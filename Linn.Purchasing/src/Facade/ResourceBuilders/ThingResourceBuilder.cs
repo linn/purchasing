@@ -28,7 +28,7 @@
 
         public string GetLocation(Thing p)
         {
-            return $"/template/things/{p.Id}";
+            return $"/purchasing/things/{p.Id}";
         }
 
         object IBuilder<Thing>.Build(Thing thing, IEnumerable<string> claims) => this.Build(thing, claims);

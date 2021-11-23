@@ -26,21 +26,21 @@ const Root = ({ store }) => (
                                 <Navigation />
                                 <CssBaseline />
 
-                                <Route exact path="/" render={() => <Redirect to="/template" />} />
+                                <Route exact path="/" render={() => <Redirect to="/purchasing" />} />
 
                                 <Route
                                     path="/"
                                     render={() => {
-                                        document.title = 'Template';
+                                        document.title = 'Purchasing';
                                         return false;
                                     }}
                                 />
 
                                 <Switch>
-                                    <Route exact path="/template" component={App} />
+                                    <Route exact path="/purchasing" component={App} />
                                     <Route
                                         exact
-                                        path="/template/signin-oidc-client"
+                                        path="/purchasing/signin-oidc-client"
                                         component={Callback}
                                     />
                                     <Route component={NotFoundPage} />

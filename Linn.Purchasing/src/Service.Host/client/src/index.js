@@ -28,7 +28,7 @@ const render = Component => {
     );
 };
 
-if ((!user || user.expired) && window.location.pathname !== '/template/signin-oidc-client') {
+if ((!user || user.expired) && window.location.pathname !== '/purchasing/signin-oidc-client') {
     userManager.signinRedirect({
         data: { redirect: window.location.pathname + window.location.search }
     });

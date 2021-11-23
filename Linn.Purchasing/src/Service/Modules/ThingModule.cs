@@ -25,12 +25,12 @@
         {
             this.thingFacadeService = thingFacadeService;
             this.thingService = thingService;
-            this.Get("/template/things", this.GetThings);
-            this.Get("/template/things/{id:int}", this.GetThingById);
-            this.Post("/template/things/{id:int}", this.DoNothing);
-            this.Post("/template/things/send-message", this.SendMessage);
-            this.Post("/template/things", this.CreateThing);
-            this.Put("/template/things/{id:int}", this.UpdateThing);
+            this.Get("/purchasing/things", this.GetThings);
+            this.Get("/purchasing/things/{id:int}", this.GetThingById);
+            this.Post("/purchasing/things/{id:int}", this.DoNothing);
+            this.Post("/purchasing/things/send-message", this.SendMessage);
+            this.Post("/purchasing/things", this.CreateThing);
+            this.Put("/purchasing/things/{id:int}", this.UpdateThing);
         }
 
         private async Task SendMessage(HttpRequest req, HttpResponse res)

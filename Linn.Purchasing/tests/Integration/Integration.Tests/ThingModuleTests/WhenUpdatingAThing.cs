@@ -33,11 +33,11 @@
                             {
                                 Id = this.thingId,
                                 Name = this.resource.Name,
-                                Links = new[] { new LinkResource("self", $"/template/things/{this.thingId}") }
+                                Links = new[] { new LinkResource("self", $"/purchasing/things/{this.thingId}") }
                             }));
 
             this.Response = this.Client.Put(
-                $"/template/things/{this.thingId}",
+                $"/purchasing/things/{this.thingId}",
                 this.resource,
                 with =>
                     {

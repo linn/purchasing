@@ -14,14 +14,14 @@
         public ApplicationModule()
         {
             this.Get("/", this.Redirect);
-            this.Get("/template", this.GetApp);
-            this.Get("/template/signin-oidc-client", this.GetApp);
-            this.Get("/template/signin-oidc-silent", this.GetSilentRenew);
+            this.Get("/purchasing", this.GetApp);
+            this.Get("/purchasing/signin-oidc-client", this.GetApp);
+            this.Get("/purchasing/signin-oidc-silent", this.GetSilentRenew);
         }
 
         private Task Redirect(HttpRequest req, HttpResponse res)
         {
-            res.Redirect("/template");
+            res.Redirect("/purchasing");
             return Task.CompletedTask;
         }
 

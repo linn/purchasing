@@ -25,7 +25,7 @@
                             var sender = MessagingFactory.CreateSender();
                             sender.Connector = a.GetService<IConnector>();
                             sender.ExchangeName = "orawin.x";
-                            sender.Identity = "Template Message Dispatcher";
+                            sender.Identity = "Purchasing Message Dispatcher";
                             sender.Init();
 
                             return sender;

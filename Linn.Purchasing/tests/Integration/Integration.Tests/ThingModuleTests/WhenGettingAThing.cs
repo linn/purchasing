@@ -29,7 +29,7 @@
                 .Returns(new SuccessResult<ThingResource>(this.thing));
 
             this.Response = this.Client.Get(
-                $"/template/things/{this.thingId}",
+                $"/purchasing/things/{this.thingId}",
                 with =>
                     {
                         with.Accept("application/json");

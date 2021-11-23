@@ -1,6 +1,6 @@
-export DATABASE_HOST='template'
-export DATABASE_NAME='template'
-export DATABASE_USER_ID='template'
-export DATABASE_PASSWORD='template'
+export DATABASE_HOST='purchasing'
+export DATABASE_NAME='purchasing'
+export DATABASE_USER_ID='purchasing'
+export DATABASE_PASSWORD='purchasing'
 
 dotnet ef database update

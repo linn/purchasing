@@ -13,7 +13,7 @@
     {
         private readonly string contentType = "application/json";
 
-        private readonly string routingKey = "template.message";
+        private readonly string routingKey = "purchasing.message";
 
         private readonly IMessageDispatcher messageDispatcher;
 

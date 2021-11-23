@@ -1,7 +1,7 @@
 {
-  "name": "template",
+  "name": "purchasing",
   "version": "1.0.0",
-  "description": "template",
+  "description": "purchasing",
   "main": "index.js",
   "scripts": {
     "noEmitOnError": true,

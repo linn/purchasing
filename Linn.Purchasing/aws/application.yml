@@ -1,4 +1,4 @@
-Description: Template
+Description: Purchasing
 AWSTemplateFormatVersion: '2010-09-09'
 Parameters:
   dockerTag:
@@ -68,7 +68,7 @@ Conditions:
   isTesting: !Equals [!Ref environmentSuffix, "-sys"]
 
 Resources:
-  templateRole:
+  purchasingRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -80,7 +80,7 @@ Resources:
             Action: [ "sts:AssumeRole" ]
       Path: "/"
       Policies:
-      - PolicyName: templateServices
+      - PolicyName: purchasingServices
         PolicyDocument:
           Version: '2012-10-17'
           Statement:
@@ -111,15 +111,15 @@ Resources:
             Action:
               - s3:*
             Resource: !Sub "arn:aws:s3:::auth${environmentSuffix}*-keysbucket*"
-  templateTaskDefinition:
+  purchasingTaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
-      TaskRoleArn: !GetAtt templateRole.Arn
+      TaskRoleArn: !GetAtt purchasingRole.Arn
       ContainerDefinitions:
-      - Name: template
+      - Name: purchasing
         Cpu: '1'
         Essential: 'true'
-        Image: !Sub docker.io/linn/template:${dockerTag}
+        Image: !Sub docker.io/linn/purchasing:${dockerTag}
         PortMappings:
         - ContainerPort: 5050
         Memory: '150'
@@ -127,7 +127,7 @@ Resources:
           LogDriver: gelf
           Options:
             'gelf-address': 'udp://syslog.linn.co.uk:12201'
-            'tag': !Sub template-${dockerTag}-ecs-task
+            'tag': !Sub purchasing-${dockerTag}-ecs-task
         Environment:
         - Name: DATABASE_HOST
           Value: !Ref databaseHost
@@ -171,7 +171,7 @@ Resources:
           Value:
             Fn::ImportValue:
               !Sub "kms-key-alias${environmentSuffix}"
-  templateService:
+  purchasingService:
     Type: AWS::ECS::Service
     Properties:
       # Have to use long form conditional
@@ -185,11 +185,11 @@ Resources:
           Type: spread
         - Field: instanceId
           Type: spread
-      TaskDefinition: !Ref templateTaskDefinition
+      TaskDefinition: !Ref purchasingTaskDefinition
       Role: ecsServiceRole
       LoadBalancers:
-      - ContainerName: template
+      - ContainerName: purchasing
         ContainerPort: 5050
         TargetGroupArn:
           Fn::ImportValue:
-            !Sub "template-target-group-arn${environmentSuffix}"
+            !Sub "purchasing-target-group-arn${environmentSuffix}"

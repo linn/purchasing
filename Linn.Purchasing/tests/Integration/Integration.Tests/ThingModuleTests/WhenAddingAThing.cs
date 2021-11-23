@@ -26,11 +26,11 @@
                 new CreatedResult<ThingResource>(
                     new ThingResource
                         {
-                            Id = 123, Name = "new", Links = new[] { new LinkResource("self", "/template/things/123") }
+                            Id = 123, Name = "new", Links = new[] { new LinkResource("self", "/purchasing/things/123") }
                         }));
 
             this.Response = this.Client.Post(
-                "/template/things",
+                "/purchasing/things",
                 this.thingResource,
                 with =>
                     {
@@ -48,7 +48,7 @@
         public void ShouldReturnLocationHeader()
         {
             this.Response.Headers.Location.Should().NotBeNull();
-            this.Response.Headers.Location.Should().Be("/template/things/123");
+            this.Response.Headers.Location.Should().Be("/purchasing/things/123");
         }
 
         [Test]

@@ -21,9 +21,9 @@
             this.receiver = scope.Resolve<IReceiver>();
             this.consumer = new DedupingMessageConsumer(new MessageConsumer(this.receiver), this.receiver);
 
-            this.logger.Info("Started template-listener");
+            this.logger.Info("Started purchasing-listener");
 
-            this.consumer.For("template.some-type")
+            this.consumer.For("purchasing.some-type")
                 .OnConsumed(m =>
                     {
                         using (var handlerScope = scope.BeginLifetimeScope("messageHandler"))

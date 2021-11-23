@@ -24,7 +24,7 @@
                     new[] { new ThingResource { Id = 1 }, new ThingResource { Id = 2 } }));
 
             this.Response = this.Client.Get(
-                "/template/things",
+                "/purchasing/things",
                 with =>
                     {
                         with.Accept("application/json");
