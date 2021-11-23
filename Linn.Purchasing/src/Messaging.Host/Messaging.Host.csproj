@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+	<TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>Linn.Purchasing.Messaging.Host</AssemblyName>
+    <RootNamespace>Linn.Purchasing.Messaging.Host</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Linn.Common.Logging" Version="2.0.0" />
+    <PackageReference Include="Linn.Common.Messaging.RabbitMQ.Autofac" Version="2.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IoC\IoC.csproj" />
+    <ProjectReference Include="..\Messaging\Messaging.csproj" />
+  </ItemGroup>
+
+</Project>

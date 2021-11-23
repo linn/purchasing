@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	<TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>Linn.Purchasing.Facade</AssemblyName>
+    <RootNamespace>Linn.Purchasing.Facade</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Linn.Common.Facade" Version="7.0.0" />
+    <PackageReference Include="Linn.Common.Logging" Version="2.0.0" />
+    <PackageReference Include="linn.common.persistence" Version="2.1.1" />
+    <PackageReference Include="Linn.Common.Proxy.LinnApps" Version="3.0.0" />
+    <PackageReference Include="Linn.Common.Reporting" Version="1.4.0" />
+    <PackageReference Include="Linn.Common.Reporting.Resources" Version="1.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Domain.LinnApps\Domain.LinnApps.csproj" />
+    <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\Persistence.LinnApps\Persistence.LinnApps.csproj" />
+    <ProjectReference Include="..\Persistence\Persistence.csproj" />
+    <ProjectReference Include="..\Proxy\Proxy.csproj" />
+    <ProjectReference Include="..\Resources\Resources.csproj" />
+  </ItemGroup>
+
+</Project>

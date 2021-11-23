@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	<TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>Linn.Purchasing.IoC</AssemblyName>
+    <RootNamespace>Linn.Purchasing.IoC</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.1" />
+    <PackageReference Include="Linn.Common.Authorisation" Version="1.0.0" />
+    <PackageReference Include="linn.common.facade.carter" Version="5.0.0" />
+    <PackageReference Include="Linn.Common.Logging" Version="2.0.0" />
+    <PackageReference Include="Linn.Common.Logging.AmazonSqs" Version="3.0.0" />
+    <PackageReference Include="Linn.Common.Persistence.EntityFramework" Version="3.0.1" />
+    <PackageReference Include="Linn.Common.Proxy" Version="3.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\Facade\Facade.csproj" />
+    <ProjectReference Include="..\Messaging\Messaging.csproj" />
+    <ProjectReference Include="..\Persistence.LinnApps\Persistence.LinnApps.csproj" />
+    <ProjectReference Include="..\Persistence\Persistence.csproj" />
+    <ProjectReference Include="..\Proxy\Proxy.csproj" />
+    <ProjectReference Include="..\Service\Service.csproj" />
+  </ItemGroup>
+
+</Project>

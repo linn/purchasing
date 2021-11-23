@@ -1,0 +1,17 @@
+language: csharp
+dist: xenial
+sudo: required
+mono: none
+dotnet: 5.0
+services: docker
+before_install: 
+ - chmod +x ./scripts/*.sh
+install: 
+ - ./scripts/install.sh
+before_script:
+ - ./scripts/test.sh
+script: ./scripts/package.sh
+after_success: travis_wait ./scripts/deploy.sh
+cache:
+  directories:
+    - ./src/Service.Host/node_modules

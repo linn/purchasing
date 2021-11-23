@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>Linn.Purchasing.Service.Host</AssemblyName>
+    <RootNamespace>Linn.Purchasing.Service.Host</RootNamespace>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="client\assets\" />
+    <Folder Include="client\src\actions\" />
+    <Folder Include="client\src\components\common\" />
+    <Folder Include="Properties\" />
+    <Compile Remove="client\build\**" />
+    <Compile Remove="client\coverage\**" />
+    <Compile Remove="coverage\**" />
+    <Compile Remove="node_modules\**" />
+    <Content Remove="client\build\**" />
+    <Content Remove="client\coverage\**" />
+    <Content Remove="coverage\**" />
+    <Content Remove="node_modules\**" />
+    <EmbeddedResource Remove="client\build\**" />
+    <EmbeddedResource Remove="client\coverage\**" />
+    <EmbeddedResource Remove="coverage\**" />
+    <EmbeddedResource Remove="node_modules\**" />
+    <None Remove="client\build\**" />
+    <None Remove="client\coverage\**" />
+    <None Remove="coverage\**" />
+    <None Remove="node_modules\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Carter" Version="5.2.0" />
+    <PackageReference Include="handlebars.net" Version="2.0.9" />
+    <PackageReference Include="Linn.Common.Authentication.Host" Version="3.1.0" />
+    <PackageReference Include="Linn.Common.Configuration" Version="2.0.0" />
+    <PackageReference Include="linn.common.facade.carter" Version="5.0.0" />
+    <PackageReference Include="Linn.Common.Logging" Version="2.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoC\IoC.csproj" />
+    <ProjectReference Include="..\Service\Service.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="client\src\components\__tests__\" />
+    <Folder Include="client\src\reducers\__tests__\" />
+    <Folder Include="client\src\selectors\__tests__\" />
+  </ItemGroup>
+</Project>
