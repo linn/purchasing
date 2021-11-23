@@ -8,7 +8,7 @@ Forms and reports application for purchasing
 This services provides forms and reporting for existing data and code in the LinnApps Oracle database. 
 
 ## Component technologies
-* The backend service is dotnet core C# using NancyFx web framework.
+* The backend service is dotnet core C# using Carter web framework.
 * The GUI client is built with React/Redux and managed with npm and webpack.
 * Persistence is to Oracle database via EF Core.
 * Continuous deployment via Docker container to AWS ECS using Travis CI.
