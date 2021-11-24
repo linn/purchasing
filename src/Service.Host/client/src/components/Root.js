@@ -26,7 +26,11 @@ const Root = ({ store }) => (
                                 <Navigation />
                                 <CssBaseline />
 
-                                <Route exact path="/" render={() => <Redirect to="/purchasing" />} />
+                                <Route
+                                    exact
+                                    path="/"
+                                    render={() => <Redirect to="/purchasing" />}
+                                />
 
                                 <Route
                                     path="/"
