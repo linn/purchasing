@@ -105,13 +105,13 @@
             entity.Property(e => e.RohsCategory).HasColumnName("ROHS_CATEGORY").HasMaxLength(6);
             entity.Property(e => e.RohsComments).HasColumnName("ROHS_COMMENTS").HasMaxLength(160);
             entity.HasOne(ps => ps.PackagingGroup).WithMany().HasForeignKey("PAGRP_ID");
-            entity.Property(e => e.CreatedBy).HasColumnName("CREATED_BY");
+            entity.HasOne(e => e.CreatedBy).WithMany().HasForeignKey("CREATED_BY");
             entity.Property(e => e.WebAddress).HasColumnName("WEB_ADDRESS").HasMaxLength(200);
             entity.Property(e => e.MinimumOrderQty).HasColumnName("MINIMUM_ORDER_QTY");
             entity.Property(e => e.OrderIncrement).HasColumnName("ORDER_INCREMENT");
             entity.Property(e => e.CurrencyUnitPrice).HasColumnName("CURRENCY_UNIT_PRICE_OURS");
             entity.Property(e => e.LeadTimeWeeks).HasColumnName("LEAD_TIME_WEEKS");
-            entity.Property(e => e.MadeInvalidBy).HasColumnName("MADE_INVALID_BY");
+            entity.HasOne(e => e.MadeInvalidBy).WithMany().HasForeignKey("MADE_INVALID_BY");
             entity.Property(e => e.OrderConversionFactor).HasColumnName("ORDER_CONV_FACTOR_US_TO_THEM");
             entity.Property(e => e.UnitOfMeasure).HasColumnName("ORDER_UNIT_OF_MEASURE").HasMaxLength(14);
             entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);

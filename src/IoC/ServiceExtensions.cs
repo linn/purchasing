@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.IoC
 {
+    using System.Collections.Generic;
     using System.Net.Http;
 
     using Amazon.Extensions.NETCore.Setup;
@@ -25,6 +26,8 @@
             return services
                 .AddTransient<IBuilder<Thing>, ThingResourceBuilder>()
                 .AddTransient<IFacadeResourceService<Thing, int, ThingResource, ThingResource>, ThingFacadeService>()
+                .AddTransient<IBuilder<PartSupplier>, PartSupplierResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<PartSupplier>>, PartSuppliersResourceBuilder>()
                 .AddTransient<IFacadeResourceService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource>, PartSupplierFacadeService>();
         }
 
