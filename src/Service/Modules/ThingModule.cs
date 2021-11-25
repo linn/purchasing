@@ -1,7 +1,6 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
     using System;
-    using System.Linq;
     using System.Threading.Tasks;
 
     using Carter;
@@ -10,11 +9,7 @@
     using Carter.Response;
 
     using Linn.Common.Facade;
-    using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps;
-    using Linn.Purchasing.Domain.LinnApps.Parts;
-    using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
-    using Linn.Purchasing.Persistence.LinnApps.Keys;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.Extensions;
 
@@ -24,22 +19,14 @@
     {
         private readonly IFacadeResourceService<Thing, int, ThingResource, ThingResource> thingFacadeService;
 
-        private readonly IRepository<PartSupplier, PartSupplierKey> repo;
-
         private readonly IThingService thingService;
 
-        public ThingModule(
-            IFacadeResourceService<Thing, int, ThingResource, ThingResource> thingFacadeService, 
-            IThingService thingService,
-            IRepository<PartSupplier, PartSupplierKey> repo)
+        public ThingModule(IFacadeResourceService<Thing, int, ThingResource, ThingResource> thingFacadeService, IThingService thingService)
         {
             this.thingFacadeService = thingFacadeService;
             this.thingService = thingService;
-            this.repo = repo;
             this.Get("/purchasing/things", this.GetThings);
             this.Get("/purchasing/things/{id:int}", this.GetThingById);
-            this.Get("/purchasing/part/{id:int}", this.GetThingById);
-
             this.Post("/purchasing/things/{id:int}", this.DoNothing);
             this.Post("/purchasing/things/send-message", this.SendMessage);
             this.Post("/purchasing/things", this.CreateThing);
@@ -60,8 +47,6 @@
 
         private async Task GetThings(HttpRequest req, HttpResponse res)
         {
-            var test = this.repo.FindAll().ToList();
-            //var count = test.Count();
             await res.Negotiate(this.thingFacadeService.GetAll());
         }
 
