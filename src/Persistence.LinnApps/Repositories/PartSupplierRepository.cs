@@ -8,17 +8,9 @@
 
     public class PartSupplierRepository : EntityFrameworkRepository<PartSupplier, PartSupplierKey>
     {
-        private readonly DbSet<PartSupplier> databaseSet;
-
         public PartSupplierRepository(DbSet<PartSupplier> databaseSet)
             : base(databaseSet)
         {
-            this.databaseSet = databaseSet;
-        }
-
-        public override PartSupplier FindById(PartSupplierKey key)
-        {
-            return this.databaseSet.Find(key);
         }
     }
 }

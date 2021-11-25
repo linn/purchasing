@@ -21,29 +21,29 @@
 
         public string Currency { get; set; }
 
-        public decimal CurrencyUnitPrice { get; set; }
+        public decimal? CurrencyUnitPrice { get; set; }
 
-        public decimal OurCurrencyPriceToShowOnOrder { get; set; }
+        public decimal? OurCurrencyPriceToShowOnOrder { get; set; }
 
-        public decimal BaseOurUnitPrice { get; set; }
+        public decimal? BaseOurUnitPrice { get; set; }
 
         public decimal MinimumOrderQty { get; set; }
 
-        public decimal MinimumDeliveryQty { get; set; }
+        public decimal? MinimumDeliveryQty { get; set; }
 
-        public decimal ReelOrBoxQty { get; set; }
+        public decimal? ReelOrBoxQty { get; set; }
 
         public decimal OrderIncrement { get; set; }
 
         public string UnitOfMeasure { get; set; }
 
-        public decimal OrderConversionFactor { get; set; }
+        public decimal? OrderConversionFactor { get; set; }
 
         public int LeadTimeWeeks { get; set; }
 
         public string OverbookingAllowed { get; set; }
 
-        public decimal DamagesPercent { get; set; }
+        public decimal? DamagesPercent { get; set; }
 
         public PackagingGroup PackagingGroup { get; set; }
 
@@ -53,15 +53,15 @@
 
         public string NotesForBuyer { get; set; }
 
-        public int JitReorderWeeks { get; set; }
+        public int? JitReorderWeeks { get; set; }
 
-        public int JitBookinOrderNumber { get; set; }
+        public int? JitBookinOrderNumber { get; set; }
 
-        public int JitBookinOrderLine { get; set; }
+        public int? JitBookinOrderLine { get; set; }
 
-        public int JitReorderOrderNumber { get; set; }
+        public int? JitReorderOrderNumber { get; set; }
 
-        public int JitReorderOrderLine { get; set; }
+        public int? JitReorderOrderLine { get; set; }
 
         public string JitStatus { get; set; }
 
@@ -73,7 +73,7 @@
 
         public Employee MadeInvalidBy { get; set; }
 
-        public DateTime DateInvalid { get; set; }
+        public DateTime? DateInvalid { get; set; }
 
         public Manufacturer Manufacturer { get; set; }
 
@@ -85,7 +85,7 @@
 
         public string RohsCompliant { get; set; }
 
-        public DateTime DateRohsCompliant { get; set; }
+        public DateTime? DateRohsCompliant { get; set; }
 
         public string RohsComments { get; set; }
 
