@@ -90,5 +90,7 @@
         public string RohsComments { get; set; }
 
         public Address DeliveryAddress { get; set; }
+
+        public string PackWasteStatus { get; set; }
     }
 }

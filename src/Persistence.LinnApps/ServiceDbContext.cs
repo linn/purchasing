@@ -140,6 +140,7 @@
             entity.Property(e => e.OurCurrencyPriceToShowOnOrder).HasColumnName("OUR_CURR_PRICE_SHOW_ON_ORDER");
             entity.HasOne(e => e.Tariff).WithMany().HasForeignKey("TARIFF_ID");
             entity.Property(e => e.DateRohsCompliant).HasColumnName("DATE_ROHS_COMPLIANT");
+            entity.Property(e => e.PackWasteStatus).HasColumnName("PACK_WASTE_STATUS").HasMaxLength(1);
         }
 
         private void BuildParts(ModelBuilder builder)
