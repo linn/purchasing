@@ -1,9 +1,9 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.PartSuppliers
 {
-    public class Address
+    public class PackagingGroup
     {
         public int Id { get; set; }
 
-        public string FullAddress { get; set; }
+        public string Description { get; set; }
     }
 }

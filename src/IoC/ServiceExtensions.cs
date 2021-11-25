@@ -10,8 +10,10 @@
     using Linn.Common.Facade;
     using Linn.Common.Pdf;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
+    using Linn.Purchasing.Persistence.LinnApps.Keys;
     using Linn.Purchasing.Resources;
 
     using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +24,8 @@
         {
             return services
                 .AddTransient<IBuilder<Thing>, ThingResourceBuilder>()
-                .AddTransient<IFacadeResourceService<Thing, int, ThingResource, ThingResource>, ThingFacadeService>();
+                .AddTransient<IFacadeResourceService<Thing, int, ThingResource, ThingResource>, ThingFacadeService>()
+                .AddTransient<IFacadeResourceService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource>, PartSupplierFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
