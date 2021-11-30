@@ -29,7 +29,8 @@ namespace Linn.Purchasing.Service.Host
             services.AddSqsExtensions();
             services.AddLog();
 
-            services.AddFacade();
+            services.AddBuilders();
+            services.AddFacades();
             services.AddServices();
             services.AddPersistence();
             services.AddHandlers();
