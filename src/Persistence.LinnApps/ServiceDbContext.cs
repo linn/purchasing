@@ -29,6 +29,10 @@
         public DbSet<PackagingGroup> PackagingGroups { get; set; }
 
         public DbSet<Address> Addresses { get; set; }
+        public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
+
+        public DbSet<PurchaseOrderDetail> PurchaseOrderDetails { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -45,6 +49,9 @@
             this.BuildPackagingGroups(builder);
             this.BuildManufacturers(builder);
             this.BuildAddresses(builder);
+            this.BuildPurchaseOrders(builder);
+            this.BuildPurchaseOrderDetails(builder);
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -197,6 +204,33 @@
             entity.HasKey(m => m.Id);
             entity.Property(e => e.Id).HasColumnName("ADDRESS_ID");
             entity.Property(a => a.FullAddress).HasColumnName("ADDRESS");
+        }
+
+        private void BuildPurchaseOrders(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PurchaseOrder>().ToTable("PL_ORDERS");
+            entity.HasKey(o => o.OrderNumber);
+            entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(o => o.SupplierId).HasColumnName("SUPP_SUPPLIER_ID");
+            entity.HasOne(o => o.Supplier).WithMany().HasForeignKey(o => o.SupplierId);
+            entity.Property(o => o.DocumentType).HasColumnName("DOCUMENT_TYPE");
+
+        }
+
+        private void BuildPurchaseOrderDetails(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PurchaseOrderDetail>().ToTable("PL_ORDER_DETAILS");
+            entity.HasKey(a => new { a.OrderNumber, a.Line });
+            entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(o => o.Line).HasColumnName("ORDER_LINE");
+            entity.Property(o => o.RohsCompliant).HasColumnName("ROHS_COMPLIANT");
+            entity.Property(o => o.OurQty).HasColumnName("OUR_QTY");
+            entity.Property(o => o.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
+            entity.Property(o => o.SuppliersDesignation).HasColumnName("SUPPLIERS_DESIGNATION").HasMaxLength(2000);
+            //entity.HasOne(a => a.SalesArticle).WithMany(x => x.PurchaseOrderDetails).HasForeignKey(z => z.PartNumber);
+            entity.HasOne(d => d.PurchaseOrder).WithMany(o => o.Details)
+                .HasForeignKey(d => d.OrderNumber);
+            entity.Property(o => o.NetTotal).HasColumnName("NET_TOTAL").HasMaxLength(18);
         }
     }
 }
