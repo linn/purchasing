@@ -1,4 +1,12 @@
 import { ItemType } from '@linn-it/linn-form-components-library';
 
-export const hub = new ItemType('hub', 'HUB', '/purchasing/hubs');
-export const hubs = new ItemType('hubs', 'HUBS', '/purchasing/hubs');
+export const signingLimit = new ItemType(
+    'signingLimit',
+    'SIGNING_LIMIT',
+    '/purchasing/signing-limits'
+);
+export const signingLimits = new ItemType(
+    'signingLimits',
+    'SIGNING_LIMITS',
+    '/purchasing/signing-limits'
+);

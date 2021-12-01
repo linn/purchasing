@@ -7,6 +7,8 @@ import { combineReducers } from 'redux';
 import { reducer as oidc } from 'redux-oidc';
 import historyStore from './history';
 import * as itemTypes from '../itemTypes';
+import signingLimit from './signingLimit';
+import signingLimits from './signingLimits';
 
 const errors = fetchErrorReducer({ ...itemTypes });
 
@@ -15,6 +17,8 @@ const rootReducer = history =>
         oidc,
         historyStore,
         router: connectRouter(history),
+        signingLimit,
+        signingLimits,
         ...sharedLibraryReducers,
         errors
     });
