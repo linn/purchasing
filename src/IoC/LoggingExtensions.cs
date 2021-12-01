@@ -13,6 +13,9 @@
     {
         public static IServiceCollection AddLog(this IServiceCollection services)
         {
+#if DEBUG
+            return services.AddSingleton<ILog, Linn.Common.Logging.ConsoleLog>();
+#else
             return services.AddSingleton<ILog>(
                 l =>
                     {
@@ -23,6 +26,7 @@
                             LoggingConfiguration.MaxInnerExceptionDepth,
                             LoggingConfiguration.AmazonSqsQueueUri);
                     });
+#endif
         }
     }
 }
