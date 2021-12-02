@@ -28,7 +28,8 @@
 
         public ResultsModel GetOrdersBySupplierReport(DateTime from, DateTime to, int supplierId)
         {
-            var purchaseOrders = this.purchaseOrderRepository.FilterBy(x => x.SupplierId == supplierId);
+            var purchaseOrders = this.purchaseOrderRepository.FilterBy(x => x.SupplierId == supplierId
+                                                                            && from <= x.OrderDate && x.OrderDate < to);
 
             var reportLayout = new SimpleGridLayout(
                 this.reportingHelper,
@@ -123,6 +124,9 @@
                         TextDisplay = "todo",
                         RowTitle = purchaseOrder.OrderNumber.ToString()
                     });
+          //  decode(plorh.document_type, 'CO', order_details.our_qty * -1, order_details.our_qty) our_qty,   
+          //decode(plorh.document_type, 'CO', pldels.net_total * -1, pldels.net_total) del_total ,
+          //decode(plorh.document_type, 'CO', pldels.our_delivery_qty * -1, pldels.OUR_DELIVERY_QTY) OUR_DELIVERY_QTY,
 
             values.Add(
                 new CalculationValueModel
@@ -130,8 +134,9 @@
                         RowId = currentRowId,
                         ColumnId = "QtyRec",
                         TextDisplay = "todo",
-                        RowTitle = purchaseOrder.OrderNumber.ToString()
-                    });
+                        RowTitle = orderDetail.PurchaseDelivery.QtyNetReceived.ToString()
+                    }); 
+            //pldels.qty_net_received rec ?
 
             values.Add(
                 new CalculationValueModel
@@ -150,7 +155,6 @@
                         TextDisplay = $"{orderDetail.NetTotal}",
                         RowTitle = purchaseOrder.OrderNumber.ToString()
                     });
-
             values.Add(
                 new CalculationValueModel
                     {
@@ -166,7 +170,7 @@
                         RowId = currentRowId,
                         ColumnId = "ReqDate",
                         TextDisplay = "todo",
-                        RowTitle = purchaseOrder.OrderNumber.ToString()
+                        RowTitle = orderDetail.PurchaseDelivery.DateRequested.ToString("o")
                     });
 
             values.Add(
@@ -175,8 +179,9 @@
                         RowId = currentRowId,
                         ColumnId = "AdvisedDate",
                         TextDisplay = "todo",
-                        RowTitle = purchaseOrder.OrderNumber.ToString()
-                    });
+                        RowTitle = orderDetail.PurchaseDelivery.DateAdvised.ToString("o")
+                }); 
+            //pldels.ADVISED_DATE ADVISED_DATE,
         }
     }
 }

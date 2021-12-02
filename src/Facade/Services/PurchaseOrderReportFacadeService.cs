@@ -28,7 +28,6 @@
             }
 
             return new SuccessResult<ResultsModel>(this.domainService.GetOrdersBySupplierReport(from, to, resource.SupplierId));
-
         }
     }
 }

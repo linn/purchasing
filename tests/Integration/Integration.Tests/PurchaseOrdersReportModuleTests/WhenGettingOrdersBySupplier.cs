@@ -1,6 +1,11 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrderReportModuleTests
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Net;
+    using System.Net.Http.Json;
+    using System.Web;
 
     using FluentAssertions;
 
@@ -20,10 +25,22 @@
         {
             this.FacadeService.GetOrdersBySupplierReport(Arg.Any<OrdersBySupplierSearchResource>()).Returns(
                 new SuccessResult<ResultsModel>(new ResultsModel()));
+            var resource = new OrdersBySupplierSearchResource() { From = "2/11/21", To = "2/12/21" };
+
+            var builder = new UriBuilder("http://localhost:51699/purchasing/reports/orders-by-supplier/118");
+            builder.Port = -1;
+            var query = HttpUtility.ParseQueryString(builder.Query);
+            query["from"] = "2/11/21";
+            query["to"] = "2/12/21";
+            builder.Query = query.ToString();
+            string url = builder.ToString();
 
             this.Response = this.Client.Get(
-                "/purchasing/reports/orders-by-supplier/118",
-                with => { with.Accept("application/json"); }).Result;
+                url,
+                with =>
+                    {
+                        with.Accept("application/json");
+                    }).Result;
         }
 
         [Test]
@@ -35,7 +52,7 @@
         [Test]
         public void ShouldReturnJsonBody()
         {
-            var resource = this.Response.DeserializeBody<ResultsModel>();
+            var resource = this.Response.DeserializeBody<SuccessResult<ResultsModel>>();
             resource.Should().NotBeNull();
         }
 

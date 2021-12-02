@@ -33,6 +33,7 @@
 
         public DbSet<PurchaseOrderDetail> PurchaseOrderDetails { get; set; }
 
+        public DbSet<PurchaseOrderDelivery> PurchaseOrderDeliveries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -51,7 +52,7 @@
             this.BuildAddresses(builder);
             this.BuildPurchaseOrders(builder);
             this.BuildPurchaseOrderDetails(builder);
-
+            this.BuildPurchaseOrderDeliveries(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -214,7 +215,7 @@
             entity.Property(o => o.SupplierId).HasColumnName("SUPP_SUPPLIER_ID");
             entity.HasOne(o => o.Supplier).WithMany().HasForeignKey(o => o.SupplierId);
             entity.Property(o => o.DocumentType).HasColumnName("DOCUMENT_TYPE");
-
+            entity.Property(o => o.OrderDate).HasColumnName("DATE_OF_ORDER");
         }
 
         private void BuildPurchaseOrderDetails(ModelBuilder builder)
@@ -227,9 +228,31 @@
             entity.Property(o => o.OurQty).HasColumnName("OUR_QTY");
             entity.Property(o => o.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
             entity.Property(o => o.SuppliersDesignation).HasColumnName("SUPPLIERS_DESIGNATION").HasMaxLength(2000);
-            //entity.HasOne(a => a.SalesArticle).WithMany(x => x.PurchaseOrderDetails).HasForeignKey(z => z.PartNumber);
+
             entity.HasOne(d => d.PurchaseOrder).WithMany(o => o.Details)
                 .HasForeignKey(d => d.OrderNumber);
+
+            entity.HasOne(d => d.PurchaseDelivery).WithOne(o => o.PurchaseOrderDetail)
+                .HasForeignKey<PurchaseOrderDelivery>(o => new { o.OrderNumber, o.OrderLine });
+            entity.Property(o => o.NetTotal).HasColumnName("NET_TOTAL").HasMaxLength(18);
+        }
+
+        private void BuildPurchaseOrderDeliveries(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PurchaseOrderDelivery>().ToTable("PL_DELIVERIES");
+            entity.HasKey(a => new { a.DeliverySeq, a.OrderNumber, a.OrderLine });
+            entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(o => o.OrderLine).HasColumnName("ORDER_LINE");
+            entity.Property(o => o.DeliverySeq).HasColumnName("DELIVERY_SEQ");
+
+            entity.Property(o => o.DateAdvised).HasColumnName("ADVISED_DATE");
+            entity.Property(o => o.DateRequested).HasColumnName("REQUESTED_DATE");
+
+            entity.Property(o => o.OurDeliveryQty).HasColumnName("OUR_DELIVERY_QTY").HasMaxLength(19);
+            entity.Property(o => o.OrderDeliveryQty).HasColumnName("ORDER_DELIVERY_QTY").HasMaxLength(19);
+            entity.Property(o => o.QtyNetReceived).HasColumnName("QTY_NET_RECEIVED").HasMaxLength(19);
+
+            entity.HasOne(d => d.PurchaseOrderDetail).WithOne(o => o.PurchaseDelivery);
             entity.Property(o => o.NetTotal).HasColumnName("NET_TOTAL").HasMaxLength(18);
         }
     }

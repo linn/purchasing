@@ -19,7 +19,8 @@
                 .AddTransient<ITransactionManager, TransactionManager>()
                 .AddTransient<IRepository<Thing, int>, ThingRepository>()
                 .AddTransient<IRepository<PartSupplier, PartSupplierKey>, EntityFrameworkRepository<PartSupplier, PartSupplierKey>>(
-                    r => new EntityFrameworkRepository<PartSupplier, PartSupplierKey>(r.GetService<ServiceDbContext>()?.PartSuppliers));
+                    r => new EntityFrameworkRepository<PartSupplier, PartSupplierKey>(r.GetService<ServiceDbContext>()?.PartSuppliers))
+                .AddTransient<IRepository<PurchaseOrder, int>, PurchaseOrderRepository>();
 
             // Could also be
             // .AddTransient<IRepository<Thing, int>, EntityFrameworkRepository<Thing, int>>(r => new EntityFrameworkRepository<Thing, int>(r.GetService<ServiceDbContext>()?.Things))

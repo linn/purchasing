@@ -1,8 +1,12 @@
 ﻿namespace Linn.Purchasing.Service.Modules.Reports
 {
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     using Carter;
+    using Carter.ModelBinding;
+    using Carter.Request;
     using Carter.Response;
 
     using Linn.Common.Facade;
@@ -30,10 +34,16 @@
 
         private async Task GetOrdersBySupplierReport(HttpRequest req, HttpResponse res)
         {
-            // var thingId = req.RouteValues.As<OrdersBySupplierSearchResource>();
-            this.purchaseOrderReportFacadeService.GetOrdersBySupplierReport(new OrdersBySupplierSearchResource());
+            var supplierId = req.RouteValues.As<int>("id");
+            var resource = await req.Bind<OrdersBySupplierSearchResource>();
+            resource.SupplierId = supplierId;
 
-            await res.Negotiate(new SuccessResult<ProcessResultResource>(new ProcessResultResource(true, "ok")));
+            resource.From = "2/11/21";
+            resource.To = "2/12/21";
+
+            var results = this.purchaseOrderReportFacadeService.GetOrdersBySupplierReport(resource);
+
+            await res.Negotiate(results);
         }
     }
 }
