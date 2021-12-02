@@ -18,7 +18,9 @@
                 .AddTransient<IHandler, ThingResourceResultHandler>()
                 .AddTransient<IHandler, JsonResultHandler<ResultsModel>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<ThingResource>>>()
-                .AddTransient<IHandler, JsonResultHandler<ProcessResultResource>>();
+                .AddTransient<IHandler, JsonResultHandler<ProcessResultResource>>()
+                .AddTransient<IHandler, JsonResultHandler<SigningLimitResource>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<SigningLimitResource>>>();
         }
     }
 }

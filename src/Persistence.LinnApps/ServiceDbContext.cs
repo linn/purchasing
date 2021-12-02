@@ -4,6 +4,7 @@
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using Microsoft.EntityFrameworkCore;
@@ -35,6 +36,8 @@
 
         public DbSet<PurchaseOrderDelivery> PurchaseOrderDeliveries { get; set; }
 
+        public DbSet<SigningLimit> SigningLimits { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -53,6 +56,7 @@
             this.BuildPurchaseOrders(builder);
             this.BuildPurchaseOrderDetails(builder);
             this.BuildPurchaseOrderDeliveries(builder);
+            this.BuildSigningLimits(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -193,10 +197,10 @@
 
         private void BuildEmployees(ModelBuilder builder)
         {
-            var entity = builder.Entity<Employee>().ToTable("EMPLOYEES");
+            var entity = builder.Entity<Employee>().ToTable("AUTH_USER_NAME_VIEW");
             entity.HasKey(m => m.Id);
-            entity.Property(e => e.Id).HasColumnName("EMPLOYEE_NUMBER");
-            entity.Property(e => e.FullName).HasColumnName("NAME").HasMaxLength(4000);
+            entity.Property(e => e.Id).HasColumnName("USER_NUMBER");
+            entity.Property(e => e.FullName).HasColumnName("USER_NAME").HasMaxLength(4000);
         }
 
         private void BuildAddresses(ModelBuilder builder)
@@ -254,6 +258,18 @@
 
             entity.HasOne(d => d.PurchaseOrderDetail).WithOne(o => o.PurchaseDelivery);
             entity.Property(o => o.NetTotal).HasColumnName("NET_TOTAL").HasMaxLength(18);
+        }
+
+        private void BuildSigningLimits(ModelBuilder builder)
+        {
+            var entity = builder.Entity<SigningLimit>().ToTable("PURCH_SIGNING_LIMITS");
+            entity.HasKey(m => m.UserNumber);
+            entity.Property(e => e.UserNumber).HasColumnName("USER_NUMBER");
+            entity.Property(a => a.ProductionLimit).HasColumnName("PRODUCTION_SIGNING_LIMIT");
+            entity.Property(a => a.SundryLimit).HasColumnName("SUNDRY_LIMIT");
+            entity.Property(a => a.Unlimited).HasColumnName("UNLIMITED").HasMaxLength(1);
+            entity.Property(a => a.ReturnsAuthorisation).HasColumnName("RETURNS_AUTHORISATION").HasMaxLength(1);
+            entity.HasOne<Employee>(a => a.User).WithMany(e => e.SigningLimits).HasForeignKey(a => a.UserNumber);
         }
     }
 }

@@ -14,6 +14,7 @@ import Callback from './Callback';
 import userManager from '../helpers/userManager';
 import 'typeface-roboto';
 import NotFoundPage from './NotFoundPage';
+import SigningLimits from './SigningLimits';
 
 const Root = ({ store }) => (
     <div>
@@ -39,9 +40,13 @@ const Root = ({ store }) => (
                                         return false;
                                     }}
                                 />
-
                                 <Switch>
                                     <Route exact path="/purchasing" component={App} />
+                                    <Route
+                                        exact
+                                        path="/purchasing/signing-limits"
+                                        component={SigningLimits}
+                                    />
                                     <Route
                                         exact
                                         path="/purchasing/signin-oidc-client"

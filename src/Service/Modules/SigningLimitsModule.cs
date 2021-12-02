@@ -1,0 +1,61 @@
+﻿namespace Linn.Purchasing.Service.Modules
+{
+    using System.Threading.Tasks;
+
+    using Carter;
+    using Carter.ModelBinding;
+    using Carter.Request;
+    using Carter.Response;
+
+    using Linn.Common.Facade;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Service.Extensions;
+
+    using Microsoft.AspNetCore.Http;
+
+    public class SigningLimitsModule : CarterModule
+    {
+        private readonly IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource> signingLimitFacadeService;
+
+        public SigningLimitsModule(IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource> signingLimitFacadeService)
+        {
+            this.signingLimitFacadeService = signingLimitFacadeService;
+            this.Get("/purchasing/signing-limits", this.GetSigningLimits);
+            this.Get("/purchasing/signing-limits/{id:int}", this.GetSigningLimitById);
+            this.Post("/purchasing/signing-limits", this.CreateSigningLimit);
+            this.Put("/purchasing/signing-limits/{id:int}", this.UpdateSigningLimit);
+        }
+
+        private async Task GetSigningLimits(HttpRequest req, HttpResponse res)
+        {
+            await res.Negotiate(this.signingLimitFacadeService.GetAll());
+        }
+
+        private async Task GetSigningLimitById(HttpRequest req, HttpResponse res)
+        {
+            var signingLimitId = req.RouteValues.As<int>("id");
+
+            var result = this.signingLimitFacadeService.GetById(signingLimitId, req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task CreateSigningLimit(HttpRequest request, HttpResponse response)
+        {
+            var resource = await request.Bind<SigningLimitResource>();
+            var result = this.signingLimitFacadeService.Add(resource);
+
+            await response.Negotiate(result);
+        }
+
+        private async Task UpdateSigningLimit(HttpRequest request, HttpResponse response)
+        {
+            var id = request.RouteValues.As<int>("id");
+            var resource = await request.Bind<SigningLimitResource>();
+            var result = this.signingLimitFacadeService.Update(id, resource);
+
+            await response.Negotiate(result);
+        }
+    }
+}
