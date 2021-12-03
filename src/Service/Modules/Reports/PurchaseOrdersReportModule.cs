@@ -15,6 +15,7 @@
     using Linn.Purchasing.Service.Models;
 
     using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Primitives;
 
     public class PurchaseOrdersReportModule : CarterModule
     {
@@ -34,12 +35,19 @@
 
         private async Task GetOrdersBySupplierReport(HttpRequest req, HttpResponse res)
         {
-            var supplierId = req.RouteValues.As<int>("id");
             var resource = await req.Bind<OrdersBySupplierSearchResource>();
-            resource.SupplierId = supplierId;
 
-            resource.From = "2/11/21";
-            resource.To = "2/12/21";
+            var supplierId = req.RouteValues.As<int>("id");
+
+            StringValues from = StringValues.Empty;
+            req.Query.TryGetValue("From", out from);
+
+            StringValues to = StringValues.Empty;
+            req.Query.TryGetValue("To", out to);
+
+            resource.SupplierId = supplierId;
+            resource.From = from; // "2/11/21";
+            resource.To = to; // "2/12/21";
 
             var results = this.purchaseOrderReportFacadeService.GetOrdersBySupplierReport(resource);
 
