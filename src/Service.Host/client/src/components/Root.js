@@ -3,7 +3,6 @@ import { Provider } from 'react-redux';
 import { Route, Redirect, Switch } from 'react-router';
 import { OidcProvider } from 'redux-oidc';
 import { ConnectedRouter } from 'connected-react-router';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import { Navigation } from '@linn-it/linn-form-components-library';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
@@ -25,8 +24,6 @@ const Root = ({ store }) => (
                         <ConnectedRouter history={history}>
                             <div>
                                 <Navigation />
-                                <CssBaseline />
-
                                 <Route
                                     exact
                                     path="/"
