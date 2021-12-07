@@ -4,8 +4,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Page, SaveBackCancelButtons, Dropdown } from '@linn-it/linn-form-components-library';
 import { DataGrid } from '@mui/x-data-grid';
 import Grid from '@material-ui/core/Grid';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
+import Popper from '@material-ui/core/Popper';
+import Paper from '@material-ui/core/Paper';
+import PropTypes from 'prop-types';
+
 import { getItems, getLoading } from '../selectors/CollectionSelectorHelpers';
 import history from '../history';
 
@@ -23,6 +25,7 @@ function SigningLimits() {
     const dispatch = useDispatch();
     useEffect(() => dispatch(signingLimitsActions.fetch()), [dispatch]);
     useEffect(() => dispatch(employeesActions.fetch()), [dispatch]);
+
     useEffect(() => {
         setRows(
             !signingLimits
@@ -31,6 +34,87 @@ function SigningLimits() {
         );
     }, [signingLimits]);
 
+    const updateRow = useCallback(
+        (rowId, fieldName, newValue) => {
+            const newRows = rows.map(r =>
+                r.userNumber === rowId
+                    ? {
+                          ...r,
+                          [fieldName]: newValue,
+                          updated: true
+                      }
+                    : r
+            );
+            setRows(newRows);
+        },
+        [rows]
+    );
+
+    const EditTextarea = props => {
+        const { id, value, field, colDef, api } = props;
+        const [anchorEl, setAnchorEl] = useState(null);
+
+        const handleRef = el => {
+            setAnchorEl(el);
+        };
+
+        const handleDropdownChange = (rowId, fieldName, newValue) => {
+            updateRow(rowId, fieldName, newValue);
+            api.setEditCellValue({ id: rowId, field: fieldName, value: newValue });
+            api.setCellMode(rowId, fieldName, 'view');
+        };
+
+        return (
+            <div>
+                <div
+                    ref={handleRef}
+                    style={{
+                        height: 1,
+                        width: colDef.computedWidth,
+                        display: 'block',
+                        position: 'absolute'
+                    }}
+                />
+                {anchorEl && (
+                    <Popper open anchorEl={anchorEl} placement="top-start">
+                        <Paper elevation={1} sx={{ p: 1, minWidth: colDef.computedWidth }}>
+                            <Dropdown
+                                label="Select Value"
+                                propertyName={field}
+                                items={[
+                                    { id: 'Y', displayText: 'Yes' },
+                                    { id: 'N', displayText: 'No' }
+                                ]}
+                                value={value}
+                                onChange={(a, b) => handleDropdownChange(id, a, b)}
+                                allowNoValue={false}
+                            />
+                        </Paper>
+                    </Popper>
+                )}
+            </div>
+        );
+    };
+
+    EditTextarea.propTypes = {
+        id: PropTypes.number.isRequired,
+        value: PropTypes.string.isRequired,
+        field: PropTypes.string.isRequired,
+        colDef: PropTypes.shape({ computedWidth: PropTypes.number }).isRequired,
+        api: PropTypes.shape({ setEditCellValue: PropTypes.func, setCellMode: PropTypes.func })
+            .isRequired
+    };
+
+    const renderEditTextarea = params => (
+        <EditTextarea
+            id={params.id}
+            field={params.field}
+            value={params.value}
+            colDef={params.colDef}
+            api={params.api}
+        />
+    );
+
     const handleEditRowsModelChange = useCallback(
         model => {
             if (model && Object.keys(model)[0]) {
@@ -38,20 +122,11 @@ function SigningLimits() {
                 const key = parseInt(Object.keys(model)[0], 10);
                 const key2 = Object.keys(model[key])[0];
                 if (model && model[key] && model[key][key2] && model[key][key2].value) {
-                    const newRows = rows.map(r =>
-                        r.userNumber === key
-                            ? {
-                                  ...r,
-                                  [key2]: model[key][key2].value,
-                                  updated: true
-                              }
-                            : r
-                    );
-                    setRows(newRows);
+                    updateRow(key, key2, model[key][key2].value);
                 }
             }
         },
-        [rows, setRows]
+        [updateRow]
     );
 
     const handleSave = () => {
@@ -69,19 +144,6 @@ function SigningLimits() {
                 : signingLimits.map(s => ({ ...s, id: s.userNumber, name: s.user?.fullName }))
         );
         setEditing(false);
-    };
-
-    const handleDropdownChange = (id, field, value) => {
-        const newRows = rows.map(r =>
-            r.userNumber === id
-                ? {
-                      ...r,
-                      [field]: value,
-                      updated: true
-                  }
-                : r
-        );
-        setRows(newRows);
     };
 
     const addNewSigningLimit = (_, newValue) => {
@@ -113,27 +175,15 @@ function SigningLimits() {
             headerName: 'Returns',
             width: 140,
             editable: true,
-            renderEditCell: p => (
-                <Card style={{ height: 500, width: '100%' }} variant="outlined">
-                    <CardContent>
-                        <div style={{ height: 500, width: '100%' }}>
-                            <Dropdown
-                                label="Labels"
-                                propertyName="printLabels"
-                                items={[
-                                    { id: 'Y', displayText: 'Yes' },
-                                    { id: 'N', displayText: 'No' }
-                                ]}
-                                value={p.row.returnsAuthorisation}
-                                onChange={(a, b) => handleDropdownChange(p.id, a, b)}
-                                allowNoValue={false}
-                            />
-                        </div>
-                    </CardContent>
-                </Card>
-            )
+            renderEditCell: renderEditTextarea
         },
-        { field: 'unlimited', headerName: 'Unlimited', width: 140, editable: true }
+        {
+            field: 'unlimited',
+            headerName: 'Unlimited',
+            width: 140,
+            editable: true,
+            renderEditCell: renderEditTextarea
+        }
     ];
 
     return (
@@ -151,7 +201,6 @@ function SigningLimits() {
                             loading={signingLimitsLoading}
                             hideFooter
                             onEditRowsModelChange={handleEditRowsModelChange}
-                            isCellEditable={() => true}
                         />
                     </div>
                 </Grid>
