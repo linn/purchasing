@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
-//import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
 import { useSelector, useDispatch } from 'react-redux';
 import { Page } from '@linn-it/linn-form-components-library';
-// import List from '@material-ui/core/List';
-// import ListItem from '@material-ui/core/ListItem';
-// import { Link } from 'react-router-dom';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import { Link } from 'react-router-dom';
 import getName from '../selectors/userSelectors';
 import { testAction } from '../actions';
 import config from '../config';
@@ -18,14 +18,14 @@ function App() {
 
     return (
         <Page homeUrl={config.appRoot} history={history}>
-            {/* <Typography variant="h6">App</Typography>
+            <Typography variant="h6">App</Typography>
             <Typography>Hello {name}</Typography>
 
             <List>
                 <ListItem component={Link} to="/purchasing/signing-limits" button>
                     <Typography color="primary">Signing Limits</Typography>
                 </ListItem>
-            </List> */}
+            </List>
         </Page>
     );
 }

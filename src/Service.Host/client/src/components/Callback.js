@@ -6,7 +6,6 @@ import history from '../history';
 import userManager from '../helpers/userManager';
 
 function Callback() {
-    console.log('I WAS HIT');
     return (
         <CallbackComponent
             userManager={userManager}

@@ -21,38 +21,34 @@ const Root = ({ store }) => (
             <Provider store={store}>
                 <OidcProvider store={store} userManager={userManager}>
                     {/* <MuiPickersUtilsProvider utils={MomentUtils}> */}
-                        <ConnectedRouter history={history}>
-                            <div>
-                                <Navigation />
-                                <Route
-                                    exact
-                                    path="/"
-                                    render={() => <Redirect to="/purchasing" />}
-                                />
+                    <ConnectedRouter history={history}>
+                        <div>
+                            <Navigation />
+                            <Route exact path="/" render={() => <Redirect to="/purchasing" />} />
 
-                                <Route
-                                    path="/"
-                                    render={() => {
-                                        document.title = 'Purchasing';
-                                        return false;
-                                    }}
-                                />
-                                <Switch>
-                                    <Route exact path="/purchasing" component={App} />
-                                    {/* <Route
+                            <Route
+                                path="/"
+                                render={() => {
+                                    document.title = 'Purchasing';
+                                    return false;
+                                }}
+                            />
+                            <Switch>
+                                <Route exact path="/purchasing" component={App} />
+                                {/* <Route
                                         exact
                                         path="/purchasing/signing-limits"
                                         component={SigningLimits}
                                     /> */}
-                                    <Route
-                                        exact
-                                        path="/purchasing/signin-oidc-client"
-                                        component={Callback}
-                                    />
-                                    <Route component={NotFoundPage} />
-                                </Switch>
-                            </div>
-                        </ConnectedRouter>
+                                <Route
+                                    exact
+                                    path="/purchasing/signin-oidc-client"
+                                    component={Callback}
+                                />
+                                <Route component={NotFoundPage} />
+                            </Switch>
+                        </div>
+                    </ConnectedRouter>
                     {/* </MuiPickersUtilsProvider> */}
                 </OidcProvider>
             </Provider>
