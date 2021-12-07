@@ -20,7 +20,6 @@ const Root = ({ store }) => (
         <div className="padding-top-when-not-printing">
             <Provider store={store}>
                 <OidcProvider store={store} userManager={userManager}>
-                    {/* <MuiPickersUtilsProvider utils={MomentUtils}> */}
                     <ConnectedRouter history={history}>
                         <div>
                             <Navigation />
@@ -49,7 +48,6 @@ const Root = ({ store }) => (
                             </Switch>
                         </div>
                     </ConnectedRouter>
-                    {/* </MuiPickersUtilsProvider> */}
                 </OidcProvider>
             </Provider>
         </div>

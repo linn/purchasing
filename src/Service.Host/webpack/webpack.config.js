@@ -86,10 +86,8 @@ module.exports = {
     },
     resolve: {
         alias: {
-            //'@material-ui/pickers': path.resolve('./node_modules/@material-ui/pickers'),
             'react-redux': path.resolve('./node_modules/react-redux'),
             react: path.resolve('./node_modules/react'),
-            //'react-router': path.resolve('./node_modules/react-router'),
             notistack: path.resolve('./node_modules/notistack'),
             '@material-ui/styles': path.resolve('./node_modules/@material-ui/styles')
         }
