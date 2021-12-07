@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
 import { useSelector, useDispatch } from 'react-redux';
 import { Page } from '@linn-it/linn-form-components-library';
 import { DataGrid } from '@mui/x-data-grid';
-
 import { getItems, getLoading } from '../selectors/CollectionSelectorHelpers';
 import signingLimitsActions from '../actions/signingLimitsActions';
 import history from '../history';
+import config from '../config';
 
 function SigningLimits() {
     const signingLimits = useSelector(state => getItems(state.signingLimits));
@@ -33,7 +33,7 @@ function SigningLimits() {
     ];
 
     return (
-        <Page history={history}>
+        <Page history={history} homeUrl={config.appRoot}>
             <Typography variant="h6">Signing Limits</Typography>
             <div style={{ height: 500, width: '100%' }}>
                 <DataGrid

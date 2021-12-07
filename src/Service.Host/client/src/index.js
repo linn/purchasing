@@ -2,9 +2,10 @@
 import ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import { SnackbarProvider } from 'notistack';
+import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import { linnTheme } from '@linn-it/linn-form-components-library';
-import { ThemeProvider } from '@material-ui/styles';
 import configureStore from './configureStore';
+
 import Root from './components/Root';
 import userManager from './helpers/userManager';
 import 'typeface-roboto';
@@ -17,13 +18,15 @@ const { user } = store.getState().oidc;
 
 const render = Component => {
     ReactDOM.render(
-        <ThemeProvider theme={linnTheme}>
-            <SnackbarProvider dense maxSnack={5}>
-                <AppContainer>
-                    <Component store={store} />
-                </AppContainer>
-            </SnackbarProvider>
-        </ThemeProvider>,
+        <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={linnTheme}>
+                <SnackbarProvider dense maxSnack={5}>
+                    <AppContainer>
+                        <Component store={store} />
+                    </AppContainer>
+                </SnackbarProvider>
+            </ThemeProvider>
+        </StyledEngineProvider>,
         document.getElementById('root')
     );
 };

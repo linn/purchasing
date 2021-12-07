@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
 import { useSelector, useDispatch } from 'react-redux';
 import { Page } from '@linn-it/linn-form-components-library';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
 import { Link } from 'react-router-dom';
 import getName from '../selectors/userSelectors';
 import { testAction } from '../actions';
