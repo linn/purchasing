@@ -10,3 +10,5 @@ export const signingLimits = new ItemType(
     'SIGNING_LIMITS',
     '/purchasing/signing-limits'
 );
+
+export const employees = new ItemType('employees', 'EMPLOYEES', '/inventory/employees');

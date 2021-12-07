@@ -9,6 +9,7 @@ import historyStore from './history';
 import * as itemTypes from '../itemTypes';
 import signingLimit from './signingLimit';
 import signingLimits from './signingLimits';
+import employees from './employees';
 
 const errors = fetchErrorReducer({ ...itemTypes });
 
@@ -17,6 +18,7 @@ const rootReducer = history =>
         oidc,
         historyStore,
         router: connectRouter(history),
+        employees,
         signingLimit,
         signingLimits,
         ...sharedLibraryReducers,

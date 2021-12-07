@@ -8,3 +8,5 @@ export const testAction = () => ({
     type: 'TEST_ACTION',
     payload: {}
 });
+
+export const employeesActionTypes = makeActionTypes(itemTypes.employees.actionType);
