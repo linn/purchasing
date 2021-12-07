@@ -15,6 +15,7 @@
         {
             return services.AddTransient<UniversalResponseNegotiator>()
                 .AddTransient<IHandler, ThingResourceResultHandler>()
+                .AddTransient<JsonResultHandler<PartSupplierResource>, PartSupplierResourceResultHandler>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<ThingResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<ProcessResultResource>>()
                 .AddTransient<IHandler, JsonResultHandler<SigningLimitResource>>()

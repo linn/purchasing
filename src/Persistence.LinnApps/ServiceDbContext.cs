@@ -118,7 +118,9 @@
             entity.Property(e => e.OrderConversionFactor).HasColumnName("ORDER_CONV_FACTOR_US_TO_THEM");
             entity.Property(e => e.UnitOfMeasure).HasColumnName("ORDER_UNIT_OF_MEASURE").HasMaxLength(14);
             entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
+            entity.HasOne(e => e.Part).WithMany().HasForeignKey(p => p.PartNumber);
             entity.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID");
+            //entity.HasOne(e => e.Supplier).WithMany().HasForeignKey("SUPPLIER_ID");
             entity.HasOne(e => e.OrderMethod).WithMany().HasForeignKey("PL_ORDER_METHOD");
             entity.Property(e => e.Currency).HasColumnName("CURR_CODE").HasMaxLength(4);
             entity.Property(e => e.MinimumDeliveryQty).HasColumnName("MINIMUM_DELIVERY_QTY");

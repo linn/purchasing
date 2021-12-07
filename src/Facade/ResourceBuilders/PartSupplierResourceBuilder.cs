@@ -14,7 +14,8 @@
             return new PartSupplierResource
                        {
                            PartNumber = entity.PartNumber,
-                           SupplierId = entity.SupplierId
+                           SupplierId = entity.SupplierId,
+                           PartDescription = entity.Part.Description
                        };
         }
 
