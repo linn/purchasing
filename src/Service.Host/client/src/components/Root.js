@@ -4,8 +4,6 @@ import { Route, Redirect, Switch } from 'react-router';
 import { OidcProvider } from 'redux-oidc';
 import { ConnectedRouter } from 'connected-react-router';
 import { Navigation } from '@linn-it/linn-form-components-library';
-// import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-// import MomentUtils from '@date-io/moment';
 import PropTypes from 'prop-types';
 import history from '../history';
 import App from './App';
