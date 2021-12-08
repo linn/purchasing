@@ -1,12 +1,12 @@
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import React from 'react';
-import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import configureMockStore from 'redux-mock-store';
 import { MemoryRouter } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import MomentUtils from '@date-io/moment';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import AdapterDateMoment from '@mui/lab/AdapterMoment';
 import { apiMiddleware as api } from 'redux-api-middleware';
 import thunkMiddleware from 'redux-thunk';
 
@@ -18,15 +18,15 @@ const Providers = ({ children }) => {
     const store = mockStore({ oidc: { user: { profile: {} } }, historyStore: { push: jest.fn() } });
     return (
         <Provider store={store}>
-            <MuiThemeProvider theme={createTheme()}>
+            <ThemeProvider theme={createTheme()}>
                 <SnackbarProvider dense maxSnack={5}>
                     <MemoryRouter>
-                        <MuiPickersUtilsProvider utils={MomentUtils}>
+                        <LocalizationProvider dateAdapter={AdapterDateMoment}>
                             {children}
-                        </MuiPickersUtilsProvider>
+                        </LocalizationProvider>
                     </MemoryRouter>
                 </SnackbarProvider>
-            </MuiThemeProvider>
+            </ThemeProvider>
         </Provider>
     );
 };

@@ -1,17 +1,17 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import Typography from '@material-ui/core/Typography';
 import { useSelector, useDispatch } from 'react-redux';
 import { Page, SaveBackCancelButtons, Dropdown } from '@linn-it/linn-form-components-library';
 import { DataGrid } from '@mui/x-data-grid';
-import Grid from '@material-ui/core/Grid';
-import Popper from '@material-ui/core/Popper';
-import Paper from '@material-ui/core/Paper';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Popper from '@mui/material/Popper';
 import PropTypes from 'prop-types';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import { makeStyles } from '@material-ui/core/styles';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import Typography from '@mui/material/Typography';
+import { makeStyles } from '@mui/styles';
 
 import { getItems, getLoading } from '../selectors/CollectionSelectorHelpers';
 import history from '../history';
@@ -52,7 +52,7 @@ function SigningLimits() {
             backgroundColor: 'linen'
         },
         inserting: {
-            backgroundColor: 'lightCyan'
+            backgroundColor: 'whiteSmoke'
         },
         gap: {
             marginBottom: '20px'

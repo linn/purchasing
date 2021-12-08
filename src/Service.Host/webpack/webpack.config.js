@@ -20,7 +20,7 @@ module.exports = {
         'silent-renew': './client/silent-renew/index.js'
     },
     output: {
-        path: path.join(__dirname, '../client/build'),
+        path: path.join(__dirname, '../client/build/'),
         filename: '[name].js',
         publicPath: '/purchasing/build/'
     },
@@ -86,7 +86,6 @@ module.exports = {
     },
     resolve: {
         alias: {
-            '@material-ui/pickers': path.resolve('./node_modules/@material-ui/pickers'),
             'react-redux': path.resolve('./node_modules/react-redux'),
             react: path.resolve('./node_modules/react'),
             notistack: path.resolve('./node_modules/notistack'),

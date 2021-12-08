@@ -75,3 +75,5 @@ local-update.sh
 # StyleCop caches
 *StyleCop.Cache
 .vs
+
+*.tgz
