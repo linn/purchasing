@@ -37,7 +37,7 @@
 
         public string GetLocation(PartSupplier p)
         {
-            return $"/purchasing/part-supplier?partId={p.Part.Id}&supplierId={p.SupplierId}";
+            return $"/purchasing/part-suppliers/record?partId={p.Part.Id}&supplierId={p.SupplierId}";
         }
 
         object IBuilder<PartSupplier>.Build(PartSupplier entity, IEnumerable<string> claims) => this.Build(entity, claims);

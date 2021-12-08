@@ -46,12 +46,12 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
-                                    path="/purchasing/part-supplier-search"
+                                    path="/purchasing/part-suppliers"
                                     component={PartSupplierSearch}
                                 />
                                 <Route
                                     exact
-                                    path="/purchasing/part-supplier"
+                                    path="/purchasing/part-suppliers/record"
                                     component={PartSupplier}
                                 />
                                 <Route component={NotFoundPage} />

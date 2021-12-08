@@ -29,7 +29,7 @@
         {
             this.facadeService = facadeService;
             this.partFacadeService = partFacadeService;
-            this.Get("/purchasing/part-supplier", this.GetById);
+            this.Get("/purchasing/part-suppliers/record", this.GetById);
             this.Get("/purchasing/part-suppliers", this.Search);
         }
 

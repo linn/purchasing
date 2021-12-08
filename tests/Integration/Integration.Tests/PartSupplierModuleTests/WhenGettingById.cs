@@ -44,7 +44,7 @@
             this.PartFacadeService.GetPartNumberFromId(100).Returns("A PART");
 
             this.Response = this.Client.Get(
-                $"/purchasing/part-supplier?partId={100}&supplierId={1}",
+                $"/purchasing/part-suppliers/record?partId={100}&supplierId={1}",
                 with =>
                     {
                         with.Accept("application/json");

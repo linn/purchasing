@@ -20,5 +20,5 @@ export const partSuppliers = new ItemType(
 export const partSupplier = new ItemType(
     'partSupplier',
     'PART_SUPPLIER',
-    '/purchasing/part-supplier'
+    '/purchasing/part-suppliers/record'
 );
