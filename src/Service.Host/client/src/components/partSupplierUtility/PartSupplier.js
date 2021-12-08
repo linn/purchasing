@@ -1,7 +1,6 @@
 import React, { Fragment, useEffect, useReducer } from 'react';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-// import { makeStyles } from '@mui/styles';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import EditOffIcon from '@mui/icons-material/EditOff';
 import Tooltip from '@mui/material/Tooltip';
@@ -22,18 +21,6 @@ function PartSupplierSearch() {
     });
 
     const reduxDispatch = useDispatch();
-
-    // const useStyles = makeStyles(theme => ({
-    //     button: {
-    //         marginLeft: theme.spacing(1),
-    //         marginTop: theme.spacing(4)
-    //     },
-    //     a: {
-    //         textDecoration: 'none'
-    //     }
-    // }));
-
-    // const classes = useStyles();
 
     const partKey = useSelector(reduxState => getQuery(reduxState));
     const loading = useSelector(reduxState => reduxState.partSupplier.loading);
