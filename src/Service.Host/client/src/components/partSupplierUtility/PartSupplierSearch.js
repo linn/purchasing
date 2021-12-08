@@ -32,15 +32,12 @@ function PartSupplierSearch() {
     const loading = useSelector(state => getSearchLoading(state.partSuppliers));
 
     const results = useSelector(state => getSearchItems(state.partSuppliers));
-    // const partSuppliersLoading = useSelector(state => getLoading(state.spartSuppliers));
     const dispatch = useDispatch();
 
     const [options, setOptions] = useState({ partNumber: '', supplierName: '' });
 
     const handleOptionsChange = (propertyName, newValue) =>
         setOptions({ ...options, [propertyName]: newValue });
-
-    //useEffect(() => dispatch(partSuppliersActions.fetch()), [dispatch]);
 
     return (
         <Page history={history} homeUrl={config.appRoot}>

@@ -13,6 +13,7 @@ import 'typeface-roboto';
 import NotFoundPage from './NotFoundPage';
 import SigningLimits from './SigningLimits';
 import PartSupplierSearch from './partSupplierUtility/PartSupplierSearch';
+import PartSupplier from './partSupplierUtility/PartSupplier';
 
 const Root = ({ store }) => (
     <div>
@@ -47,6 +48,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/part-supplier-search"
                                     component={PartSupplierSearch}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/part-supplier"
+                                    component={PartSupplier}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>
