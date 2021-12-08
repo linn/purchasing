@@ -18,13 +18,13 @@
     public class PartSupplierModule : CarterModule
     {
         private readonly
-            FacadeFilterResourceService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>
+            IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>
             facadeService;
 
         private readonly IPartService partFacadeService;
 
         public PartSupplierModule(
-            FacadeFilterResourceService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource> facadeService,
+            IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource> facadeService,
             IPartService partFacadeService)
         {
             this.facadeService = facadeService;
