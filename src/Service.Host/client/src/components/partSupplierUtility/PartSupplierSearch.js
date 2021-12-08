@@ -51,7 +51,6 @@ function PartSupplierSearch() {
                         value={options.partNumber}
                         label="Part Number"
                         propertyName="partNumber"
-                        textFieldProps={{ size: 'small' }}
                         onChange={handleOptionsChange}
                     />
                 </Grid>
@@ -61,7 +60,6 @@ function PartSupplierSearch() {
                         value={options.supplierName}
                         label="Supplier"
                         propertyName="supplierName"
-                        textFieldProps={{ size: 'small' }}
                         onChange={handleOptionsChange}
                     />
                 </Grid>

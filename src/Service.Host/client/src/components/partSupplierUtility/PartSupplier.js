@@ -81,7 +81,6 @@ function PartSupplierSearch() {
                                 value={state.partSupplier?.partNumber}
                                 label="Part Number"
                                 propertyName="partNumber"
-                                textFieldProps={{ size: 'small' }}
                                 onChange={handleFieldChange}
                             />
                         </Grid>
@@ -91,7 +90,6 @@ function PartSupplierSearch() {
                                 value={state.partSupplier?.partDescription}
                                 label="Description"
                                 propertyName="partDescription"
-                                textFieldProps={{ size: 'small' }}
                                 onChange={handleFieldChange}
                             />
                         </Grid>
@@ -101,7 +99,6 @@ function PartSupplierSearch() {
                                 value={state.partSupplier?.supplierId}
                                 label="Supplier"
                                 propertyName="supplierId"
-                                textFieldProps={{ size: 'small' }}
                                 onChange={handleFieldChange}
                             />
                         </Grid>
@@ -111,7 +108,6 @@ function PartSupplierSearch() {
                                 value={state.partSupplier?.supplierName}
                                 label="Name"
                                 propertyName="supplierName"
-                                textFieldProps={{ size: 'small' }}
                                 onChange={handleFieldChange}
                             />
                         </Grid>
