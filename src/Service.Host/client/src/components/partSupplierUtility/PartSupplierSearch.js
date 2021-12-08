@@ -101,7 +101,7 @@ function PartSupplierSearch() {
                                 >
                                     <ListItem>
                                         <Grid item xs={3}>
-                                            <Typography variant="subtitle">
+                                            <Typography variant="subtitle1">
                                                 {item.partNumber}
                                             </Typography>
                                         </Grid>
