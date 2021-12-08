@@ -16,6 +16,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { getItems, getLoading } from '../selectors/CollectionSelectorHelpers';
 import history from '../history';
 
+import signingLimitActions from '../actions/signingLimitActions';
 import signingLimitsActions from '../actions/signingLimitsActions';
 import employeesActions from '../actions/employeesActions';
 
@@ -52,18 +53,25 @@ function SigningLimits() {
         },
         inserting: {
             backgroundColor: 'lightCyan'
+        },
+        gap: {
+            marginBottom: '20px'
         }
     }));
 
     const classes = useStyles();
     const updateRow = useCallback(
         (rowId, fieldName, newValue) => {
+            let saveValue = newValue;
+            if (fieldName === 'productionLimit' || fieldName === 'sundryLimit') {
+                saveValue = parseInt(newValue, 10);
+            }
             const newRows = rows.map(r =>
                 r.userNumber === rowId
                     ? {
                           ...r,
-                          [fieldName]: newValue,
-                          updated: true
+                          [fieldName]: saveValue,
+                          updating: true
                       }
                     : r
             );
@@ -160,7 +168,11 @@ function SigningLimits() {
 
     const handleSave = () => {
         rows.forEach(a => {
-            setEditing(a === {});
+            if (a.inserting) {
+                dispatch(signingLimitActions.add(a));
+            } else if (a.updating) {
+                dispatch(signingLimitActions.update(a.id, a));
+            }
         });
 
         setEditing(false);
@@ -188,7 +200,9 @@ function SigningLimits() {
                     name,
                     unlimited: 'N',
                     returnsAuthorisation: 'N',
-                    inserting: true
+                    inserting: true,
+                    productionLimit: 0,
+                    sundryLimit: 0
                 }
             ]);
         }
@@ -200,7 +214,7 @@ function SigningLimits() {
             return classes.inserting;
         }
 
-        if (params.row.updated) {
+        if (params.row.updating) {
             return classes.editing;
         }
 
@@ -233,23 +247,8 @@ function SigningLimits() {
     return (
         <Page history={history}>
             <Grid container>
-                <Grid item xs={12}>
-                    <Typography variant="h6">Signing Limits</Typography>
-                    <div style={{ height: 500, width: '100%' }}>
-                        <DataGrid
-                            rows={rows}
-                            columns={columns}
-                            density="compact"
-                            autoHeight
-                            rowHeight={34}
-                            loading={signingLimitsLoading}
-                            hideFooter
-                            onEditRowsModelChange={handleEditRowsModelChange}
-                            getRowClassName={getBackgroundColourClass}
-                        />
-                    </div>
-                </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={8} />
+                <Grid item xs={4}>
                     <Dropdown
                         items={employees.map(e => ({
                             displayText: `${e.fullName} (${e.id})`,
@@ -262,12 +261,27 @@ function SigningLimits() {
                     />
                 </Grid>
                 <Grid item xs={12}>
-                    <SaveBackCancelButtons
-                        saveDisabled={!editing}
-                        saveClick={handleSave}
-                        cancelClick={handleCancel}
-                        backClick={handleCancel}
-                    />
+                    <Typography variant="h6">Signing Limits</Typography>
+                    <div style={{ height: 500, width: '100%' }}>
+                        <DataGrid
+                            className={classes.gap}
+                            rows={rows}
+                            columns={columns}
+                            density="compact"
+                            rowHeight={34}
+                            autoHeight
+                            loading={signingLimitsLoading}
+                            hideFooter
+                            onEditRowsModelChange={handleEditRowsModelChange}
+                            getRowClassName={getBackgroundColourClass}
+                        />
+                        <SaveBackCancelButtons
+                            saveDisabled={!editing}
+                            saveClick={handleSave}
+                            cancelClick={handleCancel}
+                            backClick={handleCancel}
+                        />
+                    </div>
                 </Grid>
             </Grid>
         </Page>
