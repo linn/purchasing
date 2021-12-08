@@ -8,8 +8,9 @@
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Persistence.LinnApps.Keys;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.SearchResources;
 
-    public class PartSupplierFacadeService : FacadeResourceService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource>
+    public class PartSupplierFacadeService : FacadeFilterResourceService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>
     {
         public PartSupplierFacadeService(IRepository<PartSupplier, PartSupplierKey> repository, ITransactionManager transactionManager, IBuilder<PartSupplier> resourceBuilder)
             : base(repository, transactionManager, resourceBuilder)
@@ -29,6 +30,12 @@
         protected override Expression<Func<PartSupplier, bool>> SearchExpression(string searchTerm)
         {
             throw new NotImplementedException();
+        }
+
+        protected override Expression<Func<PartSupplier, bool>> FilterExpression(PartSupplierSearchResource searchResource)
+        {
+            return x => x.PartNumber.Contains(searchResource.PartNumberSearchTerm.ToUpper())
+                        && x.Supplier.Name.Contains(searchResource.SupplierNameSearchTerm.ToUpper());
         }
     }
 }

@@ -17,6 +17,7 @@
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Persistence.LinnApps.Keys;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.SearchResources;
 
     using Microsoft.Extensions.DependencyInjection;
 
@@ -35,7 +36,8 @@
             return services
                 .AddTransient<IFacadeResourceService<Thing, int, ThingResource, ThingResource>, ThingFacadeService>()
                 .AddTransient<IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource>, SigningLimitFacadeService>()
-                .AddTransient<IFacadeResourceService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource>, PartSupplierFacadeService>();
+                .AddTransient<FacadeFilterResourceService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>, PartSupplierFacadeService>()
+                .AddTransient<IPartService, PartService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)

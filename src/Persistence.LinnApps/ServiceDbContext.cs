@@ -33,6 +33,8 @@
 
         public DbSet<SigningLimit> SigningLimits { get; set; }
 
+        public DbSet<Tariff> Tariffs { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -48,6 +50,7 @@
             this.BuildPackagingGroups(builder);
             this.BuildManufacturers(builder);
             this.BuildAddresses(builder);
+            this.BuildTariffs(builder);
             this.BuildSigningLimits(builder);
         }
 
@@ -107,7 +110,7 @@
             entity.Property(e => e.RohsCompliant).HasColumnName("ROHS_COMPLIANT").HasMaxLength(1);
             entity.Property(e => e.RohsCategory).HasColumnName("ROHS_CATEGORY").HasMaxLength(6);
             entity.Property(e => e.RohsComments).HasColumnName("ROHS_COMMENTS").HasMaxLength(160);
-            entity.HasOne(ps => ps.PackagingGroup).WithMany().HasForeignKey("PAGRP_ID");
+            entity.HasOne(e => e.PackagingGroup).WithMany().HasForeignKey("PAGRP_ID");
             entity.HasOne(e => e.CreatedBy).WithMany().HasForeignKey("CREATED_BY");
             entity.Property(e => e.WebAddress).HasColumnName("WEB_ADDRESS").HasMaxLength(200);
             entity.Property(e => e.MinimumOrderQty).HasColumnName("MINIMUM_ORDER_QTY");
@@ -120,7 +123,7 @@
             entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
             entity.HasOne(e => e.Part).WithMany().HasForeignKey(p => p.PartNumber);
             entity.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID");
-            //entity.HasOne(e => e.Supplier).WithMany().HasForeignKey("SUPPLIER_ID");
+            entity.HasOne(e => e.Supplier).WithMany().HasForeignKey(e => e.SupplierId);
             entity.HasOne(e => e.OrderMethod).WithMany().HasForeignKey("PL_ORDER_METHOD");
             entity.Property(e => e.Currency).HasColumnName("CURR_CODE").HasMaxLength(4);
             entity.Property(e => e.MinimumDeliveryQty).HasColumnName("MINIMUM_DELIVERY_QTY");
@@ -154,6 +157,7 @@
             entity.HasKey(a => a.PartNumber);
             entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
             entity.Property(a => a.Description).HasColumnName("DESCRIPTION").HasMaxLength(50);
+            entity.Property(a => a.Id).HasColumnName("BRIDGE_ID");
         }
 
         private void BuildSuppliers(ModelBuilder builder)
@@ -199,7 +203,7 @@
 
         private void BuildAddresses(ModelBuilder builder)
         {
-            var entity = builder.Entity<Address>().ToTable("ADDRESSES");
+            var entity = builder.Entity<Address>().ToTable("ADDRESSES_VIEW");
             entity.HasKey(m => m.Id);
             entity.Property(e => e.Id).HasColumnName("ADDRESS_ID");
             entity.Property(a => a.FullAddress).HasColumnName("ADDRESS");
@@ -215,6 +219,15 @@
             entity.Property(a => a.Unlimited).HasColumnName("UNLIMITED").HasMaxLength(1);
             entity.Property(a => a.ReturnsAuthorisation).HasColumnName("RETURNS_AUTHORISATION").HasMaxLength(1);
             entity.HasOne<Employee>(a => a.User).WithMany(e => e.SigningLimits).HasForeignKey(a => a.UserNumber);
+        }
+
+        private void BuildTariffs(ModelBuilder builder)
+        {
+            var entity = builder.Entity<Tariff>().ToTable("TARIFFS");
+            entity.HasKey(m => m.Id);
+            entity.Property(e => e.Id).HasColumnName("TARIFF_ID");
+            entity.Property(e => e.Code).HasColumnName("TARIFF_CODE");
+            entity.Property(e => e.Description).HasColumnName("DESCRIPTION");
         }
     }
 }
