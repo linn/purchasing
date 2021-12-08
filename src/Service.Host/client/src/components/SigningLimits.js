@@ -7,6 +7,11 @@ import Grid from '@material-ui/core/Grid';
 import Popper from '@material-ui/core/Popper';
 import Paper from '@material-ui/core/Paper';
 import PropTypes from 'prop-types';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import { makeStyles } from '@material-ui/core/styles';
 
 import { getItems, getLoading } from '../selectors/CollectionSelectorHelpers';
 import history from '../history';
@@ -34,6 +39,17 @@ function SigningLimits() {
         );
     }, [signingLimits]);
 
+    const useStyles = makeStyles(theme => ({
+        formControl: {
+            margin: theme.spacing(1),
+            minWidth: 120
+        },
+        selectEmpty: {
+            marginTop: theme.spacing(2)
+        }
+    }));
+
+    const classes = useStyles();
     const updateRow = useCallback(
         (rowId, fieldName, newValue) => {
             const newRows = rows.map(r =>
@@ -57,10 +73,14 @@ function SigningLimits() {
         const handleRef = el => {
             setAnchorEl(el);
         };
+        const onClose = () => {
+            api.setCellMode(id, field, 'view');
+        };
 
         const handleDropdownChange = (rowId, fieldName, newValue) => {
-            updateRow(rowId, fieldName, newValue);
-            api.setEditCellValue({ id: rowId, field: fieldName, value: newValue });
+            const saveValue = newValue === 'Yes' ? 'Y' : 'N';
+            updateRow(rowId, fieldName, saveValue);
+            api.setEditCellValue({ id: rowId, field: fieldName, value: saveValue });
             api.setCellMode(rowId, fieldName, 'view');
         };
 
@@ -78,17 +98,20 @@ function SigningLimits() {
                 {anchorEl && (
                     <Popper open anchorEl={anchorEl} placement="top-start">
                         <Paper elevation={1} sx={{ p: 1, minWidth: colDef.computedWidth }}>
-                            <Dropdown
-                                label="Select Value"
-                                propertyName={field}
-                                items={[
-                                    { id: 'Y', displayText: 'Yes' },
-                                    { id: 'N', displayText: 'No' }
-                                ]}
-                                value={value}
-                                onChange={(a, b) => handleDropdownChange(id, a, b)}
-                                allowNoValue={false}
-                            />
+                            <FormControl variant="filled" className={classes.formControl}>
+                                <InputLabel id="demo-simple-select-filled-label">
+                                    Select Values
+                                </InputLabel>
+                                <Select
+                                    id={field}
+                                    value={value}
+                                    onChange={e => handleDropdownChange(id, field, e.target.value)}
+                                    onClose={onClose}
+                                >
+                                    <MenuItem value="Yes">Yes</MenuItem>
+                                    <MenuItem value="No">No</MenuItem>
+                                </Select>
+                            </FormControl>
                         </Paper>
                     </Popper>
                 )}
@@ -165,6 +188,8 @@ function SigningLimits() {
         }
     };
 
+    const getYesNo = params => (params.row[params.field] === 'Y' ? 'Yes' : 'No');
+
     const columns = [
         { field: 'userNumber', headerName: 'User Id', width: 140 },
         { field: 'name', headerName: 'Name', width: 300 },
@@ -175,14 +200,16 @@ function SigningLimits() {
             headerName: 'Returns',
             width: 140,
             editable: true,
-            renderEditCell: renderEditTextarea
+            renderEditCell: renderEditTextarea,
+            valueGetter: params => getYesNo(params)
         },
         {
             field: 'unlimited',
             headerName: 'Unlimited',
             width: 140,
             editable: true,
-            renderEditCell: renderEditTextarea
+            renderEditCell: renderEditTextarea,
+            valueGetter: params => getYesNo(params)
         }
     ];
 
