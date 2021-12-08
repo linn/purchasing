@@ -46,6 +46,12 @@ function SigningLimits() {
         },
         selectEmpty: {
             marginTop: theme.spacing(2)
+        },
+        editing: {
+            backgroundColor: 'linen'
+        },
+        inserting: {
+            backgroundColor: 'lightCyan'
         }
     }));
 
@@ -189,6 +195,17 @@ function SigningLimits() {
     };
 
     const getYesNo = params => (params.row[params.field] === 'Y' ? 'Yes' : 'No');
+    const getBackgroundColourClass = params => {
+        if (params.row.inserting) {
+            return classes.inserting;
+        }
+
+        if (params.row.updated) {
+            return classes.editing;
+        }
+
+        return '';
+    };
 
     const columns = [
         { field: 'userNumber', headerName: 'User Id', width: 140 },
@@ -228,6 +245,7 @@ function SigningLimits() {
                             loading={signingLimitsLoading}
                             hideFooter
                             onEditRowsModelChange={handleEditRowsModelChange}
+                            getRowClassName={getBackgroundColourClass}
                         />
                     </div>
                 </Grid>
