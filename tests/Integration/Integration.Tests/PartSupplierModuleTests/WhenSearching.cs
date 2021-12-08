@@ -37,8 +37,11 @@
                                           }
                                   };
 
-            this.FacadeService.FilterBy(Arg.Is<PartSupplierSearchResource>(x => 
-                x.PartNumberSearchTerm == this.partNumberSearch && x.SupplierNameSearchTerm == this.supplierNameSearch))
+            this.FacadeService.FilterBy(
+                    Arg.Is<PartSupplierSearchResource>(
+                        x => 
+                x.PartNumberSearchTerm == this.partNumberSearch && x.SupplierNameSearchTerm == this.supplierNameSearch),
+                    Arg.Any<IEnumerable<string>>())
                 .Returns(new SuccessResult<IEnumerable<PartSupplierResource>>(this.dataResult));
 
             this.Response = this.Client.Get(

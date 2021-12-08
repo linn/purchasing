@@ -2,6 +2,9 @@ import React, { Fragment, useEffect, useReducer } from 'react';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 // import { makeStyles } from '@mui/styles';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import EditOffIcon from '@mui/icons-material/EditOff';
+import Tooltip from '@mui/material/Tooltip';
 import { useSelector, useDispatch } from 'react-redux';
 import { Page, InputField, Loading } from '@linn-it/linn-form-components-library';
 import getQuery from '../../selectors/routerSelelctors';
@@ -59,18 +62,32 @@ function PartSupplierSearch() {
         dispatch({ type: 'fieldChange', fieldName: propertyName, payload: newValue });
     };
 
+    const canEdit = () => item?.links.some(l => l.rel === 'edit' || l.rel === 'create');
+
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
-                <Grid item xs={12}>
+                <Grid item xs={11}>
                     <Typography variant="h3">Part Supplier Record</Typography>
                 </Grid>
+
                 {loading ? (
                     <Grid item xs={12}>
                         <Loading />
                     </Grid>
                 ) : (
                     <>
+                        <Grid item xs={1}>
+                            {canEdit() ? (
+                                <Tooltip title="You have write access to Part Suppliers">
+                                    <ModeEditIcon color="primary" />
+                                </Tooltip>
+                            ) : (
+                                <Tooltip title="You do not have write access to Part Suppliers">
+                                    <EditOffIcon color="secondary" />
+                                </Tooltip>
+                            )}
+                        </Grid>
                         <Grid item xs={6}>
                             <InputField
                                 fullWidth

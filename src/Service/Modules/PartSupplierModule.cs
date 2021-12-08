@@ -12,6 +12,7 @@
     using Linn.Purchasing.Persistence.LinnApps.Keys;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.SearchResources;
+    using Linn.Purchasing.Service.Extensions;
 
     using Microsoft.AspNetCore.Http;
 
@@ -45,7 +46,8 @@
                     {
                         PartNumber = partNumber,
                         SupplierId = supplierId
-                });
+                },
+                req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }
@@ -54,11 +56,15 @@
         {
             var partNumberSearch = req.Query.As<string>("partNumber");
             var supplierNameSearch = req.Query.As<string>("supplierName");
-            var result = this.facadeService.FilterBy(new PartSupplierSearchResource
-                                                         {
-                                                             PartNumberSearchTerm = partNumberSearch,
-                                                             SupplierNameSearchTerm = supplierNameSearch
-                                                         });
+            var claims = req;
+            var result = this.facadeService.FilterBy(
+                new PartSupplierSearchResource
+                    {
+                        PartNumberSearchTerm = partNumberSearch,
+                        SupplierNameSearchTerm = supplierNameSearch
+                    },
+                req.HttpContext.GetPrivileges());
+
             await res.Negotiate(result);
         }
     }

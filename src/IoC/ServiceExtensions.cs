@@ -6,6 +6,7 @@
     using Amazon.Extensions.NETCore.Setup;
     using Amazon.SimpleEmail;
 
+    using Linn.Common.Authorisation;
     using Linn.Common.Configuration;
     using Linn.Common.Email;
     using Linn.Common.Facade;
@@ -45,13 +46,11 @@
             return services.AddTransient<IThingService, ThingService>()
                 .AddTransient<IAmazonSimpleEmailService>(
                     x => new AmazonSimpleEmailServiceClient(x.GetService<AWSOptions>()?.Region))
-                
                 .AddTransient<IEmailService>(x => new EmailService(x.GetService<IAmazonSimpleEmailService>()))
-                
                 .AddTransient<ITemplateEngine, TemplateEngine>()
-
                 .AddTransient<IPdfService>(
-                    x => new PdfService(ConfigurationManager.Configuration["PDF_SERVICE_ROOT"], new HttpClient()));
+                    x => new PdfService(ConfigurationManager.Configuration["PDF_SERVICE_ROOT"], new HttpClient()))
+                .AddTransient<IAuthorisationService, AuthorisationService>();
         }
     }
 }
