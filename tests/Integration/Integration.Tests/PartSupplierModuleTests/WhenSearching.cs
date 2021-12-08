@@ -37,8 +37,9 @@
                                           }
                                   };
 
-            this.FacadeService.FilterBy(Arg.Is<PartSupplierSearchResource>(x => true)).Returns(
-                new SuccessResult<IEnumerable<PartSupplierResource>>(this.dataResult));
+            this.FacadeService.FilterBy(Arg.Is<PartSupplierSearchResource>(x => 
+                x.PartNumberSearchTerm == this.partNumberSearch && x.SupplierNameSearchTerm == this.supplierNameSearch))
+                .Returns(new SuccessResult<IEnumerable<PartSupplierResource>>(this.dataResult));
 
             this.Response = this.Client.Get(
                 $"/purchasing/part-suppliers?partNumber={this.partNumberSearch}&supplierName={this.supplierNameSearch}",
