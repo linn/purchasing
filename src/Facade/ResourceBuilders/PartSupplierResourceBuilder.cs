@@ -40,6 +40,7 @@
                            TariffDescription = entity.Tariff?.Description,
                            OrderMethodName = entity.OrderMethod?.Name,
                            OrderMethodDescription = entity.OrderMethod?.Description,
+                           Designation = entity.SupplierDesignation,
                            Links = this.BuildLinks(entity, claims).ToArray()
                        };
         }

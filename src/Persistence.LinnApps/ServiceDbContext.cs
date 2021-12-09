@@ -21,7 +21,7 @@
 
         public DbSet<Part> Parts { get; set; }
 
-        public DbSet<Part> Suppliers { get; set; }
+        public DbSet<Supplier> Suppliers { get; set; }
 
         public DbSet<Employee> Employees { get; set; }
 

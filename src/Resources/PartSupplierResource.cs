@@ -39,5 +39,9 @@
         public int? AddressId { get; set; }
 
         public string FullAddress { get; set; }
+
+        public string Designation { get; set; }
+
+        public string Stream { get; set; }
     }
 }
