@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq.Expressions;
 
     using Linn.Common.Facade;
@@ -10,11 +11,18 @@
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.SearchResources;
 
-    public class PartSupplierFacadeService : FacadeFilterResourceService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>
+    public class PartSupplierFacadeService 
+        : FacadeFilterResourceService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>,
+          IApplicationStateService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>
     {
         public PartSupplierFacadeService(IRepository<PartSupplier, PartSupplierKey> repository, ITransactionManager transactionManager, IBuilder<PartSupplier> resourceBuilder)
             : base(repository, transactionManager, resourceBuilder)
         {
+        }
+
+        public IResult<PartSupplierResource> GetApplicationState(IEnumerable<string> claims)
+        {
+            return new SuccessResult<PartSupplierResource>(this.BuildResource(null, claims));
         }
 
         protected override PartSupplier CreateFromResource(PartSupplierResource resource)

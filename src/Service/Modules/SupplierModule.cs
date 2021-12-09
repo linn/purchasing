@@ -20,7 +20,7 @@
     public class SupplierModule : CarterModule
     {
         private readonly
-            IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>
+            IApplicationStateService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>
             partSupplierFacadeService;
 
         private readonly IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource> supplierFacadeService;
@@ -28,7 +28,7 @@
         private readonly IPartService partFacadeService;
 
         public SupplierModule(
-            IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource> partSupplierFacadeService,
+            IApplicationStateService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource> partSupplierFacadeService,
             IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource> supplierFacadeService,
             IPartService partFacadeService)
         {
@@ -38,6 +38,8 @@
             this.Get("/purchasing/part-suppliers/record", this.GetById);
             this.Get("/purchasing/part-suppliers", this.SearchPartSuppliers);
             this.Get("/purchasing/suppliers", this.SearchSuppliers);
+
+            this.Get("/purchasing/suppliers/state", this.GetState);
         }
 
         private async Task GetById(HttpRequest req, HttpResponse res)
@@ -78,6 +80,15 @@
             var searchTerm = req.Query.As<string>("searchTerm");
 
             var result = this.supplierFacadeService.Search(searchTerm);
+
+            await res.Negotiate(result);
+        }
+
+        private async Task GetState(HttpRequest req, HttpResponse res)
+        {
+            var privileges = req.HttpContext.GetPrivileges();
+
+            var result = this.partSupplierFacadeService.GetApplicationState(privileges);
 
             await res.Negotiate(result);
         }
