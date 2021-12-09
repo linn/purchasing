@@ -8,7 +8,7 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
 
-    public class SigningLimitFacadeService : FacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource>
+    public class SigningLimitFacadeService : FacadeResourceService2<SigningLimit, int, SigningLimitResource, SigningLimitResource>
     {
         public SigningLimitFacadeService(
             IRepository<SigningLimit, int> repository,
