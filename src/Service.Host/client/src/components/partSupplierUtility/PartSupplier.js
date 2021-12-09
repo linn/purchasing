@@ -1,19 +1,23 @@
-import React, { Fragment, useEffect, useReducer } from 'react';
+import React, { Fragment, useEffect, useState, useReducer } from 'react';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import EditOffIcon from '@mui/icons-material/EditOff';
 import Tooltip from '@mui/material/Tooltip';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
 import { useSelector, useDispatch } from 'react-redux';
-import { Page, InputField, Loading } from '@linn-it/linn-form-components-library';
+import { Page, Loading } from '@linn-it/linn-form-components-library';
 import getQuery from '../../selectors/routerSelelctors';
 import partSupplierActions from '../../actions/partSupplierActions';
 import history from '../../history';
 import config from '../../config';
 import partSupplierReducer from './partSupplierReducer';
 import { partSupplier } from '../../itemTypes';
+//import PartSupplierTab from './tabs/PartSupplierTab';
 
-function PartSupplierSearch() {
+function PartSupplier() {
     const creating = () => false;
     const [state, dispatch] = useReducer(partSupplierReducer, {
         partSupplier: creating() ? {} : {},
@@ -51,6 +55,8 @@ function PartSupplierSearch() {
 
     const canEdit = () => item?.links.some(l => l.rel === 'edit' || l.rel === 'create');
 
+    const [value, setValue] = useState(0);
+
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
@@ -75,41 +81,33 @@ function PartSupplierSearch() {
                                 </Tooltip>
                             )}
                         </Grid>
-                        <Grid item xs={6}>
-                            <InputField
-                                fullWidth
-                                value={state.partSupplier?.partNumber}
-                                label="Part Number"
-                                propertyName="partNumber"
-                                onChange={handleFieldChange}
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <InputField
-                                fullWidth
-                                value={state.partSupplier?.partDescription}
-                                label="Description"
-                                propertyName="partDescription"
-                                onChange={handleFieldChange}
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <InputField
-                                fullWidth
-                                value={state.partSupplier?.supplierId}
-                                label="Supplier"
-                                propertyName="supplierId"
-                                onChange={handleFieldChange}
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <InputField
-                                fullWidth
-                                value={state.partSupplier?.supplierName}
-                                label="Name"
-                                propertyName="supplierName"
-                                onChange={handleFieldChange}
-                            />
+                        <Grid item xs={12}>
+                            <Box sx={{ width: '100%' }}>
+                                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                    <Tabs
+                                        value={value}
+                                        onChange={(event, newValue) => {
+                                            setValue(newValue);
+                                        }}
+                                    >
+                                        <Tab label="Part and Supplier" />
+                                        <Tab label="Order Details" disabled />
+                                        <Tab label="Other Details" disabled />
+                                    </Tabs>
+                                </Box>
+
+                                {value === 0 && (
+                                    <Box sx={{ p: 3 }}>
+                                        {/* <PartSupplierTab
+                                            handleFieldChange={handleFieldChange}
+                                            partNumber={state.partSupplier?.partNumber}
+                                            partDescription={state.partSupplier?.partDescription}
+                                            supplierId={state.partSupplier?.supplierId}
+                                            supplierName={state.partSupplier?.supplierName}
+                                        /> */}
+                                    </Box>
+                                )}
+                            </Box>
                         </Grid>
                     </>
                 )}
@@ -118,4 +116,4 @@ function PartSupplierSearch() {
     );
 }
 
-export default PartSupplierSearch;
+export default PartSupplier;

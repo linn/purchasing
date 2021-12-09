@@ -10,6 +10,7 @@ const devServer = new Server(
         static: {
             directory: path.join(__dirname, '../')
         },
+        client: { overlay: false },
         devMiddleware: {
             index: true,
             mimeTypes: { 'text/html': ['phtml'] },

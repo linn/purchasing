@@ -12,6 +12,8 @@ import partSuppliers from './partSuppliers';
 import signingLimit from './signingLimit';
 import signingLimits from './signingLimits';
 import employees from './employees';
+import suppliers from './suppliers';
+import parts from './parts';
 
 const errors = fetchErrorReducer({ ...itemTypes });
 
@@ -19,12 +21,14 @@ const rootReducer = history =>
     combineReducers({
         oidc,
         historyStore,
+        parts,
         partSupplier,
         partSuppliers,
         router: connectRouter(history),
         employees,
         signingLimit,
         signingLimits,
+        suppliers,
         ...sharedLibraryReducers,
         errors
     });
