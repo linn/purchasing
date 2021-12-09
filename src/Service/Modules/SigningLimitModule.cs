@@ -9,7 +9,6 @@
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
-    using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.Extensions;
 
@@ -17,9 +16,9 @@
 
     public class SigningLimitModule : CarterModule
     {
-        private readonly IFacadeResourceService2<SigningLimit, int, SigningLimitResource, SigningLimitResource> signingLimitFacadeService;
+        private readonly IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource> signingLimitFacadeService;
 
-        public SigningLimitModule(IFacadeResourceService2<SigningLimit, int, SigningLimitResource, SigningLimitResource> signingLimitFacadeService)
+        public SigningLimitModule(IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource> signingLimitFacadeService)
         {
             this.signingLimitFacadeService = signingLimitFacadeService;
             this.Get("/purchasing/signing-limits", this.GetSigningLimits);
