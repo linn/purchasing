@@ -12,6 +12,7 @@ import partSuppliers from './partSuppliers';
 import signingLimit from './signingLimit';
 import signingLimits from './signingLimits';
 import employees from './employees';
+import suppliers from './suppliers';
 
 const errors = fetchErrorReducer({ ...itemTypes });
 
@@ -25,6 +26,7 @@ const rootReducer = history =>
         employees,
         signingLimit,
         signingLimits,
+        suppliers,
         ...sharedLibraryReducers,
         errors
     });
