@@ -27,7 +27,8 @@
         public override IQueryable<SigningLimit> FindAll()
         {
             return this.serviceDbContext.SigningLimits
-                .Include(a => a.User);
+                .Include(a => a.User)
+                .OrderBy(a => a.User.FullName);
         }
     }
 }

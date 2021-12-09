@@ -22,3 +22,5 @@ export const partSupplier = new ItemType(
     'PART_SUPPLIER',
     '/purchasing/part-suppliers/record'
 );
+
+export const employees = new ItemType('employees', 'EMPLOYEES', '/inventory/employees');

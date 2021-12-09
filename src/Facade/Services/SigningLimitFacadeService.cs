@@ -24,7 +24,7 @@
                                    {
                                        ProductionLimit = resource.ProductionLimit,
                                        SundryLimit = resource.SundryLimit,
-                                       UserNumber = resource.User.Id,
+                                       UserNumber = resource.UserNumber,
                                        ReturnsAuthorisation = resource.ReturnsAuthorisation,
                                        Unlimited = resource.Unlimited
                                    };

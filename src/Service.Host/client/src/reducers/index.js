@@ -11,6 +11,7 @@ import partSupplier from './partSupplier';
 import partSuppliers from './partSuppliers';
 import signingLimit from './signingLimit';
 import signingLimits from './signingLimits';
+import employees from './employees';
 
 const errors = fetchErrorReducer({ ...itemTypes });
 
@@ -21,6 +22,7 @@ const rootReducer = history =>
         partSupplier,
         partSuppliers,
         router: connectRouter(history),
+        employees,
         signingLimit,
         signingLimits,
         ...sharedLibraryReducers,

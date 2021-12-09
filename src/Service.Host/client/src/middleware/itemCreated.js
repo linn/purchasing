@@ -4,7 +4,9 @@ import history from '../history';
 export default () => next => action => {
     const result = next(action);
     if (action.type.startsWith('RECEIVE_NEW_')) {
-        history.push(utilities.getSelfHref(action.payload.data));
+        if (action.type !== 'RECEIVE_NEW_SIGNING_LIMIT') {
+            history.push(utilities.getSelfHref(action.payload.data));
+        }
     }
 
     return result;
