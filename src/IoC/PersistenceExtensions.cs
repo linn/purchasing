@@ -6,6 +6,7 @@
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Persistence.LinnApps;
     using Linn.Purchasing.Persistence.LinnApps.Keys;
     using Linn.Purchasing.Persistence.LinnApps.Repositories;
@@ -22,7 +23,8 @@
                 .AddTransient<IRepository<Thing, int>, ThingRepository>()
                 .AddTransient<IRepository<SigningLimit, int>, SigningLimitRepository>()
                 .AddTransient<IRepository<PartSupplier, PartSupplierKey>, PartSupplierRepository>()
-                .AddTransient<IQueryRepository<Part>, PartRepository>();
+                .AddTransient<IQueryRepository<Part>, PartRepository>()
+                .AddTransient<IRepository<Supplier, int>, SupplierRepository>();
 
             // Could also be
             // .AddTransient<IRepository<Thing, int>, EntityFrameworkRepository<Thing, int>>(r => new EntityFrameworkRepository<Thing, int>(r.GetService<ServiceDbContext>()?.Things))
