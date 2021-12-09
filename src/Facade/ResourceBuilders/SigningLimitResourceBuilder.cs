@@ -14,7 +14,7 @@
         {
             return new SigningLimitResource
             {
-                User = new EmployeeResource { FullName = signingLimit.User.FullName, Id = signingLimit.User.Id },
+                User = signingLimit.User == null ? null : new EmployeeResource { FullName = signingLimit.User.FullName, Id = signingLimit.User.Id },
                 ProductionLimit = signingLimit.ProductionLimit,
                 UserNumber = signingLimit.UserNumber,
                 SundryLimit = signingLimit.SundryLimit,

@@ -14,11 +14,11 @@
 
     using Microsoft.AspNetCore.Http;
 
-    public class SigningLimitsModule : CarterModule
+    public class SigningLimitModule : CarterModule
     {
         private readonly IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource> signingLimitFacadeService;
 
-        public SigningLimitsModule(IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource> signingLimitFacadeService)
+        public SigningLimitModule(IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource> signingLimitFacadeService)
         {
             this.signingLimitFacadeService = signingLimitFacadeService;
             this.Get("/purchasing/signing-limits", this.GetSigningLimits);
