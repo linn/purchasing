@@ -16,6 +16,10 @@
         {
             return services.AddTransient<UniversalResponseNegotiator>()
                 .AddTransient<IHandler, ThingResourceResultHandler>()
+                .AddTransient<IHandler, JsonResultHandler<PartSupplierResource>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PartSupplierResource>>>()
+                .AddTransient<IHandler, JsonResultHandler<SupplierResource>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<SupplierResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<ResultsModel>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<ThingResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<ProcessResultResource>>()

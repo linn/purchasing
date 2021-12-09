@@ -3,8 +3,10 @@
     using Linn.Common.Persistence;
     using Linn.Common.Persistence.EntityFramework;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Persistence.LinnApps;
     using Linn.Purchasing.Persistence.LinnApps.Keys;
     using Linn.Purchasing.Persistence.LinnApps.Repositories;
@@ -20,7 +22,9 @@
                 .AddTransient<ITransactionManager, TransactionManager>()
                 .AddTransient<IRepository<Thing, int>, ThingRepository>()
                 .AddTransient<IRepository<SigningLimit, int>, SigningLimitRepository>()
-                .AddTransient<IRepository<PartSupplier, PartSupplierKey>, EntityFrameworkRepository<PartSupplier, PartSupplierKey>>(r => new EntityFrameworkRepository<PartSupplier, PartSupplierKey>(r.GetService<ServiceDbContext>()?.PartSuppliers))
+                .AddTransient<IRepository<PartSupplier, PartSupplierKey>, PartSupplierRepository>()
+                .AddTransient<IQueryRepository<Part>, PartRepository>()
+                .AddTransient<IRepository<Supplier, int>, SupplierRepository>();
                 .AddTransient<IRepository<PurchaseOrder, int>, PurchaseOrderRepository>();
 
             // Could also be
