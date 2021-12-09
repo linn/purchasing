@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState, useReducer } from 'react';
+import React, { useEffect, useState, useReducer } from 'react';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
@@ -15,7 +15,7 @@ import history from '../../history';
 import config from '../../config';
 import partSupplierReducer from './partSupplierReducer';
 import { partSupplier } from '../../itemTypes';
-//import PartSupplierTab from './tabs/PartSupplierTab';
+import PartSupplierTab from './tabs/PartSupplierTab';
 
 function PartSupplier() {
     const creating = () => false;
@@ -98,13 +98,16 @@ function PartSupplier() {
 
                                 {value === 0 && (
                                     <Box sx={{ p: 3 }}>
-                                        {/* <PartSupplierTab
+                                        <PartSupplierTab
                                             handleFieldChange={handleFieldChange}
                                             partNumber={state.partSupplier?.partNumber}
                                             partDescription={state.partSupplier?.partDescription}
                                             supplierId={state.partSupplier?.supplierId}
                                             supplierName={state.partSupplier?.supplierName}
-                                        /> */}
+                                            supplierDesignation={
+                                                state.partSupplier?.supplierDesignation
+                                            }
+                                        />
                                     </Box>
                                 )}
                             </Box>

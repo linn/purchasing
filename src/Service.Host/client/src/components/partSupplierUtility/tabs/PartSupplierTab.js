@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 
 import { InputField } from '@linn-it/linn-form-components-library';
@@ -13,7 +14,7 @@ function PartSupplierTab({
 }) {
     return (
         <Grid container spacing={3}>
-            <Grid item xs={6}>
+            <Grid item xs={4}>
                 <InputField
                     fullWidth
                     value={partNumber}
@@ -22,7 +23,7 @@ function PartSupplierTab({
                     onChange={handleFieldChange}
                 />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={8}>
                 <InputField
                     fullWidth
                     value={partDescription}
@@ -31,7 +32,7 @@ function PartSupplierTab({
                     onChange={handleFieldChange}
                 />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={4}>
                 <InputField
                     fullWidth
                     value={supplierId}
@@ -40,7 +41,7 @@ function PartSupplierTab({
                     onChange={handleFieldChange}
                 />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={8}>
                 <InputField
                     fullWidth
                     value={supplierName}
@@ -49,8 +50,35 @@ function PartSupplierTab({
                     onChange={handleFieldChange}
                 />
             </Grid>
+            <Grid item xs={8}>
+                <InputField
+                    fullWidth
+                    value={supplierDesignation}
+                    label="Designation"
+                    rows={3}
+                    propertyName="supplierDesignation"
+                    onChange={handleFieldChange}
+                />
+            </Grid>
         </Grid>
     );
 }
+
+PartSupplierTab.propTypes = {
+    partNumber: PropTypes.string,
+    partDescription: PropTypes.string,
+    supplierDesignation: PropTypes.string,
+    supplierId: PropTypes.number,
+    supplierName: PropTypes.string,
+    handleFieldChange: PropTypes.func.isRequired
+};
+
+PartSupplierTab.defaultProps = {
+    partNumber: null,
+    partDescription: null,
+    supplierDesignation: null,
+    supplierId: null,
+    supplierName: null
+};
 
 export default PartSupplierTab;
