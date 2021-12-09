@@ -13,23 +13,29 @@ import Select from '@mui/material/Select';
 import Typography from '@mui/material/Typography';
 import { makeStyles } from '@mui/styles';
 
-import { getItems, getLoading } from '../selectors/CollectionSelectorHelpers';
+import { getApplicationState, getItems, getLoading } from '../selectors/CollectionSelectorHelpers';
 import history from '../history';
 
 import signingLimitActions from '../actions/signingLimitActions';
 import signingLimitsActions from '../actions/signingLimitsActions';
+import signingLimitsApplicationStateActions from '../actions/signingLimitsApplicationStateActions';
 import employeesActions from '../actions/employeesActions';
 
 function SigningLimits() {
     const [rows, setRows] = useState([]);
+    const [editingAllowed, setEditingAllowed] = useState(false);
     const [editing, setEditing] = useState(false);
 
     const signingLimits = useSelector(state => getItems(state.signingLimits));
     const signingLimitsLoading = useSelector(state => getLoading(state.signingLimits));
     const employees = useSelector(state => getItems(state.employees));
+    const signingLimitsApplicationState = useSelector(state =>
+        getApplicationState(state.signingLimits)
+    );
 
     const dispatch = useDispatch();
     useEffect(() => dispatch(signingLimitsActions.fetch()), [dispatch]);
+    useEffect(() => dispatch(signingLimitsApplicationStateActions.fetchState()), [dispatch]);
     useEffect(() => dispatch(employeesActions.fetch()), [dispatch]);
 
     useEffect(() => {
@@ -39,6 +45,16 @@ function SigningLimits() {
                 : signingLimits.map(s => ({ ...s, id: s.userNumber, name: s.user?.fullName }))
         );
     }, [signingLimits]);
+
+    useEffect(() => {
+        if (signingLimitsApplicationState && !signingLimitsApplicationState.loading) {
+            if (signingLimitsApplicationState.links?.find(a => a.rel === 'edit')) {
+                setEditingAllowed(true);
+            } else {
+                setEditingAllowed(false);
+            }
+        }
+    }, [signingLimitsApplicationState]);
 
     const useStyles = makeStyles(theme => ({
         formControl: {
@@ -224,13 +240,18 @@ function SigningLimits() {
     const columns = [
         { field: 'userNumber', headerName: 'User Id', width: 140 },
         { field: 'name', headerName: 'Name', width: 300 },
-        { field: 'productionLimit', headerName: 'Production Limit', width: 200, editable: true },
-        { field: 'sundryLimit', headerName: 'Sundry Limit', width: 200, editable: true },
+        {
+            field: 'productionLimit',
+            headerName: 'Production Limit',
+            width: 200,
+            editable: editingAllowed
+        },
+        { field: 'sundryLimit', headerName: 'Sundry Limit', width: 200, editable: editingAllowed },
         {
             field: 'returnsAuthorisation',
             headerName: 'Returns',
             width: 140,
-            editable: true,
+            editable: editingAllowed,
             renderEditCell: renderEditTextarea,
             valueGetter: params => getYesNo(params)
         },
@@ -238,7 +259,7 @@ function SigningLimits() {
             field: 'unlimited',
             headerName: 'Unlimited',
             width: 140,
-            editable: true,
+            editable: editingAllowed,
             renderEditCell: renderEditTextarea,
             valueGetter: params => getYesNo(params)
         }
@@ -258,6 +279,7 @@ function SigningLimits() {
                         label="Add new Signing Limit For"
                         onChange={addNewSigningLimit}
                         type="number"
+                        disabled={!editingAllowed}
                     />
                 </Grid>
                 <Grid item xs={12}>
