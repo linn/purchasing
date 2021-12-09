@@ -62,7 +62,6 @@
         {
             var partNumberSearch = req.Query.As<string>("partNumber");
             var supplierNameSearch = req.Query.As<string>("supplierName");
-            var claims = req;
             var result = this.partSupplierFacadeService.FilterBy(
                 new PartSupplierSearchResource
                     {

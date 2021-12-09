@@ -16,8 +16,6 @@
 
     public class WhenSearchingSuppliers : ContextBase
     {
-        private string partNumberSearch;
-
         private string supplierNameSearch;
 
         private List<SupplierResource> dataResult;
@@ -25,8 +23,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.partNumberSearch = "PART";
-            this.supplierNameSearch = "SUPPLIER";
+            this.supplierNameSearch = "SUPP";
 
             this.dataResult = new List<SupplierResource>
                                   {
@@ -36,11 +33,11 @@
                                           }
                                   };
 
-            this.SupplierFacadeService.Search("SUP")
+            this.SupplierFacadeService.Search(this.supplierNameSearch)
                 .Returns(new SuccessResult<IEnumerable<SupplierResource>>(this.dataResult));
 
             this.Response = this.Client.Get(
-                $"/purchasing/part-suppliers?partNumber={this.partNumberSearch}&supplierName={this.supplierNameSearch}",
+                $"/purchasing/suppliers?searchTerm={this.supplierNameSearch}",
                 with =>
                 {
                     with.Accept("application/json");
