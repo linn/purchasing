@@ -25,6 +25,9 @@ function App() {
                 <ListItem component={Link} to="/purchasing/signing-limits" button>
                     <Typography color="primary">Signing Limits</Typography>
                 </ListItem>
+                <ListItem component={Link} to="/purchasing/part-suppliers" button>
+                    <Typography color="primary">Part Supplier Utility</Typography>
+                </ListItem>
             </List>
         </Page>
     );

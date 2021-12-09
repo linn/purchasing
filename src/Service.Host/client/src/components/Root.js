@@ -12,6 +12,8 @@ import userManager from '../helpers/userManager';
 import 'typeface-roboto';
 import NotFoundPage from './NotFoundPage';
 import SigningLimits from './SigningLimits';
+import PartSupplierSearch from './partSupplierUtility/PartSupplierSearch';
+import PartSupplier from './partSupplierUtility/PartSupplier';
 
 const Root = ({ store }) => (
     <div>
@@ -41,6 +43,16 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/signin-oidc-client"
                                     component={Callback}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/part-suppliers"
+                                    component={PartSupplierSearch}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/part-suppliers/record"
+                                    component={PartSupplier}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>

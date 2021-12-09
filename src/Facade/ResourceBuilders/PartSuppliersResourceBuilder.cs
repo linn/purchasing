@@ -21,6 +21,7 @@
             throw new NotImplementedException();
         }
 
-        object IBuilder<IEnumerable<PartSupplier>>.Build(IEnumerable<PartSupplier> entityList, IEnumerable<string> claims) => this.Build(entityList, claims);
+        object IBuilder<IEnumerable<PartSupplier>>.Build(IEnumerable<PartSupplier> entityList, IEnumerable<string> claims) 
+            => this.Build(entityList, claims);
     }
 }
