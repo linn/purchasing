@@ -14,6 +14,7 @@
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Persistence.LinnApps.Keys;
@@ -29,7 +30,9 @@
             return services.AddTransient<IBuilder<Thing>, ThingResourceBuilder>()
                 .AddTransient<IBuilder<SigningLimit>, SigningLimitResourceBuilder>()
                 .AddTransient<IBuilder<PartSupplier>, PartSupplierResourceBuilder>()
-                .AddTransient<IBuilder<IEnumerable<PartSupplier>>, PartSuppliersResourceBuilder>();
+                .AddTransient<IBuilder<IEnumerable<PartSupplier>>, PartSuppliersResourceBuilder>()
+                .AddTransient<IBuilder<Supplier>, SupplierResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<Supplier>>, SuppliersResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -38,6 +41,7 @@
                 .AddTransient<IFacadeResourceService<Thing, int, ThingResource, ThingResource>, ThingFacadeService>()
                 .AddTransient<IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource>, SigningLimitFacadeService>()
                 .AddTransient<IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>, PartSupplierFacadeService>()
+                .AddTransient<IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource>, SupplierFacadeService>()
                 .AddTransient<IPartService, PartService>();
         }
 

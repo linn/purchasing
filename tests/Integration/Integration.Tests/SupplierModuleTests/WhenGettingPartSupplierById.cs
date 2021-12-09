@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Integration.Tests.PartSupplierModuleTests
+﻿namespace Linn.Purchasing.Integration.Tests.SupplierModuleTests
 {
     using System.Collections.Generic;
     using System.Net;
@@ -14,7 +14,7 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingById : ContextBase
+    public class WhenGettingPartSupplierById : ContextBase
     {
         private PartSupplierKey key;
 
@@ -35,7 +35,7 @@
                                                 SupplierName = "SUPPLIER"
                                             };
 
-            this.FacadeService.GetById(
+            this.PartSupplierFacadeService.GetById(
                     Arg.Is<PartSupplierKey>(
                         x => x.PartNumber == this.key.PartNumber && this.key.SupplierId == 1), 
                     Arg.Any<IEnumerable<string>>())

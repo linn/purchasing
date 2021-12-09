@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Integration.Tests.PartSupplierModuleTests
+﻿namespace Linn.Purchasing.Integration.Tests.SupplierModuleTests
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -9,19 +9,18 @@
     using Linn.Common.Facade;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
-    using Linn.Purchasing.Resources.SearchResources;
 
     using NSubstitute;
 
     using NUnit.Framework;
 
-    public class WhenSearching : ContextBase
+    public class WhenSearchingSuppliers : ContextBase
     {
         private string partNumberSearch;
 
         private string supplierNameSearch;
 
-        private List<PartSupplierResource> dataResult;
+        private List<SupplierResource> dataResult;
 
         [SetUp]
         public void SetUp()
@@ -29,27 +28,23 @@
             this.partNumberSearch = "PART";
             this.supplierNameSearch = "SUPPLIER";
 
-            this.dataResult = new List<PartSupplierResource>
+            this.dataResult = new List<SupplierResource>
                                   {
-                                      new PartSupplierResource
+                                      new SupplierResource
                                           {
-                                              PartNumber = "PART", SupplierName = "SUPPLIER", SupplierId = 1
+                                              Name = "SUPPLIER", Id = 1
                                           }
                                   };
 
-            this.FacadeService.FilterBy(
-                    Arg.Is<PartSupplierSearchResource>(
-                        x => 
-                x.PartNumberSearchTerm == this.partNumberSearch && x.SupplierNameSearchTerm == this.supplierNameSearch),
-                    Arg.Any<IEnumerable<string>>())
-                .Returns(new SuccessResult<IEnumerable<PartSupplierResource>>(this.dataResult));
+            this.SupplierFacadeService.Search("SUP")
+                .Returns(new SuccessResult<IEnumerable<SupplierResource>>(this.dataResult));
 
             this.Response = this.Client.Get(
                 $"/purchasing/part-suppliers?partNumber={this.partNumberSearch}&supplierName={this.supplierNameSearch}",
                 with =>
-                    {
-                        with.Accept("application/json");
-                    }).Result;
+                {
+                    with.Accept("application/json");
+                }).Result;
         }
 
         [Test]
@@ -68,11 +63,11 @@
         [Test]
         public void ShouldReturnJsonBody()
         {
-            var resources = this.Response.DeserializeBody<IEnumerable<PartSupplierResource>>()?.ToArray();
+            var resources = this.Response.DeserializeBody<IEnumerable<SupplierResource>>()?.ToArray();
             resources.Should().NotBeNull();
             resources.Should().HaveCount(1);
 
-            resources?.First().PartNumber.Should().Be("PART");
+            resources?.First().Name.Should().Be("SUPPLIER");
         }
     }
 }

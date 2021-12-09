@@ -8,6 +8,7 @@
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Persistence.LinnApps.Keys;
     using Linn.Purchasing.Resources;
@@ -16,22 +17,27 @@
 
     using Microsoft.AspNetCore.Http;
 
-    public class PartSupplierModule : CarterModule
+    public class SupplierModule : CarterModule
     {
         private readonly
             IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>
-            facadeService;
+            partSupplierFacadeService;
+
+        private readonly IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource> supplierFacadeService;
 
         private readonly IPartService partFacadeService;
 
-        public PartSupplierModule(
-            IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource> facadeService,
+        public SupplierModule(
+            IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource> partSupplierFacadeService,
+            IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource> supplierFacadeService,
             IPartService partFacadeService)
         {
-            this.facadeService = facadeService;
+            this.supplierFacadeService = supplierFacadeService;
+            this.partSupplierFacadeService = partSupplierFacadeService;
             this.partFacadeService = partFacadeService;
             this.Get("/purchasing/part-suppliers/record", this.GetById);
-            this.Get("/purchasing/part-suppliers", this.Search);
+            this.Get("/purchasing/part-suppliers", this.SearchPartSuppliers);
+            this.Get("/purchasing/suppliers", this.SearchSuppliers);
         }
 
         private async Task GetById(HttpRequest req, HttpResponse res)
@@ -41,7 +47,7 @@
 
             var partNumber = this.partFacadeService.GetPartNumberFromId(partId);
 
-            var result = this.facadeService.GetById(
+            var result = this.partSupplierFacadeService.GetById(
                 new PartSupplierKey 
                     {
                         PartNumber = partNumber,
@@ -52,18 +58,27 @@
             await res.Negotiate(result);
         }
 
-        private async Task Search(HttpRequest req, HttpResponse res)
+        private async Task SearchPartSuppliers(HttpRequest req, HttpResponse res)
         {
             var partNumberSearch = req.Query.As<string>("partNumber");
             var supplierNameSearch = req.Query.As<string>("supplierName");
             var claims = req;
-            var result = this.facadeService.FilterBy(
+            var result = this.partSupplierFacadeService.FilterBy(
                 new PartSupplierSearchResource
                     {
                         PartNumberSearchTerm = partNumberSearch,
                         SupplierNameSearchTerm = supplierNameSearch
                     },
                 req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task SearchSuppliers(HttpRequest req, HttpResponse res)
+        {
+            var searchTerm = req.Query.As<string>("searchTerm");
+
+            var result = this.supplierFacadeService.Search(searchTerm);
 
             await res.Negotiate(result);
         }
