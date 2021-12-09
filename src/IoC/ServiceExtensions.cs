@@ -44,7 +44,7 @@
                 .AddTransient<IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource>, SigningLimitFacadeService>()
                 .AddTransient<IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>, PartSupplierFacadeService>()
                 .AddTransient<IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource>, SupplierFacadeService>()
-                .AddTransient<IPartService, PartService>();
+                .AddTransient<IPartService, PartService>()
                 .AddTransient<IPurchaseOrderReportFacadeService, PurchaseOrderReportFacadeService>();
         }
 
@@ -57,7 +57,7 @@
                 .AddTransient<ITemplateEngine, TemplateEngine>().AddTransient<IPdfService>(
                     x => new PdfService(ConfigurationManager.Configuration["PDF_SERVICE_ROOT"], new HttpClient()))
                 .AddTransient<IReportingHelper, ReportingHelper>()
-                .AddTransient<IPurchaseOrdersReportService, PurchaseOrdersReportService>();
+                .AddTransient<IPurchaseOrdersReportService, PurchaseOrdersReportService>()
                 .AddTransient<IAuthorisationService, AuthorisationService>();
         }
     }

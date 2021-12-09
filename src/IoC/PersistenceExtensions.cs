@@ -24,7 +24,7 @@
                 .AddTransient<IRepository<SigningLimit, int>, SigningLimitRepository>()
                 .AddTransient<IRepository<PartSupplier, PartSupplierKey>, PartSupplierRepository>()
                 .AddTransient<IQueryRepository<Part>, PartRepository>()
-                .AddTransient<IRepository<Supplier, int>, SupplierRepository>();
+                .AddTransient<IRepository<Supplier, int>, SupplierRepository>()
                 .AddTransient<IRepository<PurchaseOrder, int>, PurchaseOrderRepository>();
 
             // Could also be
