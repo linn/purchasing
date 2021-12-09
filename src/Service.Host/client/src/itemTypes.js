@@ -11,4 +11,16 @@ export const signingLimits = new ItemType(
     '/purchasing/signing-limits'
 );
 
+export const partSuppliers = new ItemType(
+    'partSuppliers',
+    'PART_SUPPLIERS',
+    '/purchasing/part-suppliers'
+);
+
+export const partSupplier = new ItemType(
+    'partSupplier',
+    'PART_SUPPLIER',
+    '/purchasing/part-suppliers/record'
+);
+
 export const employees = new ItemType('employees', 'EMPLOYEES', '/inventory/employees');

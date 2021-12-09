@@ -24,4 +24,8 @@
     <ProjectReference Include="..\..\..\src\Persistence\Persistence.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ResourceBuilderTests\PartSupplierResourceBuilderTests\" />
+  </ItemGroup>
+
 </Project>
