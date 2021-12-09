@@ -14,6 +14,8 @@ import NotFoundPage from './NotFoundPage';
 import SigningLimits from './SigningLimits';
 import PartSupplierSearch from './partSupplierUtility/PartSupplierSearch';
 import PartSupplier from './partSupplierUtility/PartSupplier';
+import OrdersBySupplier from './reports/OrdersBySupplier';
+import OrdersBySupplierOptions from './reports/OrdersBySupplierOptions';
 
 const Root = ({ store }) => (
     <div>
@@ -54,6 +56,17 @@ const Root = ({ store }) => (
                                     path="/purchasing/part-suppliers/record"
                                     component={PartSupplier}
                                 />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/orders-by-supplier"
+                                    component={OrdersBySupplierOptions}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/orders-by-supplier/:id"
+                                    component={OrdersBySupplier}
+                                />
+
                                 <Route component={NotFoundPage} />
                             </Switch>
                         </div>

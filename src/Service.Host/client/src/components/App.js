@@ -28,6 +28,10 @@ function App() {
                 <ListItem component={Link} to="/purchasing/part-suppliers" button>
                     <Typography color="primary">Part Supplier Utility</Typography>
                 </ListItem>
+                <Typography variant="h6">Reports</Typography>
+                <ListItem component={Link} to="/purchasing/reports/orders-by-supplier" button>
+                    <Typography color="primary">Orders by Supplier Report</Typography>
+                </ListItem>
             </List>
         </Page>
     );
