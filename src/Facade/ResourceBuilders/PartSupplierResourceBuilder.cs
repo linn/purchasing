@@ -22,6 +22,14 @@
 
         public PartSupplierResource Build(PartSupplier entity, IEnumerable<string> claims)
         {
+            if (entity == null)
+            {
+                return new PartSupplierResource
+                           {
+                               Links = this.BuildLinks(null, claims).ToArray()
+                           };
+            }
+
             return new PartSupplierResource
                        {
                            PartNumber = entity.PartNumber,
@@ -54,21 +62,23 @@
 
         private IEnumerable<LinkResource> BuildLinks(PartSupplier model, IEnumerable<string> claims)
         {
-            yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
-            yield return new LinkResource { Rel = "part", Href = $"/parts/{model.Part.Id}" };
-
-            yield return new LinkResource { Rel = "supplier", Href = $"/purchasing/{model.SupplierId}" };
-
             var privileges = claims as string[] ?? claims.ToArray();
+
+            if (model != null)
+            {
+                yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
+                yield return new LinkResource { Rel = "part", Href = $"/parts/{model.Part.Id}" };
+
+                yield return new LinkResource { Rel = "supplier", Href = $"/purchasing/{model.SupplierId}" };
+                if (this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
+                {
+                    yield return new LinkResource { Rel = "edit", Href = this.GetLocation(model) };
+                }
+            }
 
             if (this.authService.HasPermissionFor(AuthorisedAction.PartSupplierCreate, privileges))
             {
                 yield return new LinkResource { Rel = "create", Href = $"/purchasing/part-suppliers/create" };
-            }
-
-            if (this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
-            {
-                yield return new LinkResource { Rel = "edit", Href = this.GetLocation(model) };
             }
         }
     }

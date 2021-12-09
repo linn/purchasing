@@ -28,8 +28,8 @@
 
         protected ITransactionManager TransactionManager { get; set; }
 
-        protected 
-            IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource> 
+        protected
+            IApplicationStateService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>
             PartSupplierFacadeService
         {
             get; private set;
@@ -51,7 +51,7 @@
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.PartSupplierFacadeService = 
                 Substitute
-                    .For<IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>>();
+                    .For<IApplicationStateService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>>();
             this.PartFacadeService = Substitute.For<IPartService>();
             this.Log = Substitute.For<ILog>();
             this.SupplierFacadeService =
