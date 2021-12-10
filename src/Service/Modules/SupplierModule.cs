@@ -20,7 +20,7 @@
     public class SupplierModule : CarterModule
     {
         private readonly
-            IApplicationStateService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>
+            IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>
             partSupplierFacadeService;
 
         private readonly IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource> supplierFacadeService;
@@ -28,7 +28,7 @@
         private readonly IPartService partFacadeService;
 
         public SupplierModule(
-            IApplicationStateService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource> partSupplierFacadeService,
+            IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource> partSupplierFacadeService,
             IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource> supplierFacadeService,
             IPartService partFacadeService)
         {

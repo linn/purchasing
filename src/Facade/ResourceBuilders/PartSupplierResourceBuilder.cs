@@ -76,7 +76,7 @@
                 }
             }
 
-            if (this.authService.HasPermissionFor(AuthorisedAction.PartSupplierCreate, privileges))
+            if (true || this.authService.HasPermissionFor(AuthorisedAction.PartSupplierCreate, privileges))
             {
                 yield return new LinkResource { Rel = "create", Href = $"/purchasing/part-suppliers/create" };
             }
