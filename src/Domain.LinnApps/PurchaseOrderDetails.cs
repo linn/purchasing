@@ -18,7 +18,6 @@
 
         public string RohsCompliant { get; set; }
 
-        // public SalesArticle SalesArticle { get; set; }
         public string SuppliersDesignation { get; set; }
     }
 }

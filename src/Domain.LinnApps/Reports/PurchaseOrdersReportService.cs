@@ -124,6 +124,8 @@
                         TextDisplay = "todo",
                         RowTitle = purchaseOrder.OrderNumber.ToString()
                     });
+            //if anyone knows which of these from oracle relates to which qty that info would be welcome!
+            //will remove these comments and work it out either way before merge
           //  decode(plorh.document_type, 'CO', order_details.our_qty * -1, order_details.our_qty) our_qty,   
           //decode(plorh.document_type, 'CO', pldels.net_total * -1, pldels.net_total) del_total ,
           //decode(plorh.document_type, 'CO', pldels.our_delivery_qty * -1, pldels.OUR_DELIVERY_QTY) OUR_DELIVERY_QTY,
@@ -181,7 +183,6 @@
                         TextDisplay = "todo",
                         RowTitle = orderDetail.PurchaseDelivery.DateAdvised.ToString("o")
                 }); 
-            //pldels.ADVISED_DATE ADVISED_DATE,
         }
     }
 }
