@@ -27,10 +27,11 @@
                 new SuccessResult<ResultsModel>(new ResultsModel()));
             var resource = new OrdersBySupplierSearchResource() { From = "2/11/21", To = "2/12/21" };
 
-            var builder = new UriBuilder("http://localhost:51699/purchasing/reports/orders-by-supplier/118");
+            var builder = new UriBuilder("http://localhost:51699/purchasing/reports/orders-by-supplier/report");
             var query = HttpUtility.ParseQueryString(builder.Query);
-            query["from"] = "2/11/21";
-            query["to"] = "2/12/21";
+            query["fromDate"] = "2/11/21";
+            query["toDate"] = "2/12/21";
+            query["id"] = "16622";
             builder.Query = query.ToString();
             string url = builder.ToString();
 
