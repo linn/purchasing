@@ -39,7 +39,7 @@
             this.Get("/purchasing/part-suppliers", this.SearchPartSuppliers);
             this.Get("/purchasing/suppliers", this.SearchSuppliers);
 
-            this.Get("/purchasing/part-suppliers/state", this.GetState);
+            this.Get("/purchasing/part-suppliers/application-state", this.GetState);
         }
 
         private async Task GetById(HttpRequest req, HttpResponse res)
