@@ -32,6 +32,11 @@
             return signingLimit;
         }
 
+        protected override void DeleteOrObsoleteResource(SigningLimit entity)
+        {
+            this.RemoveFromDatabase(entity);
+        }
+
         protected override void UpdateFromResource(SigningLimit entity, SigningLimitResource updateResource)
         {
             entity.ProductionLimit = updateResource.ProductionLimit;
