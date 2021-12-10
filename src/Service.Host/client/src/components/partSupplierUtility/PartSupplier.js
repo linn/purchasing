@@ -8,7 +8,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import { useSelector, useDispatch } from 'react-redux';
-import { Page, Loading } from '@linn-it/linn-form-components-library';
+import { Page, Loading, Typeahead } from '@linn-it/linn-form-components-library';
 import getQuery from '../../selectors/routerSelelctors';
 import partSupplierActions from '../../actions/partSupplierActions';
 import history from '../../history';
@@ -16,13 +16,13 @@ import config from '../../config';
 import partSupplierReducer from './partSupplierReducer';
 import { partSupplier } from '../../itemTypes';
 import PartSupplierTab from './tabs/PartSupplierTab';
-// import partsActions from '../../actions/partsActions';
-// import { getSearchItems, getSearchLoading } from '../../selectors/CollectionSelectorHelpers';
+import partsActions from '../../actions/partsActions';
+import { getSearchItems, getSearchLoading } from '../../selectors/CollectionSelectorHelpers';
 
 function PartSupplier() {
     const reduxDispatch = useDispatch();
 
-    //const searchParts = searchTerm => reduxDispatch(partsActions.search(searchTerm));
+    const searchParts = searchTerm => reduxDispatch(partsActions.search(searchTerm));
 
     const creating = () => false;
     const [state, dispatch] = useReducer(partSupplierReducer, {
@@ -36,11 +36,11 @@ function PartSupplier() {
 
     const setEditStatus = status => reduxDispatch(partSupplierActions.setEditStatus(status));
 
-    // const partsSearchResults = useSelector(reduxState => getSearchItems(reduxState.parts));
-    // const partsSearchLoading = useSelector(reduxState => getSearchLoading(reduxState.parts));
+    const partsSearchResults = useSelector(reduxState => getSearchItems(reduxState.parts));
+    const partsSearchLoading = useSelector(reduxState => getSearchLoading(reduxState.parts));
 
     useEffect(() => {
-        if (partKey && !state?.partSupplier.partNumber) {
+        if (partKey) {
             reduxDispatch(
                 partSupplierActions.fetchByHref(
                     `${partSupplier.uri}?partId=${partKey.partId}&supplierId=${partKey.supplierId}`
@@ -50,7 +50,7 @@ function PartSupplier() {
     }, [partKey, reduxDispatch]);
 
     useEffect(() => {
-        if (item && !state?.partSupplier.partNumber) {
+        if (item) {
             dispatch({ type: 'initialise', payload: item });
         }
     }, [item]);
@@ -88,17 +88,9 @@ function PartSupplier() {
                                 </Tooltip>
                             )}
                         </Grid>
-                        {/* <Grid item xs={12}>
+                        <Grid item xs={12}>
                             <Typeahead
-                                onSelect={
-                                    () => {}
-                                    // setFormData(d => ({
-                                    //     ...d,
-                                    //     ontoLocation: newValue.name,
-                                    //     ontoLocationId: newValue.locationId,
-                                    //     palletNumber: newValue.palletNumber
-                                    // }))
-                                }
+                                onSelect={() => {}}
                                 label="Part"
                                 modal
                                 openModalOnClick={false}
@@ -116,7 +108,7 @@ function PartSupplier() {
                                 placeholder="Search Locations"
                                 minimumSearchTermLength={3}
                             />
-                        </Grid> */}
+                        </Grid>
                         <Grid item xs={12}>
                             <Box sx={{ width: '100%' }}>
                                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
