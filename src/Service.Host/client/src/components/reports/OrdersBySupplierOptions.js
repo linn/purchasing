@@ -24,8 +24,18 @@ function OrdersBySupplierReportOptions() {
 
     const dispatch = useDispatch();
 
-    const [fromDate, setFromDate] = useState('12/12/21');
-    const [toDate, setToDate] = useState('12/12/21');
+    const defaultStartDate = new Date();
+    const maxDate = new Date();
+    maxDate.setDate(defaultStartDate.getDate() + 90);
+
+    defaultStartDate.setDate(defaultStartDate.getDate() - 90);
+    const [fromDate, setFromDate] = useState(
+        prevOptions?.fromDate ? new Date(prevOptions?.fromDate) : defaultStartDate
+    );
+    const [toDate, setToDate] = useState(
+        prevOptions?.toDate ? new Date(prevOptions?.toDate) : new Date()
+    );
+
     const [supplier, setSupplier] = useState();
 
     const handleSupplierChange = selectedsupplier => {
@@ -34,8 +44,10 @@ function OrdersBySupplierReportOptions() {
 
     const handleClick = () =>
         history.push({
-            pathname: `/purchasing/reports/orders-by-supplier/${supplier.Id}`,
-            search: `?from=${fromDate.toISOString()}&to=${toDate.toISOString()}`
+            pathname: `/purchasing/reports/orders-by-supplier/report`,
+            search: `?id=${
+                supplier.id
+            }&fromDate=${fromDate.toISOString()}&toDate=${toDate.toISOString()}`
         });
 
     return (
@@ -51,7 +63,11 @@ function OrdersBySupplierReportOptions() {
                     <DatePicker
                         label="From Date"
                         value={fromDate.toString()}
-                        onChange={setFromDate}
+                        minDate="01/01/2000"
+                        maxDate={maxDate}
+                        onChange={newValue => {
+                            setFromDate(newValue);
+                        }}
                     />
                 </Grid>
                 <Grid item xs={3}>
@@ -59,7 +75,10 @@ function OrdersBySupplierReportOptions() {
                         label="To Date"
                         value={toDate.toString()}
                         minDate={fromDate.toString()}
-                        onChange={setToDate}
+                        maxDate={maxDate}
+                        onChange={newValue => {
+                            setToDate(newValue);
+                        }}
                     />
                 </Grid>
                 <Grid item xs={6}>

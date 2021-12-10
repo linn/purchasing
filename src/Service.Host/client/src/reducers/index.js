@@ -7,14 +7,16 @@ import { combineReducers } from 'redux';
 import { reducer as oidc } from 'redux-oidc';
 import historyStore from './history';
 import * as itemTypes from '../itemTypes';
+import * as reportTypes from '../reportTypes';
 import partSupplier from './partSupplier';
 import partSuppliers from './partSuppliers';
 import signingLimit from './signingLimit';
 import signingLimits from './signingLimits';
 import employees from './employees';
 import suppliers from './suppliers';
+import ordersBySupplier from './ordersBySupplierReport';
 
-const errors = fetchErrorReducer({ ...itemTypes });
+const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
 const rootReducer = history =>
     combineReducers({
@@ -24,6 +26,7 @@ const rootReducer = history =>
         partSuppliers,
         router: connectRouter(history),
         employees,
+        ordersBySupplier,
         signingLimit,
         signingLimits,
         suppliers,

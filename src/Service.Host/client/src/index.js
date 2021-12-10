@@ -5,6 +5,7 @@ import { SnackbarProvider } from 'notistack';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import { linnTheme } from '@linn-it/linn-form-components-library';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
+
 import AdapterDateMoment from '@mui/lab/AdapterMoment';
 import configureStore from './configureStore';
 import Root from './components/Root';
@@ -23,7 +24,7 @@ const render = Component => {
             <ThemeProvider theme={linnTheme}>
                 <SnackbarProvider dense maxSnack={5}>
                     <AppContainer>
-                        <LocalizationProvider dateAdapter={AdapterDateMoment}>
+                        <LocalizationProvider dateAdapter={AdapterDateMoment} locale="de-DE">
                             <Component store={store} />
                         </LocalizationProvider>
                     </AppContainer>

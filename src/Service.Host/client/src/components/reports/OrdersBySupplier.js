@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     Loading,
     ReportTable,
@@ -7,54 +7,74 @@ import {
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from 'react-redux';
+import queryString from 'query-string';
+import history from '../../history';
+import config from '../../config';
+import { getReportLoading, getReportData } from '../../selectors/ReportSelectorHelpers';
+import ordersBySupplierActions from '../../actions/ordersBySupplierActions';
 
-const handleBackClick = (history, options) => {
-    const uri = `/purchasing/reports/orders-by-supplier?
-    id=${options.id}
-    from=${encodeURIComponent(options.fromDate)}
-    &to=${encodeURIComponent(options.toDate)}`;
+function OrderBySupplierReport() {
+    const options = queryString.parse(window.location.search) || {};
 
-    history.push(uri);
-};
+    const loading = useSelector(state => getReportLoading(state.ordersBySupplier));
+    const reportData = useSelector(state => getReportData(state.ordersBySupplier));
 
-const ImpbookEuReport = ({ reportData, loading, history, options, config }) => (
-    <>
-        <Grid style={{ marginTop: 40 }} container spacing={3} justifyContent="center">
-            <Grid item xs={12}>
-                <BackButton backClick={() => handleBackClick(history, options)} />
-            </Grid>
-            <Grid item xs={12}>
-                {!loading && reportData ? (
-                    <ExportButton
-                        href={`${config.appRoot}/purchasing/reports/orders-by-supplier/${options.id}/export?from=${options.fromDate}&to=${options.toDate}`}
-                    />
-                ) : (
-                    ''
-                )}
-            </Grid>
-            <Grid item xs={12}>
-                {loading || !reportData ? (
-                    <Loading />
-                ) : (
-                    <ReportTable
-                        reportData={reportData}
-                        title={reportData.title}
-                        showTitle
-                        showTotals={false}
-                        placeholderRows={4}
-                        placeholderColumns={4}
-                        showRowTitles
-                    />
-                )}
-            </Grid>
-            <Grid item xs={12}>
-                <BackButton backClick={() => handleBackClick(history, options)} />
-            </Grid>
-        </Grid>
-    </>
-);
+    const dispatch = useDispatch();
 
-ImpbookEuReport.propTypes = {
+    const handleBackClick = () => {
+        const uri = `/purchasing/reports/orders-by-supplier/report?
+        id=${options.id}
+        &fromDate=${encodeURIComponent(options.fromDate)}
+        &toDate=${encodeURIComponent(options.toDate)}`;
+        history.push(uri);
+    };
+
+    useEffect(() => {
+        if (options) {
+            dispatch(ordersBySupplierActions.fetchReport(options));
+        }
+    }, [options, dispatch]);
+
+    return (
+        <>
+            <Grid style={{ marginTop: 40 }} container spacing={3} justifyContent="center">
+                <Grid item xs={12}>
+                    <BackButton backClick={() => handleBackClick(history, options)} />
+                </Grid>
+                <Grid item xs={12}>
+                    {!loading && reportData ? (
+                        <ExportButton
+                            href={`${config.appRoot}/purchasing/reports/orders-by-supplier/${options.id}/export?from=${options.fromDate}&to=${options.toDate}`}
+                        />
+                    ) : (
+                        ''
+                    )}
+                </Grid>
+                <Grid item xs={12}>
+                    {loading || !reportData ? (
+                        <Loading />
+                    ) : (
+                        <ReportTable
+                            reportData={reportData}
+                            title={reportData.title}
+                            showTitle
+                            showTotals={false}
+                            placeholderRows={4}
+                            placeholderColumns={4}
+                            // showRowTitles
+                        />
+                    )}
+                </Grid>
+                <Grid item xs={12}>
+                    <BackButton backClick={() => handleBackClick(history, options)} />
+                </Grid>
+            </Grid>
+        </>
+    );
+}
+
+OrderBySupplierReport.propTypes = {
     reportData: PropTypes.shape({ title: PropTypes.string }),
     history: PropTypes.shape({ push: PropTypes.func }).isRequired,
     loading: PropTypes.bool,
@@ -66,10 +86,10 @@ ImpbookEuReport.propTypes = {
     config: PropTypes.shape({ appRoot: PropTypes.string }).isRequired
 };
 
-ImpbookEuReport.defaultProps = {
+OrderBySupplierReport.defaultProps = {
     reportData: {},
     options: {},
     loading: false
 };
 
-export default ImpbookEuReport;
+export default OrderBySupplierReport;

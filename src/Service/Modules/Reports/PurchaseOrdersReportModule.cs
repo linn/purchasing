@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Service.Modules.Reports
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -25,7 +26,7 @@
         {
             this.purchaseOrderReportFacadeService = purchaseOrderReportFacadeService;
             this.Get("/purchasing/reports/orders-by-supplier", this.GetApp);
-            this.Get("/purchasing/reports/orders-by-supplier/{id:int}", this.GetOrdersBySupplierReport);
+            this.Get("/purchasing/reports/orders-by-supplier/report", this.GetOrdersBySupplierReport);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -37,17 +38,20 @@
         {
             var resource = await req.Bind<OrdersBySupplierSearchResource>();
 
-            var supplierId = req.RouteValues.As<int>("id");
+            //var supplierId = req.RouteValues.As<int>("id");
+
+            StringValues id = StringValues.Empty;
+            req.Query.TryGetValue("Id", out id);
 
             StringValues from = StringValues.Empty;
-            req.Query.TryGetValue("From", out from);
+            req.Query.TryGetValue("FromDate", out from);
 
             StringValues to = StringValues.Empty;
-            req.Query.TryGetValue("To", out to);
+            req.Query.TryGetValue("ToDate", out to);
 
-            resource.SupplierId = supplierId;
-            resource.From = from; // "2/11/21";
-            resource.To = to; // "2/12/21";
+            resource.SupplierId = Int32.Parse(id);
+            resource.From = from; 
+            resource.To = to; 
 
             var results = this.purchaseOrderReportFacadeService.GetOrdersBySupplierReport(resource);
 
