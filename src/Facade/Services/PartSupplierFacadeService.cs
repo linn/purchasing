@@ -1,7 +1,6 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq.Expressions;
 
     using Linn.Common.Facade;
@@ -14,19 +13,40 @@
     public class PartSupplierFacadeService 
         : FacadeFilterResourceService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>
     {
-        public PartSupplierFacadeService(IRepository<PartSupplier, PartSupplierKey> repository, ITransactionManager transactionManager, IBuilder<PartSupplier> resourceBuilder)
+        private readonly IPartSupplierService domainService;
+
+        public PartSupplierFacadeService(
+            IRepository<PartSupplier, PartSupplierKey> repository, 
+            ITransactionManager transactionManager, 
+            IBuilder<PartSupplier> resourceBuilder,
+            IPartSupplierService domainService)
             : base(repository, transactionManager, resourceBuilder)
         {
+            this.domainService = domainService;
         }
 
         protected override PartSupplier CreateFromResource(PartSupplierResource resource)
         {
-            throw new NotImplementedException();
+            var candidate = new PartSupplier
+                                {
+                                    SupplierId = resource.SupplierId,
+                                    PartNumber = resource.PartNumber,
+                                    SupplierDesignation = resource.Designation
+                                };
+
+            return this.domainService.CreatePartSupplier(candidate, resource.Privileges);
         }
 
         protected override void UpdateFromResource(PartSupplier entity, PartSupplierResource updateResource)
         {
-            throw new NotImplementedException();
+            var updated = new PartSupplier
+                                  {
+                                      SupplierId = updateResource.SupplierId,
+                                      PartNumber = updateResource.PartNumber,
+                                      SupplierDesignation = updateResource.Designation
+                                  };
+
+            this.domainService.UpdatePartSupplier(entity, updated, updateResource.Privileges);
         }
 
         protected override Expression<Func<PartSupplier, bool>> SearchExpression(string searchTerm)
