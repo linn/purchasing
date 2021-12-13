@@ -17,3 +17,5 @@ export const employeesActionTypes = makeActionTypes(itemTypes.employees.actionTy
 export const suppliersActionTypes = makeActionTypes(itemTypes.suppliers.actionType);
 
 export const partsActionTypes = makeActionTypes(itemTypes.parts.actionType);
+
+export const currenciesActionTypes = makeActionTypes(itemTypes.currencies.actionType);
