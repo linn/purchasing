@@ -6,7 +6,6 @@ import { InputField, Dropdown } from '@linn-it/linn-form-components-library';
 
 function OrderDetailsTab({
     handleFieldChange,
-    editStatus,
     unitsOfMeasure,
     unitOfMeasure,
     deliveryAddresses,
@@ -19,15 +18,6 @@ function OrderDetailsTab({
 }) {
     return (
         <Grid container spacing={3}>
-            <Grid item xs={12}>
-                <InputField
-                    fullWidth
-                    value={editStatus}
-                    label="thing"
-                    propertyName="editStatus"
-                    onChange={handleFieldChange}
-                />
-            </Grid>
             <Grid item xs={4}>
                 <Dropdown
                     fullWidth
@@ -97,7 +87,6 @@ OrderDetailsTab.propTypes = {
     unitsOfMeasure: PropTypes.arrayOf(PropTypes.shape({})),
     deliveryAddresses: PropTypes.arrayOf(PropTypes.shape({})),
     orderMethods: PropTypes.arrayOf(PropTypes.shape({})),
-    editStatus: PropTypes.string,
     unitOfMeasure: PropTypes.string,
     deliveryAddress: PropTypes.string,
     orderMethod: PropTypes.string,
@@ -107,7 +96,6 @@ OrderDetailsTab.propTypes = {
 };
 
 OrderDetailsTab.defaultProps = {
-    editStatus: 'view',
     unitsOfMeasure: [],
     deliveryAddresses: [],
     orderMethods: [],
