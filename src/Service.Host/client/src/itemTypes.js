@@ -40,3 +40,15 @@ export const orderMethods = new ItemType(
     'ORDER_METHODS',
     '/purchasing/purchase-orders/methods'
 );
+
+export const deliveryAddresses = new ItemType(
+    'deliveryAddresses',
+    'DELIVERY_ADDRESSES',
+    '/purchasing/purchase-orders/delivery-addresses'
+);
+
+export const unitsOfMeasure = new ItemType(
+    'unitsOfMeasure',
+    'UNITS_OF_MEASURE',
+    '/purchasing/purchase-orders/units-of-measure'
+);

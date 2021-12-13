@@ -16,6 +16,8 @@ import suppliers from './suppliers';
 import parts from './parts';
 import currencies from './currencies';
 import orderMethods from './orderMethods';
+import deliveryAddresses from './deliveryAddresses';
+import unitsOfMeasure from './unitsOfMeasure';
 
 const errors = fetchErrorReducer({ ...itemTypes });
 
@@ -24,6 +26,7 @@ const rootReducer = history =>
         oidc,
         historyStore,
         currencies,
+        deliveryAddresses,
         orderMethods,
         parts,
         partSupplier,
@@ -33,6 +36,7 @@ const rootReducer = history =>
         signingLimit,
         signingLimits,
         suppliers,
+        unitsOfMeasure,
         ...sharedLibraryReducers,
         errors
     });

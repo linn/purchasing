@@ -30,7 +30,9 @@
                 .AddTransient<IHandler, JsonResultHandler<OrderMethodResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<OrderMethodResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<LinnDeliveryAddressResource>>()
-                .AddTransient<IHandler, JsonResultHandler<IEnumerable<LinnDeliveryAddressResource>>>();
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<LinnDeliveryAddressResource>>>()
+                .AddTransient<IHandler, JsonResultHandler<UnitOfMeasureResource>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<UnitOfMeasureResource>>>();
         }
     }
 }

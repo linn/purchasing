@@ -41,6 +41,8 @@
 
         public DbSet<LinnDeliveryAddress> LinnDeliveryAddresses { get; set; }
 
+        public DbSet<UnitOfMeasure> UnitsOfMeasure { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -61,6 +63,7 @@
             this.BuildCurrencies(builder);
             this.BuildOrderMethods(builder);
             this.BuildLinnDeliveryAddresses(builder);
+            this.BuildUnitsOfMeasure(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -255,6 +258,13 @@
             entity.Property(e => e.Description).HasColumnName("DELIVERY_ADDRESS_DESCRIPTION");
             entity.Property(e => e.IsMainDeliveryAddress).HasColumnName("MAIN_DELIVERY_ADDRESS");
             entity.Property(e => e.DateObsolete).HasColumnName("DATE_OBSOLETE");
+        }
+
+        private void BuildUnitsOfMeasure(ModelBuilder builder)
+        {
+            var entity = builder.Entity<UnitOfMeasure>().ToTable("UNITS_OF_MEAUSURE");
+            entity.HasKey(e => e.Unit);
+            entity.Property(e => e.Unit).HasColumnName("UNIT_OF_MEASURE");
         }
     }
 }
