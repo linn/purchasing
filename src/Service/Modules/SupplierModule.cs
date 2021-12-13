@@ -65,14 +65,10 @@
 
         private async Task UpdatePartSupplier(HttpRequest req, HttpResponse res)
         {
-            var partId = req.Query.As<int>("partId");
-            var supplierId = req.Query.As<int>("supplierId");
-
-            var partNumber = this.partFacadeService.GetPartNumberFromId(partId);
-
-            var key = new PartSupplierKey { PartNumber = partNumber, SupplierId = supplierId };
-
             var resource = await req.Bind<PartSupplierResource>();
+
+            var key = new PartSupplierKey { PartNumber = resource.PartNumber, SupplierId = resource.SupplierId };
+
             resource.Privileges = req.HttpContext.GetPrivileges();
             var result = this.partSupplierFacadeService.Update(
                 key,

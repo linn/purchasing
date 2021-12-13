@@ -19,6 +19,8 @@ export const getSearchItems = (
         return result;
     }
 
+    result = storeItems.searchItems;
+
     if (limit) {
         result = storeItems.searchItems ? storeItems.searchItems.slice(0, limit) : [];
     }

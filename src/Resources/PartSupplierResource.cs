@@ -45,6 +45,8 @@
 
         public string Stream { get; set; }
 
+        public string CurrencyCode { get; set; }
+
         public IEnumerable<string> Privileges { get; set; }
     }
 }

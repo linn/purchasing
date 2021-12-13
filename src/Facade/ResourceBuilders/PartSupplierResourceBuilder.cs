@@ -49,6 +49,7 @@
                            OrderMethodName = entity.OrderMethod?.Name,
                            OrderMethodDescription = entity.OrderMethod?.Description,
                            Designation = entity.SupplierDesignation,
+                           CurrencyCode = entity.Currency?.Code,
                            Links = this.BuildLinks(entity, claims).ToArray()
                        };
         }
