@@ -20,6 +20,11 @@
             throw new NotImplementedException();
         }
 
+        protected override void DeleteOrObsoleteResource(Supplier entity)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override void UpdateFromResource(Supplier entity, SupplierResource updateResource)
         {
             throw new NotImplementedException();
