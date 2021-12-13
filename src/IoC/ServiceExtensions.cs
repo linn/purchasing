@@ -48,6 +48,7 @@
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
             return services.AddTransient<IThingService, ThingService>()
+                .AddTransient<IPartSupplierService, PartSupplierService>()
                 .AddTransient<IAmazonSimpleEmailService>(
                     x => new AmazonSimpleEmailServiceClient(x.GetService<AWSOptions>()?.Region))
                 .AddTransient<IEmailService>(x => new EmailService(x.GetService<IAmazonSimpleEmailService>()))

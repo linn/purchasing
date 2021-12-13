@@ -23,4 +23,8 @@ export const partSupplier = new ItemType(
     '/purchasing/part-suppliers/record'
 );
 
+export const suppliers = new ItemType('suppliers', 'SUPPLIERS', '/purchasing/suppliers');
+
 export const employees = new ItemType('employees', 'EMPLOYEES', '/inventory/employees');
+
+export const parts = new ItemType('parts', 'PARTS', '/parts');

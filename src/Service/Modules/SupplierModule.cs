@@ -3,6 +3,7 @@
     using System.Threading.Tasks;
 
     using Carter;
+    using Carter.ModelBinding;
     using Carter.Request;
     using Carter.Response;
 
@@ -36,7 +37,11 @@
             this.partSupplierFacadeService = partSupplierFacadeService;
             this.partFacadeService = partFacadeService;
             this.Get("/purchasing/part-suppliers/record", this.GetById);
+            this.Put("/purchasing/part-suppliers/record", this.UpdatePartSupplier);
             this.Get("/purchasing/part-suppliers", this.SearchPartSuppliers);
+            this.Post("/purchasing/part-suppliers", this.CreatePartSupplier);
+
+            this.Get("/purchasing/part-suppliers/application-state", this.GetState);
             this.Get("/purchasing/suppliers", this.SearchSuppliers);
         }
 
@@ -54,6 +59,25 @@
                         SupplierId = supplierId
                 },
                 req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task UpdatePartSupplier(HttpRequest req, HttpResponse res)
+        {
+            var partId = req.Query.As<int>("partId");
+            var supplierId = req.Query.As<int>("supplierId");
+
+            var partNumber = this.partFacadeService.GetPartNumberFromId(partId);
+
+            var key = new PartSupplierKey { PartNumber = partNumber, SupplierId = supplierId };
+
+            var resource = await req.Bind<PartSupplierResource>();
+            resource.Privileges = req.HttpContext.GetPrivileges();
+            var result = this.partSupplierFacadeService.Update(
+                key,
+                resource,
+                resource.Privileges);
 
             await res.Negotiate(result);
         }
@@ -78,6 +102,26 @@
             var searchTerm = req.Query.As<string>("searchTerm");
 
             var result = this.supplierFacadeService.Search(searchTerm);
+
+            await res.Negotiate(result);
+        }
+
+        private async Task GetState(HttpRequest req, HttpResponse res)
+        {
+            var privileges = req.HttpContext.GetPrivileges();
+
+            var result = this.partSupplierFacadeService.GetApplicationState(privileges);
+
+            await res.Negotiate(result);
+        }
+
+        private async Task CreatePartSupplier(HttpRequest req, HttpResponse res)
+        {
+            var resource = await req.Bind<PartSupplierResource>();
+            resource.Privileges = req.HttpContext.GetPrivileges();
+            var result = this.partSupplierFacadeService.Add(
+                resource,
+                resource.Privileges);
 
             await res.Negotiate(result);
         }
