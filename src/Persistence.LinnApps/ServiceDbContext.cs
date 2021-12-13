@@ -255,6 +255,7 @@
             var entity = builder.Entity<LinnDeliveryAddress>().ToTable("LINN_DELIVERY_ADDRESSES");
             entity.HasKey(e => e.AddressId);
             entity.HasOne(e => e.Address).WithMany().HasForeignKey(e => e.AddressId);
+            entity.Property(e => e.AddressId).HasColumnName("ADDRESS_ID");
             entity.Property(e => e.Description).HasColumnName("DELIVERY_ADDRESS_DESCRIPTION");
             entity.Property(e => e.IsMainDeliveryAddress).HasColumnName("MAIN_DELIVERY_ADDRESS");
             entity.Property(e => e.DateObsolete).HasColumnName("DATE_OBSOLETE");
@@ -262,7 +263,7 @@
 
         private void BuildUnitsOfMeasure(ModelBuilder builder)
         {
-            var entity = builder.Entity<UnitOfMeasure>().ToTable("UNITS_OF_MEAUSURE");
+            var entity = builder.Entity<UnitOfMeasure>().ToTable("UNITS_OF_MEASURE");
             entity.HasKey(e => e.Unit);
             entity.Property(e => e.Unit).HasColumnName("UNIT_OF_MEASURE");
         }

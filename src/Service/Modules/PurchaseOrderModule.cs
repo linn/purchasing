@@ -22,14 +22,14 @@
         private readonly IFacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource, LinnDeliveryAddressResource> 
             deliveryAddressService;
 
-        private readonly IFacadeResourceService<UnitOfMeasure, int, UnitOfMeasureResource, UnitOfMeasureResource>
+        private readonly IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource>
             unitsOfMeasureService;
 
         public PurchaseOrderModule(
             IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource> currencyService,
             IFacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource> orderMethodService,
             IFacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource, LinnDeliveryAddressResource> deliveryAddressService,
-            IFacadeResourceService<UnitOfMeasure, int, UnitOfMeasureResource, UnitOfMeasureResource> unitsOfMeasureService)
+            IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource> unitsOfMeasureService)
         {
             this.currencyService = currencyService;
             this.orderMethodService = orderMethodService;

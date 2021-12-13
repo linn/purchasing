@@ -23,12 +23,29 @@ import { partSupplier } from '../../itemTypes';
 import PartSupplierTab from './tabs/PartSupplierTab';
 import partsActions from '../../actions/partsActions';
 import { getSearchItems, getSearchLoading } from '../../selectors/CollectionSelectorHelpers';
-import { getSnackbarVisible, getItem } from '../../selectors/ItemSelectors';
+import { getSnackbarVisible, getItem, getEditStatus } from '../../selectors/ItemSelectors';
+import deliveryAddressesActions from '../../actions/deliveryAddressesActions';
+import unitsOfMeasureActions from '../../actions/unitsOfMeasureActions';
+import orderMethodsactions from '../../actions/orderMethodActions';
+import suppliersActions from '../../actions/suppliersActions';
 
 function PartSupplier() {
     const reduxDispatch = useDispatch();
 
     const searchParts = searchTerm => reduxDispatch(partsActions.search(searchTerm));
+    const partsSearchResults = useSelector(reduxState =>
+        getSearchItems(reduxState.parts, 100, 'partNumber', 'partNumber', 'description')
+    );
+    const partsSearchLoading = useSelector(reduxState => getSearchLoading(reduxState.parts));
+
+    const searchSuppliers = searchTerm => reduxDispatch(suppliersActions.search(searchTerm));
+    const suppliersSearchResults = useSelector(reduxState =>
+        getSearchItems(reduxState.suppliers, 100, 'id', 'name', 'name')
+    );
+    const suppliersSearchLoading = useSelector(reduxState =>
+        getSearchLoading(reduxState.suppliers)
+    );
+
     const updatePartSupplier = body => reduxDispatch(partSupplierActions.update(null, body));
 
     const creating = () => false;
@@ -40,15 +57,17 @@ function PartSupplier() {
     const partKey = useSelector(reduxState => getQuery(reduxState));
     const loading = useSelector(reduxState => reduxState.partSupplier.loading);
     const snackbarVisible = useSelector(reduxState => getSnackbarVisible(reduxState.partSupplier));
+    const editStatus = useSelector(reduxState => getEditStatus(reduxState.partSupplier));
 
     const item = useSelector(reduxState => getItem(reduxState.partSupplier));
 
     const setEditStatus = status => reduxDispatch(partSupplierActions.setEditStatus(status));
 
-    const partsSearchResults = useSelector(reduxState =>
-        getSearchItems(reduxState.parts, 100, 'partNumber', 'partNumber', 'description')
-    );
-    const partsSearchLoading = useSelector(reduxState => getSearchLoading(reduxState.parts));
+    useEffect(() => {
+        reduxDispatch(unitsOfMeasureActions.fetch());
+        reduxDispatch(deliveryAddressesActions.fetch());
+        reduxDispatch(orderMethodsactions.fetch());
+    }, [reduxDispatch]);
 
     useEffect(() => {
         if (partKey) {
@@ -148,6 +167,10 @@ function PartSupplier() {
                                             partsSearchResults={partsSearchResults}
                                             partsSearchLoading={partsSearchLoading}
                                             searchParts={searchParts}
+                                            suppliersSearchResults={suppliersSearchResults}
+                                            suppliersSearchLoading={suppliersSearchLoading}
+                                            searchSuppliers={searchSuppliers}
+                                            editStatus={editStatus}
                                         />
                                     </Box>
                                 )}
@@ -157,9 +180,16 @@ function PartSupplier() {
                 )}
                 <Grid item xs={12}>
                     <SaveBackCancelButtons
-                        //saveDisabled={!canEdit() || true}
-                        saveClick={() => (false ? null : updatePartSupplier(state.partSupplier))}
-                        cancelClick={() => {}}
+                        saveDisabled={!canEdit() || editStatus === 'view'}
+                        saveClick={() =>
+                            editStatus === 'create'
+                                ? () => {}
+                                : updatePartSupplier(state.partSupplier)
+                        }
+                        cancelClick={() => {
+                            dispatch({ type: 'initialise', payload: item });
+                            setEditStatus('view');
+                        }}
                         backClick={() => history.push('/purchasing/part-suppliers')}
                     />
                 </Grid>

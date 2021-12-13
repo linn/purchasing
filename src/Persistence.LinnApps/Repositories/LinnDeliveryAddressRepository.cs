@@ -9,13 +9,34 @@
 
     using Microsoft.EntityFrameworkCore;
 
-    public class LinnDeliveryAddressRepository : IQueryRepository<LinnDeliveryAddress>
+    public class LinnDeliveryAddressRepository : IRepository<LinnDeliveryAddress, int>
     {
         private readonly ServiceDbContext serviceDbContext;
 
         public LinnDeliveryAddressRepository(ServiceDbContext serviceDbContext)
         {
             this.serviceDbContext = serviceDbContext;
+        }
+
+        public LinnDeliveryAddress FindById(int key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IQueryable<LinnDeliveryAddress> FindAll()
+        {
+            return this.serviceDbContext.LinnDeliveryAddresses
+                .AsNoTracking().Include(x => x.Address);
+        }
+
+        public void Add(LinnDeliveryAddress entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Remove(LinnDeliveryAddress entity)
+        {
+            throw new NotImplementedException();
         }
 
         public LinnDeliveryAddress FindBy(Expression<Func<LinnDeliveryAddress, bool>> expression)
@@ -26,12 +47,6 @@
         public IQueryable<LinnDeliveryAddress> FilterBy(Expression<Func<LinnDeliveryAddress, bool>> expression)
         {
             throw new NotImplementedException();
-        }
-
-        public IQueryable<LinnDeliveryAddress> FindAll()
-        {
-            return this.serviceDbContext.LinnDeliveryAddresses
-                .AsNoTracking().Include(x => x.Address);
         }
     }
 }

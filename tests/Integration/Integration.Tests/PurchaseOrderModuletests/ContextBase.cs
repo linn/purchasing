@@ -36,7 +36,7 @@
             get; private set;
         }
 
-        protected IFacadeResourceService<UnitOfMeasure, int, UnitOfMeasureResource, UnitOfMeasureResource>
+        protected IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource>
             UnitsOfMeasureService
         {
             get; private set;
@@ -54,7 +54,7 @@
             this.DeliveryAddressService = Substitute
                 .For<IFacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource, LinnDeliveryAddressResource>>();
             this.UnitsOfMeasureService = Substitute
-                .For<IFacadeResourceService<UnitOfMeasure, int, UnitOfMeasureResource, UnitOfMeasureResource>>();
+                .For<IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource>>();
             this.Log = Substitute.For<ILog>();
 
             this.Client = TestClient.With<PurchaseOrderModule>(

@@ -13,18 +13,22 @@ function PartSupplierTab({
     designation,
     supplierId,
     supplierName,
-    handleFieldChange
+    handleFieldChange,
+    searchSuppliers,
+    suppliersSearchResults,
+    suppliersSearchLoading,
+    editStatus
 }) {
     return (
         <Grid container spacing={3}>
             <Grid item xs={4}>
                 <Typeahead
-                    onSelect={newValue => handleFieldChange('partNumber', newValue.id)}
+                    onSelect={newValue => {
+                        handleFieldChange('partNumber', newValue.id);
+                        handleFieldChange('partDescription', newValue.description);
+                    }}
                     label="Part"
                     modal
-                    handleFieldChange={(_, newValue) => {
-                        handleFieldChange('partNumber', newValue);
-                    }}
                     propertyName="partNumber"
                     items={partsSearchResults}
                     value={partNumber}
@@ -32,8 +36,9 @@ function PartSupplierTab({
                     fetchItems={searchParts}
                     links={false}
                     text
+                    disabled={editStatus !== 'create'}
                     clearSearch={() => {}}
-                    placeholder="Search Locations"
+                    placeholder="Search Parts"
                     minimumSearchTermLength={3}
                 />
             </Grid>
@@ -43,16 +48,28 @@ function PartSupplierTab({
                     value={partDescription}
                     label="Description"
                     propertyName="partDescription"
-                    onChange={handleFieldChange}
+                    onChange={() => {}}
                 />
             </Grid>
             <Grid item xs={4}>
-                <InputField
-                    fullWidth
-                    value={supplierId}
+                <Typeahead
+                    onSelect={newValue => {
+                        handleFieldChange('supplierId', newValue.id);
+                        handleFieldChange('supplierName', newValue.name);
+                    }}
                     label="Supplier"
+                    modal
                     propertyName="supplierId"
-                    onChange={handleFieldChange}
+                    items={suppliersSearchResults}
+                    value={supplierId}
+                    loading={suppliersSearchLoading}
+                    fetchItems={searchSuppliers}
+                    disabled={editStatus !== 'create'}
+                    links={false}
+                    text
+                    clearSearch={() => {}}
+                    placeholder="Search Suppliers"
+                    minimumSearchTermLength={3}
                 />
             </Grid>
             <Grid item xs={8}>
@@ -61,7 +78,7 @@ function PartSupplierTab({
                     value={supplierName}
                     label="Name"
                     propertyName="supplierName"
-                    onChange={handleFieldChange}
+                    onChange={() => {}}
                 />
             </Grid>
             <Grid item xs={8}>
@@ -87,7 +104,11 @@ PartSupplierTab.propTypes = {
     handleFieldChange: PropTypes.func.isRequired,
     partsSearchResults: PropTypes.arrayOf(PropTypes.shape({})),
     partsSearchLoading: PropTypes.bool,
-    searchParts: PropTypes.func.isRequired
+    searchParts: PropTypes.func.isRequired,
+    suppliersSearchResults: PropTypes.arrayOf(PropTypes.shape({})),
+    suppliersSearchLoading: PropTypes.bool,
+    searchSuppliers: PropTypes.func.isRequired,
+    editStatus: PropTypes.string
 };
 
 PartSupplierTab.defaultProps = {
@@ -97,7 +118,10 @@ PartSupplierTab.defaultProps = {
     supplierId: null,
     supplierName: null,
     partsSearchResults: [],
-    partsSearchLoading: false
+    partsSearchLoading: false,
+    suppliersSearchResults: [],
+    suppliersSearchLoading: false,
+    editStatus: 'view'
 };
 
 export default PartSupplierTab;

@@ -29,7 +29,7 @@
                     => new EntityFrameworkRepository<Currency, string>(r.GetService<ServiceDbContext>()?.Currencies))
                 .AddTransient<IRepository<OrderMethod, string>, EntityFrameworkRepository<OrderMethod, string>>(r
                     => new EntityFrameworkRepository<OrderMethod, string>(r.GetService<ServiceDbContext>()?.OrderMethods))
-                .AddTransient<IQueryRepository<LinnDeliveryAddress>, LinnDeliveryAddressRepository>()
+                .AddTransient<IRepository<LinnDeliveryAddress, int>, LinnDeliveryAddressRepository>()
                 .AddTransient<IRepository<UnitOfMeasure, string>, EntityFrameworkRepository<UnitOfMeasure, string>>(r
                     => new EntityFrameworkRepository<UnitOfMeasure, string>(r.GetService<ServiceDbContext>()?.UnitsOfMeasure));
         }
