@@ -22,12 +22,18 @@ import partSupplierReducer from './partSupplierReducer';
 import { partSupplier } from '../../itemTypes';
 import PartSupplierTab from './tabs/PartSupplierTab';
 import partsActions from '../../actions/partsActions';
-import { getSearchItems, getSearchLoading } from '../../selectors/CollectionSelectorHelpers';
+import {
+    getSearchItems,
+    getSearchLoading,
+    getItems
+} from '../../selectors/CollectionSelectorHelpers';
 import { getSnackbarVisible, getItem, getEditStatus } from '../../selectors/ItemSelectors';
 import deliveryAddressesActions from '../../actions/deliveryAddressesActions';
 import unitsOfMeasureActions from '../../actions/unitsOfMeasureActions';
 import orderMethodsactions from '../../actions/orderMethodActions';
 import suppliersActions from '../../actions/suppliersActions';
+import currenciesActions from '../../actions/currenciesActions';
+import OrderDetailsTab from './tabs/OrderDetailsTab';
 
 function PartSupplier() {
     const reduxDispatch = useDispatch();
@@ -46,9 +52,15 @@ function PartSupplier() {
         getSearchLoading(reduxState.suppliers)
     );
 
+    const unitsOfMeasure = useSelector(reduxState => getItems(reduxState.unitsOfMeasure));
+    const deliveryAddresses = useSelector(reduxState => getItems(reduxState.deliveryAddresses));
+    const orderMethods = useSelector(reduxState => getItems(reduxState.orderMethods));
+    const currencies = useSelector(reduxState => getItems(reduxState.currencies));
+
     const updatePartSupplier = body => reduxDispatch(partSupplierActions.update(null, body));
 
     const creating = () => false;
+
     const [state, dispatch] = useReducer(partSupplierReducer, {
         partSupplier: creating() ? {} : {},
         prevPart: {}
@@ -67,6 +79,7 @@ function PartSupplier() {
         reduxDispatch(unitsOfMeasureActions.fetch());
         reduxDispatch(deliveryAddressesActions.fetch());
         reduxDispatch(orderMethodsactions.fetch());
+        reduxDispatch(currenciesActions.fetch());
     }, [reduxDispatch]);
 
     useEffect(() => {
@@ -87,6 +100,14 @@ function PartSupplier() {
 
     const handleFieldChange = (propertyName, newValue) => {
         setEditStatus('edit');
+        if (propertyName === 'orderMethodName') {
+            dispatch({
+                type: 'fieldChange',
+                fieldName: 'orderMethodDescription',
+                payload: orderMethods.find(x => x.name === newValue).description
+            });
+            return;
+        }
         dispatch({ type: 'fieldChange', fieldName: propertyName, payload: newValue });
     };
 
@@ -150,13 +171,15 @@ function PartSupplier() {
                                         }}
                                     >
                                         <Tab label="Part and Supplier" />
-                                        <Tab label="Order Details" disabled />
-                                        <Tab label="Other Details" disabled />
+                                        <Tab label="Order Details" />
+                                        <Tab label="Jit" disabled />
+                                        <Tab label="Lifecycle" disabled />
+                                        <Tab label="Manufacturer" disabled />
                                     </Tabs>
                                 </Box>
 
                                 {value === 0 && (
-                                    <Box sx={{ p: 3 }}>
+                                    <Box sx={{ paddingTop: 3 }}>
                                         <PartSupplierTab
                                             handleFieldChange={handleFieldChange}
                                             partNumber={state.partSupplier?.partNumber}
@@ -171,6 +194,25 @@ function PartSupplier() {
                                             suppliersSearchLoading={suppliersSearchLoading}
                                             searchSuppliers={searchSuppliers}
                                             editStatus={editStatus}
+                                        />
+                                    </Box>
+                                )}
+                                {value === 1 && (
+                                    <Box sx={{ paddingTop: 3 }}>
+                                        <OrderDetailsTab
+                                            handleFieldChange={handleFieldChange}
+                                            editStatus={editStatus}
+                                            unitsOfMeasure={unitsOfMeasure}
+                                            unitOfMeasure={state.partSupplier?.unitOfMeasure}
+                                            deliveryAddresses={deliveryAddresses}
+                                            deliveryAddress={state.partSupplier?.addressId}
+                                            orderMethods={orderMethods}
+                                            orderMethod={state.partSupplier?.orderMethodName}
+                                            orderMethodDescription={
+                                                state.partSupplier?.orderMethodDescription
+                                            }
+                                            currencies={currencies}
+                                            currency={state.partSupplier?.currencyCode}
                                         />
                                     </Box>
                                 )}

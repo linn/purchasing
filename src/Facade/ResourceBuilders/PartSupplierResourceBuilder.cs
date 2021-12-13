@@ -32,6 +32,7 @@
 
             return new PartSupplierResource
                        {
+                           UnitOfMeasure = entity.UnitOfMeasure,
                            PartNumber = entity.PartNumber,
                            SupplierId = entity.SupplierId,
                            PartDescription = entity.Part.Description,

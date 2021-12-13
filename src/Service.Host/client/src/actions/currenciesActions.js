@@ -8,7 +8,7 @@ export default new FetchApiActions(
     itemTypes.currencies.actionType,
     itemTypes.currencies.uri,
     actionTypes,
-    config.proxyRoot,
+    config.appRoot,
     null,
     false
 );

@@ -61,7 +61,7 @@ function PartSupplierTab({
                     modal
                     propertyName="supplierId"
                     items={suppliersSearchResults}
-                    value={supplierId}
+                    value={supplierId?.toString()}
                     loading={suppliersSearchLoading}
                     fetchItems={searchSuppliers}
                     disabled={editStatus !== 'create'}
