@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Resources
 {
     using System;
+    using System.Collections.Generic;
 
     using Linn.Common.Resources;
 
@@ -43,5 +44,7 @@
         public string Designation { get; set; }
 
         public string Stream { get; set; }
+
+        public IEnumerable<string> Privileges { get; set; }
     }
 }

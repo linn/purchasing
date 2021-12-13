@@ -11,7 +11,9 @@
     {
         public static IEnumerable<string> GetPrivileges(this HttpContext context)
         {
-            return context.User?.Claims?.Where(b => b.Type == "privilege").Select(a => a.Value);
+            return context.User?.Claims?.Count() == 0 
+                       ? new List<string>() 
+                       : context.User?.Claims?.Where(b => b.Type == "privilege").Select(a => a.Value);
         }
 
         public static string GetEmployeeUrl(this ClaimsPrincipal principal)

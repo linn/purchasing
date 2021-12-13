@@ -40,7 +40,7 @@
             return services
                 .AddTransient<IFacadeResourceService<Thing, int, ThingResource, ThingResource>, ThingFacadeService>()
                 .AddTransient<IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource>, SigningLimitFacadeService>()
-                .AddTransient<IApplicationStateService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>, PartSupplierFacadeService>()
+                .AddTransient<IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>, PartSupplierFacadeService>()
                 .AddTransient<IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource>, SupplierFacadeService>()
                 .AddTransient<IPartService, PartService>();
         }
@@ -48,6 +48,7 @@
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
             return services.AddTransient<IThingService, ThingService>()
+                .AddTransient<IPartSupplierService, PartSupplierService>()
                 .AddTransient<IAmazonSimpleEmailService>(
                     x => new AmazonSimpleEmailServiceClient(x.GetService<AWSOptions>()?.Region))
                 .AddTransient<IEmailService>(x => new EmailService(x.GetService<IAmazonSimpleEmailService>()))

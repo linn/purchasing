@@ -3,6 +3,7 @@
     using System.Threading.Tasks;
 
     using Carter;
+    using Carter.ModelBinding;
     using Carter.Request;
     using Carter.Response;
 
@@ -20,7 +21,7 @@
     public class SupplierModule : CarterModule
     {
         private readonly
-            IApplicationStateService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>
+            IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>
             partSupplierFacadeService;
 
         private readonly IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource> supplierFacadeService;
@@ -28,7 +29,7 @@
         private readonly IPartService partFacadeService;
 
         public SupplierModule(
-            IApplicationStateService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource> partSupplierFacadeService,
+            IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource> partSupplierFacadeService,
             IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource> supplierFacadeService,
             IPartService partFacadeService)
         {
@@ -36,10 +37,12 @@
             this.partSupplierFacadeService = partSupplierFacadeService;
             this.partFacadeService = partFacadeService;
             this.Get("/purchasing/part-suppliers/record", this.GetById);
+            this.Put("/purchasing/part-suppliers/record", this.UpdatePartSupplier);
             this.Get("/purchasing/part-suppliers", this.SearchPartSuppliers);
-            this.Get("/purchasing/suppliers", this.SearchSuppliers);
+            this.Post("/purchasing/part-suppliers", this.CreatePartSupplier);
 
-            this.Get("/purchasing/part-suppliers/state", this.GetState);
+            this.Get("/purchasing/part-suppliers/application-state", this.GetState);
+            this.Get("/purchasing/suppliers", this.SearchSuppliers);
         }
 
         private async Task GetById(HttpRequest req, HttpResponse res)
@@ -56,6 +59,25 @@
                         SupplierId = supplierId
                 },
                 req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task UpdatePartSupplier(HttpRequest req, HttpResponse res)
+        {
+            var partId = req.Query.As<int>("partId");
+            var supplierId = req.Query.As<int>("supplierId");
+
+            var partNumber = this.partFacadeService.GetPartNumberFromId(partId);
+
+            var key = new PartSupplierKey { PartNumber = partNumber, SupplierId = supplierId };
+
+            var resource = await req.Bind<PartSupplierResource>();
+            resource.Privileges = req.HttpContext.GetPrivileges();
+            var result = this.partSupplierFacadeService.Update(
+                key,
+                resource,
+                resource.Privileges);
 
             await res.Negotiate(result);
         }
@@ -89,6 +111,17 @@
             var privileges = req.HttpContext.GetPrivileges();
 
             var result = this.partSupplierFacadeService.GetApplicationState(privileges);
+
+            await res.Negotiate(result);
+        }
+
+        private async Task CreatePartSupplier(HttpRequest req, HttpResponse res)
+        {
+            var resource = await req.Bind<PartSupplierResource>();
+            resource.Privileges = req.HttpContext.GetPrivileges();
+            var result = this.partSupplierFacadeService.Add(
+                resource,
+                resource.Privileges);
 
             await res.Negotiate(result);
         }

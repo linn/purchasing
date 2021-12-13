@@ -8,7 +8,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import { useSelector, useDispatch } from 'react-redux';
-import { Page, Loading } from '@linn-it/linn-form-components-library';
+import { Page, Loading, Typeahead } from '@linn-it/linn-form-components-library';
 import getQuery from '../../selectors/routerSelelctors';
 import partSupplierActions from '../../actions/partSupplierActions';
 import history from '../../history';
@@ -16,21 +16,28 @@ import config from '../../config';
 import partSupplierReducer from './partSupplierReducer';
 import { partSupplier } from '../../itemTypes';
 import PartSupplierTab from './tabs/PartSupplierTab';
+import partsActions from '../../actions/partsActions';
+import { getSearchItems, getSearchLoading } from '../../selectors/CollectionSelectorHelpers';
 
 function PartSupplier() {
+    const reduxDispatch = useDispatch();
+
+    const searchParts = searchTerm => reduxDispatch(partsActions.search(searchTerm));
+
     const creating = () => false;
     const [state, dispatch] = useReducer(partSupplierReducer, {
         partSupplier: creating() ? {} : {},
         prevPart: {}
     });
 
-    const reduxDispatch = useDispatch();
-
     const partKey = useSelector(reduxState => getQuery(reduxState));
     const loading = useSelector(reduxState => reduxState.partSupplier.loading);
     const item = useSelector(reduxState => reduxState.partSupplier.item);
 
-    const setEditStatus = status => dispatch(partSupplierActions.setEditStatus(status));
+    const setEditStatus = status => reduxDispatch(partSupplierActions.setEditStatus(status));
+
+    const partsSearchResults = useSelector(reduxState => getSearchItems(reduxState.parts));
+    const partsSearchLoading = useSelector(reduxState => getSearchLoading(reduxState.parts));
 
     useEffect(() => {
         if (partKey) {
@@ -80,6 +87,27 @@ function PartSupplier() {
                                     <EditOffIcon color="secondary" />
                                 </Tooltip>
                             )}
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Typeahead
+                                onSelect={() => {}}
+                                label="Part"
+                                modal
+                                openModalOnClick={false}
+                                handleFieldChange={(_, newValue) => {
+                                    handleFieldChange('partNumber', newValue);
+                                }}
+                                propertyName="partNumber"
+                                items={partsSearchResults}
+                                value={state.partSupplier?.ontoLocation}
+                                loading={partsSearchLoading}
+                                fetchItems={searchParts}
+                                links={false}
+                                text
+                                clearSearch={() => {}}
+                                placeholder="Search Locations"
+                                minimumSearchTermLength={3}
+                            />
                         </Grid>
                         <Grid item xs={12}>
                             <Box sx={{ width: '100%' }}>
