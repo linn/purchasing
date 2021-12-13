@@ -36,7 +36,9 @@ function PartSupplier() {
 
     const setEditStatus = status => reduxDispatch(partSupplierActions.setEditStatus(status));
 
-    const partsSearchResults = useSelector(reduxState => getSearchItems(reduxState.parts));
+    const partsSearchResults = useSelector(reduxState =>
+        getSearchItems(reduxState.parts, 100, 'partNumber', 'partNumber', 'description')
+    );
     const partsSearchLoading = useSelector(reduxState => getSearchLoading(reduxState.parts));
 
     useEffect(() => {
