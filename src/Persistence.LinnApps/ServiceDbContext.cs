@@ -37,6 +37,10 @@
 
         public DbSet<Currency> Currencies { get; set; }
 
+        public DbSet<OrderMethod> OrderMethods { get; set; }
+
+        public DbSet<LinnDeliveryAddress> LinnDeliveryAddresses { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -55,6 +59,8 @@
             this.BuildTariffs(builder);
             this.BuildSigningLimits(builder);
             this.BuildCurrencies(builder);
+            this.BuildOrderMethods(builder);
+            this.BuildLinnDeliveryAddresses(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -239,6 +245,16 @@
             entity.HasKey(e => e.Code);
             entity.Property(e => e.Code).HasColumnName("CODE");
             entity.Property(e => e.Name).HasColumnName("NAME");
+        }
+
+        private void BuildLinnDeliveryAddresses(ModelBuilder builder)
+        {
+            var entity = builder.Entity<LinnDeliveryAddress>().ToTable("LINN_DELIVERY_ADDRESSES");
+            entity.HasKey(e => e.AddressId);
+            entity.HasOne(e => e.Address).WithMany().HasForeignKey(e => e.AddressId);
+            entity.Property(e => e.Description).HasColumnName("DELIVERY_ADDRESS_DESCRIPTION");
+            entity.Property(e => e.IsMainDeliveryAddress).HasColumnName("MAIN_DELIVERY_ADDRESS");
+            entity.Property(e => e.DateObsolete).HasColumnName("DATE_OBSOLETE");
         }
     }
 }

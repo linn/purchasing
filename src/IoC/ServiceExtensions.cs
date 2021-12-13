@@ -34,7 +34,11 @@
                 .AddTransient<IBuilder<Supplier>, SupplierResourceBuilder>()
                 .AddTransient<IBuilder<IEnumerable<Supplier>>, SuppliersResourceBuilder>()
                 .AddTransient<IBuilder<Currency>, CurrencyResourceBuilder>()
-                .AddTransient<IBuilder<IEnumerable<Currency>>, CurrenciesResourceBuilder>();
+                .AddTransient<IBuilder<IEnumerable<Currency>>, CurrenciesResourceBuilder>()
+                .AddTransient<IBuilder<OrderMethod>, OrderMethodResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<OrderMethod>>, OrderMethodsResourceBuilder>()
+                .AddTransient<IBuilder<LinnDeliveryAddress>, LinnDeliveryAddressResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<LinnDeliveryAddress>>, LinnDeliveryAddressesResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -45,7 +49,9 @@
                 .AddTransient<IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>, PartSupplierFacadeService>()
                 .AddTransient<IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource>, SupplierFacadeService>()
                 .AddTransient<IPartService, PartService>()
-                .AddTransient<IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource>, CurrencyFacadeService>();
+                .AddTransient<IFacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource>, OrderMethodService>()
+                .AddTransient<IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource>, CurrencyFacadeService>()
+                .AddTransient<IFacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource, LinnDeliveryAddressResource>, LinnDeliveryAddressService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)

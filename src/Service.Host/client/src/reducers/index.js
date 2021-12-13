@@ -15,6 +15,7 @@ import employees from './employees';
 import suppliers from './suppliers';
 import parts from './parts';
 import currencies from './currencies';
+import orderMethods from './orderMethods';
 
 const errors = fetchErrorReducer({ ...itemTypes });
 
@@ -23,6 +24,7 @@ const rootReducer = history =>
         oidc,
         historyStore,
         currencies,
+        orderMethods,
         parts,
         partSupplier,
         partSuppliers,

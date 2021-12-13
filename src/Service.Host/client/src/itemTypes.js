@@ -34,3 +34,9 @@ export const currencies = new ItemType(
     'CURRENCIES',
     '/purchasing/purchase-orders/currencies'
 );
+
+export const orderMethods = new ItemType(
+    'orderMethods',
+    'ORDER_METHODS',
+    '/purchasing/purchase-orders/methods'
+);

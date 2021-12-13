@@ -14,17 +14,17 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingCurrencies : ContextBase
+    public class WhenGettingDeliveryAddresses : ContextBase
     {
         [SetUp]
         public void SetUp()
         {
-            this.CurrencyService.GetAll().Returns(
-                new SuccessResult<IEnumerable<CurrencyResource>>(
-                    new[] { new CurrencyResource { Code = "GBP" }, new CurrencyResource { Code = "USD" } }));
+            this.DeliveryAddressService.GetAll().Returns(
+                new SuccessResult<IEnumerable<LinnDeliveryAddressResource>>(
+                    new[] { new LinnDeliveryAddressResource { Description = "D1" }, new LinnDeliveryAddressResource { Description = "D2" } }));
 
             this.Response = this.Client.Get(
-                "/purchasing/purchase-orders/currencies",
+                "/purchasing/purchase-orders/delivery-addresses",
                 with =>
                     {
                         with.Accept("application/json");
@@ -47,12 +47,12 @@
         [Test]
         public void ShouldReturnJsonBody()
         {
-            var resources = this.Response.DeserializeBody<IEnumerable<CurrencyResource>>()?.ToArray();
+            var resources = this.Response.DeserializeBody<IEnumerable<LinnDeliveryAddressResource>>()?.ToArray();
             resources.Should().NotBeNull();
             resources.Should().HaveCount(2);
 
-            resources?.First().Code.Should().Be("GBP");
-            resources.Second().Code.Should().Be("USD");
+            resources?.First().Description.Should().Be("D1");
+            resources.Second().Description.Should().Be("D2");
         }
     }
 }

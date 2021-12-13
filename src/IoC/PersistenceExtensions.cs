@@ -26,7 +26,10 @@
                 .AddTransient<IQueryRepository<Part>, PartRepository>()
                 .AddTransient<IRepository<Supplier, int>, SupplierRepository>()
                 .AddTransient<IRepository<Currency, string>, EntityFrameworkRepository<Currency, string>>(r 
-                    => new EntityFrameworkRepository<Currency, string>(r.GetService<ServiceDbContext>()?.Currencies));
+                    => new EntityFrameworkRepository<Currency, string>(r.GetService<ServiceDbContext>()?.Currencies))
+                .AddTransient<IRepository<OrderMethod, string>, EntityFrameworkRepository<OrderMethod, string>>(r
+                    => new EntityFrameworkRepository<OrderMethod, string>(r.GetService<ServiceDbContext>()?.OrderMethods))
+                .AddTransient<IQueryRepository<LinnDeliveryAddress>, LinnDeliveryAddressRepository>();
         }
     }
 }
