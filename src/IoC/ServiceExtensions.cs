@@ -32,7 +32,9 @@
                 .AddTransient<IBuilder<PartSupplier>, PartSupplierResourceBuilder>()
                 .AddTransient<IBuilder<IEnumerable<PartSupplier>>, PartSuppliersResourceBuilder>()
                 .AddTransient<IBuilder<Supplier>, SupplierResourceBuilder>()
-                .AddTransient<IBuilder<IEnumerable<Supplier>>, SuppliersResourceBuilder>();
+                .AddTransient<IBuilder<IEnumerable<Supplier>>, SuppliersResourceBuilder>()
+                .AddTransient<IBuilder<Currency>, CurrencyResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<Currency>>, CurrenciesResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -42,7 +44,8 @@
                 .AddTransient<IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource>, SigningLimitFacadeService>()
                 .AddTransient<IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>, PartSupplierFacadeService>()
                 .AddTransient<IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource>, SupplierFacadeService>()
-                .AddTransient<IPartService, PartService>();
+                .AddTransient<IPartService, PartService>()
+                .AddTransient<IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource>, CurrencyFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)

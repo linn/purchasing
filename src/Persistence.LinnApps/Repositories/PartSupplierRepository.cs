@@ -31,6 +31,7 @@
                 .Include(p => p.Manufacturer)
                 .Include(p => p.Tariff)
                 .Include(p => p.OrderMethod)
+                .Include(p => p.Currency)
                 .SingleOrDefault(
                 p => p.PartNumber == key.PartNumber && p.SupplierId == key.SupplierId);
         }

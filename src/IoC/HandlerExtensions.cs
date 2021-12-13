@@ -24,7 +24,9 @@
                 .AddTransient<IHandler, JsonResultHandler<SigningLimitResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<SigningLimitResource>>>()
                 .AddTransient<IHandler, SigningLimitApplicationStateResultHandler>()
-                .AddTransient<IHandler, PartSupplierApplicationStateResultHandler>();
+                .AddTransient<IHandler, PartSupplierApplicationStateResultHandler>()
+                .AddTransient<IHandler, JsonResultHandler<CurrencyResource>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<CurrencyResource>>>();
         }
     }
 }

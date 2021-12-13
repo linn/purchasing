@@ -24,10 +24,9 @@
                 .AddTransient<IRepository<SigningLimit, int>, SigningLimitRepository>()
                 .AddTransient<IRepository<PartSupplier, PartSupplierKey>, PartSupplierRepository>()
                 .AddTransient<IQueryRepository<Part>, PartRepository>()
-                .AddTransient<IRepository<Supplier, int>, SupplierRepository>();
-
-            // Could also be
-            // .AddTransient<IRepository<Thing, int>, EntityFrameworkRepository<Thing, int>>(r => new EntityFrameworkRepository<Thing, int>(r.GetService<ServiceDbContext>()?.Things))
+                .AddTransient<IRepository<Supplier, int>, SupplierRepository>()
+                .AddTransient<IRepository<Currency, string>, EntityFrameworkRepository<Currency, string>>(r 
+                    => new EntityFrameworkRepository<Currency, string>(r.GetService<ServiceDbContext>()?.Currencies));
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseLedger
+﻿namespace Linn.Purchasing.Resources
 {
-    public class Currency
+    public class CurrencyResource
     {
         public string Code { get; set; }
 
