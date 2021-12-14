@@ -13,6 +13,7 @@
     using Linn.Common.Facade;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Service.Extensions;
     using Linn.Purchasing.Service.Models;
 
     using Microsoft.AspNetCore.Http;
@@ -53,7 +54,7 @@
             resource.From = from; 
             resource.To = to; 
 
-            var results = this.purchaseOrderReportFacadeService.GetOrdersBySupplierReport(resource);
+            var results = this.purchaseOrderReportFacadeService.GetOrdersBySupplierReport(resource, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(results);
         }

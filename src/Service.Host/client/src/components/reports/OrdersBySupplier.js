@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {
     Loading,
     ReportTable,
@@ -15,7 +15,7 @@ import { getReportLoading, getReportData } from '../../selectors/ReportSelectorH
 import ordersBySupplierActions from '../../actions/ordersBySupplierActions';
 
 function OrderBySupplierReport() {
-    const options = queryString.parse(window.location.search) || {};
+    const options = useMemo(() => queryString.parse(window.location.search) || {}, []);
 
     const loading = useSelector(state => getReportLoading(state.ordersBySupplier));
     const reportData = useSelector(state => getReportData(state.ordersBySupplier));

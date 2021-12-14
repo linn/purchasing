@@ -34,7 +34,8 @@
                 .AddTransient<IBuilder<PartSupplier>, PartSupplierResourceBuilder>()
                 .AddTransient<IBuilder<IEnumerable<PartSupplier>>, PartSuppliersResourceBuilder>()
                 .AddTransient<IBuilder<Supplier>, SupplierResourceBuilder>()
-                .AddTransient<IBuilder<IEnumerable<Supplier>>, SuppliersResourceBuilder>();
+                .AddTransient<IBuilder<IEnumerable<Supplier>>, SuppliersResourceBuilder>()
+                .AddTransient<IBuilder<ResultsModel>, ResultsModelResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)

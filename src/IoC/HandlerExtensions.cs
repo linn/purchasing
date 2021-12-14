@@ -4,7 +4,7 @@
 
     using Linn.Common.Facade.Carter;
     using Linn.Common.Facade.Carter.Handlers;
-    using Linn.Common.Reporting.Models;
+    using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.ResultHandlers;
 
@@ -20,7 +20,7 @@
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<PartSupplierResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<SupplierResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<SupplierResource>>>()
-                .AddTransient<IHandler, JsonResultHandler<ResultsModel>>()
+                .AddTransient<IHandler, JsonResultHandler<ReportReturnResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<ThingResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<ProcessResultResource>>()
                 .AddTransient<IHandler, JsonResultHandler<SigningLimitResource>>()
