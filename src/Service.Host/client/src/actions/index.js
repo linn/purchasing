@@ -25,3 +25,7 @@ export const orderMethodsActionTypes = makeActionTypes(itemTypes.orderMethods.ac
 export const deliveryAddressesActionTypes = makeActionTypes(itemTypes.deliveryAddresses.actionType);
 
 export const unitsOfMeasureActionTypes = makeActionTypes(itemTypes.unitsOfMeasure.actionType);
+
+export const tariffsActionTypes = makeActionTypes(itemTypes.tariffs.actionType);
+
+export const packagingGroupsActionTypes = makeActionTypes(itemTypes.packagingGroups.actionType);
