@@ -14,7 +14,15 @@ function OrderDetailsTab({
     orderMethodDescription,
     orderMethods,
     currencies,
-    currency
+    currency,
+    currencyUnitPrice,
+    ourCurrencyPriceToShowOnOrder,
+    baseOurUnitPrice,
+    minimumOrderQty,
+    minumuDeliveryQty,
+    orderIncrement,
+    orderConversionFactor,
+    reelOrBoxQty
 }) {
     return (
         <Grid container spacing={3}>
@@ -52,6 +60,81 @@ function OrderDetailsTab({
             </Grid>
             <Grid item xs={8} />
             <Grid item xs={4}>
+                <InputField
+                    fullWidth
+                    value={currencyUnitPrice}
+                    label="Currency Unit Price"
+                    type="number"
+                    propertyName="currencyUnitPrice"
+                    onChange={handleFieldChange}
+                />
+            </Grid>
+            <Grid item xs={8} />
+            <Grid item xs={4}>
+                <InputField
+                    fullWidth
+                    value={ourCurrencyPriceToShowOnOrder}
+                    label="Our Price to Show On Order (ex duty)"
+                    type="number"
+                    propertyName="ourCurrencyPriceToShowOnOrder"
+                    onChange={handleFieldChange}
+                />
+            </Grid>
+            <Grid item xs={8} />
+            <Grid item xs={4}>
+                <InputField
+                    fullWidth
+                    value={baseOurUnitPrice}
+                    label="Base Our Unit Price"
+                    type="number"
+                    propertyName="baseOurUnitPrice"
+                    onChange={handleFieldChange}
+                />
+            </Grid>
+            <Grid item xs={8} />
+            <Grid item xs={4}>
+                <InputField
+                    fullWidth
+                    value={minimumOrderQty}
+                    label="Minumum Order Qty"
+                    type="number"
+                    propertyName="minimumOrderQty"
+                    onChange={handleFieldChange}
+                />
+            </Grid>
+            <Grid item xs={4}>
+                <InputField
+                    fullWidth
+                    value={minumuDeliveryQty}
+                    label="Minumum Delivery Qty"
+                    type="number"
+                    propertyName="minumuDeliveryQty"
+                    onChange={handleFieldChange}
+                />
+            </Grid>
+            <Grid item xs={4} />
+            <Grid item xs={4}>
+                <InputField
+                    fullWidth
+                    value={orderIncrement}
+                    label="Order Increment"
+                    type="number"
+                    propertyName="orderIncrement"
+                    onChange={handleFieldChange}
+                />
+            </Grid>
+            <Grid item xs={4}>
+                <InputField
+                    fullWidth
+                    value={reelOrBoxQty}
+                    label="Reel or Box Qty"
+                    type="number"
+                    propertyName="reelOrBoxQty"
+                    onChange={handleFieldChange}
+                />
+            </Grid>
+            <Grid item xs={4} />
+            <Grid item xs={4}>
                 <Dropdown
                     fullWidth
                     value={unitOfMeasure}
@@ -62,7 +145,17 @@ function OrderDetailsTab({
                     onChange={handleFieldChange}
                 />
             </Grid>
-            <Grid item xs={8} />
+            <Grid item xs={4}>
+                <InputField
+                    fullWidth
+                    value={orderConversionFactor}
+                    label="Order Conversion Factor"
+                    type="number"
+                    propertyName="orderConversionFactor"
+                    onChange={handleFieldChange}
+                />
+            </Grid>
+            <Grid item xs={4} />
             <Grid item xs={4}>
                 <Dropdown
                     fullWidth
@@ -92,7 +185,15 @@ OrderDetailsTab.propTypes = {
     orderMethod: PropTypes.string,
     orderMethodDescription: PropTypes.string,
     currencies: PropTypes.arrayOf(PropTypes.shape({})),
-    currency: PropTypes.string
+    currency: PropTypes.string,
+    currencyUnitPrice: PropTypes.number,
+    ourCurrencyPriceToShowOnOrder: PropTypes.number,
+    baseOurUnitPrice: PropTypes.number,
+    minimumOrderQty: PropTypes.number,
+    minumuDeliveryQty: PropTypes.number,
+    orderIncrement: PropTypes.number,
+    orderConversionFactor: PropTypes.number,
+    reelOrBoxQty: PropTypes.number
 };
 
 OrderDetailsTab.defaultProps = {
@@ -104,7 +205,15 @@ OrderDetailsTab.defaultProps = {
     deliveryAddress: null,
     orderMethod: null,
     currency: null,
-    orderMethodDescription: null
+    orderMethodDescription: null,
+    currencyUnitPrice: null,
+    ourCurrencyPriceToShowOnOrder: null,
+    baseOurUnitPrice: null,
+    minimumOrderQty: null,
+    minumuDeliveryQty: null,
+    orderIncrement: null,
+    orderConversionFactor: null,
+    reelOrBoxQty: null
 };
 
 export default OrderDetailsTab;

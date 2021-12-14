@@ -49,6 +49,22 @@
 
         public string UnitOfMeasure { get; set; }
 
+        public decimal? CurrencyUnitPrice { get; set; }
+
+        public decimal? OurCurrencyPriceToShowOnOrder { get; set; }
+
+        public decimal? BaseOurUnitPrice { get; set; }
+
+        public decimal MinimumOrderQty { get; set; }
+
+        public decimal? MinimumDeliveryQty { get; set; }
+
+        public decimal OrderIncrement { get; set; }
+
+        public decimal? OrderConversionFactor { get; set; }
+
+        public decimal? ReelOrBoxQty { get; set; }
+
         public IEnumerable<string> Privileges { get; set; }
     }
 }

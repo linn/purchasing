@@ -51,6 +51,14 @@
                            OrderMethodDescription = entity.OrderMethod?.Description,
                            Designation = entity.SupplierDesignation,
                            CurrencyCode = entity.Currency?.Code,
+                           CurrencyUnitPrice = entity.CurrencyUnitPrice,
+                           OurCurrencyPriceToShowOnOrder = entity.OurCurrencyPriceToShowOnOrder,
+                           BaseOurUnitPrice = entity.BaseOurUnitPrice,
+                           MinimumDeliveryQty = entity.MinimumDeliveryQty,
+                           MinimumOrderQty = entity.MinimumOrderQty,
+                           OrderConversionFactor = entity.OrderConversionFactor,
+                           OrderIncrement = entity.OrderIncrement,
+                           ReelOrBoxQty = entity.ReelOrBoxQty,
                            Links = this.BuildLinks(entity, claims).ToArray()
                        };
         }

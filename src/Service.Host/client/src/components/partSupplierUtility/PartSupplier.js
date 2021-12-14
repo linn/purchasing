@@ -213,6 +213,22 @@ function PartSupplier() {
                                             }
                                             currencies={currencies}
                                             currency={state.partSupplier?.currencyCode}
+                                            currencyUnitPrice={
+                                                state.partSupplier?.currencyUnitPrice
+                                            }
+                                            ourCurrencyPriceToShowOnOrder={
+                                                state.partSupplier?.ourCurrencyPriceToShowOnOrder
+                                            }
+                                            baseOurUnitPrice={state.partSupplier?.baseOurUnitPrice}
+                                            minimumOrderQty={state.partSupplier?.minimumOrderQty}
+                                            minumuDeliveryQty={
+                                                state.partSupplier?.minumuDeliveryQty
+                                            }
+                                            orderIncrement={state.partSupplier?.orderIncrement}
+                                            orderConversionFactor={
+                                                state.partSupplier?.orderConversionFactor
+                                            }
+                                            reelOrBoxQty={state.partSupplier?.reelOrBoxQty}
                                         />
                                     </Box>
                                 )}
