@@ -42,6 +42,19 @@
             get; private set;
         }
 
+        protected IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource>
+            PackagingGroupService
+        {
+            get;
+            private set;
+        }
+
+        protected IFacadeResourceService<Tariff, int, TariffResource, TariffResource> TariffService
+        {
+            get;
+            private set;
+        }
+
         protected ILog Log { get; private set; }
 
         [SetUp]
@@ -55,6 +68,9 @@
                 .For<IFacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource, LinnDeliveryAddressResource>>();
             this.UnitsOfMeasureService = Substitute
                 .For<IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource>>();
+            this.PackagingGroupService = Substitute
+                .For<IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource>>();
+            this.TariffService = Substitute.For<IFacadeResourceService<Tariff, int, TariffResource, TariffResource>>();
             this.Log = Substitute.For<ILog>();
 
             this.Client = TestClient.With<PurchaseOrderModule>(
@@ -65,6 +81,8 @@
                         services.AddSingleton(this.OrderMethodService);
                         services.AddSingleton(this.DeliveryAddressService);
                         services.AddSingleton(this.UnitsOfMeasureService);
+                        services.AddSingleton(this.PackagingGroupService);
+                        services.AddSingleton(this.TariffService);
                         services.AddSingleton(this.Log);
                         services.AddHandlers();
                     },
