@@ -27,7 +27,7 @@ import {
     getSearchLoading,
     getItems
 } from '../../selectors/CollectionSelectorHelpers';
-import { getSnackbarVisible, getItem, getEditStatus } from '../../selectors/ItemSelectors';
+import { getSnackbarVisible, getItem, getEditStatus } from '../../selectors/ItemSelectorsHelpers';
 import deliveryAddressesActions from '../../actions/deliveryAddressesActions';
 import unitsOfMeasureActions from '../../actions/unitsOfMeasureActions';
 import orderMethodsactions from '../../actions/orderMethodActions';
