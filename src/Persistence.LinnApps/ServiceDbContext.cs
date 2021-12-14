@@ -161,6 +161,8 @@
             entity.HasOne(e => e.Tariff).WithMany().HasForeignKey("TARIFF_ID");
             entity.Property(e => e.DateRohsCompliant).HasColumnName("DATE_ROHS_COMPLIANT");
             entity.Property(e => e.PackWasteStatus).HasColumnName("PACK_WASTE_STATUS").HasMaxLength(1);
+            entity.Property(e => e.ContractLeadTimeWeeks).HasColumnName("CONTRACT_LEAD_TIME_WEEKS");
+            entity.Property(e => e.DutyPercent).HasColumnName("DUTY_PERCENT");
         }
 
         private void BuildParts(ModelBuilder builder)

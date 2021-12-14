@@ -42,6 +42,8 @@
 
         public int LeadTimeWeeks { get; set; }
 
+        public int? ContractLeadTimeWeeks { get; set; }
+
         public string OverbookingAllowed { get; set; }
 
         public decimal? DamagesPercent { get; set; }
@@ -93,5 +95,7 @@
         public Address DeliveryAddress { get; set; }
 
         public string PackWasteStatus { get; set; }
+
+        public decimal? DutyPercent { get; set; }
     }
 }

@@ -34,6 +34,7 @@ import orderMethodsactions from '../../actions/orderMethodActions';
 import suppliersActions from '../../actions/suppliersActions';
 import currenciesActions from '../../actions/currenciesActions';
 import OrderDetailsTab from './tabs/OrderDetailsTab';
+import OtherDetailsTab from './tabs/OtherDetailsTab';
 
 function PartSupplier() {
     const reduxDispatch = useDispatch();
@@ -180,6 +181,7 @@ function PartSupplier() {
                                     >
                                         <Tab label="Part and Supplier" />
                                         <Tab label="Order Details" />
+                                        <Tab label="Other Details" />
                                         <Tab label="Jit" disabled />
                                         <Tab label="Lifecycle" disabled />
                                         <Tab label="Manufacturer" disabled />
@@ -238,6 +240,37 @@ function PartSupplier() {
                                                 state.partSupplier?.orderConversionFactor
                                             }
                                             reelOrBoxQty={state.partSupplier?.reelOrBoxQty}
+                                        />
+                                    </Box>
+                                )}
+                                {value === 2 && (
+                                    <Box sx={{ paddingTop: 3 }}>
+                                        <OtherDetailsTab
+                                            handleFieldChange={handleFieldChange}
+                                            leadTimeWeeks={state.partSupplier?.leadTimeWeeks}
+                                            contractLeadTimeWeeks={
+                                                state.partSupplier?.contractLeadTimeWeeks
+                                            }
+                                            overbookingAllowed={
+                                                state.partSupplier?.overbookingAllowed
+                                            }
+                                            damagesPercent={state.partSupplier?.damagesPercent}
+                                            webAddress={state.partSupplier?.webAddress}
+                                            deliveryInstructions={
+                                                state.partSupplier?.deliveryInstructions
+                                            }
+                                            notesForBuyer={state.partSupplier?.notesForBuyer}
+                                            tariffId={state.partSupplier?.tariffId}
+                                            tariffCode={state.partSupplier?.tariffCode}
+                                            dutyPercent={state.partSupplier?.dutyPercent}
+                                            tariffDescription={
+                                                state.partSupplier?.tariffDescription
+                                            }
+                                            packWasteStatus={state.partSupplier?.packWasteStatus}
+                                            packagingGroupId={state.partSupplier?.packagingGroupId}
+                                            packagingGroupDescription={
+                                                state.partSupplier?.packagingGroupDescription
+                                            }
                                         />
                                     </Box>
                                 )}
