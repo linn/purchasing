@@ -43,7 +43,6 @@
                 throw new UnauthorisedActionException("You are not authorised to update Part Supplier records");
             }
 
-            // what if any nulls?
             if (current.OrderMethod.Name != updated.OrderMethod.Name)
             {
                 current.OrderMethod = this.orderMethodRepository.FindById(updated.OrderMethod.Name);
