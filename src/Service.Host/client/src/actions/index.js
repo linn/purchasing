@@ -29,3 +29,5 @@ export const unitsOfMeasureActionTypes = makeActionTypes(itemTypes.unitsOfMeasur
 export const tariffsActionTypes = makeActionTypes(itemTypes.tariffs.actionType);
 
 export const packagingGroupsActionTypes = makeActionTypes(itemTypes.packagingGroups.actionType);
+
+export const manufacturersActionTypes = makeActionTypes(itemTypes.manufacturers.actionType);

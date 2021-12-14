@@ -60,3 +60,9 @@ export const packagingGroups = new ItemType(
     'PACKAGING_GROUPS',
     '/purchasing/purchase-orders/packaging-groups'
 );
+
+export const manufacturers = new ItemType(
+    'manufacturers',
+    'MANUFACTURERS',
+    '/purchasing/manufacturers'
+);

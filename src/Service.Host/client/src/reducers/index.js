@@ -20,6 +20,7 @@ import deliveryAddresses from './deliveryAddresses';
 import unitsOfMeasure from './unitsOfMeasure';
 import tariffs from './tariffs';
 import packagingGroups from './packagingGroups';
+import manufacturers from './manufacturers';
 
 const errors = fetchErrorReducer({ ...itemTypes });
 
@@ -30,6 +31,7 @@ const rootReducer = history =>
         currencies,
         deliveryAddresses,
         employees,
+        manufacturers,
         orderMethods,
         packagingGroups,
         parts,

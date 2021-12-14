@@ -35,7 +35,9 @@
                 .AddTransient<IRepository<PackagingGroup, int>, EntityFrameworkRepository<PackagingGroup, int>>(r
                     => new EntityFrameworkRepository<PackagingGroup, int>(r.GetService<ServiceDbContext>()?.PackagingGroups))
                 .AddTransient<IRepository<Tariff, int>, EntityFrameworkRepository<Tariff, int>>(r
-                    => new EntityFrameworkRepository<Tariff, int>(r.GetService<ServiceDbContext>()?.Tariffs));
+                    => new EntityFrameworkRepository<Tariff, int>(r.GetService<ServiceDbContext>()?.Tariffs))
+                .AddTransient<IRepository<Manufacturer, string>, EntityFrameworkRepository<Manufacturer, string>>(r
+                    => new EntityFrameworkRepository<Manufacturer, string>(r.GetService<ServiceDbContext>()?.Manufacturers));
         }
     }
 }
