@@ -60,8 +60,26 @@
                                       OrderIncrement = updateResource.OrderIncrement,
                                       ReelOrBoxQty = updateResource.ReelOrBoxQty,
                                       DeliveryAddress = updateResource.AddressId == null ? null : 
-                                                            new Address { Id = (int)updateResource.AddressId }
-                                  };
+                                                            new Address { Id = (int)updateResource.AddressId },
+                                      LeadTimeWeeks = updateResource.LeadTimeWeeks,
+                                      ContractLeadTimeWeeks = updateResource.ContractLeadTimeWeeks,
+                                      OverbookingAllowed = updateResource.OverbookingAllowed,
+                                      DamagesPercent = updateResource.DamagesPercent,
+                                      WebAddress = updateResource.WebAddress,
+                                      DeliveryInstructions = updateResource.DeliveryInstructions,
+                                      NotesForBuyer = updateResource.NotesForBuyer,
+                                      DutyPercent = updateResource.DutyPercent,
+                                      Tariff = updateResource.TariffId == null 
+                                                   ? null : new Tariff 
+                                                                {
+                                                                    Id = (int)updateResource.TariffId
+                                                                },
+                                      PackagingGroup = updateResource.PackagingGroupId == null 
+                                                           ? null : new PackagingGroup
+                                                                        {
+                                                                            Id = (int)updateResource.PackagingGroupId
+                                                                        }
+            };
 
             this.domainService.UpdatePartSupplier(entity, updated, updateResource.Privileges);
         }

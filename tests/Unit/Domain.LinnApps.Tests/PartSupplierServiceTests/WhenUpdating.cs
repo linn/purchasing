@@ -19,6 +19,10 @@
 
         private readonly OrderMethod newOrderMethod = new OrderMethod { Name = "M1" };
 
+        private readonly Tariff newTariff = new Tariff { Id = 21 };
+
+        private readonly PackagingGroup newPackagingGroup = new PackagingGroup { Id = 77 };
+
         private PartSupplier current;
 
         private PartSupplier updated;
@@ -42,14 +46,17 @@
                                    SupplierDesignation = "We updated this to this.",
                                    OrderMethod = this.newOrderMethod,
                                    DeliveryAddress = this.newAddress,
-                                   Currency = this.newCurrency
+                                   Currency = this.newCurrency,
+                                   Tariff = this.newTariff,
+                                   PackagingGroup = this.newPackagingGroup
                                };
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
-            this.CurrencyRepository.FindById("USD").Returns(this.newCurrency);
-            this.AddressRepository.FindById(1).Returns(this.newAddress);
-            this.OrderMethodRepository.FindById("M1").Returns(this.newOrderMethod);
-
+            this.CurrencyRepository.FindById(this.newCurrency.Code).Returns(this.newCurrency);
+            this.AddressRepository.FindById(this.newAddress.Id).Returns(this.newAddress);
+            this.OrderMethodRepository.FindById(this.newOrderMethod.Name).Returns(this.newOrderMethod);
+            this.TariffRepository.FindById(this.newTariff.Id).Returns(this.newTariff);
+            this.PackagingGroupRepository.FindById(this.newPackagingGroup.Id).Returns(this.newPackagingGroup);
             this.Sut.UpdatePartSupplier(this.current, this.updated, new List<string>());
         }
 
@@ -68,6 +75,8 @@
             this.current.Currency.Code.Should().Be(this.newCurrency.Code);
             this.current.OrderMethod.Name.Should().Be(this.newOrderMethod.Name);
             this.current.DeliveryAddress.Id.Should().Be(this.newAddress.Id);
+            this.current.PackagingGroup.Id.Should().Be(this.newPackagingGroup.Id);
+            this.current.Tariff.Id.Should().Be(this.newTariff.Id);
         }
     }
 }

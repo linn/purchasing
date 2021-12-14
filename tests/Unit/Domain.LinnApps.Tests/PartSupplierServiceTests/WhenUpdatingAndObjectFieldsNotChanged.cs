@@ -46,9 +46,6 @@
             };
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
-            this.CurrencyRepository.FindById("USD").Returns(this.newCurrency);
-            this.AddressRepository.FindById(1).Returns(this.newAddress);
-            this.OrderMethodRepository.FindById("M1").Returns(this.newOrderMethod);
 
             this.Sut.UpdatePartSupplier(this.current, this.updated, new List<string>());
         }
@@ -56,9 +53,11 @@
         [Test]
         public void ShouldNotPerformLookUps()
         {
-            this.AddressRepository.DidNotReceive().FindById(1);
-            this.CurrencyRepository.DidNotReceive().FindById("USD");
-            this.OrderMethodRepository.DidNotReceive().FindById("M1");
+            this.AddressRepository.DidNotReceive().FindById(Arg.Any<int>());
+            this.CurrencyRepository.DidNotReceive().FindById(Arg.Any<string>());
+            this.OrderMethodRepository.DidNotReceive().FindById(Arg.Any<string>());
+            this.TariffRepository.DidNotReceive().FindById(Arg.Any<int>());
+            this.PackagingGroupRepository.DidNotReceive().FindById(Arg.Any<int>());
         }
 
         [Test]
