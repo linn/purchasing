@@ -35,6 +35,8 @@ import suppliersActions from '../../actions/suppliersActions';
 import currenciesActions from '../../actions/currenciesActions';
 import OrderDetailsTab from './tabs/OrderDetailsTab';
 import OtherDetailsTab from './tabs/OtherDetailsTab';
+import tariffsActions from '../../actions/tariffsActions';
+import packagingGroupActions from '../../actions/packagingGroupActions';
 
 function PartSupplier() {
     const reduxDispatch = useDispatch();
@@ -53,10 +55,17 @@ function PartSupplier() {
         getSearchLoading(reduxState.suppliers)
     );
 
+    const searchTariffs = searchTerm => reduxDispatch(tariffsActions.search(searchTerm));
+    const tariffsSearchResults = useSelector(reduxState =>
+        getSearchItems(reduxState.tariffs, 100, 'id', 'code', 'description')
+    );
+    const tariffsSearchLoading = useSelector(reduxState => getSearchLoading(reduxState.tariffs));
+
     const unitsOfMeasure = useSelector(reduxState => getItems(reduxState.unitsOfMeasure));
     const deliveryAddresses = useSelector(reduxState => getItems(reduxState.deliveryAddresses));
     const orderMethods = useSelector(reduxState => getItems(reduxState.orderMethods));
     const currencies = useSelector(reduxState => getItems(reduxState.currencies));
+    const packagingGroups = useSelector(reduxState => getItems(reduxState.packagingGroups));
 
     const updatePartSupplier = body => reduxDispatch(partSupplierActions.update(null, body));
 
@@ -81,6 +90,7 @@ function PartSupplier() {
         reduxDispatch(deliveryAddressesActions.fetch());
         reduxDispatch(orderMethodsactions.fetch());
         reduxDispatch(currenciesActions.fetch());
+        reduxDispatch(packagingGroupActions.fetch());
     }, [reduxDispatch]);
 
     useEffect(() => {
@@ -271,6 +281,10 @@ function PartSupplier() {
                                             packagingGroupDescription={
                                                 state.partSupplier?.packagingGroupDescription
                                             }
+                                            tariffsSearchResults={tariffsSearchResults}
+                                            tariffsSearchLoading={tariffsSearchLoading}
+                                            searchTariffs={searchTariffs}
+                                            packagingGroups={packagingGroups}
                                         />
                                     </Box>
                                 )}

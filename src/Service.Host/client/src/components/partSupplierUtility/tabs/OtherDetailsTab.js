@@ -2,8 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 
-import { InputField, Dropdown } from '@linn-it/linn-form-components-library';
-import { deliveryAddresses } from '../../../itemTypes';
+import { InputField, Dropdown, Typeahead } from '@linn-it/linn-form-components-library';
 
 function OtherDetailsTab({
     handleFieldChange,
@@ -16,11 +15,14 @@ function OtherDetailsTab({
     notesForBuyer,
     tariffId,
     tariffCode,
+    searchTariffs,
+    tariffsSearchResults,
+    tariffsSearchLoading,
     dutyPercent,
     tariffDescription,
     packWasteStatus,
     packagingGroupId,
-    packagingGroupDescription,
+    packagingGroups
 }) {
     return (
         <Grid container spacing={3}>
@@ -92,7 +94,7 @@ function OtherDetailsTab({
             <Grid item xs={6}>
                 <InputField
                     fullWidth
-                    label="Notes For Buyter"
+                    label="Notes For Buyer"
                     value={notesForBuyer}
                     propertyName="notesForBuyer"
                     rows={3}
@@ -100,27 +102,84 @@ function OtherDetailsTab({
                 />
             </Grid>
             <Grid item xs={6} />
-
-            {/* <Grid item xs={4}>
-                <Dropdown
+            <Grid item xs={2}>
+                <InputField
                     fullWidth
-                    value={}
-                    label=""
-                    propertyName=""
-                    items={}
-                    allowNoValue={false}
+                    label="Duty %"
+                    value={dutyPercent}
+                    propertyName="dutyPercent"
+                    type="number"
                     onChange={handleFieldChange}
+                />
+            </Grid>
+            <Grid item xs={10} />
+
+            <Grid item xs={2}>
+                <Typeahead
+                    onSelect={newValue => {
+                        handleFieldChange('tariffId', newValue.id);
+                        handleFieldChange('tariffCode', newValue.code);
+
+                        handleFieldChange('tariffDescription', newValue.description);
+                    }}
+                    label="Tariff"
+                    modal
+                    propertyName="tariffId"
+                    items={tariffsSearchResults}
+                    value={tariffId}
+                    loading={tariffsSearchLoading}
+                    fetchItems={searchTariffs}
+                    links={false}
+                    text
+                    clearSearch={() => {}}
+                    placeholder="Search tariffs"
+                    minimumSearchTermLength={3}
                 />
             </Grid>
             <Grid item xs={4}>
                 <InputField
                     fullWidth
-                    value={}
-                    label=""
-                    propertyName="orderMethdDescription"
+                    label="Code"
+                    value={tariffCode}
+                    propertyName="tariffCode"
                     onChange={() => {}}
                 />
-            </Grid> */}
+            </Grid>
+            <Grid item xs={6}>
+                <InputField
+                    fullWidth
+                    label="Description"
+                    value={tariffDescription}
+                    rows={6}
+                    propertyName="tariffDescription"
+                    onChange={() => {}}
+                />
+            </Grid>
+            <Grid item xs={4}>
+                <Dropdown
+                    fullWidth
+                    value={packWasteStatus}
+                    label="Packaging Waste Status"
+                    propertyName="packWasteStatus"
+                    items={[
+                        { id: 'A', displayText: 'Applicable' },
+                        { id: 'N', displayText: 'Not Applicable' }
+                    ]}
+                    allowNoValue
+                    onChange={handleFieldChange}
+                />
+            </Grid>
+            <Grid item xs={4}>
+                <Dropdown
+                    fullWidth
+                    value={packagingGroupId}
+                    label="Group"
+                    propertyName="packagingGroupId"
+                    items={packagingGroups.map(g => ({ ...g, displayText: g.description }))}
+                    allowNoValue
+                    onChange={handleFieldChange}
+                />
+            </Grid>
             <Grid item xs={4} />
         </Grid>
     );
@@ -141,7 +200,10 @@ OtherDetailsTab.propTypes = {
     tariffDescription: PropTypes.string,
     packWasteStatus: PropTypes.string,
     packagingGroupId: PropTypes.number,
-    packagingGroupDescription: PropTypes.string
+    searchTariffs: PropTypes.func.isRequired,
+    tariffsSearchResults: PropTypes.arrayOf(PropTypes.shape({})),
+    tariffsSearchLoading: PropTypes.bool,
+    packagingGroups: PropTypes.arrayOf(PropTypes.shape({}))
 };
 
 OtherDetailsTab.defaultProps = {
@@ -158,7 +220,9 @@ OtherDetailsTab.defaultProps = {
     tariffDescription: null,
     packWasteStatus: null,
     packagingGroupId: null,
-    packagingGroupDescription: null
+    tariffsSearchResults: [],
+    tariffsSearchLoading: false,
+    packagingGroups: []
 };
 
 export default OtherDetailsTab;

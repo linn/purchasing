@@ -14,7 +14,8 @@
             return new TariffResource
                        {
                            Id = entity.Id,
-                           Description = entity.Description
+                           Description = entity.Description,
+                           Code = entity.Code
                        };
         }
 
