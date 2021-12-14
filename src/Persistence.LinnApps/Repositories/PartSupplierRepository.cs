@@ -21,7 +21,7 @@
 
         public PartSupplier FindById(PartSupplierKey key)
         {
-            return this.serviceDbContext.PartSuppliers
+            var x = this.serviceDbContext.PartSuppliers
                 .Include(p => p.Part)
                 .Include(p => p.Supplier)
                 .Include(p => p.PackagingGroup)
@@ -31,8 +31,11 @@
                 .Include(p => p.Manufacturer)
                 .Include(p => p.Tariff)
                 .Include(p => p.OrderMethod)
+                .Include(p => p.Currency)
                 .SingleOrDefault(
                 p => p.PartNumber == key.PartNumber && p.SupplierId == key.SupplierId);
+
+            return x;
         }
 
         public IQueryable<PartSupplier> FindAll()

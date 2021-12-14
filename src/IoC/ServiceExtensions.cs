@@ -12,9 +12,11 @@
     using Linn.Common.Facade;
     using Linn.Common.Pdf;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
+    using Linn.Purchasing.Facade;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Persistence.LinnApps.Keys;
@@ -32,7 +34,15 @@
                 .AddTransient<IBuilder<PartSupplier>, PartSupplierResourceBuilder>()
                 .AddTransient<IBuilder<IEnumerable<PartSupplier>>, PartSuppliersResourceBuilder>()
                 .AddTransient<IBuilder<Supplier>, SupplierResourceBuilder>()
-                .AddTransient<IBuilder<IEnumerable<Supplier>>, SuppliersResourceBuilder>();
+                .AddTransient<IBuilder<IEnumerable<Supplier>>, SuppliersResourceBuilder>()
+                .AddTransient<IBuilder<Currency>, CurrencyResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<Currency>>, CurrenciesResourceBuilder>()
+                .AddTransient<IBuilder<OrderMethod>, OrderMethodResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<OrderMethod>>, OrderMethodsResourceBuilder>()
+                .AddTransient<IBuilder<LinnDeliveryAddress>, LinnDeliveryAddressResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<LinnDeliveryAddress>>, LinnDeliveryAddressesResourceBuilder>()
+                .AddTransient<IBuilder<UnitOfMeasure>, UnitOfMeasureResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<UnitOfMeasure>>, UnitsOfMeasureResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -42,7 +52,11 @@
                 .AddTransient<IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource>, SigningLimitFacadeService>()
                 .AddTransient<IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>, PartSupplierFacadeService>()
                 .AddTransient<IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource>, SupplierFacadeService>()
-                .AddTransient<IPartService, PartService>();
+                .AddTransient<IPartService, PartService>()
+                .AddTransient<IFacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource>, OrderMethodService>()
+                .AddTransient<IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource>, CurrencyFacadeService>()
+                .AddTransient<IFacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource, LinnDeliveryAddressResource>, LinnDeliveryAddressService>()
+                .AddTransient<IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource>, UnitsOfMeasureService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)

@@ -32,6 +32,7 @@
 
             return new PartSupplierResource
                        {
+                           UnitOfMeasure = entity.UnitOfMeasure,
                            PartNumber = entity.PartNumber,
                            SupplierId = entity.SupplierId,
                            PartDescription = entity.Part.Description,
@@ -49,6 +50,7 @@
                            OrderMethodName = entity.OrderMethod?.Name,
                            OrderMethodDescription = entity.OrderMethod?.Description,
                            Designation = entity.SupplierDesignation,
+                           CurrencyCode = entity.Currency?.Code,
                            Links = this.BuildLinks(entity, claims).ToArray()
                        };
         }

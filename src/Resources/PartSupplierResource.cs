@@ -45,6 +45,10 @@
 
         public string Stream { get; set; }
 
+        public string CurrencyCode { get; set; }
+
+        public string UnitOfMeasure { get; set; }
+
         public IEnumerable<string> Privileges { get; set; }
     }
 }

@@ -14,6 +14,10 @@ import signingLimits from './signingLimits';
 import employees from './employees';
 import suppliers from './suppliers';
 import parts from './parts';
+import currencies from './currencies';
+import orderMethods from './orderMethods';
+import deliveryAddresses from './deliveryAddresses';
+import unitsOfMeasure from './unitsOfMeasure';
 
 const errors = fetchErrorReducer({ ...itemTypes });
 
@@ -21,6 +25,9 @@ const rootReducer = history =>
     combineReducers({
         oidc,
         historyStore,
+        currencies,
+        deliveryAddresses,
+        orderMethods,
         parts,
         partSupplier,
         partSuppliers,
@@ -29,6 +36,7 @@ const rootReducer = history =>
         signingLimit,
         signingLimits,
         suppliers,
+        unitsOfMeasure,
         ...sharedLibraryReducers,
         errors
     });
