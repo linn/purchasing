@@ -221,8 +221,8 @@ function PartSupplier() {
                                             }
                                             baseOurUnitPrice={state.partSupplier?.baseOurUnitPrice}
                                             minimumOrderQty={state.partSupplier?.minimumOrderQty}
-                                            minumuDeliveryQty={
-                                                state.partSupplier?.minumuDeliveryQty
+                                            minimumDeliveryQty={
+                                                state.partSupplier?.minimumDeliveryQty
                                             }
                                             orderIncrement={state.partSupplier?.orderIncrement}
                                             orderConversionFactor={

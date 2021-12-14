@@ -11,7 +11,7 @@
 
     using NUnit.Framework;
 
-    public class WhenUpdating : ContextBase
+    public class WhenUpdatingAndObjectFieldsNotChanged : ContextBase
     {
         private readonly Currency newCurrency = new Currency { Code = "USD" };
 
@@ -27,23 +27,23 @@
         public void SetUp()
         {
             this.current = new PartSupplier
-                               {
-                                   PartNumber = "PART",
-                                   SupplierId = 1,
-                                   SupplierDesignation = string.Empty,
-                                   OrderMethod = new OrderMethod(),
-                                   DeliveryAddress = new Address(),
-                                   Currency = new Currency()
+            {
+                PartNumber = "PART",
+                SupplierId = 1,
+                SupplierDesignation = string.Empty,
+                OrderMethod = this.newOrderMethod,
+                DeliveryAddress = this.newAddress,
+                Currency = this.newCurrency
             };
             this.updated = new PartSupplier
-                               {
-                                   PartNumber = "PART",
-                                   SupplierId = 1,
-                                   SupplierDesignation = "We updated this to this.",
-                                   OrderMethod = this.newOrderMethod,
-                                   DeliveryAddress = this.newAddress,
-                                   Currency = this.newCurrency
-                               };
+            {
+                PartNumber = "PART",
+                SupplierId = 1,
+                SupplierDesignation = "We updated this to this.",
+                OrderMethod = this.newOrderMethod,
+                DeliveryAddress = this.newAddress,
+                Currency = this.newCurrency
+            };
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
             this.CurrencyRepository.FindById("USD").Returns(this.newCurrency);
@@ -54,15 +54,15 @@
         }
 
         [Test]
-        public void ShouldPerformLookUps()
+        public void ShouldNotPerformLookUps()
         {
-            this.AddressRepository.Received().FindById(1);
-            this.CurrencyRepository.Received().FindById("USD");
-            this.OrderMethodRepository.Received().FindById("M1");
+            this.AddressRepository.DidNotReceive().FindById(1);
+            this.CurrencyRepository.DidNotReceive().FindById("USD");
+            this.OrderMethodRepository.DidNotReceive().FindById("M1");
         }
 
         [Test]
-        public void ShouldUpdate()
+        public void ShouldUpdateOtherFields()
         {
             this.current.SupplierDesignation.Should().Be("We updated this to this.");
             this.current.Currency.Code.Should().Be(this.newCurrency.Code);

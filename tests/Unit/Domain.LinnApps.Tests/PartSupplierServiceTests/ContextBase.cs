@@ -1,7 +1,9 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PartSupplierServiceTests
 {
     using Linn.Common.Authorisation;
+    using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
     using NSubstitute;
 
@@ -11,13 +13,27 @@
     {
         protected IPartSupplierService Sut { get; private set; }
 
-        protected IAuthorisationService MockAuthService { get; set; }
+        protected IAuthorisationService MockAuthService { get; private set; }
+
+        protected IRepository<Currency, string> CurrencyRepository { get; private set; }
+
+        protected IRepository<OrderMethod, string> OrderMethodRepository { get; private set; }
+
+        protected IRepository<Address, int> AddressRepository { get; private set; }
 
         [SetUp]
         public void SetUpContext()
         {
             this.MockAuthService = Substitute.For<IAuthorisationService>();
-            this.Sut = new PartSupplierService(this.MockAuthService);
+            this.CurrencyRepository = Substitute.For<IRepository<Currency, string>>();
+            this.OrderMethodRepository = Substitute.For<IRepository<OrderMethod, string>>();
+            this.AddressRepository = Substitute.For<IRepository<Address, int>>();
+
+            this.Sut = new PartSupplierService(
+                this.MockAuthService,
+                this.CurrencyRepository,
+                this.OrderMethodRepository,
+                this.AddressRepository);
         }
     }
 }

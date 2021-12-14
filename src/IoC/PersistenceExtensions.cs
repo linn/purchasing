@@ -37,7 +37,9 @@
                 .AddTransient<IRepository<Tariff, int>, EntityFrameworkRepository<Tariff, int>>(r
                     => new EntityFrameworkRepository<Tariff, int>(r.GetService<ServiceDbContext>()?.Tariffs))
                 .AddTransient<IRepository<Manufacturer, string>, EntityFrameworkRepository<Manufacturer, string>>(r
-                    => new EntityFrameworkRepository<Manufacturer, string>(r.GetService<ServiceDbContext>()?.Manufacturers));
+                    => new EntityFrameworkRepository<Manufacturer, string>(r.GetService<ServiceDbContext>()?.Manufacturers))
+                .AddTransient<IRepository<Address, int>, EntityFrameworkRepository<Address, int>>(r
+                    => new EntityFrameworkRepository<Address, int>(r.GetService<ServiceDbContext>()?.Addresses));
         }
     }
 }

@@ -6,6 +6,7 @@
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Persistence.LinnApps.Keys;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.SearchResources;
@@ -46,9 +47,20 @@
         {
             var updated = new PartSupplier
                                   {
-                                      SupplierId = updateResource.SupplierId,
-                                      PartNumber = updateResource.PartNumber,
-                                      SupplierDesignation = updateResource.Designation
+                                      SupplierId = entity.SupplierId,
+                                      PartNumber = entity.PartNumber,
+                                      SupplierDesignation = updateResource.Designation,
+                                      OrderMethod = new OrderMethod { Name = updateResource.OrderMethodName },
+                                      Currency = new Currency { Code = updateResource.CurrencyCode },
+                                      CurrencyUnitPrice = updateResource.CurrencyUnitPrice,
+                                      OurCurrencyPriceToShowOnOrder = updateResource.OurCurrencyPriceToShowOnOrder,
+                                      BaseOurUnitPrice = updateResource.BaseOurUnitPrice,
+                                      MinimumOrderQty = updateResource.MinimumOrderQty,
+                                      MinimumDeliveryQty = updateResource.MinimumDeliveryQty,
+                                      OrderIncrement = updateResource.OrderIncrement,
+                                      ReelOrBoxQty = updateResource.ReelOrBoxQty,
+                                      DeliveryAddress = updateResource.AddressId == null ? null : 
+                                                            new Address { Id = (int)updateResource.AddressId }
                                   };
 
             this.domainService.UpdatePartSupplier(entity, updated, updateResource.Privileges);

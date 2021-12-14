@@ -19,7 +19,7 @@ function OrderDetailsTab({
     ourCurrencyPriceToShowOnOrder,
     baseOurUnitPrice,
     minimumOrderQty,
-    minumuDeliveryQty,
+    minimumDeliveryQty,
     orderIncrement,
     orderConversionFactor,
     reelOrBoxQty
@@ -105,10 +105,10 @@ function OrderDetailsTab({
             <Grid item xs={4}>
                 <InputField
                     fullWidth
-                    value={minumuDeliveryQty}
+                    value={minimumDeliveryQty}
                     label="Minumum Delivery Qty"
                     type="number"
-                    propertyName="minumuDeliveryQty"
+                    propertyName="minimumDeliveryQty"
                     onChange={handleFieldChange}
                 />
             </Grid>
@@ -190,7 +190,7 @@ OrderDetailsTab.propTypes = {
     ourCurrencyPriceToShowOnOrder: PropTypes.number,
     baseOurUnitPrice: PropTypes.number,
     minimumOrderQty: PropTypes.number,
-    minumuDeliveryQty: PropTypes.number,
+    minimumDeliveryQty: PropTypes.number,
     orderIncrement: PropTypes.number,
     orderConversionFactor: PropTypes.number,
     reelOrBoxQty: PropTypes.number
@@ -210,7 +210,7 @@ OrderDetailsTab.defaultProps = {
     ourCurrencyPriceToShowOnOrder: null,
     baseOurUnitPrice: null,
     minimumOrderQty: null,
-    minumuDeliveryQty: null,
+    minimumDeliveryQty: null,
     orderIncrement: null,
     orderConversionFactor: null,
     reelOrBoxQty: null
