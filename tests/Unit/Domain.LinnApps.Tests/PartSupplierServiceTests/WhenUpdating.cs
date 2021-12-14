@@ -63,9 +63,11 @@
         [Test]
         public void ShouldPerformLookUps()
         {
-            this.AddressRepository.Received().FindById(1);
-            this.CurrencyRepository.Received().FindById("USD");
-            this.OrderMethodRepository.Received().FindById("M1");
+            this.AddressRepository.Received().FindById(this.newAddress.Id);
+            this.CurrencyRepository.Received().FindById(this.newCurrency.Code);
+            this.OrderMethodRepository.Received().FindById(this.newOrderMethod.Name);
+            this.TariffRepository.Received().FindById(this.newTariff.Id);
+            this.PackagingGroupRepository.Received().FindById(this.newPackagingGroup.Id);
         }
 
         [Test]
