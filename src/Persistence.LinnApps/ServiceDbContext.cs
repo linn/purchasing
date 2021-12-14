@@ -4,6 +4,7 @@
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
@@ -40,6 +41,9 @@
 
         public DbSet<Tariff> Tariffs { get; set; }
 
+        public DbSet<PurchaseLedger> PurchaseLedgers { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -60,6 +64,7 @@
             this.BuildPurchaseOrderDeliveries(builder);
             this.BuildTariffs(builder);
             this.BuildSigningLimits(builder);
+            this.BuildPurchaseLedgers(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -285,6 +290,40 @@
             entity.Property(e => e.Id).HasColumnName("TARIFF_ID");
             entity.Property(e => e.Code).HasColumnName("TARIFF_CODE");
             entity.Property(e => e.Description).HasColumnName("DESCRIPTION");
+        }
+
+        private void BuildPurchaseLedgers(ModelBuilder builder)
+        {
+            var e = builder.Entity<PurchaseLedger>().ToTable("PURCHASE_LEDGER");
+            e.HasKey(p => p.Pltref);
+            e.Property(p => p.Pltref).HasColumnName("PL_TREF").HasMaxLength(8);
+            e.Property(p => p.SupplierId).HasColumnName("SUPPLIER_ID").HasMaxLength(6);
+            e.Property(p => p.OrderLine).HasColumnName("ORDER_LINE").HasMaxLength(6);
+            e.Property(p => p.OrderNumber).HasColumnName("ORDER_NUMBER");
+            e.Property(p => p.DatePosted).HasColumnName("DATE_POSTED");
+            e.Property(p => p.PlState).HasColumnName("PL_STATE");
+            e.Property(p => p.PlQuantity).HasColumnName("PL_QTY").HasMaxLength(19);
+            e.Property(p => p.PlNetTotal).HasColumnName("PL_NET_TOTAL").HasMaxLength(14);
+            e.Property(p => p.PlVat).HasColumnName("PL_VAT").HasMaxLength(14);
+            e.Property(p => p.PlTotal).HasColumnName("PL_TOTAL").HasMaxLength(14);
+            e.Property(p => p.BaseNetTotal).HasColumnName("BASE_NET_TOTAL").HasMaxLength(14);
+            e.Property(p => p.BaseVatTotal).HasColumnName("BASE_VAT_TOTAL").HasMaxLength(14);
+            e.Property(p => p.BaseTotal).HasColumnName("BASE_TOTAL").HasMaxLength(14);
+            e.Property(p => p.InvoiceDate).HasColumnName("INVOICE_DATE");
+            e.Property(p => p.PlInvoiceRef).HasColumnName("PL_INVOICE_REF").HasMaxLength(30);
+            e.Property(p => p.PlDeliveryRef).HasColumnName("PL_DELIVERY_REF").HasMaxLength(20);
+            e.Property(p => p.CompanyRef).HasColumnName("COMPANY_REF").HasMaxLength(8);
+            e.Property(p => p.Currency).HasColumnName("CURRENCY").HasMaxLength(4);
+            e.Property(p => p.LedgerPeriod).HasColumnName("LEDGER_PERIOD");
+            e.Property(p => p.PostedBy).HasColumnName("POSTED_BY").HasMaxLength(6);
+            e.Property(p => p.DebitNomacc).HasColumnName("DEBIT_NOMACC").HasMaxLength(6);
+            e.Property(p => p.CreditNomacc).HasColumnName("CREDIT_NOMACC").HasMaxLength(6);
+            e.Property(p => p.PlTransType).HasColumnName("PL_TRANS_TYPE").HasMaxLength(12);
+            e.Property(p => p.BaseCurrency).HasColumnName("BASE_CURRENCY").HasMaxLength(4);
+            e.Property(p => p.Carriage).HasColumnName("CARRIAGE").HasMaxLength(14);
+            e.Property(p => p.UnderOver).HasColumnName("UNDER_OVER").HasMaxLength(14);
+            e.Property(p => p.ExchangeRate).HasColumnName("EXCHANGE_RATE").HasMaxLength(19);
+            e.Property(p => p.LedgerStream).HasColumnName("LEDGER_STREAM").HasMaxLength(8);
         }
     }
 }

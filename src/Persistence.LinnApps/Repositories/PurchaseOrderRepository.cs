@@ -32,9 +32,9 @@
 
         public override PurchaseOrder FindById(int key)
         {
-            var thing = this.serviceDbContext.PurchaseOrders.Find(key);
-            this.serviceDbContext.Entry(thing).Collection(p => p.Details).Load();
-            return thing;
+            var purchaseOrder = this.serviceDbContext.PurchaseOrders.Find(key);
+            this.serviceDbContext.Entry(purchaseOrder).Collection(p => p.Details).Load();
+            return purchaseOrder;
         }
     }
 }
