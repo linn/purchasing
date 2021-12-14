@@ -32,7 +32,13 @@
                 .AddTransient<IHandler, JsonResultHandler<LinnDeliveryAddressResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<LinnDeliveryAddressResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<UnitOfMeasureResource>>()
-                .AddTransient<IHandler, JsonResultHandler<IEnumerable<UnitOfMeasureResource>>>();
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<UnitOfMeasureResource>>>()
+                .AddTransient<IHandler, JsonResultHandler<PackagingGroupResource>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PackagingGroupResource>>>()
+                .AddTransient<IHandler, JsonResultHandler<TariffResource>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<TariffResource>>>()
+                .AddTransient<IHandler, JsonResultHandler<ManufacturerResource>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<ManufacturerResource>>>();
         }
     }
 }

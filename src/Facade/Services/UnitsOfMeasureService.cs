@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Facade
+﻿namespace Linn.Purchasing.Facade.Services
 {
     using System;
     using System.Linq.Expressions;

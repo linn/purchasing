@@ -52,3 +52,17 @@ export const unitsOfMeasure = new ItemType(
     'UNITS_OF_MEASURE',
     '/purchasing/purchase-orders/units-of-measure'
 );
+
+export const tariffs = new ItemType('tariffs', 'TARIFFS', '/purchasing/purchase-orders/tariffs');
+
+export const packagingGroups = new ItemType(
+    'packagingGroups',
+    'PACKAGING_GROUPS',
+    '/purchasing/purchase-orders/packaging-groups'
+);
+
+export const manufacturers = new ItemType(
+    'manufacturers',
+    'MANUFACTURERS',
+    '/purchasing/manufacturers'
+);

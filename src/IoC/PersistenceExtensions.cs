@@ -31,7 +31,15 @@
                     => new EntityFrameworkRepository<OrderMethod, string>(r.GetService<ServiceDbContext>()?.OrderMethods))
                 .AddTransient<IRepository<LinnDeliveryAddress, int>, LinnDeliveryAddressRepository>()
                 .AddTransient<IRepository<UnitOfMeasure, string>, EntityFrameworkRepository<UnitOfMeasure, string>>(r
-                    => new EntityFrameworkRepository<UnitOfMeasure, string>(r.GetService<ServiceDbContext>()?.UnitsOfMeasure));
+                    => new EntityFrameworkRepository<UnitOfMeasure, string>(r.GetService<ServiceDbContext>()?.UnitsOfMeasure))
+                .AddTransient<IRepository<PackagingGroup, int>, EntityFrameworkRepository<PackagingGroup, int>>(r
+                    => new EntityFrameworkRepository<PackagingGroup, int>(r.GetService<ServiceDbContext>()?.PackagingGroups))
+                .AddTransient<IRepository<Tariff, int>, EntityFrameworkRepository<Tariff, int>>(r
+                    => new EntityFrameworkRepository<Tariff, int>(r.GetService<ServiceDbContext>()?.Tariffs))
+                .AddTransient<IRepository<Manufacturer, string>, EntityFrameworkRepository<Manufacturer, string>>(r
+                    => new EntityFrameworkRepository<Manufacturer, string>(r.GetService<ServiceDbContext>()?.Manufacturers))
+                .AddTransient<IRepository<Address, int>, EntityFrameworkRepository<Address, int>>(r
+                    => new EntityFrameworkRepository<Address, int>(r.GetService<ServiceDbContext>()?.Addresses));
         }
     }
 }

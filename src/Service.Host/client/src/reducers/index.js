@@ -18,6 +18,9 @@ import currencies from './currencies';
 import orderMethods from './orderMethods';
 import deliveryAddresses from './deliveryAddresses';
 import unitsOfMeasure from './unitsOfMeasure';
+import tariffs from './tariffs';
+import packagingGroups from './packagingGroups';
+import manufacturers from './manufacturers';
 
 const errors = fetchErrorReducer({ ...itemTypes });
 
@@ -27,15 +30,18 @@ const rootReducer = history =>
         historyStore,
         currencies,
         deliveryAddresses,
+        employees,
+        manufacturers,
         orderMethods,
+        packagingGroups,
         parts,
         partSupplier,
         partSuppliers,
         router: connectRouter(history),
-        employees,
         signingLimit,
         signingLimits,
         suppliers,
+        tariffs,
         unitsOfMeasure,
         ...sharedLibraryReducers,
         errors

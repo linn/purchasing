@@ -34,6 +34,9 @@ import orderMethodsactions from '../../actions/orderMethodActions';
 import suppliersActions from '../../actions/suppliersActions';
 import currenciesActions from '../../actions/currenciesActions';
 import OrderDetailsTab from './tabs/OrderDetailsTab';
+import OtherDetailsTab from './tabs/OtherDetailsTab';
+import tariffsActions from '../../actions/tariffsActions';
+import packagingGroupActions from '../../actions/packagingGroupActions';
 
 function PartSupplier() {
     const reduxDispatch = useDispatch();
@@ -52,10 +55,17 @@ function PartSupplier() {
         getSearchLoading(reduxState.suppliers)
     );
 
+    const searchTariffs = searchTerm => reduxDispatch(tariffsActions.search(searchTerm));
+    const tariffsSearchResults = useSelector(reduxState =>
+        getSearchItems(reduxState.tariffs, 100, 'id', 'code', 'description')
+    );
+    const tariffsSearchLoading = useSelector(reduxState => getSearchLoading(reduxState.tariffs));
+
     const unitsOfMeasure = useSelector(reduxState => getItems(reduxState.unitsOfMeasure));
     const deliveryAddresses = useSelector(reduxState => getItems(reduxState.deliveryAddresses));
     const orderMethods = useSelector(reduxState => getItems(reduxState.orderMethods));
     const currencies = useSelector(reduxState => getItems(reduxState.currencies));
+    const packagingGroups = useSelector(reduxState => getItems(reduxState.packagingGroups));
 
     const updatePartSupplier = body => reduxDispatch(partSupplierActions.update(null, body));
 
@@ -80,6 +90,7 @@ function PartSupplier() {
         reduxDispatch(deliveryAddressesActions.fetch());
         reduxDispatch(orderMethodsactions.fetch());
         reduxDispatch(currenciesActions.fetch());
+        reduxDispatch(packagingGroupActions.fetch());
     }, [reduxDispatch]);
 
     useEffect(() => {
@@ -106,6 +117,14 @@ function PartSupplier() {
                 fieldName: 'orderMethodDescription',
                 payload: orderMethods.find(x => x.name === newValue).description
             });
+        }
+        if (propertyName === 'addressId') {
+            dispatch({
+                type: 'fieldChange',
+                fieldName: 'fullAddress',
+                payload: deliveryAddresses.find(x => x.addressId === Number(newValue)).address
+            });
+            dispatch({ type: 'fieldChange', fieldName: propertyName, payload: Number(newValue) });
             return;
         }
         dispatch({ type: 'fieldChange', fieldName: propertyName, payload: newValue });
@@ -172,6 +191,7 @@ function PartSupplier() {
                                     >
                                         <Tab label="Part and Supplier" />
                                         <Tab label="Order Details" />
+                                        <Tab label="Other Details" />
                                         <Tab label="Jit" disabled />
                                         <Tab label="Lifecycle" disabled />
                                         <Tab label="Manufacturer" disabled />
@@ -206,6 +226,7 @@ function PartSupplier() {
                                             unitOfMeasure={state.partSupplier?.unitOfMeasure}
                                             deliveryAddresses={deliveryAddresses}
                                             deliveryAddress={state.partSupplier?.addressId}
+                                            fullAddress={state.partSupplier?.fullAddress}
                                             orderMethods={orderMethods}
                                             orderMethod={state.partSupplier?.orderMethodName}
                                             orderMethodDescription={
@@ -213,6 +234,57 @@ function PartSupplier() {
                                             }
                                             currencies={currencies}
                                             currency={state.partSupplier?.currencyCode}
+                                            currencyUnitPrice={
+                                                state.partSupplier?.currencyUnitPrice
+                                            }
+                                            ourCurrencyPriceToShowOnOrder={
+                                                state.partSupplier?.ourCurrencyPriceToShowOnOrder
+                                            }
+                                            baseOurUnitPrice={state.partSupplier?.baseOurUnitPrice}
+                                            minimumOrderQty={state.partSupplier?.minimumOrderQty}
+                                            minimumDeliveryQty={
+                                                state.partSupplier?.minimumDeliveryQty
+                                            }
+                                            orderIncrement={state.partSupplier?.orderIncrement}
+                                            orderConversionFactor={
+                                                state.partSupplier?.orderConversionFactor
+                                            }
+                                            reelOrBoxQty={state.partSupplier?.reelOrBoxQty}
+                                        />
+                                    </Box>
+                                )}
+                                {value === 2 && (
+                                    <Box sx={{ paddingTop: 3 }}>
+                                        <OtherDetailsTab
+                                            handleFieldChange={handleFieldChange}
+                                            leadTimeWeeks={state.partSupplier?.leadTimeWeeks}
+                                            contractLeadTimeWeeks={
+                                                state.partSupplier?.contractLeadTimeWeeks
+                                            }
+                                            overbookingAllowed={
+                                                state.partSupplier?.overbookingAllowed
+                                            }
+                                            damagesPercent={state.partSupplier?.damagesPercent}
+                                            webAddress={state.partSupplier?.webAddress}
+                                            deliveryInstructions={
+                                                state.partSupplier?.deliveryInstructions
+                                            }
+                                            notesForBuyer={state.partSupplier?.notesForBuyer}
+                                            tariffId={state.partSupplier?.tariffId}
+                                            tariffCode={state.partSupplier?.tariffCode}
+                                            dutyPercent={state.partSupplier?.dutyPercent}
+                                            tariffDescription={
+                                                state.partSupplier?.tariffDescription
+                                            }
+                                            packWasteStatus={state.partSupplier?.packWasteStatus}
+                                            packagingGroupId={state.partSupplier?.packagingGroupId}
+                                            packagingGroupDescription={
+                                                state.partSupplier?.packagingGroupDescription
+                                            }
+                                            tariffsSearchResults={tariffsSearchResults}
+                                            tariffsSearchLoading={tariffsSearchLoading}
+                                            searchTariffs={searchTariffs}
+                                            packagingGroups={packagingGroups}
                                         />
                                     </Box>
                                 )}

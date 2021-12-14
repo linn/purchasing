@@ -3,6 +3,7 @@
     using System.Threading.Tasks;
 
     using Carter;
+    using Carter.Request;
     using Carter.Response;
 
     using Linn.Common.Facade;
@@ -25,20 +26,31 @@
         private readonly IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource>
             unitsOfMeasureService;
 
+        private readonly IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource>
+            packagingGroupService;
+
+        private readonly IFacadeResourceService<Tariff, int, TariffResource, TariffResource> tariffService;
+
         public PurchaseOrderModule(
             IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource> currencyService,
             IFacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource> orderMethodService,
             IFacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource, LinnDeliveryAddressResource> deliveryAddressService,
-            IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource> unitsOfMeasureService)
+            IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource> unitsOfMeasureService,
+            IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource> packagingGroupService,
+            IFacadeResourceService<Tariff, int, TariffResource, TariffResource> tariffService)
         {
             this.currencyService = currencyService;
             this.orderMethodService = orderMethodService;
             this.deliveryAddressService = deliveryAddressService;
             this.unitsOfMeasureService = unitsOfMeasureService;
+            this.packagingGroupService = packagingGroupService;
+            this.tariffService = tariffService;
             this.Get("/purchasing/purchase-orders/currencies", this.GetCurrencies);
             this.Get("/purchasing/purchase-orders/methods", this.GetOrderMethods);
             this.Get("/purchasing/purchase-orders/delivery-addresses", this.GetDeliveryAddresses);
             this.Get("/purchasing/purchase-orders/units-of-measure", this.GetUnitsOfMeasure);
+            this.Get("/purchasing/purchase-orders/packaging-groups", this.GetPackagingGroups);
+            this.Get("/purchasing/purchase-orders/tariffs", this.SearchTariffs);
         }
 
         private async Task GetCurrencies(HttpRequest req, HttpResponse res)
@@ -65,6 +77,21 @@
         private async Task GetUnitsOfMeasure(HttpRequest req, HttpResponse res)
         {
             var result = this.unitsOfMeasureService.GetAll();
+
+            await res.Negotiate(result);
+        }
+
+        private async Task GetPackagingGroups(HttpRequest req, HttpResponse res)
+        {
+            var result = this.packagingGroupService.GetAll();
+
+            await res.Negotiate(result);
+        }
+
+        private async Task SearchTariffs(HttpRequest req, HttpResponse res)
+        {
+            var searchTerm = req.Query.As<string>("searchTerm");
+            var result = this.tariffService.Search(searchTerm);
 
             await res.Negotiate(result);
         }

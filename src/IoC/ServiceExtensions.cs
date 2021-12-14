@@ -42,7 +42,13 @@
                 .AddTransient<IBuilder<LinnDeliveryAddress>, LinnDeliveryAddressResourceBuilder>()
                 .AddTransient<IBuilder<IEnumerable<LinnDeliveryAddress>>, LinnDeliveryAddressesResourceBuilder>()
                 .AddTransient<IBuilder<UnitOfMeasure>, UnitOfMeasureResourceBuilder>()
-                .AddTransient<IBuilder<IEnumerable<UnitOfMeasure>>, UnitsOfMeasureResourceBuilder>();
+                .AddTransient<IBuilder<IEnumerable<UnitOfMeasure>>, UnitsOfMeasureResourceBuilder>()
+                .AddTransient<IBuilder<PackagingGroup>, PackagingGroupResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<PackagingGroup>>, PackagingGroupsResourceBuilder>()
+                .AddTransient<IBuilder<Tariff>, TariffResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<Tariff>>, TariffsResourceBuilder>()
+                .AddTransient<IBuilder<Manufacturer>, ManufacturerResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<Manufacturer>>, ManufacturersResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -56,7 +62,10 @@
                 .AddTransient<IFacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource>, OrderMethodService>()
                 .AddTransient<IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource>, CurrencyFacadeService>()
                 .AddTransient<IFacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource, LinnDeliveryAddressResource>, LinnDeliveryAddressService>()
-                .AddTransient<IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource>, UnitsOfMeasureService>();
+                .AddTransient<IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource>, UnitsOfMeasureService>()
+                .AddTransient<IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource>, PackagingGroupService>()
+                .AddTransient<IFacadeResourceService<Tariff, int, TariffResource, TariffResource>, TariffService>()
+                .AddTransient<IFacadeResourceService<Manufacturer, string, ManufacturerResource, ManufacturerResource>, ManufacturerFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
