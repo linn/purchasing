@@ -35,7 +35,6 @@
                 throw new UnauthorisedActionException("You are not authorised to update Part Supplier records");
             }
 
-            // only do db lookups for these fields if they have actually been updated to save time
             if (current.OrderMethod.Name != updated.OrderMethod.Name)
             {
                 current.OrderMethod = this.orderMethodRepository.FindById(updated.OrderMethod.Name);

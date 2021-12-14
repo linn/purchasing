@@ -106,6 +106,14 @@ function PartSupplier() {
                 fieldName: 'orderMethodDescription',
                 payload: orderMethods.find(x => x.name === newValue).description
             });
+        }
+        if (propertyName === 'addressId') {
+            dispatch({
+                type: 'fieldChange',
+                fieldName: 'fullAddress',
+                payload: deliveryAddresses.find(x => x.addressId === Number(newValue)).address
+            });
+            dispatch({ type: 'fieldChange', fieldName: propertyName, payload: Number(newValue) });
             return;
         }
         dispatch({ type: 'fieldChange', fieldName: propertyName, payload: newValue });
@@ -206,6 +214,7 @@ function PartSupplier() {
                                             unitOfMeasure={state.partSupplier?.unitOfMeasure}
                                             deliveryAddresses={deliveryAddresses}
                                             deliveryAddress={state.partSupplier?.addressId}
+                                            fullAddress={state.partSupplier?.fullAddress}
                                             orderMethods={orderMethods}
                                             orderMethod={state.partSupplier?.orderMethodName}
                                             orderMethodDescription={

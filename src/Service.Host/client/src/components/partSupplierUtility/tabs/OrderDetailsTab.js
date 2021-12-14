@@ -22,7 +22,8 @@ function OrderDetailsTab({
     minimumDeliveryQty,
     orderIncrement,
     orderConversionFactor,
-    reelOrBoxQty
+    reelOrBoxQty,
+    fullAddress
 }) {
     return (
         <Grid container spacing={3}>
@@ -170,7 +171,18 @@ function OrderDetailsTab({
                     onChange={handleFieldChange}
                 />
             </Grid>
-            <Grid item xs={8} />
+            <Grid item xs={6}>
+                <InputField
+                    fullWidth
+                    value={fullAddress}
+                    label="fullAddress"
+                    type="number"
+                    rows={10}
+                    propertyName="fullAddress"
+                    onChange={() => {}}
+                />
+            </Grid>
+            <Grid item xs={2} />
         </Grid>
     );
 }
@@ -193,7 +205,8 @@ OrderDetailsTab.propTypes = {
     minimumDeliveryQty: PropTypes.number,
     orderIncrement: PropTypes.number,
     orderConversionFactor: PropTypes.number,
-    reelOrBoxQty: PropTypes.number
+    reelOrBoxQty: PropTypes.number,
+    fullAddress: PropTypes.string
 };
 
 OrderDetailsTab.defaultProps = {
@@ -213,7 +226,8 @@ OrderDetailsTab.defaultProps = {
     minimumDeliveryQty: null,
     orderIncrement: null,
     orderConversionFactor: null,
-    reelOrBoxQty: null
+    reelOrBoxQty: null,
+    fullAddress: null
 };
 
 export default OrderDetailsTab;
