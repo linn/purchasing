@@ -60,6 +60,6 @@
 
         public decimal UnderOver { get; set; }
 
-        public TransactionType TransactionType { get; }
+        public TransactionType TransactionType { get; set; }
     }
 }

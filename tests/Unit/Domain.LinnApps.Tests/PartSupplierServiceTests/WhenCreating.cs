@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PartSupplierServiceTests
 {
-    using System;
     using System.Collections.Generic;
 
     using FluentAssertions;
@@ -13,8 +12,6 @@
 
     public class WhenCreating : ContextBase
     {
-        private Action action;
-
         private PartSupplier candidate;
 
         private PartSupplier result;
@@ -22,12 +19,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.candidate = new PartSupplier
-                                 {
-                                     PartNumber = "PART",
-                                     SupplierId = 1,
-                                     SupplierDesignation = "1234567"
-                                 };
+            this.candidate = new PartSupplier { PartNumber = "PART", SupplierId = 1, SupplierDesignation = "1234567" };
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
             this.result = this.Sut.CreatePartSupplier(this.candidate, new List<string>());

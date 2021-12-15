@@ -43,7 +43,7 @@ function OrderBySupplierReport() {
                     <BackButton backClick={() => handleBackClick(history, options)} />
                 </Grid>
                 <Grid item xs={12}>
-                    {!loading && reportData ? (
+                    {!loading && reportData && false ? (
                         <ExportButton
                             href={`${config.appRoot}/purchasing/reports/orders-by-supplier/${options.id}/export?from=${options.fromDate}&to=${options.toDate}`}
                         />
