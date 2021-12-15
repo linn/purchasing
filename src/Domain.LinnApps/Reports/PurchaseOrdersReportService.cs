@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     using Linn.Common.Persistence;
     using Linn.Common.Reporting.Layouts;
@@ -11,12 +12,13 @@
 
     public class PurchaseOrdersReportService : IPurchaseOrdersReportService
     {
-        private readonly IRepository<PurchaseOrder, int> purchaseOrderRepository;
-        private readonly IRepository<Supplier, int> supplierRepository;
         private readonly IRepository<PurchaseLedger, int> purchaseLedgerRepository;
 
+        private readonly IRepository<PurchaseOrder, int> purchaseOrderRepository;
 
         private readonly IReportingHelper reportingHelper;
+
+        private readonly IRepository<Supplier, int> supplierRepository;
 
         public PurchaseOrdersReportService(
             IRepository<PurchaseOrder, int> purchaseOrderRepository,
@@ -37,8 +39,8 @@
 
         public ResultsModel GetOrdersBySupplierReport(DateTime from, DateTime to, int supplierId)
         {
-            var purchaseOrders = this.purchaseOrderRepository.FilterBy(x => x.SupplierId == supplierId
-                                                                            && from <= x.OrderDate && x.OrderDate < to);
+            var purchaseOrders = this.purchaseOrderRepository.FilterBy(
+                x => x.SupplierId == supplierId && from <= x.OrderDate && x.OrderDate < to);
 
             var supplier = this.supplierRepository.FindById(supplierId);
 
@@ -54,11 +56,19 @@
 
             foreach (var order in purchaseOrders)
             {
-                var ledger = this.purchaseLedgerRepository.FindById(order.OrderNumber);
-                var ledgerQty = ledger.PlQuantity.HasValue ? (int)ledger.PlQuantity.Value : 0;
                 foreach (var orderDetail in order.Details)
                 {
-                    this.ExtractDetails(values, order, orderDetail, ledgerQty);
+                    var ledgersForOrderAndLine = this.purchaseLedgerRepository.FilterBy(
+                        pl => pl.OrderNumber == order.OrderNumber && pl.OrderLine == orderDetail.Line);
+
+                    var ledgerQtys = ledgersForOrderAndLine.Select(
+                        x => x.PlQuantity.HasValue
+                                 ? new { TransType = x.TransactionType.DebitOrCredit, Qty = x.PlQuantity.Value }
+                                 : null).ToList();
+
+                    var totalLedgerQty = ledgerQtys.Sum(x => x.TransType == "C" ? x.Qty : -x.Qty);
+
+                    this.ExtractDetails(values, order, orderDetail, totalLedgerQty);
                 }
             }
 
@@ -100,10 +110,8 @@
             ICollection<CalculationValueModel> values,
             PurchaseOrder purchaseOrder,
             PurchaseOrderDetail orderDetail,
-            int ledgerQty)
+            decimal ledgerQty)
         {
-
-
             var currentRowId = $"{purchaseOrder.OrderNumber}/{orderDetail.Line}";
             values.Add(
                 new CalculationValueModel
@@ -111,15 +119,13 @@
                         RowId = currentRowId,
                         ColumnId = "OrderLine",
                         TextDisplay = $"{purchaseOrder.OrderNumber}/{orderDetail.Line}"
-                });
+                    });
 
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId,
-                        ColumnId = "PartNo",
-                        TextDisplay = $"{orderDetail.PartNumber}"
-                });
+                        RowId = currentRowId, ColumnId = "PartNo", TextDisplay = $"{orderDetail.PartNumber}"
+                    });
 
             values.Add(
                 new CalculationValueModel
@@ -134,8 +140,9 @@
                     {
                         RowId = currentRowId,
                         ColumnId = "QtyOrd",
-                        TextDisplay = orderDetail.PurchaseDelivery.OrderDeliveryQty.ToString()
+                        TextDisplay = orderDetail.OurQty.HasValue ? orderDetail.OurQty.Value.ToString() : "0"
                     });
+
             values.Add(
                 new CalculationValueModel
                     {
@@ -143,42 +150,19 @@
                         ColumnId = "QtyRec",
                         TextDisplay = orderDetail.PurchaseDelivery.QtyNetReceived.ToString()
                     });
-            values.Add(
-                new CalculationValueModel
-                    {
-                        RowId = currentRowId,
-                        ColumnId = "QtyInv",
-                        TextDisplay = ledgerQty.ToString()
-                });
-            //^ I think looks to be calculated with:
-            //vqty_number as number;
-            //select sum(pl_pack.get_payment_value(pl_trans_type, pl_qty)) 
-            //into vqty
-            //from purchase_ledger
-            //where order_number = :order_number
-            //and order_line = :order_line
-            //return nvl(vqty,0)
-
-            //Function Get_Payment_Value(p_trans in varchar2, p_value in number) return number is
-            //    begin
-            //if trans_type_is_credit(p_trans) then
-            //return p_value;
-            //else
-            //return p_value * -1;
-            //end if;
-            //end get_payment_value;
-
-
-            //so long way of saying if row's there in purchase ledger, value is pl_qty
-            //so add a pl ledger repo
 
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId,
-                        ColumnId = "NetTotal",
-                        TextDisplay = $"{orderDetail.NetTotal}"
+                        RowId = currentRowId, ColumnId = "QtyInv", TextDisplay = ledgerQty.ToString()
                     });
+
+            values.Add(
+                new CalculationValueModel
+                    {
+                        RowId = currentRowId, ColumnId = "NetTotal", TextDisplay = $"{orderDetail.NetTotal}"
+                    });
+
             values.Add(
                 new CalculationValueModel
                     {
@@ -193,7 +177,7 @@
                         RowId = currentRowId,
                         ColumnId = "Qty",
                         TextDisplay = $"{orderDetail.PurchaseDelivery.OurDeliveryQty}"
-                });
+                    });
 
             values.Add(
                 new CalculationValueModel
@@ -201,7 +185,7 @@
                         RowId = currentRowId,
                         ColumnId = "ReqDate",
                         TextDisplay = orderDetail.PurchaseDelivery.DateRequested.ToString("dd-MMM-yyyy")
-                });
+                    });
 
             values.Add(
                 new CalculationValueModel
@@ -209,7 +193,7 @@
                         RowId = currentRowId,
                         ColumnId = "AdvisedDate",
                         TextDisplay = orderDetail.PurchaseDelivery.DateAdvised.ToString("dd-MMM-yyyy")
-                }); 
+                    });
         }
     }
 }

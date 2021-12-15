@@ -43,6 +43,9 @@
 
         public DbSet<PurchaseLedger> PurchaseLedgers { get; set; }
 
+        public DbSet<TransactionType> TransactionTypes { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -65,6 +68,7 @@
             this.BuildTariffs(builder);
             this.BuildSigningLimits(builder);
             this.BuildPurchaseLedgers(builder);
+            this.BuildTransactionTypes(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -324,6 +328,22 @@
             e.Property(p => p.UnderOver).HasColumnName("UNDER_OVER").HasMaxLength(14);
             e.Property(p => p.ExchangeRate).HasColumnName("EXCHANGE_RATE").HasMaxLength(19);
             e.Property(p => p.LedgerStream).HasColumnName("LEDGER_STREAM").HasMaxLength(8);
+            e.HasOne<TransactionType>(a => a.TransactionType).WithMany().HasForeignKey(a => a.PlTransType);
         }
+
+        private void BuildTransactionTypes(ModelBuilder builder)
+        {
+            var entity = builder.Entity<TransactionType>().ToTable("PL_TRANS_TYPES");
+            entity.HasKey(m => m.TransType);
+            entity.Property(e => e.TransType).HasColumnName("PL_TRANS_TYPE").HasMaxLength(12);
+            entity.Property(e => e.Description).HasColumnName("TRANS_DESCRIPTION").HasMaxLength(100);
+            entity.Property(e => e.DebitNomacc).HasColumnName("DEBIT_NOMACC").HasMaxLength(6);
+            entity.Property(e => e.CreditNomacc).HasColumnName("CREDIT_NOMACC").HasMaxLength(6);
+            entity.Property(e => e.DebitOrCredit).HasColumnName("DEBIT_OR_CREDIT").HasMaxLength(1);
+            entity.Property(e => e.DateInvalid).HasColumnName("DATE_INVALID");
+            entity.Property(e => e.TransactionCategory).HasColumnName("TRANS_CATEGORY").HasMaxLength(10);
+        }
+
+
     }
 }

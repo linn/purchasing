@@ -5,7 +5,6 @@
     using System.Linq.Expressions;
 
     using Linn.Common.Persistence.EntityFramework;
-    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
 
     using Microsoft.EntityFrameworkCore;
@@ -20,6 +19,10 @@
             this.serviceDbContext = serviceDbContext;
         }
 
+        public override IQueryable<PurchaseLedger> FilterBy(Expression<Func<PurchaseLedger, bool>> expression)
+        {
+            return this.serviceDbContext.PurchaseLedgers.Include(pl => pl.TransactionType).Where(expression);
+        }
 
         public override PurchaseLedger FindById(int key)
         {

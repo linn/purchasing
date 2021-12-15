@@ -59,5 +59,7 @@
         public int SupplierId { get; set; }
 
         public decimal UnderOver { get; set; }
+
+        public TransactionType TransactionType { get; }
     }
 }
