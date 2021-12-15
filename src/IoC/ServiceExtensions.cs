@@ -13,10 +13,12 @@
     using Linn.Common.Pdf;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
+    using Linn.Purchasing.Facade;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Persistence.LinnApps.Keys;
@@ -35,6 +37,20 @@
                 .AddTransient<IBuilder<IEnumerable<PartSupplier>>, PartSuppliersResourceBuilder>()
                 .AddTransient<IBuilder<Supplier>, SupplierResourceBuilder>()
                 .AddTransient<IBuilder<IEnumerable<Supplier>>, SuppliersResourceBuilder>()
+                .AddTransient<IBuilder<Currency>, CurrencyResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<Currency>>, CurrenciesResourceBuilder>()
+                .AddTransient<IBuilder<OrderMethod>, OrderMethodResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<OrderMethod>>, OrderMethodsResourceBuilder>()
+                .AddTransient<IBuilder<LinnDeliveryAddress>, LinnDeliveryAddressResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<LinnDeliveryAddress>>, LinnDeliveryAddressesResourceBuilder>()
+                .AddTransient<IBuilder<UnitOfMeasure>, UnitOfMeasureResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<UnitOfMeasure>>, UnitsOfMeasureResourceBuilder>()
+                .AddTransient<IBuilder<PackagingGroup>, PackagingGroupResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<PackagingGroup>>, PackagingGroupsResourceBuilder>()
+                .AddTransient<IBuilder<Tariff>, TariffResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<Tariff>>, TariffsResourceBuilder>()
+                .AddTransient<IBuilder<Manufacturer>, ManufacturerResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<Manufacturer>>, ManufacturersResourceBuilder>()
                 .AddTransient<IBuilder<ResultsModel>, ResultsModelResourceBuilder>();
         }
 
@@ -46,12 +62,20 @@
                 .AddTransient<IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>, PartSupplierFacadeService>()
                 .AddTransient<IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource>, SupplierFacadeService>()
                 .AddTransient<IPartService, PartService>()
+                .AddTransient<IFacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource>, OrderMethodService>()
+                .AddTransient<IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource>, CurrencyFacadeService>()
+                .AddTransient<IFacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource, LinnDeliveryAddressResource>, LinnDeliveryAddressService>()
+                .AddTransient<IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource>, UnitsOfMeasureService>()
+                .AddTransient<IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource>, PackagingGroupService>()
+                .AddTransient<IFacadeResourceService<Tariff, int, TariffResource, TariffResource>, TariffService>()
+                .AddTransient<IFacadeResourceService<Manufacturer, string, ManufacturerResource, ManufacturerResource>, ManufacturerFacadeService>();
                 .AddTransient<IPurchaseOrderReportFacadeService, PurchaseOrderReportFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
             return services.AddTransient<IThingService, ThingService>()
+                .AddTransient<IPartSupplierService, PartSupplierService>()
                 .AddTransient<IAmazonSimpleEmailService>(
                     x => new AmazonSimpleEmailServiceClient(x.GetService<AWSOptions>()?.Region))
                 .AddTransient<IEmailService>(x => new EmailService(x.GetService<IAmazonSimpleEmailService>()))

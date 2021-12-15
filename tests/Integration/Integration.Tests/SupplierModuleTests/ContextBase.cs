@@ -28,8 +28,8 @@
 
         protected ITransactionManager TransactionManager { get; set; }
 
-        protected 
-            IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource> 
+        protected
+            IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>
             PartSupplierFacadeService
         {
             get; private set;

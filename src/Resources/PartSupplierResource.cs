@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Resources
 {
     using System;
+    using System.Collections.Generic;
 
     using Linn.Common.Resources;
 
@@ -43,5 +44,49 @@
         public string Designation { get; set; }
 
         public string Stream { get; set; }
+
+        public string CurrencyCode { get; set; }
+
+        public string UnitOfMeasure { get; set; }
+
+        public decimal? CurrencyUnitPrice { get; set; }
+
+        public decimal? OurCurrencyPriceToShowOnOrder { get; set; }
+
+        public decimal? BaseOurUnitPrice { get; set; }
+
+        public decimal MinimumOrderQty { get; set; }
+
+        public decimal? MinimumDeliveryQty { get; set; }
+
+        public decimal OrderIncrement { get; set; }
+
+        public decimal? OrderConversionFactor { get; set; }
+
+        public decimal? ReelOrBoxQty { get; set; }
+
+        public int LeadTimeWeeks { get; set; }
+
+        public int? ContractLeadTimeWeeks { get; set; }
+
+        public string OverbookingAllowed { get; set; }
+
+        public decimal? DamagesPercent { get; set; }
+
+        public string WebAddress { get; set; }
+
+        public string DeliveryInstructions { get; set; }
+
+        public string NotesForBuyer { get; set; }
+
+        public decimal? DutyPercent { get; set; }
+
+        public string PackWasteStatus { get; set; }
+
+        public int? PackagingGroupId{ get; set; }
+
+        public string PackagingGroupDescription { get; set; }
+
+        public IEnumerable<string> Privileges { get; set; }
     }
 }

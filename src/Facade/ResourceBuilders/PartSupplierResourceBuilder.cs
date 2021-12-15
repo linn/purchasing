@@ -22,8 +22,17 @@
 
         public PartSupplierResource Build(PartSupplier entity, IEnumerable<string> claims)
         {
+            if (entity == null)
+            {
+                return new PartSupplierResource
+                           {
+                               Links = this.BuildLinks(null, claims).ToArray()
+                           };
+            }
+
             return new PartSupplierResource
                        {
+                           UnitOfMeasure = entity.UnitOfMeasure,
                            PartNumber = entity.PartNumber,
                            SupplierId = entity.SupplierId,
                            PartDescription = entity.Part.Description,
@@ -36,11 +45,32 @@
                            FullAddress = entity.DeliveryAddress?.FullAddress,
                            ManufacturerCode = entity.Manufacturer?.Code,
                            ManufacturerName = entity.Manufacturer?.Name,
-                           TariffCode = entity.Tariff?.Code,
-                           TariffDescription = entity.Tariff?.Description,
                            OrderMethodName = entity.OrderMethod?.Name,
                            OrderMethodDescription = entity.OrderMethod?.Description,
                            Designation = entity.SupplierDesignation,
+                           CurrencyCode = entity.Currency?.Code,
+                           CurrencyUnitPrice = entity.CurrencyUnitPrice,
+                           OurCurrencyPriceToShowOnOrder = entity.OurCurrencyPriceToShowOnOrder,
+                           BaseOurUnitPrice = entity.BaseOurUnitPrice,
+                           MinimumDeliveryQty = entity.MinimumDeliveryQty,
+                           MinimumOrderQty = entity.MinimumOrderQty,
+                           OrderConversionFactor = entity.OrderConversionFactor,
+                           OrderIncrement = entity.OrderIncrement,
+                           ReelOrBoxQty = entity.ReelOrBoxQty,
+                           LeadTimeWeeks = entity.LeadTimeWeeks,
+                           ContractLeadTimeWeeks = entity.ContractLeadTimeWeeks,
+                           OverbookingAllowed = entity.OverbookingAllowed,
+                           DamagesPercent = entity.DamagesPercent,
+                           DeliveryInstructions = entity.DeliveryInstructions,
+                           WebAddress = entity.WebAddress,
+                           NotesForBuyer = entity.NotesForBuyer,
+                           TariffId = entity.Tariff?.Id,
+                           TariffCode = entity.Tariff?.Code,
+                           TariffDescription = entity.Tariff?.Description,
+                           DutyPercent = entity.DutyPercent,
+                           PackWasteStatus = entity.PackWasteStatus,
+                           PackagingGroupId = entity?.PackagingGroup?.Id,
+                           PackagingGroupDescription = entity.PackagingGroup?.Description,
                            Links = this.BuildLinks(entity, claims).ToArray()
                        };
         }
@@ -54,21 +84,23 @@
 
         private IEnumerable<LinkResource> BuildLinks(PartSupplier model, IEnumerable<string> claims)
         {
-            yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
-            yield return new LinkResource { Rel = "part", Href = $"/parts/{model.Part.Id}" };
-
-            yield return new LinkResource { Rel = "supplier", Href = $"/purchasing/{model.SupplierId}" };
-
             var privileges = claims as string[] ?? claims.ToArray();
+
+            if (model != null)
+            {
+                yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
+                yield return new LinkResource { Rel = "part", Href = $"/parts/{model.Part.Id}" };
+
+                yield return new LinkResource { Rel = "supplier", Href = $"/purchasing/{model.SupplierId}" };
+                if (this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
+                {
+                    yield return new LinkResource { Rel = "edit", Href = this.GetLocation(model) };
+                }
+            }
 
             if (this.authService.HasPermissionFor(AuthorisedAction.PartSupplierCreate, privileges))
             {
                 yield return new LinkResource { Rel = "create", Href = $"/purchasing/part-suppliers/create" };
-            }
-
-            if (this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
-            {
-                yield return new LinkResource { Rel = "edit", Href = this.GetLocation(model) };
             }
         }
     }

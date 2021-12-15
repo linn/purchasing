@@ -23,13 +23,20 @@
             this.signingLimitFacadeService = signingLimitFacadeService;
             this.Get("/purchasing/signing-limits", this.GetSigningLimits);
             this.Get("/purchasing/signing-limits/{id:int}", this.GetSigningLimitById);
+            this.Get("/purchasing/signing-limits/application-state", this.GetApplicationState);
             this.Post("/purchasing/signing-limits", this.CreateSigningLimit);
             this.Put("/purchasing/signing-limits/{id:int}", this.UpdateSigningLimit);
+            this.Delete("/purchasing/signing-limits/{id:int}", this.DeleteSigningLimitById);
         }
 
         private async Task GetSigningLimits(HttpRequest req, HttpResponse res)
         {
             await res.Negotiate(this.signingLimitFacadeService.GetAll());
+        }
+
+        private async Task GetApplicationState(HttpRequest req, HttpResponse res)
+        {
+            await res.Negotiate(this.signingLimitFacadeService.GetApplicationState(req.HttpContext.GetPrivileges()));
         }
 
         private async Task GetSigningLimitById(HttpRequest req, HttpResponse res)
@@ -56,6 +63,15 @@
             var result = this.signingLimitFacadeService.Update(id, resource);
 
             await response.Negotiate(result);
+        }
+
+        private async Task DeleteSigningLimitById(HttpRequest req, HttpResponse res)
+        {
+            var signingLimitId = req.RouteValues.As<int>("id");
+
+            var result = this.signingLimitFacadeService.DeleteOrObsolete(signingLimitId, req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
         }
     }
 }

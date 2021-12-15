@@ -20,7 +20,11 @@
         public override SigningLimit FindById(int key)
         {
             var signingLimit = this.serviceDbContext.SigningLimits.Find(key);
-            this.serviceDbContext.Entry(signingLimit).Reference(p => p.User).Load();
+            if (signingLimit != null)
+            {
+                this.serviceDbContext.Entry(signingLimit).Reference(p => p.User).Load();
+            }
+
             return signingLimit;
         }
 

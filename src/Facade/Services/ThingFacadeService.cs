@@ -43,6 +43,11 @@
             return this.domainService.CreateThing(thing);
         }
 
+        protected override void DeleteOrObsoleteResource(Thing entity)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override void UpdateFromResource(Thing entity, ThingResource updateResource)
         {
             throw new NotImplementedException();

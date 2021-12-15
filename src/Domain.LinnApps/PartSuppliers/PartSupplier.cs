@@ -3,6 +3,7 @@
     using System;
 
     using Linn.Purchasing.Domain.LinnApps.Parts;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     public class PartSupplier
@@ -19,7 +20,7 @@
 
         public OrderMethod OrderMethod { get; set; }
 
-        public string Currency { get; set; }
+        public Currency Currency { get; set; }
 
         public decimal? CurrencyUnitPrice { get; set; }
 
@@ -40,6 +41,8 @@
         public decimal? OrderConversionFactor { get; set; }
 
         public int LeadTimeWeeks { get; set; }
+
+        public int? ContractLeadTimeWeeks { get; set; }
 
         public string OverbookingAllowed { get; set; }
 
@@ -92,5 +95,7 @@
         public Address DeliveryAddress { get; set; }
 
         public string PackWasteStatus { get; set; }
+
+        public decimal? DutyPercent { get; set; }
     }
 }

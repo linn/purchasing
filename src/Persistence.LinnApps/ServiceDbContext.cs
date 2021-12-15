@@ -41,6 +41,14 @@
 
         public DbSet<Tariff> Tariffs { get; set; }
 
+        public DbSet<Currency> Currencies { get; set; }
+
+        public DbSet<OrderMethod> OrderMethods { get; set; }
+
+        public DbSet<LinnDeliveryAddress> LinnDeliveryAddresses { get; set; }
+
+        public DbSet<UnitOfMeasure> UnitsOfMeasure { get; set; }
+
         public DbSet<PurchaseLedger> PurchaseLedgers { get; set; }
 
         public DbSet<TransactionType> TransactionTypes { get; set; }
@@ -67,6 +75,10 @@
             this.BuildPurchaseOrderDeliveries(builder);
             this.BuildTariffs(builder);
             this.BuildSigningLimits(builder);
+            this.BuildCurrencies(builder);
+            this.BuildOrderMethods(builder);
+            this.BuildLinnDeliveryAddresses(builder);
+            this.BuildUnitsOfMeasure(builder);
             this.BuildPurchaseLedgers(builder);
             this.BuildTransactionTypes(builder);
         }
@@ -142,7 +154,7 @@
             entity.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID");
             entity.HasOne(e => e.Supplier).WithMany().HasForeignKey(e => e.SupplierId);
             entity.HasOne(e => e.OrderMethod).WithMany().HasForeignKey("PL_ORDER_METHOD");
-            entity.Property(e => e.Currency).HasColumnName("CURR_CODE").HasMaxLength(4);
+            entity.HasOne(e => e.Currency).WithMany().HasForeignKey("CURR_CODE");
             entity.Property(e => e.MinimumDeliveryQty).HasColumnName("MINIMUM_DELIVERY_QTY");
             entity.Property(e => e.DamagesPercent).HasColumnName("DAMAGES_PERCENT");
             entity.Property(e => e.DateCreated).HasColumnName("DATE_CREATED");
@@ -166,6 +178,8 @@
             entity.HasOne(e => e.Tariff).WithMany().HasForeignKey("TARIFF_ID");
             entity.Property(e => e.DateRohsCompliant).HasColumnName("DATE_ROHS_COMPLIANT");
             entity.Property(e => e.PackWasteStatus).HasColumnName("PACK_WASTE_STATUS").HasMaxLength(1);
+            entity.Property(e => e.ContractLeadTimeWeeks).HasColumnName("CONTRACT_LEAD_TIME_WEEKS");
+            entity.Property(e => e.DutyPercent).HasColumnName("DUTY_PERCENT");
         }
 
         private void BuildParts(ModelBuilder builder)
@@ -294,6 +308,32 @@
             entity.Property(e => e.Id).HasColumnName("TARIFF_ID");
             entity.Property(e => e.Code).HasColumnName("TARIFF_CODE");
             entity.Property(e => e.Description).HasColumnName("DESCRIPTION");
+        }
+
+        private void BuildCurrencies(ModelBuilder builder)
+        {
+            var entity = builder.Entity<Currency>().ToTable("CURRENCIES");
+            entity.HasKey(e => e.Code);
+            entity.Property(e => e.Code).HasColumnName("CODE");
+            entity.Property(e => e.Name).HasColumnName("NAME");
+        }
+
+        private void BuildLinnDeliveryAddresses(ModelBuilder builder)
+        {
+            var entity = builder.Entity<LinnDeliveryAddress>().ToTable("LINN_DELIVERY_ADDRESSES");
+            entity.HasKey(e => e.AddressId);
+            entity.HasOne(e => e.Address).WithMany().HasForeignKey(e => e.AddressId);
+            entity.Property(e => e.AddressId).HasColumnName("ADDRESS_ID");
+            entity.Property(e => e.Description).HasColumnName("DELIVERY_ADDRESS_DESCRIPTION");
+            entity.Property(e => e.IsMainDeliveryAddress).HasColumnName("MAIN_DELIVERY_ADDRESS");
+            entity.Property(e => e.DateObsolete).HasColumnName("DATE_OBSOLETE");
+        }
+
+        private void BuildUnitsOfMeasure(ModelBuilder builder)
+        {
+            var entity = builder.Entity<UnitOfMeasure>().ToTable("UNITS_OF_MEASURE");
+            entity.HasKey(e => e.Unit);
+            entity.Property(e => e.Unit).HasColumnName("UNIT_OF_MEASURE");
         }
 
         private void BuildPurchaseLedgers(ModelBuilder builder)

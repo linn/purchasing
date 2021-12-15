@@ -6,16 +6,38 @@ export const getItems = storeItems => {
     return storeItems.items ? storeItems.items : [];
 };
 
-export const getSearchItems = (storeItems, limit = null) => {
+export const getSearchItems = (
+    storeItems,
+    limit = null,
+    idFieldName = null,
+    nameFieldName = null,
+    descriptionFieldName = null
+) => {
+    let result = [];
+
     if (!storeItems) {
-        return [];
+        return result;
     }
+
+    result = storeItems.searchItems;
 
     if (limit) {
-        return storeItems.searchItems ? storeItems.searchItems.slice(0, limit) : [];
+        result = storeItems.searchItems ? storeItems.searchItems.slice(0, limit) : [];
     }
 
-    return storeItems.searchItems ? storeItems.searchItems : [];
+    if (idFieldName) {
+        result = result.map(x => ({ ...x, id: x[idFieldName] }));
+    }
+
+    if (nameFieldName) {
+        result = result.map(x => ({ ...x, name: x[nameFieldName] }));
+    }
+
+    if (descriptionFieldName) {
+        result = result.map(x => ({ ...x, description: x[descriptionFieldName] }));
+    }
+
+    return result || [];
 };
 
 export const getItem = (storeItems, id, idField = 'id') => {

@@ -23,6 +23,46 @@ export const partSupplier = new ItemType(
     '/purchasing/part-suppliers/record'
 );
 
+export const suppliers = new ItemType('suppliers', 'SUPPLIERS', '/purchasing/suppliers');
+
 export const employees = new ItemType('employees', 'EMPLOYEES', '/inventory/employees');
 
-export const suppliers = new ItemType('suppliers', 'SUPPLIERS', '/purchasing/suppliers');
+export const parts = new ItemType('parts', 'PARTS', '/parts');
+
+export const currencies = new ItemType(
+    'currencies',
+    'CURRENCIES',
+    '/purchasing/purchase-orders/currencies'
+);
+
+export const orderMethods = new ItemType(
+    'orderMethods',
+    'ORDER_METHODS',
+    '/purchasing/purchase-orders/methods'
+);
+
+export const deliveryAddresses = new ItemType(
+    'deliveryAddresses',
+    'DELIVERY_ADDRESSES',
+    '/purchasing/purchase-orders/delivery-addresses'
+);
+
+export const unitsOfMeasure = new ItemType(
+    'unitsOfMeasure',
+    'UNITS_OF_MEASURE',
+    '/purchasing/purchase-orders/units-of-measure'
+);
+
+export const tariffs = new ItemType('tariffs', 'TARIFFS', '/purchasing/purchase-orders/tariffs');
+
+export const packagingGroups = new ItemType(
+    'packagingGroups',
+    'PACKAGING_GROUPS',
+    '/purchasing/purchase-orders/packaging-groups'
+);
+
+export const manufacturers = new ItemType(
+    'manufacturers',
+    'MANUFACTURERS',
+    '/purchasing/manufacturers'
+);

@@ -15,7 +15,23 @@ export const testAction = () => ({
 
 export const employeesActionTypes = makeActionTypes(itemTypes.employees.actionType);
 
-export const suppliersActionTypes = makeActionTypes(itemTypes.suppliers.actionType, false);
+export const suppliersActionTypes = makeActionTypes(itemTypes.suppliers.actionType);
+
+export const partsActionTypes = makeActionTypes(itemTypes.parts.actionType);
+
+export const currenciesActionTypes = makeActionTypes(itemTypes.currencies.actionType);
+
+export const orderMethodsActionTypes = makeActionTypes(itemTypes.orderMethods.actionType);
+
+export const deliveryAddressesActionTypes = makeActionTypes(itemTypes.deliveryAddresses.actionType);
+
+export const unitsOfMeasureActionTypes = makeActionTypes(itemTypes.unitsOfMeasure.actionType);
+
+export const tariffsActionTypes = makeActionTypes(itemTypes.tariffs.actionType);
+
+export const packagingGroupsActionTypes = makeActionTypes(itemTypes.packagingGroups.actionType);
+
+export const manufacturersActionTypes = makeActionTypes(itemTypes.manufacturers.actionType);
 
 export const ordersBySupplierReportActionTypes = makeActionTypes(
     reportTypes.ordersBySupplierReport.actionType,
