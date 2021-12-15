@@ -62,7 +62,6 @@ function OrderBySupplierReport() {
                             showTotals={false}
                             placeholderRows={4}
                             placeholderColumns={4}
-                            // showRowTitles
                         />
                     )}
                 </Grid>
