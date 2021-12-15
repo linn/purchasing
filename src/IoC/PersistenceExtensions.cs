@@ -40,7 +40,7 @@
                 .AddTransient<IRepository<Manufacturer, string>, EntityFrameworkRepository<Manufacturer, string>>(r
                     => new EntityFrameworkRepository<Manufacturer, string>(r.GetService<ServiceDbContext>()?.Manufacturers))
                 .AddTransient<IRepository<Address, int>, EntityFrameworkRepository<Address, int>>(r
-                    => new EntityFrameworkRepository<Address, int>(r.GetService<ServiceDbContext>()?.Addresses));
+                    => new EntityFrameworkRepository<Address, int>(r.GetService<ServiceDbContext>()?.Addresses))
                 .AddTransient<IRepository<PurchaseOrder, int>, PurchaseOrderRepository>()
                 .AddTransient<IRepository<PurchaseLedger, int>, PurchaseLedgerRepository>();
 
