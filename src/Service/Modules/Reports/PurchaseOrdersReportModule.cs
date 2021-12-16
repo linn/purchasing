@@ -37,22 +37,10 @@
 
         private async Task GetOrdersBySupplierReport(HttpRequest req, HttpResponse res)
         {
-            var resource = await req.Bind<OrdersBySupplierSearchResource>();
-            //will I just remove the await bind bit^?
-            //It's not actually doing anything now that they're all query strings..
-
-            StringValues id = StringValues.Empty;
-            req.Query.TryGetValue("Id", out id);
-
-            StringValues from = StringValues.Empty;
-            req.Query.TryGetValue("FromDate", out from);
-
-            StringValues to = StringValues.Empty;
-            req.Query.TryGetValue("ToDate", out to);
-
-            resource.SupplierId = int.Parse(id);
-            resource.From = from;
-            resource.To = to;
+            var resource = new OrdersBySupplierSearchResource();
+            resource.SupplierId = req.Query.As<int>("id");
+            resource.From = req.Query.As<string>("FromDate");
+            resource.To = req.Query.As<string>("ToDate");
 
             var results = this.purchaseOrderReportFacadeService.GetOrdersBySupplierReport(resource, req.HttpContext.GetPrivileges());
 
