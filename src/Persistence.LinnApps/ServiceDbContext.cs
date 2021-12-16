@@ -33,6 +33,8 @@
 
         public DbSet<SigningLimit> SigningLimits { get; set; }
 
+        public DbSet<SigningLimitLog> SigningLimitLogs { get; set; }
+
         public DbSet<Tariff> Tariffs { get; set; }
 
         public DbSet<Currency> Currencies { get; set; }
@@ -60,6 +62,7 @@
             this.BuildAddresses(builder);
             this.BuildTariffs(builder);
             this.BuildSigningLimits(builder);
+            this.BuildSigningLimitLogs(builder);
             this.BuildCurrencies(builder);
             this.BuildOrderMethods(builder);
             this.BuildLinnDeliveryAddresses(builder);
@@ -233,6 +236,22 @@
             entity.Property(a => a.Unlimited).HasColumnName("UNLIMITED").HasMaxLength(1);
             entity.Property(a => a.ReturnsAuthorisation).HasColumnName("RETURNS_AUTHORISATION").HasMaxLength(1);
             entity.HasOne<Employee>(a => a.User).WithMany(e => e.SigningLimits).HasForeignKey(a => a.UserNumber);
+        }
+
+        private void BuildSigningLimitLogs(ModelBuilder builder)
+        {
+            var entity = builder.Entity<SigningLimitLog>().ToTable("PURCH_SIGNING_LIMITS_LOG");
+            entity.HasKey(m => m.UserNumber);
+            entity.Property(e => e.UserNumber).HasColumnName("USER_NUMBER");
+            entity.Property(a => a.ProductionLimit).HasColumnName("PRODUCTION_SIGNING_LIMIT");
+            entity.Property(a => a.SundryLimit).HasColumnName("SUNDRY_LIMIT");
+            entity.Property(a => a.Unlimited).HasColumnName("UNLIMITED").HasMaxLength(1);
+            entity.Property(a => a.ReturnsAuthorisation).HasColumnName("RETURNS_AUTHORISATION").HasMaxLength(1);
+
+            entity.Property(a => a.LogId).HasColumnName("LOG_ID");
+            entity.Property(a => a.LogAction).HasColumnName("LOG_ACTION").HasMaxLength(20);
+            entity.Property(a => a.LogUserNumber).HasColumnName("LOG_USER_NUMBER");
+            entity.Property(a => a.LogTime).HasColumnName("LOG_DATE");
         }
 
         private void BuildTariffs(ModelBuilder builder)

@@ -9,7 +9,7 @@
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Resources;
 
-    public class ThingFacadeService : FacadeResourceService<Thing, int, ThingResource, ThingResource>
+    public class ThingFacadeService : FacadeResourceService2<Thing, int, ThingResource, ThingResource>
     {
         private readonly IThingService domainService;
 
@@ -44,6 +44,16 @@
         }
 
         protected override void DeleteOrObsoleteResource(Thing entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void SaveToLogTable(
+            string actionType,
+            int userNumber,
+            Thing entity,
+            ThingResource resource,
+            ThingResource updateResource)
         {
             throw new NotImplementedException();
         }

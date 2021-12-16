@@ -10,6 +10,7 @@
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.Extensions;
 
@@ -17,11 +18,11 @@
 
     public class ThingModule : CarterModule
     {
-        private readonly IFacadeResourceService<Thing, int, ThingResource, ThingResource> thingFacadeService;
+        private readonly IFacadeResourceService2<Thing, int, ThingResource, ThingResource> thingFacadeService;
 
         private readonly IThingService thingService;
 
-        public ThingModule(IFacadeResourceService<Thing, int, ThingResource, ThingResource> thingFacadeService, IThingService thingService)
+        public ThingModule(IFacadeResourceService2<Thing, int, ThingResource, ThingResource> thingFacadeService, IThingService thingService)
         {
             this.thingFacadeService = thingFacadeService;
             this.thingService = thingService;
