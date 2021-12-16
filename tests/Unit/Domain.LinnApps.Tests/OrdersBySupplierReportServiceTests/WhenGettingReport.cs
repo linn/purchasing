@@ -18,18 +18,19 @@
     public class WhenGettingReport : ContextBase
     {
         private readonly int supplierId = 77282;
+        private readonly int orderNumber = 9876;
+
 
         private ResultsModel results;
 
         [SetUp]
         public void SetUp()
         {
-            var orderNumber1 = 9876;
             var purchaseOrders = new List<PurchaseOrder>
                                      {
                                          new PurchaseOrder
                                              {
-                                                 OrderNumber = orderNumber1,
+                                                 OrderNumber = this.orderNumber,
                                                  SupplierId = this.supplierId,
                                                  Details = new List<PurchaseOrderDetail>
                                                                {
@@ -37,7 +38,7 @@
                                                                        {
                                                                            Line = 1,
                                                                            NetTotal = 2m,
-                                                                           OrderNumber = orderNumber1,
+                                                                           OrderNumber = this.orderNumber,
                                                                            OurQty = 3,
                                                                            PartNumber = "WHO N0z",
                                                                            PurchaseDelivery =
@@ -68,7 +69,7 @@
                                       {
                                           new PurchaseLedger
                                               {
-                                                  OrderNumber = orderNumber1,
+                                                  OrderNumber = this.orderNumber,
                                                   OrderLine = 1,
                                                   PlTransType = "Suhn",
                                                   TransactionType =
@@ -90,12 +91,20 @@
         }
 
         [Test]
+        public void ShouldCallRepos()
+        {
+            this.PurchaseOrderRepository.Received().FilterBy(Arg.Any<Expression<Func<PurchaseOrder, bool>>>());
+            this.PurchaseLedgerRepository.Received().FilterBy(Arg.Any<Expression<Func<PurchaseLedger, bool>>>());
+            this.SupplierRepository.Received().FindById(Arg.Any<int>());
+        }
+
+        [Test]
         public void ShouldReturnData()
         {
             this.results.ReportTitle.DisplayValue.Should().Be($"Purchase Orders By Supplier - {this.supplierId}: We sell stuff");
             this.results.Rows.Count().Should().Be(1);
-            //y does this not have the row? Stepped through and can't see the issue tonight
-
+            var row = this.results.Rows.First();
+            row.RowId.Should().Be($"{this.orderNumber}/1");
         }
     }
 }

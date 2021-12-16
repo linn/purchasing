@@ -28,7 +28,7 @@
             this.PurchaseLedgerRepository = Substitute.For<IRepository<PurchaseLedger, int>>();
             this.PurchaseOrderRepository = Substitute.For<IRepository<PurchaseOrder, int>>();
             this.SupplierRepository = Substitute.For<IRepository<Supplier, int>>();
-            this.ReportingHelper = Substitute.For<IReportingHelper>();
+            this.ReportingHelper = new ReportingHelper();
             this.Sut = new PurchaseOrdersReportService(
                 this.PurchaseOrderRepository,
                 this.SupplierRepository,
