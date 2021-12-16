@@ -1,10 +1,8 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrderReportModuleTests
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
-    using System.Web;
 
     using FluentAssertions;
 
@@ -52,15 +50,9 @@
                 .Returns(new SuccessResult<ReportReturnResource>(reportReturnResource));
             var resource = new OrdersBySupplierSearchResource { From = "2/11/21", To = "2/12/21" };
 
-            var builder = new UriBuilder("http://localhost:51699/purchasing/reports/orders-by-supplier/report");
-            var query = HttpUtility.ParseQueryString(builder.Query);
-            query["fromDate"] = "2/11/21";
-            query["toDate"] = "2/12/21";
-            query["id"] = "16622";
-            builder.Query = query.ToString();
-            var url = builder.ToString();
-
-            this.Response = this.Client.Get(url, with => { with.Accept("application/json"); }).Result;
+            this.Response = this.Client.Get(
+                $"/purchasing/reports/orders-by-supplier/report?id={16622}&fromDate={2/11/21}&toDate={2/12/21}",
+                with => { with.Accept("application/json"); }).Result;
         }
 
         [Test]
@@ -84,8 +76,8 @@
             this.Response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
-        //can't get this to pass, resource.data is always null
-        //guess same issue as domain tests but can't see why tonight either
+        // can't get this to pass, resource.data is always null
+        // guess same issue as domain tests but can't see why tonight either
         [Test]
         public void ShouldReturnReport()
         {
