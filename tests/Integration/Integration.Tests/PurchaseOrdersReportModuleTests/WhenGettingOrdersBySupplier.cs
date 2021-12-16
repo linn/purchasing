@@ -76,15 +76,12 @@
             this.Response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
-        // can't get this to pass, resource.data is always null
-        // guess same issue as domain tests but can't see why tonight either
         [Test]
         public void ShouldReturnReport()
         {
-            var resource = this.Response.DeserializeBody<SuccessResult<ReportReturnResource>>();
-            var data = resource.Data;
-            var first = data.ReportResults.First();
-            first.title.displayString.Should().Be("potat");
+            var resource = this.Response.DeserializeBody<ReportReturnResource>();
+            resource.ReportResults.First().title.displayString.Should().Be("potat");
+            resource.ReportResults.First().results.First().values.First().textDisplayValue.Should().Be("ramen noodles");
         }
     }
 }
