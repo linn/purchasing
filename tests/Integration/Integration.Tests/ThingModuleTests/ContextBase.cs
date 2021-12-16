@@ -6,6 +6,7 @@
     using Linn.Common.Logging;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.Modules;
@@ -24,7 +25,7 @@
 
         protected ITransactionManager TransactionManager { get; set; }
 
-        protected IFacadeResourceService<Thing, int, ThingResource, ThingResource> FacadeService { get; private set; }
+        protected IFacadeResourceService2<Thing, int, ThingResource, ThingResource> FacadeService { get; private set; }
 
         protected ILog Log { get; private set; }
 
@@ -34,7 +35,7 @@
         public void EstablishContext()
         {
             this.TransactionManager = Substitute.For<ITransactionManager>();
-            this.FacadeService = Substitute.For<IFacadeResourceService<Thing, int, ThingResource, ThingResource>>();
+            this.FacadeService = Substitute.For<IFacadeResourceService2<Thing, int, ThingResource, ThingResource>>();
             this.ThingService = Substitute.For<IThingService>();
             this.Log = Substitute.For<ILog>();
 
