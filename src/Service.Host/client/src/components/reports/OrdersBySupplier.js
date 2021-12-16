@@ -6,7 +6,6 @@ import {
     ExportButton
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
-import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import queryString from 'query-string';
 import history from '../../history';
@@ -72,18 +71,6 @@ function OrderBySupplierReport() {
         </>
     );
 }
-
-OrderBySupplierReport.propTypes = {
-    reportData: PropTypes.shape({ title: PropTypes.string }),
-    history: PropTypes.shape({ push: PropTypes.func }).isRequired,
-    loading: PropTypes.bool,
-    options: PropTypes.shape({
-        fromDate: PropTypes.instanceOf(Date),
-        toDate: PropTypes.instanceOf(Date),
-        id: PropTypes.number
-    }),
-    config: PropTypes.shape({ appRoot: PropTypes.string }).isRequired
-};
 
 OrderBySupplierReport.defaultProps = {
     reportData: {},

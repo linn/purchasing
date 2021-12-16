@@ -5,7 +5,6 @@ import { SnackbarProvider } from 'notistack';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import { linnTheme } from '@linn-it/linn-form-components-library';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-
 import AdapterDateMoment from '@mui/lab/AdapterMoment';
 import configureStore from './configureStore';
 import Root from './components/Root';

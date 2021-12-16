@@ -3,10 +3,9 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { Page, DatePicker, Title, Typeahead } from '@linn-it/linn-form-components-library';
-import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import { getSearchItems, getSearchLoading } from '../../selectors/CollectionSelectorHelpers';
-import { getReportLoading, getReportOptions } from '../../selectors/ReportSelectorHelpers';
+import { getReportOptions } from '../../selectors/ReportSelectorHelpers';
 import history from '../../history';
 import config from '../../config';
 import suppliersActions from '../../actions/suppliersActions';
@@ -112,9 +111,5 @@ function OrdersBySupplierReportOptions() {
         </Page>
     );
 }
-
-OrdersBySupplierReportOptions.propTypes = {
-    history: PropTypes.shape({ push: PropTypes.func }).isRequired
-};
 
 export default OrdersBySupplierReportOptions;

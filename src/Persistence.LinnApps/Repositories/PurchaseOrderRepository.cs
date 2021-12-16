@@ -22,7 +22,7 @@
         public override IQueryable<PurchaseOrder> FilterBy(Expression<Func<PurchaseOrder, bool>> expression)
         {
             return this.serviceDbContext.PurchaseOrders.Where(expression).Include(o => o.Details)
-                .ThenInclude(d => d.PurchaseDelivery).AsNoTracking().AsQueryable();
+                .ThenInclude(d => d.PurchaseDelivery).AsNoTracking();
         }
 
         public override IQueryable<PurchaseOrder> FindAll()
