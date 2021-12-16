@@ -18,7 +18,7 @@
 
         public Supplier FindById(int key)
         {
-            throw new NotImplementedException();
+            return this.serviceDbContext.Suppliers.First(x => x.SupplierId == key);
         }
 
         public IQueryable<Supplier> FindAll()

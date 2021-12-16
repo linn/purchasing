@@ -4,6 +4,7 @@
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
@@ -30,6 +31,11 @@
         public DbSet<PackagingGroup> PackagingGroups { get; set; }
 
         public DbSet<Address> Addresses { get; set; }
+        public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
+
+        public DbSet<PurchaseOrderDetail> PurchaseOrderDetails { get; set; }
+
+        public DbSet<PurchaseOrderDelivery> PurchaseOrderDeliveries { get; set; }
 
         public DbSet<SigningLimit> SigningLimits { get; set; }
 
@@ -42,6 +48,12 @@
         public DbSet<LinnDeliveryAddress> LinnDeliveryAddresses { get; set; }
 
         public DbSet<UnitOfMeasure> UnitsOfMeasure { get; set; }
+
+        public DbSet<PurchaseLedger> PurchaseLedgers { get; set; }
+
+        public DbSet<TransactionType> TransactionTypes { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -58,12 +70,17 @@
             this.BuildPackagingGroups(builder);
             this.BuildManufacturers(builder);
             this.BuildAddresses(builder);
+            this.BuildPurchaseOrders(builder);
+            this.BuildPurchaseOrderDetails(builder);
+            this.BuildPurchaseOrderDeliveries(builder);
             this.BuildTariffs(builder);
             this.BuildSigningLimits(builder);
             this.BuildCurrencies(builder);
             this.BuildOrderMethods(builder);
             this.BuildLinnDeliveryAddresses(builder);
             this.BuildUnitsOfMeasure(builder);
+            this.BuildPurchaseLedgers(builder);
+            this.BuildTransactionTypes(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -223,6 +240,55 @@
             entity.Property(a => a.FullAddress).HasColumnName("ADDRESS");
         }
 
+        private void BuildPurchaseOrders(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PurchaseOrder>().ToTable("PL_ORDERS");
+            entity.HasKey(o => o.OrderNumber);
+            entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(o => o.SupplierId).HasColumnName("SUPP_SUPPLIER_ID");
+            entity.HasOne(o => o.Supplier).WithMany().HasForeignKey(o => o.SupplierId);
+            entity.Property(o => o.DocumentType).HasColumnName("DOCUMENT_TYPE");
+            entity.Property(o => o.OrderDate).HasColumnName("DATE_OF_ORDER");
+        }
+
+        private void BuildPurchaseOrderDetails(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PurchaseOrderDetail>().ToTable("PL_ORDER_DETAILS");
+            entity.HasKey(a => new { a.OrderNumber, a.Line });
+            entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(o => o.Line).HasColumnName("ORDER_LINE");
+            entity.Property(o => o.RohsCompliant).HasColumnName("ROHS_COMPLIANT");
+            entity.Property(o => o.OurQty).HasColumnName("OUR_QTY");
+            entity.Property(o => o.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
+            entity.Property(o => o.SuppliersDesignation).HasColumnName("SUPPLIERS_DESIGNATION").HasMaxLength(2000);
+
+            entity.HasOne(d => d.PurchaseOrder).WithMany(o => o.Details)
+                .HasForeignKey(d => d.OrderNumber);
+
+            entity.HasOne(d => d.PurchaseDelivery).WithOne(o => o.PurchaseOrderDetail)
+                .HasForeignKey<PurchaseOrderDelivery>(o => new { o.OrderNumber, o.OrderLine });
+            entity.Property(o => o.NetTotal).HasColumnName("NET_TOTAL").HasMaxLength(18);
+        }
+
+        private void BuildPurchaseOrderDeliveries(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PurchaseOrderDelivery>().ToTable("PL_DELIVERIES");
+            entity.HasKey(a => new { a.DeliverySeq, a.OrderNumber, a.OrderLine });
+            entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(o => o.OrderLine).HasColumnName("ORDER_LINE");
+            entity.Property(o => o.DeliverySeq).HasColumnName("DELIVERY_SEQ");
+
+            entity.Property(o => o.DateAdvised).HasColumnName("ADVISED_DATE");
+            entity.Property(o => o.DateRequested).HasColumnName("REQUESTED_DATE");
+
+            entity.Property(o => o.OurDeliveryQty).HasColumnName("OUR_DELIVERY_QTY").HasMaxLength(19);
+            entity.Property(o => o.OrderDeliveryQty).HasColumnName("ORDER_DELIVERY_QTY").HasMaxLength(19);
+            entity.Property(o => o.QtyNetReceived).HasColumnName("QTY_NET_RECEIVED").HasMaxLength(19);
+
+            entity.HasOne(d => d.PurchaseOrderDetail).WithOne(o => o.PurchaseDelivery);
+            entity.Property(o => o.NetTotal).HasColumnName("NET_TOTAL").HasMaxLength(18);
+        }
+
         private void BuildSigningLimits(ModelBuilder builder)
         {
             var entity = builder.Entity<SigningLimit>().ToTable("PURCH_SIGNING_LIMITS");
@@ -269,5 +335,55 @@
             entity.HasKey(e => e.Unit);
             entity.Property(e => e.Unit).HasColumnName("UNIT_OF_MEASURE");
         }
+
+        private void BuildPurchaseLedgers(ModelBuilder builder)
+        {
+            var e = builder.Entity<PurchaseLedger>().ToTable("PURCHASE_LEDGER");
+            e.HasKey(p => p.Pltref);
+            e.Property(p => p.Pltref).HasColumnName("PL_TREF").HasMaxLength(8);
+            e.Property(p => p.SupplierId).HasColumnName("SUPPLIER_ID").HasMaxLength(6);
+            e.Property(p => p.OrderLine).HasColumnName("ORDER_LINE").HasMaxLength(6);
+            e.Property(p => p.OrderNumber).HasColumnName("ORDER_NUMBER");
+            e.Property(p => p.DatePosted).HasColumnName("DATE_POSTED");
+            e.Property(p => p.PlState).HasColumnName("PL_STATE");
+            e.Property(p => p.PlQuantity).HasColumnName("PL_QTY").HasMaxLength(19);
+            e.Property(p => p.PlNetTotal).HasColumnName("PL_NET_TOTAL").HasMaxLength(14);
+            e.Property(p => p.PlVat).HasColumnName("PL_VAT").HasMaxLength(14);
+            e.Property(p => p.PlTotal).HasColumnName("PL_TOTAL").HasMaxLength(14);
+            e.Property(p => p.BaseNetTotal).HasColumnName("BASE_NET_TOTAL").HasMaxLength(14);
+            e.Property(p => p.BaseVatTotal).HasColumnName("BASE_VAT_TOTAL").HasMaxLength(14);
+            e.Property(p => p.BaseTotal).HasColumnName("BASE_TOTAL").HasMaxLength(14);
+            e.Property(p => p.InvoiceDate).HasColumnName("INVOICE_DATE");
+            e.Property(p => p.PlInvoiceRef).HasColumnName("PL_INVOICE_REF").HasMaxLength(30);
+            e.Property(p => p.PlDeliveryRef).HasColumnName("PL_DELIVERY_REF").HasMaxLength(20);
+            e.Property(p => p.CompanyRef).HasColumnName("COMPANY_REF").HasMaxLength(8);
+            e.Property(p => p.Currency).HasColumnName("CURRENCY").HasMaxLength(4);
+            e.Property(p => p.LedgerPeriod).HasColumnName("LEDGER_PERIOD");
+            e.Property(p => p.PostedBy).HasColumnName("POSTED_BY").HasMaxLength(6);
+            e.Property(p => p.DebitNomacc).HasColumnName("DEBIT_NOMACC").HasMaxLength(6);
+            e.Property(p => p.CreditNomacc).HasColumnName("CREDIT_NOMACC").HasMaxLength(6);
+            e.Property(p => p.PlTransType).HasColumnName("PL_TRANS_TYPE").HasMaxLength(12);
+            e.Property(p => p.BaseCurrency).HasColumnName("BASE_CURRENCY").HasMaxLength(4);
+            e.Property(p => p.Carriage).HasColumnName("CARRIAGE").HasMaxLength(14);
+            e.Property(p => p.UnderOver).HasColumnName("UNDER_OVER").HasMaxLength(14);
+            e.Property(p => p.ExchangeRate).HasColumnName("EXCHANGE_RATE").HasMaxLength(19);
+            e.Property(p => p.LedgerStream).HasColumnName("LEDGER_STREAM").HasMaxLength(8);
+            e.HasOne<TransactionType>(a => a.TransactionType).WithMany().HasForeignKey(a => a.PlTransType);
+        }
+
+        private void BuildTransactionTypes(ModelBuilder builder)
+        {
+            var entity = builder.Entity<TransactionType>().ToTable("PL_TRANS_TYPES");
+            entity.HasKey(m => m.TransType);
+            entity.Property(e => e.TransType).HasColumnName("PL_TRANS_TYPE").HasMaxLength(12);
+            entity.Property(e => e.Description).HasColumnName("TRANS_DESCRIPTION").HasMaxLength(100);
+            entity.Property(e => e.DebitNomacc).HasColumnName("DEBIT_NOMACC").HasMaxLength(6);
+            entity.Property(e => e.CreditNomacc).HasColumnName("CREDIT_NOMACC").HasMaxLength(6);
+            entity.Property(e => e.DebitOrCredit).HasColumnName("DEBIT_OR_CREDIT").HasMaxLength(1);
+            entity.Property(e => e.DateInvalid).HasColumnName("DATE_INVALID");
+            entity.Property(e => e.TransactionCategory).HasColumnName("TRANS_CATEGORY").HasMaxLength(10);
+        }
+
+
     }
 }

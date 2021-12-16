@@ -1,5 +1,6 @@
 import { makeActionTypes } from '@linn-it/linn-form-components-library';
 import * as itemTypes from '../itemTypes';
+import * as reportTypes from '../reportTypes';
 
 export const signingLimitActionTypes = makeActionTypes(itemTypes.signingLimit.actionType);
 export const signingLimitsActionTypes = makeActionTypes(itemTypes.signingLimits.actionType, false);
@@ -31,3 +32,8 @@ export const tariffsActionTypes = makeActionTypes(itemTypes.tariffs.actionType);
 export const packagingGroupsActionTypes = makeActionTypes(itemTypes.packagingGroups.actionType);
 
 export const manufacturersActionTypes = makeActionTypes(itemTypes.manufacturers.actionType);
+
+export const ordersBySupplierReportActionTypes = makeActionTypes(
+    reportTypes.ordersBySupplierReport.actionType,
+    false
+);

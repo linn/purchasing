@@ -5,6 +5,7 @@
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Persistence.LinnApps;
@@ -39,7 +40,13 @@
                 .AddTransient<IRepository<Manufacturer, string>, EntityFrameworkRepository<Manufacturer, string>>(r
                     => new EntityFrameworkRepository<Manufacturer, string>(r.GetService<ServiceDbContext>()?.Manufacturers))
                 .AddTransient<IRepository<Address, int>, EntityFrameworkRepository<Address, int>>(r
-                    => new EntityFrameworkRepository<Address, int>(r.GetService<ServiceDbContext>()?.Addresses));
+                    => new EntityFrameworkRepository<Address, int>(r.GetService<ServiceDbContext>()?.Addresses))
+                .AddTransient<IRepository<PurchaseOrder, int>, PurchaseOrderRepository>()
+                .AddTransient<IRepository<PurchaseLedger, int>, PurchaseLedgerRepository>();
+
+
+            // Could also be
+            // .AddTransient<IRepository<Thing, int>, EntityFrameworkRepository<Thing, int>>(r => new EntityFrameworkRepository<Thing, int>(r.GetService<ServiceDbContext>()?.Things))
         }
     }
 }

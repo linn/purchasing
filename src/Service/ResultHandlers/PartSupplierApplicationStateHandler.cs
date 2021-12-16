@@ -5,8 +5,7 @@
 
     public class PartSupplierApplicationStateResultHandler : JsonResultHandler<PartSupplierResource>
     {
-        public PartSupplierApplicationStateResultHandler() : base("application/vnd.linn.application-state+json;version=1")
-        {
+        public PartSupplierApplicationStateResultHandler() : base("application/vnd.linn.application-state+json;version=1") {
         }
     }
 }

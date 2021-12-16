@@ -32,7 +32,7 @@
 
         protected override Expression<Func<Supplier, bool>> SearchExpression(string searchTerm)
         {
-            return s => s.Name.Contains(searchTerm.ToUpper());
+            return s => s.SupplierId.ToString().Contains(searchTerm) || s.Name.Contains(searchTerm.ToUpper());
         }
     }
 }
