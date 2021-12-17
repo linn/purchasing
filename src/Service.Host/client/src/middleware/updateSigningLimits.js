@@ -8,6 +8,7 @@ export default ({ dispatch }) =>
 
         switch (action.type) {
             case actionTypes.signingLimitActionTypes.RECEIVE_UPDATED_SIGNING_LIMIT:
+            case actionTypes.signingLimitActionTypes.RECEIVE_DELETED_SIGNING_LIMIT:
             case actionTypes.signingLimitActionTypes.RECEIVE_NEW_SIGNING_LIMIT:
                 dispatch(signingLimitsActions.fetch());
                 break;
