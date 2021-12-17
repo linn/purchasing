@@ -37,11 +37,34 @@
             throw new NotImplementedException();
         }
 
-        public ResultsModel GetOrdersBySupplierReport(DateTime from, DateTime to, int supplierId)
+        public ResultsModel GetOrdersBySupplierReport(
+            DateTime from,
+            DateTime to,
+            int supplierId,
+            bool includeReturns,
+            bool outstandingOnly,
+            bool includeCancelled,
+            string includeCredits,
+            string stockControlled)
         {
             var purchaseOrders = this.purchaseOrderRepository.FilterBy(
-                x => x.SupplierId == supplierId && from <= x.OrderDate && x.OrderDate < to);
+                x => x.SupplierId == supplierId && from <= x.OrderDate && x.OrderDate < to
+                     && (includeReturns || x.DocumentType != "RO")
+                     && (includeCredits == "Y" 
+                            || (includeCredits == "N" && x.DocumentType != "CO")
+                            || (includeCredits == "O" && x.DocumentType == "CO")));
 
+            // returns Y/N : document type != "RO
+            // credit document type CO or ! CO       yes / no / only
+            // stock controller: pl_orders_pack.part_is_stock_controlled_sql(part number)
+
+            // all / outstanding: pl_orders_pack.order_s_complete_sql(order number, order line)
+            // && (!outstandingOnly || x.)
+
+            // cancelled: Y/N plorh (pl orders), plorl(pl order details) or pl deliveries (plco) cancelled = 'N' (????) or plorh.archive_order = 'Y'
+
+            // && (includeCancelled || (x.Cancelled = "N" && !x.Details.Any(z => z.Cancelled = 'Y' && (!x.Details.Any(z => z.PurchaseDelivery.Cancelled == 'Y') x.ArchiveOrder))
+            // part of above should probs go in foreach orderDetails
             var supplier = this.supplierRepository.FindById(supplierId);
 
             var reportLayout = new SimpleGridLayout(
