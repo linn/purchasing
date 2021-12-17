@@ -1,6 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
 {
-    using System;
+    using Linn.Common.Domain;
 
     public class SigningLimitLog : LogTable
     {

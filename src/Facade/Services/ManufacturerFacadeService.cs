@@ -20,6 +20,16 @@
             throw new NotImplementedException();
         }
 
+        protected override void SaveToLogTable(
+            string actionType,
+            int userNumber,
+            Manufacturer entity,
+            ManufacturerResource resource,
+            ManufacturerResource updateResource)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override void DeleteOrObsoleteResource(Manufacturer entity)
         {
             throw new NotImplementedException();

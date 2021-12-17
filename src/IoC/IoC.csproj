@@ -12,7 +12,7 @@
     <PackageReference Include="linn.common.facade.carter" Version="5.1.0" />
     <PackageReference Include="Linn.Common.Logging" Version="2.0.0" />
     <PackageReference Include="Linn.Common.Logging.AmazonSqs" Version="3.0.0" />
-    <PackageReference Include="Linn.Common.Persistence.EntityFramework" Version="3.0.1" />
+    <PackageReference Include="Linn.Common.Persistence.EntityFramework" Version="3.0.2" />
     <PackageReference Include="Linn.Common.Proxy" Version="3.0.1" />
   </ItemGroup>
 

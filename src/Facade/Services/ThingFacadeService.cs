@@ -9,7 +9,7 @@
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Resources;
 
-    public class ThingFacadeService : FacadeResourceService2<Thing, int, ThingResource, ThingResource>
+    public class ThingFacadeService : FacadeResourceService<Thing, int, ThingResource, ThingResource>
     {
         private readonly IThingService domainService;
 

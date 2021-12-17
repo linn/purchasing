@@ -21,6 +21,16 @@
             throw new NotImplementedException();
         }
 
+        protected override void SaveToLogTable(
+            string actionType,
+            int userNumber,
+            LinnDeliveryAddress entity,
+            LinnDeliveryAddressResource resource,
+            LinnDeliveryAddressResource updateResource)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override void DeleteOrObsoleteResource(LinnDeliveryAddress entity)
         {
             throw new NotImplementedException();

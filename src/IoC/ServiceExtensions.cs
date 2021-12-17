@@ -54,8 +54,8 @@
         public static IServiceCollection AddFacades(this IServiceCollection services)
         {
             return services
-                .AddTransient<IFacadeResourceService2<Thing, int, ThingResource, ThingResource>, ThingFacadeService>()
-                .AddTransient<IFacadeResourceService2<SigningLimit, int, SigningLimitResource, SigningLimitResource>, SigningLimitFacadeService>()
+                .AddTransient<IFacadeResourceService<Thing, int, ThingResource, ThingResource>, ThingFacadeService>()
+                .AddTransient<IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource>, SigningLimitFacadeService>()
                 .AddTransient<IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>, PartSupplierFacadeService>()
                 .AddTransient<IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource>, SupplierFacadeService>()
                 .AddTransient<IPartService, PartService>()

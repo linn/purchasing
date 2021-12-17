@@ -8,8 +8,6 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
 
-    using PagedList.Core;
-
     public class CurrencyFacadeService : FacadeResourceService<Currency, string, CurrencyResource, CurrencyResource>
     {
         public CurrencyFacadeService(IRepository<Currency, string> repository, ITransactionManager transactionManager, IBuilder<Currency> resourceBuilder)
@@ -18,6 +16,16 @@
         }
 
         protected override Currency CreateFromResource(CurrencyResource resource)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void SaveToLogTable(
+            string actionType,
+            int userNumber,
+            Currency entity,
+            CurrencyResource resource,
+            CurrencyResource updateResource)
         {
             throw new NotImplementedException();
         }
