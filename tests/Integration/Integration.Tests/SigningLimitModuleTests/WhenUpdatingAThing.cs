@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.SigningLimitModuleTests
 {
+    using System.Collections.Generic;
     using System.Net;
 
     using FluentAssertions;
@@ -26,7 +27,11 @@
 
             this.resource = new SigningLimitResource { UserNumber = this.userNumber, ProductionLimit = 123.45m };
 
-            this.FacadeService.Update(this.userNumber, Arg.Is<SigningLimitResource>(a => a.UserNumber == this.userNumber))
+            this.FacadeService.Update(
+                    this.userNumber,
+                    Arg.Is<SigningLimitResource>(a => a.UserNumber == this.userNumber),
+                    Arg.Any<List<string>>(),
+                    Arg.Any<int>())
                 .Returns(
                     new SuccessResult<SigningLimitResource>(
                         new SigningLimitResource
@@ -55,7 +60,11 @@
         public void ShouldCallUpdate()
         {
             this.FacadeService.Received()
-                .Update(this.userNumber, Arg.Is<SigningLimitResource>(a => a.UserNumber == this.userNumber));
+                .Update(
+                    this.userNumber,
+                    Arg.Is<SigningLimitResource>(a => a.UserNumber == this.userNumber),
+                    Arg.Any<List<string>>(),
+                    Arg.Any<int>());
         }
 
         [Test]

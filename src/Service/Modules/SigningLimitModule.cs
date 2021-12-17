@@ -51,7 +51,10 @@
         private async Task CreateSigningLimit(HttpRequest request, HttpResponse response)
         {
             var resource = await request.Bind<SigningLimitResource>();
-            var result = this.signingLimitFacadeService.Add(resource);
+            var result = this.signingLimitFacadeService.Add(
+                resource,
+                request.HttpContext.GetPrivileges(),
+                request.HttpContext.User.GetEmployeeNumber());
 
             await response.Negotiate(result);
         }
@@ -60,7 +63,11 @@
         {
             var id = request.RouteValues.As<int>("id");
             var resource = await request.Bind<SigningLimitResource>();
-            var result = this.signingLimitFacadeService.Update(id, resource);
+            var result = this.signingLimitFacadeService.Update(
+                id,
+                resource,
+                request.HttpContext.GetPrivileges(),
+                request.HttpContext.User.GetEmployeeNumber());
 
             await response.Negotiate(result);
         }
@@ -69,7 +76,10 @@
         {
             var signingLimitId = req.RouteValues.As<int>("id");
 
-            var result = this.signingLimitFacadeService.DeleteOrObsolete(signingLimitId, req.HttpContext.GetPrivileges());
+            var result = this.signingLimitFacadeService.DeleteOrObsolete(
+                signingLimitId,
+                req.HttpContext.GetPrivileges(),
+                req.HttpContext.User.GetEmployeeNumber());
 
             await res.Negotiate(result);
         }

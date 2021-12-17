@@ -21,6 +21,16 @@
             throw new NotImplementedException();
         }
 
+        protected override void SaveToLogTable(
+            string actionType,
+            int userNumber,
+            PackagingGroup entity,
+            PackagingGroupResource resource,
+            PackagingGroupResource updateResource)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override void DeleteOrObsoleteResource(PackagingGroup entity)
         {
             throw new NotImplementedException();

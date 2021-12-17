@@ -48,6 +48,16 @@
             throw new NotImplementedException();
         }
 
+        protected override void SaveToLogTable(
+            string actionType,
+            int userNumber,
+            Thing entity,
+            ThingResource resource,
+            ThingResource updateResource)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override void UpdateFromResource(Thing entity, ThingResource updateResource)
         {
             throw new NotImplementedException();

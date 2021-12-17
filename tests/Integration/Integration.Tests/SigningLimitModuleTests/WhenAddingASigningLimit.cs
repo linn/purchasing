@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.SigningLimitModuleTests
 {
+    using System.Collections.Generic;
     using System.Net;
 
     using FluentAssertions;
@@ -21,7 +22,7 @@
         {
             this.signingLimitResource = new SigningLimitResource { UserNumber = 4 };
 
-            this.FacadeService.Add(Arg.Any<SigningLimitResource>())
+            this.FacadeService.Add(Arg.Any<SigningLimitResource>(), Arg.Any<List<string>>(), Arg.Any<int>())
                 .Returns(new CreatedResult<SigningLimitResource>(
                     new SigningLimitResource
                         {

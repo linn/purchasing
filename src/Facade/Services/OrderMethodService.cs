@@ -20,6 +20,16 @@
             throw new NotImplementedException();
         }
 
+        protected override void SaveToLogTable(
+            string actionType,
+            int userNumber,
+            OrderMethod entity,
+            OrderMethodResource resource,
+            OrderMethodResource updateResource)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override void DeleteOrObsoleteResource(OrderMethod entity)
         {
             throw new NotImplementedException();
