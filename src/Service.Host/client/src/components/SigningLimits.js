@@ -12,6 +12,11 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Typography from '@mui/material/Typography';
 import { makeStyles } from '@mui/styles';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import EditOffIcon from '@mui/icons-material/EditOff';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import { getApplicationState, getItems, getLoading } from '../selectors/CollectionSelectorHelpers';
 import history from '../history';
@@ -69,6 +74,10 @@ function SigningLimits() {
         },
         inserting: {
             backgroundColor: 'whiteSmoke'
+        },
+        deleting: {
+            backgroundColor: 'indianred',
+            textDecorationLine: 'line-through'
         },
         gap: {
             marginBottom: '20px'
@@ -186,6 +195,8 @@ function SigningLimits() {
         rows.forEach(a => {
             if (a.inserting) {
                 dispatch(signingLimitActions.add(a));
+            } else if (a.deleting) {
+                dispatch(signingLimitActions.delete(a.id));
             } else if (a.updating) {
                 dispatch(signingLimitActions.update(a.id, a));
             }
@@ -224,10 +235,30 @@ function SigningLimits() {
         }
     };
 
+    const handleDeleteRow = params => {
+        if (params && params.row) {
+            const newRows = rows.map(r =>
+                r.userNumber === params.row.userNumber
+                    ? {
+                          ...r,
+                          deleting: true
+                      }
+                    : r
+            );
+            setRows(newRows);
+            setEditing(true);
+        }
+    };
+
     const getYesNo = params => (params.row[params.field] === 'Y' ? 'Yes' : 'No');
+
     const getBackgroundColourClass = params => {
         if (params.row.inserting) {
             return classes.inserting;
+        }
+
+        if (params.row.deleting) {
+            return classes.deleting;
         }
 
         if (params.row.updating) {
@@ -262,6 +293,20 @@ function SigningLimits() {
             editable: editingAllowed,
             renderEditCell: renderEditTextarea,
             valueGetter: params => getYesNo(params)
+        },
+        {
+            field: 'delete',
+            headerName: ' ',
+            width: 130,
+            renderCell: params => (
+                <IconButton
+                    aria-label="delete"
+                    size="small"
+                    onClick={() => handleDeleteRow(params)}
+                >
+                    <DeleteIcon fontSize="inherit" />
+                </IconButton>
+            )
         }
     ];
 
@@ -269,7 +314,7 @@ function SigningLimits() {
         <Page history={history}>
             <Grid container>
                 <Grid item xs={8} />
-                <Grid item xs={4}>
+                <Grid item xs={3}>
                     <Dropdown
                         items={employees.map(e => ({
                             displayText: `${e.fullName} (${e.id})`,
@@ -281,6 +326,17 @@ function SigningLimits() {
                         type="number"
                         disabled={!editingAllowed}
                     />
+                </Grid>
+                <Grid item xs={1}>
+                    {editingAllowed ? (
+                        <Tooltip title="You can amend signing limits">
+                            <ModeEditIcon color="primary" />
+                        </Tooltip>
+                    ) : (
+                        <Tooltip title="You do not have write access to signing limits">
+                            <EditOffIcon color="secondary" />
+                        </Tooltip>
+                    )}
                 </Grid>
                 <Grid item xs={12}>
                     <Typography variant="h6">Signing Limits</Typography>
