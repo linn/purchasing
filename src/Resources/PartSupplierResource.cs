@@ -87,6 +87,12 @@
 
         public string PackagingGroupDescription { get; set; }
 
+        public string DateCreated { get; set; }
+
+        public string DateInvalid { get; set; }
+
+        public int? MadeInvalidBy { get; set; }
+
         public IEnumerable<string> Privileges { get; set; }
     }
 }

@@ -37,6 +37,8 @@ import OrderDetailsTab from './tabs/OrderDetailsTab';
 import OtherDetailsTab from './tabs/OtherDetailsTab';
 import tariffsActions from '../../actions/tariffsActions';
 import packagingGroupActions from '../../actions/packagingGroupActions';
+import LifecycleTab from './tabs/LifecycleTab';
+import employeesActions from '../../actions/employeesActions';
 
 function PartSupplier() {
     const reduxDispatch = useDispatch();
@@ -66,7 +68,7 @@ function PartSupplier() {
     const orderMethods = useSelector(reduxState => getItems(reduxState.orderMethods));
     const currencies = useSelector(reduxState => getItems(reduxState.currencies));
     const packagingGroups = useSelector(reduxState => getItems(reduxState.packagingGroups));
-
+    const employees = useSelector(reduxState => getItems(reduxState.employees));
     const updatePartSupplier = body => reduxDispatch(partSupplierActions.update(null, body));
 
     const creating = () => false;
@@ -93,6 +95,7 @@ function PartSupplier() {
         reduxDispatch(orderMethodsactions.fetch());
         reduxDispatch(currenciesActions.fetch());
         reduxDispatch(packagingGroupActions.fetch());
+        reduxDispatch(employeesActions.fetch());
     }, [reduxDispatch]);
 
     useEffect(() => {
@@ -104,7 +107,13 @@ function PartSupplier() {
             );
         }
         if (query.tab) {
-            const tabs = { partAndSupplier: 0, orderDetails: 1, otherDetails: 2 };
+            const tabs = {
+                partAndSupplier: 0,
+                orderDetails: 1,
+                otherDetails: 2,
+                lifecycle: 3,
+                manufacturers: 4
+            };
             setValue(tabs[query.tab]);
         }
     }, [query, reduxDispatch]);
@@ -200,9 +209,8 @@ function PartSupplier() {
                                         <Tab label="Part and Supplier" />
                                         <Tab label="Order Details" />
                                         <Tab label="Other Details" />
-                                        <Tab label="Jit" disabled />
-                                        <Tab label="Lifecycle" disabled />
-                                        <Tab label="Manufacturer" disabled />
+                                        <Tab label="Lifecycle" />
+                                        <Tab label="Manufacturer" />
                                     </Tabs>
                                 </Box>
 
@@ -293,6 +301,26 @@ function PartSupplier() {
                                             tariffsSearchLoading={tariffsSearchLoading}
                                             searchTariffs={searchTariffs}
                                             packagingGroups={packagingGroups}
+                                        />
+                                    </Box>
+                                )}
+                                {value === 3 && (
+                                    <Box sx={{ paddingTop: 3 }}>
+                                        <LifecycleTab
+                                            handleFieldChange={handleFieldChange}
+                                            createdBy={state.partSupplier?.createdBy}
+                                            employees={employees}
+                                            dateCreated={
+                                                state.partSupplier?.dateCreated
+                                                    ? new Date(state.partSupplier?.dateCreated)
+                                                    : null
+                                            }
+                                            madeInvalidB={state.partSupplier?.madeInvalidB}
+                                            dateInvalid={
+                                                state.partSupplier?.dateInvalid
+                                                    ? new Date(state.partSupplier?.dateInvalid)
+                                                    : null
+                                            }
                                         />
                                     </Box>
                                 )}

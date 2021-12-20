@@ -16,9 +16,12 @@
 
         private readonly IRepository<Address, int> addressRepository;
 
-        private IRepository<Tariff, int> tariffRepository;
+        private readonly IRepository<Tariff, int> tariffRepository;
 
-        private IRepository<PackagingGroup, int> packagingGroupRepository;
+        private readonly IRepository<PackagingGroup, int> packagingGroupRepository;
+
+        private readonly IRepository<Employee, int> employeeRepository;
+
 
         public PartSupplierService(
             IAuthorisationService authService,
@@ -26,7 +29,8 @@
             IRepository<OrderMethod, string> orderMethodRepository,
             IRepository<Address, int> addressRepository,
             IRepository<Tariff, int> tariffRepository,
-            IRepository<PackagingGroup, int> packagingGroupRepository)
+            IRepository<PackagingGroup, int> packagingGroupRepository,
+            IRepository<Employee, int> employeeRepository)
         {
             this.authService = authService;
             this.currencyRepository = currencyRepository;
@@ -34,6 +38,7 @@
             this.addressRepository = addressRepository;
             this.tariffRepository = tariffRepository;
             this.packagingGroupRepository = packagingGroupRepository;
+            this.employeeRepository = employeeRepository;
         }
 
         public void UpdatePartSupplier(PartSupplier current, PartSupplier updated, IEnumerable<string> privileges)
@@ -69,6 +74,13 @@
                                              ? null : this.packagingGroupRepository.FindById(updated.PackagingGroup.Id);
             }
 
+            if (current.MadeInvalidBy?.Id != updated.MadeInvalidBy?.Id)
+            {
+                current.MadeInvalidBy = updated.MadeInvalidBy == null
+                                             ? null : this.employeeRepository.FindById(updated.MadeInvalidBy.Id);
+            }
+
+            current.DateInvalid = updated.DateInvalid;
             current.SupplierDesignation = updated.SupplierDesignation;
             current.CurrencyUnitPrice = updated.CurrencyUnitPrice;
             current.OurCurrencyPriceToShowOnOrder = updated.OurCurrencyPriceToShowOnOrder;

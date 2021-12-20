@@ -5,6 +5,7 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Persistence.LinnApps.Keys;
@@ -88,7 +89,12 @@
                                                            ? null : new PackagingGroup
                                                                         {
                                                                             Id = (int)updateResource.PackagingGroupId
-                                                                        }
+                                                                        },
+                                      MadeInvalidBy = updateResource.MadeInvalidBy.HasValue 
+                                                          ? new Employee { Id = (int)updateResource.MadeInvalidBy }
+                                                          : null,
+                                      DateInvalid = string.IsNullOrEmpty(updateResource.DateInvalid) 
+                                                        ? null : DateTime.Parse(updateResource.DateInvalid) 
             };
 
             this.domainService.UpdatePartSupplier(entity, updated, updateResource.Privileges);

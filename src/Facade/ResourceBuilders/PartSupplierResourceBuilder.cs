@@ -71,6 +71,9 @@
                            PackWasteStatus = entity.PackWasteStatus,
                            PackagingGroupId = entity?.PackagingGroup?.Id,
                            PackagingGroupDescription = entity.PackagingGroup?.Description,
+                           DateCreated = entity.DateCreated.ToString("o"),
+                           DateInvalid = entity.DateInvalid?.ToString("o"),
+                           MadeInvalidBy = entity.MadeInvalidBy?.Id,
                            Links = this.BuildLinks(entity, claims).ToArray()
                        };
         }
