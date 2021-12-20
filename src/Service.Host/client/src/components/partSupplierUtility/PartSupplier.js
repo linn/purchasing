@@ -110,24 +110,28 @@ function PartSupplier() {
     }, [item]);
 
     const handleFieldChange = (propertyName, newValue) => {
+        let formatted = newValue;
+        if (['addressId', 'packagingGroupId'].includes(propertyName)) {
+            formatted = Number(newValue);
+        }
         setEditStatus('edit');
         if (propertyName === 'orderMethodName') {
             dispatch({
                 type: 'fieldChange',
                 fieldName: 'orderMethodDescription',
-                payload: orderMethods.find(x => x.name === newValue).description
+                payload: orderMethods.find(x => x.name === formatted).description
             });
         }
         if (propertyName === 'addressId') {
             dispatch({
                 type: 'fieldChange',
                 fieldName: 'fullAddress',
-                payload: deliveryAddresses.find(x => x.addressId === Number(newValue)).address
+                payload: deliveryAddresses.find(x => x.addressId === formatted).address
             });
-            dispatch({ type: 'fieldChange', fieldName: propertyName, payload: Number(newValue) });
+            dispatch({ type: 'fieldChange', fieldName: propertyName, payload: formatted });
             return;
         }
-        dispatch({ type: 'fieldChange', fieldName: propertyName, payload: newValue });
+        dispatch({ type: 'fieldChange', fieldName: propertyName, payload: formatted });
     };
 
     const canEdit = () => item?.links.some(l => l.rel === 'edit' || l.rel === 'create');
