@@ -76,7 +76,7 @@ function PartSupplier() {
         prevPart: {}
     });
 
-    const partKey = useSelector(reduxState => getQuery(reduxState));
+    const query = useSelector(reduxState => getQuery(reduxState));
     const loading = useSelector(reduxState => reduxState.partSupplier.loading);
     const snackbarVisible = useSelector(reduxState => getSnackbarVisible(reduxState.partSupplier));
     const editStatus = useSelector(reduxState => getEditStatus(reduxState.partSupplier));
@@ -84,6 +84,8 @@ function PartSupplier() {
     const item = useSelector(reduxState => getItem(reduxState.partSupplier));
 
     const setEditStatus = status => reduxDispatch(partSupplierActions.setEditStatus(status));
+
+    const [value, setValue] = useState(0);
 
     useEffect(() => {
         reduxDispatch(unitsOfMeasureActions.fetch());
@@ -94,14 +96,18 @@ function PartSupplier() {
     }, [reduxDispatch]);
 
     useEffect(() => {
-        if (partKey) {
+        if (query.partId && query.supplierId) {
             reduxDispatch(
                 partSupplierActions.fetchByHref(
-                    `${partSupplier.uri}?partId=${partKey.partId}&supplierId=${partKey.supplierId}`
+                    `${partSupplier.uri}?partId=${query.partId}&supplierId=${query.supplierId}`
                 )
             );
         }
-    }, [partKey, reduxDispatch]);
+        if (query.tab) {
+            const tabs = { partAndSupplier: 0, orderDetails: 1, otherDetails: 2 };
+            setValue(tabs[query.tab]);
+        }
+    }, [query, reduxDispatch]);
 
     useEffect(() => {
         if (item) {
@@ -135,8 +141,6 @@ function PartSupplier() {
     };
 
     const canEdit = () => item?.links.some(l => l.rel === 'edit' || l.rel === 'create');
-
-    const [value, setValue] = useState(0);
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
