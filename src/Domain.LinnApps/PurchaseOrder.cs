@@ -7,6 +7,8 @@
 
     public class PurchaseOrder
     {
+        public string Cancelled { get; set; }
+
         public IEnumerable<PurchaseOrderDetail> Details { get; set; }
 
         public string DocumentType { get; set; }

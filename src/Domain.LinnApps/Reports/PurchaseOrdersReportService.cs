@@ -7,8 +7,13 @@
     using Linn.Common.Persistence;
     using Linn.Common.Reporting.Layouts;
     using Linn.Common.Reporting.Models;
+    using Linn.Purchasing.Domain.LinnApps.ExternalServices;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
+
+    using MimeKit.Cryptography;
+    using MimeKit.Encodings;
 
     public class PurchaseOrdersReportService : IPurchaseOrdersReportService
     {
@@ -20,15 +25,24 @@
 
         private readonly IRepository<Supplier, int> supplierRepository;
 
+        private readonly IQueryRepository<Part> partRepository;
+
+        private readonly IPurchaseOrdersPack purchaseOrdersPack;
+
+
         public PurchaseOrdersReportService(
             IRepository<PurchaseOrder, int> purchaseOrderRepository,
             IRepository<Supplier, int> supplierRepository,
+            IQueryRepository<Part> partRepository,
             IRepository<PurchaseLedger, int> purchaseLedgerRepository,
-            IReportingHelper reportingHelper)
+            IPurchaseOrdersPack purchaseOrdersPack,
+        IReportingHelper reportingHelper)
         {
             this.purchaseOrderRepository = purchaseOrderRepository;
             this.supplierRepository = supplierRepository;
+            this.partRepository = partRepository;
             this.purchaseLedgerRepository = purchaseLedgerRepository;
+            this.purchaseOrdersPack = purchaseOrdersPack;
             this.reportingHelper = reportingHelper;
         }
 
@@ -50,21 +64,21 @@
             var purchaseOrders = this.purchaseOrderRepository.FilterBy(
                 x => x.SupplierId == supplierId && from <= x.OrderDate && x.OrderDate < to
                      && (includeReturns || x.DocumentType != "RO")
-                     && (includeCredits == "Y" 
-                            || (includeCredits == "N" && x.DocumentType != "CO")
-                            || (includeCredits == "O" && x.DocumentType == "CO")));
+                     && (includeCredits == "Y" || (includeCredits == "N" && x.DocumentType != "CO")
+                                               || (includeCredits == "O" && x.DocumentType == "CO")));
+
+            //stock_controlled from parts = "Y"
+
 
             // returns Y/N : document type != "RO
             // credit document type CO or ! CO       yes / no / only
             // stock controller: pl_orders_pack.part_is_stock_controlled_sql(part number)
 
-            // all / outstanding: pl_orders_pack.order_s_complete_sql(order number, order line)
+            // all / outstanding: pl_orders_pack.order_is_complete_sql(order number, order line)
             // && (!outstandingOnly || x.)
 
             // cancelled: Y/N plorh (pl orders), plorl(pl order details) or pl deliveries (plco) cancelled = 'N' (????) or plorh.archive_order = 'Y'
 
-            // && (includeCancelled || (x.Cancelled = "N" && !x.Details.Any(z => z.Cancelled = 'Y' && (!x.Details.Any(z => z.PurchaseDelivery.Cancelled == 'Y') x.ArchiveOrder))
-            // part of above should probs go in foreach orderDetails
             var supplier = this.supplierRepository.FindById(supplierId);
 
             var reportLayout = new SimpleGridLayout(
@@ -79,8 +93,34 @@
 
             foreach (var order in purchaseOrders)
             {
+                if (!includeCancelled &&
+                    order.Cancelled == "Y")
+                {
+                    break;
+                }
+
                 foreach (var orderDetail in order.Details)
                 {
+                    if (outstandingOnly && !this.purchaseOrdersPack.OrderIsCompleteSql(
+                            orderDetail.OrderNumber,
+                            orderDetail.Line))
+                    {
+                        break;
+                    }
+
+                    if (!includeCancelled &&
+                        (orderDetail.Cancelled == "Y" || orderDetail.PurchaseDelivery.Cancelled == "Y"))
+                    {
+                        break;
+                    }
+
+                    var part = this.partRepository.FindBy(x => x.PartNumber == orderDetail.PartNumber);
+                    if (stockControlled != "A" || (stockControlled == "N" && part.StockControlled != "N")
+                                               || (stockControlled == "O" && part.StockControlled == "Y"))
+                    {
+                        break;
+                    }
+
                     var ledgersForOrderAndLine = this.purchaseLedgerRepository.FilterBy(
                         pl => pl.OrderNumber == order.OrderNumber && pl.OrderLine == orderDetail.Line);
 

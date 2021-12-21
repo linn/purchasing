@@ -17,9 +17,9 @@
 
     public class WhenGettingReport : ContextBase
     {
-        private readonly int supplierId = 77282;
         private readonly int orderNumber = 9876;
 
+        private readonly int supplierId = 77282;
 
         private ResultsModel results;
 
@@ -84,10 +84,17 @@
             this.SupplierRepository.FindById(Arg.Any<int>())
                 .Returns(new Supplier { Name = "We sell stuff", SupplierId = this.supplierId });
 
+            //this.PurchaseOrdersPack.OrderIsCompleteSql(Arg.Any<int>(), Arg.Any<int>()).Returns(true);
+
             this.results = this.Sut.GetOrdersBySupplierReport(
                 new DateTime(2021, 10, 1),
                 new DateTime(2021, 12, 5),
-                this.supplierId);
+                this.supplierId,
+                true,
+                false,
+                true,
+                "Y",
+                "A");
         }
 
         [Test]
@@ -101,7 +108,8 @@
         [Test]
         public void ShouldReturnData()
         {
-            this.results.ReportTitle.DisplayValue.Should().Be($"Purchase Orders By Supplier - {this.supplierId}: We sell stuff");
+            this.results.ReportTitle.DisplayValue.Should()
+                .Be($"Purchase Orders By Supplier - {this.supplierId}: We sell stuff");
             this.results.Rows.Count().Should().Be(1);
             var row = this.results.Rows.First();
             row.RowId.Should().Be($"{this.orderNumber}/1");

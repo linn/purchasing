@@ -188,6 +188,7 @@
             entity.HasKey(a => a.PartNumber);
             entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
             entity.Property(a => a.Description).HasColumnName("DESCRIPTION").HasMaxLength(50);
+            entity.Property(a => a.StockControlled).HasColumnName("STOCK_CONTROLLED").HasMaxLength(1);
             entity.Property(a => a.Id).HasColumnName("BRIDGE_ID");
         }
 
@@ -245,6 +246,7 @@
             var entity = builder.Entity<PurchaseOrder>().ToTable("PL_ORDERS");
             entity.HasKey(o => o.OrderNumber);
             entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(o => o.Cancelled).HasColumnName("CANCELLED").HasMaxLength(1);
             entity.Property(o => o.SupplierId).HasColumnName("SUPP_SUPPLIER_ID");
             entity.HasOne(o => o.Supplier).WithMany().HasForeignKey(o => o.SupplierId);
             entity.Property(o => o.DocumentType).HasColumnName("DOCUMENT_TYPE");
@@ -256,6 +258,7 @@
             var entity = builder.Entity<PurchaseOrderDetail>().ToTable("PL_ORDER_DETAILS");
             entity.HasKey(a => new { a.OrderNumber, a.Line });
             entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(o => o.Cancelled).HasColumnName("CANCELLED").HasMaxLength(1);
             entity.Property(o => o.Line).HasColumnName("ORDER_LINE");
             entity.Property(o => o.RohsCompliant).HasColumnName("ROHS_COMPLIANT");
             entity.Property(o => o.OurQty).HasColumnName("OUR_QTY");
@@ -275,6 +278,7 @@
             var entity = builder.Entity<PurchaseOrderDelivery>().ToTable("PL_DELIVERIES");
             entity.HasKey(a => new { a.DeliverySeq, a.OrderNumber, a.OrderLine });
             entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(o => o.Cancelled).HasColumnName("CANCELLED").HasMaxLength(1);
             entity.Property(o => o.OrderLine).HasColumnName("ORDER_LINE");
             entity.Property(o => o.DeliverySeq).HasColumnName("DELIVERY_SEQ");
 
