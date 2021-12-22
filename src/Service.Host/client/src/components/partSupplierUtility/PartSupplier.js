@@ -356,6 +356,7 @@ function PartSupplier() {
                                                       )
                                                     : null
                                             }
+                                            rohsComments={state.partSupplier?.rohsComments}
                                         />
                                     </Box>
                                 )}

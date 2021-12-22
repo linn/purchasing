@@ -15,7 +15,6 @@ function ManufacturerTab({
     vendorPartNumber,
     rohsCategory,
     dateRohsCompliant,
-    rohsCompliant,
     rohsComments
 }) {
     return (
@@ -97,26 +96,16 @@ function ManufacturerTab({
                 />
             </Grid>
             <Grid item xs={4} />
-
-            {/* <Grid item xs={8}>
-                <Dropdown
-                    fullWidth
-                    value={createdBy}
-                    label="Created By"
-                    items={employees.map(x => ({ id: x.id, displayText: x.fullName }))}
-                    propertyName="createdBy"
+            <Grid item xs={6}>
+                <InputField
+                    label="Rohs Comment"
+                    value={rohsComments}
                     onChange={handleFieldChange}
+                    propertyName="rohsComments"
+                    rows={3}
+                    fullWidth
                 />
-            </Grid> */}
-            {/* <Grid item xs={4}>
-                <DatePicker
-                    label="Date"
-                    value={dateCreated || new Date()}
-                    onChange={newValue => handleFieldChange('dateCreated', newValue)}
-                    minDate="01/01/1970"
-                    maxDate="01/01/2100"
-                />
-            </Grid> */}
+            </Grid>
         </Grid>
     );
 }
@@ -132,7 +121,6 @@ ManufacturerTab.propTypes = {
     vendorPartNumber: PropTypes.string,
     rohsCategory: PropTypes.string,
     dateRohsCompliant: PropTypes.string,
-    rohsCompliant: PropTypes.string,
     rohsComments: PropTypes.string
 };
 
@@ -143,7 +131,6 @@ ManufacturerTab.defaultProps = {
     vendorPartNumber: null,
     rohsCategory: null,
     dateRohsCompliant: null,
-    rohsCompliant: null,
     rohsComments: null,
     manufacturersSearchResults: [],
     manufacturersSearchLoading: false
