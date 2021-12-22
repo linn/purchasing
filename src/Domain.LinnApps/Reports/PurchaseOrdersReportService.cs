@@ -12,9 +12,6 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
-    using MimeKit.Cryptography;
-    using MimeKit.Encodings;
-
     public class PurchaseOrdersReportService : IPurchaseOrdersReportService
     {
         private readonly IRepository<PurchaseLedger, int> purchaseLedgerRepository;
@@ -66,19 +63,7 @@
                      && (includeReturns || x.DocumentType != "RO")
                      && (includeCredits == "Y" || (includeCredits == "N" && x.DocumentType != "CO")
                                                || (includeCredits == "O" && x.DocumentType == "CO")));
-
-            //stock_controlled from parts = "Y"
-
-
-            // returns Y/N : document type != "RO
-            // credit document type CO or ! CO       yes / no / only
-            // stock controller: pl_orders_pack.part_is_stock_controlled_sql(part number)
-
-            // all / outstanding: pl_orders_pack.order_is_complete_sql(order number, order line)
-            // && (!outstandingOnly || x.)
-
-            // cancelled: Y/N plorh (pl orders), plorl(pl order details) or pl deliveries (plco) cancelled = 'N' (????) or plorh.archive_order = 'Y'
-
+            
             var supplier = this.supplierRepository.FindById(supplierId);
 
             var reportLayout = new SimpleGridLayout(
@@ -150,9 +135,10 @@
                         new AxisDetailsModel(
                             "OrderLine",
                             "Order/Line",
-                            GridDisplayType.TextValue) {
-                                                          AllowWrap = false 
-                                                       },
+                            GridDisplayType.TextValue)
+                            {
+                                AllowWrap = false
+                            },
                         new AxisDetailsModel("PartNo", "Part Number", GridDisplayType.TextValue),
                         new AxisDetailsModel(
                             "SuppliersDesignation",

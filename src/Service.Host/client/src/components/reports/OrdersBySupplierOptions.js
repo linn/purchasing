@@ -185,15 +185,7 @@ function OrdersBySupplierReportOptions() {
                         onChange={(propertyName, newValue) => setCancelled(newValue)}
                     />
                 </Grid>
-
-                {/*
-                            // all / outstanding: pl_orders_pack.order_s_complete_sql(order number, order line)
-
-                            //returns Y/N : document type != "RO
-                                        //stock controller: pl_orders_pack.part_is_stock_controlled_sql(part number)
-
-            //credit document type CO or ! CO       yes / no / only
-            //cancelled: Y/N plorh (pl orders), plorl(pl order details) or pl deliveries (plco) cancelled = 'N' (????) or plorh.archive_order = 'Y' */}
+                
                 <Grid item xs={12}>
                     <Button
                         color="primary"
