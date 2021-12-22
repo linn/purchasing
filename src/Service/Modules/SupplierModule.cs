@@ -41,7 +41,7 @@
             this.Get("/purchasing/part-suppliers", this.SearchPartSuppliers);
             this.Post("/purchasing/part-suppliers", this.CreatePartSupplier);
 
-            this.Get("/purchasing/part-suppliers/application-state", this.GetState);
+            this.Get("/purchasing/part-suppliers/application-state", this.GetPartSuppliersState);
             this.Get("/purchasing/suppliers", this.SearchSuppliers);
         }
 
@@ -102,7 +102,7 @@
             await res.Negotiate(result);
         }
 
-        private async Task GetState(HttpRequest req, HttpResponse res)
+        private async Task GetPartSuppliersState(HttpRequest req, HttpResponse res)
         {
             var privileges = req.HttpContext.GetPrivileges();
 

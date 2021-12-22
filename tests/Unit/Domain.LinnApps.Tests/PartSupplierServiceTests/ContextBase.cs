@@ -25,6 +25,10 @@
 
         protected IRepository<PackagingGroup, int> PackagingGroupRepository { get; private set; }
 
+        protected IRepository<Employee, int> EmployeeRepository { get; private set; }
+
+        protected IRepository<Manufacturer, string> ManufacturerRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -34,6 +38,8 @@
             this.AddressRepository = Substitute.For<IRepository<Address, int>>();
             this.PackagingGroupRepository = Substitute.For<IRepository<PackagingGroup, int>>();
             this.TariffRepository = Substitute.For<IRepository<Tariff, int>>();
+            this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
+            this.ManufacturerRepository = Substitute.For<IRepository<Manufacturer, string>>();
 
             this.Sut = new PartSupplierService(
                 this.MockAuthService,
@@ -41,7 +47,9 @@
                 this.OrderMethodRepository,
                 this.AddressRepository,
                 this.TariffRepository,
-                this.PackagingGroupRepository);
+                this.PackagingGroupRepository,
+                this.EmployeeRepository,
+                this.ManufacturerRepository);
         }
     }
 }

@@ -1,17 +1,26 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, Fragment, useEffect } from 'react';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import { makeStyles } from '@mui/styles';
 import Button from '@mui/material/Button';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-
 import Link from '@mui/material/Link';
 import { useSelector, useDispatch } from 'react-redux';
-import { Page, InputField, Loading, utilities } from '@linn-it/linn-form-components-library';
+import {
+    Page,
+    InputField,
+    Loading,
+    utilities,
+    CreateButton
+} from '@linn-it/linn-form-components-library';
 import Divider from '@mui/material/Divider';
 import { Link as RouterLink } from 'react-router-dom';
-import { getSearchItems, getSearchLoading } from '../../selectors/CollectionSelectorHelpers';
+import {
+    getSearchItems,
+    getSearchLoading,
+    getApplicationState
+} from '../../selectors/CollectionSelectorHelpers';
 import partSuppliersActions from '../../actions/partSuppliersActions';
 import history from '../../history';
 import config from '../../config';
@@ -32,18 +41,29 @@ function PartSupplierSearch() {
     const loading = useSelector(state => getSearchLoading(state.partSuppliers));
 
     const results = useSelector(state => getSearchItems(state.partSuppliers));
+    const applicationState = useSelector(state => getApplicationState(state.partSuppliers));
+
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(partSuppliersActions.fetchState());
+    }, [dispatch]);
 
     const [options, setOptions] = useState({ partNumber: '', supplierName: '' });
 
     const handleOptionsChange = (propertyName, newValue) =>
         setOptions({ ...options, [propertyName]: newValue });
 
+    const createUrl = utilities.getHref(applicationState, 'create');
+
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
-                <Grid item xs={12}>
+                <Grid item xs={10}>
                     <Typography variant="h3">Part Suppliers Search</Typography>
+                </Grid>
+                <Grid item xs={2}>
+                    {createUrl && <CreateButton createUrl={createUrl} />}
                 </Grid>
                 <Grid item xs={5}>
                     <InputField
