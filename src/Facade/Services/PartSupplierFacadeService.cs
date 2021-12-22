@@ -29,12 +29,9 @@
 
         protected override PartSupplier CreateFromResource(PartSupplierResource resource)
         {
-            var candidate = new PartSupplier
-                                {
-                                    SupplierId = resource.SupplierId,
-                                    PartNumber = resource.PartNumber,
-                                    SupplierDesignation = resource.Designation
-                                };
+            var candidate = this.BuildEntityFromResourceHelper(resource);
+            candidate.PartNumber = resource.PartNumber;
+            candidate.SupplierId = resource.SupplierId;
 
             return this.domainService.CreatePartSupplier(candidate, resource.Privileges);
         }
@@ -56,55 +53,10 @@
 
         protected override void UpdateFromResource(PartSupplier entity, PartSupplierResource updateResource)
         {
-            var updated = new PartSupplier
-                                  {
-                                      SupplierId = entity.SupplierId,
-                                      PartNumber = entity.PartNumber,
-                                      SupplierDesignation = updateResource.Designation,
-                                      OrderMethod = new OrderMethod { Name = updateResource.OrderMethodName },
-                                      Currency = new Currency { Code = updateResource.CurrencyCode },
-                                      CurrencyUnitPrice = updateResource.CurrencyUnitPrice,
-                                      OurCurrencyPriceToShowOnOrder = updateResource.OurCurrencyPriceToShowOnOrder,
-                                      BaseOurUnitPrice = updateResource.BaseOurUnitPrice,
-                                      MinimumOrderQty = updateResource.MinimumOrderQty,
-                                      MinimumDeliveryQty = updateResource.MinimumDeliveryQty,
-                                      OrderIncrement = updateResource.OrderIncrement,
-                                      ReelOrBoxQty = updateResource.ReelOrBoxQty,
-                                      DeliveryAddress = updateResource.AddressId == null ? null : 
-                                                            new Address { Id = (int)updateResource.AddressId },
-                                      LeadTimeWeeks = updateResource.LeadTimeWeeks,
-                                      ContractLeadTimeWeeks = updateResource.ContractLeadTimeWeeks,
-                                      OverbookingAllowed = updateResource.OverbookingAllowed,
-                                      DamagesPercent = updateResource.DamagesPercent,
-                                      WebAddress = updateResource.WebAddress,
-                                      DeliveryInstructions = updateResource.DeliveryInstructions,
-                                      NotesForBuyer = updateResource.NotesForBuyer,
-                                      DutyPercent = updateResource.DutyPercent,
-                                      Tariff = updateResource.TariffId == null 
-                                                   ? null : new Tariff 
-                                                                {
-                                                                    Id = (int)updateResource.TariffId
-                                                                },
-                                      PackagingGroup = updateResource.PackagingGroupId == null 
-                                                           ? null : new PackagingGroup
-                                                                        {
-                                                                            Id = (int)updateResource.PackagingGroupId
-                                                                        },
-                                      MadeInvalidBy = updateResource.MadeInvalidBy.HasValue 
-                                                          ? new Employee { Id = (int)updateResource.MadeInvalidBy }
-                                                          : null,
-                                      DateInvalid = string.IsNullOrEmpty(updateResource.DateInvalid) 
-                                                        ? null : DateTime.Parse(updateResource.DateInvalid),
-                                      Manufacturer = string.IsNullOrEmpty(updateResource.ManufacturerCode) ? null :
-                                                         new Manufacturer { Code = updateResource.ManufacturerCode },
-                                      ManufacturerPartNumber = updateResource.ManufacturerPartNumber,
-                                      VendorPartNumber = updateResource.VendorPartNumber,
-                                      RohsCategory = updateResource.RohsCategory,
-                                      DateRohsCompliant = string.IsNullOrEmpty(updateResource.DateRohsCompliant)
-                                                            ? null : DateTime.Parse(updateResource.DateRohsCompliant),
-                                      RohsComments = updateResource.RohsComments,
-                                      RohsCompliant = updateResource.RohsCompliant
-                                  };
+            var updated = this.BuildEntityFromResourceHelper(updateResource);
+
+            updated.PartNumber = entity.PartNumber;
+            updated.SupplierId = entity.SupplierId;
 
             this.domainService.UpdatePartSupplier(entity, updated, updateResource.Privileges);
         }
@@ -121,6 +73,57 @@
                         && 
                         (x.Supplier.Name.Contains(searchResource.SupplierNameSearchTerm.ToUpper())
                          || string.IsNullOrEmpty(searchResource.SupplierNameSearchTerm));
+        }
+
+        private PartSupplier BuildEntityFromResourceHelper(PartSupplierResource resource)
+        {
+            return new PartSupplier
+            {
+                SupplierDesignation = resource.Designation,
+                OrderMethod = new OrderMethod { Name = resource.OrderMethodName },
+                Currency = new Currency { Code = resource.CurrencyCode },
+                CurrencyUnitPrice = resource.CurrencyUnitPrice,
+                OurCurrencyPriceToShowOnOrder = resource.OurCurrencyPriceToShowOnOrder,
+                BaseOurUnitPrice = resource.BaseOurUnitPrice,
+                MinimumOrderQty = resource.MinimumOrderQty,
+                MinimumDeliveryQty = resource.MinimumDeliveryQty,
+                OrderIncrement = resource.OrderIncrement,
+                ReelOrBoxQty = resource.ReelOrBoxQty,
+                DeliveryAddress = resource.AddressId == null ? null :
+                                                            new Address { Id = (int)resource.AddressId },
+                LeadTimeWeeks = resource.LeadTimeWeeks,
+                ContractLeadTimeWeeks = resource.ContractLeadTimeWeeks,
+                OverbookingAllowed = resource.OverbookingAllowed,
+                DamagesPercent = resource.DamagesPercent,
+                WebAddress = resource.WebAddress,
+                DeliveryInstructions = resource.DeliveryInstructions,
+                NotesForBuyer = resource.NotesForBuyer,
+                DutyPercent = resource.DutyPercent,
+                Tariff = resource.TariffId == null
+                                                   ? null : new Tariff
+                                                   {
+                                                       Id = (int)resource.TariffId
+                                                   },
+                PackagingGroup = resource.PackagingGroupId == null
+                                                           ? null : new PackagingGroup
+                                                           {
+                                                               Id = (int)resource.PackagingGroupId
+                                                           },
+                MadeInvalidBy = resource.MadeInvalidBy.HasValue
+                                                          ? new Employee { Id = (int)resource.MadeInvalidBy }
+                                                          : null,
+                DateInvalid = string.IsNullOrEmpty(resource.DateInvalid)
+                                                        ? null : DateTime.Parse(resource.DateInvalid),
+                Manufacturer = string.IsNullOrEmpty(resource.ManufacturerCode) ? null :
+                                                         new Manufacturer { Code = resource.ManufacturerCode },
+                ManufacturerPartNumber = resource.ManufacturerPartNumber,
+                VendorPartNumber = resource.VendorPartNumber,
+                RohsCategory = resource.RohsCategory,
+                DateRohsCompliant = string.IsNullOrEmpty(resource.DateRohsCompliant)
+                                                            ? null : DateTime.Parse(resource.DateRohsCompliant),
+                RohsComments = resource.RohsComments,
+                RohsCompliant = resource.RohsCompliant
+            };
         }
     }
 }
