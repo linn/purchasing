@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.PartSuppliers
 {
     using System.Collections.Generic;
+    using System.Runtime.Serialization.Formatters;
 
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
@@ -118,6 +119,42 @@
             if (!this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
             {
                 throw new UnauthorisedActionException("You are not authorised to update Part Supplier records");
+            }
+
+            // todo - do we actually need to do all this or is ef workinbg it out anyway
+            if (!string.IsNullOrEmpty(candidate.OrderMethod?.Name))
+            {
+                candidate.OrderMethod = this.orderMethodRepository.FindById(candidate.OrderMethod.Name);
+            }
+
+            if (!string.IsNullOrEmpty(candidate.Currency?.Code))
+            {
+                candidate.Currency = this.currencyRepository.FindById(candidate.Currency.Code);
+            }
+
+            if (candidate.DeliveryAddress?.Id != null)
+            {
+                candidate.DeliveryAddress = this.addressRepository.FindById(candidate.DeliveryAddress.Id);
+            }
+
+            if (candidate.Tariff?.Id != null)
+            {
+                candidate.Tariff = this.tariffRepository.FindById(candidate.Tariff.Id);
+            }
+
+            if (candidate.PackagingGroup?.Id != null)
+            {
+                candidate.PackagingGroup = this.packagingGroupRepository.FindById(candidate.PackagingGroup.Id);
+            }
+
+            if (candidate.MadeInvalidBy?.Id != null)
+            {
+                candidate.MadeInvalidBy = this.employeeRepository.FindById(candidate.MadeInvalidBy.Id);
+            }
+
+            if (!string.IsNullOrEmpty(candidate.Manufacturer?.Code))
+            {
+                candidate.Manufacturer = this.manufacturerRepository.FindById(candidate.Manufacturer.Code);
             }
 
             return candidate;

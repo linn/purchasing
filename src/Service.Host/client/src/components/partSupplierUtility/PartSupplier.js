@@ -12,9 +12,10 @@ import {
     Page,
     Loading,
     SaveBackCancelButtons,
-    SnackbarMessage
+    SnackbarMessage,
+    utilities
 } from '@linn-it/linn-form-components-library';
-import getQuery from '../../selectors/routerSelelctors';
+import { getQuery, getPathname } from '../../selectors/routerSelelctors';
 import partSupplierActions from '../../actions/partSupplierActions';
 import history from '../../history';
 import config from '../../config';
@@ -25,8 +26,11 @@ import partsActions from '../../actions/partsActions';
 import {
     getSearchItems,
     getSearchLoading,
-    getItems
+    getItems,
+    getApplicationState
 } from '../../selectors/CollectionSelectorHelpers';
+import partSuppliersActions from '../../actions/partSuppliersActions';
+
 import { getSnackbarVisible, getItem, getEditStatus } from '../../selectors/ItemSelectorsHelpers';
 import deliveryAddressesActions from '../../actions/deliveryAddressesActions';
 import unitsOfMeasureActions from '../../actions/unitsOfMeasureActions';
@@ -80,9 +84,15 @@ function PartSupplier() {
     const currencies = useSelector(reduxState => getItems(reduxState.currencies));
     const packagingGroups = useSelector(reduxState => getItems(reduxState.packagingGroups));
     const employees = useSelector(reduxState => getItems(reduxState.employees));
-    const updatePartSupplier = body => reduxDispatch(partSupplierActions.update(null, body));
 
-    const creating = () => false;
+    const updatePartSupplier = body => reduxDispatch(partSupplierActions.update(null, body));
+    const createPartSupplier = body => reduxDispatch(partSupplierActions.create(body));
+
+    const pathName = useSelector(reduxState => getPathname(reduxState));
+
+    const creating = () => pathName.endsWith('/create');
+
+    const applicationState = useSelector(state => getApplicationState(state.partSuppliers));
 
     const [state, dispatch] = useReducer(partSupplierReducer, {
         partSupplier: creating() ? {} : {},
@@ -101,6 +111,7 @@ function PartSupplier() {
     const [value, setValue] = useState(0);
 
     useEffect(() => {
+        reduxDispatch(partSuppliersActions.fetchState());
         reduxDispatch(unitsOfMeasureActions.fetch());
         reduxDispatch(deliveryAddressesActions.fetch());
         reduxDispatch(orderMethodsactions.fetch());
@@ -160,7 +171,8 @@ function PartSupplier() {
         dispatch({ type: 'fieldChange', fieldName: propertyName, payload: formatted });
     };
 
-    const canEdit = () => item?.links.some(l => l.rel === 'edit' || l.rel === 'create');
+    const canEdit = () =>
+        item?.links.some(l => l.rel === 'edit') || !!utilities.getHref(applicationState, 'create');
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
@@ -240,7 +252,7 @@ function PartSupplier() {
                                             suppliersSearchResults={suppliersSearchResults}
                                             suppliersSearchLoading={suppliersSearchLoading}
                                             searchSuppliers={searchSuppliers}
-                                            editStatus={editStatus}
+                                            editStatus={creating() ? 'create' : editStatus}
                                         />
                                     </Box>
                                 )}
@@ -368,8 +380,8 @@ function PartSupplier() {
                     <SaveBackCancelButtons
                         saveDisabled={!canEdit() || editStatus === 'view'}
                         saveClick={() =>
-                            editStatus === 'create'
-                                ? () => {}
+                            creating()
+                                ? createPartSupplier(state.partSupplier)
                                 : updatePartSupplier(state.partSupplier)
                         }
                         cancelClick={() => {
