@@ -38,6 +38,16 @@
             return this.domainService.CreatePartSupplier(candidate, resource.Privileges);
         }
 
+        protected override void SaveToLogTable(
+            string actionType,
+            int userNumber,
+            PartSupplier entity,
+            PartSupplierResource resource,
+            PartSupplierResource updateResource)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override void DeleteOrObsoleteResource(PartSupplier entity)
         {
             throw new NotImplementedException();

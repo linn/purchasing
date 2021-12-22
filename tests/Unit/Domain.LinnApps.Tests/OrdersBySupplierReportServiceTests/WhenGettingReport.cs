@@ -17,6 +17,7 @@
 
     public class WhenGettingReport : ContextBase
     {
+        private readonly int supplierId = 77282;
         private readonly int orderNumber = 9876;
 
         private readonly int supplierId = 77282;

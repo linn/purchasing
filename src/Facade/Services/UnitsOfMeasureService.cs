@@ -21,6 +21,16 @@
             throw new NotImplementedException();
         }
 
+        protected override void SaveToLogTable(
+            string actionType,
+            int userNumber,
+            UnitOfMeasure entity,
+            UnitOfMeasureResource resource,
+            UnitOfMeasureResource updateResource)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override void DeleteOrObsoleteResource(UnitOfMeasure entity)
         {
             throw new NotImplementedException();

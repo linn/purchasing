@@ -2,7 +2,11 @@ import { makeActionTypes } from '@linn-it/linn-form-components-library';
 import * as itemTypes from '../itemTypes';
 import * as reportTypes from '../reportTypes';
 
-export const signingLimitActionTypes = makeActionTypes(itemTypes.signingLimit.actionType);
+export const signingLimitActionTypes = makeActionTypes(
+    itemTypes.signingLimit.actionType,
+    true,
+    true
+);
 export const signingLimitsActionTypes = makeActionTypes(itemTypes.signingLimits.actionType, false);
 
 export const partSuppliersActionTypes = makeActionTypes(itemTypes.partSuppliers.actionType, false);

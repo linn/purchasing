@@ -23,6 +23,13 @@
                 ?.Value;
         }
 
+        public static int GetEmployeeNumber(this ClaimsPrincipal principal)
+        {
+            int.TryParse(principal.GetEmployeeUrl()?.Split('/').Last(), out var employee);
+
+            return employee;
+        }
+
         public static bool HasClaim(this ClaimsPrincipal principal, string type)
         {
             if (type == null)

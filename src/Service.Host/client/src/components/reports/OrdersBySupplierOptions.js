@@ -185,7 +185,7 @@ function OrdersBySupplierReportOptions() {
                         onChange={(propertyName, newValue) => setCancelled(newValue)}
                     />
                 </Grid>
-                
+
                 <Grid item xs={12}>
                     <Button
                         color="primary"

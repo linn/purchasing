@@ -33,7 +33,7 @@
             IQueryRepository<Part> partRepository,
             IRepository<PurchaseLedger, int> purchaseLedgerRepository,
             IPurchaseOrdersPack purchaseOrdersPack,
-        IReportingHelper reportingHelper)
+            IReportingHelper reportingHelper)
         {
             this.purchaseOrderRepository = purchaseOrderRepository;
             this.supplierRepository = supplierRepository;
@@ -63,7 +63,7 @@
                      && (includeReturns || x.DocumentType != "RO")
                      && (includeCredits == "Y" || (includeCredits == "N" && x.DocumentType != "CO")
                                                || (includeCredits == "O" && x.DocumentType == "CO")));
-            
+
             var supplier = this.supplierRepository.FindById(supplierId);
 
             var reportLayout = new SimpleGridLayout(
@@ -137,8 +137,8 @@
                             "Order/Line",
                             GridDisplayType.TextValue)
                             {
-                                AllowWrap = false
-                            },
+                                                          AllowWrap = false 
+                                                       },
                         new AxisDetailsModel("PartNo", "Part Number", GridDisplayType.TextValue),
                         new AxisDetailsModel(
                             "SuppliersDesignation",

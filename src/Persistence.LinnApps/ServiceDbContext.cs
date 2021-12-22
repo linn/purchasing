@@ -39,6 +39,8 @@
 
         public DbSet<SigningLimit> SigningLimits { get; set; }
 
+        public DbSet<SigningLimitLog> SigningLimitLogs { get; set; }
+
         public DbSet<Tariff> Tariffs { get; set; }
 
         public DbSet<Currency> Currencies { get; set; }
@@ -75,6 +77,7 @@
             this.BuildPurchaseOrderDeliveries(builder);
             this.BuildTariffs(builder);
             this.BuildSigningLimits(builder);
+            this.BuildSigningLimitLogs(builder);
             this.BuildCurrencies(builder);
             this.BuildOrderMethods(builder);
             this.BuildLinnDeliveryAddresses(builder);
@@ -241,6 +244,25 @@
             entity.Property(a => a.FullAddress).HasColumnName("ADDRESS");
         }
 
+        private void BuildPurchaseOrderDetails(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PurchaseOrderDetail>().ToTable("PL_ORDER_DETAILS");
+            entity.HasKey(a => new { a.OrderNumber, a.Line });
+            entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(o => o.Line).HasColumnName("ORDER_LINE");
+            entity.Property(o => o.RohsCompliant).HasColumnName("ROHS_COMPLIANT");
+            entity.Property(o => o.OurQty).HasColumnName("OUR_QTY");
+            entity.Property(o => o.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
+            entity.Property(o => o.SuppliersDesignation).HasColumnName("SUPPLIERS_DESIGNATION").HasMaxLength(2000);
+
+            entity.HasOne(d => d.PurchaseOrder).WithMany(o => o.Details)
+                .HasForeignKey(d => d.OrderNumber);
+
+            entity.HasOne(d => d.PurchaseDelivery).WithOne(o => o.PurchaseOrderDetail)
+                .HasForeignKey<PurchaseOrderDelivery>(o => new { o.OrderNumber, o.OrderLine });
+            entity.Property(o => o.NetTotal).HasColumnName("NET_TOTAL").HasMaxLength(18);
+        }
+
         private void BuildPurchaseOrders(ModelBuilder builder)
         {
             var entity = builder.Entity<PurchaseOrder>().ToTable("PL_ORDERS");
@@ -303,6 +325,22 @@
             entity.Property(a => a.Unlimited).HasColumnName("UNLIMITED").HasMaxLength(1);
             entity.Property(a => a.ReturnsAuthorisation).HasColumnName("RETURNS_AUTHORISATION").HasMaxLength(1);
             entity.HasOne<Employee>(a => a.User).WithMany(e => e.SigningLimits).HasForeignKey(a => a.UserNumber);
+        }
+
+        private void BuildSigningLimitLogs(ModelBuilder builder)
+        {
+            var entity = builder.Entity<SigningLimitLog>().ToTable("PURCH_SIGNING_LIMITS_LOG");
+            entity.HasKey(m => m.UserNumber);
+            entity.Property(e => e.UserNumber).HasColumnName("USER_NUMBER");
+            entity.Property(a => a.ProductionLimit).HasColumnName("PRODUCTION_SIGNING_LIMIT");
+            entity.Property(a => a.SundryLimit).HasColumnName("SUNDRY_LIMIT");
+            entity.Property(a => a.Unlimited).HasColumnName("UNLIMITED").HasMaxLength(1);
+            entity.Property(a => a.ReturnsAuthorisation).HasColumnName("RETURNS_AUTHORISATION").HasMaxLength(1);
+
+            entity.Property(a => a.LogId).HasColumnName("LOG_ID");
+            entity.Property(a => a.LogAction).HasColumnName("LOG_ACTION").HasMaxLength(20);
+            entity.Property(a => a.LogUserNumber).HasColumnName("LOG_USER_NUMBER");
+            entity.Property(a => a.LogTime).HasColumnName("LOG_DATE");
         }
 
         private void BuildTariffs(ModelBuilder builder)

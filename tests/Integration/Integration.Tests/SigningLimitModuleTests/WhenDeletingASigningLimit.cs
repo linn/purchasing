@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.SigningLimitModuleTests
 {
+    using System.Collections.Generic;
     using System.Net;
 
     using FluentAssertions;
@@ -13,10 +14,8 @@
 
     using NUnit.Framework;
 
-    public class WhenUpdatingASigningLimit : ContextBase
+    public class WhenDeletingASigningLimit : ContextBase
     {
-        private SigningLimitResource resource;
-
         private int userNumber;
 
         [SetUp]
@@ -24,21 +23,18 @@
         {
             this.userNumber = 123;
 
-            this.resource = new SigningLimitResource { UserNumber = this.userNumber, ProductionLimit = 123.45m };
-
-            this.FacadeService.Update(this.userNumber, Arg.Is<SigningLimitResource>(a => a.UserNumber == this.userNumber))
+            this.FacadeService.DeleteOrObsolete(this.userNumber, Arg.Any<List<string>>(), Arg.Any<int>())
                 .Returns(
                     new SuccessResult<SigningLimitResource>(
                         new SigningLimitResource
                             {
                                 UserNumber = this.userNumber,
-                                ProductionLimit = this.resource.ProductionLimit,
+                                ProductionLimit = 123.45m,
                                 Links = new[] { new LinkResource("self", $"/purchasing/signing-limits/{this.userNumber}") }
                             }));
 
-            this.Response = this.Client.Put(
+            this.Response = this.Client.Delete(
                 $"/purchasing/signing-limits/{this.userNumber}",
-                this.resource,
                 with =>
                     {
                         with.Accept("application/json");
@@ -54,8 +50,7 @@
         [Test]
         public void ShouldCallUpdate()
         {
-            this.FacadeService.Received()
-                .Update(this.userNumber, Arg.Is<SigningLimitResource>(a => a.UserNumber == this.userNumber));
+            this.FacadeService.Received().DeleteOrObsolete(this.userNumber, Arg.Any<List<string>>(), Arg.Any<int>());
         }
 
         [Test]
