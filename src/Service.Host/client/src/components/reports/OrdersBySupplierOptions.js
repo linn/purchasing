@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import { Page, DatePicker, Title, Typeahead } from '@linn-it/linn-form-components-library';
+import {
+    Page,
+    DatePicker,
+    Dropdown,
+    Title,
+    Typeahead
+} from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import { getSearchItems, getSearchLoading } from '../../selectors/CollectionSelectorHelpers';
 import { getReportOptions } from '../../selectors/ReportSelectorHelpers';
@@ -24,10 +29,8 @@ function OrdersBySupplierReportOptions() {
     const dispatch = useDispatch();
 
     const defaultStartDate = new Date();
-    const maxDate = new Date();
-    maxDate.setDate(defaultStartDate.getDate() + 90);
+    defaultStartDate.setMonth(defaultStartDate.getMonth() - 1);
 
-    defaultStartDate.setDate(defaultStartDate.getDate() - 90);
     const [fromDate, setFromDate] = useState(
         prevOptions?.fromDate ? new Date(prevOptions?.fromDate) : defaultStartDate
     );
@@ -35,7 +38,12 @@ function OrdersBySupplierReportOptions() {
         prevOptions?.toDate ? new Date(prevOptions?.toDate) : new Date()
     );
 
-    const [supplier, setSupplier] = useState();
+    const [supplier, setSupplier] = useState({ id: '', name: 'click to set supplier' });
+    const [outstandingOnly, setOutstandingOnly] = useState('N');
+    const [returns, setReturns] = useState('N');
+    const [stockControlled, setStockControlled] = useState('A');
+    const [credits, setCredits] = useState('N');
+    const [cancelled, setCancelled] = useState('N');
 
     const handleSupplierChange = selectedsupplier => {
         setSupplier(selectedsupplier);
@@ -44,43 +52,22 @@ function OrdersBySupplierReportOptions() {
     const handleClick = () =>
         history.push({
             pathname: `/purchasing/reports/orders-by-supplier/report`,
-            search: `?id=${
-                supplier.id
-            }&fromDate=${fromDate.toISOString()}&toDate=${toDate.toISOString()}`
+            search:
+                `?id=${supplier.id}` +
+                `&fromDate=${fromDate.toISOString()}` +
+                `&toDate=${toDate.toISOString()}` +
+                `&outstanding=${outstandingOnly}` +
+                `&returns=${returns}` +
+                `&stockControlled=${stockControlled}` +
+                `&credits=${credits}` +
+                `&cancelled=${cancelled}`
         });
 
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} homeUrl={config.appRoot} width="s">
             <Title text="Orders By Supplier" />
-            <Grid style={{ marginTop: 40 }} container spacing={3} justifyContent="center">
+            <Grid container spacing={3} justifyContent="center">
                 <Grid item xs={12}>
-                    <Typography variant="h6" gutterBottom>
-                        Choose a date range:
-                    </Typography>
-                </Grid>
-                <Grid item xs={3}>
-                    <DatePicker
-                        label="From Date"
-                        value={fromDate.toString()}
-                        minDate="01/01/2000"
-                        maxDate={maxDate}
-                        onChange={newValue => {
-                            setFromDate(newValue);
-                        }}
-                    />
-                </Grid>
-                <Grid item xs={3}>
-                    <DatePicker
-                        label="To Date"
-                        value={toDate.toString()}
-                        minDate={fromDate.toString()}
-                        maxDate={maxDate}
-                        onChange={newValue => {
-                            setToDate(newValue);
-                        }}
-                    />
-                </Grid>
-                <Grid item xs={6}>
                     <Typeahead
                         label="Supplier"
                         title="Search for a supplier"
@@ -94,6 +81,104 @@ function OrdersBySupplierReportOptions() {
                         links={false}
                         debounce={1000}
                         minimumSearchTermLength={2}
+                    />
+                </Grid>
+                <Grid item xs={6}>
+                    <DatePicker
+                        label="From Date"
+                        value={fromDate.toString()}
+                        minDate="01/01/2000"
+                        maxDate={toDate}
+                        onChange={newValue => {
+                            setFromDate(newValue);
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={6}>
+                    <DatePicker
+                        label="To Date"
+                        value={toDate.toString()}
+                        minDate={fromDate.toString()}
+                        onChange={newValue => {
+                            setToDate(newValue);
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={12} />
+                <Grid item xs={4}>
+                    <Dropdown
+                        fullWidth
+                        value={outstandingOnly}
+                        label="All or Outstanding"
+                        propertyName="outstanding"
+                        items={[
+                            { id: 'N', displayText: 'All' },
+                            { id: 'Y', displayText: 'Outstanding' }
+                        ]}
+                        allowNoValue={false}
+                        onChange={(propertyName, newValue) => setOutstandingOnly(newValue)}
+                    />
+                </Grid>
+
+                <Grid item xs={4}>
+                    <Dropdown
+                        fullWidth
+                        value={returns}
+                        label="Include Returns"
+                        propertyName="returns"
+                        items={[
+                            { id: 'N', displayText: 'No' },
+                            { id: 'Y', displayText: 'Yes' }
+                        ]}
+                        allowNoValue={false}
+                        onChange={(propertyName, newValue) => setReturns(newValue)}
+                    />
+                </Grid>
+
+                <Grid item xs={4}>
+                    <Dropdown
+                        fullWidth
+                        value={stockControlled}
+                        label="Stock Controlled"
+                        propertyName="stockControlled"
+                        items={[
+                            { id: 'A', displayText: 'All' },
+                            { id: 'O', displayText: 'Stock Controlled Only' },
+                            { id: 'N', displayText: 'Non Stock Controlled' }
+                        ]}
+                        allowNoValue={false}
+                        onChange={(propertyName, newValue) => setStockControlled(newValue)}
+                    />
+                </Grid>
+
+                <Grid item xs={4}>
+                    <Dropdown
+                        fullWidth
+                        value={credits}
+                        label="Include Credits"
+                        propertyName="credits"
+                        items={[
+                            { id: 'Y', displayText: 'Yes' },
+                            { id: 'N', displayText: 'No' },
+                            { id: 'O', displayText: 'Only' }
+                        ]}
+                        allowNoValue={false}
+                        onChange={(propertyName, newValue) => setCredits(newValue)}
+                    />
+                </Grid>
+
+                <Grid item xs={4}>
+                    <Dropdown
+                        fullWidth
+                        value={cancelled}
+                        label="Include Cancelled"
+                        propertyName="cancelled"
+                        items={[
+                            { id: 'N', displayText: 'No' },
+                            { id: 'Y', displayText: 'Yes' }
+                        ]}
+                        allowNoValue={false}
+                        onChange={(propertyName, newValue) => setCancelled(newValue)}
                     />
                 </Grid>
 

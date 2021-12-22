@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.OrdersBySupplerReportServiceTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.OrdersBySupplierReportServiceTests
 {
     using System;
     using System.Collections.Generic;
@@ -19,7 +19,6 @@
     {
         private readonly int supplierId = 77282;
         private readonly int orderNumber = 9876;
-
 
         private ResultsModel results;
 
@@ -87,7 +86,12 @@
             this.results = this.Sut.GetOrdersBySupplierReport(
                 new DateTime(2021, 10, 1),
                 new DateTime(2021, 12, 5),
-                this.supplierId);
+                this.supplierId,
+                true,
+                false,
+                true,
+                "Y",
+                "A");
         }
 
         [Test]
@@ -101,7 +105,8 @@
         [Test]
         public void ShouldReturnData()
         {
-            this.results.ReportTitle.DisplayValue.Should().Be($"Purchase Orders By Supplier - {this.supplierId}: We sell stuff");
+            this.results.ReportTitle.DisplayValue.Should()
+                .Be($"Purchase Orders By Supplier - {this.supplierId}: We sell stuff");
             this.results.Rows.Count().Should().Be(1);
             var row = this.results.Rows.First();
             row.RowId.Should().Be($"{this.orderNumber}/1");

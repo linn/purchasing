@@ -7,6 +7,8 @@
     using Linn.Common.Persistence;
     using Linn.Common.Reporting.Layouts;
     using Linn.Common.Reporting.Models;
+    using Linn.Purchasing.Domain.LinnApps.ExternalServices;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
@@ -20,15 +22,24 @@
 
         private readonly IRepository<Supplier, int> supplierRepository;
 
+        private readonly IQueryRepository<Part> partRepository;
+
+        private readonly IPurchaseOrdersPack purchaseOrdersPack;
+
+
         public PurchaseOrdersReportService(
             IRepository<PurchaseOrder, int> purchaseOrderRepository,
             IRepository<Supplier, int> supplierRepository,
+            IQueryRepository<Part> partRepository,
             IRepository<PurchaseLedger, int> purchaseLedgerRepository,
+            IPurchaseOrdersPack purchaseOrdersPack,
             IReportingHelper reportingHelper)
         {
             this.purchaseOrderRepository = purchaseOrderRepository;
             this.supplierRepository = supplierRepository;
+            this.partRepository = partRepository;
             this.purchaseLedgerRepository = purchaseLedgerRepository;
+            this.purchaseOrdersPack = purchaseOrdersPack;
             this.reportingHelper = reportingHelper;
         }
 
@@ -37,10 +48,21 @@
             throw new NotImplementedException();
         }
 
-        public ResultsModel GetOrdersBySupplierReport(DateTime from, DateTime to, int supplierId)
+        public ResultsModel GetOrdersBySupplierReport(
+            DateTime from,
+            DateTime to,
+            int supplierId,
+            bool includeReturns,
+            bool outstandingOnly,
+            bool includeCancelled,
+            string includeCredits,
+            string stockControlled)
         {
             var purchaseOrders = this.purchaseOrderRepository.FilterBy(
-                x => x.SupplierId == supplierId && from <= x.OrderDate && x.OrderDate < to);
+                x => x.SupplierId == supplierId && from <= x.OrderDate && x.OrderDate < to
+                     && (includeReturns || x.DocumentType != "RO")
+                     && (includeCredits == "Y" || (includeCredits == "N" && x.DocumentType != "CO")
+                                               || (includeCredits == "O" && x.DocumentType == "CO")));
 
             var supplier = this.supplierRepository.FindById(supplierId);
 
@@ -56,8 +78,34 @@
 
             foreach (var order in purchaseOrders)
             {
+                if (!includeCancelled &&
+                    order.Cancelled == "Y")
+                {
+                    continue;
+                }
+
                 foreach (var orderDetail in order.Details)
                 {
+                    if (outstandingOnly && this.purchaseOrdersPack.OrderIsCompleteSql(
+                            orderDetail.OrderNumber,
+                            orderDetail.Line))
+                    {
+                        continue;
+                    }
+
+                    if (!includeCancelled &&
+                        (orderDetail.Cancelled == "Y" || orderDetail.PurchaseDelivery.Cancelled == "Y"))
+                    {
+                        continue;
+                    }
+
+                    var part = this.partRepository.FindBy(x => x.PartNumber == orderDetail.PartNumber);
+                    if (stockControlled != "A" && ((stockControlled == "N" && part.StockControlled == "N")
+                                               || (stockControlled == "O" && part.StockControlled != "Y")))
+                    {
+                        continue;
+                    }
+
                     var ledgersForOrderAndLine = this.purchaseLedgerRepository.FilterBy(
                         pl => pl.OrderNumber == order.OrderNumber && pl.OrderLine == orderDetail.Line);
 
@@ -87,7 +135,8 @@
                         new AxisDetailsModel(
                             "OrderLine",
                             "Order/Line",
-                            GridDisplayType.TextValue) {
+                            GridDisplayType.TextValue)
+                            {
                                                           AllowWrap = false 
                                                        },
                         new AxisDetailsModel("PartNo", "Part Number", GridDisplayType.TextValue),

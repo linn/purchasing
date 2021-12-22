@@ -11,19 +11,22 @@
     using Linn.Common.Email;
     using Linn.Common.Facade;
     using Linn.Common.Pdf;
+    using Linn.Common.Proxy.LinnApps;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
-    using Linn.Purchasing.Facade;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Persistence.LinnApps.Keys;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.SearchResources;
+    using Linn.Stores.Proxy;
 
     using Microsoft.Extensions.DependencyInjection;
 
@@ -83,7 +86,10 @@
                     x => new PdfService(ConfigurationManager.Configuration["PDF_SERVICE_ROOT"], new HttpClient()))
                 .AddTransient<IReportingHelper, ReportingHelper>()
                 .AddTransient<IPurchaseOrdersReportService, PurchaseOrdersReportService>()
-                .AddTransient<IAuthorisationService, AuthorisationService>();
+                .AddTransient<IAuthorisationService, AuthorisationService>()
+                .AddTransient<IDatabaseService, DatabaseService>()
+            //external services
+                .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>();
         }
     }
 }

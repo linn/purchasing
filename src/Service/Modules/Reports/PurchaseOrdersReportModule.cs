@@ -38,9 +38,15 @@
         private async Task GetOrdersBySupplierReport(HttpRequest req, HttpResponse res)
         {
             var resource = new OrdersBySupplierSearchResource();
-            resource.SupplierId = req.Query.As<int>("id");
+            resource.SupplierId = req.Query.As<int>("Id");
             resource.From = req.Query.As<string>("FromDate");
             resource.To = req.Query.As<string>("ToDate");
+
+            resource.Returns = req.Query.As<string>("Returns");
+            resource.Outstanding = req.Query.As<string>("Outstanding");
+            resource.Cancelled = req.Query.As<string>("Cancelled");
+            resource.Credits = req.Query.As<string>("Credits");
+            resource.StockControlled = req.Query.As<string>("StockControlled");
 
             var results = this.purchaseOrderReportFacadeService.GetOrdersBySupplierReport(resource, req.HttpContext.GetPrivileges());
 

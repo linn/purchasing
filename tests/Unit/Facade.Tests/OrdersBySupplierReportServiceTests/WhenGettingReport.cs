@@ -26,9 +26,9 @@
         {
             var resource = new OrdersBySupplierSearchResource
                                {
-                                   From = "01-Jan-2021", To = "01-Jun-2021", SupplierId = this.supplierId
+                                   From = "01-Jan-2021", To = "01-Jun-2021", SupplierId = this.supplierId, Returns = "Y", Outstanding = "N", Cancelled = "Y", Credits = "Y", StockControlled = "A"
                                };
-            this.DomainService.GetOrdersBySupplierReport(1.January(2021), 1.June(2021), this.supplierId).Returns(
+            this.DomainService.GetOrdersBySupplierReport(1.January(2021), 1.June(2021), this.supplierId, true, false, true, "Y", "A").Returns(
                 new ResultsModel
                     {
                         ReportTitle = new NameModel("Purchase Orders By Supplier - 71234: Dwight K Schrute")
@@ -40,7 +40,7 @@
         [Test]
         public void ShouldCallDomain()
         {
-            this.DomainService.Received().GetOrdersBySupplierReport(1.January(2021), 1.June(2021), this.supplierId);
+            this.DomainService.Received().GetOrdersBySupplierReport(1.January(2021), 1.June(2021), this.supplierId, true, false, true, "Y", "A");
         }
 
         [Test]

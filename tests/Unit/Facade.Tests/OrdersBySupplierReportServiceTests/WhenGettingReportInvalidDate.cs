@@ -28,7 +28,7 @@
                                {
                                    From = "01-Jan-2021", To = "01-Potato-2021", SupplierId = this.supplierId
                                };
-            this.DomainService.GetOrdersBySupplierReport(1.January(2021), 1.June(2021), this.supplierId).Returns(
+            this.DomainService.GetOrdersBySupplierReport(1.January(2021), 1.June(2021), this.supplierId, true, false, true, "Y", "A").Returns(
                 new ResultsModel
                     {
                         ReportTitle = new NameModel("Purchase Orders By Supplier - 71234: Dwight K Schrute")
@@ -43,7 +43,7 @@
             this.DomainService.DidNotReceiveWithAnyArgs().GetOrdersBySupplierReport(
                 Arg.Any<DateTime>(),
                 Arg.Any<DateTime>(),
-                Arg.Any<int>());
+                Arg.Any<int>(), true, false, true, "Y", "A");
         }
 
         [Test]

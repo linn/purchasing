@@ -16,7 +16,9 @@
 
         private readonly IBuilder<ResultsModel> resultsModelResourceBuilder;
 
-        public PurchaseOrderReportFacadeService(IPurchaseOrdersReportService domainService, IBuilder<ResultsModel> resultsModelResourceBuilder)
+        public PurchaseOrderReportFacadeService(
+            IPurchaseOrdersReportService domainService,
+            IBuilder<ResultsModel> resultsModelResourceBuilder)
         {
             this.domainService = domainService;
             this.resultsModelResourceBuilder = resultsModelResourceBuilder;
@@ -35,7 +37,20 @@
                     "Invalid dates supplied to orders by supplier report");
             }
 
-            var results = this.domainService.GetOrdersBySupplierReport(from, to, resource.SupplierId);
+            var returns = resource.Returns == "Y";
+            var outstanding = resource.Outstanding == "Y";
+            var cancelled = resource.Cancelled == "Y";
+
+            var results = this.domainService.GetOrdersBySupplierReport(
+                from,
+                to,
+                resource.SupplierId,
+                returns,
+                outstanding,
+                cancelled,
+                resource.Credits,
+                resource.StockControlled);
+
             var returnResource = this.BuildResource(results, privileges);
 
             return new SuccessResult<ReportReturnResource>(returnResource);
@@ -43,7 +58,7 @@
 
         private ReportReturnResource BuildResource(ResultsModel resultsModel, IEnumerable<string> privileges)
         {
-            return (ReportReturnResource)this.resultsModelResourceBuilder.Build(resultsModel, privileges);
+            return (ReportReturnResource) this.resultsModelResourceBuilder.Build(resultsModel, privileges);
         }
     }
 }

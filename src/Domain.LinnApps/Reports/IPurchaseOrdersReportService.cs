@@ -8,6 +8,14 @@
     {
         ResultsModel GetOrdersByPartReport(DateTime from, DateTime to, string partNumber);
 
-        ResultsModel GetOrdersBySupplierReport(DateTime from, DateTime to, int supplierId);
+        ResultsModel GetOrdersBySupplierReport(
+            DateTime from,
+            DateTime to,
+            int supplierId,
+            bool includeReturns,
+            bool outstandingOnly,
+            bool includeCancelled,
+            string includeCredits,
+            string stockControlled);
     }
 }
