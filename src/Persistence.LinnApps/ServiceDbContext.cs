@@ -31,6 +31,7 @@
         public DbSet<PackagingGroup> PackagingGroups { get; set; }
 
         public DbSet<Address> Addresses { get; set; }
+
         public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
 
         public DbSet<PurchaseOrderDetail> PurchaseOrderDetails { get; set; }
@@ -242,25 +243,6 @@
             entity.HasKey(m => m.Id);
             entity.Property(e => e.Id).HasColumnName("ADDRESS_ID");
             entity.Property(a => a.FullAddress).HasColumnName("ADDRESS");
-        }
-
-        private void BuildPurchaseOrderDetails(ModelBuilder builder)
-        {
-            var entity = builder.Entity<PurchaseOrderDetail>().ToTable("PL_ORDER_DETAILS");
-            entity.HasKey(a => new { a.OrderNumber, a.Line });
-            entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
-            entity.Property(o => o.Line).HasColumnName("ORDER_LINE");
-            entity.Property(o => o.RohsCompliant).HasColumnName("ROHS_COMPLIANT");
-            entity.Property(o => o.OurQty).HasColumnName("OUR_QTY");
-            entity.Property(o => o.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
-            entity.Property(o => o.SuppliersDesignation).HasColumnName("SUPPLIERS_DESIGNATION").HasMaxLength(2000);
-
-            entity.HasOne(d => d.PurchaseOrder).WithMany(o => o.Details)
-                .HasForeignKey(d => d.OrderNumber);
-
-            entity.HasOne(d => d.PurchaseDelivery).WithOne(o => o.PurchaseOrderDetail)
-                .HasForeignKey<PurchaseOrderDelivery>(o => new { o.OrderNumber, o.OrderLine });
-            entity.Property(o => o.NetTotal).HasColumnName("NET_TOTAL").HasMaxLength(18);
         }
 
         private void BuildPurchaseOrders(ModelBuilder builder)

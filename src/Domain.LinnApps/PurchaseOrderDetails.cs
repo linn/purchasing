@@ -18,8 +18,6 @@
 
         public PurchaseOrder PurchaseOrder { get; set; }
 
-        public PurchaseOrderDelivery PurchaseDelivery { get; set; }
-
         public string RohsCompliant { get; set; }
 
         public string SuppliersDesignation { get; set; }

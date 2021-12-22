@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
 import {
     Page,
     DatePicker,
@@ -10,6 +9,7 @@ import {
     Typeahead
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
+import moment from 'moment';
 import { getSearchItems, getSearchLoading } from '../../selectors/CollectionSelectorHelpers';
 import { getReportOptions } from '../../selectors/ReportSelectorHelpers';
 import history from '../../history';
@@ -30,10 +30,8 @@ function OrdersBySupplierReportOptions() {
     const dispatch = useDispatch();
 
     const defaultStartDate = new Date();
-    const maxDate = new Date();
-    maxDate.setDate(defaultStartDate.getDate() + 90);
+    defaultStartDate.setMonth(defaultStartDate.getMonth() - 1);
 
-    defaultStartDate.setDate(defaultStartDate.getDate() - 90);
     const [fromDate, setFromDate] = useState(
         prevOptions?.fromDate ? new Date(prevOptions?.fromDate) : defaultStartDate
     );
@@ -41,7 +39,7 @@ function OrdersBySupplierReportOptions() {
         prevOptions?.toDate ? new Date(prevOptions?.toDate) : new Date()
     );
 
-    const [supplier, setSupplier] = useState();
+    const [supplier, setSupplier] = useState({ name: 'please enter a value' });
     const [outstandingOnly, setOutstandingOnly] = useState('N');
     const [returns, setReturns] = useState('N');
     const [stockControlled, setStockControlled] = useState('A');
@@ -91,7 +89,7 @@ function OrdersBySupplierReportOptions() {
                         label="From Date"
                         value={fromDate.toString()}
                         minDate="01/01/2000"
-                        maxDate={maxDate}
+                        maxDate={toDate}
                         onChange={newValue => {
                             setFromDate(newValue);
                         }}
@@ -102,7 +100,6 @@ function OrdersBySupplierReportOptions() {
                         label="To Date"
                         value={toDate.toString()}
                         minDate={fromDate.toString()}
-                        maxDate={maxDate}
                         onChange={newValue => {
                             setToDate(newValue);
                         }}

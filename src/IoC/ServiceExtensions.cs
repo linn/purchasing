@@ -11,6 +11,7 @@
     using Linn.Common.Email;
     using Linn.Common.Facade;
     using Linn.Common.Pdf;
+    using Linn.Common.Proxy.LinnApps;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
@@ -86,6 +87,7 @@
                 .AddTransient<IReportingHelper, ReportingHelper>()
                 .AddTransient<IPurchaseOrdersReportService, PurchaseOrdersReportService>()
                 .AddTransient<IAuthorisationService, AuthorisationService>()
+                .AddTransient<IDatabaseService, DatabaseService>()
             //external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>();
         }
