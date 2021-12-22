@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.OrdersBySupplerReportServiceTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.OrdersBySupplierReportServiceTests
 {
     using System;
     using System.Collections.Generic;
@@ -82,8 +82,6 @@
 
             this.SupplierRepository.FindById(Arg.Any<int>())
                 .Returns(new Supplier { Name = "We sell stuff", SupplierId = this.supplierId });
-
-            //this.PurchaseOrdersPack.OrderIsCompleteSql(Arg.Any<int>(), Arg.Any<int>()).Returns(true);
 
             this.results = this.Sut.GetOrdersBySupplierReport(
                 new DateTime(2021, 10, 1),
