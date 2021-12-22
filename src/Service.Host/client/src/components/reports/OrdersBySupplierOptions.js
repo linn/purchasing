@@ -9,7 +9,6 @@ import {
     Typeahead
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
-import moment from 'moment';
 import { getSearchItems, getSearchLoading } from '../../selectors/CollectionSelectorHelpers';
 import { getReportOptions } from '../../selectors/ReportSelectorHelpers';
 import history from '../../history';

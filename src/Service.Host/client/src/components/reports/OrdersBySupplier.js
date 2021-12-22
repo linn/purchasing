@@ -22,10 +22,16 @@ function OrderBySupplierReport() {
     const dispatch = useDispatch();
 
     const handleBackClick = () => {
-        const uri = `/purchasing/reports/orders-by-supplier/report?
-        id=${options.id}
-        &fromDate=${encodeURIComponent(options.fromDate)}
-        &toDate=${encodeURIComponent(options.toDate)}`;
+        const uri =
+            `/purchasing/reports/orders-by-supplier/?` +
+            `?id=${options.id}` +
+            `&fromDate=${options.fromDate}` +
+            `&toDate=${options.toDate}` +
+            `&outstanding=${options.outstanding}` +
+            `&returns=${options.returns}` +
+            `&stockControlled=${options.stockControlled}` +
+            `&credits=${options.credits}` +
+            `&cancelled=${options.cancelled}`;
         history.push(uri);
     };
 
