@@ -74,6 +74,12 @@
                            DateCreated = entity.DateCreated.ToString("o"),
                            DateInvalid = entity.DateInvalid?.ToString("o"),
                            MadeInvalidBy = entity.MadeInvalidBy?.Id,
+                           ManufacturerPartNumber = entity.ManufacturerPartNumber,
+                           VendorPartNumber = entity.VendorPartNumber,
+                           RohsCategory = entity.RohsCategory,
+                           DateRohsCompliant = entity.DateRohsCompliant?.ToString("o"),
+                           RohsCompliant = entity.RohsCompliant,
+                           RohsComments = entity.RohsComments,
                            Links = this.BuildLinks(entity, claims).ToArray()
                        };
         }

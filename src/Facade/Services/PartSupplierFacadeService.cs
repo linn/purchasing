@@ -94,8 +94,17 @@
                                                           ? new Employee { Id = (int)updateResource.MadeInvalidBy }
                                                           : null,
                                       DateInvalid = string.IsNullOrEmpty(updateResource.DateInvalid) 
-                                                        ? null : DateTime.Parse(updateResource.DateInvalid) 
-            };
+                                                        ? null : DateTime.Parse(updateResource.DateInvalid),
+                                      Manufacturer = string.IsNullOrEmpty(updateResource.ManufacturerCode) ? null :
+                                                         new Manufacturer { Code = updateResource.ManufacturerCode },
+                                      ManufacturerPartNumber = updateResource.ManufacturerPartNumber,
+                                      VendorPartNumber = updateResource.VendorPartNumber,
+                                      RohsCategory = updateResource.RohsCategory,
+                                      DateRohsCompliant = string.IsNullOrEmpty(updateResource.DateRohsCompliant)
+                                                            ? null : DateTime.Parse(updateResource.DateRohsCompliant),
+                                      RohsComments = updateResource.RohsComments,
+                                      RohsCompliant = updateResource.RohsCompliant
+                                  };
 
             this.domainService.UpdatePartSupplier(entity, updated, updateResource.Privileges);
         }

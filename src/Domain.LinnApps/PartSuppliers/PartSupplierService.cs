@@ -22,6 +22,7 @@
 
         private readonly IRepository<Employee, int> employeeRepository;
 
+        private readonly IRepository<Manufacturer, string> manufacturerRepository;
 
         public PartSupplierService(
             IAuthorisationService authService,
@@ -30,7 +31,8 @@
             IRepository<Address, int> addressRepository,
             IRepository<Tariff, int> tariffRepository,
             IRepository<PackagingGroup, int> packagingGroupRepository,
-            IRepository<Employee, int> employeeRepository)
+            IRepository<Employee, int> employeeRepository,
+            IRepository<Manufacturer, string> manufacturerRepository)
         {
             this.authService = authService;
             this.currencyRepository = currencyRepository;
@@ -39,6 +41,7 @@
             this.tariffRepository = tariffRepository;
             this.packagingGroupRepository = packagingGroupRepository;
             this.employeeRepository = employeeRepository;
+            this.manufacturerRepository = manufacturerRepository;
         }
 
         public void UpdatePartSupplier(PartSupplier current, PartSupplier updated, IEnumerable<string> privileges)
@@ -80,6 +83,12 @@
                                              ? null : this.employeeRepository.FindById(updated.MadeInvalidBy.Id);
             }
 
+            if (current.Manufacturer?.Code != updated.Manufacturer?.Code)
+            {
+                current.Manufacturer = updated.Manufacturer == null
+                                            ? null : this.manufacturerRepository.FindById(updated.Manufacturer.Code);
+            }
+
             current.DateInvalid = updated.DateInvalid;
             current.SupplierDesignation = updated.SupplierDesignation;
             current.CurrencyUnitPrice = updated.CurrencyUnitPrice;
@@ -95,7 +104,13 @@
             current.DamagesPercent = updated.DamagesPercent;
             current.WebAddress = updated.WebAddress;
             current.DeliveryInstructions = updated.DeliveryInstructions;
-            updated.NotesForBuyer = updated.NotesForBuyer;
+            current.NotesForBuyer = updated.NotesForBuyer;
+            current.ManufacturerPartNumber = updated.ManufacturerPartNumber;
+            current.VendorPartNumber = updated.VendorPartNumber;
+            current.RohsCategory = updated.RohsCategory;
+            current.DateRohsCompliant = updated.DateRohsCompliant;
+            current.RohsCompliant = updated.RohsCompliant;
+            current.RohsComments = updated.RohsComments;
         }
 
         public PartSupplier CreatePartSupplier(PartSupplier candidate, IEnumerable<string> privileges)

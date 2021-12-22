@@ -42,7 +42,7 @@
 
         protected override Expression<Func<Manufacturer, bool>> SearchExpression(string searchTerm)
         {
-            throw new NotImplementedException();
+            return x => x.Code.Contains(searchTerm.ToUpper()) || x.Name.Contains(searchTerm.ToUpper());
         }
     }
 }

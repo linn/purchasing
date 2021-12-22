@@ -39,6 +39,8 @@ import tariffsActions from '../../actions/tariffsActions';
 import packagingGroupActions from '../../actions/packagingGroupActions';
 import LifecycleTab from './tabs/LifecycleTab';
 import employeesActions from '../../actions/employeesActions';
+import ManufacturerTab from './tabs/ManufacturerTab';
+import manufacturersActions from '../../actions/manufacturersActions';
 
 function PartSupplier() {
     const reduxDispatch = useDispatch();
@@ -62,6 +64,15 @@ function PartSupplier() {
         getSearchItems(reduxState.tariffs, 100, 'id', 'code', 'description')
     );
     const tariffsSearchLoading = useSelector(reduxState => getSearchLoading(reduxState.tariffs));
+
+    const searchManufacturers = searchTerm =>
+        reduxDispatch(manufacturersActions.search(searchTerm));
+    const manufacturersSearchResults = useSelector(reduxState =>
+        getSearchItems(reduxState.manufacturers, 100, 'code', 'code', 'name')
+    );
+    const manufacturersSearchLoading = useSelector(reduxState =>
+        getSearchLoading(reduxState.manufacturers)
+    );
 
     const unitsOfMeasure = useSelector(reduxState => getItems(reduxState.unitsOfMeasure));
     const deliveryAddresses = useSelector(reduxState => getItems(reduxState.deliveryAddresses));
@@ -319,6 +330,30 @@ function PartSupplier() {
                                             dateInvalid={
                                                 state.partSupplier?.dateInvalid
                                                     ? new Date(state.partSupplier?.dateInvalid)
+                                                    : null
+                                            }
+                                        />
+                                    </Box>
+                                )}
+                                {value === 4 && (
+                                    <Box sx={{ paddingTop: 3 }}>
+                                        <ManufacturerTab
+                                            handleFieldChange={handleFieldChange}
+                                            manufacturerPartNumber={
+                                                state.partSupplier?.manufacturerPartNumber
+                                            }
+                                            manufacturer={state.partSupplier?.manufacturerCode}
+                                            manufacturerName={state.partSupplier?.manufacturerName}
+                                            manufacturersSearchResults={manufacturersSearchResults}
+                                            manufacturersSearchLoading={manufacturersSearchLoading}
+                                            searchManufacturers={searchManufacturers}
+                                            vendorPartNumber={state.partSupplier?.vendorPartNumber}
+                                            rohsCategory={state.partSupplier?.rohsCategory}
+                                            dateRohsCompliant={
+                                                state.partSupplier?.dateRohsCompliant
+                                                    ? new Date(
+                                                          state.partSupplier?.dateRohsCompliant
+                                                      )
                                                     : null
                                             }
                                         />
