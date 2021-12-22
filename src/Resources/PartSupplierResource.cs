@@ -87,6 +87,24 @@
 
         public string PackagingGroupDescription { get; set; }
 
+        public string DateCreated { get; set; }
+
+        public string DateInvalid { get; set; }
+
+        public int? MadeInvalidBy { get; set; }
+
+        public string ManufacturerPartNumber { get; set; }
+
+        public string VendorPartNumber { get; set; }
+
+        public string RohsCategory { get; set; }
+
+        public string DateRohsCompliant { get; set; }
+
+        public string RohsCompliant { get; set; }
+
+        public string RohsComments { get; set; }
+
         public IEnumerable<string> Privileges { get; set; }
     }
 }

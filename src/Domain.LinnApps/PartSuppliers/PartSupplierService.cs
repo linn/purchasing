@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.PartSuppliers
 {
     using System.Collections.Generic;
+    using System.Runtime.Serialization.Formatters;
 
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
@@ -16,9 +17,13 @@
 
         private readonly IRepository<Address, int> addressRepository;
 
-        private IRepository<Tariff, int> tariffRepository;
+        private readonly IRepository<Tariff, int> tariffRepository;
 
-        private IRepository<PackagingGroup, int> packagingGroupRepository;
+        private readonly IRepository<PackagingGroup, int> packagingGroupRepository;
+
+        private readonly IRepository<Employee, int> employeeRepository;
+
+        private readonly IRepository<Manufacturer, string> manufacturerRepository;
 
         public PartSupplierService(
             IAuthorisationService authService,
@@ -26,7 +31,9 @@
             IRepository<OrderMethod, string> orderMethodRepository,
             IRepository<Address, int> addressRepository,
             IRepository<Tariff, int> tariffRepository,
-            IRepository<PackagingGroup, int> packagingGroupRepository)
+            IRepository<PackagingGroup, int> packagingGroupRepository,
+            IRepository<Employee, int> employeeRepository,
+            IRepository<Manufacturer, string> manufacturerRepository)
         {
             this.authService = authService;
             this.currencyRepository = currencyRepository;
@@ -34,6 +41,8 @@
             this.addressRepository = addressRepository;
             this.tariffRepository = tariffRepository;
             this.packagingGroupRepository = packagingGroupRepository;
+            this.employeeRepository = employeeRepository;
+            this.manufacturerRepository = manufacturerRepository;
         }
 
         public void UpdatePartSupplier(PartSupplier current, PartSupplier updated, IEnumerable<string> privileges)
@@ -69,6 +78,19 @@
                                              ? null : this.packagingGroupRepository.FindById(updated.PackagingGroup.Id);
             }
 
+            if (current.MadeInvalidBy?.Id != updated.MadeInvalidBy?.Id)
+            {
+                current.MadeInvalidBy = updated.MadeInvalidBy == null
+                                             ? null : this.employeeRepository.FindById(updated.MadeInvalidBy.Id);
+            }
+
+            if (current.Manufacturer?.Code != updated.Manufacturer?.Code)
+            {
+                current.Manufacturer = updated.Manufacturer == null
+                                            ? null : this.manufacturerRepository.FindById(updated.Manufacturer.Code);
+            }
+
+            current.DateInvalid = updated.DateInvalid;
             current.SupplierDesignation = updated.SupplierDesignation;
             current.CurrencyUnitPrice = updated.CurrencyUnitPrice;
             current.OurCurrencyPriceToShowOnOrder = updated.OurCurrencyPriceToShowOnOrder;
@@ -83,7 +105,13 @@
             current.DamagesPercent = updated.DamagesPercent;
             current.WebAddress = updated.WebAddress;
             current.DeliveryInstructions = updated.DeliveryInstructions;
-            updated.NotesForBuyer = updated.NotesForBuyer;
+            current.NotesForBuyer = updated.NotesForBuyer;
+            current.ManufacturerPartNumber = updated.ManufacturerPartNumber;
+            current.VendorPartNumber = updated.VendorPartNumber;
+            current.RohsCategory = updated.RohsCategory;
+            current.DateRohsCompliant = updated.DateRohsCompliant;
+            current.RohsCompliant = updated.RohsCompliant;
+            current.RohsComments = updated.RohsComments;
         }
 
         public PartSupplier CreatePartSupplier(PartSupplier candidate, IEnumerable<string> privileges)
@@ -91,6 +119,41 @@
             if (!this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
             {
                 throw new UnauthorisedActionException("You are not authorised to update Part Supplier records");
+            }
+
+            if (!string.IsNullOrEmpty(candidate.OrderMethod?.Name))
+            {
+                candidate.OrderMethod = this.orderMethodRepository.FindById(candidate.OrderMethod.Name);
+            }
+
+            if (!string.IsNullOrEmpty(candidate.Currency?.Code))
+            {
+                candidate.Currency = this.currencyRepository.FindById(candidate.Currency.Code);
+            }
+
+            if (candidate.DeliveryAddress?.Id != null)
+            {
+                candidate.DeliveryAddress = this.addressRepository.FindById(candidate.DeliveryAddress.Id);
+            }
+
+            if (candidate.Tariff?.Id != null)
+            {
+                candidate.Tariff = this.tariffRepository.FindById(candidate.Tariff.Id);
+            }
+
+            if (candidate.PackagingGroup?.Id != null)
+            {
+                candidate.PackagingGroup = this.packagingGroupRepository.FindById(candidate.PackagingGroup.Id);
+            }
+
+            if (candidate.MadeInvalidBy?.Id != null)
+            {
+                candidate.MadeInvalidBy = this.employeeRepository.FindById(candidate.MadeInvalidBy.Id);
+            }
+
+            if (!string.IsNullOrEmpty(candidate.Manufacturer?.Code))
+            {
+                candidate.Manufacturer = this.manufacturerRepository.FindById(candidate.Manufacturer.Code);
             }
 
             return candidate;

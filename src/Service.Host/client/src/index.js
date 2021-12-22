@@ -23,7 +23,7 @@ const render = Component => {
             <ThemeProvider theme={linnTheme}>
                 <SnackbarProvider dense maxSnack={5}>
                     <AppContainer>
-                        <LocalizationProvider dateAdapter={AdapterDateMoment} locale="de-DE">
+                        <LocalizationProvider dateAdapter={AdapterDateMoment} locale="fr-FR">
                             <Component store={store} />
                         </LocalizationProvider>
                     </AppContainer>

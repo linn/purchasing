@@ -12,9 +12,10 @@ import {
     Page,
     Loading,
     SaveBackCancelButtons,
-    SnackbarMessage
+    SnackbarMessage,
+    utilities
 } from '@linn-it/linn-form-components-library';
-import getQuery from '../../selectors/routerSelelctors';
+import { getQuery, getPathname } from '../../selectors/routerSelelctors';
 import partSupplierActions from '../../actions/partSupplierActions';
 import history from '../../history';
 import config from '../../config';
@@ -25,8 +26,11 @@ import partsActions from '../../actions/partsActions';
 import {
     getSearchItems,
     getSearchLoading,
-    getItems
+    getItems,
+    getApplicationState
 } from '../../selectors/CollectionSelectorHelpers';
+import partSuppliersActions from '../../actions/partSuppliersActions';
+
 import { getSnackbarVisible, getItem, getEditStatus } from '../../selectors/ItemSelectorsHelpers';
 import deliveryAddressesActions from '../../actions/deliveryAddressesActions';
 import unitsOfMeasureActions from '../../actions/unitsOfMeasureActions';
@@ -37,6 +41,10 @@ import OrderDetailsTab from './tabs/OrderDetailsTab';
 import OtherDetailsTab from './tabs/OtherDetailsTab';
 import tariffsActions from '../../actions/tariffsActions';
 import packagingGroupActions from '../../actions/packagingGroupActions';
+import LifecycleTab from './tabs/LifecycleTab';
+import employeesActions from '../../actions/employeesActions';
+import ManufacturerTab from './tabs/ManufacturerTab';
+import manufacturersActions from '../../actions/manufacturersActions';
 
 function PartSupplier() {
     const reduxDispatch = useDispatch();
@@ -61,22 +69,37 @@ function PartSupplier() {
     );
     const tariffsSearchLoading = useSelector(reduxState => getSearchLoading(reduxState.tariffs));
 
+    const searchManufacturers = searchTerm =>
+        reduxDispatch(manufacturersActions.search(searchTerm));
+    const manufacturersSearchResults = useSelector(reduxState =>
+        getSearchItems(reduxState.manufacturers, 100, 'code', 'code', 'name')
+    );
+    const manufacturersSearchLoading = useSelector(reduxState =>
+        getSearchLoading(reduxState.manufacturers)
+    );
+
     const unitsOfMeasure = useSelector(reduxState => getItems(reduxState.unitsOfMeasure));
     const deliveryAddresses = useSelector(reduxState => getItems(reduxState.deliveryAddresses));
     const orderMethods = useSelector(reduxState => getItems(reduxState.orderMethods));
     const currencies = useSelector(reduxState => getItems(reduxState.currencies));
     const packagingGroups = useSelector(reduxState => getItems(reduxState.packagingGroups));
+    const employees = useSelector(reduxState => getItems(reduxState.employees));
 
     const updatePartSupplier = body => reduxDispatch(partSupplierActions.update(null, body));
+    const createPartSupplier = body => reduxDispatch(partSupplierActions.create(body));
 
-    const creating = () => false;
+    const pathName = useSelector(reduxState => getPathname(reduxState));
+
+    const creating = () => pathName.endsWith('/create');
+
+    const applicationState = useSelector(state => getApplicationState(state.partSuppliers));
 
     const [state, dispatch] = useReducer(partSupplierReducer, {
         partSupplier: creating() ? {} : {},
         prevPart: {}
     });
 
-    const partKey = useSelector(reduxState => getQuery(reduxState));
+    const query = useSelector(reduxState => getQuery(reduxState));
     const loading = useSelector(reduxState => reduxState.partSupplier.loading);
     const snackbarVisible = useSelector(reduxState => getSnackbarVisible(reduxState.partSupplier));
     const editStatus = useSelector(reduxState => getEditStatus(reduxState.partSupplier));
@@ -85,23 +108,37 @@ function PartSupplier() {
 
     const setEditStatus = status => reduxDispatch(partSupplierActions.setEditStatus(status));
 
+    const [value, setValue] = useState(0);
+
     useEffect(() => {
+        reduxDispatch(partSuppliersActions.fetchState());
         reduxDispatch(unitsOfMeasureActions.fetch());
         reduxDispatch(deliveryAddressesActions.fetch());
         reduxDispatch(orderMethodsactions.fetch());
         reduxDispatch(currenciesActions.fetch());
         reduxDispatch(packagingGroupActions.fetch());
+        reduxDispatch(employeesActions.fetch());
     }, [reduxDispatch]);
 
     useEffect(() => {
-        if (partKey) {
+        if (query.partId && query.supplierId) {
             reduxDispatch(
                 partSupplierActions.fetchByHref(
-                    `${partSupplier.uri}?partId=${partKey.partId}&supplierId=${partKey.supplierId}`
+                    `${partSupplier.uri}?partId=${query.partId}&supplierId=${query.supplierId}`
                 )
             );
         }
-    }, [partKey, reduxDispatch]);
+        if (query.tab) {
+            const tabs = {
+                partAndSupplier: 0,
+                orderDetails: 1,
+                otherDetails: 2,
+                lifecycle: 3,
+                manufacturers: 4
+            };
+            setValue(tabs[query.tab]);
+        }
+    }, [query, reduxDispatch]);
 
     useEffect(() => {
         if (item) {
@@ -110,29 +147,32 @@ function PartSupplier() {
     }, [item]);
 
     const handleFieldChange = (propertyName, newValue) => {
+        let formatted = newValue;
+        if (['addressId', 'packagingGroupId'].includes(propertyName)) {
+            formatted = Number(newValue);
+        }
         setEditStatus('edit');
         if (propertyName === 'orderMethodName') {
             dispatch({
                 type: 'fieldChange',
                 fieldName: 'orderMethodDescription',
-                payload: orderMethods.find(x => x.name === newValue).description
+                payload: orderMethods.find(x => x.name === formatted).description
             });
         }
         if (propertyName === 'addressId') {
             dispatch({
                 type: 'fieldChange',
                 fieldName: 'fullAddress',
-                payload: deliveryAddresses.find(x => x.addressId === Number(newValue)).address
+                payload: deliveryAddresses.find(x => x.addressId === formatted).address
             });
-            dispatch({ type: 'fieldChange', fieldName: propertyName, payload: Number(newValue) });
+            dispatch({ type: 'fieldChange', fieldName: propertyName, payload: formatted });
             return;
         }
-        dispatch({ type: 'fieldChange', fieldName: propertyName, payload: newValue });
+        dispatch({ type: 'fieldChange', fieldName: propertyName, payload: formatted });
     };
 
-    const canEdit = () => item?.links.some(l => l.rel === 'edit' || l.rel === 'create');
-
-    const [value, setValue] = useState(0);
+    const canEdit = () =>
+        item?.links.some(l => l.rel === 'edit') || !!utilities.getHref(applicationState, 'create');
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
@@ -192,9 +232,8 @@ function PartSupplier() {
                                         <Tab label="Part and Supplier" />
                                         <Tab label="Order Details" />
                                         <Tab label="Other Details" />
-                                        <Tab label="Jit" disabled />
-                                        <Tab label="Lifecycle" disabled />
-                                        <Tab label="Manufacturer" disabled />
+                                        <Tab label="Lifecycle" />
+                                        <Tab label="Manufacturer" />
                                     </Tabs>
                                 </Box>
 
@@ -213,7 +252,7 @@ function PartSupplier() {
                                             suppliersSearchResults={suppliersSearchResults}
                                             suppliersSearchLoading={suppliersSearchLoading}
                                             searchSuppliers={searchSuppliers}
-                                            editStatus={editStatus}
+                                            editStatus={creating() ? 'create' : editStatus}
                                         />
                                     </Box>
                                 )}
@@ -288,6 +327,51 @@ function PartSupplier() {
                                         />
                                     </Box>
                                 )}
+                                {value === 3 && (
+                                    <Box sx={{ paddingTop: 3 }}>
+                                        <LifecycleTab
+                                            handleFieldChange={handleFieldChange}
+                                            createdBy={state.partSupplier?.createdBy}
+                                            employees={employees}
+                                            dateCreated={
+                                                state.partSupplier?.dateCreated
+                                                    ? new Date(state.partSupplier?.dateCreated)
+                                                    : null
+                                            }
+                                            madeInvalidB={state.partSupplier?.madeInvalidB}
+                                            dateInvalid={
+                                                state.partSupplier?.dateInvalid
+                                                    ? new Date(state.partSupplier?.dateInvalid)
+                                                    : null
+                                            }
+                                        />
+                                    </Box>
+                                )}
+                                {value === 4 && (
+                                    <Box sx={{ paddingTop: 3 }}>
+                                        <ManufacturerTab
+                                            handleFieldChange={handleFieldChange}
+                                            manufacturerPartNumber={
+                                                state.partSupplier?.manufacturerPartNumber
+                                            }
+                                            manufacturer={state.partSupplier?.manufacturerCode}
+                                            manufacturerName={state.partSupplier?.manufacturerName}
+                                            manufacturersSearchResults={manufacturersSearchResults}
+                                            manufacturersSearchLoading={manufacturersSearchLoading}
+                                            searchManufacturers={searchManufacturers}
+                                            vendorPartNumber={state.partSupplier?.vendorPartNumber}
+                                            rohsCategory={state.partSupplier?.rohsCategory}
+                                            dateRohsCompliant={
+                                                state.partSupplier?.dateRohsCompliant
+                                                    ? new Date(
+                                                          state.partSupplier?.dateRohsCompliant
+                                                      )
+                                                    : null
+                                            }
+                                            rohsComments={state.partSupplier?.rohsComments}
+                                        />
+                                    </Box>
+                                )}
                             </Box>
                         </Grid>
                     </>
@@ -296,8 +380,8 @@ function PartSupplier() {
                     <SaveBackCancelButtons
                         saveDisabled={!canEdit() || editStatus === 'view'}
                         saveClick={() =>
-                            editStatus === 'create'
-                                ? () => {}
+                            creating()
+                                ? createPartSupplier(state.partSupplier)
                                 : updatePartSupplier(state.partSupplier)
                         }
                         cancelClick={() => {

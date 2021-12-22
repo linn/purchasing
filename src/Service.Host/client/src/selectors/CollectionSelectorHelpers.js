@@ -29,12 +29,12 @@ export const getSearchItems = (
         result = result.map(x => ({ ...x, id: x[idFieldName] }));
     }
 
-    if (nameFieldName) {
-        result = result.map(x => ({ ...x, name: x[nameFieldName] }));
-    }
-
     if (descriptionFieldName) {
         result = result.map(x => ({ ...x, description: x[descriptionFieldName] }));
+    }
+
+    if (nameFieldName) {
+        result = result.map(x => ({ ...x, name: x[nameFieldName] }));
     }
 
     return result || [];

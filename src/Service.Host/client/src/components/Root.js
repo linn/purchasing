@@ -58,6 +58,11 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
+                                    path="/purchasing/part-suppliers/create"
+                                    component={PartSupplier}
+                                />
+                                <Route
+                                    exact
                                     path="/purchasing/reports/orders-by-supplier"
                                     component={OrdersBySupplierOptions}
                                 />
