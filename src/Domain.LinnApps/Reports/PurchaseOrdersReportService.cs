@@ -81,29 +81,29 @@
                 if (!includeCancelled &&
                     order.Cancelled == "Y")
                 {
-                    break;
+                    continue;
                 }
 
                 foreach (var orderDetail in order.Details)
                 {
-                    if (outstandingOnly && !this.purchaseOrdersPack.OrderIsCompleteSql(
+                    if (outstandingOnly && this.purchaseOrdersPack.OrderIsCompleteSql(
                             orderDetail.OrderNumber,
                             orderDetail.Line))
                     {
-                        break;
+                        continue;
                     }
 
                     if (!includeCancelled &&
                         (orderDetail.Cancelled == "Y" || orderDetail.PurchaseDelivery.Cancelled == "Y"))
                     {
-                        break;
+                        continue;
                     }
 
                     var part = this.partRepository.FindBy(x => x.PartNumber == orderDetail.PartNumber);
                     if (stockControlled != "A" || (stockControlled == "N" && part.StockControlled != "N")
                                                || (stockControlled == "O" && part.StockControlled == "Y"))
                     {
-                        break;
+                        continue;
                     }
 
                     var ledgersForOrderAndLine = this.purchaseLedgerRepository.FilterBy(
