@@ -121,7 +121,6 @@
                 throw new UnauthorisedActionException("You are not authorised to update Part Supplier records");
             }
 
-            // todo - do we actually need to do all this or is ef workinbg it out anyway
             if (!string.IsNullOrEmpty(candidate.OrderMethod?.Name))
             {
                 candidate.OrderMethod = this.orderMethodRepository.FindById(candidate.OrderMethod.Name);
