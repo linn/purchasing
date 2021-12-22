@@ -23,7 +23,7 @@ function OrderBySupplierReport() {
 
     const handleBackClick = () => {
         const uri =
-            `/purchasing/reports/orders-by-supplier/?` +
+            `/purchasing/reports/orders-by-supplier/` +
             `?id=${options.id}` +
             `&fromDate=${options.fromDate}` +
             `&toDate=${options.toDate}` +

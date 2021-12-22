@@ -38,7 +38,7 @@ function OrdersBySupplierReportOptions() {
         prevOptions?.toDate ? new Date(prevOptions?.toDate) : new Date()
     );
 
-    const [supplier, setSupplier] = useState({ name: 'please enter a value' });
+    const [supplier, setSupplier] = useState({ id: '', name: 'click to set supplier' });
     const [outstandingOnly, setOutstandingOnly] = useState('N');
     const [returns, setReturns] = useState('N');
     const [stockControlled, setStockControlled] = useState('A');
@@ -143,7 +143,7 @@ function OrdersBySupplierReportOptions() {
                         propertyName="stockControlled"
                         items={[
                             { id: 'A', displayText: 'All' },
-                            { id: 'Y', displayText: 'Stock Controlled Only' },
+                            { id: 'O', displayText: 'Stock Controlled Only' },
                             { id: 'N', displayText: 'Non Stock Controlled' }
                         ]}
                         allowNoValue={false}
