@@ -2,8 +2,10 @@
 {
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NSubstitute;
 
@@ -29,6 +31,10 @@
 
         protected IRepository<Manufacturer, string> ManufacturerRepository { get; private set; }
 
+        protected IQueryRepository<Part> PartRepository { get; private set; }
+
+        protected IRepository<Supplier, int> SupplierRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -40,6 +46,8 @@
             this.TariffRepository = Substitute.For<IRepository<Tariff, int>>();
             this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
             this.ManufacturerRepository = Substitute.For<IRepository<Manufacturer, string>>();
+            this.PartRepository = Substitute.For<IQueryRepository<Part>>();
+            this.SupplierRepository = Substitute.For<IRepository<Supplier, int>>();
 
             this.Sut = new PartSupplierService(
                 this.MockAuthService,
@@ -49,7 +57,9 @@
                 this.TariffRepository,
                 this.PackagingGroupRepository,
                 this.EmployeeRepository,
-                this.ManufacturerRepository);
+                this.ManufacturerRepository,
+                this.PartRepository,
+                this.SupplierRepository);
         }
     }
 }

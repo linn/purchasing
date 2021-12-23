@@ -32,7 +32,8 @@
             var candidate = this.BuildEntityFromResourceHelper(resource);
             candidate.PartNumber = resource.PartNumber;
             candidate.SupplierId = resource.SupplierId;
-
+            candidate.CreatedBy = resource.CreatedBy.HasValue 
+                                      ? new Employee { Id = (int)resource.CreatedBy } : null;
             return this.domainService.CreatePartSupplier(candidate, resource.Privileges);
         }
 

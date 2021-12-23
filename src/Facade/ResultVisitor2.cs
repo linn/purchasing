@@ -75,7 +75,7 @@
                 res.StatusCode = 400;
                 res.ContentType = this.contentType;
 
-                return Task.CompletedTask;
+                return res.WriteAsync(this.serialiser.Serialise(result.Message), cancellationToken);
             };
         }
 

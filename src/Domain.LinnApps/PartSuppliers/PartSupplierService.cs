@@ -9,6 +9,7 @@
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using Microsoft.VisualBasic;
 
@@ -30,6 +31,10 @@
 
         private readonly IRepository<Manufacturer, string> manufacturerRepository;
 
+        private readonly IQueryRepository<Part> partRepository;
+
+        private readonly IRepository<Supplier, int> supplierRepository;
+
         public PartSupplierService(
             IAuthorisationService authService,
             IRepository<Currency, string> currencyRepository,
@@ -38,7 +43,9 @@
             IRepository<Tariff, int> tariffRepository,
             IRepository<PackagingGroup, int> packagingGroupRepository,
             IRepository<Employee, int> employeeRepository,
-            IRepository<Manufacturer, string> manufacturerRepository)
+            IRepository<Manufacturer, string> manufacturerRepository,
+            IQueryRepository<Part> partRepository,
+            IRepository<Supplier, int> supplierRepository)
         {
             this.authService = authService;
             this.currencyRepository = currencyRepository;
@@ -48,6 +55,8 @@
             this.packagingGroupRepository = packagingGroupRepository;
             this.employeeRepository = employeeRepository;
             this.manufacturerRepository = manufacturerRepository;
+            this.partRepository = partRepository;
+            this.supplierRepository = supplierRepository;
         }
 
         public void UpdatePartSupplier(PartSupplier current, PartSupplier updated, IEnumerable<string> privileges)
@@ -138,6 +147,10 @@
                 throw new PartSupplierException(msg);
             }
 
+            candidate.CreatedBy = this.employeeRepository.FindById(candidate.CreatedBy.Id);
+            candidate.Part = this.partRepository.FindBy(x => x.PartNumber == candidate.PartNumber);
+            candidate.Supplier = this.supplierRepository.FindById(candidate.SupplierId);
+
             if (!string.IsNullOrEmpty(candidate.OrderMethod?.Name))
             {
                 candidate.OrderMethod = this.orderMethodRepository.FindById(candidate.OrderMethod.Name);
@@ -202,7 +215,7 @@
 
             if (string.IsNullOrEmpty(candidate.RohsCompliant))
             {
-                errors.Add("Rohs Compliant");
+                candidate.RohsCompliant = "N";
             }
 
             if (string.IsNullOrEmpty(candidate.RohsCategory))
