@@ -3,15 +3,11 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using Amazon.SimpleEmail.Model;
-
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
-
-    using Microsoft.VisualBasic;
 
     public class PartSupplierService : IPartSupplierService
     {
