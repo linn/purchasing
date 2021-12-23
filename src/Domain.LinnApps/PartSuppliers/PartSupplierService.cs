@@ -182,32 +182,32 @@
 
             if (candidate.MinimumOrderQty == 0)
             {
-                errors.Add("MinumumOrderQty");
+                errors.Add("Minimum Order Qty");
             }
 
             if (candidate.CreatedBy == null)
             {
-                errors.Add("CreatedBy");
+                errors.Add("Created By");
             }
 
             if (candidate.OrderIncrement == 0)
             {
-                errors.Add("OrderIncrement");
+                errors.Add("Order Increment");
             }
 
             if (candidate.LeadTimeWeeks == 0)
             {
-                errors.Add("LeadTimeWeeks");
+                errors.Add("Lead Time Weeks");
             }
 
             if (string.IsNullOrEmpty(candidate.RohsCompliant))
             {
-                errors.Add("RohsCompliant");
+                errors.Add("Rohs Compliant");
             }
 
             if (string.IsNullOrEmpty(candidate.RohsCategory))
             {
-                errors.Add("RohsCategory");
+                errors.Add("Rohs Category");
             }
 
             return errors;
