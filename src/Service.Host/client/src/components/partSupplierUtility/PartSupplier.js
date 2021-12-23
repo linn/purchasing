@@ -86,7 +86,7 @@ function PartSupplier() {
     const employees = useSelector(reduxState => getItems(reduxState.employees));
 
     const updatePartSupplier = body => reduxDispatch(partSupplierActions.update(null, body));
-    const createPartSupplier = body => reduxDispatch(partSupplierActions.create(body));
+    const createPartSupplier = body => reduxDispatch(partSupplierActions.add(body));
 
     const pathName = useSelector(reduxState => getPathname(reduxState));
 
