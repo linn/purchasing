@@ -1,7 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.PartSuppliers
 {
     using System.Collections.Generic;
-    using System.Runtime.Serialization.Formatters;
 
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
@@ -64,7 +63,7 @@
 
             if (current.DeliveryAddress?.Id != updated.DeliveryAddress?.Id)
             {
-                current.DeliveryAddress = this.addressRepository.FindById(updated.DeliveryAddress.Id);
+                current.DeliveryAddress = updated.DeliveryAddress == null ? null : this.addressRepository.FindById(updated.DeliveryAddress.Id);
             }
 
             if (current.Tariff?.Id != updated.Tariff?.Id)

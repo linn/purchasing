@@ -23,6 +23,10 @@
 
         private readonly PackagingGroup newPackagingGroup = new PackagingGroup { Id = 77 };
 
+        private readonly Employee madeInvalidBy = new Employee { Id = 33087 };
+
+        private readonly Manufacturer manufacturer = new Manufacturer { Code = "MAN" };
+
         private PartSupplier current;
 
         private PartSupplier updated;
@@ -48,7 +52,9 @@
                                    DeliveryAddress = this.newAddress,
                                    Currency = this.newCurrency,
                                    Tariff = this.newTariff,
-                                   PackagingGroup = this.newPackagingGroup
+                                   PackagingGroup = this.newPackagingGroup,
+                                   MadeInvalidBy = this.madeInvalidBy,
+                                   Manufacturer = this.manufacturer
                                };
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
@@ -57,6 +63,8 @@
             this.OrderMethodRepository.FindById(this.newOrderMethod.Name).Returns(this.newOrderMethod);
             this.TariffRepository.FindById(this.newTariff.Id).Returns(this.newTariff);
             this.PackagingGroupRepository.FindById(this.newPackagingGroup.Id).Returns(this.newPackagingGroup);
+            this.EmployeeRepository.FindById(this.madeInvalidBy.Id).Returns(this.madeInvalidBy);
+            this.ManufacturerRepository.FindById(this.manufacturer.Code).Returns(this.manufacturer);
             this.Sut.UpdatePartSupplier(this.current, this.updated, new List<string>());
         }
 
@@ -79,6 +87,8 @@
             this.current.DeliveryAddress.Id.Should().Be(this.newAddress.Id);
             this.current.PackagingGroup.Id.Should().Be(this.newPackagingGroup.Id);
             this.current.Tariff.Id.Should().Be(this.newTariff.Id);
+            this.current.MadeInvalidBy.Id.Should().Be(this.madeInvalidBy.Id);
+            this.current.Manufacturer.Code.Should().Be(this.manufacturer.Code);
         }
     }
 }
