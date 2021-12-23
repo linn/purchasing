@@ -45,6 +45,7 @@
 
         public void Add(PartSupplier entity)
         {
+            this.serviceDbContext.Entry(entity.Part).State = EntityState.Unchanged;
             this.serviceDbContext.PartSuppliers.Add(entity);
         }
 
