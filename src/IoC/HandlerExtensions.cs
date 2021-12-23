@@ -6,6 +6,7 @@
     using Linn.Common.Facade.Carter.Handlers;
     using Linn.Common.Reporting.Models;
     using Linn.Common.Reporting.Resources.ReportResultResources;
+    using Linn.Purchasing.Facade;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.ResultHandlers;
 
@@ -17,7 +18,7 @@
         {
             return services.AddTransient<UniversalResponseNegotiator>()
                 .AddTransient<IHandler, ThingResourceResultHandler>()
-                .AddTransient<IHandler, JsonResultHandler<PartSupplierResource>>()
+                .AddTransient<IHandler, JsonResultHandler2<PartSupplierResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<PartSupplierResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<SupplierResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<SupplierResource>>>()
