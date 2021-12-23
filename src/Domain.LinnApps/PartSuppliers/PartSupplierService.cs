@@ -1,10 +1,16 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.PartSuppliers
 {
     using System.Collections.Generic;
+    using System.Linq;
+
+    using Amazon.SimpleEmail.Model;
 
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+
+    using Microsoft.VisualBasic;
 
     public class PartSupplierService : IPartSupplierService
     {
@@ -120,6 +126,18 @@
                 throw new UnauthorisedActionException("You are not authorised to update Part Supplier records");
             }
 
+            var errors = this.ValidateFields(candidate);
+
+            if (errors.Any())
+            {
+                var msg = errors
+                        .Aggregate(
+                            "The inputs for the following fields are empty/invalid: ", 
+                            (current, error) => current + $"{error}, ");
+
+                throw new PartSupplierException(msg);
+            }
+
             if (!string.IsNullOrEmpty(candidate.OrderMethod?.Name))
             {
                 candidate.OrderMethod = this.orderMethodRepository.FindById(candidate.OrderMethod.Name);
@@ -156,6 +174,43 @@
             }
 
             return candidate;
+        }
+
+        private List<string> ValidateFields(PartSupplier candidate)
+        {
+            var errors = new List<string>();
+
+            if (candidate.MinimumOrderQty == 0)
+            {
+                errors.Add("MinumumOrderQty");
+            }
+
+            if (candidate.CreatedBy == null)
+            {
+                errors.Add("CreatedBy");
+            }
+
+            if (candidate.OrderIncrement == 0)
+            {
+                errors.Add("OrderIncrement");
+            }
+
+            if (candidate.LeadTimeWeeks == 0)
+            {
+                errors.Add("LeadTimeWeeks");
+            }
+
+            if (string.IsNullOrEmpty(candidate.RohsCompliant))
+            {
+                errors.Add("RohsCompliant");
+            }
+
+            if (string.IsNullOrEmpty(candidate.RohsCategory))
+            {
+                errors.Add("RohsCategory");
+            }
+
+            return errors;
         }
     }
 }

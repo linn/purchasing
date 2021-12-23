@@ -45,7 +45,7 @@
 
         public void Add(PartSupplier entity)
         {
-            throw new NotImplementedException();
+            this.serviceDbContext.PartSuppliers.Add(entity);
         }
 
         public void Remove(PartSupplier entity)

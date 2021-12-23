@@ -30,7 +30,7 @@ import {
     getApplicationState
 } from '../../selectors/CollectionSelectorHelpers';
 import partSuppliersActions from '../../actions/partSuppliersActions';
-
+import { getUserNumber } from '../../selectors/userSelectors';
 import { getSnackbarVisible, getItem, getEditStatus } from '../../selectors/ItemSelectorsHelpers';
 import deliveryAddressesActions from '../../actions/deliveryAddressesActions';
 import unitsOfMeasureActions from '../../actions/unitsOfMeasureActions';
@@ -78,6 +78,7 @@ function PartSupplier() {
         getSearchLoading(reduxState.manufacturers)
     );
 
+    const currentUserNumber = useSelector(reduxState => getUserNumber(reduxState));
     const unitsOfMeasure = useSelector(reduxState => getItems(reduxState.unitsOfMeasure));
     const deliveryAddresses = useSelector(reduxState => getItems(reduxState.deliveryAddresses));
     const orderMethods = useSelector(reduxState => getItems(reduxState.orderMethods));
@@ -95,7 +96,7 @@ function PartSupplier() {
     const applicationState = useSelector(state => getApplicationState(state.partSuppliers));
 
     const [state, dispatch] = useReducer(partSupplierReducer, {
-        partSupplier: creating() ? {} : {},
+        partSupplier: {},
         prevPart: {}
     });
 
@@ -142,11 +143,14 @@ function PartSupplier() {
 
     useEffect(() => {
         if (pathName.endsWith('/create')) {
-            dispatch({ type: 'initialise', payload: {} });
+            dispatch({
+                type: 'initialise',
+                payload: { createdBy: currentUserNumber, dateCreated: new Date() }
+            });
         } else if (item) {
             dispatch({ type: 'initialise', payload: item });
         }
-    }, [item, pathName]);
+    }, [item, pathName, currentUserNumber]);
 
     const handleFieldChange = (propertyName, newValue) => {
         let formatted = newValue;
