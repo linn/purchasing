@@ -141,10 +141,12 @@ function PartSupplier() {
     }, [query, reduxDispatch]);
 
     useEffect(() => {
-        if (item) {
+        if (pathName.endsWith('/create')) {
+            dispatch({ type: 'initialise', payload: {} });
+        } else if (item) {
             dispatch({ type: 'initialise', payload: item });
         }
-    }, [item]);
+    }, [item, pathName]);
 
     const handleFieldChange = (propertyName, newValue) => {
         let formatted = newValue;
