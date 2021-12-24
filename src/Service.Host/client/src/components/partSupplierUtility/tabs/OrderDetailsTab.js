@@ -99,6 +99,7 @@ function OrderDetailsTab({
                     value={minimumOrderQty}
                     label="Minumum Order Qty"
                     type="number"
+                    required
                     propertyName="minimumOrderQty"
                     onChange={handleFieldChange}
                 />
@@ -120,6 +121,7 @@ function OrderDetailsTab({
                     value={orderIncrement}
                     label="Order Increment"
                     type="number"
+                    required
                     propertyName="orderIncrement"
                     onChange={handleFieldChange}
                 />

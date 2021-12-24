@@ -13,7 +13,8 @@ import {
     Loading,
     SaveBackCancelButtons,
     SnackbarMessage,
-    utilities
+    utilities,
+    ErrorCard
 } from '@linn-it/linn-form-components-library';
 import { getQuery, getPathname } from '../../selectors/routerSelelctors';
 import partSupplierActions from '../../actions/partSupplierActions';
@@ -30,7 +31,7 @@ import {
     getApplicationState
 } from '../../selectors/CollectionSelectorHelpers';
 import partSuppliersActions from '../../actions/partSuppliersActions';
-
+import { getUserNumber } from '../../selectors/userSelectors';
 import { getSnackbarVisible, getItem, getEditStatus } from '../../selectors/ItemSelectorsHelpers';
 import deliveryAddressesActions from '../../actions/deliveryAddressesActions';
 import unitsOfMeasureActions from '../../actions/unitsOfMeasureActions';
@@ -45,6 +46,7 @@ import LifecycleTab from './tabs/LifecycleTab';
 import employeesActions from '../../actions/employeesActions';
 import ManufacturerTab from './tabs/ManufacturerTab';
 import manufacturersActions from '../../actions/manufacturersActions';
+import { getItemError } from '../../selectors/errorSelectors';
 
 function PartSupplier() {
     const reduxDispatch = useDispatch();
@@ -78,6 +80,7 @@ function PartSupplier() {
         getSearchLoading(reduxState.manufacturers)
     );
 
+    const currentUserNumber = useSelector(reduxState => getUserNumber(reduxState));
     const unitsOfMeasure = useSelector(reduxState => getItems(reduxState.unitsOfMeasure));
     const deliveryAddresses = useSelector(reduxState => getItems(reduxState.deliveryAddresses));
     const orderMethods = useSelector(reduxState => getItems(reduxState.orderMethods));
@@ -86,7 +89,8 @@ function PartSupplier() {
     const employees = useSelector(reduxState => getItems(reduxState.employees));
 
     const updatePartSupplier = body => reduxDispatch(partSupplierActions.update(null, body));
-    const createPartSupplier = body => reduxDispatch(partSupplierActions.create(body));
+    const createPartSupplier = body => reduxDispatch(partSupplierActions.add(body));
+    const clearErrors = () => reduxDispatch(partSupplierActions.clearErrorsForItem());
 
     const pathName = useSelector(reduxState => getPathname(reduxState));
 
@@ -95,7 +99,7 @@ function PartSupplier() {
     const applicationState = useSelector(state => getApplicationState(state.partSuppliers));
 
     const [state, dispatch] = useReducer(partSupplierReducer, {
-        partSupplier: creating() ? {} : {},
+        partSupplier: {},
         prevPart: {}
     });
 
@@ -105,6 +109,8 @@ function PartSupplier() {
     const editStatus = useSelector(reduxState => getEditStatus(reduxState.partSupplier));
 
     const item = useSelector(reduxState => getItem(reduxState.partSupplier));
+
+    const itemError = useSelector(reduxState => getItemError(reduxState, 'partSupplier'));
 
     const setEditStatus = status => reduxDispatch(partSupplierActions.setEditStatus(status));
 
@@ -141,14 +147,19 @@ function PartSupplier() {
     }, [query, reduxDispatch]);
 
     useEffect(() => {
-        if (item) {
+        if (pathName.endsWith('/create')) {
+            dispatch({
+                type: 'initialise',
+                payload: { createdBy: Number(currentUserNumber), dateCreated: new Date() }
+            });
+        } else if (item) {
             dispatch({ type: 'initialise', payload: item });
         }
-    }, [item]);
+    }, [item, pathName, currentUserNumber]);
 
     const handleFieldChange = (propertyName, newValue) => {
         let formatted = newValue;
-        if (['addressId', 'packagingGroupId'].includes(propertyName)) {
+        if (['addressId', 'packagingGroupId', 'createdBy'].includes(propertyName)) {
             formatted = Number(newValue);
         }
         setEditStatus('edit');
@@ -181,6 +192,11 @@ function PartSupplier() {
                 onClose={() => reduxDispatch(partSupplierActions.setSnackbarVisible(false))}
                 message="Save Successful"
             />
+            {itemError && (
+                <Grid item xs={12}>
+                    <ErrorCard errorMessage={itemError.details} />
+                </Grid>
+            )}
             <Grid container spacing={3}>
                 {loading ? (
                     <Grid item xs={12}>
@@ -379,11 +395,14 @@ function PartSupplier() {
                 <Grid item xs={12}>
                     <SaveBackCancelButtons
                         saveDisabled={!canEdit() || editStatus === 'view'}
-                        saveClick={() =>
-                            creating()
-                                ? createPartSupplier(state.partSupplier)
-                                : updatePartSupplier(state.partSupplier)
-                        }
+                        saveClick={() => {
+                            clearErrors();
+                            if (creating()) {
+                                createPartSupplier(state.partSupplier);
+                            } else {
+                                updatePartSupplier(state.partSupplier);
+                            }
+                        }}
                         cancelClick={() => {
                             dispatch({ type: 'initialise', payload: item });
                             setEditStatus('view');

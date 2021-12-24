@@ -23,9 +23,10 @@
                 .AddTransient<ITransactionManager, TransactionManager>()
                 .AddTransient<IRepository<Thing, int>, ThingRepository>()
                 .AddTransient<IRepository<SigningLimit, int>, SigningLimitRepository>()
-                .AddTransient<IRepository<SigningLimitLog, int>, EntityFrameworkRepository<SigningLimitLog, int>>(r => new EntityFrameworkRepository<SigningLimitLog, int>(r.GetService<ServiceDbContext>()?.SigningLimitLogs))
+                .AddTransient<IRepository<SigningLimitLog, int>, EntityFrameworkRepository<SigningLimitLog, int>>(
+                    r => new EntityFrameworkRepository<SigningLimitLog, int>(r.GetService<ServiceDbContext>()?.SigningLimitLogs))
                 .AddTransient<IRepository<PartSupplier, PartSupplierKey>, PartSupplierRepository>()
-                .AddTransient<IQueryRepository<Part>, PartRepository>()
+                    .AddTransient<IQueryRepository<Part>, PartRepository>()
                 .AddTransient<IRepository<Supplier, int>, SupplierRepository>()
                 .AddTransient<IRepository<Currency, string>, EntityFrameworkRepository<Currency, string>>(r 
                     => new EntityFrameworkRepository<Currency, string>(r.GetService<ServiceDbContext>()?.Currencies))

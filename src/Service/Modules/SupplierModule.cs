@@ -39,7 +39,7 @@
             this.Get("/purchasing/part-suppliers/record", this.GetById);
             this.Put("/purchasing/part-suppliers/record", this.UpdatePartSupplier);
             this.Get("/purchasing/part-suppliers", this.SearchPartSuppliers);
-            this.Post("/purchasing/part-suppliers", this.CreatePartSupplier);
+            this.Post("/purchasing/part-suppliers/record", this.CreatePartSupplier);
 
             this.Get("/purchasing/part-suppliers/application-state", this.GetPartSuppliersState);
             this.Get("/purchasing/suppliers", this.SearchSuppliers);

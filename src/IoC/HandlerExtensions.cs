@@ -4,7 +4,6 @@
 
     using Linn.Common.Facade.Carter;
     using Linn.Common.Facade.Carter.Handlers;
-    using Linn.Common.Reporting.Models;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.ResultHandlers;

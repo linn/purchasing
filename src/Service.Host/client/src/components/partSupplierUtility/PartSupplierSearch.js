@@ -63,7 +63,7 @@ function PartSupplierSearch() {
                     <Typography variant="h3">Part Suppliers Search</Typography>
                 </Grid>
                 <Grid item xs={2}>
-                    {createUrl && <CreateButton createUrl={createUrl} />}
+                    <CreateButton createUrl={createUrl} disabled={!createUrl} />
                 </Grid>
                 <Grid item xs={5}>
                     <InputField

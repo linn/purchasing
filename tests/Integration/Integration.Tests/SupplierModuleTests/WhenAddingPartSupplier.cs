@@ -7,7 +7,6 @@
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Integration.Tests.Extensions;
-    using Linn.Purchasing.Persistence.LinnApps.Keys;
     using Linn.Purchasing.Resources;
 
     using NSubstitute;
@@ -37,7 +36,7 @@
                                            }));
 
             this.Response = this.Client.Post(
-                $"/purchasing/part-suppliers/",
+                $"/purchasing/part-suppliers/record",
                 this.resource,
                 with =>
                 {

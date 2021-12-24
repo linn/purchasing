@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PartSupplierServiceTests
 {
+    using System;
     using System.Collections.Generic;
 
     using FluentAssertions;
@@ -19,7 +20,19 @@
         [SetUp]
         public void SetUp()
         {
-            this.candidate = new PartSupplier { PartNumber = "PART", SupplierId = 1, SupplierDesignation = "1234567" };
+            this.candidate = new PartSupplier
+                                 {
+                                     PartNumber = "PART", 
+                                     SupplierId = 1, 
+                                     SupplierDesignation = "1234567", 
+                                     MinimumOrderQty = 10,
+                                     CreatedBy = new Employee { Id = 33087 },
+                                     OrderIncrement = 1m,
+                                     LeadTimeWeeks = 1,
+                                     DateCreated = DateTime.UnixEpoch,
+                                     RohsCompliant = "Y",
+                                     RohsCategory = "COMPLIANT"
+                                 };
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
             this.result = this.Sut.CreatePartSupplier(this.candidate, new List<string>());

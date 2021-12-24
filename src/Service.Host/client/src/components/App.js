@@ -5,7 +5,7 @@ import { Page } from '@linn-it/linn-form-components-library';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import { Link } from 'react-router-dom';
-import getName from '../selectors/userSelectors';
+import { getName } from '../selectors/userSelectors';
 import { testAction } from '../actions';
 import config from '../config';
 import history from '../history';
