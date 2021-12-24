@@ -4,24 +4,25 @@
     using System.Linq;
     using System.Linq.Expressions;
 
-    using Linn.Common.Persistence;
+    using Linn.Common.Persistence.EntityFramework;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Persistence.LinnApps.Keys;
 
     using Microsoft.EntityFrameworkCore;
 
-    public class PartSupplierRepository : IRepository<PartSupplier, PartSupplierKey>
+    public class PartSupplierRepository : EntityFrameworkRepository<PartSupplier, PartSupplierKey>
     {
-        private readonly ServiceDbContext serviceDbContext;
+        private readonly DbSet<PartSupplier> partSuppliers;
 
-        public PartSupplierRepository(ServiceDbContext serviceDbContext)
+        public PartSupplierRepository(ServiceDbContext serviceDbContext) 
+            : base(serviceDbContext.PartSuppliers)
         {
-            this.serviceDbContext = serviceDbContext;
+            this.partSuppliers = serviceDbContext.PartSuppliers;
         }
 
-        public PartSupplier FindById(PartSupplierKey key)
+        public override PartSupplier FindById(PartSupplierKey key)
         {
-            var x = this.serviceDbContext.PartSuppliers
+            return this.partSuppliers
                 .Include(p => p.Part)
                 .Include(p => p.Supplier)
                 .Include(p => p.PackagingGroup)
@@ -34,34 +35,11 @@
                 .Include(p => p.Currency)
                 .SingleOrDefault(
                 p => p.PartNumber == key.PartNumber && p.SupplierId == key.SupplierId);
-
-            return x;
         }
 
-        public IQueryable<PartSupplier> FindAll()
+        public override IQueryable<PartSupplier> FilterBy(Expression<Func<PartSupplier, bool>> expression)
         {
-            throw new NotImplementedException();
-        }
-
-        public void Add(PartSupplier entity)
-        {
-            this.serviceDbContext.Entry(entity.Part).State = EntityState.Unchanged;
-            this.serviceDbContext.PartSuppliers.Add(entity);
-        }
-
-        public void Remove(PartSupplier entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public PartSupplier FindBy(Expression<Func<PartSupplier, bool>> expression)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IQueryable<PartSupplier> FilterBy(Expression<Func<PartSupplier, bool>> expression)
-        {
-            return this.serviceDbContext.PartSuppliers
+            return this.partSuppliers
                 .Include(p => p.Supplier)
                 .Include(p => p.Part)
                 .AsNoTracking().Where(expression);
