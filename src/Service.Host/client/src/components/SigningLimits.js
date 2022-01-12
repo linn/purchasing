@@ -1,6 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Page, SaveBackCancelButtons, Dropdown } from '@linn-it/linn-form-components-library';
+import {
+    Page,
+    SaveBackCancelButtons,
+    Dropdown,
+    collectionSelectorHelpers
+} from '@linn-it/linn-form-components-library';
 import { DataGrid } from '@mui/x-data-grid';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
@@ -18,7 +23,6 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { getApplicationState, getItems, getLoading } from '../selectors/CollectionSelectorHelpers';
 import history from '../history';
 
 import signingLimitActions from '../actions/signingLimitActions';
@@ -31,11 +35,15 @@ function SigningLimits() {
     const [editingAllowed, setEditingAllowed] = useState(false);
     const [editing, setEditing] = useState(false);
 
-    const signingLimits = useSelector(state => getItems(state.signingLimits));
-    const signingLimitsLoading = useSelector(state => getLoading(state.signingLimits));
-    const employees = useSelector(state => getItems(state.employees));
+    const signingLimits = useSelector(state =>
+        collectionSelectorHelpers.getItems(state.signingLimits)
+    );
+    const signingLimitsLoading = useSelector(state =>
+        collectionSelectorHelpers.getLoading(state.signingLimits)
+    );
+    const employees = useSelector(state => collectionSelectorHelpers.getItems(state.employees));
     const signingLimitsApplicationState = useSelector(state =>
-        getApplicationState(state.signingLimits)
+        collectionSelectorHelpers.getApplicationState(state.signingLimits)
     );
 
     const dispatch = useDispatch();
