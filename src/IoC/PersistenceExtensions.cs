@@ -47,10 +47,6 @@
                 .AddTransient<IRepository<PurchaseLedger, int>, PurchaseLedgerRepository>()
                 .AddTransient<IRepository<Employee, int>, EntityFrameworkRepository<Employee, int>>(r
                     => new EntityFrameworkRepository<Employee, int>(r.GetService<ServiceDbContext>()?.Employees));
-
-
-            // Could also be
-            // .AddTransient<IRepository<Thing, int>, EntityFrameworkRepository<Thing, int>>(r => new EntityFrameworkRepository<Thing, int>(r.GetService<ServiceDbContext>()?.Things))
         }
     }
 }
