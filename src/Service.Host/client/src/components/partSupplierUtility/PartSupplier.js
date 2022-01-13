@@ -17,7 +17,8 @@ import {
     ErrorCard,
     collectionSelectorHelpers,
     itemSelectorHelpers,
-    getItemError
+    getItemError,
+    userSelectors
 } from '@linn-it/linn-form-components-library';
 import { getQuery, getPathname } from '../../selectors/routerSelelctors';
 import partSupplierActions from '../../actions/partSupplierActions';
@@ -29,7 +30,6 @@ import PartSupplierTab from './tabs/PartSupplierTab';
 import partsActions from '../../actions/partsActions';
 
 import partSuppliersActions from '../../actions/partSuppliersActions';
-import { getUserNumber } from '../../selectors/userSelectors';
 import deliveryAddressesActions from '../../actions/deliveryAddressesActions';
 import unitsOfMeasureActions from '../../actions/unitsOfMeasureActions';
 import orderMethodsactions from '../../actions/orderMethodActions';
@@ -98,7 +98,7 @@ function PartSupplier() {
         collectionSelectorHelpers.getSearchLoading(reduxState.manufacturers)
     );
 
-    const currentUserNumber = useSelector(reduxState => getUserNumber(reduxState));
+    const currentUserNumber = useSelector(reduxState => userSelectors.getUserNumber(reduxState));
     const unitsOfMeasure = useSelector(reduxState =>
         collectionSelectorHelpers.getItems(reduxState.unitsOfMeasure)
     );
