@@ -1,17 +1,16 @@
 import React, { useEffect } from 'react';
 import Typography from '@mui/material/Typography';
 import { useSelector, useDispatch } from 'react-redux';
-import { Page } from '@linn-it/linn-form-components-library';
+import { Page, userSelectors } from '@linn-it/linn-form-components-library';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import { Link } from 'react-router-dom';
-import { getName } from '../selectors/userSelectors';
 import { testAction } from '../actions';
 import config from '../config';
 import history from '../history';
 
 function App() {
-    const name = useSelector(state => getName(state));
+    const name = useSelector(state => userSelectors.getName(state));
     const dispatch = useDispatch();
 
     useEffect(() => dispatch(testAction()), [dispatch]);
