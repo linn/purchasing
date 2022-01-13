@@ -16,7 +16,8 @@ import {
     utilities,
     ErrorCard,
     collectionSelectorHelpers,
-    itemSelectorHelpers
+    itemSelectorHelpers,
+    getItemError
 } from '@linn-it/linn-form-components-library';
 import { getQuery, getPathname } from '../../selectors/routerSelelctors';
 import partSupplierActions from '../../actions/partSupplierActions';
@@ -42,7 +43,6 @@ import LifecycleTab from './tabs/LifecycleTab';
 import employeesActions from '../../actions/employeesActions';
 import ManufacturerTab from './tabs/ManufacturerTab';
 import manufacturersActions from '../../actions/manufacturersActions';
-import { getItemError } from '../../selectors/errorSelectors';
 
 function PartSupplier() {
     const reduxDispatch = useDispatch();
