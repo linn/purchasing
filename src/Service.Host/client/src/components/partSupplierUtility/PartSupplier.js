@@ -14,7 +14,11 @@ import {
     SaveBackCancelButtons,
     SnackbarMessage,
     utilities,
-    ErrorCard
+    ErrorCard,
+    collectionSelectorHelpers,
+    itemSelectorHelpers,
+    getItemError,
+    userSelectors
 } from '@linn-it/linn-form-components-library';
 import { getQuery, getPathname } from '../../selectors/routerSelelctors';
 import partSupplierActions from '../../actions/partSupplierActions';
@@ -24,15 +28,8 @@ import partSupplierReducer from './partSupplierReducer';
 import { partSupplier } from '../../itemTypes';
 import PartSupplierTab from './tabs/PartSupplierTab';
 import partsActions from '../../actions/partsActions';
-import {
-    getSearchItems,
-    getSearchLoading,
-    getItems,
-    getApplicationState
-} from '../../selectors/CollectionSelectorHelpers';
+
 import partSuppliersActions from '../../actions/partSuppliersActions';
-import { getUserNumber } from '../../selectors/userSelectors';
-import { getSnackbarVisible, getItem, getEditStatus } from '../../selectors/ItemSelectorsHelpers';
 import deliveryAddressesActions from '../../actions/deliveryAddressesActions';
 import unitsOfMeasureActions from '../../actions/unitsOfMeasureActions';
 import orderMethodsactions from '../../actions/orderMethodActions';
@@ -46,47 +43,80 @@ import LifecycleTab from './tabs/LifecycleTab';
 import employeesActions from '../../actions/employeesActions';
 import ManufacturerTab from './tabs/ManufacturerTab';
 import manufacturersActions from '../../actions/manufacturersActions';
-import { getItemError } from '../../selectors/errorSelectors';
 
 function PartSupplier() {
     const reduxDispatch = useDispatch();
 
     const searchParts = searchTerm => reduxDispatch(partsActions.search(searchTerm));
     const partsSearchResults = useSelector(reduxState =>
-        getSearchItems(reduxState.parts, 100, 'partNumber', 'partNumber', 'description')
+        collectionSelectorHelpers.getSearchItems(
+            reduxState.parts,
+            100,
+            'partNumber',
+            'partNumber',
+            'description'
+        )
     );
-    const partsSearchLoading = useSelector(reduxState => getSearchLoading(reduxState.parts));
+    const partsSearchLoading = useSelector(reduxState =>
+        collectionSelectorHelpers.getSearchLoading(reduxState.parts)
+    );
 
     const searchSuppliers = searchTerm => reduxDispatch(suppliersActions.search(searchTerm));
     const suppliersSearchResults = useSelector(reduxState =>
-        getSearchItems(reduxState.suppliers, 100, 'id', 'name', 'name')
+        collectionSelectorHelpers.getSearchItems(reduxState.suppliers, 100, 'id', 'name', 'name')
     );
     const suppliersSearchLoading = useSelector(reduxState =>
-        getSearchLoading(reduxState.suppliers)
+        collectionSelectorHelpers.getSearchLoading(reduxState.suppliers)
     );
 
     const searchTariffs = searchTerm => reduxDispatch(tariffsActions.search(searchTerm));
     const tariffsSearchResults = useSelector(reduxState =>
-        getSearchItems(reduxState.tariffs, 100, 'id', 'code', 'description')
+        collectionSelectorHelpers.getSearchItems(
+            reduxState.tariffs,
+            100,
+            'id',
+            'code',
+            'description'
+        )
     );
-    const tariffsSearchLoading = useSelector(reduxState => getSearchLoading(reduxState.tariffs));
+    const tariffsSearchLoading = useSelector(reduxState =>
+        collectionSelectorHelpers.getSearchLoading(reduxState.tariffs)
+    );
 
     const searchManufacturers = searchTerm =>
         reduxDispatch(manufacturersActions.search(searchTerm));
     const manufacturersSearchResults = useSelector(reduxState =>
-        getSearchItems(reduxState.manufacturers, 100, 'code', 'code', 'name')
+        collectionSelectorHelpers.getSearchItems(
+            reduxState.manufacturers,
+            100,
+            'code',
+            'code',
+            'name'
+        )
     );
     const manufacturersSearchLoading = useSelector(reduxState =>
-        getSearchLoading(reduxState.manufacturers)
+        collectionSelectorHelpers.getSearchLoading(reduxState.manufacturers)
     );
 
-    const currentUserNumber = useSelector(reduxState => getUserNumber(reduxState));
-    const unitsOfMeasure = useSelector(reduxState => getItems(reduxState.unitsOfMeasure));
-    const deliveryAddresses = useSelector(reduxState => getItems(reduxState.deliveryAddresses));
-    const orderMethods = useSelector(reduxState => getItems(reduxState.orderMethods));
-    const currencies = useSelector(reduxState => getItems(reduxState.currencies));
-    const packagingGroups = useSelector(reduxState => getItems(reduxState.packagingGroups));
-    const employees = useSelector(reduxState => getItems(reduxState.employees));
+    const currentUserNumber = useSelector(reduxState => userSelectors.getUserNumber(reduxState));
+    const unitsOfMeasure = useSelector(reduxState =>
+        collectionSelectorHelpers.getItems(reduxState.unitsOfMeasure)
+    );
+    const deliveryAddresses = useSelector(reduxState =>
+        collectionSelectorHelpers.getItems(reduxState.deliveryAddresses)
+    );
+    const orderMethods = useSelector(reduxState =>
+        collectionSelectorHelpers.getItems(reduxState.orderMethods)
+    );
+    const currencies = useSelector(reduxState =>
+        collectionSelectorHelpers.getItems(reduxState.currencies)
+    );
+    const packagingGroups = useSelector(reduxState =>
+        collectionSelectorHelpers.getItems(reduxState.packagingGroups)
+    );
+    const employees = useSelector(reduxState =>
+        collectionSelectorHelpers.getItems(reduxState.employees)
+    );
 
     const updatePartSupplier = body => reduxDispatch(partSupplierActions.update(null, body));
     const createPartSupplier = body => reduxDispatch(partSupplierActions.add(body));
@@ -96,7 +126,9 @@ function PartSupplier() {
 
     const creating = () => pathName.endsWith('/create');
 
-    const applicationState = useSelector(state => getApplicationState(state.partSuppliers));
+    const applicationState = useSelector(state =>
+        collectionSelectorHelpers.getApplicationState(state.partSuppliers)
+    );
 
     const [state, dispatch] = useReducer(partSupplierReducer, {
         partSupplier: {},
@@ -105,10 +137,14 @@ function PartSupplier() {
 
     const query = useSelector(reduxState => getQuery(reduxState));
     const loading = useSelector(reduxState => reduxState.partSupplier.loading);
-    const snackbarVisible = useSelector(reduxState => getSnackbarVisible(reduxState.partSupplier));
-    const editStatus = useSelector(reduxState => getEditStatus(reduxState.partSupplier));
+    const snackbarVisible = useSelector(reduxState =>
+        itemSelectorHelpers.getSnackbarVisible(reduxState.partSupplier)
+    );
+    const editStatus = useSelector(reduxState =>
+        itemSelectorHelpers.getItemEditStatus(reduxState.partSupplier)
+    );
 
-    const item = useSelector(reduxState => getItem(reduxState.partSupplier));
+    const item = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.partSupplier));
 
     const itemError = useSelector(reduxState => getItemError(reduxState, 'partSupplier'));
 

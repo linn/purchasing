@@ -3,21 +3,25 @@ import {
     Loading,
     ReportTable,
     BackButton,
-    ExportButton
+    ExportButton,
+    reportSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import { useSelector, useDispatch } from 'react-redux';
 import queryString from 'query-string';
 import history from '../../history';
 import config from '../../config';
-import { getReportLoading, getReportData } from '../../selectors/ReportSelectorHelpers';
 import ordersBySupplierActions from '../../actions/ordersBySupplierActions';
 
 function OrderBySupplierReport() {
     const options = useMemo(() => queryString.parse(window.location.search) || {}, []);
 
-    const loading = useSelector(state => getReportLoading(state.ordersBySupplier));
-    const reportData = useSelector(state => getReportData(state.ordersBySupplier));
+    const loading = useSelector(state =>
+        reportSelectorHelpers.getReportLoading(state.ordersBySupplier)
+    );
+    const reportData = useSelector(state =>
+        reportSelectorHelpers.getReportData(state.ordersBySupplier)
+    );
 
     const dispatch = useDispatch();
 
@@ -48,7 +52,7 @@ function OrderBySupplierReport() {
                     <BackButton backClick={() => handleBackClick(history, options)} />
                 </Grid>
                 <Grid item xs={12}>
-                    {!loading && reportData && false ? (
+                    {!loading && reportData && 1 === 2 ? (
                         <ExportButton
                             href={`${config.appRoot}/purchasing/reports/orders-by-supplier/${options.id}/export?from=${options.fromDate}&to=${options.toDate}`}
                         />

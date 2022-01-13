@@ -6,25 +6,29 @@ import {
     DatePicker,
     Dropdown,
     Title,
-    Typeahead
+    Typeahead,
+    collectionSelectorHelpers,
+    reportSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
-import { getSearchItems, getSearchLoading } from '../../selectors/CollectionSelectorHelpers';
-import { getReportOptions } from '../../selectors/ReportSelectorHelpers';
 import history from '../../history';
 import config from '../../config';
 import suppliersActions from '../../actions/suppliersActions';
 
 function OrdersBySupplierReportOptions() {
-    const suppliersSearchResults = useSelector(state => getSearchItems(state.suppliers)).map?.(
-        c => ({
-            id: c.id,
-            name: c.name.toString(),
-            description: c.name
-        })
+    const suppliersSearchResults = useSelector(state =>
+        collectionSelectorHelpers.getSearchItems(state.suppliers)
+    ).map?.(c => ({
+        id: c.id,
+        name: c.name.toString(),
+        description: c.name
+    }));
+    const suppliersSearchLoading = useSelector(state =>
+        collectionSelectorHelpers.getSearchLoading(state.suppliers)
     );
-    const suppliersSearchLoading = useSelector(state => getSearchLoading(state.suppliers));
-    const prevOptions = useSelector(state => getReportOptions(state.suppliers));
+    const prevOptions = useSelector(state =>
+        reportSelectorHelpers.getReportOptions(state.suppliers)
+    );
 
     const dispatch = useDispatch();
 
