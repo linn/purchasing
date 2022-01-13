@@ -105,14 +105,16 @@ function PartSupplierTab({
                 />
             </Grid>
             <Grid item xs={4}>
-                <LinkButton
-                    external
-                    to={`${config.proxyRoot}${utilities.getHref(
-                        part,
-                        'mechanical-sourcing-sheet'
-                    )}?tab=manufacturers`}
-                    text="Edit Manufacturers"
-                />
+                {utilities.getHref(part, 'mechanical-sourcing-sheet') && (
+                    <LinkButton
+                        external
+                        to={`${config.proxyRoot}${utilities.getHref(
+                            part,
+                            'mechanical-sourcing-sheet'
+                        )}?tab=manufacturers`}
+                        text="Edit Manufacturers"
+                    />
+                )}
             </Grid>
         </Grid>
     );
