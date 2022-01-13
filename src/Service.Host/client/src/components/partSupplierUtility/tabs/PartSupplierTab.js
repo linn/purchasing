@@ -1,8 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
-
-import { InputField, Typeahead } from '@linn-it/linn-form-components-library';
+import {
+    InputField,
+    LinkButton,
+    Typeahead,
+    utilities
+} from '@linn-it/linn-form-components-library';
+import config from '../../../config';
 
 function PartSupplierTab({
     partNumber,
@@ -97,6 +102,16 @@ function PartSupplierTab({
                     rows={8}
                     propertyName="designation"
                     onChange={handleFieldChange}
+                />
+            </Grid>
+            <Grid item xs={4}>
+                <LinkButton
+                    external
+                    to={`${config.proxyRoot}${utilities.getHref(
+                        part,
+                        'mechanical-sourcing-sheet'
+                    )}?tab=manufacturers`}
+                    text="Edit Manufacturers"
                 />
             </Grid>
         </Grid>
