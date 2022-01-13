@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq.Expressions;
 
     using Linn.Common.Facade;
@@ -27,7 +28,9 @@
             this.domainService = domainService;
         }
 
-        protected override PartSupplier CreateFromResource(PartSupplierResource resource)
+        protected override PartSupplier CreateFromResource(
+            PartSupplierResource resource,
+            IEnumerable<string> privileges = null)
         {
             var candidate = this.BuildEntityFromResourceHelper(resource);
             candidate.PartNumber = resource.PartNumber;
@@ -47,12 +50,17 @@
             throw new NotImplementedException();
         }
 
-        protected override void DeleteOrObsoleteResource(PartSupplier entity)
+        protected override void DeleteOrObsoleteResource(
+            PartSupplier entity,
+            IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }
 
-        protected override void UpdateFromResource(PartSupplier entity, PartSupplierResource updateResource)
+        protected override void UpdateFromResource(
+            PartSupplier entity, 
+            PartSupplierResource updateResource,
+            IEnumerable<string> privileges = null)
         {
             var updated = this.BuildEntityFromResourceHelper(updateResource);
 

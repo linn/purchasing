@@ -21,7 +21,6 @@
         {
             return services.AddScoped<ServiceDbContext>().AddTransient<DbContext>(a => a.GetService<ServiceDbContext>())
                 .AddTransient<ITransactionManager, TransactionManager>()
-                .AddTransient<IRepository<Thing, int>, ThingRepository>()
                 .AddTransient<IRepository<SigningLimit, int>, SigningLimitRepository>()
                 .AddTransient<IRepository<SigningLimitLog, int>, EntityFrameworkRepository<SigningLimitLog, int>>(
                     r => new EntityFrameworkRepository<SigningLimitLog, int>(r.GetService<ServiceDbContext>()?.SigningLimitLogs))

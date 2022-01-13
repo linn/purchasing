@@ -16,8 +16,6 @@
         public static readonly LoggerFactory MyLoggerFactory =
             new LoggerFactory(new[] { new Microsoft.Extensions.Logging.Debug.DebugLoggerProvider() });
 
-        public DbSet<Thing> Things { get; set; }
-
         public DbSet<PartSupplier> PartSuppliers { get; set; }
 
         public DbSet<Part> Parts { get; set; }
@@ -61,9 +59,6 @@
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
-            this.BuildThings(builder);
-            this.BuildThingDetails(builder);
-            this.BuildThingCodes(builder);
             base.OnModelCreating(builder);
             this.BuildPartSuppliers(builder);
             this.BuildParts(builder);
@@ -103,36 +98,6 @@
             optionsBuilder.UseLoggerFactory(MyLoggerFactory);
             optionsBuilder.EnableSensitiveDataLogging(true);
             base.OnConfiguring(optionsBuilder);
-        }
-
-        private void BuildThings(ModelBuilder builder)
-        {
-            var entity = builder.Entity<Thing>().ToTable("THINGS");
-            entity.HasKey(a => a.Id);
-            entity.Property(a => a.Id).HasColumnName("ID");
-            entity.Property(a => a.Name).HasColumnName("NAME");
-            entity.Property(a => a.CodeId).HasColumnName("THING_CODE");
-            entity.Property(a => a.RecipientAddress).HasColumnName("RECIPIENT_ADDRESS");
-            entity.Property(a => a.RecipientName).HasColumnName("RECIPIENT_NAME");
-            entity.HasOne(d => d.Code).WithMany(p => p.Things).HasForeignKey(d => d.CodeId);
-            entity.HasMany(a => a.Details).WithOne();
-        }
-
-        private void BuildThingDetails(ModelBuilder builder)
-        {
-            var h = builder.Entity<ThingDetail>().ToTable("THING_DETAILS");
-            h.HasKey(a => new { a.ThingId, a.DetailId });
-            h.Property(a => a.ThingId).HasColumnName("THING_ID");
-            h.Property(a => a.DetailId).HasColumnName("DETAIL_ID");
-            h.Property(a => a.Description).HasColumnName("DESCRIPTION");
-        }
-
-        private void BuildThingCodes(ModelBuilder builder)
-        {
-            var h = builder.Entity<ThingCode>().ToTable("THING_CODES");
-            h.HasKey(a => a.Code);
-            h.Property(a => a.Code).HasColumnName("CODE");
-            h.Property(a => a.CodeName).HasColumnName("CODE_NAME");
         }
 
         private void BuildPartSuppliers(ModelBuilder builder)

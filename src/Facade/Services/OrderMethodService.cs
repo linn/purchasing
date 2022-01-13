@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq.Expressions;
 
     using Linn.Common.Facade;
@@ -15,7 +16,9 @@
         {
         }
 
-        protected override OrderMethod CreateFromResource(OrderMethodResource resource)
+        protected override OrderMethod CreateFromResource(
+            OrderMethodResource resource,
+            IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }
@@ -30,12 +33,17 @@
             throw new NotImplementedException();
         }
 
-        protected override void DeleteOrObsoleteResource(OrderMethod entity)
+        protected override void DeleteOrObsoleteResource(
+            OrderMethod entity,
+            IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }
 
-        protected override void UpdateFromResource(OrderMethod entity, OrderMethodResource updateResource)
+        protected override void UpdateFromResource(
+            OrderMethod entity, 
+            OrderMethodResource updateResource,
+            IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }
