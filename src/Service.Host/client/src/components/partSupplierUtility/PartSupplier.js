@@ -15,7 +15,8 @@ import {
     SnackbarMessage,
     utilities,
     ErrorCard,
-    collectionSelectorHelpers
+    collectionSelectorHelpers,
+    itemSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import { getQuery, getPathname } from '../../selectors/routerSelelctors';
 import partSupplierActions from '../../actions/partSupplierActions';
@@ -28,7 +29,6 @@ import partsActions from '../../actions/partsActions';
 
 import partSuppliersActions from '../../actions/partSuppliersActions';
 import { getUserNumber } from '../../selectors/userSelectors';
-import { getSnackbarVisible, getItem, getEditStatus } from '../../selectors/ItemSelectorsHelpers';
 import deliveryAddressesActions from '../../actions/deliveryAddressesActions';
 import unitsOfMeasureActions from '../../actions/unitsOfMeasureActions';
 import orderMethodsactions from '../../actions/orderMethodActions';
@@ -137,10 +137,14 @@ function PartSupplier() {
 
     const query = useSelector(reduxState => getQuery(reduxState));
     const loading = useSelector(reduxState => reduxState.partSupplier.loading);
-    const snackbarVisible = useSelector(reduxState => getSnackbarVisible(reduxState.partSupplier));
-    const editStatus = useSelector(reduxState => getEditStatus(reduxState.partSupplier));
+    const snackbarVisible = useSelector(reduxState =>
+        itemSelectorHelpers.getSnackbarVisible(reduxState.partSupplier)
+    );
+    const editStatus = useSelector(reduxState =>
+        itemSelectorHelpers.getItemEditStatus(reduxState.partSupplier)
+    );
 
-    const item = useSelector(reduxState => getItem(reduxState.partSupplier));
+    const item = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.partSupplier));
 
     const itemError = useSelector(reduxState => getItemError(reduxState, 'partSupplier'));
 
