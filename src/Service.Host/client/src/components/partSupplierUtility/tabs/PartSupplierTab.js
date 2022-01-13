@@ -17,7 +17,8 @@ function PartSupplierTab({
     searchSuppliers,
     suppliersSearchResults,
     suppliersSearchLoading,
-    editStatus
+    editStatus,
+    part
 }) {
     return (
         <Grid container spacing={3}>
@@ -84,9 +85,16 @@ function PartSupplierTab({
             <Grid item xs={8}>
                 <InputField
                     fullWidth
-                    value={designation}
+                    value={
+                        designation +
+                        part?.manufacturers
+                            ?.map(
+                                x => `\n${x.manufacturerDescription ?? ''} - ${x.partNumber ?? ''}`
+                            )
+                            .join(',')
+                    }
                     label="Designation"
-                    rows={3}
+                    rows={8}
                     propertyName="designation"
                     onChange={handleFieldChange}
                 />
@@ -108,7 +116,15 @@ PartSupplierTab.propTypes = {
     suppliersSearchResults: PropTypes.arrayOf(PropTypes.shape({})),
     suppliersSearchLoading: PropTypes.bool,
     searchSuppliers: PropTypes.func.isRequired,
-    editStatus: PropTypes.string
+    editStatus: PropTypes.string,
+    part: PropTypes.shape({
+        manufacturers: PropTypes.arrayOf(
+            PropTypes.shape({
+                manufacturerDescription: PropTypes.string,
+                partNumber: PropTypes.string
+            })
+        )
+    })
 };
 
 PartSupplierTab.defaultProps = {
@@ -121,7 +137,8 @@ PartSupplierTab.defaultProps = {
     partsSearchLoading: false,
     suppliersSearchResults: [],
     suppliersSearchLoading: false,
-    editStatus: 'view'
+    editStatus: 'view',
+    part: null
 };
 
 export default PartSupplierTab;

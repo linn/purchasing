@@ -15,6 +15,7 @@ import signingLimits from './signingLimits';
 import employees from './employees';
 import suppliers from './suppliers';
 import parts from './parts';
+import part from './part';
 import currencies from './currencies';
 import orderMethods from './orderMethods';
 import deliveryAddresses from './deliveryAddresses';
@@ -36,6 +37,7 @@ const rootReducer = history =>
         manufacturers,
         orderMethods,
         packagingGroups,
+        part,
         parts,
         partSupplier,
         partSuppliers,
