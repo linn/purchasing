@@ -17,7 +17,7 @@ function App() {
 
     return (
         <Page homeUrl={config.appRoot} history={history}>
-            <Typography variant="h6">App</Typography>
+            <Typography variant="h6">Purchasing</Typography>
             <Typography>Hello {name}</Typography>
 
             <List>
