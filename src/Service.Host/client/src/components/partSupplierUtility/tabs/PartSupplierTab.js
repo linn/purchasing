@@ -90,32 +90,42 @@ function PartSupplierTab({
             <Grid item xs={8}>
                 <InputField
                     fullWidth
-                    value={
-                        designation +
-                        part?.manufacturers
-                            ?.map(
-                                x => `\n${x.manufacturerDescription ?? ''} - ${x.partNumber ?? ''}`
-                            )
-                            .join(',')
-                    }
+                    value={designation}
                     label="Designation"
-                    rows={8}
+                    rows={4}
                     propertyName="designation"
                     onChange={handleFieldChange}
                 />
             </Grid>
-            <Grid item xs={4}>
-                {utilities.getHref(part, 'mechanical-sourcing-sheet') && (
-                    <LinkButton
-                        external
-                        to={`${config.proxyRoot}${utilities.getHref(
-                            part,
-                            'mechanical-sourcing-sheet'
-                        )}?tab=manufacturers`}
-                        text="Edit Manufacturers"
-                    />
-                )}
-            </Grid>
+            {part?.manufacturers?.length > 0 && (
+                <>
+                    <Grid item xs={8}>
+                        <InputField
+                            fullWidth
+                            value={part?.manufacturers
+                                ?.map(x => `${x.manufacturerDescription} - ${x.partNumber}`)
+                                .join('\n')}
+                            label="Manufacturers"
+                            rows={4}
+                            propertyName="manufacturers"
+                            onChange={() => {}}
+                        />
+                    </Grid>
+                    <Grid item xs={4}>
+                        {!!utilities.getHref(part, 'mechanical-sourcing-sheet') && (
+                            <LinkButton
+                                external
+                                newTab
+                                to={`${config.proxyRoot}${utilities.getHref(
+                                    part,
+                                    'mechanical-sourcing-sheet'
+                                )}?tab=manufacturers`}
+                                text="Edit Manufacturers"
+                            />
+                        )}
+                    </Grid>
+                </>
+            )}
         </Grid>
     );
 }
