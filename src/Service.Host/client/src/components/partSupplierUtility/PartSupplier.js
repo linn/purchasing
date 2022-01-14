@@ -28,7 +28,7 @@ import partSupplierReducer from './partSupplierReducer';
 import { partSupplier } from '../../itemTypes';
 import PartSupplierTab from './tabs/PartSupplierTab';
 import partsActions from '../../actions/partsActions';
-
+import partActions from '../../actions/partActions';
 import partSuppliersActions from '../../actions/partSuppliersActions';
 import deliveryAddressesActions from '../../actions/deliveryAddressesActions';
 import unitsOfMeasureActions from '../../actions/unitsOfMeasureActions';
@@ -146,6 +146,8 @@ function PartSupplier() {
 
     const item = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.partSupplier));
 
+    const part = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.part));
+
     const itemError = useSelector(reduxState => getItemError(reduxState, 'partSupplier'));
 
     const setEditStatus = status => reduxDispatch(partSupplierActions.setEditStatus(status));
@@ -169,6 +171,7 @@ function PartSupplier() {
                     `${partSupplier.uri}?partId=${query.partId}&supplierId=${query.supplierId}`
                 )
             );
+            reduxDispatch(partActions.fetch(query.partId));
         }
         if (query.tab) {
             const tabs = {
@@ -305,6 +308,7 @@ function PartSupplier() {
                                             suppliersSearchLoading={suppliersSearchLoading}
                                             searchSuppliers={searchSuppliers}
                                             editStatus={creating() ? 'create' : editStatus}
+                                            part={part}
                                         />
                                     </Box>
                                 )}

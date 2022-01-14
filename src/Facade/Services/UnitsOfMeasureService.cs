@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq.Expressions;
 
     using Linn.Common.Facade;
@@ -16,7 +17,9 @@
         {
         }
 
-        protected override UnitOfMeasure CreateFromResource(UnitOfMeasureResource resource)
+        protected override UnitOfMeasure CreateFromResource(
+            UnitOfMeasureResource resource,
+            IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }
@@ -31,12 +34,17 @@
             throw new NotImplementedException();
         }
 
-        protected override void DeleteOrObsoleteResource(UnitOfMeasure entity)
+        protected override void DeleteOrObsoleteResource(
+            UnitOfMeasure entity,
+            IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }
 
-        protected override void UpdateFromResource(UnitOfMeasure entity, UnitOfMeasureResource updateResource)
+        protected override void UpdateFromResource(
+            UnitOfMeasure entity, 
+            UnitOfMeasureResource updateResource,
+            IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }

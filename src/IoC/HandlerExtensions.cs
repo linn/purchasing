@@ -15,13 +15,11 @@
         public static IServiceCollection AddHandlers(this IServiceCollection services)
         {
             return services.AddTransient<UniversalResponseNegotiator>()
-                .AddTransient<IHandler, ThingResourceResultHandler>()
                 .AddTransient<IHandler, JsonResultHandler<PartSupplierResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<PartSupplierResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<SupplierResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<SupplierResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<ReportReturnResource>>()
-                .AddTransient<IHandler, JsonResultHandler<IEnumerable<ThingResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<ProcessResultResource>>()
                 .AddTransient<IHandler, JsonResultHandler<SigningLimitResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<SigningLimitResource>>>()

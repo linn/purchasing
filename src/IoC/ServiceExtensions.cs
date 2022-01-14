@@ -33,7 +33,7 @@
     {
         public static IServiceCollection AddBuilders(this IServiceCollection services)
         {
-            return services.AddTransient<IBuilder<Thing>, ThingResourceBuilder>()
+            return services
                 .AddTransient<IBuilder<SigningLimit>, SigningLimitResourceBuilder>()
                 .AddTransient<IBuilder<PartSupplier>, PartSupplierResourceBuilder>()
                 .AddTransient<IBuilder<IEnumerable<PartSupplier>>, PartSuppliersResourceBuilder>()
@@ -59,7 +59,6 @@
         public static IServiceCollection AddFacades(this IServiceCollection services)
         {
             return services
-                .AddTransient<IFacadeResourceService<Thing, int, ThingResource, ThingResource>, ThingFacadeService>()
                 .AddTransient<IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource>, SigningLimitFacadeService>()
                 .AddTransient<IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>, PartSupplierFacadeService>()
                 .AddTransient<IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource>, SupplierFacadeService>()
@@ -76,7 +75,7 @@
 
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            return services.AddTransient<IThingService, ThingService>()
+            return services
                 .AddTransient<IPartSupplierService, PartSupplierService>()
                 .AddTransient<IAmazonSimpleEmailService>(
                     x => new AmazonSimpleEmailServiceClient(x.GetService<AWSOptions>()?.Region))
