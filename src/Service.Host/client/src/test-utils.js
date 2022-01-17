@@ -14,6 +14,11 @@ const middleware = [api, thunkMiddleware];
 
 // eslint-disable-next-line react/prop-types
 const Providers = ({ children }) => {
+    global.fetch = jest.fn(() =>
+        Promise.resolve({
+            json: () => Promise.resolve({})
+        })
+    );
     const mockStore = configureMockStore(middleware);
     const store = mockStore({ oidc: { user: { profile: {} } }, historyStore: { push: jest.fn() } });
     return (
