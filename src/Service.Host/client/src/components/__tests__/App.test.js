@@ -32,8 +32,6 @@ describe('App tests', () => {
 
     test('App loads data from redux store...', () => {
         const { getByText } = render(<App />);
-        expect(testActionSpy).toBeCalledTimes(1);
-        expect(testActionSpy).toBeCalledWith('args');
         expect(getByText('Hello User Name')).toBeInTheDocument();
     });
 
