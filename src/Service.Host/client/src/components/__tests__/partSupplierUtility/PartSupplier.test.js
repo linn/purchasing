@@ -31,8 +31,11 @@ const fetchCurrenciesActionsSpy = jest.spyOn(currenciesActions, 'fetch');
 const fetchPackagingGroupActionsSpy = jest.spyOn(packagingGroupActions, 'fetch');
 const fetchEmployeesActionsSpy = jest.spyOn(employeesActions, 'fetch');
 
+const updateItemActionsSpy = jest.spyOn(partSupplierActions, 'update');
+const addItemActionSpy = jest.spyOn(partSupplierActions, 'add');
+
 const state = {
-    oidc: { user: { profile: { name: 'User Name' } } },
+    oidc: { user: { profile: { name: 'User Name', employee: '/employees/33087' } } },
     router: { location: { pathname: '', query: { partId: 1, supplierId: 2 } } },
     partSupplier: {
         loading: false,
@@ -53,6 +56,29 @@ const stateWithItemLoadedWhereUserCanEdit = {
     partSupplier: {
         loading: false,
         item: { supplierName: 'SUPPLIER', partNumber: 'PART', links: [{ rel: 'edit' }] }
+    }
+};
+
+const stateWithItemLoadedWhereEditing = {
+    ...state,
+    partSupplier: {
+        loading: false,
+        editStatus: 'edit',
+        item: { supplierName: 'SUPPLIER', partNumber: 'PART', links: [{ rel: 'edit' }] }
+    }
+};
+
+const stateWhereCreating = {
+    ...state,
+    router: { location: { pathname: '/create', query: {} } },
+
+    partSupplier: {
+        loading: false,
+        editStatus: 'create',
+        item: { supplierName: 'SUPPLIER', partNumber: 'PART', links: [{ rel: 'create' }] }
+    },
+    partSuppliers: {
+        applicationState: { links: [{ href: '/create', rel: 'create' }] }
     }
 };
 
@@ -97,6 +123,11 @@ describe('When item loaded...', () => {
             await screen.findByText('You do not have write access to Part Suppliers')
         ).toBeInTheDocument();
     });
+
+    test('Save button should be disabled...', () => {
+        const saveButton = screen.getByRole('button', { name: 'Save' });
+        expect(saveButton).toBeDisabled();
+    });
 });
 
 describe('When user can edit...', () => {
@@ -128,5 +159,52 @@ describe('When item loading...', () => {
     test('Should render loading spinner...', () => {
         render(<PartSupplier />);
         expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    });
+});
+
+describe('When editing...', () => {
+    beforeEach(() => {
+        cleanup();
+        jest.clearAllMocks();
+        useSelector.mockImplementation(callback => callback(stateWithItemLoadedWhereEditing));
+        render(<PartSupplier />);
+    });
+
+    test('Save button should be enabled...', () => {
+        const saveButton = screen.getByRole('button', { name: 'Save' });
+        expect(saveButton).not.toBeDisabled();
+    });
+
+    test('Should dispatch update action when save clicked...', () => {
+        const saveButton = screen.getByRole('button', { name: 'Save' });
+        fireEvent.click(saveButton);
+        expect(updateItemActionsSpy).toHaveBeenCalledTimes(1);
+        expect(updateItemActionsSpy).toHaveBeenCalledWith(
+            null,
+            expect.objectContaining({ partNumber: 'PART', supplierName: 'SUPPLIER' })
+        );
+    });
+});
+
+describe('When creating...', () => {
+    beforeEach(() => {
+        cleanup();
+        jest.clearAllMocks();
+        useSelector.mockImplementation(callback => callback(stateWhereCreating));
+        render(<PartSupplier />);
+    });
+
+    test('Save button should be enabled...', () => {
+        const saveButton = screen.getByRole('button', { name: 'Save' });
+        expect(saveButton).not.toBeDisabled();
+    });
+
+    test('Should dispatch add action when save clicked...', () => {
+        const saveButton = screen.getByRole('button', { name: 'Save' });
+        fireEvent.click(saveButton);
+        expect(addItemActionSpy).toHaveBeenCalledTimes(1);
+        expect(addItemActionSpy).toHaveBeenCalledWith(
+            expect.objectContaining({ createdBy: 33087 })
+        );
     });
 });
