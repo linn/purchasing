@@ -13,7 +13,7 @@ function App() {
     const name = useSelector(state => userSelectors.getName(state));
     const dispatch = useDispatch();
 
-    useEffect(() => dispatch(testAction()), [dispatch]);
+    useEffect(() => dispatch(testAction('args')), [dispatch]);
 
     return (
         <Page homeUrl={config.appRoot} history={history}>
