@@ -17,6 +17,7 @@
     using Linn.Purchasing.Service.Models;
 
     using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.FileProviders;
     using Microsoft.Extensions.Primitives;
 
     public class PurchaseOrdersReportModule : CarterModule
@@ -28,6 +29,7 @@
             this.purchaseOrderReportFacadeService = purchaseOrderReportFacadeService;
             this.Get("/purchasing/reports/orders-by-supplier", this.GetApp);
             this.Get("/purchasing/reports/orders-by-supplier/report", this.GetOrdersBySupplierReport);
+            this.Get("/purchasing/reports/orders-by-supplier/export", this.GetOrdersBySupplierExport);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -51,6 +53,28 @@
             var results = this.purchaseOrderReportFacadeService.GetOrdersBySupplierReport(resource, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(results);
+        }
+
+        private async Task GetOrdersBySupplierExport(HttpRequest req, HttpResponse res)
+        {
+            var resource = new OrdersBySupplierSearchResource();
+            resource.SupplierId = req.Query.As<int>("Id");
+            resource.From = req.Query.As<string>("FromDate");
+            resource.To = req.Query.As<string>("ToDate");
+
+            resource.Returns = req.Query.As<string>("Returns");
+            resource.Outstanding = req.Query.As<string>("Outstanding");
+            resource.Cancelled = req.Query.As<string>("Cancelled");
+            resource.Credits = req.Query.As<string>("Credits");
+            resource.StockControlled = req.Query.As<string>("StockControlled");
+
+            var results = this.purchaseOrderReportFacadeService.GetOrdersBySupplierExport(resource, req.HttpContext.GetPrivileges());
+
+            res.ContentType = "text/csv";
+            await res.Negotiate(results);
+
+            //await res.SendFileAsync(new IFileInfo());
+            //    (results);
         }
     }
 }

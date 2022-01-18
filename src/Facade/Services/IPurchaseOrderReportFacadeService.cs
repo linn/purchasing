@@ -11,5 +11,9 @@
         IResult<ReportReturnResource> GetOrdersBySupplierReport(
             OrdersBySupplierSearchResource resource,
             IEnumerable<string> privileges);
+
+        IResult<IEnumerable<IEnumerable<string>>> GetOrdersBySupplierExport(
+            OrdersBySupplierSearchResource resource,
+            IEnumerable<string> privileges);
     }
 }
