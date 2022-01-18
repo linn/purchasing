@@ -66,17 +66,7 @@
                     "You are not authorised to update Part Supplier records");
             }
 
-            var errors = this.ValidateFields(updated);
-
-            if (errors.Any())
-            {
-                var msg = errors
-                    .Aggregate(
-                        "The inputs for the following fields are empty/invalid: ",
-                        (i, error) => i + $"{error}, ");
-
-                throw new PartSupplierException(msg);
-            }
+            this.ValidateFields(updated);
 
             if (current.OrderMethod.Name != updated.OrderMethod.Name)
             {
@@ -156,17 +146,7 @@
                     "You are not authorised to update Part Supplier records");
             }
 
-            var errors = this.ValidateFields(candidate);
-
-            if (errors.Any())
-            {
-                var msg = errors
-                        .Aggregate(
-                            "The inputs for the following fields are empty/invalid: ", 
-                            (current, error) => current + $"{error}, ");
-
-                throw new PartSupplierException(msg);
-            }
+            this.ValidateFields(candidate);
 
             candidate.CreatedBy = this.employeeRepository.FindById(candidate.CreatedBy.Id);
             var part = this.partRepository.FindBy(x => x.PartNumber == candidate.PartNumber);
@@ -219,7 +199,7 @@
             return candidate;
         }
 
-        private List<string> ValidateFields(PartSupplier candidate)
+        private void ValidateFields(PartSupplier candidate)
         {
             var errors = new List<string>();
 
@@ -273,7 +253,15 @@
                 errors.Add("Damages Percent");
             }
 
-            return errors;
+            if (errors.Any())
+            {
+                var msg = errors
+                    .Aggregate(
+                        "The inputs for the following fields are empty/invalid: ",
+                        (current, error) => current + $"{error}, ");
+
+                throw new PartSupplierException(msg);
+            }
         }
     }
 }
