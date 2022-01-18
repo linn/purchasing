@@ -208,3 +208,130 @@ describe('When creating...', () => {
         );
     });
 });
+
+describe('When clicking tabs...', () => {
+    beforeEach(() => {
+        cleanup();
+        jest.clearAllMocks();
+        useSelector.mockImplementation(callback => callback(stateWithItemLoaded));
+        render(<PartSupplier />);
+    });
+
+    test('Should render Part and Supplier tab', () => {
+        const tab = screen.getByText('Part and Supplier');
+        fireEvent.click(tab);
+        expect(screen.getByLabelText('Designation')).toBeInTheDocument();
+    });
+
+    test('Should render Order Details tab', () => {
+        const tab = screen.getByText('Order Details');
+        fireEvent.click(tab);
+        expect(screen.getByLabelText('Order Method')).toBeInTheDocument();
+    });
+
+    test('Should render Other Details tab', () => {
+        const tab = screen.getByText('Other Details');
+        fireEvent.click(tab);
+        expect(screen.getByLabelText('Contract Lead Time Weeks')).toBeInTheDocument();
+    });
+
+    test('Should render Lifecycle tab', () => {
+        const tab = screen.getByText('Lifecycle');
+        fireEvent.click(tab);
+        expect(screen.getByLabelText('Created By')).toBeInTheDocument();
+    });
+
+    test('Should render Manufacturer tab', () => {
+        const tab = screen.getByText('Manufacturer');
+        fireEvent.click(tab);
+        expect(screen.getByLabelText('Manufacturer')).toBeInTheDocument();
+    });
+});
+
+describe('When url query params specify tab...', () => {
+    beforeEach(() => {
+        cleanup();
+        jest.clearAllMocks();
+    });
+
+    test('Should render Part and Supplier tab', () => {
+        useSelector.mockImplementation(callback =>
+            callback({
+                ...stateWithItemLoaded,
+                router: {
+                    location: {
+                        pathname: '',
+                        query: { partId: 1, supplierId: 2, tab: 'partAndSupplier' }
+                    }
+                }
+            })
+        );
+        render(<PartSupplier />);
+        expect(screen.getByLabelText('Designation')).toBeInTheDocument();
+    });
+
+    test('Should render Order Details tab', () => {
+        useSelector.mockImplementation(callback =>
+            callback({
+                ...stateWithItemLoaded,
+                router: {
+                    location: {
+                        pathname: '',
+                        query: { partId: 1, supplierId: 2, tab: 'orderDetails' }
+                    }
+                }
+            })
+        );
+        render(<PartSupplier />);
+
+        expect(screen.getByLabelText('Order Method')).toBeInTheDocument();
+    });
+
+    test('Should render Other Details tab', () => {
+        useSelector.mockImplementation(callback =>
+            callback({
+                ...stateWithItemLoaded,
+                router: {
+                    location: {
+                        pathname: '',
+                        query: { partId: 1, supplierId: 2, tab: 'otherDetails' }
+                    }
+                }
+            })
+        );
+        render(<PartSupplier />);
+        expect(screen.getByLabelText('Contract Lead Time Weeks')).toBeInTheDocument();
+    });
+
+    test('Should render Lifecycle tab', () => {
+        useSelector.mockImplementation(callback =>
+            callback({
+                ...stateWithItemLoaded,
+                router: {
+                    location: {
+                        pathname: '',
+                        query: { partId: 1, supplierId: 2, tab: 'lifecycle' }
+                    }
+                }
+            })
+        );
+        render(<PartSupplier />);
+        expect(screen.getByLabelText('Created By')).toBeInTheDocument();
+    });
+
+    test('Should render Manufacturer tab', () => {
+        useSelector.mockImplementation(callback =>
+            callback({
+                ...stateWithItemLoaded,
+                router: {
+                    location: {
+                        pathname: '',
+                        query: { partId: 1, supplierId: 2, tab: 'manufacturer' }
+                    }
+                }
+            })
+        );
+        render(<PartSupplier />);
+        expect(screen.getByLabelText('Manufacturer')).toBeInTheDocument();
+    });
+});
