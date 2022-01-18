@@ -51,6 +51,24 @@ const stateWithItemLoaded = {
     }
 };
 
+const stateWithPart = {
+    ...state,
+    part: {
+        item: {
+            partNumber: 'A PART',
+            manufacturers: [
+                { partNumber: 'P1', manufacturerDescription: 'M1' },
+                { partNumber: 'P2', manufacturerDescription: 'M2' }
+            ],
+            links: [{ rel: 'mechanical-sourcing-sheet', href: '/parts/sources/382' }]
+        }
+    },
+    partSupplier: {
+        loading: false,
+        item: { supplierName: 'SUPPLIER', partNumber: 'PART', links: [] }
+    }
+};
+
 const stateWithItemLoadedWhereUserCanEdit = {
     ...state,
     partSupplier: {
@@ -333,5 +351,22 @@ describe('When url query params specify tab...', () => {
         );
         render(<PartSupplier />);
         expect(screen.getByLabelText('Manufacturer')).toBeInTheDocument();
+    });
+});
+
+describe('When part has manufacturers...', () => {
+    beforeEach(() => {
+        cleanup();
+        jest.clearAllMocks();
+        useSelector.mockImplementation(callback => callback(stateWithPart));
+        render(<PartSupplier />);
+    });
+
+    test('Should link to manufacturers', () => {
+        expect(screen.getByRole('link', { name: 'Edit Manufacturers' })).toBeInTheDocument();
+    });
+
+    test('Should list manufacturers and their part numbers in the Manufacturers box', () => {
+        expect(screen.getByText('M1 - P1 M2 - P2')).toBeInTheDocument();
     });
 });
