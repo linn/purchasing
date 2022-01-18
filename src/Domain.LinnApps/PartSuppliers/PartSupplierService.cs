@@ -169,7 +169,14 @@
             }
 
             candidate.CreatedBy = this.employeeRepository.FindById(candidate.CreatedBy.Id);
-            candidate.Part = this.partRepository.FindBy(x => x.PartNumber == candidate.PartNumber);
+            var part = this.partRepository.FindBy(x => x.PartNumber == candidate.PartNumber);
+            candidate.Part = part;
+            
+            if (string.IsNullOrEmpty(candidate.SupplierDesignation))
+            {
+                candidate.SupplierDesignation = part.Description;
+            }
+
             candidate.Supplier = this.supplierRepository.FindById(candidate.SupplierId);
 
             if (!string.IsNullOrEmpty(candidate.OrderMethod?.Name))

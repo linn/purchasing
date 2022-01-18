@@ -13,7 +13,7 @@
 
     using NUnit.Framework;
 
-    public class WhenCreating : ContextBase
+    public class WhenCreatingAndNoDesignation : ContextBase
     {
         private PartSupplier candidate;
 
@@ -24,38 +24,35 @@
         {
             this.candidate = new PartSupplier
                                  {
-                                     PartNumber = "PART", 
-                                     SupplierId = 1, 
+                                     PartNumber = "PART",
+                                     SupplierId = 1,
                                      MinimumOrderQty = 10,
                                      CreatedBy = new Employee { Id = 33087 },
                                      OrderIncrement = 1m,
                                      LeadTimeWeeks = 1,
                                      DateCreated = DateTime.UnixEpoch,
                                      RohsCompliant = "Y",
-                                     SupplierDesignation = "1234567",
                                      RohsCategory = "COMPLIANT",
                                      CurrencyUnitPrice = 1m,
                                      DamagesPercent = 0m,
                                      MinimumDeliveryQty = 1m,
                                      OrderMethod = new OrderMethod { Name = "METHOD" },
                                      Part = new Part { PartNumber = "PART" }
-            };
+                                 };
 
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { PartNumber = "PART", Description = "DESC" });
             this.MockAuthService.HasPermissionFor(
-                    AuthorisedAction.PartSupplierUpdate, 
+                    AuthorisedAction.PartSupplierUpdate,
                     Arg.Any<IEnumerable<string>>())
                 .Returns(true);
             this.result = this.Sut.CreatePartSupplier(this.candidate, new List<string>());
         }
 
         [Test]
-        public void ShouldReturnCreated()
+        public void ShouldDefaultToPartsDescription()
         {
-            this.result.SupplierId.Should().Be(1);
-            this.result.PartNumber.Should().Be("PART");
-            this.result.SupplierDesignation.Should().Be("1234567");
+            this.result.SupplierDesignation.Should().Be("DESC");
         }
     }
 }
