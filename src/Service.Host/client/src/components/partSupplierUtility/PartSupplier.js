@@ -179,7 +179,7 @@ function PartSupplier() {
                 orderDetails: 1,
                 otherDetails: 2,
                 lifecycle: 3,
-                manufacturers: 4
+                manufacturer: 4
             };
             setValue(tabs[query.tab]);
         }
