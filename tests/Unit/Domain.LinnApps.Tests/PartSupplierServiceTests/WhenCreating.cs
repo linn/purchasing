@@ -31,9 +31,15 @@
                                      LeadTimeWeeks = 1,
                                      DateCreated = DateTime.UnixEpoch,
                                      RohsCompliant = "Y",
-                                     RohsCategory = "COMPLIANT"
-                                 };
-            this.MockAuthService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, Arg.Any<IEnumerable<string>>())
+                                     RohsCategory = "COMPLIANT",
+                                     CurrencyUnitPrice = 1m,
+                                     DamagesPercent = 0m,
+                                     MinimumDeliveryQty = 1m,
+                                     OrderMethod = new OrderMethod { Name = "METHOD" }
+            };
+            this.MockAuthService.HasPermissionFor(
+                    AuthorisedAction.PartSupplierUpdate, 
+                    Arg.Any<IEnumerable<string>>())
                 .Returns(true);
             this.result = this.Sut.CreatePartSupplier(this.candidate, new List<string>());
         }
