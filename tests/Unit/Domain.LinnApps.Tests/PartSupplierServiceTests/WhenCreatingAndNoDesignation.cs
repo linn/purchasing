@@ -8,6 +8,7 @@
 
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
     using NSubstitute;
 
@@ -37,7 +38,8 @@
                                      DamagesPercent = 0m,
                                      MinimumDeliveryQty = 1m,
                                      OrderMethod = new OrderMethod { Name = "METHOD" },
-                                     Part = new Part { PartNumber = "PART" }
+                                     Part = new Part { PartNumber = "PART" },
+                                     Currency = new Currency { Code = "GBP" }
                                  };
 
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())

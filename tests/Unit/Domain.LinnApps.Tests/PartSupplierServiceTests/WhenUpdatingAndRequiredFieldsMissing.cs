@@ -57,7 +57,7 @@
         {
             this.action.Should().Throw<PartSupplierException>()
                 .WithMessage(
-                    "The inputs for the following fields are empty/invalid: Minimum Order Qty, Created By, Order Increment, Lead Time Weeks, Rohs Category, Order Method, Currency Unit Price, Minimum Delivery Quantity, Damages Percent, ");
+                    "The inputs for the following fields are empty/invalid: Minimum Order Qty, Created By, Order Increment, Lead Time Weeks, Rohs Category, Order Method, Currency Unit Price, Minimum Delivery Quantity, Damages Percent, Currency, ");
         }
     }
 }

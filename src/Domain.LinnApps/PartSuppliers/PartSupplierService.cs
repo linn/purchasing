@@ -253,6 +253,11 @@
                 errors.Add("Damages Percent");
             }
 
+            if (candidate.Currency == null)
+            {
+                errors.Add("Currency");
+            }
+
             if (errors.Any())
             {
                 var msg = errors
