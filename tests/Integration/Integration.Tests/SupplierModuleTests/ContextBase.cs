@@ -5,11 +5,11 @@
     using Linn.Common.Facade;
     using Linn.Common.Logging;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
-    using Linn.Purchasing.Persistence.LinnApps.Keys;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.SearchResources;
     using Linn.Purchasing.Service.Modules;
@@ -35,11 +35,24 @@
             get; private set;
         }
 
+        protected IFacadeResourceService<PreferredSupplierChange, PreferredSupplierChangeKey,
+            PreferredSupplierChangeResource, PreferredSupplierChangeKey> PreferredSupplierChangeService
+        {
+            get; private set;
+        }
+
         protected ILog Log { get; private set; }
 
         protected IPartService PartFacadeService { get; private set; }
 
         protected IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource> SupplierFacadeService
+        {
+            get;
+            private set;
+        }
+
+        protected IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource,
+            PriceChangeReasonResource> PriceChangeReasonService
         {
             get;
             private set;
@@ -56,7 +69,11 @@
             this.Log = Substitute.For<ILog>();
             this.SupplierFacadeService =
                 Substitute.For<IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource>>();
-
+            this.PreferredSupplierChangeService = Substitute
+                .For<IFacadeResourceService<PreferredSupplierChange, PreferredSupplierChangeKey, PreferredSupplierChangeResource, PreferredSupplierChangeKey>>();
+            this.PriceChangeReasonService = Substitute
+                .For<IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource,
+                    PriceChangeReasonResource>>();
             this.Client = TestClient.With<SupplierModule>(
                 services =>
                     {
@@ -65,6 +82,8 @@
                         services.AddSingleton(this.Log);
                         services.AddSingleton(this.PartFacadeService);
                         services.AddSingleton(this.SupplierFacadeService);
+                        services.AddSingleton(this.PreferredSupplierChangeService);
+                        services.AddSingleton(this.PriceChangeReasonService);
                         services.AddHandlers();
                     },
                 FakeAuthMiddleware.EmployeeMiddleware);

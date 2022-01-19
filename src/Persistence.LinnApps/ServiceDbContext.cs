@@ -54,7 +54,9 @@
 
         public DbSet<TransactionType> TransactionTypes { get; set; }
 
+        public DbSet<PreferredSupplierChange> PreferredSupplierChanges { get; set; }
 
+        public DbSet<PriceChangeReason> PriceChangeReasons { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -80,6 +82,8 @@
             this.BuildUnitsOfMeasure(builder);
             this.BuildPurchaseLedgers(builder);
             this.BuildTransactionTypes(builder);
+            this.BuildPreferredSupplierChanges(builder);
+            this.BuildPriceChangeReasons(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -98,6 +102,33 @@
             optionsBuilder.UseLoggerFactory(MyLoggerFactory);
             optionsBuilder.EnableSensitiveDataLogging(true);
             base.OnConfiguring(optionsBuilder);
+        }
+
+        private void BuildPriceChangeReasons(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PriceChangeReason>().ToTable("PRICE_CHANGE_REASONS");
+            entity.HasKey(e => e.ReasonCode);
+            entity.Property(e => e.ReasonCode).HasColumnName("REASON_CODE");
+            entity.Property(e => e.Description).HasColumnName("DESCRIPTION");
+        }
+
+        private void BuildPreferredSupplierChanges(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PreferredSupplierChange>().ToTable("PREFERRED_SUPPLIER_CHANGES");
+            entity.HasKey(e => new { e.PartNumber, e.Seq });
+            entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER");
+            entity.Property(e => e.Seq).HasColumnName("SEQ");
+            entity.Property(e => e.DateChanged).HasColumnName("DATE_CHANGED");
+            entity.Property(e => e.Remarks).HasColumnName("REMARKS");
+            entity.Property(e => e.NewPrice).HasColumnName("NEW_PRICE");
+            entity.Property(e => e.OldPrice).HasColumnName("OLD_PRICE");
+            entity.HasOne(e => e.OldSupplier).WithMany().HasForeignKey("OLD_SUPPLIER_ID");
+            entity.HasOne(e => e.NewSupplier).WithMany().HasForeignKey("NEW_SUPPLIER_ID");
+            entity.HasOne(e => e.ChangeReason).WithMany().HasForeignKey("CHANGE_REASON");
+            entity.HasOne(e => e.ChangedBy).WithMany().HasForeignKey("CHANGED_BY");
+            entity.HasOne(e => e.NewCurrency).WithMany().HasForeignKey("NEW_CURRENCY");
+            entity.HasOne(e => e.OldCurrency).WithMany().HasForeignKey("OLD_CURRENCY");
+            entity.Property(e => e.BaseOldPrice).HasColumnName("BASE_OLD_PRICE");
         }
 
         private void BuildPartSuppliers(ModelBuilder builder)
@@ -149,6 +180,7 @@
             entity.Property(e => e.PackWasteStatus).HasColumnName("PACK_WASTE_STATUS").HasMaxLength(1);
             entity.Property(e => e.ContractLeadTimeWeeks).HasColumnName("CONTRACT_LEAD_TIME_WEEKS");
             entity.Property(e => e.DutyPercent).HasColumnName("DUTY_PERCENT");
+            entity.Property(e => e.SupplierRanking).HasColumnName("SUPPLIER_RANKING");
         }
 
         private void BuildParts(ModelBuilder builder)
@@ -159,6 +191,13 @@
             entity.Property(a => a.Description).HasColumnName("DESCRIPTION").HasMaxLength(50);
             entity.Property(a => a.StockControlled).HasColumnName("STOCK_CONTROLLED").HasMaxLength(1);
             entity.Property(a => a.Id).HasColumnName("BRIDGE_ID");
+            entity.Property(a => a.BomType).HasColumnName("BOM_TYPE");
+            entity.Property(a => a.BaseUnitPrice).HasColumnName("BASE_UNIT_PRICE");
+            entity.Property(a => a.MaterialPrice).HasColumnName("MATERIAL_PRICE");
+            entity.Property(a => a.LabourPrice).HasColumnName("LABOUR_PRICE");
+            entity.HasOne(a => a.Currency).WithMany().HasForeignKey("CURRENCY");
+            entity.HasOne(a => a.PreferredSupplier).WithMany().HasForeignKey("PREFERRED_SUPPLIER");
+            entity.Property(a => a.CurrencyUnitPrice).HasColumnName("CURRENCY_UNIT_PRICE");
         }
 
         private void BuildSuppliers(ModelBuilder builder)

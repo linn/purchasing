@@ -3,13 +3,13 @@
     using Linn.Common.Persistence;
     using Linn.Common.Persistence.EntityFramework;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Persistence.LinnApps;
-    using Linn.Purchasing.Persistence.LinnApps.Keys;
     using Linn.Purchasing.Persistence.LinnApps.Repositories;
 
     using Microsoft.EntityFrameworkCore;
@@ -45,7 +45,10 @@
                 .AddTransient<IRepository<PurchaseOrder, int>, PurchaseOrderRepository>()
                 .AddTransient<IRepository<PurchaseLedger, int>, PurchaseLedgerRepository>()
                 .AddTransient<IRepository<Employee, int>, EntityFrameworkRepository<Employee, int>>(r
-                    => new EntityFrameworkRepository<Employee, int>(r.GetService<ServiceDbContext>()?.Employees));
+                    => new EntityFrameworkRepository<Employee, int>(r.GetService<ServiceDbContext>()?.Employees))
+                .AddTransient<IRepository<PreferredSupplierChange, PreferredSupplierChangeKey>, PreferredSupplierChangeRepository>()
+                .AddTransient<IRepository<PriceChangeReason, string>, EntityFrameworkRepository<PriceChangeReason, string>>(r
+                    => new EntityFrameworkRepository<PriceChangeReason, string>(r.GetService<ServiceDbContext>()?.PriceChangeReasons));
         }
     }
 }

@@ -13,8 +13,8 @@
     using Linn.Common.Pdf;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Common.Reporting.Models;
-    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
+    using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
@@ -22,7 +22,6 @@
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
-    using Linn.Purchasing.Persistence.LinnApps.Keys;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.SearchResources;
     using Linn.Stores.Proxy;
@@ -33,8 +32,7 @@
     {
         public static IServiceCollection AddBuilders(this IServiceCollection services)
         {
-            return services
-                .AddTransient<IBuilder<SigningLimit>, SigningLimitResourceBuilder>()
+            return services.AddTransient<IBuilder<SigningLimit>, SigningLimitResourceBuilder>()
                 .AddTransient<IBuilder<PartSupplier>, PartSupplierResourceBuilder>()
                 .AddTransient<IBuilder<IEnumerable<PartSupplier>>, PartSuppliersResourceBuilder>()
                 .AddTransient<IBuilder<Supplier>, SupplierResourceBuilder>()
@@ -53,7 +51,11 @@
                 .AddTransient<IBuilder<IEnumerable<Tariff>>, TariffsResourceBuilder>()
                 .AddTransient<IBuilder<Manufacturer>, ManufacturerResourceBuilder>()
                 .AddTransient<IBuilder<IEnumerable<Manufacturer>>, ManufacturersResourceBuilder>()
-                .AddTransient<IBuilder<ResultsModel>, ResultsModelResourceBuilder>();
+                .AddTransient<IBuilder<ResultsModel>, ResultsModelResourceBuilder>()
+                .AddTransient<IBuilder<PreferredSupplierChange>, PreferredSupplierChangeResourceBuilder>()
+                .AddTransient<IBuilder<PriceChangeReason>, PriceChangeReasonResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<PriceChangeReason>>, PriceChangeReasonsResourceBuilder>();
+
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -61,6 +63,7 @@
             return services
                 .AddTransient<IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource>, SigningLimitFacadeService>()
                 .AddTransient<IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>, PartSupplierFacadeService>()
+                .AddTransient<IFacadeResourceService<PreferredSupplierChange, PreferredSupplierChangeKey, PreferredSupplierChangeResource, PreferredSupplierChangeKey>, PreferredSupplierChangeService>()
                 .AddTransient<IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource>, SupplierFacadeService>()
                 .AddTransient<IPartService, PartService>()
                 .AddTransient<IFacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource>, OrderMethodService>()
@@ -70,7 +73,8 @@
                 .AddTransient<IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource>, PackagingGroupService>()
                 .AddTransient<IFacadeResourceService<Tariff, int, TariffResource, TariffResource>, TariffService>()
                 .AddTransient<IFacadeResourceService<Manufacturer, string, ManufacturerResource, ManufacturerResource>, ManufacturerFacadeService>()
-                .AddTransient<IPurchaseOrderReportFacadeService, PurchaseOrderReportFacadeService>();
+                .AddTransient<IPurchaseOrderReportFacadeService, PurchaseOrderReportFacadeService>()
+                .AddTransient<IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource>, PriceChangeReasonService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)

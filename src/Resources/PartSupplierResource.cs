@@ -1,8 +1,5 @@
 ﻿namespace Linn.Purchasing.Resources
 {
-    using System;
-    using System.Collections.Generic;
-
     using Linn.Common.Resources;
 
     public class PartSupplierResource : HypermediaResource
@@ -104,7 +101,5 @@
         public string RohsCompliant { get; set; }
 
         public string RohsComments { get; set; }
-
-        public IEnumerable<string> Privileges { get; set; }
     }
 }

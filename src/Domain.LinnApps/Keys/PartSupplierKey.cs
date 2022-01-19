@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Persistence.LinnApps.Keys
+﻿namespace Linn.Purchasing.Domain.LinnApps.Keys
 {
     public class PartSupplierKey
     {

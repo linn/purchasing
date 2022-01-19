@@ -21,6 +21,8 @@
         public Part FindBy(Expression<Func<Part, bool>> expression)
         {
             return this.serviceDbContext.Parts
+                .Include(p => p.Currency)
+                .Include(p => p.PreferredSupplier)
                 .AsNoTracking().SingleOrDefault(expression);
         }
 
