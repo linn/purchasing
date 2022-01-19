@@ -8,10 +8,10 @@
     using Carter.Response;
 
     using Linn.Common.Facade;
+    using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Facade.Services;
-    using Linn.Purchasing.Persistence.LinnApps.Keys;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.SearchResources;
     using Linn.Purchasing.Service.Extensions;

@@ -8,6 +8,6 @@
 
         public PartSupplier CreatePartSupplier(PartSupplier candidate, IEnumerable<string> privileges);
 
-        public PartSupplier CreatePreferredSupplierChange(PreferredSupplierChange candidate, IEnumerable<string> privileges);
+        public PreferredSupplierChange CreatePreferredSupplierChange(PreferredSupplierChange candidate, IEnumerable<string> privileges);
     }
 }

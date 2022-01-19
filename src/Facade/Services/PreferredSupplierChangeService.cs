@@ -6,8 +6,8 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
-    using Linn.Purchasing.Persistence.LinnApps.Keys;
     using Linn.Purchasing.Resources;
 
     public class PreferredSupplierChangeService 

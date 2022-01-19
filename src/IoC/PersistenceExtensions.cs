@@ -3,13 +3,13 @@
     using Linn.Common.Persistence;
     using Linn.Common.Persistence.EntityFramework;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Persistence.LinnApps;
-    using Linn.Purchasing.Persistence.LinnApps.Keys;
     using Linn.Purchasing.Persistence.LinnApps.Repositories;
 
     using Microsoft.EntityFrameworkCore;

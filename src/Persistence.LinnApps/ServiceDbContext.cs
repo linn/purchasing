@@ -54,7 +54,7 @@
 
         public DbSet<TransactionType> TransactionTypes { get; set; }
 
-        public DbSet<PreferredSupplierChange> PartSupplierChanges { get; set; }
+        public DbSet<PreferredSupplierChange> PreferredSupplierChanges { get; set; }
 
         public DbSet<PriceChangeReason> PriceChangeReasons { get; set; }
 
@@ -127,6 +127,8 @@
             entity.HasOne(e => e.ChangeReason).WithMany().HasForeignKey("CHANGE_REASON");
             entity.HasOne(e => e.ChangedBy).WithMany().HasForeignKey("CHANGED_BY");
             entity.HasOne(e => e.NewCurrency).WithMany().HasForeignKey("NEW_CURRENCY");
+            entity.HasOne(e => e.OldCurrency).WithMany().HasForeignKey("OLD_CURRENCY");
+            entity.Property(e => e.BaseOldPrice).HasColumnName("BASE_OLD_PRICE");
         }
 
         private void BuildPartSuppliers(ModelBuilder builder)
@@ -189,6 +191,13 @@
             entity.Property(a => a.Description).HasColumnName("DESCRIPTION").HasMaxLength(50);
             entity.Property(a => a.StockControlled).HasColumnName("STOCK_CONTROLLED").HasMaxLength(1);
             entity.Property(a => a.Id).HasColumnName("BRIDGE_ID");
+            entity.Property(a => a.BomType).HasColumnName("BOM_TYPE");
+            entity.Property(a => a.BaseUnitPrice).HasColumnName("BASE_UNIT_PRICE");
+            entity.Property(a => a.MaterialPrice).HasColumnName("MATERIAL_PRICE");
+            entity.Property(a => a.LabourPrice).HasColumnName("LABOUR_PRICE");
+            entity.HasOne(a => a.Currency).WithMany().HasForeignKey("CURRENCY");
+            entity.HasOne(a => a.PreferredSupplier).WithMany().HasForeignKey("PREFERRED_SUPPLIER");
+            entity.Property(a => a.CurrencyUnitPrice).HasColumnName("CURRENCY_UNIT_PRICE");
         }
 
         private void BuildSuppliers(ModelBuilder builder)

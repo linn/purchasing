@@ -15,13 +15,15 @@
 
         public Supplier NewSupplier { get; set; }
 
-        public int NewSupplierId { get; set; }
-
         public decimal? OldPrice { get; set; }
+
+        public decimal? BaseOldPrice { get; set; }
 
         public decimal? NewPrice { get; set; }
 
         public Currency NewCurrency { get; set; }
+
+        public Currency OldCurrency { get; set; }
 
         public DateTime DateChanged { get; set; }
 

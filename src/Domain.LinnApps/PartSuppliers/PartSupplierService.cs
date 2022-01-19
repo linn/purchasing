@@ -5,6 +5,7 @@
 
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -31,6 +32,8 @@
 
         private readonly IRepository<Supplier, int> supplierRepository;
 
+        private IRepository<PartSupplier, PartSupplierKey> partSupplierRepository;
+
         public PartSupplierService(
             IAuthorisationService authService,
             IRepository<Currency, string> currencyRepository,
@@ -41,7 +44,8 @@
             IRepository<Employee, int> employeeRepository,
             IRepository<Manufacturer, string> manufacturerRepository,
             IQueryRepository<Part> partRepository,
-            IRepository<Supplier, int> supplierRepository)
+            IRepository<Supplier, int> supplierRepository,
+            IRepository<PartSupplier, PartSupplierKey> partSupplierRepository)
         {
             this.authService = authService;
             this.currencyRepository = currencyRepository;
@@ -53,6 +57,7 @@
             this.manufacturerRepository = manufacturerRepository;
             this.partRepository = partRepository;
             this.supplierRepository = supplierRepository;
+            this.partSupplierRepository = partSupplierRepository;
         }
 
         public void UpdatePartSupplier(
@@ -199,13 +204,39 @@
             return candidate;
         }
 
-        public PartSupplier CreatePreferredSupplierChange(PreferredSupplierChange candidate, IEnumerable<string> privileges)
+        public PreferredSupplierChange CreatePreferredSupplierChange(PreferredSupplierChange candidate, IEnumerable<string> privileges)
         {
-            // checks
-            // do create
-            // update part supplie record
-            // dispatch rabbit message to update part record
-            throw new System.NotImplementedException();
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
+            {
+                throw new UnauthorisedActionException(
+                    "You are not authorised to update Part Supplier records");
+            }
+
+            var part = this.partRepository.FindBy(x => x.PartNumber == candidate.PartNumber.ToUpper());
+            
+            if (part.BomType.Equals("P") || part.BomType.Equals("S"))
+            {
+                throw new PartSupplierException("You cannot set a preferred supplier for phantoms");
+            }
+
+            // todo - check part_locked
+
+            var oldPartSupplier = this.partSupplierRepository.FindById(
+                new PartSupplierKey { PartNumber = part.PartNumber, SupplierId = candidate.OldSupplier.SupplierId });
+            oldPartSupplier.SupplierRanking = 2;
+
+            var newPartSupplier = this.partSupplierRepository.FindById(
+                new PartSupplierKey { PartNumber = part.PartNumber, SupplierId = candidate.NewSupplier.SupplierId });
+            newPartSupplier.SupplierRanking = 1;
+
+            candidate.OldSupplier = part.PreferredSupplier;
+            candidate.OldPrice = part.CurrencyUnitPrice;
+            candidate.BaseOldPrice = part.BaseUnitPrice;
+            candidate.OldCurrency = part.Currency;
+
+            // todo - dispatch message to update part record in stores
+            
+            return candidate;
         }
 
         private void ValidateFields(PartSupplier candidate)
