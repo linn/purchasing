@@ -57,7 +57,7 @@
                 .Returns(true);
 
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
-                .Returns(part);
+                .Returns(this.part);
 
             this.PartSupplierRepository.FindById(Arg.Any<PartSupplierKey>()).Returns(
                 this.oldPartSupplierRecord,
