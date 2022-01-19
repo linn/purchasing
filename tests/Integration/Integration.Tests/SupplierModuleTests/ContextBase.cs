@@ -35,6 +35,12 @@
             get; private set;
         }
 
+        protected IFacadeResourceService<PreferredSupplierChange, PreferredSupplierChangeKey,
+            PreferredSupplierChangeResource, PreferredSupplierChangeKey> PreferredSupplierChangeService
+        {
+            get; private set;
+        }
+
         protected ILog Log { get; private set; }
 
         protected IPartService PartFacadeService { get; private set; }
@@ -56,6 +62,8 @@
             this.Log = Substitute.For<ILog>();
             this.SupplierFacadeService =
                 Substitute.For<IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource>>();
+            this.PreferredSupplierChangeService = Substitute
+                .For<IFacadeResourceService<PreferredSupplierChange, PreferredSupplierChangeKey, PreferredSupplierChangeResource, PreferredSupplierChangeKey>>();
 
             this.Client = TestClient.With<SupplierModule>(
                 services =>
@@ -65,6 +73,7 @@
                         services.AddSingleton(this.Log);
                         services.AddSingleton(this.PartFacadeService);
                         services.AddSingleton(this.SupplierFacadeService);
+                        services.AddSingleton(this.PreferredSupplierChangeService);
                         services.AddHandlers();
                     },
                 FakeAuthMiddleware.EmployeeMiddleware);

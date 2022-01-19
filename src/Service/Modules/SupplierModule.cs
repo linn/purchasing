@@ -24,6 +24,10 @@
             IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>
             partSupplierFacadeService;
 
+        private readonly
+            IFacadeResourceService<PreferredSupplierChange, PreferredSupplierChangeKey, PreferredSupplierChangeResource,
+                PreferredSupplierChangeKey> preferredSupplierChangeService;
+
         private readonly IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource> supplierFacadeService;
 
         private readonly IPartService partFacadeService;
@@ -31,11 +35,13 @@
         public SupplierModule(
             IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource> partSupplierFacadeService,
             IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource> supplierFacadeService,
+            IFacadeResourceService<PreferredSupplierChange, PreferredSupplierChangeKey, PreferredSupplierChangeResource, PreferredSupplierChangeKey> preferredSupplierChangeService,
             IPartService partFacadeService)
         {
             this.supplierFacadeService = supplierFacadeService;
             this.partSupplierFacadeService = partSupplierFacadeService;
             this.partFacadeService = partFacadeService;
+            this.preferredSupplierChangeService = preferredSupplierChangeService;
             this.Get("/purchasing/part-suppliers/record", this.GetById);
             this.Put("/purchasing/part-suppliers/record", this.UpdatePartSupplier);
             this.Get("/purchasing/part-suppliers", this.SearchPartSuppliers);
@@ -43,7 +49,7 @@
 
             this.Get("/purchasing/part-suppliers/application-state", this.GetPartSuppliersState);
             this.Get("/purchasing/suppliers", this.SearchSuppliers);
-            this.Get("/purchasing/preferred-supplier-changes", this.SearchSuppliers);
+            this.Post("/purchasing/preferred-supplier-changes", this.CreatePreferredSupplierChange);
         }
 
         private async Task GetById(HttpRequest req, HttpResponse res)
@@ -70,11 +76,10 @@
 
             var key = new PartSupplierKey { PartNumber = resource.PartNumber, SupplierId = resource.SupplierId };
 
-            resource.Privileges = req.HttpContext.GetPrivileges();
             var result = this.partSupplierFacadeService.Update(
                 key,
                 resource,
-                resource.Privileges);
+                req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }
@@ -115,10 +120,20 @@
         private async Task CreatePartSupplier(HttpRequest req, HttpResponse res)
         {
             var resource = await req.Bind<PartSupplierResource>();
-            resource.Privileges = req.HttpContext.GetPrivileges();
             var result = this.partSupplierFacadeService.Add(
                 resource,
-                resource.Privileges);
+                req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task CreatePreferredSupplierChange(HttpRequest req, HttpResponse res)
+        {
+            var resource = await req.Bind<PreferredSupplierChangeResource>();
+            var prives = req.HttpContext.GetPrivileges();
+            var result = this.preferredSupplierChangeService.Add(
+                resource,
+                req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }

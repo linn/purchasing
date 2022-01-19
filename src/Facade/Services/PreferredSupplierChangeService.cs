@@ -13,12 +13,16 @@
     public class PreferredSupplierChangeService 
         : FacadeResourceService<PreferredSupplierChange, PreferredSupplierChangeKey, PreferredSupplierChangeResource, PreferredSupplierChangeKey>
     {
+        private readonly IPartSupplierService domainService;
+
         public PreferredSupplierChangeService(
             IRepository<PreferredSupplierChange, PreferredSupplierChangeKey> repository, 
             ITransactionManager transactionManager, 
-            IBuilder<PreferredSupplierChange> resourceBuilder)
+            IBuilder<PreferredSupplierChange> resourceBuilder,
+            IPartSupplierService domainService)
             : base(repository, transactionManager, resourceBuilder)
         {
+            this.domainService = domainService;
         }
 
         protected override PreferredSupplierChange CreateFromResource(

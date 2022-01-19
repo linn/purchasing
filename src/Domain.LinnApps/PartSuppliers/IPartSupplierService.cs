@@ -7,5 +7,7 @@
         public void UpdatePartSupplier(PartSupplier current, PartSupplier updated, IEnumerable<string> privileges);
 
         public PartSupplier CreatePartSupplier(PartSupplier candidate, IEnumerable<string> privileges);
+
+        public PartSupplier CreatePreferredSupplierChange(PreferredSupplierChange candidate, IEnumerable<string> privileges);
     }
 }

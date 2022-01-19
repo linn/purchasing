@@ -199,6 +199,15 @@
             return candidate;
         }
 
+        public PartSupplier CreatePreferredSupplierChange(PreferredSupplierChange candidate, IEnumerable<string> privileges)
+        {
+            // checks
+            // do create
+            // update part supplie record
+            // dispatch rabbit message to update part record
+            throw new System.NotImplementedException();
+        }
+
         private void ValidateFields(PartSupplier candidate)
         {
             var errors = new List<string>();
