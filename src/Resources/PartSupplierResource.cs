@@ -1,8 +1,5 @@
 ﻿namespace Linn.Purchasing.Resources
 {
-    using System;
-    using System.Collections.Generic;
-
     using Linn.Common.Resources;
 
     public class PartSupplierResource : HypermediaResource
