@@ -55,12 +55,18 @@
             this.supplierRepository = supplierRepository;
         }
 
-        public void UpdatePartSupplier(PartSupplier current, PartSupplier updated, IEnumerable<string> privileges)
+        public void UpdatePartSupplier(
+            PartSupplier current, 
+            PartSupplier updated, 
+            IEnumerable<string> privileges)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
             {
-                throw new UnauthorisedActionException("You are not authorised to update Part Supplier records");
+                throw new UnauthorisedActionException(
+                    "You are not authorised to update Part Supplier records");
             }
+
+            this.ValidateFields(updated);
 
             if (current.OrderMethod.Name != updated.OrderMethod.Name)
             {
@@ -74,30 +80,38 @@
 
             if (current.DeliveryAddress?.Id != updated.DeliveryAddress?.Id)
             {
-                current.DeliveryAddress = updated.DeliveryAddress == null ? null : this.addressRepository.FindById(updated.DeliveryAddress.Id);
+                current.DeliveryAddress = updated.DeliveryAddress == null 
+                                              ? null 
+                                              : this.addressRepository.FindById(updated.DeliveryAddress.Id);
             }
 
             if (current.Tariff?.Id != updated.Tariff?.Id)
             {
-                current.Tariff = updated.Tariff == null ? null : this.tariffRepository.FindById(updated.Tariff.Id);
+                current.Tariff = updated.Tariff == null 
+                                     ? null 
+                                     : this.tariffRepository.FindById(updated.Tariff.Id);
             }
 
             if (current.PackagingGroup?.Id != updated.PackagingGroup?.Id)
             {
                 current.PackagingGroup = updated.PackagingGroup == null 
-                                             ? null : this.packagingGroupRepository.FindById(updated.PackagingGroup.Id);
+                                             ? null 
+                                             : this.packagingGroupRepository
+                                                 .FindById(updated.PackagingGroup.Id);
             }
 
             if (current.MadeInvalidBy?.Id != updated.MadeInvalidBy?.Id)
             {
                 current.MadeInvalidBy = updated.MadeInvalidBy == null
-                                             ? null : this.employeeRepository.FindById(updated.MadeInvalidBy.Id);
+                                             ? null 
+                                             : this.employeeRepository.FindById(updated.MadeInvalidBy.Id);
             }
 
             if (current.Manufacturer?.Code != updated.Manufacturer?.Code)
             {
                 current.Manufacturer = updated.Manufacturer == null
-                                            ? null : this.manufacturerRepository.FindById(updated.Manufacturer.Code);
+                                            ? null 
+                                            : this.manufacturerRepository.FindById(updated.Manufacturer.Code);
             }
 
             current.DateInvalid = updated.DateInvalid;
@@ -128,23 +142,21 @@
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
             {
-                throw new UnauthorisedActionException("You are not authorised to update Part Supplier records");
+                throw new UnauthorisedActionException(
+                    "You are not authorised to update Part Supplier records");
             }
 
-            var errors = this.ValidateFields(candidate);
-
-            if (errors.Any())
-            {
-                var msg = errors
-                        .Aggregate(
-                            "The inputs for the following fields are empty/invalid: ", 
-                            (current, error) => current + $"{error}, ");
-
-                throw new PartSupplierException(msg);
-            }
+            this.ValidateFields(candidate);
 
             candidate.CreatedBy = this.employeeRepository.FindById(candidate.CreatedBy.Id);
-            candidate.Part = this.partRepository.FindBy(x => x.PartNumber == candidate.PartNumber);
+            var part = this.partRepository.FindBy(x => x.PartNumber == candidate.PartNumber);
+            candidate.Part = part;
+            
+            if (string.IsNullOrEmpty(candidate.SupplierDesignation))
+            {
+                candidate.SupplierDesignation = part.Description;
+            }
+
             candidate.Supplier = this.supplierRepository.FindById(candidate.SupplierId);
 
             if (!string.IsNullOrEmpty(candidate.OrderMethod?.Name))
@@ -169,12 +181,14 @@
 
             if (candidate.PackagingGroup?.Id != null)
             {
-                candidate.PackagingGroup = this.packagingGroupRepository.FindById(candidate.PackagingGroup.Id);
+                candidate.PackagingGroup = this.packagingGroupRepository
+                    .FindById(candidate.PackagingGroup.Id);
             }
 
             if (candidate.MadeInvalidBy?.Id != null)
             {
-                candidate.MadeInvalidBy = this.employeeRepository.FindById(candidate.MadeInvalidBy.Id);
+                candidate.MadeInvalidBy = this.employeeRepository
+                    .FindById(candidate.MadeInvalidBy.Id);
             }
 
             if (!string.IsNullOrEmpty(candidate.Manufacturer?.Code))
@@ -185,7 +199,7 @@
             return candidate;
         }
 
-        private List<string> ValidateFields(PartSupplier candidate)
+        private void ValidateFields(PartSupplier candidate)
         {
             var errors = new List<string>();
 
@@ -219,7 +233,40 @@
                 errors.Add("Rohs Category");
             }
 
-            return errors;
+            if (candidate.OrderMethod == null)
+            {
+                errors.Add("Order Method");
+            }
+
+            if (candidate.CurrencyUnitPrice.GetValueOrDefault() == 0)
+            {
+                errors.Add("Currency Unit Price");
+            }
+
+            if (candidate.MinimumDeliveryQty.GetValueOrDefault() == 0)
+            {
+                errors.Add("Minimum Delivery Quantity");
+            }
+
+            if (!candidate.DamagesPercent.HasValue)
+            {
+                errors.Add("Damages Percent");
+            }
+
+            if (candidate.Currency == null)
+            {
+                errors.Add("Currency");
+            }
+
+            if (errors.Any())
+            {
+                var msg = errors
+                    .Aggregate(
+                        "The inputs for the following fields are empty/invalid: ",
+                        (current, error) => current + $"{error}, ");
+
+                throw new PartSupplierException(msg);
+            }
         }
     }
 }
