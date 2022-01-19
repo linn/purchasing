@@ -37,7 +37,7 @@
             candidate.SupplierId = resource.SupplierId;
             candidate.CreatedBy = resource.CreatedBy.HasValue 
                                       ? new Employee { Id = (int)resource.CreatedBy } : null;
-            return this.domainService.CreatePartSupplier(candidate, resource.Privileges);
+            return this.domainService.CreatePartSupplier(candidate, privileges);
         }
 
         protected override void SaveToLogTable(
@@ -67,7 +67,7 @@
             updated.PartNumber = entity.PartNumber;
             updated.SupplierId = entity.SupplierId;
 
-            this.domainService.UpdatePartSupplier(entity, updated, updateResource.Privileges);
+            this.domainService.UpdatePartSupplier(entity, updated, privileges);
         }
 
         protected override Expression<Func<PartSupplier, bool>> SearchExpression(string searchTerm)

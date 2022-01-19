@@ -104,7 +104,5 @@
         public string RohsCompliant { get; set; }
 
         public string RohsComments { get; set; }
-
-        public IEnumerable<string> Privileges { get; set; }
     }
 }
