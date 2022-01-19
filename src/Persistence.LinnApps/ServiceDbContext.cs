@@ -54,7 +54,9 @@
 
         public DbSet<TransactionType> TransactionTypes { get; set; }
 
+        public DbSet<PreferredSupplierChange> PartSupplierChanges { get; set; }
 
+        public DbSet<PriceChangeReason> PriceChangeReasons { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -80,6 +82,8 @@
             this.BuildUnitsOfMeasure(builder);
             this.BuildPurchaseLedgers(builder);
             this.BuildTransactionTypes(builder);
+            this.BuildPartSupplierChanges(builder);
+            this.BuildPriceChangeReasons(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -98,6 +102,31 @@
             optionsBuilder.UseLoggerFactory(MyLoggerFactory);
             optionsBuilder.EnableSensitiveDataLogging(true);
             base.OnConfiguring(optionsBuilder);
+        }
+
+        private void BuildPriceChangeReasons(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PriceChangeReason>().ToTable("PRICE_CHANGE_REASONS");
+            entity.HasKey(e => e.ReasonCode);
+            entity.Property(e => e.ReasonCode).HasColumnName("REASON_CODE");
+            entity.Property(e => e.Description).HasColumnName("DESCRIPTION");
+        }
+
+        private void BuildPartSupplierChanges(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PreferredSupplierChange>().ToTable("PREFERRED_SUPPLIER_CHANGES");
+            entity.HasKey(e => new { e.PartNumber, e.Seq });
+            entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER");
+            entity.Property(e => e.Seq).HasColumnName("SEQ");
+            entity.Property(e => e.DateChanged).HasColumnName("DATE_CHANGED");
+            entity.Property(e => e.Remarks).HasColumnName("REMARKS");
+            entity.Property(e => e.NewPrice).HasColumnName("NEW_PRICE");
+            entity.Property(e => e.OldPrice).HasColumnName("OLD_PRICE");
+            entity.HasOne(e => e.OldSupplier).WithMany().HasForeignKey("OLD_SUPPLIER_ID");
+            entity.HasOne(e => e.NewSupplier).WithMany().HasForeignKey("NEW_SUPPLIER_ID");
+            entity.HasOne(e => e.ChangeReason).WithMany().HasForeignKey("CHANGE_REASON");
+            entity.HasOne(e => e.ChangedBy).WithMany().HasForeignKey("CHANGED_BY");
+            entity.HasOne(e => e.NewCurrency).WithMany().HasForeignKey("NEW_CURRENCY");
         }
 
         private void BuildPartSuppliers(ModelBuilder builder)
