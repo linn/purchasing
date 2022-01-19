@@ -3,6 +3,7 @@
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.IO;
     using System.Threading.Tasks;
 
     using Carter;
@@ -11,12 +12,14 @@
     using Carter.Response;
 
     using Linn.Common.Facade;
+    using Linn.Common.Serialization;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.Extensions;
     using Linn.Purchasing.Service.Models;
 
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.FileProviders;
     using Microsoft.Extensions.Primitives;
 
@@ -24,12 +27,18 @@
     {
         private readonly IPurchaseOrderReportFacadeService purchaseOrderReportFacadeService;
 
+        private readonly CsvStreamWriter csvStreamWriter;
+
+        private MemoryStream stream;
+
         public PurchaseOrdersReportModule(IPurchaseOrderReportFacadeService purchaseOrderReportFacadeService)
         {
             this.purchaseOrderReportFacadeService = purchaseOrderReportFacadeService;
             this.Get("/purchasing/reports/orders-by-supplier", this.GetApp);
             this.Get("/purchasing/reports/orders-by-supplier/report", this.GetOrdersBySupplierReport);
             this.Get("/purchasing/reports/orders-by-supplier/export", this.GetOrdersBySupplierExport);
+            this.stream = new MemoryStream();
+            this.csvStreamWriter = new CsvStreamWriter(this.stream);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -49,7 +58,7 @@
             resource.Cancelled = req.Query.As<string>("Cancelled");
             resource.Credits = req.Query.As<string>("Credits");
             resource.StockControlled = req.Query.As<string>("StockControlled");
-
+            
             var results = this.purchaseOrderReportFacadeService.GetOrdersBySupplierReport(resource, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(results);
@@ -70,11 +79,18 @@
 
             var results = this.purchaseOrderReportFacadeService.GetOrdersBySupplierExport(resource, req.HttpContext.GetPrivileges());
 
-            res.ContentType = "text/csv";
-            await res.Negotiate(results);
+            this.csvStreamWriter.WriteModel(results);
 
-            //await res.SendFileAsync(new IFileInfo());
-            //    (results);
+            res.Body = this.stream;
+            //how do I get the actual value of the stream?!
+
+            res.ContentType = "text/csv";
+
+            res.Headers.Add("Content-Disposition", $"attachment;filename=ordersBySupplier{resource.From.Substring(0, 10)}_To_{resource.To.Substring(0, 10)}.csv");
+            await res.Negotiate(results);
         }
+
+
+
     }
 }

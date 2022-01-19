@@ -59,7 +59,7 @@
         }
 
 
-        public IResult<IEnumerable<IEnumerable<string>>> GetOrdersBySupplierExport(
+        public IEnumerable<IEnumerable<string>> GetOrdersBySupplierExport(
             OrdersBySupplierSearchResource resource,
             IEnumerable<string> privileges)
         {
@@ -68,8 +68,9 @@
 
             if (!fromValid || !toValid)
             {
-                return new BadRequestResult<IEnumerable<IEnumerable<string>>>(
-                    "Invalid dates supplied to orders by supplier report");
+                throw new Exception();
+                //return new BadRequestResult<IEnumerable<IEnumerable<string>>>(
+                //    "Invalid dates supplied to orders by supplier report");
             }
 
             var returns = resource.Returns == "Y";
@@ -88,7 +89,8 @@
 
             var returnResource = results.ConvertToCsvList();
 
-            return new SuccessResult<IEnumerable<IEnumerable<string>>>(returnResource);
+            return returnResource;
+            //return new SuccessResult<IEnumerable<IEnumerable<string>>>(returnResource);
         }
 
         private ReportReturnResource BuildResource(ResultsModel resultsModel, IEnumerable<string> privileges)

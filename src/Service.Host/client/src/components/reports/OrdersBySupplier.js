@@ -54,7 +54,17 @@ function OrderBySupplierReport() {
                 <Grid item xs={12}>
                     {!loading && reportData ? (
                         <ExportButton
-                            href={`${config.appRoot}/purchasing/reports/orders-by-supplier/export?id=${options.id}&from=${options.fromDate}&to=${options.toDate}`}
+                            href={
+                                `${config.appRoot}/purchasing/reports/orders-by-supplier/export?` +
+                                `?id=${options.id}` +
+                                `&fromDate=${options.fromDate}` +
+                                `&toDate=${options.toDate}` +
+                                `&outstanding=${options.outstandingOnly}` +
+                                `&returns=${options.returns}` +
+                                `&stockControlled=${options.stockControlled}` +
+                                `&credits=${options.credits}` +
+                                `&cancelled=${options.cancelled}`
+                            }
                         />
                     ) : (
                         ''

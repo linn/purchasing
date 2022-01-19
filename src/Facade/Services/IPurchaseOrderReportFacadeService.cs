@@ -12,7 +12,7 @@
             OrdersBySupplierSearchResource resource,
             IEnumerable<string> privileges);
 
-        IResult<IEnumerable<IEnumerable<string>>> GetOrdersBySupplierExport(
+        IEnumerable<IEnumerable<string>> GetOrdersBySupplierExport(
             OrdersBySupplierSearchResource resource,
             IEnumerable<string> privileges);
     }

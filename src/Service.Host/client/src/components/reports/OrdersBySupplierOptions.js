@@ -18,7 +18,7 @@ import suppliersActions from '../../actions/suppliersActions';
 function OrdersBySupplierReportOptions() {
     const suppliersSearchResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.suppliers)
-    ).map?.(c => ({
+    )?.map(c => ({
         id: c.id,
         name: c.name.toString(),
         description: c.name
@@ -71,7 +71,7 @@ function OrdersBySupplierReportOptions() {
         <Page history={history} homeUrl={config.appRoot} width="s">
             <Title text="Orders By Supplier" />
             <Grid container spacing={3} justifyContent="center">
-                <Grid item xs={12}>
+                <Grid item xs={12} data-testid="supplierSearch">
                     <Typeahead
                         label="Supplier"
                         title="Search for a supplier"

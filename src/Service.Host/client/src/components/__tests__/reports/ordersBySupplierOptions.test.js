@@ -8,6 +8,8 @@ import { cleanup, screen, fireEvent } from '@testing-library/react';
 import render from '../../../test-utils';
 
 import suppliersActions from '../../../actions/suppliersActions';
+import suppliersActions from '../../../actions/suppliersActions';
+
 import OrdersBySupplierOptions from '../../reports/OrdersBySupplierOptions';
 
 // import * as itemTypes from '../../../itemTypes';
@@ -34,18 +36,43 @@ describe('When component mounts...', () => {
         render(<OrdersBySupplierOptions />);
     });
 
-    test('Displays search fields...', () => {
-        expect(screen.getByLabelText('Supplier')).toBeInTheDocument();
-        expect(screen.getByLabelText('From Date')).toBeInTheDocument();
-        expect(screen.getByLabelText('To Date')).toBeInTheDocument();
+    test('Displays search fields with correct default values...', () => {
+        expect(screen.getByText('Supplier')).toBeInTheDocument();
+        expect(screen.getByText('From Date')).toBeInTheDocument();
+        expect(screen.getByText('To Date')).toBeInTheDocument();
         expect(screen.getByLabelText('All or Outstanding')).toBeInTheDocument();
+        expect(screen.getByLabelText('All or Outstanding')).toHaveDisplayValue('All');
 
         expect(screen.getByLabelText('Include Returns')).toBeInTheDocument();
+        expect(screen.getByLabelText('Include Returns')).toHaveDisplayValue('No');
 
         expect(screen.getByLabelText('Stock Controlled')).toBeInTheDocument();
+        expect(screen.getByLabelText('Stock Controlled')).toHaveDisplayValue('All');
 
         expect(screen.getByLabelText('Include Credits')).toBeInTheDocument();
+        expect(screen.getByLabelText('Include Credits')).toHaveDisplayValue('No');
 
         expect(screen.getByLabelText('Include Cancelled')).toBeInTheDocument();
+        expect(screen.getByLabelText('Include Cancelled')).toHaveDisplayValue('No');
+
+        expect(screen.getByLabelText('Run Report')).toBeInTheDocument();
+    });
+
+    test('Displays search fields with correct default values...', () => {
+        const supplierSearchContainer = screen.getByTestId('supplierSearch');
+        const searchInput = within(supplierSearchContainer).getByRole('input');
+
+        // var button = screen.getByLabelText('Run Report');
+        fireEvent.click(searchInput);
+        expect(screen.getByLabelText('Search for a supplier')).toBeInTheDocument();
+
+        
+
+        // expect(addItemActionSpy).toHaveBeenCalledTimes(1);
+        // expect(addItemActionSpy).toHaveBeenCalledWith(
+        //     expect.objectContaining({ createdBy: 33087 })
+        // );
+        // searchSuppliersActionSpy
+
     });
 });
