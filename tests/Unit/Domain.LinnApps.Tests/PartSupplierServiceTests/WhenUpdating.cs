@@ -41,7 +41,15 @@
                                    SupplierDesignation = string.Empty,
                                    OrderMethod = new OrderMethod(),
                                    DeliveryAddress = new Address(),
-                                   Currency = new Currency()
+                                   Currency = new Currency(),
+                                   CreatedBy = new Employee { Id = 33087 },
+                                   MinimumOrderQty = 1m,
+                                   LeadTimeWeeks = 1,
+                                   OrderIncrement = 1m,
+                                   RohsCategory = "NO",
+                                   CurrencyUnitPrice = 1m,
+                                   DamagesPercent = 0m,
+                                   MinimumDeliveryQty = 1m
             };
             this.updated = new PartSupplier
                                {
@@ -54,8 +62,16 @@
                                    Tariff = this.newTariff,
                                    PackagingGroup = this.newPackagingGroup,
                                    MadeInvalidBy = this.madeInvalidBy,
-                                   Manufacturer = this.manufacturer
-                               };
+                                   Manufacturer = this.manufacturer,
+                                   CreatedBy = new Employee { Id = 33087 },
+                                   MinimumOrderQty = 1m,
+                                   LeadTimeWeeks = 1,
+                                   OrderIncrement = 1m,
+                                   RohsCategory = "NO",
+                                   CurrencyUnitPrice = 1m,
+                                   DamagesPercent = 0m,
+                                   MinimumDeliveryQty = 1m
+            };
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
             this.CurrencyRepository.FindById(this.newCurrency.Code).Returns(this.newCurrency);
