@@ -82,7 +82,7 @@
             this.BuildUnitsOfMeasure(builder);
             this.BuildPurchaseLedgers(builder);
             this.BuildTransactionTypes(builder);
-            this.BuildPartSupplierChanges(builder);
+            this.BuildPreferredSupplierChanges(builder);
             this.BuildPriceChangeReasons(builder);
         }
 
@@ -112,7 +112,7 @@
             entity.Property(e => e.Description).HasColumnName("DESCRIPTION");
         }
 
-        private void BuildPartSupplierChanges(ModelBuilder builder)
+        private void BuildPreferredSupplierChanges(ModelBuilder builder)
         {
             var entity = builder.Entity<PreferredSupplierChange>().ToTable("PREFERRED_SUPPLIER_CHANGES");
             entity.HasKey(e => new { e.PartNumber, e.Seq });
@@ -178,6 +178,7 @@
             entity.Property(e => e.PackWasteStatus).HasColumnName("PACK_WASTE_STATUS").HasMaxLength(1);
             entity.Property(e => e.ContractLeadTimeWeeks).HasColumnName("CONTRACT_LEAD_TIME_WEEKS");
             entity.Property(e => e.DutyPercent).HasColumnName("DUTY_PERCENT");
+            entity.Property(e => e.SupplierRanking).HasColumnName("SUPPLIER_RANKING");
         }
 
         private void BuildParts(ModelBuilder builder)

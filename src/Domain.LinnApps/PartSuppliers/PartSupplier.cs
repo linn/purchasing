@@ -97,5 +97,7 @@
         public string PackWasteStatus { get; set; }
 
         public decimal? DutyPercent { get; set; }
+
+        public int? SupplierRanking { get; set; }
     }
 }

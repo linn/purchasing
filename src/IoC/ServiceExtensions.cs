@@ -33,8 +33,7 @@
     {
         public static IServiceCollection AddBuilders(this IServiceCollection services)
         {
-            return services
-                .AddTransient<IBuilder<SigningLimit>, SigningLimitResourceBuilder>()
+            return services.AddTransient<IBuilder<SigningLimit>, SigningLimitResourceBuilder>()
                 .AddTransient<IBuilder<PartSupplier>, PartSupplierResourceBuilder>()
                 .AddTransient<IBuilder<IEnumerable<PartSupplier>>, PartSuppliersResourceBuilder>()
                 .AddTransient<IBuilder<Supplier>, SupplierResourceBuilder>()
@@ -53,7 +52,9 @@
                 .AddTransient<IBuilder<IEnumerable<Tariff>>, TariffsResourceBuilder>()
                 .AddTransient<IBuilder<Manufacturer>, ManufacturerResourceBuilder>()
                 .AddTransient<IBuilder<IEnumerable<Manufacturer>>, ManufacturersResourceBuilder>()
-                .AddTransient<IBuilder<ResultsModel>, ResultsModelResourceBuilder>();
+                .AddTransient<IBuilder<ResultsModel>, ResultsModelResourceBuilder>()
+                .AddTransient<IBuilder<PreferredSupplierChange>, PreferredSupplierChangeResourceBuilder>();
+
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -61,6 +62,7 @@
             return services
                 .AddTransient<IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource>, SigningLimitFacadeService>()
                 .AddTransient<IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>, PartSupplierFacadeService>()
+                .AddTransient<IFacadeResourceService<PreferredSupplierChange, PreferredSupplierChangeKey, PreferredSupplierChangeResource, PreferredSupplierChangeKey>, PreferredSupplierChangeService>()
                 .AddTransient<IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource>, SupplierFacadeService>()
                 .AddTransient<IPartService, PartService>()
                 .AddTransient<IFacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource>, OrderMethodService>()

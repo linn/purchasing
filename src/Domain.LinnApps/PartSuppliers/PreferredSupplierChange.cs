@@ -15,6 +15,8 @@
 
         public Supplier NewSupplier { get; set; }
 
+        public int NewSupplierId { get; set; }
+
         public decimal? OldPrice { get; set; }
 
         public decimal? NewPrice { get; set; }
