@@ -219,8 +219,6 @@
                 throw new PartSupplierException("You cannot set a preferred supplier for phantoms");
             }
 
-            // todo - check part_locked
-
             var oldPartSupplier = this.partSupplierRepository.FindById(
                 new PartSupplierKey { PartNumber = part.PartNumber, SupplierId = candidate.OldSupplier.SupplierId });
             oldPartSupplier.SupplierRanking = 2;

@@ -30,18 +30,23 @@
 
         private readonly IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource> supplierFacadeService;
 
+        private readonly IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource> 
+            priceChangeReasonService;
+
         private readonly IPartService partFacadeService;
 
         public SupplierModule(
             IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource> partSupplierFacadeService,
             IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource> supplierFacadeService,
             IFacadeResourceService<PreferredSupplierChange, PreferredSupplierChangeKey, PreferredSupplierChangeResource, PreferredSupplierChangeKey> preferredSupplierChangeService,
-            IPartService partFacadeService)
+            IPartService partFacadeService,
+            IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource> priceChangeReasonService)
         {
             this.supplierFacadeService = supplierFacadeService;
             this.partSupplierFacadeService = partSupplierFacadeService;
             this.partFacadeService = partFacadeService;
             this.preferredSupplierChangeService = preferredSupplierChangeService;
+            this.priceChangeReasonService = priceChangeReasonService;
             this.Get("/purchasing/part-suppliers/record", this.GetById);
             this.Put("/purchasing/part-suppliers/record", this.UpdatePartSupplier);
             this.Get("/purchasing/part-suppliers", this.SearchPartSuppliers);
@@ -50,6 +55,7 @@
             this.Get("/purchasing/part-suppliers/application-state", this.GetPartSuppliersState);
             this.Get("/purchasing/suppliers", this.SearchSuppliers);
             this.Post("/purchasing/preferred-supplier-changes", this.CreatePreferredSupplierChange);
+            this.Get("/purchasing/price-change-reasons", this.GetPriceChangeReasons);
         }
 
         private async Task GetById(HttpRequest req, HttpResponse res)
@@ -130,10 +136,16 @@
         private async Task CreatePreferredSupplierChange(HttpRequest req, HttpResponse res)
         {
             var resource = await req.Bind<PreferredSupplierChangeResource>();
-            var prives = req.HttpContext.GetPrivileges();
             var result = this.preferredSupplierChangeService.Add(
                 resource,
                 req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task GetPriceChangeReasons(HttpRequest req, HttpResponse res)
+        {
+            var result = this.priceChangeReasonService.GetAll();
 
             await res.Negotiate(result);
         }

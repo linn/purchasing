@@ -1,6 +1,6 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.PartSuppliers
+﻿namespace Linn.Purchasing.Resources
 {
-    public class PriceChangeReason
+    public class PriceChangeReasonResource
     {
         public string ReasonCode { get; set; }
 

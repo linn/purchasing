@@ -51,6 +51,13 @@
             private set;
         }
 
+        protected IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource,
+            PriceChangeReasonResource> PriceChangeReasonService
+        {
+            get;
+            private set;
+        }
+
         [SetUp]
         public void EstablishContext()
         {
@@ -64,7 +71,9 @@
                 Substitute.For<IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource>>();
             this.PreferredSupplierChangeService = Substitute
                 .For<IFacadeResourceService<PreferredSupplierChange, PreferredSupplierChangeKey, PreferredSupplierChangeResource, PreferredSupplierChangeKey>>();
-
+            this.PriceChangeReasonService = Substitute
+                .For<IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource,
+                    PriceChangeReasonResource>>();
             this.Client = TestClient.With<SupplierModule>(
                 services =>
                     {
@@ -74,6 +83,7 @@
                         services.AddSingleton(this.PartFacadeService);
                         services.AddSingleton(this.SupplierFacadeService);
                         services.AddSingleton(this.PreferredSupplierChangeService);
+                        services.AddSingleton(this.PriceChangeReasonService);
                         services.AddHandlers();
                     },
                 FakeAuthMiddleware.EmployeeMiddleware);
