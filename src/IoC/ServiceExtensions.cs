@@ -52,7 +52,9 @@
                 .AddTransient<IBuilder<Manufacturer>, ManufacturerResourceBuilder>()
                 .AddTransient<IBuilder<IEnumerable<Manufacturer>>, ManufacturersResourceBuilder>()
                 .AddTransient<IBuilder<ResultsModel>, ResultsModelResourceBuilder>()
-                .AddTransient<IBuilder<PreferredSupplierChange>, PreferredSupplierChangeResourceBuilder>();
+                .AddTransient<IBuilder<PreferredSupplierChange>, PreferredSupplierChangeResourceBuilder>()
+                .AddTransient<IBuilder<PriceChangeReason>, PriceChangeReasonResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<PriceChangeReason>>, PriceChangeReasonsResourceBuilder>();
 
         }
 
