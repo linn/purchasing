@@ -4,6 +4,6 @@
     {
         public string PartNumber { get; set; }
 
-        public int Sew { get; set; }
+        public int Seq { get; set; }
     }
 }
