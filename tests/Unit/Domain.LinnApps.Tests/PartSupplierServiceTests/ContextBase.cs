@@ -38,6 +38,8 @@
 
         protected IRepository<PartSupplier, PartSupplierKey> PartSupplierRepository { get; private set; }
 
+        protected IRepository<PartHistoryEntry, PartHistoryEntryKey> PartHistory { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -52,6 +54,7 @@
             this.PartRepository = Substitute.For<IQueryRepository<Part>>();
             this.SupplierRepository = Substitute.For<IRepository<Supplier, int>>();
             this.PartSupplierRepository = Substitute.For<IRepository<PartSupplier, PartSupplierKey>>();
+            this.PartHistory = Substitute.For<IRepository<PartHistoryEntry, PartHistoryEntryKey>>();
             this.Sut = new PartSupplierService(
                 this.MockAuthService,
                 this.CurrencyRepository,
@@ -63,7 +66,8 @@
                 this.ManufacturerRepository,
                 this.PartRepository,
                 this.SupplierRepository,
-                this.PartSupplierRepository);
+                this.PartSupplierRepository,
+                this.PartHistory);
         }
     }
 }

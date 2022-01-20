@@ -31,17 +31,15 @@
         [SetUp]
         public void SetUp()
         {
-            this.oldPartSupplierRecord = new PartSupplier { PartNumber = "PART", SupplierId = 1 };
-            this.newPartSupplierRecord = new PartSupplier { PartNumber = "PART", SupplierId = 2 };
-
+          
             this.part = new Part
                             {
                                 PartNumber = "PART",
                                 BomType = "A",
-                                PreferredSupplier = new Supplier { SupplierId = 777 },
+                                PreferredSupplier = new Supplier { SupplierId = 1 },
                                 CurrencyUnitPrice = 100m,
                                 BaseUnitPrice = 50m,
-                                Currency = new Currency { Code = "USD"}
+                                Currency = new Currency { Code = "USD" },
                             };
 
             this.candidate = new PreferredSupplierChange
@@ -50,6 +48,9 @@
                                      OldSupplier = new Supplier { SupplierId = 1 },
                                      NewSupplier = new Supplier { SupplierId = 2 }
                                  };
+
+            this.oldPartSupplierRecord = new PartSupplier { PartNumber = "PART", SupplierId = 1, Supplier = this.candidate.OldSupplier };
+            this.newPartSupplierRecord = new PartSupplier { PartNumber = "PART", SupplierId = 2,  };
 
             this.MockAuthService.HasPermissionFor(
                     AuthorisedAction.PartSupplierUpdate,
@@ -75,7 +76,7 @@
         [Test]
         public void ShouldSetOldSupplierToBeThePartsOldPreferredSupplier()
         {
-            this.result.OldSupplier.SupplierId.Should().Be(this.part.PreferredSupplier.SupplierId);
+            this.result.OldSupplier.SupplierId.Should().Be(this.oldPartSupplierRecord.SupplierId);
         }
 
         [Test]

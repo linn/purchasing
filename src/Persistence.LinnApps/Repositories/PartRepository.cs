@@ -23,7 +23,7 @@
             return this.serviceDbContext.Parts
                 .Include(p => p.Currency)
                 .Include(p => p.PreferredSupplier)
-                .AsNoTracking().SingleOrDefault(expression);
+                .SingleOrDefault(expression);
         }
 
         public IQueryable<Part> FilterBy(Expression<Func<Part, bool>> expression)
