@@ -264,23 +264,6 @@
                 part.CurrencyUnitPrice = candidate.NewPrice;
             }
 
-            // update Part
-            if (!(part.BomType.Equals("A") && newPartSupplier.SupplierId == 4415))
-            {
-                part.LabourPrice = 0;
-            }
-
-            part.PreferredSupplier = newPartSupplier.Supplier;
-            
-            if (prevPart.BaseUnitPrice.GetValueOrDefault() == 0)
-            {
-                // todo - find out if standard price should still change here
-                part.PreferredSupplier = newPartSupplier.Supplier;
-                part.MaterialPrice = candidate.BaseNewPrice;
-                part.Currency = candidate.NewCurrency;
-                part.CurrencyUnitPrice = candidate.NewPrice;
-            }
-
             var history = this.partHistory.FilterBy(x => x.PartNumber == candidate.PartNumber);
             
             var maxSeqForPart = history.Any() ? history.Max(x => x.Seq) : 0;
