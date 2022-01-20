@@ -19,6 +19,8 @@
 
         public decimal? BaseOldPrice { get; set; }
 
+        public decimal? BaseNewPrice { get; set; }
+
         public decimal? NewPrice { get; set; }
 
         public Currency NewCurrency { get; set; }

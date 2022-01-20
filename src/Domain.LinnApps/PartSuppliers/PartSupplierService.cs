@@ -32,7 +32,9 @@
 
         private readonly IRepository<Supplier, int> supplierRepository;
 
-        private IRepository<PartSupplier, PartSupplierKey> partSupplierRepository;
+        private readonly IRepository<PartSupplier, PartSupplierKey> partSupplierRepository;
+
+        private readonly IRepository<PartHistoryEntry, PartHistoryEntryKey> partHistory;
 
         public PartSupplierService(
             IAuthorisationService authService,
@@ -45,7 +47,8 @@
             IRepository<Manufacturer, string> manufacturerRepository,
             IQueryRepository<Part> partRepository,
             IRepository<Supplier, int> supplierRepository,
-            IRepository<PartSupplier, PartSupplierKey> partSupplierRepository)
+            IRepository<PartSupplier, PartSupplierKey> partSupplierRepository,
+            IRepository<PartHistoryEntry, PartHistoryEntryKey> partHistory)
         {
             this.authService = authService;
             this.currencyRepository = currencyRepository;
@@ -58,6 +61,7 @@
             this.partRepository = partRepository;
             this.supplierRepository = supplierRepository;
             this.partSupplierRepository = partSupplierRepository;
+            this.partHistory = partHistory;
         }
 
         public void UpdatePartSupplier(
@@ -213,6 +217,17 @@
             }
 
             var part = this.partRepository.FindBy(x => x.PartNumber == candidate.PartNumber.ToUpper());
+
+            var prevPart = new Part
+                               {
+                                   MaterialPrice = part.MaterialPrice, 
+                                   PreferredSupplier = part.PreferredSupplier,
+                                   Currency = part.Currency,
+                                   LabourPrice = part.LabourPrice,
+                                   BaseUnitPrice = part.BaseUnitPrice,
+                                   BomType = part.BomType,
+                                   CurrencyUnitPrice = part.CurrencyUnitPrice
+                               };
             
             if (part.BomType.Equals("P") || part.BomType.Equals("S"))
             {
@@ -232,8 +247,52 @@
             candidate.BaseOldPrice = part.BaseUnitPrice;
             candidate.OldCurrency = part.Currency;
 
-            // todo - dispatch message to update part record in stores
+            // update Part
+            if (!(part.BomType.Equals("A") && newPartSupplier.SupplierId == 4415))
+            {
+                part.LabourPrice = 0;
+            }
+
+            part.PreferredSupplier = newPartSupplier.Supplier;
             
+            if (prevPart.BaseUnitPrice.GetValueOrDefault() == 0)
+            {
+                // todo - find out if standard price should still change here
+                part.PreferredSupplier = newPartSupplier.Supplier;
+                part.MaterialPrice = candidate.BaseNewPrice;
+                part.Currency = candidate.NewCurrency;
+                part.CurrencyUnitPrice = candidate.NewPrice;
+            }
+
+            var history = this.partHistory.FilterBy(x => x.PartNumber == candidate.PartNumber);
+            
+            var maxSeqForPart = history.Any() ? history.Max(x => x.Seq) : 0;
+
+            // update Part History
+            this.partHistory.Add(new PartHistoryEntry
+                                     {
+                                        PartNumber = candidate.PartNumber,
+                                        Seq = maxSeqForPart + 1,
+                                        OldMaterialPrice = prevPart.MaterialPrice,
+                                        OldLabourPrice = prevPart.LabourPrice,
+                                        NewMaterialPrice = part.MaterialPrice,
+                                        NewLabourPrice = part.LabourPrice,
+                                        OldPreferredSupplierId = prevPart.PreferredSupplier.SupplierId,
+                                        NewPreferredSupplierId = part.PreferredSupplier.SupplierId,
+                                        OldBomType = prevPart.BomType,
+                                        NewBomType = part.BomType,
+                                        ChangedBy = candidate.ChangedBy.Id,
+                                        ChangeType = "PREFSUP",
+                                        Remarks = candidate.Remarks,
+                                        PriceChangeReason = candidate.ChangeReason.ReasonCode,
+                                        OldCurrency = prevPart.Currency.Code,
+                                        NewCurrency = part.Currency.Code,
+                                        OldCurrencyUnitPrice = prevPart.CurrencyUnitPrice,
+                                        NewCurrencyUnitPrice = part.CurrencyUnitPrice,
+                                        OldBaseUnitPrice = prevPart.BaseUnitPrice,
+                                        NewBaseUnitPrice = part.BaseUnitPrice
+                                     });
+
             return candidate;
         }
 

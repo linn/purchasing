@@ -58,6 +58,8 @@
 
         public DbSet<PriceChangeReason> PriceChangeReasons { get; set; }
 
+        public DbSet<PartHistoryEntry> PartHistory { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -84,6 +86,7 @@
             this.BuildTransactionTypes(builder);
             this.BuildPreferredSupplierChanges(builder);
             this.BuildPriceChangeReasons(builder);
+            this.BuildPartHistory(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -181,6 +184,33 @@
             entity.Property(e => e.ContractLeadTimeWeeks).HasColumnName("CONTRACT_LEAD_TIME_WEEKS");
             entity.Property(e => e.DutyPercent).HasColumnName("DUTY_PERCENT");
             entity.Property(e => e.SupplierRanking).HasColumnName("SUPPLIER_RANKING");
+        }
+
+        private void BuildPartHistory(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PartHistoryEntry>().ToTable("PART_HISTORY");
+            entity.HasKey(e => new { e.PartNumber, e.Seq });
+            entity.Property(e => e.ChangedBy).HasColumnName("CHANGED_BY");
+            entity.Property(e => e.ChangeType).HasColumnName("CHANGE_TYPE").HasMaxLength(20);
+            entity.Property(e => e.DateChanged).HasColumnName("DATE_CHANGED");
+            entity.Property(e => e.NewBaseUnitPrice).HasColumnName("NEW_BASE_UNIT_PRICE");
+            entity.Property(e => e.NewBomType).HasColumnName("NEW_BOM_TYPE").HasMaxLength(1);
+            entity.Property(e => e.NewCurrency).HasColumnName("NEW_CURRENCY").HasMaxLength(4);
+            entity.Property(e => e.NewCurrencyUnitPrice).HasColumnName("NEW_CURRENCY_UNIT_PRICE");
+            entity.Property(e => e.NewLabourPrice).HasColumnName("NEW_LABOUR_PRICE");
+            entity.Property(e => e.NewMaterialPrice).HasColumnName("NEW_MATERIAL_PRICE");
+            entity.Property(e => e.NewPreferredSupplierId).HasColumnName("NEW_PREFERRED_SUPPLIER_ID");
+            entity.Property(e => e.OldBaseUnitPrice).HasColumnName("OLD_BASE_UNIT_PRICE");
+            entity.Property(e => e.OldBomType).HasColumnName("OLD_BOM_TYPE").HasMaxLength(1);
+            entity.Property(e => e.OldCurrency).HasColumnName("OLD_CURRENCY").HasMaxLength(4);
+            entity.Property(e => e.OldCurrencyUnitPrice).HasColumnName("OLD_CURRENCY_UNIT_PRICE");
+            entity.Property(e => e.OldLabourPrice).HasColumnName("OLD_LABOUR_PRICE");
+            entity.Property(e => e.OldMaterialPrice).HasColumnName("OLD_MATERIAL_PRICE");
+            entity.Property(e => e.OldPreferredSupplierId).HasColumnName("OLD_PREFERRED_SUPPLIER_ID");
+            entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
+            entity.Property(e => e.PriceChangeReason).HasColumnName("PRICE_CHANGE_REASON").HasMaxLength(10);
+            entity.Property(e => e.Remarks).HasColumnName("REMARKS").HasMaxLength(200);
+            entity.Property(e => e.Seq).HasColumnName("SEQ");
         }
 
         private void BuildParts(ModelBuilder builder)
