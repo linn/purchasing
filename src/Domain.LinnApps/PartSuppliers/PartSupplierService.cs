@@ -242,10 +242,10 @@
                 new PartSupplierKey { PartNumber = part.PartNumber, SupplierId = candidate.NewSupplier.SupplierId });
             newPartSupplier.SupplierRanking = 1;
 
-            candidate.OldSupplier = part.PreferredSupplier;
-            candidate.OldPrice = part.CurrencyUnitPrice;
-            candidate.BaseOldPrice = part.BaseUnitPrice;
-            candidate.OldCurrency = part.Currency;
+            candidate.OldSupplier = prevPart.PreferredSupplier;
+            candidate.OldPrice = prevPart.CurrencyUnitPrice;
+            candidate.BaseOldPrice = prevPart.BaseUnitPrice;
+            candidate.OldCurrency = prevPart.Currency;
 
             // update Part
             if (!(part.BomType.Equals("A") && newPartSupplier.SupplierId == 4415))
