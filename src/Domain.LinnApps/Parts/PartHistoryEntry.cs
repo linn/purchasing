@@ -8,13 +8,13 @@
 
         public int Seq { get; set; }
 
-        public int? OldLabourPrice { get; set; }
+        public decimal? OldLabourPrice { get; set; }
 
-        public int? OldMaterialPrice { get; set; }
+        public decimal? OldMaterialPrice { get; set; }
 
-        public int? NewMaterialPrice { get; set; }
+        public decimal? NewMaterialPrice { get; set; }
 
-        public int? NewLabourPrice { get; set; }
+        public decimal? NewLabourPrice { get; set; }
 
         public int? NewPreferredSupplierId { get; set; }
 
@@ -38,12 +38,12 @@
 
         public string NewCurrency { get; set; }
 
-        public int? NewCurrencyUnitPrice { get; set; }
+        public decimal? NewCurrencyUnitPrice { get; set; }
 
-        public int? OldCurrencyUnitPrice { get; set; }
+        public decimal? OldCurrencyUnitPrice { get; set; }
 
-        public int? OldBaseUnitPrice { get; set; }
+        public decimal? OldBaseUnitPrice { get; set; }
 
-        public int? NewBaseUnitPrice { get; set; }
+        public decimal? NewBaseUnitPrice { get; set; }
     }
 }

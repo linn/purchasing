@@ -217,13 +217,22 @@
             }
 
             var part = this.partRepository.FindBy(x => x.PartNumber == candidate.PartNumber.ToUpper());
+
+            var prevPart = new Part
+                               {
+                                   MaterialPrice = part.MaterialPrice, 
+                                   PreferredSupplier = part.PreferredSupplier,
+                                   Currency = part.Currency,
+                                   LabourPrice = part.LabourPrice,
+                                   BaseUnitPrice = part.BaseUnitPrice,
+                                   BomType = part.BomType,
+                                   CurrencyUnitPrice = part.CurrencyUnitPrice
+                               };
             
             if (part.BomType.Equals("P") || part.BomType.Equals("S"))
             {
                 throw new PartSupplierException("You cannot set a preferred supplier for phantoms");
             }
-
-            var baseOldPrice = part.BaseUnitPrice;
 
             var oldPartSupplier = this.partSupplierRepository.FindById(
                 new PartSupplierKey { PartNumber = part.PartNumber, SupplierId = candidate.OldSupplier.SupplierId });
@@ -241,12 +250,12 @@
             // update Part
             if (!(part.BomType.Equals("A") && newPartSupplier.SupplierId == 4415))
             {
-                part.LabourPrice = 0; // todo - some kind of warning to remind production to put a labour price in
+                part.LabourPrice = 0;
             }
 
             part.PreferredSupplier = newPartSupplier.Supplier;
             
-            if (baseOldPrice.GetValueOrDefault() == 0)
+            if (prevPart.BaseUnitPrice.GetValueOrDefault() == 0)
             {
                 // todo - find out if standard price should still change here
                 part.PreferredSupplier = newPartSupplier.Supplier;
@@ -255,13 +264,33 @@
                 part.CurrencyUnitPrice = candidate.NewPrice;
             }
 
-            var maxSeqForPart = this.partHistory.FilterBy(x => x.PartNumber == candidate.PartNumber).Max(x => x.Seq);
+            var history = this.partHistory.FilterBy(x => x.PartNumber == candidate.PartNumber);
+            
+            var maxSeqForPart = history.Any() ? history.Max(x => x.Seq) : 0;
+
             // update Part History
             this.partHistory.Add(new PartHistoryEntry
                                      {
                                         PartNumber = candidate.PartNumber,
                                         Seq = maxSeqForPart + 1,
-                                        // OldMaterialPrice = cps_material price?
+                                        OldMaterialPrice = prevPart.MaterialPrice,
+                                        OldLabourPrice = prevPart.LabourPrice,
+                                        NewMaterialPrice = part.MaterialPrice,
+                                        NewLabourPrice = part.LabourPrice,
+                                        OldPreferredSupplierId = prevPart.PreferredSupplier.SupplierId,
+                                        NewPreferredSupplierId = part.PreferredSupplier.SupplierId,
+                                        OldBomType = prevPart.BomType,
+                                        NewBomType = part.BomType,
+                                        ChangedBy = candidate.ChangedBy.Id,
+                                        ChangeType = "PREFSUP",
+                                        Remarks = candidate.Remarks,
+                                        PriceChangeReason = candidate.ChangeReason.ReasonCode,
+                                        OldCurrency = prevPart.Currency.Code,
+                                        NewCurrency = part.Currency.Code,
+                                        OldCurrencyUnitPrice = prevPart.CurrencyUnitPrice,
+                                        NewCurrencyUnitPrice = part.CurrencyUnitPrice,
+                                        OldBaseUnitPrice = prevPart.BaseUnitPrice,
+                                        NewBaseUnitPrice = part.BaseUnitPrice
                                      });
 
             return candidate;
