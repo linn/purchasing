@@ -28,7 +28,7 @@ function OrderBySupplierReport() {
     const handleBackClick = () => {
         const uri =
             `/purchasing/reports/orders-by-supplier/` +
-            `?id=${options.id}` +
+            `?&id=${options.id}` +
             `&fromDate=${options.fromDate}` +
             `&toDate=${options.toDate}` +
             `&outstanding=${options.outstanding}` +
@@ -56,10 +56,10 @@ function OrderBySupplierReport() {
                         <ExportButton
                             href={
                                 `${config.appRoot}/purchasing/reports/orders-by-supplier/export?` +
-                                `?id=${options.id}` +
+                                `?&id=${options.id}` +
                                 `&fromDate=${options.fromDate}` +
                                 `&toDate=${options.toDate}` +
-                                `&outstanding=${options.outstandingOnly}` +
+                                `&outstanding=${options.outstanding}` +
                                 `&returns=${options.returns}` +
                                 `&stockControlled=${options.stockControlled}` +
                                 `&credits=${options.credits}` +

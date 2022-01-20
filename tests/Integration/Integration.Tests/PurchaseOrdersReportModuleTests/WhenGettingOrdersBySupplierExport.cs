@@ -76,12 +76,12 @@
             this.Response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
-        [Test]
-        public void ShouldReturnReport()
-        {
-            var resource = this.Response.DeserializeBody<ReportReturnResource>();
-            resource.ReportResults.First().title.displayString.Should().Be("potat");
-            resource.ReportResults.First().results.First().values.First().textDisplayValue.Should().Be("ramen noodles");
-        }
+        //[Test]
+        //public void ShouldReturnExport()
+        //{
+        //    var resource = this.Response.DeserializeBody<I>();
+        //    resource.ReportResults.First().title.displayString.Should().Be("potat");
+        //    resource.ReportResults.First().results.First().values.First().textDisplayValue.Should().Be("ramen noodles");
+        //}
     }
 }
