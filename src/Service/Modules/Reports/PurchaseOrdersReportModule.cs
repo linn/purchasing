@@ -81,7 +81,7 @@
 
             this.csvStreamWriter.WriteModel(results);
 
-            res.Body = this.stream;
+            this.stream.CopyTo(res.Body);
             //how do I get the actual value of the stream?!
 
             res.ContentType = "text/csv";
