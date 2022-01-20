@@ -68,3 +68,15 @@ export const manufacturers = new ItemType(
     'MANUFACTURERS',
     '/purchasing/manufacturers'
 );
+
+export const preferredSupplierChange = new ItemType(
+    'preferredSupplierChange',
+    'PREFERRED_SUPPLIER_CHANGE',
+    '/purchasing/preferred-supplier-changes'
+);
+
+export const priceChangeReasons = new ItemType(
+    'priceChangeReasons',
+    'PRICE_CHANGE_REASONS',
+    '/purchasing/price-change-reasons'
+);
