@@ -90,12 +90,12 @@ function PartSupplierTab({
                     onChange={() => {}}
                 />
             </Grid>
-            <Grid item xs={2}>
-                <Button onClick={() => setPreferredSupplierDialogOpen(true)}>
+            <Grid item xs={4}>
+                <Button variant="outlined" onClick={() => setPreferredSupplierDialogOpen(true)}>
                     Preferred Supplier
                 </Button>
             </Grid>
-            <Grid item xs={10} />
+            <Grid item xs={8} />
             <Grid item xs={8}>
                 <InputField
                     fullWidth

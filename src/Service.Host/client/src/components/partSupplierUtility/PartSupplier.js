@@ -258,6 +258,11 @@ function PartSupplier() {
                             <PreferredSupplier
                                 partNumber={part?.partNumber}
                                 partDescription={part?.description}
+                                baseOldPrice={part?.baseUnitPrice}
+                                oldPrice={part?.currencyUnitPrice}
+                                oldCurrencyCode={part?.currency}
+                                oldSupplierId={part?.preferredSupplier}
+                                oldSupplierName={part?.preferredSupplierName}
                             />
                         </div>
                     </div>
