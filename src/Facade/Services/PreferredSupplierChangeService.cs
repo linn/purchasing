@@ -48,7 +48,7 @@
                                     NewSupplier = resource.NewSupplierId.HasValue 
                                                         ? new Supplier { SupplierId = (int)resource.NewSupplierId }
                                                         : null,
-                                    ChangeReason = new PriceChangeReason { ReasonCode = "NEW" } // todo - how are change reasons used?
+                                    ChangeReason = new PriceChangeReason { ReasonCode = "NEW" }
                                 };
             return this.domainService.CreatePreferredSupplierChange(candidate, privileges);
         }
