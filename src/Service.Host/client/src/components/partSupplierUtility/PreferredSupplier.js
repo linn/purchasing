@@ -6,8 +6,10 @@ import {
     InputField,
     SaveBackCancelButtons,
     collectionSelectorHelpers,
+    itemSelectorHelpers,
     Dropdown,
-    userSelectors
+    userSelectors,
+    Loading
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import preferredSupplierChangeActions from '../../actions/preferredSupplierChangeActions';
@@ -20,7 +22,10 @@ function PreferredSupplier({
     oldSupplierName,
     oldPrice,
     baseOldPrice,
-    oldCurrencyCode
+    oldCurrencyCode,
+    close,
+    refreshPart,
+    partLoading
 }) {
     const dispatch = useDispatch();
     const postChange = body => dispatch(preferredSupplierChangeActions.add(body));
@@ -36,7 +41,17 @@ function PreferredSupplier({
 
     const currentUserNumber = useSelector(reduxState => userSelectors.getUserNumber(reduxState));
 
+    const preferredSupplierChange = useSelector(reduxState =>
+        itemSelectorHelpers.getItem(reduxState.preferredSupplierChange)
+    );
+
+    const preferredSupplierChangeLoading = useSelector(reduxState =>
+        itemSelectorHelpers.getItemLoading(reduxState.preferredSupplierChange)
+    );
+
     const [formData, setFormData] = useState({});
+
+    const [saveDisabled, setSaveDisabled] = useState(true);
 
     const handleFieldChange = (propertyName, newValue) => {
         if (propertyName === 'newSupplierId') {
@@ -44,7 +59,24 @@ function PreferredSupplier({
         } else {
             setFormData(d => ({ ...d, [propertyName]: newValue }));
         }
+        setSaveDisabled(false);
     };
+
+    useEffect(() => {
+        if (preferredSupplierChange?.newSupplierId) {
+            refreshPart();
+        }
+    }, [preferredSupplierChange, refreshPart]);
+
+    if (preferredSupplierChangeLoading || partLoading) {
+        return (
+            <Grid container spacing={3}>
+                <Grid item xs={12}>
+                    <Loading />
+                </Grid>
+            </Grid>
+        );
+    }
 
     return (
         <Grid container spacing={3}>
@@ -127,7 +159,6 @@ function PreferredSupplier({
                     propertyName="newSupplierId"
                     label="newSupplier"
                     items={suppliers.map(s => ({ id: s.supplierId, displayText: s.supplierName }))}
-                    allowNoValue
                     onChange={handleFieldChange}
                 />
             </Grid>
@@ -135,7 +166,10 @@ function PreferredSupplier({
 
             <Grid item xs={12}>
                 <SaveBackCancelButtons
-                    saveClick={() =>
+                    cancelClick={close}
+                    saveDisabled={saveDisabled}
+                    saveClick={() => {
+                        setSaveDisabled(true);
                         postChange({
                             partNumber,
                             oldSupplierId,
@@ -144,8 +178,8 @@ function PreferredSupplier({
                             oldCurrencyCode,
                             ...formData,
                             changedById: Number(currentUserNumber)
-                        })
-                    }
+                        });
+                    }}
                 />
             </Grid>
         </Grid>
@@ -159,13 +193,17 @@ PreferredSupplier.propTypes = {
     oldSupplierName: PropTypes.string.isRequired,
     oldPrice: PropTypes.number,
     baseOldPrice: PropTypes.number,
-    oldCurrencyCode: PropTypes.number
+    oldCurrencyCode: PropTypes.number,
+    close: PropTypes.func.isRequired,
+    refreshPart: PropTypes.func.isRequired,
+    partLoading: PropTypes.bool
 };
 
 PreferredSupplier.defaultProps = {
     oldPrice: null,
     baseOldPrice: null,
-    oldCurrencyCode: null
+    oldCurrencyCode: null,
+    partLoading: false
 };
 
 export default PreferredSupplier;

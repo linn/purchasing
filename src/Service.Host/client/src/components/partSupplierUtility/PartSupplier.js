@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer } from 'react';
+import React, { useEffect, useState, useReducer, useCallback } from 'react';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import { makeStyles } from '@mui/styles';
@@ -164,6 +164,9 @@ function PartSupplier() {
     const item = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.partSupplier));
 
     const part = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.part));
+    const partLoading = useSelector(reduxState =>
+        itemSelectorHelpers.getItemLoading(reduxState.part)
+    );
 
     const itemError = useSelector(reduxState => getItemError(reduxState, 'partSupplier'));
 
@@ -171,6 +174,11 @@ function PartSupplier() {
 
     const [value, setValue] = useState(0);
     const [preferredSupplierDialogOpen, setPreferredSupplierDialogOpen] = useState(false);
+
+    const refreshPart = useCallback(
+        () => reduxDispatch(partActions.fetch(query.partId)),
+        [query.partId, reduxDispatch]
+    );
 
     useEffect(() => {
         reduxDispatch(partSuppliersActions.fetchState());
@@ -256,6 +264,7 @@ function PartSupplier() {
                         </IconButton>
                         <div className={classes.dialog}>
                             <PreferredSupplier
+                                partLoading={partLoading}
                                 partNumber={part?.partNumber}
                                 partDescription={part?.description}
                                 baseOldPrice={part?.baseUnitPrice}
@@ -263,6 +272,8 @@ function PartSupplier() {
                                 oldCurrencyCode={part?.currency}
                                 oldSupplierId={part?.preferredSupplier}
                                 oldSupplierName={part?.preferredSupplierName}
+                                close={() => setPreferredSupplierDialogOpen(false)}
+                                refreshPart={refreshPart}
                             />
                         </div>
                     </div>
