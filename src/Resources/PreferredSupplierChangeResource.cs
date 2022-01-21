@@ -18,9 +18,11 @@
 
         public decimal? OldPrice { get; set; }
 
+        public decimal? BaseOldPrice { get; set; }
+
         public decimal? NewPrice { get; set; }
 
-        public string CurrencyCode { get; set; }
+        public string OldCurrencyCode { get; set; }
 
         public string DateChanged { get; set; }
 

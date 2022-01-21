@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import {
     InputField,
     SaveBackCancelButtons,
-    Typeahead,
-    collectionSelectorHelpers
+    collectionSelectorHelpers,
+    Dropdown,
+    userSelectors
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import preferredSupplierChangeActions from '../../actions/preferredSupplierChangeActions';
-import suppliersActions from '../../actions/suppliersActions';
+import partSuppliersActions from '../../actions/partSuppliersActions';
 
 function PreferredSupplier({
     partNumber,
@@ -23,18 +24,26 @@ function PreferredSupplier({
 }) {
     const dispatch = useDispatch();
     const postChange = body => dispatch(preferredSupplierChangeActions.add(body));
-    const searchSuppliers = searchTerm => dispatch(suppliersActions.search(searchTerm));
-    const suppliersSearchResults = useSelector(reduxState =>
-        collectionSelectorHelpers.getSearchItems(reduxState.suppliers, 100, 'id', 'name', 'name')
+    useEffect(() => {
+        dispatch(
+            partSuppliersActions.searchWithOptions(null, `&partNumber=${partNumber}&supplierName=`)
+        );
+    }, [dispatch, partNumber]);
+
+    const suppliers = useSelector(reduxState =>
+        collectionSelectorHelpers.getSearchItems(reduxState.partSuppliers)
     );
-    const suppliersSearchLoading = useSelector(reduxState =>
-        collectionSelectorHelpers.getSearchLoading(reduxState.suppliers)
-    );
+
+    const currentUserNumber = useSelector(reduxState => userSelectors.getUserNumber(reduxState));
 
     const [formData, setFormData] = useState({});
 
     const handleFieldChange = (propertyName, newValue) => {
-        setFormData(d => ({ ...d, [propertyName]: newValue }));
+        if (propertyName === 'newSupplierId') {
+            setFormData(d => ({ ...d, [propertyName]: Number(newValue) }));
+        } else {
+            setFormData(d => ({ ...d, [propertyName]: newValue }));
+        }
     };
 
     return (
@@ -112,35 +121,18 @@ function PreferredSupplier({
                     disabled
                 />
             </Grid>
-            <Grid item xs={4}>
-                <Typeahead
-                    onSelect={newValue => {
-                        handleFieldChange('newSupplierId', newValue.id);
-                        handleFieldChange('newSupplierName', newValue.name);
-                    }}
-                    label="New Supplier"
-                    modal
+            <Grid item xs={6}>
+                <Dropdown
+                    value={formData?.newSupplierId}
                     propertyName="newSupplierId"
-                    items={suppliersSearchResults}
-                    value={formData?.newSupplierId?.toString()}
-                    loading={suppliersSearchLoading}
-                    fetchItems={searchSuppliers}
-                    links={false}
-                    text
-                    clearSearch={() => {}}
-                    placeholder="Search Suppliers"
-                    minimumSearchTermLength={3}
+                    label="newSupplier"
+                    items={suppliers.map(s => ({ id: s.supplierId, displayText: s.supplierName }))}
+                    allowNoValue
+                    onChange={handleFieldChange}
                 />
             </Grid>
-            <Grid item xs={8}>
-                <InputField
-                    fullWidth
-                    value={formData?.newSupplierName}
-                    label="Name"
-                    propertyName="newSupplierName"
-                    onChange={() => {}}
-                />
-            </Grid>
+            <Grid item xs={6} />
+
             <Grid item xs={12}>
                 <SaveBackCancelButtons
                     saveClick={() =>
@@ -150,7 +142,8 @@ function PreferredSupplier({
                             oldPrice,
                             baseOldPrice,
                             oldCurrencyCode,
-                            ...formData
+                            ...formData,
+                            changedById: Number(currentUserNumber)
                         })
                     }
                 />

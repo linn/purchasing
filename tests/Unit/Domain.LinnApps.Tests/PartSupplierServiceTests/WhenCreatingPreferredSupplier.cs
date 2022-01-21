@@ -61,6 +61,11 @@
             this.oldPartSupplierRecord = new PartSupplier { PartNumber = "PART", SupplierId = 1, Supplier = this.candidate.OldSupplier };
             this.newPartSupplierRecord = new PartSupplier { PartNumber = "PART", SupplierId = 2, Supplier = this.candidate.NewSupplier };
 
+            this.SupplierRepository.FindById(this.candidate.OldSupplier.SupplierId).Returns(this.candidate.OldSupplier);
+            this.SupplierRepository.FindById(this.candidate.NewSupplier.SupplierId).Returns(this.candidate.NewSupplier);
+            this.EmployeeRepository.FindById(33087).Returns(this.candidate.ChangedBy);
+            this.ChangeReasonsRepository.FindById(this.candidate.ChangeReason.ReasonCode)
+                .Returns(this.candidate.ChangeReason);
             this.PartHistory.FilterBy(Arg.Any<Expression<Func<PartHistoryEntry, bool>>>())
                 .Returns(new List<PartHistoryEntry>().AsQueryable());
 

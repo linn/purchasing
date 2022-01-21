@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.PartSuppliers
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -36,6 +37,11 @@
 
         private readonly IRepository<PartHistoryEntry, PartHistoryEntryKey> partHistory;
 
+        private readonly IRepository<PriceChangeReason, string> changeReasonsRepository;
+
+        private readonly IRepository<PreferredSupplierChange, PreferredSupplierChangeKey>
+            preferredSupplierChangeRepository;
+
         public PartSupplierService(
             IAuthorisationService authService,
             IRepository<Currency, string> currencyRepository,
@@ -48,7 +54,9 @@
             IQueryRepository<Part> partRepository,
             IRepository<Supplier, int> supplierRepository,
             IRepository<PartSupplier, PartSupplierKey> partSupplierRepository,
-            IRepository<PartHistoryEntry, PartHistoryEntryKey> partHistory)
+            IRepository<PartHistoryEntry, PartHistoryEntryKey> partHistory,
+            IRepository<PriceChangeReason, string> changeReasonsRepository,
+            IRepository<PreferredSupplierChange, PreferredSupplierChangeKey> preferredSupplierChangeRepository)
         {
             this.authService = authService;
             this.currencyRepository = currencyRepository;
@@ -62,6 +70,8 @@
             this.supplierRepository = supplierRepository;
             this.partSupplierRepository = partSupplierRepository;
             this.partHistory = partHistory;
+            this.changeReasonsRepository = changeReasonsRepository;
+            this.preferredSupplierChangeRepository = preferredSupplierChangeRepository;
         }
 
         public void UpdatePartSupplier(
@@ -246,6 +256,23 @@
             candidate.OldPrice = prevPart.CurrencyUnitPrice;
             candidate.BaseOldPrice = prevPart.BaseUnitPrice;
             candidate.OldCurrency = prevPart.Currency;
+
+            // todo - case where new part and no prices exist yet
+            
+            // otherwise the prices don't change
+            candidate.NewPrice = prevPart.CurrencyUnitPrice;
+            candidate.BaseNewPrice = prevPart.BaseUnitPrice;
+            candidate.NewCurrency = prevPart.Currency;
+
+            candidate.NewSupplier = this.supplierRepository.FindById(candidate.NewSupplier.SupplierId);
+            candidate.ChangedBy = this.employeeRepository.FindById(candidate.ChangedBy.Id);
+            candidate.ChangeReason = this.changeReasonsRepository.FindById(candidate.ChangeReason.ReasonCode);
+            candidate.DateChanged = DateTime.Now;
+
+            var entriesForThisPart =
+                this.preferredSupplierChangeRepository.FilterBy(x => x.PartNumber == candidate.PartNumber);
+
+            candidate.Seq = entriesForThisPart.Any() ? entriesForThisPart.Max(x => x.Seq) + 1 : 1;
 
             // update Part
             if (!(part.BomType.Equals("A") && newPartSupplier.SupplierId == 4415))
