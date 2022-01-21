@@ -167,6 +167,7 @@ function PreferredSupplier({
             <Grid item xs={12}>
                 <SaveBackCancelButtons
                     cancelClick={close}
+                    backClick={close}
                     saveDisabled={saveDisabled}
                     saveClick={() => {
                         setSaveDisabled(true);
