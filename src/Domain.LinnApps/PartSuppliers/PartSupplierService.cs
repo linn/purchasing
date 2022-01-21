@@ -85,7 +85,7 @@
                     "You are not authorised to update Part Supplier records");
             }
 
-            this.ValidateFields(updated);
+            ValidateFields(updated);
 
             if (current.OrderMethod.Name != updated.OrderMethod.Name)
             {
@@ -165,7 +165,7 @@
                     "You are not authorised to update Part Supplier records");
             }
 
-            this.ValidateFields(candidate);
+            ValidateFields(candidate);
 
             candidate.CreatedBy = this.employeeRepository.FindById(candidate.CreatedBy.Id);
             var part = this.partRepository.FindBy(x => x.PartNumber == candidate.PartNumber);
@@ -322,7 +322,7 @@
             return candidate;
         }
 
-        private void ValidateFields(PartSupplier candidate)
+        private static void ValidateFields(PartSupplier candidate)
         {
             var errors = new List<string>();
 
