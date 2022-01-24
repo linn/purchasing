@@ -193,15 +193,15 @@ function PreferredSupplier({
                 />
             </Grid>
             <Grid item xs={6} />
-            {bomType === 'A' &&
-                formData?.newSupplierId !==
-                    Number(4415)(
-                        <Grid item xs={12}>
-                            <Typography variant="subtitle" color="secondary">
-                                Tell production to put a labour price on this.
-                            </Typography>
-                        </Grid>
-                    )}
+            {formData?.newSupplierId &&
+                bomType === 'A' &&
+                Number(formData?.newSupplierId) !== 4415 && (
+                    <Grid item xs={12}>
+                        <Typography variant="subtitle" color="secondary">
+                            Tell production to put a labour price on this.
+                        </Typography>
+                    </Grid>
+                )}
             <Grid item xs={12}>
                 <SaveBackCancelButtons
                     cancelClick={close}
