@@ -18,23 +18,19 @@ beforeEach(() => {
 
 describe('When RECEIVE_NEW_SIGNING_LIMIT...', () => {
     test('should not redirect', () => {
+        itemCreated(fakeStore)(fakeNext)({ type: 'RECEIVE_NEW_SIGNING_LIMIT', payload: {} });
         expect(historyPushSpy).not.toBeCalled();
     });
-
-    itemCreated(fakeStore)(fakeNext)({ type: 'RECEIVE_NEW_SIGNING_LIMIT', payload: {} });
-    expect(historyPushSpy).not.toBeCalled();
 });
 
 describe('When RECEIVE_NEW_SIGNING_LIMIT...', () => {
     test('should not redirect', () => {
+        itemCreated(fakeStore)(fakeNext)({
+            type: 'RECEIVE_NEW_SIGNING_LIMIT',
+            payload: {}
+        });
         expect(historyPushSpy).not.toBeCalled();
     });
-
-    itemCreated(fakeStore)(fakeNext)({
-        type: 'RECEIVE_NEW_SIGNING_LIMIT',
-        payload: {}
-    });
-    expect(historyPushSpy).not.toBeCalled();
 });
 
 describe('When any other RECEIVE_NEW_ action', () => {
