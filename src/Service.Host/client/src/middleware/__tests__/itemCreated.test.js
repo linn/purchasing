@@ -35,12 +35,10 @@ describe('When RECEIVE_NEW_SIGNING_LIMIT...', () => {
 
 describe('When any other RECEIVE_NEW_ action', () => {
     test('should redirect', () => {
-        expect(historyPushSpy).not.toBeCalled();
+        itemCreated(fakeStore)(fakeNext)({
+            type: 'RECEIVE_NEW_TYPE',
+            payload: { data: { links: [{ rel: 'self', href: '/location' }] } }
+        });
+        expect(historyPushSpy).toBeCalledWith('/location');
     });
-
-    itemCreated(fakeStore)(fakeNext)({
-        type: 'RECEIVE_NEW_TYPE',
-        payload: { data: { links: [{ rel: 'self', href: '/location' }] } }
-    });
-    expect(historyPushSpy).toBeCalledWith('/location');
 });
