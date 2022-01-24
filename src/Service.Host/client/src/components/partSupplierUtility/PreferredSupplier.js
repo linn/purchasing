@@ -9,7 +9,9 @@ import {
     itemSelectorHelpers,
     Dropdown,
     userSelectors,
-    Loading
+    Loading,
+    getItemError,
+    ErrorCard
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import preferredSupplierChangeActions from '../../actions/preferredSupplierChangeActions';
@@ -49,6 +51,11 @@ function PreferredSupplier({
         itemSelectorHelpers.getItemLoading(reduxState.preferredSupplierChange)
     );
 
+    const itemError = useSelector(reduxState =>
+        getItemError(reduxState, 'preferredSupplierChange')
+    );
+    const clearErrors = () => dispatch(preferredSupplierChangeActions.clearErrorsForItem());
+
     const [formData, setFormData] = useState({});
 
     const [saveDisabled, setSaveDisabled] = useState(true);
@@ -83,6 +90,11 @@ function PreferredSupplier({
             <Grid item xs={12}>
                 <Typography variant="h6">Change Preferred Supplier</Typography>
             </Grid>
+            {itemError && (
+                <Grid item xs={12}>
+                    <ErrorCard errorMessage={itemError.details} />
+                </Grid>
+            )}
             <Grid item xs={4}>
                 <InputField
                     fullWidth
@@ -170,6 +182,7 @@ function PreferredSupplier({
                     backClick={close}
                     saveDisabled={saveDisabled}
                     saveClick={() => {
+                        clearErrors();
                         setSaveDisabled(true);
                         postChange({
                             partNumber,
