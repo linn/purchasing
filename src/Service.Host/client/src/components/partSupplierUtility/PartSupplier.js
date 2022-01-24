@@ -274,6 +274,7 @@ function PartSupplier() {
                                 oldSupplierName={part?.preferredSupplierName}
                                 close={() => setPreferredSupplierDialogOpen(false)}
                                 refreshPart={refreshPart}
+                                safetyCriticalPart={part?.safetyCriticalPart}
                             />
                         </div>
                     </div>

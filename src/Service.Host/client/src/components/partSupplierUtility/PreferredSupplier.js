@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -27,7 +27,9 @@ function PreferredSupplier({
     oldCurrencyCode,
     close,
     refreshPart,
-    partLoading
+    partLoading,
+    safetyCriticalPart,
+    bomType
 }) {
     const dispatch = useDispatch();
     const postChange = body => dispatch(preferredSupplierChangeActions.add(body));
@@ -54,7 +56,11 @@ function PreferredSupplier({
     const itemError = useSelector(reduxState =>
         getItemError(reduxState, 'preferredSupplierChange')
     );
-    const clearErrors = () => dispatch(preferredSupplierChangeActions.clearErrorsForItem());
+
+    const clearErrors = useCallback(
+        () => dispatch(preferredSupplierChangeActions.clearErrorsForItem()),
+        [dispatch]
+    );
 
     const [formData, setFormData] = useState({});
 
@@ -75,6 +81,10 @@ function PreferredSupplier({
         }
     }, [preferredSupplierChange, refreshPart]);
 
+    useEffect(() => {
+        clearErrors();
+    }, [clearErrors]);
+
     if (preferredSupplierChangeLoading || partLoading) {
         return (
             <Grid container spacing={3}>
@@ -93,6 +103,14 @@ function PreferredSupplier({
             {itemError && (
                 <Grid item xs={12}>
                     <ErrorCard errorMessage={itemError.details} />
+                </Grid>
+            )}
+            {safetyCriticalPart === 'Y' && (
+                <Grid item xs={12}>
+                    <Typography variant="subtitle" color="secondary">
+                        WARNING: This is a safety critical part. Please ensure new part number has
+                        been verified for this function.
+                    </Typography>
                 </Grid>
             )}
             <Grid item xs={4}>
@@ -175,7 +193,15 @@ function PreferredSupplier({
                 />
             </Grid>
             <Grid item xs={6} />
-
+            {bomType === 'A' &&
+                formData?.newSupplierId !==
+                    Number(4415)(
+                        <Grid item xs={12}>
+                            <Typography variant="subtitle" color="secondary">
+                                Tell production to put a labour price on this.
+                            </Typography>
+                        </Grid>
+                    )}
             <Grid item xs={12}>
                 <SaveBackCancelButtons
                     cancelClick={close}
@@ -210,14 +236,18 @@ PreferredSupplier.propTypes = {
     oldCurrencyCode: PropTypes.number,
     close: PropTypes.func.isRequired,
     refreshPart: PropTypes.func.isRequired,
-    partLoading: PropTypes.bool
+    partLoading: PropTypes.bool,
+    safetyCriticalPart: PropTypes.string,
+    bomType: PropTypes.string
 };
 
 PreferredSupplier.defaultProps = {
     oldPrice: null,
     baseOldPrice: null,
     oldCurrencyCode: null,
-    partLoading: false
+    partLoading: false,
+    safetyCriticalPart: null,
+    bomType: null
 };
 
 export default PreferredSupplier;

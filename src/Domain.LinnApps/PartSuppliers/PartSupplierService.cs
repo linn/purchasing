@@ -267,10 +267,16 @@
 
             candidate.Seq = entriesForThisPart.Any() ? entriesForThisPart.Max(x => x.Seq) + 1 : 1;
 
+            decimal? labourPrice;
+
             // update Part
-            if (!(part.BomType.Equals("A") && newPartSupplier.SupplierId == 4415))
+            if (part.BomType.Equals("A") && newPartSupplier.SupplierId != 4415)
             {
-                part.LabourPrice = 0;
+                labourPrice = part.LabourPrice ?? 0m;
+            }
+            else
+            {
+                labourPrice = 0m;
             }
 
             part.PreferredSupplier = newPartSupplier.Supplier;
@@ -283,6 +289,7 @@
                 part.Currency = candidate.NewCurrency;
                 part.CurrencyUnitPrice = candidate.NewPrice;
                 part.BaseUnitPrice = candidate.BaseNewPrice;
+                part.LabourPrice = labourPrice;
             }
             else
             {
@@ -302,7 +309,7 @@
                                          OldMaterialPrice = prevPart.MaterialPrice,
                                          OldLabourPrice = prevPart.LabourPrice,
                                          NewMaterialPrice = part.MaterialPrice,
-                                         NewLabourPrice = part.LabourPrice,
+                                         NewLabourPrice = labourPrice,
                                          OldPreferredSupplierId = prevPart.PreferredSupplier?.SupplierId,
                                          NewPreferredSupplierId = candidate.NewSupplier.SupplierId,
                                          OldBomType = prevPart.BomType,

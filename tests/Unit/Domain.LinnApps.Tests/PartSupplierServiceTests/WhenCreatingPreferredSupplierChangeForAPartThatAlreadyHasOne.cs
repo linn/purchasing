@@ -144,7 +144,7 @@
                 && x.OldMaterialPrice == 1m
                 && x.OldLabourPrice == 2m
                 && x.NewMaterialPrice == 1m
-                && x.NewLabourPrice == 0m
+                && x.NewLabourPrice == 2m
                 && x.OldPreferredSupplierId == 1
                 && x.NewPreferredSupplierId == 2
                 && x.OldBomType == "A"
