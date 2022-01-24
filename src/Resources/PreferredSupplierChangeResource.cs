@@ -35,5 +35,9 @@
         public string ChangeReasonCode { get; set; }
 
         public string ChangeReasonDescription { get; set; }
+
+        public string NewCurrency { get; set; }
+
+        public decimal? BaseNewPrice { get; set; }
     }
 }

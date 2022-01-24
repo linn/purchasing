@@ -48,4 +48,7 @@ export const preferredSupplierChangeActionTypes = makeActionTypes(
     itemTypes.preferredSupplierChange.actionType
 );
 
-export const priceChangeReasonsActionTypes = makeActionTypes(itemTypes.priceChangeReasons, false);
+export const priceChangeReasonsActionTypes = makeActionTypes(
+    itemTypes.priceChangeReasons.actionType,
+    false
+);

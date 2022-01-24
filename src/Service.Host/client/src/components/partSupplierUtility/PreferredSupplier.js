@@ -15,7 +15,9 @@ import {
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import preferredSupplierChangeActions from '../../actions/preferredSupplierChangeActions';
+import currenciesActions from '../../actions/currenciesActions';
 import partSuppliersActions from '../../actions/partSuppliersActions';
+import priceChangeReasonsActions from '../../actions/priceChangeReasonsActions';
 
 function PreferredSupplier({
     partNumber,
@@ -37,10 +39,20 @@ function PreferredSupplier({
         dispatch(
             partSuppliersActions.searchWithOptions(null, `&partNumber=${partNumber}&supplierName=`)
         );
+        dispatch(currenciesActions.fetch());
+        dispatch(priceChangeReasonsActions.fetch());
     }, [dispatch, partNumber]);
 
     const suppliers = useSelector(reduxState =>
         collectionSelectorHelpers.getSearchItems(reduxState.partSuppliers)
+    );
+
+    const currencies = useSelector(reduxState =>
+        collectionSelectorHelpers.getItems(reduxState.currencies)
+    );
+
+    const reasons = useSelector(reduxState =>
+        collectionSelectorHelpers.getItems(reduxState.priceChangeReasons)
     );
 
     const currentUserNumber = useSelector(reduxState => userSelectors.getUserNumber(reduxState));
@@ -83,6 +95,7 @@ function PreferredSupplier({
 
     useEffect(() => {
         clearErrors();
+        setFormData();
     }, [clearErrors]);
 
     if (preferredSupplierChangeLoading || partLoading) {
@@ -202,6 +215,65 @@ function PreferredSupplier({
                         </Typography>
                     </Grid>
                 )}
+            {!oldSupplierId && (
+                <>
+                    <Grid item xs={4}>
+                        <InputField
+                            fullWidth
+                            value={formData?.newPrice}
+                            label="New Price"
+                            propertyName="newPrice"
+                            type="number"
+                            onChange={handleFieldChange}
+                        />
+                    </Grid>
+                    <Grid item xs={4}>
+                        <InputField
+                            fullWidth
+                            value={formData?.baseNewPrice}
+                            label="Base New Price"
+                            propertyName="baseNewPrice"
+                            type="number"
+                            onChange={handleFieldChange}
+                        />
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Dropdown
+                            value={formData?.newCurrency}
+                            propertyName="newCurrency"
+                            label="New Currency"
+                            items={currencies.map(s => ({
+                                id: s.code,
+                                displayText: s.name
+                            }))}
+                            onChange={handleFieldChange}
+                        />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Dropdown
+                            value={formData?.changeReasonCode}
+                            propertyName="changeReasonCode"
+                            label="Reason"
+                            items={reasons.map(s => ({
+                                id: s.reasonCode,
+                                displayText: s.description
+                            }))}
+                            onChange={handleFieldChange}
+                        />
+                    </Grid>
+                    <Grid item xs={6} />
+
+                    <Grid item xs={12}>
+                        <InputField
+                            fullWidth
+                            value={formData?.remarks}
+                            label="Remarks"
+                            propertyName="remarks"
+                            onChange={handleFieldChange}
+                        />
+                    </Grid>
+                </>
+            )}
             <Grid item xs={12}>
                 <SaveBackCancelButtons
                     cancelClick={close}
@@ -227,13 +299,13 @@ function PreferredSupplier({
 }
 
 PreferredSupplier.propTypes = {
-    partNumber: PropTypes.string.isRequired,
-    partDescription: PropTypes.string.isRequired,
-    oldSupplierId: PropTypes.number.isRequired,
-    oldSupplierName: PropTypes.string.isRequired,
+    partNumber: PropTypes.string,
+    partDescription: PropTypes.string,
+    oldSupplierId: PropTypes.number,
+    oldSupplierName: PropTypes.string,
     oldPrice: PropTypes.number,
     baseOldPrice: PropTypes.number,
-    oldCurrencyCode: PropTypes.number,
+    oldCurrencyCode: PropTypes.string,
     close: PropTypes.func.isRequired,
     refreshPart: PropTypes.func.isRequired,
     partLoading: PropTypes.bool,
@@ -242,12 +314,16 @@ PreferredSupplier.propTypes = {
 };
 
 PreferredSupplier.defaultProps = {
+    partNumber: null,
+    partDescription: null,
     oldPrice: null,
     baseOldPrice: null,
     oldCurrencyCode: null,
     partLoading: false,
     safetyCriticalPart: null,
-    bomType: null
+    bomType: null,
+    oldSupplierId: null,
+    oldSupplierName: null
 };
 
 export default PreferredSupplier;
