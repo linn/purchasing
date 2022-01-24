@@ -62,6 +62,7 @@
                 .Returns(this.candidate.ChangeReason);
             this.PartHistory.FilterBy(Arg.Any<Expression<Func<PartHistoryEntry, bool>>>())
                 .Returns(new List<PartHistoryEntry>().AsQueryable());
+            this.CurrencyRepository.FindById("USD").Returns(new Currency { Code = "USD" });
 
             this.MockAuthService.HasPermissionFor(
                     AuthorisedAction.PartSupplierUpdate,

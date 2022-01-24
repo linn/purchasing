@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Xml.Xsl;
 
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
@@ -244,13 +245,17 @@
                 throw new PartSupplierException("You cannot set a preferred supplier for phantoms");
             }
 
-            var oldPartSupplier = this.partSupplierRepository.FindById(
-                new PartSupplierKey { PartNumber = part.PartNumber, SupplierId = candidate.OldSupplier.SupplierId });
-            oldPartSupplier.SupplierRanking = 2;
-
+            if (candidate.OldSupplier != null)
+            {
+                var oldPartSupplier = this.partSupplierRepository.FindById(
+                    new PartSupplierKey { PartNumber = part.PartNumber, SupplierId = candidate.OldSupplier.SupplierId });
+                oldPartSupplier.SupplierRanking = 2;
+            }
+            
             var newPartSupplier = this.partSupplierRepository.FindById(
                 new PartSupplierKey { PartNumber = part.PartNumber, SupplierId = candidate.NewSupplier.SupplierId });
             newPartSupplier.SupplierRanking = 1;
+
 
             candidate.OldSupplier = prevPart.PreferredSupplier;
             candidate.OldPrice = prevPart.CurrencyUnitPrice;
@@ -284,12 +289,15 @@
             // if this is the first time a preferred supplier is chosen for this part
             if (prevPart.PreferredSupplier == null)
             {
+                var newCurrency = this.currencyRepository.FindById(candidate.NewCurrency.Code);
+
                 // set prices
                 part.MaterialPrice = candidate.BaseNewPrice;
-                part.Currency = candidate.NewCurrency;
+                part.Currency = newCurrency;
                 part.CurrencyUnitPrice = candidate.NewPrice;
                 part.BaseUnitPrice = candidate.BaseNewPrice;
                 part.LabourPrice = labourPrice;
+                candidate.NewCurrency = newCurrency;
             }
             else
             {
@@ -317,7 +325,7 @@
                                          ChangedBy = candidate.ChangedBy.Id,
                                          ChangeType = "PREFSUP",
                                          Remarks = candidate.Remarks,
-                                         PriceChangeReason = candidate.ChangeReason.ReasonCode,
+                                         PriceChangeReason = candidate.ChangeReason?.ReasonCode,
                                          OldCurrency = prevPart.Currency?.Code,
                                          NewCurrency = part.Currency.Code,
                                          OldCurrencyUnitPrice = prevPart.CurrencyUnitPrice,

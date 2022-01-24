@@ -11,7 +11,8 @@ import {
     userSelectors,
     Loading,
     getItemError,
-    ErrorCard
+    ErrorCard,
+    SnackbarMessage
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import preferredSupplierChangeActions from '../../actions/preferredSupplierChangeActions';
@@ -65,6 +66,10 @@ function PreferredSupplier({
         itemSelectorHelpers.getItemLoading(reduxState.preferredSupplierChange)
     );
 
+    const snackbarVisible = useSelector(reduxState =>
+        itemSelectorHelpers.getSnackbarVisible(reduxState.preferredSupplierChange)
+    );
+
     const itemError = useSelector(reduxState =>
         getItemError(reduxState, 'preferredSupplierChange')
     );
@@ -110,6 +115,11 @@ function PreferredSupplier({
 
     return (
         <Grid container spacing={3}>
+            <SnackbarMessage
+                visible={snackbarVisible}
+                onClose={() => dispatch(preferredSupplierChangeActions.setSnackbarVisible(false))}
+                message="Save Successful"
+            />
             <Grid item xs={12}>
                 <Typography variant="h6">Change Preferred Supplier</Typography>
             </Grid>
@@ -118,7 +128,7 @@ function PreferredSupplier({
                     <ErrorCard errorMessage={itemError.details} />
                 </Grid>
             )}
-            {safetyCriticalPart === 'Y' && (
+            {safetyCriticalPart && (
                 <Grid item xs={12}>
                     <Typography variant="subtitle" color="secondary">
                         WARNING: This is a safety critical part. Please ensure new part number has
@@ -200,7 +210,7 @@ function PreferredSupplier({
                 <Dropdown
                     value={formData?.newSupplierId}
                     propertyName="newSupplierId"
-                    label="newSupplier"
+                    label="Select a New Supplier"
                     items={suppliers.map(s => ({ id: s.supplierId, displayText: s.supplierName }))}
                     onChange={handleFieldChange}
                 />
@@ -215,6 +225,29 @@ function PreferredSupplier({
                         </Typography>
                     </Grid>
                 )}
+            <Grid item xs={6}>
+                <Dropdown
+                    value={formData?.changeReasonCode}
+                    propertyName="changeReasonCode"
+                    label="Reason"
+                    items={reasons.map(s => ({
+                        id: s.reasonCode,
+                        displayText: s.description
+                    }))}
+                    onChange={handleFieldChange}
+                />
+            </Grid>
+            <Grid item xs={6} />
+
+            <Grid item xs={12}>
+                <InputField
+                    fullWidth
+                    value={formData?.remarks}
+                    label="Remarks"
+                    propertyName="remarks"
+                    onChange={handleFieldChange}
+                />
+            </Grid>
             {!oldSupplierId && (
                 <>
                     <Grid item xs={4}>
@@ -246,29 +279,6 @@ function PreferredSupplier({
                                 id: s.code,
                                 displayText: s.name
                             }))}
-                            onChange={handleFieldChange}
-                        />
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Dropdown
-                            value={formData?.changeReasonCode}
-                            propertyName="changeReasonCode"
-                            label="Reason"
-                            items={reasons.map(s => ({
-                                id: s.reasonCode,
-                                displayText: s.description
-                            }))}
-                            onChange={handleFieldChange}
-                        />
-                    </Grid>
-                    <Grid item xs={6} />
-
-                    <Grid item xs={12}>
-                        <InputField
-                            fullWidth
-                            value={formData?.remarks}
-                            label="Remarks"
-                            propertyName="remarks"
                             onChange={handleFieldChange}
                         />
                     </Grid>
@@ -309,7 +319,7 @@ PreferredSupplier.propTypes = {
     close: PropTypes.func.isRequired,
     refreshPart: PropTypes.func.isRequired,
     partLoading: PropTypes.bool,
-    safetyCriticalPart: PropTypes.string,
+    safetyCriticalPart: PropTypes.bool,
     bomType: PropTypes.string
 };
 
@@ -320,7 +330,7 @@ PreferredSupplier.defaultProps = {
     baseOldPrice: null,
     oldCurrencyCode: null,
     partLoading: false,
-    safetyCriticalPart: null,
+    safetyCriticalPart: false,
     bomType: null,
     oldSupplierId: null,
     oldSupplierName: null
