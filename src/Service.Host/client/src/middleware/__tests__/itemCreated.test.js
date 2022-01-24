@@ -9,8 +9,7 @@ jest.mock('../../history', () => ({
 }));
 
 const historyPushSpy = jest.spyOn(history, 'push');
-const fakeStore = { dispatch: jest.fn() };
-const fakeNext = jest.fn();
+const mockNext = jest.fn();
 
 beforeEach(() => {
     jest.clearAllMocks();
@@ -18,14 +17,14 @@ beforeEach(() => {
 
 describe('When RECEIVE_NEW_SIGNING_LIMIT...', () => {
     test('should not redirect', () => {
-        itemCreated(fakeStore)(fakeNext)({ type: 'RECEIVE_NEW_SIGNING_LIMIT', payload: {} });
+        itemCreated()(mockNext)({ type: 'RECEIVE_NEW_SIGNING_LIMIT', payload: {} });
         expect(historyPushSpy).not.toBeCalled();
     });
 });
 
 describe('When RECEIVE_NEW_SIGNING_LIMIT...', () => {
     test('should not redirect', () => {
-        itemCreated(fakeStore)(fakeNext)({
+        itemCreated()(mockNext)({
             type: 'RECEIVE_NEW_SIGNING_LIMIT',
             payload: {}
         });
@@ -35,7 +34,7 @@ describe('When RECEIVE_NEW_SIGNING_LIMIT...', () => {
 
 describe('When any other RECEIVE_NEW_ action', () => {
     test('should redirect', () => {
-        itemCreated(fakeStore)(fakeNext)({
+        itemCreated()(mockNext)({
             type: 'RECEIVE_NEW_TYPE',
             payload: { data: { links: [{ rel: 'self', href: '/location' }] } }
         });
