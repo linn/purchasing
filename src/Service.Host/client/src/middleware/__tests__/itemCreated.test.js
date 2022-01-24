@@ -22,10 +22,10 @@ describe('When RECEIVE_NEW_SIGNING_LIMIT...', () => {
     });
 });
 
-describe('When RECEIVE_NEW_SIGNING_LIMIT...', () => {
+describe('When RECEIVE_NEW_PREFERRED_SUPPLIER_CHANGE...', () => {
     test('should not redirect', () => {
         itemCreated()(mockNext)({
-            type: 'RECEIVE_NEW_SIGNING_LIMIT',
+            type: 'RECEIVE_NEW_PREFERRED_SUPPLIER_CHANGE',
             payload: {}
         });
         expect(historyPushSpy).not.toBeCalled();
