@@ -24,6 +24,8 @@ import tariffs from './tariffs';
 import packagingGroups from './packagingGroups';
 import manufacturers from './manufacturers';
 import ordersBySupplier from './ordersBySupplierReport';
+import preferredSupplierChange from './preferredSupplierChange';
+import priceChangeReasons from './priceChangeReasons';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -36,13 +38,15 @@ const rootReducer = history =>
         employees,
         manufacturers,
         orderMethods,
+        ordersBySupplier,
         packagingGroups,
         part,
         parts,
         partSupplier,
         partSuppliers,
+        preferredSupplierChange,
+        priceChangeReasons,
         router: connectRouter(history),
-        ordersBySupplier,
         signingLimit,
         signingLimits,
         suppliers,

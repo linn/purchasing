@@ -14,11 +14,10 @@
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NSubstitute;
-    using NSubstitute.ReceivedExtensions;
 
     using NUnit.Framework;
 
-    public class WhenCreatingPreferredSupplier : ContextBase
+    public class WhenCreatingAPreferredSupplierChangeForAPartForTheFirstTime : ContextBase
     {
         private PreferredSupplierChange candidate;
 
@@ -33,34 +32,34 @@
         [SetUp]
         public void SetUp()
         {
-          
             this.part = new Part
-                            {
-                                PartNumber = "PART",
-                                BomType = "A",
-                                PreferredSupplier = new Supplier { SupplierId = 1 },
-                                CurrencyUnitPrice = 100m,
-                                BaseUnitPrice = 50m,
-                                Currency = new Currency { Code = "USD" },
-                                MaterialPrice = 1m,
-                                LabourPrice = 2m
-                            };
+            {
+                PartNumber = "PART",
+                BomType = "A",
+                PreferredSupplier = null
+            };
 
             this.candidate = new PreferredSupplierChange
-                                 {
-                                     PartNumber = "PART",
-                                     OldSupplier = new Supplier { SupplierId = 1 },
-                                     NewSupplier = new Supplier { SupplierId = 2 },
-                                     ChangeReason = new PriceChangeReason { ReasonCode = "CHG", Description = "DESC" },
-                                     ChangedBy = new Employee { Id = 33087 },
-                                     Remarks = "REMARKS",
-                                     BaseNewPrice = 3m,
-                                     NewCurrency = new Currency { Code = "USD" }
-                                 };
+            {
+                PartNumber = "PART",
+                OldSupplier = new Supplier { SupplierId = 1 },
+                NewSupplier = new Supplier { SupplierId = 2 },
+                ChangeReason = new PriceChangeReason { ReasonCode = "CHG", Description = "DESC" },
+                ChangedBy = new Employee { Id = 33087 },
+                Remarks = "REMARKS",
+                BaseNewPrice = 3m,
+                NewPrice = 100m,
+                NewCurrency = new Currency { Code = "USD" }
+            };
 
             this.oldPartSupplierRecord = new PartSupplier { PartNumber = "PART", SupplierId = 1, Supplier = this.candidate.OldSupplier };
             this.newPartSupplierRecord = new PartSupplier { PartNumber = "PART", SupplierId = 2, Supplier = this.candidate.NewSupplier };
 
+            this.SupplierRepository.FindById(this.candidate.OldSupplier.SupplierId).Returns(this.candidate.OldSupplier);
+            this.SupplierRepository.FindById(this.candidate.NewSupplier.SupplierId).Returns(this.candidate.NewSupplier);
+            this.EmployeeRepository.FindById(33087).Returns(this.candidate.ChangedBy);
+            this.ChangeReasonsRepository.FindById(this.candidate.ChangeReason.ReasonCode)
+                .Returns(this.candidate.ChangeReason);
             this.PartHistory.FilterBy(Arg.Any<Expression<Func<PartHistoryEntry, bool>>>())
                 .Returns(new List<PartHistoryEntry>().AsQueryable());
 
@@ -86,47 +85,55 @@
         }
 
         [Test]
-        public void ShouldSetOldSupplierToBeThePartsOldPreferredSupplier()
+        public void ShouldSetOldSupplierToBeNull()
         {
-            this.result.OldSupplier.SupplierId.Should().Be(this.oldPartSupplierRecord.SupplierId);
+            this.result.OldSupplier.Should().Be(null);
         }
 
         [Test]
-        public void ShouldSetOldPriceToBeThePartsOldCurrencyUnitPrice()
+        public void ShouldSetOldPriceToBeNull()
         {
-            this.result.OldPrice.Should().Be(this.part.CurrencyUnitPrice);
+            this.result.OldPrice.Should().Be(null);
         }
 
         [Test]
         public void ShouldSetOldCurrencyToBeThePartsOldCurrencyPrice()
         {
-            this.result.OldCurrency.Code.Should().Be(this.part.Currency.Code);
+            this.result.OldCurrency.Should().Be(null);
         }
 
         [Test]
-        public void ShouldSetOldBasePriceToBeThePartsOldBaseUnitPrice()
+        public void ShouldSetPartPrices()
         {
-            this.result.BaseOldPrice.Should().Be(this.part.BaseUnitPrice);
+            this.result.NewCurrency.Code.Should().Be(this.candidate.NewCurrency.Code);
+            this.result.BaseNewPrice.Should().Be(this.candidate.BaseNewPrice);
+            this.result.NewPrice.Should().Be(this.candidate.NewPrice);
+        }
+
+        [Test]
+        public void ShouldSetOldBasePriceToBeNull()
+        {
+            this.result.BaseOldPrice.Should().Be(null);
         }
 
         [Test]
         public void ShouldUpdatePartSupplierRecords()
         {
             this.newPartSupplierRecord.SupplierRanking.Should().Be(1);
-            this.oldPartSupplierRecord.SupplierRanking.Should().Be(2); 
+            this.oldPartSupplierRecord.SupplierRanking.Should().Be(2);
         }
 
         [Test]
         public void ShouldInsertAPartHistoryRecord()
         {
-            this.PartHistory.Received().Add(Arg.Is<PartHistoryEntry>(x => 
-                x.Seq  == 1
+            this.PartHistory.Received().Add(Arg.Is<PartHistoryEntry>(x =>
+                x.Seq == 1
                 && x.PartNumber == "PART"
-                && x.OldMaterialPrice == 1m
-                && x.OldLabourPrice == 2m
-                && x.NewMaterialPrice == 1m
+                && x.OldMaterialPrice == null
+                && x.OldLabourPrice == null
+                && x.NewMaterialPrice == 3m
                 && x.NewLabourPrice == 0m
-                && x.OldPreferredSupplierId == 1
+                && x.OldPreferredSupplierId == null
                 && x.NewPreferredSupplierId == 2
                 && x.OldBomType == "A"
                 && x.NewBomType == "A"
@@ -134,12 +141,12 @@
                 && x.ChangeType == "PREFSUP"
                 && x.Remarks == "REMARKS"
                 && x.PriceChangeReason == "CHG"
-                && x.OldCurrency == "USD"
+                && x.OldCurrency == null
                 && x.NewCurrency == "USD"
-                && x.OldCurrencyUnitPrice == 100m
+                && x.OldCurrencyUnitPrice == null
                 && x.NewCurrencyUnitPrice == 100m
-                && x.OldBaseUnitPrice == 50m
-                && x.NewBaseUnitPrice == 50m));
+                && x.OldBaseUnitPrice == null
+                && x.NewBaseUnitPrice == 3m));
         }
     }
 }

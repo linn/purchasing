@@ -6,8 +6,11 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
 
     public class PreferredSupplierChangeService 
@@ -29,7 +32,25 @@
             PreferredSupplierChangeResource resource, 
             IEnumerable<string> privileges = null)
         {
-            throw new NotImplementedException();
+            var candidate = new PreferredSupplierChange
+                                {
+                                    ChangedBy = resource.ChangedById.HasValue
+                                    ? new Employee { Id = (int)resource.ChangedById } : null,
+                                    PartNumber = resource.PartNumber,
+                                    OldSupplier = resource.OldSupplierId.HasValue
+                                                      ? new Supplier { SupplierId = (int)resource.OldSupplierId }
+                                                      : null,
+                                    OldPrice = resource.OldPrice,
+                                    BaseOldPrice = resource.BaseOldPrice,
+                                    OldCurrency = !string.IsNullOrEmpty(resource.OldCurrencyCode) 
+                                                      ? new Currency { Code = resource.OldCurrencyCode }
+                                                      : null,
+                                    NewSupplier = resource.NewSupplierId.HasValue 
+                                                        ? new Supplier { SupplierId = (int)resource.NewSupplierId }
+                                                        : null,
+                                    ChangeReason = new PriceChangeReason { ReasonCode = "NEW" }
+                                };
+            return this.domainService.CreatePreferredSupplierChange(candidate, privileges);
         }
 
         protected override void UpdateFromResource(

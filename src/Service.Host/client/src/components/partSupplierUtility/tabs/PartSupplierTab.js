@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+
 import {
     InputField,
     LinkButton,
@@ -23,7 +25,8 @@ function PartSupplierTab({
     suppliersSearchResults,
     suppliersSearchLoading,
     editStatus,
-    part
+    part,
+    setPreferredSupplierDialogOpen
 }) {
     return (
         <Grid container spacing={3}>
@@ -87,6 +90,12 @@ function PartSupplierTab({
                     onChange={() => {}}
                 />
             </Grid>
+            <Grid item xs={4}>
+                <Button variant="outlined" onClick={() => setPreferredSupplierDialogOpen(true)}>
+                    Preferred Supplier
+                </Button>
+            </Grid>
+            <Grid item xs={8} />
             <Grid item xs={8}>
                 <InputField
                     fullWidth
@@ -151,7 +160,8 @@ PartSupplierTab.propTypes = {
                 partNumber: PropTypes.string
             })
         )
-    })
+    }),
+    setPreferredSupplierDialogOpen: PropTypes.func.isRequired
 };
 
 PartSupplierTab.defaultProps = {

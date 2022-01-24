@@ -132,6 +132,7 @@
             entity.HasOne(e => e.NewCurrency).WithMany().HasForeignKey("NEW_CURRENCY");
             entity.HasOne(e => e.OldCurrency).WithMany().HasForeignKey("OLD_CURRENCY");
             entity.Property(e => e.BaseOldPrice).HasColumnName("BASE_OLD_PRICE");
+            entity.Property(e => e.BaseNewPrice).HasColumnName("BASE_NEW_PRICE");
         }
 
         private void BuildPartSuppliers(ModelBuilder builder)

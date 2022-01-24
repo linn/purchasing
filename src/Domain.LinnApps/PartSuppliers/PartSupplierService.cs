@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.PartSuppliers
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -36,6 +37,11 @@
 
         private readonly IRepository<PartHistoryEntry, PartHistoryEntryKey> partHistory;
 
+        private readonly IRepository<PriceChangeReason, string> changeReasonsRepository;
+
+        private readonly IRepository<PreferredSupplierChange, PreferredSupplierChangeKey>
+            preferredSupplierChangeRepository;
+
         public PartSupplierService(
             IAuthorisationService authService,
             IRepository<Currency, string> currencyRepository,
@@ -48,7 +54,9 @@
             IQueryRepository<Part> partRepository,
             IRepository<Supplier, int> supplierRepository,
             IRepository<PartSupplier, PartSupplierKey> partSupplierRepository,
-            IRepository<PartHistoryEntry, PartHistoryEntryKey> partHistory)
+            IRepository<PartHistoryEntry, PartHistoryEntryKey> partHistory,
+            IRepository<PriceChangeReason, string> changeReasonsRepository,
+            IRepository<PreferredSupplierChange, PreferredSupplierChangeKey> preferredSupplierChangeRepository)
         {
             this.authService = authService;
             this.currencyRepository = currencyRepository;
@@ -62,6 +70,8 @@
             this.supplierRepository = supplierRepository;
             this.partSupplierRepository = partSupplierRepository;
             this.partHistory = partHistory;
+            this.changeReasonsRepository = changeReasonsRepository;
+            this.preferredSupplierChangeRepository = preferredSupplierChangeRepository;
         }
 
         public void UpdatePartSupplier(
@@ -75,7 +85,7 @@
                     "You are not authorised to update Part Supplier records");
             }
 
-            this.ValidateFields(updated);
+            ValidateFields(updated);
 
             if (current.OrderMethod.Name != updated.OrderMethod.Name)
             {
@@ -155,7 +165,7 @@
                     "You are not authorised to update Part Supplier records");
             }
 
-            this.ValidateFields(candidate);
+            ValidateFields(candidate);
 
             candidate.CreatedBy = this.employeeRepository.FindById(candidate.CreatedBy.Id);
             var part = this.partRepository.FindBy(x => x.PartNumber == candidate.PartNumber);
@@ -242,10 +252,20 @@
                 new PartSupplierKey { PartNumber = part.PartNumber, SupplierId = candidate.NewSupplier.SupplierId });
             newPartSupplier.SupplierRanking = 1;
 
-            candidate.OldSupplier = part.PreferredSupplier;
-            candidate.OldPrice = part.CurrencyUnitPrice;
-            candidate.BaseOldPrice = part.BaseUnitPrice;
-            candidate.OldCurrency = part.Currency;
+            candidate.OldSupplier = prevPart.PreferredSupplier;
+            candidate.OldPrice = prevPart.CurrencyUnitPrice;
+            candidate.BaseOldPrice = prevPart.BaseUnitPrice;
+            candidate.OldCurrency = prevPart.Currency;
+
+            candidate.NewSupplier = this.supplierRepository.FindById(candidate.NewSupplier.SupplierId);
+            candidate.ChangedBy = this.employeeRepository.FindById(candidate.ChangedBy.Id);
+            candidate.ChangeReason = this.changeReasonsRepository.FindById(candidate.ChangeReason.ReasonCode);
+            candidate.DateChanged = DateTime.Now;
+
+            var entriesForThisPart =
+                this.preferredSupplierChangeRepository.FilterBy(x => x.PartNumber == candidate.PartNumber);
+
+            candidate.Seq = entriesForThisPart.Any() ? entriesForThisPart.Max(x => x.Seq) + 1 : 1;
 
             // update Part
             if (!(part.BomType.Equals("A") && newPartSupplier.SupplierId == 4415))
@@ -255,48 +275,54 @@
 
             part.PreferredSupplier = newPartSupplier.Supplier;
             
-            if (prevPart.BaseUnitPrice.GetValueOrDefault() == 0)
+            // if this is the first time a preferred supplier is chosen for this part
+            if (prevPart.PreferredSupplier == null)
             {
-                // todo - find out if standard price should still change here
-                part.PreferredSupplier = newPartSupplier.Supplier;
+                // set prices
                 part.MaterialPrice = candidate.BaseNewPrice;
                 part.Currency = candidate.NewCurrency;
                 part.CurrencyUnitPrice = candidate.NewPrice;
+                part.BaseUnitPrice = candidate.BaseNewPrice;
+            }
+            else
+            {
+                // otherwise the prices don't change
+                candidate.NewPrice = prevPart.CurrencyUnitPrice;
+                candidate.BaseNewPrice = prevPart.BaseUnitPrice;
+                candidate.NewCurrency = prevPart.Currency;
             }
 
-            var history = this.partHistory.FilterBy(x => x.PartNumber == candidate.PartNumber);
-            
-            var maxSeqForPart = history.Any() ? history.Max(x => x.Seq) : 0;
-
             // update Part History
+            var history = this.partHistory.FilterBy(x => x.PartNumber == candidate.PartNumber);
+            var maxSeqForPart = history.Any() ? history.Max(x => x.Seq) : 0;
             this.partHistory.Add(new PartHistoryEntry
                                      {
-                                        PartNumber = candidate.PartNumber,
-                                        Seq = maxSeqForPart + 1,
-                                        OldMaterialPrice = prevPart.MaterialPrice,
-                                        OldLabourPrice = prevPart.LabourPrice,
-                                        NewMaterialPrice = part.MaterialPrice,
-                                        NewLabourPrice = part.LabourPrice,
-                                        OldPreferredSupplierId = prevPart.PreferredSupplier.SupplierId,
-                                        NewPreferredSupplierId = part.PreferredSupplier.SupplierId,
-                                        OldBomType = prevPart.BomType,
-                                        NewBomType = part.BomType,
-                                        ChangedBy = candidate.ChangedBy.Id,
-                                        ChangeType = "PREFSUP",
-                                        Remarks = candidate.Remarks,
-                                        PriceChangeReason = candidate.ChangeReason.ReasonCode,
-                                        OldCurrency = prevPart.Currency.Code,
-                                        NewCurrency = part.Currency.Code,
-                                        OldCurrencyUnitPrice = prevPart.CurrencyUnitPrice,
-                                        NewCurrencyUnitPrice = part.CurrencyUnitPrice,
-                                        OldBaseUnitPrice = prevPart.BaseUnitPrice,
-                                        NewBaseUnitPrice = part.BaseUnitPrice
+                                         PartNumber = candidate.PartNumber,
+                                         Seq = maxSeqForPart + 1,
+                                         OldMaterialPrice = prevPart.MaterialPrice,
+                                         OldLabourPrice = prevPart.LabourPrice,
+                                         NewMaterialPrice = part.MaterialPrice,
+                                         NewLabourPrice = part.LabourPrice,
+                                         OldPreferredSupplierId = prevPart.PreferredSupplier?.SupplierId,
+                                         NewPreferredSupplierId = candidate.NewSupplier.SupplierId,
+                                         OldBomType = prevPart.BomType,
+                                         NewBomType = part.BomType,
+                                         ChangedBy = candidate.ChangedBy.Id,
+                                         ChangeType = "PREFSUP",
+                                         Remarks = candidate.Remarks,
+                                         PriceChangeReason = candidate.ChangeReason.ReasonCode,
+                                         OldCurrency = prevPart.Currency?.Code,
+                                         NewCurrency = part.Currency.Code,
+                                         OldCurrencyUnitPrice = prevPart.CurrencyUnitPrice,
+                                         NewCurrencyUnitPrice = part.CurrencyUnitPrice,
+                                         OldBaseUnitPrice = prevPart.BaseUnitPrice,
+                                         NewBaseUnitPrice = part.BaseUnitPrice
                                      });
 
             return candidate;
         }
 
-        private void ValidateFields(PartSupplier candidate)
+        private static void ValidateFields(PartSupplier candidate)
         {
             var errors = new List<string>();
 

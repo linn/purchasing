@@ -136,9 +136,11 @@
         private async Task CreatePreferredSupplierChange(HttpRequest req, HttpResponse res)
         {
             var resource = await req.Bind<PreferredSupplierChangeResource>();
+
+            var privileges = req.HttpContext.GetPrivileges();
             var result = this.preferredSupplierChangeService.Add(
                 resource,
-                req.HttpContext.GetPrivileges());
+                privileges);
 
             await res.Negotiate(result);
         }

@@ -40,6 +40,13 @@
 
         protected IRepository<PartHistoryEntry, PartHistoryEntryKey> PartHistory { get; private set; }
 
+        protected IRepository<PriceChangeReason, string> ChangeReasonsRepository { get; private set; }
+
+        protected IRepository<PreferredSupplierChange, PreferredSupplierChangeKey> PreferredSupplierChangeRepository
+        {
+            get; private set;
+        }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -55,6 +62,9 @@
             this.SupplierRepository = Substitute.For<IRepository<Supplier, int>>();
             this.PartSupplierRepository = Substitute.For<IRepository<PartSupplier, PartSupplierKey>>();
             this.PartHistory = Substitute.For<IRepository<PartHistoryEntry, PartHistoryEntryKey>>();
+            this.ChangeReasonsRepository = Substitute.For<IRepository<PriceChangeReason, string>>();
+            this.PreferredSupplierChangeRepository =
+                Substitute.For<IRepository<PreferredSupplierChange, PreferredSupplierChangeKey>>();
             this.Sut = new PartSupplierService(
                 this.MockAuthService,
                 this.CurrencyRepository,
@@ -67,7 +77,9 @@
                 this.PartRepository,
                 this.SupplierRepository,
                 this.PartSupplierRepository,
-                this.PartHistory);
+                this.PartHistory,
+                this.ChangeReasonsRepository,
+                this.PreferredSupplierChangeRepository);
         }
     }
 }
