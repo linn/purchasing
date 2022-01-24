@@ -31,7 +31,7 @@ describe('When RECEIVE_NEW_SIGNING_LIMIT...', () => {
     });
 
     itemCreated(fakeStore)(fakeNext)({
-        type: 'RECEIVE_NEW_PREFERRED_SUPPLIER_CHANGE',
+        type: 'RECEIVE_NEW_SIGNING_LIMIT',
         payload: {}
     });
     expect(historyPushSpy).not.toBeCalled();
