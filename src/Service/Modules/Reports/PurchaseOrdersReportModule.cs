@@ -4,6 +4,8 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.IO;
+    using System.Net.Mime;
+    using System.Text;
     using System.Threading.Tasks;
 
     using Carter;
@@ -19,7 +21,9 @@
     using Linn.Purchasing.Service.Models;
 
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Http.Extensions;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
     using Microsoft.Extensions.FileProviders;
     using Microsoft.Extensions.Primitives;
 
@@ -58,7 +62,7 @@
             resource.Cancelled = req.Query.As<string>("Cancelled");
             resource.Credits = req.Query.As<string>("Credits");
             resource.StockControlled = req.Query.As<string>("StockControlled");
-            
+
             var results = this.purchaseOrderReportFacadeService.GetOrdersBySupplierReport(resource, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(results);
@@ -81,16 +85,14 @@
 
             this.csvStreamWriter.WriteModel(results);
 
-            this.stream.CopyTo(res.Body);
-            //how do I get the actual value of the stream?!
+            var contentDisposition = new ContentDisposition
+                                         {
+                                             FileName =
+                                                 $"ordersBySupplier{resource.From.Substring(0, 10)}_To_{resource.To.Substring(0, 10)}.csv"
+                                         };
 
-            res.ContentType = "text/csv";
-
-            res.Headers.Add("Content-Disposition", $"attachment;filename=ordersBySupplier{resource.From.Substring(0, 10)}_To_{resource.To.Substring(0, 10)}.csv");
-            await res.Negotiate(results);
+            this.stream.Position = 0;
+            await res.FromStream(this.stream, "text/csv", contentDisposition);
         }
-
-
-
     }
 }

@@ -5,6 +5,7 @@
     using System.Net;
 
     using FluentAssertions;
+    using FluentAssertions.Extensions;
 
     using Linn.Common.Facade;
     using Linn.Common.Reporting.Resources.ReportResultResources;
@@ -48,17 +49,16 @@
             this.FacadeService
                 .GetOrdersBySupplierReport(Arg.Any<OrdersBySupplierSearchResource>(), Arg.Any<IEnumerable<string>>())
                 .Returns(new SuccessResult<ReportReturnResource>(reportReturnResource));
-            var resource = new OrdersBySupplierSearchResource { From = "2/11/21", To = "2/12/21" };
 
             this.Response = this.Client.Get(
-                $"/purchasing/reports/orders-by-supplier/export?id={16622}&fromDate={2/11/21}&toDate={2/12/21}",
+                $"/purchasing/reports/orders-by-supplier/export?id={16622}&fromDate={(1.January(2022).ToLongDateString())}&toDate={(1.February(2022).ToLongDateString())}",
                 with => { with.Accept("text/csv"); }).Result;
         }
 
         [Test]
         public void ShouldCallFacadeService()
         {
-            this.FacadeService.Received().GetOrdersBySupplierReport(
+            this.FacadeService.Received().GetOrdersBySupplierExport(
                 Arg.Any<OrdersBySupplierSearchResource>(),
                 Arg.Any<IEnumerable<string>>());
         }
@@ -75,13 +75,5 @@
         {
             this.Response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
-
-        //[Test]
-        //public void ShouldReturnExport()
-        //{
-        //    var resource = this.Response.DeserializeBody<I>();
-        //    resource.ReportResults.First().title.displayString.Should().Be("potat");
-        //    resource.ReportResults.First().results.First().values.First().textDisplayValue.Should().Be("ramen noodles");
-        //}
     }
 }
