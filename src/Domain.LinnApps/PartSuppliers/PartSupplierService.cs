@@ -286,7 +286,7 @@
             part.PreferredSupplier = newPartSupplier.Supplier;
             
             // if this is the first time a preferred supplier is chosen for this part
-            if (prevPart.PreferredSupplier == null)
+            if (prevPart.BaseUnitPrice.GetValueOrDefault() == 0)
             {
                 var newCurrency = this.currencyRepository.FindById(candidate.NewCurrency.Code);
 
