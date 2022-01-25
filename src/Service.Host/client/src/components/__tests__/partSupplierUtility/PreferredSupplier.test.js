@@ -29,7 +29,13 @@ const state = {
     partSuppliers: {
         searchItems: [
             { supplierId: 1, supplierName: 'THE SUPPLIER' },
-            { supplierId: 2, supplierName: 'NEW SUPPLIER' }
+            {
+                supplierId: 2,
+                supplierName: 'NEW SUPPLIER',
+                currencyUnitPrice: 123,
+                baseOurUnitPrice: 456,
+                currencyCode: 'USD'
+            }
         ]
     },
     currencies: {
@@ -175,15 +181,6 @@ describe('When Part already has a preferred supplier...', () => {
         const reasonDropdown = screen.getByLabelText('Reason');
         fireEvent.change(reasonDropdown, { target: { value: 'NEW' } });
 
-        const newPrice = screen.getByLabelText('New Price');
-        fireEvent.change(newPrice, { target: { value: 321 } });
-
-        const baseNewPrice = screen.getByLabelText('Base New Price');
-        fireEvent.change(baseNewPrice, { target: { value: 567 } });
-
-        const currencyDropdown = screen.getByLabelText('New Currency');
-        fireEvent.change(currencyDropdown, { target: { value: 'USD' } });
-
         fireEvent.click(saveButton);
 
         expect(addPreferredSupplierSpy).toHaveBeenCalledWith(
@@ -191,8 +188,9 @@ describe('When Part already has a preferred supplier...', () => {
                 remarks: 'REMARKABLE',
                 newSupplierId: 2,
                 changeReasonCode: 'NEW',
-                newPrice: 321,
-                baseNewPrice: 567,
+                // the below fields come from the new supplier
+                newPrice: 123,
+                baseNewPrice: 456,
                 newCurrency: 'USD'
             })
         );

@@ -81,6 +81,22 @@ function PreferredSupplier({
 
     const [formData, setFormData] = useState({});
 
+    useEffect(() => {
+        if (formData?.newSupplierId) {
+            const selectedSupplier = suppliers?.find(
+                x => x.supplierId === Number(formData.newSupplierId)
+            );
+            if (selectedSupplier) {
+                setFormData(d => ({
+                    ...d,
+                    newPrice: selectedSupplier.currencyUnitPrice,
+                    newCurrency: selectedSupplier.currencyCode,
+                    baseNewPrice: selectedSupplier.baseOurUnitPrice
+                }));
+            }
+        }
+    }, [formData?.newSupplierId, suppliers]);
+
     const [saveDisabled, setSaveDisabled] = useState(true);
 
     const handleFieldChange = (propertyName, newValue) => {
@@ -216,6 +232,41 @@ function PreferredSupplier({
                 />
             </Grid>
             <Grid item xs={6} />
+            <Grid item xs={4}>
+                <InputField
+                    fullWidth
+                    value={formData?.newPrice}
+                    label="New Price"
+                    propertyName="newPrice"
+                    type="number"
+                    disabled
+                    onChange={handleFieldChange}
+                />
+            </Grid>
+            <Grid item xs={4}>
+                <InputField
+                    fullWidth
+                    value={formData?.baseNewPrice}
+                    label="Base New Price"
+                    propertyName="baseNewPrice"
+                    type="number"
+                    disabled
+                    onChange={handleFieldChange}
+                />
+            </Grid>
+            <Grid item xs={4}>
+                <Dropdown
+                    value={formData?.newCurrency}
+                    propertyName="newCurrency"
+                    label="New Currency"
+                    items={currencies.map(s => ({
+                        id: s.code,
+                        displayText: s.name
+                    }))}
+                    onChange={handleFieldChange}
+                    disabled
+                />
+            </Grid>
             {formData?.newSupplierId &&
                 bomType === 'A' &&
                 Number(formData?.newSupplierId) !== 4415 && (
@@ -248,40 +299,6 @@ function PreferredSupplier({
                     onChange={handleFieldChange}
                 />
             </Grid>
-
-            <Grid item xs={4}>
-                <InputField
-                    fullWidth
-                    value={formData?.newPrice}
-                    label="New Price"
-                    propertyName="newPrice"
-                    type="number"
-                    onChange={handleFieldChange}
-                />
-            </Grid>
-            <Grid item xs={4}>
-                <InputField
-                    fullWidth
-                    value={formData?.baseNewPrice}
-                    label="Base New Price"
-                    propertyName="baseNewPrice"
-                    type="number"
-                    onChange={handleFieldChange}
-                />
-            </Grid>
-            <Grid item xs={4}>
-                <Dropdown
-                    value={formData?.newCurrency}
-                    propertyName="newCurrency"
-                    label="New Currency"
-                    items={currencies.map(s => ({
-                        id: s.code,
-                        displayText: s.name
-                    }))}
-                    onChange={handleFieldChange}
-                />
-            </Grid>
-
             <Grid item xs={12}>
                 <SaveBackCancelButtons
                     cancelClick={close}
