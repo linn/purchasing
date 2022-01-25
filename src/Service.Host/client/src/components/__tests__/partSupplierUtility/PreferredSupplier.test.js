@@ -116,6 +116,25 @@ describe('When result Loading...', () => {
     });
 });
 
+describe('When changePreferredSupplier error...', () => {
+    beforeEach(() => {
+        const loadingState = {
+            preferredSupplierChange: { loading: false },
+            errors: {
+                itemErrors: [{ item: 'preferredSupplierChange', details: 'An Error Occurred' }]
+            }
+        };
+        cleanup();
+        jest.clearAllMocks();
+        useSelector.mockImplementation(callback => callback(loadingState));
+        render(<PreferredSupplier partNumber={partNumber} partLoading={false} />);
+    });
+
+    test('Should render ErrorCard', () => {
+        expect(screen.getByText('An Error Occurred')).toBeInTheDocument();
+    });
+});
+
 describe('When Part already has a preferred supplier...', () => {
     beforeEach(() => {
         cleanup();
