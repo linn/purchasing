@@ -163,68 +163,7 @@ describe('When Part already has a preferred supplier...', () => {
         expect(screen.getByDisplayValue('USD')).toBeDisabled();
     });
 
-    test('Should not render price input fields', () => {
-        expect(screen.queryByLabelText('New Price')).not.toBeInTheDocument();
-        expect(screen.queryByLabelText('Base New Price')).not.toBeInTheDocument();
-        expect(screen.queryByLabelText('New Currency')).not.toBeInTheDocument();
-    });
-
     test('Should allow new supplier to be saved', () => {
-        const saveButton = screen.getByRole('button', { name: 'Save' });
-        const supplierDropdown = screen.getByLabelText('Select a New Supplier');
-        fireEvent.change(supplierDropdown, { target: { value: 2 } });
-        expect(saveButton).not.toHaveClass('Mui-disabled');
-
-        const remarks = screen.getByLabelText('Remarks');
-        fireEvent.change(remarks, { target: { value: 'REMARKABLE' } });
-
-        const reasonDropdown = screen.getByLabelText('Reason');
-        fireEvent.change(reasonDropdown, { target: { value: 'NEW' } });
-
-        fireEvent.click(saveButton);
-
-        expect(addPreferredSupplierSpy).toHaveBeenCalledWith(
-            expect.objectContaining({
-                remarks: 'REMARKABLE',
-                newSupplierId: 2,
-                changeReasonCode: 'NEW'
-            })
-        );
-    });
-});
-
-describe('When Part bomType A and not new Supplier not 4415 (Linn)...', () => {
-    beforeEach(() => {
-        cleanup();
-        jest.clearAllMocks();
-        useSelector.mockImplementation(callback => callback(state));
-        render(<PreferredSupplier partNumber={partNumber} bomType="A" />);
-        const supplierDropdown = screen.getByLabelText('Select a New Supplier');
-        fireEvent.change(supplierDropdown, { target: { value: 2 } });
-    });
-
-    test('Should show message', () => {
-        expect(
-            screen.getByText('Tell production to put a labour price on this.')
-        ).toBeInTheDocument();
-    });
-});
-
-describe('When Part has no preferred supplier...', () => {
-    beforeEach(() => {
-        cleanup();
-        jest.clearAllMocks();
-        useSelector.mockImplementation(callback => callback(state));
-        render(<PreferredSupplier partNumber={partNumber} />);
-    });
-
-    test('Should render price input fields', () => {
-        expect(screen.queryByLabelText('New Price')).toBeInTheDocument();
-        expect(screen.queryByLabelText('Base New Price')).toBeInTheDocument();
-        expect(screen.queryByLabelText('New Currency')).toBeInTheDocument();
-    });
-
-    test('Should allow new supplier to be saved with prices', () => {
         const saveButton = screen.getByRole('button', { name: 'Save' });
         const supplierDropdown = screen.getByLabelText('Select a New Supplier');
         fireEvent.change(supplierDropdown, { target: { value: 2 } });
@@ -257,5 +196,22 @@ describe('When Part has no preferred supplier...', () => {
                 newCurrency: 'USD'
             })
         );
+    });
+});
+
+describe('When Part bomType A and not new Supplier not 4415 (Linn)...', () => {
+    beforeEach(() => {
+        cleanup();
+        jest.clearAllMocks();
+        useSelector.mockImplementation(callback => callback(state));
+        render(<PreferredSupplier partNumber={partNumber} bomType="A" />);
+        const supplierDropdown = screen.getByLabelText('Select a New Supplier');
+        fireEvent.change(supplierDropdown, { target: { value: 2 } });
+    });
+
+    test('Should show message', () => {
+        expect(
+            screen.getByText('Tell production to put a labour price on this.')
+        ).toBeInTheDocument();
     });
 });

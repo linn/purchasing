@@ -248,42 +248,40 @@ function PreferredSupplier({
                     onChange={handleFieldChange}
                 />
             </Grid>
-            {!oldSupplierId && (
-                <>
-                    <Grid item xs={4}>
-                        <InputField
-                            fullWidth
-                            value={formData?.newPrice}
-                            label="New Price"
-                            propertyName="newPrice"
-                            type="number"
-                            onChange={handleFieldChange}
-                        />
-                    </Grid>
-                    <Grid item xs={4}>
-                        <InputField
-                            fullWidth
-                            value={formData?.baseNewPrice}
-                            label="Base New Price"
-                            propertyName="baseNewPrice"
-                            type="number"
-                            onChange={handleFieldChange}
-                        />
-                    </Grid>
-                    <Grid item xs={4}>
-                        <Dropdown
-                            value={formData?.newCurrency}
-                            propertyName="newCurrency"
-                            label="New Currency"
-                            items={currencies.map(s => ({
-                                id: s.code,
-                                displayText: s.name
-                            }))}
-                            onChange={handleFieldChange}
-                        />
-                    </Grid>
-                </>
-            )}
+
+            <Grid item xs={4}>
+                <InputField
+                    fullWidth
+                    value={formData?.newPrice}
+                    label="New Price"
+                    propertyName="newPrice"
+                    type="number"
+                    onChange={handleFieldChange}
+                />
+            </Grid>
+            <Grid item xs={4}>
+                <InputField
+                    fullWidth
+                    value={formData?.baseNewPrice}
+                    label="Base New Price"
+                    propertyName="baseNewPrice"
+                    type="number"
+                    onChange={handleFieldChange}
+                />
+            </Grid>
+            <Grid item xs={4}>
+                <Dropdown
+                    value={formData?.newCurrency}
+                    propertyName="newCurrency"
+                    label="New Currency"
+                    items={currencies.map(s => ({
+                        id: s.code,
+                        displayText: s.name
+                    }))}
+                    onChange={handleFieldChange}
+                />
+            </Grid>
+
             <Grid item xs={12}>
                 <SaveBackCancelButtons
                     cancelClick={close}
