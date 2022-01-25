@@ -4,20 +4,14 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
-import { cleanup, screen, fireEvent } from '@testing-library/react';
+import { cleanup, screen } from '@testing-library/react';
 import render from '../../../test-utils';
-
-import suppliersActions from '../../../actions/suppliersActions';
 import OrdersBySupplierOptions from '../../reports/OrdersBySupplierOptions';
-
-// import * as itemTypes from '../../../itemTypes';
 
 jest.mock('react-redux', () => ({
     ...jest.requireActual('react-redux'),
     useSelector: jest.fn()
 }));
-
-const searchSuppliersActionSpy = jest.spyOn(suppliersActions, 'search');
 
 const state = {
     oidc: { user: { profile: { name: 'User Name', employee: '/employees/33087' } } },
@@ -55,22 +49,4 @@ describe('When component mounts...', () => {
 
         expect(screen.getByText('Run Report')).toBeInTheDocument();
     });
-
-    // test('Displays search fields with correct default values...', () => {
-    //     const supplierSearchContainer = screen.getByTestId('supplierSearch');
-    //     const searchInput = within(supplierSearchContainer).getByRole('input');
-
-    //     // var button = screen.getByLabelText('Run Report');
-    //     fireEvent.click(searchInput);
-    //     expect(screen.getByLabelText('Search for a supplier')).toBeInTheDocument();
-
-        
-
-    //     // expect(addItemActionSpy).toHaveBeenCalledTimes(1);
-    //     // expect(addItemActionSpy).toHaveBeenCalledWith(
-    //     //     expect.objectContaining({ createdBy: 33087 })
-    //     // );
-    //     // searchSuppliersActionSpy
-
-    // });
 });
