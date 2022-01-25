@@ -50,6 +50,7 @@ const fetchCurrenciesSpy = jest.spyOn(currenciesActions, 'fetch');
 const fetchReasonsSpy = jest.spyOn(priceChangeReasonsActions, 'fetch');
 const fetchPartSuppliersSpy = jest.spyOn(partSuppliersActions, 'searchWithOptions');
 const addPreferredSupplierSpy = jest.spyOn(preferredSupplierChangeActions, 'add');
+const clearErrorsSpy = jest.spyOn(preferredSupplierChangeActions, 'clearErrorsForItem');
 
 describe('When component mounts...', () => {
     beforeEach(() => {
@@ -63,6 +64,7 @@ describe('When component mounts...', () => {
         expect(fetchCurrenciesSpy).toBeCalledTimes(1);
         expect(fetchReasonsSpy).toBeCalledTimes(1);
         expect(fetchPartSuppliersSpy).toBeCalledTimes(1);
+        expect(clearErrorsSpy).toBeCalledTimes(1);
         expect(fetchPartSuppliersSpy).toBeCalledWith(
             null,
             `&partNumber=${partNumber}&supplierName=`
