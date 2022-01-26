@@ -1,4 +1,4 @@
-﻿namespace Linn.Stores.Proxy
+﻿namespace Linn.Purchasing.Proxy
 {
     using System.Data;
 

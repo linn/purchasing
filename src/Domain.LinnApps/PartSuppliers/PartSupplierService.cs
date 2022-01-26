@@ -11,6 +11,8 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
+    using MimeKit;
+
     public class PartSupplierService : IPartSupplierService
     {
         private readonly IAuthorisationService authService;
@@ -244,8 +246,19 @@
                 throw new PartSupplierException("You cannot set a preferred supplier for phantoms");
             }
 
+            if (part.BomType == "C" && candidate.NewSupplier.SupplierId == 4415)
+            {
+                throw new PartSupplierException("Linn Cannot Supply Components");
+            }
+
             if (candidate.OldSupplier != null)
             {
+                if (candidate.NewSupplier.SupplierId == candidate.OldSupplier.SupplierId)
+                {
+                    throw new PartSupplierException(
+                        "Selected  supplier is already the preferred supplier for this part.");
+                }
+
                 var oldPartSupplier = this.partSupplierRepository.FindById(
                     new PartSupplierKey { PartNumber = part.PartNumber, SupplierId = candidate.OldSupplier.SupplierId });
                 oldPartSupplier.SupplierRanking = 2;
@@ -253,6 +266,14 @@
             
             var newPartSupplier = this.partSupplierRepository.FindById(
                 new PartSupplierKey { PartNumber = part.PartNumber, SupplierId = candidate.NewSupplier.SupplierId });
+
+            if (!newPartSupplier.Supplier.Planner.HasValue
+                || string.IsNullOrEmpty(newPartSupplier.Supplier.VendorManager))
+            {
+                throw new PartSupplierException(
+                    "Selected supplier is missing planner or vendor manager");
+            }
+
             newPartSupplier.SupplierRanking = 1;
 
 

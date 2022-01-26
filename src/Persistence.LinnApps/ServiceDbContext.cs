@@ -238,6 +238,8 @@
             entity.Property(a => a.SupplierId).HasColumnName("SUPPLIER_ID");
             entity.Property(a => a.Name).HasColumnName("SUPPLIER_NAME").HasMaxLength(50);
             entity.Property(a => a.LedgerStream).HasColumnName("LEDGER_STREAM");
+            entity.Property(a => a.Planner).HasColumnName("PLANNER");
+            entity.Property(a => a.VendorManager).HasColumnName("VENDOR_MANAGER").HasMaxLength(1);
         }
 
         private void BuildOrderMethods(ModelBuilder builder)

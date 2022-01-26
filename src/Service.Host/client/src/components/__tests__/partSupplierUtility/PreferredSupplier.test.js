@@ -126,7 +126,7 @@ describe('When result Loading...', () => {
 
 describe('When changePreferredSupplier error...', () => {
     beforeEach(() => {
-        const loadingState = {
+        const errorState = {
             preferredSupplierChange: { loading: false },
             errors: {
                 itemErrors: [{ item: 'preferredSupplierChange', details: 'An Error Occurred' }]
@@ -134,7 +134,7 @@ describe('When changePreferredSupplier error...', () => {
         };
         cleanup();
         jest.clearAllMocks();
-        useSelector.mockImplementation(callback => callback(loadingState));
+        useSelector.mockImplementation(callback => callback(errorState));
         render(<PreferredSupplier partNumber={partNumber} partLoading={false} />);
     });
 
@@ -173,7 +173,7 @@ describe('When Part already has a preferred supplier...', () => {
         const saveButton = screen.getByRole('button', { name: 'Save' });
         const supplierDropdown = screen.getByLabelText('Select a New Supplier');
         fireEvent.change(supplierDropdown, { target: { value: 2 } });
-        expect(saveButton).not.toHaveClass('Mui-disabled');
+        expect(saveButton).not.toBeDisabled();
 
         const remarks = screen.getByLabelText('Remarks');
         fireEvent.change(remarks, { target: { value: 'REMARKABLE' } });
