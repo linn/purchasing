@@ -1,5 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps
 {
+    using System.Collections.Generic;
+
     public class PurchaseOrderDetail
     {
         public string Cancelled { get; set; }
@@ -14,7 +16,7 @@
 
         public string PartNumber { get; set; }
 
-        public PurchaseOrderDelivery PurchaseDelivery { get; set; }
+        public IEnumerable<PurchaseOrderDelivery> PurchaseDeliveries { get; set; }
 
         public PurchaseOrder PurchaseOrder { get; set; }
 

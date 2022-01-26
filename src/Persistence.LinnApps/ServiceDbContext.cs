@@ -303,12 +303,10 @@
             entity.Property(o => o.OurQty).HasColumnName("OUR_QTY");
             entity.Property(o => o.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
             entity.Property(o => o.SuppliersDesignation).HasColumnName("SUPPLIERS_DESIGNATION").HasMaxLength(2000);
-
             entity.HasOne(d => d.PurchaseOrder).WithMany(o => o.Details)
                 .HasForeignKey(d => d.OrderNumber);
-
-            entity.HasOne(d => d.PurchaseDelivery).WithOne(o => o.PurchaseOrderDetail)
-                .HasForeignKey<PurchaseOrderDelivery>(o => new { o.OrderNumber, o.OrderLine });
+            entity.HasMany(d => d.PurchaseDeliveries).WithOne(o => o.PurchaseOrderDetail)
+                .HasForeignKey(o => new { o.OrderNumber, o.OrderLine });
             entity.Property(o => o.NetTotal).HasColumnName("NET_TOTAL").HasMaxLength(18);
         }
 
@@ -328,7 +326,7 @@
             entity.Property(o => o.OrderDeliveryQty).HasColumnName("ORDER_DELIVERY_QTY").HasMaxLength(19);
             entity.Property(o => o.QtyNetReceived).HasColumnName("QTY_NET_RECEIVED").HasMaxLength(19);
 
-            entity.HasOne(d => d.PurchaseOrderDetail).WithOne(o => o.PurchaseDelivery);
+            entity.HasOne(d => d.PurchaseOrderDetail).WithMany(o => o.PurchaseDeliveries);
             entity.Property(o => o.NetTotal).HasColumnName("NET_TOTAL").HasMaxLength(18);
         }
 

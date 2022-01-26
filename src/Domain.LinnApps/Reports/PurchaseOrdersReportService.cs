@@ -93,30 +93,34 @@
                         continue;
                     }
 
-                    if (!includeCancelled &&
-                        (orderDetail.Cancelled == "Y" || orderDetail.PurchaseDelivery.Cancelled == "Y"))
+                    foreach (var delivery in orderDetail.PurchaseDeliveries)
                     {
-                        continue;
+
+                        if (!includeCancelled
+                            && (orderDetail.Cancelled == "Y" || delivery.Cancelled == "Y"))
+                        {
+                            continue;
+                        }
+
+                        var part = this.partRepository.FindBy(x => x.PartNumber == orderDetail.PartNumber);
+                        if (stockControlled != "A" && ((stockControlled == "N" && part.StockControlled == "N")
+                                                       || (stockControlled == "O" && part.StockControlled != "Y")))
+                        {
+                            continue;
+                        }
+
+                        var ledgersForOrderAndLine = this.purchaseLedgerRepository.FilterBy(
+                            pl => pl.OrderNumber == order.OrderNumber && pl.OrderLine == orderDetail.Line);
+
+                        var ledgerQtys = ledgersForOrderAndLine.Select(
+                            x => x.PlQuantity.HasValue
+                                     ? new { TransType = x.TransactionType.DebitOrCredit, Qty = x.PlQuantity.Value }
+                                     : null).ToList();
+
+                        var totalLedgerQty = ledgerQtys.Sum(x => x.TransType == "C" ? x.Qty : -x.Qty);
+
+                        this.ExtractDetails(values, orderDetail, delivery, totalLedgerQty);
                     }
-
-                    var part = this.partRepository.FindBy(x => x.PartNumber == orderDetail.PartNumber);
-                    if (stockControlled != "A" && ((stockControlled == "N" && part.StockControlled == "N")
-                                               || (stockControlled == "O" && part.StockControlled != "Y")))
-                    {
-                        continue;
-                    }
-
-                    var ledgersForOrderAndLine = this.purchaseLedgerRepository.FilterBy(
-                        pl => pl.OrderNumber == order.OrderNumber && pl.OrderLine == orderDetail.Line);
-
-                    var ledgerQtys = ledgersForOrderAndLine.Select(
-                        x => x.PlQuantity.HasValue
-                                 ? new { TransType = x.TransactionType.DebitOrCredit, Qty = x.PlQuantity.Value }
-                                 : null).ToList();
-
-                    var totalLedgerQty = ledgerQtys.Sum(x => x.TransType == "C" ? x.Qty : -x.Qty);
-
-                    this.ExtractDetails(values, order, orderDetail, totalLedgerQty);
                 }
             }
 
@@ -157,17 +161,17 @@
 
         private void ExtractDetails(
             ICollection<CalculationValueModel> values,
-            PurchaseOrder purchaseOrder,
             PurchaseOrderDetail orderDetail,
+            PurchaseOrderDelivery delivery,
             decimal ledgerQty)
         {
-            var currentRowId = $"{purchaseOrder.OrderNumber}/{orderDetail.Line}";
+            var currentRowId = $"{orderDetail.OrderNumber}/{orderDetail.Line}";
             values.Add(
                 new CalculationValueModel
                     {
                         RowId = currentRowId,
                         ColumnId = "OrderLine",
-                        TextDisplay = $"{purchaseOrder.OrderNumber}/{orderDetail.Line}"
+                        TextDisplay = $"{orderDetail.OrderNumber}/{orderDetail.Line}"
                     });
 
             values.Add(
@@ -197,7 +201,7 @@
                     {
                         RowId = currentRowId,
                         ColumnId = "QtyRec",
-                        TextDisplay = orderDetail.PurchaseDelivery.QtyNetReceived.ToString()
+                        TextDisplay = delivery.QtyNetReceived.ToString()
                     });
 
             values.Add(
@@ -217,7 +221,7 @@
                     {
                         RowId = currentRowId,
                         ColumnId = "Delivery",
-                        TextDisplay = $"{orderDetail.PurchaseDelivery.DeliverySeq}"
+                        TextDisplay = $"{delivery.DeliverySeq}"
                     });
 
             values.Add(
@@ -225,7 +229,7 @@
                     {
                         RowId = currentRowId,
                         ColumnId = "Qty",
-                        TextDisplay = $"{orderDetail.PurchaseDelivery.OurDeliveryQty}"
+                        TextDisplay = $"{delivery.OurDeliveryQty}"
                     });
 
             values.Add(
@@ -233,7 +237,7 @@
                     {
                         RowId = currentRowId,
                         ColumnId = "ReqDate",
-                        TextDisplay = orderDetail.PurchaseDelivery.DateRequested.ToString("dd-MMM-yyyy")
+                        TextDisplay = delivery.DateRequested.ToString("dd-MMM-yyyy")
                     });
 
             values.Add(
@@ -241,7 +245,7 @@
                     {
                         RowId = currentRowId,
                         ColumnId = "AdvisedDate",
-                        TextDisplay = orderDetail.PurchaseDelivery.DateAdvised.ToString("dd-MMM-yyyy")
+                        TextDisplay = delivery.DateAdvised.ToString("dd-MMM-yyyy")
                     });
         }
     }
