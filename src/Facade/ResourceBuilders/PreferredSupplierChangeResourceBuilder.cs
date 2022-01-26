@@ -23,8 +23,8 @@
         {
             return new PreferredSupplierChangeResource
                        {
-                           ChangeReasonCode = entity.ChangeReason.ReasonCode,
-                           ChangeReasonDescription = entity.ChangeReason.Description,
+                           ChangeReasonCode = entity.ChangeReason?.ReasonCode,
+                           ChangeReasonDescription = entity.ChangeReason?.Description,
                            ChangedById = entity.ChangedBy.Id,
                            ChangedByName = entity.ChangedBy.FullName,
                            OldCurrencyCode = entity.OldCurrency.Code,
@@ -33,8 +33,8 @@
                            NewSupplierId = entity.NewSupplier.SupplierId,
                            NewSupplierName = entity.NewSupplier.Name,
                            OldPrice = entity.OldPrice,
-                           OldSupplierId = entity.OldSupplier.SupplierId,
-                           OldSupplierName = entity.OldSupplier.Name,
+                           OldSupplierId = entity.OldSupplier?.SupplierId,
+                           OldSupplierName = entity.OldSupplier?.Name,
                            PartNumber = entity.PartNumber,
                            Remarks = entity.Remarks
                            //Links = this.BuildLinks()

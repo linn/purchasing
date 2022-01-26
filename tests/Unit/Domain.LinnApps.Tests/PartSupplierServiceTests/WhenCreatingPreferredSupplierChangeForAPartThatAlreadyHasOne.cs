@@ -48,7 +48,7 @@
                                  {
                                      PartNumber = "PART",
                                      OldSupplier = new Supplier { SupplierId = 1 },
-                                     NewSupplier = new Supplier { SupplierId = 2 },
+                                     NewSupplier = new Supplier { SupplierId = 2, VendorManager = "A", Planner = 1 },
                                      ChangeReason = new PriceChangeReason { ReasonCode = "CHG", Description = "DESC" },
                                      ChangedBy = new Employee { Id = 33087 },
                                      Remarks = "REMARKS",
@@ -144,7 +144,7 @@
                 && x.OldMaterialPrice == 1m
                 && x.OldLabourPrice == 2m
                 && x.NewMaterialPrice == 1m
-                && x.NewLabourPrice == 0m
+                && x.NewLabourPrice == 2m
                 && x.OldPreferredSupplierId == 1
                 && x.NewPreferredSupplierId == 2
                 && x.OldBomType == "A"

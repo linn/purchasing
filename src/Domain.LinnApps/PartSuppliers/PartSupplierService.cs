@@ -244,13 +244,36 @@
                 throw new PartSupplierException("You cannot set a preferred supplier for phantoms");
             }
 
-            var oldPartSupplier = this.partSupplierRepository.FindById(
-                new PartSupplierKey { PartNumber = part.PartNumber, SupplierId = candidate.OldSupplier.SupplierId });
-            oldPartSupplier.SupplierRanking = 2;
+            if (part.BomType == "C" && candidate.NewSupplier.SupplierId == 4415)
+            {
+                throw new PartSupplierException("Linn Cannot Supply Components");
+            }
 
+            if (candidate.OldSupplier != null)
+            {
+                if (candidate.NewSupplier.SupplierId == candidate.OldSupplier.SupplierId)
+                {
+                    throw new PartSupplierException(
+                        "Selected  supplier is already the preferred supplier for this part.");
+                }
+
+                var oldPartSupplier = this.partSupplierRepository.FindById(
+                    new PartSupplierKey { PartNumber = part.PartNumber, SupplierId = candidate.OldSupplier.SupplierId });
+                oldPartSupplier.SupplierRanking = 2;
+            }
+            
             var newPartSupplier = this.partSupplierRepository.FindById(
                 new PartSupplierKey { PartNumber = part.PartNumber, SupplierId = candidate.NewSupplier.SupplierId });
+
+            if (!newPartSupplier.Supplier.Planner.HasValue
+                || string.IsNullOrEmpty(newPartSupplier.Supplier.VendorManager))
+            {
+                throw new PartSupplierException(
+                    "Selected supplier is missing planner or vendor manager");
+            }
+
             newPartSupplier.SupplierRanking = 1;
+
 
             candidate.OldSupplier = prevPart.PreferredSupplier;
             candidate.OldPrice = prevPart.CurrencyUnitPrice;
@@ -267,22 +290,32 @@
 
             candidate.Seq = entriesForThisPart.Any() ? entriesForThisPart.Max(x => x.Seq) + 1 : 1;
 
+            decimal? labourPrice;
+
             // update Part
-            if (!(part.BomType.Equals("A") && newPartSupplier.SupplierId == 4415))
+            if (part.BomType.Equals("A") && newPartSupplier.SupplierId != 4415)
             {
-                part.LabourPrice = 0;
+                labourPrice = part.LabourPrice ?? 0m;
+            }
+            else
+            {
+                labourPrice = 0m;
             }
 
             part.PreferredSupplier = newPartSupplier.Supplier;
             
             // if this is the first time a preferred supplier is chosen for this part
-            if (prevPart.PreferredSupplier == null)
+            if (prevPart.BaseUnitPrice.GetValueOrDefault() == 0)
             {
+                var newCurrency = this.currencyRepository.FindById(candidate.NewCurrency.Code);
+
                 // set prices
                 part.MaterialPrice = candidate.BaseNewPrice;
-                part.Currency = candidate.NewCurrency;
+                part.Currency = newCurrency;
                 part.CurrencyUnitPrice = candidate.NewPrice;
                 part.BaseUnitPrice = candidate.BaseNewPrice;
+                part.LabourPrice = labourPrice;
+                candidate.NewCurrency = newCurrency;
             }
             else
             {
@@ -302,7 +335,7 @@
                                          OldMaterialPrice = prevPart.MaterialPrice,
                                          OldLabourPrice = prevPart.LabourPrice,
                                          NewMaterialPrice = part.MaterialPrice,
-                                         NewLabourPrice = part.LabourPrice,
+                                         NewLabourPrice = labourPrice,
                                          OldPreferredSupplierId = prevPart.PreferredSupplier?.SupplierId,
                                          NewPreferredSupplierId = candidate.NewSupplier.SupplierId,
                                          OldBomType = prevPart.BomType,
@@ -310,7 +343,7 @@
                                          ChangedBy = candidate.ChangedBy.Id,
                                          ChangeType = "PREFSUP",
                                          Remarks = candidate.Remarks,
-                                         PriceChangeReason = candidate.ChangeReason.ReasonCode,
+                                         PriceChangeReason = candidate.ChangeReason?.ReasonCode,
                                          OldCurrency = prevPart.Currency?.Code,
                                          NewCurrency = part.Currency.Code,
                                          OldCurrencyUnitPrice = prevPart.CurrencyUnitPrice,

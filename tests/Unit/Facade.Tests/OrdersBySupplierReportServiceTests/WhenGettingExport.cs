@@ -17,7 +17,7 @@
     {
         private readonly int supplierId = 71234;
 
-        private MemoryStream resultsStream;
+        private Stream resultsStream;
 
         [SetUp]
         public void SetUp()
@@ -41,7 +41,7 @@
                             ReportTitle = new NameModel("Purchase Orders By Supplier - 71234: Dwight K Schrute")
                         });
 
-            this.resultsStream = (MemoryStream)this.Sut.GetOrdersBySupplierExport(resource, new List<string>());
+            this.resultsStream = this.Sut.GetOrdersBySupplierExport(resource, new List<string>());
         }
 
         [Test]

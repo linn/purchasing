@@ -42,7 +42,8 @@
                 .AddTransient<IHandler, JsonResultHandler<ReportReturnResource>>()
                 .AddTransient<IHandler, JsonResultHandler<PreferredSupplierChangeResource>>()
                 .AddTransient<IHandler, JsonResultHandler<PriceChangeReasonResource>>()
-                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PriceChangeReasonResource>>>();
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PriceChangeReasonResource>>>()
+                .AddTransient<IHandler, JsonResultHandler<PartPriceConversionsResource>>();
         }
     }
 }
