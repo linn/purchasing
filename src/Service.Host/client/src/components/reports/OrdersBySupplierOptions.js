@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import {
@@ -11,6 +11,7 @@ import {
     reportSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
+import queryString from 'query-string';
 import history from '../../history';
 import config from '../../config';
 import suppliersActions from '../../actions/suppliersActions';
@@ -27,7 +28,7 @@ function OrdersBySupplierReportOptions() {
         collectionSelectorHelpers.getSearchLoading(state.suppliers)
     );
     const prevOptions = useSelector(state =>
-        reportSelectorHelpers.getReportOptions(state.suppliers)
+        reportSelectorHelpers.getReportOptions(state.ordersBySupplier)
     );
 
     const dispatch = useDispatch();
@@ -42,12 +43,22 @@ function OrdersBySupplierReportOptions() {
         prevOptions?.toDate ? new Date(prevOptions?.toDate) : new Date()
     );
 
-    const [supplier, setSupplier] = useState({ id: '', name: 'click to set supplier' });
-    const [outstandingOnly, setOutstandingOnly] = useState('N');
-    const [returns, setReturns] = useState('N');
-    const [stockControlled, setStockControlled] = useState('A');
-    const [credits, setCredits] = useState('N');
-    const [cancelled, setCancelled] = useState('N');
+    const [supplier, setSupplier] = useState(
+        prevOptions?.id
+            ? { id: prevOptions.id, name: '' }
+            : { id: '', name: 'click to set supplier' }
+    );
+    const [outstandingOnly, setOutstandingOnly] = useState(
+        prevOptions?.outstanding ? prevOptions.outstanding : 'N'
+    );
+    const [returns, setReturns] = useState(prevOptions?.returns ? prevOptions.returns : 'N');
+    const [stockControlled, setStockControlled] = useState(
+        prevOptions?.stockControlled ? prevOptions.stockControlled : 'A'
+    );
+    const [credits, setCredits] = useState(prevOptions?.credits ? prevOptions.credits : 'N');
+    const [cancelled, setCancelled] = useState(
+        prevOptions?.cancelled ? prevOptions.cancelled : 'N'
+    );
 
     const handleSupplierChange = selectedsupplier => {
         setSupplier(selectedsupplier);
