@@ -41,7 +41,11 @@ function OrdersByPartReportOptions() {
         prevOptions?.toDate ? new Date(prevOptions?.toDate) : new Date()
     );
 
-    const [part, setPart] = useState({ partNumber: '', name: 'click to set part' });
+    const [part, setPart] = useState(
+        prevOptions?.toDate
+            ? { partNumber: prevOptions.partNumber }
+            : { partNumber: 'click to set part' }
+    );
     const [cancelled, setCancelled] = useState('N');
 
     const handlePartChange = selectedPart => {
@@ -60,7 +64,7 @@ function OrdersByPartReportOptions() {
 
     return (
         <Page history={history} homeUrl={config.appRoot} width="s">
-            <Title text="Orders By Supplier" />
+            <Title text="Orders By Part" />
             <Grid container spacing={3} justifyContent="center">
                 <Grid item xs={12}>
                     <Typeahead
