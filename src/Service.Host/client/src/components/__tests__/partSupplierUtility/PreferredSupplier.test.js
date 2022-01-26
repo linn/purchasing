@@ -189,8 +189,8 @@ describe('When Part already has a preferred supplier...', () => {
                 newSupplierId: 2,
                 changeReasonCode: 'NEW',
                 // the below fields come from the new supplier
-                newPrice: 123,
-                baseNewPrice: 456,
+                // newPrice: 123,
+                // baseNewPrice: 456,
                 newCurrency: 'USD'
             })
         );
