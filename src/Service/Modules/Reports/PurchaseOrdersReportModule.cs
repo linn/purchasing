@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Service.Modules.Reports
 {
+    using System.IO;
     using System.Net.Mime;
     using System.Threading.Tasks;
 
@@ -7,6 +8,7 @@
     using Carter.Request;
     using Carter.Response;
 
+    using Linn.Common.Facade;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.Extensions;
@@ -44,9 +46,16 @@
             resource.Credits = req.Query.As<string>("Credits");
             resource.StockControlled = req.Query.As<string>("StockControlled");
 
-            var resultsStream = this.purchaseOrderReportFacadeService.GetOrdersBySupplierExport(
+            using MemoryStream stream = new();
+
+            var result = this.purchaseOrderReportFacadeService.GetOrdersBySupplierExport(
                 resource,
-                req.HttpContext.GetPrivileges());
+                req.HttpContext.GetPrivileges(), stream);
+
+            if (!(result is SuccessResult<bool>))
+            {
+                await res.Negotiate(result);
+            }
 
             var contentDisposition = new ContentDisposition
                                          {
@@ -54,8 +63,8 @@
                                                  $"ordersBySupplier{resource.From.Substring(0, 10)}_To_{resource.To.Substring(0, 10)}.csv"
                                          };
 
-            resultsStream.Position = 0;
-            await res.FromStream(resultsStream, "text/csv", contentDisposition);
+            stream.Position = 0;
+            await res.FromStream(stream, "text/csv", contentDisposition);
         }
 
         private async Task GetOrdersBySupplierReport(HttpRequest req, HttpResponse res)

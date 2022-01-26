@@ -13,8 +13,9 @@
             OrdersBySupplierSearchResource resource,
             IEnumerable<string> privileges);
 
-        MemoryStream GetOrdersBySupplierExport(
+        IResult<bool> GetOrdersBySupplierExport(
             OrdersBySupplierSearchResource resource,
-            IEnumerable<string> privileges);
+            IEnumerable<string> privileges,
+            MemoryStream stream);
     }
 }
