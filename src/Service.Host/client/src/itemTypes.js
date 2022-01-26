@@ -80,3 +80,9 @@ export const priceChangeReasons = new ItemType(
     'PRICE_CHANGE_REASONS',
     '/purchasing/price-change-reasons'
 );
+
+export const partPriceConversions = new ItemType(
+    'partPriceConversions',
+    'PART_PRICE_CONVERSIONS',
+    '/purchasing/part-suppliers/part-price-conversions'
+);

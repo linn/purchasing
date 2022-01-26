@@ -19,6 +19,8 @@ import preferredSupplierChangeActions from '../../actions/preferredSupplierChang
 import currenciesActions from '../../actions/currenciesActions';
 import partSuppliersActions from '../../actions/partSuppliersActions';
 import priceChangeReasonsActions from '../../actions/priceChangeReasonsActions';
+import partPriceConversionsActions from '../../actions/partPriceConversionsActions';
+import { partPriceConversions } from '../../itemTypes';
 
 function PreferredSupplier({
     partNumber,
@@ -58,6 +60,10 @@ function PreferredSupplier({
 
     const currentUserNumber = useSelector(reduxState => userSelectors.getUserNumber(reduxState));
 
+    const partPriceConversionsResult = useSelector(reduxState =>
+        itemSelectorHelpers.getItem(reduxState.partPriceConversions)
+    );
+
     const preferredSupplierChange = useSelector(reduxState =>
         itemSelectorHelpers.getItem(reduxState.preferredSupplierChange)
     );
@@ -87,15 +93,28 @@ function PreferredSupplier({
                 x => x.supplierId === Number(formData.newSupplierId)
             );
             if (selectedSupplier) {
+                dispatch(
+                    partPriceConversionsActions.fetchByHref(
+                        `${partPriceConversions.uri}?partNumber=${selectedSupplier.partNumber}&newPrice=${selectedSupplier.currencyUnitPrice}&newCurrency=${selectedSupplier.currencyCode}`
+                    )
+                );
                 setFormData(d => ({
                     ...d,
-                    newPrice: selectedSupplier.currencyUnitPrice,
-                    newCurrency: selectedSupplier.currencyCode,
-                    baseNewPrice: selectedSupplier.baseOurUnitPrice
+                    newCurrency: selectedSupplier.currencyCode
                 }));
             }
         }
-    }, [formData?.newSupplierId, suppliers]);
+    }, [formData?.newSupplierId, suppliers, dispatch]);
+
+    useEffect(() => {
+        if (partPriceConversionsResult) {
+            setFormData(d => ({
+                ...d,
+                newPrice: partPriceConversionsResult.newPrice,
+                baseNewPrice: partPriceConversionsResult.baseNewPrice
+            }));
+        }
+    }, [partPriceConversionsResult]);
 
     const [saveDisabled, setSaveDisabled] = useState(true);
 

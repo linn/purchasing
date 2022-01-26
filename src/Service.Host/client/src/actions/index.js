@@ -52,3 +52,8 @@ export const priceChangeReasonsActionTypes = makeActionTypes(
     itemTypes.priceChangeReasons.actionType,
     false
 );
+
+export const partPriceConversionsActionTypes = makeActionTypes(
+    itemTypes.partPriceConversions.actionType,
+    false
+);

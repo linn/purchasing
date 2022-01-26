@@ -13,7 +13,6 @@
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
-    using Linn.Purchasing.Resources.RequestResources;
     using Linn.Purchasing.Resources.SearchResources;
     using Linn.Purchasing.Service.Extensions;
 
