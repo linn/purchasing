@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
 
@@ -13,9 +14,8 @@
             OrdersBySupplierSearchResource resource,
             IEnumerable<string> privileges);
 
-        IResult<bool> GetOrdersBySupplierExport(
+        MemoryStream GetOrdersBySupplierExport(
             OrdersBySupplierSearchResource resource,
-            IEnumerable<string> privileges,
-            MemoryStream stream);
+            IEnumerable<string> privileges);
     }
 }

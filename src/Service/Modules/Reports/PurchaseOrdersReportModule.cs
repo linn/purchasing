@@ -46,16 +46,9 @@
             resource.Credits = req.Query.As<string>("Credits");
             resource.StockControlled = req.Query.As<string>("StockControlled");
 
-            using MemoryStream stream = new();
-
-            var result = this.purchaseOrderReportFacadeService.GetOrdersBySupplierExport(
+            using MemoryStream stream = this.purchaseOrderReportFacadeService.GetOrdersBySupplierExport(
                 resource,
-                req.HttpContext.GetPrivileges(), stream);
-
-            if (!(result is SuccessResult<bool>))
-            {
-                await res.Negotiate(result);
-            }
+                req.HttpContext.GetPrivileges());
 
             var contentDisposition = new ContentDisposition
                                          {

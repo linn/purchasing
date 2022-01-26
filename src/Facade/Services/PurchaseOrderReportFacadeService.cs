@@ -61,17 +61,16 @@
         }
 
 
-        public IResult<bool> GetOrdersBySupplierExport(
+        public MemoryStream GetOrdersBySupplierExport(
             OrdersBySupplierSearchResource resource,
-            IEnumerable<string> privileges, MemoryStream stream)
+            IEnumerable<string> privileges)
         {
             var fromValid = DateTime.TryParse(resource.From, out var from);
             var toValid = DateTime.TryParse(resource.To, out var to);
 
             if (!fromValid || !toValid)
             {
-                return new BadRequestResult<bool>(
-                    "Invalid dates supplied to orders by supplier export");
+                throw new Exception("Invalid dates supplied to orders by supplier export");
             }
 
             var returns = resource.Returns == "Y";
@@ -90,10 +89,11 @@
 
             var returnResource = results.ConvertToCsvList();
 
+            MemoryStream stream = new MemoryStream();
             var csvStreamWriter = new CsvStreamWriter(stream);
             csvStreamWriter.WriteModel(results);
 
-            return new SuccessResult<bool>(true);
+            return stream;
         }
 
         private ReportReturnResource BuildResource(ResultsModel resultsModel, IEnumerable<string> privileges)
