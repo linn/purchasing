@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -9,11 +9,18 @@ import {
     itemSelectorHelpers,
     Dropdown,
     userSelectors,
-    Loading
+    Loading,
+    getItemError,
+    ErrorCard,
+    SnackbarMessage
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import preferredSupplierChangeActions from '../../actions/preferredSupplierChangeActions';
+import currenciesActions from '../../actions/currenciesActions';
 import partSuppliersActions from '../../actions/partSuppliersActions';
+import priceChangeReasonsActions from '../../actions/priceChangeReasonsActions';
+import partPriceConversionsActions from '../../actions/partPriceConversionsActions';
+import { partPriceConversions } from '../../itemTypes';
 
 function PreferredSupplier({
     partNumber,
@@ -25,7 +32,9 @@ function PreferredSupplier({
     oldCurrencyCode,
     close,
     refreshPart,
-    partLoading
+    partLoading,
+    safetyCriticalPart,
+    bomType
 }) {
     const dispatch = useDispatch();
     const postChange = body => dispatch(preferredSupplierChangeActions.add(body));
@@ -33,13 +42,27 @@ function PreferredSupplier({
         dispatch(
             partSuppliersActions.searchWithOptions(null, `&partNumber=${partNumber}&supplierName=`)
         );
+        dispatch(currenciesActions.fetch());
+        dispatch(priceChangeReasonsActions.fetch());
     }, [dispatch, partNumber]);
 
     const suppliers = useSelector(reduxState =>
         collectionSelectorHelpers.getSearchItems(reduxState.partSuppliers)
     );
 
+    const currencies = useSelector(reduxState =>
+        collectionSelectorHelpers.getItems(reduxState.currencies)
+    );
+
+    const reasons = useSelector(reduxState =>
+        collectionSelectorHelpers.getItems(reduxState.priceChangeReasons)
+    );
+
     const currentUserNumber = useSelector(reduxState => userSelectors.getUserNumber(reduxState));
+
+    const partPriceConversionsResult = useSelector(reduxState =>
+        itemSelectorHelpers.getItem(reduxState.partPriceConversions)
+    );
 
     const preferredSupplierChange = useSelector(reduxState =>
         itemSelectorHelpers.getItem(reduxState.preferredSupplierChange)
@@ -49,7 +72,49 @@ function PreferredSupplier({
         itemSelectorHelpers.getItemLoading(reduxState.preferredSupplierChange)
     );
 
+    const snackbarVisible = useSelector(reduxState =>
+        itemSelectorHelpers.getSnackbarVisible(reduxState.preferredSupplierChange)
+    );
+
+    const itemError = useSelector(reduxState =>
+        getItemError(reduxState, 'preferredSupplierChange')
+    );
+
+    const clearErrors = useCallback(
+        () => dispatch(preferredSupplierChangeActions.clearErrorsForItem()),
+        [dispatch]
+    );
+
     const [formData, setFormData] = useState({});
+
+    useEffect(() => {
+        if (formData?.newSupplierId) {
+            const selectedSupplier = suppliers?.find(
+                x => x.supplierId === Number(formData.newSupplierId)
+            );
+            if (selectedSupplier) {
+                dispatch(
+                    partPriceConversionsActions.fetchByHref(
+                        `${partPriceConversions.uri}?partNumber=${selectedSupplier.partNumber}&newPrice=${selectedSupplier.currencyUnitPrice}&newCurrency=${selectedSupplier.currencyCode}`
+                    )
+                );
+                setFormData(d => ({
+                    ...d,
+                    newCurrency: selectedSupplier.currencyCode
+                }));
+            }
+        }
+    }, [formData?.newSupplierId, suppliers, dispatch]);
+
+    useEffect(() => {
+        if (partPriceConversionsResult) {
+            setFormData(d => ({
+                ...d,
+                newPrice: partPriceConversionsResult.newPrice,
+                baseNewPrice: partPriceConversionsResult.baseNewPrice
+            }));
+        }
+    }, [partPriceConversionsResult]);
 
     const [saveDisabled, setSaveDisabled] = useState(true);
 
@@ -65,8 +130,17 @@ function PreferredSupplier({
     useEffect(() => {
         if (preferredSupplierChange?.newSupplierId) {
             refreshPart();
+            setFormData({});
         }
     }, [preferredSupplierChange, refreshPart]);
+
+    useEffect(() => {
+        clearErrors();
+    }, [clearErrors]);
+
+    useEffect(() => {
+        setFormData({});
+    }, []);
 
     if (preferredSupplierChangeLoading || partLoading) {
         return (
@@ -80,9 +154,27 @@ function PreferredSupplier({
 
     return (
         <Grid container spacing={3}>
+            <SnackbarMessage
+                visible={snackbarVisible}
+                onClose={() => dispatch(preferredSupplierChangeActions.setSnackbarVisible(false))}
+                message="Save Successful"
+            />
             <Grid item xs={12}>
                 <Typography variant="h6">Change Preferred Supplier</Typography>
             </Grid>
+            {itemError && (
+                <Grid item xs={12}>
+                    <ErrorCard errorMessage={itemError.details} />
+                </Grid>
+            )}
+            {safetyCriticalPart && (
+                <Grid item xs={12}>
+                    <Typography variant="subtitle" color="secondary">
+                        WARNING: This is a safety critical part. Please ensure new part number has
+                        been verified for this function.
+                    </Typography>
+                </Grid>
+            )}
             <Grid item xs={4}>
                 <InputField
                     fullWidth
@@ -157,19 +249,86 @@ function PreferredSupplier({
                 <Dropdown
                     value={formData?.newSupplierId}
                     propertyName="newSupplierId"
-                    label="newSupplier"
+                    label="Select a New Supplier"
                     items={suppliers.map(s => ({ id: s.supplierId, displayText: s.supplierName }))}
+                    onChange={handleFieldChange}
+                />
+            </Grid>
+            <Grid item xs={6} />
+            <Grid item xs={4}>
+                <InputField
+                    fullWidth
+                    value={formData?.newPrice}
+                    label="New Price"
+                    propertyName="newPrice"
+                    type="number"
+                    disabled
+                    onChange={handleFieldChange}
+                />
+            </Grid>
+            <Grid item xs={4}>
+                <InputField
+                    fullWidth
+                    value={formData?.baseNewPrice}
+                    label="Base New Price"
+                    propertyName="baseNewPrice"
+                    type="number"
+                    disabled
+                    onChange={handleFieldChange}
+                />
+            </Grid>
+            <Grid item xs={4}>
+                <Dropdown
+                    value={formData?.newCurrency}
+                    propertyName="newCurrency"
+                    label="New Currency"
+                    items={currencies.map(s => ({
+                        id: s.code,
+                        displayText: s.name
+                    }))}
+                    onChange={handleFieldChange}
+                    disabled
+                />
+            </Grid>
+            {formData?.newSupplierId &&
+                bomType === 'A' &&
+                Number(formData?.newSupplierId) !== 4415 && (
+                    <Grid item xs={12}>
+                        <Typography variant="subtitle" color="secondary">
+                            Tell production to put a labour price on this.
+                        </Typography>
+                    </Grid>
+                )}
+            <Grid item xs={6}>
+                <Dropdown
+                    value={formData?.changeReasonCode}
+                    propertyName="changeReasonCode"
+                    label="Reason"
+                    items={reasons.map(s => ({
+                        id: s.reasonCode,
+                        displayText: s.description
+                    }))}
                     onChange={handleFieldChange}
                 />
             </Grid>
             <Grid item xs={6} />
 
             <Grid item xs={12}>
+                <InputField
+                    fullWidth
+                    value={formData?.remarks}
+                    label="Remarks"
+                    propertyName="remarks"
+                    onChange={handleFieldChange}
+                />
+            </Grid>
+            <Grid item xs={12}>
                 <SaveBackCancelButtons
                     cancelClick={close}
                     backClick={close}
                     saveDisabled={saveDisabled}
                     saveClick={() => {
+                        clearErrors();
                         setSaveDisabled(true);
                         postChange({
                             partNumber,
@@ -188,23 +347,31 @@ function PreferredSupplier({
 }
 
 PreferredSupplier.propTypes = {
-    partNumber: PropTypes.string.isRequired,
-    partDescription: PropTypes.string.isRequired,
-    oldSupplierId: PropTypes.number.isRequired,
-    oldSupplierName: PropTypes.string.isRequired,
+    partNumber: PropTypes.string,
+    partDescription: PropTypes.string,
+    oldSupplierId: PropTypes.number,
+    oldSupplierName: PropTypes.string,
     oldPrice: PropTypes.number,
     baseOldPrice: PropTypes.number,
-    oldCurrencyCode: PropTypes.number,
+    oldCurrencyCode: PropTypes.string,
     close: PropTypes.func.isRequired,
     refreshPart: PropTypes.func.isRequired,
-    partLoading: PropTypes.bool
+    partLoading: PropTypes.bool,
+    safetyCriticalPart: PropTypes.bool,
+    bomType: PropTypes.string
 };
 
 PreferredSupplier.defaultProps = {
+    partNumber: null,
+    partDescription: null,
     oldPrice: null,
     baseOldPrice: null,
     oldCurrencyCode: null,
-    partLoading: false
+    partLoading: false,
+    safetyCriticalPart: false,
+    bomType: null,
+    oldSupplierId: null,
+    oldSupplierName: null
 };
 
 export default PreferredSupplier;

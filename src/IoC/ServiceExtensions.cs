@@ -22,9 +22,9 @@
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
+    using Linn.Purchasing.Proxy;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.SearchResources;
-    using Linn.Stores.Proxy;
 
     using Microsoft.Extensions.DependencyInjection;
 
@@ -91,7 +91,9 @@
                 .AddTransient<IAuthorisationService, AuthorisationService>()
                 .AddTransient<IDatabaseService, DatabaseService>()
             //external services
-                .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>();
+                .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
+                .AddTransient<IAutocostPack, AutocostPack>()
+                .AddTransient<ICurrencyPack, CurrencyPack>(); 
         }
     }
 }

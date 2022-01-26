@@ -42,6 +42,7 @@
             return this.partSuppliers
                 .Include(p => p.Supplier)
                 .Include(p => p.Part)
+                .Include(p => p.Currency)
                 .AsNoTracking().Where(expression);
         }
     }

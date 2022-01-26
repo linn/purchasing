@@ -43,7 +43,7 @@
             {
                 PartNumber = "PART",
                 OldSupplier = new Supplier { SupplierId = 1 },
-                NewSupplier = new Supplier { SupplierId = 2 },
+                NewSupplier = new Supplier { SupplierId = 2, VendorManager = "A", Planner = 1 },
                 ChangeReason = new PriceChangeReason { ReasonCode = "CHG", Description = "DESC" },
                 ChangedBy = new Employee { Id = 33087 },
                 Remarks = "REMARKS",
@@ -62,6 +62,7 @@
                 .Returns(this.candidate.ChangeReason);
             this.PartHistory.FilterBy(Arg.Any<Expression<Func<PartHistoryEntry, bool>>>())
                 .Returns(new List<PartHistoryEntry>().AsQueryable());
+            this.CurrencyRepository.FindById("USD").Returns(new Currency { Code = "USD" });
 
             this.MockAuthService.HasPermissionFor(
                     AuthorisedAction.PartSupplierUpdate,

@@ -56,6 +56,7 @@
             this.Get("/purchasing/suppliers", this.SearchSuppliers);
             this.Post("/purchasing/preferred-supplier-changes", this.CreatePreferredSupplierChange);
             this.Get("/purchasing/price-change-reasons", this.GetPriceChangeReasons);
+            this.Get("/purchasing/part-suppliers/part-price-conversions", this.GetPartPriceConversions);
         }
 
         private async Task GetById(HttpRequest req, HttpResponse res)
@@ -148,6 +149,17 @@
         private async Task GetPriceChangeReasons(HttpRequest req, HttpResponse res)
         {
             var result = this.priceChangeReasonService.GetAll();
+
+            await res.Negotiate(result);
+        }
+
+        private async Task GetPartPriceConversions(HttpRequest req, HttpResponse res)
+        {
+            var partNumber = req.Query.As<string>("partNumber");
+            var newCurrency = req.Query.As<string>("newCurrency");
+            var newPrice = req.Query.As<decimal>("newPrice");
+
+            var result = this.partFacadeService.GetPrices(partNumber, newCurrency, newPrice);
 
             await res.Negotiate(result);
         }
