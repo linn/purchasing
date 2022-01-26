@@ -11,7 +11,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import queryString from 'query-string';
 import history from '../../history';
 import config from '../../config';
-import ordersBySupplierActions from '../../actions/ordersBySupplierActions';
+import ordersByPartActions from '../../actions/ordersByPartActions';
 
 function OrderBySupplierReport() {
     const options = useMemo(() => queryString.parse(window.location.search) || {}, []);
