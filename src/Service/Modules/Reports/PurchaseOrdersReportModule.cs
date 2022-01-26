@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Service.Modules.Reports
 {
+    using System.IO;
     using System.Net.Mime;
     using System.Threading.Tasks;
 

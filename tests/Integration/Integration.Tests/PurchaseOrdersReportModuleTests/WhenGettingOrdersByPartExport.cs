@@ -52,7 +52,7 @@
                 .Returns(new MemoryStream());
 
             this.Response = this.Client.Get(
-                $"/purchasing/reports/orders-by-supplier/export?partNumber={"MCP 123"}&fromDate={(1.January(2022).ToLongDateString())}&toDate={(1.February(2022).ToLongDateString())}&cancelled=N",
+                $"/purchasing/reports/orders-by-part/export?partNumber={"MCP 123"}&fromDate={(1.January(2022).ToLongDateString())}&toDate={(1.February(2022).ToLongDateString())}&cancelled=N",
                 with => { with.Accept("text/csv"); }).Result;
         }
 

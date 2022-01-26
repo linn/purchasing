@@ -1,7 +1,7 @@
-﻿namespace Linn.Purchasing.Facade.Tests.ResourceBuilderTests.OrdersBySupplierReportServiceTests
+﻿namespace Linn.Purchasing.Facade.Tests.ResourceBuilderTests.PurchaseOrdersReportServiceTests
 {
+    using System;
     using System.Collections.Generic;
-    using System.Linq;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
@@ -15,7 +15,7 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingReport : ContextBase
+    public class WhenGettingSupplierReportInvalidDate : ContextBase
     {
         private readonly int supplierId = 71234;
 
@@ -26,7 +26,7 @@
         {
             var resource = new OrdersBySupplierSearchResource
                                {
-                                   From = "01-Jan-2021", To = "01-Jun-2021", SupplierId = this.supplierId, Returns = "Y", Outstanding = "N", Cancelled = "Y", Credits = "Y", StockControlled = "A"
+                                   From = "01-Jan-2021", To = "01-Potato-2021", SupplierId = this.supplierId
                                };
             this.DomainService.GetOrdersBySupplierReport(1.January(2021), 1.June(2021), this.supplierId, true, false, true, "Y", "A").Returns(
                 new ResultsModel
@@ -38,18 +38,20 @@
         }
 
         [Test]
-        public void ShouldCallDomain()
+        public void ShouldNotCallDomain()
         {
-            this.DomainService.Received().GetOrdersBySupplierReport(1.January(2021), 1.June(2021), this.supplierId, true, false, true, "Y", "A");
+            this.DomainService.DidNotReceiveWithAnyArgs().GetOrdersBySupplierReport(
+                Arg.Any<DateTime>(),
+                Arg.Any<DateTime>(),
+                Arg.Any<int>(), true, false, true, "Y", "A");
         }
 
         [Test]
-        public void ShouldReturnSuccess()
+        public void ShouldReturnBadRequestWithMessage()
         {
-            this.result.Should().BeOfType<SuccessResult<ReportReturnResource>>();
-            var dataResult = ((SuccessResult<ReportReturnResource>) this.result).Data;
-            dataResult.ReportResults.First().title.displayString.Should()
-                .Be("Purchase Orders By Supplier - 71234: Dwight K Schrute");
+            this.result.Should().BeOfType<BadRequestResult<ReportReturnResource>>();
+            var dataResult = (BadRequestResult<ReportReturnResource>) this.result;
+            dataResult.Message.Should().Be("Invalid dates supplied to orders by supplier report");
         }
     }
 }
