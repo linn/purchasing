@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import {
@@ -11,7 +11,6 @@ import {
     reportSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
-import queryString from 'query-string';
 import history from '../../history';
 import config from '../../config';
 import suppliersActions from '../../actions/suppliersActions';
