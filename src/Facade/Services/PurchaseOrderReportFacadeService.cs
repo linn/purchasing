@@ -91,7 +91,7 @@
 
             MemoryStream stream = new MemoryStream();
             var csvStreamWriter = new CsvStreamWriter(stream);
-            csvStreamWriter.WriteModel(results);
+            csvStreamWriter.WriteModel(returnResource);
 
             return stream;
         }
