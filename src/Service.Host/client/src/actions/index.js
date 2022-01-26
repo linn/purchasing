@@ -49,3 +49,8 @@ export const preferredSupplierChangeActionTypes = makeActionTypes(
 );
 
 export const priceChangeReasonsActionTypes = makeActionTypes(itemTypes.priceChangeReasons, false);
+
+export const ordersByPartReportActionTypes = makeActionTypes(
+    reportTypes.ordersByPartReport.actionType,
+    false
+);
