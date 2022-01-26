@@ -26,16 +26,7 @@ function OrderBySupplierReport() {
     const dispatch = useDispatch();
 
     const handleBackClick = () => {
-        const uri =
-            `/purchasing/reports/orders-by-supplier/` +
-            `?id=${options.id}` +
-            `&fromDate=${options.fromDate}` +
-            `&toDate=${options.toDate}` +
-            `&outstanding=${options.outstanding}` +
-            `&returns=${options.returns}` +
-            `&stockControlled=${options.stockControlled}` +
-            `&credits=${options.credits}` +
-            `&cancelled=${options.cancelled}`;
+        const uri = `/purchasing/reports/orders-by-supplier/`;
         history.push(uri);
     };
 
@@ -52,9 +43,19 @@ function OrderBySupplierReport() {
                     <BackButton backClick={() => handleBackClick(history, options)} />
                 </Grid>
                 <Grid item xs={12}>
-                    {!loading && reportData && 1 === 2 ? (
+                    {!loading && reportData ? (
                         <ExportButton
-                            href={`${config.appRoot}/purchasing/reports/orders-by-supplier/${options.id}/export?from=${options.fromDate}&to=${options.toDate}`}
+                            href={
+                                `${config.appRoot}/purchasing/reports/orders-by-supplier/export?` +
+                                `?&id=${options.id}` +
+                                `&fromDate=${options.fromDate}` +
+                                `&toDate=${options.toDate}` +
+                                `&outstanding=${options.outstanding}` +
+                                `&returns=${options.returns}` +
+                                `&stockControlled=${options.stockControlled}` +
+                                `&credits=${options.credits}` +
+                                `&cancelled=${options.cancelled}`
+                            }
                         />
                     ) : (
                         ''

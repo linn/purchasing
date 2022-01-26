@@ -13,6 +13,7 @@
     <PackageReference Include="Linn.Common.Proxy.LinnApps" Version="3.0.0" />
     <PackageReference Include="Linn.Common.Reporting" Version="1.4.0" />
     <PackageReference Include="Linn.Common.Reporting.Resources" Version="1.2.2" />
+    <PackageReference Include="Linn.Common.Serialization" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
