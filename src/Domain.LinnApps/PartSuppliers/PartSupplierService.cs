@@ -11,8 +11,6 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
-    using MimeKit;
-
     public class PartSupplierService : IPartSupplierService
     {
         private readonly IAuthorisationService authService;
