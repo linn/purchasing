@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Facade.Tests.ResourceBuilderTests.OrdersBySupplierReportServiceTests
 {
     using System.Collections.Generic;
+    using System.IO;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
@@ -16,7 +17,7 @@
     {
         private readonly int supplierId = 71234;
 
-        private IEnumerable<IEnumerable<string>> result;
+        private MemoryStream resultsStream;
 
         [SetUp]
         public void SetUp()
@@ -40,7 +41,7 @@
                             ReportTitle = new NameModel("Purchase Orders By Supplier - 71234: Dwight K Schrute")
                         });
 
-            this.result = this.Sut.GetOrdersBySupplierExport(resource, new List<string>());
+            this.resultsStream = this.Sut.GetOrdersBySupplierExport(resource, new List<string>());
         }
 
         [Test]
@@ -60,7 +61,7 @@
         [Test]
         public void ShouldReturnListOfListOfStrings()
         {
-            this.result.Should().BeOfType<List<List<string>>>();
+            this.resultsStream.Should().BeOfType<MemoryStream>();
         }
     }
 }

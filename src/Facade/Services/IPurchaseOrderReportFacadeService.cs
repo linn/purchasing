@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
     using System.Collections.Generic;
+    using System.IO;
 
     using Linn.Common.Facade;
     using Linn.Common.Reporting.Resources.ReportResultResources;
@@ -12,7 +13,7 @@
             OrdersBySupplierSearchResource resource,
             IEnumerable<string> privileges);
 
-        IEnumerable<IEnumerable<string>> GetOrdersBySupplierExport(
+        MemoryStream GetOrdersBySupplierExport(
             OrdersBySupplierSearchResource resource,
             IEnumerable<string> privileges);
     }

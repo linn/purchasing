@@ -2,12 +2,14 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
 
     using Linn.Common.Facade;
     using Linn.Common.Reporting.Models;
     using Linn.Common.Reporting.Resources.Extensions;
 
     using Linn.Common.Reporting.Resources.ReportResultResources;
+    using Linn.Common.Serialization;
     using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Resources;
@@ -59,7 +61,7 @@
         }
 
 
-        public IEnumerable<IEnumerable<string>> GetOrdersBySupplierExport(
+        public MemoryStream GetOrdersBySupplierExport(
             OrdersBySupplierSearchResource resource,
             IEnumerable<string> privileges)
         {
@@ -87,7 +89,12 @@
 
             var returnResource = results.ConvertToCsvList();
 
-            return returnResource;
+            using MemoryStream stream = new();
+
+            var csvStreamWriter = new CsvStreamWriter(stream);
+            csvStreamWriter.WriteModel(results);
+
+            return stream;
         }
 
         private ReportReturnResource BuildResource(ResultsModel resultsModel, IEnumerable<string> privileges)
