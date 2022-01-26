@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Service.Modules.Reports
 {
-    using System.IO;
     using System.Net.Mime;
     using System.Threading.Tasks;
 
@@ -8,7 +7,6 @@
     using Carter.Request;
     using Carter.Response;
 
-    using Linn.Common.Facade;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.Extensions;
@@ -26,11 +24,50 @@
             this.Get("/purchasing/reports/orders-by-supplier", this.GetApp);
             this.Get("/purchasing/reports/orders-by-supplier/report", this.GetOrdersBySupplierReport);
             this.Get("/purchasing/reports/orders-by-supplier/export", this.GetOrdersBySupplierExport);
+            this.Get("/purchasing/reports/orders-by-part/report", this.GetOrdersByPartReport);
+            this.Get("/purchasing/reports/orders-by-part/export", this.GetOrdersByPartExport);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
         {
             await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
+        }
+
+        private async Task GetOrdersByPartExport(HttpRequest req, HttpResponse res)
+        {
+            var resource = new OrdersByPartSearchResource();
+            resource.PartNumber = req.Query.As<string>("PartNumber");
+            resource.From = req.Query.As<string>("FromDate");
+            resource.To = req.Query.As<string>("ToDate");
+            resource.Cancelled = req.Query.As<string>("Cancelled");
+
+            using var stream = this.purchaseOrderReportFacadeService.GetOrdersByPartExport(
+                resource,
+                req.HttpContext.GetPrivileges());
+
+            var contentDisposition = new ContentDisposition
+                                         {
+                                             FileName =
+                                                 $"ordersByPart{resource.From.Substring(0, 10)}_To_{resource.To.Substring(0, 10)}.csv"
+                                         };
+
+            stream.Position = 0;
+            await res.FromStream(stream, "text/csv", contentDisposition);
+        }
+
+        private async Task GetOrdersByPartReport(HttpRequest req, HttpResponse res)
+        {
+            var resource = new OrdersByPartSearchResource();
+            resource.PartNumber = req.Query.As<string>("PartNumber");
+            resource.From = req.Query.As<string>("FromDate");
+            resource.To = req.Query.As<string>("ToDate");
+            resource.Cancelled = req.Query.As<string>("Cancelled");
+
+            var results = this.purchaseOrderReportFacadeService.GetOrdersByPartReport(
+                resource,
+                req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(results);
         }
 
         private async Task GetOrdersBySupplierExport(HttpRequest req, HttpResponse res)
@@ -46,7 +83,7 @@
             resource.Credits = req.Query.As<string>("Credits");
             resource.StockControlled = req.Query.As<string>("StockControlled");
 
-            using MemoryStream stream = (MemoryStream)this.purchaseOrderReportFacadeService.GetOrdersBySupplierExport(
+            using var stream = this.purchaseOrderReportFacadeService.GetOrdersBySupplierExport(
                 resource,
                 req.HttpContext.GetPrivileges());
 

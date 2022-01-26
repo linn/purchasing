@@ -28,6 +28,62 @@
             this.resultsModelResourceBuilder = resultsModelResourceBuilder;
         }
 
+        public IResult<ReportReturnResource> GetOrdersByPartReport(
+        OrdersByPartSearchResource resource,
+        IEnumerable<string> privileges)
+        {
+            var fromValid = DateTime.TryParse(resource.From, out var from);
+            var toValid = DateTime.TryParse(resource.To, out var to);
+
+            if (!fromValid || !toValid)
+            {
+                return new BadRequestResult<ReportReturnResource>(
+                    "Invalid dates supplied to orders by part report");
+            }
+            
+            var cancelled = resource.Cancelled == "Y";
+
+            var results = this.domainService.GetOrdersByPartReport(
+                from,
+                to,
+                resource.PartNumber,
+                cancelled);
+
+            var returnResource = this.BuildResource(results, privileges);
+
+            return new SuccessResult<ReportReturnResource>(returnResource);
+        }
+
+
+        public Stream GetOrdersByPartExport(
+            OrdersByPartSearchResource resource,
+            IEnumerable<string> privileges)
+        {
+            var fromValid = DateTime.TryParse(resource.From, out var from);
+            var toValid = DateTime.TryParse(resource.To, out var to);
+
+            if (!fromValid || !toValid)
+            {
+                throw new Exception("Invalid dates supplied to orders by part export");
+            }
+
+            var cancelled = resource.Cancelled == "Y";
+
+            var results = this.domainService.GetOrdersByPartReport(
+                from,
+                to,
+                resource.PartNumber,
+                cancelled);
+
+            var returnResource = results.ConvertToCsvList();
+
+            MemoryStream stream = new MemoryStream();
+            var csvStreamWriter = new CsvStreamWriter(stream);
+            csvStreamWriter.WriteModel(returnResource);
+
+            return stream;
+        }
+
         public IResult<ReportReturnResource> GetOrdersBySupplierReport(
             OrdersBySupplierSearchResource resource,
             IEnumerable<string> privileges)

@@ -14,18 +14,17 @@
 
     public class PurchaseOrdersReportService : IPurchaseOrdersReportService
     {
+        private readonly IQueryRepository<Part> partRepository;
+
         private readonly IRepository<PurchaseLedger, int> purchaseLedgerRepository;
 
         private readonly IRepository<PurchaseOrder, int> purchaseOrderRepository;
 
+        private readonly IPurchaseOrdersPack purchaseOrdersPack;
+
         private readonly IReportingHelper reportingHelper;
 
         private readonly IRepository<Supplier, int> supplierRepository;
-
-        private readonly IQueryRepository<Part> partRepository;
-
-        private readonly IPurchaseOrdersPack purchaseOrdersPack;
-
 
         public PurchaseOrdersReportService(
             IRepository<PurchaseOrder, int> purchaseOrderRepository,
@@ -43,9 +42,56 @@
             this.reportingHelper = reportingHelper;
         }
 
-        public ResultsModel GetOrdersByPartReport(DateTime from, DateTime to, string partNumber)
+        public ResultsModel GetOrdersByPartReport(DateTime from, DateTime to, string partNumber, bool includeCancelled)
         {
-            throw new NotImplementedException();
+            var purchaseOrders = this.purchaseOrderRepository.FilterBy(
+                x => x.Details.Any(z => z.PartNumber == partNumber) 
+                     && from <= x.OrderDate && x.OrderDate < to);
+
+            var reportLayout = new SimpleGridLayout(
+                this.reportingHelper,
+                CalculationValueModelType.TextValue,
+                null,
+                $"Purchase Orders By Part: {partNumber}");
+
+            this.AddReportColumns(reportLayout);
+
+            var values = new List<CalculationValueModel>();
+
+            foreach (var order in purchaseOrders)
+            {
+                if (!includeCancelled && order.Cancelled == "Y")
+                {
+                    continue;
+                }
+
+                foreach (var orderDetail in order.Details.Where(d => d.PartNumber == partNumber))
+                {
+                    foreach (var delivery in orderDetail.PurchaseDeliveries)
+                    {
+                        if (!includeCancelled && (orderDetail.Cancelled == "Y" || delivery.Cancelled == "Y"))
+                        {
+                            continue;
+                        }
+
+                        var part = this.partRepository.FindBy(x => x.PartNumber == orderDetail.PartNumber);
+
+                        var supplier = this.supplierRepository.FindById(supplierId);
+
+                        var ledgersForOrderAndLine = this.purchaseLedgerRepository.FilterBy(
+                            pl => pl.OrderNumber == order.OrderNumber && pl.OrderLine == orderDetail.Line);
+
+                        var ledgerQtys = ledgersForOrderAndLine.Select(
+                            x => x.PlQuantity.HasValue
+                                     ? new { TransType = x.TransactionType.DebitOrCredit, Qty = x.PlQuantity.Value }
+                                     : null).ToList();
+
+                        var totalLedgerQty = ledgerQtys.Sum(x => x.TransType == "C" ? x.Qty : -x.Qty);
+
+                        this.ExtractDetails(values, orderDetail, delivery, totalLedgerQty);
+                    }
+                }
+            }
         }
 
         public ResultsModel GetOrdersBySupplierReport(
@@ -61,8 +107,8 @@
             var purchaseOrders = this.purchaseOrderRepository.FilterBy(
                 x => x.SupplierId == supplierId && from <= x.OrderDate && x.OrderDate < to
                      && (includeReturns || x.DocumentType != "RO")
-                     && (includeCredits == "Y" || (includeCredits == "N" && x.DocumentType != "CO")
-                                               || (includeCredits == "O" && x.DocumentType == "CO")));
+                     && (includeCredits == "Y" || includeCredits == "N" && x.DocumentType != "CO"
+                                               || includeCredits == "O" && x.DocumentType == "CO"));
 
             var supplier = this.supplierRepository.FindById(supplierId);
 
@@ -78,8 +124,7 @@
 
             foreach (var order in purchaseOrders)
             {
-                if (!includeCancelled &&
-                    order.Cancelled == "Y")
+                if (!includeCancelled && order.Cancelled == "Y")
                 {
                     continue;
                 }
@@ -95,16 +140,14 @@
 
                     foreach (var delivery in orderDetail.PurchaseDeliveries)
                     {
-
-                        if (!includeCancelled
-                            && (orderDetail.Cancelled == "Y" || delivery.Cancelled == "Y"))
+                        if (!includeCancelled && (orderDetail.Cancelled == "Y" || delivery.Cancelled == "Y"))
                         {
                             continue;
                         }
 
                         var part = this.partRepository.FindBy(x => x.PartNumber == orderDetail.PartNumber);
-                        if (stockControlled != "A" && ((stockControlled == "N" && part.StockControlled == "N")
-                                                       || (stockControlled == "O" && part.StockControlled != "Y")))
+                        if (stockControlled != "A" && (stockControlled == "N" && part.StockControlled == "N"
+                                                       || stockControlled == "O" && part.StockControlled != "Y"))
                         {
                             continue;
                         }
@@ -139,8 +182,7 @@
                         new AxisDetailsModel(
                             "OrderLine",
                             "Order/Line",
-                            GridDisplayType.TextValue)
-                            {
+                            GridDisplayType.TextValue) {
                                                           AllowWrap = false 
                                                        },
                         new AxisDetailsModel("PartNo", "Part Number", GridDisplayType.TextValue),
@@ -199,9 +241,7 @@
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId,
-                        ColumnId = "QtyRec",
-                        TextDisplay = delivery.QtyNetReceived.ToString()
+                        RowId = currentRowId, ColumnId = "QtyRec", TextDisplay = delivery.QtyNetReceived.ToString()
                     });
 
             values.Add(
@@ -219,17 +259,13 @@
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId,
-                        ColumnId = "Delivery",
-                        TextDisplay = $"{delivery.DeliverySeq}"
+                        RowId = currentRowId, ColumnId = "Delivery", TextDisplay = $"{delivery.DeliverySeq}"
                     });
 
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId,
-                        ColumnId = "Qty",
-                        TextDisplay = $"{delivery.OurDeliveryQty}"
+                        RowId = currentRowId, ColumnId = "Qty", TextDisplay = $"{delivery.OurDeliveryQty}"
                     });
 
             values.Add(
