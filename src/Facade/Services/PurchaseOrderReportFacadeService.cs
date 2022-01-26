@@ -61,7 +61,7 @@
         }
 
 
-        public MemoryStream GetOrdersBySupplierExport(
+        public Stream GetOrdersBySupplierExport(
             OrdersBySupplierSearchResource resource,
             IEnumerable<string> privileges)
         {
