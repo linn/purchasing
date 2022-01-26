@@ -11,6 +11,8 @@ import currenciesActions from '../../../actions/currenciesActions';
 import partSuppliersActions from '../../../actions/partSuppliersActions';
 import priceChangeReasonsActions from '../../../actions/priceChangeReasonsActions';
 import PreferredSupplier from '../../partSupplierUtility/PreferredSupplier';
+import partPriceConversionsActions from '../../../actions/partPriceConversionsActions';
+import { partPriceConversions } from '../../../itemTypes';
 
 jest.mock('react-redux', () => ({
     ...jest.requireActual('react-redux'),
@@ -34,7 +36,8 @@ const state = {
                 supplierName: 'NEW SUPPLIER',
                 currencyUnitPrice: 123,
                 baseOurUnitPrice: 456,
-                currencyCode: 'USD'
+                currencyCode: 'USD',
+                partNumber: 'PART'
             }
         ]
     },
@@ -57,6 +60,7 @@ const fetchReasonsSpy = jest.spyOn(priceChangeReasonsActions, 'fetch');
 const fetchPartSuppliersSpy = jest.spyOn(partSuppliersActions, 'searchWithOptions');
 const addPreferredSupplierSpy = jest.spyOn(preferredSupplierChangeActions, 'add');
 const clearErrorsSpy = jest.spyOn(preferredSupplierChangeActions, 'clearErrorsForItem');
+const fetchPartPriceConversionsSpy = jest.spyOn(partPriceConversionsActions, 'fetchByHref');
 
 describe('When component mounts...', () => {
     beforeEach(() => {
@@ -143,7 +147,7 @@ describe('When changePreferredSupplier error...', () => {
     });
 });
 
-describe('When Part already has a preferred supplier...', () => {
+describe('When submitting a new preferred Supplier...', () => {
     beforeEach(() => {
         cleanup();
         jest.clearAllMocks();
@@ -188,12 +192,65 @@ describe('When Part already has a preferred supplier...', () => {
                 remarks: 'REMARKABLE',
                 newSupplierId: 2,
                 changeReasonCode: 'NEW',
-                // the below fields come from the new supplier
-                // newPrice: 123,
-                // baseNewPrice: 456,
                 newCurrency: 'USD'
             })
         );
+    });
+});
+
+describe('When new preferred supplier selected...', () => {
+    beforeEach(() => {
+        cleanup();
+        jest.clearAllMocks();
+        useSelector.mockImplementation(callback => callback(state));
+        render(
+            <PreferredSupplier
+                partNumber={partNumber}
+                oldSupplierId={supplierId}
+                oldSupplierName={supplierName}
+                oldPrice={price}
+                baseOldPrice={basePrice}
+                oldCurrencyCode={currency}
+            />
+        );
+        const supplierDropdown = screen.getByLabelText('Select a New Supplier');
+        fireEvent.change(supplierDropdown, { target: { value: 2 } });
+    });
+
+    test('Should request price conversions', () => {
+        expect(fetchPartPriceConversionsSpy).toHaveBeenCalledWith(
+            `${partPriceConversions.uri}?partNumber=PART&newPrice=123&newCurrency=USD`
+        );
+    });
+});
+
+describe('When price conversions arrive...', () => {
+    beforeEach(() => {
+        cleanup();
+        jest.clearAllMocks();
+        render(
+            <PreferredSupplier
+                partNumber={partNumber}
+                oldSupplierId={supplierId}
+                oldSupplierName={supplierName}
+                oldPrice={price}
+                baseOldPrice={basePrice}
+                oldCurrencyCode={currency}
+                clearErrors={jest.fn()}
+            />
+        );
+        const stateWithPriceConversions = {
+            partPriceConversions: { item: { newPrice: 666, baseNewPrice: 777 } }
+        };
+
+        useSelector.mockImplementation(callback => callback(stateWithPriceConversions));
+        const supplierDropdown = screen.getByLabelText('Select a New Supplier');
+        fireEvent.change(supplierDropdown, { target: { value: 2 } });
+    });
+
+    test('Should show new results', () => {
+        expect(screen.getByDisplayValue(666)).toBeInTheDocument();
+        expect(screen.getByDisplayValue(777)).toBeInTheDocument();
     });
 });
 

@@ -51,7 +51,7 @@
                                     ChangeReason = new PriceChangeReason { ReasonCode = resource.ChangeReasonCode },
                                     NewCurrency = !string.IsNullOrEmpty(resource.NewCurrency)
                                                       ? new Currency { Code = resource.NewCurrency } : null,
-                                    NewPrice = resource.BaseNewPrice,
+                                    NewPrice = resource.NewPrice,
                                     BaseNewPrice = resource.BaseNewPrice
                                 };
             return this.domainService.CreatePreferredSupplierChange(candidate, privileges);

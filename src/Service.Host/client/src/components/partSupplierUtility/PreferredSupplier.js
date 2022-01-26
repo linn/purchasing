@@ -130,13 +130,17 @@ function PreferredSupplier({
     useEffect(() => {
         if (preferredSupplierChange?.newSupplierId) {
             refreshPart();
+            setFormData({});
         }
     }, [preferredSupplierChange, refreshPart]);
 
     useEffect(() => {
         clearErrors();
-        setFormData();
     }, [clearErrors]);
+
+    useEffect(() => {
+        setFormData({});
+    }, []);
 
     if (preferredSupplierChangeLoading || partLoading) {
         return (
