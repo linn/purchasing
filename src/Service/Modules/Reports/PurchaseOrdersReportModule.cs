@@ -46,7 +46,7 @@
             resource.Credits = req.Query.As<string>("Credits");
             resource.StockControlled = req.Query.As<string>("StockControlled");
 
-            using MemoryStream stream = this.purchaseOrderReportFacadeService.GetOrdersBySupplierExport(
+            using MemoryStream stream = (MemoryStream)this.purchaseOrderReportFacadeService.GetOrdersBySupplierExport(
                 resource,
                 req.HttpContext.GetPrivileges());
 

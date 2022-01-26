@@ -41,7 +41,7 @@
                             ReportTitle = new NameModel("Purchase Orders By Supplier - 71234: Dwight K Schrute")
                         });
 
-            this.resultsStream = this.Sut.GetOrdersBySupplierExport(resource, new List<string>());
+            this.resultsStream = (MemoryStream)this.Sut.GetOrdersBySupplierExport(resource, new List<string>());
         }
 
         [Test]
