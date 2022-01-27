@@ -85,6 +85,7 @@
                     "You are not authorised to update Part Supplier records");
             }
 
+            updated.CreatedBy = current.CreatedBy;
             ValidateFields(updated);
 
             if (current.OrderMethod.Name != updated.OrderMethod.Name)

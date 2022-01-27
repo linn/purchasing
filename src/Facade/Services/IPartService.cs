@@ -7,6 +7,11 @@
     {
         string GetPartNumberFromId(int id);
 
-        IResult<PartPriceConversionsResource> GetPrices(string partNumber, string newCurrency, decimal newPrice);
+        IResult<PartPriceConversionsResource> GetPrices(
+            string partNumber, 
+            string newCurrency, 
+            decimal newPrice, 
+            string ledger, 
+            string round);
     }
 }

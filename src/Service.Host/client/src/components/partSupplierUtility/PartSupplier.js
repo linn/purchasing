@@ -49,6 +49,7 @@ import employeesActions from '../../actions/employeesActions';
 import ManufacturerTab from './tabs/ManufacturerTab';
 import manufacturersActions from '../../actions/manufacturersActions';
 import PreferredSupplier from './PreferredSupplier';
+import PriceChange from './PriceChange';
 
 function PartSupplier() {
     const useStyles = makeStyles(theme => ({
@@ -174,6 +175,7 @@ function PartSupplier() {
 
     const [value, setValue] = useState(0);
     const [preferredSupplierDialogOpen, setPreferredSupplierDialogOpen] = useState(false);
+    const [priceChangeDialogOpen, setPriceChangeDialogOpen] = useState(false);
 
     const refreshPart = useCallback(
         () => reduxDispatch(partActions.fetch(query.partId)),
@@ -276,6 +278,38 @@ function PartSupplier() {
                                 refreshPart={refreshPart}
                                 safetyCriticalPart={part?.safetyCriticalPart === 'Y'}
                                 bomType={part?.bomType}
+                            />
+                        </div>
+                    </div>
+                </Dialog>
+                <Dialog open={priceChangeDialogOpen} fullWidth maxWidth="md">
+                    <div>
+                        <IconButton
+                            className={classes.pullRight}
+                            aria-label="Close"
+                            onClick={() => setPriceChangeDialogOpen(false)}
+                        >
+                            <Close />
+                        </IconButton>
+                        <div className={classes.dialog}>
+                            <PriceChange
+                                partNumber={part?.partNumber}
+                                partDescription={part?.description}
+                                baseOldPrice={state.partSupplier?.baseOurUnitPrice}
+                                oldPrice={state.partSupplier?.currencyUnitPrice}
+                                oldCurrencyCode={state.partSupplier?.currencyCode}
+                                supplierId={state.partSupplier?.supplierId}
+                                supplierName={state.partSupplier?.supplierName}
+                                close={() => setPriceChangeDialogOpen(false)}
+                                changePrices={newValues =>
+                                    updatePartSupplier({
+                                        ...state.partSupplier,
+                                        currencyUnitPrice: newValues.newPrice,
+                                        ourCurrencyPriceToShowOnOrder: newValues.newPrice,
+                                        baseOurUnitPrice: newValues.baseNewPrice,
+                                        currencyCode: newValues.newCurrency
+                                    })
+                                }
                             />
                         </div>
                     </div>
@@ -409,6 +443,7 @@ function PartSupplier() {
                                                     state.partSupplier?.orderConversionFactor
                                                 }
                                                 reelOrBoxQty={state.partSupplier?.reelOrBoxQty}
+                                                setPriceChangeDialogOpen={setPriceChangeDialogOpen}
                                             />
                                         </Box>
                                     )}

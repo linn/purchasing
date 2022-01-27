@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 
 import { InputField, Dropdown } from '@linn-it/linn-form-components-library';
+import { Button } from '@mui/material';
 
 function OrderDetailsTab({
     handleFieldChange,
@@ -23,7 +24,8 @@ function OrderDetailsTab({
     orderIncrement,
     orderConversionFactor,
     reelOrBoxQty,
-    fullAddress
+    fullAddress,
+    setPriceChangeDialogOpen
 }) {
     return (
         <Grid container spacing={3}>
@@ -49,6 +51,12 @@ function OrderDetailsTab({
             </Grid>
             <Grid item xs={4} />
             <Grid item xs={4}>
+                <Button variant="outlined" onClick={() => setPriceChangeDialogOpen(true)}>
+                    Change Prices
+                </Button>
+            </Grid>
+            <Grid item xs={8} />
+            <Grid item xs={4}>
                 <Dropdown
                     fullWidth
                     value={currency}
@@ -56,6 +64,7 @@ function OrderDetailsTab({
                     propertyName="currencyCode"
                     items={currencies.map(x => x.code)}
                     allowNoValue
+                    disabled
                     onChange={handleFieldChange}
                 />
             </Grid>
@@ -66,6 +75,7 @@ function OrderDetailsTab({
                     value={currencyUnitPrice}
                     label="Currency Unit Price"
                     type="number"
+                    disabled
                     propertyName="currencyUnitPrice"
                     onChange={handleFieldChange}
                 />
@@ -77,6 +87,7 @@ function OrderDetailsTab({
                     value={ourCurrencyPriceToShowOnOrder}
                     label="Our Price to Show On Order (ex duty)"
                     type="number"
+                    disabled
                     propertyName="ourCurrencyPriceToShowOnOrder"
                     onChange={handleFieldChange}
                 />
@@ -88,6 +99,7 @@ function OrderDetailsTab({
                     value={baseOurUnitPrice}
                     label="Base Our Unit Price"
                     type="number"
+                    disabled
                     propertyName="baseOurUnitPrice"
                     onChange={handleFieldChange}
                 />
@@ -208,7 +220,8 @@ OrderDetailsTab.propTypes = {
     orderIncrement: PropTypes.number,
     orderConversionFactor: PropTypes.number,
     reelOrBoxQty: PropTypes.number,
-    fullAddress: PropTypes.string
+    fullAddress: PropTypes.string,
+    setPriceChangeDialogOpen: PropTypes.func.isRequired
 };
 
 OrderDetailsTab.defaultProps = {
