@@ -136,8 +136,8 @@
                         }
 
                         var part = this.partRepository.FindBy(x => x.PartNumber == orderDetail.PartNumber);
-                        if (stockControlled != "A" && (stockControlled == "N" && part.StockControlled == "N"
-                                                       || stockControlled == "O" && part.StockControlled != "Y"))
+                        if (stockControlled != "A" && ((stockControlled == "N" && part.StockControlled == "N")
+                                                       || (stockControlled == "O" && part.StockControlled != "Y")))
                         {
                             continue;
                         }
