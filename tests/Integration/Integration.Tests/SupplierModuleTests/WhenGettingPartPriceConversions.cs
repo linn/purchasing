@@ -27,7 +27,7 @@
                 NewPrice = 100
             };
 
-            this.PartFacadeService.GetPrices("PART", "USD", 100m)
+            this.PartFacadeService.GetPrices("PART", "USD", 100m, null, null)
                 .Returns(new SuccessResult<PartPriceConversionsResource>(this.resource));
 
 

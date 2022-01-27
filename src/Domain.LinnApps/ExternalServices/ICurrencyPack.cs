@@ -2,6 +2,10 @@
 {
     public interface ICurrencyPack
     {
-        decimal CalculateBaseValueFromCurrencyValue(string newCurrency, decimal newPrice);
+        decimal CalculateBaseValueFromCurrencyValue(
+            string newCurrency, 
+            decimal newPrice, 
+            string ledger = "SL", 
+            string round = "TRUE");
     }
 }
