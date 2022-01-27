@@ -31,7 +31,12 @@
             return this.partRepository.FindBy(x => x.Id == id)?.PartNumber;
         }
 
-        public IResult<PartPriceConversionsResource> GetPrices(string partNumber, string newCurrency, decimal newPrice)
+        public IResult<PartPriceConversionsResource> GetPrices(
+            string partNumber,
+            string newCurrency,
+            decimal newPrice,
+            string ledger,
+            string round)
         {
             try
             {
@@ -39,7 +44,7 @@
                     new PartPriceConversionsResource
                         {
                             NewPrice = this.autocostPack.CalculateNewMaterialPrice(partNumber, newCurrency, newPrice),
-                            BaseNewPrice = this.currencyPack.CalculateBaseValueFromCurrencyValue(newCurrency, newPrice)
+                            BaseNewPrice = this.currencyPack.CalculateBaseValueFromCurrencyValue(newCurrency, newPrice, ledger, round)
                         });
             }
             catch (Exception e)

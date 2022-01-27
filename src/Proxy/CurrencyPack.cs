@@ -17,7 +17,11 @@
             this.databaseService = databaseService;
         }
 
-        public decimal CalculateBaseValueFromCurrencyValue(string newCurrency, decimal newPrice)
+        public decimal CalculateBaseValueFromCurrencyValue(
+            string newCurrency,
+            decimal newPrice,
+            string ledger = "SL",
+            string round = "TRUE")
         {
             using var connection = this.databaseService.GetConnection();
             connection.Open();
@@ -25,18 +29,30 @@
                           {
                               CommandType = CommandType.StoredProcedure
                           };
-            var currency = new OracleParameter("P_CURR", OracleDbType.Varchar2)
+            var currencyParam = new OracleParameter("p_curr", OracleDbType.Varchar2)
+                                    {
+                                        Direction = ParameterDirection.Input,
+                                        Size = 50,
+                                        Value = newCurrency
+                                    };
+            var valueParam = new OracleParameter("p_curr_value", OracleDbType.Decimal)
+                                 {
+                                     Direction = ParameterDirection.Input,
+                                     Size = 50,
+                                     Value = newPrice
+                                 };
+            var ledgerParam = new OracleParameter("p_ledger", OracleDbType.Varchar2)
                             {
                                 Direction = ParameterDirection.Input,
                                 Size = 50,
-                                Value = newCurrency
+                                Value = ledger
                             };
-            var value = new OracleParameter("P_CURR_VALUE", OracleDbType.Decimal)
-                              {
-                                  Direction = ParameterDirection.Input,
-                                  Size = 50,
-                                  Value = newPrice
-                              };
+            var roundParam = new OracleParameter("p_round", OracleDbType.Varchar2)
+                            {
+                                Direction = ParameterDirection.Input,
+                                Size = 50,
+                                Value = round
+                            };
             var result = new OracleParameter(null, OracleDbType.Varchar2)
                              {
                                  Direction = ParameterDirection.ReturnValue,
@@ -44,8 +60,10 @@
                              };
 
             cmd.Parameters.Add(result);
-            cmd.Parameters.Add(currency);
-            cmd.Parameters.Add(value);
+            cmd.Parameters.Add(currencyParam);
+            cmd.Parameters.Add(valueParam);
+            cmd.Parameters.Add(ledgerParam);
+            cmd.Parameters.Add(roundParam);
 
             cmd.ExecuteNonQuery();
             connection.Close();

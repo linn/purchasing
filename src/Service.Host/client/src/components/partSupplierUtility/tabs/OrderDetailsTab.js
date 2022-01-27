@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 
 import { InputField, Dropdown } from '@linn-it/linn-form-components-library';
+import { Button } from '@mui/material';
 
 function OrderDetailsTab({
     handleFieldChange,
@@ -23,7 +24,8 @@ function OrderDetailsTab({
     orderIncrement,
     orderConversionFactor,
     reelOrBoxQty,
-    fullAddress
+    fullAddress,
+    setPriceChangeDialogOpen
 }) {
     return (
         <Grid container spacing={3}>
@@ -70,7 +72,12 @@ function OrderDetailsTab({
                     onChange={handleFieldChange}
                 />
             </Grid>
-            <Grid item xs={8} />
+            <Grid item xs={4}>
+                <Button variant="outlined" onClick={() => setPriceChangeDialogOpen(true)}>
+                    Change Prices
+                </Button>
+            </Grid>
+            <Grid item xs={4} />
             <Grid item xs={4}>
                 <InputField
                     fullWidth
@@ -208,7 +215,8 @@ OrderDetailsTab.propTypes = {
     orderIncrement: PropTypes.number,
     orderConversionFactor: PropTypes.number,
     reelOrBoxQty: PropTypes.number,
-    fullAddress: PropTypes.string
+    fullAddress: PropTypes.string,
+    setPriceChangeDialogOpen: PropTypes.func.isRequired
 };
 
 OrderDetailsTab.defaultProps = {

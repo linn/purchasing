@@ -158,8 +158,16 @@
             var partNumber = req.Query.As<string>("partNumber");
             var newCurrency = req.Query.As<string>("newCurrency");
             var newPrice = req.Query.As<decimal>("newPrice");
+            var ledger = req.Query.As<string>("ledger");
+            var round = req.Query.As<string>("round");
 
-            var result = this.partFacadeService.GetPrices(partNumber, newCurrency, newPrice);
+
+            var result = this.partFacadeService.GetPrices(
+                partNumber, 
+                newCurrency, 
+                newPrice,
+                ledger,
+                round);
 
             await res.Negotiate(result);
         }
