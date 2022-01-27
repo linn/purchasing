@@ -70,7 +70,7 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
-                                    path="/purchasing/reports/orders-by-supplier/:id"
+                                    path="/purchasing/reports/orders-by-supplier/report"
                                     component={OrdersBySupplier}
                                 />
                                 <Route
@@ -80,7 +80,7 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
-                                    path="/purchasing/reports/orders-by-part/:id"
+                                    path="/purchasing/reports/orders-by-part/report"
                                     component={OrdersByPart}
                                 />
 

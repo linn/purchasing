@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Facade.Tests.ResourceBuilderTests.PurchaseOrdersReportServiceTests
+﻿namespace Linn.Purchasing.Facade.Tests.PurchaseOrdersReportServiceTests
 {
     using Linn.Common.Facade;
     using Linn.Common.Reporting.Models;

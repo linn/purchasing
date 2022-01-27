@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Facade.Tests.ResourceBuilderTests.PurchaseOrdersReportServiceTests
+﻿namespace Linn.Purchasing.Facade.Tests.PurchaseOrdersReportServiceTests
 {
     using System;
     using System.Collections.Generic;
