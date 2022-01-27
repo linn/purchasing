@@ -60,6 +60,8 @@
 
         public DbSet<PartHistoryEntry> PartHistory { get; set; }
 
+        public DbSet<VendorManager> VendorManagers { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -87,6 +89,7 @@
             this.BuildPreferredSupplierChanges(builder);
             this.BuildPriceChangeReasons(builder);
             this.BuildPartHistory(builder);
+            this.BuildVendorManagers(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -444,6 +447,16 @@
             entity.Property(e => e.TransactionCategory).HasColumnName("TRANS_CATEGORY").HasMaxLength(10);
         }
 
+        private void BuildVendorManagers(ModelBuilder builder)
+        {
+            var entity = builder.Entity<VendorManager>().ToTable("VENDOR_MANAGERS");
+            entity.HasKey(m => m.VmId);
+            entity.Property(e => e.VmId).HasColumnName("VM_ID").HasMaxLength(1);
+            entity.Property(e => e.UserNumber).HasColumnName("USER_NUMBER").HasMaxLength(6);
+            entity.Property(e => e.PmMeasured).HasColumnName("PM_MEASURED").HasMaxLength(1);
+        }
 
+        //"PL_PL_SUPPLIERS_EX_VAT"
+        //"PL_PL_PURCHASES_FACTORS"
     }
 }
