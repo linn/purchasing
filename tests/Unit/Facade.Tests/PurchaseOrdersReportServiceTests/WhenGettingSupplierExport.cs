@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Facade.Tests.ResourceBuilderTests.OrdersBySupplierReportServiceTests
+﻿namespace Linn.Purchasing.Facade.Tests.PurchaseOrdersReportServiceTests
 {
     using System.Collections.Generic;
     using System.IO;
@@ -59,7 +59,7 @@
         }
 
         [Test]
-        public void ShouldReturnListOfListOfStrings()
+        public void ShouldReturnMemoryStream()
         {
             this.resultsStream.Should().BeOfType<MemoryStream>();
         }

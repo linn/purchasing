@@ -16,6 +16,8 @@ import PartSupplierSearch from './partSupplierUtility/PartSupplierSearch';
 import PartSupplier from './partSupplierUtility/PartSupplier';
 import OrdersBySupplier from './reports/OrdersBySupplier';
 import OrdersBySupplierOptions from './reports/OrdersBySupplierOptions';
+import OrdersByPart from './reports/OrdersByPart';
+import OrdersByPartOptions from './reports/OrdersByPartOptions';
 
 const Root = ({ store }) => (
     <div>
@@ -68,8 +70,18 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
-                                    path="/purchasing/reports/orders-by-supplier/:id"
+                                    path="/purchasing/reports/orders-by-supplier/report"
                                     component={OrdersBySupplier}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/orders-by-part"
+                                    component={OrdersByPartOptions}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/orders-by-part/report"
+                                    component={OrdersByPart}
                                 />
 
                                 <Route component={NotFoundPage} />

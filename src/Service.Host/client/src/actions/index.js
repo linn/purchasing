@@ -57,3 +57,8 @@ export const partPriceConversionsActionTypes = makeActionTypes(
     itemTypes.partPriceConversions.actionType,
     false
 );
+
+export const ordersByPartReportActionTypes = makeActionTypes(
+    reportTypes.ordersByPartReport.actionType,
+    false
+);

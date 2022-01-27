@@ -11,5 +11,7 @@
         public string VendorManager { get; set; }
 
         public int? Planner { get; set; }
+
+        public string Currency { get; set; }
     }
 }

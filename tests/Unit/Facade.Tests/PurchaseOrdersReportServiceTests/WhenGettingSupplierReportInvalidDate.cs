@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Facade.Tests.ResourceBuilderTests.OrdersBySupplierReportServiceTests
+﻿namespace Linn.Purchasing.Facade.Tests.PurchaseOrdersReportServiceTests
 {
     using System;
     using System.Collections.Generic;
@@ -15,7 +15,7 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingReportInvalidDate : ContextBase
+    public class WhenGettingSupplierReportInvalidDate : ContextBase
     {
         private readonly int supplierId = 71234;
 

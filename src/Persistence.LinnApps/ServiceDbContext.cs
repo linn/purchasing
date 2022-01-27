@@ -240,6 +240,7 @@
             entity.Property(a => a.LedgerStream).HasColumnName("LEDGER_STREAM");
             entity.Property(a => a.Planner).HasColumnName("PLANNER");
             entity.Property(a => a.VendorManager).HasColumnName("VENDOR_MANAGER").HasMaxLength(1);
+            entity.Property(a => a.Currency).HasColumnName("CURRENCY").HasMaxLength(4);
         }
 
         private void BuildOrderMethods(ModelBuilder builder)

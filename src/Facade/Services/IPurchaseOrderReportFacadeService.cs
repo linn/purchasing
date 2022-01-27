@@ -17,5 +17,13 @@
         Stream GetOrdersBySupplierExport(
             OrdersBySupplierSearchResource resource,
             IEnumerable<string> privileges);
+
+        IResult<ReportReturnResource> GetOrdersByPartReport(
+            OrdersByPartSearchResource resource,
+            IEnumerable<string> privileges);
+
+        Stream GetOrdersByPartExport(
+            OrdersByPartSearchResource resource,
+            IEnumerable<string> privileges);
     }
 }
