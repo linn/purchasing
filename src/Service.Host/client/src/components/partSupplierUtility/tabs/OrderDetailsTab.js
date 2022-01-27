@@ -51,6 +51,12 @@ function OrderDetailsTab({
             </Grid>
             <Grid item xs={4} />
             <Grid item xs={4}>
+                <Button variant="outlined" onClick={() => setPriceChangeDialogOpen(true)}>
+                    Change Prices
+                </Button>
+            </Grid>
+            <Grid item xs={8} />
+            <Grid item xs={4}>
                 <Dropdown
                     fullWidth
                     value={currency}
@@ -58,6 +64,7 @@ function OrderDetailsTab({
                     propertyName="currencyCode"
                     items={currencies.map(x => x.code)}
                     allowNoValue
+                    disabled
                     onChange={handleFieldChange}
                 />
             </Grid>
@@ -68,22 +75,19 @@ function OrderDetailsTab({
                     value={currencyUnitPrice}
                     label="Currency Unit Price"
                     type="number"
+                    disabled
                     propertyName="currencyUnitPrice"
                     onChange={handleFieldChange}
                 />
             </Grid>
-            <Grid item xs={4}>
-                <Button variant="outlined" onClick={() => setPriceChangeDialogOpen(true)}>
-                    Change Prices
-                </Button>
-            </Grid>
-            <Grid item xs={4} />
+            <Grid item xs={8} />
             <Grid item xs={4}>
                 <InputField
                     fullWidth
                     value={ourCurrencyPriceToShowOnOrder}
                     label="Our Price to Show On Order (ex duty)"
                     type="number"
+                    disabled
                     propertyName="ourCurrencyPriceToShowOnOrder"
                     onChange={handleFieldChange}
                 />
@@ -95,6 +99,7 @@ function OrderDetailsTab({
                     value={baseOurUnitPrice}
                     label="Base Our Unit Price"
                     type="number"
+                    disabled
                     propertyName="baseOurUnitPrice"
                     onChange={handleFieldChange}
                 />

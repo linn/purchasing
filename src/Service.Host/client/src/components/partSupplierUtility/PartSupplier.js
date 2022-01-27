@@ -293,15 +293,14 @@ function PartSupplier() {
                         </IconButton>
                         <div className={classes.dialog}>
                             <PriceChange
-                                partLoading={partLoading}
                                 partNumber={part?.partNumber}
                                 partDescription={part?.description}
                                 baseOldPrice={state.partSupplier?.baseOurUnitPrice}
                                 oldPrice={state.partSupplier?.currencyUnitPrice}
-                                oldCurrencyCode={part?.currency}
+                                oldCurrencyCode={state.partSupplier?.currencyCode}
                                 supplierId={state.partSupplier?.supplierId}
                                 supplierName={state.partSupplier?.supplierName}
-                                close={() => setPreferredSupplierDialogOpen(false)}
+                                close={() => setPriceChangeDialogOpen(false)}
                                 changePrices={newValues =>
                                     updatePartSupplier({
                                         ...state.partSupplier,

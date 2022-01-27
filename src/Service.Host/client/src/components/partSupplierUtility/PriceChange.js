@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -8,15 +8,12 @@ import {
     collectionSelectorHelpers,
     itemSelectorHelpers,
     Dropdown,
-    getItemError,
-    ErrorCard,
     SnackbarMessage
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import preferredSupplierChangeActions from '../../actions/preferredSupplierChangeActions';
 import currenciesActions from '../../actions/currenciesActions';
 import partSuppliersActions from '../../actions/partSuppliersActions';
-import priceChangeReasonsActions from '../../actions/priceChangeReasonsActions';
 import partPriceConversionsActions from '../../actions/partPriceConversionsActions';
 import { partPriceConversions } from '../../itemTypes';
 
@@ -37,7 +34,6 @@ function PriceChange({
             partSuppliersActions.searchWithOptions(null, `&partNumber=${partNumber}&supplierName=`)
         );
         dispatch(currenciesActions.fetch());
-        dispatch(priceChangeReasonsActions.fetch());
     }, [dispatch, partNumber]);
 
     const currencies = useSelector(reduxState =>
@@ -50,15 +46,6 @@ function PriceChange({
 
     const snackbarVisible = useSelector(reduxState =>
         itemSelectorHelpers.getSnackbarVisible(reduxState.preferredSupplierChange)
-    );
-
-    const itemError = useSelector(reduxState =>
-        getItemError(reduxState, 'preferredSupplierChange')
-    );
-
-    const clearErrors = useCallback(
-        () => dispatch(preferredSupplierChangeActions.clearErrorsForItem()),
-        [dispatch]
     );
 
     const [formData, setFormData] = useState({ newCurrency: oldCurrencyCode });
@@ -98,10 +85,6 @@ function PriceChange({
         setSaveDisabled(false);
     };
 
-    useEffect(() => {
-        clearErrors();
-    }, [clearErrors]);
-
     return (
         <Grid container spacing={3}>
             <SnackbarMessage
@@ -112,11 +95,6 @@ function PriceChange({
             <Grid item xs={12}>
                 <Typography variant="h6">Change Prices</Typography>
             </Grid>
-            {itemError && (
-                <Grid item xs={12}>
-                    <ErrorCard errorMessage={itemError.details} />
-                </Grid>
-            )}
             <Grid item xs={4}>
                 <InputField
                     fullWidth
@@ -234,11 +212,12 @@ function PriceChange({
                         !formData?.baseNewPrice
                     }
                     saveClick={() => {
-                        clearErrors();
                         setSaveDisabled(true);
                         changePrices({
                             ...formData
                         });
+                        setFormData({});
+                        close();
                     }}
                 />
             </Grid>
