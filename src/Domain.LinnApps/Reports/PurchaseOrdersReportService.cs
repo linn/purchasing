@@ -320,7 +320,7 @@
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId, ColumnId = "Date", TextDisplay = $"{order.OrderDate}"
+                        RowId = currentRowId, ColumnId = "Date", TextDisplay = $"{order.OrderDate.ToString("dd-MMM-yyyy")}"
                     });
 
             values.Add(
@@ -348,7 +348,7 @@
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId, ColumnId = "Currency", TextDisplay = "GBP"
+                        RowId = currentRowId, ColumnId = "Currency", TextDisplay = order.Supplier.Currency
                     });
 
             values.Add(

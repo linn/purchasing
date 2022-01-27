@@ -42,7 +42,7 @@
             resource.To = req.Query.As<string>("ToDate");
             resource.Cancelled = req.Query.As<string>("Cancelled");
 
-            using var stream = this.purchaseOrderReportFacadeService.GetOrdersByPartExport(
+            using Stream stream = this.purchaseOrderReportFacadeService.GetOrdersByPartExport(
                 resource,
                 req.HttpContext.GetPrivileges());
 

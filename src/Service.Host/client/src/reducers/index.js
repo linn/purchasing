@@ -27,6 +27,7 @@ import ordersBySupplier from './ordersBySupplierReport';
 import preferredSupplierChange from './preferredSupplierChange';
 import priceChangeReasons from './priceChangeReasons';
 import partPriceConversions from './partPriceConversions';
+import ordersByPart from './ordersByPartReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -39,6 +40,7 @@ const rootReducer = history =>
         employees,
         manufacturers,
         orderMethods,
+        ordersByPart,
         ordersBySupplier,
         packagingGroups,
         part,

@@ -46,8 +46,8 @@ function OrderByPartReport() {
                     {!loading && reportData ? (
                         <ExportButton
                             href={
-                                `${config.appRoot}/purchasing/reports/orders-by-part/export?` +
-                                `?&id=${options.partNumber}` +
+                                `${config.appRoot}/purchasing/reports/orders-by-part/export` +
+                                `?&partNumber=${options.partNumber}` +
                                 `&fromDate=${options.fromDate}` +
                                 `&toDate=${options.toDate}` +
                                 `&cancelled=${options.cancelled}`

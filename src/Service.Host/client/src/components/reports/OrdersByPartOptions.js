@@ -19,15 +19,15 @@ function OrdersByPartReportOptions() {
     const partsSearchResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.parts)
     ).map?.(c => ({
+        id: c.partNumber,
+        name: c.partNumber,
         partNumber: c.partNumber,
         description: c.description
     }));
     const partsSearchLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.parts)
     );
-    const prevOptions = useSelector(state =>
-        reportSelectorHelpers.getReportOptions(state.suppliers)
-    );
+    const prevOptions = useSelector(state => reportSelectorHelpers.getReportOptions(state.parts));
 
     const dispatch = useDispatch();
 
@@ -118,6 +118,7 @@ function OrdersByPartReportOptions() {
                         onChange={(propertyName, newValue) => setCancelled(newValue)}
                     />
                 </Grid>
+                <Grid item xs={8} />
 
                 <Grid item xs={12}>
                     <Button

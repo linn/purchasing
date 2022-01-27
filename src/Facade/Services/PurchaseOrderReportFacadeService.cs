@@ -40,7 +40,7 @@
                 return new BadRequestResult<ReportReturnResource>(
                     "Invalid dates supplied to orders by part report");
             }
-            
+
             var cancelled = resource.Cancelled == "Y";
 
             var results = this.domainService.GetOrdersByPartReport(
