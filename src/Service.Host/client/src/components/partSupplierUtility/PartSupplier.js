@@ -302,6 +302,15 @@ function PartSupplier() {
                                 supplierId={state.partSupplier?.supplierId}
                                 supplierName={state.partSupplier?.supplierName}
                                 close={() => setPreferredSupplierDialogOpen(false)}
+                                changePrices={newValues =>
+                                    updatePartSupplier({
+                                        ...state.partSupplier,
+                                        currencyUnitPrice: newValues.newPrice,
+                                        ourCurrencyPriceToShowOnOrder: newValues.newPrice,
+                                        baseOurUnitPrice: newValues.baseNewPrice,
+                                        currencyCode: newValues.newCurrency
+                                    })
+                                }
                             />
                         </div>
                     </div>

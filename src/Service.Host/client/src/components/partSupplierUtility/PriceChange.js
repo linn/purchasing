@@ -8,7 +8,6 @@ import {
     collectionSelectorHelpers,
     itemSelectorHelpers,
     Dropdown,
-    userSelectors,
     getItemError,
     ErrorCard,
     SnackbarMessage
@@ -29,10 +28,10 @@ function PriceChange({
     oldPrice,
     baseOldPrice,
     oldCurrencyCode,
-    close
+    close,
+    changePrices
 }) {
     const dispatch = useDispatch();
-    const postChange = body => dispatch(preferredSupplierChangeActions.add(body));
     useEffect(() => {
         dispatch(
             partSuppliersActions.searchWithOptions(null, `&partNumber=${partNumber}&supplierName=`)
@@ -45,23 +44,9 @@ function PriceChange({
         collectionSelectorHelpers.getItems(reduxState.currencies)
     );
 
-    const reasons = useSelector(reduxState =>
-        collectionSelectorHelpers.getItems(reduxState.priceChangeReasons)
-    );
-
-    const currentUserNumber = useSelector(reduxState => userSelectors.getUserNumber(reduxState));
-
     const partPriceConversionsResult = useSelector(reduxState =>
         itemSelectorHelpers.getItem(reduxState.partPriceConversions)
     );
-
-    // const preferredSupplierChange = useSelector(reduxState =>
-    //     itemSelectorHelpers.getItem(reduxState.preferredSupplierChange)
-    // );
-
-    // const preferredSupplierChangeLoading = useSelector(reduxState =>
-    //     itemSelectorHelpers.getItemLoading(reduxState.preferredSupplierChange)
-    // );
 
     const snackbarVisible = useSelector(reduxState =>
         itemSelectorHelpers.getSnackbarVisible(reduxState.preferredSupplierChange)
@@ -77,16 +62,6 @@ function PriceChange({
     );
 
     const [formData, setFormData] = useState({ newCurrency: oldCurrencyCode });
-
-    // useEffect(() => {
-    //     if (formData?.newPrice && formData?.newCurrency) {
-    //         dispatch(
-    //             partPriceConversionsActions.fetchByHref(
-    //                 `${partPriceConversions.uri}?partNumber=${partNumber}&newPrice=${formData?.newPrice}&newCurrency=${formData?.newCurrency}`
-    //             )
-    //         );
-    //     }
-    // }, [formData?.newPrice, formData?.newCurrency, partNumber, supplierId, dispatch]);
 
     useEffect(() => {
         if (partPriceConversionsResult) {
@@ -126,20 +101,6 @@ function PriceChange({
     useEffect(() => {
         clearErrors();
     }, [clearErrors]);
-
-    // useEffect(() => {
-    //     setFormData({});
-    // }, []);
-
-    // if (preferredSupplierChangeLoading) {
-    //     return (
-    //         <Grid container spacing={3}>
-    //             <Grid item xs={12}>
-    //                 <Loading />
-    //             </Grid>
-    //         </Grid>
-    //     );
-    // }
 
     return (
         <Grid container spacing={3}>
@@ -262,45 +223,21 @@ function PriceChange({
                     onChange={handleFieldChange}
                 />
             </Grid>
-            <Grid item xs={6}>
-                <Dropdown
-                    value={formData?.changeReasonCode}
-                    propertyName="changeReasonCode"
-                    label="Reason"
-                    items={reasons.map(s => ({
-                        id: s.reasonCode,
-                        displayText: s.description
-                    }))}
-                    onChange={handleFieldChange}
-                />
-            </Grid>
-            <Grid item xs={6} />
-
-            <Grid item xs={12}>
-                <InputField
-                    fullWidth
-                    value={formData?.remarks}
-                    label="Remarks"
-                    propertyName="remarks"
-                    onChange={handleFieldChange}
-                />
-            </Grid>
             <Grid item xs={12}>
                 <SaveBackCancelButtons
                     cancelClick={close}
                     backClick={close}
-                    saveDisabled={saveDisabled}
+                    saveDisabled={
+                        saveDisabled ||
+                        !formData?.newCurrency ||
+                        !formData?.newPrice ||
+                        !formData?.baseNewPrice
+                    }
                     saveClick={() => {
                         clearErrors();
                         setSaveDisabled(true);
-                        postChange({
-                            partNumber,
-                            supplierId,
-                            oldPrice,
-                            baseOldPrice,
-                            oldCurrencyCode,
-                            ...formData,
-                            changedById: Number(currentUserNumber)
+                        changePrices({
+                            ...formData
                         });
                     }}
                 />
@@ -317,7 +254,8 @@ PriceChange.propTypes = {
     oldPrice: PropTypes.number,
     baseOldPrice: PropTypes.number,
     oldCurrencyCode: PropTypes.string,
-    close: PropTypes.func.isRequired
+    close: PropTypes.func.isRequired,
+    changePrices: PropTypes.func.isRequired
 };
 
 PriceChange.defaultProps = {
