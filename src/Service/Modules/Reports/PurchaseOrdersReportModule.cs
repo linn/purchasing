@@ -23,6 +23,7 @@
         {
             this.purchaseOrderReportFacadeService = purchaseOrderReportFacadeService;
             this.Get("/purchasing/reports/orders-by-supplier", this.GetApp);
+            this.Get("/purchasing/reports/orders-by-part", this.GetApp);
             this.Get("/purchasing/reports/orders-by-supplier/report", this.GetOrdersBySupplierReport);
             this.Get("/purchasing/reports/orders-by-supplier/export", this.GetOrdersBySupplierExport);
             this.Get("/purchasing/reports/orders-by-part/report", this.GetOrdersByPartReport);

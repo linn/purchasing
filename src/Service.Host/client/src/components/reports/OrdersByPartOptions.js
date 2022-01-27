@@ -27,7 +27,9 @@ function OrdersByPartReportOptions() {
     const partsSearchLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.parts)
     );
-    const prevOptions = useSelector(state => reportSelectorHelpers.getReportOptions(state.parts));
+    const prevOptions = useSelector(state =>
+        reportSelectorHelpers.getReportOptions(state.ordersByPart)
+    );
 
     const dispatch = useDispatch();
 
@@ -42,11 +44,13 @@ function OrdersByPartReportOptions() {
     );
 
     const [part, setPart] = useState(
-        prevOptions?.toDate
+        prevOptions?.partNumber
             ? { partNumber: prevOptions.partNumber }
             : { partNumber: 'click to set part' }
     );
-    const [cancelled, setCancelled] = useState('N');
+    const [cancelled, setCancelled] = useState(
+        prevOptions?.cancelled ? prevOptions.cancelled : 'N'
+    );
 
     const handlePartChange = selectedPart => {
         setPart(selectedPart);
