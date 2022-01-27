@@ -85,7 +85,7 @@ describe('When changing price...', () => {
         expect(fetchPartPriceConversionsSpy).toBeCalledWith(
             `${
                 partPriceConversions.uri
-            }?partNumber=PART&newPrice=${999}&newCurrency=USD&ledger=SL&round=TRUE`
+            }?partNumber=PART&newPrice=${999}&newCurrency=USD&ledger=PL&round=FALSE`
         );
     });
 });
@@ -113,7 +113,7 @@ describe('When changing and new price has value...', () => {
         expect(fetchPartPriceConversionsSpy).toBeCalledWith(
             `${
                 partPriceConversions.uri
-            }?partNumber=PART&newPrice=${999}&newCurrency=GBP&ledger=SL&round=TRUE`
+            }?partNumber=PART&newPrice=${999}&newCurrency=GBP&ledger=PL&round=FALSE`
         );
     });
 });

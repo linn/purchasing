@@ -67,7 +67,7 @@ function PriceChange({
                 partPriceConversionsActions.fetchByHref(
                     `${partPriceConversions.uri}?partNumber=${partNumber}&newPrice=${
                         formData?.newPrice
-                    }&newCurrency=${newCurrency ?? formData?.newCurrency}&ledger=SL&round=TRUE`
+                    }&newCurrency=${newCurrency ?? formData?.newCurrency}&ledger=PL&round=FALSE`
                 )
             );
         }
