@@ -164,7 +164,7 @@ describe('When saving new price and currency...', () => {
         fireEvent.click(saveButton);
     });
 
-    test('Should request part price conversions with new currency', () => {
+    test('Should call save function with new values', () => {
         expect(changePrices).toBeCalledWith(
             expect.objectContaining({
                 newPrice: 999,
