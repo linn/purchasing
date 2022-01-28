@@ -35,6 +35,7 @@ function PartSupplierTab({
                     onSelect={newValue => {
                         handleFieldChange('partNumber', newValue.id);
                         handleFieldChange('partDescription', newValue.description);
+                        handleFieldChange('designation', newValue.description);
                     }}
                     label="Part"
                     modal

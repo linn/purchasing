@@ -227,6 +227,33 @@ describe('When creating...', () => {
     });
 });
 
+describe('When new part selected...', () => {
+    beforeEach(() => {
+        const stateWithPartSearchResults = {
+            ...state,
+            router: { location: { pathname: '/create', query: {} } },
+            partSupplier: {
+                loading: false
+            },
+            parts: {
+                searchItems: [{ id: 1, partNumber: 'SOME PART', description: 'SOME DESC' }]
+            }
+        };
+        cleanup();
+        jest.clearAllMocks();
+        useSelector.mockImplementation(callback => callback(stateWithPartSearchResults));
+        render(<PartSupplier />);
+    });
+
+    test('Should set designation and part description to be selected results description', () => {
+        const input = screen.getByLabelText('Part');
+        fireEvent.click(input);
+        const result = screen.getByText('SOME PART');
+        fireEvent.click(result);
+        expect(screen.getAllByText('SOME DESC')).toHaveLength(2);
+    });
+});
+
 describe('When clicking tabs...', () => {
     beforeEach(() => {
         cleanup();
