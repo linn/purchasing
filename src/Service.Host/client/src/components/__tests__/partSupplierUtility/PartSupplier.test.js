@@ -214,17 +214,49 @@ describe('When creating...', () => {
         render(<PartSupplier />);
     });
 
-    test('Save button should be enabled...', () => {
+    test('Save button should be disabled since no data...', () => {
         const saveButton = screen.getByRole('button', { name: 'Save' });
-        expect(saveButton).not.toBeDisabled();
+        expect(saveButton).toBeDisabled();
     });
 
-    test('Should dispatch add action when save clicked...', () => {
-        const saveButton = screen.getByRole('button', { name: 'Save' });
+    test('Preferred Supplier button should be disabled', () => {
+        expect(screen.getByRole('button', { name: 'Preferred Supplier' })).toBeDisabled();
+    });
+
+    test('Change prices button should be disabled', () => {
+        const tab = screen.getByText('Order Details');
+        fireEvent.click(tab);
+        expect(screen.getByRole('button', { name: 'Change Prices' })).toBeDisabled();
+    });
+});
+
+describe('When save clicked when creating...', () => {
+    beforeEach(() => {
+        cleanup();
+        jest.clearAllMocks();
+        useSelector.mockImplementation(callback =>
+            callback({
+                ...stateWhereCreating,
+                parts: {
+                    searchItems: [{ id: 1, partNumber: 'SOME PART', description: 'SOME DESC' }]
+                }
+            })
+        );
+        render(<PartSupplier />);
+    });
+    test('Should dispatch add action when save clicked...', async () => {
+        // enter some data
+        const input = screen.getByLabelText('Part');
+        fireEvent.click(input);
+        const result = screen.getByRole('button', { name: 'SOME PART SOME DESC' });
+        fireEvent.click(result);
+
+        const saveButton = await screen.findByRole('button', { name: 'Save' });
         fireEvent.click(saveButton);
+
         expect(addItemActionSpy).toHaveBeenCalledTimes(1);
         expect(addItemActionSpy).toHaveBeenCalledWith(
-            expect.objectContaining({ createdBy: 33087 })
+            expect.objectContaining({ createdBy: 33087, partNumber: 'SOME PART' })
         );
     });
 });
@@ -295,6 +327,9 @@ describe('When currency changed', () => {
                     { code: 'GBP', name: 'Sterling' },
                     { code: 'USD', name: 'Dollar Dollar Bills' }
                 ]
+            },
+            parts: {
+                searchItems: [{ id: 1, partNumber: 'SOME PART', description: 'SOME DESC' }]
             }
         };
         cleanup();
@@ -459,5 +494,51 @@ describe('When part has manufacturers...', () => {
 
     test('Should list manufacturers and their part numbers in the Manufacturers box', () => {
         expect(screen.getByText('M1 - P1 M2 - P2')).toBeInTheDocument();
+    });
+});
+
+describe('When no edit link...', () => {
+    beforeEach(() => {
+        cleanup();
+        jest.clearAllMocks();
+        const stateWithNoEditLink = {
+            ...state,
+            partSupplier: { item: { links: [] } }
+        };
+        useSelector.mockImplementation(callback => callback(stateWithNoEditLink));
+        render(<PartSupplier />);
+    });
+
+    test('Preferred Supplier button should be disabled', () => {
+        expect(screen.getByRole('button', { name: 'Preferred Supplier' })).toBeDisabled();
+    });
+
+    test('Change prices button should be disabled', () => {
+        const tab = screen.getByText('Order Details');
+        fireEvent.click(tab);
+        expect(screen.getByRole('button', { name: 'Change Prices' })).toBeDisabled();
+    });
+});
+
+describe('When edit link...', () => {
+    beforeEach(() => {
+        cleanup();
+        jest.clearAllMocks();
+        const stateWithEditLink = {
+            ...state,
+            partSupplier: { item: { links: [{ rel: 'edit', href: '/edit' }] } }
+        };
+        useSelector.mockImplementation(callback => callback(stateWithEditLink));
+        render(<PartSupplier />);
+    });
+
+    test('Preferred Supplier button should be enabled', () => {
+        expect(screen.getByRole('button', { name: 'Preferred Supplier' })).not.toBeDisabled();
+    });
+
+    test('Change prices button should be enabled', () => {
+        const tab = screen.getByText('Order Details');
+        fireEvent.click(tab);
+        expect(screen.getByRole('button', { name: 'Change Prices' })).not.toBeDisabled();
     });
 });

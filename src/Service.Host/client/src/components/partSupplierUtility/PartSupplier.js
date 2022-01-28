@@ -275,6 +275,8 @@ function PartSupplier() {
     const canEdit = () =>
         item?.links.some(l => l.rel === 'edit') || !!utilities.getHref(applicationState, 'create');
 
+    const invalid = () => !state.partSupplier?.partNumber;
+
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
@@ -425,6 +427,8 @@ function PartSupplier() {
                                                 searchSuppliers={searchSuppliers}
                                                 editStatus={creating() ? 'create' : editStatus}
                                                 part={part}
+                                                canEdit={canEdit}
+                                                creating={creating}
                                             />
                                         </Box>
                                     )}
@@ -468,6 +472,7 @@ function PartSupplier() {
                                                 reelOrBoxQty={state.partSupplier?.reelOrBoxQty}
                                                 setPriceChangeDialogOpen={setPriceChangeDialogOpen}
                                                 fetchBasePriceConversion={fetchBasePriceConversion}
+                                                canEdit={canEdit}
                                             />
                                         </Box>
                                     )}
@@ -569,7 +574,7 @@ function PartSupplier() {
                     )}
                     <Grid item xs={12}>
                         <SaveBackCancelButtons
-                            saveDisabled={!canEdit() || editStatus === 'view'}
+                            saveDisabled={!canEdit() || invalid() || editStatus === 'view'}
                             saveClick={() => {
                                 clearErrors();
                                 if (creating()) {

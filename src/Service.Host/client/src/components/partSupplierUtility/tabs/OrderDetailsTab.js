@@ -27,7 +27,8 @@ function OrderDetailsTab({
     fullAddress,
     setPriceChangeDialogOpen,
     creating,
-    fetchBasePriceConversion
+    fetchBasePriceConversion,
+    canEdit
 }) {
     return (
         <Grid container spacing={3}>
@@ -53,7 +54,11 @@ function OrderDetailsTab({
             </Grid>
             <Grid item xs={4} />
             <Grid item xs={4}>
-                <Button variant="outlined" onClick={() => setPriceChangeDialogOpen(true)}>
+                <Button
+                    variant="outlined"
+                    onClick={() => setPriceChangeDialogOpen(true)}
+                    disabled={!canEdit() || creating()}
+                >
                     Change Prices
                 </Button>
             </Grid>
@@ -237,7 +242,8 @@ OrderDetailsTab.propTypes = {
     reelOrBoxQty: PropTypes.number,
     fullAddress: PropTypes.string,
     setPriceChangeDialogOpen: PropTypes.func.isRequired,
-    creating: PropTypes.bool.isRequired,
+    creating: PropTypes.func.isRequired,
+    canEdit: PropTypes.func.isRequired,
     fetchBasePriceConversion: PropTypes.func.isRequired
 };
 
