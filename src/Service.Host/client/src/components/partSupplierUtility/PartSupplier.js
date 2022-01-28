@@ -298,6 +298,7 @@ function PartSupplier() {
                         </IconButton>
                         <div className={classes.dialog}>
                             <PreferredSupplier
+                                currentSupplier={state.partSupplier?.supplierId}
                                 partLoading={partLoading}
                                 partNumber={part?.partNumber}
                                 partDescription={part?.description}
