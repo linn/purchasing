@@ -129,9 +129,8 @@ function OrderDetailsTab({
                 <InputField
                     fullWidth
                     value={minimumOrderQty}
-                    label="Minumum Order Qty"
+                    label="Minimum Order Qty"
                     type="number"
-                    required
                     propertyName="minimumOrderQty"
                     onChange={handleFieldChange}
                 />
@@ -153,7 +152,6 @@ function OrderDetailsTab({
                     value={orderIncrement}
                     label="Order Increment"
                     type="number"
-                    required
                     propertyName="orderIncrement"
                     onChange={handleFieldChange}
                 />

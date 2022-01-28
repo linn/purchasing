@@ -275,7 +275,14 @@ function PartSupplier() {
     const canEdit = () =>
         item?.links.some(l => l.rel === 'edit') || !!utilities.getHref(applicationState, 'create');
 
-    const invalid = () => !state.partSupplier?.partNumber;
+    const invalid = () =>
+        !state.partSupplier?.partNumber ||
+        !state.partSupplier?.orderMethodName ||
+        !state.partSupplier?.currencyCode ||
+        !state.partSupplier?.minimumOrderQty ||
+        !state.partSupplier?.orderIncrement ||
+        !state.partSupplier?.leadTimeWeeks ||
+        !state.partSupplier?.damagesPercent;
 
     return (
         <Page history={history} homeUrl={config.appRoot}>

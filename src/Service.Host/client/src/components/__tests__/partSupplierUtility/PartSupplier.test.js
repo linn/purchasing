@@ -71,11 +71,22 @@ const stateWithPart = {
     }
 };
 
+const validitem = {
+    supplierName: 'SUPPLIER',
+    partNumber: 'PART',
+    orderMethodName: 'METHOD',
+    currencyCode: 'GBP',
+    minimumOrderQty: 1,
+    orderIncrement: 1,
+    leadTimeWeeks: 1,
+    damagesPercent: 1,
+    links: [{ rel: 'edit' }]
+};
 const stateWithItemLoadedWhereUserCanEdit = {
     ...state,
     partSupplier: {
         loading: false,
-        item: { supplierName: 'SUPPLIER', partNumber: 'PART', links: [{ rel: 'edit' }] }
+        item: validitem
     }
 };
 
@@ -84,7 +95,7 @@ const stateWithItemLoadedWhereEditing = {
     partSupplier: {
         loading: false,
         editStatus: 'edit',
-        item: { supplierName: 'SUPPLIER', partNumber: 'PART', links: [{ rel: 'edit' }] }
+        item: validitem
     }
 };
 
@@ -239,24 +250,67 @@ describe('When save clicked when creating...', () => {
                 ...stateWhereCreating,
                 parts: {
                     searchItems: [{ id: 1, partNumber: 'SOME PART', description: 'SOME DESC' }]
+                },
+                orderMethods: { items: [{ name: 'METHOD', description: 'METHOD' }] },
+                currencies: {
+                    items: [
+                        { code: 'GBP', name: 'Sterling' },
+                        { code: 'USD', name: 'Dollar Dollar Bills' }
+                    ]
                 }
             })
         );
         render(<PartSupplier />);
     });
     test('Should dispatch add action when save clicked...', async () => {
-        // enter some data
-        const input = screen.getByLabelText('Part');
+        // enter required fields
+
+        // Part Supplier Tab
+        let input = screen.getByLabelText('Part');
         fireEvent.click(input);
         const result = screen.getByRole('button', { name: 'SOME PART SOME DESC' });
         fireEvent.click(result);
+
+        // Order Details tab
+        let tab = screen.getByText('Order Details');
+        fireEvent.click(tab);
+
+        let dropdown = screen.getByLabelText('Order Method');
+        fireEvent.change(dropdown, { target: { value: 'METHOD' } });
+
+        dropdown = screen.getByLabelText('Currency');
+        fireEvent.change(dropdown, { target: { value: 'USD' } });
+        input = screen.getByLabelText('Minimum Order Qty');
+        fireEvent.change(input, { target: { value: 111 } });
+
+        input = screen.getByLabelText('Order Increment');
+        fireEvent.change(input, { target: { value: 222 } });
+
+        // Other Details tab
+        tab = screen.getByText('Other Details');
+        fireEvent.click(tab);
+
+        input = screen.getByLabelText('Lead Time Weeks');
+        fireEvent.change(input, { target: { value: 333 } });
+
+        input = screen.getByLabelText('Damages Percent');
+        fireEvent.change(input, { target: { value: 444 } });
 
         const saveButton = await screen.findByRole('button', { name: 'Save' });
         fireEvent.click(saveButton);
 
         expect(addItemActionSpy).toHaveBeenCalledTimes(1);
         expect(addItemActionSpy).toHaveBeenCalledWith(
-            expect.objectContaining({ createdBy: 33087, partNumber: 'SOME PART' })
+            expect.objectContaining({
+                createdBy: 33087,
+                partNumber: 'SOME PART',
+                orderMethodName: 'METHOD',
+                currencyCode: 'USD',
+                minimumOrderQty: 111,
+                orderIncrement: 222,
+                leadTimeWeeks: 333,
+                damagesPercent: 444
+            })
         );
     });
 });
