@@ -27,7 +27,7 @@
                                    SupplierId = 1,
                                    SupplierDesignation = "We updated this to this."
                                };
-            this.MockAuthService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, Arg.Any<IEnumerable<string>>())
+            this.MockAuthService.HasPermissionFor(AuthorisedAction.PartSupplierCreate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
             this.action = () => this.Sut.CreatePartSupplier(this.candidate, new List<string>());
