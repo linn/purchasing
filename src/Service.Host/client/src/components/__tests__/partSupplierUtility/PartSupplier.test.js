@@ -15,6 +15,7 @@ import currenciesActions from '../../../actions/currenciesActions';
 import packagingGroupActions from '../../../actions/packagingGroupActions';
 import employeesActions from '../../../actions/employeesActions';
 import partSupplierActions from '../../../actions/partSupplierActions';
+import partPriceConversionsActions from '../../../actions/partPriceConversionsActions';
 import * as itemTypes from '../../../itemTypes';
 
 jest.mock('react-redux', () => ({
@@ -30,6 +31,7 @@ const fetchOrderMethodsactionsSpy = jest.spyOn(orderMethodsactions, 'fetch');
 const fetchCurrenciesActionsSpy = jest.spyOn(currenciesActions, 'fetch');
 const fetchPackagingGroupActionsSpy = jest.spyOn(packagingGroupActions, 'fetch');
 const fetchEmployeesActionsSpy = jest.spyOn(employeesActions, 'fetch');
+const fetchPartPriceConversionsSpy = jest.spyOn(partPriceConversionsActions, 'fetchByHref');
 
 const updateItemActionsSpy = jest.spyOn(partSupplierActions, 'update');
 const addItemActionSpy = jest.spyOn(partSupplierActions, 'add');
@@ -251,6 +253,68 @@ describe('When new part selected...', () => {
         const result = screen.getByText('SOME PART');
         fireEvent.click(result);
         expect(screen.getAllByText('SOME DESC')).toHaveLength(2);
+    });
+});
+
+describe('When new currency unit price entered', () => {
+    beforeEach(() => {
+        const stateWithPartSearchResults = {
+            ...state,
+            router: { location: { pathname: '/create', query: {} } },
+            partSupplier: {
+                loading: false
+            }
+        };
+        cleanup();
+        jest.clearAllMocks();
+        useSelector.mockImplementation(callback => callback(stateWithPartSearchResults));
+        render(<PartSupplier />);
+        const tab = screen.getByText('Order Details');
+        fireEvent.click(tab);
+    });
+
+    test('Should request part price conversions', () => {
+        const input = screen.getByLabelText('Currency Unit Price');
+        input.focus();
+        fireEvent.change(input, { target: { value: 123 } });
+        input.blur();
+        expect(fetchPartPriceConversionsSpy).toHaveBeenCalledWith(
+            `${
+                itemTypes.partPriceConversions.uri
+            }?partNumber=&newPrice=${123}&newCurrency=GBP&ledger=PL&round=FALSE`
+        );
+    });
+});
+
+describe('When currency changed', () => {
+    beforeEach(() => {
+        const stateWithCurrencies = {
+            ...stateWhereCreating,
+            currencies: {
+                items: [
+                    { code: 'GBP', name: 'Sterling' },
+                    { code: 'USD', name: 'Dollar Dollar Bills' }
+                ]
+            }
+        };
+        cleanup();
+        jest.clearAllMocks();
+        useSelector.mockImplementation(callback => callback(stateWithCurrencies));
+        render(<PartSupplier />);
+        const tab = screen.getByText('Order Details');
+        fireEvent.click(tab);
+        const input = screen.getByLabelText('Currency Unit Price');
+        fireEvent.change(input, { target: { value: 123 } });
+    });
+
+    test('Should request part price conversions', () => {
+        const dropdown = screen.getByLabelText('Currency');
+        fireEvent.change(dropdown, { target: { value: 'USD' } });
+        expect(fetchPartPriceConversionsSpy).toHaveBeenCalledWith(
+            `${
+                itemTypes.partPriceConversions.uri
+            }?partNumber=&newPrice=${123}&newCurrency=USD&ledger=PL&round=FALSE`
+        );
     });
 });
 

@@ -30,7 +30,7 @@ import partSupplierActions from '../../actions/partSupplierActions';
 import history from '../../history';
 import config from '../../config';
 import partSupplierReducer from './partSupplierReducer';
-import { partSupplier } from '../../itemTypes';
+import { partSupplier, partPriceConversions } from '../../itemTypes';
 import PartSupplierTab from './tabs/PartSupplierTab';
 import partsActions from '../../actions/partsActions';
 import partActions from '../../actions/partActions';
@@ -50,6 +50,7 @@ import ManufacturerTab from './tabs/ManufacturerTab';
 import manufacturersActions from '../../actions/manufacturersActions';
 import PreferredSupplier from './PreferredSupplier';
 import PriceChange from './PriceChange';
+import partPriceConversionsActions from '../../actions/partPriceConversionsActions';
 
 function PartSupplier() {
     const useStyles = makeStyles(theme => ({
@@ -182,6 +183,14 @@ function PartSupplier() {
         [query.partId, reduxDispatch]
     );
 
+    const fetchBasePriceConversion = (currency, currencyUnitPrice) => {
+        reduxDispatch(
+            partPriceConversionsActions.fetchByHref(
+                `${partPriceConversions.uri}?partNumber=&newPrice=${currencyUnitPrice}&newCurrency=${currency}&ledger=PL&round=FALSE`
+            )
+        );
+    };
+
     useEffect(() => {
         reduxDispatch(partSuppliersActions.fetchState());
         reduxDispatch(unitsOfMeasureActions.fetch());
@@ -191,6 +200,20 @@ function PartSupplier() {
         reduxDispatch(packagingGroupActions.fetch());
         reduxDispatch(employeesActions.fetch());
     }, [reduxDispatch]);
+
+    const partPriceConversionsResult = useSelector(reduxState =>
+        itemSelectorHelpers.getItem(reduxState.partPriceConversions)
+    );
+
+    useEffect(() => {
+        if (partPriceConversionsResult) {
+            dispatch({
+                type: 'fieldChange',
+                fieldName: 'baseOurUnitPrice',
+                payload: partPriceConversionsResult.baseNewPrice
+            });
+        }
+    }, [partPriceConversionsResult]);
 
     useEffect(() => {
         if (query.partId && query.supplierId) {
@@ -409,7 +432,7 @@ function PartSupplier() {
                                         <Box sx={{ paddingTop: 3 }}>
                                             <OrderDetailsTab
                                                 handleFieldChange={handleFieldChange}
-                                                editStatus={editStatus}
+                                                creating={() => pathName.includes('/create')}
                                                 unitsOfMeasure={unitsOfMeasure}
                                                 unitOfMeasure={state.partSupplier?.unitOfMeasure}
                                                 deliveryAddresses={deliveryAddresses}
@@ -421,7 +444,7 @@ function PartSupplier() {
                                                     state.partSupplier?.orderMethodDescription
                                                 }
                                                 currencies={currencies}
-                                                currency={state.partSupplier?.currencyCode}
+                                                currencyCode={state.partSupplier?.currencyCode}
                                                 currencyUnitPrice={
                                                     state.partSupplier?.currencyUnitPrice
                                                 }
@@ -444,6 +467,7 @@ function PartSupplier() {
                                                 }
                                                 reelOrBoxQty={state.partSupplier?.reelOrBoxQty}
                                                 setPriceChangeDialogOpen={setPriceChangeDialogOpen}
+                                                fetchBasePriceConversion={fetchBasePriceConversion}
                                             />
                                         </Box>
                                     )}

@@ -15,7 +15,7 @@ function OrderDetailsTab({
     orderMethodDescription,
     orderMethods,
     currencies,
-    currency,
+    currencyCode,
     currencyUnitPrice,
     ourCurrencyPriceToShowOnOrder,
     baseOurUnitPrice,
@@ -25,7 +25,9 @@ function OrderDetailsTab({
     orderConversionFactor,
     reelOrBoxQty,
     fullAddress,
-    setPriceChangeDialogOpen
+    setPriceChangeDialogOpen,
+    creating,
+    fetchBasePriceConversion
 }) {
     return (
         <Grid container spacing={3}>
@@ -59,13 +61,18 @@ function OrderDetailsTab({
             <Grid item xs={4}>
                 <Dropdown
                     fullWidth
-                    value={currency}
+                    value={currencyCode ?? 'GBP'}
                     label="Currency"
                     propertyName="currencyCode"
                     items={currencies.map(x => x.code)}
                     allowNoValue
-                    disabled
-                    onChange={handleFieldChange}
+                    disabled={!creating()}
+                    onChange={(propertyName, newValue) => {
+                        handleFieldChange(propertyName, newValue);
+                        if (currencyUnitPrice) {
+                            fetchBasePriceConversion(newValue, currencyUnitPrice);
+                        }
+                    }}
                 />
             </Grid>
             <Grid item xs={8} />
@@ -75,9 +82,17 @@ function OrderDetailsTab({
                     value={currencyUnitPrice}
                     label="Currency Unit Price"
                     type="number"
-                    disabled
+                    disabled={!creating()}
                     propertyName="currencyUnitPrice"
-                    onChange={handleFieldChange}
+                    onChange={(_, newValue) => {
+                        handleFieldChange('currencyUnitPrice', newValue);
+                    }}
+                    textFieldProps={{
+                        onBlur: () => {
+                            handleFieldChange('ourCurrencyPriceToShowOnOrder', currencyUnitPrice);
+                            fetchBasePriceConversion(currencyCode ?? 'GBP', currencyUnitPrice);
+                        }
+                    }}
                 />
             </Grid>
             <Grid item xs={8} />
@@ -87,7 +102,7 @@ function OrderDetailsTab({
                     value={ourCurrencyPriceToShowOnOrder}
                     label="Our Price to Show On Order (ex duty)"
                     type="number"
-                    disabled
+                    disabled={!creating()}
                     propertyName="ourCurrencyPriceToShowOnOrder"
                     onChange={handleFieldChange}
                 />
@@ -99,7 +114,7 @@ function OrderDetailsTab({
                     value={baseOurUnitPrice}
                     label="Base Our Unit Price"
                     type="number"
-                    disabled
+                    disabled={!creating()}
                     propertyName="baseOurUnitPrice"
                     onChange={handleFieldChange}
                 />
@@ -152,7 +167,7 @@ function OrderDetailsTab({
             <Grid item xs={4}>
                 <Dropdown
                     fullWidth
-                    value={unitOfMeasure}
+                    value={unitOfMeasure ?? 'ONES'}
                     label="Units"
                     propertyName="unitOfMeasure"
                     items={unitsOfMeasure.map(x => x.unit)}
@@ -163,7 +178,7 @@ function OrderDetailsTab({
             <Grid item xs={4}>
                 <InputField
                     fullWidth
-                    value={orderConversionFactor}
+                    value={orderConversionFactor ?? 1}
                     label="Order Conversion Factor"
                     type="number"
                     propertyName="orderConversionFactor"
@@ -211,7 +226,7 @@ OrderDetailsTab.propTypes = {
     orderMethod: PropTypes.string,
     orderMethodDescription: PropTypes.string,
     currencies: PropTypes.arrayOf(PropTypes.shape({})),
-    currency: PropTypes.string,
+    currencyCode: PropTypes.string,
     currencyUnitPrice: PropTypes.number,
     ourCurrencyPriceToShowOnOrder: PropTypes.number,
     baseOurUnitPrice: PropTypes.number,
@@ -221,7 +236,9 @@ OrderDetailsTab.propTypes = {
     orderConversionFactor: PropTypes.number,
     reelOrBoxQty: PropTypes.number,
     fullAddress: PropTypes.string,
-    setPriceChangeDialogOpen: PropTypes.func.isRequired
+    setPriceChangeDialogOpen: PropTypes.func.isRequired,
+    creating: PropTypes.bool.isRequired,
+    fetchBasePriceConversion: PropTypes.func.isRequired
 };
 
 OrderDetailsTab.defaultProps = {
@@ -232,7 +249,7 @@ OrderDetailsTab.defaultProps = {
     unitOfMeasure: null,
     deliveryAddress: null,
     orderMethod: null,
-    currency: null,
+    currencyCode: null,
     orderMethodDescription: null,
     currencyUnitPrice: null,
     ourCurrencyPriceToShowOnOrder: null,
