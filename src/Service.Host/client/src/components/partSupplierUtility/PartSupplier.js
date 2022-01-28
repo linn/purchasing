@@ -23,7 +23,8 @@ import {
     collectionSelectorHelpers,
     itemSelectorHelpers,
     getItemError,
-    userSelectors
+    userSelectors,
+    LinkButton
 } from '@linn-it/linn-form-components-library';
 import { getQuery, getPathname } from '../../selectors/routerSelelctors';
 import partSupplierActions from '../../actions/partSupplierActions';
@@ -375,8 +376,7 @@ function PartSupplier() {
                                 <Box
                                     sx={{
                                         borderBottom: 1,
-                                        borderColor: 'divider',
-                                        marginBottom: '20px'
+                                        borderColor: 'divider'
                                     }}
                                 >
                                     <Typography variant="h6">
@@ -396,6 +396,31 @@ function PartSupplier() {
                                     </Tooltip>
                                 )}
                             </Grid>
+                            <Grid item xs={3}>
+                                {!creating() && (
+                                    <LinkButton
+                                        external
+                                        newTab
+                                        to={`${config.proxyRoot}${utilities.getHref(item, 'part')}`}
+                                        text="View Part"
+                                    />
+                                )}
+                            </Grid>
+                            <Grid item xs={3}>
+                                {!creating() && (
+                                    <LinkButton
+                                        external
+                                        newTab
+                                        disabled
+                                        to={`${config.proxyRoot}${utilities.getHref(
+                                            item,
+                                            'supplier'
+                                        )}`}
+                                        text="View Supplier"
+                                    />
+                                )}
+                            </Grid>
+                            <Grid item xs={6} />
                             <Grid item xs={12}>
                                 <Box sx={{ width: '100%' }}>
                                     <Box sx={{ borderBottom: 0, borderColor: 'divider' }}>
