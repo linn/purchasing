@@ -11,3 +11,9 @@ export const ordersByPartReport = new ItemType(
     'ORDERS_BY_PART_REPORT',
     '/purchasing/reports/orders-by-part/report'
 );
+
+export const spendBySupplierReport = new ItemType(
+    'spendBySupplierReport',
+    'SPEND_BY_SUPPLIER',
+    '/purchasing/reports/spend-by-supplier/report'
+);

@@ -62,3 +62,13 @@ export const ordersByPartReportActionTypes = makeActionTypes(
     reportTypes.ordersByPartReport.actionType,
     false
 );
+
+export const vendorManagersActionTypes = makeActionTypes(
+    itemTypes.vendorManagers.actionType,
+    false
+);
+
+export const spendBySupplierReportActionTypes = makeActionTypes(
+    reportTypes.spendBySupplierReport.actionType,
+    false
+);

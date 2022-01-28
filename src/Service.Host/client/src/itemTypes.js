@@ -86,3 +86,9 @@ export const partPriceConversions = new ItemType(
     'PART_PRICE_CONVERSIONS',
     '/purchasing/part-suppliers/part-price-conversions'
 );
+
+export const vendorManagers = new ItemType(
+    'vendorManagers',
+    'VENDOR_MANAGERS',
+    '/purchasing/vendor-managers'
+);

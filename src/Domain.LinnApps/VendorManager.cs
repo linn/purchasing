@@ -1,17 +1,13 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps
 {
-    using System.Collections.Generic;
-
-    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
-
     public class VendorManager
     {
-        public string VmId { get; set; }
-
-        public int UserNumber { get; set; }
+        public Employee Employee { get; }
 
         public string PmMeasured { get; set; }
 
-        public Employee Employee { get; }
+        public int UserNumber { get; set; }
+
+        public string VmId { get; set; }
     }
 }

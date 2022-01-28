@@ -28,6 +28,7 @@ import preferredSupplierChange from './preferredSupplierChange';
 import priceChangeReasons from './priceChangeReasons';
 import partPriceConversions from './partPriceConversions';
 import ordersByPart from './ordersByPartReport';
+import vendorManagers from './vendorManagers';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -56,6 +57,7 @@ const rootReducer = history =>
         suppliers,
         tariffs,
         unitsOfMeasure,
+        vendorManagers,
         ...sharedLibraryReducers,
         errors
     });

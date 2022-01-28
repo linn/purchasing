@@ -13,6 +13,7 @@
     using Linn.Common.Pdf;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Common.Reporting.Models;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.Parts;
@@ -74,7 +75,8 @@
                 .AddTransient<IFacadeResourceService<Tariff, int, TariffResource, TariffResource>, TariffService>()
                 .AddTransient<IFacadeResourceService<Manufacturer, string, ManufacturerResource, ManufacturerResource>, ManufacturerFacadeService>()
                 .AddTransient<IPurchaseOrderReportFacadeService, PurchaseOrderReportFacadeService>()
-                .AddTransient<IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource>, PriceChangeReasonService>();
+                .AddTransient<IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource>, PriceChangeReasonService>()
+                .AddTransient<IFacadeResourceService<VendorManager, string, VendorManagerResource, VendorManagerResource>, VendorManagerFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
