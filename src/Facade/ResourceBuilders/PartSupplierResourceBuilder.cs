@@ -80,6 +80,7 @@
                            DateRohsCompliant = entity.DateRohsCompliant?.ToString("o"),
                            RohsCompliant = entity.RohsCompliant,
                            RohsComments = entity.RohsComments,
+                           SupplierRanking = entity.SupplierRanking,
                            Links = this.BuildLinks(entity, claims).ToArray()
                        };
         }

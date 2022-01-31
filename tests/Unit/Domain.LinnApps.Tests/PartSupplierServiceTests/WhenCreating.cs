@@ -46,7 +46,7 @@
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { PartNumber = "PART", Description = "DESC" });
             this.MockAuthService.HasPermissionFor(
-                    AuthorisedAction.PartSupplierUpdate, 
+                    AuthorisedAction.PartSupplierCreate, 
                     Arg.Any<IEnumerable<string>>())
                 .Returns(true);
             this.result = this.Sut.CreatePartSupplier(this.candidate, new List<string>());

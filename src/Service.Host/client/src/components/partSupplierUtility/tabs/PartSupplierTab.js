@@ -26,7 +26,9 @@ function PartSupplierTab({
     suppliersSearchLoading,
     editStatus,
     part,
-    setPreferredSupplierDialogOpen
+    setPreferredSupplierDialogOpen,
+    canEdit,
+    creating
 }) {
     return (
         <Grid container spacing={3}>
@@ -35,6 +37,7 @@ function PartSupplierTab({
                     onSelect={newValue => {
                         handleFieldChange('partNumber', newValue.id);
                         handleFieldChange('partDescription', newValue.description);
+                        handleFieldChange('designation', newValue.description);
                     }}
                     label="Part"
                     modal
@@ -91,7 +94,11 @@ function PartSupplierTab({
                 />
             </Grid>
             <Grid item xs={4}>
-                <Button variant="outlined" onClick={() => setPreferredSupplierDialogOpen(true)}>
+                <Button
+                    variant="outlined"
+                    onClick={() => setPreferredSupplierDialogOpen(true)}
+                    disabled={!canEdit() || creating()}
+                >
                     Preferred Supplier
                 </Button>
             </Grid>
@@ -161,7 +168,9 @@ PartSupplierTab.propTypes = {
             })
         )
     }),
-    setPreferredSupplierDialogOpen: PropTypes.func.isRequired
+    setPreferredSupplierDialogOpen: PropTypes.func.isRequired,
+    canEdit: PropTypes.func.isRequired,
+    creating: PropTypes.func.isRequired
 };
 
 PartSupplierTab.defaultProps = {
