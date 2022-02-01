@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq.Expressions;
 
     using Linn.Common.Facade;
@@ -16,7 +17,7 @@
         {
         }
 
-        protected override LinnDeliveryAddress CreateFromResource(LinnDeliveryAddressResource resource)
+        protected override LinnDeliveryAddress CreateFromResource(LinnDeliveryAddressResource resource, IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }
@@ -31,12 +32,12 @@
             throw new NotImplementedException();
         }
 
-        protected override void DeleteOrObsoleteResource(LinnDeliveryAddress entity)
+        protected override void DeleteOrObsoleteResource(LinnDeliveryAddress entity, IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }
 
-        protected override void UpdateFromResource(LinnDeliveryAddress entity, LinnDeliveryAddressResource updateResource)
+        protected override void UpdateFromResource(LinnDeliveryAddress entity, LinnDeliveryAddressResource updateResource, IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }

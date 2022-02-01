@@ -41,7 +41,8 @@
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<TariffResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<ManufacturerResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<ManufacturerResource>>>()
-                .AddTransient<IHandler, JsonResultHandler<ReportReturnResource>>();
+                .AddTransient<IHandler, JsonResultHandler<ReportReturnResource>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PurchaseOrderResource>>>();
         }
     }
 }

@@ -20,5 +20,9 @@
         public Supplier Supplier { get; set; }
 
         public int SupplierId { get; set; }
+
+        public string Overbook { get; set; }
+
+        public decimal? OverbookQty { get; set; }
     }
 }

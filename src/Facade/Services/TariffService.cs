@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq.Expressions;
 
     using Linn.Common.Facade;
@@ -15,7 +16,7 @@
         {
         }
 
-        protected override Tariff CreateFromResource(TariffResource resource)
+        protected override Tariff CreateFromResource(TariffResource resource, IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }
@@ -30,12 +31,12 @@
             throw new NotImplementedException();
         }
 
-        protected override void DeleteOrObsoleteResource(Tariff entity)
+        protected override void DeleteOrObsoleteResource(Tariff entity, IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }
 
-        protected override void UpdateFromResource(Tariff entity, TariffResource updateResource)
+        protected override void UpdateFromResource(Tariff entity, TariffResource updateResource, IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }

@@ -255,6 +255,8 @@
             entity.HasOne(o => o.Supplier).WithMany().HasForeignKey(o => o.SupplierId);
             entity.Property(o => o.DocumentType).HasColumnName("DOCUMENT_TYPE");
             entity.Property(o => o.OrderDate).HasColumnName("DATE_OF_ORDER");
+            entity.Property(o => o.Overbook).HasColumnName("OVERBOOK");
+            entity.Property(o => o.OverbookQty).HasColumnName("OVERBOOK_QTY");
         }
 
         private void BuildPurchaseOrderDetails(ModelBuilder builder)
