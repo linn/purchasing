@@ -29,6 +29,7 @@ import priceChangeReasons from './priceChangeReasons';
 import partPriceConversions from './partPriceConversions';
 import ordersByPart from './ordersByPartReport';
 import vendorManagers from './vendorManagers';
+import spendBySupplierReport from './spendBySupplierReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -54,6 +55,7 @@ const rootReducer = history =>
         router: connectRouter(history),
         signingLimit,
         signingLimits,
+        spendBySupplierReport,
         suppliers,
         tariffs,
         unitsOfMeasure,

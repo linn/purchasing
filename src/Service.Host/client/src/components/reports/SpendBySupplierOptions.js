@@ -23,7 +23,7 @@ function SpendBySupplierReportOptions() {
     );
 
     const prevOptions = useSelector(state =>
-        reportSelectorHelpers.getReportOptions(state.spendBySupplier)
+        reportSelectorHelpers.getReportOptions(state.spendBySupplierReport)
     );
 
     const dispatch = useDispatch();

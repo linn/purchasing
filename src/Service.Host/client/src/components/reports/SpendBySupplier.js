@@ -17,10 +17,10 @@ function SpendBySupplierReport() {
     const options = useMemo(() => queryString.parse(window.location.search) || {}, []);
 
     const loading = useSelector(state =>
-        reportSelectorHelpers.getReportLoading(state.spendBySupplier)
+        reportSelectorHelpers.getReportLoading(state.spendBySupplierReport)
     );
     const reportData = useSelector(state =>
-        reportSelectorHelpers.getReportData(state.spendBySupplier)
+        reportSelectorHelpers.getReportData(state.spendBySupplierReport)
     );
 
     const dispatch = useDispatch();

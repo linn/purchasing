@@ -18,6 +18,8 @@ import OrdersBySupplier from './reports/OrdersBySupplier';
 import OrdersBySupplierOptions from './reports/OrdersBySupplierOptions';
 import OrdersByPart from './reports/OrdersByPart';
 import OrdersByPartOptions from './reports/OrdersByPartOptions';
+import SpendBySupplier from './reports/SpendBySupplier';
+import SpendBySupplierOptions from './reports/SpendBySupplierOptions';
 
 const Root = ({ store }) => (
     <div>
@@ -82,6 +84,16 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/reports/orders-by-part/report"
                                     component={OrdersByPart}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/spend-by-supplier"
+                                    component={SpendBySupplierOptions}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/spend-by-supplier/report"
+                                    component={SpendBySupplier}
                                 />
 
                                 <Route component={NotFoundPage} />

@@ -51,7 +51,7 @@
                     => new EntityFrameworkRepository<PriceChangeReason, string>(r.GetService<ServiceDbContext>()?.PriceChangeReasons))
                 .AddTransient<IRepository<PartHistoryEntry, PartHistoryEntryKey>, EntityFrameworkRepository<PartHistoryEntry, PartHistoryEntryKey>>(r
                     => new EntityFrameworkRepository<PartHistoryEntry, PartHistoryEntryKey>(r.GetService<ServiceDbContext>()?.PartHistory))
-                .AddTransient<IRepository<VendorManager, string>, EntityFrameworkRepository<VendorManager, string>>()
+                .AddTransient<IRepository<VendorManager, string>, VendorManagerRepository>()
                 .AddTransient<IQueryRepository<SupplierSpend>, SupplierSpendRepository>();
         }
     }
