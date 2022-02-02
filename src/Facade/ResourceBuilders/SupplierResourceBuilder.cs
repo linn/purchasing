@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Facade.ResourceBuilders
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     using Linn.Common.Facade;
     using Linn.Common.Resources;
@@ -14,7 +15,8 @@
             return new SupplierResource
             {
                 Id = entity.SupplierId,
-                Name = entity.Name
+                Name = entity.Name,
+                Links = this.BuildLinks(entity, claims).ToArray()
             };
         }
 

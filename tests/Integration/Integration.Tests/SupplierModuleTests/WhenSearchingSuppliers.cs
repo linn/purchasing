@@ -1,12 +1,15 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.SupplierModuleTests
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Net;
 
     using FluentAssertions;
 
     using Linn.Common.Facade;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -18,23 +21,23 @@
     {
         private string supplierNameSearch;
 
-        private List<SupplierResource> dataResult;
+        private List<Supplier> dataResult;
 
         [SetUp]
         public void SetUp()
         {
             this.supplierNameSearch = "SUPP";
 
-            this.dataResult = new List<SupplierResource>
+            this.dataResult = new List<Supplier>
                                   {
-                                      new SupplierResource
+                                      new Supplier
                                           {
-                                              Name = "SUPPLIER", Id = 1
+                                              Name = "SUPPLIER", SupplierId = 1
                                           }
                                   };
 
-            this.SupplierFacadeService.Search(this.supplierNameSearch)
-                .Returns(new SuccessResult<IEnumerable<SupplierResource>>(this.dataResult));
+            this.SupplierRepository.FilterBy(Arg.Any<Expression<Func<Supplier, bool>>>())
+                .Returns(this.dataResult.AsQueryable());
 
             this.Response = this.Client.Get(
                 $"/purchasing/suppliers?searchTerm={this.supplierNameSearch}",

@@ -1,6 +1,8 @@
 ﻿namespace Linn.Purchasing.Resources
 {
-    public class SupplierResource
+    using Linn.Common.Resources;
+
+    public class SupplierResource : HypermediaResource
     {
         public int Id { get; set; }
 
