@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Reports
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -8,8 +7,6 @@
     using Linn.Common.Reporting.Layouts;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
-    using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
-    using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using MoreLinq;
 
@@ -22,10 +19,7 @@
         private readonly IQueryRepository<SupplierSpend> spendsRepository;
 
         public SpendsReportService(
-            IRepository<PurchaseOrder, int> purchaseOrderRepository,
-            IRepository<Supplier, int> supplierRepository,
             IQueryRepository<SupplierSpend> spendsRepository,
-            IRepository<PurchaseLedger, int> purchaseLedgerRepository,
             IPurchaseLedgerPack purchaseLedgerPack,
             IReportingHelper reportingHelper)
         {
@@ -42,8 +36,8 @@
 
             var supplierSpends = this.spendsRepository.FilterBy(
                 x => x.LedgerPeriod >= previousYearStartLedgerPeriod && x.LedgerPeriod <= currentLedgerPeriod).ToList();
-            // do I need to check the current ledger period as an upper limit? Not sure if we'd have stuff in the future
 
+            // do I need to check the current ledger period as an upper limit? Not sure if we'd have stuff in the future
             var reportLayout = new SimpleGridLayout(
                 this.reportingHelper,
                 CalculationValueModelType.TextValue,
@@ -57,6 +51,7 @@
             // is the below too rogue or is it readable? From the list of transacions/purchase orders,
             // get one entry for each supplier id,
             // and with that entry include the month, year & prev year totals of all the transactions for that supplier
+
             var distinctSupplierSpends = supplierSpends.DistinctBy(x => x.SupplierId).Select(
                 x => new SupplierSpend
                          {
@@ -66,16 +61,16 @@
                              SupplierId = x.SupplierId,
                              MonthTotal =
                                  supplierSpends.Where(
-                                         s => s.SupplierId == x.SupplierId && x.LedgerPeriod == currentLedgerPeriod)
+                                         s => s.SupplierId == x.SupplierId && s.LedgerPeriod == currentLedgerPeriod)
                                      .Sum(z => z.BaseTotal),
                              YearTotal =
                                  supplierSpends.Where(
-                                         s => s.SupplierId == x.SupplierId && x.LedgerPeriod >= yearStartLedgerPeriod)
+                                         s => s.SupplierId == x.SupplierId && s.LedgerPeriod >= yearStartLedgerPeriod)
                                      .Sum(z => z.BaseTotal),
                              PrevYearTotal = supplierSpends.Where(
                                      s => s.SupplierId == x.SupplierId
-                                          && x.LedgerPeriod >= previousYearStartLedgerPeriod
-                                          && x.LedgerPeriod <= yearStartLedgerPeriod)
+                                          && s.LedgerPeriod >= previousYearStartLedgerPeriod
+                                          && s.LedgerPeriod <= yearStartLedgerPeriod)
                                  .Sum(z => z.BaseTotal)
                          });
 
@@ -107,50 +102,38 @@
                     });
         }
 
-        private void ExtractDetailsForPartReport(
-            ICollection<CalculationValueModel> values,
-            SupplierSpend supplier)
+        private void ExtractDetailsForPartReport(ICollection<CalculationValueModel> values, SupplierSpend supplier)
         {
             var currentRowId = $"{supplier.SupplierId}";
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId,
-                        ColumnId = "SupplierId",
-                        TextDisplay = $"{supplier.SupplierId}"
+                        RowId = currentRowId, ColumnId = "SupplierId", TextDisplay = $"{supplier.SupplierId}"
                     });
 
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId,
-                        ColumnId = "Name",
-                        TextDisplay = supplier.Supplier.Name
+                        RowId = currentRowId, ColumnId = "Name", TextDisplay = supplier.Supplier.Name
                     });
 
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId,
-                        ColumnId = "ThisMonth",
-                        TextDisplay = supplier.MonthTotal.ToString()
-                });
+                        RowId = currentRowId, ColumnId = "ThisMonth", TextDisplay = supplier.MonthTotal.ToString()
+                    });
 
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId,
-                        ColumnId = "ThisYear",
-                        TextDisplay = supplier.YearTotal.ToString()
-                });
+                        RowId = currentRowId, ColumnId = "ThisYear", TextDisplay = supplier.YearTotal.ToString()
+                    });
 
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId,
-                        ColumnId = "LastYear",
-                        TextDisplay = supplier.PrevYearTotal.ToString()
-                });
+                        RowId = currentRowId, ColumnId = "LastYear", TextDisplay = supplier.PrevYearTotal.ToString()
+                    });
         }
     }
 }
