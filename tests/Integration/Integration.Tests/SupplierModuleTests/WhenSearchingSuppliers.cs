@@ -66,8 +66,15 @@
             var resources = this.Response.DeserializeBody<IEnumerable<SupplierResource>>()?.ToArray();
             resources.Should().NotBeNull();
             resources.Should().HaveCount(1);
-
             resources?.First().Name.Should().Be("SUPPLIER");
+        }
+
+        [Test]
+        public void ShouldBuildLinks()
+        {
+            var resources = this.Response.DeserializeBody<IEnumerable<SupplierResource>>()?.ToArray();
+            resources?.First().Links.Single(x => x.Rel == "self").Href.Should()
+                .Be($"/purchasing/suppliers/{this.dataResult.First().SupplierId}");
         }
     }
 }
