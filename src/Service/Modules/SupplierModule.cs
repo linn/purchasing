@@ -47,19 +47,40 @@
             this.partFacadeService = partFacadeService;
             this.preferredSupplierChangeService = preferredSupplierChangeService;
             this.priceChangeReasonService = priceChangeReasonService;
-            this.Get("/purchasing/part-suppliers/record", this.GetById);
+
+            this.Get("/purchasing/suppliers", this.SearchSuppliers);
+            this.Get("/purchasing/suppliers/{id:int}", this.GetSupplier);
+
+            this.Get("/purchasing/part-suppliers/record", this.GetPartSupplierRecord);
             this.Put("/purchasing/part-suppliers/record", this.UpdatePartSupplier);
             this.Get("/purchasing/part-suppliers", this.SearchPartSuppliers);
             this.Post("/purchasing/part-suppliers/record", this.CreatePartSupplier);
 
             this.Get("/purchasing/part-suppliers/application-state", this.GetPartSuppliersState);
-            this.Get("/purchasing/suppliers", this.SearchSuppliers);
             this.Post("/purchasing/preferred-supplier-changes", this.CreatePreferredSupplierChange);
             this.Get("/purchasing/price-change-reasons", this.GetPriceChangeReasons);
             this.Get("/purchasing/part-suppliers/part-price-conversions", this.GetPartPriceConversions);
         }
 
-        private async Task GetById(HttpRequest req, HttpResponse res)
+        private async Task GetSupplier(HttpRequest req, HttpResponse res)
+        {
+            var id = req.RouteValues.As<int>("id");
+
+            var result = this.supplierFacadeService.GetById(id, req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task SearchSuppliers(HttpRequest req, HttpResponse res)
+        {
+            var searchTerm = req.Query.As<string>("searchTerm");
+
+            var result = this.supplierFacadeService.Search(searchTerm);
+
+            await res.Negotiate(result);
+        }
+
+        private async Task GetPartSupplierRecord(HttpRequest req, HttpResponse res)
         {
             var partId = req.Query.As<int>("partId");
             var supplierId = req.Query.As<int>("supplierId");
@@ -102,15 +123,6 @@
                         SupplierNameSearchTerm = supplierNameSearch
                     },
                 req.HttpContext.GetPrivileges());
-
-            await res.Negotiate(result);
-        }
-
-        private async Task SearchSuppliers(HttpRequest req, HttpResponse res)
-        {
-            var searchTerm = req.Query.As<string>("searchTerm");
-
-            var result = this.supplierFacadeService.Search(searchTerm);
 
             await res.Negotiate(result);
         }
