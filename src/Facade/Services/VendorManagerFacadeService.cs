@@ -9,8 +9,7 @@
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Resources;
 
-    public class VendorManagerFacadeService : FacadeResourceService<VendorManager, string, VendorManagerResource,
-        VendorManagerResource>
+    public class VendorManagerFacadeService : FacadeResourceService<VendorManager, string, VendorManagerResource, VendorManagerResource>
     {
         public VendorManagerFacadeService(
             IRepository<VendorManager, string> repository,

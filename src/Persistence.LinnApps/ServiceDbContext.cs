@@ -62,6 +62,8 @@
 
         public DbSet<VendorManager> VendorManagers { get; set; }
 
+        public DbSet<SupplierSpend> SupplierSpends { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -90,6 +92,7 @@
             this.BuildPriceChangeReasons(builder);
             this.BuildPartHistory(builder);
             this.BuildVendorManagers(builder);
+            this.BuildSpendsView(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -454,9 +457,18 @@
             entity.Property(e => e.VmId).HasColumnName("VM_ID").HasMaxLength(1);
             entity.Property(e => e.UserNumber).HasColumnName("USER_NUMBER").HasMaxLength(6);
             entity.Property(e => e.PmMeasured).HasColumnName("PM_MEASURED").HasMaxLength(1);
+            entity.HasOne(x => x.Employee).WithOne().HasForeignKey<VendorManager>(z => z.UserNumber);
         }
 
-        //"PL_PL_SUPPLIERS_EX_VAT"
-        //"PL_PL_PURCHASES_FACTORS"
+        private void BuildSpendsView(ModelBuilder builder)
+        {
+            var entity = builder.Entity<SupplierSpend>().ToTable("PL_PL_SUPPLIERS_EX_VAT");
+            entity.HasKey(m => m.PlTref);
+            entity.Property(e => e.PlTref).HasColumnName("PL_TREF");
+            entity.Property(e => e.BaseTotal).HasColumnName("BASE_TOTAL");
+            entity.Property(e => e.LedgerPeriod).HasColumnName("LEDGER_PERIOD");
+            entity.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID");
+            entity.HasOne<Supplier>(x => x.Supplier).WithMany().HasForeignKey(z => z.SupplierId);
+        }
     }
 }

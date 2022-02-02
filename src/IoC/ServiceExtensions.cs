@@ -55,7 +55,8 @@
                 .AddTransient<IBuilder<ResultsModel>, ResultsModelResourceBuilder>()
                 .AddTransient<IBuilder<PreferredSupplierChange>, PreferredSupplierChangeResourceBuilder>()
                 .AddTransient<IBuilder<PriceChangeReason>, PriceChangeReasonResourceBuilder>()
-                .AddTransient<IBuilder<IEnumerable<PriceChangeReason>>, PriceChangeReasonsResourceBuilder>();
+                .AddTransient<IBuilder<IEnumerable<PriceChangeReason>>, PriceChangeReasonsResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<VendorManager>>, VendorManagersResourceBuilder>();
 
         }
 
@@ -76,7 +77,9 @@
                 .AddTransient<IFacadeResourceService<Manufacturer, string, ManufacturerResource, ManufacturerResource>, ManufacturerFacadeService>()
                 .AddTransient<IPurchaseOrderReportFacadeService, PurchaseOrderReportFacadeService>()
                 .AddTransient<IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource>, PriceChangeReasonService>()
-                .AddTransient<IFacadeResourceService<VendorManager, string, VendorManagerResource, VendorManagerResource>, VendorManagerFacadeService>();
+                .AddTransient<IFacadeResourceService<VendorManager, string, VendorManagerResource, VendorManagerResource>, VendorManagerFacadeService>()
+                .AddTransient<IFacadeResourceService<VendorManager, string, VendorManagerResource, VendorManagerResource>, VendorManagerFacadeService>()
+                .AddTransient<ISpendsReportFacadeService, SpendsReportFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
@@ -92,10 +95,14 @@
                 .AddTransient<IPurchaseOrdersReportService, PurchaseOrdersReportService>()
                 .AddTransient<IAuthorisationService, AuthorisationService>()
                 .AddTransient<IDatabaseService, DatabaseService>()
+                .AddTransient<ISpendsReportService, SpendsReportService>()
+
             //external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
                 .AddTransient<IAutocostPack, AutocostPack>()
-                .AddTransient<ICurrencyPack, CurrencyPack>(); 
+                .AddTransient<ICurrencyPack, CurrencyPack>()
+                .AddTransient<IPurchaseLedgerPack, PurchaseLedgerPack>()
+                ;
         }
     }
 }
