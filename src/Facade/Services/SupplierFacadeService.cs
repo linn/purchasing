@@ -45,7 +45,21 @@
             SupplierResource updateResource,
             IEnumerable<string> privileges = null)
         {
-            throw new NotImplementedException();
+            var updated = new Supplier
+                              {
+                                  SupplierId = entity.SupplierId,
+                                  Name = updateResource.Name,
+                                  Currency = updateResource.Currency,
+                                  WebAddress = updateResource.WebAddress,
+                                  VendorManager = updateResource.VendorManager,
+                                  Planner = updateResource.Planner,
+                                  InvoiceContactMethod = updateResource.InvoiceContactMethod,
+                                  PhoneNumber = updateResource.PhoneNumber,
+                                  OrderContactMethod = updateResource.OrderContactMethod,
+                                  SuppliersReference = updateResource.SuppliersReference,
+                                  LiveOnOracle = updateResource.LiveOnOracle,
+                                  LedgerStream = updateResource.LedgerStream
+                              };
         }
 
         protected override Expression<Func<Supplier, bool>> SearchExpression(string searchTerm)

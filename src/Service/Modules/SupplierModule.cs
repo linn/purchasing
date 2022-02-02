@@ -50,6 +50,8 @@
 
             this.Get("/purchasing/suppliers", this.SearchSuppliers);
             this.Get("/purchasing/suppliers/{id:int}", this.GetSupplier);
+            this.Put("/purchasing/suppliers/{id:int}", this.UpdateSupplier);
+            this.Post("/purchasing/suppliers", this.GetSupplier);
 
             this.Get("/purchasing/part-suppliers/record", this.GetPartSupplierRecord);
             this.Put("/purchasing/part-suppliers/record", this.UpdatePartSupplier);
@@ -76,6 +78,17 @@
             var searchTerm = req.Query.As<string>("searchTerm");
 
             var result = this.supplierFacadeService.Search(searchTerm);
+
+            await res.Negotiate(result);
+        }
+
+        private async Task UpdateSupplier(HttpRequest req, HttpResponse res)
+        {
+            var id = req.RouteValues.As<int>("id");
+            var resource = await req.Bind<SupplierResource>();
+
+
+            var result = this.supplierFacadeService.Update(id, resource, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }
