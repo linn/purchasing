@@ -3,7 +3,7 @@ const initialState = { supplier: {} };
 export default function partReducer(state = initialState, action) {
     switch (action.type) {
         case 'initialise':
-            return { ...state, supplier: action.payload, prevPartSupplier: action.payload };
+            return { ...state, supplier: action.payload };
         case 'fieldChange':
             return {
                 ...state,
