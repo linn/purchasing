@@ -3,13 +3,13 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
+    using System.Threading;
 
     using FluentAssertions;
 
-    using Linn.Common.Facade;
+    using Linn.Common.Reporting.Models;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Integration.Tests.Extensions;
-    using Linn.Purchasing.Resources;
 
     using NSubstitute;
 
@@ -17,47 +17,24 @@
 
     public class WhenGettingSpendBySupplierReport : ContextBase
     {
+        private readonly string title =
+            "Spend by supplier report for Vendor Manager: X - Doctor X (999). For this financial year and last, excludes factors & VAT.";
+
         [SetUp]
         public void SetUp()
         {
-            var reportReturnResource = new ReportReturnResource();
-            var reportResult = new ReportResultResource
-                                   {
-                                       displaySequence = 1,
-                                       title = new DisplayResource("potat"),
-                                       results = new List<ResultDetailsResource>
-                                                     {
-                                                         new ResultDetailsResource
-                                                             {
-                                                                 rowTitle = new DisplayResource("rowtitle"),
-                                                                 rowType = "string",
-                                                                 values = new List<ValueResource>
-                                                                              {
-                                                                                  new ValueResource(1)
-                                                                                      {
-                                                                                          textDisplayValue =
-                                                                                              "ramen noodles"
-                                                                                      }
-                                                                              }
-                                                             }
-                                                     }
-                                   };
-
-            reportReturnResource.ReportResults.Add(reportResult);
-
-            this.FacadeService
-                .GetSpendBySupplierReport("", Arg.Any<IEnumerable<string>>())
-                .Returns(new SuccessResult<ReportReturnResource>(reportReturnResource));
+            this.DomainService.GetSpendBySupplierReport("X")
+                .Returns(new ResultsModel { ReportTitle = new NameModel(this.title) });
 
             this.Response = this.Client.Get(
-                $"/purchasing/reports/spend-by-supplier/report?vm=",
+                "/purchasing/reports/spend-by-supplier/report?vm=X",
                 with => { with.Accept("application/json"); }).Result;
         }
 
         [Test]
-        public void ShouldCallFacadeService()
+        public void ShouldCallDomainService()
         {
-            this.FacadeService.Received().GetSpendBySupplierReport(Arg.Any<string>(), Arg.Any<IEnumerable<string>>());
+            this.DomainService.Received().GetSpendBySupplierReport("X");
         }
 
         [Test]
@@ -77,8 +54,7 @@
         public void ShouldReturnReport()
         {
             var resource = this.Response.DeserializeBody<ReportReturnResource>();
-            resource.ReportResults.First().title.displayString.Should().Be("potat");
-            resource.ReportResults.First().results.First().values.First().textDisplayValue.Should().Be("ramen noodles");
+            resource.ReportResults.First().title.displayString.Should().Be(this.title);
         }
     }
 }

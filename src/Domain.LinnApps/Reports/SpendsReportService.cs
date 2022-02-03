@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
 
     using Linn.Common.Persistence;
@@ -129,18 +130,19 @@
                         RowId = currentRowId, ColumnId = "Name", TextDisplay = supplier.Supplier.Name
                     });
 
+            var enGbCulture = CultureInfo.CreateSpecificCulture("en-GB");
             values.Add(
                 new CalculationValueModel
                     {
                         RowId = currentRowId,
                         ColumnId = "LastYear",
-                        TextDisplay = supplier.PrevYearTotal.ToString("C")
+                        TextDisplay = supplier.PrevYearTotal.ToString("C", enGbCulture)
                     });
 
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId, ColumnId = "ThisYear", TextDisplay = supplier.YearTotal.ToString("C")
+                        RowId = currentRowId, ColumnId = "ThisYear", TextDisplay = supplier.YearTotal.ToString("C", enGbCulture)
                     });
 
             values.Add(
@@ -148,7 +150,7 @@
                     {
                         RowId = currentRowId,
                         ColumnId = "ThisMonth",
-                        TextDisplay = supplier.MonthTotal.ToString("C")
+                        TextDisplay = supplier.MonthTotal.ToString("C", enGbCulture)
                     });
         }
     }

@@ -1,17 +1,11 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.SpendsReportModuleTests
 {
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
     using System.Net;
 
     using FluentAssertions;
-    using FluentAssertions.Extensions;
 
-    using Linn.Common.Facade;
-    using Linn.Common.Reporting.Resources.ReportResultResources;
+    using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Integration.Tests.Extensions;
-    using Linn.Purchasing.Resources;
 
     using NSubstitute;
 
@@ -19,49 +13,24 @@
 
     public class WhenGettingSpendBySupplierExport : ContextBase
     {
+        private readonly string title =
+            "Spend by supplier report for Vendor Manager: X - Doctor X (999). For this financial year and last, excludes factors & VAT.";
+
         [SetUp]
         public void SetUp()
         {
-            var reportReturnResource = new ReportReturnResource();
-            var reportResult = new ReportResultResource
-                                   {
-                                       displaySequence = 1,
-                                       title = new DisplayResource("potat"),
-                                       results = new List<ResultDetailsResource>
-                                                     {
-                                                         new ResultDetailsResource
-                                                             {
-                                                                 rowTitle = new DisplayResource("rowtitle"),
-                                                                 rowType = "string",
-                                                                 values = new List<ValueResource>
-                                                                              {
-                                                                                  new ValueResource(1)
-                                                                                      {
-                                                                                          textDisplayValue =
-                                                                                              "ramen noodles"
-                                                                                      }
-                                                                              }
-                                                             }
-                                                     }
-                                   };
-
-            reportReturnResource.ReportResults.Add(reportResult);
-
-            this.FacadeService
-                .GetSpendBySupplierExport("", Arg.Any<IEnumerable<string>>())
-                .Returns(new MemoryStream());
+            this.DomainService.GetSpendBySupplierReport(string.Empty)
+                .Returns(new ResultsModel { ReportTitle = new NameModel(this.title) });
 
             this.Response = this.Client.Get(
-                $"/purchasing/reports/spend-by-supplier/export?vm=",
+                "/purchasing/reports/spend-by-supplier/export?vm=",
                 with => { with.Accept("text/csv"); }).Result;
         }
 
         [Test]
-        public void ShouldCallFacadeService()
+        public void ShouldCallDomainService()
         {
-            this.FacadeService.Received().GetSpendBySupplierExport(
-                Arg.Any<string>(),
-                Arg.Any<IEnumerable<string>>());
+            this.DomainService.Received().GetSpendBySupplierReport(string.Empty);
         }
 
         [Test]
