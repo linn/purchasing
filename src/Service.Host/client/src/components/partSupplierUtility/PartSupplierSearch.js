@@ -58,6 +58,13 @@ function PartSupplierSearch() {
 
     const createUrl = utilities.getHref(applicationState, 'create');
 
+    const search = () =>
+        dispatch(
+            partSuppliersActions.searchWithOptions(
+                '',
+                `&partNumber=${options.partNumber}&supplierName=${options.supplierName}`
+            )
+        );
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
@@ -74,6 +81,16 @@ function PartSupplierSearch() {
                         label="Part Number"
                         propertyName="partNumber"
                         onChange={handleOptionsChange}
+                        textFieldProps={{
+                            onKeyDown: data => {
+                                if (
+                                    options.partNumber &&
+                                    (data.keyCode === 13 || data.keyCode === 9)
+                                ) {
+                                    search();
+                                }
+                            }
+                        }}
                     />
                 </Grid>
                 <Grid item xs={5}>
@@ -83,6 +100,16 @@ function PartSupplierSearch() {
                         label="Supplier"
                         propertyName="supplierName"
                         onChange={handleOptionsChange}
+                        textFieldProps={{
+                            onKeyDown: data => {
+                                if (
+                                    options.supplierName &&
+                                    (data.keyCode === 13 || data.keyCode === 9)
+                                ) {
+                                    search();
+                                }
+                            }
+                        }}
                     />
                 </Grid>
                 <Grid item xs={2}>
@@ -90,14 +117,7 @@ function PartSupplierSearch() {
                         variant="outlined"
                         color="primary"
                         className={classes.button}
-                        onClick={() =>
-                            dispatch(
-                                partSuppliersActions.searchWithOptions(
-                                    '',
-                                    `&partNumber=${options.partNumber}&supplierName=${options.supplierName}`
-                                )
-                            )
-                        }
+                        onClick={() => search()}
                     >
                         Go
                     </Button>
@@ -123,7 +143,11 @@ function PartSupplierSearch() {
                                             </Typography>
                                         </Grid>
                                         <Grid item xs={9}>
-                                            <Typography>{item.supplierName}</Typography>
+                                            <Typography>
+                                                {item.supplierRanking === 1
+                                                    ? `${item.supplierName} (PREFERRED)`
+                                                    : item.supplierName}
+                                            </Typography>
                                         </Grid>
                                     </ListItem>
                                 </Link>

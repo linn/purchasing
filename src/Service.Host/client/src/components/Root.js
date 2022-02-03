@@ -17,9 +17,11 @@ import PartSupplier from './partSupplierUtility/PartSupplier';
 import OrdersBySupplier from './reports/OrdersBySupplier';
 import OrdersBySupplierOptions from './reports/OrdersBySupplierOptions';
 import OrdersByPart from './reports/OrdersByPart';
+import SuppliersSearch from './supplierUtility/SuppliersSearch';
 import OrdersByPartOptions from './reports/OrdersByPartOptions';
 import SpendBySupplier from './reports/SpendBySupplier';
 import SpendBySupplierOptions from './reports/SpendBySupplierOptions';
+import Supplier from './supplierUtility/Supplier';
 
 const Root = ({ store }) => (
     <div>
@@ -40,6 +42,16 @@ const Root = ({ store }) => (
                             />
                             <Switch>
                                 <Route exact path="/purchasing" component={App} />
+                                <Route
+                                    exact
+                                    path="/purchasing/suppliers"
+                                    component={SuppliersSearch}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/suppliers/:id"
+                                    component={Supplier}
+                                />
                                 <Route
                                     exact
                                     path="/purchasing/signing-limits"

@@ -31,7 +31,6 @@ function OtherDetailsTab({
                     fullWidth
                     value={leadTimeWeeks}
                     type="number"
-                    required
                     label="Lead Time Weeks"
                     propertyName="leadTimeWeeks"
                     onChange={handleFieldChange}

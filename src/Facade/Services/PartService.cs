@@ -43,7 +43,7 @@
                 return new SuccessResult<PartPriceConversionsResource>(
                     new PartPriceConversionsResource
                         {
-                            NewPrice = this.autocostPack.CalculateNewMaterialPrice(partNumber, newCurrency, newPrice),
+                            NewPrice = string.IsNullOrEmpty(partNumber) ? null : this.autocostPack.CalculateNewMaterialPrice(partNumber, newCurrency, newPrice),
                             BaseNewPrice = this.currencyPack.CalculateBaseValueFromCurrencyValue(newCurrency, newPrice, ledger, round)
                         });
             }

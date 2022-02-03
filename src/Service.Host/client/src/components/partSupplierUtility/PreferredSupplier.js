@@ -34,7 +34,8 @@ function PreferredSupplier({
     refreshPart,
     partLoading,
     safetyCriticalPart,
-    bomType
+    bomType,
+    currentSupplier
 }) {
     const dispatch = useDispatch();
     const postChange = body => dispatch(preferredSupplierChangeActions.add(body));
@@ -85,7 +86,7 @@ function PreferredSupplier({
         [dispatch]
     );
 
-    const [formData, setFormData] = useState({});
+    const [formData, setFormData] = useState({ newSupplierId: currentSupplier });
 
     useEffect(() => {
         if (formData?.newSupplierId) {
@@ -139,8 +140,8 @@ function PreferredSupplier({
     }, [clearErrors]);
 
     useEffect(() => {
-        setFormData({});
-    }, []);
+        setFormData({ newSupplierId: currentSupplier });
+    }, [currentSupplier]);
 
     if (preferredSupplierChangeLoading || partLoading) {
         return (
@@ -358,7 +359,8 @@ PreferredSupplier.propTypes = {
     refreshPart: PropTypes.func.isRequired,
     partLoading: PropTypes.bool,
     safetyCriticalPart: PropTypes.bool,
-    bomType: PropTypes.string
+    bomType: PropTypes.string,
+    currentSupplier: PropTypes.number.isRequired
 };
 
 PreferredSupplier.defaultProps = {

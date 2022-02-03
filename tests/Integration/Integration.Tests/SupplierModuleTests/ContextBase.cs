@@ -2,12 +2,14 @@
 {
     using System.Net.Http;
 
+    using Linn.Common.Authorisation;
     using Linn.Common.Facade;
     using Linn.Common.Logging;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
+    using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
     using Linn.Purchasing.Resources;
@@ -58,6 +60,12 @@
             private set;
         }
 
+        protected IRepository<Supplier, int> SupplierRepository { get; private set; }
+
+        protected ISupplierService DomainService { get; private set; }
+
+        protected IAuthorisationService AuthService { get; private set; }
+
         [SetUp]
         public void EstablishContext()
         {
@@ -67,13 +75,22 @@
                     .For<IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>>();
             this.PartFacadeService = Substitute.For<IPartService>();
             this.Log = Substitute.For<ILog>();
-            this.SupplierFacadeService =
-                Substitute.For<IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource>>();
-            this.PreferredSupplierChangeService = Substitute
+            this.AuthService = Substitute.For<IAuthorisationService>();
+            this.SupplierRepository = Substitute.For<IRepository<Supplier, int>>();
+
+            this.DomainService = Substitute.For<ISupplierService>();
+
+            this.SupplierFacadeService = new SupplierFacadeService(
+                this.SupplierRepository,
+                this.TransactionManager,
+                new SupplierResourceBuilder(this.AuthService),
+                this.DomainService);
+
+                this.PreferredSupplierChangeService = Substitute
                 .For<IFacadeResourceService<PreferredSupplierChange, PreferredSupplierChangeKey, PreferredSupplierChangeResource, PreferredSupplierChangeKey>>();
             this.PriceChangeReasonService = Substitute
-                .For<IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource,
-                    PriceChangeReasonResource>>();
+                .For<IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource>>();
+
             this.Client = TestClient.With<SupplierModule>(
                 services =>
                     {

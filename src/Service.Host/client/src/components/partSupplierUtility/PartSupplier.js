@@ -23,14 +23,15 @@ import {
     collectionSelectorHelpers,
     itemSelectorHelpers,
     getItemError,
-    userSelectors
+    userSelectors,
+    LinkButton
 } from '@linn-it/linn-form-components-library';
 import { getQuery, getPathname } from '../../selectors/routerSelelctors';
 import partSupplierActions from '../../actions/partSupplierActions';
 import history from '../../history';
 import config from '../../config';
 import partSupplierReducer from './partSupplierReducer';
-import { partSupplier } from '../../itemTypes';
+import { partSupplier, partPriceConversions } from '../../itemTypes';
 import PartSupplierTab from './tabs/PartSupplierTab';
 import partsActions from '../../actions/partsActions';
 import partActions from '../../actions/partActions';
@@ -50,6 +51,7 @@ import ManufacturerTab from './tabs/ManufacturerTab';
 import manufacturersActions from '../../actions/manufacturersActions';
 import PreferredSupplier from './PreferredSupplier';
 import PriceChange from './PriceChange';
+import partPriceConversionsActions from '../../actions/partPriceConversionsActions';
 
 function PartSupplier() {
     const useStyles = makeStyles(theme => ({
@@ -182,6 +184,14 @@ function PartSupplier() {
         [query.partId, reduxDispatch]
     );
 
+    const fetchBasePriceConversion = (currency, currencyUnitPrice) => {
+        reduxDispatch(
+            partPriceConversionsActions.fetchByHref(
+                `${partPriceConversions.uri}?partNumber=&newPrice=${currencyUnitPrice}&newCurrency=${currency}&ledger=PL&round=FALSE`
+            )
+        );
+    };
+
     useEffect(() => {
         reduxDispatch(partSuppliersActions.fetchState());
         reduxDispatch(unitsOfMeasureActions.fetch());
@@ -191,6 +201,20 @@ function PartSupplier() {
         reduxDispatch(packagingGroupActions.fetch());
         reduxDispatch(employeesActions.fetch());
     }, [reduxDispatch]);
+
+    const partPriceConversionsResult = useSelector(reduxState =>
+        itemSelectorHelpers.getItem(reduxState.partPriceConversions)
+    );
+
+    useEffect(() => {
+        if (partPriceConversionsResult) {
+            dispatch({
+                type: 'fieldChange',
+                fieldName: 'baseOurUnitPrice',
+                payload: partPriceConversionsResult.baseNewPrice
+            });
+        }
+    }, [partPriceConversionsResult]);
 
     useEffect(() => {
         if (query.partId && query.supplierId) {
@@ -252,6 +276,15 @@ function PartSupplier() {
     const canEdit = () =>
         item?.links.some(l => l.rel === 'edit') || !!utilities.getHref(applicationState, 'create');
 
+    const invalid = () =>
+        !state.partSupplier?.partNumber ||
+        !state.partSupplier?.orderMethodName ||
+        !state.partSupplier?.currencyCode ||
+        !state.partSupplier?.minimumOrderQty ||
+        !state.partSupplier?.orderIncrement ||
+        !state.partSupplier?.leadTimeWeeks ||
+        !state.partSupplier?.damagesPercent;
+
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
@@ -266,6 +299,7 @@ function PartSupplier() {
                         </IconButton>
                         <div className={classes.dialog}>
                             <PreferredSupplier
+                                currentSupplier={state.partSupplier?.supplierId}
                                 partLoading={partLoading}
                                 partNumber={part?.partNumber}
                                 partDescription={part?.description}
@@ -342,8 +376,7 @@ function PartSupplier() {
                                 <Box
                                     sx={{
                                         borderBottom: 1,
-                                        borderColor: 'divider',
-                                        marginBottom: '20px'
+                                        borderColor: 'divider'
                                     }}
                                 >
                                     <Typography variant="h6">
@@ -363,6 +396,31 @@ function PartSupplier() {
                                     </Tooltip>
                                 )}
                             </Grid>
+                            <Grid item xs={3}>
+                                {!creating() && (
+                                    <LinkButton
+                                        external
+                                        newTab
+                                        to={`${config.proxyRoot}${utilities.getHref(item, 'part')}`}
+                                        text="View Part"
+                                    />
+                                )}
+                            </Grid>
+                            <Grid item xs={3}>
+                                {!creating() && (
+                                    <LinkButton
+                                        external
+                                        newTab
+                                        disabled
+                                        to={`${config.proxyRoot}${utilities.getHref(
+                                            item,
+                                            'supplier'
+                                        )}`}
+                                        text="View Supplier"
+                                    />
+                                )}
+                            </Grid>
+                            <Grid item xs={6} />
                             <Grid item xs={12}>
                                 <Box sx={{ width: '100%' }}>
                                     <Box sx={{ borderBottom: 0, borderColor: 'divider' }}>
@@ -402,6 +460,8 @@ function PartSupplier() {
                                                 searchSuppliers={searchSuppliers}
                                                 editStatus={creating() ? 'create' : editStatus}
                                                 part={part}
+                                                canEdit={canEdit}
+                                                creating={creating}
                                             />
                                         </Box>
                                     )}
@@ -409,7 +469,7 @@ function PartSupplier() {
                                         <Box sx={{ paddingTop: 3 }}>
                                             <OrderDetailsTab
                                                 handleFieldChange={handleFieldChange}
-                                                editStatus={editStatus}
+                                                creating={() => pathName.includes('/create')}
                                                 unitsOfMeasure={unitsOfMeasure}
                                                 unitOfMeasure={state.partSupplier?.unitOfMeasure}
                                                 deliveryAddresses={deliveryAddresses}
@@ -421,7 +481,7 @@ function PartSupplier() {
                                                     state.partSupplier?.orderMethodDescription
                                                 }
                                                 currencies={currencies}
-                                                currency={state.partSupplier?.currencyCode}
+                                                currencyCode={state.partSupplier?.currencyCode}
                                                 currencyUnitPrice={
                                                     state.partSupplier?.currencyUnitPrice
                                                 }
@@ -444,6 +504,8 @@ function PartSupplier() {
                                                 }
                                                 reelOrBoxQty={state.partSupplier?.reelOrBoxQty}
                                                 setPriceChangeDialogOpen={setPriceChangeDialogOpen}
+                                                fetchBasePriceConversion={fetchBasePriceConversion}
+                                                canEdit={canEdit}
                                             />
                                         </Box>
                                     )}
@@ -545,7 +607,7 @@ function PartSupplier() {
                     )}
                     <Grid item xs={12}>
                         <SaveBackCancelButtons
-                            saveDisabled={!canEdit() || editStatus === 'view'}
+                            saveDisabled={!canEdit() || invalid() || editStatus === 'view'}
                             saveClick={() => {
                                 clearErrors();
                                 if (creating()) {

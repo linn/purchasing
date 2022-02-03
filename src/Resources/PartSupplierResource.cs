@@ -101,5 +101,7 @@
         public string RohsCompliant { get; set; }
 
         public string RohsComments { get; set; }
+
+        public int? SupplierRanking { get; set; }
     }
 }

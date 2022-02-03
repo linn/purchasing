@@ -30,6 +30,7 @@ import partPriceConversions from './partPriceConversions';
 import ordersByPart from './ordersByPartReport';
 import vendorManagers from './vendorManagers';
 import spendBySupplierReport from './spendBySupplierReport';
+import supplier from './supplier';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -56,6 +57,7 @@ const rootReducer = history =>
         signingLimit,
         signingLimits,
         spendBySupplierReport,
+        supplier,
         suppliers,
         tariffs,
         unitsOfMeasure,

@@ -160,7 +160,7 @@
 
         public PartSupplier CreatePartSupplier(PartSupplier candidate, IEnumerable<string> privileges)
         {
-            if (!this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PartSupplierCreate, privileges))
             {
                 throw new UnauthorisedActionException(
                     "You are not authorised to update Part Supplier records");
