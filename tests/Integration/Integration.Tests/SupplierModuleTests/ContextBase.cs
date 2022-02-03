@@ -61,7 +61,7 @@
 
         protected IRepository<Supplier, int> SupplierRepository { get; private set; }
 
-        protected ISupplierService domainService { get; private set; }
+        protected ISupplierService DomainService { get; private set; }
 
         [SetUp]
         public void EstablishContext()
@@ -75,13 +75,13 @@
 
             this.SupplierRepository = Substitute.For<IRepository<Supplier, int>>();
 
-            this.domainService = Substitute.For<ISupplierService>();
+            this.DomainService = Substitute.For<ISupplierService>();
 
             this.SupplierFacadeService = new SupplierFacadeService(
                 this.SupplierRepository,
                 this.TransactionManager,
                 new SupplierResourceBuilder(),
-                this.domainService);
+                this.DomainService);
 
                 this.PreferredSupplierChangeService = Substitute
                 .For<IFacadeResourceService<PreferredSupplierChange, PreferredSupplierChangeKey, PreferredSupplierChangeResource, PreferredSupplierChangeKey>>();
