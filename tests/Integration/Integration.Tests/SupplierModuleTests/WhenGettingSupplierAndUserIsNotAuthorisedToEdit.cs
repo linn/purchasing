@@ -39,7 +39,7 @@
         }
 
         [Test]
-        public void ShouldBuildEditLink()
+        public void ShouldNotBuildEditLink()
         {
             var resource = this.Response.DeserializeBody<SupplierResource>();
             resource.Links.Any(x => x.Rel == "edit").Should().BeFalse();
