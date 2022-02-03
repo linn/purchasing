@@ -2,6 +2,7 @@
 {
     using System.Net.Http;
 
+    using Linn.Common.Authorisation;
     using Linn.Common.Facade;
     using Linn.Common.Logging;
     using Linn.Common.Persistence;
@@ -63,6 +64,8 @@
 
         protected ISupplierService DomainService { get; private set; }
 
+        protected IAuthorisationService AuthService { get; private set; }
+
         [SetUp]
         public void EstablishContext()
         {
@@ -72,7 +75,7 @@
                     .For<IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>>();
             this.PartFacadeService = Substitute.For<IPartService>();
             this.Log = Substitute.For<ILog>();
-
+            this.AuthService = Substitute.For<IAuthorisationService>();
             this.SupplierRepository = Substitute.For<IRepository<Supplier, int>>();
 
             this.DomainService = Substitute.For<ISupplierService>();
@@ -80,7 +83,7 @@
             this.SupplierFacadeService = new SupplierFacadeService(
                 this.SupplierRepository,
                 this.TransactionManager,
-                new SupplierResourceBuilder(),
+                new SupplierResourceBuilder(this.AuthService),
                 this.DomainService);
 
                 this.PreferredSupplierChangeService = Substitute
