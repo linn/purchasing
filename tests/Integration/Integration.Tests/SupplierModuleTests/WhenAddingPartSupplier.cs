@@ -53,9 +53,8 @@
         [Test]
         public void ShouldCallAdd()
         {
-            this.PartSupplierFacadeService
-                .Add(Arg.Any<PartSupplierResource>(), Arg.Any<IEnumerable<string>>()).Received()
-                .Should().Be(true);
+            this.PartSupplierFacadeService.Received()
+                .Add(Arg.Any<PartSupplierResource>(), Arg.Any<IEnumerable<string>>());
         }
 
         [Test]
