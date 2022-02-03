@@ -53,15 +53,13 @@
         [Test]
         public void ShouldCallAdd()
         {
-            this.PartSupplierFacadeService
+            this.PartSupplierFacadeService.Received()
                 .Add(Arg.Any<PartSupplierResource>(), Arg.Any<IEnumerable<string>>());
         }
 
         [Test]
         public void ShouldReturnJsonContentType()
         {
-            var response = this.Response;
-
             this.Response.Content.Headers.ContentType.Should().NotBeNull();
             this.Response.Content.Headers.ContentType?.ToString().Should().Be("application/json");
         }

@@ -10,10 +10,17 @@
 
     public class SuppliersResourceBuilder : IBuilder<IEnumerable<Supplier>>
     {
+        private readonly IBuilder<Supplier> builder;
+
+        public SuppliersResourceBuilder(IBuilder<Supplier> builder)
+        {
+            this.builder = builder;
+        }
+
         public IEnumerable<SupplierResource> Build(IEnumerable<Supplier> entityList, IEnumerable<string> claims)
         {
             return entityList.Select(
-                e => new SupplierResource { Id = e.SupplierId, Name = e.Name });
+                e => (SupplierResource)this.builder.Build(e, claims));
         }
 
         public string GetLocation(IEnumerable<Supplier> p)

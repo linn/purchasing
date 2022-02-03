@@ -19,6 +19,8 @@ export const testAction = () => ({
 
 export const employeesActionTypes = makeActionTypes(itemTypes.employees.actionType);
 
+export const supplierActionTypes = makeActionTypes(itemTypes.supplier.actionType);
+
 export const suppliersActionTypes = makeActionTypes(itemTypes.suppliers.actionType);
 
 export const partsActionTypes = makeActionTypes(itemTypes.parts.actionType);
