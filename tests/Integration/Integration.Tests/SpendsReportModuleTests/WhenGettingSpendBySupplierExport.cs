@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrderReportModuleTests
+﻿namespace Linn.Purchasing.Integration.Tests.SpendsReportModuleTests
 {
     using System.Collections.Generic;
     using System.IO;
@@ -48,19 +48,19 @@
             reportReturnResource.ReportResults.Add(reportResult);
 
             this.FacadeService
-                .GetOrdersBySupplierExport(Arg.Any<OrdersBySupplierSearchResource>(), Arg.Any<IEnumerable<string>>())
+                .GetSpendBySupplierExport("", Arg.Any<IEnumerable<string>>())
                 .Returns(new MemoryStream());
 
             this.Response = this.Client.Get(
-                $"/purchasing/reports/orders-by-supplier/export?id={16622}&fromDate={(1.January(2022).ToLongDateString())}&toDate={(1.February(2022).ToLongDateString())}",
+                $"/purchasing/reports/spend-by-supplier/export?vm=",
                 with => { with.Accept("text/csv"); }).Result;
         }
 
         [Test]
         public void ShouldCallFacadeService()
         {
-            this.FacadeService.Received().GetOrdersBySupplierExport(
-                Arg.Any<OrdersBySupplierSearchResource>(),
+            this.FacadeService.Received().GetSpendBySupplierExport(
+                Arg.Any<string>(),
                 Arg.Any<IEnumerable<string>>());
         }
 

@@ -8,8 +8,8 @@
 
     public interface ISpendsReportFacadeService
     {
-        Stream GetSpendBySupplierExport(IEnumerable<string> privileges);
+        Stream GetSpendBySupplierExport(string vm, IEnumerable<string> privileges);
 
-        IResult<ReportReturnResource> GetSpendBySupplierReport(IEnumerable<string> privileges);
+        IResult<ReportReturnResource> GetSpendBySupplierReport(string vm, IEnumerable<string> privileges);
     }
 }

@@ -6,6 +6,6 @@
 
     public interface ISpendsReportService
     {
-        ResultsModel GetSpendBySupplierReport();
+        ResultsModel GetSpendBySupplierReport(string vm);
     }
 }

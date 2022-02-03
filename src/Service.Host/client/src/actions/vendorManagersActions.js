@@ -8,5 +8,7 @@ export default new FetchApiActions(
     itemTypes.vendorManagers.actionType,
     itemTypes.vendorManagers.uri,
     actionTypes,
-    config.proxyRoot
+    config.appRoot,
+    null,
+    false
 );

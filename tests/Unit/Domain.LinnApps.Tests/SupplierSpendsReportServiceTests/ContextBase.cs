@@ -27,6 +27,7 @@
         protected IRepository<Supplier, int> SupplierRepository { get; private set; }
 
         protected ISpendsReportService Sut { get; private set; }
+        protected IRepository<VendorManager, string> VendorManagerRepository { get; set; }
 
         [SetUp]
         public void SetUpContext()
@@ -36,11 +37,13 @@
             this.SupplierRepository = Substitute.For<IRepository<Supplier, int>>();
             this.SpendsRepository = Substitute.For<IQueryRepository<SupplierSpend>>();
             this.PurchaseLedgerPack = Substitute.For<IPurchaseLedgerPack>();
+            this.VendorManagerRepository = Substitute.For<IRepository<VendorManager, string>>();
 
             this.ReportingHelper = new ReportingHelper();
 
             this.Sut = new SpendsReportService(
                 this.SpendsRepository,
+                this.VendorManagerRepository,
                 this.PurchaseLedgerPack,
                 this.ReportingHelper);
         }

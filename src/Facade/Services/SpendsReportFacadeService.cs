@@ -24,9 +24,9 @@
             this.resultsModelResourceBuilder = resultsModelResourceBuilder;
         }
 
-        public Stream GetSpendBySupplierExport(IEnumerable<string> privileges)
+        public Stream GetSpendBySupplierExport(string vm, IEnumerable<string> privileges)
         {
-            var results = this.domainService.GetSpendBySupplierReport();
+            var results = this.domainService.GetSpendBySupplierReport(vm);
 
             var returnResource = results.ConvertToCsvList();
 
@@ -37,9 +37,9 @@
             return stream;
         }
 
-        public IResult<ReportReturnResource> GetSpendBySupplierReport(IEnumerable<string> privileges)
+        public IResult<ReportReturnResource> GetSpendBySupplierReport(string vm, IEnumerable<string> privileges)
         {
-            var results = this.domainService.GetSpendBySupplierReport();
+            var results = this.domainService.GetSpendBySupplierReport(vm);
 
             var returnResource = this.BuildResource(results, privileges);
 

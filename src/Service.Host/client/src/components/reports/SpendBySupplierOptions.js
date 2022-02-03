@@ -19,7 +19,7 @@ function SpendBySupplierReportOptions() {
         collectionSelectorHelpers.getItems(state.vendorManagers)
     );
     const vendorManagersLoading = useSelector(state =>
-        collectionSelectorHelpers.getSearchLoading(state.vendorManagers)
+        collectionSelectorHelpers.getLoading(state.vendorManagers)
     );
 
     const prevOptions = useSelector(state =>
@@ -29,15 +29,15 @@ function SpendBySupplierReportOptions() {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(vendorManagersActions.fetch);
+        dispatch(vendorManagersActions.fetch());
     }, [dispatch]);
 
-    const [vm, setVm] = useState(prevOptions?.id ? prevOptions.id : '');
+    const [vm, setVm] = useState(prevOptions?.vm ? prevOptions.vm : '');
 
     const handleClick = () =>
         history.push({
             pathname: `/purchasing/reports/spend-by-supplier/report`,
-            search: `?id=${vm}`
+            search: `?vm=${vm}`
         });
 
     return (
@@ -53,15 +53,25 @@ function SpendBySupplierReportOptions() {
                         <Grid item xs={4}>
                             <Dropdown
                                 fullWidth
-                                value={vm.id}
+                                value={vm}
                                 label="Vendor Manager"
                                 propertyName="vendorManager"
                                 items={[
                                     ...[{ id: '', displayText: 'All' }],
-                                    ...vendorManagers?.map(v => ({
-                                        id: v.vmId,
-                                        displayText: `${v.vmId} ${v.name} (${v.userNumber})`
-                                    }))
+                                    ...vendorManagers
+                                        ?.sort((a, b) => {
+                                            if (a.vmId < b.vmId) {
+                                                return -1;
+                                            }
+                                            if (a.vmId > b.vmId) {
+                                                return 1;
+                                            }
+                                            return 0;
+                                        })
+                                        .map(v => ({
+                                            id: v.vmId,
+                                            displayText: `${v.vmId} ${v.name} (${v.userNumber})`
+                                        }))
                                 ]}
                                 allowNoValue={false}
                                 onChange={(propertyName, newValue) => setVm(newValue)}

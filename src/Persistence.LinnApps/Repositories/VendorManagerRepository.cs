@@ -21,5 +21,10 @@
         {
             return this.serviceDbContext.VendorManagers.AsNoTracking().Include(x => x.Employee);
         }
+
+        public override VendorManager FindById(string key)
+        {
+            return this.serviceDbContext.VendorManagers.Include(v => v.Employee).SingleOrDefault(v => v.VmId == key);
+        }
     }
 }

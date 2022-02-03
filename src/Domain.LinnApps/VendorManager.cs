@@ -2,7 +2,7 @@
 {
     public class VendorManager
     {
-        public Employee Employee { get; }
+        public Employee Employee { get; set; }
 
         public string PmMeasured { get; set; }
 

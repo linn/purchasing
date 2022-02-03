@@ -46,18 +46,18 @@
             reportReturnResource.ReportResults.Add(reportResult);
 
             this.FacadeService
-                .GetSpendBySupplierReport(Arg.Any<IEnumerable<string>>())
+                .GetSpendBySupplierReport("", Arg.Any<IEnumerable<string>>())
                 .Returns(new SuccessResult<ReportReturnResource>(reportReturnResource));
 
             this.Response = this.Client.Get(
-                $"/purchasing/reports/spend-by-supplier/report",
+                $"/purchasing/reports/spend-by-supplier/report?vm=",
                 with => { with.Accept("application/json"); }).Result;
         }
 
         [Test]
         public void ShouldCallFacadeService()
         {
-            this.FacadeService.Received().GetSpendBySupplierReport(Arg.Any<IEnumerable<string>>());
+            this.FacadeService.Received().GetSpendBySupplierReport(Arg.Any<string>(), Arg.Any<IEnumerable<string>>());
         }
 
         [Test]

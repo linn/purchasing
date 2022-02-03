@@ -35,11 +35,9 @@
 
         private async Task GetSpendBySupplierExport(HttpRequest req, HttpResponse res)
         {
-            //var resource = new OrdersBySupplierSearchResource();
-            //resource.SupplierId = req.Query.As<int>("Id");
-          
+            var vm = req.Query.As<string>("Vm");
 
-            using Stream stream = this.spendsReportFacadeService.GetSpendBySupplierExport(req.HttpContext.GetPrivileges());
+            using Stream stream = this.spendsReportFacadeService.GetSpendBySupplierExport(vm != null ? vm : string.Empty, req.HttpContext.GetPrivileges());
 
             var contentDisposition = new ContentDisposition
                                          {
@@ -53,10 +51,10 @@
 
         private async Task GetSpendBySupplierReport(HttpRequest req, HttpResponse res)
         {
-            //var resource = new OrdersBySupplierSearchResource();
-            //resource.SupplierId = req.Query.As<int>("Id");
+            var vm = req.Query.As<string>("Vm");
 
-            var results = this.spendsReportFacadeService.GetSpendBySupplierReport(req.HttpContext.GetPrivileges());
+            var results = this.spendsReportFacadeService.GetSpendBySupplierReport(
+                vm != null ? vm : string.Empty, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(results);
         }

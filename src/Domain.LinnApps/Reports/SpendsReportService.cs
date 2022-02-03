@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Reports
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -18,39 +19,49 @@
 
         private readonly IQueryRepository<SupplierSpend> spendsRepository;
 
+        private readonly IRepository<VendorManager, string> vendorManagerRepository;
+
+
         public SpendsReportService(
             IQueryRepository<SupplierSpend> spendsRepository,
+            IRepository<VendorManager, string> vendorManagerRepository,
             IPurchaseLedgerPack purchaseLedgerPack,
             IReportingHelper reportingHelper)
         {
             this.spendsRepository = spendsRepository;
+            this.vendorManagerRepository = vendorManagerRepository;
             this.purchaseLedgerPack = purchaseLedgerPack;
             this.reportingHelper = reportingHelper;
         }
 
-        public ResultsModel GetSpendBySupplierReport()
+        public ResultsModel GetSpendBySupplierReport(string vm)
         {
             var currentLedgerPeriod = this.purchaseLedgerPack.GetLedgerPeriod();
             var yearStartLedgerPeriod = this.purchaseLedgerPack.GetYearStartLedgerPeriod();
             var previousYearStartLedgerPeriod = yearStartLedgerPeriod - 12;
 
-            var supplierSpends = this.spendsRepository.FilterBy(
-                x => x.LedgerPeriod >= previousYearStartLedgerPeriod && x.LedgerPeriod <= currentLedgerPeriod).ToList();
-
             // do I need to check the current ledger period as an upper limit? Not sure if we'd have stuff in the future
+            var supplierSpends = this.spendsRepository.FilterBy(
+                        x => x.LedgerPeriod >= previousYearStartLedgerPeriod && x.LedgerPeriod <= currentLedgerPeriod
+                             && (string.IsNullOrWhiteSpace(vm) || x.Supplier.VendorManager == vm))
+                    .ToList();
+
+            var vmName = "ALL";
+            if (!string.IsNullOrWhiteSpace(vm))
+            {
+                var vendorManager = this.vendorManagerRepository.FindById(vm);
+                vmName = $"{vm} - {vendorManager.Employee.FullName} ({vendorManager.UserNumber})";
+            }
+
             var reportLayout = new SimpleGridLayout(
                 this.reportingHelper,
                 CalculationValueModelType.TextValue,
                 null,
-                "Spend by supplier report");
+                $"Spend by supplier report for Vendor Manager: {vmName}. For this financial year and last, excludes factors & VAT.");
 
             this.AddSupplierReportColumns(reportLayout);
 
             var values = new List<CalculationValueModel>();
-
-            // is the below too rogue or is it readable? From the list of transacions/purchase orders,
-            // get one entry for each supplier id,
-            // and with that entry include the month, year & prev year totals of all the transactions for that supplier
 
             var distinctSupplierSpends = supplierSpends.DistinctBy(x => x.SupplierId).Select(
                 x => new SupplierSpend
@@ -70,9 +81,9 @@
                              PrevYearTotal = supplierSpends.Where(
                                      s => s.SupplierId == x.SupplierId
                                           && s.LedgerPeriod >= previousYearStartLedgerPeriod
-                                          && s.LedgerPeriod <= yearStartLedgerPeriod)
+                                          && s.LedgerPeriod < yearStartLedgerPeriod)
                                  .Sum(z => z.BaseTotal)
-                         });
+                         }).OrderByDescending(x => x.PrevYearTotal).ThenByDescending(s => s.YearTotal).ThenByDescending(s => s.MonthTotal);
 
             foreach (var supplier in distinctSupplierSpends)
             {
@@ -83,6 +94,7 @@
             var model = reportLayout.GetResultsModel();
 
             return model;
+
         }
 
         private void AddSupplierReportColumns(SimpleGridLayout reportLayout)
@@ -96,9 +108,9 @@
                                 AllowWrap = false
                             },
                         new AxisDetailsModel("Name", "Name", GridDisplayType.TextValue),
-                        new AxisDetailsModel("ThisMonth", "This Month", GridDisplayType.TextValue),
+                        new AxisDetailsModel("LastYear", "Last Year", GridDisplayType.TextValue),
                         new AxisDetailsModel("ThisYear", "This Year", GridDisplayType.TextValue),
-                        new AxisDetailsModel("LastYear", "Last Year", GridDisplayType.TextValue)
+                        new AxisDetailsModel("ThisMonth", "This Month", GridDisplayType.TextValue)
                     });
         }
 
@@ -120,19 +132,23 @@
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId, ColumnId = "ThisMonth", TextDisplay = supplier.MonthTotal.ToString()
+                        RowId = currentRowId,
+                        ColumnId = "LastYear",
+                        TextDisplay = supplier.PrevYearTotal.ToString("C")
                     });
 
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId, ColumnId = "ThisYear", TextDisplay = supplier.YearTotal.ToString()
+                        RowId = currentRowId, ColumnId = "ThisYear", TextDisplay = supplier.YearTotal.ToString("C")
                     });
 
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId, ColumnId = "LastYear", TextDisplay = supplier.PrevYearTotal.ToString()
+                        RowId = currentRowId,
+                        ColumnId = "ThisMonth",
+                        TextDisplay = supplier.MonthTotal.ToString("C")
                     });
         }
     }
