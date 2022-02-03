@@ -1,6 +1,11 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { itemSelectorHelpers, Page, Loading } from '@linn-it/linn-form-components-library';
+import {
+    itemSelectorHelpers,
+    Page,
+    Loading,
+    SaveBackCancelButtons
+} from '@linn-it/linn-form-components-library';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import { useParams } from 'react-router-dom';
@@ -14,6 +19,7 @@ import supplierActions from '../../actions/supplierActions';
 import history from '../../history';
 import config from '../../config';
 import supplierReducer from './supplierReducer';
+import GeneralTab from './tabs/GeneralTab';
 
 function Supplier() {
     const reduxDispatch = useDispatch();
@@ -29,6 +35,9 @@ function Supplier() {
         itemSelectorHelpers.getItemLoading(reduxState.supplier)
     );
 
+    const clearErrors = () => reduxDispatch(supplierActions.clearErrorsForItem());
+    const updateSupplier = body => reduxDispatch(supplierActions.update(id, body));
+
     useEffect(() => {
         if (supplier) {
             dispatch({ type: 'initialise', payload: supplier });
@@ -42,6 +51,17 @@ function Supplier() {
             reduxDispatch(supplierActions.fetch(id));
         }
     }, [id, reduxDispatch]);
+    const [tab, setTab] = useState(0);
+
+    const handleFieldChange = (propertyName, newValue) => {
+        dispatch({ type: 'fieldChange', fieldName: propertyName, payload: newValue });
+    };
+
+    const setEditStatus = status => reduxDispatch(supplierActions.setEditStatus(status));
+
+    const editStatus = useSelector(reduxState =>
+        itemSelectorHelpers.getItemEditStatus(reduxState.supplier)
+    );
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
@@ -53,11 +73,11 @@ function Supplier() {
                         </Grid>
                     </>
                 ) : (
-                    supplier && (
+                    state.supplier && (
                         <>
                             <Grid item xs={3}>
                                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                    <Typography variant="h6">{state.supplier?.id}</Typography>
+                                    <Typography variant="h6">{state.supplier.id}</Typography>
                                 </Box>
                             </Grid>
                             <Grid item xs={7}>
@@ -67,7 +87,7 @@ function Supplier() {
                                         borderColor: 'divider'
                                     }}
                                 >
-                                    <Typography variant="h6">{state.supplier?.name}</Typography>
+                                    <Typography variant="h6">{state.supplier.name}</Typography>
                                 </Box>
                             </Grid>
                             <Grid item xs={1} />
@@ -81,6 +101,60 @@ function Supplier() {
                                         <EditOffIcon fontSize="large" color="secondary" />
                                     </Tooltip>
                                 )}
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Box sx={{ width: '100%' }}>
+                                    <Box sx={{ borderBottom: 0, borderColor: 'divider' }}>
+                                        <Tabs
+                                            value={tab}
+                                            onChange={(event, newValue) => {
+                                                setTab(newValue);
+                                            }}
+                                        >
+                                            <Tab label="General" />
+                                            <Tab label="Finanace" />
+                                            <Tab label="Purch" />
+                                            <Tab label="Where" />
+                                            <Tab label="Whose" />
+                                            <Tab label="Lifecycle" />
+                                            <Tab label="Notes" />
+                                        </Tabs>
+                                    </Box>
+                                    {tab === 0 && (
+                                        <Box sx={{ paddingTop: 3 }}>
+                                            <GeneralTab
+                                                name={state.supplier.name}
+                                                phoneNumber={state.supplier.phoneNumber}
+                                                webAddress={state.supplier.webAddress}
+                                                orderContactMethod={
+                                                    state.supplier.orderContactMethod
+                                                }
+                                                invoiceContactMethod={
+                                                    state.supplier.invoiceContactMethod
+                                                }
+                                                suppliersReference={
+                                                    state.supplier.suppliersReference
+                                                }
+                                                liveOnOracle={state.supplier.liveOnOracle}
+                                                handleFieldChange={handleFieldChange}
+                                            />
+                                        </Box>
+                                    )}
+                                </Box>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <SaveBackCancelButtons
+                                    saveDisabled={!canEdit() || editStatus === 'view'}
+                                    saveClick={() => {
+                                        clearErrors();
+                                        updateSupplier(state.partSupplier);
+                                    }}
+                                    cancelClick={() => {
+                                        dispatch({ type: 'initialise', payload: supplier });
+                                        setEditStatus('view');
+                                    }}
+                                    backClick={() => history.push('/purchasing/part-suppliers')}
+                                />
                             </Grid>
                         </>
                     )

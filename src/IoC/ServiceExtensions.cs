@@ -81,6 +81,7 @@
         {
             return services
                 .AddTransient<IPartSupplierService, PartSupplierService>()
+                .AddTransient<ISupplierService, SupplierService>()
                 .AddTransient<IAmazonSimpleEmailService>(
                     x => new AmazonSimpleEmailServiceClient(x.GetService<AWSOptions>()?.Region))
                 .AddTransient<IEmailService>(x => new EmailService(x.GetService<IAmazonSimpleEmailService>()))

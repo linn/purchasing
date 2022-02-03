@@ -25,6 +25,12 @@
             {
                 Id = entity.SupplierId,
                 Name = entity.Name,
+                PhoneNumber = entity.PhoneNumber,
+                InvoiceContactMethod = entity.InvoiceContactMethod,
+                LiveOnOracle = entity.LiveOnOracle,
+                SuppliersReference = entity.SuppliersReference,
+                WebAddress = entity.WebAddress,
+                OrderContactMethod = entity.OrderContactMethod,
                 Links = this.BuildLinks(entity, claims).ToArray()
             };
         }
