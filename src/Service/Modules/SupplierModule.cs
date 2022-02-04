@@ -9,6 +9,7 @@
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.Keys;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Facade.Services;
@@ -33,6 +34,9 @@
         private readonly IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource> 
             priceChangeReasonService;
 
+        private readonly IFacadeResourceService<PartCategory, string, PartCategoryResource, PartCategoryResource>
+            partCategoryService;
+
         private readonly IPartService partFacadeService;
 
         public SupplierModule(
@@ -40,13 +44,15 @@
             IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource> supplierFacadeService,
             IFacadeResourceService<PreferredSupplierChange, PreferredSupplierChangeKey, PreferredSupplierChangeResource, PreferredSupplierChangeKey> preferredSupplierChangeService,
             IPartService partFacadeService,
-            IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource> priceChangeReasonService)
+            IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource> priceChangeReasonService,
+            IFacadeResourceService<PartCategory, string, PartCategoryResource, PartCategoryResource> partCategoryService)
         {
             this.supplierFacadeService = supplierFacadeService;
             this.partSupplierFacadeService = partSupplierFacadeService;
             this.partFacadeService = partFacadeService;
             this.preferredSupplierChangeService = preferredSupplierChangeService;
             this.priceChangeReasonService = priceChangeReasonService;
+            this.partCategoryService = partCategoryService;
 
             this.Get("/purchasing/suppliers", this.SearchSuppliers);
             this.Get("/purchasing/suppliers/{id:int}", this.GetSupplier);
@@ -62,6 +68,8 @@
             this.Post("/purchasing/preferred-supplier-changes", this.CreatePreferredSupplierChange);
             this.Get("/purchasing/price-change-reasons", this.GetPriceChangeReasons);
             this.Get("/purchasing/part-suppliers/part-price-conversions", this.GetPartPriceConversions);
+            this.Get("/purchasing/part-categories/", this.SearchPartCategories);
+
         }
 
         private async Task GetSupplier(HttpRequest req, HttpResponse res)
@@ -192,6 +200,15 @@
                 newPrice,
                 ledger,
                 round);
+
+            await res.Negotiate(result);
+        }
+
+        private async Task SearchPartCategories(HttpRequest req, HttpResponse res)
+        {
+            var searchTerm = req.Query.As<string>("searchTerm");
+
+            var result = this.partCategoryService.Search(searchTerm);
 
             await res.Negotiate(result);
         }

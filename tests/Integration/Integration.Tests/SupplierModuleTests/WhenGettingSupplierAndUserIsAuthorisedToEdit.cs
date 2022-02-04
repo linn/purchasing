@@ -26,8 +26,8 @@
             this.id = 1;
             this.supplier = new Supplier { SupplierId = 1, Name = "SUPPLIER" };
 
-            this.SupplierRepository.FindById(1).Returns(this.supplier);
-            this.AuthService.HasPermissionFor(AuthorisedAction.SupplierUpdate, Arg.Any<IEnumerable<string>>())
+            this.MockSupplierRepository.FindById(1).Returns(this.supplier);
+            this.MockAuthService.HasPermissionFor(AuthorisedAction.SupplierUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
             this.Response = this.Client.Get(

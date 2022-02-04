@@ -8,7 +8,7 @@
 
     using FluentAssertions;
 
-    using Linn.Purchasing.Domain.LinnApps.Suppliers;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -16,34 +16,34 @@
 
     using NUnit.Framework;
 
-    public class WhenSearchingSuppliers : ContextBase
+    public class WhenSearchingPartCategories : ContextBase
     {
-        private string supplierNameSearch;
+        private string searchTerm;
 
-        private List<Supplier> dataResult;
+        private List<PartCategory> dataResult;
 
         [SetUp]
         public void SetUp()
         {
-            this.supplierNameSearch = "SUPP";
+            this.searchTerm = "CAT";
 
-            this.dataResult = new List<Supplier>
+            this.dataResult = new List<PartCategory>
                                   {
-                                      new Supplier
+                                      new PartCategory
                                           {
-                                              Name = "SUPPLIER", SupplierId = 1
+                                              Category = "CAT", Description = "KITTEN"
                                           }
                                   };
 
-            this.MockSupplierRepository.FilterBy(Arg.Any<Expression<Func<Supplier, bool>>>())
+            this.MockPartCategoriesRepository.FilterBy(Arg.Any<Expression<Func<PartCategory, bool>>>())
                 .Returns(this.dataResult.AsQueryable());
 
             this.Response = this.Client.Get(
-                $"/purchasing/suppliers?searchTerm={this.supplierNameSearch}",
+                $"/purchasing/part-categories?searchTerm={this.searchTerm}",
                 with =>
-                {
-                    with.Accept("application/json");
-                }).Result;
+                    {
+                        with.Accept("application/json");
+                    }).Result;
         }
 
         [Test]
@@ -62,18 +62,17 @@
         [Test]
         public void ShouldReturnJsonBody()
         {
-            var resources = this.Response.DeserializeBody<IEnumerable<SupplierResource>>()?.ToArray();
+            var resources = this.Response.DeserializeBody<IEnumerable<PartCategoryResource>>()?.ToArray();
             resources.Should().NotBeNull();
             resources.Should().HaveCount(1);
-            resources?.First().Name.Should().Be("SUPPLIER");
         }
 
         [Test]
-        public void ShouldBuildLinks()
+        public void ShouldBuildResource()
         {
-            var resources = this.Response.DeserializeBody<IEnumerable<SupplierResource>>()?.ToArray();
-            resources?.First().Links.Single(x => x.Rel == "self").Href.Should()
-                .Be($"/purchasing/suppliers/{this.dataResult.First().SupplierId}");
+            var resource = this.Response.DeserializeBody<IEnumerable<PartCategoryResource>>()?.ToArray()?.First();
+            resource.Category.Should().Be("CAT");
+            resource.Description.Should().Be("KITTEN");
         }
     }
 }

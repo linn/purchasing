@@ -60,6 +60,8 @@
 
         public DbSet<PartHistoryEntry> PartHistory { get; set; }
 
+        public DbSet<PartCategory> PartCategories { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -87,6 +89,7 @@
             this.BuildPreferredSupplierChanges(builder);
             this.BuildPriceChangeReasons(builder);
             this.BuildPartHistory(builder);
+            this.BuildPartCategories(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -212,6 +215,14 @@
             entity.Property(e => e.PriceChangeReason).HasColumnName("PRICE_CHANGE_REASON").HasMaxLength(10);
             entity.Property(e => e.Remarks).HasColumnName("REMARKS").HasMaxLength(200);
             entity.Property(e => e.Seq).HasColumnName("SEQ");
+        }
+
+        private void BuildPartCategories(ModelBuilder builder)
+        {
+            var q = builder.Entity<PartCategory>().ToTable("PART_CATEGORIES");
+            q.HasKey(e => e.Category);
+            q.Property(e => e.Category).HasColumnName("CATEGORY").HasMaxLength(2);
+            q.Property(e => e.Description).HasColumnName("DESCRIPTION").HasMaxLength(30);
         }
 
         private void BuildParts(ModelBuilder builder)

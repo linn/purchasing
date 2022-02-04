@@ -27,7 +27,7 @@
             this.resource = new SupplierResource { Id = 1, Name = "NEW NAME" };
             this.supplier = new Supplier { SupplierId = 1, Name = "SUPPLIER" };
 
-            this.SupplierRepository.FindById(1).Returns(this.supplier);
+            this.MockSupplierRepository.FindById(1).Returns(this.supplier);
             this.Response = this.Client.Put(
                 $"/purchasing/suppliers/{this.resource.Id}",
                 this.resource,
@@ -50,7 +50,7 @@
         [Test]
         public void ShouldCallDomainService()
         {
-            this.DomainService.Received().UpdateSupplier(
+            this.MockDomainService.Received().UpdateSupplier(
                 Arg.Is<Supplier>(s => s.SupplierId == 1  && s.Name == "SUPPLIER"),
                 Arg.Is<Supplier>(s => s.SupplierId == 1 && s.Name == "NEW NAME"),
                 Arg.Any<IEnumerable<string>>());

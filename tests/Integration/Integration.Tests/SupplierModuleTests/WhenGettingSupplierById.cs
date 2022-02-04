@@ -25,7 +25,7 @@
             this.id = 1;
             this.supplier = new Supplier { SupplierId = 1, Name = "SUPPLIER" };
 
-            this.SupplierRepository.FindById(1).Returns(this.supplier);
+            this.MockSupplierRepository.FindById(1).Returns(this.supplier);
 
             this.Response = this.Client.Get(
                 $"/purchasing/suppliers/{this.id}",

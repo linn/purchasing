@@ -1,7 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.SupplierServiceTests
 {
     using System.Collections.Generic;
-    using System.Threading;
 
     using FluentAssertions;
 
