@@ -28,7 +28,7 @@
 
         public string LiveOnOracle { get; set; }
 
-        public string InvoiceGoesToId { get; set; }
+        public int? InvoiceGoesToId { get; set; }
 
         public string InvoiceGoesToName { get; set; }
 

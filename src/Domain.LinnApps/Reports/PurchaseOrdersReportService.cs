@@ -307,7 +307,7 @@
             PurchaseOrder order,
             PurchaseOrderDetail orderDetail,
             PurchaseOrderDelivery delivery)
-        {
+        { 
             var currentRowId = $"{orderDetail.OrderNumber}/{orderDetail.Line}";
             values.Add(
                 new CalculationValueModel
