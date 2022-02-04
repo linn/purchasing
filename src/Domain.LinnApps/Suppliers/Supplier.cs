@@ -8,8 +8,6 @@
 
         public string Name { get; set; }
 
-        public int LedgerStream { get; set; }
-
         public string VendorManager { get; set; }
 
         public int? Planner { get; set; }
