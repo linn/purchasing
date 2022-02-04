@@ -64,3 +64,10 @@ export const ordersByPartReportActionTypes = makeActionTypes(
     reportTypes.ordersByPartReport.actionType,
     false
 );
+
+export const partCategoriesActionTypes = makeActionTypes(
+    itemTypes.partCategories.actionType,
+    false
+);
+
+export const accountingCompaniesActionTypes = makeActionTypes(itemTypes.accountingCompanies, false);
