@@ -1,5 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Suppliers
 {
+    using System.ComponentModel.DataAnnotations.Schema;
+
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
     public class Supplier
