@@ -7,6 +7,8 @@
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
+    using Microsoft.EntityFrameworkCore;
+
     public class SupplierRepository : IRepository<Supplier, int>
     {
         private readonly ServiceDbContext serviceDbContext;
@@ -18,7 +20,10 @@
 
         public Supplier FindById(int key)
         {
-            return this.serviceDbContext.Suppliers.First(x => x.SupplierId == key);
+            return this.serviceDbContext.Suppliers
+                .Include(s => s.InvoiceGoesTo)
+                .Include(s => s.Currency)
+                .First(x => x.SupplierId == key);
         }
 
         public IQueryable<Supplier> FindAll()

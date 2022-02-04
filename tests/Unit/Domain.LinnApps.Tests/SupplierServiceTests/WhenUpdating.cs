@@ -4,6 +4,7 @@
 
     using FluentAssertions;
 
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NUnit.Framework;
@@ -24,7 +25,7 @@
             this.updated = new Supplier
                                {
                                    Name = "NEW NAME",
-                                   Currency = "USD",
+                                   Currency = new Currency { Code = "USD" },
                                    VendorManager = "V",
                                    WebAddress = "/web",
                                    InvoiceContactMethod = "POST",

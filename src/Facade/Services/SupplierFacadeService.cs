@@ -6,6 +6,7 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
 
@@ -71,7 +72,10 @@
             return new Supplier
                        {
                            Name = resource.Name,
-                           Currency = resource.Currency,
+                           Currency = new Currency
+                                          {
+                                              Code = resource.CurrencyCode
+                                          },
                            WebAddress = resource.WebAddress,
                            VendorManager = resource.VendorManager,
                            Planner = resource.Planner,
