@@ -41,6 +41,8 @@
                 PaymentDays = entity.PaymentDays,
                 PaymentMethod = entity.PaymentMethod,
                 PaysInFc = entity.PaysInFc,
+                AccountingCompany = entity.AccountingCompany,
+                VatNumber = entity.VatNumber,
                 Links = this.BuildLinks(entity, claims).ToArray()
             };
         }

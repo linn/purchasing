@@ -52,6 +52,8 @@
                                         ? this.currencyRepository.FindById(updated.Currency.Code)
                                         : null;
             current.ApprovedCarrier = updated.ApprovedCarrier;
+            current.AccountingCompany = updated.AccountingCompany;
+            current.VatNumber = updated.VatNumber;
 
         }
 

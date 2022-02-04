@@ -88,7 +88,9 @@
                            PaymentDays = resource.PaymentDays,
                            PaymentMethod = resource.PaymentMethod,
                            PaysInFc = resource.PaysInFc,
+                           AccountingCompany = resource.AccountingCompany,
                            ApprovedCarrier = resource.ApprovedCarrier,
+                           VatNumber = resource.VatNumber,
                            InvoiceGoesTo = resource.InvoiceGoesToId.HasValue 
                                                ? new Supplier { SupplierId = (int)resource.InvoiceGoesToId } : null
                        };

@@ -70,4 +70,7 @@ export const partCategoriesActionTypes = makeActionTypes(
     false
 );
 
-export const accountingCompaniesActionTypes = makeActionTypes(itemTypes.accountingCompanies, false);
+export const accountingCompaniesActionTypes = makeActionTypes(
+    itemTypes.accountingCompanies.actionType,
+    false
+);

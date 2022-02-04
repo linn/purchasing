@@ -37,5 +37,9 @@
         public Currency Currency { get; set; }
 
         public string ApprovedCarrier { get; set; }
+
+        public string AccountingCompany { get; set; }
+
+        public string VatNumber { get; set; }
     }
 }

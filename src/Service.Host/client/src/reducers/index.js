@@ -30,6 +30,7 @@ import partPriceConversions from './partPriceConversions';
 import ordersByPart from './ordersByPartReport';
 import supplier from './supplier';
 import partCategories from './partCategories';
+import accountingCompanies from './accountingCompanies';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -37,6 +38,7 @@ const rootReducer = history =>
     combineReducers({
         oidc,
         historyStore,
+        accountingCompanies,
         currencies,
         deliveryAddresses,
         employees,
