@@ -31,6 +31,18 @@
                 SuppliersReference = entity.SuppliersReference,
                 WebAddress = entity.WebAddress,
                 OrderContactMethod = entity.OrderContactMethod,
+                VendorManager = entity.VendorManager,
+                ApprovedCarrier = entity.ApprovedCarrier,
+                CurrencyCode = entity.Currency?.Code,
+                CurrencyName = entity.Currency?.Name,
+                ExpenseAccount = entity.ExpenseAccount,
+                InvoiceGoesToId = entity.InvoiceGoesTo?.SupplierId,
+                InvoiceGoesToName = entity.InvoiceGoesTo?.Name,
+                PaymentDays = entity.PaymentDays,
+                PaymentMethod = entity.PaymentMethod,
+                PaysInFc = entity.PaysInFc,
+                AccountingCompany = entity.AccountingCompany,
+                VatNumber = entity.VatNumber,
                 Links = this.BuildLinks(entity, claims).ToArray()
             };
         }

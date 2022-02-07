@@ -307,7 +307,7 @@
             PurchaseOrder order,
             PurchaseOrderDetail orderDetail,
             PurchaseOrderDelivery delivery)
-        {
+        { 
             var currentRowId = $"{orderDetail.OrderNumber}/{orderDetail.Line}";
             values.Add(
                 new CalculationValueModel
@@ -348,7 +348,7 @@
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId, ColumnId = "Currency", TextDisplay = order.Supplier.Currency
+                        RowId = currentRowId, ColumnId = "Currency", TextDisplay = order.Supplier.Currency?.Code
                     });
 
             values.Add(

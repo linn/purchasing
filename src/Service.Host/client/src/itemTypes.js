@@ -88,3 +88,15 @@ export const partPriceConversions = new ItemType(
     'PART_PRICE_CONVERSIONS',
     '/purchasing/part-suppliers/part-price-conversions'
 );
+
+export const partCategories = new ItemType(
+    'partCategories',
+    'PART_CATEGORIES',
+    '/purchasing/part-categories'
+);
+
+export const accountingCompanies = new ItemType(
+    'accountingCompanies',
+    'ACCOUNTING_COMPANIES',
+    '/inventory/accounting-companies'
+);

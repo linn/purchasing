@@ -20,6 +20,7 @@ import history from '../../history';
 import config from '../../config';
 import supplierReducer from './supplierReducer';
 import GeneralTab from './tabs/GeneralTab';
+import FinanceTab from './tabs/FinanceTab';
 
 function Supplier() {
     const reduxDispatch = useDispatch();
@@ -112,12 +113,12 @@ function Supplier() {
                                             }}
                                         >
                                             <Tab label="General" />
-                                            <Tab label="Finanace" />
-                                            <Tab label="Purch" />
-                                            <Tab label="Where" />
-                                            <Tab label="Whose" />
-                                            <Tab label="Lifecycle" />
-                                            <Tab label="Notes" />
+                                            <Tab label="Finance" />
+                                            <Tab label="Purch" disabled />
+                                            <Tab label="Where" disabled />
+                                            <Tab label="Whose" disabled />
+                                            <Tab label="Lifecycle" disabled />
+                                            <Tab label="Notes" disabled />
                                         </Tabs>
                                     </Box>
                                     {tab === 0 && (
@@ -136,7 +137,24 @@ function Supplier() {
                                                     state.supplier.suppliersReference
                                                 }
                                                 liveOnOracle={state.supplier.liveOnOracle}
+                                                accountingCompany={state.supplier.accountingCompany}
                                                 handleFieldChange={handleFieldChange}
+                                            />
+                                        </Box>
+                                    )}
+                                    {tab === 1 && (
+                                        <Box sx={{ paddingTop: 3 }}>
+                                            <FinanceTab
+                                                handleFieldChange={handleFieldChange}
+                                                vatNumber={state.supplier.vatNumber}
+                                                invoiceGoesToId={state.supplier.invoiceGoesToId}
+                                                invoiceGoesToName={state.supplier.invoiceGoesToName}
+                                                expenseAccount={state.supplier.expenseAccount}
+                                                paymentDays={state.supplier.paymentDays}
+                                                paymentMethod={state.supplier.paymentMethod}
+                                                currencyCode={state.supplier.currencyCode}
+                                                paysInFc={state.supplier.paysInFc}
+                                                approvedCarrier={state.supplier.approvedCarrier}
                                             />
                                         </Box>
                                     )}

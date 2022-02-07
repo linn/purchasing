@@ -4,7 +4,10 @@
 
     using FluentAssertions;
 
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
+
+    using NSubstitute;
 
     using NUnit.Framework;
 
@@ -14,28 +17,31 @@
 
         private Supplier updated;
 
+        private Currency currency;
+
         private IEnumerable<string> privileges;
 
         [SetUp]
         public void SetUp()
         {
+            this.currency = new Currency { Code = "USD" };
             this.current = new Supplier { SupplierId = 1, Name = "SUPPLIER" };
 
             this.updated = new Supplier
                                {
                                    Name = "NEW NAME",
-                                   Currency = "USD",
+                                   Currency = this.currency,
                                    VendorManager = "V",
                                    WebAddress = "/web",
                                    InvoiceContactMethod = "POST",
-                                   LedgerStream = 1,
                                    LiveOnOracle = "Y",
                                    OrderContactMethod = "EMAIL",
                                    PhoneNumber = "123 456 789",
                                    Planner = 1,
                                    SuppliersReference = "REF"
                                };
-
+            this.MockCurrencyRepository
+                .FindById(this.updated.Currency.Code).Returns(this.currency);
             this.privileges = new List<string> { "priv" };
             this.Sut.UpdateSupplier(this.current, this.updated, this.privileges);
         }
@@ -53,7 +59,6 @@
             this.current.Currency.Should().Be(this.updated.Currency);
             this.current.VendorManager.Should().Be(this.updated.VendorManager);
             this.current.InvoiceContactMethod.Should().Be(this.updated.InvoiceContactMethod);
-            this.current.LedgerStream.Should().Be(this.updated.LedgerStream);
             this.current.LiveOnOracle.Should().Be(this.updated.LiveOnOracle);
             this.current.OrderContactMethod.Should().Be(this.updated.OrderContactMethod);
             this.current.InvoiceContactMethod.Should().Be(this.updated.InvoiceContactMethod);

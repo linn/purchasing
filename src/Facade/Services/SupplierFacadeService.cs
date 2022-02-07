@@ -6,12 +6,13 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
 
     public class SupplierFacadeService : FacadeResourceService<Supplier, int, SupplierResource, SupplierResource>
     {
-        private ISupplierService domainService;
+        private readonly ISupplierService domainService;
 
         public SupplierFacadeService(
             IRepository<Supplier, int> repository, 
@@ -71,7 +72,10 @@
             return new Supplier
                        {
                            Name = resource.Name,
-                           Currency = resource.Currency,
+                           Currency = new Currency
+                                          {
+                                              Code = resource.CurrencyCode
+                                          },
                            WebAddress = resource.WebAddress,
                            VendorManager = resource.VendorManager,
                            Planner = resource.Planner,
@@ -80,7 +84,15 @@
                            OrderContactMethod = resource.OrderContactMethod,
                            SuppliersReference = resource.SuppliersReference,
                            LiveOnOracle = resource.LiveOnOracle,
-                           LedgerStream = resource.LedgerStream
+                           ExpenseAccount = resource.ExpenseAccount,
+                           PaymentDays = resource.PaymentDays,
+                           PaymentMethod = resource.PaymentMethod,
+                           PaysInFc = resource.PaysInFc,
+                           AccountingCompany = resource.AccountingCompany,
+                           ApprovedCarrier = resource.ApprovedCarrier,
+                           VatNumber = resource.VatNumber,
+                           InvoiceGoesTo = resource.InvoiceGoesToId.HasValue 
+                                               ? new Supplier { SupplierId = (int)resource.InvoiceGoesToId } : null
                        };
         }
     }

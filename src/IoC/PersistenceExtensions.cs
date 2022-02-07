@@ -50,7 +50,9 @@
                 .AddTransient<IRepository<PriceChangeReason, string>, EntityFrameworkRepository<PriceChangeReason, string>>(r
                     => new EntityFrameworkRepository<PriceChangeReason, string>(r.GetService<ServiceDbContext>()?.PriceChangeReasons))
                 .AddTransient<IRepository<PartHistoryEntry, PartHistoryEntryKey>, EntityFrameworkRepository<PartHistoryEntry, PartHistoryEntryKey>>(r
-                    => new EntityFrameworkRepository<PartHistoryEntry, PartHistoryEntryKey>(r.GetService<ServiceDbContext>()?.PartHistory));
+                    => new EntityFrameworkRepository<PartHistoryEntry, PartHistoryEntryKey>(r.GetService<ServiceDbContext>()?.PartHistory))
+                .AddTransient<IRepository<PartCategory, string>, EntityFrameworkRepository<PartCategory, string>>(r
+                    => new EntityFrameworkRepository<PartCategory, string>(r.GetService<ServiceDbContext>()?.PartCategories));
         }
     }
 }

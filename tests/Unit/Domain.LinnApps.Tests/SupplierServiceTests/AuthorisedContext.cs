@@ -18,7 +18,10 @@
                         x => x.Equals(AuthorisedAction.SupplierCreate) || x.Equals(AuthorisedAction.SupplierUpdate)), 
                     Arg.Any<IEnumerable<string>>())
                 .Returns(true);
-            this.Sut = new SupplierService(this.MockAuthorisationService);
+            this.Sut = new SupplierService(
+                this.MockAuthorisationService,
+                this.MockSupplierRepository,
+                this.MockCurrencyRepository);
         }
     }
 }

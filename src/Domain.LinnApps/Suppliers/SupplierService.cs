@@ -3,14 +3,25 @@
     using System.Collections.Generic;
 
     using Linn.Common.Authorisation;
+    using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
     public class SupplierService : ISupplierService
     {
         private readonly IAuthorisationService authService;
 
-        public SupplierService(IAuthorisationService authService)
+        private readonly IRepository<Supplier, int> supplierRepository;
+
+        private readonly IRepository<Currency, string> currencyRepository;
+
+        public SupplierService(
+            IAuthorisationService authService,
+            IRepository<Supplier, int> supplierRepository,
+            IRepository<Currency, string> currencyRepository)
         {
             this.authService = authService;
+            this.supplierRepository = supplierRepository;
+            this.currencyRepository = currencyRepository;
         }
 
         public void UpdateSupplier(Supplier current, Supplier updated, IEnumerable<string> privileges)
@@ -30,7 +41,20 @@
             current.OrderContactMethod = updated.OrderContactMethod;
             current.SuppliersReference = updated.SuppliersReference;
             current.LiveOnOracle = updated.LiveOnOracle;
-            current.LedgerStream = updated.LedgerStream;
+            current.InvoiceGoesTo = updated.InvoiceGoesTo != null
+                                        ? this.supplierRepository.FindById(updated.InvoiceGoesTo.SupplierId)
+                                        : null;
+            current.ExpenseAccount = updated.ExpenseAccount;
+            current.PaymentDays = updated.PaymentDays;
+            current.PaymentMethod = updated.PaymentMethod;
+            current.PaysInFc = updated.PaysInFc;
+            current.Currency = updated.Currency != null
+                                        ? this.currencyRepository.FindById(updated.Currency.Code)
+                                        : null;
+            current.ApprovedCarrier = updated.ApprovedCarrier;
+            current.AccountingCompany = updated.AccountingCompany;
+            current.VatNumber = updated.VatNumber;
+
         }
 
         public Supplier CreateSupplier(Supplier candidate, IEnumerable<string> privileges)
@@ -40,6 +64,12 @@
                 throw new UnauthorisedActionException("You are not authorised to create Suppliers");
             }
 
+            candidate.InvoiceGoesTo = candidate.InvoiceGoesTo != null
+                                           ? this.supplierRepository.FindById(candidate.InvoiceGoesTo.SupplierId)
+                                           : null;
+            candidate.Currency = candidate.Currency != null
+                                     ? this.currencyRepository.FindById(candidate.Currency.Code)
+                                     : null;
             return candidate;
         }
     }
