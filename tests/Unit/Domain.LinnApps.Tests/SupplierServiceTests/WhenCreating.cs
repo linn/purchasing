@@ -19,7 +19,14 @@
         [SetUp]
         public void SetUp()
         {
-            this.candidate = new Supplier { SupplierId = 1, Name = "SUPPLIER" };
+            this.candidate = new Supplier
+                                 {
+                                     SupplierId = 1, 
+                                     Name = "SUPPLIER",
+                                     InvoiceContactMethod = "METHOD",
+                                     PaymentDays = 1,
+                                     PaymentMethod = "PAYMENT METHOD"
+                                 };
             this.privileges = new List<string> { "priv" };
             this.result = this.Sut.CreateSupplier(this.candidate, this.privileges);
         }

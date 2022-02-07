@@ -1,11 +1,13 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Suppliers
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers.Exceptions;
 
     public class SupplierService : ISupplierService
     {
@@ -35,6 +37,8 @@
             {
                 throw new UnauthorisedActionException("You are not authorised to update Suppliers");
             }
+
+            ValidateFields(updated);
 
             current.Name = updated.Name;
             current.Currency = updated.Currency;
@@ -95,7 +99,49 @@
             candidate.RefersToFc = candidate.RefersToFc != null
                                        ? this.supplierRepository.FindById(candidate.RefersToFc.SupplierId)
                                        : null;
+            ValidateFields(candidate);
+
             return candidate;
+        }
+
+        private static void ValidateFields(Supplier candidate)
+        {
+            var errors = new List<string>();
+
+            if (candidate.SupplierId == 0)
+            {
+                errors.Add("Supplier Id");
+            }
+
+            if (string.IsNullOrEmpty(candidate.Name))
+            {
+                errors.Add("Supplier Name");
+            }
+
+            if (string.IsNullOrEmpty(candidate.InvoiceContactMethod))
+            {
+                errors.Add("Invoice Contact Method");
+            }
+
+            if (candidate.PaymentDays == 0)
+            {
+                errors.Add("Payment Days");
+            }
+
+            if (string.IsNullOrEmpty(candidate.PaymentMethod))
+            {
+                errors.Add("Payment Method");
+            }
+
+            if (errors.Any())
+            {
+                var msg = errors
+                    .Aggregate(
+                        "The inputs for the following fields are empty/invalid: ",
+                        (current, error) => current + $"{error}, ");
+
+                throw new SupplierException(msg);
+            }
         }
     }
 }

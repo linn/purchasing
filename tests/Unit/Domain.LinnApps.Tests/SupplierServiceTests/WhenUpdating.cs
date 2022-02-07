@@ -30,6 +30,7 @@
             this.updated = new Supplier
                                {
                                    Name = "NEW NAME",
+                                   SupplierId = 1,
                                    Currency = this.currency,
                                    VendorManager = "V",
                                    WebAddress = "/web",
@@ -38,8 +39,10 @@
                                    OrderContactMethod = "EMAIL",
                                    PhoneNumber = "123 456 789",
                                    Planner = 1,
-                                   SuppliersReference = "REF"
-                               };
+                                   SuppliersReference = "REF",
+                                   PaymentDays = 1,
+                                   PaymentMethod = "PAYMENT METHOD"
+            };
             this.MockCurrencyRepository
                 .FindById(this.updated.Currency.Code).Returns(this.currency);
             this.privileges = new List<string> { "priv" };
