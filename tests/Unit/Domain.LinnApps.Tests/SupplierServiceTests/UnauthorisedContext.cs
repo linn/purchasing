@@ -15,7 +15,9 @@
         {
             this.MockAuthorisationService.HasPermissionFor(
                     Arg.Is<string>(
-                        x => x.Equals(AuthorisedAction.SupplierCreate) || x.Equals(AuthorisedAction.SupplierUpdate)),
+                        x => x.Equals(AuthorisedAction.SupplierCreate) 
+                             || x.Equals(AuthorisedAction.SupplierUpdate) 
+                             || x.Equals(AuthorisedAction.SupplierHoldChange)),
                     Arg.Any<IEnumerable<string>>())
                 .Returns(false);
             this.Sut = new SupplierService(
