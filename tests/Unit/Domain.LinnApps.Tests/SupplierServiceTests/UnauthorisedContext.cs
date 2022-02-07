@@ -21,7 +21,8 @@
             this.Sut = new SupplierService(
                 this.MockAuthorisationService,
                 this.MockSupplierRepository,
-                this.MockCurrencyRepository);
+                this.MockCurrencyRepository,
+                this.MockPartCategoryRepository);
         }
     }
 }

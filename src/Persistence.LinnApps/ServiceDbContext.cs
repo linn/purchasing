@@ -265,6 +265,12 @@
             entity.Property(a => a.AccountingCompany).HasColumnName("ACCOUNTING_COMPANY").HasMaxLength(10);
             entity.Property(a => a.ApprovedCarrier).HasColumnName("APPROVED_CARRIER").HasMaxLength(1);
             entity.Property(a => a.VatNumber).HasColumnName("VAT_NUMBER").HasMaxLength(20);
+            entity.HasOne(a => a.PartCategory).WithMany().HasForeignKey("PART_CATEGORY");
+            entity.Property(a => a.OrderHold).HasColumnName("ORDER_HOLD").HasMaxLength(1);
+            entity.Property(a => a.NotesForBuyer).HasColumnName("NOTES_FOR_BUY").HasMaxLength(200);
+            entity.Property(a => a.DeliveryDay).HasColumnName("DELIVERY_DAY").HasMaxLength(10);
+            entity.HasOne(a => a.RefersToFc).WithMany().HasForeignKey("REFERS_TO_FC_SUPPLIER");
+            entity.Property(a => a.PmDeliveryDaysGrace).HasColumnName("PM_DELIVERY_DAYS_GRACE");
         }
 
         private void BuildOrderMethods(ModelBuilder builder)

@@ -23,6 +23,8 @@
             return this.serviceDbContext.Suppliers
                 .Include(s => s.InvoiceGoesTo)
                 .Include(s => s.Currency)
+                .Include(s => s.PartCategory)
+                .Include(s => s.RefersToFc)
                 .First(x => x.SupplierId == key);
         }
 
@@ -48,7 +50,8 @@
 
         public IQueryable<Supplier> FilterBy(Expression<Func<Supplier, bool>> expression)
         {
-            return this.serviceDbContext.Suppliers.Where(expression);
+            return this.serviceDbContext.Suppliers
+                .AsNoTracking().Where(expression);
         }
     }
 }

@@ -43,6 +43,14 @@
                 PaysInFc = entity.PaysInFc,
                 AccountingCompany = entity.AccountingCompany,
                 VatNumber = entity.VatNumber,
+                PartCategory = entity.PartCategory?.Category,
+                PartCategoryDescription = entity.PartCategory?.Description,
+                OrderHold = entity.OrderHold,
+                NotesForBuyer = entity.NotesForBuyer,
+                DeliveryDay = entity.DeliveryDay,
+                RefersToFcId = entity.RefersToFc?.SupplierId,
+                RefersToFcName = entity.RefersToFc?.Name,
+                PmDeliveryDaysGrace = entity.PmDeliveryDaysGrace,
                 Links = this.BuildLinks(entity, claims).ToArray()
             };
         }
