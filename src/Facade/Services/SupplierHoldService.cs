@@ -2,9 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
-
-    using Amazon.Runtime.Internal.Util;
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
