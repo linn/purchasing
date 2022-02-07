@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Suppliers
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -19,16 +20,20 @@
 
         private readonly IRepository<PartCategory, string> partCategoryRepository;
 
+        private readonly IRepository<SupplierOrderHoldHistoryEntry, int> supplierHoldHistories;
+
         public SupplierService(
             IAuthorisationService authService,
             IRepository<Supplier, int> supplierRepository,
             IRepository<Currency, string> currencyRepository,
-            IRepository<PartCategory, string> partCategoryRepository)
+            IRepository<PartCategory, string> partCategoryRepository,
+            IRepository<SupplierOrderHoldHistoryEntry, int> supplierHoldHistories)
         {
             this.authService = authService;
             this.supplierRepository = supplierRepository;
             this.currencyRepository = currencyRepository;
             this.partCategoryRepository = partCategoryRepository;
+            this.supplierHoldHistories = supplierHoldHistories;
         }
 
         public void UpdateSupplier(Supplier current, Supplier updated, IEnumerable<string> privileges)
@@ -102,6 +107,35 @@
             ValidateFields(candidate);
 
             return candidate;
+        }
+
+        public Supplier ChangeSupplierHoldStatus(
+            SupplierOrderHoldHistoryEntry data, IEnumerable<string> privileges)
+        {
+            if (!this.authService.HasPermissionFor(AuthorisedAction.SupplierHoldChange, privileges))
+            {
+                throw new UnauthorisedActionException("You do not have permission to change Supplier Hold Status");
+            }
+
+            var supplier = this.supplierRepository.FindById(data.SupplierId);
+
+            if (!string.IsNullOrEmpty(data.ReasonOnHold))
+            {
+                data.DateOnHold = DateTime.Today;
+                supplier.OrderHold = "Y";
+                this.supplierHoldHistories.Add(data);
+            }
+            else if (!string.IsNullOrEmpty(data.ReasonOffHold))
+            {
+                var entry = this.supplierHoldHistories.FilterBy(x => x.SupplierId == data.SupplierId && x.DateOffHold == null)
+                    .OrderByDescending(x => x.Id).First();
+                entry.DateOffHold = DateTime.Today;
+                entry.ReasonOffHold = data.ReasonOffHold;
+                entry.TakenOffHoldBy = data.TakenOffHoldBy;
+                supplier.OrderHold = "N";
+            }
+
+            return this.supplierRepository.FindById(data.SupplierId);
         }
 
         private static void ValidateFields(Supplier candidate)

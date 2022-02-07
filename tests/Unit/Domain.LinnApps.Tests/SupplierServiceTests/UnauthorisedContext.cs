@@ -22,7 +22,8 @@
                 this.MockAuthorisationService,
                 this.MockSupplierRepository,
                 this.MockCurrencyRepository,
-                this.MockPartCategoryRepository);
+                this.MockPartCategoryRepository,
+                this.MockSupplierOrderHoldHistory);
         }
     }
 }

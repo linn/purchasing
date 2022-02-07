@@ -21,6 +21,7 @@ import config from '../../config';
 import supplierReducer from './supplierReducer';
 import GeneralTab from './tabs/GeneralTab';
 import FinanceTab from './tabs/FinanceTab';
+import PurchTab from './tabs/PurchTab';
 
 function Supplier() {
     const reduxDispatch = useDispatch();
@@ -114,7 +115,7 @@ function Supplier() {
                                         >
                                             <Tab label="General" />
                                             <Tab label="Finance" />
-                                            <Tab label="Purch" disabled />
+                                            <Tab label="Purch" />
                                             <Tab label="Where" disabled />
                                             <Tab label="Whose" disabled />
                                             <Tab label="Lifecycle" disabled />
@@ -155,6 +156,25 @@ function Supplier() {
                                                 currencyCode={state.supplier.currencyCode}
                                                 paysInFc={state.supplier.paysInFc}
                                                 approvedCarrier={state.supplier.approvedCarrier}
+                                            />
+                                        </Box>
+                                    )}
+                                    {tab === 2 && (
+                                        <Box sx={{ paddingTop: 3 }}>
+                                            <PurchTab
+                                                handleFieldChange={handleFieldChange}
+                                                partCategory={state.supplier.partCategory}
+                                                partCategoryDescription={
+                                                    state.supplier.partCategoryDescription
+                                                }
+                                                orderHold={state.supplier.orderHold}
+                                                notesForBuyer={state.supplier.notesForBuyer}
+                                                deliveryDay={state.supplier.deliveryDay}
+                                                refersToFcId={state.supplier.refersToFcId}
+                                                refersToFcName={state.supplier.refersToFcName}
+                                                pmDeliveryDaysGrace={
+                                                    state.supplier.pmDeliveryDaysGrace
+                                                }
                                             />
                                         </Box>
                                     )}

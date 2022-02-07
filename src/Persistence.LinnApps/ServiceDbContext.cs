@@ -62,6 +62,8 @@
 
         public DbSet<PartCategory> PartCategories { get; set; }
 
+        public DbSet<SupplierOrderHoldHistoryEntry> SupplierOrderHoldHistories { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -90,6 +92,7 @@
             this.BuildPriceChangeReasons(builder);
             this.BuildPartHistory(builder);
             this.BuildPartCategories(builder);
+            this.BuildSupplierOrderHoldHistories(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -267,10 +270,24 @@
             entity.Property(a => a.VatNumber).HasColumnName("VAT_NUMBER").HasMaxLength(20);
             entity.HasOne(a => a.PartCategory).WithMany().HasForeignKey("PART_CATEGORY");
             entity.Property(a => a.OrderHold).HasColumnName("ORDER_HOLD").HasMaxLength(1);
-            entity.Property(a => a.NotesForBuyer).HasColumnName("NOTES_FOR_BUY").HasMaxLength(200);
+            entity.Property(a => a.NotesForBuyer).HasColumnName("NOTES_FOR_BUYER").HasMaxLength(200);
             entity.Property(a => a.DeliveryDay).HasColumnName("DELIVERY_DAY").HasMaxLength(10);
             entity.HasOne(a => a.RefersToFc).WithMany().HasForeignKey("REFERS_TO_FC_SUPPLIER");
             entity.Property(a => a.PmDeliveryDaysGrace).HasColumnName("PM_DELIVERY_DAYS_GRACE");
+        }
+
+        private void BuildSupplierOrderHoldHistories(ModelBuilder builder)
+        {
+            var entity = builder.Entity<SupplierOrderHoldHistoryEntry>().ToTable("SUPPLIER_ORDER_HOLD_HISTORIES");
+            entity.HasKey(a => a.Id);
+            entity.Property(a => a.Id).HasColumnName("SOHH_ID");
+            entity.Property(a => a.DateOffHold).HasColumnName("DATE_OFF_HOLD");
+            entity.Property(a => a.DateOnHold).HasColumnName("DATE_ON_HOLD");
+            entity.Property(a => a.PutOnHoldBy).HasColumnName("PUT_ON_HOLD_BY");
+            entity.Property(a => a.TakenOffHoldBy).HasColumnName("TAKEN_OFF_HOLD_BY").HasMaxLength(200);
+            entity.Property(a => a.ReasonOnHold).HasColumnName("REASON_ON_HOLD").HasMaxLength(200);
+            entity.Property(a => a.ReasonOffHold).HasColumnName("REASON_OFF_HOLD").HasMaxLength(200);
+            entity.Property(a => a.SupplierId).HasColumnName("SUPP_SUPPLIER_ID");
         }
 
         private void BuildOrderMethods(ModelBuilder builder)
