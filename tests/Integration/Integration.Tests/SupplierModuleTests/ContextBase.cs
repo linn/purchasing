@@ -6,6 +6,7 @@
     using Linn.Common.Facade;
     using Linn.Common.Logging;
     using Linn.Common.Persistence;
+    using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
@@ -76,6 +77,10 @@
 
         protected IAuthorisationService MockAuthService { get; private set; }
 
+        protected ISupplierHoldService SupplierHoldService { get; set; }
+
+        protected IDatabaseService MockDatabaseService { get; set; }
+
         [SetUp]
         public void EstablishContext()
         {
@@ -89,7 +94,7 @@
             this.MockSupplierRepository = Substitute.For<IRepository<Supplier, int>>();
 
             this.MockDomainService = Substitute.For<ISupplierService>();
-
+            this.MockDatabaseService = Substitute.For<IDatabaseService>();
             this.SupplierFacadeService = new SupplierFacadeService(
                 this.MockSupplierRepository,
                 this.TransactionManager,
@@ -108,6 +113,11 @@
                 this.TransactionManager,
                 new PartCategoryResourceBuilder());
 
+            this.SupplierHoldService = new SupplierHoldService(
+                this.MockDomainService,
+                this.MockDatabaseService,
+                this.TransactionManager);
+
             this.Client = TestClient.With<SupplierModule>(
                 services =>
                     {
@@ -119,6 +129,7 @@
                         services.AddSingleton(this.PreferredSupplierChangeService);
                         services.AddSingleton(this.PriceChangeReasonService);
                         services.AddSingleton(this.PartCategoryService);
+                        services.AddSingleton(this.SupplierHoldService);
                         services.AddHandlers();
                     },
                 FakeAuthMiddleware.EmployeeMiddleware);

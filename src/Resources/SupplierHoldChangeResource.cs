@@ -2,15 +2,9 @@
 {
     public class SupplierHoldChangeResource
     {
-        public int Id { get; set; }
-
         public int SupplierId { get; set; }
 
-        public string DateOnHold { get; set; }
-
         public string ReasonOnHold { get; set; }
-
-        public string DateOffHold { get; set; }
 
         public string ReasonOffHold { get; set; }
 

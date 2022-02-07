@@ -31,18 +31,19 @@
         {
             var holdHistoryEntry = new SupplierOrderHoldHistoryEntry
                                        {
-                                            Id = this.databaseService.GetNextVal("SOHH_SEQ"),
-                                            DateOnHold = DateTime.Parse(resource.DateOffHold),
-                                            DateOffHold = resource.DateOffHold != null ? DateTime.Parse(resource.DateOffHold) : null,
                                             PutOnHoldBy = resource.PutOnHoldBy,
                                             ReasonOffHold = resource.ReasonOffHold,
                                             ReasonOnHold = resource.ReasonOnHold,
                                             SupplierId = resource.SupplierId,
                                             TakenOffHoldBy = resource.TakenOffHoldBy
                                        };
-
             try
             {
+                if (!string.IsNullOrEmpty(resource.ReasonOnHold))
+                {
+                    holdHistoryEntry.Id = this.databaseService.GetNextVal("SOHH_SEQ");
+                }
+
                 var result = this.domainService.ChangeSupplierHoldStatus(holdHistoryEntry, privileges);
                 this.transactionManager.Commit();
                 return new SuccessResult<SupplierResource>(new SupplierResource
