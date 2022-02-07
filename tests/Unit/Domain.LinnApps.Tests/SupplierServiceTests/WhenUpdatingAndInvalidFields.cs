@@ -26,8 +26,6 @@
 
         private PartCategory partCategory;
 
-        private IEnumerable<string> privileges;
-
         private Action action;
 
         [SetUp]
@@ -68,7 +66,6 @@
                 .FindById(this.updated.Currency.Code).Returns(this.currency);
             this.MockSupplierRepository.FindById(2).Returns(this.otherSupplier);
             this.MockPartCategoryRepository.FindById("CAT").Returns(this.partCategory);
-            this.privileges = new List<string> { "priv" };
 
             this.action = () => this.Sut.UpdateSupplier(
                 this.current, 
