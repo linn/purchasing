@@ -56,6 +56,8 @@
                 .AddTransient<IBuilder<PreferredSupplierChange>, PreferredSupplierChangeResourceBuilder>()
                 .AddTransient<IBuilder<PriceChangeReason>, PriceChangeReasonResourceBuilder>()
                 .AddTransient<IBuilder<IEnumerable<PriceChangeReason>>, PriceChangeReasonsResourceBuilder>()
+                .AddTransient<IBuilder<PartCategory>, PartCategoryResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<PartCategory>>, PartCategoriesResourceBuilder>()
                 .AddTransient<IBuilder<VendorManager>, VendorManagerResourceBuilder>()
                 .AddTransient<IBuilder<IEnumerable<VendorManager>>, VendorManagersResourceBuilder>();
         }
@@ -67,6 +69,7 @@
                 .AddTransient<IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>, PartSupplierFacadeService>()
                 .AddTransient<IFacadeResourceService<PreferredSupplierChange, PreferredSupplierChangeKey, PreferredSupplierChangeResource, PreferredSupplierChangeKey>, PreferredSupplierChangeService>()
                 .AddTransient<IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource>, SupplierFacadeService>()
+                .AddTransient<ISupplierHoldService, SupplierHoldService>()
                 .AddTransient<IPartService, PartService>()
                 .AddTransient<IFacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource>, OrderMethodService>()
                 .AddTransient<IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource>, CurrencyFacadeService>()
@@ -77,6 +80,7 @@
                 .AddTransient<IFacadeResourceService<Manufacturer, string, ManufacturerResource, ManufacturerResource>, ManufacturerFacadeService>()
                 .AddTransient<IPurchaseOrderReportFacadeService, PurchaseOrderReportFacadeService>()
                 .AddTransient<IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource>, PriceChangeReasonService>()
+                .AddTransient<IFacadeResourceService<PartCategory, string, PartCategoryResource, PartCategoryResource>, PartCategoriesService>()
                 .AddTransient<IFacadeResourceService<VendorManager, string, VendorManagerResource, VendorManagerResource>, VendorManagerFacadeService>()
                 .AddTransient<ISpendsReportFacadeService, SpendsReportFacadeService>();
         }

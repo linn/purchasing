@@ -89,6 +89,24 @@ export const partPriceConversions = new ItemType(
     '/purchasing/part-suppliers/part-price-conversions'
 );
 
+export const partCategories = new ItemType(
+    'partCategories',
+    'PART_CATEGORIES',
+    '/purchasing/part-categories'
+);
+
+export const accountingCompanies = new ItemType(
+    'accountingCompanies',
+    'ACCOUNTING_COMPANIES',
+    '/inventory/accounting-companies'
+);
+
+export const putSupplierOnHold = new ItemType(
+    'putSupplierOnHold',
+    'PUT_SUPPLIER_ON_HOLD',
+    '/purchasing/suppliers/hold'
+);
+
 export const vendorManagers = new ItemType(
     'vendorManagers',
     'VENDOR_MANAGERS',

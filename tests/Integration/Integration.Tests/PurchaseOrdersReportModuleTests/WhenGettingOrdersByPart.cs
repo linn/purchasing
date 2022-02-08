@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrderReportModuleTests
+﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrdersReportModuleTests
 {
     using System.Collections.Generic;
     using System.Linq;

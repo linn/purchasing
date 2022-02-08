@@ -1,14 +1,12 @@
-﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrderReportModuleTests
+﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrdersReportModuleTests
 {
     using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
     using System.Net;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
-    using Linn.Common.Facade;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
@@ -65,7 +63,7 @@
         }
 
         [Test]
-        public void ShouldReturnCSVContentType()
+        public void ShouldReturnCsvContentType()
         {
             this.Response.Content.Headers.ContentType.Should().NotBeNull();
             this.Response.Content.Headers.ContentType?.ToString().Should().Be("text/csv");

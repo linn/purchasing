@@ -31,6 +31,26 @@
                 SuppliersReference = entity.SuppliersReference,
                 WebAddress = entity.WebAddress,
                 OrderContactMethod = entity.OrderContactMethod,
+                VendorManager = entity.VendorManager,
+                ApprovedCarrier = entity.ApprovedCarrier,
+                CurrencyCode = entity.Currency?.Code,
+                CurrencyName = entity.Currency?.Name,
+                ExpenseAccount = entity.ExpenseAccount,
+                InvoiceGoesToId = entity.InvoiceGoesTo?.SupplierId,
+                InvoiceGoesToName = entity.InvoiceGoesTo?.Name,
+                PaymentDays = entity.PaymentDays,
+                PaymentMethod = entity.PaymentMethod,
+                PaysInFc = entity.PaysInFc,
+                AccountingCompany = entity.AccountingCompany,
+                VatNumber = entity.VatNumber,
+                PartCategory = entity.PartCategory?.Category,
+                PartCategoryDescription = entity.PartCategory?.Description,
+                OrderHold = entity.OrderHold,
+                NotesForBuyer = entity.NotesForBuyer,
+                DeliveryDay = entity.DeliveryDay,
+                RefersToFcId = entity.RefersToFc?.SupplierId,
+                RefersToFcName = entity.RefersToFc?.Name,
+                PmDeliveryDaysGrace = entity.PmDeliveryDaysGrace,
                 Links = this.BuildLinks(entity, claims).ToArray()
             };
         }
@@ -46,9 +66,16 @@
         {
             yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
 
-            if (this.authService.HasPermissionFor(AuthorisedAction.SupplierUpdate, claims))
+            var privileges = claims?.ToList();
+
+            if (this.authService.HasPermissionFor(AuthorisedAction.SupplierUpdate, privileges))
             {
                 yield return new LinkResource { Rel = "edit", Href = $"{this.GetLocation(model)}/edit" };
+            }
+
+            if (this.authService.HasPermissionFor(AuthorisedAction.SupplierHoldChange, privileges))
+            {
+                yield return new LinkResource { Rel = "hold", Href = $"/purchasing/suppliers/hold" };
             }
         }
     }

@@ -1,8 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
+import { useSelector, useDispatch } from 'react-redux';
 
-import { InputField } from '@linn-it/linn-form-components-library';
+import {
+    InputField,
+    collectionSelectorHelpers,
+    Dropdown
+} from '@linn-it/linn-form-components-library';
+
+import accountingCompaniesActions from '../../../actions/accountingCompaniesActions';
 
 function GeneralTab({
     name,
@@ -12,8 +19,18 @@ function GeneralTab({
     suppliersReference,
     orderContactMethod,
     invoiceContactMethod,
-    liveOnOracle
+    liveOnOracle,
+    accountingCompany
 }) {
+    const reduxDispatch = useDispatch();
+    useEffect(() => {
+        reduxDispatch(accountingCompaniesActions.fetch());
+    }, [reduxDispatch]);
+
+    const accountingCompanies = useSelector(state =>
+        collectionSelectorHelpers.getItems(state.accountingCompanies)
+    ).map(x => x.name);
+
     return (
         <Grid container spacing={3}>
             <Grid item xs={8}>
@@ -86,6 +103,18 @@ function GeneralTab({
                 />
             </Grid>
             <Grid item xs={4} />
+            <Grid item xs={4}>
+                <Dropdown
+                    fullWidth
+                    value={accountingCompany}
+                    label="Accounting Company"
+                    items={accountingCompanies}
+                    propertyName="accountingCompany"
+                    onChange={handleFieldChange}
+                    allowNoValue={false}
+                />
+            </Grid>
+            <Grid item xs={8} />
         </Grid>
     );
 }
@@ -98,7 +127,8 @@ GeneralTab.propTypes = {
     invoiceContactMethod: PropTypes.string,
     liveOnOracle: PropTypes.string,
     suppliersReference: PropTypes.string,
-    handleFieldChange: PropTypes.func.isRequired
+    handleFieldChange: PropTypes.func.isRequired,
+    accountingCompany: PropTypes.string
 };
 
 GeneralTab.defaultProps = {
@@ -108,7 +138,8 @@ GeneralTab.defaultProps = {
     orderContactMethod: null,
     invoiceContactMethod: null,
     suppliersReference: null,
-    liveOnOracle: null
+    liveOnOracle: null,
+    accountingCompany: null
 };
 
 export default GeneralTab;

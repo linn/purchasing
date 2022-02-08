@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrderReportModuleTests
+﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrdersReportModuleTests
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -48,7 +48,6 @@
             this.FacadeService
                 .GetOrdersBySupplierReport(Arg.Any<OrdersBySupplierSearchResource>(), Arg.Any<IEnumerable<string>>())
                 .Returns(new SuccessResult<ReportReturnResource>(reportReturnResource));
-            var resource = new OrdersBySupplierSearchResource { From = "2/11/21", To = "2/12/21" };
 
             this.Response = this.Client.Get(
                 $"/purchasing/reports/orders-by-supplier/report?id={16622}&fromDate={2/11/21}&toDate={2/12/21}",

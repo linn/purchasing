@@ -35,7 +35,7 @@
                                           }
                                   };
 
-            this.SupplierRepository.FilterBy(Arg.Any<Expression<Func<Supplier, bool>>>())
+            this.MockSupplierRepository.FilterBy(Arg.Any<Expression<Func<Supplier, bool>>>())
                 .Returns(this.dataResult.AsQueryable());
 
             this.Response = this.Client.Get(

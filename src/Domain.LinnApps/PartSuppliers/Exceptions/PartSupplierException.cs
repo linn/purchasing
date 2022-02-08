@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.PartSuppliers
+﻿namespace Linn.Purchasing.Domain.LinnApps.PartSuppliers.Exceptions
 {
     using System;
 

@@ -60,6 +60,10 @@
 
         public DbSet<PartHistoryEntry> PartHistory { get; set; }
 
+        public DbSet<PartCategory> PartCategories { get; set; }
+
+        public DbSet<SupplierOrderHoldHistoryEntry> SupplierOrderHoldHistories { get; set; }
+
         public DbSet<VendorManager> VendorManagers { get; set; }
 
         public DbSet<SupplierSpend> SupplierSpends { get; set; }
@@ -91,6 +95,8 @@
             this.BuildPreferredSupplierChanges(builder);
             this.BuildPriceChangeReasons(builder);
             this.BuildPartHistory(builder);
+            this.BuildPartCategories(builder);
+            this.BuildSupplierOrderHoldHistories(builder);
             this.BuildVendorManagers(builder);
             this.BuildSpendsView(builder);
         }
@@ -220,6 +226,14 @@
             entity.Property(e => e.Seq).HasColumnName("SEQ");
         }
 
+        private void BuildPartCategories(ModelBuilder builder)
+        {
+            var q = builder.Entity<PartCategory>().ToTable("PART_CATEGORIES");
+            q.HasKey(e => e.Category);
+            q.Property(e => e.Category).HasColumnName("CATEGORY").HasMaxLength(2);
+            q.Property(e => e.Description).HasColumnName("DESCRIPTION").HasMaxLength(30);
+        }
+
         private void BuildParts(ModelBuilder builder)
         {
             var entity = builder.Entity<Part>().ToTable("PARTS");
@@ -243,16 +257,43 @@
             entity.HasKey(a => a.SupplierId);
             entity.Property(a => a.SupplierId).HasColumnName("SUPPLIER_ID");
             entity.Property(a => a.Name).HasColumnName("SUPPLIER_NAME").HasMaxLength(50);
-            entity.Property(a => a.LedgerStream).HasColumnName("LEDGER_STREAM");
             entity.Property(a => a.Planner).HasColumnName("PLANNER");
             entity.Property(a => a.VendorManager).HasColumnName("VENDOR_MANAGER").HasMaxLength(1);
-            entity.Property(a => a.Currency).HasColumnName("CURRENCY").HasMaxLength(4);
             entity.Property(a => a.WebAddress).HasColumnName("WEB_ADDRESS").HasMaxLength(300);
             entity.Property(a => a.PhoneNumber).HasColumnName("PHONE_NUMBER").HasMaxLength(25);
             entity.Property(a => a.OrderContactMethod).HasColumnName("PREFERRED_CONTACT_METHOD").HasMaxLength(20);
             entity.Property(a => a.InvoiceContactMethod).HasColumnName("INV_PREFERRED_CONTACT_METHOD").HasMaxLength(20);
             entity.Property(a => a.LiveOnOracle).HasColumnName("LIVE_ON_ORACLE").HasMaxLength(2);
             entity.Property(a => a.SuppliersReference).HasColumnName("SUPPLIERS_REFERENCE_FOR_US").HasMaxLength(30);
+            entity.HasOne(a => a.InvoiceGoesTo).WithMany().HasForeignKey("INVOICE_GOES_TO_SUPP");
+            entity.Property(a => a.ExpenseAccount).HasColumnName("EXPENSE_ACCOUNT").HasMaxLength(1);
+            entity.Property(a => a.PaymentDays).HasColumnName("PAYMENT_DAYS");
+            entity.Property(a => a.PaymentMethod).HasColumnName("PAYMENT_METHOD").HasMaxLength(20);
+            entity.Property(a => a.PaysInFc).HasColumnName("PAYS_IN_FC").HasMaxLength(1);
+            entity.HasOne(a => a.Currency).WithMany().HasForeignKey("CURRENCY");
+            entity.Property(a => a.AccountingCompany).HasColumnName("ACCOUNTING_COMPANY").HasMaxLength(10);
+            entity.Property(a => a.ApprovedCarrier).HasColumnName("APPROVED_CARRIER").HasMaxLength(1);
+            entity.Property(a => a.VatNumber).HasColumnName("VAT_NUMBER").HasMaxLength(20);
+            entity.HasOne(a => a.PartCategory).WithMany().HasForeignKey("PART_CATEGORY");
+            entity.Property(a => a.OrderHold).HasColumnName("ORDER_HOLD").HasMaxLength(1);
+            entity.Property(a => a.NotesForBuyer).HasColumnName("NOTES_FOR_BUYER").HasMaxLength(200);
+            entity.Property(a => a.DeliveryDay).HasColumnName("DELIVERY_DAY").HasMaxLength(10);
+            entity.HasOne(a => a.RefersToFc).WithMany().HasForeignKey("REFERS_TO_FC_SUPPLIER");
+            entity.Property(a => a.PmDeliveryDaysGrace).HasColumnName("PM_DELIVERY_DAYS_GRACE");
+        }
+
+        private void BuildSupplierOrderHoldHistories(ModelBuilder builder)
+        {
+            var entity = builder.Entity<SupplierOrderHoldHistoryEntry>().ToTable("SUPPLIER_ORDER_HOLD_HISTORIES");
+            entity.HasKey(a => a.Id);
+            entity.Property(a => a.Id).HasColumnName("SOHH_ID");
+            entity.Property(a => a.DateOffHold).HasColumnName("DATE_OFF_HOLD");
+            entity.Property(a => a.DateOnHold).HasColumnName("DATE_ON_HOLD");
+            entity.Property(a => a.PutOnHoldBy).HasColumnName("PUT_ON_HOLD_BY");
+            entity.Property(a => a.TakenOffHoldBy).HasColumnName("TAKEN_OFF_HOLD_BY").HasMaxLength(200);
+            entity.Property(a => a.ReasonOnHold).HasColumnName("REASON_ON_HOLD").HasMaxLength(200);
+            entity.Property(a => a.ReasonOffHold).HasColumnName("REASON_OFF_HOLD").HasMaxLength(200);
+            entity.Property(a => a.SupplierId).HasColumnName("SUPP_SUPPLIER_ID");
         }
 
         private void BuildOrderMethods(ModelBuilder builder)
