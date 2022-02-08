@@ -6,6 +6,7 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
@@ -92,7 +93,15 @@
                            ApprovedCarrier = resource.ApprovedCarrier,
                            VatNumber = resource.VatNumber,
                            InvoiceGoesTo = resource.InvoiceGoesToId.HasValue 
-                                               ? new Supplier { SupplierId = (int)resource.InvoiceGoesToId } : null
+                                               ? new Supplier { SupplierId = (int)resource.InvoiceGoesToId } : null,
+                           PartCategory = !string.IsNullOrEmpty(resource.PartCategory)
+                                          ? new PartCategory { Category = resource.PartCategory } : null,
+                           OrderHold = resource.OrderHold,
+                           NotesForBuyer = resource.NotesForBuyer,
+                           DeliveryDay = resource.DeliveryDay,
+                           RefersToFc = resource.RefersToFcId.HasValue
+                            ? new Supplier { SupplierId = (int)resource.RefersToFcId } : null,
+                           PmDeliveryDaysGrace = resource.PmDeliveryDaysGrace
                        };
         }
     }

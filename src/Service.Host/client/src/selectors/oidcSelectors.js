@@ -15,3 +15,6 @@ export const getEmail = state => {
 
     return state.oidc.user.profile.email;
 };
+
+export const getUserNumber = state =>
+    Number(state.oidc?.user?.profile?.employee?.split('/')?.slice(-1)[0]);

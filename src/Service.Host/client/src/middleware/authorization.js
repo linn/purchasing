@@ -1,5 +1,5 @@
 ﻿import { RSAA } from 'redux-api-middleware';
-import { getAccessToken } from '../selectors/getAccessToken';
+import { getAccessToken } from '../selectors/oidcSelectors';
 
 export default ({ getState }) =>
     next =>

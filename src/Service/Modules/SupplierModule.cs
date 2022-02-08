@@ -39,13 +39,16 @@
 
         private readonly IPartService partFacadeService;
 
+        private readonly ISupplierHoldService supplierHoldService;
+
         public SupplierModule(
             IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource> partSupplierFacadeService,
             IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource> supplierFacadeService,
             IFacadeResourceService<PreferredSupplierChange, PreferredSupplierChangeKey, PreferredSupplierChangeResource, PreferredSupplierChangeKey> preferredSupplierChangeService,
             IPartService partFacadeService,
             IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource> priceChangeReasonService,
-            IFacadeResourceService<PartCategory, string, PartCategoryResource, PartCategoryResource> partCategoryService)
+            IFacadeResourceService<PartCategory, string, PartCategoryResource, PartCategoryResource> partCategoryService,
+            ISupplierHoldService supplierHoldService)
         {
             this.supplierFacadeService = supplierFacadeService;
             this.partSupplierFacadeService = partSupplierFacadeService;
@@ -53,6 +56,7 @@
             this.preferredSupplierChangeService = preferredSupplierChangeService;
             this.priceChangeReasonService = priceChangeReasonService;
             this.partCategoryService = partCategoryService;
+            this.supplierHoldService = supplierHoldService;
 
             this.Get("/purchasing/suppliers", this.SearchSuppliers);
             this.Get("/purchasing/suppliers/{id:int}", this.GetSupplier);
@@ -70,6 +74,7 @@
             this.Get("/purchasing/part-suppliers/part-price-conversions", this.GetPartPriceConversions);
             this.Get("/purchasing/part-categories/", this.SearchPartCategories);
 
+            this.Post("/purchasing/suppliers/hold", this.ChangeHoldStatus);
         }
 
         private async Task GetSupplier(HttpRequest req, HttpResponse res)
@@ -94,7 +99,6 @@
         {
             var id = req.RouteValues.As<int>("id");
             var resource = await req.Bind<SupplierResource>();
-
             var result = this.supplierFacadeService.Update(id, resource, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
@@ -209,6 +213,17 @@
             var searchTerm = req.Query.As<string>("searchTerm");
 
             var result = this.partCategoryService.Search(searchTerm);
+
+            await res.Negotiate(result);
+        }
+
+        private async Task ChangeHoldStatus(HttpRequest req, HttpResponse res)
+        {
+            var resource = await req.Bind<SupplierHoldChangeResource>();
+
+            var result = this.supplierHoldService.ChangeSupplierHoldStatus(
+                resource,
+                req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }
