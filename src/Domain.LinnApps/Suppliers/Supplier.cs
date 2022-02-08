@@ -23,7 +23,7 @@
 
         public string SuppliersReference { get; set; }
 
-        public string LiveOnOracle { get; set; } // defaults n
+        public string LiveOnOracle { get; set; }
 
         public Supplier InvoiceGoesTo { get; set; }
 
@@ -37,15 +37,15 @@
 
         public Currency Currency { get; set; }
 
-        public string ApprovedCarrier { get; set; } // defaults n
+        public string ApprovedCarrier { get; set; }
 
-        public string AccountingCompany { get; set; } // defaults LINN
+        public string AccountingCompany { get; set; }
 
         public string VatNumber { get; set; }
 
         public PartCategory PartCategory { get; set; }
 
-        public string OrderHold { get; set; } // defaults n
+        public string OrderHold { get; set; }
 
         public string NotesForBuyer { get; set; }
 
