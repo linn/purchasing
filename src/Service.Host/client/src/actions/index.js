@@ -74,3 +74,8 @@ export const accountingCompaniesActionTypes = makeActionTypes(
     itemTypes.accountingCompanies.actionType,
     false
 );
+
+export const putSupplierOnHoldActionTypes = makeActionTypes(
+    itemTypes.putSupplierOnHold.actionType,
+    false
+);

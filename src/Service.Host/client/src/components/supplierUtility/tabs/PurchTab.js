@@ -67,6 +67,18 @@ function PurchTab({
                     onChange={() => {}}
                 />
             </Grid>
+            <Grid item xs={4}>
+                <Dropdown
+                    fullWidth
+                    value={orderHold}
+                    label="Order Hold"
+                    items={['Y', 'N']}
+                    propertyName="orderHold"
+                    onChange={handleFieldChange}
+                    allowNoValue={false}
+                />
+            </Grid>
+            <Grid item xs={8}>
             {/* <Grid item xs={8}>
                 <InputField
                     fullWidth
