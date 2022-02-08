@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.SupplierModuleTests
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
 
     using FluentAssertions;
@@ -10,6 +11,7 @@
     using Linn.Purchasing.Resources;
 
     using NSubstitute;
+    using NSubstitute.ReceivedExtensions;
 
     using NUnit.Framework;
 
@@ -69,6 +71,7 @@
             var resultResource = this.Response.DeserializeBody<SupplierResource>();
             resultResource.Should().NotBeNull();
             resultResource.Id.Should().Be(1);
+            resultResource.Links.Any(l => l.Rel == "self").Should().BeTrue();
         }
     }
 }

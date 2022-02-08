@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
@@ -17,14 +18,18 @@
 
         private readonly ITransactionManager transactionManager;
 
+        private readonly IBuilder<Supplier> supplierResourceBuilder;
+
         public SupplierHoldService(
             ISupplierService domainService,
             IDatabaseService databaseService,
-            ITransactionManager transactionManager)
+            ITransactionManager transactionManager,
+            IBuilder<Supplier> supplierResourceBuilder)
         {
             this.domainService = domainService;
             this.databaseService = databaseService;
             this.transactionManager = transactionManager;
+            this.supplierResourceBuilder = supplierResourceBuilder;
         }
 
         public IResult<SupplierResource> ChangeSupplierHoldStatus(SupplierHoldChangeResource resource, IEnumerable<string> privileges)
@@ -44,13 +49,10 @@
                     holdHistoryEntry.Id = this.databaseService.GetIdSequence("SOHH_SEQ");
                 }
 
-                var result = this.domainService.ChangeSupplierHoldStatus(holdHistoryEntry, privileges);
+                var enumerable = privileges as string[] ?? privileges.ToArray();
+                var result = this.domainService.ChangeSupplierHoldStatus(holdHistoryEntry, enumerable);
                 this.transactionManager.Commit();
-                return new SuccessResult<SupplierResource>(new SupplierResource
-                                                               {
-                                                                   Id = result.SupplierId, 
-                                                                   OrderHold = result.OrderHold
-                                                               });
+                return new SuccessResult<SupplierResource>((SupplierResource)this.supplierResourceBuilder.Build(result, enumerable));
             }
             catch (Exception e)
             {

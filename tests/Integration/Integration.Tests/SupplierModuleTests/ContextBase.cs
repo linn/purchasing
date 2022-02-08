@@ -116,7 +116,8 @@
             this.SupplierHoldService = new SupplierHoldService(
                 this.MockDomainService,
                 this.MockDatabaseService,
-                this.TransactionManager);
+                this.TransactionManager,
+                new SupplierResourceBuilder(this.MockAuthService));
 
             this.Client = TestClient.With<SupplierModule>(
                 services =>

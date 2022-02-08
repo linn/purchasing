@@ -56,6 +56,10 @@ function Supplier() {
         itemSelectorHelpers.getItemLoading(reduxState.supplier)
     );
 
+    const holdChangeLoading = useSelector(reduxState =>
+        itemSelectorHelpers.getItemLoading(reduxState.putSupplierOnHold)
+    );
+
     const clearErrors = () => reduxDispatch(supplierActions.clearErrorsForItem());
     const updateSupplier = body => reduxDispatch(supplierActions.update(id, body));
 
@@ -115,7 +119,7 @@ function Supplier() {
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
-                {supplierLoading ? (
+                {supplierLoading || holdChangeLoading ? (
                     <>
                         <Grid item xs={12}>
                             <Loading />
