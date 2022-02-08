@@ -15,13 +15,17 @@
         {
             this.MockAuthorisationService.HasPermissionFor(
                     Arg.Is<string>(
-                        x => x.Equals(AuthorisedAction.SupplierCreate) || x.Equals(AuthorisedAction.SupplierUpdate)), 
+                        x => x.Equals(AuthorisedAction.SupplierCreate) 
+                             || x.Equals(AuthorisedAction.SupplierUpdate)
+                             || x.Equals(AuthorisedAction.SupplierHoldChange)), 
                     Arg.Any<IEnumerable<string>>())
                 .Returns(true);
             this.Sut = new SupplierService(
                 this.MockAuthorisationService,
                 this.MockSupplierRepository,
-                this.MockCurrencyRepository);
+                this.MockCurrencyRepository,
+                this.MockPartCategoryRepository,
+                this.MockSupplierOrderHoldHistory);
         }
     }
 }

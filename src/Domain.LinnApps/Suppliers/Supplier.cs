@@ -1,7 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Suppliers
 {
-    using System.ComponentModel.DataAnnotations.Schema;
-
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
     public class Supplier
@@ -43,5 +42,17 @@
         public string AccountingCompany { get; set; }
 
         public string VatNumber { get; set; }
+
+        public PartCategory PartCategory { get; set; }
+
+        public string OrderHold { get; set; }
+
+        public string NotesForBuyer { get; set; }
+
+        public string DeliveryDay { get; set; }
+
+        public Supplier RefersToFc { get; set; }
+
+        public int? PmDeliveryDaysGrace { get; set; }
     }
 }

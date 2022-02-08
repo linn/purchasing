@@ -100,3 +100,9 @@ export const accountingCompanies = new ItemType(
     'ACCOUNTING_COMPANIES',
     '/inventory/accounting-companies'
 );
+
+export const putSupplierOnHold = new ItemType(
+    'putSupplierOnHold',
+    'PUT_SUPPLIER_ON_HOLD',
+    '/purchasing/suppliers/hold'
+);

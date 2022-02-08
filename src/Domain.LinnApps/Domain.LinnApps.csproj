@@ -17,4 +17,8 @@
     <PackageReference Include="Linn.Common.Reporting" Version="1.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Suppliers\Exceptions\" />
+  </ItemGroup>
+
 </Project>
