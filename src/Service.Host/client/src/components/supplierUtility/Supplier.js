@@ -4,7 +4,9 @@ import {
     itemSelectorHelpers,
     Page,
     Loading,
-    SaveBackCancelButtons
+    SaveBackCancelButtons,
+    utilities,
+    InputField
 } from '@linn-it/linn-form-components-library';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -14,16 +16,33 @@ import EditOffIcon from '@mui/icons-material/EditOff';
 import Tooltip from '@mui/material/Tooltip';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import Dialog from '@mui/material/Dialog';
+import { makeStyles } from '@mui/styles';
+import IconButton from '@mui/material/IconButton';
+import Close from '@mui/icons-material/Close';
 import Box from '@mui/material/Box';
 import supplierActions from '../../actions/supplierActions';
+import putSupplierOnHoldActions from '../../actions/putSupplierOnHoldActions';
 import history from '../../history';
 import config from '../../config';
 import supplierReducer from './supplierReducer';
 import GeneralTab from './tabs/GeneralTab';
 import FinanceTab from './tabs/FinanceTab';
 import PurchTab from './tabs/PurchTab';
+import { getUserNumber } from '../../selectors/oidcSelectors';
 
 function Supplier() {
+    const useStyles = makeStyles(theme => ({
+        dialog: {
+            margin: theme.spacing(6),
+            minWidth: theme.spacing(62)
+        },
+        total: {
+            float: 'right'
+        }
+    }));
+    const classes = useStyles();
+
     const reduxDispatch = useDispatch();
 
     const [state, dispatch] = useReducer(supplierReducer, {
@@ -47,6 +66,7 @@ function Supplier() {
     }, [supplier]);
 
     const canEdit = () => supplier?.links.some(l => l.rel === 'edit');
+    const holdLink = () => utilities.getHref(supplier, 'hold');
 
     useEffect(() => {
         if (id) {
@@ -60,10 +80,31 @@ function Supplier() {
     };
 
     const setEditStatus = status => reduxDispatch(supplierActions.setEditStatus(status));
+    const [holdReason, setHoldReason] = useState('');
 
     const editStatus = useSelector(reduxState =>
         itemSelectorHelpers.getItemEditStatus(reduxState.supplier)
     );
+
+    const userNumber = useSelector(reduxState => getUserNumber(reduxState));
+
+    const [holdChangeDialogOpen, setHoldChangeDialogOpen] = useState(false);
+
+    const changeSupplierHoldStatus = () => {
+        if (state.supplier.orderHold === 'Y') {
+            reduxDispatch(
+                putSupplierOnHoldActions.add({
+                    reasonOffHold: holdReason,
+                    takenOffHoldBy: userNumber
+                })
+            );
+        } else {
+            reduxDispatch(
+                putSupplierOnHoldActions.add({ reasonOnHold: holdReason, putOnHoldBy: userNumber })
+            );
+        }
+        setHoldChangeDialogOpen(false);
+    };
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
@@ -77,6 +118,35 @@ function Supplier() {
                 ) : (
                     state.supplier && (
                         <>
+                            <Dialog open={holdChangeDialogOpen} fullWidth maxWidth="md">
+                                <div>
+                                    <IconButton
+                                        className={classes.pullRight}
+                                        aria-label="Close"
+                                        onClick={() => setHoldChangeDialogOpen(false)}
+                                    >
+                                        <Close />
+                                    </IconButton>
+                                    <div className={classes.dialog}>
+                                        <Grid item xs={12}>
+                                            <InputField
+                                                fullWidth
+                                                value={holdReason}
+                                                label="Must give a reason:"
+                                                propertyName="holdReason"
+                                                onChange={(_, newValue) => setHoldReason(newValue)}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <SaveBackCancelButtons
+                                                backClick={() => setHoldChangeDialogOpen(false)}
+                                                cancelClick={() => setHoldChangeDialogOpen(false)}
+                                                saveClick={changeSupplierHoldStatus}
+                                            />
+                                        </Grid>
+                                    </div>
+                                </div>
+                            </Dialog>
                             <Grid item xs={3}>
                                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                     <Typography variant="h6">{state.supplier.id}</Typography>
@@ -175,6 +245,8 @@ function Supplier() {
                                                 pmDeliveryDaysGrace={
                                                     state.supplier.pmDeliveryDaysGrace
                                                 }
+                                                holdLink={holdLink()}
+                                                openHoldDialog={() => setHoldChangeDialogOpen(true)}
                                             />
                                         </Box>
                                     )}

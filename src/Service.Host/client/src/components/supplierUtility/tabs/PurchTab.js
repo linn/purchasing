@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+
 import { useSelector, useDispatch } from 'react-redux';
 
 import {
@@ -12,6 +14,7 @@ import {
 
 import suppliersActions from '../../../actions/suppliersActions';
 import currenciesActions from '../../../actions/currenciesActions';
+import partCategoriesActions from '../../../actions/partCategoriesActions';
 
 function PurchTab({
     handleFieldChange,
@@ -22,7 +25,9 @@ function PurchTab({
     deliveryDay,
     refersToFcId,
     refersToFcName,
-    pmDeliveryDaysGrace
+    pmDeliveryDaysGrace,
+    holdLink,
+    openHoldDialog
 }) {
     const reduxDispatch = useDispatch();
     useEffect(() => {
@@ -36,8 +41,52 @@ function PurchTab({
     const suppliersSearchLoading = useSelector(reduxState =>
         collectionSelectorHelpers.getSearchLoading(reduxState.suppliers)
     );
+
+    const searchPartCategories = searchTerm =>
+        reduxDispatch(partCategoriesActions.search(searchTerm));
+    const partCategoriesSearchResults = useSelector(reduxState =>
+        collectionSelectorHelpers.getSearchItems(
+            reduxState.partCategories,
+            100,
+            'category',
+            'description',
+            'description'
+        )
+    );
+    const partCategoriesSearchLoading = useSelector(reduxState =>
+        collectionSelectorHelpers.getSearchLoading(reduxState.partCategories)
+    );
     return (
         <Grid container spacing={3}>
+            <Grid item xs={4}>
+                <Typeahead
+                    onSelect={newValue => {
+                        handleFieldChange('partCategory', newValue.id);
+                        handleFieldChange('partCategoryDescription', newValue.description);
+                    }}
+                    label="Part Category"
+                    modal
+                    propertyName="partCategory"
+                    items={partCategoriesSearchResults}
+                    value={partCategory}
+                    loading={partCategoriesSearchLoading}
+                    fetchItems={searchPartCategories}
+                    links={false}
+                    text
+                    clearSearch={() => {}}
+                    placeholder="Search Part Categories"
+                    minimumSearchTermLength={3}
+                />
+            </Grid>
+            <Grid item xs={8}>
+                <InputField
+                    fullWidth
+                    value={partCategoryDescription}
+                    label="Desc"
+                    propertyName="partCategoryDescription"
+                    onChange={() => {}}
+                />
+            </Grid>
             <Grid item xs={4}>
                 <Typeahead
                     onSelect={newValue => {
@@ -68,105 +117,65 @@ function PurchTab({
                 />
             </Grid>
             <Grid item xs={4}>
-                <Dropdown
-                    fullWidth
-                    value={orderHold}
-                    label="Order Hold"
-                    items={['Y', 'N']}
-                    propertyName="orderHold"
-                    onChange={handleFieldChange}
-                    allowNoValue={false}
-                />
-            </Grid>
-            <Grid item xs={8}>
-            {/* <Grid item xs={8}>
                 <InputField
                     fullWidth
-                    value={invoiceGoesToName}
-                    label="Name"
-                    propertyName="invoiceGoesToName"
+                    value={orderHold}
+                    label="On Hold?"
+                    propertyName="orderHold"
                     onChange={() => {}}
                 />
             </Grid>
-            <Grid item xs={4}>
-                <Dropdown
-                    fullWidth
-                    value={expenseAccount}
-                    label="Expense Account"
-                    items={['Y', 'N']}
-                    propertyName="expenseAccount"
-                    onChange={handleFieldChange}
-                    allowNoValue
-                />
-            </Grid>
-            <Grid item xs={8}>
-                <InputField
-                    fullWidth
-                    value={paymentDays}
-                    label="Payment Days"
-                    propertyName="paymentDays"
-                    type="number"
-                    onChange={handleFieldChange}
-                />
-            </Grid>
+            <Grid item xs={8} />
 
-            <Grid item xs={8}>
+            <Grid item xs={3}>
+                {holdLink && (
+                    <Button onClick={() => openHoldDialog()} variant="outlined">
+                        {orderHold === 'Y' ? 'TAKE OFF HOLD' : 'PUT ON HOLD'}
+                    </Button>
+                )}
+            </Grid>
+            <Grid item xs={10}>
                 <InputField
                     fullWidth
-                    value={vatNumber}
-                    label="VAT Number"
-                    propertyName="vatNumber"
+                    value={notesForBuyer}
+                    label="Notes For Buyer"
+                    rows={3}
+                    propertyName="notesForBuyer"
                     onChange={handleFieldChange}
                 />
             </Grid>
-            <Grid item xs={4} />
+            <Grid item xs={2} />
             <Grid item xs={4}>
                 <Dropdown
                     fullWidth
-                    value={paymentMethod}
-                    label="Payment Method"
-                    items={['BACS', 'CHEQUE', 'FORPAY', 'NONE', 'OTHER']}
-                    propertyName="paymentMethod"
+                    value={deliveryDay}
+                    label="Delivery Day"
+                    items={[
+                        'MONDAY',
+                        'TUESDAY',
+                        'WEDNESDAY',
+                        'THURSDAY',
+                        'FRIDAY',
+                        'SATURDAY',
+                        'SUNDAY'
+                    ]}
+                    propertyName="deliveryDay"
                     onChange={handleFieldChange}
                     allowNoValue
                 />
             </Grid>
             <Grid item xs={8} />
-            <Grid item xs={4}>
-                <Dropdown
+            <Grid item xs={3}>
+                <InputField
                     fullWidth
-                    value={currencyCode}
-                    label="Currency"
-                    items={currencies}
-                    propertyName="currencyCode"
+                    value={pmDeliveryDaysGrace}
+                    label="PM Delivery Days Grance"
+                    type="number"
+                    propertyName="pmDeliveryDaysGrace"
                     onChange={handleFieldChange}
-                    allowNoValue={false}
                 />
             </Grid>
-            <Grid item xs={2}>
-                <Dropdown
-                    fullWidth
-                    value={paysInFc}
-                    label="Payment Method"
-                    items={['A', 'S', 'N']}
-                    propertyName="paysInFc"
-                    onChange={handleFieldChange}
-                    allowNoValue
-                />
-            </Grid>
-            <Grid item xs={6} />
-            <Grid item xs={4}>
-                <Dropdown
-                    fullWidth
-                    value={approvedCarrier}
-                    label="Approved Carrier"
-                    items={['Y', 'N']}
-                    propertyName="approvedCarrier"
-                    onChange={handleFieldChange}
-                    allowNoValue={false}
-                />
-            </Grid>
-            <Grid item xs={8} /> */}
+            <Grid item xs={9} />
         </Grid>
     );
 }
@@ -180,7 +189,9 @@ PurchTab.propTypes = {
     deliveryDay: PropTypes.string,
     refersToFcId: PropTypes.number,
     refersToFcName: PropTypes.string,
-    pmDeliveryDaysGrace: PropTypes.number
+    pmDeliveryDaysGrace: PropTypes.number,
+    holdLink: PropTypes.string,
+    openHoldDialog: PropTypes.func.isRequired
 };
 
 PurchTab.defaultProps = {
@@ -191,7 +202,8 @@ PurchTab.defaultProps = {
     deliveryDay: null,
     refersToFcId: null,
     refersToFcName: null,
-    pmDeliveryDaysGrace: null
+    pmDeliveryDaysGrace: null,
+    holdLink: null
 };
 
 export default PurchTab;

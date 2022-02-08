@@ -77,5 +77,5 @@ export const accountingCompaniesActionTypes = makeActionTypes(
 
 export const putSupplierOnHoldActionTypes = makeActionTypes(
     itemTypes.putSupplierOnHold.actionType,
-    false
+    true
 );
