@@ -62,7 +62,7 @@
             var values = new List<CalculationValueModel>();
 
             var distinctSupplierSpends = supplierSpends.DistinctBy(x => x.SupplierId).Select(
-                x => new SupplierSpend
+                x => new SupplierSpendWithTotals
                          {
                              BaseTotal = x.BaseTotal,
                              LedgerPeriod = x.LedgerPeriod,
@@ -111,7 +111,7 @@
                     });
         }
 
-        private void ExtractDetailsForPartReport(ICollection<CalculationValueModel> values, SupplierSpend supplier)
+        private void ExtractDetailsForPartReport(ICollection<CalculationValueModel> values, SupplierSpendWithTotals supplier)
         {
             var currentRowId = $"{supplier.SupplierId}";
             values.Add(
