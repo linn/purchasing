@@ -74,12 +74,13 @@ function Supplier() {
         }
     }, [id, reduxDispatch]);
     const [tab, setTab] = useState(0);
+    const setEditStatus = status => reduxDispatch(supplierActions.setEditStatus(status));
 
     const handleFieldChange = (propertyName, newValue) => {
+        setEditStatus('edit');
         dispatch({ type: 'fieldChange', fieldName: propertyName, payload: newValue });
     };
 
-    const setEditStatus = status => reduxDispatch(supplierActions.setEditStatus(status));
     const [holdReason, setHoldReason] = useState('');
 
     const editStatus = useSelector(reduxState =>
@@ -95,12 +96,17 @@ function Supplier() {
             reduxDispatch(
                 putSupplierOnHoldActions.add({
                     reasonOffHold: holdReason,
-                    takenOffHoldBy: userNumber
+                    takenOffHoldBy: userNumber,
+                    supplierId: state.supplier.id
                 })
             );
         } else {
             reduxDispatch(
-                putSupplierOnHoldActions.add({ reasonOnHold: holdReason, putOnHoldBy: userNumber })
+                putSupplierOnHoldActions.add({
+                    reasonOnHold: holdReason,
+                    putOnHoldBy: userNumber,
+                    supplierId: state.supplier.id
+                })
             );
         }
         setHoldChangeDialogOpen(false);
@@ -257,7 +263,7 @@ function Supplier() {
                                     saveDisabled={!canEdit() || editStatus === 'view'}
                                     saveClick={() => {
                                         clearErrors();
-                                        updateSupplier(state.partSupplier);
+                                        updateSupplier(state.supplier);
                                     }}
                                     cancelClick={() => {
                                         dispatch({ type: 'initialise', payload: supplier });

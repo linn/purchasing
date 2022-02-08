@@ -99,7 +99,6 @@
         {
             var id = req.RouteValues.As<int>("id");
             var resource = await req.Bind<SupplierResource>();
-
             var result = this.supplierFacadeService.Update(id, resource, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);

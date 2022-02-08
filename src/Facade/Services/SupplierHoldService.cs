@@ -41,7 +41,7 @@
             {
                 if (!string.IsNullOrEmpty(resource.ReasonOnHold))
                 {
-                    holdHistoryEntry.Id = this.databaseService.GetNextVal("SOHH_SEQ");
+                    holdHistoryEntry.Id = this.databaseService.GetIdSequence("SOHH_SEQ");
                 }
 
                 var result = this.domainService.ChangeSupplierHoldStatus(holdHistoryEntry, privileges);

@@ -117,13 +117,14 @@
                 throw new UnauthorisedActionException("You do not have permission to change Supplier Hold Status");
             }
 
-            var supplier = this.supplierRepository.FindById(data.SupplierId);
+            Supplier supplier = this.supplierRepository.FindById(data.SupplierId);
 
             if (!string.IsNullOrEmpty(data.ReasonOnHold))
             {
                 data.DateOnHold = DateTime.Today;
-                supplier.OrderHold = "Y";
                 this.supplierHoldHistories.Add(data);
+
+                supplier.OrderHold = "Y";
             }
             else if (!string.IsNullOrEmpty(data.ReasonOffHold))
             {
@@ -135,7 +136,7 @@
                 supplier.OrderHold = "N";
             }
 
-            return this.supplierRepository.FindById(data.SupplierId);
+            return supplier;
         }
 
         private static void ValidateFields(Supplier candidate)

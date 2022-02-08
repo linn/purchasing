@@ -26,7 +26,7 @@
                                     PutOnHoldBy = 33087,
                                     ReasonOnHold = "HOLDING TIGHT"
                                 };
-            this.MockDatabaseService.GetNextVal("SOHH_SEQ").Returns(123);
+            this.MockDatabaseService.GetIdSequence("SOHH_SEQ").Returns(123);
             this.MockDomainService
                 .ChangeSupplierHoldStatus(Arg.Any<SupplierOrderHoldHistoryEntry>(), Arg.Any<IEnumerable<string>>())
                 .Returns(new Supplier { SupplierId = 1 });
@@ -49,7 +49,7 @@
         [Test]
         public void ShouldGetSeqNextVal()
         {
-            this.MockDatabaseService.Received().GetNextVal("SOHH_SEQ");
+            this.MockDatabaseService.Received().GetIdSequence("SOHH_SEQ");
         }
 
         [Test]
