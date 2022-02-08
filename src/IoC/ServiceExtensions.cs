@@ -34,29 +34,18 @@
         {
             return services.AddTransient<IBuilder<SigningLimit>, SigningLimitResourceBuilder>()
                 .AddTransient<IBuilder<PartSupplier>, PartSupplierResourceBuilder>()
-                .AddTransient<IBuilder<IEnumerable<PartSupplier>>, PartSuppliersResourceBuilder>()
                 .AddTransient<IBuilder<Supplier>, SupplierResourceBuilder>()
-                .AddTransient<IBuilder<IEnumerable<Supplier>>, SuppliersResourceBuilder>()
                 .AddTransient<IBuilder<Currency>, CurrencyResourceBuilder>()
-                .AddTransient<IBuilder<IEnumerable<Currency>>, CurrenciesResourceBuilder>()
                 .AddTransient<IBuilder<OrderMethod>, OrderMethodResourceBuilder>()
-                .AddTransient<IBuilder<IEnumerable<OrderMethod>>, OrderMethodsResourceBuilder>()
                 .AddTransient<IBuilder<LinnDeliveryAddress>, LinnDeliveryAddressResourceBuilder>()
-                .AddTransient<IBuilder<IEnumerable<LinnDeliveryAddress>>, LinnDeliveryAddressesResourceBuilder>()
                 .AddTransient<IBuilder<UnitOfMeasure>, UnitOfMeasureResourceBuilder>()
-                .AddTransient<IBuilder<IEnumerable<UnitOfMeasure>>, UnitsOfMeasureResourceBuilder>()
                 .AddTransient<IBuilder<PackagingGroup>, PackagingGroupResourceBuilder>()
-                .AddTransient<IBuilder<IEnumerable<PackagingGroup>>, PackagingGroupsResourceBuilder>()
                 .AddTransient<IBuilder<Tariff>, TariffResourceBuilder>()
-                .AddTransient<IBuilder<IEnumerable<Tariff>>, TariffsResourceBuilder>()
                 .AddTransient<IBuilder<Manufacturer>, ManufacturerResourceBuilder>()
-                .AddTransient<IBuilder<IEnumerable<Manufacturer>>, ManufacturersResourceBuilder>()
                 .AddTransient<IBuilder<ResultsModel>, ResultsModelResourceBuilder>()
                 .AddTransient<IBuilder<PreferredSupplierChange>, PreferredSupplierChangeResourceBuilder>()
                 .AddTransient<IBuilder<PriceChangeReason>, PriceChangeReasonResourceBuilder>()
-                .AddTransient<IBuilder<IEnumerable<PriceChangeReason>>, PriceChangeReasonsResourceBuilder>()
-                .AddTransient<IBuilder<PartCategory>, PartCategoryResourceBuilder>()
-                .AddTransient<IBuilder<IEnumerable<PartCategory>>, PartCategoriesResourceBuilder>();
+                .AddTransient<IBuilder<PartCategory>, PartCategoryResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
