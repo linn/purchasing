@@ -5,6 +5,7 @@ import { createBrowserHistory } from 'history';
 import reducer from './reducers';
 import authorization from './middleware/authorization';
 import itemCreated from './middleware/itemCreated';
+import refreshSupplier from './middleware/refreshSupplier';
 import updateSigningLimits from './middleware/updateSigningLimits';
 import previousLocationMiddleware from './middleware/previousLocation';
 // eslint-disable-next-line no-underscore-dangle
@@ -15,6 +16,7 @@ const middleware = [
     api,
     thunkMiddleware,
     itemCreated,
+    refreshSupplier,
     updateSigningLimits,
     previousLocationMiddleware
 ];

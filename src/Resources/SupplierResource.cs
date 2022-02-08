@@ -45,5 +45,21 @@
         public string AccountingCompany { get; set; }
 
         public string VatNumber { get; set; }
+
+        public string PartCategory { get; set; }
+
+        public string PartCategoryDescription { get; set; }
+
+        public string OrderHold { get; set; }
+
+        public string NotesForBuyer { get; set; }
+
+        public string DeliveryDay { get; set; }
+
+        public int? RefersToFcId { get; set; }
+
+        public string RefersToFcName { get; set; }
+
+        public int? PmDeliveryDaysGrace { get; set; }
     }
 }

@@ -28,7 +28,7 @@
 
         protected override Expression<Func<PartCategory, bool>> SearchExpression(string searchTerm)
         {
-            return c => c.Category.Contains(searchTerm.ToUpper());
+            return c => c.Category.Contains(searchTerm.ToUpper()) || c.Description.Contains(searchTerm.ToUpper());
         }
 
         protected override void SaveToLogTable(

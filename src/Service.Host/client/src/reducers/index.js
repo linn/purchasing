@@ -31,6 +31,7 @@ import ordersByPart from './ordersByPartReport';
 import supplier from './supplier';
 import partCategories from './partCategories';
 import accountingCompanies from './accountingCompanies';
+import putSupplierOnHold from './putSupplierOnHold';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -55,6 +56,7 @@ const rootReducer = history =>
         partSuppliers,
         preferredSupplierChange,
         priceChangeReasons,
+        putSupplierOnHold,
         router: connectRouter(history),
         signingLimit,
         signingLimits,

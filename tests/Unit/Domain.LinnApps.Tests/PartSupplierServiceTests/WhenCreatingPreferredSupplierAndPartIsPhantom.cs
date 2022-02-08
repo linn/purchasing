@@ -8,6 +8,7 @@
 
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.PartSuppliers.Exceptions;
 
     using NSubstitute;
 
