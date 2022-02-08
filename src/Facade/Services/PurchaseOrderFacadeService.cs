@@ -57,7 +57,7 @@
 
         protected override Expression<Func<PurchaseOrder, bool>> SearchExpression(string searchTerm)
         {
-            return x => x.OrderNumber.ToString().Contains(searchTerm) || x.OrderNumber.ToString().Equals(searchTerm);
+            return x => x.OrderNumber.ToString().Contains(searchTerm);
         }
 
         protected override Expression<Func<PurchaseOrder, bool>> FilterExpression(PurchaseOrderSearchResource searchResource)
