@@ -5,8 +5,8 @@
     using System.Linq.Expressions;
 
     using Linn.Common.Persistence.EntityFramework;
+    using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
-    using Linn.Purchasing.Persistence.LinnApps.Keys;
 
     using Microsoft.EntityFrameworkCore;
 
@@ -42,6 +42,7 @@
             return this.partSuppliers
                 .Include(p => p.Supplier)
                 .Include(p => p.Part)
+                .Include(p => p.Currency)
                 .AsNoTracking().Where(expression);
         }
     }

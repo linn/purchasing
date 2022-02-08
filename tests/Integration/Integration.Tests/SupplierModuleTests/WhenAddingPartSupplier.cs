@@ -27,7 +27,7 @@
                 SupplierId = 100
             };
 
-            this.PartSupplierFacadeService.Add( Arg.Any<PartSupplierResource>())
+            this.PartSupplierFacadeService.Add(Arg.Any<PartSupplierResource>())
                 .ReturnsForAnyArgs(new CreatedResult<PartSupplierResource>(
                                        new PartSupplierResource
                                            {
@@ -45,23 +45,21 @@
         }
 
         [Test]
-        public void ShouldReturnSuccess()
+        public void ShouldReturnCreated()
         {
             this.Response.StatusCode.Should().Be(HttpStatusCode.Created);
         }
 
         [Test]
-        public void ShouldCallUpdate()
+        public void ShouldCallAdd()
         {
-            this.PartSupplierFacadeService
+            this.PartSupplierFacadeService.Received()
                 .Add(Arg.Any<PartSupplierResource>(), Arg.Any<IEnumerable<string>>());
         }
 
         [Test]
         public void ShouldReturnJsonContentType()
         {
-            var response = this.Response;
-
             this.Response.Content.Headers.ContentType.Should().NotBeNull();
             this.Response.Content.Headers.ContentType?.ToString().Should().Be("application/json");
         }

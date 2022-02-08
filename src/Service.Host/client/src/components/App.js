@@ -1,24 +1,23 @@
 import React, { useEffect } from 'react';
 import Typography from '@mui/material/Typography';
 import { useSelector, useDispatch } from 'react-redux';
-import { Page } from '@linn-it/linn-form-components-library';
+import { Page, userSelectors } from '@linn-it/linn-form-components-library';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import { Link } from 'react-router-dom';
-import { getName } from '../selectors/userSelectors';
 import { testAction } from '../actions';
 import config from '../config';
 import history from '../history';
 
 function App() {
-    const name = useSelector(state => getName(state));
+    const name = useSelector(state => userSelectors.getName(state));
     const dispatch = useDispatch();
 
-    useEffect(() => dispatch(testAction()), [dispatch]);
+    useEffect(() => dispatch(testAction('args')), [dispatch]);
 
     return (
         <Page homeUrl={config.appRoot} history={history}>
-            <Typography variant="h6">App</Typography>
+            <Typography variant="h6">Purchasing</Typography>
             <Typography>Hello {name}</Typography>
 
             <List>
@@ -31,6 +30,9 @@ function App() {
                 <Typography variant="h6">Reports</Typography>
                 <ListItem component={Link} to="/purchasing/reports/orders-by-supplier" button>
                     <Typography color="primary">Orders by Supplier Report</Typography>
+                </ListItem>
+                <ListItem component={Link} to="/purchasing/reports/orders-by-part" button>
+                    <Typography color="primary">Orders by Part Report</Typography>
                 </ListItem>
             </List>
         </Page>

@@ -15,13 +15,11 @@
         public static IServiceCollection AddHandlers(this IServiceCollection services)
         {
             return services.AddTransient<UniversalResponseNegotiator>()
-                .AddTransient<IHandler, ThingResourceResultHandler>()
                 .AddTransient<IHandler, JsonResultHandler<PartSupplierResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<PartSupplierResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<SupplierResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<SupplierResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<ReportReturnResource>>()
-                .AddTransient<IHandler, JsonResultHandler<IEnumerable<ThingResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<ProcessResultResource>>()
                 .AddTransient<IHandler, JsonResultHandler<SigningLimitResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<SigningLimitResource>>>()
@@ -41,9 +39,12 @@
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<TariffResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<ManufacturerResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<ManufacturerResource>>>()
-                .AddTransient<IHandler, JsonResultHandler<ReportReturnResource>>()
-                .AddTransient<IHandler, JsonResultHandler<PurchaseOrderResource>>()
-                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PurchaseOrderResource>>>();
-        }
+                .AddTransient<IHandler, JsonResultHandler<PreferredSupplierChangeResource>>()
+                .AddTransient<IHandler, JsonResultHandler<PriceChangeReasonResource>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PriceChangeReasonResource>>>()
+                .AddTransient<IHandler, JsonResultHandler<PartPriceConversionsResource>>()
+                .AddTransient<IHandler, JsonResultHandler<PartCategoryResource>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PartCategoryResource>>>();                .AddTransient<IHandler, JsonResultHandler<PurchaseOrderResource>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PurchaseOrderResource>>>();        }
     }
 }

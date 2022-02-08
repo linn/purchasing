@@ -4,7 +4,8 @@
     "plugins": ["prettier", "jest", "react-hooks"],
     "parser": "babel-eslint",
     "env": {
-        "browser": true
+        "browser": true,
+        "jest": true
     },
     "rules": {
         "prettier/prettier": ["error"],

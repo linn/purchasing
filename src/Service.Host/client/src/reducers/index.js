@@ -15,6 +15,7 @@ import signingLimits from './signingLimits';
 import employees from './employees';
 import suppliers from './suppliers';
 import parts from './parts';
+import part from './part';
 import currencies from './currencies';
 import orderMethods from './orderMethods';
 import deliveryAddresses from './deliveryAddresses';
@@ -23,6 +24,13 @@ import tariffs from './tariffs';
 import packagingGroups from './packagingGroups';
 import manufacturers from './manufacturers';
 import ordersBySupplier from './ordersBySupplierReport';
+import preferredSupplierChange from './preferredSupplierChange';
+import priceChangeReasons from './priceChangeReasons';
+import partPriceConversions from './partPriceConversions';
+import ordersByPart from './ordersByPartReport';
+import supplier from './supplier';
+import partCategories from './partCategories';
+import accountingCompanies from './accountingCompanies';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -30,19 +38,27 @@ const rootReducer = history =>
     combineReducers({
         oidc,
         historyStore,
+        accountingCompanies,
         currencies,
         deliveryAddresses,
         employees,
         manufacturers,
         orderMethods,
+        ordersByPart,
+        ordersBySupplier,
         packagingGroups,
+        part,
+        partCategories,
+        partPriceConversions,
         parts,
         partSupplier,
         partSuppliers,
+        preferredSupplierChange,
+        priceChangeReasons,
         router: connectRouter(history),
-        ordersBySupplier,
         signingLimit,
         signingLimits,
+        supplier,
         suppliers,
         tariffs,
         unitsOfMeasure,

@@ -14,18 +14,17 @@
 
     public class PurchaseOrdersReportService : IPurchaseOrdersReportService
     {
+        private readonly IQueryRepository<Part> partRepository;
+
         private readonly IRepository<PurchaseLedger, int> purchaseLedgerRepository;
 
         private readonly IRepository<PurchaseOrder, int> purchaseOrderRepository;
 
+        private readonly IPurchaseOrdersPack purchaseOrdersPack;
+
         private readonly IReportingHelper reportingHelper;
 
         private readonly IRepository<Supplier, int> supplierRepository;
-
-        private readonly IQueryRepository<Part> partRepository;
-
-        private readonly IPurchaseOrdersPack purchaseOrdersPack;
-
 
         public PurchaseOrdersReportService(
             IRepository<PurchaseOrder, int> purchaseOrderRepository,
@@ -43,9 +42,46 @@
             this.reportingHelper = reportingHelper;
         }
 
-        public ResultsModel GetOrdersByPartReport(DateTime from, DateTime to, string partNumber)
+        public ResultsModel GetOrdersByPartReport(DateTime from, DateTime to, string partNumber, bool includeCancelled)
         {
-            throw new NotImplementedException();
+            var purchaseOrders = this.purchaseOrderRepository.FilterBy(
+                x => x.Details.Any(z => z.PartNumber == partNumber) && from <= x.OrderDate && x.OrderDate < to);
+
+            var reportLayout = new SimpleGridLayout(
+                this.reportingHelper,
+                CalculationValueModelType.TextValue,
+                null,
+                $"Purchase Orders By Part: {partNumber}");
+
+            this.AddPartReportColumns(reportLayout);
+
+            var values = new List<CalculationValueModel>();
+
+            foreach (var order in purchaseOrders)
+            {
+                if (!includeCancelled && order.Cancelled == "Y")
+                {
+                    continue;
+                }
+
+                foreach (var orderDetail in order.Details.Where(d => d.PartNumber == partNumber))
+                {
+                    foreach (var delivery in orderDetail.PurchaseDeliveries)
+                    {
+                        if (!includeCancelled && (orderDetail.Cancelled == "Y" || delivery.Cancelled == "Y"))
+                        {
+                            continue;
+                        }
+
+                        this.ExtractDetailsForPartReport(values, order, orderDetail, delivery);
+                    }
+                }
+            }
+
+            reportLayout.SetGridData(values);
+            var model = reportLayout.GetResultsModel();
+
+            return model;
         }
 
         public ResultsModel GetOrdersBySupplierReport(
@@ -72,14 +108,13 @@
                 null,
                 $"Purchase Orders By Supplier - {supplierId}: {supplier.Name}");
 
-            this.AddReportColumns(reportLayout);
+            this.AddSupplierReportColumns(reportLayout);
 
             var values = new List<CalculationValueModel>();
 
             foreach (var order in purchaseOrders)
             {
-                if (!includeCancelled &&
-                    order.Cancelled == "Y")
+                if (!includeCancelled && order.Cancelled == "Y")
                 {
                     continue;
                 }
@@ -93,30 +128,32 @@
                         continue;
                     }
 
-                    if (!includeCancelled &&
-                        (orderDetail.Cancelled == "Y" || orderDetail.PurchaseDelivery.Cancelled == "Y"))
+                    foreach (var delivery in orderDetail.PurchaseDeliveries)
                     {
-                        continue;
+                        if (!includeCancelled && (orderDetail.Cancelled == "Y" || delivery.Cancelled == "Y"))
+                        {
+                            continue;
+                        }
+
+                        var part = this.partRepository.FindBy(x => x.PartNumber == orderDetail.PartNumber);
+                        if (stockControlled != "A" && ((stockControlled == "N" && part.StockControlled == "N")
+                                                       || (stockControlled == "O" && part.StockControlled != "Y")))
+                        {
+                            continue;
+                        }
+
+                        var ledgersForOrderAndLine = this.purchaseLedgerRepository.FilterBy(
+                            pl => pl.OrderNumber == order.OrderNumber && pl.OrderLine == orderDetail.Line);
+
+                        var ledgerQtys = ledgersForOrderAndLine.Select(
+                            x => x.PlQuantity.HasValue
+                                     ? new { TransType = x.TransactionType.DebitOrCredit, Qty = x.PlQuantity.Value }
+                                     : null).ToList();
+
+                        var totalLedgerQty = ledgerQtys.Sum(x => x.TransType == "C" ? x.Qty : -x.Qty);
+
+                        this.ExtractSupplierReportDetails(values, orderDetail, delivery, totalLedgerQty);
                     }
-
-                    var part = this.partRepository.FindBy(x => x.PartNumber == orderDetail.PartNumber);
-                    if (stockControlled != "A" && ((stockControlled == "N" && part.StockControlled == "N")
-                                               || (stockControlled == "O" && part.StockControlled != "Y")))
-                    {
-                        continue;
-                    }
-
-                    var ledgersForOrderAndLine = this.purchaseLedgerRepository.FilterBy(
-                        pl => pl.OrderNumber == order.OrderNumber && pl.OrderLine == orderDetail.Line);
-
-                    var ledgerQtys = ledgersForOrderAndLine.Select(
-                        x => x.PlQuantity.HasValue
-                                 ? new { TransType = x.TransactionType.DebitOrCredit, Qty = x.PlQuantity.Value }
-                                 : null).ToList();
-
-                    var totalLedgerQty = ledgerQtys.Sum(x => x.TransType == "C" ? x.Qty : -x.Qty);
-
-                    this.ExtractDetails(values, order, orderDetail, totalLedgerQty);
                 }
             }
 
@@ -126,7 +163,7 @@
             return model;
         }
 
-        private void AddReportColumns(SimpleGridLayout reportLayout)
+        private void AddSupplierReportColumns(SimpleGridLayout reportLayout)
         {
             reportLayout.AddColumnComponent(
                 null,
@@ -135,8 +172,7 @@
                         new AxisDetailsModel(
                             "OrderLine",
                             "Order/Line",
-                            GridDisplayType.TextValue)
-                            {
+                            GridDisplayType.TextValue) {
                                                           AllowWrap = false 
                                                        },
                         new AxisDetailsModel("PartNo", "Part Number", GridDisplayType.TextValue),
@@ -155,19 +191,46 @@
                     });
         }
 
-        private void ExtractDetails(
+
+        private void AddPartReportColumns(SimpleGridLayout reportLayout)
+        {
+            reportLayout.AddColumnComponent(
+                null,
+                new List<AxisDetailsModel>
+                    {
+                        new AxisDetailsModel(
+                            "OrderLine",
+                            "Order/Line",
+                            GridDisplayType.TextValue) {
+                                                               AllowWrap = false
+                                                           },
+                        new AxisDetailsModel("Date", "Date", GridDisplayType.TextValue),
+                        new AxisDetailsModel(
+                            "Supplier",
+                            "Supplier",
+                            GridDisplayType.TextValue),
+                        new AxisDetailsModel("QtyOrd", "Qty Ordered", GridDisplayType.TextValue),
+                        new AxisDetailsModel("QtyRec", "Qty Rec", GridDisplayType.TextValue),
+                        new AxisDetailsModel("Currency", "Currency", GridDisplayType.TextValue),
+                        new AxisDetailsModel("NetTotal", "Net Total", GridDisplayType.TextValue),
+                        new AxisDetailsModel("Delivery", "Delivery", GridDisplayType.TextValue),
+                        new AxisDetailsModel("Qty", "Qty", GridDisplayType.TextValue)
+                    });
+        }
+
+        private void ExtractSupplierReportDetails(
             ICollection<CalculationValueModel> values,
-            PurchaseOrder purchaseOrder,
             PurchaseOrderDetail orderDetail,
+            PurchaseOrderDelivery delivery,
             decimal ledgerQty)
         {
-            var currentRowId = $"{purchaseOrder.OrderNumber}/{orderDetail.Line}";
+            var currentRowId = $"{orderDetail.OrderNumber}/{orderDetail.Line}";
             values.Add(
                 new CalculationValueModel
                     {
                         RowId = currentRowId,
                         ColumnId = "OrderLine",
-                        TextDisplay = $"{purchaseOrder.OrderNumber}/{orderDetail.Line}"
+                        TextDisplay = $"{orderDetail.OrderNumber}/{orderDetail.Line}"
                     });
 
             values.Add(
@@ -195,9 +258,7 @@
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId,
-                        ColumnId = "QtyRec",
-                        TextDisplay = orderDetail.PurchaseDelivery.QtyNetReceived.ToString()
+                        RowId = currentRowId, ColumnId = "QtyRec", TextDisplay = delivery.QtyNetReceived.ToString()
                     });
 
             values.Add(
@@ -215,17 +276,13 @@
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId,
-                        ColumnId = "Delivery",
-                        TextDisplay = $"{orderDetail.PurchaseDelivery.DeliverySeq}"
+                        RowId = currentRowId, ColumnId = "Delivery", TextDisplay = $"{delivery.DeliverySeq}"
                     });
 
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId,
-                        ColumnId = "Qty",
-                        TextDisplay = $"{orderDetail.PurchaseDelivery.OurDeliveryQty}"
+                        RowId = currentRowId, ColumnId = "Qty", TextDisplay = $"{delivery.OurDeliveryQty}"
                     });
 
             values.Add(
@@ -233,7 +290,7 @@
                     {
                         RowId = currentRowId,
                         ColumnId = "ReqDate",
-                        TextDisplay = orderDetail.PurchaseDelivery.DateRequested.ToString("dd-MMM-yyyy")
+                        TextDisplay = delivery.DateRequested.ToString("dd-MMM-yyyy")
                     });
 
             values.Add(
@@ -241,7 +298,75 @@
                     {
                         RowId = currentRowId,
                         ColumnId = "AdvisedDate",
-                        TextDisplay = orderDetail.PurchaseDelivery.DateAdvised.ToString("dd-MMM-yyyy")
+                        TextDisplay = delivery.DateAdvised.ToString("dd-MMM-yyyy")
+                    });
+        }
+
+        private void ExtractDetailsForPartReport(
+            ICollection<CalculationValueModel> values,
+            PurchaseOrder order,
+            PurchaseOrderDetail orderDetail,
+            PurchaseOrderDelivery delivery)
+        { 
+            var currentRowId = $"{orderDetail.OrderNumber}/{orderDetail.Line}";
+            values.Add(
+                new CalculationValueModel
+                    {
+                        RowId = currentRowId,
+                        ColumnId = "OrderLine",
+                        TextDisplay = $"{orderDetail.OrderNumber}/{orderDetail.Line}"
+                    });
+
+            values.Add(
+                new CalculationValueModel
+                    {
+                        RowId = currentRowId, ColumnId = "Date", TextDisplay = $"{order.OrderDate.ToString("dd-MMM-yyyy")}"
+                    });
+
+            values.Add(
+                new CalculationValueModel
+                    {
+                        RowId = currentRowId,
+                        ColumnId = "Supplier",
+                        TextDisplay = $"{order.Supplier.SupplierId}: {order.Supplier.Name}"
+                    });
+
+            values.Add(
+                new CalculationValueModel
+                    {
+                        RowId = currentRowId,
+                        ColumnId = "QtyOrd",
+                        TextDisplay = orderDetail.OurQty.HasValue ? orderDetail.OurQty.Value.ToString() : "0"
+                    });
+
+            values.Add(
+                new CalculationValueModel
+                    {
+                        RowId = currentRowId, ColumnId = "QtyRec", TextDisplay = delivery.QtyNetReceived.ToString()
+                    });
+
+            values.Add(
+                new CalculationValueModel
+                    {
+                        RowId = currentRowId, ColumnId = "Currency", TextDisplay = order.Supplier.Currency?.Code
+                    });
+
+            values.Add(
+                new CalculationValueModel
+                    {
+                        RowId = currentRowId, ColumnId = "NetTotal", TextDisplay = $"{orderDetail.NetTotal}"
+                    });
+
+            values.Add(
+                new CalculationValueModel
+                    {
+                        RowId = currentRowId, ColumnId = "Delivery", TextDisplay = $"{delivery.DeliverySeq}"
+                    });
+
+            values.Add(
+                new CalculationValueModel
+                    {
+                        RowId = currentRowId, ColumnId = "Qty", TextDisplay = $"{delivery.OurDeliveryQty}"
                     });
         }
     }

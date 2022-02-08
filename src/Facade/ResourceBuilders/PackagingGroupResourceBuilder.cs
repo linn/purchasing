@@ -4,7 +4,6 @@
     using System.Collections.Generic;
 
     using Linn.Common.Facade;
-    using Linn.Common.Resources;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Resources;
 

@@ -1,8 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
 
-import { InputField, Typeahead } from '@linn-it/linn-form-components-library';
+import {
+    InputField,
+    LinkButton,
+    Typeahead,
+    utilities
+} from '@linn-it/linn-form-components-library';
+import config from '../../../config';
 
 function PartSupplierTab({
     partNumber,
@@ -17,7 +24,11 @@ function PartSupplierTab({
     searchSuppliers,
     suppliersSearchResults,
     suppliersSearchLoading,
-    editStatus
+    editStatus,
+    part,
+    setPreferredSupplierDialogOpen,
+    canEdit,
+    creating
 }) {
     return (
         <Grid container spacing={3}>
@@ -26,6 +37,7 @@ function PartSupplierTab({
                     onSelect={newValue => {
                         handleFieldChange('partNumber', newValue.id);
                         handleFieldChange('partDescription', newValue.description);
+                        handleFieldChange('designation', newValue.description);
                     }}
                     label="Part"
                     modal
@@ -81,16 +93,55 @@ function PartSupplierTab({
                     onChange={() => {}}
                 />
             </Grid>
+            <Grid item xs={4}>
+                <Button
+                    variant="outlined"
+                    onClick={() => setPreferredSupplierDialogOpen(true)}
+                    disabled={!canEdit() || creating()}
+                >
+                    Preferred Supplier
+                </Button>
+            </Grid>
+            <Grid item xs={8} />
             <Grid item xs={8}>
                 <InputField
                     fullWidth
                     value={designation}
                     label="Designation"
-                    rows={3}
+                    rows={4}
                     propertyName="designation"
                     onChange={handleFieldChange}
                 />
             </Grid>
+            {part?.manufacturers?.length > 0 && (
+                <>
+                    <Grid item xs={8}>
+                        <InputField
+                            fullWidth
+                            value={part?.manufacturers
+                                ?.map(x => `${x.manufacturerDescription} - ${x.partNumber}`)
+                                .join('\n')}
+                            label="Manufacturers"
+                            rows={4}
+                            propertyName="manufacturers"
+                            onChange={() => {}}
+                        />
+                    </Grid>
+                    <Grid item xs={4}>
+                        {!!utilities.getHref(part, 'mechanical-sourcing-sheet') && (
+                            <LinkButton
+                                external
+                                newTab
+                                to={`${config.proxyRoot}${utilities.getHref(
+                                    part,
+                                    'mechanical-sourcing-sheet'
+                                )}?tab=manufacturers`}
+                                text="Edit Manufacturers"
+                            />
+                        )}
+                    </Grid>
+                </>
+            )}
         </Grid>
     );
 }
@@ -108,7 +159,18 @@ PartSupplierTab.propTypes = {
     suppliersSearchResults: PropTypes.arrayOf(PropTypes.shape({})),
     suppliersSearchLoading: PropTypes.bool,
     searchSuppliers: PropTypes.func.isRequired,
-    editStatus: PropTypes.string
+    editStatus: PropTypes.string,
+    part: PropTypes.shape({
+        manufacturers: PropTypes.arrayOf(
+            PropTypes.shape({
+                manufacturerDescription: PropTypes.string,
+                partNumber: PropTypes.string
+            })
+        )
+    }),
+    setPreferredSupplierDialogOpen: PropTypes.func.isRequired,
+    canEdit: PropTypes.func.isRequired,
+    creating: PropTypes.func.isRequired
 };
 
 PartSupplierTab.defaultProps = {
@@ -121,7 +183,8 @@ PartSupplierTab.defaultProps = {
     partsSearchLoading: false,
     suppliersSearchResults: [],
     suppliersSearchLoading: false,
-    editStatus: 'view'
+    editStatus: 'view',
+    part: null
 };
 
 export default PartSupplierTab;

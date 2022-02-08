@@ -13,8 +13,8 @@
     using Linn.Common.Pdf;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Common.Reporting.Models;
-    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
+    using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
@@ -22,10 +22,9 @@
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
-    using Linn.Purchasing.Persistence.LinnApps.Keys;
+    using Linn.Purchasing.Proxy;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.SearchResources;
-    using Linn.Stores.Proxy;
 
     using Microsoft.Extensions.DependencyInjection;
 
@@ -33,8 +32,7 @@
     {
         public static IServiceCollection AddBuilders(this IServiceCollection services)
         {
-            return services.AddTransient<IBuilder<Thing>, ThingResourceBuilder>()
-                .AddTransient<IBuilder<SigningLimit>, SigningLimitResourceBuilder>()
+            return services.AddTransient<IBuilder<SigningLimit>, SigningLimitResourceBuilder>()
                 .AddTransient<IBuilder<PartSupplier>, PartSupplierResourceBuilder>()
                 .AddTransient<IBuilder<IEnumerable<PartSupplier>>, PartSuppliersResourceBuilder>()
                 .AddTransient<IBuilder<Supplier>, SupplierResourceBuilder>()
@@ -53,17 +51,20 @@
                 .AddTransient<IBuilder<IEnumerable<Tariff>>, TariffsResourceBuilder>()
                 .AddTransient<IBuilder<Manufacturer>, ManufacturerResourceBuilder>()
                 .AddTransient<IBuilder<IEnumerable<Manufacturer>>, ManufacturersResourceBuilder>()
+                .AddTransient<IBuilder<PreferredSupplierChange>, PreferredSupplierChangeResourceBuilder>()
+                .AddTransient<IBuilder<PriceChangeReason>, PriceChangeReasonResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<PriceChangeReason>>, PriceChangeReasonsResourceBuilder>()
+                .AddTransient<IBuilder<PartCategory>, PartCategoryResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<PartCategory>>, PartCategoriesResourceBuilder>();
                 .AddTransient<IBuilder<PurchaseOrder>, PurchaseOrderResourceBuilder>()
-                .AddTransient<IBuilder<IEnumerable<PurchaseOrder>>, PurchaseOrdersResourceBuilder>()
-                .AddTransient<IBuilder<ResultsModel>, ResultsModelResourceBuilder>();
-        }
+                .AddTransient<IBuilder<IEnumerable<PurchaseOrder>>, PurchaseOrdersResourceBuilder>()        }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
         {
             return services
-                .AddTransient<IFacadeResourceService<Thing, int, ThingResource, ThingResource>, ThingFacadeService>()
                 .AddTransient<IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource>, SigningLimitFacadeService>()
                 .AddTransient<IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>, PartSupplierFacadeService>()
+                .AddTransient<IFacadeResourceService<PreferredSupplierChange, PreferredSupplierChangeKey, PreferredSupplierChangeResource, PreferredSupplierChangeKey>, PreferredSupplierChangeService>()
                 .AddTransient<IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource>, SupplierFacadeService>()
                 .AddTransient<IPartService, PartService>()
                 .AddTransient<IFacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource>, OrderMethodService>()
@@ -73,14 +74,15 @@
                 .AddTransient<IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource>, PackagingGroupService>()
                 .AddTransient<IFacadeResourceService<Tariff, int, TariffResource, TariffResource>, TariffService>()
                 .AddTransient<IFacadeResourceService<Manufacturer, string, ManufacturerResource, ManufacturerResource>, ManufacturerFacadeService>()
-                .AddTransient<IPurchaseOrderReportFacadeService, PurchaseOrderReportFacadeService>()
                 .AddTransient<IFacadeResourceFilterService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource>, PurchaseOrderFacadeService>();
-        }
+                .AddTransient<IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource>, PriceChangeReasonService>()
+                .AddTransient<IFacadeResourceService<PartCategory, string, PartCategoryResource, PartCategoryResource>, PartCategoriesService>();        }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            return services.AddTransient<IThingService, ThingService>()
+            return services
                 .AddTransient<IPartSupplierService, PartSupplierService>()
+                .AddTransient<ISupplierService, SupplierService>()
                 .AddTransient<IAmazonSimpleEmailService>(
                     x => new AmazonSimpleEmailServiceClient(x.GetService<AWSOptions>()?.Region))
                 .AddTransient<IEmailService>(x => new EmailService(x.GetService<IAmazonSimpleEmailService>()))
@@ -92,7 +94,9 @@
                 .AddTransient<IAuthorisationService, AuthorisationService>()
                 .AddTransient<IDatabaseService, DatabaseService>()
             //external services
-                .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>();
+                .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
+                .AddTransient<IAutocostPack, AutocostPack>()
+                .AddTransient<ICurrencyPack, CurrencyPack>(); 
         }
     }
 }

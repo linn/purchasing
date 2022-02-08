@@ -7,9 +7,9 @@
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
-    using Linn.Purchasing.Persistence.LinnApps.Keys;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.SearchResources;
 
@@ -28,14 +28,13 @@
             this.domainService = domainService;
         }
 
-        protected override PartSupplier CreateFromResource(PartSupplierResource resource, IEnumerable<string> privileges = null)
-        {
+        protected override PartSupplier CreateFromResource(PartSupplierResource resource, IEnumerable<string> privileges = null)        {
             var candidate = this.BuildEntityFromResourceHelper(resource);
             candidate.PartNumber = resource.PartNumber;
             candidate.SupplierId = resource.SupplierId;
             candidate.CreatedBy = resource.CreatedBy.HasValue 
                                       ? new Employee { Id = (int)resource.CreatedBy } : null;
-            return this.domainService.CreatePartSupplier(candidate, resource.Privileges);
+            return this.domainService.CreatePartSupplier(candidate, privileges);
         }
 
         protected override void SaveToLogTable(
@@ -48,19 +47,17 @@
             throw new NotImplementedException();
         }
 
-        protected override void DeleteOrObsoleteResource(PartSupplier entity, IEnumerable<string> privileges = null)
-        {
+        protected override void DeleteOrObsoleteResource(PartSupplier entity, IEnumerable<string> privileges = null)        {
             throw new NotImplementedException();
         }
 
-        protected override void UpdateFromResource(PartSupplier entity, PartSupplierResource updateResource, IEnumerable<string> privileges = null)
-        {
+        protected override void UpdateFromResource(PartSupplier entity, PartSupplierResource updateResource, IEnumerable<string> privileges = null)        {
             var updated = this.BuildEntityFromResourceHelper(updateResource);
 
             updated.PartNumber = entity.PartNumber;
             updated.SupplierId = entity.SupplierId;
 
-            this.domainService.UpdatePartSupplier(entity, updated, updateResource.Privileges);
+            this.domainService.UpdatePartSupplier(entity, updated, privileges);
         }
 
         protected override Expression<Func<PartSupplier, bool>> SearchExpression(string searchTerm)

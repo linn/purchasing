@@ -16,8 +16,6 @@
         public static readonly LoggerFactory MyLoggerFactory =
             new LoggerFactory(new[] { new Microsoft.Extensions.Logging.Debug.DebugLoggerProvider() });
 
-        public DbSet<Thing> Things { get; set; }
-
         public DbSet<PartSupplier> PartSuppliers { get; set; }
 
         public DbSet<Part> Parts { get; set; }
@@ -56,14 +54,17 @@
 
         public DbSet<TransactionType> TransactionTypes { get; set; }
 
+        public DbSet<PreferredSupplierChange> PreferredSupplierChanges { get; set; }
 
+        public DbSet<PriceChangeReason> PriceChangeReasons { get; set; }
+
+        public DbSet<PartHistoryEntry> PartHistory { get; set; }
+
+        public DbSet<PartCategory> PartCategories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
-            this.BuildThings(builder);
-            this.BuildThingDetails(builder);
-            this.BuildThingCodes(builder);
             base.OnModelCreating(builder);
             this.BuildPartSuppliers(builder);
             this.BuildParts(builder);
@@ -85,6 +86,10 @@
             this.BuildUnitsOfMeasure(builder);
             this.BuildPurchaseLedgers(builder);
             this.BuildTransactionTypes(builder);
+            this.BuildPreferredSupplierChanges(builder);
+            this.BuildPriceChangeReasons(builder);
+            this.BuildPartHistory(builder);
+            this.BuildPartCategories(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -105,34 +110,32 @@
             base.OnConfiguring(optionsBuilder);
         }
 
-        private void BuildThings(ModelBuilder builder)
+        private void BuildPriceChangeReasons(ModelBuilder builder)
         {
-            var entity = builder.Entity<Thing>().ToTable("THINGS");
-            entity.HasKey(a => a.Id);
-            entity.Property(a => a.Id).HasColumnName("ID");
-            entity.Property(a => a.Name).HasColumnName("NAME");
-            entity.Property(a => a.CodeId).HasColumnName("THING_CODE");
-            entity.Property(a => a.RecipientAddress).HasColumnName("RECIPIENT_ADDRESS");
-            entity.Property(a => a.RecipientName).HasColumnName("RECIPIENT_NAME");
-            entity.HasOne(d => d.Code).WithMany(p => p.Things).HasForeignKey(d => d.CodeId);
-            entity.HasMany(a => a.Details).WithOne();
+            var entity = builder.Entity<PriceChangeReason>().ToTable("PRICE_CHANGE_REASONS");
+            entity.HasKey(e => e.ReasonCode);
+            entity.Property(e => e.ReasonCode).HasColumnName("REASON_CODE");
+            entity.Property(e => e.Description).HasColumnName("DESCRIPTION");
         }
 
-        private void BuildThingDetails(ModelBuilder builder)
+        private void BuildPreferredSupplierChanges(ModelBuilder builder)
         {
-            var h = builder.Entity<ThingDetail>().ToTable("THING_DETAILS");
-            h.HasKey(a => new { a.ThingId, a.DetailId });
-            h.Property(a => a.ThingId).HasColumnName("THING_ID");
-            h.Property(a => a.DetailId).HasColumnName("DETAIL_ID");
-            h.Property(a => a.Description).HasColumnName("DESCRIPTION");
-        }
-
-        private void BuildThingCodes(ModelBuilder builder)
-        {
-            var h = builder.Entity<ThingCode>().ToTable("THING_CODES");
-            h.HasKey(a => a.Code);
-            h.Property(a => a.Code).HasColumnName("CODE");
-            h.Property(a => a.CodeName).HasColumnName("CODE_NAME");
+            var entity = builder.Entity<PreferredSupplierChange>().ToTable("PREFERRED_SUPPLIER_CHANGES");
+            entity.HasKey(e => new { e.PartNumber, e.Seq });
+            entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER");
+            entity.Property(e => e.Seq).HasColumnName("SEQ");
+            entity.Property(e => e.DateChanged).HasColumnName("DATE_CHANGED");
+            entity.Property(e => e.Remarks).HasColumnName("REMARKS");
+            entity.Property(e => e.NewPrice).HasColumnName("NEW_PRICE");
+            entity.Property(e => e.OldPrice).HasColumnName("OLD_PRICE");
+            entity.HasOne(e => e.OldSupplier).WithMany().HasForeignKey("OLD_SUPPLIER_ID");
+            entity.HasOne(e => e.NewSupplier).WithMany().HasForeignKey("NEW_SUPPLIER_ID");
+            entity.HasOne(e => e.ChangeReason).WithMany().HasForeignKey("CHANGE_REASON");
+            entity.HasOne(e => e.ChangedBy).WithMany().HasForeignKey("CHANGED_BY");
+            entity.HasOne(e => e.NewCurrency).WithMany().HasForeignKey("NEW_CURRENCY");
+            entity.HasOne(e => e.OldCurrency).WithMany().HasForeignKey("OLD_CURRENCY");
+            entity.Property(e => e.BaseOldPrice).HasColumnName("BASE_OLD_PRICE");
+            entity.Property(e => e.BaseNewPrice).HasColumnName("BASE_NEW_PRICE");
         }
 
         private void BuildPartSuppliers(ModelBuilder builder)
@@ -184,6 +187,42 @@
             entity.Property(e => e.PackWasteStatus).HasColumnName("PACK_WASTE_STATUS").HasMaxLength(1);
             entity.Property(e => e.ContractLeadTimeWeeks).HasColumnName("CONTRACT_LEAD_TIME_WEEKS");
             entity.Property(e => e.DutyPercent).HasColumnName("DUTY_PERCENT");
+            entity.Property(e => e.SupplierRanking).HasColumnName("SUPPLIER_RANKING");
+        }
+
+        private void BuildPartHistory(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PartHistoryEntry>().ToTable("PART_HISTORY");
+            entity.HasKey(e => new { e.PartNumber, e.Seq });
+            entity.Property(e => e.ChangedBy).HasColumnName("CHANGED_BY");
+            entity.Property(e => e.ChangeType).HasColumnName("CHANGE_TYPE").HasMaxLength(20);
+            entity.Property(e => e.DateChanged).HasColumnName("DATE_CHANGED");
+            entity.Property(e => e.NewBaseUnitPrice).HasColumnName("NEW_BASE_UNIT_PRICE");
+            entity.Property(e => e.NewBomType).HasColumnName("NEW_BOM_TYPE").HasMaxLength(1);
+            entity.Property(e => e.NewCurrency).HasColumnName("NEW_CURRENCY").HasMaxLength(4);
+            entity.Property(e => e.NewCurrencyUnitPrice).HasColumnName("NEW_CURRENCY_UNIT_PRICE");
+            entity.Property(e => e.NewLabourPrice).HasColumnName("NEW_LABOUR_PRICE");
+            entity.Property(e => e.NewMaterialPrice).HasColumnName("NEW_MATERIAL_PRICE");
+            entity.Property(e => e.NewPreferredSupplierId).HasColumnName("NEW_PREFERRED_SUPPLIER_ID");
+            entity.Property(e => e.OldBaseUnitPrice).HasColumnName("OLD_BASE_UNIT_PRICE");
+            entity.Property(e => e.OldBomType).HasColumnName("OLD_BOM_TYPE").HasMaxLength(1);
+            entity.Property(e => e.OldCurrency).HasColumnName("OLD_CURRENCY").HasMaxLength(4);
+            entity.Property(e => e.OldCurrencyUnitPrice).HasColumnName("OLD_CURRENCY_UNIT_PRICE");
+            entity.Property(e => e.OldLabourPrice).HasColumnName("OLD_LABOUR_PRICE");
+            entity.Property(e => e.OldMaterialPrice).HasColumnName("OLD_MATERIAL_PRICE");
+            entity.Property(e => e.OldPreferredSupplierId).HasColumnName("OLD_PREFERRED_SUPPLIER_ID");
+            entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
+            entity.Property(e => e.PriceChangeReason).HasColumnName("PRICE_CHANGE_REASON").HasMaxLength(10);
+            entity.Property(e => e.Remarks).HasColumnName("REMARKS").HasMaxLength(200);
+            entity.Property(e => e.Seq).HasColumnName("SEQ");
+        }
+
+        private void BuildPartCategories(ModelBuilder builder)
+        {
+            var q = builder.Entity<PartCategory>().ToTable("PART_CATEGORIES");
+            q.HasKey(e => e.Category);
+            q.Property(e => e.Category).HasColumnName("CATEGORY").HasMaxLength(2);
+            q.Property(e => e.Description).HasColumnName("DESCRIPTION").HasMaxLength(30);
         }
 
         private void BuildParts(ModelBuilder builder)
@@ -194,6 +233,13 @@
             entity.Property(a => a.Description).HasColumnName("DESCRIPTION").HasMaxLength(50);
             entity.Property(a => a.StockControlled).HasColumnName("STOCK_CONTROLLED").HasMaxLength(1);
             entity.Property(a => a.Id).HasColumnName("BRIDGE_ID");
+            entity.Property(a => a.BomType).HasColumnName("BOM_TYPE");
+            entity.Property(a => a.BaseUnitPrice).HasColumnName("BASE_UNIT_PRICE");
+            entity.Property(a => a.MaterialPrice).HasColumnName("MATERIAL_PRICE");
+            entity.Property(a => a.LabourPrice).HasColumnName("LABOUR_PRICE");
+            entity.HasOne(a => a.Currency).WithMany().HasForeignKey("CURRENCY");
+            entity.HasOne(a => a.PreferredSupplier).WithMany().HasForeignKey("PREFERRED_SUPPLIER");
+            entity.Property(a => a.CurrencyUnitPrice).HasColumnName("CURRENCY_UNIT_PRICE");
         }
 
         private void BuildSuppliers(ModelBuilder builder)
@@ -202,7 +248,23 @@
             entity.HasKey(a => a.SupplierId);
             entity.Property(a => a.SupplierId).HasColumnName("SUPPLIER_ID");
             entity.Property(a => a.Name).HasColumnName("SUPPLIER_NAME").HasMaxLength(50);
-            entity.Property(a => a.LedgerStream).HasColumnName("LEDGER_STREAM");
+            entity.Property(a => a.Planner).HasColumnName("PLANNER");
+            entity.Property(a => a.VendorManager).HasColumnName("VENDOR_MANAGER").HasMaxLength(1);
+            entity.Property(a => a.WebAddress).HasColumnName("WEB_ADDRESS").HasMaxLength(300);
+            entity.Property(a => a.PhoneNumber).HasColumnName("PHONE_NUMBER").HasMaxLength(25);
+            entity.Property(a => a.OrderContactMethod).HasColumnName("PREFERRED_CONTACT_METHOD").HasMaxLength(20);
+            entity.Property(a => a.InvoiceContactMethod).HasColumnName("INV_PREFERRED_CONTACT_METHOD").HasMaxLength(20);
+            entity.Property(a => a.LiveOnOracle).HasColumnName("LIVE_ON_ORACLE").HasMaxLength(2);
+            entity.Property(a => a.SuppliersReference).HasColumnName("SUPPLIERS_REFERENCE_FOR_US").HasMaxLength(30);
+            entity.HasOne(a => a.InvoiceGoesTo).WithMany().HasForeignKey("INVOICE_GOES_TO_SUPP");
+            entity.Property(a => a.ExpenseAccount).HasColumnName("EXPENSE_ACCOUNT").HasMaxLength(1);
+            entity.Property(a => a.PaymentDays).HasColumnName("PAYMENT_DAYS");
+            entity.Property(a => a.PaymentMethod).HasColumnName("PAYMENT_METHOD").HasMaxLength(20);
+            entity.Property(a => a.PaysInFc).HasColumnName("PAYS_IN_FC").HasMaxLength(1);
+            entity.HasOne(a => a.Currency).WithMany().HasForeignKey("CURRENCY");
+            entity.Property(a => a.AccountingCompany).HasColumnName("ACCOUNTING_COMPANY").HasMaxLength(10);
+            entity.Property(a => a.ApprovedCarrier).HasColumnName("APPROVED_CARRIER").HasMaxLength(1);
+            entity.Property(a => a.VatNumber).HasColumnName("VAT_NUMBER").HasMaxLength(20);
         }
 
         private void BuildOrderMethods(ModelBuilder builder)
@@ -270,12 +332,10 @@
             entity.Property(o => o.OurQty).HasColumnName("OUR_QTY");
             entity.Property(o => o.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
             entity.Property(o => o.SuppliersDesignation).HasColumnName("SUPPLIERS_DESIGNATION").HasMaxLength(2000);
-
             entity.HasOne(d => d.PurchaseOrder).WithMany(o => o.Details)
                 .HasForeignKey(d => d.OrderNumber);
-
-            entity.HasOne(d => d.PurchaseDelivery).WithOne(o => o.PurchaseOrderDetail)
-                .HasForeignKey<PurchaseOrderDelivery>(o => new { o.OrderNumber, o.OrderLine });
+            entity.HasMany(d => d.PurchaseDeliveries).WithOne(o => o.PurchaseOrderDetail)
+                .HasForeignKey(o => new { o.OrderNumber, o.OrderLine });
             entity.Property(o => o.NetTotal).HasColumnName("NET_TOTAL").HasMaxLength(18);
         }
 
@@ -295,7 +355,7 @@
             entity.Property(o => o.OrderDeliveryQty).HasColumnName("ORDER_DELIVERY_QTY").HasMaxLength(19);
             entity.Property(o => o.QtyNetReceived).HasColumnName("QTY_NET_RECEIVED").HasMaxLength(19);
 
-            entity.HasOne(d => d.PurchaseOrderDetail).WithOne(o => o.PurchaseDelivery);
+            entity.HasOne(d => d.PurchaseOrderDetail).WithMany(o => o.PurchaseDeliveries);
             entity.Property(o => o.NetTotal).HasColumnName("NET_TOTAL").HasMaxLength(18);
         }
 

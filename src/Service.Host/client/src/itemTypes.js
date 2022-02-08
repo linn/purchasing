@@ -23,11 +23,15 @@ export const partSupplier = new ItemType(
     '/purchasing/part-suppliers/record'
 );
 
+export const supplier = new ItemType('supplier', 'SUPPLIER', '/purchasing/suppliers');
+
 export const suppliers = new ItemType('suppliers', 'SUPPLIERS', '/purchasing/suppliers');
 
 export const employees = new ItemType('employees', 'EMPLOYEES', '/inventory/employees');
 
 export const parts = new ItemType('parts', 'PARTS', '/parts');
+
+export const part = new ItemType('part', 'PART', '/parts/manufacturer-data');
 
 export const currencies = new ItemType(
     'currencies',
@@ -65,4 +69,34 @@ export const manufacturers = new ItemType(
     'manufacturers',
     'MANUFACTURERS',
     '/purchasing/manufacturers'
+);
+
+export const preferredSupplierChange = new ItemType(
+    'preferredSupplierChange',
+    'PREFERRED_SUPPLIER_CHANGE',
+    '/purchasing/preferred-supplier-changes'
+);
+
+export const priceChangeReasons = new ItemType(
+    'priceChangeReasons',
+    'PRICE_CHANGE_REASONS',
+    '/purchasing/price-change-reasons'
+);
+
+export const partPriceConversions = new ItemType(
+    'partPriceConversions',
+    'PART_PRICE_CONVERSIONS',
+    '/purchasing/part-suppliers/part-price-conversions'
+);
+
+export const partCategories = new ItemType(
+    'partCategories',
+    'PART_CATEGORIES',
+    '/purchasing/part-categories'
+);
+
+export const accountingCompanies = new ItemType(
+    'accountingCompanies',
+    'ACCOUNTING_COMPANIES',
+    '/inventory/accounting-companies'
 );

@@ -12,15 +12,11 @@ import {
     InputField,
     Loading,
     utilities,
-    CreateButton
+    CreateButton,
+    collectionSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import Divider from '@mui/material/Divider';
 import { Link as RouterLink } from 'react-router-dom';
-import {
-    getSearchItems,
-    getSearchLoading,
-    getApplicationState
-} from '../../selectors/CollectionSelectorHelpers';
 import partSuppliersActions from '../../actions/partSuppliersActions';
 import history from '../../history';
 import config from '../../config';
@@ -38,10 +34,16 @@ function PartSupplierSearch() {
 
     const classes = useStyles();
 
-    const loading = useSelector(state => getSearchLoading(state.partSuppliers));
+    const loading = useSelector(state =>
+        collectionSelectorHelpers.getSearchLoading(state.partSuppliers)
+    );
 
-    const results = useSelector(state => getSearchItems(state.partSuppliers));
-    const applicationState = useSelector(state => getApplicationState(state.partSuppliers));
+    const results = useSelector(state =>
+        collectionSelectorHelpers.getSearchItems(state.partSuppliers)
+    );
+    const applicationState = useSelector(state =>
+        collectionSelectorHelpers.getApplicationState(state.partSuppliers)
+    );
 
     const dispatch = useDispatch();
 
@@ -56,6 +58,13 @@ function PartSupplierSearch() {
 
     const createUrl = utilities.getHref(applicationState, 'create');
 
+    const search = () =>
+        dispatch(
+            partSuppliersActions.searchWithOptions(
+                '',
+                `&partNumber=${options.partNumber}&supplierName=${options.supplierName}`
+            )
+        );
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
@@ -72,6 +81,16 @@ function PartSupplierSearch() {
                         label="Part Number"
                         propertyName="partNumber"
                         onChange={handleOptionsChange}
+                        textFieldProps={{
+                            onKeyDown: data => {
+                                if (
+                                    options.partNumber &&
+                                    (data.keyCode === 13 || data.keyCode === 9)
+                                ) {
+                                    search();
+                                }
+                            }
+                        }}
                     />
                 </Grid>
                 <Grid item xs={5}>
@@ -81,6 +100,16 @@ function PartSupplierSearch() {
                         label="Supplier"
                         propertyName="supplierName"
                         onChange={handleOptionsChange}
+                        textFieldProps={{
+                            onKeyDown: data => {
+                                if (
+                                    options.supplierName &&
+                                    (data.keyCode === 13 || data.keyCode === 9)
+                                ) {
+                                    search();
+                                }
+                            }
+                        }}
                     />
                 </Grid>
                 <Grid item xs={2}>
@@ -88,14 +117,7 @@ function PartSupplierSearch() {
                         variant="outlined"
                         color="primary"
                         className={classes.button}
-                        onClick={() =>
-                            dispatch(
-                                partSuppliersActions.searchWithOptions(
-                                    '',
-                                    `&partNumber=${options.partNumber}&supplierName=${options.supplierName}`
-                                )
-                            )
-                        }
+                        onClick={() => search()}
                     >
                         Go
                     </Button>
@@ -121,7 +143,11 @@ function PartSupplierSearch() {
                                             </Typography>
                                         </Grid>
                                         <Grid item xs={9}>
-                                            <Typography>{item.supplierName}</Typography>
+                                            <Typography>
+                                                {item.supplierRanking === 1
+                                                    ? `${item.supplierName} (PREFERRED)`
+                                                    : item.supplierName}
+                                            </Typography>
                                         </Grid>
                                     </ListItem>
                                 </Link>

@@ -17,8 +17,13 @@
 
     public class WhenGettingReport : ContextBase
     {
-        private readonly int supplierId = 77282;
         private readonly int orderNumber = 9876;
+
+        private readonly string partNumber = "WHO N0z";
+
+        private readonly int supplierId = 77282;
+
+        private readonly string suppliersDesignation = "a sorta description that's quite long total £15millION";
 
         private ResultsModel results;
 
@@ -39,23 +44,30 @@
                                                                            NetTotal = 2m,
                                                                            OrderNumber = this.orderNumber,
                                                                            OurQty = 3,
-                                                                           PartNumber = "WHO N0z",
-                                                                           PurchaseDelivery =
-                                                                               new PurchaseOrderDelivery
+                                                                           PartNumber = this.partNumber,
+                                                                           PurchaseDeliveries =
+                                                                               new List<PurchaseOrderDelivery>
                                                                                    {
-                                                                                       QtyNetReceived = 11,
-                                                                                       DeliverySeq = 12,
-                                                                                       OurDeliveryQty = 13,
-                                                                                       NetTotal = 14,
-                                                                                       DateRequested =
-                                                                                           new DateTime(2021, 11, 1),
-                                                                                       DateAdvised = new DateTime(
-                                                                                           2021,
-                                                                                           12,
-                                                                                           1)
+                                                                                       new PurchaseOrderDelivery
+                                                                                           {
+                                                                                               QtyNetReceived = 11,
+                                                                                               DeliverySeq = 12,
+                                                                                               OurDeliveryQty = 13,
+                                                                                               NetTotal = 2m,
+                                                                                               DateRequested =
+                                                                                                   new DateTime(
+                                                                                                       2021,
+                                                                                                       11,
+                                                                                                       1),
+                                                                                               DateAdvised =
+                                                                                                   new DateTime(
+                                                                                                       2021,
+                                                                                                       12,
+                                                                                                       1)
+                                                                                           }
                                                                                    },
                                                                            SuppliersDesignation =
-                                                                               "a sorta description that's quite long total £15millION"
+                                                                               this.suppliersDesignation
                                                                        }
                                                                },
                                                  DocumentType = "Suhn"
@@ -110,6 +122,17 @@
             this.results.Rows.Count().Should().Be(1);
             var row = this.results.Rows.First();
             row.RowId.Should().Be($"{this.orderNumber}/1");
+            this.results.GetGridTextValue(0, 0).Should().Be($"{this.orderNumber}/1");
+            this.results.GetGridTextValue(0, 1).Should().Be(this.partNumber);
+            this.results.GetGridTextValue(0, 2).Should().Be(this.suppliersDesignation);
+            this.results.GetGridTextValue(0, 3).Should().Be("3");
+            this.results.GetGridTextValue(0, 4).Should().Be("11");
+            this.results.GetGridTextValue(0, 5).Should().Be("77");
+            this.results.GetGridTextValue(0, 6).Should().Be("2");
+            this.results.GetGridTextValue(0, 7).Should().Be("12");
+            this.results.GetGridTextValue(0, 8).Should().Be("13");
+            this.results.GetGridTextValue(0, 9).Should().Be("01-Nov-2021");
+            this.results.GetGridTextValue(0, 10).Should().Be("01-Dec-2021");
         }
     }
 }

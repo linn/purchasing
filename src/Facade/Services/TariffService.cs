@@ -16,8 +16,7 @@
         {
         }
 
-        protected override Tariff CreateFromResource(TariffResource resource, IEnumerable<string> privileges = null)
-        {
+        protected override Tariff CreateFromResource(TariffResource resource, IEnumerable<string> privileges = null)        {
             throw new NotImplementedException();
         }
 
@@ -31,13 +30,11 @@
             throw new NotImplementedException();
         }
 
-        protected override void DeleteOrObsoleteResource(Tariff entity, IEnumerable<string> privileges = null)
-        {
+        protected override void DeleteOrObsoleteResource(Tariff entity, IEnumerable<string> privileges = null)        {
             throw new NotImplementedException();
         }
 
-        protected override void UpdateFromResource(Tariff entity, TariffResource updateResource, IEnumerable<string> privileges = null)
-        {
+        protected override void UpdateFromResource(Tariff entity, TariffResource updateResource, IEnumerable<string> privileges = null)        {
             throw new NotImplementedException();
         }
 

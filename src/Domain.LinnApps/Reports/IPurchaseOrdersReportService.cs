@@ -6,7 +6,7 @@
 
     public interface IPurchaseOrdersReportService
     {
-        ResultsModel GetOrdersByPartReport(DateTime from, DateTime to, string partNumber);
+        ResultsModel GetOrdersByPartReport(DateTime from, DateTime to, string partNumber, bool includeCancelled);
 
         ResultsModel GetOrdersBySupplierReport(
             DateTime from,

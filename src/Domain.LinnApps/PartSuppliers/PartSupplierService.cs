@@ -1,10 +1,12 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.PartSuppliers
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -31,6 +33,15 @@
 
         private readonly IRepository<Supplier, int> supplierRepository;
 
+        private readonly IRepository<PartSupplier, PartSupplierKey> partSupplierRepository;
+
+        private readonly IRepository<PartHistoryEntry, PartHistoryEntryKey> partHistory;
+
+        private readonly IRepository<PriceChangeReason, string> changeReasonsRepository;
+
+        private readonly IRepository<PreferredSupplierChange, PreferredSupplierChangeKey>
+            preferredSupplierChangeRepository;
+
         public PartSupplierService(
             IAuthorisationService authService,
             IRepository<Currency, string> currencyRepository,
@@ -41,7 +52,11 @@
             IRepository<Employee, int> employeeRepository,
             IRepository<Manufacturer, string> manufacturerRepository,
             IQueryRepository<Part> partRepository,
-            IRepository<Supplier, int> supplierRepository)
+            IRepository<Supplier, int> supplierRepository,
+            IRepository<PartSupplier, PartSupplierKey> partSupplierRepository,
+            IRepository<PartHistoryEntry, PartHistoryEntryKey> partHistory,
+            IRepository<PriceChangeReason, string> changeReasonsRepository,
+            IRepository<PreferredSupplierChange, PreferredSupplierChangeKey> preferredSupplierChangeRepository)
         {
             this.authService = authService;
             this.currencyRepository = currencyRepository;
@@ -53,14 +68,25 @@
             this.manufacturerRepository = manufacturerRepository;
             this.partRepository = partRepository;
             this.supplierRepository = supplierRepository;
+            this.partSupplierRepository = partSupplierRepository;
+            this.partHistory = partHistory;
+            this.changeReasonsRepository = changeReasonsRepository;
+            this.preferredSupplierChangeRepository = preferredSupplierChangeRepository;
         }
 
-        public void UpdatePartSupplier(PartSupplier current, PartSupplier updated, IEnumerable<string> privileges)
+        public void UpdatePartSupplier(
+            PartSupplier current, 
+            PartSupplier updated, 
+            IEnumerable<string> privileges)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
             {
-                throw new UnauthorisedActionException("You are not authorised to update Part Supplier records");
+                throw new UnauthorisedActionException(
+                    "You are not authorised to update Part Supplier records");
             }
+
+            updated.CreatedBy = current.CreatedBy;
+            ValidateFields(updated);
 
             if (current.OrderMethod.Name != updated.OrderMethod.Name)
             {
@@ -74,30 +100,38 @@
 
             if (current.DeliveryAddress?.Id != updated.DeliveryAddress?.Id)
             {
-                current.DeliveryAddress = updated.DeliveryAddress == null ? null : this.addressRepository.FindById(updated.DeliveryAddress.Id);
+                current.DeliveryAddress = updated.DeliveryAddress == null 
+                                              ? null 
+                                              : this.addressRepository.FindById(updated.DeliveryAddress.Id);
             }
 
             if (current.Tariff?.Id != updated.Tariff?.Id)
             {
-                current.Tariff = updated.Tariff == null ? null : this.tariffRepository.FindById(updated.Tariff.Id);
+                current.Tariff = updated.Tariff == null 
+                                     ? null 
+                                     : this.tariffRepository.FindById(updated.Tariff.Id);
             }
 
             if (current.PackagingGroup?.Id != updated.PackagingGroup?.Id)
             {
                 current.PackagingGroup = updated.PackagingGroup == null 
-                                             ? null : this.packagingGroupRepository.FindById(updated.PackagingGroup.Id);
+                                             ? null 
+                                             : this.packagingGroupRepository
+                                                 .FindById(updated.PackagingGroup.Id);
             }
 
             if (current.MadeInvalidBy?.Id != updated.MadeInvalidBy?.Id)
             {
                 current.MadeInvalidBy = updated.MadeInvalidBy == null
-                                             ? null : this.employeeRepository.FindById(updated.MadeInvalidBy.Id);
+                                             ? null 
+                                             : this.employeeRepository.FindById(updated.MadeInvalidBy.Id);
             }
 
             if (current.Manufacturer?.Code != updated.Manufacturer?.Code)
             {
                 current.Manufacturer = updated.Manufacturer == null
-                                            ? null : this.manufacturerRepository.FindById(updated.Manufacturer.Code);
+                                            ? null 
+                                            : this.manufacturerRepository.FindById(updated.Manufacturer.Code);
             }
 
             current.DateInvalid = updated.DateInvalid;
@@ -126,25 +160,23 @@
 
         public PartSupplier CreatePartSupplier(PartSupplier candidate, IEnumerable<string> privileges)
         {
-            if (!this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PartSupplierCreate, privileges))
             {
-                throw new UnauthorisedActionException("You are not authorised to update Part Supplier records");
+                throw new UnauthorisedActionException(
+                    "You are not authorised to update Part Supplier records");
             }
 
-            var errors = this.ValidateFields(candidate);
-
-            if (errors.Any())
-            {
-                var msg = errors
-                        .Aggregate(
-                            "The inputs for the following fields are empty/invalid: ", 
-                            (current, error) => current + $"{error}, ");
-
-                throw new PartSupplierException(msg);
-            }
+            ValidateFields(candidate);
 
             candidate.CreatedBy = this.employeeRepository.FindById(candidate.CreatedBy.Id);
-            candidate.Part = this.partRepository.FindBy(x => x.PartNumber == candidate.PartNumber);
+            var part = this.partRepository.FindBy(x => x.PartNumber == candidate.PartNumber);
+            candidate.Part = part;
+            
+            if (string.IsNullOrEmpty(candidate.SupplierDesignation))
+            {
+                candidate.SupplierDesignation = part.Description;
+            }
+
             candidate.Supplier = this.supplierRepository.FindById(candidate.SupplierId);
 
             if (!string.IsNullOrEmpty(candidate.OrderMethod?.Name))
@@ -169,12 +201,14 @@
 
             if (candidate.PackagingGroup?.Id != null)
             {
-                candidate.PackagingGroup = this.packagingGroupRepository.FindById(candidate.PackagingGroup.Id);
+                candidate.PackagingGroup = this.packagingGroupRepository
+                    .FindById(candidate.PackagingGroup.Id);
             }
 
             if (candidate.MadeInvalidBy?.Id != null)
             {
-                candidate.MadeInvalidBy = this.employeeRepository.FindById(candidate.MadeInvalidBy.Id);
+                candidate.MadeInvalidBy = this.employeeRepository
+                    .FindById(candidate.MadeInvalidBy.Id);
             }
 
             if (!string.IsNullOrEmpty(candidate.Manufacturer?.Code))
@@ -185,7 +219,144 @@
             return candidate;
         }
 
-        private List<string> ValidateFields(PartSupplier candidate)
+        public PreferredSupplierChange CreatePreferredSupplierChange(PreferredSupplierChange candidate, IEnumerable<string> privileges)
+        {
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
+            {
+                throw new UnauthorisedActionException(
+                    "You are not authorised to update Part Supplier records");
+            }
+
+            var part = this.partRepository.FindBy(x => x.PartNumber == candidate.PartNumber.ToUpper());
+
+            var prevPart = new Part
+                               {
+                                   MaterialPrice = part.MaterialPrice, 
+                                   PreferredSupplier = part.PreferredSupplier,
+                                   Currency = part.Currency,
+                                   LabourPrice = part.LabourPrice,
+                                   BaseUnitPrice = part.BaseUnitPrice,
+                                   BomType = part.BomType,
+                                   CurrencyUnitPrice = part.CurrencyUnitPrice
+                               };
+            
+            if (part.BomType.Equals("P") || part.BomType.Equals("S"))
+            {
+                throw new PartSupplierException("You cannot set a preferred supplier for phantoms");
+            }
+
+            if (part.BomType == "C" && candidate.NewSupplier.SupplierId == 4415)
+            {
+                throw new PartSupplierException("Linn Cannot Supply Components");
+            }
+
+            if (candidate.OldSupplier != null)
+            {
+                if (candidate.NewSupplier.SupplierId == candidate.OldSupplier.SupplierId)
+                {
+                    throw new PartSupplierException(
+                        "Selected  supplier is already the preferred supplier for this part.");
+                }
+
+                var oldPartSupplier = this.partSupplierRepository.FindById(
+                    new PartSupplierKey { PartNumber = part.PartNumber, SupplierId = candidate.OldSupplier.SupplierId });
+                oldPartSupplier.SupplierRanking = 2;
+            }
+            
+            var newPartSupplier = this.partSupplierRepository.FindById(
+                new PartSupplierKey { PartNumber = part.PartNumber, SupplierId = candidate.NewSupplier.SupplierId });
+
+            if (!newPartSupplier.Supplier.Planner.HasValue
+                || string.IsNullOrEmpty(newPartSupplier.Supplier.VendorManager))
+            {
+                throw new PartSupplierException(
+                    "Selected supplier is missing planner or vendor manager");
+            }
+
+            newPartSupplier.SupplierRanking = 1;
+
+
+            candidate.OldSupplier = prevPart.PreferredSupplier;
+            candidate.OldPrice = prevPart.CurrencyUnitPrice;
+            candidate.BaseOldPrice = prevPart.BaseUnitPrice;
+            candidate.OldCurrency = prevPart.Currency;
+
+            candidate.NewSupplier = this.supplierRepository.FindById(candidate.NewSupplier.SupplierId);
+            candidate.ChangedBy = this.employeeRepository.FindById(candidate.ChangedBy.Id);
+            candidate.ChangeReason = this.changeReasonsRepository.FindById(candidate.ChangeReason.ReasonCode);
+            candidate.DateChanged = DateTime.Now;
+
+            var entriesForThisPart =
+                this.preferredSupplierChangeRepository.FilterBy(x => x.PartNumber == candidate.PartNumber);
+
+            candidate.Seq = entriesForThisPart.Any() ? entriesForThisPart.Max(x => x.Seq) + 1 : 1;
+
+            decimal? labourPrice;
+
+            // update Part
+            if (part.BomType.Equals("A") && newPartSupplier.SupplierId != 4415)
+            {
+                labourPrice = part.LabourPrice ?? 0m;
+            }
+            else
+            {
+                labourPrice = 0m;
+            }
+
+            part.PreferredSupplier = newPartSupplier.Supplier;
+            
+            // if this is the first time a preferred supplier is chosen for this part
+            if (prevPart.BaseUnitPrice.GetValueOrDefault() == 0)
+            {
+                var newCurrency = this.currencyRepository.FindById(candidate.NewCurrency.Code);
+
+                // set prices
+                part.MaterialPrice = candidate.BaseNewPrice;
+                part.Currency = newCurrency;
+                part.CurrencyUnitPrice = candidate.NewPrice;
+                part.BaseUnitPrice = candidate.BaseNewPrice;
+                part.LabourPrice = labourPrice;
+                candidate.NewCurrency = newCurrency;
+            }
+            else
+            {
+                // otherwise the prices don't change
+                candidate.NewPrice = prevPart.CurrencyUnitPrice;
+                candidate.BaseNewPrice = prevPart.BaseUnitPrice;
+                candidate.NewCurrency = prevPart.Currency;
+            }
+
+            // update Part History
+            var history = this.partHistory.FilterBy(x => x.PartNumber == candidate.PartNumber);
+            var maxSeqForPart = history.Any() ? history.Max(x => x.Seq) : 0;
+            this.partHistory.Add(new PartHistoryEntry
+                                     {
+                                         PartNumber = candidate.PartNumber,
+                                         Seq = maxSeqForPart + 1,
+                                         OldMaterialPrice = prevPart.MaterialPrice,
+                                         OldLabourPrice = prevPart.LabourPrice,
+                                         NewMaterialPrice = part.MaterialPrice,
+                                         NewLabourPrice = labourPrice,
+                                         OldPreferredSupplierId = prevPart.PreferredSupplier?.SupplierId,
+                                         NewPreferredSupplierId = candidate.NewSupplier.SupplierId,
+                                         OldBomType = prevPart.BomType,
+                                         NewBomType = part.BomType,
+                                         ChangedBy = candidate.ChangedBy.Id,
+                                         ChangeType = "PREFSUP",
+                                         Remarks = candidate.Remarks,
+                                         PriceChangeReason = candidate.ChangeReason?.ReasonCode,
+                                         OldCurrency = prevPart.Currency?.Code,
+                                         NewCurrency = part.Currency.Code,
+                                         OldCurrencyUnitPrice = prevPart.CurrencyUnitPrice,
+                                         NewCurrencyUnitPrice = part.CurrencyUnitPrice,
+                                         OldBaseUnitPrice = prevPart.BaseUnitPrice,
+                                         NewBaseUnitPrice = part.BaseUnitPrice
+                                     });
+
+            return candidate;
+        }
+
+        private static void ValidateFields(PartSupplier candidate)
         {
             var errors = new List<string>();
 
@@ -219,7 +390,40 @@
                 errors.Add("Rohs Category");
             }
 
-            return errors;
+            if (candidate.OrderMethod == null)
+            {
+                errors.Add("Order Method");
+            }
+
+            if (candidate.CurrencyUnitPrice.GetValueOrDefault() == 0)
+            {
+                errors.Add("Currency Unit Price");
+            }
+
+            if (candidate.MinimumDeliveryQty.GetValueOrDefault() == 0)
+            {
+                errors.Add("Minimum Delivery Quantity");
+            }
+
+            if (!candidate.DamagesPercent.HasValue)
+            {
+                errors.Add("Damages Percent");
+            }
+
+            if (candidate.Currency == null)
+            {
+                errors.Add("Currency");
+            }
+
+            if (errors.Any())
+            {
+                var msg = errors
+                    .Aggregate(
+                        "The inputs for the following fields are empty/invalid: ",
+                        (current, error) => current + $"{error}, ");
+
+                throw new PartSupplierException(msg);
+            }
         }
     }
 }

@@ -34,7 +34,8 @@
                 SupplierDesignation = string.Empty,
                 OrderMethod = this.newOrderMethod,
                 DeliveryAddress = this.newAddress,
-                Currency = this.newCurrency
+                Currency = this.newCurrency,
+                CreatedBy = new Employee { Id = 33087 }
             };
             this.updated = new PartSupplier
             {
@@ -64,7 +65,8 @@
                 RohsCategory = "COMPLIANT",
                 DateRohsCompliant = DateTime.UnixEpoch,
                 RohsCompliant = "Y",
-                RohsComments = "COMMENT"
+                RohsComments = "COMMENT",
+                CreatedBy = new Employee { Id = 33087 }
             };
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);

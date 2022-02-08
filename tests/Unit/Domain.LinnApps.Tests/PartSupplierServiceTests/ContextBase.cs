@@ -2,6 +2,7 @@
 {
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
@@ -35,6 +36,17 @@
 
         protected IRepository<Supplier, int> SupplierRepository { get; private set; }
 
+        protected IRepository<PartSupplier, PartSupplierKey> PartSupplierRepository { get; private set; }
+
+        protected IRepository<PartHistoryEntry, PartHistoryEntryKey> PartHistory { get; private set; }
+
+        protected IRepository<PriceChangeReason, string> ChangeReasonsRepository { get; private set; }
+
+        protected IRepository<PreferredSupplierChange, PreferredSupplierChangeKey> PreferredSupplierChangeRepository
+        {
+            get; private set;
+        }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -48,7 +60,11 @@
             this.ManufacturerRepository = Substitute.For<IRepository<Manufacturer, string>>();
             this.PartRepository = Substitute.For<IQueryRepository<Part>>();
             this.SupplierRepository = Substitute.For<IRepository<Supplier, int>>();
-
+            this.PartSupplierRepository = Substitute.For<IRepository<PartSupplier, PartSupplierKey>>();
+            this.PartHistory = Substitute.For<IRepository<PartHistoryEntry, PartHistoryEntryKey>>();
+            this.ChangeReasonsRepository = Substitute.For<IRepository<PriceChangeReason, string>>();
+            this.PreferredSupplierChangeRepository =
+                Substitute.For<IRepository<PreferredSupplierChange, PreferredSupplierChangeKey>>();
             this.Sut = new PartSupplierService(
                 this.MockAuthService,
                 this.CurrencyRepository,
@@ -59,7 +75,11 @@
                 this.EmployeeRepository,
                 this.ManufacturerRepository,
                 this.PartRepository,
-                this.SupplierRepository);
+                this.SupplierRepository,
+                this.PartSupplierRepository,
+                this.PartHistory,
+                this.ChangeReasonsRepository,
+                this.PreferredSupplierChangeRepository);
         }
     }
 }

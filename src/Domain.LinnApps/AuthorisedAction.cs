@@ -8,6 +8,10 @@
 
         public const string SigningLimitAdmin = "purchasing.signing-limits.admin";
 
+        public const string SupplierCreate = "purchasing.supplier.create";
+
+        public const string SupplierUpdate = "purchasing.supplier.update";
+
         public const string PurchaseOrderUpdate = "purchase-order.update";
-    }
+`    }
 }

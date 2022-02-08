@@ -6,8 +6,8 @@
     using FluentAssertions;
 
     using Linn.Common.Facade;
+    using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Integration.Tests.Extensions;
-    using Linn.Purchasing.Persistence.LinnApps.Keys;
     using Linn.Purchasing.Resources;
 
     using NSubstitute;

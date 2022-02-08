@@ -6,25 +6,29 @@ import {
     DatePicker,
     Dropdown,
     Title,
-    Typeahead
+    Typeahead,
+    collectionSelectorHelpers,
+    reportSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
-import { getSearchItems, getSearchLoading } from '../../selectors/CollectionSelectorHelpers';
-import { getReportOptions } from '../../selectors/ReportSelectorHelpers';
 import history from '../../history';
 import config from '../../config';
 import suppliersActions from '../../actions/suppliersActions';
 
 function OrdersBySupplierReportOptions() {
-    const suppliersSearchResults = useSelector(state => getSearchItems(state.suppliers)).map?.(
-        c => ({
-            id: c.id,
-            name: c.name.toString(),
-            description: c.name
-        })
+    const suppliersSearchResults = useSelector(state =>
+        collectionSelectorHelpers.getSearchItems(state.suppliers)
+    )?.map(c => ({
+        id: c.id,
+        name: c.name.toString(),
+        description: c.name
+    }));
+    const suppliersSearchLoading = useSelector(state =>
+        collectionSelectorHelpers.getSearchLoading(state.suppliers)
     );
-    const suppliersSearchLoading = useSelector(state => getSearchLoading(state.suppliers));
-    const prevOptions = useSelector(state => getReportOptions(state.suppliers));
+    const prevOptions = useSelector(state =>
+        reportSelectorHelpers.getReportOptions(state.ordersBySupplier)
+    );
 
     const dispatch = useDispatch();
 
@@ -38,12 +42,22 @@ function OrdersBySupplierReportOptions() {
         prevOptions?.toDate ? new Date(prevOptions?.toDate) : new Date()
     );
 
-    const [supplier, setSupplier] = useState({ id: '', name: 'click to set supplier' });
-    const [outstandingOnly, setOutstandingOnly] = useState('N');
-    const [returns, setReturns] = useState('N');
-    const [stockControlled, setStockControlled] = useState('A');
-    const [credits, setCredits] = useState('N');
-    const [cancelled, setCancelled] = useState('N');
+    const [supplier, setSupplier] = useState(
+        prevOptions?.id
+            ? { id: prevOptions.id, name: '' }
+            : { id: '', name: 'click to set supplier' }
+    );
+    const [outstandingOnly, setOutstandingOnly] = useState(
+        prevOptions?.outstanding ? prevOptions.outstanding : 'N'
+    );
+    const [returns, setReturns] = useState(prevOptions?.returns ? prevOptions.returns : 'N');
+    const [stockControlled, setStockControlled] = useState(
+        prevOptions?.stockControlled ? prevOptions.stockControlled : 'A'
+    );
+    const [credits, setCredits] = useState(prevOptions?.credits ? prevOptions.credits : 'N');
+    const [cancelled, setCancelled] = useState(
+        prevOptions?.cancelled ? prevOptions.cancelled : 'N'
+    );
 
     const handleSupplierChange = selectedsupplier => {
         setSupplier(selectedsupplier);
@@ -67,7 +81,7 @@ function OrdersBySupplierReportOptions() {
         <Page history={history} homeUrl={config.appRoot} width="s">
             <Title text="Orders By Supplier" />
             <Grid container spacing={3} justifyContent="center">
-                <Grid item xs={12}>
+                <Grid item xs={12} data-testid="supplierSearch">
                     <Typeahead
                         label="Supplier"
                         title="Search for a supplier"

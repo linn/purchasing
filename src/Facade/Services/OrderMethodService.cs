@@ -16,8 +16,7 @@
         {
         }
 
-        protected override OrderMethod CreateFromResource(OrderMethodResource resource, IEnumerable<string> privileges = null)
-        {
+        protected override OrderMethod CreateFromResource(OrderMethodResource resource, IEnumerable<string> privileges = null)        {
             throw new NotImplementedException();
         }
 
@@ -31,13 +30,11 @@
             throw new NotImplementedException();
         }
 
-        protected override void DeleteOrObsoleteResource(OrderMethod entity, IEnumerable<string> privileges = null)
-        {
+        protected override void DeleteOrObsoleteResource(OrderMethod entity, IEnumerable<string> privileges = null)        {
             throw new NotImplementedException();
         }
 
-        protected override void UpdateFromResource(OrderMethod entity, OrderMethodResource updateResource, IEnumerable<string> privileges = null)
-        {
+        protected override void UpdateFromResource(OrderMethod entity, OrderMethodResource updateResource, IEnumerable<string> privileges = null)        {
             throw new NotImplementedException();
         }
 
