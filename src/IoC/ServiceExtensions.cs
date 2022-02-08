@@ -74,7 +74,7 @@
                 .AddTransient<IFacadeResourceService<Tariff, int, TariffResource, TariffResource>, TariffService>()
                 .AddTransient<IFacadeResourceService<Manufacturer, string, ManufacturerResource, ManufacturerResource>, ManufacturerFacadeService>()
                 .AddTransient<IPurchaseOrderReportFacadeService, PurchaseOrderReportFacadeService>()
-                .AddTransient<IFacadeResourceFilterService<PurchaseOrder, PurchaseOrderKey, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource>, PurchaseOrderFacadeService>();
+                .AddTransient<IFacadeResourceFilterService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource>, PurchaseOrderFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)

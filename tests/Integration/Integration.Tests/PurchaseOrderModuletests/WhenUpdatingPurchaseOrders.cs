@@ -1,44 +1,46 @@
-﻿namespace Linn.Purchasing.Integration.Tests.SupplierModuleTests
+﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrderModuleTests
 {
     using System.Collections.Generic;
     using System.Net;
 
     using FluentAssertions;
+    using FluentAssertions.Extensions;
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Integration.Tests.Extensions;
-    using Linn.Purchasing.Persistence.LinnApps.Keys;
     using Linn.Purchasing.Resources;
 
     using NSubstitute;
 
     using NUnit.Framework;
 
-    public class WhenUpdatingPartSupplier : ContextBase
+    public class WhenUpdatingPurchaseOrders : ContextBase
     {
-        private PartSupplierResource resource;
+        private PurchaseOrderResource resource;
 
         [SetUp]
         public void SetUp()
         {
 
-            this.resource = new PartSupplierResource
-                                {
-                                    PartNumber = "PART",
-                                    SupplierId = 100
-                                };
+            this.resource = new PurchaseOrderResource
+            {
+                OrderNumber = 600179,
+                Overbook = "Y",
+                OverbookQty = 1
+            };
 
-            this.PartSupplierFacadeService.Update(Arg.Any<PartSupplierKey>(), Arg.Any<PartSupplierResource>())
+            this.PurchaseOrderFacadeService.Update(Arg.Any<int>(), Arg.Any<PurchaseOrderResource>())
                 .ReturnsForAnyArgs(
-                    new SuccessResult<PartSupplierResource>(
-                        new PartSupplierResource
+                    new SuccessResult<PurchaseOrderResource>(
+                        new PurchaseOrderResource
                         {
-                            PartNumber = "PART",
-                            SupplierId = 100
+                            OrderNumber = 600179,
+                            Overbook = "Y",
+                            OverbookQty = 1,
                         }));
 
             this.Response = this.Client.Put(
-                $"/purchasing/part-suppliers/record?partId={1}&supplierId={100}",
+                $"/purchasing/purchase-orders/overbook?orderNumber={600179}",
                 this.resource,
                 with =>
                 {
@@ -55,8 +57,8 @@
         [Test]
         public void ShouldCallUpdate()
         {
-            this.PartSupplierFacadeService.Received()
-                .Update(Arg.Any<PartSupplierKey>(), Arg.Any<PartSupplierResource>(), Arg.Any<IEnumerable<string>>());
+            this.PurchaseOrderFacadeService.Received()
+                .Update(Arg.Any<int>(), Arg.Any<PurchaseOrderResource>(), Arg.Any<IEnumerable<string>>());
         }
 
         [Test]
@@ -71,7 +73,7 @@
         [Test]
         public void ShouldReturnJsonBody()
         {
-            var resultResource = this.Response.DeserializeBody<PartSupplierResource>();
+            var resultResource = this.Response.DeserializeBody<PurchaseOrderResource>();
             resultResource.Should().NotBeNull();
         }
     }

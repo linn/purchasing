@@ -16,7 +16,7 @@
 
     using NUnit.Framework;
 
-    public class WhenSearchingOverbooks : ContextBase
+    public class WhenSearchingPurchaseOrders : ContextBase
     {
         private int orderNumberSearch;
 
@@ -29,7 +29,7 @@
 
             this.dataResult = new List<PurchaseOrderResource>
                                   {
-                                      new PurchaseOrderResource()
+                                      new PurchaseOrderResource
                                           {
                                               OrderNumber = 600179,
                                               Cancelled = string.Empty,
@@ -74,7 +74,6 @@
             var resources = this.Response.DeserializeBody<IEnumerable<PurchaseOrderResource>>()?.ToArray();
             resources.Should().NotBeNull();
             resources.Should().HaveCount(1);
-
             resources?.First().OrderNumber.Should().Be(600179);
         }
     }

@@ -6,19 +6,22 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
+    using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
-    using Linn.Purchasing.Persistence.LinnApps.Keys;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.SearchResources;
 
     public class PurchaseOrderFacadeService
-        : FacadeFilterResourceService<PurchaseOrder, PurchaseOrderKey, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource>
+        : FacadeFilterResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource>
     {
         private readonly IPurchaseOrderService domainService;
 
+        private readonly IBuilder<ResultsModel> resultsModelResourceBuilder;
+
+
         public PurchaseOrderFacadeService(
-            IRepository<PurchaseOrder, PurchaseOrderKey> repository,
+            IRepository<PurchaseOrder, int> repository,
             ITransactionManager transactionManager,
             IBuilder<PurchaseOrder> resourceBuilder,
             IPurchaseOrderService domainService)
@@ -49,17 +52,17 @@
             updated.Overbook = entity.Overbook;
             updated.OverbookQty = entity.OverbookQty;
 
-            this.domainService.UpdatePurchaseOrder(entity, updated, privileges);
+            this.domainService.UpdatePurchaseOrder(entity, updated, updateResource.Privileges);
         }
 
         protected override Expression<Func<PurchaseOrder, bool>> SearchExpression(string searchTerm)
         {
-            throw new NotImplementedException();
+            return x => x.OrderNumber.ToString().Contains(searchTerm) || x.OrderNumber.ToString().Equals(searchTerm);
         }
 
         protected override Expression<Func<PurchaseOrder, bool>> FilterExpression(PurchaseOrderSearchResource searchResource)
         {
-            return a => a.OrderNumber == searchResource.OrderNumberSearchTerm;
+            throw new NotImplementedException();
         }
 
         private PurchaseOrder BuildEntityFromResourceHelper(PurchaseOrderResource resource)

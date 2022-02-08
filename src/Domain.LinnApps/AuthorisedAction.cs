@@ -7,5 +7,7 @@
         public const string PartSupplierUpdate = "part-supplier.update";
 
         public const string SigningLimitAdmin = "purchasing.signing-limits.admin";
+
+        public const string PurchaseOrderUpdate = "purchase-order.update";
     }
 }

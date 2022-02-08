@@ -23,20 +23,25 @@
 
         public PurchaseOrderResource Build(PurchaseOrder entity, IEnumerable<string> claims)
         {
-            var detail = entity.Details.First(x => x.Line == 1);
+            if (entity == null)
             {
                 return new PurchaseOrderResource
                            {
-                                OrderNumber = entity.OrderNumber,
-                                Cancelled = entity.Cancelled,
-                                DocumentType = entity.DocumentType,
-                                DateOfOrder = entity.OrderDate,
-                                Overbook = entity.Overbook,
-                                OverbookQty = entity.OverbookQty,
-                                SupplierId = entity.SupplierId,
-                                Links = this.BuildLinks(null, claims).ToArray()
+                               Links = this.BuildLinks(null, claims).ToArray()
                            };
             }
+
+            return new PurchaseOrderResource
+                       {
+                           OrderNumber = entity.OrderNumber,
+                           Cancelled = entity.Cancelled,
+                           DocumentType = entity.DocumentType,
+                           DateOfOrder = entity.OrderDate,
+                           Overbook = entity.Overbook,
+                           OverbookQty = entity.OverbookQty,
+                           SupplierId = entity.SupplierId,
+                           Links = this.BuildLinks(entity, claims).ToArray()
+                       };
         }
 
         public string GetLocation(PurchaseOrder p)
@@ -54,7 +59,7 @@
             {
                 yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
 
-                if (this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
+                if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
                 {
                     yield return new LinkResource { Rel = "edit", Href = this.GetLocation(model) };
                 }

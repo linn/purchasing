@@ -3,6 +3,7 @@
     using System.Threading.Tasks;
 
     using Carter;
+    using Carter.ModelBinding;
     using Carter.Request;
     using Carter.Response;
 
@@ -36,8 +37,8 @@
         private readonly IFacadeResourceService<Tariff, int, TariffResource, TariffResource> tariffService;
 
         private readonly
-            IFacadeResourceFilterService<PurchaseOrder, PurchaseOrderKey, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource>
-            purchaseOrderService;
+            IFacadeResourceFilterService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource>
+            purchaseOrderFacadeService;
 
         public PurchaseOrderModule(
             IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource> currencyService,
@@ -46,7 +47,7 @@
             IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource> unitsOfMeasureService,
             IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource> packagingGroupService,
             IFacadeResourceService<Tariff, int, TariffResource, TariffResource> tariffService,
-            IFacadeResourceFilterService<PurchaseOrder, PurchaseOrderKey, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource> purchaseOrderService)
+            IFacadeResourceFilterService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource> purchaseOrderFacadeService)
         {
             this.currencyService = currencyService;
             this.orderMethodService = orderMethodService;
@@ -54,15 +55,15 @@
             this.unitsOfMeasureService = unitsOfMeasureService;
             this.packagingGroupService = packagingGroupService;
             this.tariffService = tariffService;
-            this.purchaseOrderService = purchaseOrderService;
+            this.purchaseOrderFacadeService = purchaseOrderFacadeService;
             this.Get("/purchasing/purchase-orders/currencies", this.GetCurrencies);
             this.Get("/purchasing/purchase-orders/methods", this.GetOrderMethods);
             this.Get("/purchasing/purchase-orders/delivery-addresses", this.GetDeliveryAddresses);
             this.Get("/purchasing/purchase-orders/units-of-measure", this.GetUnitsOfMeasure);
             this.Get("/purchasing/purchase-orders/packaging-groups", this.GetPackagingGroups);
             this.Get("/purchasing/purchase-orders/tariffs", this.SearchTariffs);
-            this.Get("/purchasing/purchase-orders/overbook", this.SearchOverbookItems);
-
+            this.Get("/purchasing/purchase-orders/overbook", this.SearchPurchaseOrders);
+            this.Put("/purchasing/purchase-orders/overbook", this.UpdatePurchaseOrder);
         }
 
         private async Task GetCurrencies(HttpRequest req, HttpResponse res)
@@ -108,15 +109,28 @@
             await res.Negotiate(result);
         }
 
-        private async Task SearchOverbookItems(HttpRequest req, HttpResponse res)
+        private async Task SearchPurchaseOrders(HttpRequest req, HttpResponse res)
         {
             var orderNumberSearch = req.Query.As<int>("orderNumber");
-            var result = this.purchaseOrderService.FilterBy(
-                new PurchaseOrderSearchResource()
+            var result = this.purchaseOrderFacadeService.FilterBy(
+                new PurchaseOrderSearchResource
                     {
                         OrderNumberSearchTerm = orderNumberSearch
                     },
                 req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task UpdatePurchaseOrder(HttpRequest req, HttpResponse res)
+        {
+            var resource = await req.Bind<PurchaseOrderResource>();
+            resource.Privileges = req.HttpContext.GetPrivileges();
+           
+            var result = this.purchaseOrderFacadeService.Update(
+                resource.OrderNumber,
+                resource,
+                resource.Privileges);
 
             await res.Negotiate(result);
         }

@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.PartSuppliers
+﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
 {
     using System.Collections.Generic;
 
@@ -17,9 +17,9 @@
 
         public void UpdatePurchaseOrder(PurchaseOrder current, PurchaseOrder updated, IEnumerable<string> privileges)
         {
-            if (!this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
             {
-                throw new UnauthorisedActionException("You are not authorised to Overbook records");
+                throw new UnauthorisedActionException("You are not authorised to allow overbooks on a purchase order");
             }
 
             current.Overbook = updated.Overbook;

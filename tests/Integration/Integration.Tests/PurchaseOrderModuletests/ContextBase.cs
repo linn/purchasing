@@ -30,7 +30,7 @@
 
         protected ITransactionManager TransactionManager { get; set; }
 
-        protected IFacadeResourceFilterService<PurchaseOrder, PurchaseOrderKey, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource>
+        protected IFacadeResourceFilterService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource>
            PurchaseOrderFacadeService
         {
             get; private set;
@@ -73,7 +73,7 @@
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.PurchaseOrderFacadeService =
                 Substitute
-                    .For<IFacadeResourceFilterService<PurchaseOrder, PurchaseOrderKey, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource>>();
+                    .For<IFacadeResourceFilterService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource>>();
             this.CurrencyService = Substitute.For<IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource>>();
             this.OrderMethodService = Substitute
                 .For<IFacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource>>();
