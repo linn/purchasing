@@ -65,6 +65,12 @@
         }
 
         [Test]
+        public void ShouldCommit()
+        {
+            this.TransactionManager.Received().Commit();
+        }
+
+        [Test]
         public void ShouldReturnJsonResult()
         {
             var resultResource = this.Response.DeserializeBody<SupplierResource>();
