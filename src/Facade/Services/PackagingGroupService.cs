@@ -17,7 +17,8 @@
         {
         }
 
-        protected override PackagingGroup CreateFromResource(PackagingGroupResource resource, IEnumerable<string> privileges = null)        {
+        protected override PackagingGroup CreateFromResource(PackagingGroupResource resource, IEnumerable<string> privileges = null)        
+        {
             throw new NotImplementedException();
         }
 
@@ -31,11 +32,13 @@
             throw new NotImplementedException();
         }
 
-        protected override void DeleteOrObsoleteResource(PackagingGroup entity, IEnumerable<string> privileges = null)        {
+        protected override void DeleteOrObsoleteResource(PackagingGroup entity, IEnumerable<string> privileges = null)        
+        {
             throw new NotImplementedException();
         }
 
-        protected override void UpdateFromResource(PackagingGroup entity, PackagingGroupResource updateResource, IEnumerable<string> privileges = null)        {
+        protected override void UpdateFromResource(PackagingGroup entity, PackagingGroupResource updateResource, IEnumerable<string> privileges = null)        
+        {
             throw new NotImplementedException();
         }
 

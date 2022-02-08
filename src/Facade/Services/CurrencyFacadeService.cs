@@ -16,7 +16,8 @@
         {
         }
 
-        protected override Currency CreateFromResource(CurrencyResource resource, IEnumerable<string> privileges = null)        {
+        protected override Currency CreateFromResource(CurrencyResource resource, IEnumerable<string> privileges = null)        
+        {
             throw new NotImplementedException();
         }
 
@@ -30,11 +31,13 @@
             throw new NotImplementedException();
         }
 
-        protected override void DeleteOrObsoleteResource(Currency entity, IEnumerable<string> privileges = null)        {
+        protected override void DeleteOrObsoleteResource(Currency entity, IEnumerable<string> privileges = null)        
+        {
             throw new NotImplementedException();
         }
 
-        protected override void UpdateFromResource(Currency entity, CurrencyResource updateResource, IEnumerable<string> privileges = null)        {
+        protected override void UpdateFromResource(Currency entity, CurrencyResource updateResource, IEnumerable<string> privileges = null)        
+        {
             throw new NotImplementedException();
         }
 

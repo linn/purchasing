@@ -17,7 +17,8 @@
         {
         }
 
-        protected override UnitOfMeasure CreateFromResource(UnitOfMeasureResource resource, IEnumerable<string> privileges = null)        {
+        protected override UnitOfMeasure CreateFromResource(UnitOfMeasureResource resource, IEnumerable<string> privileges = null)        
+        {
             throw new NotImplementedException();
         }
 
@@ -31,11 +32,13 @@
             throw new NotImplementedException();
         }
 
-        protected override void DeleteOrObsoleteResource(UnitOfMeasure entity, IEnumerable<string> privileges = null)        {
+        protected override void DeleteOrObsoleteResource(UnitOfMeasure entity, IEnumerable<string> privileges = null)        
+        {
             throw new NotImplementedException();
         }
 
-        protected override void UpdateFromResource(UnitOfMeasure entity, UnitOfMeasureResource updateResource, IEnumerable<string> privileges = null)        {
+        protected override void UpdateFromResource(UnitOfMeasure entity, UnitOfMeasureResource updateResource, IEnumerable<string> privileges = null)        
+        {
             throw new NotImplementedException();
         }
 

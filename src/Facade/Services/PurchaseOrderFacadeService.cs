@@ -17,9 +17,6 @@
     {
         private readonly IPurchaseOrderService domainService;
 
-        private readonly IBuilder<ResultsModel> resultsModelResourceBuilder;
-
-
         public PurchaseOrderFacadeService(
             IRepository<PurchaseOrder, int> repository,
             ITransactionManager transactionManager,
