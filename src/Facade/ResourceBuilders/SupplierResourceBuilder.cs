@@ -66,9 +66,16 @@
         {
             yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
 
-            if (this.authService.HasPermissionFor(AuthorisedAction.SupplierUpdate, claims))
+            var privileges = claims?.ToList();
+
+            if (this.authService.HasPermissionFor(AuthorisedAction.SupplierUpdate, privileges))
             {
                 yield return new LinkResource { Rel = "edit", Href = $"{this.GetLocation(model)}/edit" };
+            }
+
+            if (this.authService.HasPermissionFor(AuthorisedAction.SupplierHoldChange, privileges))
+            {
+                yield return new LinkResource { Rel = "hold", Href = $"/purchasing/suppliers/hold" };
             }
         }
     }
