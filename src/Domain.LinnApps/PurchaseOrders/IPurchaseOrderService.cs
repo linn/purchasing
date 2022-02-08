@@ -4,6 +4,6 @@
 
     public interface IPurchaseOrderService
     {
-        public void UpdatePurchaseOrder(PurchaseOrder current, PurchaseOrder updated, IEnumerable<string> privileges);
+        public void AllowOverbook(PurchaseOrder current, PurchaseOrder updated, IEnumerable<string> privileges);
     }
 }

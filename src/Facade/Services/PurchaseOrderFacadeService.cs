@@ -27,29 +27,37 @@
             this.domainService = domainService;
         }
 
-        protected override PurchaseOrder CreateFromResource(PurchaseOrderResource resource, IEnumerable<string> privileges = null)
+        protected override PurchaseOrder CreateFromResource(
+            PurchaseOrderResource resource, 
+            IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }
 
-        protected override void SaveToLogTable(string actionType, int userNumber, PurchaseOrder entity, PurchaseOrderResource resource, PurchaseOrderResource updateResource)
+        protected override void SaveToLogTable(
+            string actionType, 
+            int userNumber, 
+            PurchaseOrder entity, 
+            PurchaseOrderResource resource, 
+            PurchaseOrderResource updateResource)
         {
             throw new NotImplementedException();
         }
 
-        protected override void DeleteOrObsoleteResource(PurchaseOrder entity, IEnumerable<string> privileges = null)
+        protected override void DeleteOrObsoleteResource(
+            PurchaseOrder entity, 
+            IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }
 
-        protected override void UpdateFromResource(PurchaseOrder entity, PurchaseOrderResource updateResource, IEnumerable<string> privileges = null)
+        protected override void UpdateFromResource(
+            PurchaseOrder entity, 
+            PurchaseOrderResource updateResource, 
+            IEnumerable<string> privileges = null)
         {
             var updated = this.BuildEntityFromResourceHelper(updateResource);
-
-            updated.Overbook = entity.Overbook;
-            updated.OverbookQty = entity.OverbookQty;
-
-            this.domainService.UpdatePurchaseOrder(entity, updated, updateResource.Privileges);
+            this.domainService.AllowOverbook(entity, updated, updateResource.Privileges);
         }
 
         protected override Expression<Func<PurchaseOrder, bool>> SearchExpression(string searchTerm)

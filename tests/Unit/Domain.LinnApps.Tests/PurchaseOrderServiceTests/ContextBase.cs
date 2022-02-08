@@ -13,12 +13,9 @@
 
     public class ContextBase
     {
-
-
         protected IPurchaseOrderService Sut { get; private set; }
 
         protected IAuthorisationService MockAuthService { get; private set; }
-
 
         [SetUp]
         public void SetUpContext()

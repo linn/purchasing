@@ -47,7 +47,7 @@
                 .Returns(new SuccessResult<IEnumerable<PurchaseOrderResource>>(this.dataResult));
 
             this.Response = this.Client.Get(
-                $"/purchasing/purchase-orders/overbook?orderNumber={this.orderNumberSearch}",
+                $"/purchasing/purchase-orders/{this.orderNumberSearch}/over-book",
 
             with =>
                 {

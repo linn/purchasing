@@ -12,12 +12,17 @@
     public class PriceChangeReasonService 
         : FacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource>
     {
-        public PriceChangeReasonService(IRepository<PriceChangeReason, string> repository, ITransactionManager transactionManager, IBuilder<PriceChangeReason> resourceBuilder)
+        public PriceChangeReasonService(
+            IRepository<PriceChangeReason, string> repository, 
+            ITransactionManager transactionManager, 
+            IBuilder<PriceChangeReason> resourceBuilder)
             : base(repository, transactionManager, resourceBuilder)
         {
         }
 
-        protected override PriceChangeReason CreateFromResource(PriceChangeReasonResource resource, IEnumerable<string> privileges = null)
+        protected override PriceChangeReason CreateFromResource(
+            PriceChangeReasonResource resource, 
+            IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }
@@ -45,7 +50,9 @@
             throw new NotImplementedException();
         }
 
-        protected override void DeleteOrObsoleteResource(PriceChangeReason entity, IEnumerable<string> privileges = null)
+        protected override void DeleteOrObsoleteResource(
+            PriceChangeReason entity, 
+            IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }

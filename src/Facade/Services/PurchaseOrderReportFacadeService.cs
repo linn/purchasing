@@ -152,7 +152,9 @@
             return stream;
         }
 
-        private ReportReturnResource BuildResource(ResultsModel resultsModel, IEnumerable<string> privileges)
+        private ReportReturnResource BuildResource(
+            ResultsModel resultsModel, 
+            IEnumerable<string> privileges)
         {
             return (ReportReturnResource) this.resultsModelResourceBuilder.Build(resultsModel, privileges);
         }

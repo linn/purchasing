@@ -61,8 +61,8 @@
             this.Get("/purchasing/purchase-orders/units-of-measure", this.GetUnitsOfMeasure);
             this.Get("/purchasing/purchase-orders/packaging-groups", this.GetPackagingGroups);
             this.Get("/purchasing/purchase-orders/tariffs", this.SearchTariffs);
-            this.Get("/purchasing/purchase-orders/overbook", this.SearchPurchaseOrders);
-            this.Put("/purchasing/purchase-orders/overbook", this.UpdatePurchaseOrder);
+            this.Get("/purchasing/purchase-orders/{OrderNumber:int}/over-book", this.SearchPurchaseOrders);
+            this.Put("/purchasing/purchase-orders/{OrderNumber:int}/over-book", this.AllowOverbook);
         }
 
         private async Task GetCurrencies(HttpRequest req, HttpResponse res)
@@ -121,7 +121,7 @@
             await res.Negotiate(result);
         }
 
-        private async Task UpdatePurchaseOrder(HttpRequest req, HttpResponse res)
+        private async Task AllowOverbook(HttpRequest req, HttpResponse res)
         {
             var resource = await req.Bind<PurchaseOrderResource>();
             resource.Privileges = req.HttpContext.GetPrivileges();

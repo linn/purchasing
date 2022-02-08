@@ -32,7 +32,9 @@
             this.supplierResourceBuilder = supplierResourceBuilder;
         }
 
-        public IResult<SupplierResource> ChangeSupplierHoldStatus(SupplierHoldChangeResource resource, IEnumerable<string> privileges)
+        public IResult<SupplierResource> ChangeSupplierHoldStatus(
+            SupplierHoldChangeResource resource, 
+            IEnumerable<string> privileges)
         {
             var holdHistoryEntry = new SupplierOrderHoldHistoryEntry
                                        {

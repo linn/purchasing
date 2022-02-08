@@ -57,8 +57,7 @@
                 .AddTransient<IBuilder<IEnumerable<PriceChangeReason>>, PriceChangeReasonsResourceBuilder>()
                 .AddTransient<IBuilder<PartCategory>, PartCategoryResourceBuilder>()
                 .AddTransient<IBuilder<IEnumerable<PartCategory>>, PartCategoriesResourceBuilder>()
-                .AddTransient<IBuilder<PurchaseOrder>, PurchaseOrderResourceBuilder>()
-                .AddTransient<IBuilder<IEnumerable<PurchaseOrder>>, PurchaseOrdersResourceBuilder>();
+                .AddTransient<IBuilder<PurchaseOrder>, PurchaseOrderResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)

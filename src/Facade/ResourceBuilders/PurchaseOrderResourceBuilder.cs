@@ -46,7 +46,7 @@
 
         public string GetLocation(PurchaseOrder p)
         {
-            return $"/purchasing/overbook/{p.OrderNumber}";
+            return $" /purchasing/purchase-orders/{p.OrderNumber}";
         }
 
         object IBuilder<PurchaseOrder>.Build(PurchaseOrder entity, IEnumerable<string> claims) => this.Build(entity, claims);
@@ -62,6 +62,7 @@
                 if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
                 {
                     yield return new LinkResource { Rel = "edit", Href = this.GetLocation(model) };
+                    yield return new LinkResource { Rel = "over-book", Href = this.GetLocation(model) };
                 }
             }
         }

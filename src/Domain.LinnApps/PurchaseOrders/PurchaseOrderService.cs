@@ -15,7 +15,7 @@
             this.authService = authService;
         }
 
-        public void UpdatePurchaseOrder(PurchaseOrder current, PurchaseOrder updated, IEnumerable<string> privileges)
+        public void AllowOverbook(PurchaseOrder current, PurchaseOrder updated, IEnumerable<string> privileges)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
             {

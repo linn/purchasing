@@ -12,12 +12,17 @@
     public class LinnDeliveryAddressService 
         : FacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource, LinnDeliveryAddressResource>
     {
-        public LinnDeliveryAddressService(IRepository<LinnDeliveryAddress, int> repository, ITransactionManager transactionManager, IBuilder<LinnDeliveryAddress> resourceBuilder)
+        public LinnDeliveryAddressService(
+            IRepository<LinnDeliveryAddress, int> repository, 
+            ITransactionManager transactionManager, 
+            IBuilder<LinnDeliveryAddress> resourceBuilder)
             : base(repository, transactionManager, resourceBuilder)
         {
         }
 
-        protected override LinnDeliveryAddress CreateFromResource(LinnDeliveryAddressResource resource, IEnumerable<string> privileges = null)        
+        protected override LinnDeliveryAddress CreateFromResource(
+            LinnDeliveryAddressResource resource, 
+            IEnumerable<string> privileges = null)        
         {
             throw new NotImplementedException();
         }
@@ -32,12 +37,17 @@
             throw new NotImplementedException();
         }
 
-        protected override void DeleteOrObsoleteResource(LinnDeliveryAddress entity, IEnumerable<string> privileges = null)        
+        protected override void DeleteOrObsoleteResource(
+            LinnDeliveryAddress entity, 
+            IEnumerable<string> privileges = null)        
         {
             throw new NotImplementedException();
         }
 
-        protected override void UpdateFromResource(LinnDeliveryAddress entity, LinnDeliveryAddressResource updateResource, IEnumerable<string> privileges = null)        
+        protected override void UpdateFromResource(
+            LinnDeliveryAddress entity, 
+            LinnDeliveryAddressResource updateResource,
+            IEnumerable<string> privileges = null)        
         {
             throw new NotImplementedException();
         }
