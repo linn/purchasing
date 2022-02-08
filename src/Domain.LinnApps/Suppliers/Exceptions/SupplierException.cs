@@ -2,7 +2,9 @@
 {
     using System;
 
-    public class SupplierException : AppDomainUnloadedException
+    using Linn.Common.Domain.Exceptions;
+
+    public class SupplierException : DomainException
     {
         public SupplierException(string message)
             : base(message)
