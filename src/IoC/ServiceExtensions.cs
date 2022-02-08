@@ -13,6 +13,7 @@
     using Linn.Common.Pdf;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Common.Reporting.Models;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.Parts;
@@ -55,9 +56,10 @@
                 .AddTransient<IBuilder<PriceChangeReason>, PriceChangeReasonResourceBuilder>()
                 .AddTransient<IBuilder<IEnumerable<PriceChangeReason>>, PriceChangeReasonsResourceBuilder>()
                 .AddTransient<IBuilder<PartCategory>, PartCategoryResourceBuilder>()
-                .AddTransient<IBuilder<IEnumerable<PartCategory>>, PartCategoriesResourceBuilder>();
+                .AddTransient<IBuilder<IEnumerable<PartCategory>>, PartCategoriesResourceBuilder>()
                 .AddTransient<IBuilder<PurchaseOrder>, PurchaseOrderResourceBuilder>()
-                .AddTransient<IBuilder<IEnumerable<PurchaseOrder>>, PurchaseOrdersResourceBuilder>()        }
+                .AddTransient<IBuilder<IEnumerable<PurchaseOrder>>, PurchaseOrdersResourceBuilder>();
+        }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
         {
@@ -74,9 +76,10 @@
                 .AddTransient<IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource>, PackagingGroupService>()
                 .AddTransient<IFacadeResourceService<Tariff, int, TariffResource, TariffResource>, TariffService>()
                 .AddTransient<IFacadeResourceService<Manufacturer, string, ManufacturerResource, ManufacturerResource>, ManufacturerFacadeService>()
-                .AddTransient<IFacadeResourceFilterService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource>, PurchaseOrderFacadeService>();
+                .AddTransient<IFacadeResourceFilterService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource>, PurchaseOrderFacadeService>()
                 .AddTransient<IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource>, PriceChangeReasonService>()
-                .AddTransient<IFacadeResourceService<PartCategory, string, PartCategoryResource, PartCategoryResource>, PartCategoriesService>();        }
+                .AddTransient<IFacadeResourceService<PartCategory, string, PartCategoryResource, PartCategoryResource>, PartCategoriesService>();
+        }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
         {

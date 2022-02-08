@@ -13,5 +13,5 @@
         public const string SupplierUpdate = "purchasing.supplier.update";
 
         public const string PurchaseOrderUpdate = "purchase-order.update";
-`    }
+    }
 }
