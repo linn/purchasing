@@ -1,9 +1,7 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.SpendsReportModuleTests
 {
-    using System.Collections.Generic;
     using System.Linq;
     using System.Net;
-    using System.Threading;
 
     using FluentAssertions;
 

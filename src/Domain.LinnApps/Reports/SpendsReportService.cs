@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Reports
 {
-    using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
@@ -22,7 +21,6 @@
 
         private readonly IRepository<VendorManager, string> vendorManagerRepository;
 
-
         public SpendsReportService(
             IQueryRepository<SupplierSpend> spendsRepository,
             IRepository<VendorManager, string> vendorManagerRepository,
@@ -41,7 +39,6 @@
             var yearStartLedgerPeriod = this.purchaseLedgerPack.GetYearStartLedgerPeriod();
             var previousYearStartLedgerPeriod = yearStartLedgerPeriod - 12;
 
-            // do I need to check the current ledger period as an upper limit? Not sure if we'd have stuff in the future
             var supplierSpends = this.spendsRepository.FilterBy(
                         x => x.LedgerPeriod >= previousYearStartLedgerPeriod && x.LedgerPeriod <= currentLedgerPeriod
                              && (string.IsNullOrWhiteSpace(vm) || x.Supplier.VendorManager == vm))
@@ -95,7 +92,6 @@
             var model = reportLayout.GetResultsModel();
 
             return model;
-
         }
 
         private void AddSupplierReportColumns(SimpleGridLayout reportLayout)

@@ -51,7 +51,7 @@ function SpendBySupplierReport() {
                             }
                         />
                     ) : (
-                        ''
+                        <></>
                     )}
                 </Grid>
                 <Grid item xs={12}>

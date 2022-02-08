@@ -6,7 +6,6 @@
     using Linn.Common.Logging;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Reports;
-    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
@@ -40,7 +39,6 @@
             this.FacadeService = new SpendsReportFacadeService(this.DomainService, new ResultsModelResourceBuilder());
 
             this.Log = Substitute.For<ILog>();
-
 
             this.Client = TestClient.With<SpendsReportModule>(
                 services =>

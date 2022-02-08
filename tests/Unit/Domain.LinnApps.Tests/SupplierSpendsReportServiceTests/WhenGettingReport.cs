@@ -8,7 +8,6 @@
     using FluentAssertions;
 
     using Linn.Common.Reporting.Models;
-    using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NSubstitute;
@@ -46,11 +45,11 @@
                                          BaseTotal = 500m,
                                          Supplier = new Supplier { SupplierId = this.supplierId, Name = "seller1" },
                                          LedgerPeriod = 1273
-                                     },
+                                     }
                              };
 
-
-            this.SpendsRepository.FilterBy(Arg.Any<Expression<Func<SupplierSpend, bool>>>()).Returns(spends.AsQueryable());
+            this.SpendsRepository.FilterBy(Arg.Any<Expression<Func<SupplierSpend, bool>>>())
+                .Returns(spends.AsQueryable());
             var vendorManager = new VendorManager { VmId = "X", UserNumber = 999 };
             vendorManager.Employee = new Employee { FullName = "Doctor X" };
 
@@ -73,8 +72,8 @@
         [Test]
         public void ShouldReturnData()
         {
-            this.results.ReportTitle.DisplayValue.Should()
-                .Be($"Spend by supplier report for Vendor Manager: X - Doctor X (999). For this financial year and last, excludes factors & VAT.");
+            this.results.ReportTitle.DisplayValue.Should().Be(
+                "Spend by supplier report for Vendor Manager: X - Doctor X (999). For this financial year and last, excludes factors & VAT.");
             this.results.Rows.Count().Should().Be(1);
             var row = this.results.Rows.First();
             row.RowId.Should().Be(this.supplierId.ToString());
@@ -83,7 +82,6 @@
             this.results.GetGridTextValue(0, 2).Should().Be("£500.00");
             this.results.GetGridTextValue(0, 3).Should().Be("£250.00");
             this.results.GetGridTextValue(0, 4).Should().Be("£120.00");
-
         }
     }
 }

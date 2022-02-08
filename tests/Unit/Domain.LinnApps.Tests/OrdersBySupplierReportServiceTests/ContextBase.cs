@@ -28,7 +28,6 @@
 
         protected IPurchaseOrdersPack PurchaseOrdersPack { get; private set; }
 
-
         [SetUp]
         public void SetUpContext()
         {
@@ -44,7 +43,7 @@
                 this.SupplierRepository,
                 this.PartQueryRepository,
                 this.PurchaseLedgerRepository,
-                PurchaseOrdersPack,
+                this.PurchaseOrdersPack,
                 this.ReportingHelper);
         }
     }
