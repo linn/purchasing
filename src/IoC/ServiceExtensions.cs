@@ -50,7 +50,8 @@
                 .AddTransient<IBuilder<PreferredSupplierChange>, PreferredSupplierChangeResourceBuilder>()
                 .AddTransient<IBuilder<PriceChangeReason>, PriceChangeReasonResourceBuilder>()
                 .AddTransient<IBuilder<PartCategory>, PartCategoryResourceBuilder>()
-                .AddTransient<IBuilder<PurchaseOrder>, PurchaseOrderResourceBuilder>();
+                .AddTransient<IBuilder<PurchaseOrder>, PurchaseOrderResourceBuilder>()
+                .AddTransient<IBuilder<ResultsModel>, ResultsModelResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -71,7 +72,8 @@
                 .AddTransient<IFacadeResourceService<Manufacturer, string, ManufacturerResource, ManufacturerResource>, ManufacturerFacadeService>()
                 .AddTransient<IFacadeResourceFilterService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource>, PurchaseOrderFacadeService>()
                 .AddTransient<IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource>, PriceChangeReasonService>()
-                .AddTransient<IFacadeResourceService<PartCategory, string, PartCategoryResource, PartCategoryResource>, PartCategoriesService>();
+                .AddTransient<IFacadeResourceService<PartCategory, string, PartCategoryResource, PartCategoryResource>, PartCategoriesService>()
+                .AddTransient<IPurchaseOrderReportFacadeService, PurchaseOrderReportFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
