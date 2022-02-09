@@ -30,6 +30,7 @@ import GeneralTab from './tabs/GeneralTab';
 import FinanceTab from './tabs/FinanceTab';
 import PurchTab from './tabs/PurchTab';
 import { getUserNumber } from '../../selectors/oidcSelectors';
+import WhereTab from './tabs/WhereTab';
 
 function Supplier() {
     const useStyles = makeStyles(theme => ({
@@ -196,7 +197,7 @@ function Supplier() {
                                             <Tab label="General" />
                                             <Tab label="Finance" />
                                             <Tab label="Purch" />
-                                            <Tab label="Where" disabled />
+                                            <Tab label="Where" />
                                             <Tab label="Whose" disabled />
                                             <Tab label="Lifecycle" disabled />
                                             <Tab label="Notes" disabled />
@@ -257,6 +258,18 @@ function Supplier() {
                                                 }
                                                 holdLink={holdLink()}
                                                 openHoldDialog={() => setHoldChangeDialogOpen(true)}
+                                            />
+                                        </Box>
+                                    )}
+                                    {tab === 3 && (
+                                        <Box sx={{ paddingTop: 3 }}>
+                                            <WhereTab
+                                                orderAddressId={state.supplier.orderAddressId}
+                                                orderFullAddress={state.supplier.orderFullAddress}
+                                                invoiceAddressId={state.supplier.invoiceAddressId}
+                                                invoiceFullAddress={
+                                                    state.supplier.invoiceFullAddress
+                                                }
                                             />
                                         </Box>
                                     )}

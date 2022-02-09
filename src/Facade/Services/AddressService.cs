@@ -11,19 +11,44 @@
 
     public class AddressService : FacadeFilterResourceService<Address, int, AddressResource, AddressResource, AddressResource>
     {
-        public AddressService(IRepository<Address, int> repository, ITransactionManager transactionManager, IBuilder<Address> builder)
+        private readonly IRepository<Country, string> countryRepository;
+
+        public AddressService(
+            IRepository<Address, int> repository, 
+            ITransactionManager transactionManager, 
+            IBuilder<Address> builder,
+            IRepository<Country, string> countryRepository)
             : base(repository, transactionManager, builder)
         {
+            this.countryRepository = countryRepository;
         }
 
         protected override Address CreateFromResource(AddressResource resource, IEnumerable<string> privileges = null)
         {
-            throw new NotImplementedException();
+            return new Address
+                       {
+                           AddressId = resource.AddressId,
+                           Country = this.countryRepository.FindById(resource.CountryCode),
+                           Line1 = resource.Line1,
+                           Line2 = resource.Line2,
+                           Line3 = resource.Line3,
+                           Line4 = resource.Line4,
+                           PostCode = resource.PostCode,
+                           Addressee = resource.Addressee,
+                           Addressee2 = resource.Addressee2
+                       };
         }
 
         protected override void UpdateFromResource(Address entity, AddressResource updateResource, IEnumerable<string> privileges = null)
         {
-            throw new NotImplementedException();
+            entity.Country = this.countryRepository.FindById(updateResource.CountryCode);
+            entity.Line1 = updateResource.Line1;
+            entity.Line2 = updateResource.Line2;
+            entity.Line3 = updateResource.Line3;
+            entity.Line4 = updateResource.Line4;
+            entity.PostCode = updateResource.PostCode;
+            entity.Addressee = updateResource.Addressee;
+            entity.Addressee2 = updateResource.Addressee2;
         }
 
         protected override Expression<Func<Address, bool>> SearchExpression(string searchTerm)
