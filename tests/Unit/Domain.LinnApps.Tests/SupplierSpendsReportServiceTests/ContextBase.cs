@@ -1,9 +1,8 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.OrdersBySupplierReportServiceTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.SupplierSpendsReportServiceTests
 {
     using Linn.Common.Persistence;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
-    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -14,7 +13,7 @@
 
     public class ContextBase
     {
-        protected IQueryRepository<Part> PartQueryRepository { get; private set; }
+        protected IPurchaseLedgerPack PurchaseLedgerPack { get; private set; }
 
         protected IRepository<PurchaseLedger, int> PurchaseLedgerRepository { get; private set; }
 
@@ -22,11 +21,13 @@
 
         protected IReportingHelper ReportingHelper { get; private set; }
 
+        protected IQueryRepository<SupplierSpend> SpendsRepository { get; private set; }
+
         protected IRepository<Supplier, int> SupplierRepository { get; private set; }
 
-        protected IPurchaseOrdersReportService Sut { get; private set; }
+        protected ISpendsReportService Sut { get; private set; }
 
-        protected IPurchaseOrdersPack PurchaseOrdersPack { get; private set; }
+        protected IRepository<VendorManager, string> VendorManagerRepository { get; set; }
 
         [SetUp]
         public void SetUpContext()
@@ -34,16 +35,16 @@
             this.PurchaseLedgerRepository = Substitute.For<IRepository<PurchaseLedger, int>>();
             this.PurchaseOrderRepository = Substitute.For<IRepository<PurchaseOrder, int>>();
             this.SupplierRepository = Substitute.For<IRepository<Supplier, int>>();
-            this.PartQueryRepository = Substitute.For<IQueryRepository<Part>>();
-            this.PurchaseOrdersPack = Substitute.For<IPurchaseOrdersPack>();
+            this.SpendsRepository = Substitute.For<IQueryRepository<SupplierSpend>>();
+            this.PurchaseLedgerPack = Substitute.For<IPurchaseLedgerPack>();
+            this.VendorManagerRepository = Substitute.For<IRepository<VendorManager, string>>();
 
             this.ReportingHelper = new ReportingHelper();
-            this.Sut = new PurchaseOrdersReportService(
-                this.PurchaseOrderRepository,
-                this.SupplierRepository,
-                this.PartQueryRepository,
-                this.PurchaseLedgerRepository,
-                this.PurchaseOrdersPack,
+
+            this.Sut = new SpendsReportService(
+                this.SpendsRepository,
+                this.VendorManagerRepository,
+                this.PurchaseLedgerPack,
                 this.ReportingHelper);
         }
     }

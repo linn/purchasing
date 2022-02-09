@@ -19,6 +19,8 @@ import OrdersBySupplierOptions from './reports/OrdersBySupplierOptions';
 import OrdersByPart from './reports/OrdersByPart';
 import SuppliersSearch from './supplierUtility/SuppliersSearch';
 import OrdersByPartOptions from './reports/OrdersByPartOptions';
+import SpendBySupplier from './reports/SpendBySupplier';
+import SpendBySupplierOptions from './reports/SpendBySupplierOptions';
 import Supplier from './supplierUtility/Supplier';
 
 const Root = ({ store }) => (
@@ -95,6 +97,16 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/reports/orders-by-part/report"
                                     component={OrdersByPart}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/spend-by-supplier"
+                                    component={SpendBySupplierOptions}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/spend-by-supplier/report"
+                                    component={SpendBySupplier}
                                 />
 
                                 <Route component={NotFoundPage} />

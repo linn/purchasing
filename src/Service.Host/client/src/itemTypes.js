@@ -106,3 +106,9 @@ export const putSupplierOnHold = new ItemType(
     'PUT_SUPPLIER_ON_HOLD',
     '/purchasing/suppliers/hold'
 );
+
+export const vendorManagers = new ItemType(
+    'vendorManagers',
+    'VENDOR_MANAGERS',
+    '/purchasing/vendor-managers'
+);

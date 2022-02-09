@@ -34,6 +34,9 @@ function App() {
                 <ListItem component={Link} to="/purchasing/reports/orders-by-part" button>
                     <Typography color="primary">Orders by Part Report</Typography>
                 </ListItem>
+                <ListItem component={Link} to="/purchasing/reports/spend-by-supplier" button>
+                    <Typography color="primary">Spend By Supplier Report</Typography>
+                </ListItem>
             </List>
         </Page>
     );

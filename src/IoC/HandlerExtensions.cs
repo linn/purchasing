@@ -46,7 +46,8 @@
                 .AddTransient<IHandler, JsonResultHandler<PartCategoryResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<PartCategoryResource>>>()                
                 .AddTransient<IHandler, JsonResultHandler<PurchaseOrderResource>>()
-                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PurchaseOrderResource>>>();
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PurchaseOrderResource>>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<VendorManagerResource>>>();
         }
     }
 }

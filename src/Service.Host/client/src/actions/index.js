@@ -79,3 +79,10 @@ export const putSupplierOnHoldActionTypes = makeActionTypes(
     itemTypes.putSupplierOnHold.actionType,
     true
 );
+
+export const vendorManagersActionTypes = makeActionTypes(itemTypes.vendorManagers.actionType);
+
+export const spendBySupplierReportActionTypes = makeActionTypes(
+    reportTypes.spendBySupplierReport.actionType,
+    false
+);

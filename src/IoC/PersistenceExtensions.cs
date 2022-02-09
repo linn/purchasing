@@ -54,7 +54,9 @@
                 .AddTransient<IRepository<PartCategory, string>, EntityFrameworkRepository<PartCategory, string>>(r
                     => new EntityFrameworkRepository<PartCategory, string>(r.GetService<ServiceDbContext>()?.PartCategories))
                 .AddTransient<IRepository<SupplierOrderHoldHistoryEntry, int>, EntityFrameworkRepository<SupplierOrderHoldHistoryEntry, int>>(r
-                    => new EntityFrameworkRepository<SupplierOrderHoldHistoryEntry, int>(r.GetService<ServiceDbContext>()?.SupplierOrderHoldHistories));
+                    => new EntityFrameworkRepository<SupplierOrderHoldHistoryEntry, int>(r.GetService<ServiceDbContext>()?.SupplierOrderHoldHistories))
+                .AddTransient<IRepository<VendorManager, string>, VendorManagerRepository>()
+                .AddTransient<IQueryRepository<SupplierSpend>, SupplierSpendRepository>();
         }
     }
 }
