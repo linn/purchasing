@@ -22,7 +22,7 @@
 
         protected IRepository<OrderMethod, string> OrderMethodRepository { get; private set; }
 
-        protected IRepository<Address, int> AddressRepository { get; private set; }
+        protected IRepository<FullAddress, int> AddressRepository { get; private set; }
 
         protected IRepository<Tariff, int> TariffRepository { get; private set; }
 
@@ -53,7 +53,7 @@
             this.MockAuthService = Substitute.For<IAuthorisationService>();
             this.CurrencyRepository = Substitute.For<IRepository<Currency, string>>();
             this.OrderMethodRepository = Substitute.For<IRepository<OrderMethod, string>>();
-            this.AddressRepository = Substitute.For<IRepository<Address, int>>();
+            this.AddressRepository = Substitute.For<IRepository<FullAddress, int>>();
             this.PackagingGroupRepository = Substitute.For<IRepository<PackagingGroup, int>>();
             this.TariffRepository = Substitute.For<IRepository<Tariff, int>>();
             this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();

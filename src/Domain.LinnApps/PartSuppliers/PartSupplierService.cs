@@ -20,7 +20,7 @@
 
         private readonly IRepository<OrderMethod, string> orderMethodRepository;
 
-        private readonly IRepository<Address, int> addressRepository;
+        private readonly IRepository<FullAddress, int> addressRepository;
 
         private readonly IRepository<Tariff, int> tariffRepository;
 
@@ -47,7 +47,7 @@
             IAuthorisationService authService,
             IRepository<Currency, string> currencyRepository,
             IRepository<OrderMethod, string> orderMethodRepository,
-            IRepository<Address, int> addressRepository,
+            IRepository<FullAddress, int> addressRepository,
             IRepository<Tariff, int> tariffRepository,
             IRepository<PackagingGroup, int> packagingGroupRepository,
             IRepository<Employee, int> employeeRepository,
@@ -99,11 +99,11 @@
                 current.Currency = this.currencyRepository.FindById(updated.Currency.Code);
             }
 
-            if (current.DeliveryAddress?.Id != updated.DeliveryAddress?.Id)
+            if (current.DeliveryFullAddress?.Id != updated.DeliveryFullAddress?.Id)
             {
-                current.DeliveryAddress = updated.DeliveryAddress == null 
+                current.DeliveryFullAddress = updated.DeliveryFullAddress == null 
                                               ? null 
-                                              : this.addressRepository.FindById(updated.DeliveryAddress.Id);
+                                              : this.addressRepository.FindById(updated.DeliveryFullAddress.Id);
             }
 
             if (current.Tariff?.Id != updated.Tariff?.Id)
@@ -190,9 +190,9 @@
                 candidate.Currency = this.currencyRepository.FindById(candidate.Currency.Code);
             }
 
-            if (candidate.DeliveryAddress?.Id != null)
+            if (candidate.DeliveryFullAddress?.Id != null)
             {
-                candidate.DeliveryAddress = this.addressRepository.FindById(candidate.DeliveryAddress.Id);
+                candidate.DeliveryFullAddress = this.addressRepository.FindById(candidate.DeliveryFullAddress.Id);
             }
 
             if (candidate.Tariff?.Id != null)

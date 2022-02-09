@@ -28,7 +28,7 @@
 
         public DbSet<PackagingGroup> PackagingGroups { get; set; }
 
-        public DbSet<Address> Addresses { get; set; }
+        public DbSet<FullAddress> FullAddresses { get; set; }
 
         public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
 
@@ -64,6 +64,10 @@
 
         public DbSet<SupplierOrderHoldHistoryEntry> SupplierOrderHoldHistories { get; set; }
 
+        public DbSet<Address> Addresses { get; set; }
+
+        public DbSet<Country> Countries { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -75,7 +79,7 @@
             this.BuildEmployees(builder);
             this.BuildPackagingGroups(builder);
             this.BuildManufacturers(builder);
-            this.BuildAddresses(builder);
+            this.BuildFullAddresses(builder);
             this.BuildPurchaseOrders(builder);
             this.BuildPurchaseOrderDetails(builder);
             this.BuildPurchaseOrderDeliveries(builder);
@@ -93,6 +97,8 @@
             this.BuildPartHistory(builder);
             this.BuildPartCategories(builder);
             this.BuildSupplierOrderHoldHistories(builder);
+            this.BuildAddresses(builder);
+            this.BuildCountries(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -119,6 +125,29 @@
             entity.HasKey(e => e.ReasonCode);
             entity.Property(e => e.ReasonCode).HasColumnName("REASON_CODE");
             entity.Property(e => e.Description).HasColumnName("DESCRIPTION");
+        }
+
+        private void BuildAddresses(ModelBuilder builder)
+        {
+            var entity = builder.Entity<Address>().ToTable("ADDRESSES");
+            entity.HasKey(e => e.AddressId);
+            entity.Property(e => e.AddressId).HasColumnName("ADDRESS_ID");
+            entity.Property(e => e.Addressee).HasColumnName("ADDRESSEE").HasMaxLength(40);
+            entity.Property(e => e.Addressee2).HasColumnName("ADDRESSEE_2").HasMaxLength(40);
+            entity.Property(e => e.Line1).HasColumnName("ADDRESS_1").HasMaxLength(40);
+            entity.Property(e => e.Line2).HasColumnName("ADDRESS_2").HasMaxLength(40);
+            entity.Property(e => e.Line3).HasColumnName("ADDRESS_3").HasMaxLength(40);
+            entity.Property(e => e.Line4).HasColumnName("ADDRESS_4").HasMaxLength(40);
+            entity.HasOne(e => e.Country).WithMany().HasForeignKey("COUNTRY");
+            entity.Property(e => e.PostCode).HasColumnName("POSTAL_CODE").HasMaxLength(20);
+        }
+
+        private void BuildCountries(ModelBuilder builder)
+        {
+            var entity = builder.Entity<Country>().ToTable("COUNTRIES");
+            entity.HasKey(c => c.CountryCode);
+            entity.Property(c => c.CountryCode).HasColumnName("COUNTRY_CODE").HasMaxLength(2);
+            entity.Property(c => c.Name).HasColumnName("NAME").HasMaxLength(50);
         }
 
         private void BuildPreferredSupplierChanges(ModelBuilder builder)
@@ -174,7 +203,7 @@
             entity.Property(e => e.OverbookingAllowed).HasColumnName("OVERBOOKING_ALLOWED").HasMaxLength(1);
             entity.Property(e => e.BaseOurUnitPrice).HasColumnName("BASE_OUR_UNIT_PRICE");
             entity.Property(e => e.NotesForBuyer).HasColumnName("NOTES_FOR_BUYER").HasMaxLength(200);
-            entity.HasOne(e => e.DeliveryAddress).WithMany().HasForeignKey("DELIVERY_ADDRESS_ID");
+            entity.HasOne(e => e.DeliveryFullAddress).WithMany().HasForeignKey("DELIVERY_ADDRESS_ID");
             entity.Property(e => e.JitReorderWeeks).HasColumnName("JIT_REORDER_WEEKS");
             entity.Property(e => e.JitReorderOrderNumber).HasColumnName("JIT_REORDER_ORDER_NUMBER");
             entity.Property(e => e.JitReorderOrderLine).HasColumnName("JIT_REORDER_ORDER_LINE");
@@ -274,6 +303,8 @@
             entity.Property(a => a.DeliveryDay).HasColumnName("DELIVERY_DAY").HasMaxLength(10);
             entity.HasOne(a => a.RefersToFc).WithMany().HasForeignKey("REFERS_TO_FC_SUPPLIER");
             entity.Property(a => a.PmDeliveryDaysGrace).HasColumnName("PM_DELIVERY_DAYS_GRACE");
+            entity.HasOne(a => a.OrderFullAddress).WithMany().HasForeignKey("ORD_ADDRESS_ID");
+            entity.HasOne(a => a.InvoiceFullAddress).WithMany().HasForeignKey("INV_ADDRESS_ID");
         }
 
         private void BuildSupplierOrderHoldHistories(ModelBuilder builder)
@@ -322,12 +353,12 @@
             entity.Property(e => e.FullName).HasColumnName("USER_NAME").HasMaxLength(4000);
         }
 
-        private void BuildAddresses(ModelBuilder builder)
+        private void BuildFullAddresses(ModelBuilder builder)
         {
-            var entity = builder.Entity<Address>().ToTable("ADDRESSES_VIEW");
+            var entity = builder.Entity<FullAddress>().ToTable("ADDRESSES_VIEW");
             entity.HasKey(m => m.Id);
             entity.Property(e => e.Id).HasColumnName("ADDRESS_ID");
-            entity.Property(a => a.FullAddress).HasColumnName("ADDRESS");
+            entity.Property(a => a.AddressString).HasColumnName("ADDRESS");
         }
 
         private void BuildPurchaseOrders(ModelBuilder builder)
@@ -431,7 +462,7 @@
         {
             var entity = builder.Entity<LinnDeliveryAddress>().ToTable("LINN_DELIVERY_ADDRESSES");
             entity.HasKey(e => e.AddressId);
-            entity.HasOne(e => e.Address).WithMany().HasForeignKey(e => e.AddressId);
+            entity.HasOne(e => e.FullAddress).WithMany().HasForeignKey(e => e.AddressId);
             entity.Property(e => e.AddressId).HasColumnName("ADDRESS_ID");
             entity.Property(e => e.Description).HasColumnName("DELIVERY_ADDRESS_DESCRIPTION");
             entity.Property(e => e.IsMainDeliveryAddress).HasColumnName("MAIN_DELIVERY_ADDRESS");

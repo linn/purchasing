@@ -40,8 +40,8 @@
                     => new EntityFrameworkRepository<Tariff, int>(r.GetService<ServiceDbContext>()?.Tariffs))
                 .AddTransient<IRepository<Manufacturer, string>, EntityFrameworkRepository<Manufacturer, string>>(r
                     => new EntityFrameworkRepository<Manufacturer, string>(r.GetService<ServiceDbContext>()?.Manufacturers))
-                .AddTransient<IRepository<Address, int>, EntityFrameworkRepository<Address, int>>(r
-                    => new EntityFrameworkRepository<Address, int>(r.GetService<ServiceDbContext>()?.Addresses))
+                .AddTransient<IRepository<FullAddress, int>, EntityFrameworkRepository<FullAddress, int>>(r
+                    => new EntityFrameworkRepository<FullAddress, int>(r.GetService<ServiceDbContext>()?.FullAddresses))
                 .AddTransient<IRepository<PurchaseOrder, int>, PurchaseOrderRepository>()
                 .AddTransient<IRepository<PurchaseLedger, int>, PurchaseLedgerRepository>()
                 .AddTransient<IRepository<Employee, int>, EntityFrameworkRepository<Employee, int>>(r
@@ -54,7 +54,11 @@
                 .AddTransient<IRepository<PartCategory, string>, EntityFrameworkRepository<PartCategory, string>>(r
                     => new EntityFrameworkRepository<PartCategory, string>(r.GetService<ServiceDbContext>()?.PartCategories))
                 .AddTransient<IRepository<SupplierOrderHoldHistoryEntry, int>, EntityFrameworkRepository<SupplierOrderHoldHistoryEntry, int>>(r
-                    => new EntityFrameworkRepository<SupplierOrderHoldHistoryEntry, int>(r.GetService<ServiceDbContext>()?.SupplierOrderHoldHistories));
+                    => new EntityFrameworkRepository<SupplierOrderHoldHistoryEntry, int>(r.GetService<ServiceDbContext>()?.SupplierOrderHoldHistories))
+                .AddTransient<IRepository<Country, string>, EntityFrameworkRepository<Country, string>>(r
+                    => new EntityFrameworkRepository<Country, string>(r.GetService<ServiceDbContext>()?.Countries))
+                .AddTransient<IRepository<Address, int>, EntityFrameworkRepository<Address, int>>(r
+                    => new EntityFrameworkRepository<Address, int>(r.GetService<ServiceDbContext>()?.Addresses));
         }
     }
 }

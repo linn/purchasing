@@ -98,8 +98,8 @@
                 MinimumDeliveryQty = resource.MinimumDeliveryQty,
                 OrderIncrement = resource.OrderIncrement,
                 ReelOrBoxQty = resource.ReelOrBoxQty,
-                DeliveryAddress = resource.AddressId == null ? null :
-                                                            new Address { Id = (int)resource.AddressId },
+                DeliveryFullAddress = resource.AddressId == null ? null :
+                                                            new FullAddress { Id = (int)resource.AddressId },
                 LeadTimeWeeks = resource.LeadTimeWeeks,
                 ContractLeadTimeWeeks = resource.ContractLeadTimeWeeks,
                 OverbookingAllowed = resource.OverbookingAllowed,

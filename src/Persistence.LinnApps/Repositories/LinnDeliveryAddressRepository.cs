@@ -26,7 +26,7 @@
         public IQueryable<LinnDeliveryAddress> FindAll()
         {
             return this.serviceDbContext.LinnDeliveryAddresses
-                .AsNoTracking().Include(x => x.Address);
+                .AsNoTracking().Include(x => x.FullAddress);
         }
 
         public void Add(LinnDeliveryAddress entity)
