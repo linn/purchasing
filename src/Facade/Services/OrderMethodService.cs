@@ -11,14 +11,17 @@
 
     public class OrderMethodService : FacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource>
     {
-        public OrderMethodService(IRepository<OrderMethod, string> repository, ITransactionManager transactionManager, IBuilder<OrderMethod> resourceBuilder)
+        public OrderMethodService(
+            IRepository<OrderMethod, string> repository, 
+            ITransactionManager transactionManager, 
+            IBuilder<OrderMethod> resourceBuilder)
             : base(repository, transactionManager, resourceBuilder)
         {
         }
 
         protected override OrderMethod CreateFromResource(
-            OrderMethodResource resource,
-            IEnumerable<string> privileges = null)
+            OrderMethodResource resource, 
+            IEnumerable<string> privileges = null)        
         {
             throw new NotImplementedException();
         }
@@ -34,16 +37,16 @@
         }
 
         protected override void DeleteOrObsoleteResource(
-            OrderMethod entity,
-            IEnumerable<string> privileges = null)
+            OrderMethod entity, 
+            IEnumerable<string> privileges = null)        
         {
             throw new NotImplementedException();
         }
 
         protected override void UpdateFromResource(
-            OrderMethod entity, 
+            OrderMethod entity,
             OrderMethodResource updateResource,
-            IEnumerable<string> privileges = null)
+            IEnumerable<string> privileges = null)        
         {
             throw new NotImplementedException();
         }

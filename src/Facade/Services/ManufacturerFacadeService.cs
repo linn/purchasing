@@ -11,14 +11,17 @@
 
     public class ManufacturerFacadeService : FacadeResourceService<Manufacturer, string, ManufacturerResource, ManufacturerResource>
     {
-        public ManufacturerFacadeService(IRepository<Manufacturer, string> repository, ITransactionManager transactionManager, IBuilder<Manufacturer> resourceBuilder)
+        public ManufacturerFacadeService(
+            IRepository<Manufacturer, string> repository, 
+            ITransactionManager transactionManager, 
+            IBuilder<Manufacturer> resourceBuilder)
             : base(repository, transactionManager, resourceBuilder)
         {
         }
 
         protected override Manufacturer CreateFromResource(
-            ManufacturerResource resource,
-            IEnumerable<string> privileges = null)
+            ManufacturerResource resource, 
+            IEnumerable<string> privileges = null)        
         {
             throw new NotImplementedException();
         }
@@ -34,16 +37,16 @@
         }
 
         protected override void DeleteOrObsoleteResource(
-            Manufacturer entity,
-            IEnumerable<string> privileges = null)
+            Manufacturer entity, 
+            IEnumerable<string> privileges = null)        
         {
             throw new NotImplementedException();
         }
 
         protected override void UpdateFromResource(
             Manufacturer entity, 
-            ManufacturerResource updateResource,
-            IEnumerable<string> privileges = null)
+            ManufacturerResource updateResource, 
+            IEnumerable<string> privileges = null)        
         {
             throw new NotImplementedException();
         }
