@@ -101,8 +101,6 @@ const stateWithItemLoadedWhereEditing = {
 
 const stateWhereCreating = {
     ...state,
-    router: { location: { pathname: '/create', query: {} } },
-
     partSupplier: {
         loading: false,
         editStatus: 'create',
@@ -222,7 +220,7 @@ describe('When creating...', () => {
         cleanup();
         jest.clearAllMocks();
         useSelector.mockImplementation(callback => callback(stateWhereCreating));
-        render(<PartSupplier />);
+        render(<PartSupplier creating />);
     });
 
     test('Save button should be disabled since no data...', () => {
@@ -260,7 +258,7 @@ describe('When save clicked when creating...', () => {
                 }
             })
         );
-        render(<PartSupplier />);
+        render(<PartSupplier creating />);
     });
     test('Should dispatch add action when save clicked...', async () => {
         // enter required fields
@@ -319,7 +317,6 @@ describe('When new part selected...', () => {
     beforeEach(() => {
         const stateWithPartSearchResults = {
             ...state,
-            router: { location: { pathname: '/create', query: {} } },
             partSupplier: {
                 loading: false
             },
@@ -330,7 +327,7 @@ describe('When new part selected...', () => {
         cleanup();
         jest.clearAllMocks();
         useSelector.mockImplementation(callback => callback(stateWithPartSearchResults));
-        render(<PartSupplier />);
+        render(<PartSupplier creating />);
     });
 
     test('Should set designation and part description to be selected results description', () => {
@@ -346,7 +343,6 @@ describe('When new currency unit price entered', () => {
     beforeEach(() => {
         const stateWithPartSearchResults = {
             ...state,
-            router: { location: { pathname: '/create', query: {} } },
             partSupplier: {
                 loading: false
             }
@@ -354,7 +350,7 @@ describe('When new currency unit price entered', () => {
         cleanup();
         jest.clearAllMocks();
         useSelector.mockImplementation(callback => callback(stateWithPartSearchResults));
-        render(<PartSupplier />);
+        render(<PartSupplier creating />);
         const tab = screen.getByText('Order Details');
         fireEvent.click(tab);
     });
