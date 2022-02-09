@@ -57,8 +57,7 @@
                     => new EntityFrameworkRepository<SupplierOrderHoldHistoryEntry, int>(r.GetService<ServiceDbContext>()?.SupplierOrderHoldHistories))
                 .AddTransient<IRepository<Country, string>, EntityFrameworkRepository<Country, string>>(r
                     => new EntityFrameworkRepository<Country, string>(r.GetService<ServiceDbContext>()?.Countries))
-                .AddTransient<IRepository<Address, int>, EntityFrameworkRepository<Address, int>>(r
-                    => new EntityFrameworkRepository<Address, int>(r.GetService<ServiceDbContext>()?.Addresses));
+                .AddTransient<IRepository<Address, int>, AddressRepository>();
         }
     }
 }

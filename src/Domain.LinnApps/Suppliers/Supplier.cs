@@ -55,8 +55,8 @@
 
         public int? PmDeliveryDaysGrace { get; set; }
 
-        public Address OrderFullAddress { get; set; }
+        public FullAddress OrderFullAddress { get; set; }
 
-        public Address InvoiceFullAddress { get; set; }
+        public FullAddress InvoiceFullAddress { get; set; }
     }
 }
