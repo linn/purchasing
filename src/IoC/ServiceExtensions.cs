@@ -97,8 +97,7 @@
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
                 .AddTransient<IAutocostPack, AutocostPack>()
                 .AddTransient<ICurrencyPack, CurrencyPack>()
-                .AddTransient<IPurchaseLedgerPack, PurchaseLedgerPack>()
-                ;
+                .AddTransient<IPurchaseLedgerPack, PurchaseLedgerPack>();
         }
     }
 }
