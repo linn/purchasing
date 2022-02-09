@@ -73,7 +73,8 @@ const Root = ({ store }) => (
                                 <Route
                                     exact
                                     path="/purchasing/part-suppliers/create"
-                                    component={PartSupplier}
+                                    // eslint-disable-next-line react/jsx-props-no-spreading
+                                    render={props => <PartSupplier creating {...props} />}
                                 />
                                 <Route
                                     exact

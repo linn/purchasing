@@ -10,7 +10,7 @@ import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Close from '@mui/icons-material/Close';
-
+import PropTypes from 'prop-types';
 import Dialog from '@mui/material/Dialog';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -26,7 +26,7 @@ import {
     userSelectors,
     LinkButton
 } from '@linn-it/linn-form-components-library';
-import { getQuery, getPathname } from '../../selectors/routerSelelctors';
+import { getQuery } from '../../selectors/routerSelelctors';
 import partSupplierActions from '../../actions/partSupplierActions';
 import history from '../../history';
 import config from '../../config';
@@ -53,7 +53,7 @@ import PreferredSupplier from './PreferredSupplier';
 import PriceChange from './PriceChange';
 import partPriceConversionsActions from '../../actions/partPriceConversionsActions';
 
-function PartSupplier() {
+function PartSupplier({ creating }) {
     const useStyles = makeStyles(theme => ({
         dialog: {
             margin: theme.spacing(6),
@@ -141,10 +141,6 @@ function PartSupplier() {
     const updatePartSupplier = body => reduxDispatch(partSupplierActions.update(null, body));
     const createPartSupplier = body => reduxDispatch(partSupplierActions.add(body));
     const clearErrors = () => reduxDispatch(partSupplierActions.clearErrorsForItem());
-
-    const pathName = useSelector(reduxState => getPathname(reduxState));
-
-    const creating = () => pathName.endsWith('/create');
 
     const applicationState = useSelector(state =>
         collectionSelectorHelpers.getApplicationState(state.partSuppliers)
@@ -238,15 +234,20 @@ function PartSupplier() {
     }, [query, reduxDispatch]);
 
     useEffect(() => {
-        if (pathName.endsWith('/create')) {
+        if (creating) {
             dispatch({
                 type: 'initialise',
-                payload: { createdBy: Number(currentUserNumber), dateCreated: new Date() }
+                payload: {
+                    createdBy: Number(currentUserNumber),
+                    dateCreated: new Date(),
+                    currencyCode: 'GBP',
+                    orderMethodName: 'MANUAL'
+                }
             });
         } else if (item) {
             dispatch({ type: 'initialise', payload: item });
         }
-    }, [item, pathName, currentUserNumber]);
+    }, [item, creating, currentUserNumber]);
 
     const handleFieldChange = (propertyName, newValue) => {
         let formatted = newValue;
@@ -288,34 +289,36 @@ function PartSupplier() {
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
-                <Dialog open={preferredSupplierDialogOpen} fullWidth maxWidth="md">
-                    <div>
-                        <IconButton
-                            className={classes.pullRight}
-                            aria-label="Close"
-                            onClick={() => setPreferredSupplierDialogOpen(false)}
-                        >
-                            <Close />
-                        </IconButton>
-                        <div className={classes.dialog}>
-                            <PreferredSupplier
-                                currentSupplier={state.partSupplier?.supplierId}
-                                partLoading={partLoading}
-                                partNumber={part?.partNumber}
-                                partDescription={part?.description}
-                                baseOldPrice={part?.baseUnitPrice}
-                                oldPrice={part?.currencyUnitPrice}
-                                oldCurrencyCode={part?.currency}
-                                oldSupplierId={part?.preferredSupplier}
-                                oldSupplierName={part?.preferredSupplierName}
-                                close={() => setPreferredSupplierDialogOpen(false)}
-                                refreshPart={refreshPart}
-                                safetyCriticalPart={part?.safetyCriticalPart === 'Y'}
-                                bomType={part?.bomType}
-                            />
+                {!creating && (
+                    <Dialog open={preferredSupplierDialogOpen} fullWidth maxWidth="md">
+                        <div>
+                            <IconButton
+                                className={classes.pullRight}
+                                aria-label="Close"
+                                onClick={() => setPreferredSupplierDialogOpen(false)}
+                            >
+                                <Close />
+                            </IconButton>
+                            <div className={classes.dialog}>
+                                <PreferredSupplier
+                                    currentSupplier={state.partSupplier?.supplierId}
+                                    partLoading={partLoading}
+                                    partNumber={part?.partNumber}
+                                    partDescription={part?.description}
+                                    baseOldPrice={part?.baseUnitPrice}
+                                    oldPrice={part?.currencyUnitPrice}
+                                    oldCurrencyCode={part?.currency}
+                                    oldSupplierId={part?.preferredSupplier}
+                                    oldSupplierName={part?.preferredSupplierName}
+                                    close={() => setPreferredSupplierDialogOpen(false)}
+                                    refreshPart={refreshPart}
+                                    safetyCriticalPart={part?.safetyCriticalPart === 'Y'}
+                                    bomType={part?.bomType}
+                                />
+                            </div>
                         </div>
-                    </div>
-                </Dialog>
+                    </Dialog>
+                )}
                 <Dialog open={priceChangeDialogOpen} fullWidth maxWidth="md">
                     <div>
                         <IconButton
@@ -397,7 +400,7 @@ function PartSupplier() {
                                 )}
                             </Grid>
                             <Grid item xs={3}>
-                                {!creating() && (
+                                {!creating && (
                                     <LinkButton
                                         external
                                         newTab
@@ -407,7 +410,7 @@ function PartSupplier() {
                                 )}
                             </Grid>
                             <Grid item xs={3}>
-                                {!creating() && (
+                                {!creating && (
                                     <LinkButton
                                         external
                                         newTab
@@ -458,7 +461,6 @@ function PartSupplier() {
                                                 suppliersSearchResults={suppliersSearchResults}
                                                 suppliersSearchLoading={suppliersSearchLoading}
                                                 searchSuppliers={searchSuppliers}
-                                                editStatus={creating() ? 'create' : editStatus}
                                                 part={part}
                                                 canEdit={canEdit}
                                                 creating={creating}
@@ -469,7 +471,7 @@ function PartSupplier() {
                                         <Box sx={{ paddingTop: 3 }}>
                                             <OrderDetailsTab
                                                 handleFieldChange={handleFieldChange}
-                                                creating={() => pathName.includes('/create')}
+                                                creating={creating}
                                                 unitsOfMeasure={unitsOfMeasure}
                                                 unitOfMeasure={state.partSupplier?.unitOfMeasure}
                                                 deliveryAddresses={deliveryAddresses}
@@ -610,7 +612,7 @@ function PartSupplier() {
                             saveDisabled={!canEdit() || invalid() || editStatus === 'view'}
                             saveClick={() => {
                                 clearErrors();
-                                if (creating()) {
+                                if (creating) {
                                     createPartSupplier(state.partSupplier);
                                 } else {
                                     updatePartSupplier(state.partSupplier);
@@ -628,5 +630,13 @@ function PartSupplier() {
         </Page>
     );
 }
+
+PartSupplier.propTypes = {
+    creating: PropTypes.bool
+};
+
+PartSupplier.defaultProps = {
+    creating: false
+};
 
 export default PartSupplier;
