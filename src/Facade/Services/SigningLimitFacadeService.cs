@@ -24,8 +24,8 @@
         }
 
         protected override SigningLimit CreateFromResource(
-            SigningLimitResource resource,
-            IEnumerable<string> privileges = null)
+            SigningLimitResource resource, 
+            IEnumerable<string> privileges = null)        
         {
             var signingLimit = new SigningLimit
             {
@@ -40,8 +40,8 @@
         }
 
         protected override void DeleteOrObsoleteResource(
-            SigningLimit entity,
-            IEnumerable<string> privileges = null)
+            SigningLimit entity, 
+            IEnumerable<string> privileges = null)        
         {
             this.RemoveFromDatabase(entity);
         }
@@ -69,8 +69,8 @@
 
         protected override void UpdateFromResource(
             SigningLimit entity, 
-            SigningLimitResource updateResource,
-            IEnumerable<string> privileges = null)
+            SigningLimitResource updateResource, 
+            IEnumerable<string> privileges = null)        
         {
             entity.ProductionLimit = updateResource.ProductionLimit;
             entity.SundryLimit = updateResource.SundryLimit;

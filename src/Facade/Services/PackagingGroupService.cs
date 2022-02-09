@@ -12,14 +12,17 @@
     public class PackagingGroupService
         : FacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource>
     {
-        public PackagingGroupService(IRepository<PackagingGroup, int> repository, ITransactionManager transactionManager, IBuilder<PackagingGroup> resourceBuilder)
+        public PackagingGroupService(
+            IRepository<PackagingGroup, int> repository, 
+            ITransactionManager transactionManager, 
+            IBuilder<PackagingGroup> resourceBuilder)
             : base(repository, transactionManager, resourceBuilder)
         {
         }
 
         protected override PackagingGroup CreateFromResource(
-            PackagingGroupResource resource,
-            IEnumerable<string> privileges = null)
+            PackagingGroupResource resource, 
+            IEnumerable<string> privileges = null)        
         {
             throw new NotImplementedException();
         }
@@ -35,16 +38,16 @@
         }
 
         protected override void DeleteOrObsoleteResource(
-            PackagingGroup entity,
-            IEnumerable<string> privileges = null)
+            PackagingGroup entity, 
+            IEnumerable<string> privileges = null)        
         {
             throw new NotImplementedException();
         }
 
         protected override void UpdateFromResource(
             PackagingGroup entity, 
-            PackagingGroupResource updateResource,
-            IEnumerable<string> privileges = null)
+            PackagingGroupResource updateResource, 
+            IEnumerable<string> privileges = null)        
         {
             throw new NotImplementedException();
         }

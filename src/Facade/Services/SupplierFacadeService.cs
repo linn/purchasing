@@ -26,8 +26,8 @@
         }
 
         protected override Supplier CreateFromResource(
-            SupplierResource resource,
-            IEnumerable<string> privileges = null)
+            SupplierResource resource, 
+            IEnumerable<string> privileges = null)        
         {
             var candidate = this.BuildEntityFromResourceHelper(resource);
 
@@ -45,16 +45,16 @@
         }
 
         protected override void DeleteOrObsoleteResource(
-            Supplier entity,
-            IEnumerable<string> privileges = null)
+            Supplier entity, 
+            IEnumerable<string> privileges = null)        
         {
             throw new NotImplementedException();
         }
 
         protected override void UpdateFromResource(
             Supplier entity, 
-            SupplierResource updateResource,
-            IEnumerable<string> privileges = null)
+            SupplierResource updateResource, 
+            IEnumerable<string> privileges = null)        
         {
             var updated = this.BuildEntityFromResourceHelper(updateResource);
 
@@ -103,6 +103,6 @@
                             ? new Supplier { SupplierId = (int)resource.RefersToFcId } : null,
                            PmDeliveryDaysGrace = resource.PmDeliveryDaysGrace
                        };
-        }
+    }
     }
 }

@@ -11,17 +11,25 @@
 
     public class PartCategoriesService : FacadeResourceService<PartCategory, string, PartCategoryResource, PartCategoryResource>
     {
-        public PartCategoriesService(IRepository<PartCategory, string> repository, ITransactionManager transactionManager, IBuilder<PartCategory> resourceBuilder)
+        public PartCategoriesService(
+            IRepository<PartCategory, string> repository, 
+            ITransactionManager transactionManager, 
+            IBuilder<PartCategory> resourceBuilder)
             : base(repository, transactionManager, resourceBuilder)
         {
         }
 
-        protected override PartCategory CreateFromResource(PartCategoryResource resource, IEnumerable<string> privileges = null)
+        protected override PartCategory CreateFromResource(
+            PartCategoryResource resource, 
+            IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }
 
-        protected override void UpdateFromResource(PartCategory entity, PartCategoryResource updateResource, IEnumerable<string> privileges = null)
+        protected override void UpdateFromResource(
+            PartCategory entity, 
+            PartCategoryResource updateResource, 
+            IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }
@@ -41,7 +49,9 @@
             throw new NotImplementedException();
         }
 
-        protected override void DeleteOrObsoleteResource(PartCategory entity, IEnumerable<string> privileges = null)
+        protected override void DeleteOrObsoleteResource(
+            PartCategory entity, 
+            IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }

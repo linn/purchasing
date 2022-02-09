@@ -3,14 +3,18 @@
     using System.Threading.Tasks;
 
     using Carter;
+    using Carter.ModelBinding;
     using Carter.Request;
     using Carter.Response;
 
     using Linn.Common.Facade;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.SearchResources;
+    using Linn.Purchasing.Service.Extensions;
 
     using Microsoft.AspNetCore.Http;
 
@@ -31,13 +35,18 @@
 
         private readonly IFacadeResourceService<Tariff, int, TariffResource, TariffResource> tariffService;
 
+        private readonly
+            IFacadeResourceFilterService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource>
+            purchaseOrderFacadeService;
+
         public PurchaseOrderModule(
             IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource> currencyService,
             IFacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource> orderMethodService,
             IFacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource, LinnDeliveryAddressResource> deliveryAddressService,
             IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource> unitsOfMeasureService,
             IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource> packagingGroupService,
-            IFacadeResourceService<Tariff, int, TariffResource, TariffResource> tariffService)
+            IFacadeResourceService<Tariff, int, TariffResource, TariffResource> tariffService,
+            IFacadeResourceFilterService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource> purchaseOrderFacadeService)
         {
             this.currencyService = currencyService;
             this.orderMethodService = orderMethodService;
@@ -45,12 +54,15 @@
             this.unitsOfMeasureService = unitsOfMeasureService;
             this.packagingGroupService = packagingGroupService;
             this.tariffService = tariffService;
+            this.purchaseOrderFacadeService = purchaseOrderFacadeService;
             this.Get("/purchasing/purchase-orders/currencies", this.GetCurrencies);
             this.Get("/purchasing/purchase-orders/methods", this.GetOrderMethods);
             this.Get("/purchasing/purchase-orders/delivery-addresses", this.GetDeliveryAddresses);
             this.Get("/purchasing/purchase-orders/units-of-measure", this.GetUnitsOfMeasure);
             this.Get("/purchasing/purchase-orders/packaging-groups", this.GetPackagingGroups);
             this.Get("/purchasing/purchase-orders/tariffs", this.SearchTariffs);
+            this.Get("/purchasing/purchase-orders/{OrderNumber:int}/over-book", this.SearchPurchaseOrders);
+            this.Put("/purchasing/purchase-orders/{OrderNumber:int}/over-book", this.AllowOverbook);
         }
 
         private async Task GetCurrencies(HttpRequest req, HttpResponse res)
@@ -92,6 +104,32 @@
         {
             var searchTerm = req.Query.As<string>("searchTerm");
             var result = this.tariffService.Search(searchTerm);
+
+            await res.Negotiate(result);
+        }
+
+        private async Task SearchPurchaseOrders(HttpRequest req, HttpResponse res)
+        {
+            var orderNumberSearch = req.Query.As<int>("orderNumber");
+            var result = this.purchaseOrderFacadeService.FilterBy(
+                new PurchaseOrderSearchResource
+                    {
+                        OrderNumberSearchTerm = orderNumberSearch
+                    },
+                req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task AllowOverbook(HttpRequest req, HttpResponse res)
+        {
+            var resource = await req.Bind<PurchaseOrderResource>();
+            resource.Privileges = req.HttpContext.GetPrivileges();
+           
+            var result = this.purchaseOrderFacadeService.Update(
+                resource.OrderNumber,
+                resource,
+                resource.Privileges);
 
             await res.Negotiate(result);
         }
