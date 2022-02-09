@@ -29,8 +29,8 @@
         }
 
         protected override PartSupplier CreateFromResource(
-            PartSupplierResource resource,
-            IEnumerable<string> privileges = null)
+            PartSupplierResource resource, 
+            IEnumerable<string> privileges = null)        
         {
             var candidate = this.BuildEntityFromResourceHelper(resource);
             candidate.PartNumber = resource.PartNumber;
@@ -51,16 +51,16 @@
         }
 
         protected override void DeleteOrObsoleteResource(
-            PartSupplier entity,
-            IEnumerable<string> privileges = null)
+            PartSupplier entity, 
+            IEnumerable<string> privileges = null)        
         {
             throw new NotImplementedException();
         }
 
         protected override void UpdateFromResource(
             PartSupplier entity, 
-            PartSupplierResource updateResource,
-            IEnumerable<string> privileges = null)
+            PartSupplierResource updateResource, 
+            IEnumerable<string> privileges = null)        
         {
             var updated = this.BuildEntityFromResourceHelper(updateResource);
 

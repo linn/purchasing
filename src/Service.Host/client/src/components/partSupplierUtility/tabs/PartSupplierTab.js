@@ -24,7 +24,6 @@ function PartSupplierTab({
     searchSuppliers,
     suppliersSearchResults,
     suppliersSearchLoading,
-    editStatus,
     part,
     setPreferredSupplierDialogOpen,
     canEdit,
@@ -48,7 +47,7 @@ function PartSupplierTab({
                     fetchItems={searchParts}
                     links={false}
                     text
-                    disabled={editStatus !== 'create'}
+                    disabled={!creating}
                     clearSearch={() => {}}
                     placeholder="Search Parts"
                     minimumSearchTermLength={3}
@@ -76,7 +75,7 @@ function PartSupplierTab({
                     value={supplierId?.toString()}
                     loading={suppliersSearchLoading}
                     fetchItems={searchSuppliers}
-                    disabled={editStatus !== 'create'}
+                    disabled={!creating}
                     links={false}
                     text
                     clearSearch={() => {}}
@@ -97,7 +96,7 @@ function PartSupplierTab({
                 <Button
                     variant="outlined"
                     onClick={() => setPreferredSupplierDialogOpen(true)}
-                    disabled={!canEdit() || creating()}
+                    disabled={!canEdit() || creating}
                 >
                     Preferred Supplier
                 </Button>
@@ -159,7 +158,6 @@ PartSupplierTab.propTypes = {
     suppliersSearchResults: PropTypes.arrayOf(PropTypes.shape({})),
     suppliersSearchLoading: PropTypes.bool,
     searchSuppliers: PropTypes.func.isRequired,
-    editStatus: PropTypes.string,
     part: PropTypes.shape({
         manufacturers: PropTypes.arrayOf(
             PropTypes.shape({
@@ -170,7 +168,7 @@ PartSupplierTab.propTypes = {
     }),
     setPreferredSupplierDialogOpen: PropTypes.func.isRequired,
     canEdit: PropTypes.func.isRequired,
-    creating: PropTypes.func.isRequired
+    creating: PropTypes.bool
 };
 
 PartSupplierTab.defaultProps = {
@@ -183,8 +181,8 @@ PartSupplierTab.defaultProps = {
     partsSearchLoading: false,
     suppliersSearchResults: [],
     suppliersSearchLoading: false,
-    editStatus: 'view',
-    part: null
+    part: null,
+    creating: false
 };
 
 export default PartSupplierTab;

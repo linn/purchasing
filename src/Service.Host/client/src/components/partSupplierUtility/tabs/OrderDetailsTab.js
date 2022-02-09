@@ -57,7 +57,7 @@ function OrderDetailsTab({
                 <Button
                     variant="outlined"
                     onClick={() => setPriceChangeDialogOpen(true)}
-                    disabled={!canEdit() || creating()}
+                    disabled={!canEdit() || creating}
                 >
                     Change Prices
                 </Button>
@@ -71,7 +71,7 @@ function OrderDetailsTab({
                     propertyName="currencyCode"
                     items={currencies.map(x => x.code)}
                     allowNoValue
-                    disabled={!creating()}
+                    disabled={!creating}
                     onChange={(propertyName, newValue) => {
                         handleFieldChange(propertyName, newValue);
                         if (currencyUnitPrice) {
@@ -87,7 +87,7 @@ function OrderDetailsTab({
                     value={currencyUnitPrice}
                     label="Currency Unit Price"
                     type="number"
-                    disabled={!creating()}
+                    disabled={!creating}
                     propertyName="currencyUnitPrice"
                     onChange={(_, newValue) => {
                         handleFieldChange('currencyUnitPrice', newValue);
@@ -107,7 +107,7 @@ function OrderDetailsTab({
                     value={ourCurrencyPriceToShowOnOrder}
                     label="Our Price to Show On Order (ex duty)"
                     type="number"
-                    disabled={!creating()}
+                    disabled={!creating}
                     propertyName="ourCurrencyPriceToShowOnOrder"
                     onChange={handleFieldChange}
                 />
@@ -119,7 +119,7 @@ function OrderDetailsTab({
                     value={baseOurUnitPrice}
                     label="Base Our Unit Price"
                     type="number"
-                    disabled={!creating()}
+                    disabled={!creating}
                     propertyName="baseOurUnitPrice"
                     onChange={handleFieldChange}
                 />
@@ -240,7 +240,7 @@ OrderDetailsTab.propTypes = {
     reelOrBoxQty: PropTypes.number,
     fullAddress: PropTypes.string,
     setPriceChangeDialogOpen: PropTypes.func.isRequired,
-    creating: PropTypes.func.isRequired,
+    creating: PropTypes.bool,
     canEdit: PropTypes.func.isRequired,
     fetchBasePriceConversion: PropTypes.func.isRequired
 };
@@ -254,6 +254,7 @@ OrderDetailsTab.defaultProps = {
     deliveryAddress: null,
     orderMethod: null,
     currencyCode: null,
+    creating: false,
     orderMethodDescription: null,
     currencyUnitPrice: null,
     ourCurrencyPriceToShowOnOrder: null,
