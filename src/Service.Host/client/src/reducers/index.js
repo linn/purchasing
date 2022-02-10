@@ -34,6 +34,7 @@ import supplier from './supplier';
 import partCategories from './partCategories';
 import accountingCompanies from './accountingCompanies';
 import putSupplierOnHold from './putSupplierOnHold';
+import suppliersWithUnacknowledgedOrders from './suppliersWithUnacknowledgedOrders';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -65,6 +66,7 @@ const rootReducer = history =>
         spendBySupplierReport,
         supplier,
         suppliers,
+        suppliersWithUnacknowledgedOrders,
         tariffs,
         unitsOfMeasure,
         vendorManagers,

@@ -199,7 +199,7 @@
                 supplierResults.Add(new CalculationValueModel { RowId = rowId, ColumnId = "Supplier Name", TextDisplay = supplier.SupplierName });
             }
 
-            this.reportingHelper.AddResultsToModel(results, supplierResults, CalculationValueModelType.Value, true);
+            this.reportingHelper.AddResultsToModel(results, supplierResults, CalculationValueModelType.TextValue, true);
             this.SortRowsByTextColumnValues(results, 1);
 
             return results;

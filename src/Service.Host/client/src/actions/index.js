@@ -1,4 +1,4 @@
-import { makeActionTypes } from '@linn-it/linn-form-components-library';
+import { makeActionTypes, makeReportActionTypes } from '@linn-it/linn-form-components-library';
 import * as itemTypes from '../itemTypes';
 import * as reportTypes from '../reportTypes';
 
@@ -11,11 +11,6 @@ export const signingLimitsActionTypes = makeActionTypes(itemTypes.signingLimits.
 
 export const partSuppliersActionTypes = makeActionTypes(itemTypes.partSuppliers.actionType, false);
 export const partSupplierActionTypes = makeActionTypes(itemTypes.partSupplier.actionType);
-
-export const testAction = () => ({
-    type: 'TEST_ACTION',
-    payload: {}
-});
 
 export const employeesActionTypes = makeActionTypes(itemTypes.employees.actionType);
 
@@ -84,5 +79,10 @@ export const vendorManagersActionTypes = makeActionTypes(itemTypes.vendorManager
 
 export const spendBySupplierReportActionTypes = makeActionTypes(
     reportTypes.spendBySupplierReport.actionType,
+    false
+);
+
+export const suppliersWithUnacknowledgedOrdersActionTypes = makeReportActionTypes(
+    reportTypes.suppliersWithUnacknowledgedOrders.actionType,
     false
 );
