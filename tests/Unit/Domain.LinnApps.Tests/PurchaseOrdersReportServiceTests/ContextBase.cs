@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.OrdersBySupplierReportServiceTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrdersReportServiceTests
 {
     using Linn.Common.Persistence;
     using Linn.Common.Reporting.Models;

@@ -197,7 +197,6 @@
             var ledger = req.Query.As<string>("ledger");
             var round = req.Query.As<string>("round");
 
-
             var result = this.partFacadeService.GetPrices(
                 partNumber, 
                 newCurrency, 

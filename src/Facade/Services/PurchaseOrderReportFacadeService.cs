@@ -11,8 +11,8 @@
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Common.Serialization;
     using Linn.Purchasing.Domain.LinnApps.Reports;
-    using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.RequestResources;
 
     public class PurchaseOrderReportFacadeService : IPurchaseOrderReportFacadeService
     {
@@ -54,7 +54,6 @@
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
-
         public Stream GetOrdersByPartExport(
             OrdersByPartSearchResource resource,
             IEnumerable<string> privileges)
@@ -82,6 +81,19 @@
             csvStreamWriter.WriteModel(returnResource);
 
             return stream;
+        }
+
+        public IResult<ReportReturnResource> GetSuppliersWithUnacknowledgedOrdersReport(
+            SuppliersWithUnacknowledgedOrdersRequestResource resource,
+            IEnumerable<string> privileges)
+        {
+            var results = this.domainService.GetSuppliersWithUnacknowledgedOrders(
+                resource.Planner,
+                resource.VendorManager);
+
+            var returnResource = this.BuildResource(results, privileges);
+
+            return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
         public IResult<ReportReturnResource> GetOrdersBySupplierReport(
@@ -115,7 +127,6 @@
 
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
-
 
         public Stream GetOrdersBySupplierExport(
             OrdersBySupplierSearchResource resource,
