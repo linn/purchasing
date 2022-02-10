@@ -66,9 +66,11 @@
         {
             this.result.ReportTitle.DisplayValue.Should().Be("Suppliers with unacknowledged orders");
             this.result.RowCount().Should().Be(3);
-            this.result.ColumnCount().Should().Be(2);
+            this.result.ColumnCount().Should().Be(4);
             this.result.GetGridTextValue(0, 0).Should().Be("1");
             this.result.GetGridTextValue(0, 1).Should().Be("one");
+            this.result.GetGridTextValue(0, 2).Should().Be("view");
+            this.result.GetGridTextValue(0, 3).Should().Be("csv");
             this.result.GetGridTextValue(1, 0).Should().Be("2");
             this.result.GetGridTextValue(1, 1).Should().Be("two");
             this.result.GetGridTextValue(2, 0).Should().Be("3");

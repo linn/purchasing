@@ -186,6 +186,9 @@
                               {
                                   ReportTitle = new NameModel("Suppliers with unacknowledged orders")
                               };
+            results.AddColumn("view", string.Empty, GridDisplayType.TextValue);
+            results.AddColumn("csv", string.Empty, GridDisplayType.TextValue);
+
             var supplierResults = new List<CalculationValueModel>();
             foreach (var supplier in suppliers)
             {
@@ -197,8 +200,12 @@
                                             TextDisplay = supplier.SupplierId.ToString()
                                         });
                 supplierResults.Add(new CalculationValueModel { RowId = rowId, ColumnId = "Supplier Name", TextDisplay = supplier.SupplierName });
+                supplierResults.Add(new CalculationValueModel { RowId = rowId, ColumnId = "view", TextDisplay = "view" });
+                supplierResults.Add(new CalculationValueModel { RowId = rowId, ColumnId = "csv", TextDisplay = "csv" });
             }
 
+            results.ValueDrillDownTemplates.Add(new DrillDownModel("view", "/purchasing/reports/unacknowledged-orders?supplierId={rowId}", null, 2));
+            results.ValueDrillDownTemplates.Add(new DrillDownModel("csv", "/purchasing/reports/unacknowledged-orders/export?supplierId={rowId}", null, 3));
             this.reportingHelper.AddResultsToModel(results, supplierResults, CalculationValueModelType.TextValue, true);
             this.SortRowsByTextColumnValues(results, 1);
 

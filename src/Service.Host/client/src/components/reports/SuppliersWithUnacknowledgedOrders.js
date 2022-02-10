@@ -91,7 +91,7 @@ function SuppliersWithUnacknowledgedOrders() {
 
                         <Grid item xs={8} />
                         <Grid item xs={12}>
-                            {reportLoading || !reportData ? (
+                            {reportLoading ? (
                                 <Loading />
                             ) : (
                                 <ReportTable
