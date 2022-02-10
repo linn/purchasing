@@ -16,11 +16,11 @@
 
     public class AddressModule : CarterModule
     {
-        private readonly FacadeFilterResourceService<Address, int, AddressResource, AddressResource, AddressResource>
+        private readonly IFacadeResourceFilterService<Address, int, AddressResource, AddressResource, AddressResource>
             addressService;
 
         public AddressModule(
-            FacadeFilterResourceService<Address, int, AddressResource, AddressResource, AddressResource> addressService)
+            IFacadeResourceFilterService<Address, int, AddressResource, AddressResource, AddressResource> addressService)
         {
             this.addressService = addressService;
             this.Post("/purchasing/addresses", this.CreateAddress);

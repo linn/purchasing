@@ -5,7 +5,6 @@
     using Linn.Common.Facade.Carter;
     using Linn.Common.Facade.Carter.Handlers;
     using Linn.Common.Reporting.Resources.ReportResultResources;
-    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.ResultHandlers;
 
@@ -48,8 +47,8 @@
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<PartCategoryResource>>>()                
                 .AddTransient<IHandler, JsonResultHandler<PurchaseOrderResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<PurchaseOrderResource>>>()
-                .AddTransient<IHandler, JsonResultHandler<Address>>()
-                .AddTransient<IHandler, JsonResultHandler<IEnumerable<Address>>>();
+                .AddTransient<IHandler, JsonResultHandler<AddressResource>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<AddressResource>>>();
         }
     }
 }
