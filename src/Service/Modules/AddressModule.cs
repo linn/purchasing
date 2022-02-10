@@ -10,7 +10,6 @@
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Resources;
-    using Linn.Purchasing.Service.Extensions;
 
     using Microsoft.AspNetCore.Http;
 
