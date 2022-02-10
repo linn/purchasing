@@ -20,6 +20,7 @@ import OrdersByPart from './reports/OrdersByPart';
 import SuppliersSearch from './supplierUtility/SuppliersSearch';
 import OrdersByPartOptions from './reports/OrdersByPartOptions';
 import Supplier from './supplierUtility/Supplier';
+import AddressUtility from './AdressUtility';
 
 const Root = ({ store }) => (
     <div>
@@ -75,6 +76,11 @@ const Root = ({ store }) => (
                                     path="/purchasing/part-suppliers/create"
                                     // eslint-disable-next-line react/jsx-props-no-spreading
                                     render={props => <PartSupplier creating {...props} />}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/addresses"
+                                    component={AddressUtility}
                                 />
                                 <Route
                                     exact

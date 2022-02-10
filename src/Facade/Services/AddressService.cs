@@ -6,6 +6,7 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
+    using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Resources;
 
@@ -13,21 +14,25 @@
     {
         private readonly IRepository<Country, string> countryRepository;
 
+        private readonly IDatabaseService databaseService;
+
         public AddressService(
             IRepository<Address, int> repository, 
             ITransactionManager transactionManager, 
             IBuilder<Address> builder,
-            IRepository<Country, string> countryRepository)
+            IRepository<Country, string> countryRepository,
+            IDatabaseService databaseService)
             : base(repository, transactionManager, builder)
         {
             this.countryRepository = countryRepository;
+            this.databaseService = databaseService;
         }
 
         protected override Address CreateFromResource(AddressResource resource, IEnumerable<string> privileges = null)
         {
             return new Address
                        {
-                           AddressId = resource.AddressId,
+                           AddressId = this.databaseService.GetNextVal("ADDR_SEQ"),
                            Country = this.countryRepository.FindById(resource.CountryCode),
                            Line1 = resource.Line1,
                            Line2 = resource.Line2,

@@ -32,6 +32,8 @@ import supplier from './supplier';
 import partCategories from './partCategories';
 import accountingCompanies from './accountingCompanies';
 import putSupplierOnHold from './putSupplierOnHold';
+import address from './address';
+import addresses from './addresses';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -40,6 +42,8 @@ const rootReducer = history =>
         oidc,
         historyStore,
         accountingCompanies,
+        address,
+        addresses,
         currencies,
         deliveryAddresses,
         employees,

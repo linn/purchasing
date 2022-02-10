@@ -33,6 +33,7 @@
                                            CountryName = "GREAT BRITAIN"
                                        };
             this.CountryRepository.FindById("GB").Returns(new Country { CountryCode = "GB", Name = "GREAT BRITAIN" });
+            this.DatabaseService.GetNextVal("ADDR_SEQ").Returns(1);
             this.Response = this.Client.Post(
                 "/purchasing/addresses",
                 this.addressResource,

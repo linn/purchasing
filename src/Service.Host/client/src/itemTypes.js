@@ -106,3 +106,7 @@ export const putSupplierOnHold = new ItemType(
     'PUT_SUPPLIER_ON_HOLD',
     '/purchasing/suppliers/hold'
 );
+
+export const address = new ItemType('address', 'ADDRESS', '/purchasing/addresses');
+
+export const addresses = new ItemType('address', 'ADDRESSES', '/purchasing/addresses');

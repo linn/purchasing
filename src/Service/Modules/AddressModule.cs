@@ -32,9 +32,7 @@
         {
             var resource = await request.Bind<AddressResource>();
             var result = this.addressService.Add(
-                resource,
-                null,
-                request.HttpContext.User.GetEmployeeNumber());
+                resource);
 
             await response.Negotiate(result);
         }
@@ -45,9 +43,7 @@
             var resource = await request.Bind<AddressResource>();
             var result = this.addressService.Update(
                 id,
-                resource,
-                null,
-                request.HttpContext.User.GetEmployeeNumber());
+                resource);
 
             await response.Negotiate(result);
         }

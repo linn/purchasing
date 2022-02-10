@@ -11,19 +11,23 @@
 
     public class AddressRepository : EntityFrameworkRepository<Address, int>
     {
+        private readonly ServiceDbContext serviceDbContext;
+
         public AddressRepository(ServiceDbContext serviceDbContext)
             : base(serviceDbContext.Addresses)
         {
+            this.serviceDbContext = serviceDbContext;
         }
 
         public override Address FindById(int key)
         {
-            return this.FilterBy(x => x.AddressId == key).FirstOrDefault();
+            return this.serviceDbContext.Addresses.Include(a => a.Country)
+                .SingleOrDefault(a => a.AddressId == key);
         }
 
         public override IQueryable<Address> FilterBy(Expression<Func<Address, bool>> expression)
         {
-            return base.FilterBy(expression).Include(x => x.Country);
+            return base.FilterBy(expression).AsNoTracking().Include(x => x.Country);
         }
     }
 }

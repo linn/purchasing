@@ -5,6 +5,7 @@
     using Linn.Common.Facade;
     using Linn.Common.Logging;
     using Linn.Common.Persistence;
+    using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
@@ -23,6 +24,8 @@
         protected HttpClient Client { get; set; }
 
         protected HttpResponseMessage Response { get; set; }
+
+        protected IDatabaseService DatabaseService { get; private set; }
 
         protected ITransactionManager TransactionManager { get; set; }
 
@@ -45,12 +48,14 @@
             this.AddressRepository = Substitute.For<IRepository<Address, int>>();
             this.CountryRepository = Substitute.For<IRepository<Country, string>>();
             this.Log = Substitute.For<ILog>();
+            this.DatabaseService = Substitute.For<IDatabaseService>();
 
             this.FacadeService = new AddressService(
                 this.AddressRepository,
                 this.TransactionManager,
                 new AddressResourceBuilder(),
-                this.CountryRepository);
+                this.CountryRepository,
+                this.DatabaseService);
 
             this.Client = TestClient.With<AddressModule>(
                 services =>

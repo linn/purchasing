@@ -79,3 +79,7 @@ export const putSupplierOnHoldActionTypes = makeActionTypes(
     itemTypes.putSupplierOnHold.actionType,
     true
 );
+
+export const addressActionTypes = makeActionTypes(itemTypes.address.actionType, true);
+
+export const addressesActionTypes = makeActionTypes(itemTypes.addresses.actionType);
