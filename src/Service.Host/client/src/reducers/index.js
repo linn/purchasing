@@ -28,6 +28,8 @@ import preferredSupplierChange from './preferredSupplierChange';
 import priceChangeReasons from './priceChangeReasons';
 import partPriceConversions from './partPriceConversions';
 import ordersByPart from './ordersByPartReport';
+import vendorManagers from './vendorManagers';
+import spendBySupplierReport from './spendBySupplierReport';
 import supplier from './supplier';
 import partCategories from './partCategories';
 import accountingCompanies from './accountingCompanies';
@@ -66,10 +68,12 @@ const rootReducer = history =>
         router: connectRouter(history),
         signingLimit,
         signingLimits,
+        spendBySupplierReport,
         supplier,
         suppliers,
         tariffs,
         unitsOfMeasure,
+        vendorManagers,
         ...sharedLibraryReducers,
         errors
     });

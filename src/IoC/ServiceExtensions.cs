@@ -50,7 +50,8 @@
                 .AddTransient<IBuilder<PurchaseOrder>, PurchaseOrderResourceBuilder>()
                 .AddTransient<IBuilder<ResultsModel>, ResultsModelResourceBuilder>()
                 .AddTransient<IBuilder<Address>, AddressResourceBuilder>()
-                .AddTransient<IBuilder<Country>, CountryResourceBuilder>();
+                .AddTransient<IBuilder<Country>, CountryResourceBuilder>()
+                .AddTransient<IBuilder<VendorManager>, VendorManagerResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -73,8 +74,13 @@
                 .AddTransient<IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource>, PriceChangeReasonService>()
                 .AddTransient<IFacadeResourceService<PartCategory, string, PartCategoryResource, PartCategoryResource>, PartCategoriesService>()
                 .AddTransient<IPurchaseOrderReportFacadeService, PurchaseOrderReportFacadeService>()
+<<<<<<< HEAD
                 .AddTransient<IFacadeResourceFilterService<Address, int, AddressResource, AddressResource, AddressResource>, AddressService>()
                 .AddTransient<IFacadeResourceService<Country, string, CountryResource, CountryResource>, CountryService>();
+=======
+                .AddTransient<IFacadeResourceService<VendorManager, string, VendorManagerResource, VendorManagerResource>, VendorManagerFacadeService>()
+                .AddTransient<ISpendsReportFacadeService, SpendsReportFacadeService>();
+>>>>>>> main
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
@@ -92,10 +98,13 @@
                 .AddTransient<IPurchaseOrderService, PurchaseOrderService>()
                 .AddTransient<IAuthorisationService, AuthorisationService>()
                 .AddTransient<IDatabaseService, DatabaseService>()
+                .AddTransient<ISpendsReportService, SpendsReportService>()
+
             //external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
                 .AddTransient<IAutocostPack, AutocostPack>()
-                .AddTransient<ICurrencyPack, CurrencyPack>(); 
+                .AddTransient<ICurrencyPack, CurrencyPack>()
+                .AddTransient<IPurchaseLedgerPack, PurchaseLedgerPack>();
         }
     }
 }

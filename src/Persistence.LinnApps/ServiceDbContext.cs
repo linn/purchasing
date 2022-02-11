@@ -67,6 +67,10 @@
         public DbSet<Address> Addresses { get; set; }
 
         public DbSet<Country> Countries { get; set; }
+        
+        public DbSet<VendorManager> VendorManagers { get; set; }
+
+        public DbSet<SupplierSpend> SupplierSpends { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -99,6 +103,8 @@
             this.BuildSupplierOrderHoldHistories(builder);
             this.BuildAddresses(builder);
             this.BuildCountries(builder);
+            this.BuildVendorManagers(builder);
+            this.BuildSpendsView(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -423,7 +429,7 @@
             entity.Property(a => a.SundryLimit).HasColumnName("SUNDRY_LIMIT");
             entity.Property(a => a.Unlimited).HasColumnName("UNLIMITED").HasMaxLength(1);
             entity.Property(a => a.ReturnsAuthorisation).HasColumnName("RETURNS_AUTHORISATION").HasMaxLength(1);
-            entity.HasOne<Employee>(a => a.User).WithMany(e => e.SigningLimits).HasForeignKey(a => a.UserNumber);
+            entity.HasOne(a => a.User).WithMany(e => e.SigningLimits).HasForeignKey(a => a.UserNumber);
         }
 
         private void BuildSigningLimitLogs(ModelBuilder builder)
@@ -435,7 +441,6 @@
             entity.Property(a => a.SundryLimit).HasColumnName("SUNDRY_LIMIT");
             entity.Property(a => a.Unlimited).HasColumnName("UNLIMITED").HasMaxLength(1);
             entity.Property(a => a.ReturnsAuthorisation).HasColumnName("RETURNS_AUTHORISATION").HasMaxLength(1);
-
             entity.Property(a => a.LogId).HasColumnName("LOG_ID");
             entity.Property(a => a.LogAction).HasColumnName("LOG_ACTION").HasMaxLength(20);
             entity.Property(a => a.LogUserNumber).HasColumnName("LOG_USER_NUMBER");
@@ -509,7 +514,7 @@
             e.Property(p => p.UnderOver).HasColumnName("UNDER_OVER").HasMaxLength(14);
             e.Property(p => p.ExchangeRate).HasColumnName("EXCHANGE_RATE").HasMaxLength(19);
             e.Property(p => p.LedgerStream).HasColumnName("LEDGER_STREAM").HasMaxLength(8);
-            e.HasOne<TransactionType>(a => a.TransactionType).WithMany().HasForeignKey(a => a.PlTransType);
+            e.HasOne(a => a.TransactionType).WithMany().HasForeignKey(a => a.PlTransType);
         }
 
         private void BuildTransactionTypes(ModelBuilder builder)
@@ -525,6 +530,25 @@
             entity.Property(e => e.TransactionCategory).HasColumnName("TRANS_CATEGORY").HasMaxLength(10);
         }
 
+        private void BuildVendorManagers(ModelBuilder builder)
+        {
+            var entity = builder.Entity<VendorManager>().ToTable("VENDOR_MANAGERS");
+            entity.HasKey(m => m.VmId);
+            entity.Property(e => e.VmId).HasColumnName("VM_ID").HasMaxLength(1);
+            entity.Property(e => e.UserNumber).HasColumnName("USER_NUMBER").HasMaxLength(6);
+            entity.Property(e => e.PmMeasured).HasColumnName("PM_MEASURED").HasMaxLength(1);
+            entity.HasOne(x => x.Employee).WithOne().HasForeignKey<VendorManager>(z => z.UserNumber);
+        }
 
+        private void BuildSpendsView(ModelBuilder builder)
+        {
+            var entity = builder.Entity<SupplierSpend>().ToTable("PL_PL_SUPPLIERS_EX_VAT");
+            entity.HasKey(m => m.PlTref);
+            entity.Property(e => e.PlTref).HasColumnName("PL_TREF");
+            entity.Property(e => e.BaseTotal).HasColumnName("BASE_TOTAL");
+            entity.Property(e => e.LedgerPeriod).HasColumnName("LEDGER_PERIOD");
+            entity.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID");
+            entity.HasOne(x => x.Supplier).WithMany().HasForeignKey(z => z.SupplierId);
+        }
     }
 }

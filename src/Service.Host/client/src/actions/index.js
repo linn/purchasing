@@ -85,3 +85,10 @@ export const addressActionTypes = makeActionTypes(itemTypes.address.actionType, 
 export const addressesActionTypes = makeActionTypes(itemTypes.addresses.actionType);
 
 export const countriesActionTypes = makeActionTypes(itemTypes.countries.actionType);
+
+export const vendorManagersActionTypes = makeActionTypes(itemTypes.vendorManagers.actionType);
+
+export const spendBySupplierReportActionTypes = makeActionTypes(
+    reportTypes.spendBySupplierReport.actionType,
+    false
+);
