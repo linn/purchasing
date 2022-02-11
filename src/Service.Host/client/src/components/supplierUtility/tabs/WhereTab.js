@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import {
@@ -7,8 +7,13 @@ import {
     collectionSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
-
+import Dialog from '@mui/material/Dialog';
+import { makeStyles } from '@mui/styles';
+import IconButton from '@mui/material/IconButton';
+import Close from '@mui/icons-material/Close';
+import Button from '@mui/material/Button';
 import addressesActions from '../../../actions/addressesActions';
+import AddressUtility from '../../AdressUtility';
 
 function WhereTab({
     orderAddressId,
@@ -18,6 +23,16 @@ function WhereTab({
     handleFieldChange
 }) {
     const dispatch = useDispatch();
+    const useStyles = makeStyles(theme => ({
+        dialog: {
+            margin: theme.spacing(6),
+            minWidth: theme.spacing(62)
+        },
+        total: {
+            float: 'right'
+        }
+    }));
+    const classes = useStyles();
     const addressesSearchResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(
             state.addresses,
@@ -31,8 +46,27 @@ function WhereTab({
         collectionSelectorHelpers.getSearchLoading(state.addresses)
     );
     const searchAddresses = searchTerm => dispatch(addressesActions.search(searchTerm));
+
+    const [addressDialogOpen, setAddressDialogOpen] = useState(false);
     return (
         <Grid container spacing={3}>
+            <Dialog open={addressDialogOpen} fullWidth maxWidth="md">
+                <div>
+                    <IconButton
+                        className={classes.pullRight}
+                        aria-label="Close"
+                        onClick={() => setAddressDialogOpen(false)}
+                    >
+                        <Close />
+                    </IconButton>
+                    <div className={classes.dialog}>
+                        <AddressUtility
+                            inDialogBox
+                            closeDialog={() => setAddressDialogOpen(false)}
+                        />
+                    </div>
+                </div>
+            </Dialog>
             <Grid item xs={3}>
                 <Typeahead
                     onSelect={newValue => {
@@ -94,6 +128,12 @@ function WhereTab({
                     onChange={() => {}}
                     rows={7}
                 />
+            </Grid>
+            <Grid item xs={3} />
+            <Grid item xs={2}>
+                <Button variant="outlined" onClick={() => setAddressDialogOpen(true)}>
+                    Address Utility
+                </Button>
             </Grid>
         </Grid>
     );

@@ -209,7 +209,7 @@ function AddressUtility({ inDialogBox, closeDialog }) {
                 <Grid item xs={12}>
                     <SaveBackCancelButtons
                         saveDisabled={
-                            editStatus === 'view' || !address?.addressee || !address?.country
+                            editStatus === 'view' || !address?.addressee || !address?.countryCode
                         }
                         backClick={() =>
                             closeDialog ? closeDialog() : history.push('/purchasing')
