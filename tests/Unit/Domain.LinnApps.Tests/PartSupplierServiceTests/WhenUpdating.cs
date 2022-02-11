@@ -15,7 +15,7 @@
     {
         private readonly Currency newCurrency = new Currency { Code = "USD" };
 
-        private readonly Address newAddress = new Address { Id = 1 };
+        private readonly FullAddress newFullAddress = new FullAddress { Id = 1 };
 
         private readonly OrderMethod newOrderMethod = new OrderMethod { Name = "M1" };
 
@@ -40,7 +40,7 @@
                                    SupplierId = 1,
                                    SupplierDesignation = string.Empty,
                                    OrderMethod = new OrderMethod(),
-                                   DeliveryAddress = new Address(),
+                                   DeliveryFullAddress = new FullAddress(),
                                    Currency = new Currency(),
                                    CreatedBy = new Employee { Id = 33087 },
                                    MinimumOrderQty = 1m,
@@ -57,7 +57,7 @@
                                    SupplierId = 1,
                                    SupplierDesignation = "We updated this to this.",
                                    OrderMethod = this.newOrderMethod,
-                                   DeliveryAddress = this.newAddress,
+                                   DeliveryFullAddress = this.newFullAddress,
                                    Currency = this.newCurrency,
                                    Tariff = this.newTariff,
                                    PackagingGroup = this.newPackagingGroup,
@@ -75,7 +75,7 @@
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
             this.CurrencyRepository.FindById(this.newCurrency.Code).Returns(this.newCurrency);
-            this.AddressRepository.FindById(this.newAddress.Id).Returns(this.newAddress);
+            this.AddressRepository.FindById(this.newFullAddress.Id).Returns(this.newFullAddress);
             this.OrderMethodRepository.FindById(this.newOrderMethod.Name).Returns(this.newOrderMethod);
             this.TariffRepository.FindById(this.newTariff.Id).Returns(this.newTariff);
             this.PackagingGroupRepository.FindById(this.newPackagingGroup.Id).Returns(this.newPackagingGroup);
@@ -87,7 +87,7 @@
         [Test]
         public void ShouldPerformLookUps()
         {
-            this.AddressRepository.Received().FindById(this.newAddress.Id);
+            this.AddressRepository.Received().FindById(this.newFullAddress.Id);
             this.CurrencyRepository.Received().FindById(this.newCurrency.Code);
             this.OrderMethodRepository.Received().FindById(this.newOrderMethod.Name);
             this.TariffRepository.Received().FindById(this.newTariff.Id);
@@ -100,7 +100,7 @@
             this.current.SupplierDesignation.Should().Be("We updated this to this.");
             this.current.Currency.Code.Should().Be(this.newCurrency.Code);
             this.current.OrderMethod.Name.Should().Be(this.newOrderMethod.Name);
-            this.current.DeliveryAddress.Id.Should().Be(this.newAddress.Id);
+            this.current.DeliveryFullAddress.Id.Should().Be(this.newFullAddress.Id);
             this.current.PackagingGroup.Id.Should().Be(this.newPackagingGroup.Id);
             this.current.Tariff.Id.Should().Be(this.newTariff.Id);
             this.current.MadeInvalidBy.Id.Should().Be(this.madeInvalidBy.Id);

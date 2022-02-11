@@ -54,5 +54,9 @@
         public Supplier RefersToFc { get; set; }
 
         public int? PmDeliveryDaysGrace { get; set; }
+
+        public FullAddress OrderFullAddress { get; set; }
+
+        public FullAddress InvoiceFullAddress { get; set; }
     }
 }

@@ -28,7 +28,7 @@
                 .Include(p => p.PackagingGroup)
                 .Include(p => p.CreatedBy)
                 .Include(p => p.MadeInvalidBy)
-                .Include(p => p.DeliveryAddress)
+                .Include(p => p.DeliveryFullAddress)
                 .Include(p => p.Manufacturer)
                 .Include(p => p.Tariff)
                 .Include(p => p.OrderMethod)

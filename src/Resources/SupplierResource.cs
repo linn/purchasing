@@ -61,5 +61,13 @@
         public string RefersToFcName { get; set; }
 
         public int? PmDeliveryDaysGrace { get; set; }
+
+        public int? OrderAddressId { get; set; }
+
+        public string OrderFullAddress { get; set; }
+
+        public int? InvoiceAddressId { get; set; }
+
+        public string InvoiceFullAddress { get; set; }
     }
 }

@@ -30,7 +30,7 @@
                                  Supplier = new Supplier { Name = "SUPPLIER" },
                                  PackagingGroup = new PackagingGroup { Description = "GRP", Id = 555 },
                                  CreatedBy = new Employee { Id = 345, FullName = "EMPLOYEE" },
-                                 DeliveryAddress = new Address { Id = 1, FullAddress = "FULL ADDRESS" },
+                                 DeliveryFullAddress = new FullAddress { Id = 1, AddressString = "FULL ADDRESS" },
                                  Manufacturer = new Manufacturer { Name = "MANUFACTURER", Code = "MAN" },
                                  Tariff = new Tariff { Code = "T", Description = "TARIFF"},
                                  OrderMethod = new OrderMethod { Name = "M", Description = "METHOD"},
@@ -46,8 +46,8 @@
             this.result.SupplierName.Should().Be(this.model.Supplier.Name);
             this.result.CreatedBy.Should().Be(this.model.CreatedBy.Id);
             this.result.CreatedByName.Should().Be(this.model.CreatedBy.FullName);
-            this.result.AddressId.Should().Be(this.model.DeliveryAddress.Id);
-            this.result.FullAddress.Should().Be(this.model.DeliveryAddress.FullAddress);
+            this.result.AddressId.Should().Be(this.model.DeliveryFullAddress.Id);
+            this.result.FullAddress.Should().Be(this.model.DeliveryFullAddress.AddressString);
             this.result.ManufacturerCode.Should().Be(this.model.Manufacturer.Code);
             this.result.PackingGroup.Should().Be(this.model.PackagingGroup.Id);
             this.result.PackingGroupDescription.Should().Be(this.model.PackagingGroup.Description);

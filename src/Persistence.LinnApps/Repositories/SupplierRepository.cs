@@ -25,6 +25,8 @@
                 .Include(s => s.Currency)
                 .Include(s => s.PartCategory)
                 .Include(s => s.RefersToFc)
+                .Include(s => s.InvoiceFullAddress)
+                .Include(s => s.OrderFullAddress)
                 .First(x => x.SupplierId == key);
         }
 

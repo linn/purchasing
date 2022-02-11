@@ -4,7 +4,7 @@
 
     public class LinnDeliveryAddress
     {
-        public Address Address { get; set; }
+        public FullAddress FullAddress { get; set; }
 
         public int AddressId { get; set; }
 

@@ -48,6 +48,8 @@
                 .AddTransient<IBuilder<PartCategory>, PartCategoryResourceBuilder>()
                 .AddTransient<IBuilder<PurchaseOrder>, PurchaseOrderResourceBuilder>()
                 .AddTransient<IBuilder<ResultsModel>, ResultsModelResourceBuilder>()
+                .AddTransient<IBuilder<Address>, AddressResourceBuilder>()
+                .AddTransient<IBuilder<Country>, CountryResourceBuilder>()
                 .AddTransient<IBuilder<VendorManager>, VendorManagerResourceBuilder>();
         }
 
@@ -71,6 +73,8 @@
                 .AddTransient<IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource>, PriceChangeReasonService>()
                 .AddTransient<IFacadeResourceService<PartCategory, string, PartCategoryResource, PartCategoryResource>, PartCategoriesService>()
                 .AddTransient<IPurchaseOrderReportFacadeService, PurchaseOrderReportFacadeService>()
+                .AddTransient<IFacadeResourceFilterService<Address, int, AddressResource, AddressResource, AddressResource>, AddressService>()
+                .AddTransient<IFacadeResourceService<Country, string, CountryResource, CountryResource>, CountryService>()
                 .AddTransient<IFacadeResourceService<VendorManager, string, VendorManagerResource, VendorManagerResource>, VendorManagerFacadeService>()
                 .AddTransient<ISpendsReportFacadeService, SpendsReportFacadeService>();
         }

@@ -22,6 +22,7 @@ import OrdersByPartOptions from './reports/OrdersByPartOptions';
 import SpendBySupplierOptions from './reports/SpendBySupplierOptions';
 import SpendBySupplier from './reports/SpendBySupplier';
 import Supplier from './supplierUtility/Supplier';
+import AddressUtility from './AdressUtility';
 import SuppliersWithUnacknowledgedOrders from './reports/SuppliersWithUnacknowledgedOrders';
 
 const Root = ({ store }) => (
@@ -78,6 +79,11 @@ const Root = ({ store }) => (
                                     path="/purchasing/part-suppliers/create"
                                     // eslint-disable-next-line react/jsx-props-no-spreading
                                     render={props => <PartSupplier creating {...props} />}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/addresses"
+                                    component={AddressUtility}
                                 />
                                 <Route
                                     exact

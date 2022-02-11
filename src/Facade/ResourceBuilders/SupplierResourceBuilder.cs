@@ -51,6 +51,10 @@
                 RefersToFcId = entity.RefersToFc?.SupplierId,
                 RefersToFcName = entity.RefersToFc?.Name,
                 PmDeliveryDaysGrace = entity.PmDeliveryDaysGrace,
+                InvoiceAddressId = entity.InvoiceFullAddress?.Id,
+                InvoiceFullAddress = entity.InvoiceFullAddress?.AddressString,
+                OrderAddressId = entity.OrderFullAddress?.Id,
+                OrderFullAddress = entity.OrderFullAddress?.AddressString,
                 Links = this.BuildLinks(entity, claims).ToArray()
             };
         }

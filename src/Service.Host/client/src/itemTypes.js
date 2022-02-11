@@ -107,6 +107,12 @@ export const putSupplierOnHold = new ItemType(
     '/purchasing/suppliers/hold'
 );
 
+export const address = new ItemType('address', 'ADDRESS', '/purchasing/addresses');
+
+export const addresses = new ItemType('address', 'ADDRESSES', '/purchasing/addresses');
+
+export const countries = new ItemType('countries', 'COUNTRIES', '/purchasing/countries');
+
 export const vendorManagers = new ItemType(
     'vendorManagers',
     'VENDOR_MANAGERS',

@@ -16,7 +16,7 @@
     {
         private readonly Currency newCurrency = new Currency { Code = "USD" };
 
-        private readonly Address newAddress = new Address { Id = 1 };
+        private readonly FullAddress newFullAddress = new FullAddress { Id = 1 };
 
         private readonly OrderMethod newOrderMethod = new OrderMethod { Name = "M1" };
 
@@ -33,7 +33,7 @@
                 SupplierId = 1,
                 SupplierDesignation = string.Empty,
                 OrderMethod = this.newOrderMethod,
-                DeliveryAddress = this.newAddress,
+                DeliveryFullAddress = this.newFullAddress,
                 Currency = this.newCurrency,
                 CreatedBy = new Employee { Id = 33087 }
             };
@@ -43,7 +43,7 @@
                 SupplierId = 1,
                 SupplierDesignation = "We updated this to this.",
                 OrderMethod = this.newOrderMethod,
-                DeliveryAddress = this.newAddress,
+                DeliveryFullAddress = this.newFullAddress,
                 Currency = this.newCurrency,
                 DateInvalid = DateTime.UnixEpoch,
                 CurrencyUnitPrice = 10m,
@@ -112,7 +112,7 @@
             this.current.SupplierDesignation.Should().Be("We updated this to this.");
             this.current.Currency.Code.Should().Be(this.newCurrency.Code);
             this.current.OrderMethod.Name.Should().Be(this.newOrderMethod.Name);
-            this.current.DeliveryAddress.Id.Should().Be(this.newAddress.Id);
+            this.current.DeliveryFullAddress.Id.Should().Be(this.newFullAddress.Id);
             this.current.DateInvalid.Should().Be(DateTime.UnixEpoch);
         }
     }
