@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.IoC
 {
-    using System.Collections.Generic;
     using System.Net.Http;
 
     using Amazon.Extensions.NETCore.Setup;
