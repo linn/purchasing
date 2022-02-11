@@ -12,8 +12,6 @@ import queryString from 'query-string';
 import history from '../../history';
 import config from '../../config';
 import ordersBySupplierActions from '../../actions/ordersBySupplierActions';
-// import ReportTable from './LocReportTable';
-import { DataGrid } from '@mui/x-data-grid';
 
 function OrderBySupplierReport() {
     const options = useMemo(() => queryString.parse(window.location.search) || {}, []);
@@ -97,12 +95,3 @@ OrderBySupplierReport.defaultProps = {
 };
 
 export default OrderBySupplierReport;
-
-// <DataGrid
-//     rows={reportData?.results.map(s => ({ ...s, id: s.userNumber, name: s.user?.fullName }))}
-//     columns={reportData?.headers?.columnHeaders}
-//     pageSize={5}
-//     rowsPerPageOptions={[5]}
-//     checkboxSelection
-//     disableSelectionOnClick
-// />
