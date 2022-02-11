@@ -6,8 +6,6 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
-    using Linn.Common.Reporting.Models;
-    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.SearchResources;

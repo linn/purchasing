@@ -10,7 +10,6 @@
     using Carter.Response;
 
     using Linn.Purchasing.Facade.Services;
-    using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.Extensions;
     using Linn.Purchasing.Service.Models;
 

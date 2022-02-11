@@ -6,6 +6,8 @@
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+
     using NSubstitute;
 
     using NUnit.Framework;

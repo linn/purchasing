@@ -6,6 +6,7 @@
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Reports.Models;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using Microsoft.EntityFrameworkCore;
@@ -72,6 +73,10 @@
 
         public DbSet<SupplierSpend> SupplierSpends { get; set; }
 
+        public DbSet<UnacknowledgedOrders> UnacknowledgedOrders { get; set; }
+
+        public DbSet<SuppliersWithUnacknowledgedOrders> SuppliersWithUnacknowledgedOrders { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -105,6 +110,8 @@
             this.BuildCountries(builder);
             this.BuildVendorManagers(builder);
             this.BuildSpendsView(builder);
+            this.BuildUnacknowledgedOrderSuppliers(builder);
+            this.BuildUnacknowledgedOrders(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -380,6 +387,7 @@
             entity.Property(o => o.OrderDate).HasColumnName("DATE_OF_ORDER");
             entity.Property(o => o.Overbook).HasColumnName("OVERBOOK");
             entity.Property(o => o.OverbookQty).HasColumnName("OVERBOOK_QTY");
+            entity.HasOne(o => o.Currency).WithMany().HasForeignKey("CURR_CODE");
         }
 
         private void BuildPurchaseOrderDetails(ModelBuilder builder)
@@ -397,7 +405,8 @@
                 .HasForeignKey(d => d.OrderNumber);
             entity.HasMany(d => d.PurchaseDeliveries).WithOne(o => o.PurchaseOrderDetail)
                 .HasForeignKey(o => new { o.OrderNumber, o.OrderLine });
-            entity.Property(o => o.NetTotal).HasColumnName("NET_TOTAL").HasMaxLength(18);
+            entity.Property(o => o.BaseNetTotal).HasColumnName("BASE_NET_TOTAL").HasMaxLength(18);
+            entity.Property(o => o.NetTotalCurrency).HasColumnName("NET_TOTAL").HasMaxLength(18);
         }
 
         private void BuildPurchaseOrderDeliveries(ModelBuilder builder)
@@ -549,6 +558,32 @@
             entity.Property(e => e.LedgerPeriod).HasColumnName("LEDGER_PERIOD");
             entity.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID");
             entity.HasOne(x => x.Supplier).WithMany().HasForeignKey(z => z.SupplierId);
+        }
+
+        private void BuildUnacknowledgedOrders(ModelBuilder builder)
+        {
+            var entity = builder.Entity<UnacknowledgedOrders>().ToTable("unacknowledged_orders_view").HasNoKey();
+            entity.Property(e => e.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(e => e.OrderLine).HasColumnName("ORDER_LINE");
+            entity.Property(e => e.DeliveryNumber).HasColumnName("DELIVERY_SEQ");
+            entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
+            entity.Property(e => e.CallOffDate).HasColumnName("CALL_OFF_DATE");
+            entity.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID");
+            entity.Property(e => e.SupplierName).HasColumnName("SUPPLIER_NAME").HasMaxLength(50);
+            entity.Property(e => e.OrganisationId).HasColumnName("SUPPLIER_ORGANISATION_ID");
+            entity.Property(e => e.OrderDeliveryQuantity).HasColumnName("ORDER_DELIVERY_QTY");
+            entity.Property(e => e.OurDeliveryQuantity).HasColumnName("OUR_DELIVERY_QTY");
+            entity.Property(e => e.RequestedDate).HasColumnName("REQUESTED_DATE");
+        }
+
+        private void BuildUnacknowledgedOrderSuppliers(ModelBuilder builder)
+        {
+            var entity = builder.Entity<SuppliersWithUnacknowledgedOrders>().ToTable("UNACKNOWLEDGED_ORDER_SUPPLIERS").HasNoKey();
+            entity.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID");
+            entity.Property(e => e.SupplierName).HasColumnName("SUPPLIER_NAME").HasMaxLength(50);
+            entity.Property(e => e.OrganisationId).HasColumnName("SUPPLIER_ORGANISATION_ID");
+            entity.Property(e => e.VendorManager).HasColumnName("VENDOR_MANAGER").HasMaxLength(1);
+            entity.Property(e => e.Planner).HasColumnName("PLANNER");
         }
     }
 }

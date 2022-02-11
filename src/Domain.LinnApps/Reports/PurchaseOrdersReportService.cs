@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
 
     using Linn.Common.Persistence;
@@ -10,6 +11,8 @@
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Reports.Models;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     public class PurchaseOrdersReportService : IPurchaseOrdersReportService
@@ -24,6 +27,8 @@
 
         private readonly IReportingHelper reportingHelper;
 
+        private readonly IQueryRepository<SuppliersWithUnacknowledgedOrders> suppliersWithUnacknowledgedOrdersRepository;
+
         private readonly IRepository<Supplier, int> supplierRepository;
 
         public PurchaseOrdersReportService(
@@ -32,7 +37,8 @@
             IQueryRepository<Part> partRepository,
             IRepository<PurchaseLedger, int> purchaseLedgerRepository,
             IPurchaseOrdersPack purchaseOrdersPack,
-            IReportingHelper reportingHelper)
+            IReportingHelper reportingHelper,
+            IQueryRepository<SuppliersWithUnacknowledgedOrders> suppliersWithUnacknowledgedOrdersRepository)
         {
             this.purchaseOrderRepository = purchaseOrderRepository;
             this.supplierRepository = supplierRepository;
@@ -40,6 +46,7 @@
             this.purchaseLedgerRepository = purchaseLedgerRepository;
             this.purchaseOrdersPack = purchaseOrdersPack;
             this.reportingHelper = reportingHelper;
+            this.suppliersWithUnacknowledgedOrdersRepository = suppliersWithUnacknowledgedOrdersRepository;
         }
 
         public ResultsModel GetOrdersByPartReport(DateTime from, DateTime to, string partNumber, bool includeCancelled)
@@ -49,11 +56,11 @@
 
             var reportLayout = new SimpleGridLayout(
                 this.reportingHelper,
-                CalculationValueModelType.TextValue,
+                CalculationValueModelType.Value,
                 null,
                 $"Purchase Orders By Part: {partNumber}");
 
-            this.AddPartReportColumns(reportLayout);
+            AddPartReportColumns(reportLayout);
 
             var values = new List<CalculationValueModel>();
 
@@ -73,7 +80,7 @@
                             continue;
                         }
 
-                        this.ExtractDetailsForPartReport(values, order, orderDetail, delivery);
+                        ExtractDetailsForPartReport(values, order, orderDetail, delivery, order.Currency.Code);
                     }
                 }
             }
@@ -104,11 +111,11 @@
 
             var reportLayout = new SimpleGridLayout(
                 this.reportingHelper,
-                CalculationValueModelType.TextValue,
+                CalculationValueModelType.Value,
                 null,
                 $"Purchase Orders By Supplier - {supplierId}: {supplier.Name}");
 
-            this.AddSupplierReportColumns(reportLayout);
+            AddSupplierReportColumns(reportLayout);
 
             var values = new List<CalculationValueModel>();
 
@@ -136,7 +143,7 @@
                         }
 
                         var part = this.partRepository.FindBy(x => x.PartNumber == orderDetail.PartNumber);
-                        if (stockControlled != "A" && ((stockControlled == "N" && part.StockControlled == "N")
+                        if (stockControlled != "A" && ((stockControlled == "N" && part.StockControlled != "N")
                                                        || (stockControlled == "O" && part.StockControlled != "Y")))
                         {
                             continue;
@@ -152,7 +159,7 @@
 
                         var totalLedgerQty = ledgerQtys.Sum(x => x.TransType == "C" ? x.Qty : -x.Qty);
 
-                        this.ExtractSupplierReportDetails(values, orderDetail, delivery, totalLedgerQty);
+                        ExtractSupplierReportDetails(values, orderDetail, delivery, totalLedgerQty, order.Currency.Code);
                     }
                 }
             }
@@ -163,7 +170,88 @@
             return model;
         }
 
-        private void AddSupplierReportColumns(SimpleGridLayout reportLayout)
+        public ResultsModel GetSuppliersWithUnacknowledgedOrders(int? planner, string vendorManager)
+        {
+            var suppliers = this.suppliersWithUnacknowledgedOrdersRepository.FindAll();
+            if (planner.HasValue)
+            {
+                suppliers = suppliers.Where(a => a.Planner == planner);
+            }
+
+            if (!string.IsNullOrEmpty(vendorManager))
+            {
+                suppliers = suppliers.Where(a => a.VendorManager == vendorManager);
+            }
+
+            var results = new ResultsModel(new string[] { "Supplier Id", "Supplier Name" })
+                              {
+                                  ReportTitle = new NameModel("Suppliers with unacknowledged orders")
+                              };
+            results.AddColumn("view", string.Empty, GridDisplayType.TextValue);
+            results.AddColumn("csv", string.Empty, GridDisplayType.TextValue);
+
+            var supplierResults = new List<CalculationValueModel>();
+            foreach (var supplier in suppliers)
+            {
+                var rowId = supplier.SupplierId.ToString();
+                supplierResults.Add(new CalculationValueModel
+                                        {
+                                            RowId = rowId,
+                                            ColumnId = "Supplier Id",
+                                            TextDisplay = supplier.SupplierId.ToString()
+                                        });
+                supplierResults.Add(new CalculationValueModel { RowId = rowId, ColumnId = "Supplier Name", TextDisplay = supplier.SupplierName });
+                supplierResults.Add(new CalculationValueModel { RowId = rowId, ColumnId = "view", TextDisplay = "view" });
+                supplierResults.Add(new CalculationValueModel { RowId = rowId, ColumnId = "csv", TextDisplay = "csv" });
+            }
+
+            results.ValueDrillDownTemplates.Add(new DrillDownModel("view", "/purchasing/reports/unacknowledged-orders?supplierId={rowId}", null, 2));
+            results.ValueDrillDownTemplates.Add(new DrillDownModel("csv", "/purchasing/reports/unacknowledged-orders/export?supplierId={rowId}", null, 3));
+            this.reportingHelper.AddResultsToModel(results, supplierResults, CalculationValueModelType.TextValue, true);
+            this.SortRowsByTextColumnValues(results, 1);
+
+            return results;
+        }
+
+        public void SortRowsByTextColumnValues(
+            ResultsModel model,
+            int columnIndex,
+            int? column2Index = null,
+            int? column3Index = null,
+            bool sortDescending = false)
+        {
+            var sortOrder = 0;
+
+            if (sortDescending)
+            {
+                foreach (var modelRow in model.Rows
+                    .OrderByDescending(a => model.GetGridTextValue(a.RowIndex, columnIndex))
+                    .ThenByDescending(t => column2Index.HasValue ? model.GetGridTextValue(t.RowIndex, column2Index.Value) : string.Empty)
+                    .ThenByDescending(t => column3Index.HasValue ? model.GetGridTextValue(t.RowIndex, column3Index.Value) : string.Empty)
+                    .ThenBy(a => a.RowTitle))
+                {
+                    modelRow.SortOrder = sortOrder++;
+                }
+            }
+            else
+            {
+                foreach (var modelRow in model.Rows
+                    .OrderBy(a => model.GetGridTextValue(a.RowIndex, columnIndex))
+                    .ThenBy(a => column2Index.HasValue ? model.GetGridTextValue(a.RowIndex, column2Index.Value) : string.Empty)
+                    .ThenBy(a => column3Index.HasValue ? model.GetGridTextValue(a.RowIndex, column3Index.Value) : string.Empty)
+                    .ThenBy(a => a.RowTitle))
+                {
+                    modelRow.SortOrder = sortOrder++;
+                }
+            }
+        }
+
+        public ResultsModel GetUnacknowledgedOrders(DateTime startDate, DateTime endDate, int supplierId, int? organisationId)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static void AddSupplierReportColumns(SimpleGridLayout reportLayout)
         {
             reportLayout.AddColumnComponent(
                 null,
@@ -172,9 +260,7 @@
                         new AxisDetailsModel(
                             "OrderLine",
                             "Order/Line",
-                            GridDisplayType.TextValue) {
-                                                          AllowWrap = false 
-                                                       },
+                            GridDisplayType.TextValue),
                         new AxisDetailsModel("PartNo", "Part Number", GridDisplayType.TextValue),
                         new AxisDetailsModel(
                             "SuppliersDesignation",
@@ -183,7 +269,9 @@
                         new AxisDetailsModel("QtyOrd", "Qty Ordered", GridDisplayType.TextValue),
                         new AxisDetailsModel("QtyRec", "Qty Rec", GridDisplayType.TextValue),
                         new AxisDetailsModel("QtyInv", "Qty Inv", GridDisplayType.TextValue),
-                        new AxisDetailsModel("NetTotal", "Net Total", GridDisplayType.TextValue),
+                        new AxisDetailsModel("BaseNetTotal", "Net Total (GBP)", GridDisplayType.Value) { DecimalPlaces = 2 },
+                        new AxisDetailsModel("Currency", "Currency", GridDisplayType.TextValue),
+                        new AxisDetailsModel("NetTotalCurrency", "Net Total (Currency)", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new AxisDetailsModel("Delivery", "Delivery", GridDisplayType.TextValue),
                         new AxisDetailsModel("Qty", "Qty", GridDisplayType.TextValue),
                         new AxisDetailsModel("ReqDate", "Req Date", GridDisplayType.TextValue),
@@ -191,8 +279,7 @@
                     });
         }
 
-
-        private void AddPartReportColumns(SimpleGridLayout reportLayout)
+        private static void AddPartReportColumns(SimpleGridLayout reportLayout)
         {
             reportLayout.AddColumnComponent(
                 null,
@@ -201,28 +288,28 @@
                         new AxisDetailsModel(
                             "OrderLine",
                             "Order/Line",
-                            GridDisplayType.TextValue) {
-                                                               AllowWrap = false
-                                                           },
+                            GridDisplayType.TextValue),
                         new AxisDetailsModel("Date", "Date", GridDisplayType.TextValue),
                         new AxisDetailsModel(
                             "Supplier",
                             "Supplier",
                             GridDisplayType.TextValue),
-                        new AxisDetailsModel("QtyOrd", "Qty Ordered", GridDisplayType.TextValue),
-                        new AxisDetailsModel("QtyRec", "Qty Rec", GridDisplayType.TextValue),
+                        new AxisDetailsModel("QtyOrd", "Qty Ordered", GridDisplayType.Value),
+                        new AxisDetailsModel("QtyRec", "Qty Rec", GridDisplayType.Value),
+                        new AxisDetailsModel("BaseNetTotal", "Net Total (GBP)", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new AxisDetailsModel("Currency", "Currency", GridDisplayType.TextValue),
-                        new AxisDetailsModel("NetTotal", "Net Total", GridDisplayType.TextValue),
+                        new AxisDetailsModel("NetTotalCurrency", "Net Total (Currency)", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new AxisDetailsModel("Delivery", "Delivery", GridDisplayType.TextValue),
-                        new AxisDetailsModel("Qty", "Qty", GridDisplayType.TextValue)
+                        new AxisDetailsModel("Qty", "Qty", GridDisplayType.Value)
                     });
         }
 
-        private void ExtractSupplierReportDetails(
+        private static void ExtractSupplierReportDetails(
             ICollection<CalculationValueModel> values,
             PurchaseOrderDetail orderDetail,
             PurchaseOrderDelivery delivery,
-            decimal ledgerQty)
+            decimal ledgerQty,
+            string currencyCode)
         {
             var currentRowId = $"{orderDetail.OrderNumber}/{orderDetail.Line}";
             values.Add(
@@ -264,14 +351,32 @@
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId, ColumnId = "QtyInv", TextDisplay = ledgerQty.ToString()
+                        RowId = currentRowId, ColumnId = "QtyInv", TextDisplay = ledgerQty.ToString(CultureInfo.InvariantCulture)
                     });
 
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId, ColumnId = "NetTotal", TextDisplay = $"{orderDetail.NetTotal}"
+                        RowId = currentRowId,
+                        ColumnId = "BaseNetTotal",
+                        Value = orderDetail.BaseNetTotal,
+                        CurrencyCode = "GBP"
                     });
+
+            values.Add(
+                new CalculationValueModel
+                    {
+                        RowId = currentRowId,
+                        ColumnId = "Currency",
+                        TextDisplay = currencyCode
+                    });
+            values.Add(
+                new CalculationValueModel
+                    {
+                        RowId = currentRowId,
+                        ColumnId = "NetTotalCurrency",
+                        Value = orderDetail.NetTotalCurrency
+                });
 
             values.Add(
                 new CalculationValueModel
@@ -298,16 +403,17 @@
                     {
                         RowId = currentRowId,
                         ColumnId = "AdvisedDate",
-                        TextDisplay = delivery.DateAdvised.ToString("dd-MMM-yyyy")
+                        TextDisplay = delivery.DateAdvised?.ToString("dd-MMM-yyyy")
                     });
         }
 
-        private void ExtractDetailsForPartReport(
+        private static void ExtractDetailsForPartReport(
             ICollection<CalculationValueModel> values,
             PurchaseOrder order,
             PurchaseOrderDetail orderDetail,
-            PurchaseOrderDelivery delivery)
-        { 
+            PurchaseOrderDelivery delivery,
+            string currencyCode)
+        {
             var currentRowId = $"{orderDetail.OrderNumber}/{orderDetail.Line}";
             values.Add(
                 new CalculationValueModel
@@ -320,7 +426,7 @@
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId, ColumnId = "Date", TextDisplay = $"{order.OrderDate.ToString("dd-MMM-yyyy")}"
+                        RowId = currentRowId, ColumnId = "Date", TextDisplay = $"{order.OrderDate:dd-MMM-yyyy}"
                     });
 
             values.Add(
@@ -336,25 +442,38 @@
                     {
                         RowId = currentRowId,
                         ColumnId = "QtyOrd",
-                        TextDisplay = orderDetail.OurQty.HasValue ? orderDetail.OurQty.Value.ToString() : "0"
+                        Value = orderDetail.OurQty.HasValue ? orderDetail.OurQty.Value : 0
                     });
 
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId, ColumnId = "QtyRec", TextDisplay = delivery.QtyNetReceived.ToString()
+                        RowId = currentRowId, ColumnId = "QtyRec",
+                        Value = delivery.QtyNetReceived
                     });
 
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId, ColumnId = "Currency", TextDisplay = order.Supplier.Currency?.Code
+                        RowId = currentRowId,
+                        ColumnId = "BaseNetTotal",
+                        Value = orderDetail.BaseNetTotal
                     });
 
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId, ColumnId = "NetTotal", TextDisplay = $"{orderDetail.NetTotal}"
+                        RowId = currentRowId,
+                        ColumnId = "Currency",
+                        TextDisplay = currencyCode
+                    });
+
+            values.Add(
+                new CalculationValueModel
+                    {
+                        RowId = currentRowId,
+                        ColumnId = "NetTotalCurrency",
+                        Value = orderDetail.NetTotalCurrency
                     });
 
             values.Add(
@@ -366,7 +485,8 @@
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId, ColumnId = "Qty", TextDisplay = $"{delivery.OurDeliveryQty}"
+                        RowId = currentRowId, ColumnId = "Qty",
+                        Value = delivery.OurDeliveryQty
                     });
         }
     }

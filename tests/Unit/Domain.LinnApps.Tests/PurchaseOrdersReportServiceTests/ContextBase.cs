@@ -1,11 +1,13 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.OrdersBySupplierReportServiceTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrdersReportServiceTests
 {
     using Linn.Common.Persistence;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Reports;
+    using Linn.Purchasing.Domain.LinnApps.Reports.Models;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NSubstitute;
@@ -28,6 +30,8 @@
 
         protected IPurchaseOrdersPack PurchaseOrdersPack { get; private set; }
 
+        protected IQueryRepository<SuppliersWithUnacknowledgedOrders> SuppliersWithUnacknowledgedOrdersRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -36,6 +40,7 @@
             this.SupplierRepository = Substitute.For<IRepository<Supplier, int>>();
             this.PartQueryRepository = Substitute.For<IQueryRepository<Part>>();
             this.PurchaseOrdersPack = Substitute.For<IPurchaseOrdersPack>();
+            this.SuppliersWithUnacknowledgedOrdersRepository = Substitute.For<IQueryRepository<SuppliersWithUnacknowledgedOrders>>();
 
             this.ReportingHelper = new ReportingHelper();
             this.Sut = new PurchaseOrdersReportService(
@@ -44,7 +49,8 @@
                 this.PartQueryRepository,
                 this.PurchaseLedgerRepository,
                 this.PurchaseOrdersPack,
-                this.ReportingHelper);
+                this.ReportingHelper,
+                this.SuppliersWithUnacknowledgedOrdersRepository);
         }
     }
 }

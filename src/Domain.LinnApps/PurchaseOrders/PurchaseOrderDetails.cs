@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps
+﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
 {
     using System.Collections.Generic;
 
@@ -8,7 +8,10 @@
 
         public int Line { get; set; }
 
-        public decimal NetTotal { get; set; }
+        public decimal BaseNetTotal { get; set; }
+
+        public decimal NetTotalCurrency { get; set; }
+
 
         public int OrderNumber { get; set; }
 

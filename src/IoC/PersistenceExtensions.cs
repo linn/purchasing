@@ -8,6 +8,7 @@
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Reports.Models;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Persistence.LinnApps;
     using Linn.Purchasing.Persistence.LinnApps.Repositories;
@@ -59,7 +60,9 @@
                     => new EntityFrameworkRepository<Country, string>(r.GetService<ServiceDbContext>()?.Countries))
                 .AddTransient<IRepository<Address, int>, AddressRepository>()
                 .AddTransient<IRepository<VendorManager, string>, VendorManagerRepository>()
-                .AddTransient<IQueryRepository<SupplierSpend>, SupplierSpendRepository>();
+                .AddTransient<IQueryRepository<SupplierSpend>, SupplierSpendRepository>()
+                .AddTransient<IQueryRepository<UnacknowledgedOrders>, UnacknowledgedOrdersRepository>()
+                .AddTransient<IQueryRepository<SuppliersWithUnacknowledgedOrders>, SuppliersWithUnacknowledgedOrdersRepository>();
         }
     }
 }
