@@ -27,7 +27,8 @@
 
         public override IQueryable<Address> FilterBy(Expression<Func<Address, bool>> expression)
         {
-            return base.FilterBy(expression).AsNoTracking().Include(x => x.Country);
+            return base.FilterBy(expression).AsNoTracking().Include(x => x.Country)
+                .Include(x => x.FullAddress);
         }
     }
 }

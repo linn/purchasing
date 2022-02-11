@@ -22,7 +22,8 @@
                            Line4 = entity.Line4,
                            PostCode = entity.PostCode,
                            CountryCode = entity.Country?.CountryCode,
-                           CountryName = entity.Country?.Name
+                           CountryName = entity.Country?.Name,
+                           FullAddress = entity.FullAddress?.AddressString
                        };
         }
 

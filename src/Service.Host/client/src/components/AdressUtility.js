@@ -88,7 +88,7 @@ function AddressUtility({ inDialogBox, closeDialog }) {
                         }}
                         label="Address Lookup (Leave blank if creating new)"
                         modal
-                        propertyName="partNumber"
+                        propertyName="addressId"
                         items={addressesSearchResults}
                         value={address?.addressId}
                         loading={addressesSearchLoading}
@@ -168,6 +168,7 @@ function AddressUtility({ inDialogBox, closeDialog }) {
                         onChange={handleFieldChange}
                     />
                 </Grid>
+                <Grid item xs={4} />
                 <Grid item xs={4}>
                     <Typeahead
                         onSelect={newValue => {

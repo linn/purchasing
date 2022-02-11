@@ -270,6 +270,7 @@ function Supplier() {
                                                 invoiceFullAddress={
                                                     state.supplier.invoiceFullAddress
                                                 }
+                                                handleFieldChange={handleFieldChange}
                                             />
                                         </Box>
                                     )}
