@@ -165,18 +165,6 @@
 
         private static void AddSupplierReportColumns(SimpleGridLayout reportLayout)
         {
-            var totalCurrencyColumn = new AxisDetailsModel(
-                "NetTotalCurrency",
-                "Net Total (Currency)",
-                GridDisplayType.Value);
-            totalCurrencyColumn.DecimalPlaces = 2;
-
-            var baseNetTotalColumn = new AxisDetailsModel(
-                "BaseNetTotal",
-                "Net Total (GBP)",
-                GridDisplayType.Value);
-            baseNetTotalColumn.DecimalPlaces = 2;
-
             reportLayout.AddColumnComponent(
                 null,
                 new List<AxisDetailsModel>
@@ -193,9 +181,9 @@
                         new AxisDetailsModel("QtyOrd", "Qty Ordered", GridDisplayType.TextValue),
                         new AxisDetailsModel("QtyRec", "Qty Rec", GridDisplayType.TextValue),
                         new AxisDetailsModel("QtyInv", "Qty Inv", GridDisplayType.TextValue),
-                        baseNetTotalColumn,
+                        new AxisDetailsModel("BaseNetTotal", "Net Total (GBP)", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new AxisDetailsModel("Currency", "Currency", GridDisplayType.TextValue),
-                        totalCurrencyColumn,
+                        new AxisDetailsModel("NetTotalCurrency", "Net Total (Currency)", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new AxisDetailsModel("Delivery", "Delivery", GridDisplayType.TextValue),
                         new AxisDetailsModel("Qty", "Qty", GridDisplayType.TextValue),
                         new AxisDetailsModel("ReqDate", "Req Date", GridDisplayType.TextValue),
@@ -205,18 +193,6 @@
 
         private static void AddPartReportColumns(SimpleGridLayout reportLayout)
         {
-            var totalCurrencyColumn = new AxisDetailsModel(
-                "NetTotalCurrency",
-                "Net Total (Currency)",
-                GridDisplayType.Value);
-            totalCurrencyColumn.DecimalPlaces = 2;
-
-            var baseNetTotalColumn = new AxisDetailsModel(
-                "BaseNetTotal",
-                "Net Total (GBP)",
-                GridDisplayType.Value);
-            baseNetTotalColumn.DecimalPlaces = 2;
-
             reportLayout.AddColumnComponent(
                 null,
                 new List<AxisDetailsModel>
@@ -232,9 +208,9 @@
                             GridDisplayType.TextValue),
                         new AxisDetailsModel("QtyOrd", "Qty Ordered", GridDisplayType.Value),
                         new AxisDetailsModel("QtyRec", "Qty Rec", GridDisplayType.Value),
-                        baseNetTotalColumn,
+                        new AxisDetailsModel("BaseNetTotal", "Net Total (GBP)", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new AxisDetailsModel("Currency", "Currency", GridDisplayType.TextValue),
-                        totalCurrencyColumn,
+                        new AxisDetailsModel("NetTotalCurrency", "Net Total (Currency)", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new AxisDetailsModel("Delivery", "Delivery", GridDisplayType.TextValue),
                         new AxisDetailsModel("Qty", "Qty", GridDisplayType.Value)
                     });
