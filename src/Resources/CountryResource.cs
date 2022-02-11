@@ -4,6 +4,6 @@
     {
         public string CountryCode { get; set; }
 
-        public string Name { get; set; }
+        public string CountryName { get; set; }
     }
 }

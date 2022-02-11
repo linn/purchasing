@@ -15,6 +15,8 @@ import {
 } from '@linn-it/linn-form-components-library';
 import addressesActions from '../actions/addressesActions';
 import addressActions from '../actions/addressActions';
+import countriesActions from '../actions/countriesActions';
+
 import history from '../history';
 import config from '../config';
 
@@ -33,6 +35,20 @@ function AddressUtility({ inDialogBox, closeDialog }) {
         collectionSelectorHelpers.getSearchLoading(state.addresses)
     );
     const searchAddresses = searchTerm => dispatch(addressesActions.search(searchTerm));
+
+    const countriesSearchResults = useSelector(state =>
+        collectionSelectorHelpers.getSearchItems(
+            state.countries,
+            100,
+            'countryCode',
+            'countryCode',
+            'countryName'
+        )
+    );
+    const countriesSearchLoading = useSelector(state =>
+        collectionSelectorHelpers.getSearchLoading(state.countries)
+    );
+    const searchCountries = searchTerm => dispatch(countriesActions.search(searchTerm));
 
     const [address, setAddress] = useState({});
     const snackbarVisible = useSelector(state =>
@@ -79,7 +95,7 @@ function AddressUtility({ inDialogBox, closeDialog }) {
                         fetchItems={searchAddresses}
                         links={false}
                         text
-                        clearSearch={handleFieldChange}
+                        clearSearch={() => dispatch(addressesActions.clearSearch())}
                         placeholder="Search by Addressee"
                         minimumSearchTermLength={3}
                     />
@@ -152,16 +168,43 @@ function AddressUtility({ inDialogBox, closeDialog }) {
                         onChange={handleFieldChange}
                     />
                 </Grid>
+                <Grid item xs={4}>
+                    <Typeahead
+                        onSelect={newValue => {
+                            setAddress(a => ({
+                                ...a,
+                                countryCode: newValue.countryCode,
+                                countryName: newValue.countryName
+                            }));
+                        }}
+                        label="Country Lookup"
+                        modal
+                        propertyName="countryCode"
+                        items={countriesSearchResults}
+                        value={address?.countryCode}
+                        loading={countriesSearchLoading}
+                        fetchItems={searchCountries}
+                        links={false}
+                        priorityFunction={(i, searchTerm) => {
+                            if (i.countryCode === searchTerm?.toUpperCase()) {
+                                return 1;
+                            }
+                            return 0;
+                        }}
+                        text
+                        placeholder="Search by Name or Code"
+                        minimumSearchTermLength={2}
+                    />
+                </Grid>
                 <Grid item xs={8}>
                     <InputField
                         fullWidth
-                        value={address?.countryCode}
-                        label="Country"
-                        propertyName="countryCode"
-                        onChange={handleFieldChange}
+                        value={address?.countryName}
+                        label="Name"
+                        propertyName="countryName"
+                        onChange={() => {}}
                     />
                 </Grid>
-                <Grid item xs={4} />
                 <Grid item xs={12}>
                     <SaveBackCancelButtons
                         saveDisabled={

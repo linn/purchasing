@@ -28,7 +28,7 @@
 
         protected override Expression<Func<Country, bool>> SearchExpression(string searchTerm)
         {
-            return c => c.Name.Contains(searchTerm.ToUpper());
+            return c => c.Name.Contains(searchTerm.ToUpper()) || c.CountryCode.Equals(searchTerm.ToUpper());
         }
 
         protected override void SaveToLogTable(

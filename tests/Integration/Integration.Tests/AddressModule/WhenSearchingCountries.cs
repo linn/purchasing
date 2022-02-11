@@ -73,7 +73,7 @@
         {
             var resource = this.Response.DeserializeBody<IEnumerable<CountryResource>>().ToArray().First();
             resource.CountryCode.Should().Be("GB");
-            resource.Name.Should().Be("BRITAIN");
+            resource.CountryName.Should().Be("BRITAIN");
         }
     }
 }

@@ -83,3 +83,5 @@ export const putSupplierOnHoldActionTypes = makeActionTypes(
 export const addressActionTypes = makeActionTypes(itemTypes.address.actionType, true);
 
 export const addressesActionTypes = makeActionTypes(itemTypes.addresses.actionType);
+
+export const countriesActionTypes = makeActionTypes(itemTypes.countries.actionType);

@@ -34,6 +34,7 @@ import accountingCompanies from './accountingCompanies';
 import putSupplierOnHold from './putSupplierOnHold';
 import address from './address';
 import addresses from './addresses';
+import countries from './countries';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -44,6 +45,7 @@ const rootReducer = history =>
         accountingCompanies,
         address,
         addresses,
+        countries,
         currencies,
         deliveryAddresses,
         employees,

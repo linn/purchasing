@@ -14,7 +14,7 @@
             return new CountryResource
                        {
                            CountryCode = entity.CountryCode,
-                           Name = entity.Name
+                           CountryName = entity.Name
                        };
         }
 
