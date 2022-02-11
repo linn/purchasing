@@ -18,13 +18,18 @@
         private readonly IFacadeResourceFilterService<Address, int, AddressResource, AddressResource, AddressResource>
             addressService;
 
+        private readonly IFacadeResourceService<Country, string, CountryResource, CountryResource> countryService;
+
         public AddressModule(
-            IFacadeResourceFilterService<Address, int, AddressResource, AddressResource, AddressResource> addressService)
+            IFacadeResourceFilterService<Address, int, AddressResource, AddressResource, AddressResource> addressService,
+            IFacadeResourceService<Country, string, CountryResource, CountryResource> countryService)
         {
             this.addressService = addressService;
+            this.countryService = countryService;
             this.Post("/purchasing/addresses", this.CreateAddress);
             this.Put("/purchasing/addresses/{id:int}", this.UpdateAddress);
             this.Get("/purchasing/addresses", this.SearchAddresses);
+            this.Get("/purchasing/countries", this.SearchCountries);
         }
 
         private async Task CreateAddress(HttpRequest request, HttpResponse response)
@@ -56,6 +61,13 @@
                         Addressee = searchTerm
                     });
 
+            await res.Negotiate(result);
+        }
+
+        private async Task SearchCountries(HttpRequest req, HttpResponse res)
+        {
+            var searchTerm = req.Query.As<string>("searchTerm");
+            var result = this.countryService.Search(searchTerm);
             await res.Negotiate(result);
         }
     }

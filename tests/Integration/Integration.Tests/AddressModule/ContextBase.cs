@@ -41,6 +41,8 @@
 
         protected IRepository<Country, string> CountryRepository { get; private set; }
 
+        protected IFacadeResourceService<Country, string, CountryResource, CountryResource> CountryService { get; private set; }
+
         [SetUp]
         public void EstablishContext()
         {
@@ -57,6 +59,11 @@
                 this.CountryRepository,
                 this.DatabaseService);
 
+            this.CountryService = new CountryService(
+                this.CountryRepository,
+                this.TransactionManager,
+                new CountryResourceBuilder());
+
             this.Client = TestClient.With<AddressModule>(
                 services =>
                     {
@@ -64,6 +71,9 @@
                         services.AddSingleton(this.Log);
 
                         services.AddSingleton(this.FacadeService);
+
+                        services.AddSingleton(this.CountryService);
+
                         services.AddHandlers();
                     },
                 FakeAuthMiddleware.EmployeeMiddleware);

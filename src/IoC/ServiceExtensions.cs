@@ -49,7 +49,8 @@
                 .AddTransient<IBuilder<PartCategory>, PartCategoryResourceBuilder>()
                 .AddTransient<IBuilder<PurchaseOrder>, PurchaseOrderResourceBuilder>()
                 .AddTransient<IBuilder<ResultsModel>, ResultsModelResourceBuilder>()
-                .AddTransient<IBuilder<Address>, AddressResourceBuilder>();
+                .AddTransient<IBuilder<Address>, AddressResourceBuilder>()
+                .AddTransient<IBuilder<Country>, CountryResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -72,7 +73,8 @@
                 .AddTransient<IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource>, PriceChangeReasonService>()
                 .AddTransient<IFacadeResourceService<PartCategory, string, PartCategoryResource, PartCategoryResource>, PartCategoriesService>()
                 .AddTransient<IPurchaseOrderReportFacadeService, PurchaseOrderReportFacadeService>()
-                .AddTransient<IFacadeResourceFilterService<Address, int, AddressResource, AddressResource, AddressResource>, AddressService>();
+                .AddTransient<IFacadeResourceFilterService<Address, int, AddressResource, AddressResource, AddressResource>, AddressService>()
+                .AddTransient<IFacadeResourceService<Country, string, CountryResource, CountryResource>, CountryService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)

@@ -48,7 +48,8 @@
                 .AddTransient<IHandler, JsonResultHandler<PurchaseOrderResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<PurchaseOrderResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<AddressResource>>()
-                .AddTransient<IHandler, JsonResultHandler<IEnumerable<AddressResource>>>();
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<AddressResource>>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<CountryResource>>>();
         }
     }
 }
