@@ -77,6 +77,8 @@
 
         public DbSet<SuppliersWithUnacknowledgedOrders> SuppliersWithUnacknowledgedOrders { get; set; }
 
+        public DbSet<Planner> Planners { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -112,6 +114,7 @@
             this.BuildSpendsView(builder);
             this.BuildUnacknowledgedOrderSuppliers(builder);
             this.BuildUnacknowledgedOrders(builder);
+            this.BuildPlanners(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -138,6 +141,14 @@
             entity.HasKey(e => e.ReasonCode);
             entity.Property(e => e.ReasonCode).HasColumnName("REASON_CODE");
             entity.Property(e => e.Description).HasColumnName("DESCRIPTION");
+        }
+
+        private void BuildPlanners(ModelBuilder builder)
+        {
+            var entity = builder.Entity<Planner>().ToTable("PLANNERS");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnName("PLANNER");
+            entity.HasOne(e => e.Employee).WithOne().HasForeignKey("PLANNER");
         }
 
         private void BuildAddresses(ModelBuilder builder)

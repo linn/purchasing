@@ -81,6 +81,14 @@
 
         protected IDatabaseService MockDatabaseService { get; set; }
 
+        protected IFacadeResourceService<Planner, int, PlannerResource, PlannerResource> PlannerService 
+        { 
+            get;
+            private set;
+        }
+
+        protected IRepository<Planner, int> MockPlannerRepository { get; private set; }
+
         [SetUp]
         public void EstablishContext()
         {
@@ -119,6 +127,13 @@
                 this.TransactionManager,
                 new SupplierResourceBuilder(this.MockAuthService));
 
+            this.MockPlannerRepository = Substitute.For<IRepository<Planner, int>>();
+
+            this.PlannerService = new PlannerService(
+                this.MockPlannerRepository,
+                this.TransactionManager,
+                new PlannerResourceBuilder());
+
             this.Client = TestClient.With<SupplierModule>(
                 services =>
                     {
@@ -131,6 +146,7 @@
                         services.AddSingleton(this.PriceChangeReasonService);
                         services.AddSingleton(this.PartCategoryService);
                         services.AddSingleton(this.SupplierHoldService);
+                        services.AddSingleton(this.PlannerService);
                         services.AddHandlers();
                     },
                 FakeAuthMiddleware.EmployeeMiddleware);

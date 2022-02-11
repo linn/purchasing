@@ -3,7 +3,7 @@
     using System.Linq;
 
     using Linn.Common.Persistence.EntityFramework;
-    using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using Microsoft.EntityFrameworkCore;
 
