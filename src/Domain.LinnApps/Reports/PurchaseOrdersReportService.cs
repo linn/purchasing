@@ -53,7 +53,7 @@
                 null,
                 $"Purchase Orders By Part: {partNumber}");
 
-            this.AddPartReportColumns(reportLayout);
+            AddPartReportColumns(reportLayout);
 
             var values = new List<CalculationValueModel>();
 
@@ -73,19 +73,13 @@
                             continue;
                         }
 
-                        this.ExtractDetailsForPartReport(values, order, orderDetail, delivery, order.CurrencyCode);
+                        ExtractDetailsForPartReport(values, order, orderDetail, delivery, order.Currency.Code);
                     }
                 }
             }
 
             reportLayout.SetGridData(values);
             var model = reportLayout.GetResultsModel();
-
-            foreach ((var row, int i) in model.Rows.Select((value, i) => (value, i)))
-            {
-                model.SetGridValue(i, 5, model.GetGridValue(i, 5), decimalPlaces: 2);
-                model.SetGridValue(i, 7, model.GetGridValue(i, 7), decimalPlaces: 2);
-            }
 
             return model;
         }
@@ -114,7 +108,7 @@
                 null,
                 $"Purchase Orders By Supplier - {supplierId}: {supplier.Name}");
 
-            this.AddSupplierReportColumns(reportLayout);
+            AddSupplierReportColumns(reportLayout);
 
             var values = new List<CalculationValueModel>();
 
@@ -158,7 +152,7 @@
 
                         var totalLedgerQty = ledgerQtys.Sum(x => x.TransType == "C" ? x.Qty : -x.Qty);
 
-                        this.ExtractSupplierReportDetails(values, orderDetail, delivery, totalLedgerQty, order.CurrencyCode);
+                        ExtractSupplierReportDetails(values, orderDetail, delivery, totalLedgerQty, order.Currency.Code);
                     }
                 }
             }
@@ -166,17 +160,23 @@
             reportLayout.SetGridData(values);
             var model = reportLayout.GetResultsModel();
 
-            foreach ((var row, int i) in model.Rows.Select((value, i) => (value, i)))
-            {
-                model.SetGridValue(i, 6, model.GetGridValue(i, 6), decimalPlaces: 2);
-                model.SetGridValue(i, 8, model.GetGridValue(i, 8), decimalPlaces: 2);
-            }
-
             return model;
         }
 
-        private void AddSupplierReportColumns(SimpleGridLayout reportLayout)
+        private static void AddSupplierReportColumns(SimpleGridLayout reportLayout)
         {
+            var totalCurrencyColumn = new AxisDetailsModel(
+                "NetTotalCurrency",
+                "Net Total (Currency)",
+                GridDisplayType.Value);
+            totalCurrencyColumn.DecimalPlaces = 2;
+
+            var baseNetTotalColumn = new AxisDetailsModel(
+                "BaseNetTotal",
+                "Net Total (GBP)",
+                GridDisplayType.Value);
+            baseNetTotalColumn.DecimalPlaces = 2;
+
             reportLayout.AddColumnComponent(
                 null,
                 new List<AxisDetailsModel>
@@ -193,9 +193,9 @@
                         new AxisDetailsModel("QtyOrd", "Qty Ordered", GridDisplayType.TextValue),
                         new AxisDetailsModel("QtyRec", "Qty Rec", GridDisplayType.TextValue),
                         new AxisDetailsModel("QtyInv", "Qty Inv", GridDisplayType.TextValue),
-                        new AxisDetailsModel("BaseNetTotal", "Net Total (GBP)", GridDisplayType.Value),
+                        baseNetTotalColumn,
                         new AxisDetailsModel("Currency", "Currency", GridDisplayType.TextValue),
-                        new AxisDetailsModel("NetTotalCurrency", "Net Total (Currency)", GridDisplayType.Value),
+                        totalCurrencyColumn,
                         new AxisDetailsModel("Delivery", "Delivery", GridDisplayType.TextValue),
                         new AxisDetailsModel("Qty", "Qty", GridDisplayType.TextValue),
                         new AxisDetailsModel("ReqDate", "Req Date", GridDisplayType.TextValue),
@@ -203,8 +203,20 @@
                     });
         }
 
-        private void AddPartReportColumns(SimpleGridLayout reportLayout)
+        private static void AddPartReportColumns(SimpleGridLayout reportLayout)
         {
+            var totalCurrencyColumn = new AxisDetailsModel(
+                "NetTotalCurrency",
+                "Net Total (Currency)",
+                GridDisplayType.Value);
+            totalCurrencyColumn.DecimalPlaces = 2;
+
+            var baseNetTotalColumn = new AxisDetailsModel(
+                "BaseNetTotal",
+                "Net Total (GBP)",
+                GridDisplayType.Value);
+            baseNetTotalColumn.DecimalPlaces = 2;
+
             reportLayout.AddColumnComponent(
                 null,
                 new List<AxisDetailsModel>
@@ -220,15 +232,15 @@
                             GridDisplayType.TextValue),
                         new AxisDetailsModel("QtyOrd", "Qty Ordered", GridDisplayType.Value),
                         new AxisDetailsModel("QtyRec", "Qty Rec", GridDisplayType.Value),
-                        new AxisDetailsModel("BaseNetTotal", "Net Total (GBP)", GridDisplayType.Value),
+                        baseNetTotalColumn,
                         new AxisDetailsModel("Currency", "Currency", GridDisplayType.TextValue),
-                        new AxisDetailsModel("NetTotalCurrency", "Net Total (Currency)", GridDisplayType.Value),
+                        totalCurrencyColumn,
                         new AxisDetailsModel("Delivery", "Delivery", GridDisplayType.TextValue),
                         new AxisDetailsModel("Qty", "Qty", GridDisplayType.Value)
                     });
         }
 
-        private void ExtractSupplierReportDetails(
+        private static void ExtractSupplierReportDetails(
             ICollection<CalculationValueModel> values,
             PurchaseOrderDetail orderDetail,
             PurchaseOrderDelivery delivery,
@@ -331,7 +343,7 @@
                     });
         }
 
-        private void ExtractDetailsForPartReport(
+        private static void ExtractDetailsForPartReport(
             ICollection<CalculationValueModel> values,
             PurchaseOrder order,
             PurchaseOrderDetail orderDetail,

@@ -9,6 +9,7 @@
 
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NSubstitute;
@@ -72,7 +73,7 @@
                                                                        }
                                                                },
                                                  DocumentType = "Suhn",
-                                                 CurrencyCode = "USD"
+                                                 Currency = new Currency { Code = "USD" },
                                              }
                                      }.AsQueryable();
             this.PurchaseOrderRepository.FilterBy(Arg.Any<Expression<Func<PurchaseOrder, bool>>>())

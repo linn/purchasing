@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
 
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     public class PurchaseOrder
@@ -25,6 +26,6 @@
 
         public decimal? OverbookQty { get; set; }
 
-        public string CurrencyCode { get; set; }
+        public Currency Currency { get; set; }
     }
 }

@@ -348,7 +348,7 @@
             entity.Property(o => o.OrderDate).HasColumnName("DATE_OF_ORDER");
             entity.Property(o => o.Overbook).HasColumnName("OVERBOOK");
             entity.Property(o => o.OverbookQty).HasColumnName("OVERBOOK_QTY");
-            entity.Property(o => o.CurrencyCode).HasColumnName("CURR_CODE");
+            entity.HasOne(o => o.Currency).WithMany().HasForeignKey("CURR_CODE");
         }
 
         private void BuildPurchaseOrderDetails(ModelBuilder builder)
