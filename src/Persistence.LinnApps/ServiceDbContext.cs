@@ -348,6 +348,7 @@
             entity.Property(o => o.OrderDate).HasColumnName("DATE_OF_ORDER");
             entity.Property(o => o.Overbook).HasColumnName("OVERBOOK");
             entity.Property(o => o.OverbookQty).HasColumnName("OVERBOOK_QTY");
+            entity.Property(o => o.CurrencyCode).HasColumnName("CURR_CODE");
         }
 
         private void BuildPurchaseOrderDetails(ModelBuilder builder)
@@ -365,7 +366,8 @@
                 .HasForeignKey(d => d.OrderNumber);
             entity.HasMany(d => d.PurchaseDeliveries).WithOne(o => o.PurchaseOrderDetail)
                 .HasForeignKey(o => new { o.OrderNumber, o.OrderLine });
-            entity.Property(o => o.NetTotal).HasColumnName("NET_TOTAL").HasMaxLength(18);
+            entity.Property(o => o.BaseNetTotal).HasColumnName("BASE_NET_TOTAL").HasMaxLength(18);
+            entity.Property(o => o.NetTotalCurrency).HasColumnName("NET_TOTAL").HasMaxLength(18);
         }
 
         private void BuildPurchaseOrderDeliveries(ModelBuilder builder)

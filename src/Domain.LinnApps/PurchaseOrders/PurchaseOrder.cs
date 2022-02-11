@@ -24,5 +24,7 @@
         public string Overbook { get; set; }
 
         public decimal? OverbookQty { get; set; }
+
+        public string CurrencyCode { get; set; }
     }
 }
