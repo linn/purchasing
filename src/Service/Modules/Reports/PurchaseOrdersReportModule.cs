@@ -30,6 +30,22 @@
             this.Get("/purchasing/reports/orders-by-part/report", this.GetOrdersByPartReport);
             this.Get("/purchasing/reports/orders-by-part/export", this.GetOrdersByPartExport);
             this.Get("/purchasing/reports/suppliers-with-unacknowledged-orders", this.GetSuppliersWithUnacknowledgedOrdersReport);
+            this.Get("/purchasing/reports/unacknowledged-orders", this.GetUnacknowledgedOrdersReport);
+        }
+
+        private async Task GetUnacknowledgedOrdersReport(HttpRequest request, HttpResponse response)
+        {
+            var resource = new UnacknowledgedOrdersRequestResource
+            {
+                                   SupplierId = request.Query.As<int?>("SupplierId"),
+                                   OrganisationId = request.Query.As<int?>("OrganisationId")
+                               };
+
+            var results = this.purchaseOrderReportFacadeService.GetUnacknowledgedOrdersReport(
+                resource,
+                request.HttpContext.GetPrivileges());
+
+            await response.Negotiate(results);
         }
 
         private async Task GetSuppliersWithUnacknowledgedOrdersReport(HttpRequest request, HttpResponse response)

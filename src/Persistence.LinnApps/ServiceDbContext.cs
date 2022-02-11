@@ -53,8 +53,6 @@
 
         public DbSet<PurchaseLedger> PurchaseLedgers { get; set; }
 
-        public DbSet<TransactionType> TransactionTypes { get; set; }
-
         public DbSet<PreferredSupplierChange> PreferredSupplierChanges { get; set; }
 
         public DbSet<PriceChangeReason> PriceChangeReasons { get; set; }
@@ -562,7 +560,7 @@
 
         private void BuildUnacknowledgedOrders(ModelBuilder builder)
         {
-            var entity = builder.Entity<UnacknowledgedOrders>().ToTable("unacknowledged_orders_view").HasNoKey();
+            var entity = builder.Entity<UnacknowledgedOrders>().ToTable("UNACKNOWLEDGED_ORDERS_VIEW").HasNoKey();
             entity.Property(e => e.OrderNumber).HasColumnName("ORDER_NUMBER");
             entity.Property(e => e.OrderLine).HasColumnName("ORDER_LINE");
             entity.Property(e => e.DeliveryNumber).HasColumnName("DELIVERY_SEQ");
@@ -570,9 +568,11 @@
             entity.Property(e => e.CallOffDate).HasColumnName("CALL_OFF_DATE");
             entity.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID");
             entity.Property(e => e.SupplierName).HasColumnName("SUPPLIER_NAME").HasMaxLength(50);
+            entity.Property(e => e.SuppliersDesignation).HasColumnName("SUPPLIERS_DESIGNATION").HasMaxLength(2000);
             entity.Property(e => e.OrganisationId).HasColumnName("SUPPLIER_ORGANISATION_ID");
             entity.Property(e => e.OrderDeliveryQuantity).HasColumnName("ORDER_DELIVERY_QTY");
             entity.Property(e => e.OurDeliveryQuantity).HasColumnName("OUR_DELIVERY_QTY");
+            entity.Property(e => e.OrderUnitPrice).HasColumnName("ORDER_UNIT_PRICE");
             entity.Property(e => e.RequestedDate).HasColumnName("REQUESTED_DATE");
         }
 
