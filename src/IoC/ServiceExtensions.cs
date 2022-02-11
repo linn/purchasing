@@ -74,13 +74,10 @@
                 .AddTransient<IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource>, PriceChangeReasonService>()
                 .AddTransient<IFacadeResourceService<PartCategory, string, PartCategoryResource, PartCategoryResource>, PartCategoriesService>()
                 .AddTransient<IPurchaseOrderReportFacadeService, PurchaseOrderReportFacadeService>()
-<<<<<<< HEAD
                 .AddTransient<IFacadeResourceFilterService<Address, int, AddressResource, AddressResource, AddressResource>, AddressService>()
-                .AddTransient<IFacadeResourceService<Country, string, CountryResource, CountryResource>, CountryService>();
-=======
+                .AddTransient<IFacadeResourceService<Country, string, CountryResource, CountryResource>, CountryService>()
                 .AddTransient<IFacadeResourceService<VendorManager, string, VendorManagerResource, VendorManagerResource>, VendorManagerFacadeService>()
                 .AddTransient<ISpendsReportFacadeService, SpendsReportFacadeService>();
->>>>>>> main
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
