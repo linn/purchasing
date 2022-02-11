@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo } from 'react';
 import {
     Loading,
-    ReportTable,
     BackButton,
     ExportButton,
-    reportSelectorHelpers
+    reportSelectorHelpers,
+    ReportTable
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import { useSelector, useDispatch } from 'react-redux';
@@ -65,16 +65,21 @@ function OrderBySupplierReport() {
                     {loading || !reportData ? (
                         <Loading />
                     ) : (
-                        <ReportTable
-                            reportData={reportData}
-                            title={reportData.title}
-                            showTitle
-                            showTotals={false}
-                            placeholderRows={4}
-                            placeholderColumns={4}
-                        />
+                        <>
+                            <ReportTable
+                                reportData={reportData}
+                                title={reportData.title}
+                                showTitle
+                                showTotals
+                                placeholderRows={4}
+                                placeholderColumns={4}
+                            />
+
+                            <p>Number of orders: {reportData?.results?.length}</p>
+                        </>
                     )}
                 </Grid>
+
                 <Grid item xs={12}>
                     <BackButton backClick={() => handleBackClick(history, options)} />
                 </Grid>

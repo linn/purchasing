@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.OrdersBySupplierReportServiceTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrdersReportServiceTests
 {
     using System;
     using System.Collections.Generic;
@@ -9,13 +9,14 @@
 
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NSubstitute;
 
     using NUnit.Framework;
 
-    public class WhenGettingReport : ContextBase
+    public class WhenGettingOrdsBySupplierReport : ContextBase
     {
         private readonly int orderNumber = 9876;
 
@@ -41,7 +42,8 @@
                                                                    new PurchaseOrderDetail
                                                                        {
                                                                            Line = 1,
-                                                                           NetTotal = 2m,
+                                                                           BaseNetTotal = 14.88m,
+                                                                           NetTotalCurrency = 17.34m,
                                                                            OrderNumber = this.orderNumber,
                                                                            OurQty = 3,
                                                                            PartNumber = this.partNumber,
@@ -70,7 +72,8 @@
                                                                                this.suppliersDesignation
                                                                        }
                                                                },
-                                                 DocumentType = "Suhn"
+                                                 DocumentType = "Suhn",
+                                                 Currency = new Currency { Code = "USD" },
                                              }
                                      }.AsQueryable();
             this.PurchaseOrderRepository.FilterBy(Arg.Any<Expression<Func<PurchaseOrder, bool>>>())
@@ -128,11 +131,13 @@
             this.results.GetGridTextValue(0, 3).Should().Be("3");
             this.results.GetGridTextValue(0, 4).Should().Be("11");
             this.results.GetGridTextValue(0, 5).Should().Be("77");
-            this.results.GetGridTextValue(0, 6).Should().Be("2");
-            this.results.GetGridTextValue(0, 7).Should().Be("12");
-            this.results.GetGridTextValue(0, 8).Should().Be("13");
-            this.results.GetGridTextValue(0, 9).Should().Be("01-Nov-2021");
-            this.results.GetGridTextValue(0, 10).Should().Be("01-Dec-2021");
+            this.results.GetGridValue(0, 6).Should().Be(14.88m);
+            this.results.GetGridTextValue(0, 7).Should().Be("USD");
+            this.results.GetGridValue(0, 8).Should().Be(17.34m);
+            this.results.GetGridTextValue(0, 9).Should().Be("12");
+            this.results.GetGridTextValue(0, 10).Should().Be("13");
+            this.results.GetGridTextValue(0, 11).Should().Be("01-Nov-2021");
+            this.results.GetGridTextValue(0, 12).Should().Be("01-Dec-2021");
         }
     }
 }

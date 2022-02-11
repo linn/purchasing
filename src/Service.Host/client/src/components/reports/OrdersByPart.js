@@ -65,7 +65,7 @@ function OrderByPartReport() {
                             reportData={reportData}
                             title={reportData.title}
                             showTitle
-                            showTotals={false}
+                            showTotals
                             placeholderRows={4}
                             placeholderColumns={4}
                         />

@@ -8,7 +8,10 @@
 
         public int Line { get; set; }
 
-        public decimal NetTotal { get; set; }
+        public decimal BaseNetTotal { get; set; }
+
+        public decimal NetTotalCurrency { get; set; }
+
 
         public int OrderNumber { get; set; }
 
