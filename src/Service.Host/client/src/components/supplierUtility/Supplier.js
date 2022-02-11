@@ -176,11 +176,11 @@ function Supplier() {
                             <Grid item xs={1} />
                             <Grid item xs={1}>
                                 {canEdit() ? (
-                                    <Tooltip title="You have write access to Part Suppliers">
+                                    <Tooltip title="You have write access to Suppliers">
                                         <ModeEditIcon fontSize="large" color="primary" />
                                     </Tooltip>
                                 ) : (
-                                    <Tooltip title="You do not have write access to Part Suppliers">
+                                    <Tooltip title="You do not have write access to Suppliers">
                                         <EditOffIcon fontSize="large" color="secondary" />
                                     </Tooltip>
                                 )}

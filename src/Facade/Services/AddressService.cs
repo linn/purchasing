@@ -78,7 +78,7 @@
 
         protected override Expression<Func<Address, bool>> FilterExpression(AddressResource searchResource)
         {
-            return x => x.Addressee.Contains(searchResource.Addressee.ToUpper());
+            return x => x.Addressee.ToUpper().Contains(searchResource.Addressee.ToUpper());
         }
     }
 }
