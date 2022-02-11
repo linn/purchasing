@@ -1,11 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderServiceTests
 {
     using Linn.Common.Authorisation;
-    using Linn.Common.Persistence;
-    using Linn.Purchasing.Domain.LinnApps.Parts;
-    using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
-    using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NSubstitute;
 
