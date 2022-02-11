@@ -5,7 +5,7 @@
     using System.Linq.Expressions;
 
     using Linn.Common.Persistence.EntityFramework;
-    using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
     using Microsoft.EntityFrameworkCore;
 

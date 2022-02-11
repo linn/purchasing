@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.IoC
 {
-    using System.Collections.Generic;
     using System.Net.Http;
 
     using Amazon.Extensions.NETCore.Setup;
@@ -93,7 +92,7 @@
                 .AddTransient<IDatabaseService, DatabaseService>()
                 .AddTransient<ISpendsReportService, SpendsReportService>()
 
-            //external services
+            // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
                 .AddTransient<IAutocostPack, AutocostPack>()
                 .AddTransient<ICurrencyPack, CurrencyPack>()

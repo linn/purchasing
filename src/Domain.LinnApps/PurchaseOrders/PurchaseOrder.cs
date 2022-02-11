@@ -1,9 +1,8 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps
+﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
 {
     using System;
     using System.Collections.Generic;
 
-    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     public class PurchaseOrder

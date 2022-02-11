@@ -3,7 +3,6 @@
     using System.Collections.Generic;
 
     using Linn.Common.Authorisation;
-    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
     public class PurchaseOrderService : IPurchaseOrderService
     {

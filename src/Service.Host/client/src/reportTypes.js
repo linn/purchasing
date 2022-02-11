@@ -17,3 +17,9 @@ export const spendBySupplierReport = new ItemType(
     'SPEND_BY_SUPPLIER',
     '/purchasing/reports/spend-by-supplier/report'
 );
+
+export const suppliersWithUnacknowledgedOrders = new ItemType(
+    'suppliersWithUnacknowledgedOrders',
+    'SUPPLIERS_WITH_UNACKNOWLEDGED_ORDERS',
+    '/purchasing/reports/suppliers-with-unacknowledged-orders'
+);

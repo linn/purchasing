@@ -6,7 +6,7 @@
     using FluentAssertions.Extensions;
 
     using Linn.Common.Facade;
-    using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
 
     using NSubstitute;

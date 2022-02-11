@@ -10,6 +10,7 @@
 
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.RequestResources;
     using Linn.Purchasing.Service.Extensions;
     using Linn.Purchasing.Service.Models;
 
@@ -28,6 +29,22 @@
             this.Get("/purchasing/reports/orders-by-supplier/export", this.GetOrdersBySupplierExport);
             this.Get("/purchasing/reports/orders-by-part/report", this.GetOrdersByPartReport);
             this.Get("/purchasing/reports/orders-by-part/export", this.GetOrdersByPartExport);
+            this.Get("/purchasing/reports/suppliers-with-unacknowledged-orders", this.GetSuppliersWithUnacknowledgedOrdersReport);
+        }
+
+        private async Task GetSuppliersWithUnacknowledgedOrdersReport(HttpRequest request, HttpResponse response)
+        {
+            var resource = new SuppliersWithUnacknowledgedOrdersRequestResource
+                               {
+                                   VendorManager = request.Query.As<string>("VendorManager"),
+                                   Planner = request.Query.As<int?>("Planner")
+                               };
+
+            var results = this.purchaseOrderReportFacadeService.GetSuppliersWithUnacknowledgedOrdersReport(
+                resource,
+                request.HttpContext.GetPrivileges());
+
+            await response.Negotiate(results);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
