@@ -81,6 +81,12 @@
             reportLayout.SetGridData(values);
             var model = reportLayout.GetResultsModel();
 
+            foreach ((var row, int i) in model.Rows.Select((value, i) => (value, i)))
+            {
+                model.SetGridValue(i, 5, model.GetGridValue(i, 5), decimalPlaces: 2);
+                model.SetGridValue(i, 7, model.GetGridValue(i, 7), decimalPlaces: 2);
+            }
+
             return model;
         }
 
@@ -159,6 +165,12 @@
 
             reportLayout.SetGridData(values);
             var model = reportLayout.GetResultsModel();
+
+            foreach ((var row, int i) in model.Rows.Select((value, i) => (value, i)))
+            {
+                model.SetGridValue(i, 6, model.GetGridValue(i, 6), decimalPlaces: 2);
+                model.SetGridValue(i, 8, model.GetGridValue(i, 8), decimalPlaces: 2);
+            }
 
             return model;
         }

@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.OrdersBySupplierReportServiceTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrdersReportServiceTests
 {
     using System;
     using System.Collections.Generic;
@@ -8,7 +8,6 @@
     using FluentAssertions;
 
     using Linn.Common.Reporting.Models;
-    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
@@ -16,7 +15,7 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingReportStockN : ContextBase
+    public class WhenGettingOrdsBySupplierReport : ContextBase
     {
         private readonly int orderNumber = 9876;
 
@@ -42,8 +41,8 @@
                                                                    new PurchaseOrderDetail
                                                                        {
                                                                            Line = 1,
-                                                                           NetTotalCurrency = 5m,
-                                                                           BaseNetTotal = 4m,
+                                                                           BaseNetTotal = 14.88m,
+                                                                           NetTotalCurrency = 17.34m,
                                                                            OrderNumber = this.orderNumber,
                                                                            OurQty = 3,
                                                                            PartNumber = this.partNumber,
@@ -61,49 +60,11 @@
                                                                                                        2021,
                                                                                                        11,
                                                                                                        1),
-                                                                                               DateAdvised = null
-                                                                                           }
-                                                                                   },
-                                                                           SuppliersDesignation =
-                                                                               this.suppliersDesignation
-                                                                       }
-                                                               },
-                                                 DocumentType = "Suhn",
-                                                 CurrencyCode = "EUR"
-                                             },
-                                         new PurchaseOrder
-                                             {
-                                                 OrderNumber = 1111,
-                                                 SupplierId = this.supplierId,
-                                                 Details = new List<PurchaseOrderDetail>
-                                                               {
-                                                                   new PurchaseOrderDetail
-                                                                       {
-                                                                           Line = 1,
-                                                                           NetTotalCurrency = 2m,
-                                                                           BaseNetTotal = 2.5m,
-                                                                           OrderNumber = 1111,
-                                                                           OurQty = 3,
-                                                                           PartNumber = "part2",
-                                                                           PurchaseDeliveries =
-                                                                               new List<PurchaseOrderDelivery>
-                                                                                   {
-                                                                                       new PurchaseOrderDelivery
-                                                                                           {
-                                                                                               QtyNetReceived = 31,
-                                                                                               DeliverySeq = 32,
-                                                                                               OurDeliveryQty = 33,
-                                                                                               NetTotal = 32m,
-                                                                                               DateRequested =
-                                                                                                   new DateTime(
-                                                                                                       2021,
-                                                                                                       11,
-                                                                                                       3),
                                                                                                DateAdvised =
                                                                                                    new DateTime(
                                                                                                        2021,
                                                                                                        12,
-                                                                                                       3)
+                                                                                                       1)
                                                                                            }
                                                                                    },
                                                                            SuppliersDesignation =
@@ -111,7 +72,7 @@
                                                                        }
                                                                },
                                                  DocumentType = "Suhn",
-                                                 CurrencyCode = "EUR"
+                                                 CurrencyCode = "USD"
                                              }
                                      }.AsQueryable();
             this.PurchaseOrderRepository.FilterBy(Arg.Any<Expression<Func<PurchaseOrder, bool>>>())
@@ -136,10 +97,6 @@
             this.SupplierRepository.FindById(Arg.Any<int>())
                 .Returns(new Supplier { Name = "We sell stuff", SupplierId = this.supplierId });
 
-            this.PartQueryRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>()).Returns(
-                new Part { StockControlled = "N" },
-                new Part { StockControlled = "Y" });
-
             this.results = this.Sut.GetOrdersBySupplierReport(
                 new DateTime(2021, 10, 1),
                 new DateTime(2021, 12, 5),
@@ -148,7 +105,7 @@
                 false,
                 true,
                 "Y",
-                "N");
+                "A");
         }
 
         [Test]
@@ -157,7 +114,6 @@
             this.PurchaseOrderRepository.Received().FilterBy(Arg.Any<Expression<Func<PurchaseOrder, bool>>>());
             this.PurchaseLedgerRepository.Received().FilterBy(Arg.Any<Expression<Func<PurchaseLedger, bool>>>());
             this.SupplierRepository.Received().FindById(Arg.Any<int>());
-            this.PartQueryRepository.Received(2).FindBy(Arg.Any<Expression<Func<Part, bool>>>());
         }
 
         [Test]
@@ -166,8 +122,6 @@
             this.results.ReportTitle.DisplayValue.Should()
                 .Be($"Purchase Orders By Supplier - {this.supplierId}: We sell stuff");
             this.results.Rows.Count().Should().Be(1);
-
-            // doesn't have 2 rows because second part is stock controlled but filter set to non stock controlled
             var row = this.results.Rows.First();
             row.RowId.Should().Be($"{this.orderNumber}/1");
             this.results.GetGridTextValue(0, 0).Should().Be($"{this.orderNumber}/1");
@@ -176,15 +130,13 @@
             this.results.GetGridTextValue(0, 3).Should().Be("3");
             this.results.GetGridTextValue(0, 4).Should().Be("11");
             this.results.GetGridTextValue(0, 5).Should().Be("77");
-            this.results.GetGridValue(0, 6).Should().Be(4m);
-            this.results.GetGridTextValue(0, 7).Should().Be("EUR");
-            this.results.GetGridValue(0, 8).Should().Be(5);
+            this.results.GetGridValue(0, 6).Should().Be(14.88m);
+            this.results.GetGridTextValue(0, 7).Should().Be("USD");
+            this.results.GetGridValue(0, 8).Should().Be(17.34m);
             this.results.GetGridTextValue(0, 9).Should().Be("12");
             this.results.GetGridTextValue(0, 10).Should().Be("13");
             this.results.GetGridTextValue(0, 11).Should().Be("01-Nov-2021");
-
-            // null advised date shouldn't have a value
-            this.results.GetGridTextValue(0, 12).Should().BeNullOrWhiteSpace();
+            this.results.GetGridTextValue(0, 12).Should().Be("01-Dec-2021");
         }
     }
 }
