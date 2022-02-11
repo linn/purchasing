@@ -20,6 +20,7 @@ import OrdersByPart from './reports/OrdersByPart';
 import SuppliersSearch from './supplierUtility/SuppliersSearch';
 import OrdersByPartOptions from './reports/OrdersByPartOptions';
 import SpendBySupplierOptions from './reports/SpendBySupplierOptions';
+import SpendBySupplier from './reports/SpendBySupplier';
 import Supplier from './supplierUtility/Supplier';
 import SuppliersWithUnacknowledgedOrders from './reports/SuppliersWithUnacknowledgedOrders';
 
@@ -102,6 +103,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/reports/spend-by-supplier"
                                     component={SpendBySupplierOptions}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/spend-by-supplier/report"
+                                    component={SpendBySupplier}
                                 />
                                 <Route
                                     exact
