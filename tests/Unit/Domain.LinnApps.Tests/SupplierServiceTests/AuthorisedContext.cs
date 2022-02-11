@@ -25,7 +25,8 @@
                 this.MockSupplierRepository,
                 this.MockCurrencyRepository,
                 this.MockPartCategoryRepository,
-                this.MockSupplierOrderHoldHistory);
+                this.MockSupplierOrderHoldHistory,
+                this.MockAddressRepository);
         }
     }
 }

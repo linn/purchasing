@@ -22,18 +22,22 @@
 
         private readonly IRepository<SupplierOrderHoldHistoryEntry, int> supplierHoldHistories;
 
+        private readonly IRepository<FullAddress, int> addressRepository;
+
         public SupplierService(
             IAuthorisationService authService,
             IRepository<Supplier, int> supplierRepository,
             IRepository<Currency, string> currencyRepository,
             IRepository<PartCategory, string> partCategoryRepository,
-            IRepository<SupplierOrderHoldHistoryEntry, int> supplierHoldHistories)
+            IRepository<SupplierOrderHoldHistoryEntry, int> supplierHoldHistories,
+            IRepository<FullAddress, int> addressRepository)
         {
             this.authService = authService;
             this.supplierRepository = supplierRepository;
             this.currencyRepository = currencyRepository;
             this.partCategoryRepository = partCategoryRepository;
             this.supplierHoldHistories = supplierHoldHistories;
+            this.addressRepository = addressRepository;
         }
 
         public void UpdateSupplier(Supplier current, Supplier updated, IEnumerable<string> privileges)
@@ -82,6 +86,14 @@
             current.RefersToFc = updated.RefersToFc != null
                                      ? this.supplierRepository.FindById(updated.RefersToFc.SupplierId)
                                      : null;
+
+            current.OrderFullAddress = updated.OrderFullAddress != null
+                                           ? this.addressRepository.FindById(updated.OrderFullAddress.Id)
+                                           : null;
+
+            current.InvoiceFullAddress = updated.InvoiceFullAddress != null
+                                           ? this.addressRepository.FindById(updated.InvoiceFullAddress.Id)
+                                           : null;
         }
 
         public Supplier CreateSupplier(Supplier candidate, IEnumerable<string> privileges)
@@ -104,6 +116,14 @@
             candidate.RefersToFc = candidate.RefersToFc != null
                                        ? this.supplierRepository.FindById(candidate.RefersToFc.SupplierId)
                                        : null;
+
+            candidate.OrderFullAddress = candidate.OrderFullAddress != null
+                                             ? this.addressRepository.FindById(candidate.OrderFullAddress.Id)
+                                             : null;
+
+            candidate.InvoiceFullAddress = candidate.InvoiceFullAddress != null
+                                               ? this.addressRepository.FindById(candidate.InvoiceFullAddress.Id)
+                                               : null;
             ValidateFields(candidate);
 
             return candidate;

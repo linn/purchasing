@@ -24,6 +24,8 @@
 
         protected IRepository<SupplierOrderHoldHistoryEntry, int> MockSupplierOrderHoldHistory { get; set; }
 
+        protected IRepository<FullAddress, int> MockAddressRepository { get; set; }
+
         [SetUp]
         public void EstablishContext()
         {
@@ -32,6 +34,7 @@
             this.MockCurrencyRepository = Substitute.For<IRepository<Currency, string>>();
             this.MockPartCategoryRepository = Substitute.For<IRepository<PartCategory, string>>();
             this.MockSupplierOrderHoldHistory = Substitute.For<IRepository<SupplierOrderHoldHistoryEntry, int>>();
+            this.MockAddressRepository = Substitute.For<IRepository<FullAddress, int>>();
         }
     }
 }

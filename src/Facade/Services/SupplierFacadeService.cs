@@ -6,6 +6,7 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -29,7 +30,7 @@
             SupplierResource resource, 
             IEnumerable<string> privileges = null)        
         {
-            var candidate = this.BuildEntityFromResourceHelper(resource);
+            var candidate = BuildEntityFromResourceHelper(resource);
 
             return this.domainService.CreateSupplier(candidate, privileges);
         }
@@ -56,7 +57,7 @@
             SupplierResource updateResource, 
             IEnumerable<string> privileges = null)        
         {
-            var updated = this.BuildEntityFromResourceHelper(updateResource);
+            var updated = BuildEntityFromResourceHelper(updateResource);
 
             updated.SupplierId = entity.SupplierId;
 
@@ -68,7 +69,7 @@
             return s => s.SupplierId.ToString().Contains(searchTerm) || s.Name.Contains(searchTerm.ToUpper());
         }
 
-        private Supplier BuildEntityFromResourceHelper(SupplierResource resource)
+        private static Supplier BuildEntityFromResourceHelper(SupplierResource resource)
         {
             return new Supplier
                        {
@@ -101,8 +102,12 @@
                            DeliveryDay = resource.DeliveryDay,
                            RefersToFc = resource.RefersToFcId.HasValue
                             ? new Supplier { SupplierId = (int)resource.RefersToFcId } : null,
-                           PmDeliveryDaysGrace = resource.PmDeliveryDaysGrace
-                       };
-    }
+                           PmDeliveryDaysGrace = resource.PmDeliveryDaysGrace,
+                           OrderFullAddress = resource.OrderAddressId.HasValue 
+                                                  ? new FullAddress { Id = (int)resource.OrderAddressId } : null,
+                           InvoiceFullAddress = resource.InvoiceAddressId.HasValue
+                                                  ? new FullAddress { Id = (int)resource.InvoiceAddressId } : null
+            };
+        }
     }
 }

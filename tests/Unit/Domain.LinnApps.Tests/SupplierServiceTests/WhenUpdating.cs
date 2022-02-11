@@ -24,6 +24,8 @@
 
         private PartCategory partCategory;
 
+        private FullAddress address;
+
         private IEnumerable<string> privileges;
 
         [SetUp]
@@ -35,6 +37,8 @@
             this.otherSupplier = new Supplier { SupplierId = 2, Name = "SUPPLIER 2" };
 
             this.partCategory = new PartCategory { Category = "CAT" };
+
+            this.address = new FullAddress { AddressString = "ADDRESS", Id = 1 };
 
             this.updated = new Supplier
                                {
@@ -62,12 +66,15 @@
                                    NotesForBuyer = "NOTES",
                                    DeliveryDay = "FRIDAY",
                                    RefersToFc = this.otherSupplier,
-                                   PmDeliveryDaysGrace = 1
+                                   PmDeliveryDaysGrace = 1,
+                                   OrderFullAddress = this.address,
+                                   InvoiceFullAddress = this.address
                                };
             this.MockCurrencyRepository
                 .FindById(this.updated.Currency.Code).Returns(this.currency);
             this.MockSupplierRepository.FindById(2).Returns(this.otherSupplier);
             this.MockPartCategoryRepository.FindById("CAT").Returns(this.partCategory);
+            this.MockAddressRepository.FindById(1).Returns(this.address);
             this.privileges = new List<string> { "priv" };
             this.Sut.UpdateSupplier(this.current, this.updated, this.privileges);
         }
@@ -105,6 +112,10 @@
             this.current.DeliveryDay.Should().Be(this.updated.DeliveryDay);
             this.current.RefersToFc.SupplierId.Should().Be(this.otherSupplier.SupplierId);
             this.current.PmDeliveryDaysGrace.Should().Be(this.updated.PmDeliveryDaysGrace);
+            this.current.OrderFullAddress.Id.Should().Be(1);
+            this.current.OrderFullAddress.AddressString.Should().Be("ADDRESS");
+            this.current.InvoiceFullAddress.Id.Should().Be(1);
+            this.current.InvoiceFullAddress.AddressString.Should().Be("ADDRESS");
         }
     }
 }
