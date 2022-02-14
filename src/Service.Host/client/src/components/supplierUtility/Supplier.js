@@ -84,7 +84,11 @@ function Supplier() {
 
     const handleFieldChange = (propertyName, newValue) => {
         setEditStatus('edit');
-        dispatch({ type: 'fieldChange', fieldName: propertyName, payload: newValue });
+        let formatted = newValue;
+        if (propertyName === 'plannerId') {
+            formatted = Number(newValue);
+        }
+        dispatch({ type: 'fieldChange', fieldName: propertyName, payload: formatted });
     };
 
     const [holdReason, setHoldReason] = useState('');
@@ -277,7 +281,17 @@ function Supplier() {
                                     )}
                                     {tab === 4 && (
                                         <Box sx={{ paddingTop: 3 }}>
-                                            <WhoseTab handleFieldChange={handleFieldChange} />
+                                            <WhoseTab
+                                                handleFieldChange={handleFieldChange}
+                                                accountControllerId={
+                                                    state.supplier.accountControllerId
+                                                }
+                                                accountControllerName={
+                                                    state.supplier.accountControllerName
+                                                }
+                                                vendorManagerId={state.supplier.vendorManagerId}
+                                                plannerId={state.supplier.plannerId}
+                                            />
                                         </Box>
                                     )}
                                 </Box>

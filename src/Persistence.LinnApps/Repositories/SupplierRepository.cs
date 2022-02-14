@@ -26,6 +26,9 @@
                 .Include(s => s.PartCategory)
                 .Include(s => s.RefersToFc)
                 .Include(s => s.InvoiceFullAddress)
+                .Include(s => s.AccountController)
+                .Include(s => s.Planner)
+                .Include(s => s.VendorManager)
                 .Include(s => s.OrderFullAddress)
                 .First(x => x.SupplierId == key);
         }

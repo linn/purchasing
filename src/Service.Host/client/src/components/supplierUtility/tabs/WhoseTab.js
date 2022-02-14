@@ -8,6 +8,7 @@ import {
     collectionSelectorHelpers,
     Dropdown,
     InputField,
+    Loading,
     Typeahead
 } from '@linn-it/linn-form-components-library';
 
@@ -29,16 +30,28 @@ function WhoseTab({
     }, [dispatch]);
 
     const searchEmployees = searchTerm => dispatch(employeesActions.search(searchTerm));
-    const employeesSearchResults = useSelector(reduxState =>
-        collectionSelectorHelpers.getSearchItems(reduxState.employees, 100, 'id', 'name', 'name')
+    const employeesSearchResults = useSelector(state =>
+        collectionSelectorHelpers.getSearchItems(state.employees, 100, 'id', 'fullName', 'fullName')
     );
-    const employeesSearchLoading = useSelector(reduxState =>
-        collectionSelectorHelpers.getSearchLoading(reduxState.employees)
+    const employeesSearchLoading = useSelector(state =>
+        collectionSelectorHelpers.getSearchLoading(state.employees)
     );
-
+    const vendorManagers = useSelector(state =>
+        collectionSelectorHelpers.getItems(state.vendorManagers)
+    );
+    const planners = useSelector(state => collectionSelectorHelpers.getItems(state.planners));
+    const vendorManagersLoading = useSelector(state =>
+        collectionSelectorHelpers.getLoading(state.vendorManagers)
+    );
+    const plannersLoading = useSelector(state =>
+        collectionSelectorHelpers.getLoading(state.planners)
+    );
+    if (plannersLoading || vendorManagersLoading) {
+        return <Loading />;
+    }
     return (
         <Grid container spacing={3}>
-            <Grid item xs={8}>
+            <Grid item xs={3}>
                 <Typeahead
                     onSelect={newValue => {
                         handleFieldChange('accountControllerId', newValue.id);
@@ -62,11 +75,35 @@ function WhoseTab({
                 <InputField
                     fullWidth
                     value={accountControllerName}
-                    label="Addressee"
+                    label="Name"
                     propertyName="addressee"
                     onChange={() => {}}
                 />
             </Grid>
+            <Grid item xs={5} />
+
+            <Grid item xs={8}>
+                <Dropdown
+                    items={vendorManagers.map(v => ({ id: v.vmId, displayText: v.name }))}
+                    value={vendorManagerId}
+                    allowNoValue
+                    propertyName="vendorManagerId"
+                    label="Vendor Manager"
+                    onChange={handleFieldChange}
+                />
+            </Grid>
+            <Grid item xs={4} />
+            <Grid item xs={8}>
+                <Dropdown
+                    items={planners.map(v => ({ id: v.id, displayText: v.employeeName }))}
+                    value={plannerId}
+                    allowNoValue
+                    propertyName="plannerId"
+                    label="Planner"
+                    onChange={handleFieldChange}
+                />
+            </Grid>
+            <Grid item xs={4} />
         </Grid>
     );
 }

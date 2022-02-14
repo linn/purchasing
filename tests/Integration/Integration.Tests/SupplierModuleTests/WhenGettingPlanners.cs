@@ -26,11 +26,11 @@
                                   {
                                       new Planner
                                           {
-                                              Id = 1,
-                                              Employee = new Employee { Id = 1, FullName = "MC PLANNER"}
+                                              Id = 1
                                           }
                                   };
 
+            this.MockEmployeeRepository.FindById(1).Returns(new Employee { FullName = "MC PLANNER" });
             this.MockPlannerRepository.FindAll().Returns(this.dataResult.AsQueryable());
             this.Response = this.Client.Get(
                 $"/purchasing/suppliers/planners",

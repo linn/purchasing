@@ -19,12 +19,12 @@
 
         public override IQueryable<Planner> FindAll()
         {
-            return this.serviceDbContext.Planners.AsNoTracking().Include(x => x.Employee);
+            return this.serviceDbContext.Planners.AsNoTracking(); //.Include(x => x.Employee);
         }
 
         public override Planner FindById(int key)
         {
-            return this.serviceDbContext.Planners.Include(v => v.Employee).SingleOrDefault(v => v.Id == key);
+            return this.serviceDbContext.Planners.SingleOrDefault(v => v.Id == key);
         }
     }
 }
