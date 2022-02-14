@@ -31,7 +31,7 @@
                 SuppliersReference = entity.SuppliersReference,
                 WebAddress = entity.WebAddress,
                 OrderContactMethod = entity.OrderContactMethod,
-                VendorManager = entity.VendorManager,
+                VendorManagerId = entity.VendorManager?.VmId,
                 ApprovedCarrier = entity.ApprovedCarrier,
                 CurrencyCode = entity.Currency?.Code,
                 CurrencyName = entity.Currency?.Name,

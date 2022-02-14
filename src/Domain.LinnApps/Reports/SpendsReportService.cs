@@ -34,31 +34,35 @@
             this.reportingHelper = reportingHelper;
         }
 
-        public ResultsModel GetSpendBySupplierReport(string vm)
+        public ResultsModel GetSpendBySupplierReport(string vendorManagerId)
         {
             var currentLedgerPeriod = this.purchaseLedgerPack.GetLedgerPeriod();
             var yearStartLedgerPeriod = this.purchaseLedgerPack.GetYearStartLedgerPeriod();
             var previousYearStartLedgerPeriod = yearStartLedgerPeriod - 12;
 
             var supplierSpends = this.spendsRepository.FilterBy(
-                        x => x.LedgerPeriod >= previousYearStartLedgerPeriod && x.LedgerPeriod <= currentLedgerPeriod
-                             && (string.IsNullOrWhiteSpace(vm) || x.Supplier.VendorManager == vm))
+                        x => 
+                            x.Supplier.VendorManager != null &&
+                            x.LedgerPeriod >= previousYearStartLedgerPeriod && x.LedgerPeriod <= currentLedgerPeriod
+                             && (string.IsNullOrWhiteSpace(vendorManagerId) 
+                                 || x.Supplier.VendorManager.VmId == vendorManagerId))
                     .ToList();
 
-            var vmName = "ALL";
-            if (!string.IsNullOrWhiteSpace(vm))
+            var vendorManagerName = "ALL";
+
+            if (!string.IsNullOrWhiteSpace(vendorManagerId))
             {
-                var vendorManager = this.vendorManagerRepository.FindById(vm);
-                vmName = $"{vm} - {vendorManager.Employee.FullName} ({vendorManager.UserNumber})";
+                var vendorManager = this.vendorManagerRepository.FindById(vendorManagerId);
+                vendorManagerName = $"{vendorManagerId} - {vendorManager.Employee.FullName} ({vendorManager.UserNumber})";
             }
 
             var reportLayout = new SimpleGridLayout(
                 this.reportingHelper,
                 CalculationValueModelType.TextValue,
                 null,
-                $"Spend by supplier report for Vendor Manager: {vmName}. For this financial year and last, excludes factors & VAT.");
+                $"Spend by supplier report for Vendor Manager: {vendorManagerName}. For this financial year and last, excludes factors & VAT.");
 
-            this.AddSupplierReportColumns(reportLayout);
+            AddSupplierReportColumns(reportLayout);
 
             var values = new List<CalculationValueModel>();
 
@@ -86,7 +90,7 @@
 
             foreach (var supplier in distinctSupplierSpends)
             {
-                this.ExtractDetailsForPartReport(values, supplier);
+                ExtractDetailsForPartReport(values, supplier);
             }
 
             reportLayout.SetGridData(values);
@@ -95,7 +99,7 @@
             return model;
         }
 
-        private void AddSupplierReportColumns(SimpleGridLayout reportLayout)
+        private static void AddSupplierReportColumns(SimpleGridLayout reportLayout)
         {
             reportLayout.AddColumnComponent(
                 null,
@@ -112,7 +116,7 @@
                     });
         }
 
-        private void ExtractDetailsForPartReport(ICollection<CalculationValueModel> values, SupplierSpendWithTotals supplier)
+        private static void ExtractDetailsForPartReport(ICollection<CalculationValueModel> values, SupplierSpendWithTotals supplier)
         {
             var currentRowId = $"{supplier.SupplierId}";
             values.Add(
@@ -127,19 +131,19 @@
                         RowId = currentRowId, ColumnId = "Name", TextDisplay = supplier.Supplier.Name
                     });
 
-            var enGbCulture = CultureInfo.CreateSpecificCulture("en-GB");
+            var culture = CultureInfo.CreateSpecificCulture("en-GB");
             values.Add(
                 new CalculationValueModel
                     {
                         RowId = currentRowId,
                         ColumnId = "LastYear",
-                        TextDisplay = supplier.PrevYearTotal.ToString("C", enGbCulture)
+                        TextDisplay = supplier.PrevYearTotal.ToString("C", culture)
                     });
 
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId, ColumnId = "ThisYear", TextDisplay = supplier.YearTotal.ToString("C", enGbCulture)
+                        RowId = currentRowId, ColumnId = "ThisYear", TextDisplay = supplier.YearTotal.ToString("C", culture)
                     });
 
             values.Add(
@@ -147,7 +151,7 @@
                     {
                         RowId = currentRowId,
                         ColumnId = "ThisMonth",
-                        TextDisplay = supplier.MonthTotal.ToString("C", enGbCulture)
+                        TextDisplay = supplier.MonthTotal.ToString("C", culture)
                     });
         }
     }

@@ -9,10 +9,6 @@
 
         public string Name { get; set; }
 
-        public string VendorManager { get; set; }
-
-        public int? Planner { get; set; }
-
         public string WebAddress { get; set; }
 
         public string PhoneNumber { get; set; }
@@ -58,5 +54,11 @@
         public FullAddress OrderFullAddress { get; set; }
 
         public FullAddress InvoiceFullAddress { get; set; }
+
+        public Planner Planner { get; set; }
+
+        public VendorManager VendorManager { get; set; }
+
+        public Employee AccountController { get; set; }
     }
 }

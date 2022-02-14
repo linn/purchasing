@@ -267,8 +267,8 @@
             var newPartSupplier = this.partSupplierRepository.FindById(
                 new PartSupplierKey { PartNumber = part.PartNumber, SupplierId = candidate.NewSupplier.SupplierId });
 
-            if (!newPartSupplier.Supplier.Planner.HasValue
-                || string.IsNullOrEmpty(newPartSupplier.Supplier.VendorManager))
+            if (newPartSupplier.Supplier.Planner == null
+                || newPartSupplier.Supplier.VendorManager == null)
             {
                 throw new PartSupplierException(
                     "Selected supplier is missing planner or vendor manager");

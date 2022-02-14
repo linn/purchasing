@@ -12,6 +12,8 @@
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
 
+    using Org.BouncyCastle.Crypto.Agreement.JPake;
+
     public class SupplierFacadeService : FacadeResourceService<Supplier, int, SupplierResource, SupplierResource>
     {
         private readonly ISupplierService domainService;
@@ -79,8 +81,9 @@
                                               Code = resource.CurrencyCode
                                           },
                            WebAddress = resource.WebAddress,
-                           VendorManager = resource.VendorManager,
-                           Planner = resource.Planner,
+                           VendorManager = new VendorManager { VmId = resource.VendorManagerId },
+                           Planner = resource.PlannerId.HasValue 
+                                         ? new Planner { Id = (int)resource.PlannerId } : null,
                            InvoiceContactMethod = resource.InvoiceContactMethod,
                            PhoneNumber = resource.PhoneNumber,
                            OrderContactMethod = resource.OrderContactMethod,

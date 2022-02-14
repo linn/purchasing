@@ -8,8 +8,6 @@
 
         public string Name { get; set; }
 
-        public string VendorManager { get; set; }
-
         public int? Planner { get; set; }
 
         public string CurrencyCode { get; set; }
@@ -69,5 +67,13 @@
         public int? InvoiceAddressId { get; set; }
 
         public string InvoiceFullAddress { get; set; }
+
+        public string VendorManagerId { get; set; }
+
+        public int? PlannerId { get; set; }
+
+        public int? AccountControllerId { get; set; }
+
+        public string AccountControllerName { get; set; }
     }
 }
