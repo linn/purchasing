@@ -58,6 +58,14 @@
                 PlannerId = entity.Planner?.Id,
                 AccountControllerId = entity.AccountController?.Id,
                 AccountControllerName = entity.AccountController?.FullName,
+                OpenedById = entity.OpenedBy.Id,
+                DateOpened = entity.DateOpened.ToString("o"),
+                OpenedByName = entity.OpenedBy.FullName,
+                ClosedById = entity.ClosedBy?.Id,
+                ClosedByName = entity.ClosedBy?.FullName,
+                ReasonClosed = entity.ReasonClosed,
+                Notes = entity.Notes,
+                OrganisationId = entity.OrganisationId,
                 Links = this.BuildLinks(entity, claims).ToArray()
             };
         }

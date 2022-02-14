@@ -330,6 +330,13 @@
             entity.HasOne(a => a.VendorManager).WithMany().HasForeignKey("VENDOR_MANAGER");
             entity.HasOne(a => a.Planner).WithMany().HasForeignKey("PLANNER");
             entity.HasOne(a => a.AccountController).WithMany().HasForeignKey("ACCOUNT_CONTROLLER");
+            entity.Property(a => a.DateOpened).HasColumnName("DATE_OPENED");
+            entity.HasOne(a => a.OpenedBy).WithMany().HasForeignKey("OPENED_BY");
+            entity.Property(a => a.DateClosed).HasColumnName("DATE_CLOSED");
+            entity.Property(a => a.ReasonClosed).HasColumnName("REASON_CLOSED");
+            entity.HasOne(a => a.ClosedBy).WithMany().HasForeignKey("CLOSED_BY");
+            entity.Property(a => a.Notes).HasColumnName("NOTES").HasMaxLength(1000);
+            entity.Property(a => a.OrganisationId).HasColumnName("ORGANISATION_ID");
         }
 
         private void BuildSupplierOrderHoldHistories(ModelBuilder builder)

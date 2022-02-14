@@ -1,5 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Suppliers
 {
+    using System;
+
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
@@ -60,5 +62,19 @@
         public VendorManager VendorManager { get; set; }
 
         public Employee AccountController { get; set; }
+
+        public DateTime DateOpened { get; set; }
+
+        public Employee OpenedBy { get; set; }
+
+        public DateTime? DateClosed { get; set; }
+
+        public Employee ClosedBy { get; set; }
+
+        public string ReasonClosed { get; set; }
+
+        public string Notes { get; set; }
+
+        public int OrganisationId { get; set; }
     }
 }
