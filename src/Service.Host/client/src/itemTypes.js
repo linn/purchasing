@@ -118,3 +118,5 @@ export const vendorManagers = new ItemType(
     'VENDOR_MANAGERS',
     '/purchasing/vendor-managers'
 );
+
+export const planners = new ItemType('planners', 'PLANNERS', '/purchasing/suppliers/planners');

@@ -31,6 +31,7 @@ import FinanceTab from './tabs/FinanceTab';
 import PurchTab from './tabs/PurchTab';
 import { getUserNumber } from '../../selectors/oidcSelectors';
 import WhereTab from './tabs/WhereTab';
+import WhoseTab from './tabs/WhoseTab';
 
 function Supplier() {
     const useStyles = makeStyles(theme => ({
@@ -198,9 +199,9 @@ function Supplier() {
                                             <Tab label="Finance" />
                                             <Tab label="Purch" />
                                             <Tab label="Where" />
-                                            <Tab label="Whose" disabled />
-                                            <Tab label="Lifecycle" disabled />
-                                            <Tab label="Notes" disabled />
+                                            <Tab label="Whose" />
+                                            <Tab label="Lifecycle" />
+                                            <Tab label="Notes" />
                                         </Tabs>
                                     </Box>
                                     {tab === 0 && (
@@ -272,6 +273,11 @@ function Supplier() {
                                                 }
                                                 handleFieldChange={handleFieldChange}
                                             />
+                                        </Box>
+                                    )}
+                                    {tab === 4 && (
+                                        <Box sx={{ paddingTop: 3 }}>
+                                            <WhoseTab handleFieldChange={handleFieldChange} />
                                         </Box>
                                     )}
                                 </Box>

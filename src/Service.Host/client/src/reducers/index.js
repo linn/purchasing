@@ -38,6 +38,7 @@ import address from './address';
 import addresses from './addresses';
 import countries from './countries';
 import suppliersWithUnacknowledgedOrders from './suppliersWithUnacknowledgedOrders';
+import planners from './planners';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -63,6 +64,7 @@ const rootReducer = history =>
         parts,
         partSupplier,
         partSuppliers,
+        planners,
         preferredSupplierChange,
         priceChangeReasons,
         putSupplierOnHold,
