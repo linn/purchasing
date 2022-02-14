@@ -46,7 +46,7 @@
                             x.Supplier.VendorManager != null &&
                             x.LedgerPeriod >= previousYearStartLedgerPeriod && x.LedgerPeriod <= currentLedgerPeriod
                              && (string.IsNullOrWhiteSpace(vendorManagerId) 
-                                 || x.Supplier.VendorManager.VmId == vendorManagerId))
+                                 || x.Supplier.VendorManager.Id == vendorManagerId))
                     .ToList();
 
             var vendorManagerName = "ALL";

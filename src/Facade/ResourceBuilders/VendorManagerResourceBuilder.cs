@@ -13,7 +13,7 @@
         {
             return new VendorManagerResource
             {
-                VmId = entity.VmId,
+                VmId = entity.Id,
                 Name = entity.Employee.FullName,
                 UserNumber = entity.UserNumber
             };
@@ -21,7 +21,7 @@
 
         public string GetLocation(VendorManager v)
         {
-            return $"/purchasing/vendor-managers/{v.VmId}";
+            return $"/purchasing/vendor-managers/{v.Id}";
         }
 
         object IBuilder<VendorManager>.Build(VendorManager entity, IEnumerable<string> claims)

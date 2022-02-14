@@ -25,13 +25,22 @@
 
         private readonly IRepository<FullAddress, int> addressRepository;
 
+        private readonly IRepository<Employee, int> employeeRepository;
+
+        private readonly IRepository<VendorManager, string> vendorManagerRepository;
+
+        private readonly IRepository<Planner, int> plannerRepository;
+
         public SupplierService(
             IAuthorisationService authService,
             IRepository<Supplier, int> supplierRepository,
             IRepository<Currency, string> currencyRepository,
             IRepository<PartCategory, string> partCategoryRepository,
             IRepository<SupplierOrderHoldHistoryEntry, int> supplierHoldHistories,
-            IRepository<FullAddress, int> addressRepository)
+            IRepository<FullAddress, int> addressRepository,
+            IRepository<Employee, int> employeeRepository,
+            IRepository<VendorManager, string> vendorManagerRepository,
+            IRepository<Planner, int> plannerRepository)
         {
             this.authService = authService;
             this.supplierRepository = supplierRepository;
@@ -39,6 +48,9 @@
             this.partCategoryRepository = partCategoryRepository;
             this.supplierHoldHistories = supplierHoldHistories;
             this.addressRepository = addressRepository;
+            this.employeeRepository = employeeRepository;
+            this.vendorManagerRepository = vendorManagerRepository;
+            this.plannerRepository = plannerRepository;
         }
 
         public void UpdateSupplier(Supplier current, Supplier updated, IEnumerable<string> privileges)
@@ -95,6 +107,18 @@
             current.InvoiceFullAddress = updated.InvoiceFullAddress != null
                                            ? this.addressRepository.FindById(updated.InvoiceFullAddress.Id)
                                            : null;
+
+            current.Planner = updated.Planner != null
+                                  ? this.plannerRepository.FindById(updated.Planner.Id)
+                                  : null;
+
+            current.VendorManager = updated.VendorManager != null
+                                        ? this.vendorManagerRepository.FindById(updated.VendorManager.Id)
+                                        : null;
+
+            current.AccountController = updated.AccountController != null
+                                            ? this.employeeRepository.FindById(updated.AccountController.Id)
+                                            : null;
         }
 
         public Supplier CreateSupplier(Supplier candidate, IEnumerable<string> privileges)
@@ -125,6 +149,19 @@
             candidate.InvoiceFullAddress = candidate.InvoiceFullAddress != null
                                                ? this.addressRepository.FindById(candidate.InvoiceFullAddress.Id)
                                                : null;
+
+            candidate.Planner = candidate.Planner != null
+                                               ? this.plannerRepository.FindById(candidate.Planner.Id)
+                                               : null;
+
+            candidate.VendorManager = candidate.VendorManager != null
+                                    ? this.vendorManagerRepository.FindById(candidate.VendorManager.Id)
+                                    : null;
+
+            candidate.AccountController = candidate.AccountController != null
+                                    ? this.employeeRepository.FindById(candidate.AccountController.Id)
+                                    : null;
+
             ValidateFields(candidate);
 
             return candidate;

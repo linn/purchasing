@@ -42,7 +42,7 @@
                                          new Supplier
                                              {
                                                  SupplierId = 2,
-                                                 VendorManager = new VendorManager {VmId = "V"},
+                                                 VendorManager = new VendorManager {Id = "V"},
                                                  Planner = new Planner {Id = 1}
                                              },
                                      ChangeReason = new PriceChangeReason {ReasonCode = "CHG", Description = "DESC"},

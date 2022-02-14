@@ -8,8 +8,6 @@
 
         public string Name { get; set; }
 
-        public int? Planner { get; set; }
-
         public string CurrencyCode { get; set; }
 
         public string WebAddress { get; set; }

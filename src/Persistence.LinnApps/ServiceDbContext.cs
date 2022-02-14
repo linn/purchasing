@@ -305,8 +305,6 @@
             entity.HasKey(a => a.SupplierId);
             entity.Property(a => a.SupplierId).HasColumnName("SUPPLIER_ID");
             entity.Property(a => a.Name).HasColumnName("SUPPLIER_NAME").HasMaxLength(50);
-            entity.Property(a => a.Planner).HasColumnName("PLANNER");
-            entity.Property(a => a.VendorManager).HasColumnName("VENDOR_MANAGER").HasMaxLength(1);
             entity.Property(a => a.WebAddress).HasColumnName("WEB_ADDRESS").HasMaxLength(300);
             entity.Property(a => a.PhoneNumber).HasColumnName("PHONE_NUMBER").HasMaxLength(25);
             entity.Property(a => a.OrderContactMethod).HasColumnName("PREFERRED_CONTACT_METHOD").HasMaxLength(20);
@@ -330,6 +328,9 @@
             entity.Property(a => a.PmDeliveryDaysGrace).HasColumnName("PM_DELIVERY_DAYS_GRACE");
             entity.HasOne(a => a.OrderFullAddress).WithMany().HasForeignKey("ORD_ADDRESS_ID");
             entity.HasOne(a => a.InvoiceFullAddress).WithMany().HasForeignKey("INV_ADDRESS_ID");
+            entity.HasOne(a => a.VendorManager).WithMany().HasForeignKey("VENDOR_MANAGER");
+            entity.HasOne(a => a.Planner).WithMany().HasForeignKey("PLANNER");
+            entity.HasOne(a => a.AccountController).WithMany().HasForeignKey("ACCOUNT_CONTROLLER");
         }
 
         private void BuildSupplierOrderHoldHistories(ModelBuilder builder)
@@ -553,8 +554,8 @@
         private void BuildVendorManagers(ModelBuilder builder)
         {
             var entity = builder.Entity<VendorManager>().ToTable("VENDOR_MANAGERS");
-            entity.HasKey(m => m.VmId);
-            entity.Property(e => e.VmId).HasColumnName("VM_ID").HasMaxLength(1);
+            entity.HasKey(m => m.Id);
+            entity.Property(e => e.Id).HasColumnName("VM_ID").HasMaxLength(1);
             entity.Property(e => e.UserNumber).HasColumnName("USER_NUMBER").HasMaxLength(6);
             entity.Property(e => e.PmMeasured).HasColumnName("PM_MEASURED").HasMaxLength(1);
             entity.HasOne(x => x.Employee).WithOne().HasForeignKey<VendorManager>(z => z.UserNumber);

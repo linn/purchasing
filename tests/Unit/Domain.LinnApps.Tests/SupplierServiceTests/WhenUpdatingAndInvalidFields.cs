@@ -42,7 +42,7 @@
             this.updated = new Supplier
             {
                 Currency = this.currency,
-                VendorManager = new VendorManager { VmId = "V"},
+                VendorManager = new VendorManager { Id = "V"},
                 WebAddress = "/web",
                 LiveOnOracle = "Y",
                 OrderContactMethod = "EMAIL",

@@ -51,7 +51,7 @@
 
             this.SpendsRepository.FilterBy(Arg.Any<Expression<Func<SupplierSpend, bool>>>())
                 .Returns(spends.AsQueryable());
-            var vendorManager = new VendorManager { VmId = "X", UserNumber = 999 };
+            var vendorManager = new VendorManager { Id = "X", UserNumber = 999 };
             vendorManager.Employee = new Employee { FullName = "Doctor X" };
 
             this.VendorManagerRepository.FindById(Arg.Any<string>()).Returns(vendorManager);
