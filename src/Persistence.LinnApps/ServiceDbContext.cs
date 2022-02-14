@@ -148,7 +148,7 @@
             var entity = builder.Entity<Planner>().ToTable("PLANNERS");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id).HasColumnName("PLANNER");
-            entity.HasOne(e => e.Employee).WithOne().HasForeignKey("PLANNER");
+            entity.HasOne(e => e.Employee).WithMany().HasForeignKey("PLANNER");
         }
 
         private void BuildAddresses(ModelBuilder builder)

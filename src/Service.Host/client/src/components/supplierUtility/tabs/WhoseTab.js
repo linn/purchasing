@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
     collectionSelectorHelpers,
     Dropdown,
+    InputField,
     Typeahead
 } from '@linn-it/linn-form-components-library';
 
@@ -14,14 +15,20 @@ import plannersActions from '../../../actions/plannersActions';
 import vendorManagersActions from '../../../actions/vendorManagersActions';
 import employeesActions from '../../../actions/employeesActions';
 
-function WhoseTab({handleFieldChange}) {
-    const reduxDispatch = useDispatch();
+function WhoseTab({
+    handleFieldChange,
+    accountControllerId,
+    accountControllerName,
+    vendorManagerId,
+    plannerId
+}) {
+    const dispatch = useDispatch();
     useEffect(() => {
-        reduxDispatch(plannersActions.fetch());
-        reduxDispatch(vendorManagersActions.fetch());
-    }, [reduxDispatch]);
+        dispatch(plannersActions.fetch());
+        dispatch(vendorManagersActions.fetch());
+    }, [dispatch]);
 
-    const searchEmployees = searchTerm => reduxDispatch(employeesActions.search(searchTerm));
+    const searchEmployees = searchTerm => dispatch(employeesActions.search(searchTerm));
     const employeesSearchResults = useSelector(reduxState =>
         collectionSelectorHelpers.getSearchItems(reduxState.employees, 100, 'id', 'name', 'name')
     );
@@ -29,13 +36,54 @@ function WhoseTab({handleFieldChange}) {
         collectionSelectorHelpers.getSearchLoading(reduxState.employees)
     );
 
-    return <Grid container spacing={3}></Grid>;
+    return (
+        <Grid container spacing={3}>
+            <Grid item xs={8}>
+                <Typeahead
+                    onSelect={newValue => {
+                        handleFieldChange('accountControllerId', newValue.id);
+                        handleFieldChange('accountControllerName', newValue.fullName);
+                    }}
+                    label="Employeee Lookup"
+                    modal
+                    propertyName="accountControllerId"
+                    items={employeesSearchResults}
+                    value={accountControllerId}
+                    loading={employeesSearchLoading}
+                    fetchItems={searchEmployees}
+                    links={false}
+                    text
+                    clearSearch={() => dispatch(employeesActions.clearSearch())}
+                    placeholder="Search by Name"
+                    minimumSearchTermLength={3}
+                />
+            </Grid>
+            <Grid item xs={4}>
+                <InputField
+                    fullWidth
+                    value={accountControllerName}
+                    label="Addressee"
+                    propertyName="addressee"
+                    onChange={() => {}}
+                />
+            </Grid>
+        </Grid>
+    );
 }
 
 WhoseTab.propTypes = {
-    handleFieldChange: PropTypes.func.isRequired
+    handleFieldChange: PropTypes.func.isRequired,
+    accountControllerId: PropTypes.number,
+    accountControllerName: PropTypes.string,
+    vendorManagerId: PropTypes.number,
+    plannerId: PropTypes.number
 };
 
-WhoseTab.defaultProps = {};
+WhoseTab.defaultProps = {
+    accountControllerName: null,
+    accountControllerId: null,
+    vendorManagerId: null,
+    plannerId: null
+};
 
 export default WhoseTab;
