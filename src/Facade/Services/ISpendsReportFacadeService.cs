@@ -11,5 +11,9 @@
         Stream GetSpendBySupplierExport(string vm, IEnumerable<string> privileges);
 
         IResult<ReportReturnResource> GetSpendBySupplierReport(string vm, IEnumerable<string> privileges);
+
+        Stream GetSpendByPartExport(int supplierId, IEnumerable<string> privileges);
+
+        IResult<ReportReturnResource> GetSpendByPartReport(int supplierId, IEnumerable<string> privileges);
     }
 }

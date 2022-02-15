@@ -46,6 +46,28 @@
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
+        public Stream GetSpendByPartExport(int supplierId, IEnumerable<string> privileges)
+        {
+            var results = this.domainService.GetSpendByPartReport(supplierId);
+
+            var returnResource = results.ConvertToCsvList();
+
+            var stream = new MemoryStream();
+            var csvStreamWriter = new CsvStreamWriter(stream);
+            csvStreamWriter.WriteModel(returnResource);
+
+            return stream;
+        }
+
+        public IResult<ReportReturnResource> GetSpendByPartReport(int supplierId, IEnumerable<string> privileges)
+        {
+            var results = this.domainService.GetSpendByPartReport(supplierId);
+
+            var returnResource = this.BuildResource(results, privileges);
+
+            return new SuccessResult<ReportReturnResource>(returnResource);
+        }
+
         private ReportReturnResource BuildResource(ResultsModel resultsModel, IEnumerable<string> privileges)
         {
             return (ReportReturnResource)this.resultsModelResourceBuilder.Build(resultsModel, privileges);

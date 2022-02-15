@@ -2,20 +2,18 @@
 {
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
-    public class SupplierSpend
+    public class PartSpend
     {
         public decimal BaseTotal { get; set; }
-
-        public int LedgerPeriod { get; set; }
-
+        
         public int OrderLine { get; set; }
 
         public int OrderNumber { get; set; }
 
-        public int PlTref { get; }
+        public int LedgerPeriod { get; set; }
+        
+        public string PartNumber { get; set; }
 
-        public Supplier Supplier { get; set; }
-
-        public int SupplierId { get; set; }
+        public string PartDescription { get; set; }
     }
 }

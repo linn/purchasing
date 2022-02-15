@@ -92,3 +92,8 @@ export const suppliersWithUnacknowledgedOrdersActionTypes = makeReportActionType
     reportTypes.suppliersWithUnacknowledgedOrders.actionType,
     false
 );
+
+export const spendByPartReportActionTypes = makeActionTypes(
+    reportTypes.spendByPartReport.actionType,
+    false
+);

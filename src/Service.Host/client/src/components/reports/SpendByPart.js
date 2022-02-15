@@ -11,28 +11,28 @@ import { useSelector, useDispatch } from 'react-redux';
 import queryString from 'query-string';
 import history from '../../history';
 import config from '../../config';
-import spendBySupplierActions from '../../actions/spendBySupplierActions';
+import spendByPartActions from '../../actions/spendByPartActions';
 
-function SpendBySupplierReport() {
+function SpendByPartReport() {
     const options = useMemo(() => queryString.parse(window.location.search) || {}, []);
 
     const loading = useSelector(state =>
-        reportSelectorHelpers.getReportLoading(state.spendBySupplierReport)
+        reportSelectorHelpers.getReportLoading(state.spendByPartReport)
     );
     const reportData = useSelector(state =>
-        reportSelectorHelpers.getReportData(state.spendBySupplierReport)
+        reportSelectorHelpers.getReportData(state.spendByPartReport)
     );
 
     const dispatch = useDispatch();
 
     const handleBackClick = () => {
-        const uri = `/purchasing/reports/spend-by-supplier/`;
+        const uri = `/purchasing/reports/spend-by-part/`;
         history.push(uri);
     };
 
     useEffect(() => {
         if (options) {
-            dispatch(spendBySupplierActions.fetchReport(options));
+            dispatch(spendByPartActions.fetchReport(options));
         }
     }, [options, dispatch]);
 
@@ -76,10 +76,10 @@ function SpendBySupplierReport() {
     );
 }
 
-SpendBySupplierReport.defaultProps = {
+SpendByPartReport.defaultProps = {
     reportData: {},
     options: {},
     loading: false
 };
 
-export default SpendBySupplierReport;
+export default SpendByPartReport;

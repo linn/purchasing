@@ -5,5 +5,8 @@
     public interface ISpendsReportService
     {
         ResultsModel GetSpendBySupplierReport(string vm);
+
+        ResultsModel GetSpendByPartReport(int supplierId);
+
     }
 }
