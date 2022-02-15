@@ -92,7 +92,6 @@
 
         protected IRepository<Employee, int> MockEmployeeRepository { get; set; }
 
-
         [SetUp]
         public void EstablishContext()
         {
