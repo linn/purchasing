@@ -52,9 +52,9 @@
                 this.SpendsRepository,
                 this.VendorManagerRepository,
                 this.PurchaseLedgerPack,
-                this.PurchaseOrderRepository,
-                this.SupplierRepository,
-                this.PartRepository,
+                //this.PurchaseOrderRepository,
+                //this.SupplierRepository,
+                //this.PartRepository,
                 this.ReportingHelper);
         }
     }

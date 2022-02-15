@@ -7,6 +7,5 @@
         ResultsModel GetSpendBySupplierReport(string vendorManagerId);
 
         ResultsModel GetSpendByPartReport(int supplierId);
-
     }
 }
