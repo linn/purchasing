@@ -31,7 +31,8 @@
             IEnumerable<string> privileges = null)        
         {
             var candidate = BuildEntityFromResourceHelper(resource);
-
+            candidate.OpenedBy = new Employee {Id = resource.OpenedById };
+            candidate.DateOpened = DateTime.Today;
             return this.domainService.CreateSupplier(candidate, privileges);
         }
 
@@ -110,7 +111,14 @@
                            InvoiceFullAddress = resource.InvoiceAddressId.HasValue
                                                   ? new FullAddress { Id = (int)resource.InvoiceAddressId } : null,
                            AccountController = resource.AccountControllerId.HasValue
-                               ? new Employee { Id = (int)resource.AccountControllerId } : null
+                               ? new Employee { Id = (int)resource.AccountControllerId } : null,
+                           ClosedBy = resource.ClosedById.HasValue ? new Employee { Id = (int)resource.ClosedById }
+                                        : null,
+                           DateClosed = !string.IsNullOrEmpty(resource.DateClosed) 
+                                        ? DateTime.Parse(resource.DateClosed) : null,
+                           ReasonClosed = resource.ReasonClosed,
+                           Notes = resource.Notes,
+                           OrganisationId = resource.OrganisationId
             };
         }
     }

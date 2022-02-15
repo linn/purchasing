@@ -63,6 +63,7 @@
                 OpenedByName = entity.OpenedBy.FullName,
                 ClosedById = entity.ClosedBy?.Id,
                 ClosedByName = entity.ClosedBy?.FullName,
+                DateClosed = entity.DateClosed?.ToString("o"),
                 ReasonClosed = entity.ReasonClosed,
                 Notes = entity.Notes,
                 OrganisationId = entity.OrganisationId,

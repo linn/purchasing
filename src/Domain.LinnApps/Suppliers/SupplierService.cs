@@ -84,6 +84,10 @@
             current.NotesForBuyer = updated.NotesForBuyer;
             current.DeliveryDay = updated.DeliveryDay;
             current.PmDeliveryDaysGrace = updated.PmDeliveryDaysGrace;
+            current.DateClosed = updated.DateClosed;
+            current.ReasonClosed = updated.ReasonClosed;
+            current.Notes = updated.Notes;
+            current.OrganisationId = updated.OrganisationId;
 
 
             current.InvoiceGoesTo = updated.InvoiceGoesTo != null
@@ -118,6 +122,10 @@
 
             current.AccountController = updated.AccountController != null
                                             ? this.employeeRepository.FindById(updated.AccountController.Id)
+                                            : null;
+
+            current.ClosedBy = updated.ClosedBy != null
+                                            ? this.employeeRepository.FindById(updated.ClosedBy.Id)
                                             : null;
         }
 
@@ -161,6 +169,9 @@
             candidate.AccountController = candidate.AccountController != null
                                     ? this.employeeRepository.FindById(candidate.AccountController.Id)
                                     : null;
+            candidate.OpenedBy = candidate.OpenedBy != null
+                                              ? this.employeeRepository.FindById(candidate.OpenedBy.Id)
+                                              : null;
 
             ValidateFields(candidate);
 

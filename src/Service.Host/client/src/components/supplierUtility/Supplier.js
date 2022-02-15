@@ -32,6 +32,8 @@ import PurchTab from './tabs/PurchTab';
 import { getUserNumber } from '../../selectors/oidcSelectors';
 import WhereTab from './tabs/WhereTab';
 import WhoseTab from './tabs/WhoseTab';
+import LifecycleTab from './tabs/LifecycleTab';
+import NotesTab from './tabs/NotesTab';
 
 function Supplier() {
     const useStyles = makeStyles(theme => ({
@@ -291,6 +293,28 @@ function Supplier() {
                                                 }
                                                 vendorManagerId={state.supplier.vendorManagerId}
                                                 plannerId={state.supplier.plannerId}
+                                            />
+                                        </Box>
+                                    )}
+                                    {tab === 5 && (
+                                        <Box sx={{ paddingTop: 3 }}>
+                                            <LifecycleTab
+                                                handleFieldChange={handleFieldChange}
+                                                openedById={state.supplier.openedById}
+                                                openedByName={state.supplier.openedByName}
+                                                dateOpened={state.supplier.dateOpened}
+                                                closedById={state.supplier.plannerId}
+                                                dateClosed={state.supplier.dateClosed}
+                                                reasonClosed={state.supplier.reasonClosed}
+                                            />
+                                        </Box>
+                                    )}
+                                    {tab === 6 && (
+                                        <Box sx={{ paddingTop: 3 }}>
+                                            <NotesTab
+                                                handleFieldChange={handleFieldChange}
+                                                notes={state.supplier.notes}
+                                                organisationId={state.supplier.organisationId}
                                             />
                                         </Box>
                                     )}
