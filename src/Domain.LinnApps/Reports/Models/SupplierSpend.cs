@@ -6,7 +6,7 @@
     {
         public int PlTref { get; }
 
-        public decimal BaseTotal { get; set; }
+        public decimal? BaseTotal { get; set; }
 
         public int LedgerPeriod { get; set; }
 
