@@ -41,6 +41,8 @@
 
         private readonly ISupplierHoldService supplierHoldService;
 
+        private readonly IFacadeResourceService<Planner, int, PlannerResource, PlannerResource> plannerService;
+
         public SupplierModule(
             IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource> partSupplierFacadeService,
             IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource> supplierFacadeService,
@@ -48,7 +50,8 @@
             IPartService partFacadeService,
             IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource> priceChangeReasonService,
             IFacadeResourceService<PartCategory, string, PartCategoryResource, PartCategoryResource> partCategoryService,
-            ISupplierHoldService supplierHoldService)
+            ISupplierHoldService supplierHoldService,
+            IFacadeResourceService<Planner, int, PlannerResource, PlannerResource> plannerService)
         {
             this.supplierFacadeService = supplierFacadeService;
             this.partSupplierFacadeService = partSupplierFacadeService;
@@ -57,6 +60,7 @@
             this.priceChangeReasonService = priceChangeReasonService;
             this.partCategoryService = partCategoryService;
             this.supplierHoldService = supplierHoldService;
+            this.plannerService = plannerService;
 
             this.Get("/purchasing/suppliers", this.SearchSuppliers);
             this.Get("/purchasing/suppliers/{id:int}", this.GetSupplier);
@@ -75,6 +79,8 @@
             this.Get("/purchasing/part-categories/", this.SearchPartCategories);
 
             this.Post("/purchasing/suppliers/hold", this.ChangeHoldStatus);
+            this.Get("/purchasing/suppliers/planners", this.GetPlanners);
+
         }
 
         private async Task GetSupplier(HttpRequest req, HttpResponse res)
@@ -223,6 +229,13 @@
             var result = this.supplierHoldService.ChangeSupplierHoldStatus(
                 resource,
                 req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task GetPlanners(HttpRequest req, HttpResponse res)
+        {
+            var result = this.plannerService.GetAll();
 
             await res.Negotiate(result);
         }

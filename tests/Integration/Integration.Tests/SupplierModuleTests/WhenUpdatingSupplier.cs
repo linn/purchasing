@@ -5,7 +5,7 @@
 
     using FluentAssertions;
 
-    using Linn.Common.Facade;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
@@ -25,7 +25,12 @@
         {
 
             this.resource = new SupplierResource { Id = 1, Name = "NEW NAME" };
-            this.supplier = new Supplier { SupplierId = 1, Name = "SUPPLIER" };
+            this.supplier = new Supplier
+                                {
+                                    SupplierId = 1,
+                                    Name = "SUPPLIER",
+                                    OpenedBy = new Employee { Id = 1 }
+                                };
 
             this.MockSupplierRepository.FindById(1).Returns(this.supplier);
             this.Response = this.Client.Put(

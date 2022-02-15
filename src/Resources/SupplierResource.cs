@@ -8,10 +8,6 @@
 
         public string Name { get; set; }
 
-        public string VendorManager { get; set; }
-
-        public int? Planner { get; set; }
-
         public string CurrencyCode { get; set; }
 
         public string WebAddress { get; set; }
@@ -69,5 +65,31 @@
         public int? InvoiceAddressId { get; set; }
 
         public string InvoiceFullAddress { get; set; }
+
+        public string VendorManagerId { get; set; }
+
+        public int? PlannerId { get; set; }
+
+        public int? AccountControllerId { get; set; }
+
+        public string AccountControllerName { get; set; }
+
+        public int? OpenedById { get; set; }
+
+        public string OpenedByName { get; set; }
+
+        public int? ClosedById { get; set; }
+
+        public string ClosedByName { get; set; }
+
+        public string DateOpened { get; set; }
+
+        public string DateClosed { get; set; }
+
+        public string ReasonClosed { get; set; }
+
+        public string Notes { get; set; }
+
+        public int OrganisationId { get; set; }
     }
 }

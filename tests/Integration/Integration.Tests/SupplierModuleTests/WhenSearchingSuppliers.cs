@@ -8,6 +8,7 @@
 
     using FluentAssertions;
 
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
@@ -31,9 +32,11 @@
                                   {
                                       new Supplier
                                           {
-                                              Name = "SUPPLIER", SupplierId = 1
+                                              SupplierId = 1,
+                                              Name = "SUPPLIER",
+                                              OpenedBy = new Employee { Id = 1 }
                                           }
-                                  };
+        };
 
             this.MockSupplierRepository.FilterBy(Arg.Any<Expression<Func<Supplier, bool>>>())
                 .Returns(this.dataResult.AsQueryable());

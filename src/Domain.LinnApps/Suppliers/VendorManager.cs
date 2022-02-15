@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps
+﻿namespace Linn.Purchasing.Domain.LinnApps.Suppliers
 {
     public class VendorManager
     {
@@ -8,6 +8,6 @@
 
         public int UserNumber { get; set; }
 
-        public string VmId { get; set; }
+        public string Id { get; set; }
     }
 }

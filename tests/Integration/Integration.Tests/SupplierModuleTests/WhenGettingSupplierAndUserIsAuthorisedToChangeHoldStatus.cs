@@ -24,7 +24,7 @@
         public void SetUp()
         {
             this.id = 1;
-            this.supplier = new Supplier { SupplierId = 1, Name = "SUPPLIER" };
+            this.supplier = new Supplier { SupplierId = 1, Name = "SUPPLIER", OpenedBy = new Employee() };
 
             this.MockSupplierRepository.FindById(1).Returns(this.supplier);
             this.MockAuthService.HasPermissionFor(AuthorisedAction.SupplierHoldChange, Arg.Any<IEnumerable<string>>())

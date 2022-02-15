@@ -31,7 +31,9 @@
             IEnumerable<string> privileges = null)        
         {
             var candidate = BuildEntityFromResourceHelper(resource);
-
+            candidate.OpenedBy = resource.OpenedById.HasValue
+                ? new Employee {Id = (int)resource.OpenedById } : null;
+            candidate.DateOpened = DateTime.Today;
             return this.domainService.CreateSupplier(candidate, privileges);
         }
 
@@ -79,8 +81,10 @@
                                               Code = resource.CurrencyCode
                                           },
                            WebAddress = resource.WebAddress,
-                           VendorManager = resource.VendorManager,
-                           Planner = resource.Planner,
+                           VendorManager = !string.IsNullOrEmpty(resource.VendorManagerId) 
+                            ? new VendorManager { Id = resource.VendorManagerId } : null,
+                           Planner = resource.PlannerId.HasValue 
+                                         ? new Planner { Id = (int)resource.PlannerId } : null,
                            InvoiceContactMethod = resource.InvoiceContactMethod,
                            PhoneNumber = resource.PhoneNumber,
                            OrderContactMethod = resource.OrderContactMethod,
@@ -106,7 +110,16 @@
                            OrderFullAddress = resource.OrderAddressId.HasValue 
                                                   ? new FullAddress { Id = (int)resource.OrderAddressId } : null,
                            InvoiceFullAddress = resource.InvoiceAddressId.HasValue
-                                                  ? new FullAddress { Id = (int)resource.InvoiceAddressId } : null
+                                                  ? new FullAddress { Id = (int)resource.InvoiceAddressId } : null,
+                           AccountController = resource.AccountControllerId.HasValue
+                               ? new Employee { Id = (int)resource.AccountControllerId } : null,
+                           ClosedBy = resource.ClosedById.HasValue ? new Employee { Id = (int)resource.ClosedById }
+                                        : null,
+                           DateClosed = !string.IsNullOrEmpty(resource.DateClosed) 
+                                        ? DateTime.Parse(resource.DateClosed) : null,
+                           ReasonClosed = resource.ReasonClosed,
+                           Notes = resource.Notes,
+                           OrganisationId = resource.OrganisationId
             };
         }
     }

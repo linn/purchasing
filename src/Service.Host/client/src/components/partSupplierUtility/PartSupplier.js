@@ -414,7 +414,6 @@ function PartSupplier({ creating }) {
                                     <LinkButton
                                         external
                                         newTab
-                                        disabled
                                         to={`${config.proxyRoot}${utilities.getHref(
                                             item,
                                             'supplier'
