@@ -38,9 +38,7 @@
         {
             var supplierId = req.Query.As<int>("Id");
 
-            using var stream = this.spendsReportFacadeService.GetSpendByPartExport(
-                supplierId,
-                req.HttpContext.GetPrivileges());
+            using var stream = this.spendsReportFacadeService.GetSpendByPartExport(supplierId, req.HttpContext.GetPrivileges());
 
             var contentDisposition = new ContentDisposition
                                          {

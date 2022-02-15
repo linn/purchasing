@@ -25,7 +25,7 @@ function SpendByPartReportOptions() {
         collectionSelectorHelpers.getSearchLoading(state.suppliers)
     );
     const prevOptions = useSelector(state =>
-        reportSelectorHelpers.getReportOptions(state.spendByPart)
+        reportSelectorHelpers.getReportOptions(state.spendByPartReport)
     );
 
     const dispatch = useDispatch();
