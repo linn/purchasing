@@ -21,6 +21,14 @@
 
         public SupplierResource Build(Supplier entity, IEnumerable<string> claims)
         {
+            if (entity == null)
+            {
+                return new SupplierResource
+                {
+                    Links = this.BuildLinks(null, claims).ToArray()
+                };
+            }
+
             return new SupplierResource
             {
                 Id = entity.SupplierId,
@@ -80,13 +88,21 @@
 
         private IEnumerable<LinkResource> BuildLinks(Supplier model, IEnumerable<string> claims)
         {
-            yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
+            if (model != null)
+            {
+                yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
+            }
 
             var privileges = claims?.ToList();
 
-            if (this.authService.HasPermissionFor(AuthorisedAction.SupplierUpdate, privileges))
+            if (model != null && this.authService.HasPermissionFor(AuthorisedAction.SupplierUpdate, privileges))
             {
                 yield return new LinkResource { Rel = "edit", Href = $"{this.GetLocation(model)}/edit" };
+            }
+
+            if (this.authService.HasPermissionFor(AuthorisedAction.SupplierCreate, privileges))
+            {
+                yield return new LinkResource { Rel = "create", Href = $"purchasing/suppliers/create" };
             }
 
             if (this.authService.HasPermissionFor(AuthorisedAction.SupplierHoldChange, privileges))

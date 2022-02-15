@@ -73,6 +73,7 @@
             this.Post("/purchasing/part-suppliers/record", this.CreatePartSupplier);
 
             this.Get("/purchasing/part-suppliers/application-state", this.GetPartSuppliersState);
+            this.Get("/purchasing/suppliers/application-state", this.GetSuppliersState);
             this.Post("/purchasing/preferred-supplier-changes", this.CreatePreferredSupplierChange);
             this.Get("/purchasing/price-change-reasons", this.GetPriceChangeReasons);
             this.Get("/purchasing/part-suppliers/part-price-conversions", this.GetPartPriceConversions);
@@ -80,7 +81,6 @@
 
             this.Post("/purchasing/suppliers/hold", this.ChangeHoldStatus);
             this.Get("/purchasing/suppliers/planners", this.GetPlanners);
-
         }
 
         private async Task GetSupplier(HttpRequest req, HttpResponse res)
@@ -162,6 +162,15 @@
             var privileges = req.HttpContext.GetPrivileges();
 
             var result = this.partSupplierFacadeService.GetApplicationState(privileges);
+
+            await res.Negotiate(result);
+        }
+
+        private async Task GetSuppliersState(HttpRequest req, HttpResponse res)
+        {
+            var privileges = req.HttpContext.GetPrivileges();
+
+            var result = this.supplierFacadeService.GetApplicationState(privileges);
 
             await res.Negotiate(result);
         }
