@@ -1,4 +1,5 @@
 import React, { useEffect, useReducer, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     itemSelectorHelpers,
@@ -35,7 +36,7 @@ import WhoseTab from './tabs/WhoseTab';
 import LifecycleTab from './tabs/LifecycleTab';
 import NotesTab from './tabs/NotesTab';
 
-function Supplier() {
+function Supplier({ creating }) {
     const useStyles = makeStyles(theme => ({
         dialog: {
             margin: theme.spacing(6),
@@ -66,6 +67,7 @@ function Supplier() {
 
     const clearErrors = () => reduxDispatch(supplierActions.clearErrorsForItem());
     const updateSupplier = body => reduxDispatch(supplierActions.update(id, body));
+    const addSupplier = body => reduxDispatch(supplierActions.add(body));
 
     useEffect(() => {
         if (supplier) {
@@ -324,8 +326,13 @@ function Supplier() {
                                 <SaveBackCancelButtons
                                     saveDisabled={!canEdit() || editStatus === 'view'}
                                     saveClick={() => {
-                                        clearErrors();
-                                        updateSupplier(state.supplier);
+                                        if (creating) {
+                                            clearErrors();
+                                            addSupplier(state.supplier);
+                                        } else {
+                                            clearErrors();
+                                            updateSupplier(state.supplier);
+                                        }
                                     }}
                                     cancelClick={() => {
                                         dispatch({ type: 'initialise', payload: supplier });
@@ -341,5 +348,8 @@ function Supplier() {
         </Page>
     );
 }
+
+Supplier.propTypes = { creating: PropTypes.bool };
+Supplier.defaultProps = { creating: false };
 
 export default Supplier;

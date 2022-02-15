@@ -65,7 +65,7 @@
             this.Get("/purchasing/suppliers", this.SearchSuppliers);
             this.Get("/purchasing/suppliers/{id:int}", this.GetSupplier);
             this.Put("/purchasing/suppliers/{id:int}", this.UpdateSupplier);
-            this.Post("/purchasing/suppliers", this.GetSupplier);
+            this.Post("/purchasing/suppliers", this.CreateSupplier);
 
             this.Get("/purchasing/part-suppliers/record", this.GetPartSupplierRecord);
             this.Put("/purchasing/part-suppliers/record", this.UpdatePartSupplier);
@@ -184,6 +184,19 @@
 
             await res.Negotiate(result);
         }
+
+        private async Task CreateSupplier(HttpRequest req, HttpResponse res)
+        {
+            var resource = await req.Bind<SupplierResource>();
+            resource.OpenedById = req.HttpContext.User.GetEmployeeNumber();
+            var result = this.supplierFacadeService.Add(
+                resource,
+                req.HttpContext.GetPrivileges(),
+                null);
+
+            await res.Negotiate(result);
+        }
+
 
         private async Task CreatePreferredSupplierChange(HttpRequest req, HttpResponse res)
         {
