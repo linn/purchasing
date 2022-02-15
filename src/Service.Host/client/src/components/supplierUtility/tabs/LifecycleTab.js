@@ -107,7 +107,7 @@ function LifecycleTab({
             <Grid item xs={4}>
                 <DatePicker
                     label="Date"
-                    value={dateClosed || new Date()}
+                    value={dateClosed}
                     onChange={newValue => handleFieldChange('dateClosed', newValue)}
                     minDate="01/01/1970"
                     maxDate="01/01/2100"
