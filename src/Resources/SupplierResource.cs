@@ -74,7 +74,7 @@
 
         public string AccountControllerName { get; set; }
 
-        public int OpenedById { get; set; }
+        public int? OpenedById { get; set; }
 
         public string OpenedByName { get; set; }
 

@@ -31,7 +31,8 @@
             IEnumerable<string> privileges = null)        
         {
             var candidate = BuildEntityFromResourceHelper(resource);
-            candidate.OpenedBy = new Employee {Id = resource.OpenedById };
+            candidate.OpenedBy = resource.OpenedById.HasValue
+                ? new Employee {Id = (int)resource.OpenedById } : null;
             candidate.DateOpened = DateTime.Today;
             return this.domainService.CreateSupplier(candidate, privileges);
         }
