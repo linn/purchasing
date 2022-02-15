@@ -5,6 +5,7 @@
 
     using FluentAssertions;
 
+    using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NUnit.Framework;

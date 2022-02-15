@@ -1,5 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Suppliers
 {
+    using System;
+
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
@@ -8,10 +10,6 @@
         public int SupplierId { get; set; }
 
         public string Name { get; set; }
-
-        public string VendorManager { get; set; }
-
-        public int? Planner { get; set; }
 
         public string WebAddress { get; set; }
 
@@ -58,5 +56,25 @@
         public FullAddress OrderFullAddress { get; set; }
 
         public FullAddress InvoiceFullAddress { get; set; }
+
+        public Planner Planner { get; set; }
+
+        public VendorManager VendorManager { get; set; }
+
+        public Employee AccountController { get; set; }
+
+        public DateTime DateOpened { get; set; }
+
+        public Employee OpenedBy { get; set; }
+
+        public DateTime? DateClosed { get; set; }
+
+        public Employee ClosedBy { get; set; }
+
+        public string ReasonClosed { get; set; }
+
+        public string Notes { get; set; }
+
+        public int OrganisationId { get; set; }
     }
 }

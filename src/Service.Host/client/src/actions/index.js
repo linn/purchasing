@@ -98,3 +98,5 @@ export const suppliersWithUnacknowledgedOrdersActionTypes = makeReportActionType
 export const unacknowledgedOrdersReportActionTypes = makeReportActionTypes(
     reportTypes.unacknowledgedOrdersReport.actionType
 );
+
+export const plannersActionTypes = makeActionTypes(itemTypes.planners.actionType);

@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.SupplierModuleTests
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Net;
 
@@ -14,22 +15,25 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingSupplierById : ContextBase
+    public class WhenGettingPlanners : ContextBase
     {
-        private int id;
-
-        private Supplier supplier;
+        private List<Planner> dataResult;
 
         [SetUp]
         public void SetUp()
         {
-            this.id = 1;
-            this.supplier = new Supplier { SupplierId = 1, Name = "SUPPLIER", OpenedBy = new Employee { Id = 1 } };
+            this.dataResult = new List<Planner>
+                                  {
+                                      new Planner
+                                          {
+                                              Id = 1
+                                          }
+                                  };
 
-            this.MockSupplierRepository.FindById(1).Returns(this.supplier);
-
+            this.MockEmployeeRepository.FindById(1).Returns(new Employee { FullName = "MC PLANNER" });
+            this.MockPlannerRepository.FindAll().Returns(this.dataResult.AsQueryable());
             this.Response = this.Client.Get(
-                $"/purchasing/suppliers/{this.id}",
+                $"/purchasing/suppliers/planners",
                 with =>
                     {
                         with.Accept("application/json");
@@ -52,17 +56,17 @@
         [Test]
         public void ShouldReturnJsonBody()
         {
-            var resource = this.Response.DeserializeBody<SupplierResource>();
-            resource.Id.Should().Be(this.supplier.SupplierId);
-            resource.Name.Should().Be(this.supplier.Name);
+            var resources = this.Response.DeserializeBody<IEnumerable<PlannerResource>>()?.ToArray();
+            resources.Should().NotBeNull();
+            resources.Should().HaveCount(1);
         }
 
         [Test]
-        public void ShouldBuildLinks()
+        public void ShouldBuildResource()
         {
-            var resource = this.Response.DeserializeBody<SupplierResource>();
-            resource.Links.Single(x => x.Rel == "self").Href.Should()
-                .Be($"/purchasing/suppliers/{this.supplier.SupplierId}");
+            var resources = this.Response.DeserializeBody<IEnumerable<PlannerResource>>().ToArray();
+            resources.First().Id.Should().Be(1);
+            resources.First().EmployeeName.Should().Be("MC PLANNER");
         }
     }
 }

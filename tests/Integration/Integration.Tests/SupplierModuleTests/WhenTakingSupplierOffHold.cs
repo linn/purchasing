@@ -6,6 +6,7 @@
 
     using FluentAssertions;
 
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
@@ -30,7 +31,13 @@
             this.MockDatabaseService.GetNextVal("SOHH_SEQ").Returns(123);
             this.MockDomainService
                 .ChangeSupplierHoldStatus(Arg.Any<SupplierOrderHoldHistoryEntry>(), Arg.Any<IEnumerable<string>>())
-                .Returns(new Supplier { SupplierId = 1 });
+                .Returns(
+                    new Supplier
+                        {
+                            SupplierId = 1,
+                            Name = "SUPPLIER",
+                            OpenedBy = new Employee { Id = 1 }
+                        });
 
             this.Response = this.Client.Post(
                 $"/purchasing/suppliers/hold",

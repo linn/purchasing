@@ -7,6 +7,7 @@
     using Linn.Common.Logging;
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
@@ -81,6 +82,16 @@
 
         protected IDatabaseService MockDatabaseService { get; set; }
 
+        protected IFacadeResourceService<Planner, int, PlannerResource, PlannerResource> PlannerService 
+        { 
+            get;
+            private set;
+        }
+
+        protected IRepository<Planner, int> MockPlannerRepository { get; private set; }
+
+        protected IRepository<Employee, int> MockEmployeeRepository { get; set; }
+
         [SetUp]
         public void EstablishContext()
         {
@@ -119,6 +130,13 @@
                 this.TransactionManager,
                 new SupplierResourceBuilder(this.MockAuthService));
 
+            this.MockPlannerRepository = Substitute.For<IRepository<Planner, int>>();
+            this.MockEmployeeRepository = Substitute.For<IRepository<Employee, int>>();
+            this.PlannerService = new PlannerService(
+                this.MockPlannerRepository,
+                this.TransactionManager,
+                new PlannerResourceBuilder(this.MockEmployeeRepository));
+
             this.Client = TestClient.With<SupplierModule>(
                 services =>
                     {
@@ -131,6 +149,7 @@
                         services.AddSingleton(this.PriceChangeReasonService);
                         services.AddSingleton(this.PartCategoryService);
                         services.AddSingleton(this.SupplierHoldService);
+                        services.AddSingleton(this.PlannerService);
                         services.AddHandlers();
                     },
                 FakeAuthMiddleware.EmployeeMiddleware);
