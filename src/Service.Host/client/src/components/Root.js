@@ -24,6 +24,8 @@ import SpendBySupplier from './reports/SpendBySupplier';
 import Supplier from './supplierUtility/Supplier';
 import AddressUtility from './AdressUtility';
 import SuppliersWithUnacknowledgedOrders from './reports/SuppliersWithUnacknowledgedOrders';
+import SpendByPartOptions from './reports/SpendByPartOptions';
+import SpendByPart from './reports/SpendByPart';
 
 const Root = ({ store }) => (
     <div>
@@ -119,6 +121,16 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/reports/suppliers-with-unacknowledged-orders"
                                     component={SuppliersWithUnacknowledgedOrders}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/spend-by-part"
+                                    component={SpendByPartOptions}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/spend-by-part/report"
+                                    component={SpendByPart}
                                 />
 
                                 <Route component={NotFoundPage} />

@@ -55,9 +55,8 @@
         private async Task GetSpendByPartReport(HttpRequest req, HttpResponse res)
         {
             var supplierId = req.Query.As<int>("Id");
-
             var results = this.spendsReportFacadeService.GetSpendByPartReport(
-                supplierId,
+               supplierId,
                 req.HttpContext.GetPrivileges());
 
             await res.Negotiate(results);

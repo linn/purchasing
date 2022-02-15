@@ -47,7 +47,7 @@
             this.partRepository = partRepository;
         }
 
-        public ResultsModel GetSpendBySupplierReport(string vm)
+        public ResultsModel GetSpendBySupplierReport(string vendorManagerId)
         {
             var currentLedgerPeriod = this.purchaseLedgerPack.GetLedgerPeriod();
             var yearStartLedgerPeriod = this.purchaseLedgerPack.GetYearStartLedgerPeriod();
@@ -55,21 +55,21 @@
 
             var supplierSpends = this.spendsRepository.FilterBy(
                         x => x.LedgerPeriod >= previousYearStartLedgerPeriod && x.LedgerPeriod <= currentLedgerPeriod
-                             && (string.IsNullOrWhiteSpace(vm) || x.Supplier.VendorManager == vm))
+                             && (string.IsNullOrWhiteSpace(vendorManagerId) || x.Supplier.VendorManager == vendorManagerId))
                     .ToList();
 
-            var vmName = "ALL";
-            if (!string.IsNullOrWhiteSpace(vm))
+            var vendorManagerName = "ALL";
+            if (!string.IsNullOrWhiteSpace(vendorManagerId))
             {
-                var vendorManager = this.vendorManagerRepository.FindById(vm);
-                vmName = $"{vm} - {vendorManager.Employee.FullName} ({vendorManager.UserNumber})";
+                var vendorManager = this.vendorManagerRepository.FindById(vendorManagerId);
+                vendorManagerName = $"{vendorManagerId} - {vendorManager.Employee.FullName} ({vendorManager.UserNumber})";
             }
 
             var reportLayout = new SimpleGridLayout(
                 this.reportingHelper,
                 CalculationValueModelType.TextValue,
                 null,
-                $"Spend by supplier report for Vendor Manager: {vmName}. For this financial year and last, excludes factors & VAT.");
+                $"Spend by supplier report for Vendor Manager: {vendorManagerName}. For this financial year and last, excludes factors & VAT.");
 
             AddSupplierReportColumns(reportLayout);
 

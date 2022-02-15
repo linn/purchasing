@@ -35,7 +35,7 @@
                                  new SupplierSpend
                                      {
                                          SupplierId = this.supplierId,
-                                         BaseTotal = 130m,
+                                         BaseTotal = 130.87m,
                                          Supplier = new Supplier { SupplierId = this.supplierId, Name = "seller1" },
                                          LedgerPeriod = 1288
                                      },
@@ -79,9 +79,9 @@
             row.RowId.Should().Be(this.supplierId.ToString());
             this.results.GetGridTextValue(0, 0).Should().Be(this.supplierId.ToString());
             this.results.GetGridTextValue(0, 1).Should().Be("seller1");
-            this.results.GetGridTextValue(0, 2).Should().Be("£500.00");
-            this.results.GetGridTextValue(0, 3).Should().Be("£250.00");
-            this.results.GetGridTextValue(0, 4).Should().Be("£120.00");
+            this.results.GetGridValue(0, 2).Should().Be(500);
+            this.results.GetGridValue(0, 3).Should().Be(250.87m);
+            this.results.GetGridValue(0, 4).Should().Be(120);
         }
     }
 }
