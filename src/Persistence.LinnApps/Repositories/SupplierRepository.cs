@@ -42,7 +42,7 @@
 
         public void Add(Supplier entity)
         {
-            throw new NotImplementedException();
+            this.serviceDbContext.Suppliers.Add(entity);
         }
 
         public void Remove(Supplier entity)
