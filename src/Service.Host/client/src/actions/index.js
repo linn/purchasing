@@ -77,11 +77,14 @@ export const putSupplierOnHoldActionTypes = makeActionTypes(
 
 export const addressActionTypes = makeActionTypes(itemTypes.address.actionType, true);
 
-export const addressesActionTypes = makeActionTypes(itemTypes.addresses.actionType);
+export const addressesActionTypes = makeActionTypes(itemTypes.addresses.actionType, false);
 
-export const countriesActionTypes = makeActionTypes(itemTypes.countries.actionType);
+export const countriesActionTypes = makeActionTypes(itemTypes.countries.actionType, false);
 
-export const vendorManagersActionTypes = makeActionTypes(itemTypes.vendorManagers.actionType);
+export const vendorManagersActionTypes = makeActionTypes(
+    itemTypes.vendorManagers.actionType,
+    false
+);
 
 export const spendBySupplierReportActionTypes = makeActionTypes(
     reportTypes.spendBySupplierReport.actionType,
@@ -89,8 +92,11 @@ export const spendBySupplierReportActionTypes = makeActionTypes(
 );
 
 export const suppliersWithUnacknowledgedOrdersActionTypes = makeReportActionTypes(
-    reportTypes.suppliersWithUnacknowledgedOrders.actionType,
-    false
+    reportTypes.suppliersWithUnacknowledgedOrders.actionType
+);
+
+export const unacknowledgedOrdersReportActionTypes = makeReportActionTypes(
+    reportTypes.unacknowledgedOrdersReport.actionType
 );
 
 export const plannersActionTypes = makeActionTypes(itemTypes.planners.actionType);

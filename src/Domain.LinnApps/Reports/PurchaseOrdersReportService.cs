@@ -29,6 +29,8 @@
 
         private readonly IQueryRepository<SuppliersWithUnacknowledgedOrders> suppliersWithUnacknowledgedOrdersRepository;
 
+        private readonly IQueryRepository<UnacknowledgedOrders> unacknowledgedOrdersRepository;
+
         private readonly IRepository<Supplier, int> supplierRepository;
 
         public PurchaseOrdersReportService(
@@ -38,7 +40,8 @@
             IRepository<PurchaseLedger, int> purchaseLedgerRepository,
             IPurchaseOrdersPack purchaseOrdersPack,
             IReportingHelper reportingHelper,
-            IQueryRepository<SuppliersWithUnacknowledgedOrders> suppliersWithUnacknowledgedOrdersRepository)
+            IQueryRepository<SuppliersWithUnacknowledgedOrders> suppliersWithUnacknowledgedOrdersRepository,
+            IQueryRepository<UnacknowledgedOrders> unacknowledgedOrdersRepository)
         {
             this.purchaseOrderRepository = purchaseOrderRepository;
             this.supplierRepository = supplierRepository;
@@ -47,6 +50,7 @@
             this.purchaseOrdersPack = purchaseOrdersPack;
             this.reportingHelper = reportingHelper;
             this.suppliersWithUnacknowledgedOrdersRepository = suppliersWithUnacknowledgedOrdersRepository;
+            this.unacknowledgedOrdersRepository = unacknowledgedOrdersRepository;
         }
 
         public ResultsModel GetOrdersByPartReport(DateTime from, DateTime to, string partNumber, bool includeCancelled)
@@ -208,47 +212,90 @@
             results.ValueDrillDownTemplates.Add(new DrillDownModel("view", "/purchasing/reports/unacknowledged-orders?supplierId={rowId}", null, 2));
             results.ValueDrillDownTemplates.Add(new DrillDownModel("csv", "/purchasing/reports/unacknowledged-orders/export?supplierId={rowId}", null, 3));
             this.reportingHelper.AddResultsToModel(results, supplierResults, CalculationValueModelType.TextValue, true);
-            this.SortRowsByTextColumnValues(results, 1);
+            this.reportingHelper.SortRowsByTextColumnValues(results, 1);
 
             return results;
         }
 
-        public void SortRowsByTextColumnValues(
-            ResultsModel model,
-            int columnIndex,
-            int? column2Index = null,
-            int? column3Index = null,
-            bool sortDescending = false)
+        public ResultsModel GetUnacknowledgedOrders(int? supplierId, int? organisationId)
         {
-            var sortOrder = 0;
-
-            if (sortDescending)
+            IQueryable<UnacknowledgedOrders> orders;
+            string title;
+            if (!supplierId.HasValue && !organisationId.HasValue)
             {
-                foreach (var modelRow in model.Rows
-                    .OrderByDescending(a => model.GetGridTextValue(a.RowIndex, columnIndex))
-                    .ThenByDescending(t => column2Index.HasValue ? model.GetGridTextValue(t.RowIndex, column2Index.Value) : string.Empty)
-                    .ThenByDescending(t => column3Index.HasValue ? model.GetGridTextValue(t.RowIndex, column3Index.Value) : string.Empty)
-                    .ThenBy(a => a.RowTitle))
-                {
-                    modelRow.SortOrder = sortOrder++;
-                }
+                title = "All unacknowledged orders";
+                orders = this.unacknowledgedOrdersRepository.FindAll();
+            }
+            else if (supplierId.HasValue)
+            {
+                var supplier = this.supplierRepository.FindById(supplierId.Value);
+                title = $"Unacknowledged orders for {supplier.Name}";
+                orders = this.unacknowledgedOrdersRepository.FilterBy(
+                    a => (a.SupplierId == supplierId));
             }
             else
             {
-                foreach (var modelRow in model.Rows
-                    .OrderBy(a => model.GetGridTextValue(a.RowIndex, columnIndex))
-                    .ThenBy(a => column2Index.HasValue ? model.GetGridTextValue(a.RowIndex, column2Index.Value) : string.Empty)
-                    .ThenBy(a => column3Index.HasValue ? model.GetGridTextValue(a.RowIndex, column3Index.Value) : string.Empty)
-                    .ThenBy(a => a.RowTitle))
-                {
-                    modelRow.SortOrder = sortOrder++;
-                }
+                title = "Unacknowledged orders for organisation";
+                    orders = this.unacknowledgedOrdersRepository.FilterBy(
+                    a => (a.OrganisationId == organisationId));
             }
-        }
 
-        public ResultsModel GetUnacknowledgedOrders(DateTime startDate, DateTime endDate, int supplierId, int? organisationId)
-        {
-            throw new NotImplementedException();
+            var results = new ResultsModel
+            {
+                ReportTitle = new NameModel(title)
+            };
+            var columns = new List<AxisDetailsModel>
+                              {
+                                  new AxisDetailsModel("Order Number/Line", GridDisplayType.TextValue) { SortOrder = 0 },
+                                  new AxisDetailsModel("Part Number", GridDisplayType.TextValue) { SortOrder = 1 },
+                                  new AxisDetailsModel("Description", GridDisplayType.TextValue) { SortOrder = 2 },
+                                  new AxisDetailsModel("Delivery No", GridDisplayType.TextValue) { SortOrder = 3 },
+                                  new AxisDetailsModel("Qty", GridDisplayType.Value) { SortOrder = 4 },
+                                  new AxisDetailsModel("Unit Price", GridDisplayType.TextValue) { SortOrder = 5 },
+                                  new AxisDetailsModel("Requested Delivery", GridDisplayType.TextValue) { SortOrder = 6 }
+                              };
+            results.AddSortedColumns(columns);
+
+            var models = new List<CalculationValueModel>();
+            foreach (var order in orders)
+            {
+                var rowId = $"{order.OrderNumber}/{order.OrderLine}/{order.DeliveryNumber}";
+                models.Add(new CalculationValueModel
+                               {
+                                   RowId = rowId,
+                                   ColumnId = "Order Number/Line",
+                                   TextDisplay = $"{order.OrderNumber}/{order.OrderLine}"
+                               });
+                models.Add(new CalculationValueModel 
+                               {
+                                   RowId = rowId, ColumnId = "Part Number", TextDisplay = order.PartNumber
+                               });
+                models.Add(new CalculationValueModel
+                               {
+                                   RowId = rowId, ColumnId = "Description", TextDisplay = order.SuppliersDesignation
+                               });
+                models.Add(new CalculationValueModel
+                               {
+                                   RowId = rowId, ColumnId = "Delivery No", TextDisplay = order.DeliveryNumber.ToString()
+                               });
+                models.Add(new CalculationValueModel
+                               {
+                                   RowId = rowId, ColumnId = "Qty", Value = order.OrderDeliveryQuantity
+                               });
+                models.Add(new CalculationValueModel
+                               {
+                                   RowId = rowId, ColumnId = "Unit Price", TextDisplay = order.OrderUnitPrice.ToString("###,###,###,##0.00###")
+                               });
+                models.Add(new CalculationValueModel
+                               {
+                                   RowId = rowId, ColumnId = "Requested Delivery", TextDisplay = order.RequestedDate.ToString("dd-MMM-yyyy")
+                               });
+            }
+
+            this.reportingHelper.AddResultsToModel(results, models, CalculationValueModelType.Value, true);
+            this.reportingHelper.SortRowsByTextColumnValues(results, 0, 3);
+
+            return results;
         }
 
         private static void AddSupplierReportColumns(SimpleGridLayout reportLayout)

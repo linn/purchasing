@@ -29,5 +29,9 @@
         IResult<ReportReturnResource> GetSuppliersWithUnacknowledgedOrdersReport(
             SuppliersWithUnacknowledgedOrdersRequestResource resource,
             IEnumerable<string> getPrivileges);
+
+        IResult<ReportReturnResource> GetUnacknowledgedOrdersReport(
+            UnacknowledgedOrdersRequestResource resource,
+            IEnumerable<string> getPrivileges);
     }
 }

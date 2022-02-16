@@ -23,3 +23,9 @@ export const suppliersWithUnacknowledgedOrders = new ItemType(
     'SUPPLIERS_WITH_UNACKNOWLEDGED_ORDERS',
     '/purchasing/reports/suppliers-with-unacknowledged-orders'
 );
+
+export const unacknowledgedOrdersReport = new ItemType(
+    'unacknowledgedOrdersReport',
+    'UNACKNOWLEDGED_ORDERS_REPORT',
+    '/purchasing/reports/unacknowledged-orders'
+);

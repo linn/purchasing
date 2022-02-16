@@ -20,6 +20,6 @@
 
         ResultsModel GetSuppliersWithUnacknowledgedOrders(int? planner, string vendorManager);
 
-        ResultsModel GetUnacknowledgedOrders(DateTime startDate, DateTime endDate, int supplierId, int? organisationId);
+        ResultsModel GetUnacknowledgedOrders(int? supplierId, int? organisationId);
     }
 }
