@@ -54,7 +54,6 @@
                 OrderIncrement = 15m,
                 ReelOrBoxQty = 16m,
                 LeadTimeWeeks = 17,
-                ContractLeadTimeWeeks = 18,
                 OverbookingAllowed = "N",
                 DamagesPercent = 19m,
                 WebAddress = "/web",
@@ -62,10 +61,6 @@
                 NotesForBuyer = "NOTES",
                 ManufacturerPartNumber = "MPN",
                 VendorPartNumber = "VPN",
-                RohsCategory = "COMPLIANT",
-                DateRohsCompliant = DateTime.UnixEpoch,
-                RohsCompliant = "Y",
-                RohsComments = "COMMENT",
                 CreatedBy = new Employee { Id = 33087 }
             };
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, Arg.Any<IEnumerable<string>>())
@@ -80,8 +75,6 @@
             this.AddressRepository.DidNotReceive().FindById(Arg.Any<int>());
             this.CurrencyRepository.DidNotReceive().FindById(Arg.Any<string>());
             this.OrderMethodRepository.DidNotReceive().FindById(Arg.Any<string>());
-            this.TariffRepository.DidNotReceive().FindById(Arg.Any<int>());
-            this.PackagingGroupRepository.DidNotReceive().FindById(Arg.Any<int>());
             this.EmployeeRepository.DidNotReceive().FindById(Arg.Any<int>());
             this.ManufacturerRepository.DidNotReceive().FindById(Arg.Any<string>());
         }
@@ -94,7 +87,6 @@
             this.current.OrderIncrement.Should().Be(15m);
             this.current.ReelOrBoxQty.Should().Be(16m);
             this.current.LeadTimeWeeks.Should().Be(17);
-            this.current.ContractLeadTimeWeeks.Should().Be(18);
             this.current.OverbookingAllowed.Should().Be("N");
             this.current.DamagesPercent.Should().Be(19m);
             this.current.WebAddress.Should().Be("/web");
@@ -102,10 +94,6 @@
             this.current.NotesForBuyer.Should().Be("NOTES");
             this.current.ManufacturerPartNumber.Should().Be("MPN");
             this.current.VendorPartNumber.Should().Be("VPN");
-            this.current.RohsCategory.Should().Be("COMPLIANT");
-            this.current.DateRohsCompliant.Should().Be(DateTime.UnixEpoch);
-            this.current.RohsCompliant.Should().Be("Y");
-            this.current.RohsComments.Should().Be("COMMENT");
             this.current.BaseOurUnitPrice.Should().Be(12m);
             this.current.OurCurrencyPriceToShowOnOrder.Should().Be(11m);
             this.current.CurrencyUnitPrice.Should().Be(10m);

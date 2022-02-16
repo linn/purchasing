@@ -43,7 +43,6 @@ import suppliersActions from '../../actions/suppliersActions';
 import currenciesActions from '../../actions/currenciesActions';
 import OrderDetailsTab from './tabs/OrderDetailsTab';
 import OtherDetailsTab from './tabs/OtherDetailsTab';
-import tariffsActions from '../../actions/tariffsActions';
 import packagingGroupActions from '../../actions/packagingGroupActions';
 import LifecycleTab from './tabs/LifecycleTab';
 import employeesActions from '../../actions/employeesActions';
@@ -89,20 +88,6 @@ function PartSupplier({ creating }) {
         collectionSelectorHelpers.getSearchLoading(reduxState.suppliers)
     );
 
-    const searchTariffs = searchTerm => reduxDispatch(tariffsActions.search(searchTerm));
-    const tariffsSearchResults = useSelector(reduxState =>
-        collectionSelectorHelpers.getSearchItems(
-            reduxState.tariffs,
-            100,
-            'id',
-            'code',
-            'description'
-        )
-    );
-    const tariffsSearchLoading = useSelector(reduxState =>
-        collectionSelectorHelpers.getSearchLoading(reduxState.tariffs)
-    );
-
     const searchManufacturers = searchTerm =>
         reduxDispatch(manufacturersActions.search(searchTerm));
     const manufacturersSearchResults = useSelector(reduxState =>
@@ -131,9 +116,7 @@ function PartSupplier({ creating }) {
     const currencies = useSelector(reduxState =>
         collectionSelectorHelpers.getItems(reduxState.currencies)
     );
-    const packagingGroups = useSelector(reduxState =>
-        collectionSelectorHelpers.getItems(reduxState.packagingGroups)
-    );
+
     const employees = useSelector(reduxState =>
         collectionSelectorHelpers.getItems(reduxState.employees)
     );
@@ -241,7 +224,8 @@ function PartSupplier({ creating }) {
                     createdBy: Number(currentUserNumber),
                     dateCreated: new Date(),
                     currencyCode: 'GBP',
-                    orderMethodName: 'MANUAL'
+                    orderMethodName: 'MANUAL',
+                    addressId: 405284
                 }
             });
         } else if (item) {
@@ -475,7 +459,6 @@ function PartSupplier({ creating }) {
                                                 unitOfMeasure={state.partSupplier?.unitOfMeasure}
                                                 deliveryAddresses={deliveryAddresses}
                                                 deliveryAddress={state.partSupplier?.addressId}
-                                                fullAddress={state.partSupplier?.fullAddress}
                                                 orderMethods={orderMethods}
                                                 orderMethod={state.partSupplier?.orderMethodName}
                                                 orderMethodDescription={
@@ -515,9 +498,6 @@ function PartSupplier({ creating }) {
                                             <OtherDetailsTab
                                                 handleFieldChange={handleFieldChange}
                                                 leadTimeWeeks={state.partSupplier?.leadTimeWeeks}
-                                                contractLeadTimeWeeks={
-                                                    state.partSupplier?.contractLeadTimeWeeks
-                                                }
                                                 overbookingAllowed={
                                                     state.partSupplier?.overbookingAllowed
                                                 }
@@ -536,16 +516,6 @@ function PartSupplier({ creating }) {
                                                 packWasteStatus={
                                                     state.partSupplier?.packWasteStatus
                                                 }
-                                                packagingGroupId={
-                                                    state.partSupplier?.packagingGroupId
-                                                }
-                                                packagingGroupDescription={
-                                                    state.partSupplier?.packagingGroupDescription
-                                                }
-                                                tariffsSearchResults={tariffsSearchResults}
-                                                tariffsSearchLoading={tariffsSearchLoading}
-                                                searchTariffs={searchTariffs}
-                                                packagingGroups={packagingGroups}
                                             />
                                         </Box>
                                     )}
@@ -590,15 +560,6 @@ function PartSupplier({ creating }) {
                                                 vendorPartNumber={
                                                     state.partSupplier?.vendorPartNumber
                                                 }
-                                                rohsCategory={state.partSupplier?.rohsCategory}
-                                                dateRohsCompliant={
-                                                    state.partSupplier?.dateRohsCompliant
-                                                        ? new Date(
-                                                              state.partSupplier?.dateRohsCompliant
-                                                          )
-                                                        : null
-                                                }
-                                                rohsComments={state.partSupplier?.rohsComments}
                                             />
                                         </Box>
                                     )}

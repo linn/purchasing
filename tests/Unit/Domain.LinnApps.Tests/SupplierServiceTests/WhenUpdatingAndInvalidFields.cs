@@ -85,7 +85,7 @@
             this.action.Should().Throw<SupplierException>()
                 .WithMessage(
                     "The inputs for the following fields are empty/invalid: Supplier Id, "
-                    + "Supplier Name, Invoice Contact Method, Payment Days, Payment Method, ");
+                    + "Supplier Name, Invoice Contact Method, Payment Days, Payment Method, Account Controller, Order Addressee, ");
         }
     }
 }

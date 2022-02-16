@@ -197,10 +197,6 @@
             var entity = builder.Entity<PartSupplier>().ToTable("PART_SUPPLIERS");
             entity.HasKey(e => new { e.PartNumber, e.SupplierId });
             entity.Property(e => e.ReelOrBoxQty).HasColumnName("REEL_OR_BOX_QTY");
-            entity.Property(e => e.RohsCompliant).HasColumnName("ROHS_COMPLIANT").HasMaxLength(1);
-            entity.Property(e => e.RohsCategory).HasColumnName("ROHS_CATEGORY").HasMaxLength(6);
-            entity.Property(e => e.RohsComments).HasColumnName("ROHS_COMMENTS").HasMaxLength(160);
-            entity.HasOne(e => e.PackagingGroup).WithMany().HasForeignKey("PAGRP_ID");
             entity.HasOne(e => e.CreatedBy).WithMany().HasForeignKey("CREATED_BY");
             entity.Property(e => e.WebAddress).HasColumnName("WEB_ADDRESS").HasMaxLength(200);
             entity.Property(e => e.MinimumOrderQty).HasColumnName("MINIMUM_ORDER_QTY");
@@ -236,11 +232,7 @@
             entity.HasOne(e => e.Manufacturer).WithMany().HasForeignKey("MANUFACTURER");
             entity.Property(e => e.ManufacturerPartNumber).HasColumnName("MANUFACTURER_PART_NUMBER").HasMaxLength(20);
             entity.Property(e => e.OurCurrencyPriceToShowOnOrder).HasColumnName("OUR_CURR_PRICE_SHOW_ON_ORDER");
-            entity.HasOne(e => e.Tariff).WithMany().HasForeignKey("TARIFF_ID");
-            entity.Property(e => e.DateRohsCompliant).HasColumnName("DATE_ROHS_COMPLIANT");
             entity.Property(e => e.PackWasteStatus).HasColumnName("PACK_WASTE_STATUS").HasMaxLength(1);
-            entity.Property(e => e.ContractLeadTimeWeeks).HasColumnName("CONTRACT_LEAD_TIME_WEEKS");
-            entity.Property(e => e.DutyPercent).HasColumnName("DUTY_PERCENT");
             entity.Property(e => e.SupplierRanking).HasColumnName("SUPPLIER_RANKING");
         }
 

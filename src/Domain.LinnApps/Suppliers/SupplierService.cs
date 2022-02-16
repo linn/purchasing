@@ -237,6 +237,16 @@
                 errors.Add("Payment Method");
             }
 
+            if (candidate.AccountController == null)
+            {
+                errors.Add("Account Controller");
+            }
+
+            if (candidate.OrderFullAddress == null)
+            {
+                errors.Add("Order Addressee");
+            }
+
             if (errors.Any())
             {
                 var msg = errors

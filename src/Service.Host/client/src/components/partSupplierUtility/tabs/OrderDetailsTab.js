@@ -24,7 +24,6 @@ function OrderDetailsTab({
     orderIncrement,
     orderConversionFactor,
     reelOrBoxQty,
-    fullAddress,
     setPriceChangeDialogOpen,
     creating,
     fetchBasePriceConversion,
@@ -201,20 +200,10 @@ function OrderDetailsTab({
                     }))}
                     allowNoValue
                     onChange={handleFieldChange}
+                    disabled
                 />
             </Grid>
-            <Grid item xs={6}>
-                <InputField
-                    fullWidth
-                    value={fullAddress}
-                    label="fullAddress"
-                    type="number"
-                    rows={10}
-                    propertyName="fullAddress"
-                    onChange={() => {}}
-                />
-            </Grid>
-            <Grid item xs={2} />
+            <Grid item xs={8} />
         </Grid>
     );
 }
@@ -238,7 +227,6 @@ OrderDetailsTab.propTypes = {
     orderIncrement: PropTypes.number,
     orderConversionFactor: PropTypes.number,
     reelOrBoxQty: PropTypes.number,
-    fullAddress: PropTypes.string,
     setPriceChangeDialogOpen: PropTypes.func.isRequired,
     creating: PropTypes.bool,
     canEdit: PropTypes.func.isRequired,
@@ -263,8 +251,7 @@ OrderDetailsTab.defaultProps = {
     minimumDeliveryQty: null,
     orderIncrement: null,
     orderConversionFactor: null,
-    reelOrBoxQty: null,
-    fullAddress: null
+    reelOrBoxQty: null
 };
 
 export default OrderDetailsTab;

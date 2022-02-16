@@ -74,21 +74,25 @@ function GeneralTab({
             </Grid>
             <Grid item xs={4} />
             <Grid item xs={8}>
-                <InputField
+                <Dropdown
                     fullWidth
                     value={orderContactMethod}
                     label="Order Contact Method"
                     propertyName="orderContactMethod"
+                    allowNoValue
+                    items={['EDI', 'EMAIL', 'FAX', 'NONE', 'POST']}
                     onChange={handleFieldChange}
                 />
             </Grid>
             <Grid item xs={4} />
             <Grid item xs={8}>
-                <InputField
+                <Dropdown
                     fullWidth
                     value={invoiceContactMethod}
                     label="Invoice Contact Method"
                     propertyName="invoiceContactMethod"
+                    allowNoValue
+                    items={['EDI', 'EMAIL', 'FAX', 'NONE', 'POST']}
                     onChange={handleFieldChange}
                 />
             </Grid>

@@ -34,7 +34,7 @@
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, Arg.Any<IEnumerable<string>>()).Returns(true);
 
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
-                .Returns(new Part { BomType = "C" });
+                .Returns(new Part { BomType = "C", PreferredSupplier = new Supplier { SupplierId = 1 } });
             this.action = () => this.Sut.CreatePreferredSupplierChange(this.candidate, new List<string>());
         }
 

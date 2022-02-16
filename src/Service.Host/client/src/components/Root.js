@@ -51,6 +51,12 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
+                                    path="/purchasing/suppliers/create"
+                                    // eslint-disable-next-line react/jsx-props-no-spreading
+                                    render={props => <Supplier creating {...props} />}
+                                />
+                                <Route
+                                    exact
                                     path="/purchasing/suppliers/:id"
                                     component={Supplier}
                                 />

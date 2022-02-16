@@ -15,7 +15,7 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingApplicationState : ContextBase
+    public class WhenGettingPartSupplierApplicationState : ContextBase
     {
         private PartSupplierResource partSupplierResource;
 

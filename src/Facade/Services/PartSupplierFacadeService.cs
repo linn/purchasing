@@ -77,10 +77,10 @@
 
         protected override Expression<Func<PartSupplier, bool>> FilterExpression(PartSupplierSearchResource searchResource)
         {
-            return x => (x.PartNumber.Contains(searchResource.PartNumberSearchTerm.ToUpper())
+            return x => (x.PartNumber.Contains(searchResource.PartNumberSearchTerm.Trim().ToUpper())
                         || string.IsNullOrEmpty(searchResource.PartNumberSearchTerm))
                         &&
-                        (x.Supplier.Name.Contains(searchResource.SupplierNameSearchTerm.ToUpper())
+                        (x.Supplier.Name.Contains(searchResource.SupplierNameSearchTerm.Trim().ToUpper())
                          || string.IsNullOrEmpty(searchResource.SupplierNameSearchTerm));
         }
 
@@ -101,37 +101,20 @@
                 DeliveryFullAddress = resource.AddressId == null ? null :
                                                             new FullAddress { Id = (int)resource.AddressId },
                 LeadTimeWeeks = resource.LeadTimeWeeks,
-                ContractLeadTimeWeeks = resource.ContractLeadTimeWeeks,
                 OverbookingAllowed = resource.OverbookingAllowed,
                 DamagesPercent = resource.DamagesPercent,
                 WebAddress = resource.WebAddress,
                 DeliveryInstructions = resource.DeliveryInstructions,
                 NotesForBuyer = resource.NotesForBuyer,
-                DutyPercent = resource.DutyPercent,
-                Tariff = resource.TariffId == null
-                                                   ? null : new Tariff
-                                                   {
-                                                       Id = (int)resource.TariffId
-                                                   },
-                PackagingGroup = resource.PackagingGroupId == null
-                                                           ? null : new PackagingGroup
-                                                           {
-                                                               Id = (int)resource.PackagingGroupId
-                                                           },
                 MadeInvalidBy = resource.MadeInvalidBy.HasValue
-                                                          ? new Employee { Id = (int)resource.MadeInvalidBy }
-                                                          : null,
+                                    ? new Employee { Id = (int)resource.MadeInvalidBy }
+                                    : null,
                 DateInvalid = string.IsNullOrEmpty(resource.DateInvalid)
                                                         ? null : DateTime.Parse(resource.DateInvalid),
                 Manufacturer = string.IsNullOrEmpty(resource.ManufacturerCode) ? null :
                                                          new Manufacturer { Code = resource.ManufacturerCode },
                 ManufacturerPartNumber = resource.ManufacturerPartNumber,
-                VendorPartNumber = resource.VendorPartNumber,
-                RohsCategory = resource.RohsCategory,
-                DateRohsCompliant = string.IsNullOrEmpty(resource.DateRohsCompliant)
-                                                            ? null : DateTime.Parse(resource.DateRohsCompliant),
-                RohsComments = resource.RohsComments,
-                RohsCompliant = resource.RohsCompliant
+                VendorPartNumber = resource.VendorPartNumber
             };
         }
     }
