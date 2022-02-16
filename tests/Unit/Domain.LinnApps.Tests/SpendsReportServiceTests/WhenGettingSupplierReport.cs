@@ -77,11 +77,10 @@
             this.results.Rows.Count().Should().Be(1);
             var row = this.results.Rows.First();
             row.RowId.Should().Be(this.supplierId.ToString());
-            this.results.GetGridTextValue(0, 0).Should().Be(this.supplierId.ToString());
-            this.results.GetGridTextValue(0, 1).Should().Be("seller1");
-            this.results.GetGridValue(0, 2).Should().Be(500);
-            this.results.GetGridValue(0, 3).Should().Be(250.87m);
-            this.results.GetGridValue(0, 4).Should().Be(120);
+            this.results.GetGridTextValue(0, 0).Should().Be("seller1");
+            this.results.GetGridValue(0, 1).Should().Be(500);
+            this.results.GetGridValue(0, 2).Should().Be(250.87m);
+            this.results.GetGridValue(0, 3).Should().Be(120);
         }
     }
 }
