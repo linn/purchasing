@@ -35,7 +35,6 @@
                 .Include(p => p.MadeInvalidBy)
                 .Include(p => p.DeliveryFullAddress)
                 .Include(p => p.Manufacturer)
-                .Include(p => p.Tariff)
                 .Include(p => p.OrderMethod)
                 .Include(p => p.Currency)
                 .SingleOrDefault(

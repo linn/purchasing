@@ -23,8 +23,6 @@
 
         private readonly IRepository<FullAddress, int> addressRepository;
 
-        private readonly IRepository<Tariff, int> tariffRepository;
-
         private readonly IRepository<PackagingGroup, int> packagingGroupRepository;
 
         private readonly IRepository<Employee, int> employeeRepository;
@@ -49,7 +47,6 @@
             IRepository<Currency, string> currencyRepository,
             IRepository<OrderMethod, string> orderMethodRepository,
             IRepository<FullAddress, int> addressRepository,
-            IRepository<Tariff, int> tariffRepository,
             IRepository<PackagingGroup, int> packagingGroupRepository,
             IRepository<Employee, int> employeeRepository,
             IRepository<Manufacturer, string> manufacturerRepository,
@@ -64,7 +61,6 @@
             this.currencyRepository = currencyRepository;
             this.orderMethodRepository = orderMethodRepository;
             this.addressRepository = addressRepository;
-            this.tariffRepository = tariffRepository;
             this.packagingGroupRepository = packagingGroupRepository;
             this.employeeRepository = employeeRepository;
             this.manufacturerRepository = manufacturerRepository;
@@ -107,13 +103,6 @@
                                               : this.addressRepository.FindById(updated.DeliveryFullAddress.Id);
             }
 
-            if (current.Tariff?.Id != updated.Tariff?.Id)
-            {
-                current.Tariff = updated.Tariff == null 
-                                     ? null 
-                                     : this.tariffRepository.FindById(updated.Tariff.Id);
-            }
-
             if (current.PackagingGroup?.Id != updated.PackagingGroup?.Id)
             {
                 current.PackagingGroup = updated.PackagingGroup == null 
@@ -146,7 +135,6 @@
             current.OrderIncrement = updated.OrderIncrement;
             current.ReelOrBoxQty = updated.ReelOrBoxQty;
             current.LeadTimeWeeks = updated.LeadTimeWeeks;
-            current.ContractLeadTimeWeeks = updated.ContractLeadTimeWeeks;
             current.OverbookingAllowed = updated.OverbookingAllowed;
             current.DamagesPercent = updated.DamagesPercent;
             current.WebAddress = updated.WebAddress;
@@ -154,10 +142,6 @@
             current.NotesForBuyer = updated.NotesForBuyer;
             current.ManufacturerPartNumber = updated.ManufacturerPartNumber;
             current.VendorPartNumber = updated.VendorPartNumber;
-            current.RohsCategory = updated.RohsCategory;
-            current.DateRohsCompliant = updated.DateRohsCompliant;
-            current.RohsCompliant = updated.RohsCompliant;
-            current.RohsComments = updated.RohsComments;
         }
 
         public PartSupplier CreatePartSupplier(PartSupplier candidate, IEnumerable<string> privileges)
@@ -194,11 +178,6 @@
             if (candidate.DeliveryFullAddress?.Id != null)
             {
                 candidate.DeliveryFullAddress = this.addressRepository.FindById(candidate.DeliveryFullAddress.Id);
-            }
-
-            if (candidate.Tariff?.Id != null)
-            {
-                candidate.Tariff = this.tariffRepository.FindById(candidate.Tariff.Id);
             }
 
             if (candidate.PackagingGroup?.Id != null)
@@ -380,16 +359,6 @@
             if (candidate.LeadTimeWeeks == 0)
             {
                 errors.Add("Lead Time Weeks");
-            }
-
-            if (string.IsNullOrEmpty(candidate.RohsCompliant))
-            {
-                candidate.RohsCompliant = "N";
-            }
-
-            if (string.IsNullOrEmpty(candidate.RohsCategory))
-            {
-                errors.Add("Rohs Category");
             }
 
             if (candidate.OrderMethod == null)

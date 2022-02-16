@@ -24,8 +24,6 @@
 
         protected IRepository<FullAddress, int> AddressRepository { get; private set; }
 
-        protected IRepository<Tariff, int> TariffRepository { get; private set; }
-
         protected IRepository<PackagingGroup, int> PackagingGroupRepository { get; private set; }
 
         protected IRepository<Employee, int> EmployeeRepository { get; private set; }
@@ -55,7 +53,6 @@
             this.OrderMethodRepository = Substitute.For<IRepository<OrderMethod, string>>();
             this.AddressRepository = Substitute.For<IRepository<FullAddress, int>>();
             this.PackagingGroupRepository = Substitute.For<IRepository<PackagingGroup, int>>();
-            this.TariffRepository = Substitute.For<IRepository<Tariff, int>>();
             this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
             this.ManufacturerRepository = Substitute.For<IRepository<Manufacturer, string>>();
             this.PartRepository = Substitute.For<IQueryRepository<Part>>();
@@ -70,7 +67,6 @@
                 this.CurrencyRepository,
                 this.OrderMethodRepository,
                 this.AddressRepository,
-                this.TariffRepository,
                 this.PackagingGroupRepository,
                 this.EmployeeRepository,
                 this.ManufacturerRepository,
