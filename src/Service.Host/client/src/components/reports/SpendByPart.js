@@ -58,14 +58,17 @@ function SpendByPartReport() {
                     {loading || !reportData ? (
                         <Loading />
                     ) : (
-                        <ReportTable
-                            reportData={reportData}
-                            title={reportData.title}
-                            showTitle
-                            showTotals
-                            placeholderRows={4}
-                            placeholderColumns={4}
-                        />
+                        <>
+                            <ReportTable
+                                reportData={reportData}
+                                title={reportData.title}
+                                showTitle
+                                showTotals
+                                placeholderRows={4}
+                                placeholderColumns={4}
+                            />
+                            <p>Total Number of parts: {reportData?.results?.length}</p>
+                        </>
                     )}
                 </Grid>
                 <Grid item xs={12}>

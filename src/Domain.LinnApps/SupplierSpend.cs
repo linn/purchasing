@@ -8,9 +8,9 @@
 
         public int LedgerPeriod { get; set; }
 
-        //public int? OrderLine { get; set; }
+        public int? OrderLine { get; set; }
 
-        //public int? OrderNumber { get; set; }
+        public int? OrderNumber { get; set; }
 
         public int PlTref { get; }
 

@@ -24,28 +24,28 @@
 
         private readonly IRepository<VendorManager, string> vendorManagerRepository;
 
-        //private readonly IRepository<PurchaseOrder, int> purchaseOrderRepository;
+        private readonly IRepository<PurchaseOrder, int> purchaseOrderRepository;
 
-        //private readonly IRepository<Supplier, int> supplierRepository;
+        private readonly IRepository<Supplier, int> supplierRepository;
 
-        //private readonly IQueryRepository<Part> partRepository;
+        private readonly IQueryRepository<Part> partRepository;
 
         public SpendsReportService(
             IQueryRepository<SupplierSpend> spendsRepository,
             IRepository<VendorManager, string> vendorManagerRepository,
             IPurchaseLedgerPack purchaseLedgerPack,
-            //IRepository<PurchaseOrder, int> purchaseOrderRepository,
-            //IRepository<Supplier, int> supplierRepository,
-            //IQueryRepository<Part> partRepository,
+            IRepository<PurchaseOrder, int> purchaseOrderRepository,
+            IRepository<Supplier, int> supplierRepository,
+            IQueryRepository<Part> partRepository,
             IReportingHelper reportingHelper)
         {
             this.spendsRepository = spendsRepository;
             this.vendorManagerRepository = vendorManagerRepository;
             this.purchaseLedgerPack = purchaseLedgerPack;
             this.reportingHelper = reportingHelper;
-            //this.purchaseOrderRepository = purchaseOrderRepository;
-            //this.supplierRepository = supplierRepository;
-            //this.partRepository = partRepository;
+            this.purchaseOrderRepository = purchaseOrderRepository;
+            this.supplierRepository = supplierRepository;
+            this.partRepository = partRepository;
         }
 
         public ResultsModel GetSpendBySupplierReport(string vendorManagerId)
@@ -68,7 +68,7 @@
 
             var reportLayout = new SimpleGridLayout(
                 this.reportingHelper,
-                CalculationValueModelType.TextValue,
+                CalculationValueModelType.Value,
                 null,
                 $"Spend by supplier report for Vendor Manager: {vendorManagerName}. For this financial year and last, excludes factors & VAT.");
 
@@ -111,74 +111,73 @@
 
         public ResultsModel GetSpendByPartReport(int supplierId)
         {
-            throw new NotImplementedException();
-            //var currentLedgerPeriod = this.purchaseLedgerPack.GetLedgerPeriod();
-            //var yearStartLedgerPeriod = this.purchaseLedgerPack.GetYearStartLedgerPeriod();
-            //var previousYearStartLedgerPeriod = yearStartLedgerPeriod - 12;
+            var currentLedgerPeriod = this.purchaseLedgerPack.GetLedgerPeriod();
+            var yearStartLedgerPeriod = this.purchaseLedgerPack.GetYearStartLedgerPeriod();
+            var previousYearStartLedgerPeriod = yearStartLedgerPeriod - 12;
 
-            //var supplierSpends = this.spendsRepository.FilterBy(
-            //            x => x.LedgerPeriod >= previousYearStartLedgerPeriod && x.LedgerPeriod <= currentLedgerPeriod
-            //                 && x.SupplierId == supplierId).ToList();
+            var supplierSpends = this.spendsRepository.FilterBy(
+                        x => x.LedgerPeriod >= previousYearStartLedgerPeriod && x.LedgerPeriod <= currentLedgerPeriod
+                             && x.SupplierId == supplierId && x.OrderNumber.HasValue && x.OrderLine.HasValue).ToList();
 
-            //var purchaseOrders = this.purchaseOrderRepository.FilterBy(
-            //    x => x.SupplierId == supplierId &&
-            //         supplierSpends.Any(s => x.Details.Any(d => d.Line == s.OrderLine && d.OrderNumber == s.OrderNumber)));
+            var purchaseOrders = this.purchaseOrderRepository.FilterBy(
+                s => s.SupplierId == supplierId).ToList().Where(x =>
+                     supplierSpends.Any(s => x.Details.Any(d => d.Line == s.OrderLine.Value && d.OrderNumber == s.OrderNumber.Value)));
 
-            //var supplier = this.supplierRepository.FindById(supplierId);
-
-
-            //var reportLayout = new SimpleGridLayout(
-            //    this.reportingHelper,
-            //    CalculationValueModelType.TextValue,
-            //    null,
-            //    $"Spend by part report for Supplier: {supplier.Name}. For this financial year and last, excludes factors & VAT.");
-
-            //AddPartReportColumns(reportLayout);
-
-            //var values = new List<CalculationValueModel>();
-
-            //var partSpends = supplierSpends.Select(
-            //    s => new PartSpend
-            //    {
-            //        LedgerPeriod = s.LedgerPeriod,
-            //        BaseTotal = s.BaseTotal,
-            //        OrderNumber = s.OrderNumber,
-            //        OrderLine = s.OrderLine,
-            //        PartNumber = purchaseOrders.First(po => po.OrderNumber == s.OrderNumber).Details
-            //                     .First(x => x.Line == s.OrderLine).PartNumber
-            //    });
+            var supplier = this.supplierRepository.FindById(supplierId);
 
 
-            //var distinctPartSpends = partSpends.DistinctBy(x => x.PartNumber).Select(
-            //    x => new PartSpendWithTotals
-            //    {
-            //        BaseTotal = x.BaseTotal,
-            //        LedgerPeriod = x.LedgerPeriod,
-            //        PartNumber = x.PartNumber,
-            //        PartDescription = this.partRepository.FindBy(p => p.PartNumber == x.PartNumber).Description,
-            //        MonthTotal = partSpends.Where(
-            //                             s => s.PartNumber == x.PartNumber && s.LedgerPeriod == currentLedgerPeriod)
-            //                         .Sum(z => z.BaseTotal),
-            //        YearTotal = partSpends.Where(
-            //                             s => s.PartNumber == x.PartNumber && s.LedgerPeriod >= yearStartLedgerPeriod)
-            //                         .Sum(z => z.BaseTotal),
-            //        PrevYearTotal = partSpends.Where(
-            //                         s => s.PartNumber == x.PartNumber
-            //                              && s.LedgerPeriod >= previousYearStartLedgerPeriod
-            //                              && s.LedgerPeriod < yearStartLedgerPeriod)
-            //                     .Sum(z => z.BaseTotal)
-            //    }).OrderByDescending(x => x.PrevYearTotal).ThenByDescending(s => s.YearTotal).ThenByDescending(s => s.MonthTotal);
+            var reportLayout = new SimpleGridLayout(
+                this.reportingHelper,
+                CalculationValueModelType.Value,
+                null,
+                $"Spend by part report for Supplier: {supplier.Name} ({supplierId}). For this financial year and last, excludes factors & VAT.");
+
+            AddPartReportColumns(reportLayout);
+
+            var values = new List<CalculationValueModel>();
+
+            var partSpends = supplierSpends.Select(
+                s => new PartSpend
+                {
+                    LedgerPeriod = s.LedgerPeriod,
+                    BaseTotal = s.BaseTotal ?? 0m,
+                    OrderNumber = s.OrderNumber.Value,
+                    OrderLine = s.OrderLine.Value,
+                    PartNumber = purchaseOrders.First(po => po.OrderNumber == s.OrderNumber.Value).Details
+                                 .First(x => x.Line == s.OrderLine.Value).PartNumber
+                }).ToList();
 
 
-            //foreach (var part in distinctPartSpends)
-            //{
-            //    ExtractDetailsForPartReport(values, part);
-            //}
+            var distinctPartSpends = partSpends.DistinctBy(x => x.PartNumber).Select(
+                x => new PartSpendWithTotals
+                {
+                    BaseTotal = x.BaseTotal,
+                    LedgerPeriod = x.LedgerPeriod,
+                    PartNumber = x.PartNumber,
+                    PartDescription = this.partRepository.FindBy(p => p.PartNumber == x.PartNumber).Description,
+                    MonthTotal = partSpends.Where(
+                                         s => s.PartNumber == x.PartNumber && s.LedgerPeriod == currentLedgerPeriod)
+                                     .Sum(z => z.BaseTotal),
+                    YearTotal = partSpends.Where(
+                                         s => s.PartNumber == x.PartNumber && s.LedgerPeriod >= yearStartLedgerPeriod)
+                                     .Sum(z => z.BaseTotal),
+                    PrevYearTotal = partSpends.Where(
+                                     s => s.PartNumber == x.PartNumber
+                                          && s.LedgerPeriod >= previousYearStartLedgerPeriod
+                                          && s.LedgerPeriod < yearStartLedgerPeriod)
+                                 .Sum(z => z.BaseTotal)
+                }).OrderByDescending(x => x.PrevYearTotal).ThenByDescending(s => s.YearTotal).ThenByDescending(s => s.MonthTotal);
 
-            //reportLayout.SetGridData(values);
-            //var model = reportLayout.GetResultsModel();
 
-            //return model;
+            foreach (var part in distinctPartSpends)
+            {
+                ExtractDetailsForPartReport(values, part);
+            }
+
+            reportLayout.SetGridData(values);
+            var model = reportLayout.GetResultsModel();
+
+            return model;
         }
 
         private static void AddSupplierReportColumns(SimpleGridLayout reportLayout)

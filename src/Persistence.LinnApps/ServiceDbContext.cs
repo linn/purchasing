@@ -557,8 +557,8 @@
             entity.Property(e => e.BaseTotal).HasColumnName("BASE_TOTAL");
             entity.Property(e => e.LedgerPeriod).HasColumnName("LEDGER_PERIOD");
             entity.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID");
-            //entity.Property(e => e.OrderNumber).HasColumnName("ORDER_NUMBER");
-            //entity.Property(e => e.OrderLine).HasColumnName("ORDER_LINE");
+            entity.Property(e => e.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(e => e.OrderLine).HasColumnName("ORDER_LINE");
             entity.HasOne(x => x.Supplier).WithMany().HasForeignKey(z => z.SupplierId);
         }
 

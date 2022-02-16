@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.SupplierSpendsReportServiceTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.SpendsReportServiceTests
 {
     using System;
     using System.Collections.Generic;
@@ -14,7 +14,7 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingReport : ContextBase
+    public class WhenGettingSupplierReport : ContextBase
     {
         private readonly int supplierId = 77282;
 
@@ -50,8 +50,7 @@
 
             this.SpendsRepository.FilterBy(Arg.Any<Expression<Func<SupplierSpend, bool>>>())
                 .Returns(spends.AsQueryable());
-            var vendorManager = new VendorManager { VmId = "X", UserNumber = 999 };
-            vendorManager.Employee = new Employee { FullName = "Doctor X" };
+            var vendorManager = new VendorManager { VmId = "X", UserNumber = 999, Employee = new Employee { FullName = "Doctor X" } };
 
             this.VendorManagerRepository.FindById(Arg.Any<string>()).Returns(vendorManager);
 
@@ -67,6 +66,7 @@
             this.PurchaseLedgerPack.Received().GetLedgerPeriod();
             this.PurchaseLedgerPack.Received().GetYearStartLedgerPeriod();
             this.SpendsRepository.Received().FilterBy(Arg.Any<Expression<Func<SupplierSpend, bool>>>());
+            this.VendorManagerRepository.Received().FindById(Arg.Any<string>());
         }
 
         [Test]

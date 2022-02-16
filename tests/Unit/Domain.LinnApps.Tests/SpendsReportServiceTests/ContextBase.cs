@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.SupplierSpendsReportServiceTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.SpendsReportServiceTests
 {
     using Linn.Common.Persistence;
     using Linn.Common.Reporting.Models;
@@ -52,9 +52,9 @@
                 this.SpendsRepository,
                 this.VendorManagerRepository,
                 this.PurchaseLedgerPack,
-                //this.PurchaseOrderRepository,
-                //this.SupplierRepository,
-                //this.PartRepository,
+                this.PurchaseOrderRepository,
+                this.SupplierRepository,
+                this.PartRepository,
                 this.ReportingHelper);
         }
     }

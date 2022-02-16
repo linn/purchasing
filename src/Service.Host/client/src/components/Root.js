@@ -44,6 +44,12 @@ const Root = ({ store }) => (
                                     return false;
                                 }}
                             />
+                            <Route
+                                exact
+                                path="/purchasing/reports"
+                                render={() => <Redirect to="/purchasing" />}
+                            />
+
                             <Switch>
                                 <Route exact path="/purchasing" component={App} />
                                 <Route

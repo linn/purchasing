@@ -38,7 +38,9 @@
         {
             var supplierId = req.Query.As<int>("Id");
 
-            using var stream = this.spendsReportFacadeService.GetSpendByPartExport(supplierId, req.HttpContext.GetPrivileges());
+            using var stream = this.spendsReportFacadeService.GetSpendByPartExport(
+                supplierId,
+                req.HttpContext.GetPrivileges());
 
             var contentDisposition = new ContentDisposition
                                          {
@@ -54,7 +56,7 @@
         {
             var supplierId = req.Query.As<int>("Id");
             var results = this.spendsReportFacadeService.GetSpendByPartReport(
-               supplierId,
+                supplierId,
                 req.HttpContext.GetPrivileges());
 
             await res.Negotiate(results);
