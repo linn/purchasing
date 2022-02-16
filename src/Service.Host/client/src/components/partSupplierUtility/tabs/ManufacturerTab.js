@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 
-import { Dropdown, DatePicker, InputField, Typeahead } from '@linn-it/linn-form-components-library';
+import { InputField, Typeahead } from '@linn-it/linn-form-components-library';
 
 function ManufacturerTab({
     handleFieldChange,
@@ -12,10 +12,7 @@ function ManufacturerTab({
     manufacturersSearchLoading,
     searchManufacturers,
     manufacturerPartNumber,
-    vendorPartNumber,
-    rohsCategory,
-    dateRohsCompliant,
-    rohsComments
+    vendorPartNumber
 }) {
     return (
         <Grid container spacing={3}>
@@ -71,41 +68,6 @@ function ManufacturerTab({
                 />
             </Grid>
             <Grid item xs={6} />
-            <Grid item xs={4}>
-                <Dropdown
-                    fullWidth
-                    value={rohsCategory}
-                    label="Rohs Category"
-                    items={[
-                        { id: 'YES', displayText: 'COMPLIANT' },
-                        { id: 'EXEMPT', displayText: 'EXEMPT FROM ROHS DIRECTIVE' },
-                        { id: 'NOREP', displayText: 'NO REPLACEMENT' },
-                        { id: 'NO', displayText: 'NON COMPLIANT' }
-                    ]}
-                    propertyName="rohsCategory"
-                    onChange={handleFieldChange}
-                />
-            </Grid>
-            <Grid item xs={4}>
-                <DatePicker
-                    label="Date"
-                    value={dateRohsCompliant || new Date()}
-                    onChange={newValue => handleFieldChange('dateRohsCompliant', newValue)}
-                    minDate="01/01/1900"
-                    maxDate="01/01/2100"
-                />
-            </Grid>
-            <Grid item xs={4} />
-            <Grid item xs={6}>
-                <InputField
-                    label="Rohs Comment"
-                    value={rohsComments}
-                    onChange={handleFieldChange}
-                    propertyName="rohsComments"
-                    rows={3}
-                    fullWidth
-                />
-            </Grid>
         </Grid>
     );
 }
@@ -118,10 +80,7 @@ ManufacturerTab.propTypes = {
     manufacturersSearchResults: PropTypes.arrayOf(PropTypes.shape({})),
     manufacturersSearchLoading: PropTypes.bool,
     searchManufacturers: PropTypes.func.isRequired,
-    vendorPartNumber: PropTypes.string,
-    rohsCategory: PropTypes.string,
-    dateRohsCompliant: PropTypes.string,
-    rohsComments: PropTypes.string
+    vendorPartNumber: PropTypes.string
 };
 
 ManufacturerTab.defaultProps = {
@@ -129,9 +88,6 @@ ManufacturerTab.defaultProps = {
     manufacturerName: null,
     manufacturerPartNumber: null,
     vendorPartNumber: null,
-    rohsCategory: null,
-    dateRohsCompliant: null,
-    rohsComments: null,
     manufacturersSearchResults: [],
     manufacturersSearchLoading: false
 };
