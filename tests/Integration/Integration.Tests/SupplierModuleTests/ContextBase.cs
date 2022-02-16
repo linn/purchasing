@@ -110,7 +110,8 @@
                 this.MockSupplierRepository,
                 this.TransactionManager,
                 new SupplierResourceBuilder(this.MockAuthService),
-                this.MockDomainService);
+                this.MockDomainService,
+                this.MockDatabaseService);
 
                 this.PreferredSupplierChangeService = Substitute
                 .For<IFacadeResourceService<PreferredSupplierChange, PreferredSupplierChangeKey, PreferredSupplierChangeResource, PreferredSupplierChangeKey>>();

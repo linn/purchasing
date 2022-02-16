@@ -24,10 +24,18 @@
 
             this.resource = new SupplierResource
             {
+                Name = "SUPPLIER"
             };
 
             this.MockDomainService.CreateSupplier(Arg.Any<Supplier>(), Arg.Any<IEnumerable<string>>())
-                .Returns(new Supplier());
+                .Returns(new Supplier
+                             {
+                                 Name = "SUPPLIER",
+                                 SupplierId = 123
+                             });
+
+            this.MockDatabaseService.GetNextVal("SUPPLIER_SEQ").Returns(123);
+
             this.Response = this.Client.Post(
                 $"/purchasing/suppliers",
                 this.resource,
@@ -51,10 +59,18 @@
         }
 
         [Test]
+        public void ShouldQuerySequence()
+        {
+            this.MockDatabaseService.Received().GetNextVal("SUPPLIER_SEQ");
+        }
+
+        [Test]
         public void ShouldReturnJsonBody()
         {
             var resultResource = this.Response.DeserializeBody<SupplierResource>();
             resultResource.Should().NotBeNull();
+            resultResource.Name.Should().Be("SUPPLIER");
+            resultResource.Id.Should().Be(123);
         }
     }
 }

@@ -6,6 +6,7 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
+    using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
@@ -16,14 +17,18 @@
     {
         private readonly ISupplierService domainService;
 
+        private readonly IDatabaseService databaseService;
+
         public SupplierFacadeService(
             IRepository<Supplier, int> repository, 
             ITransactionManager transactionManager, 
             IBuilder<Supplier> resourceBuilder,
-            ISupplierService domainService)
+            ISupplierService domainService,
+            IDatabaseService databaseService)
             : base(repository, transactionManager, resourceBuilder)
         {
             this.domainService = domainService;
+            this.databaseService = databaseService;
         }
 
         protected override Supplier CreateFromResource(
@@ -31,6 +36,8 @@
             IEnumerable<string> privileges = null)        
         {
             var candidate = BuildEntityFromResourceHelper(resource);
+            candidate.SupplierId = this.databaseService.GetNextVal("SUPPLIER_SEQ");
+
             candidate.OpenedBy = resource.OpenedById.HasValue
                 ? new Employee {Id = (int)resource.OpenedById } : null;
             candidate.DateOpened = DateTime.Today;
