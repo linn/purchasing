@@ -426,7 +426,7 @@ describe('When clicking tabs...', () => {
     test('Should render Other Details tab', () => {
         const tab = screen.getByText('Other Details');
         fireEvent.click(tab);
-        expect(screen.getByLabelText('Contract Lead Time Weeks')).toBeInTheDocument();
+        expect(screen.getByLabelText('Lead Time Weeks')).toBeInTheDocument();
     });
 
     test('Should render Lifecycle tab', () => {
@@ -494,7 +494,7 @@ describe('When url query params specify tab...', () => {
             })
         );
         render(<PartSupplier />);
-        expect(screen.getByLabelText('Contract Lead Time Weeks')).toBeInTheDocument();
+        expect(screen.getByLabelText('Lead Time Weeks')).toBeInTheDocument();
     });
 
     test('Should render Lifecycle tab', () => {
