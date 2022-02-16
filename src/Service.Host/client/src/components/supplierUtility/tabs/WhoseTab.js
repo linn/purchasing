@@ -57,7 +57,7 @@ function WhoseTab({
                         handleFieldChange('accountControllerId', newValue.id);
                         handleFieldChange('accountControllerName', newValue.fullName);
                     }}
-                    label="Employeee Lookup"
+                    label="Account Controller"
                     modal
                     propertyName="accountControllerId"
                     items={employeesSearchResults}

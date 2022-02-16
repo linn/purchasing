@@ -73,10 +73,23 @@ function Supplier({ creating }) {
     const addSupplier = body => reduxDispatch(supplierActions.add(body));
 
     useEffect(() => {
-        if (supplier) {
+        if (creating) {
+            dispatch({
+                type: 'initialise',
+                payload: {
+                    accountingCompany: 'LINN',
+                    liveOnOracle: 'Y',
+                    expenseAccount: 'N',
+                    currencyCode: 'GBP',
+                    approvedCarrier: 'N',
+                    paymentMethod: 'CHEQUE',
+                    orderHold: 'N'
+                }
+            });
+        } else if (supplier) {
             dispatch({ type: 'initialise', payload: supplier });
         }
-    }, [supplier]);
+    }, [supplier, creating]);
 
     const canEdit = () => creating || supplier?.links.some(l => l.rel === 'edit');
     const holdLink = () => utilities.getHref(supplier, 'hold');
