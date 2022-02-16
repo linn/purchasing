@@ -64,10 +64,11 @@ function SpendBySupplierReport() {
                                 title={reportData.title}
                                 showTitle
                                 showTotals
+                                showRowTitles
                                 placeholderRows={4}
                                 placeholderColumns={4}
                             />
-                            <p>Total Number of suppliers: {reportData?.results?.length}</p>
+                            <p>Total number of suppliers: {reportData?.results?.length}</p>
                         </>
                     )}
                 </Grid>

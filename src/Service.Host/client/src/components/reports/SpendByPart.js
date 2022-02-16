@@ -67,7 +67,7 @@ function SpendByPartReport() {
                                 placeholderRows={4}
                                 placeholderColumns={4}
                             />
-                            <p>Total Number of parts: {reportData?.results?.length}</p>
+                            <p>Total number of parts: {reportData?.results?.length}</p>
                         </>
                     )}
                 </Grid>

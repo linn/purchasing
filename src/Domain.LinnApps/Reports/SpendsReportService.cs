@@ -106,6 +106,9 @@
             reportLayout.SetGridData(values);
             var model = reportLayout.GetResultsModel();
 
+            model.RowDrillDownTemplates.Add(new DrillDownModel("Id", "/purchasing/reports/spend-by-part/report?id={textValue}"));
+            model.RowHeader = "Supplier (Drilldown)";
+
             return model;
         }
 
@@ -186,7 +189,6 @@
                 null,
                 new List<AxisDetailsModel>
                     {
-                        new AxisDetailsModel("SupplierId", "Supplier Id", GridDisplayType.TextValue),
                         new AxisDetailsModel("Name", "Name", GridDisplayType.TextValue),
                         new AxisDetailsModel("LastYear", "Last Year", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new AxisDetailsModel("ThisYear", "This Year", GridDisplayType.Value) { DecimalPlaces = 2 },
@@ -214,11 +216,6 @@
         private static void ExtractDetailsForSupplierReport(ICollection<CalculationValueModel> values, SupplierSpendWithTotals supplier)
         {
             var currentRowId = $"{supplier.SupplierId}";
-            values.Add(
-                new CalculationValueModel
-                    {
-                        RowId = currentRowId, ColumnId = "SupplierId", TextDisplay = $"{supplier.SupplierId}"
-                    });
 
             values.Add(
                 new CalculationValueModel

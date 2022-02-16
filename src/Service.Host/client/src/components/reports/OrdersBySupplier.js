@@ -75,7 +75,7 @@ function OrderBySupplierReport() {
                                 placeholderColumns={4}
                             />
 
-                            <p>Number of orders: {reportData?.results?.length}</p>
+                            <p>Total number of orders: {reportData?.results?.length}</p>
                         </>
                     )}
                 </Grid>
