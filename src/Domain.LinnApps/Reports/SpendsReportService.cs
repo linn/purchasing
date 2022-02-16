@@ -55,8 +55,11 @@
             var previousYearStartLedgerPeriod = yearStartLedgerPeriod - 12;
 
             var supplierSpends = this.spendsRepository.FilterBy(
-                        x => x.LedgerPeriod >= previousYearStartLedgerPeriod && x.LedgerPeriod <= currentLedgerPeriod
-                             && (string.IsNullOrWhiteSpace(vendorManagerId) || x.Supplier.VendorManager == vendorManagerId))
+                        x => 
+                            x.Supplier.VendorManager != null &&
+                            x.LedgerPeriod >= previousYearStartLedgerPeriod && x.LedgerPeriod <= currentLedgerPeriod
+                             && (string.IsNullOrWhiteSpace(vendorManagerId) 
+                                 || x.Supplier.VendorManager.Id == vendorManagerId))
                     .ToList();
 
             var vendorManagerName = "ALL";

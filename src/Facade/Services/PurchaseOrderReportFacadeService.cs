@@ -96,6 +96,17 @@
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
+        public IResult<ReportReturnResource> GetUnacknowledgedOrdersReport(
+            UnacknowledgedOrdersRequestResource resource,
+            IEnumerable<string> privileges)
+        {
+            var results = this.domainService.GetUnacknowledgedOrders(resource.SupplierId, resource.OrganisationId);
+
+            var returnResource = this.BuildResource(results, privileges);
+
+            return new SuccessResult<ReportReturnResource>(returnResource);
+        }
+
         public IResult<ReportReturnResource> GetOrdersBySupplierReport(
             OrdersBySupplierSearchResource resource,
             IEnumerable<string> privileges)

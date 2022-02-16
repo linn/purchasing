@@ -5,8 +5,7 @@
     using Linn.Common.Facade;
     using Linn.Common.Logging;
     using Linn.Common.Persistence;
-    using Linn.Purchasing.Domain.LinnApps;
-    using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.IoC;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.Modules;

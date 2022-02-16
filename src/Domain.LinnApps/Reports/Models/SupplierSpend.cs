@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps
+﻿namespace Linn.Purchasing.Domain.LinnApps.Reports.Models
 {
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 

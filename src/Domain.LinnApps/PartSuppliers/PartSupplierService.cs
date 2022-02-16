@@ -6,6 +6,7 @@
 
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers.Exceptions;
@@ -267,8 +268,8 @@
             var newPartSupplier = this.partSupplierRepository.FindById(
                 new PartSupplierKey { PartNumber = part.PartNumber, SupplierId = candidate.NewSupplier.SupplierId });
 
-            if (!newPartSupplier.Supplier.Planner.HasValue
-                || string.IsNullOrEmpty(newPartSupplier.Supplier.VendorManager))
+            if (newPartSupplier.Supplier.Planner == null
+                || newPartSupplier.Supplier.VendorManager == null)
             {
                 throw new PartSupplierException(
                     "Selected supplier is missing planner or vendor manager");

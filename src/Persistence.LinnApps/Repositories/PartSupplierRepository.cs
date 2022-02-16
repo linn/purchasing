@@ -25,7 +25,12 @@
             return this.partSuppliers
                 .Include(p => p.Part)
                 .Include(p => p.Supplier)
+                .ThenInclude(p => p.Planner)
+                .Include(p => p.Supplier)
+                .ThenInclude(p => p.VendorManager)
                 .Include(p => p.PackagingGroup)
+                .Include(p => p.Supplier)
+                .ThenInclude(p => p.AccountController)
                 .Include(p => p.CreatedBy)
                 .Include(p => p.MadeInvalidBy)
                 .Include(p => p.DeliveryFullAddress)

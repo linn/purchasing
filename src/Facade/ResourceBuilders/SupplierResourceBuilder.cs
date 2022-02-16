@@ -31,7 +31,7 @@
                 SuppliersReference = entity.SuppliersReference,
                 WebAddress = entity.WebAddress,
                 OrderContactMethod = entity.OrderContactMethod,
-                VendorManager = entity.VendorManager,
+                VendorManagerId = entity.VendorManager?.Id,
                 ApprovedCarrier = entity.ApprovedCarrier,
                 CurrencyCode = entity.Currency?.Code,
                 CurrencyName = entity.Currency?.Name,
@@ -55,6 +55,18 @@
                 InvoiceFullAddress = entity.InvoiceFullAddress?.AddressString,
                 OrderAddressId = entity.OrderFullAddress?.Id,
                 OrderFullAddress = entity.OrderFullAddress?.AddressString,
+                PlannerId = entity.Planner?.Id,
+                AccountControllerId = entity.AccountController?.Id,
+                AccountControllerName = entity.AccountController?.FullName,
+                OpenedById = entity.OpenedBy?.Id,
+                DateOpened = entity.DateOpened.ToString("o"),
+                OpenedByName = entity.OpenedBy?.FullName,
+                ClosedById = entity.ClosedBy?.Id,
+                ClosedByName = entity.ClosedBy?.FullName,
+                DateClosed = entity.DateClosed?.ToString("o"),
+                ReasonClosed = entity.ReasonClosed,
+                Notes = entity.Notes,
+                OrganisationId = entity.OrganisationId,
                 Links = this.BuildLinks(entity, claims).ToArray()
             };
         }

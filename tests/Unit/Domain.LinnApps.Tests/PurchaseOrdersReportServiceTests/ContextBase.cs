@@ -32,6 +32,8 @@
 
         protected IQueryRepository<SuppliersWithUnacknowledgedOrders> SuppliersWithUnacknowledgedOrdersRepository { get; private set; }
 
+        protected IQueryRepository<UnacknowledgedOrders> UnacknowledgedOrdersRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -41,6 +43,7 @@
             this.PartQueryRepository = Substitute.For<IQueryRepository<Part>>();
             this.PurchaseOrdersPack = Substitute.For<IPurchaseOrdersPack>();
             this.SuppliersWithUnacknowledgedOrdersRepository = Substitute.For<IQueryRepository<SuppliersWithUnacknowledgedOrders>>();
+            this.UnacknowledgedOrdersRepository = Substitute.For<IQueryRepository<UnacknowledgedOrders>>();
 
             this.ReportingHelper = new ReportingHelper();
             this.Sut = new PurchaseOrdersReportService(
@@ -50,7 +53,8 @@
                 this.PurchaseLedgerRepository,
                 this.PurchaseOrdersPack,
                 this.ReportingHelper,
-                this.SuppliersWithUnacknowledgedOrdersRepository);
+                this.SuppliersWithUnacknowledgedOrdersRepository,
+                this.UnacknowledgedOrdersRepository);
         }
     }
 }

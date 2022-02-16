@@ -42,12 +42,12 @@
             this.updated = new Supplier
             {
                 Currency = this.currency,
-                VendorManager = "V",
+                VendorManager = new VendorManager { Id = "V"},
                 WebAddress = "/web",
                 LiveOnOracle = "Y",
                 OrderContactMethod = "EMAIL",
                 PhoneNumber = "123 456 789",
-                Planner = 1,
+                Planner = new Planner { Id = 1 },
                 SuppliersReference = "REF",
                 InvoiceGoesTo = this.otherSupplier,
                 ExpenseAccount = "Y",

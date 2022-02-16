@@ -101,7 +101,7 @@
                 yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
                 yield return new LinkResource { Rel = "part", Href = $"/parts/{model.Part.Id}" };
 
-                yield return new LinkResource { Rel = "supplier", Href = $"/purchasing/{model.SupplierId}" };
+                yield return new LinkResource { Rel = "supplier", Href = $"/purchasing/suppliers/{model.SupplierId}" };
                 if (this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
                 {
                     yield return new LinkResource { Rel = "edit", Href = this.GetLocation(model) };

@@ -4,7 +4,7 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Resources;
-    using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
 
     public class VendorManagerResourceBuilder : IBuilder<VendorManager>
@@ -13,7 +13,7 @@
         {
             return new VendorManagerResource
             {
-                VmId = entity.VmId,
+                VmId = entity.Id,
                 Name = entity.Employee.FullName,
                 UserNumber = entity.UserNumber
             };
@@ -21,7 +21,7 @@
 
         public string GetLocation(VendorManager v)
         {
-            return $"/purchasing/vendor-managers/{v.VmId}";
+            return $"/purchasing/vendor-managers/{v.Id}";
         }
 
         object IBuilder<VendorManager>.Build(VendorManager entity, IEnumerable<string> claims)

@@ -36,10 +36,10 @@
                             {
                                 PartNumber = "PART",
                                 BomType = "A",
-                                PreferredSupplier = new Supplier { SupplierId = 1 },
+                                PreferredSupplier = new Supplier {SupplierId = 1},
                                 CurrencyUnitPrice = 100m,
                                 BaseUnitPrice = 50m,
-                                Currency = new Currency { Code = "USD" },
+                                Currency = new Currency {Code = "USD"},
                                 MaterialPrice = 1m,
                                 LabourPrice = 2m
                             };
@@ -47,17 +47,25 @@
             this.candidate = new PreferredSupplierChange
                                  {
                                      PartNumber = "PART",
-                                     OldSupplier = new Supplier { SupplierId = 1 },
-                                     NewSupplier = new Supplier { SupplierId = 2, VendorManager = "A", Planner = 1 },
-                                     ChangeReason = new PriceChangeReason { ReasonCode = "CHG", Description = "DESC" },
-                                     ChangedBy = new Employee { Id = 33087 },
+                                     OldSupplier = new Supplier {SupplierId = 1},
+                                     NewSupplier =
+                                         new Supplier
+                                             {
+                                                 SupplierId = 2,
+                                                 VendorManager = new VendorManager {Id = "V"},
+                                                 Planner = new Planner {Id = 1}
+                                             },
+                                     ChangeReason = new PriceChangeReason {ReasonCode = "CHG", Description = "DESC"},
+                                     ChangedBy = new Employee {Id = 33087},
                                      Remarks = "REMARKS",
                                      BaseNewPrice = 3m,
-                                     NewCurrency = new Currency { Code = "USD" }
+                                     NewCurrency = new Currency {Code = "USD"}
                                  };
 
-            this.oldPartSupplierRecord = new PartSupplier { PartNumber = "PART", SupplierId = 1, Supplier = this.candidate.OldSupplier };
-            this.newPartSupplierRecord = new PartSupplier { PartNumber = "PART", SupplierId = 2, Supplier = this.candidate.NewSupplier };
+            this.oldPartSupplierRecord =
+                new PartSupplier {PartNumber = "PART", SupplierId = 1, Supplier = this.candidate.OldSupplier};
+            this.newPartSupplierRecord =
+                new PartSupplier {PartNumber = "PART", SupplierId = 2, Supplier = this.candidate.NewSupplier};
 
             this.SupplierRepository.FindById(this.candidate.OldSupplier.SupplierId).Returns(this.candidate.OldSupplier);
             this.SupplierRepository.FindById(this.candidate.NewSupplier.SupplierId).Returns(this.candidate.NewSupplier);
@@ -67,13 +75,10 @@
             this.PartHistory.FilterBy(Arg.Any<Expression<Func<PartHistoryEntry, bool>>>())
                 .Returns(new List<PartHistoryEntry>().AsQueryable());
 
-            this.MockAuthService.HasPermissionFor(
-                    AuthorisedAction.PartSupplierUpdate,
-                    Arg.Any<IEnumerable<string>>())
+            this.MockAuthService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
-            this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
-                .Returns(this.part);
+            this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>()).Returns(this.part);
 
             this.PartSupplierRepository.FindById(Arg.Any<PartSupplierKey>()).Returns(
                 this.oldPartSupplierRecord,

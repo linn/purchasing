@@ -60,6 +60,7 @@
                     => new EntityFrameworkRepository<Country, string>(r.GetService<ServiceDbContext>()?.Countries))
                 .AddTransient<IRepository<Address, int>, AddressRepository>()
                 .AddTransient<IRepository<VendorManager, string>, VendorManagerRepository>()
+                .AddTransient<IRepository<Planner, int>, PlannerRepository>()
                 .AddTransient<IQueryRepository<SupplierSpend>, SupplierSpendRepository>()
                 .AddTransient<IQueryRepository<UnacknowledgedOrders>, UnacknowledgedOrdersRepository>()
                 .AddTransient<IQueryRepository<SuppliersWithUnacknowledgedOrders>, SuppliersWithUnacknowledgedOrdersRepository>();

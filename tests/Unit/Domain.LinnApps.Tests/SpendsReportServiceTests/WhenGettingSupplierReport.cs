@@ -8,6 +8,7 @@
     using FluentAssertions;
 
     using Linn.Common.Reporting.Models;
+    using Linn.Purchasing.Domain.LinnApps.Reports.Models;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NSubstitute;
@@ -50,7 +51,7 @@
 
             this.SpendsRepository.FilterBy(Arg.Any<Expression<Func<SupplierSpend, bool>>>())
                 .Returns(spends.AsQueryable());
-            var vendorManager = new VendorManager { VmId = "X", UserNumber = 999, Employee = new Employee { FullName = "Doctor X" } };
+            var vendorManager = new VendorManager { Id = "X", UserNumber = 999, Employee = new Employee { FullName = "Doctor X" } };
 
             this.VendorManagerRepository.FindById(Arg.Any<string>()).Returns(vendorManager);
 

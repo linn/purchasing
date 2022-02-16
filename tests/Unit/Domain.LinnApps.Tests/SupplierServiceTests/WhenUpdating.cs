@@ -45,13 +45,13 @@
                                    Name = "NEW NAME",
                                    SupplierId = 1,
                                    Currency = this.currency,
-                                   VendorManager = "V",
+                                   VendorManager = new VendorManager { Id = "V" },
                                    WebAddress = "/web",
                                    InvoiceContactMethod = "POST",
                                    LiveOnOracle = "Y",
                                    OrderContactMethod = "EMAIL",
                                    PhoneNumber = "123 456 789",
-                                   Planner = 1,
+                                   Planner = new Planner { Id = 1 },
                                    SuppliersReference = "REF",
                                    PaymentDays = 1,
                                    PaymentMethod = "PAYMENT METHOD",
@@ -68,14 +68,19 @@
                                    RefersToFc = this.otherSupplier,
                                    PmDeliveryDaysGrace = 1,
                                    OrderFullAddress = this.address,
-                                   InvoiceFullAddress = this.address
+                                   InvoiceFullAddress = this.address,
+                                   AccountController = new Employee { Id = 123 }
                                };
+
             this.MockCurrencyRepository
                 .FindById(this.updated.Currency.Code).Returns(this.currency);
             this.MockSupplierRepository.FindById(2).Returns(this.otherSupplier);
             this.MockPartCategoryRepository.FindById("CAT").Returns(this.partCategory);
             this.MockAddressRepository.FindById(1).Returns(this.address);
             this.privileges = new List<string> { "priv" };
+            this.VendorManagerRepository.FindById("V").Returns(new VendorManager { Id = "V" });
+            this.PlannerRepository.FindById(1).Returns(new Planner { Id = 1 });
+            this.EmployeeRepository.FindById(123).Returns(new Employee { Id = 123 });
             this.Sut.UpdateSupplier(this.current, this.updated, this.privileges);
         }
 
@@ -90,13 +95,13 @@
         {
             this.current.Name.Should().Be(this.updated.Name);
             this.current.Currency.Should().Be(this.updated.Currency);
-            this.current.VendorManager.Should().Be(this.updated.VendorManager);
+            this.current.VendorManager.Id.Should().Be(this.updated.VendorManager.Id);
             this.current.InvoiceContactMethod.Should().Be(this.updated.InvoiceContactMethod);
             this.current.LiveOnOracle.Should().Be(this.updated.LiveOnOracle);
             this.current.OrderContactMethod.Should().Be(this.updated.OrderContactMethod);
             this.current.InvoiceContactMethod.Should().Be(this.updated.InvoiceContactMethod);
             this.current.PhoneNumber.Should().Be(this.updated.PhoneNumber);
-            this.current.Planner.Should().Be(this.updated.Planner);
+            this.current.Planner.Id.Should().Be(this.updated.Planner.Id);
             this.current.SuppliersReference.Should().Be(this.updated.SuppliersReference);
             this.current.PaymentDays.Should().Be(this.updated.PaymentDays);
             this.current.InvoiceGoesTo.SupplierId.Should().Be(this.otherSupplier.SupplierId);
@@ -116,6 +121,7 @@
             this.current.OrderFullAddress.AddressString.Should().Be("ADDRESS");
             this.current.InvoiceFullAddress.Id.Should().Be(1);
             this.current.InvoiceFullAddress.AddressString.Should().Be("ADDRESS");
+            this.current.AccountController.Id.Should().Be(this.updated.AccountController.Id);
         }
     }
 }
