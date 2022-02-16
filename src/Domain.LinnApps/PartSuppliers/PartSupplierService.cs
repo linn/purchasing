@@ -215,7 +215,7 @@
 
             if (candidate.OldSupplier != null)
             {
-                if (candidate.NewSupplier.SupplierId == candidate.OldSupplier.SupplierId)
+                if (candidate.NewSupplier.SupplierId == part.PreferredSupplier?.SupplierId)
                 {
                     throw new PartSupplierException(
                         "Selected  supplier is already the preferred supplier for this part.");
