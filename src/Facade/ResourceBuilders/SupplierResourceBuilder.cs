@@ -102,7 +102,7 @@
 
             if (this.authService.HasPermissionFor(AuthorisedAction.SupplierCreate, privileges))
             {
-                yield return new LinkResource { Rel = "create", Href = $"purchasing/suppliers/create" };
+                yield return new LinkResource { Rel = "create", Href = $"/purchasing/suppliers/create" };
             }
 
             if (this.authService.HasPermissionFor(AuthorisedAction.SupplierHoldChange, privileges))
