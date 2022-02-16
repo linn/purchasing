@@ -52,7 +52,7 @@
             resource.Should().NotBeNull();
             resource.Links.Length.Should().Be(1);
             resource.Links.First().Rel.Should().Be("create");
-            resource.Links.First().Href.Should().Be("purchasing/suppliers/create");
+            resource.Links.First().Href.Should().Be("/purchasing/suppliers/create");
         }
     }
 }
