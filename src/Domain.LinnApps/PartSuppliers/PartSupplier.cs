@@ -46,8 +46,6 @@
 
         public decimal? DamagesPercent { get; set; }
 
-        public PackagingGroup PackagingGroup { get; set; }
-
         public string WebAddress { get; set; }
 
         public string DeliveryInstructions { get; set; }

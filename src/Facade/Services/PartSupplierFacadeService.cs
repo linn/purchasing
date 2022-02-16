@@ -106,14 +106,9 @@
                 WebAddress = resource.WebAddress,
                 DeliveryInstructions = resource.DeliveryInstructions,
                 NotesForBuyer = resource.NotesForBuyer,
-                PackagingGroup = resource.PackagingGroupId == null
-                                     ? null : new PackagingGroup
-                                                  {
-                                                      Id = (int)resource.PackagingGroupId
-                                                  },
                 MadeInvalidBy = resource.MadeInvalidBy.HasValue
-                                                          ? new Employee { Id = (int)resource.MadeInvalidBy }
-                                                          : null,
+                                    ? new Employee { Id = (int)resource.MadeInvalidBy }
+                                    : null,
                 DateInvalid = string.IsNullOrEmpty(resource.DateInvalid)
                                                         ? null : DateTime.Parse(resource.DateInvalid),
                 Manufacturer = string.IsNullOrEmpty(resource.ManufacturerCode) ? null :

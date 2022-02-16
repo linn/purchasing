@@ -199,7 +199,6 @@
             var entity = builder.Entity<PartSupplier>().ToTable("PART_SUPPLIERS");
             entity.HasKey(e => new { e.PartNumber, e.SupplierId });
             entity.Property(e => e.ReelOrBoxQty).HasColumnName("REEL_OR_BOX_QTY");
-            entity.HasOne(e => e.PackagingGroup).WithMany().HasForeignKey("PAGRP_ID");
             entity.HasOne(e => e.CreatedBy).WithMany().HasForeignKey("CREATED_BY");
             entity.Property(e => e.WebAddress).HasColumnName("WEB_ADDRESS").HasMaxLength(200);
             entity.Property(e => e.MinimumOrderQty).HasColumnName("MINIMUM_ORDER_QTY");

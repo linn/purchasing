@@ -23,8 +23,6 @@
 
         private readonly IRepository<FullAddress, int> addressRepository;
 
-        private readonly IRepository<PackagingGroup, int> packagingGroupRepository;
-
         private readonly IRepository<Employee, int> employeeRepository;
 
         private readonly IRepository<Manufacturer, string> manufacturerRepository;
@@ -47,7 +45,6 @@
             IRepository<Currency, string> currencyRepository,
             IRepository<OrderMethod, string> orderMethodRepository,
             IRepository<FullAddress, int> addressRepository,
-            IRepository<PackagingGroup, int> packagingGroupRepository,
             IRepository<Employee, int> employeeRepository,
             IRepository<Manufacturer, string> manufacturerRepository,
             IQueryRepository<Part> partRepository,
@@ -61,7 +58,6 @@
             this.currencyRepository = currencyRepository;
             this.orderMethodRepository = orderMethodRepository;
             this.addressRepository = addressRepository;
-            this.packagingGroupRepository = packagingGroupRepository;
             this.employeeRepository = employeeRepository;
             this.manufacturerRepository = manufacturerRepository;
             this.partRepository = partRepository;
@@ -101,14 +97,6 @@
                 current.DeliveryFullAddress = updated.DeliveryFullAddress == null 
                                               ? null 
                                               : this.addressRepository.FindById(updated.DeliveryFullAddress.Id);
-            }
-
-            if (current.PackagingGroup?.Id != updated.PackagingGroup?.Id)
-            {
-                current.PackagingGroup = updated.PackagingGroup == null 
-                                             ? null 
-                                             : this.packagingGroupRepository
-                                                 .FindById(updated.PackagingGroup.Id);
             }
 
             if (current.MadeInvalidBy?.Id != updated.MadeInvalidBy?.Id)
@@ -178,12 +166,6 @@
             if (candidate.DeliveryFullAddress?.Id != null)
             {
                 candidate.DeliveryFullAddress = this.addressRepository.FindById(candidate.DeliveryFullAddress.Id);
-            }
-
-            if (candidate.PackagingGroup?.Id != null)
-            {
-                candidate.PackagingGroup = this.packagingGroupRepository
-                    .FindById(candidate.PackagingGroup.Id);
             }
 
             if (candidate.MadeInvalidBy?.Id != null)

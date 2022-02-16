@@ -56,7 +56,6 @@
                                    OrderMethod = this.newOrderMethod,
                                    DeliveryFullAddress = this.newFullAddress,
                                    Currency = this.newCurrency,
-                                   PackagingGroup = this.newPackagingGroup,
                                    MadeInvalidBy = this.madeInvalidBy,
                                    Manufacturer = this.manufacturer,
                                    CreatedBy = new Employee { Id = 33087 },
@@ -72,7 +71,6 @@
             this.CurrencyRepository.FindById(this.newCurrency.Code).Returns(this.newCurrency);
             this.AddressRepository.FindById(this.newFullAddress.Id).Returns(this.newFullAddress);
             this.OrderMethodRepository.FindById(this.newOrderMethod.Name).Returns(this.newOrderMethod);
-            this.PackagingGroupRepository.FindById(this.newPackagingGroup.Id).Returns(this.newPackagingGroup);
             this.EmployeeRepository.FindById(this.madeInvalidBy.Id).Returns(this.madeInvalidBy);
             this.ManufacturerRepository.FindById(this.manufacturer.Code).Returns(this.manufacturer);
             this.Sut.UpdatePartSupplier(this.current, this.updated, new List<string>());
@@ -84,7 +82,6 @@
             this.AddressRepository.Received().FindById(this.newFullAddress.Id);
             this.CurrencyRepository.Received().FindById(this.newCurrency.Code);
             this.OrderMethodRepository.Received().FindById(this.newOrderMethod.Name);
-            this.PackagingGroupRepository.Received().FindById(this.newPackagingGroup.Id);
         }
 
         [Test]
@@ -94,7 +91,6 @@
             this.current.Currency.Code.Should().Be(this.newCurrency.Code);
             this.current.OrderMethod.Name.Should().Be(this.newOrderMethod.Name);
             this.current.DeliveryFullAddress.Id.Should().Be(this.newFullAddress.Id);
-            this.current.PackagingGroup.Id.Should().Be(this.newPackagingGroup.Id);
             this.current.MadeInvalidBy.Id.Should().Be(this.madeInvalidBy.Id);
             this.current.Manufacturer.Code.Should().Be(this.manufacturer.Code);
         }

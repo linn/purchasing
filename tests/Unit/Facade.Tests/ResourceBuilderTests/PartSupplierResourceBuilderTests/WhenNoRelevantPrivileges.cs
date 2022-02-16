@@ -28,7 +28,6 @@
                                  Part = new Part { PartNumber = "PART", Description = "DESCRIPTION", Id = 123 },
                                  SupplierId = 1,
                                  Supplier = new Supplier { Name = "SUPPLIER" },
-                                 PackagingGroup = new PackagingGroup { Description = "GRP", Id = 555 },
                                  CreatedBy = new Employee { Id = 345, FullName = "EMPLOYEE" },
                                  DeliveryFullAddress = new FullAddress { Id = 1, AddressString = "FULL ADDRESS" },
                                  Manufacturer = new Manufacturer { Name = "MANUFACTURER", Code = "MAN" },
@@ -48,8 +47,6 @@
             this.result.AddressId.Should().Be(this.model.DeliveryFullAddress.Id);
             this.result.FullAddress.Should().Be(this.model.DeliveryFullAddress.AddressString);
             this.result.ManufacturerCode.Should().Be(this.model.Manufacturer.Code);
-            this.result.PackingGroup.Should().Be(this.model.PackagingGroup.Id);
-            this.result.PackingGroupDescription.Should().Be(this.model.PackagingGroup.Description);
             this.result.OrderMethodName.Should().Be(this.model.OrderMethod.Name);
             this.result.OrderMethodDescription.Should().Be(this.model.OrderMethod.Description);
             this.result.Links.Length.Should().Be(3);

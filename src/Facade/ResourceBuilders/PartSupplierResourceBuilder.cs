@@ -37,8 +37,7 @@
                            SupplierId = entity.SupplierId,
                            PartDescription = entity.Part.Description,
                            SupplierName = entity.Supplier.Name,
-                           PackingGroup = entity.PackagingGroup?.Id,
-                           PackingGroupDescription = entity.PackagingGroup?.Description,
+                          
                            CreatedBy = entity.CreatedBy?.Id,
                            CreatedByName = entity.CreatedBy?.FullName,
                            AddressId = entity.DeliveryFullAddress?.Id,
@@ -64,8 +63,6 @@
                            WebAddress = entity.WebAddress,
                            NotesForBuyer = entity.NotesForBuyer,
                            PackWasteStatus = entity.PackWasteStatus,
-                           PackagingGroupId = entity?.PackagingGroup?.Id,
-                           PackagingGroupDescription = entity.PackagingGroup?.Description,
                            DateCreated = entity.DateCreated.ToString("o"),
                            DateInvalid = entity.DateInvalid?.ToString("o"),
                            MadeInvalidBy = entity.MadeInvalidBy?.Id,

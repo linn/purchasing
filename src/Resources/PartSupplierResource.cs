@@ -12,10 +12,6 @@
 
         public string SupplierName { get; set; }
 
-        public int? PackingGroup { get; set; }
-
-        public string PackingGroupDescription { get; set; }
-
         public int? CreatedBy { get; set; }
 
         public string CreatedByName { get; set; }

@@ -28,7 +28,6 @@
                 .ThenInclude(p => p.Planner)
                 .Include(p => p.Supplier)
                 .ThenInclude(p => p.VendorManager)
-                .Include(p => p.PackagingGroup)
                 .Include(p => p.Supplier)
                 .ThenInclude(p => p.AccountController)
                 .Include(p => p.CreatedBy)

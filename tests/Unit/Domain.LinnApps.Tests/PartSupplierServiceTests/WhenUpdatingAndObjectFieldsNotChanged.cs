@@ -75,7 +75,6 @@
             this.AddressRepository.DidNotReceive().FindById(Arg.Any<int>());
             this.CurrencyRepository.DidNotReceive().FindById(Arg.Any<string>());
             this.OrderMethodRepository.DidNotReceive().FindById(Arg.Any<string>());
-            this.PackagingGroupRepository.DidNotReceive().FindById(Arg.Any<int>());
             this.EmployeeRepository.DidNotReceive().FindById(Arg.Any<int>());
             this.ManufacturerRepository.DidNotReceive().FindById(Arg.Any<string>());
         }
