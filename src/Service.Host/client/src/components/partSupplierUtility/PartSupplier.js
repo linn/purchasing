@@ -224,7 +224,8 @@ function PartSupplier({ creating }) {
                     createdBy: Number(currentUserNumber),
                     dateCreated: new Date(),
                     currencyCode: 'GBP',
-                    orderMethodName: 'MANUAL'
+                    orderMethodName: 'MANUAL',
+                    addressId: 405284
                 }
             });
         } else if (item) {
@@ -458,7 +459,6 @@ function PartSupplier({ creating }) {
                                                 unitOfMeasure={state.partSupplier?.unitOfMeasure}
                                                 deliveryAddresses={deliveryAddresses}
                                                 deliveryAddress={state.partSupplier?.addressId}
-                                                fullAddress={state.partSupplier?.fullAddress}
                                                 orderMethods={orderMethods}
                                                 orderMethod={state.partSupplier?.orderMethodName}
                                                 orderMethodDescription={
