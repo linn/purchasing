@@ -74,7 +74,7 @@
         public void ShouldReturnData()
         {
             this.results.ReportTitle.DisplayValue.Should().Be(
-                "Spend by supplier report for Vendor Manager: X - Doctor X (999). For this financial year and last, excludes factors & VAT.");
+                "Spend by supplier report for Vendor Manager: X - Doctor X (999). In base currency, for this financial year and last, excludes factors & VAT.");
             this.results.Rows.Count().Should().Be(1);
             var row = this.results.Rows.First();
             row.RowId.Should().Be(this.supplierId.ToString());

@@ -174,7 +174,6 @@ describe('When component mounts...', () => {
             )
         ).toBeInTheDocument();
         expect(screen.getByText('Supplier Id')).toBeInTheDocument();
-        expect(screen.getByText('47881')).toBeInTheDocument();
         expect(screen.getByText('TRUMPF LTD')).toBeInTheDocument();
         expect(screen.getByText('£324,249.50')).toBeInTheDocument();
         expect(screen.getByText('£61,484.98')).toBeInTheDocument();

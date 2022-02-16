@@ -35,8 +35,8 @@ function SpendByPartReportOptions() {
 
     const [supplier, setSupplier] = useState(
         prevOptions?.id
-            ? { id: prevOptions.id, name: '' }
-            : { id: '', name: 'click to set supplier' }
+            ? { id: prevOptions.id, description: '' }
+            : { id: '', description: 'click to set supplier' }
     );
 
     const handleSupplierChange = selectedsupplier => {
@@ -51,7 +51,7 @@ function SpendByPartReportOptions() {
 
     return (
         <Page history={history} homeUrl={config.appRoot} width="s">
-            <Title text="Orders By Part" />
+            <Title text="Spend By Part" />
             <Grid container spacing={3} justifyContent="center">
                 <Grid item xs={12}>
                     <Typeahead
