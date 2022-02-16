@@ -21,9 +21,7 @@
 
         public IQueryable<SupplierSpend> FilterBy(Expression<Func<SupplierSpend, bool>> expression)
         {
-            var spends = this.serviceDbContext.SupplierSpends.Include(s => s.Supplier).Where(expression);
-
-            return spends;
+           return this.serviceDbContext.SupplierSpends.Include(s => s.Supplier).Where(expression);
         }
 
         IQueryable<SupplierSpend> IQueryRepository<SupplierSpend>.FindAll()
