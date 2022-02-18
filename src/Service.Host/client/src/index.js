@@ -34,6 +34,8 @@ const render = Component => {
     );
 };
 
+document.body.style.margin = '0';
+
 if ((!user || user.expired) && window.location.pathname !== '/purchasing/signin-oidc-client') {
     userManager.signinRedirect({
         data: { redirect: window.location.pathname + window.location.search }
