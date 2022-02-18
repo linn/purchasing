@@ -44,7 +44,7 @@ function SuppliersWithUnacknowledgedOrders() {
         }
     }, [dispatch, vendorManagers]);
 
-    const [vm, setVm] = useState(prevOptions?.vm ? prevOptions.vm : '');
+    const [vm, setVm] = useState(prevOptions?.vendorManager ? prevOptions.vendorManager : '');
 
     const handleVmChange = selectedVm => {
         setVm(selectedVm);
