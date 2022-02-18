@@ -174,11 +174,12 @@ describe('When component mounts...', () => {
     });
 
     test('Displays report title, column title, row data & export button...', () => {
-        // expect(
-        //     screen.getByText(
-        //         'Spend by part report for Supplier: EXMEL SOLUTIONS  LTD (89351). In base currency, for this financial year and last, excludes factors & VAT.'
-        //     )
-        // ).toBeInTheDocument();
+        //below doesn't work, can't see why..
+        expect(
+            screen.getByText(
+                'Spend by part report for Supplier: EXMEL SOLUTIONS  LTD (89351). In base currency, for this financial year and last, excludes factors & VAT.'
+            )
+        ).toBeInTheDocument();
         expect(screen.getByText('Part 007')).toBeInTheDocument();
         expect(screen.getByText('Jimmy Bond action figure')).toBeInTheDocument();
         // expect(screen.getByDisplayValue('3439.67')).toBeInTheDocument();
