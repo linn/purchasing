@@ -204,13 +204,23 @@
                                             ColumnId = "Supplier Id",
                                             TextDisplay = supplier.SupplierId.ToString()
                                         });
-                supplierResults.Add(new CalculationValueModel { RowId = rowId, ColumnId = "Supplier Name", TextDisplay = supplier.SupplierName });
+                supplierResults.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = rowId, ColumnId = "Supplier Name", TextDisplay = supplier.SupplierName
+                        });
                 supplierResults.Add(new CalculationValueModel { RowId = rowId, ColumnId = "view", TextDisplay = "view" });
                 supplierResults.Add(new CalculationValueModel { RowId = rowId, ColumnId = "csv", TextDisplay = "csv" });
             }
 
-            results.ValueDrillDownTemplates.Add(new DrillDownModel("view", "/purchasing/reports/unacknowledged-orders?supplierId={rowId}", null, 2));
-            results.ValueDrillDownTemplates.Add(new DrillDownModel("csv", "/purchasing/reports/unacknowledged-orders/export?supplierId={rowId}", null, 3));
+            results.ValueDrillDownTemplates.Add(
+                new DrillDownModel("view", "/purchasing/reports/unacknowledged-orders?supplierId={rowId}", null, 2));
+            results.ValueDrillDownTemplates.Add(
+                new DrillDownModel(
+                    "csv",
+                    "/purchasing/reports/unacknowledged-orders/export?supplierId={rowId}",
+                    null,
+                    3));
             this.reportingHelper.AddResultsToModel(results, supplierResults, CalculationValueModelType.TextValue, true);
             this.reportingHelper.SortRowsByTextColumnValues(results, 1);
 
@@ -241,13 +251,13 @@
             }
 
             var results = new ResultsModel
-            {
-                ReportTitle = new NameModel(title)
-            };
+                              {
+                                  ReportTitle = new NameModel(title),
+                                  RowHeader = "Order Number/Line"
+                              };
             var columns = new List<AxisDetailsModel>
                               {
-                                  new AxisDetailsModel("Order Number/Line", GridDisplayType.TextValue) { SortOrder = 0 },
-                                  new AxisDetailsModel("Part Number", GridDisplayType.TextValue) { SortOrder = 1 },
+                                  new AxisDetailsModel("Part Number", GridDisplayType.TextValue) { SortOrder = 1, AllowWrap = false },
                                   new AxisDetailsModel("Description", GridDisplayType.TextValue) { SortOrder = 2 },
                                   new AxisDetailsModel("Delivery No", GridDisplayType.TextValue) { SortOrder = 3 },
                                   new AxisDetailsModel("Qty", GridDisplayType.Value) { SortOrder = 4 },
@@ -260,35 +270,37 @@
             foreach (var order in orders)
             {
                 var rowId = $"{order.OrderNumber}/{order.OrderLine}/{order.DeliveryNumber}";
-                models.Add(new CalculationValueModel
-                               {
-                                   RowId = rowId,
-                                   ColumnId = "Order Number/Line",
-                                   TextDisplay = $"{order.OrderNumber}/{order.OrderLine}"
-                               });
                 models.Add(new CalculationValueModel 
                                {
-                                   RowId = rowId, ColumnId = "Part Number", TextDisplay = order.PartNumber
+                                   RowId = rowId,
+                                   ColumnId = "Part Number",
+                                   TextDisplay = order.PartNumber,
+                                   RowTitle = $"{order.OrderNumber}/{order.OrderLine}"
                                });
                 models.Add(new CalculationValueModel
                                {
-                                   RowId = rowId, ColumnId = "Description", TextDisplay = order.SuppliersDesignation
+                                   RowId = rowId, ColumnId = "Description", TextDisplay = order.SuppliersDesignation,
+                                   RowTitle = $"{order.OrderNumber}/{order.OrderLine}"
                                });
                 models.Add(new CalculationValueModel
                                {
-                                   RowId = rowId, ColumnId = "Delivery No", TextDisplay = order.DeliveryNumber.ToString()
+                                   RowId = rowId, ColumnId = "Delivery No", TextDisplay = order.DeliveryNumber.ToString(),
+                                   RowTitle = $"{order.OrderNumber}/{order.OrderLine}"
                                });
                 models.Add(new CalculationValueModel
                                {
-                                   RowId = rowId, ColumnId = "Qty", Value = order.OrderDeliveryQuantity
+                                   RowId = rowId, ColumnId = "Qty", Value = order.OrderDeliveryQuantity,
+                                   RowTitle = $"{order.OrderNumber}/{order.OrderLine}"
                                });
                 models.Add(new CalculationValueModel
                                {
-                                   RowId = rowId, ColumnId = "Unit Price", TextDisplay = order.OrderUnitPrice.ToString("###,###,###,##0.00###")
+                                   RowId = rowId, ColumnId = "Unit Price", TextDisplay = order.OrderUnitPrice.ToString("###,###,###,##0.00###"),
+                                   RowTitle = $"{order.OrderNumber}/{order.OrderLine}"
                                });
                 models.Add(new CalculationValueModel
                                {
-                                   RowId = rowId, ColumnId = "Requested Delivery", TextDisplay = order.RequestedDate.ToString("dd-MMM-yyyy")
+                                   RowId = rowId, ColumnId = "Requested Delivery", TextDisplay = order.RequestedDate.ToString("dd-MMM-yyyy"),
+                                   RowTitle = $"{order.OrderNumber}/{order.OrderLine}"
                                });
             }
 

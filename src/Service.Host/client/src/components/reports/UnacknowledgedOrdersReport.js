@@ -51,6 +51,7 @@ function UnacknowledgedOrdersReport() {
                             reportData={reportData}
                             title={reportData?.title}
                             showTitle
+                            showRowTitles
                             showTotals={false}
                             placeholderRows={4}
                             placeholderColumns={2}

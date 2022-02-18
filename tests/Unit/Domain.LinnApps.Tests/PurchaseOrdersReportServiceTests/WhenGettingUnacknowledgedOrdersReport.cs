@@ -77,21 +77,21 @@
         {
             this.result.ReportTitle.DisplayValue.Should().Be("Unacknowledged orders for Supplier Of Things");
             this.result.RowCount().Should().Be(2);
-            this.result.ColumnCount().Should().Be(7);
-            this.result.GetGridTextValue(0, 0).Should().Be("1/1");
-            this.result.GetGridTextValue(0, 1).Should().Be("P1");
-            this.result.GetGridTextValue(0, 2).Should().Be("part 1");
-            this.result.GetGridTextValue(0, 3).Should().Be("1");
-            this.result.GetGridValue(0, 4).Should().Be(1);
-            this.result.GetGridTextValue(0, 5).Should().Be("1.20");
-            this.result.GetGridTextValue(0, 6).Should().Be("01-Jan-2029");
-            this.result.GetGridTextValue(1, 0).Should().Be("2/2");
-            this.result.GetGridTextValue(1, 1).Should().Be("P2");
-            this.result.GetGridTextValue(1, 2).Should().Be("part 2");
-            this.result.GetGridTextValue(1, 3).Should().Be("2");
-            this.result.GetGridValue(1, 4).Should().Be(300);
-            this.result.GetGridTextValue(1, 5).Should().Be("0.24356");
-            this.result.GetGridTextValue(1, 6).Should().Be("01-Feb-2029");
+            this.result.ColumnCount().Should().Be(6);
+            this.result.Rows.First(a => a.RowId == "1/1/1").RowTitle.Should().Be("1/1");
+            this.result.GetGridTextValue(0, 0).Should().Be("P1");
+            this.result.GetGridTextValue(0, 1).Should().Be("part 1");
+            this.result.GetGridTextValue(0, 2).Should().Be("1");
+            this.result.GetGridValue(0, 3).Should().Be(1);
+            this.result.GetGridTextValue(0, 4).Should().Be("1.20");
+            this.result.GetGridTextValue(0, 5).Should().Be("01-Jan-2029");
+            this.result.Rows.First(a => a.RowId == "2/2/2").RowTitle.Should().Be("2/2");
+            this.result.GetGridTextValue(1, 0).Should().Be("P2");
+            this.result.GetGridTextValue(1, 1).Should().Be("part 2");
+            this.result.GetGridTextValue(1, 2).Should().Be("2");
+            this.result.GetGridValue(1, 3).Should().Be(300);
+            this.result.GetGridTextValue(1, 4).Should().Be("0.24356");
+            this.result.GetGridTextValue(1, 5).Should().Be("01-Feb-2029");
         }
     }
 }
