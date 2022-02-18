@@ -39,6 +39,7 @@ import addresses from './addresses';
 import countries from './countries';
 import suppliersWithUnacknowledgedOrders from './suppliersWithUnacknowledgedOrders';
 import planners from './planners';
+import spendByPartReport from './spendByPartReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -72,6 +73,7 @@ const rootReducer = history =>
         signingLimit,
         signingLimits,
         spendBySupplierReport,
+        spendByPartReport,
         supplier,
         suppliers,
         suppliersWithUnacknowledgedOrders,

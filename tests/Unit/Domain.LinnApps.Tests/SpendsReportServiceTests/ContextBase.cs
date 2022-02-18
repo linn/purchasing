@@ -1,8 +1,9 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.SupplierSpendsReportServiceTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.SpendsReportServiceTests
 {
     using Linn.Common.Persistence;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Reports;
@@ -31,6 +32,8 @@
 
         protected IRepository<VendorManager, string> VendorManagerRepository { get; set; }
 
+        protected IQueryRepository<Part> PartRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -40,6 +43,7 @@
             this.SpendsRepository = Substitute.For<IQueryRepository<SupplierSpend>>();
             this.PurchaseLedgerPack = Substitute.For<IPurchaseLedgerPack>();
             this.VendorManagerRepository = Substitute.For<IRepository<VendorManager, string>>();
+            this.PartRepository = Substitute.For<IQueryRepository<Part>>();
 
             this.ReportingHelper = new ReportingHelper();
 
@@ -47,6 +51,9 @@
                 this.SpendsRepository,
                 this.VendorManagerRepository,
                 this.PurchaseLedgerPack,
+                this.PurchaseOrderRepository,
+                this.SupplierRepository,
+                this.PartRepository,
                 this.ReportingHelper);
         }
     }

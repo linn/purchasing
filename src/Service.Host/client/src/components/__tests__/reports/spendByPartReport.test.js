@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
 import { cleanup, screen } from '@testing-library/react';
 import render from '../../../test-utils';
-import SpendBySupplier from '../../reports/SpendBySupplier';
+import SpendByPart from '../../reports/SpendByPart';
 
 jest.mock('react-redux', () => ({
     ...jest.requireActual('react-redux'),
@@ -15,17 +15,17 @@ jest.mock('react-redux', () => ({
 
 const state = {
     oidc: { user: { profile: { name: 'User Name', employee: '/employees/33087' } } },
-    router: { location: { pathname: '', query: { vm: '' } } },
-    spendBySupplierReport: {
+    router: { location: { pathname: '', query: { id: 89351 } } },
+    spendByPartReport: {
         options: {
-            vm: ''
+            id: 89351
         },
         results: {
             loading: false,
             data: {
                 title: {
                     displayString:
-                        'Spend by supplier report for Vendor Manager: A - No person assigned (101). For this financial year and last, excludes factors & VAT.',
+                        'Spend by part report for Supplier: EXMEL SOLUTIONS  LTD (89351)',
                     drillDowns: []
                 },
                 resultType: null,
@@ -33,24 +33,30 @@ const state = {
                 displaySequence: null,
                 headers: {
                     rowHeader: null,
-                    columnHeaders: ['Supplier Id', 'Name', 'Last Year', 'This Year', 'This Month'],
+                    columnHeaders: [
+                        'PartNumber',
+                        'Description',
+                        'Last Year',
+                        'This Year',
+                        'This Month'
+                    ],
                     varianceRows: [],
                     varianceColumns: [],
                     totalColumns: [],
-                    textColumns: [0, 1, 2, 3, 4]
+                    textColumns: [0, 1]
                 },
                 filterOptions: [],
                 results: [
                     {
                         rowTitle: {
-                            displayString: '47881',
+                            displayString: 'SUNDRY',
                             drillDowns: []
                         },
                         rowSortOrder: 0,
                         values: [
                             {
                                 displayValue: null,
-                                textDisplayValue: '47881',
+                                textDisplayValue: 'Part 007',
                                 prefix: null,
                                 suffix: null,
                                 decimalPlaces: null,
@@ -59,7 +65,7 @@ const state = {
                             },
                             {
                                 displayValue: null,
-                                textDisplayValue: 'TRUMPF LTD',
+                                textDisplayValue: 'Jimmy Bond action figure',
                                 prefix: null,
                                 suffix: null,
                                 decimalPlaces: null,
@@ -67,29 +73,29 @@ const state = {
                                 drillDowns: []
                             },
                             {
-                                displayValue: null,
-                                textDisplayValue: '£324,249.50',
+                                displayValue: 3439.67,
+                                textDisplayValue: null,
                                 prefix: null,
                                 suffix: null,
-                                decimalPlaces: null,
+                                decimalPlaces: 2,
                                 allowWrap: true,
                                 drillDowns: []
                             },
                             {
-                                displayValue: null,
-                                textDisplayValue: '£61,484.98',
+                                displayValue: 547.56,
+                                textDisplayValue: null,
                                 prefix: null,
                                 suffix: null,
-                                decimalPlaces: null,
+                                decimalPlaces: 2,
                                 allowWrap: true,
                                 drillDowns: []
                             },
                             {
-                                displayValue: null,
-                                textDisplayValue: '£62.10',
+                                displayValue: 0,
+                                textDisplayValue: null,
                                 prefix: null,
                                 suffix: null,
-                                decimalPlaces: null,
+                                decimalPlaces: 2,
                                 allowWrap: true,
                                 drillDowns: []
                             }
@@ -123,29 +129,29 @@ const state = {
                             drillDowns: []
                         },
                         {
-                            displayValue: null,
+                            displayValue: 3439.67,
                             textDisplayValue: null,
                             prefix: null,
                             suffix: null,
-                            decimalPlaces: null,
+                            decimalPlaces: 2,
                             allowWrap: true,
                             drillDowns: []
                         },
                         {
-                            displayValue: null,
+                            displayValue: 547.56,
                             textDisplayValue: null,
                             prefix: null,
                             suffix: null,
-                            decimalPlaces: null,
+                            decimalPlaces: 2,
                             allowWrap: true,
                             drillDowns: []
                         },
                         {
-                            displayValue: null,
+                            displayValue: 0,
                             textDisplayValue: null,
                             prefix: null,
                             suffix: null,
-                            decimalPlaces: null,
+                            decimalPlaces: 2,
                             allowWrap: true,
                             drillDowns: []
                         }
@@ -164,20 +170,12 @@ describe('When component mounts...', () => {
         jest.clearAllMocks();
         useSelector.mockImplementation(callback => callback(state));
 
-        render(<SpendBySupplier />);
+        render(<SpendByPart />);
     });
 
     test('Displays report title, column title, row data & export button...', () => {
-        expect(
-            screen.getByText(
-                'Spend by supplier report for Vendor Manager: A - No person assigned (101). For this financial year and last, excludes factors & VAT.'
-            )
-        ).toBeInTheDocument();
-        expect(screen.getByText('Supplier Id')).toBeInTheDocument();
-        expect(screen.getByText('TRUMPF LTD')).toBeInTheDocument();
-        expect(screen.getByText('£324,249.50')).toBeInTheDocument();
-        expect(screen.getByText('£61,484.98')).toBeInTheDocument();
-        expect(screen.getByText('£62.10')).toBeInTheDocument();
+        expect(screen.getByText('Part 007')).toBeInTheDocument();
+        expect(screen.getByText('Jimmy Bond action figure')).toBeInTheDocument();
         expect(screen.getByText('Export')).toBeInTheDocument();
     });
 });

@@ -100,3 +100,8 @@ export const unacknowledgedOrdersReportActionTypes = makeReportActionTypes(
 );
 
 export const plannersActionTypes = makeActionTypes(itemTypes.planners.actionType);
+
+export const spendByPartReportActionTypes = makeActionTypes(
+    reportTypes.spendByPartReport.actionType,
+    false
+);

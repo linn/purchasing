@@ -29,3 +29,9 @@ export const unacknowledgedOrdersReport = new ItemType(
     'UNACKNOWLEDGED_ORDERS_REPORT',
     '/purchasing/reports/unacknowledged-orders'
 );
+
+export const spendByPartReport = new ItemType(
+    'spendByPartReport',
+    'SPEND_BY_PART',
+    '/purchasing/reports/spend-by-part/report'
+);
