@@ -33,5 +33,9 @@
         IResult<ReportReturnResource> GetUnacknowledgedOrdersReport(
             UnacknowledgedOrdersRequestResource resource,
             IEnumerable<string> getPrivileges);
+
+        Stream GetUnacknowledgedOrdersReportExport(
+            UnacknowledgedOrdersRequestResource resource,
+            IEnumerable<string> getPrivileges);
     }
 }

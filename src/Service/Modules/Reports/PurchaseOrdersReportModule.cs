@@ -31,6 +31,7 @@
             this.Get("/purchasing/reports/orders-by-part/export", this.GetOrdersByPartExport);
             this.Get("/purchasing/reports/suppliers-with-unacknowledged-orders", this.GetSuppliersWithUnacknowledgedOrdersReport);
             this.Get("/purchasing/reports/unacknowledged-orders", this.GetUnacknowledgedOrdersReport);
+            this.Get("/purchasing/reports/unacknowledged-orders/export", this.GetUnacknowledgedOrdersReportExport);
         }
 
         private async Task GetUnacknowledgedOrdersReport(HttpRequest request, HttpResponse response)
@@ -46,6 +47,28 @@
                 request.HttpContext.GetPrivileges());
 
             await response.Negotiate(results);
+        }
+
+        private async Task GetUnacknowledgedOrdersReportExport(HttpRequest request, HttpResponse response)
+        {
+            var resource = new UnacknowledgedOrdersRequestResource
+                               {
+                                   SupplierId = request.Query.As<int?>("SupplierId"),
+                                   OrganisationId = request.Query.As<int?>("OrganisationId")
+                               };
+
+            var stream = this.purchaseOrderReportFacadeService.GetUnacknowledgedOrdersReportExport(
+                                      resource,
+                                      request.HttpContext.GetPrivileges());
+            
+            var contentDisposition = new ContentDisposition
+                                         {
+                                             FileName =
+                                                 $"unackorders {resource.SupplierId ?? resource.OrganisationId}.csv"
+                                         };
+
+            stream.Position = 0;
+            await response.FromStream(stream, "text/csv", contentDisposition);
         }
 
         private async Task GetSuppliersWithUnacknowledgedOrdersReport(HttpRequest request, HttpResponse response)

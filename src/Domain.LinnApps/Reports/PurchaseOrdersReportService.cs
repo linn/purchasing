@@ -294,7 +294,6 @@
 
             this.reportingHelper.AddResultsToModel(results, models, CalculationValueModelType.Value, true);
             this.reportingHelper.SortRowsByTextColumnValues(results, 0, 3);
-
             return results;
         }
 
