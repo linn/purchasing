@@ -38,6 +38,7 @@ import address from './address';
 import addresses from './addresses';
 import countries from './countries';
 import suppliersWithUnacknowledgedOrders from './suppliersWithUnacknowledgedOrders';
+import unacknowledgedOrdersReport from './unacknowledgedOrdersReport';
 import planners from './planners';
 import spendByPartReport from './spendByPartReport';
 
@@ -78,6 +79,7 @@ const rootReducer = history =>
         suppliers,
         suppliersWithUnacknowledgedOrders,
         tariffs,
+        unacknowledgedOrdersReport,
         unitsOfMeasure,
         vendorManagers,
         ...sharedLibraryReducers,
