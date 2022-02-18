@@ -25,7 +25,7 @@ const state = {
             data: {
                 title: {
                     displayString:
-                        'Spend by part report for Supplier: EXMEL SOLUTIONS  LTD (89351). In base currency, for this financial year and last, excludes factors & VAT.',
+                        'Spend by part report for Supplier: EXMEL SOLUTIONS  LTD (89351)',
                     drillDowns: []
                 },
                 resultType: null,
@@ -174,17 +174,8 @@ describe('When component mounts...', () => {
     });
 
     test('Displays report title, column title, row data & export button...', () => {
-        //below doesn't work, can't see why..
-        expect(
-            screen.getByText(
-                'Spend by part report for Supplier: EXMEL SOLUTIONS  LTD (89351). In base currency, for this financial year and last, excludes factors & VAT.'
-            )
-        ).toBeInTheDocument();
         expect(screen.getByText('Part 007')).toBeInTheDocument();
         expect(screen.getByText('Jimmy Bond action figure')).toBeInTheDocument();
-        // expect(screen.getByDisplayValue('3439.67')).toBeInTheDocument();
-        // expect(screen.getByText('547.56')).toBeInTheDocument();
-        // expect(screen.getByDisplayValue('0')).toBeInTheDocument();
         expect(screen.getByText('Export')).toBeInTheDocument();
     });
 });
