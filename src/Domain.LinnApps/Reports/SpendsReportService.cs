@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Reports
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -56,7 +55,7 @@
             var previousYearStartLedgerPeriod = yearStartLedgerPeriod - 12;
 
             var supplierSpends = this.spendsRepository.FilterBy(
-                        x => 
+                        x =>
                             x.Supplier.VendorManager != null &&
                             x.LedgerPeriod >= previousYearStartLedgerPeriod && x.LedgerPeriod <= currentLedgerPeriod
                              && (string.IsNullOrWhiteSpace(vendorManagerId) 
@@ -132,7 +131,6 @@
 
             var supplier = this.supplierRepository.FindById(supplierId);
 
-
             var reportLayout = new SimpleGridLayout(
                 this.reportingHelper,
                 CalculationValueModelType.Value,
@@ -154,7 +152,6 @@
                                  .First(x => x.Line == s.OrderLine.Value).PartNumber
                 }).ToList();
 
-
             var distinctPartSpends = partSpends.DistinctBy(x => x.PartNumber).Select(
                 x => new PartSpendWithTotals
                 {
@@ -174,7 +171,6 @@
                                           && s.LedgerPeriod < yearStartLedgerPeriod)
                                  .Sum(z => z.BaseTotal)
                 }).OrderByDescending(x => x.PrevYearTotal).ThenByDescending(s => s.YearTotal).ThenByDescending(s => s.MonthTotal);
-
 
             foreach (var part in distinctPartSpends)
             {

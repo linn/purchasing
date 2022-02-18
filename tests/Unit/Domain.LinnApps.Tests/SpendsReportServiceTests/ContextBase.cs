@@ -34,7 +34,6 @@
 
         protected IQueryRepository<Part> PartRepository { get; private set; }
 
-
         [SetUp]
         public void SetUpContext()
         {
@@ -45,7 +44,6 @@
             this.PurchaseLedgerPack = Substitute.For<IPurchaseLedgerPack>();
             this.VendorManagerRepository = Substitute.For<IRepository<VendorManager, string>>();
             this.PartRepository = Substitute.For<IQueryRepository<Part>>();
-
 
             this.ReportingHelper = new ReportingHelper();
 
