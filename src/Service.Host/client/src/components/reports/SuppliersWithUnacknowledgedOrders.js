@@ -127,7 +127,6 @@ function SuppliersWithUnacknowledgedOrders() {
                                     showTitle={false}
                                     showTotals={false}
                                     placeholderRows={0}
-                                    hasExternalLinks
                                     placeholderColumns={0}
                                 />
                             )}

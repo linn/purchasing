@@ -220,7 +220,8 @@
                     "csv",
                     "/purchasing/reports/unacknowledged-orders/export?supplierId={rowId}",
                     null,
-                    3));
+                    3,
+                    true));
             this.reportingHelper.AddResultsToModel(results, supplierResults, CalculationValueModelType.TextValue, true);
             this.reportingHelper.SortRowsByTextColumnValues(results, 1);
 
