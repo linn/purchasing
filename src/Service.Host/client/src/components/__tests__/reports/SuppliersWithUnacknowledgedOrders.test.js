@@ -21,7 +21,27 @@ const fetchsuppliersWithUnacknowledgedOrdersActionsSpy = jest.spyOn(
 );
 const fetchVendorManagersSpy = jest.spyOn(vendorManagersActions, 'fetch');
 
-const state = {
+const initialState = {
+    suppliersWithUnacknowledgedOrders: {
+        options: null
+    }
+};
+
+const stateWithVendorManagers = {
+    suppliersWithUnacknowledgedOrders: {
+        options: null
+    },
+    vendorManagers: {
+        items: [
+            { vmId: 'A', userNumber: 123, name: '123' },
+            { vmId: 'B', userNumber: 456, name: '456' }
+        ],
+        loading: false
+    }
+};
+
+const stateWithReport = {
+    ...initialState,
     vendorManagers: {
         items: [
             { vmId: 'A', userNumber: 123, name: '123' },
@@ -29,13 +49,6 @@ const state = {
         ],
         loading: false
     },
-    suppliersWithUnacknowledgedOrders: {
-        options: null
-    }
-};
-
-const stateWithReport = {
-    ...state,
     suppliersWithUnacknowledgedOrders: {
         options: null,
         results: {
@@ -227,13 +240,20 @@ describe('When component mounts...', () => {
     beforeEach(() => {
         cleanup();
         jest.clearAllMocks();
-        useSelector.mockImplementation(callback => callback(state));
+        useSelector.mockImplementation(callback => callback(initialState));
         render(<SuppliersWithUnacknowledgedOrders />);
     });
 
     test('Initialisation actions are dispatched', () => {
         expect(fetchVendorManagersSpy).toBeCalledTimes(1);
-        expect(fetchsuppliersWithUnacknowledgedOrdersActionsSpy).toBeCalledTimes(1);
+    });
+
+    test('Should not run report immediately', () => {
+        expect(fetchsuppliersWithUnacknowledgedOrdersActionsSpy).not.toBeCalled();
+    });
+
+    test('Should show run button', () => {
+        expect(screen.getByText('Run Report')).toBeInTheDocument();
     });
 });
 
@@ -263,7 +283,7 @@ describe('When vendor manager selected...', () => {
     beforeEach(() => {
         cleanup();
         jest.clearAllMocks();
-        useSelector.mockImplementation(callback => callback(state));
+        useSelector.mockImplementation(callback => callback(stateWithVendorManagers));
         render(<SuppliersWithUnacknowledgedOrders />);
         const vmDropdown = screen.getByLabelText('Vendor Manager');
         fireEvent.change(vmDropdown, { target: { value: 'A' } });
@@ -273,5 +293,20 @@ describe('When vendor manager selected...', () => {
         expect(fetchsuppliersWithUnacknowledgedOrdersActionsSpy).toHaveBeenCalledWith({
             vendorManager: 'A'
         });
+    });
+});
+
+describe('When run report clicked ...', () => {
+    beforeEach(() => {
+        cleanup();
+        jest.clearAllMocks();
+        useSelector.mockImplementation(callback => callback(stateWithVendorManagers));
+        render(<SuppliersWithUnacknowledgedOrders />);
+        const runButton = screen.getByText('Run Report');
+        fireEvent.click(runButton);
+    });
+
+    test('Should update report', () => {
+        expect(fetchsuppliersWithUnacknowledgedOrdersActionsSpy).toHaveBeenCalledTimes(1);
     });
 });

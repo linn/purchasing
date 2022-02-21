@@ -107,6 +107,19 @@
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
+        public Stream GetUnacknowledgedOrdersReportExport(UnacknowledgedOrdersRequestResource resource, IEnumerable<string> privileges)
+        {
+            var results = this.domainService.GetUnacknowledgedOrders(resource.SupplierId, resource.OrganisationId);
+
+            var returnResource = results.ConvertToCsvList();
+
+            var stream = new MemoryStream();
+            var csvStreamWriter = new CsvStreamWriter(stream);
+            csvStreamWriter.WriteModel(returnResource);
+
+            return stream;
+        }
+
         public IResult<ReportReturnResource> GetOrdersBySupplierReport(
             OrdersBySupplierSearchResource resource,
             IEnumerable<string> privileges)
