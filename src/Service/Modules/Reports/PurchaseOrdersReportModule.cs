@@ -54,7 +54,8 @@
             var resource = new UnacknowledgedOrdersRequestResource
                                {
                                    SupplierId = request.Query.As<int?>("SupplierId"),
-                                   OrganisationId = request.Query.As<int?>("OrganisationId")
+                                   OrganisationId = request.Query.As<int?>("OrganisationId"),
+                                   Name = request.Query.As<string>("Name")
                                };
 
             var stream = this.purchaseOrderReportFacadeService.GetUnacknowledgedOrdersReportExport(
@@ -64,7 +65,7 @@
             var contentDisposition = new ContentDisposition
                                          {
                                              FileName =
-                                                 $"unackorders {resource.SupplierId ?? resource.OrganisationId}.csv"
+                                                 $"Unacknowledged purchase orders for {resource.Name} ({resource.SupplierId ?? resource.OrganisationId}).csv"
                                          };
 
             stream.Position = 0;

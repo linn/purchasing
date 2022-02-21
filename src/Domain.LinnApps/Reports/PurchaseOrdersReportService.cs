@@ -215,14 +215,19 @@
 
             results.ValueDrillDownTemplates.Add(
                 new DrillDownModel("view", "/purchasing/reports/unacknowledged-orders?supplierId={rowId}", null, 2));
-            results.ValueDrillDownTemplates.Add(
-                new DrillDownModel(
-                    "csv",
-                    "/purchasing/reports/unacknowledged-orders/export?supplierId={rowId}",
-                    null,
-                    3,
-                    true));
+
             this.reportingHelper.AddResultsToModel(results, supplierResults, CalculationValueModelType.TextValue, true);
+            foreach (var row in results.Rows)
+            {
+                results.ValueDrillDownTemplates.Add(
+                    new DrillDownModel(
+                        "csv",
+                        $"/purchasing/reports/unacknowledged-orders/export?supplierId={row.RowId}&name={results.GetGridTextValue(row.RowIndex, 1)}",
+                        row.RowIndex,
+                        3,
+                        true));
+            }
+
             this.reportingHelper.SortRowsByTextColumnValues(results, 1);
 
             return results;

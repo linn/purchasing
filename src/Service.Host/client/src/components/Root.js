@@ -36,23 +36,10 @@ const Root = ({ store }) => (
                     <ConnectedRouter history={history}>
                         <div>
                             <Navigation />
-                            <Route exact path="/" render={() => <Redirect to="/purchasing" />} />
-
-                            <Route
-                                path="/"
-                                render={() => {
-                                    document.title = 'Purchasing';
-                                    return false;
-                                }}
-                            />
-                            <Route
-                                exact
-                                path="/purchasing/reports"
-                                render={() => <Redirect to="/purchasing" />}
-                            />
-
                             <Switch>
                                 <Route exact path="/purchasing" component={App} />
+                                <Redirect exact from="/" to="/purchasing" />
+                                <Redirect exact from="/purchasing/reports" to="/purchasing" />
                                 <Route
                                     exact
                                     path="/purchasing/suppliers"
