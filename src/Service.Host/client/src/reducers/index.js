@@ -40,6 +40,7 @@ import countries from './countries';
 import suppliersWithUnacknowledgedOrders from './suppliersWithUnacknowledgedOrders';
 import planners from './planners';
 import spendByPartReport from './spendByPartReport';
+import purchaseOrderReq from './purchaseOrderReq';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -68,6 +69,7 @@ const rootReducer = history =>
         planners,
         preferredSupplierChange,
         priceChangeReasons,
+        purchaseOrderReq,
         putSupplierOnHold,
         router: connectRouter(history),
         signingLimit,

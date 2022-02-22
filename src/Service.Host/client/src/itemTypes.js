@@ -120,3 +120,9 @@ export const vendorManagers = new ItemType(
 );
 
 export const planners = new ItemType('planners', 'PLANNERS', '/purchasing/suppliers/planners');
+
+export const purchaseOrderReq = new ItemType(
+    'purchaseOrderReq',
+    'PURCHASE_ORDER_REQ',
+    '/purchasing/po-req'
+);

@@ -105,3 +105,8 @@ export const spendByPartReportActionTypes = makeActionTypes(
     reportTypes.spendByPartReport.actionType,
     false
 );
+
+export const purchaseOrderReqActionTypes = makeActionTypes(
+    itemTypes.purchaseOrderReq.actionType,
+    true
+);

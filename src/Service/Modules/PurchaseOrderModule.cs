@@ -38,6 +38,10 @@
             IFacadeResourceFilterService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource>
             purchaseOrderFacadeService;
 
+        private readonly IFacadeResourceService<PurchaseOrderReq, string, PurchaseOrderReqResource, PurchaseOrderReqResource> poReqFacadeService;
+
+        
+
         public PurchaseOrderModule(
             IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource> currencyService,
             IFacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource> orderMethodService,
@@ -62,6 +66,11 @@
             this.Get("/purchasing/purchase-orders/tariffs", this.SearchTariffs);
             this.Get("/purchasing/purchase-orders/{OrderNumber:int}/over-book", this.SearchPurchaseOrders);
             this.Put("/purchasing/purchase-orders/{OrderNumber:int}/over-book", this.AllowOverbook);
+
+            this.Get("/purchasing/purchase-orders/reqs", this.SearchReqs);
+            this.Get("/purchasing/purchase-orders/reqs/{id:int}", this.GetReqs);
+            this.Put("/purchasing/purchase-orders/reqs/{id:int}", this.UpdateReq);
+            this.Post("/purchasing/purchase-orders/reqs", this.CreateReq);
         }
 
         private async Task GetCurrencies(HttpRequest req, HttpResponse res)
@@ -124,11 +133,51 @@
         {
             var resource = await req.Bind<PurchaseOrderResource>();
             resource.Privileges = req.HttpContext.GetPrivileges();
-           
+
             var result = this.purchaseOrderFacadeService.Update(
                 resource.OrderNumber,
                 resource,
                 resource.Privileges);
+
+            await res.Negotiate(result);
+        }
+
+
+        private async Task GetReq(HttpRequest req, HttpResponse res)
+        {
+            var id = req.RouteValues.As<int>("id");
+
+            var result = this.poReqFacadeService.GetById(id, req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task SearchReqs(HttpRequest req, HttpResponse res)
+        {
+            var searchTerm = req.Query.As<string>("searchTerm");
+
+            var result = this.poReqFacadeService.Search(searchTerm);
+
+            await res.Negotiate(result);
+        }
+
+        private async Task UpdateReq(HttpRequest req, HttpResponse res)
+        {
+            var id = req.RouteValues.As<int>("id");
+            var resource = await req.Bind<PurchaseOrderReqResource>();
+            var result = this.poReqFacadeService.Update(id, resource, req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task CreateReq(HttpRequest req, HttpResponse res)
+        {
+            var resource = await req.Bind<PurchaseOrderReqResource>();
+            resource.OpenedById = req.HttpContext.User.GetEmployeeNumber();
+            var result = this.poReqFacadeService.Add(
+                resource,
+                req.HttpContext.GetPrivileges(),
+                null);
 
             await res.Negotiate(result);
         }
