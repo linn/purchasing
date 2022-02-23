@@ -100,6 +100,7 @@
                 ReelOrBoxQty = resource.ReelOrBoxQty,
                 DeliveryFullAddress = resource.AddressId == null ? null :
                                                             new FullAddress { Id = (int)resource.AddressId },
+                UnitOfMeasure = resource.UnitOfMeasure,
                 LeadTimeWeeks = resource.LeadTimeWeeks,
                 OverbookingAllowed = resource.OverbookingAllowed,
                 DamagesPercent = resource.DamagesPercent,

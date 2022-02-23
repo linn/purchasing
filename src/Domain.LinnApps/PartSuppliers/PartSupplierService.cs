@@ -128,6 +128,7 @@
             current.NotesForBuyer = updated.NotesForBuyer;
             current.ManufacturerPartNumber = updated.ManufacturerPartNumber;
             current.VendorPartNumber = updated.VendorPartNumber;
+            current.UnitOfMeasure = updated.UnitOfMeasure;
         }
 
         public PartSupplier CreatePartSupplier(PartSupplier candidate, IEnumerable<string> privileges)
