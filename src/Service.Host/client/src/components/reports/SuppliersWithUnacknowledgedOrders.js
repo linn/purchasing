@@ -18,7 +18,7 @@ import vendorManagersActions from '../../actions/vendorManagersActions';
 import suppliersWithUnacknowledgedOrdersActions from '../../actions/suppliersWithUnacknowledgedOrdersActions';
 
 function SuppliersWithUnacknowledgedOrders() {
-    const [options, setOptions] = useState({});
+    const [options, setOptions] = useState({ useSupplierGroup: true });
 
     const vendorManagers = useSelector(state =>
         collectionSelectorHelpers.getItems(state.vendorManagers)

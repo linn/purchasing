@@ -1,33 +1,42 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrdersReportServiceTests
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NSubstitute;
 
     using NUnit.Framework;
 
-    public class WhenGettingUnacknowledgedOrdersReportForAllSuppliers : ContextBase
+    public class WhenGettingUnacknowledgedOrdersReportBySupplier : ContextBase
     {
         private ResultsModel result;
+
+        private int supplierId;
+
+        private int? supplierGroupId;
 
         private IQueryable<UnacknowledgedOrders> orders;
 
         [SetUp]
         public void SetUp()
         {
+            this.supplierId = 123;
+            this.supplierGroupId = null;
             this.orders = new List<UnacknowledgedOrders>
                                  {
                                      new UnacknowledgedOrders
                                          {
-                                             SupplierId = 1,
-                                             OrganisationId = 400,
+                                             SupplierId = this.supplierId,
+                                             OrganisationId = 456,
                                              OrderNumber = 1,
                                              OrderLine = 1,
                                              DeliveryNumber = 1,
@@ -40,8 +49,8 @@
                                          },
                                      new UnacknowledgedOrders
                                          {
-                                             SupplierId = 2,
-                                             OrganisationId = 500,
+                                             SupplierId = this.supplierId,
+                                             OrganisationId = 456,
                                              OrderNumber = 2,
                                              OrderLine = 2,
                                              DeliveryNumber = 2,
@@ -50,24 +59,27 @@
                                              PartNumber = "P2",
                                              SuppliersDesignation = "part 2",
                                              OrderDeliveryQuantity = 300m,
-                                             CurrencyCode = "GBP"
+                                             CurrencyCode = "EUR"
                                          }
                                  }.AsQueryable();
-            this.UnacknowledgedOrdersRepository.FindAll().Returns(this.orders);
-            this.result = this.Sut.GetUnacknowledgedOrders(null, null);
+            this.UnacknowledgedOrdersRepository.FilterBy(Arg.Any<Expression<Func<UnacknowledgedOrders, bool>>>())
+                .Returns(this.orders);
+            this.SupplierRepository.FindById(this.supplierId).Returns(new Supplier { Name = "Supplier Of Things" });
+            this.result = this.Sut.GetUnacknowledgedOrders(this.supplierId, this.supplierGroupId);
         }
 
         [Test]
         public void ShouldGetOrders()
         {
-            this.UnacknowledgedOrdersRepository.Received().FindAll();
+            this.UnacknowledgedOrdersRepository.Received().FilterBy(Arg.Any<Expression<Func<UnacknowledgedOrders, bool>>>());
         }
 
         [Test]
         public void ShouldReturnReport()
         {
-            this.result.ReportTitle.DisplayValue.Should().Be("All unacknowledged orders");
+            this.result.ReportTitle.DisplayValue.Should().Be("Unacknowledged orders for Supplier Of Things");
             this.result.RowCount().Should().Be(2);
+            this.result.ColumnCount().Should().Be(8);
             this.result.Rows.First(a => a.RowId == "1/1/1").RowTitle.Should().Be("1");
             this.result.GetGridTextValue(0, 0).Should().Be("P1");
             this.result.GetGridTextValue(0, 1).Should().Be("part 1");
@@ -83,7 +95,7 @@
             this.result.GetGridValue(1, 2).Should().Be(2);
             this.result.GetGridValue(1, 3).Should().Be(2);
             this.result.GetGridValue(1, 4).Should().Be(300);
-            this.result.GetGridTextValue(1, 5).Should().Be("GBP");
+            this.result.GetGridTextValue(1, 5).Should().Be("EUR");
             this.result.GetGridTextValue(1, 6).Should().Be("0.24356");
             this.result.GetGridTextValue(1, 7).Should().Be("01-Feb-2029");
         }

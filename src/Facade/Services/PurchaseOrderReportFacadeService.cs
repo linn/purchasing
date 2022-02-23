@@ -89,7 +89,8 @@
         {
             var results = this.domainService.GetSuppliersWithUnacknowledgedOrders(
                 resource.Planner,
-                resource.VendorManager);
+                resource.VendorManager,
+                resource.UseSupplierGroup);
 
             var returnResource = this.BuildResource(results, privileges);
 
@@ -100,7 +101,7 @@
             UnacknowledgedOrdersRequestResource resource,
             IEnumerable<string> privileges)
         {
-            var results = this.domainService.GetUnacknowledgedOrders(resource.SupplierId, resource.OrganisationId);
+            var results = this.domainService.GetUnacknowledgedOrders(resource.SupplierId, resource.SupplierGroupId);
 
             var returnResource = this.BuildResource(results, privileges);
 
@@ -109,7 +110,7 @@
 
         public Stream GetUnacknowledgedOrdersReportExport(UnacknowledgedOrdersRequestResource resource, IEnumerable<string> privileges)
         {
-            var results = this.domainService.GetUnacknowledgedOrders(resource.SupplierId, resource.OrganisationId);
+            var results = this.domainService.GetUnacknowledgedOrders(resource.SupplierId, resource.SupplierGroupId);
 
             var returnResource = results.ConvertToCsvList();
 

@@ -39,7 +39,7 @@
             var resource = new UnacknowledgedOrdersRequestResource
             {
                                    SupplierId = request.Query.As<int?>("SupplierId"),
-                                   OrganisationId = request.Query.As<int?>("OrganisationId")
+                                   SupplierGroupId = request.Query.As<int?>("SupplierGroupId")
                                };
 
             var results = this.purchaseOrderReportFacadeService.GetUnacknowledgedOrdersReport(
@@ -54,19 +54,20 @@
             var resource = new UnacknowledgedOrdersRequestResource
                                {
                                    SupplierId = request.Query.As<int?>("SupplierId"),
-                                   OrganisationId = request.Query.As<int?>("OrganisationId"),
+                                   SupplierGroupId = request.Query.As<int?>("SupplierGroupId"),
                                    Name = request.Query.As<string>("Name")
                                };
 
             var stream = this.purchaseOrderReportFacadeService.GetUnacknowledgedOrdersReportExport(
                                       resource,
                                       request.HttpContext.GetPrivileges());
-            
-            var contentDisposition = new ContentDisposition
-                                         {
-                                             FileName =
-                                                 $"Unacknowledged purchase orders for {resource.Name} ({resource.SupplierId ?? resource.OrganisationId}).csv"
-                                         };
+
+            var fileName = $"Unacknowledged purchase orders for {resource.Name}.csv";
+            if (resource.SupplierId.HasValue)
+            {
+                fileName += $" ({resource.SupplierId}).csv";
+            }
+            var contentDisposition = new ContentDisposition { FileName = fileName };
 
             stream.Position = 0;
             await response.FromStream(stream, "text/csv", contentDisposition);
@@ -77,7 +78,8 @@
             var resource = new SuppliersWithUnacknowledgedOrdersRequestResource
                                {
                                    VendorManager = request.Query.As<string>("VendorManager"),
-                                   Planner = request.Query.As<int?>("Planner")
+                                   Planner = request.Query.As<int?>("Planner"),
+                                   UseSupplierGroup = request.Query.As<bool>("UseSupplierGroup")
                                };
 
             var results = this.purchaseOrderReportFacadeService.GetSuppliersWithUnacknowledgedOrdersReport(

@@ -26,9 +26,13 @@
             this.requestResource = new SuppliersWithUnacknowledgedOrdersRequestResource
                                        {
                                            VendorManager = "A",
-                                           Planner = 123
+                                           Planner = 123,
+                                           UseSupplierGroup = true
                                        };
-            this.DomainService.GetSuppliersWithUnacknowledgedOrders(123, "A")
+            this.DomainService.GetSuppliersWithUnacknowledgedOrders(
+                    this.requestResource.Planner,
+                    this.requestResource.VendorManager,
+                    this.requestResource.UseSupplierGroup)
                 .Returns(new ResultsModel { ReportTitle = new NameModel("Title") });
             this.result = this.Sut.GetSuppliersWithUnacknowledgedOrdersReport(this.requestResource, new List<string>());
         }
@@ -37,7 +41,10 @@
         public void ShouldCallDomainService()
         {
             this.DomainService
-                .Received().GetSuppliersWithUnacknowledgedOrders(123, "A");
+                .Received().GetSuppliersWithUnacknowledgedOrders(
+                    this.requestResource.Planner,
+                    this.requestResource.VendorManager,
+                    this.requestResource.UseSupplierGroup);
         }
 
         [Test]

@@ -39,7 +39,7 @@
                 .Returns(new SuccessResult<ReportReturnResource>(this.reportReturnResource));
 
             this.Response = this.Client.Get(
-                $"/purchasing/reports/unacknowledged-orders?supplierId=123&organisationId=456",
+                $"/purchasing/reports/unacknowledged-orders?supplierId=123&supplierGroupId=456",
                 with => { with.Accept("application/json"); }).Result;
         }
 
@@ -47,7 +47,7 @@
         public void ShouldCallFacadeService()
         {
             this.FacadeService.Received().GetUnacknowledgedOrdersReport(
-                Arg.Is<UnacknowledgedOrdersRequestResource>(a => a.SupplierId == 123 && a.OrganisationId == 456),
+                Arg.Is<UnacknowledgedOrdersRequestResource>(a => a.SupplierId == 123 && a.SupplierGroupId == 456),
                 Arg.Any<IEnumerable<string>>());
         }
 

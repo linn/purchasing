@@ -25,7 +25,7 @@
                 .Returns(new MemoryStream());
 
             this.Response = this.Client.Get(
-                $"/purchasing/reports/unacknowledged-orders/export?supplierId=123&organisationId=456",
+                $"/purchasing/reports/unacknowledged-orders/export?supplierId=123&supplierGroupId=456",
                 with => { with.Accept("application/json"); }).Result;
         }
 
@@ -33,7 +33,7 @@
         public void ShouldCallFacadeService()
         {
             this.FacadeService.Received().GetUnacknowledgedOrdersReportExport(
-                Arg.Is<UnacknowledgedOrdersRequestResource>(a => a.SupplierId == 123 && a.OrganisationId == 456),
+                Arg.Is<UnacknowledgedOrdersRequestResource>(a => a.SupplierId == 123 && a.SupplierGroupId == 456),
                 Arg.Any<IEnumerable<string>>());
         }
 
