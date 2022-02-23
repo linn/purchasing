@@ -237,13 +237,15 @@
                 var supplier = this.supplierRepository.FindById(supplierId.Value);
                 title = $"Unacknowledged orders for {supplier.Name}";
                 orders = this.unacknowledgedOrdersRepository.FilterBy(
-                    a => (a.SupplierId == supplierId));
+                    a => a.SupplierId == supplierId);
             }
             else
             {
-                title = "Unacknowledged orders for organisation";
-                    orders = this.unacknowledgedOrdersRepository.FilterBy(
-                    a => (a.OrganisationId == supplierGroupId));
+                var supplierGroup = this.supplierGroupRepository.FindById(supplierGroupId.Value);
+
+                title = $"Unacknowledged orders for {supplierGroup.Name}";
+                orders = this.unacknowledgedOrdersRepository.FilterBy(
+                    a => a.SupplierGroupId == supplierGroupId);
             }
 
             var results = new ResultsModel

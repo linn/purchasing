@@ -592,6 +592,8 @@
             entity.Property(e => e.OurDeliveryQuantity).HasColumnName("OUR_DELIVERY_QTY");
             entity.Property(e => e.OrderUnitPrice).HasColumnName("ORDER_UNIT_PRICE");
             entity.Property(e => e.RequestedDate).HasColumnName("REQUESTED_DATE");
+            entity.Property(e => e.SupplierGroupId).HasColumnName("SUPPLIER_GROUP_ID");
+            entity.Property(e => e.SupplierGroupName).HasColumnName("SUPPLIER_GROUP_NAME");
         }
 
         private void BuildUnacknowledgedOrderSuppliers(ModelBuilder builder)

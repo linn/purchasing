@@ -5,7 +5,6 @@
     using System.Net;
 
     using FluentAssertions;
-    using FluentAssertions.Extensions;
 
     using Linn.Common.Facade;
     using Linn.Common.Reporting.Resources.ReportResultResources;
