@@ -38,15 +38,11 @@
 
         public string UnitOfMeasure { get; set; }
 
-        public decimal? OrderConversionFactor { get; set; }
-
         public int LeadTimeWeeks { get; set; }
 
         public string OverbookingAllowed { get; set; }
 
         public decimal? DamagesPercent { get; set; }
-
-        public string WebAddress { get; set; }
 
         public string DeliveryInstructions { get; set; }
 

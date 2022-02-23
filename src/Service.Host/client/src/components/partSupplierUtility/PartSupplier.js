@@ -484,9 +484,6 @@ function PartSupplier({ creating }) {
                                                     state.partSupplier?.minimumDeliveryQty
                                                 }
                                                 orderIncrement={state.partSupplier?.orderIncrement}
-                                                orderConversionFactor={
-                                                    state.partSupplier?.orderConversionFactor
-                                                }
                                                 reelOrBoxQty={state.partSupplier?.reelOrBoxQty}
                                                 setPriceChangeDialogOpen={setPriceChangeDialogOpen}
                                                 fetchBasePriceConversion={fetchBasePriceConversion}
@@ -503,7 +500,6 @@ function PartSupplier({ creating }) {
                                                     state.partSupplier?.overbookingAllowed
                                                 }
                                                 damagesPercent={state.partSupplier?.damagesPercent}
-                                                webAddress={state.partSupplier?.webAddress}
                                                 deliveryInstructions={
                                                     state.partSupplier?.deliveryInstructions
                                                 }

@@ -9,7 +9,6 @@ function OtherDetailsTab({
     leadTimeWeeks,
     overbookingAllowed,
     damagesPercent,
-    webAddress,
     deliveryInstructions,
     notesForBuyer
 }) {
@@ -53,7 +52,6 @@ function OtherDetailsTab({
                 <InputField
                     fullWidth
                     label="Web Address"
-                    value={webAddress}
                     propertyName="webAddress"
                     onChange={handleFieldChange}
                 />
@@ -90,7 +88,6 @@ OtherDetailsTab.propTypes = {
     leadTimeWeeks: PropTypes.number,
     overbookingAllowed: PropTypes.string,
     damagesPercent: PropTypes.number,
-    webAddress: PropTypes.string,
     deliveryInstructions: PropTypes.string,
     notesForBuyer: PropTypes.string
 };
@@ -99,7 +96,6 @@ OtherDetailsTab.defaultProps = {
     leadTimeWeeks: null,
     overbookingAllowed: null,
     damagesPercent: null,
-    webAddress: null,
     deliveryInstructions: null,
     notesForBuyer: null
 };

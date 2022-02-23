@@ -48,8 +48,6 @@
 
         public decimal OrderIncrement { get; set; }
 
-        public decimal? OrderConversionFactor { get; set; }
-
         public decimal? ReelOrBoxQty { get; set; }
 
         public int LeadTimeWeeks { get; set; }
