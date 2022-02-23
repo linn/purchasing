@@ -29,7 +29,11 @@
 
         private readonly IQueryRepository<SuppliersWithUnacknowledgedOrders> suppliersWithUnacknowledgedOrdersRepository;
 
+        private readonly IQueryRepository<SupplierGroupsWithUnacknowledgedOrders> supplierGroupsWithUnacknowledgedOrdersRepository;
+
         private readonly IQueryRepository<UnacknowledgedOrders> unacknowledgedOrdersRepository;
+
+        private readonly IRepository<SupplierGroup, int> supplierGroupRepository;
 
         private readonly IRepository<Supplier, int> supplierRepository;
 
@@ -41,7 +45,9 @@
             IPurchaseOrdersPack purchaseOrdersPack,
             IReportingHelper reportingHelper,
             IQueryRepository<SuppliersWithUnacknowledgedOrders> suppliersWithUnacknowledgedOrdersRepository,
-            IQueryRepository<UnacknowledgedOrders> unacknowledgedOrdersRepository)
+            IQueryRepository<SupplierGroupsWithUnacknowledgedOrders> supplierGroupsWithUnacknowledgedOrdersRepository,
+            IQueryRepository<UnacknowledgedOrders> unacknowledgedOrdersRepository,
+            IRepository<SupplierGroup, int> supplierGroupRepository)
         {
             this.purchaseOrderRepository = purchaseOrderRepository;
             this.supplierRepository = supplierRepository;
@@ -50,7 +56,9 @@
             this.purchaseOrdersPack = purchaseOrdersPack;
             this.reportingHelper = reportingHelper;
             this.suppliersWithUnacknowledgedOrdersRepository = suppliersWithUnacknowledgedOrdersRepository;
+            this.supplierGroupsWithUnacknowledgedOrdersRepository = supplierGroupsWithUnacknowledgedOrdersRepository;
             this.unacknowledgedOrdersRepository = unacknowledgedOrdersRepository;
+            this.supplierGroupRepository = supplierGroupRepository;
         }
 
         public ResultsModel GetOrdersByPartReport(DateTime from, DateTime to, string partNumber, bool includeCancelled)
@@ -177,7 +185,7 @@
         public ResultsModel GetSuppliersWithUnacknowledgedOrders(
             int? planner,
             string vendorManager,
-            bool useSupplierGroup = true)
+            bool useSupplierGroup)
         {
             var suppliers = this.suppliersWithUnacknowledgedOrdersRepository.FindAll();
             if (planner.HasValue)
@@ -190,7 +198,7 @@
                 suppliers = suppliers.Where(a => a.VendorManager == vendorManager);
             }
 
-            var results = new ResultsModel(new string[] { "Supplier Id", "Supplier Name" })
+            var results = new ResultsModel(new string[] { "Id", "Name" })
                               {
                                   ReportTitle = new NameModel("Suppliers with unacknowledged orders")
                               };
@@ -204,13 +212,13 @@
                 supplierResults.Add(new CalculationValueModel
                                         {
                                             RowId = rowId,
-                                            ColumnId = "Supplier Id",
+                                            ColumnId = "Id",
                                             TextDisplay = supplier.Id.ToString()
                                         });
                 supplierResults.Add(
                     new CalculationValueModel
                         {
-                            RowId = rowId, ColumnId = "Supplier Name", TextDisplay = supplier.Name
+                            RowId = rowId, ColumnId = "Name", TextDisplay = supplier.Name
                         });
                 supplierResults.Add(new CalculationValueModel { RowId = rowId, ColumnId = "view", TextDisplay = "view" });
                 supplierResults.Add(new CalculationValueModel { RowId = rowId, ColumnId = "csv", TextDisplay = "csv" });

@@ -21,7 +21,7 @@
         ResultsModel GetSuppliersWithUnacknowledgedOrders(
             int? planner,
             string vendorManager,
-            bool useSupplierGroup = true);
+            bool useSupplierGroup);
 
         ResultsModel GetUnacknowledgedOrders(int? supplierId, int? supplierGroupId);
     }

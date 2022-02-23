@@ -26,11 +26,15 @@
 
         protected IRepository<Supplier, int> SupplierRepository { get; private set; }
 
+        protected IRepository<SupplierGroup, int> SupplierGroupRepository { get; private set; }
+
         protected IPurchaseOrdersReportService Sut { get; private set; }
 
         protected IPurchaseOrdersPack PurchaseOrdersPack { get; private set; }
 
         protected IQueryRepository<SuppliersWithUnacknowledgedOrders> SuppliersWithUnacknowledgedOrdersRepository { get; private set; }
+
+        protected IQueryRepository<SupplierGroupsWithUnacknowledgedOrders> SupplierGroupsWithUnacknowledgedOrdersRepository { get; private set; }
 
         protected IQueryRepository<UnacknowledgedOrders> UnacknowledgedOrdersRepository { get; private set; }
 
@@ -40,9 +44,11 @@
             this.PurchaseLedgerRepository = Substitute.For<IRepository<PurchaseLedger, int>>();
             this.PurchaseOrderRepository = Substitute.For<IRepository<PurchaseOrder, int>>();
             this.SupplierRepository = Substitute.For<IRepository<Supplier, int>>();
+            this.SupplierGroupRepository = Substitute.For<IRepository<SupplierGroup, int>>();
             this.PartQueryRepository = Substitute.For<IQueryRepository<Part>>();
             this.PurchaseOrdersPack = Substitute.For<IPurchaseOrdersPack>();
             this.SuppliersWithUnacknowledgedOrdersRepository = Substitute.For<IQueryRepository<SuppliersWithUnacknowledgedOrders>>();
+            this.SupplierGroupsWithUnacknowledgedOrdersRepository = Substitute.For<IQueryRepository<SupplierGroupsWithUnacknowledgedOrders>>();
             this.UnacknowledgedOrdersRepository = Substitute.For<IQueryRepository<UnacknowledgedOrders>>();
 
             this.ReportingHelper = new ReportingHelper();
@@ -54,7 +60,9 @@
                 this.PurchaseOrdersPack,
                 this.ReportingHelper,
                 this.SuppliersWithUnacknowledgedOrdersRepository,
-                this.UnacknowledgedOrdersRepository);
+                this.SupplierGroupsWithUnacknowledgedOrdersRepository,
+                this.UnacknowledgedOrdersRepository,
+                this.SupplierGroupRepository);
         }
     }
 }
