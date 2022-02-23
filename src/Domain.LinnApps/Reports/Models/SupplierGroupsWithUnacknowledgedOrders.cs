@@ -6,7 +6,7 @@
 
         public string Name { get; set; }
 
-        public int SupplierGroupId { get; set; }
+        public int? SupplierGroupId { get; set; }
 
         public string SupplierGroupName { get; set; }
 

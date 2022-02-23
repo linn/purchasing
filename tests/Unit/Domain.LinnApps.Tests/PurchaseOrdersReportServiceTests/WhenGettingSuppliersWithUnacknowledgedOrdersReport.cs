@@ -31,23 +31,23 @@
                                  {
                                      new SuppliersWithUnacknowledgedOrders
                                          {
-                                             Id = 1, Name = "one", Planner = 1, VendorManager = "M"
+                                             SupplierId = 1, SupplierName = "one", Planner = 1, VendorManager = "M"
                                          },
                                      new SuppliersWithUnacknowledgedOrders
                                          {
-                                             Id = 2, Name = "two", Planner = 1, VendorManager = "M"
+                                             SupplierId = 2, SupplierName = "two", Planner = 1, VendorManager = "M"
                                          },
                                      new SuppliersWithUnacknowledgedOrders
                                          {
-                                             Id = 3, Name = "three", Planner = 1, VendorManager = "M"
+                                             SupplierId = 3, SupplierName = "three", Planner = 1, VendorManager = "M"
                                          },
                                      new SuppliersWithUnacknowledgedOrders
                                          {
-                                             Id = 4, Name = "four",  Planner = 1, VendorManager = "B"
+                                             SupplierId = 4, SupplierName = "four",  Planner = 1, VendorManager = "B"
                                          },
                                      new SuppliersWithUnacknowledgedOrders
                                          {
-                                             Id = 5, Name = "five", Planner = 2, VendorManager = "M"
+                                             SupplierId = 5, SupplierName = "five", Planner = 2, VendorManager = "M"
                                          }
                                  }.AsQueryable();
             this.SuppliersWithUnacknowledgedOrdersRepository

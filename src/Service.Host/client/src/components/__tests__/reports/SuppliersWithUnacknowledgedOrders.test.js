@@ -291,7 +291,8 @@ describe('When vendor manager selected...', () => {
 
     test('Should update report', () => {
         expect(fetchsuppliersWithUnacknowledgedOrdersActionsSpy).toHaveBeenCalledWith({
-            vendorManager: 'A'
+            vendorManager: 'A',
+            useSupplierGroup: true
         });
     });
 });

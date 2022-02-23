@@ -2,11 +2,11 @@
 {
     public class SuppliersWithUnacknowledgedOrders
     {
-        public int Id { get; set; }
+        public int SupplierId { get; set; }
 
-        public string Name { get; set; }
+        public string SupplierName { get; set; }
 
-        public int SupplierGroupId { get; set; }
+        public int? SupplierGroupId { get; set; }
 
         public string SupplierGroupName { get; set; }
 

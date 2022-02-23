@@ -208,17 +208,17 @@
             var supplierResults = new List<CalculationValueModel>();
             foreach (var supplier in suppliers)
             {
-                var rowId = supplier.Id.ToString();
+                var rowId = supplier.SupplierId.ToString();
                 supplierResults.Add(new CalculationValueModel
                                         {
                                             RowId = rowId,
                                             ColumnId = "Id",
-                                            TextDisplay = supplier.Id.ToString()
+                                            TextDisplay = supplier.SupplierId.ToString()
                                         });
                 supplierResults.Add(
                     new CalculationValueModel
                         {
-                            RowId = rowId, ColumnId = "Name", TextDisplay = supplier.Name
+                            RowId = rowId, ColumnId = "Name", TextDisplay = supplier.SupplierName
                         });
                 supplierResults.Add(new CalculationValueModel { RowId = rowId, ColumnId = "view", TextDisplay = "view" });
                 supplierResults.Add(new CalculationValueModel { RowId = rowId, ColumnId = "csv", TextDisplay = "csv" });
