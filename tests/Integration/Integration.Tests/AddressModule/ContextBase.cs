@@ -41,7 +41,6 @@
 
         protected IRepository<FullAddress, int> FullAddressRepository { get; private set; }
 
-
         protected IRepository<Country, string> CountryRepository { get; private set; }
 
         protected IFacadeResourceService<Country, string, CountryResource, CountryResource> CountryService { get; private set; }
