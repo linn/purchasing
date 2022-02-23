@@ -33,5 +33,7 @@
         public int? SupplierGroupId { get; set; }
 
         public string SupplierGroupName { get; set; }
+
+        public string CurrencyCode { get; set; }
     }
 }

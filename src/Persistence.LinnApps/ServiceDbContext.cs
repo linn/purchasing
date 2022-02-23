@@ -33,10 +33,6 @@
 
         public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
 
-        public DbSet<PurchaseOrderDetail> PurchaseOrderDetails { get; set; }
-
-        public DbSet<PurchaseOrderDelivery> PurchaseOrderDeliveries { get; set; }
-
         public DbSet<SigningLimit> SigningLimits { get; set; }
 
         public DbSet<SigningLimitLog> SigningLimitLogs { get; set; }
@@ -594,6 +590,7 @@
             entity.Property(e => e.RequestedDate).HasColumnName("REQUESTED_DATE");
             entity.Property(e => e.SupplierGroupId).HasColumnName("SUPPLIER_GROUP_ID");
             entity.Property(e => e.SupplierGroupName).HasColumnName("SUPPLIER_GROUP_NAME");
+            entity.Property(e => e.CurrencyCode).HasColumnName("CURRENCY_CODE").HasMaxLength(4);
         }
 
         private void BuildUnacknowledgedOrderSuppliers(ModelBuilder builder)

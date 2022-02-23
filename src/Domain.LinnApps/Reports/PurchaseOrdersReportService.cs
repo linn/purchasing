@@ -251,16 +251,18 @@
             var results = new ResultsModel
                               {
                                   ReportTitle = new NameModel(title),
-                                  RowHeader = "Order Number/Line"
+                                  RowHeader = "Order Number"
                               };
             var columns = new List<AxisDetailsModel>
                               {
-                                  new AxisDetailsModel("Part Number", GridDisplayType.TextValue) { SortOrder = 1, AllowWrap = false },
-                                  new AxisDetailsModel("Description", GridDisplayType.TextValue) { SortOrder = 2 },
-                                  new AxisDetailsModel("Delivery No", GridDisplayType.TextValue) { SortOrder = 3 },
+                                  new AxisDetailsModel("Part Number", GridDisplayType.TextValue) { SortOrder = 0, AllowWrap = false },
+                                  new AxisDetailsModel("Description", GridDisplayType.TextValue) { SortOrder = 1 },
+                                  new AxisDetailsModel("Order Line", GridDisplayType.Value) { SortOrder = 2, DecimalPlaces = 0 },
+                                  new AxisDetailsModel("Delivery No", GridDisplayType.Value) { SortOrder = 3, DecimalPlaces = 0 },
                                   new AxisDetailsModel("Qty", GridDisplayType.Value) { SortOrder = 4 },
-                                  new AxisDetailsModel("Unit Price", GridDisplayType.TextValue) { SortOrder = 5 },
-                                  new AxisDetailsModel("Requested Delivery", GridDisplayType.TextValue) { SortOrder = 6 }
+                                  new AxisDetailsModel("Currency Code", GridDisplayType.TextValue) { SortOrder = 5 },
+                                  new AxisDetailsModel("Unit Price", GridDisplayType.TextValue) { SortOrder = 6 },
+                                  new AxisDetailsModel("Requested Delivery", GridDisplayType.TextValue) { SortOrder = 7 }
                               };
             results.AddSortedColumns(columns);
 
@@ -273,32 +275,46 @@
                                    RowId = rowId,
                                    ColumnId = "Part Number",
                                    TextDisplay = order.PartNumber,
-                                   RowTitle = $"{order.OrderNumber}/{order.OrderLine}"
+                                   RowTitle = $"{order.OrderNumber}"
                                });
                 models.Add(new CalculationValueModel
                                {
                                    RowId = rowId, ColumnId = "Description", TextDisplay = order.SuppliersDesignation,
-                                   RowTitle = $"{order.OrderNumber}/{order.OrderLine}"
+                                   RowTitle = $"{order.OrderNumber}"
                                });
                 models.Add(new CalculationValueModel
                                {
-                                   RowId = rowId, ColumnId = "Delivery No", TextDisplay = order.DeliveryNumber.ToString(),
-                                   RowTitle = $"{order.OrderNumber}/{order.OrderLine}"
+                                   RowId = rowId,
+                                   ColumnId = "Order Line",
+                                   Value = order.OrderLine,
+                                   RowTitle = $"{order.OrderNumber}"
+                               });
+                models.Add(new CalculationValueModel
+                               {
+                                   RowId = rowId, ColumnId = "Delivery No", Value = order.DeliveryNumber,
+                                   RowTitle = $"{order.OrderNumber}"
                                });
                 models.Add(new CalculationValueModel
                                {
                                    RowId = rowId, ColumnId = "Qty", Value = order.OrderDeliveryQuantity,
-                                   RowTitle = $"{order.OrderNumber}/{order.OrderLine}"
+                                   RowTitle = $"{order.OrderNumber}"
+                               });
+                models.Add(new CalculationValueModel
+                               {
+                                   RowId = rowId,
+                                   ColumnId = "Currency Code",
+                                   TextDisplay = order.CurrencyCode, 
+                                   RowTitle = $"{order.OrderNumber}"
                                });
                 models.Add(new CalculationValueModel
                                {
                                    RowId = rowId, ColumnId = "Unit Price", TextDisplay = order.OrderUnitPrice.ToString("###,###,###,##0.00###"),
-                                   RowTitle = $"{order.OrderNumber}/{order.OrderLine}"
+                                   RowTitle = $"{order.OrderNumber}"
                                });
                 models.Add(new CalculationValueModel
                                {
                                    RowId = rowId, ColumnId = "Requested Delivery", TextDisplay = order.RequestedDate.ToString("dd-MMM-yyyy"),
-                                   RowTitle = $"{order.OrderNumber}/{order.OrderLine}"
+                                   RowTitle = $"{order.OrderNumber}"
                                });
             }
 
