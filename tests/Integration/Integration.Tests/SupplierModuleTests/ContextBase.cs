@@ -92,20 +92,38 @@
 
         protected IRepository<Employee, int> MockEmployeeRepository { get; set; }
 
+        protected IRepository<PartSupplier, PartSupplierKey> MockPartSupplierRepository { get; private set; }
+
+        protected IPartSupplierService MockPartSupplierDomainService { get; set; }
+
         [SetUp]
         public void EstablishContext()
         {
             this.TransactionManager = Substitute.For<ITransactionManager>();
-            this.PartSupplierFacadeService = 
-                Substitute
-                    .For<IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>>();
-            this.PartFacadeService = Substitute.For<IPartService>();
-            this.Log = Substitute.For<ILog>();
+
             this.MockAuthService = Substitute.For<IAuthorisationService>();
+
+            this.MockPartSupplierRepository = Substitute.For<IRepository<PartSupplier, PartSupplierKey>>();
+
+            this.MockPartSupplierDomainService = Substitute.For<IPartSupplierService>();
+
+            this.PartSupplierFacadeService = new PartSupplierFacadeService(
+                this.MockPartSupplierRepository,
+                this.TransactionManager,
+                new PartSupplierResourceBuilder(this.MockAuthService),
+                this.MockPartSupplierDomainService);
+
+                this.PartFacadeService = Substitute.For<IPartService>();
+
+            this.Log = Substitute.For<ILog>();
+
+
             this.MockSupplierRepository = Substitute.For<IRepository<Supplier, int>>();
 
             this.MockDomainService = Substitute.For<ISupplierService>();
+
             this.MockDatabaseService = Substitute.For<IDatabaseService>();
+
             this.SupplierFacadeService = new SupplierFacadeService(
                 this.MockSupplierRepository,
                 this.TransactionManager,
@@ -115,7 +133,8 @@
 
                 this.PreferredSupplierChangeService = Substitute
                 .For<IFacadeResourceService<PreferredSupplierChange, PreferredSupplierChangeKey, PreferredSupplierChangeResource, PreferredSupplierChangeKey>>();
-            this.PriceChangeReasonService = Substitute
+            
+                this.PriceChangeReasonService = Substitute
                 .For<IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource>>();
 
             this.MockPartCategoriesRepository = Substitute.For<IRepository<PartCategory, string>>();
@@ -132,7 +151,9 @@
                 new SupplierResourceBuilder(this.MockAuthService));
 
             this.MockPlannerRepository = Substitute.For<IRepository<Planner, int>>();
+            
             this.MockEmployeeRepository = Substitute.For<IRepository<Employee, int>>();
+            
             this.PlannerService = new PlannerService(
                 this.MockPlannerRepository,
                 this.TransactionManager,

@@ -1,12 +1,13 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.SupplierModuleTests
 {
-    using System.Collections.Generic;
     using System.Net;
 
     using FluentAssertions;
 
-    using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.Keys;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
+    using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -16,30 +17,31 @@
 
     public class WhenUpdatingPartSupplier : ContextBase
     {
-        private PartSupplierResource resource;
+        private PartSupplierResource updateResource;
 
         [SetUp]
         public void SetUp()
         {
+            this.updateResource = new PartSupplierResource
+                                      {
+                                          PartNumber = "PART",
+                                          SupplierId = 100
+                                      };
 
-            this.resource = new PartSupplierResource
-                                {
-                                    PartNumber = "PART",
-                                    SupplierId = 100
-                                };
-
-            this.PartSupplierFacadeService.Update(Arg.Any<PartSupplierKey>(), Arg.Any<PartSupplierResource>())
-                .ReturnsForAnyArgs(
-                    new SuccessResult<PartSupplierResource>(
-                        new PartSupplierResource
+            this.MockPartSupplierRepository
+                .FindById(Arg.Is<PartSupplierKey>(
+                    k => k.PartNumber == this.updateResource.PartNumber && k.SupplierId == this.updateResource.SupplierId))
+                .Returns(
+                    new PartSupplier
                         {
-                            PartNumber = "PART",
-                            SupplierId = 100
-                        }));
+                            PartNumber = this.updateResource.PartNumber, SupplierId = this.updateResource.SupplierId,
+                            Part = new Part { PartNumber = this.updateResource.PartNumber },
+                            Supplier = new Supplier { SupplierId = this.updateResource.SupplierId }
+                        });
 
             this.Response = this.Client.Put(
                 $"/purchasing/part-suppliers/record?partId={1}&supplierId={100}",
-                this.resource,
+                this.updateResource,
                 with =>
                 {
                     with.Accept("application/json");
@@ -53,17 +55,8 @@
         }
 
         [Test]
-        public void ShouldCallUpdate()
-        {
-            this.PartSupplierFacadeService.Received()
-                .Update(Arg.Any<PartSupplierKey>(), Arg.Any<PartSupplierResource>(), Arg.Any<IEnumerable<string>>());
-        }
-
-        [Test]
         public void ShouldReturnJsonContentType()
         {
-            var response = this.Response;
-
             this.Response.Content.Headers.ContentType.Should().NotBeNull();
             this.Response.Content.Headers.ContentType?.ToString().Should().Be("application/json");
         }

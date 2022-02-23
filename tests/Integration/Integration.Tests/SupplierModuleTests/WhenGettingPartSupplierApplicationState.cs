@@ -6,8 +6,7 @@
 
     using FluentAssertions;
 
-    using Linn.Common.Facade;
-    using Linn.Common.Resources;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -17,20 +16,11 @@
 
     public class WhenGettingPartSupplierApplicationState : ContextBase
     {
-        private PartSupplierResource partSupplierResource;
-
         [SetUp]
         public void SetUp()
         {
-            this.partSupplierResource = new PartSupplierResource
-                                            {
-                                                Links = new LinkResource[1] { new LinkResource("edit", "/edit") }
-                                            };
-
-            this.PartSupplierFacadeService.GetApplicationState(Arg.Any<List<string>>())
-                .Returns(new SuccessResult<PartSupplierResource>(this.partSupplierResource));
-
-
+            this.MockAuthService.HasPermissionFor(AuthorisedAction.PartSupplierCreate, Arg.Any<IEnumerable<string>>())
+                .Returns(true);
             this.Response = this.Client.Get(
                 $"/purchasing/part-suppliers/application-state",
                 with =>
@@ -58,8 +48,8 @@
             var resource = this.Response.DeserializeBody<PartSupplierResource>();
             resource.Should().NotBeNull();
             resource.Links.Length.Should().Be(1);
-            resource.Links.First().Rel.Should().Be("edit");
-            resource.Links.First().Href.Should().Be("/edit");
+            resource.Links.First().Rel.Should().Be("create");
+            resource.Links.First().Href.Should().Be("/purchasing/part-suppliers/create");
         }
     }
 }

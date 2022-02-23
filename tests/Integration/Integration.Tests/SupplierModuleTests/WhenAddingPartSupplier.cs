@@ -5,7 +5,9 @@
 
     using FluentAssertions;
 
-    using Linn.Common.Facade;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
+    using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -17,6 +19,8 @@
     {
         private PartSupplierResource resource;
 
+        private PartSupplier partSupplier;
+
         [SetUp]
         public void SetUp()
         {
@@ -27,13 +31,13 @@
                 SupplierId = 100
             };
 
-            this.PartSupplierFacadeService.Add(Arg.Any<PartSupplierResource>())
-                .ReturnsForAnyArgs(new CreatedResult<PartSupplierResource>(
-                                       new PartSupplierResource
-                                           {
-                                               PartNumber = "PART",
-                                               SupplierId = 100
-                                           }));
+            this.partSupplier = new PartSupplier
+                                    {
+                                        PartNumber = "PART",
+                                        SupplierId = 100,
+                                        Part = new Part { PartNumber = "PART" },
+                                        Supplier = new Supplier { SupplierId = 100 }
+                                    };
 
             this.Response = this.Client.Post(
                 $"/purchasing/part-suppliers/record",
@@ -48,13 +52,6 @@
         public void ShouldReturnCreated()
         {
             this.Response.StatusCode.Should().Be(HttpStatusCode.Created);
-        }
-
-        [Test]
-        public void ShouldCallAdd()
-        {
-            this.PartSupplierFacadeService.Received()
-                .Add(Arg.Any<PartSupplierResource>(), Arg.Any<IEnumerable<string>>());
         }
 
         [Test]
