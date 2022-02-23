@@ -262,7 +262,7 @@
                                   new AxisDetailsModel("Qty", GridDisplayType.Value) { SortOrder = 4 },
                                   new AxisDetailsModel("Currency Code", GridDisplayType.TextValue) { SortOrder = 5 },
                                   new AxisDetailsModel("Unit Price", GridDisplayType.TextValue) { SortOrder = 6 },
-                                  new AxisDetailsModel("Requested Delivery", GridDisplayType.TextValue) { SortOrder = 7 }
+                                  new AxisDetailsModel("Requested Delivery", GridDisplayType.TextValue) { SortOrder = 7, AllowWrap = false }
                               };
             results.AddSortedColumns(columns);
 
@@ -279,7 +279,8 @@
                                });
                 models.Add(new CalculationValueModel
                                {
-                                   RowId = rowId, ColumnId = "Description", TextDisplay = order.SuppliersDesignation,
+                                   RowId = rowId, ColumnId = "Description", 
+                                   TextDisplay = order.SuppliersDesignation,
                                    RowTitle = $"{order.OrderNumber}"
                                });
                 models.Add(new CalculationValueModel
@@ -291,12 +292,14 @@
                                });
                 models.Add(new CalculationValueModel
                                {
-                                   RowId = rowId, ColumnId = "Delivery No", Value = order.DeliveryNumber,
+                                   RowId = rowId, ColumnId = "Delivery No", 
+                                   Value = order.DeliveryNumber,
                                    RowTitle = $"{order.OrderNumber}"
                                });
                 models.Add(new CalculationValueModel
                                {
-                                   RowId = rowId, ColumnId = "Qty", Value = order.OrderDeliveryQuantity,
+                                   RowId = rowId, ColumnId = "Qty", 
+                                   Value = order.OrderDeliveryQuantity,
                                    RowTitle = $"{order.OrderNumber}"
                                });
                 models.Add(new CalculationValueModel
@@ -308,12 +311,14 @@
                                });
                 models.Add(new CalculationValueModel
                                {
-                                   RowId = rowId, ColumnId = "Unit Price", TextDisplay = order.OrderUnitPrice.ToString("###,###,###,##0.00###"),
+                                   RowId = rowId, ColumnId = "Unit Price",
+                                   TextDisplay = order.OrderUnitPrice.ToString("###,###,###,##0.00###"),
                                    RowTitle = $"{order.OrderNumber}"
                                });
                 models.Add(new CalculationValueModel
                                {
-                                   RowId = rowId, ColumnId = "Requested Delivery", TextDisplay = order.RequestedDate.ToString("dd-MMM-yyyy"),
+                                   RowId = rowId, ColumnId = "Requested Delivery", 
+                                   TextDisplay = order.RequestedDate.ToString("dd-MMM-yyyy"),
                                    RowTitle = $"{order.OrderNumber}"
                                });
             }

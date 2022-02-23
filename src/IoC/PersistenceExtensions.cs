@@ -62,9 +62,12 @@
                 .AddTransient<IRepository<VendorManager, string>, VendorManagerRepository>()
                 .AddTransient<IRepository<Planner, int>, PlannerRepository>()
                 .AddTransient<IQueryRepository<SupplierSpend>, SupplierSpendRepository>()
-                .AddTransient<IQueryRepository<UnacknowledgedOrders>, UnacknowledgedOrdersRepository>()
-                .AddTransient<IQueryRepository<SuppliersWithUnacknowledgedOrders>, SuppliersWithUnacknowledgedOrdersRepository>()
-                .AddTransient<IQueryRepository<SupplierGroupsWithUnacknowledgedOrders>, SupplierGroupsWithUnacknowledgedOrdersRepository>()
+                .AddTransient<IQueryRepository<UnacknowledgedOrders>, EntityFrameworkQueryRepository<UnacknowledgedOrders>>(r
+                    => new EntityFrameworkQueryRepository<UnacknowledgedOrders>(r.GetService<ServiceDbContext>()?.UnacknowledgedOrders))
+                .AddTransient<IQueryRepository<SuppliersWithUnacknowledgedOrders>, EntityFrameworkQueryRepository<SuppliersWithUnacknowledgedOrders>>(r
+                    => new EntityFrameworkQueryRepository<SuppliersWithUnacknowledgedOrders>(r.GetService<ServiceDbContext>()?.SuppliersWithUnacknowledgedOrders))
+                .AddTransient<IQueryRepository<SupplierGroupsWithUnacknowledgedOrders>, EntityFrameworkQueryRepository<SupplierGroupsWithUnacknowledgedOrders>>(r
+                    => new EntityFrameworkQueryRepository<SupplierGroupsWithUnacknowledgedOrders>(r.GetService<ServiceDbContext>()?.SupplierGroupsWithUnacknowledgedOrders))
                 .AddTransient<IRepository<SupplierGroup, int>, EntityFrameworkRepository<SupplierGroup, int>>(
                     r => new EntityFrameworkRepository<SupplierGroup, int>(r.GetService<ServiceDbContext>()?.SupplierGroups));
         }
