@@ -187,60 +187,39 @@
             string vendorManager,
             bool useSupplierGroup)
         {
-            var suppliers = this.suppliersWithUnacknowledgedOrdersRepository.FindAll();
-            if (planner.HasValue)
-            {
-                suppliers = suppliers.Where(a => a.Planner == planner);
-            }
-
-            if (!string.IsNullOrEmpty(vendorManager))
-            {
-                suppliers = suppliers.Where(a => a.VendorManager == vendorManager);
-            }
-
             var results = new ResultsModel(new string[] { "Id", "Name" })
                               {
                                   ReportTitle = new NameModel("Suppliers with unacknowledged orders")
                               };
+            results.AddColumn("supplierOrGroup", string.Empty, GridDisplayType.TextValue);
             results.AddColumn("view", string.Empty, GridDisplayType.TextValue);
             results.AddColumn("csv", string.Empty, GridDisplayType.TextValue);
 
-            var supplierResults = new List<CalculationValueModel>();
-            foreach (var supplier in suppliers)
-            {
-                var rowId = supplier.SupplierId.ToString();
-                supplierResults.Add(new CalculationValueModel
-                                        {
-                                            RowId = rowId,
-                                            ColumnId = "Id",
-                                            TextDisplay = supplier.SupplierId.ToString()
-                                        });
-                supplierResults.Add(
-                    new CalculationValueModel
-                        {
-                            RowId = rowId, ColumnId = "Name", TextDisplay = supplier.SupplierName
-                        });
-                supplierResults.Add(new CalculationValueModel { RowId = rowId, ColumnId = "view", TextDisplay = "view" });
-                supplierResults.Add(new CalculationValueModel { RowId = rowId, ColumnId = "csv", TextDisplay = "csv" });
-            }
-
-            results.ValueDrillDownTemplates.Add(
-                new DrillDownModel("view", "/purchasing/reports/unacknowledged-orders?supplierId={rowId}", null, 2));
+            var supplierResults = useSupplierGroup
+                                      ? this.GetResultsBySupplierGroup(vendorManager, planner)
+                                      : this.GetResultsBySupplier(vendorManager, planner);
 
             this.reportingHelper.AddResultsToModel(results, supplierResults, CalculationValueModelType.TextValue, true);
             foreach (var row in results.Rows)
             {
+                var href = results.GetGridTextValue(row.RowIndex, 2) == string.Empty
+                               ? $"/purchasing/reports/unacknowledged-orders?supplierId={row.RowId}&name={results.GetGridTextValue(row.RowIndex, 1)}"
+                               : $"/purchasing/reports/unacknowledged-orders?supplierGroupId={row.RowId}&name={results.GetGridTextValue(row.RowIndex, 1)}";
+                results.ValueDrillDownTemplates.Add(new DrillDownModel("view", href, row.RowIndex, 3));
+                
+                var exportHref = results.GetGridTextValue(row.RowIndex, 2) == string.Empty
+                               ? $"/purchasing/reports/unacknowledged-orders/export?supplierId={row.RowId}&name={results.GetGridTextValue(row.RowIndex, 1)}"
+                               : $"/purchasing/reports/unacknowledged-orders/export?supplierGroupId={row.RowId}&name={results.GetGridTextValue(row.RowIndex, 1)}";
                 results.ValueDrillDownTemplates.Add(
                     new DrillDownModel(
                         "csv",
-                        $"/purchasing/reports/unacknowledged-orders/export?supplierId={row.RowId}&name={results.GetGridTextValue(row.RowIndex, 1)}",
+                        exportHref,
                         row.RowIndex,
-                        3,
+                        4,
                         true));
             }
 
             this.reportingHelper.SortRowsByTextColumnValues(results, 1);
-
             return results;
         }
 
@@ -563,6 +542,82 @@
                         RowId = currentRowId, ColumnId = "Qty",
                         Value = delivery.OurDeliveryQty
                     });
+        }
+
+        private List<CalculationValueModel> GetResultsBySupplier(string vendorManager, int? planner)
+        {
+            var suppliers = this.suppliersWithUnacknowledgedOrdersRepository.FindAll();
+            if (planner.HasValue)
+            {
+                suppliers = suppliers.Where(a => a.Planner == planner);
+            }
+
+            if (!string.IsNullOrEmpty(vendorManager))
+            {
+                suppliers = suppliers.Where(a => a.VendorManager == vendorManager);
+            }
+
+            var supplierResults = new List<CalculationValueModel>();
+            foreach (var supplier in suppliers)
+            {
+                var rowId = supplier.SupplierId.ToString();
+                supplierResults.Add(new CalculationValueModel
+                                        {
+                                            RowId = rowId,
+                                            ColumnId = "Id",
+                                            TextDisplay = supplier.SupplierId.ToString()
+                                        });
+                supplierResults.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = rowId,
+                            ColumnId = "Name",
+                            TextDisplay = supplier.SupplierName
+                        });
+                supplierResults.Add(new CalculationValueModel { RowId = rowId, ColumnId = "view", TextDisplay = "view" });
+                supplierResults.Add(new CalculationValueModel { RowId = rowId, ColumnId = "csv", TextDisplay = "csv" });
+                supplierResults.Add(new CalculationValueModel { RowId = rowId, ColumnId = "supplierOrGroup", TextDisplay = string.Empty });
+            }
+
+            return supplierResults;
+        }
+
+        private List<CalculationValueModel> GetResultsBySupplierGroup(string vendorManager, int? planner)
+        {
+            var suppliers = this.supplierGroupsWithUnacknowledgedOrdersRepository.FindAll();
+            if (planner.HasValue)
+            {
+                suppliers = suppliers.Where(a => a.Planner == planner);
+            }
+
+            if (!string.IsNullOrEmpty(vendorManager))
+            {
+                suppliers = suppliers.Where(a => a.VendorManager == vendorManager);
+            }
+
+            var supplierResults = new List<CalculationValueModel>();
+            foreach (var supplier in suppliers)
+            {
+                var rowId = supplier.Id.ToString();
+                supplierResults.Add(new CalculationValueModel
+                                        {
+                                            RowId = rowId,
+                                            ColumnId = "Id",
+                                            TextDisplay = supplier.Id.ToString()
+                                        });
+                supplierResults.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = rowId,
+                            ColumnId = "Name",
+                            TextDisplay = supplier.Name
+                        });
+                supplierResults.Add(new CalculationValueModel { RowId = rowId, ColumnId = "view", TextDisplay = "view" });
+                supplierResults.Add(new CalculationValueModel { RowId = rowId, ColumnId = "csv", TextDisplay = "csv" });
+                supplierResults.Add(new CalculationValueModel { RowId = rowId, ColumnId = "supplierOrGroup", TextDisplay = supplier.SupplierGroupId.HasValue  ? "(Group)" : string.Empty });
+            }
+
+            return supplierResults;
         }
     }
 }
