@@ -75,7 +75,11 @@
 
         public DbSet<SuppliersWithUnacknowledgedOrders> SuppliersWithUnacknowledgedOrders { get; set; }
 
+        public DbSet<SupplierGroupsWithUnacknowledgedOrders> SupplierGroupsWithUnacknowledgedOrders { get; set; }
+
         public DbSet<Planner> Planners { get; set; }
+
+        public DbSet<SupplierGroup> SupplierGroups { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -111,8 +115,10 @@
             this.BuildVendorManagers(builder);
             this.BuildSpendsView(builder);
             this.BuildUnacknowledgedOrderSuppliers(builder);
+            this.BuildUnacknowledgedOrderSupplierGroups(builder);
             this.BuildUnacknowledgedOrders(builder);
             this.BuildPlanners(builder);
+            this.BuildSupplierGroups(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -591,11 +597,31 @@
         private void BuildUnacknowledgedOrderSuppliers(ModelBuilder builder)
         {
             var entity = builder.Entity<SuppliersWithUnacknowledgedOrders>().ToTable("UNACKNOWLEDGED_ORDER_SUPPLIERS").HasNoKey();
-            entity.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID");
-            entity.Property(e => e.SupplierName).HasColumnName("SUPPLIER_NAME").HasMaxLength(50);
-            entity.Property(e => e.OrganisationId).HasColumnName("SUPPLIER_ORGANISATION_ID");
+            entity.Property(e => e.Id).HasColumnName("SUPPLIER_ID");
+            entity.Property(e => e.Name).HasColumnName("SUPPLIER_NAME").HasMaxLength(50);
+            entity.Property(e => e.SupplierGroupId).HasColumnName("SUPPLIER_GROUP_ID");
             entity.Property(e => e.VendorManager).HasColumnName("VENDOR_MANAGER").HasMaxLength(1);
             entity.Property(e => e.Planner).HasColumnName("PLANNER");
+            entity.Property(e => e.SupplierGroupName).HasColumnName("SUPPLIER_GROUP_NAME").HasMaxLength(50);
+        }
+
+        private void BuildUnacknowledgedOrderSupplierGroups(ModelBuilder builder)
+        {
+            var entity = builder.Entity<SuppliersWithUnacknowledgedOrders>().ToTable("UNACK_ORDER_SUPPLIER_GROUPS").HasNoKey();
+            entity.Property(e => e.Id).HasColumnName("SUPPLIER_ID");
+            entity.Property(e => e.Name).HasColumnName("SUPPLIER_NAME").HasMaxLength(50);
+            entity.Property(e => e.SupplierGroupId).HasColumnName("SUPPLIER_GROUP_ID");
+            entity.Property(e => e.VendorManager).HasColumnName("VENDOR_MANAGER").HasMaxLength(1);
+            entity.Property(e => e.Planner).HasColumnName("PLANNER");
+            entity.Property(e => e.SupplierGroupName).HasColumnName("SUPPLIER_GROUP_NAME").HasMaxLength(50);
+        }
+        
+        private void BuildSupplierGroups(ModelBuilder builder)
+        {
+            var entity = builder.Entity<SupplierGroup>().ToTable("SUPPLIER_GROUPS");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.Name).HasColumnName("NAME");
         }
     }
 }

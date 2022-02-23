@@ -1,6 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Reports.Models
 {
-    public class SuppliersWithUnacknowledgedOrders
+    public class SupplierGroupsWithUnacknowledgedOrders
     {
         public int Id { get; set; }
 

@@ -63,7 +63,10 @@
                 .AddTransient<IRepository<Planner, int>, PlannerRepository>()
                 .AddTransient<IQueryRepository<SupplierSpend>, SupplierSpendRepository>()
                 .AddTransient<IQueryRepository<UnacknowledgedOrders>, UnacknowledgedOrdersRepository>()
-                .AddTransient<IQueryRepository<SuppliersWithUnacknowledgedOrders>, SuppliersWithUnacknowledgedOrdersRepository>();
+                .AddTransient<IQueryRepository<SuppliersWithUnacknowledgedOrders>, SuppliersWithUnacknowledgedOrdersRepository>()
+                .AddTransient<IQueryRepository<SupplierGroupsWithUnacknowledgedOrders>, SupplierGroupsWithUnacknowledgedOrdersRepository>()
+                .AddTransient<IRepository<SupplierGroup, int>, EntityFrameworkRepository<SupplierGroup, int>>(
+                    r => new EntityFrameworkRepository<SupplierGroup, int>(r.GetService<ServiceDbContext>()?.SupplierGroups));
         }
     }
 }

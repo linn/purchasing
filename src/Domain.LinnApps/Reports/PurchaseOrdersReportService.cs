@@ -174,7 +174,10 @@
             return model;
         }
 
-        public ResultsModel GetSuppliersWithUnacknowledgedOrders(int? planner, string vendorManager)
+        public ResultsModel GetSuppliersWithUnacknowledgedOrders(
+            int? planner,
+            string vendorManager,
+            bool useSupplierGroup = true)
         {
             var suppliers = this.suppliersWithUnacknowledgedOrdersRepository.FindAll();
             if (planner.HasValue)
@@ -197,17 +200,17 @@
             var supplierResults = new List<CalculationValueModel>();
             foreach (var supplier in suppliers)
             {
-                var rowId = supplier.SupplierId.ToString();
+                var rowId = supplier.Id.ToString();
                 supplierResults.Add(new CalculationValueModel
                                         {
                                             RowId = rowId,
                                             ColumnId = "Supplier Id",
-                                            TextDisplay = supplier.SupplierId.ToString()
+                                            TextDisplay = supplier.Id.ToString()
                                         });
                 supplierResults.Add(
                     new CalculationValueModel
                         {
-                            RowId = rowId, ColumnId = "Supplier Name", TextDisplay = supplier.SupplierName
+                            RowId = rowId, ColumnId = "Supplier Name", TextDisplay = supplier.Name
                         });
                 supplierResults.Add(new CalculationValueModel { RowId = rowId, ColumnId = "view", TextDisplay = "view" });
                 supplierResults.Add(new CalculationValueModel { RowId = rowId, ColumnId = "csv", TextDisplay = "csv" });
@@ -233,11 +236,11 @@
             return results;
         }
 
-        public ResultsModel GetUnacknowledgedOrders(int? supplierId, int? organisationId)
+        public ResultsModel GetUnacknowledgedOrders(int? supplierId, int? supplierGroupId)
         {
             IQueryable<UnacknowledgedOrders> orders;
             string title;
-            if (!supplierId.HasValue && !organisationId.HasValue)
+            if (!supplierId.HasValue && !supplierGroupId.HasValue)
             {
                 title = "All unacknowledged orders";
                 orders = this.unacknowledgedOrdersRepository.FindAll();
@@ -253,7 +256,7 @@
             {
                 title = "Unacknowledged orders for organisation";
                     orders = this.unacknowledgedOrdersRepository.FilterBy(
-                    a => (a.OrganisationId == organisationId));
+                    a => (a.OrganisationId == supplierGroupId));
             }
 
             var results = new ResultsModel

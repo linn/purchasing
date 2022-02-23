@@ -18,8 +18,11 @@
             string includeCredits,
             string stockControlled);
 
-        ResultsModel GetSuppliersWithUnacknowledgedOrders(int? planner, string vendorManager);
+        ResultsModel GetSuppliersWithUnacknowledgedOrders(
+            int? planner,
+            string vendorManager,
+            bool useSupplierGroup = true);
 
-        ResultsModel GetUnacknowledgedOrders(int? supplierId, int? organisationId);
+        ResultsModel GetUnacknowledgedOrders(int? supplierId, int? supplierGroupId);
     }
 }

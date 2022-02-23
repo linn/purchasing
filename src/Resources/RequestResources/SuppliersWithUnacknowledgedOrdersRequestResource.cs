@@ -5,5 +5,7 @@
         public string VendorManager { get; set; }
 
         public int? Planner { get; set; }
+
+        public bool UseSupplierGroup { get; set; }
     }
 }

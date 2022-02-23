@@ -20,18 +20,18 @@
 
         private int? supplierId;
 
-        private int? organisationId;
+        private int? supplierGroupId;
 
         [SetUp]
         public void SetUp()
         {
             this.supplierId = 123;
-            this.organisationId = 456;
+            this.supplierGroupId = 456;
             this.requestResource = new UnacknowledgedOrdersRequestResource
                                        {
-                                           SupplierId = this.supplierId, OrganisationId = this.organisationId
+                                           SupplierId = this.supplierId, SupplierGroupId = this.supplierGroupId
                                        };
-            this.DomainService.GetUnacknowledgedOrders(this.supplierId, this.organisationId)
+            this.DomainService.GetUnacknowledgedOrders(this.supplierId, this.supplierGroupId)
                 .Returns(new ResultsModel { ReportTitle = new NameModel("Title") });
             this.resultsStream = this.Sut.GetUnacknowledgedOrdersReportExport(this.requestResource, new List<string>());
         }
@@ -40,7 +40,7 @@
         public void ShouldCallDomainService()
         {
             this.DomainService
-                .Received().GetUnacknowledgedOrders(this.supplierId, this.organisationId);
+                .Received().GetUnacknowledgedOrders(this.supplierId, this.supplierGroupId);
         }
 
         [Test]

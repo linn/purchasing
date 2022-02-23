@@ -31,28 +31,28 @@
                                  {
                                      new SuppliersWithUnacknowledgedOrders
                                          {
-                                             SupplierId = 1, SupplierName = "one", OrganisationId = 100, Planner = 1, VendorManager = "M"
+                                             Id = 1, Name = "one", Planner = 1, VendorManager = "M"
                                          },
                                      new SuppliersWithUnacknowledgedOrders
                                          {
-                                             SupplierId = 2, SupplierName = "two", OrganisationId = 200, Planner = 1, VendorManager = "M"
+                                             Id = 2, Name = "two", Planner = 1, VendorManager = "M"
                                          },
                                      new SuppliersWithUnacknowledgedOrders
                                          {
-                                             SupplierId = 3, SupplierName = "three", OrganisationId = 300, Planner = 1, VendorManager = "M"
+                                             Id = 3, Name = "three", Planner = 1, VendorManager = "M"
                                          },
                                      new SuppliersWithUnacknowledgedOrders
                                          {
-                                             SupplierId = 4, SupplierName = "four", OrganisationId = 400, Planner = 1, VendorManager = "B"
+                                             Id = 4, Name = "four",  Planner = 1, VendorManager = "B"
                                          },
                                      new SuppliersWithUnacknowledgedOrders
                                          {
-                                             SupplierId = 5, SupplierName = "five", OrganisationId = 500, Planner = 2, VendorManager = "M"
+                                             Id = 5, Name = "five", Planner = 2, VendorManager = "M"
                                          }
                                  }.AsQueryable();
             this.SuppliersWithUnacknowledgedOrdersRepository
                 .FindAll().Returns(this.suppliers);
-            this.result = this.Sut.GetSuppliersWithUnacknowledgedOrders(this.planner, this.vendorManger);
+            this.result = this.Sut.GetSuppliersWithUnacknowledgedOrders(this.planner, this.vendorManger, false);
         }
 
         [Test]
