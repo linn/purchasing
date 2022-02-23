@@ -117,7 +117,6 @@
 
             this.Log = Substitute.For<ILog>();
 
-
             this.MockSupplierRepository = Substitute.For<IRepository<Supplier, int>>();
 
             this.MockDomainService = Substitute.For<ISupplierService>();
