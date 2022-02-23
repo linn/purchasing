@@ -61,12 +61,13 @@
             var stream = this.purchaseOrderReportFacadeService.GetUnacknowledgedOrdersReportExport(
                                       resource,
                                       request.HttpContext.GetPrivileges());
-            
-            var contentDisposition = new ContentDisposition
-                                         {
-                                             FileName =
-                                                 $"Unacknowledged purchase orders for {resource.Name} ({resource.SupplierId ?? resource.SupplierGroupId}).csv"
-                                         };
+
+            var fileName = $"Unacknowledged purchase orders for {resource.Name}.csv";
+            if (resource.SupplierId.HasValue)
+            {
+                fileName += $" ({resource.SupplierId}).csv";
+            }
+            var contentDisposition = new ContentDisposition { FileName = fileName };
 
             stream.Position = 0;
             await response.FromStream(stream, "text/csv", contentDisposition);
