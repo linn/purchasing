@@ -298,7 +298,6 @@ function PartSupplier({ creating }) {
                                     close={() => setPreferredSupplierDialogOpen(false)}
                                     refreshPart={refreshPart}
                                     safetyCriticalPart={part?.safetyCriticalPart === 'Y'}
-                                    bomType={part?.bomType}
                                 />
                             </div>
                         </div>
