@@ -31,7 +31,7 @@ import partSupplierActions from '../../actions/partSupplierActions';
 import history from '../../history';
 import config from '../../config';
 import partSupplierReducer from './partSupplierReducer';
-import { partSupplier, partPriceConversions } from '../../itemTypes';
+import { partSupplier, partPriceConversions, supplier } from '../../itemTypes';
 import PartSupplierTab from './tabs/PartSupplierTab';
 import partsActions from '../../actions/partsActions';
 import partActions from '../../actions/partActions';
@@ -51,6 +51,7 @@ import manufacturersActions from '../../actions/manufacturersActions';
 import PreferredSupplier from './PreferredSupplier';
 import PriceChange from './PriceChange';
 import partPriceConversionsActions from '../../actions/partPriceConversionsActions';
+import supplierActions from '../../actions/supplierActions';
 
 function PartSupplier({ creating }) {
     const useStyles = makeStyles(theme => ({
@@ -337,7 +338,7 @@ function PartSupplier({ creating }) {
                 </Dialog>
                 <SnackbarMessage
                     visible={snackbarVisible}
-                    onClose={() => reduxDispatch(partSupplierActions.setSnackbarVisible(false))}
+                    onClose={() => reduxDispatch(supplierActions.setSnackbarVisible(false))}
                     message="Save Successful"
                 />
                 {itemError && (
