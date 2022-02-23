@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.SupplierModuleTests
 {
-    using System.Collections.Generic;
     using System.Net;
 
     using FluentAssertions;
@@ -10,8 +9,6 @@
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
-
-    using NSubstitute;
 
     using NUnit.Framework;
 

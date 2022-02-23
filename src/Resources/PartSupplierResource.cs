@@ -52,21 +52,13 @@
 
         public int LeadTimeWeeks { get; set; }
 
-        public string OverbookingAllowed { get; set; }
-
         public decimal? DamagesPercent { get; set; }
-
-        public string WebAddress { get; set; }
 
         public string DeliveryInstructions { get; set; }
 
         public string NotesForBuyer { get; set; }
 
         public string PackWasteStatus { get; set; }
-
-        public int? PackagingGroupId{ get; set; }
-
-        public string PackagingGroupDescription { get; set; }
 
         public string DateCreated { get; set; }
 

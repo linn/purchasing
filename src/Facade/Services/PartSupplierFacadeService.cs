@@ -102,7 +102,6 @@
                                                             new FullAddress { Id = (int)resource.AddressId },
                 UnitOfMeasure = resource.UnitOfMeasure,
                 LeadTimeWeeks = resource.LeadTimeWeeks,
-                OverbookingAllowed = resource.OverbookingAllowed,
                 DamagesPercent = resource.DamagesPercent,
                 DeliveryInstructions = resource.DeliveryInstructions,
                 NotesForBuyer = resource.NotesForBuyer,

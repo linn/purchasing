@@ -56,7 +56,6 @@
                            OrderIncrement = entity.OrderIncrement,
                            ReelOrBoxQty = entity.ReelOrBoxQty,
                            LeadTimeWeeks = entity.LeadTimeWeeks,
-                           OverbookingAllowed = entity.OverbookingAllowed,
                            DamagesPercent = entity.DamagesPercent,
                            DeliveryInstructions = entity.DeliveryInstructions,
                            NotesForBuyer = entity.NotesForBuyer,
