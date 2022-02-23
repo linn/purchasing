@@ -69,6 +69,16 @@ function AddressUtility({ inDialogBox, closeDialog }) {
                 <Grid item xs={8}>
                     <InputField
                         fullWidth
+                        value={address?.addressee}
+                        label="Addressee"
+                        propertyName="addressee"
+                        onChange={handleFieldChange}
+                    />
+                </Grid>
+                <Grid item xs={4} />
+                <Grid item xs={8}>
+                    <InputField
+                        fullWidth
                         value={address?.addressee2}
                         label="Addressee 2"
                         propertyName="addressee2"
