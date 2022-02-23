@@ -31,7 +31,7 @@ import partSupplierActions from '../../actions/partSupplierActions';
 import history from '../../history';
 import config from '../../config';
 import partSupplierReducer from './partSupplierReducer';
-import { partSupplier, partPriceConversions, supplier } from '../../itemTypes';
+import { partSupplier, partPriceConversions } from '../../itemTypes';
 import PartSupplierTab from './tabs/PartSupplierTab';
 import partsActions from '../../actions/partsActions';
 import partActions from '../../actions/partActions';
