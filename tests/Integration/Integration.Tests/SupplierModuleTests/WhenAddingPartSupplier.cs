@@ -1,5 +1,7 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.SupplierModuleTests
 {
+    using System;
+    using System.Collections.Generic;
     using System.Net;
 
     using FluentAssertions;
@@ -10,11 +12,13 @@
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
+    using NSubstitute;
+
     using NUnit.Framework;
 
     public class WhenAddingPartSupplier : ContextBase
     {
-        private PartSupplierResource resource;
+        private PartSupplierResource createResource;
 
         private PartSupplier partSupplier;
 
@@ -22,11 +26,33 @@
         public void SetUp()
         {
 
-            this.resource = new PartSupplierResource
-            {
-                PartNumber = "PART",
-                SupplierId = 100
-            };
+            this.createResource = new PartSupplierResource
+                                {
+                                    CreatedBy = 33087,
+                                    DateCreated = DateTime.Today.ToString("o"),
+                                    PartNumber = "PART",
+                                    SupplierId = 100,
+                                    UnitOfMeasure = "NEW UOM",
+                                    BaseOurUnitPrice = 100m,
+                                    AddressId = 1,
+                                    CurrencyCode = "USD",
+                                    CurrencyUnitPrice = 150m,
+                                    DamagesPercent = 2,
+                                    DeliveryInstructions = "INSTR",
+                                    Designation = "DESG",
+                                    LeadTimeWeeks = 12,
+                                    MadeInvalidBy = 33087,
+                                    ManufacturerCode = "MAN",
+                                    ManufacturerPartNumber = "M PART",
+                                    MinimumDeliveryQty = 3m,
+                                    MinimumOrderQty = 4m,
+                                    NotesForBuyer = "NOTES",
+                                    OrderIncrement = 5m,
+                                    OrderMethodName = "METHOD",
+                                    OurCurrencyPriceToShowOnOrder = 6m,
+                                    ReelOrBoxQty = 7m,
+                                    VendorPartNumber = "VPN"
+                                };
 
             this.partSupplier = new PartSupplier
                                     {
@@ -38,11 +64,41 @@
 
             this.Response = this.Client.Post(
                 $"/purchasing/part-suppliers/record",
-                this.resource,
+                this.createResource,
                 with =>
                 {
                     with.Accept("application/json");
                 }).Result;
+        }
+
+        [Test]
+        public void ShouldPassCorrectDataToDomainService()
+        {
+            this.MockPartSupplierDomainService.Received()
+                .CreatePartSupplier(
+                Arg.Is<PartSupplier>(
+                    u =>
+                        u.UnitOfMeasure == this.createResource.UnitOfMeasure
+                        && u.BaseOurUnitPrice == this.createResource.BaseOurUnitPrice
+                        && u.DeliveryFullAddress.Id == this.createResource.AddressId
+                        && u.Currency.Code == this.createResource.CurrencyCode
+                        && u.CurrencyUnitPrice == this.createResource.CurrencyUnitPrice
+                        && u.DamagesPercent == this.createResource.DamagesPercent
+                        && u.DeliveryInstructions == this.createResource.DeliveryInstructions
+                        && u.SupplierDesignation == this.createResource.Designation
+                        && u.LeadTimeWeeks == this.createResource.LeadTimeWeeks
+                        && u.CreatedBy.Id == this.createResource.CreatedBy
+                        && u.Manufacturer.Code == this.createResource.ManufacturerCode
+                        && u.ManufacturerPartNumber == this.createResource.ManufacturerPartNumber
+                        && u.MinimumDeliveryQty == this.createResource.MinimumDeliveryQty
+                        && u.MinimumOrderQty == this.createResource.MinimumOrderQty
+                        && u.NotesForBuyer == this.createResource.NotesForBuyer
+                        && u.OrderIncrement == this.createResource.OrderIncrement
+                        && u.OrderMethod.Name == this.createResource.OrderMethodName
+                        && u.OurCurrencyPriceToShowOnOrder == this.createResource.OurCurrencyPriceToShowOnOrder
+                        && u.ReelOrBoxQty == this.createResource.ReelOrBoxQty
+                        && u.VendorPartNumber == this.createResource.VendorPartNumber),
+                Arg.Any<IEnumerable<string>>());
         }
 
         [Test]
