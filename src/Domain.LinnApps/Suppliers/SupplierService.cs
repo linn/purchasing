@@ -76,7 +76,7 @@
             current.PaymentDays = updated.PaymentDays;
             current.PaymentMethod = updated.PaymentMethod;
             current.PaysInFc = updated.PaysInFc;
-           
+
             current.ApprovedCarrier = updated.ApprovedCarrier;
             current.AccountingCompany = updated.AccountingCompany;
             current.VatNumber = updated.VatNumber;

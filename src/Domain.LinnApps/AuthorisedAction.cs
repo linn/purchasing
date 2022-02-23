@@ -11,9 +11,13 @@
         public const string SupplierCreate = "purchasing.supplier.create";
 
         public const string SupplierUpdate = "purchasing.supplier.update";
-      
+
         public const string SupplierHoldChange = "purchasing.supplier.hold-change";
 
         public const string PurchaseOrderUpdate = "purchase-order.update";
+
+        public const string PurchaseOrderReqUpdate = "purchase-order-req.update";
+
+        public const string PurchaseOrderReqCreate = "purchase-order-req.create";
     }
 }

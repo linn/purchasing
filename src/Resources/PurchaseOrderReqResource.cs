@@ -1,14 +1,14 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
+﻿namespace Linn.Purchasing.Resources
 {
-    using System;
+    using Linn.Common.Resources;
 
-    public class PurchaseOrderReq
+    public class PurchaseOrderReqResource : HypermediaResource
     {
         public int ReqNumber { get; set; }
 
         public string State { get; set; }
 
-        public DateTime ReqDate { get; set; }
+        public string ReqDate { get; set; }
 
         public int? OrderNumber { get; set; }
 
@@ -24,7 +24,7 @@
 
         public decimal? TotalReqPrice { get; set; }
 
-        public Currency Currency { get; set; }
+        public string CurrencyCode { get; set; }
 
         public int? SupplierId { get; set; }
 
@@ -42,7 +42,7 @@
 
         public string PostCode { get; set; }
 
-        public Country Country { get; set; }
+        public CountryResource Country { get; set; }
 
         public string PhoneNumber { get; set; }
 
@@ -50,17 +50,17 @@
 
         public string Email { get; set; }
 
-        public DateTime? DateRequired { get; set; }
+        public string DateRequired { get; set; }
 
-        public Employee RequestedByEmployee { get; set; }
+        public EmployeeResource RequestedBy { get; set; }
 
-        public Employee AuthorisedByEmployee { get; set; }
+        public EmployeeResource AuthorisedBy { get; set; }
 
-        public Employee SecondAuthByEmployee { get; set; }
+        public EmployeeResource SecondAuthBy { get; set; }
 
-        public Employee FinanceCheckByEmployee { get; set; }
+        public EmployeeResource FinanceCheckBy { get; set; }
 
-        public Employee TurnedIntoOrderByEmployee { get; set; }
+        public EmployeeResource TurnedIntoOrderBy { get; set; }
 
         public string Nominal { get; set; }
 

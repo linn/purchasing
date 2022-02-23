@@ -38,9 +38,7 @@
             IFacadeResourceFilterService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource>
             purchaseOrderFacadeService;
 
-        private readonly IFacadeResourceService<PurchaseOrderReq, string, PurchaseOrderReqResource, PurchaseOrderReqResource> poReqFacadeService;
-
-        
+        private readonly IFacadeResourceFilterService<PurchaseOrderReq, int, PurchaseOrderReqResource, PurchaseOrderReqResource, PurchaseOrderReqSearchResource> purchaseOrderReqFacadeService;
 
         public PurchaseOrderModule(
             IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource> currencyService,
@@ -49,7 +47,8 @@
             IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource> unitsOfMeasureService,
             IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource> packagingGroupService,
             IFacadeResourceService<Tariff, int, TariffResource, TariffResource> tariffService,
-            IFacadeResourceFilterService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource> purchaseOrderFacadeService)
+            IFacadeResourceFilterService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource> purchaseOrderFacadeService,
+            IFacadeResourceFilterService<PurchaseOrderReq, int, PurchaseOrderReqResource, PurchaseOrderReqResource, PurchaseOrderReqSearchResource> purchaseOrderReqFacadeService)
         {
             this.currencyService = currencyService;
             this.orderMethodService = orderMethodService;
@@ -58,6 +57,8 @@
             this.packagingGroupService = packagingGroupService;
             this.tariffService = tariffService;
             this.purchaseOrderFacadeService = purchaseOrderFacadeService;
+            this.purchaseOrderReqFacadeService = purchaseOrderReqFacadeService;
+
             this.Get("/purchasing/purchase-orders/currencies", this.GetCurrencies);
             this.Get("/purchasing/purchase-orders/methods", this.GetOrderMethods);
             this.Get("/purchasing/purchase-orders/delivery-addresses", this.GetDeliveryAddresses);
@@ -68,7 +69,7 @@
             this.Put("/purchasing/purchase-orders/{OrderNumber:int}/over-book", this.AllowOverbook);
 
             this.Get("/purchasing/purchase-orders/reqs", this.SearchReqs);
-            this.Get("/purchasing/purchase-orders/reqs/{id:int}", this.GetReqs);
+            this.Get("/purchasing/purchase-orders/reqs/{id:int}", this.GetReq);
             this.Put("/purchasing/purchase-orders/reqs/{id:int}", this.UpdateReq);
             this.Post("/purchasing/purchase-orders/reqs", this.CreateReq);
         }
@@ -147,7 +148,7 @@
         {
             var id = req.RouteValues.As<int>("id");
 
-            var result = this.poReqFacadeService.GetById(id, req.HttpContext.GetPrivileges());
+            var result = this.purchaseOrderReqFacadeService.GetById(id, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }
@@ -156,7 +157,7 @@
         {
             var searchTerm = req.Query.As<string>("searchTerm");
 
-            var result = this.poReqFacadeService.Search(searchTerm);
+            var result = this.purchaseOrderReqFacadeService.Search(searchTerm);
 
             await res.Negotiate(result);
         }
@@ -165,7 +166,7 @@
         {
             var id = req.RouteValues.As<int>("id");
             var resource = await req.Bind<PurchaseOrderReqResource>();
-            var result = this.poReqFacadeService.Update(id, resource, req.HttpContext.GetPrivileges());
+            var result = this.purchaseOrderReqFacadeService.Update(id, resource, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }
@@ -173,8 +174,7 @@
         private async Task CreateReq(HttpRequest req, HttpResponse res)
         {
             var resource = await req.Bind<PurchaseOrderReqResource>();
-            resource.OpenedById = req.HttpContext.User.GetEmployeeNumber();
-            var result = this.poReqFacadeService.Add(
+            var result = this.purchaseOrderReqFacadeService.Add(
                 resource,
                 req.HttpContext.GetPrivileges(),
                 null);

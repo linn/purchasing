@@ -20,8 +20,8 @@
         private readonly IDatabaseService databaseService;
 
         public SupplierFacadeService(
-            IRepository<Supplier, int> repository, 
-            ITransactionManager transactionManager, 
+            IRepository<Supplier, int> repository,
+            ITransactionManager transactionManager,
             IBuilder<Supplier> resourceBuilder,
             ISupplierService domainService,
             IDatabaseService databaseService)
@@ -32,14 +32,14 @@
         }
 
         protected override Supplier CreateFromResource(
-            SupplierResource resource, 
-            IEnumerable<string> privileges = null)        
+            SupplierResource resource,
+            IEnumerable<string> privileges = null)
         {
             var candidate = BuildEntityFromResourceHelper(resource);
             candidate.SupplierId = this.databaseService.GetNextVal("SUPPLIER_SEQ");
 
             candidate.OpenedBy = resource.OpenedById.HasValue
-                ? new Employee {Id = (int)resource.OpenedById } : null;
+                ? new Employee { Id = (int)resource.OpenedById } : null;
             candidate.DateOpened = DateTime.Today;
             return this.domainService.CreateSupplier(candidate, privileges);
         }
@@ -55,16 +55,16 @@
         }
 
         protected override void DeleteOrObsoleteResource(
-            Supplier entity, 
-            IEnumerable<string> privileges = null)        
+            Supplier entity,
+            IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }
 
         protected override void UpdateFromResource(
-            Supplier entity, 
-            SupplierResource updateResource, 
-            IEnumerable<string> privileges = null)        
+            Supplier entity,
+            SupplierResource updateResource,
+            IEnumerable<string> privileges = null)
         {
             var updated = BuildEntityFromResourceHelper(updateResource);
 
@@ -88,9 +88,9 @@
                                               Code = resource.CurrencyCode
                                           },
                            WebAddress = resource.WebAddress,
-                           VendorManager = !string.IsNullOrEmpty(resource.VendorManagerId) 
+                           VendorManager = !string.IsNullOrEmpty(resource.VendorManagerId)
                             ? new VendorManager { Id = resource.VendorManagerId } : null,
-                           Planner = resource.PlannerId.HasValue 
+                           Planner = resource.PlannerId.HasValue
                                          ? new Planner { Id = (int)resource.PlannerId } : null,
                            InvoiceContactMethod = resource.InvoiceContactMethod,
                            PhoneNumber = resource.PhoneNumber,
@@ -104,7 +104,7 @@
                            AccountingCompany = resource.AccountingCompany,
                            ApprovedCarrier = resource.ApprovedCarrier,
                            VatNumber = resource.VatNumber,
-                           InvoiceGoesTo = resource.InvoiceGoesToId.HasValue 
+                           InvoiceGoesTo = resource.InvoiceGoesToId.HasValue
                                                ? new Supplier { SupplierId = (int)resource.InvoiceGoesToId } : null,
                            PartCategory = !string.IsNullOrEmpty(resource.PartCategory)
                                           ? new PartCategory { Category = resource.PartCategory } : null,
@@ -114,7 +114,7 @@
                            RefersToFc = resource.RefersToFcId.HasValue
                             ? new Supplier { SupplierId = (int)resource.RefersToFcId } : null,
                            PmDeliveryDaysGrace = resource.PmDeliveryDaysGrace,
-                           OrderFullAddress = resource.OrderAddressId.HasValue 
+                           OrderFullAddress = resource.OrderAddressId.HasValue
                                                   ? new FullAddress { Id = (int)resource.OrderAddressId } : null,
                            InvoiceFullAddress = resource.InvoiceAddressId.HasValue
                                                   ? new FullAddress { Id = (int)resource.InvoiceAddressId } : null,
@@ -122,7 +122,7 @@
                                ? new Employee { Id = (int)resource.AccountControllerId } : null,
                            ClosedBy = resource.ClosedById.HasValue ? new Employee { Id = (int)resource.ClosedById }
                                         : null,
-                           DateClosed = !string.IsNullOrEmpty(resource.DateClosed) 
+                           DateClosed = !string.IsNullOrEmpty(resource.DateClosed)
                                         ? DateTime.Parse(resource.DateClosed) : null,
                            ReasonClosed = resource.ReasonClosed,
                            Notes = resource.Notes,
