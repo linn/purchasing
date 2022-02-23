@@ -39,6 +39,9 @@
 
         protected IRepository<Address, int> AddressRepository { get; private set; }
 
+        protected IRepository<FullAddress, int> FullAddressRepository { get; private set; }
+
+
         protected IRepository<Country, string> CountryRepository { get; private set; }
 
         protected IFacadeResourceService<Country, string, CountryResource, CountryResource> CountryService { get; private set; }
@@ -48,6 +51,7 @@
         {
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.AddressRepository = Substitute.For<IRepository<Address, int>>();
+            this.FullAddressRepository = Substitute.For<IRepository<FullAddress, int>>();
             this.CountryRepository = Substitute.For<IRepository<Country, string>>();
             this.Log = Substitute.For<ILog>();
             this.DatabaseService = Substitute.For<IDatabaseService>();
@@ -55,7 +59,7 @@
             this.FacadeService = new AddressService(
                 this.AddressRepository,
                 this.TransactionManager,
-                new AddressResourceBuilder(),
+                new AddressResourceBuilder(this.FullAddressRepository),
                 this.CountryRepository,
                 this.DatabaseService);
 
