@@ -70,8 +70,8 @@
                     => new EntityFrameworkQueryRepository<SupplierGroupsWithUnacknowledgedOrders>(r.GetService<ServiceDbContext>()?.SupplierGroupsWithUnacknowledgedOrders))
                 .AddTransient<IRepository<SupplierGroup, int>, EntityFrameworkRepository<SupplierGroup, int>>(
                     r => new EntityFrameworkRepository<SupplierGroup, int>(r.GetService<ServiceDbContext>()?.SupplierGroups))
-                .AddTransient<IRepository<SupplierContact, int>, EntityFrameworkRepository<SupplierContact, int>>(
-                    r => new EntityFrameworkRepository<SupplierContact, int>(r.GetService<ServiceDbContext>()?.SupplierContacts));
+                .AddTransient<IRepository<Contact, int>, EntityFrameworkRepository<Contact, int>>(
+                    r => new EntityFrameworkRepository<Contact, int>(r.GetService<ServiceDbContext>()?.Contacts));
         }
     }
 }

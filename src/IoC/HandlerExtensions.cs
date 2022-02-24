@@ -55,8 +55,8 @@
                 .AddTransient<IHandler, JsonResultHandler<SupplierGroupResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<SupplierGroupResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<PlannerResource>>>()
-                .AddTransient<IHandler, JsonResultHandler<SupplierContactResource>>()
-                .AddTransient<IHandler, JsonResultHandler<IEnumerable<SupplierContactResource>>>();
+                .AddTransient<IHandler, JsonResultHandler<ContactResource>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<ContactResource>>>();
         }
     }
 }

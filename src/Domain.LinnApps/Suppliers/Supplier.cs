@@ -78,6 +78,6 @@
 
         public int OrganisationId { get; set; }
 
-        public IEnumerable<SupplierContact> Contacts { get; set; }
+        public IEnumerable<Contact> Contacts { get; set; }
     }
 }

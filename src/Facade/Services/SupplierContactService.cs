@@ -12,24 +12,17 @@
     public class SupplierContactService 
         : FacadeResourceService<SupplierContact, int, SupplierContactResource, SupplierContactResource>
     {
-        public SupplierContactService(
-            IRepository<SupplierContact, int> repository, 
-            ITransactionManager transactionManager, 
-            IBuilder<SupplierContact> resourceBuilder)
+        public SupplierContactService(IRepository<SupplierContact, int> repository, ITransactionManager transactionManager, IBuilder<SupplierContact> resourceBuilder)
             : base(repository, transactionManager, resourceBuilder)
         {
         }
 
-        protected override SupplierContact CreateFromResource(
-            SupplierContactResource resource, IEnumerable<string> privileges = null)
+        protected override SupplierContact CreateFromResource(SupplierContactResource resource, IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }
 
-        protected override void UpdateFromResource(
-            SupplierContact entity, 
-            SupplierContactResource updateResource, 
-            IEnumerable<string> privileges = null)
+        protected override void UpdateFromResource(SupplierContact entity, SupplierContactResource updateResource, IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }
@@ -49,8 +42,7 @@
             throw new NotImplementedException();
         }
 
-        protected override void DeleteOrObsoleteResource(
-            SupplierContact entity, IEnumerable<string> privileges = null)
+        protected override void DeleteOrObsoleteResource(SupplierContact entity, IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }
