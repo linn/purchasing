@@ -37,7 +37,7 @@
         private async Task GetUnacknowledgedOrdersReport(HttpRequest request, HttpResponse response)
         {
             var resource = new UnacknowledgedOrdersRequestResource
-            {
+                               {
                                    SupplierId = request.Query.As<int?>("SupplierId"),
                                    SupplierGroupId = request.Query.As<int?>("SupplierGroupId")
                                };
@@ -59,8 +59,8 @@
                                };
 
             var stream = this.purchaseOrderReportFacadeService.GetUnacknowledgedOrdersReportExport(
-                                      resource,
-                                      request.HttpContext.GetPrivileges());
+                resource,
+                request.HttpContext.GetPrivileges());
 
             var fileName = $"Unacknowledged purchase orders for {resource.Name}.csv";
             if (resource.SupplierId.HasValue)
