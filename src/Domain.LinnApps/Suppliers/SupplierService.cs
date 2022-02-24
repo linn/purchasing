@@ -30,6 +30,12 @@
         private readonly IRepository<VendorManager, string> vendorManagerRepository;
 
         private readonly IRepository<Planner, int> plannerRepository;
+        
+        private readonly IRepository<Contact, int> contactRepository;
+        
+        private readonly IRepository<Person, int> personRepository;
+        
+        private readonly IRepository<SupplierContact, int> supplierContactRepository;
 
         public SupplierService(
             IAuthorisationService authService,
@@ -40,7 +46,10 @@
             IRepository<FullAddress, int> addressRepository,
             IRepository<Employee, int> employeeRepository,
             IRepository<VendorManager, string> vendorManagerRepository,
-            IRepository<Planner, int> plannerRepository)
+            IRepository<Planner, int> plannerRepository,
+            IRepository<Contact, int> contactRepository,
+            IRepository<Person, int> personRepository,
+            IRepository<SupplierContact, int> supplierContactRepository)
         {
             this.authService = authService;
             this.supplierRepository = supplierRepository;
@@ -51,6 +60,9 @@
             this.employeeRepository = employeeRepository;
             this.vendorManagerRepository = vendorManagerRepository;
             this.plannerRepository = plannerRepository;
+            this.contactRepository = contactRepository;
+            this.personRepository = personRepository;
+            this.supplierContactRepository = supplierContactRepository;
         }
 
         public void UpdateSupplier(Supplier current, Supplier updated, IEnumerable<string> privileges)
@@ -127,6 +139,8 @@
             current.ClosedBy = updated.ClosedBy != null
                                             ? this.employeeRepository.FindById(updated.ClosedBy.Id)
                                             : null;
+
+            current.Contacts = updated.Contacts;
         }
 
         public Supplier CreateSupplier(Supplier candidate, IEnumerable<string> privileges)

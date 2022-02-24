@@ -29,7 +29,10 @@
                 this.MockAddressRepository,
                 this.EmployeeRepository,
                 this.VendorManagerRepository,
-                this.PlannerRepository);
+                this.PlannerRepository,
+                this.ContactRepository,
+                this.PersonRepository,
+                this.SupplierContactRepository);
         }
     }
 }

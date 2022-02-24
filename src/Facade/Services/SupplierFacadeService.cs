@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Linq;
     using System.Linq.Expressions;
 
@@ -129,30 +130,30 @@
                            Notes = resource.Notes,
                            OrganisationId = resource.OrganisationId,
                            Contacts = resource.Contacts?.Select(c => new SupplierContact
-                                                                         {
-                                                                             Contact = new Contact
-                                                                                 {
-                                                                                     ContactId = c.Contact.ContactId,
-                                                                                     Comments = c.Contact.Comments,
-                                                                                     EmailAddress = c.Contact.EmailAddress,
-                                                                                     JobTitle = c.Contact.JobTitle,
-                                                                                     DateCreated = !string.IsNullOrEmpty(c.Contact.DateCreated)
-                                                                                     ? DateTime.Parse(c.Contact.DateCreated) : null,
-                                                                                     DateInvalid = !string.IsNullOrEmpty(c.Contact.DateInvalid)
-                                                                                     ? DateTime.Parse(c.Contact.DateInvalid) : null,
-                                                                                     MobileNumber = c.Contact.MobileNumber,
-                                                                                     PhoneNumber = c.Contact.PhoneNumber,
-                                                                                     Person = new Person
-                                                                                         {
-                                                                                             FirstName = c.Contact.FirstName,
-                                                                                             LastName = c.Contact.LastName,
-                                                                                             Id = c.Contact.PersonId
-                                                                                         }
-                                                                                 },
-                                                                             ContactId = c.Contact.ContactId,
-                                                                             IsMainInvoiceContact = c.IsMainInvoiceContact,
-                                                                             IsMainOrderContact = c.IsMainOrderContact
-                                                                         })
+                                                                          {
+                                                                              Contact = new Contact
+                                                                                  {
+                                                                                      ContactId = c.Contact.ContactId,
+                                                                                      Comments = c.Contact.Comments,
+                                                                                      EmailAddress = c.Contact.EmailAddress,
+                                                                                      JobTitle = c.Contact.JobTitle,
+                                                                                      DateCreated = !string.IsNullOrEmpty(c.Contact.DateCreated)
+                                                                                          ? DateTime.Parse(c.Contact.DateCreated) : null,
+                                                                                      DateInvalid = !string.IsNullOrEmpty(c.Contact.DateInvalid)
+                                                                                          ? DateTime.Parse(c.Contact.DateInvalid) : null,
+                                                                                      MobileNumber = c.Contact.MobileNumber,
+                                                                                      PhoneNumber = c.Contact.PhoneNumber,
+                                                                                      Person = new Person
+                                                                                          {
+                                                                                              FirstName = c.Contact.FirstName,
+                                                                                              LastName = c.Contact.LastName,
+                                                                                              Id = c.Contact.PersonId
+                                                                                          }
+                                                                                  },
+                                                                              ContactId = c.Contact.ContactId,
+                                                                              IsMainInvoiceContact = c.IsMainInvoiceContact,
+                                                                              IsMainOrderContact = c.IsMainOrderContact
+                                                                          })
             };
         }
     }
