@@ -4,8 +4,6 @@
 
     public class Contact
     {
-        public string ContactDescription { get; set; }
-
         public string JobTitle { get; set; }
 
         public string PhoneNumber { get; set; }

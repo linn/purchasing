@@ -5,7 +5,6 @@
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps;
-    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
 
     public class ContactResourceBuilder : IBuilder<Contact>
@@ -21,7 +20,6 @@
                           JobTitle = entity.JobTitle,
                           PersonId = entity.Person.Id,
                           Comments = entity.Comments,
-                          ContactDescription = entity.ContactDescription,
                           EmailAddress = entity.EmailAddress,
                           MobileNumber = entity.MobileNumber
                        };

@@ -2,8 +2,6 @@
 {
     public class ContactResource
     {
-        public string ContactDescription { get; set; }
-
         public string MobileNumber { get; set; }
 
         public string EmailAddress { get; set; }

@@ -16,9 +16,9 @@
 
     public class SupplierContactModule : CarterModule
     {
-        private readonly IFacadeResourceService<Contact, int, ContactResource, ContactResource> supplierContactService;
+        private readonly IFacadeResourceService<SupplierContact, int, SupplierContactResource, SupplierContactResource> supplierContactService;
 
-        public SupplierContactModule(IFacadeResourceService<Contact, int, ContactResource, ContactResource> supplierContactService)
+        public SupplierContactModule(IFacadeResourceService<SupplierContact, int, SupplierContactResource, SupplierContactResource> supplierContactService)
         {
             this.supplierContactService = supplierContactService;
             this.Post("/purchasing/supplier-groups", this.GetAllSupplierContacts);

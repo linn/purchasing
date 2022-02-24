@@ -9,5 +9,7 @@
         public string IsMainOrderContact { get; set; }
 
         public string IsMainInvoiceContact { get; set; }
+
+        public Contact Contact { get; set; }
     }
 }
