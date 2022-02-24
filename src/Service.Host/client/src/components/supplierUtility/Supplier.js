@@ -349,7 +349,8 @@ function Supplier({ creating }) {
                                                     openedById={state.supplier.openedById}
                                                     openedByName={state.supplier.openedByName}
                                                     dateOpened={state.supplier.dateOpened}
-                                                    closedById={state.supplier.plannerId}
+                                                    closedById={state.supplier.closedById}
+                                                    closedByName={state.supplier.closedByName}
                                                     dateClosed={state.supplier.dateClosed}
                                                     reasonClosed={state.supplier.reasonClosed}
                                                 />
