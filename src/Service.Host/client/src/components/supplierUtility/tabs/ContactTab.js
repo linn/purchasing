@@ -14,10 +14,10 @@ function ContactTab({ contacts, updateContact }) {
 
     const columns = [
         { field: 'id', headerName: 'Id', width: 100 },
-        { field: 'firstName', headerName: 'First Name', width: 200 },
-        { field: 'lastName', headerName: 'Last Name', width: 200 },
-        { field: 'phoneNumber', headerName: 'Phone', width: 150 },
-        { field: 'emailAddress', headerName: 'Email', width: 150 },
+        { field: 'firstName', headerName: 'First Name', width: 200, editable: true },
+        { field: 'lastName', headerName: 'Last Name', width: 200, editable: true },
+        { field: 'phoneNumber', headerName: 'Phone', width: 150, editable: true },
+        { field: 'emailAddress', headerName: 'Email', width: 150, editable: true },
         {
             field: 'isMainOrderContact',
             headerName: 'Main Order Contact',

@@ -153,6 +153,12 @@ function Supplier({ creating }) {
                 propertyName,
                 payload: { id: contactId, newValue }
             });
+        } else {
+            dispatch({
+                type: 'updateContactDetail',
+                propertyName,
+                payload: { id: contactId, newValue }
+            });
         }
     };
     return (

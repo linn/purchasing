@@ -21,6 +21,24 @@ export default function partReducer(state = initialState, action) {
                     )
                 }
             };
+        case 'updateContactDetail':
+            return {
+                ...state,
+                supplier: {
+                    ...state.supplier,
+                    contacts: state.supplier.contacts.map(c =>
+                        c.contact.contactId === action.payload.id
+                            ? {
+                                  ...c,
+                                  contact: {
+                                      ...c.contact,
+                                      [action.propertyName]: action.payload.newValue
+                                  }
+                              }
+                            : c
+                    )
+                }
+            };
         default:
             return state;
     }
