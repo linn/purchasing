@@ -52,7 +52,8 @@
                 .AddTransient<IBuilder<Country>, CountryResourceBuilder>()
                 .AddTransient<IBuilder<VendorManager>, VendorManagerResourceBuilder>()
                 .AddTransient<IBuilder<Planner>, PlannerResourceBuilder>()
-                .AddTransient<IBuilder<SupplierGroup>, SupplierGroupResourceBuilder>();
+                .AddTransient<IBuilder<SupplierGroup>, SupplierGroupResourceBuilder>()
+                .AddTransient<IBuilder<SupplierContact>, SupplierContactResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -80,7 +81,8 @@
                 .AddTransient<IFacadeResourceService<VendorManager, string, VendorManagerResource, VendorManagerResource>, VendorManagerFacadeService>()
                 .AddTransient<ISpendsReportFacadeService, SpendsReportFacadeService>()
                 .AddTransient<IFacadeResourceService<Planner, int, PlannerResource, PlannerResource>, PlannerService>()
-                .AddTransient<IFacadeResourceService<SupplierGroup, int, SupplierGroupResource, SupplierGroupResource>, SupplierGroupFacadeService>();
+                .AddTransient<IFacadeResourceService<SupplierGroup, int, SupplierGroupResource, SupplierGroupResource>, SupplierGroupFacadeService>()
+                .AddTransient<IFacadeResourceService<SupplierContact, int, SupplierContactResource, SupplierContactResource>, SupplierContactService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)

@@ -77,6 +77,8 @@
 
         public DbSet<SupplierGroup> SupplierGroups { get; set; }
 
+        public DbSet<SupplierContact> SupplierContacts { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -115,6 +117,7 @@
             this.BuildUnacknowledgedOrders(builder);
             this.BuildPlanners(builder);
             this.BuildSupplierGroups(builder);
+            this.BuildSupplierContacts(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -327,6 +330,26 @@
             entity.HasOne(a => a.ClosedBy).WithMany().HasForeignKey("CLOSED_BY");
             entity.Property(a => a.Notes).HasColumnName("NOTES").HasMaxLength(1000);
             entity.Property(a => a.OrganisationId).HasColumnName("ORGANISATION_ID");
+            entity.HasMany(s => s.Contacts).WithOne().HasForeignKey(c => c.SupplierId);
+        }
+
+        private void BuildSupplierContacts(ModelBuilder builder)
+        {
+            var s = builder.Entity<SupplierContact>().ToTable("SUPPLIER_CONTACTS");
+            s.HasKey(a => a.ContactId);
+            s.Property(e => e.ContactDescription).HasColumnName("CONTACT_DESCRIPTION").HasMaxLength(30);
+            s.Property(e => e.MainOrderContact).HasColumnName("MAIN_ORDER_CONTACT").HasMaxLength(1);
+            s.Property(e => e.MainInvoiceContact).HasColumnName("MAIN_INVOICE_CONTACT").HasMaxLength(1);
+            s.Property(e => e.MobileNumber).HasColumnName("MOBILE_NUMBER").HasMaxLength(25);
+            s.Property(e => e.EmailAddress).HasColumnName("EMAIL_ADDRESS").HasMaxLength(200);
+            s.Property(e => e.PhoneNumber).HasColumnName("PHONE_NUMBER").HasMaxLength(25);
+            s.Property(e => e.Comments).HasColumnName("COMMENTS").HasMaxLength(200);
+            s.Property(e => e.JobTitle).HasColumnName("JOB_TITLE").HasMaxLength(50);
+            s.Property(e => e.DateInvalid).HasColumnName("DATE_INVALID");
+            s.Property(e => e.DateCreated).HasColumnName("DATE_CREATED");
+            s.Property(e => e.ContactId).HasColumnName("CONTACT_ID");
+            s.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID");
+            s.Property(e => e.PersonId).HasColumnName("PERSON_ID");
         }
 
         private void BuildSupplierOrderHoldHistories(ModelBuilder builder)

@@ -32,6 +32,7 @@
                 .Include(s => s.OrderFullAddress)
                 .Include(s => s.OpenedBy)
                 .Include(s => s.ClosedBy)
+                .Include(s => s.Contacts)
                 .First(x => x.SupplierId == key);
         }
 

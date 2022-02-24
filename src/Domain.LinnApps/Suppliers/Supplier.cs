@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Suppliers
 {
     using System;
+    using System.Collections.Generic;
 
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
@@ -76,5 +77,7 @@
         public string Notes { get; set; }
 
         public int OrganisationId { get; set; }
+
+        public IEnumerable<SupplierContact> Contacts { get; set; }
     }
 }
