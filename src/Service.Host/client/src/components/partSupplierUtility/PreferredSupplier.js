@@ -34,7 +34,6 @@ function PreferredSupplier({
     refreshPart,
     partLoading,
     safetyCriticalPart,
-    bomType,
     currentSupplier
 }) {
     const dispatch = useDispatch();
@@ -291,15 +290,6 @@ function PreferredSupplier({
                     disabled
                 />
             </Grid>
-            {formData?.newSupplierId &&
-                bomType === 'A' &&
-                Number(formData?.newSupplierId) !== 4415 && (
-                    <Grid item xs={12}>
-                        <Typography variant="subtitle" color="secondary">
-                            Tell production to put a labour price on this.
-                        </Typography>
-                    </Grid>
-                )}
             <Grid item xs={6}>
                 <Dropdown
                     value={formData?.changeReasonCode}
@@ -359,7 +349,6 @@ PreferredSupplier.propTypes = {
     refreshPart: PropTypes.func.isRequired,
     partLoading: PropTypes.bool,
     safetyCriticalPart: PropTypes.bool,
-    bomType: PropTypes.string,
     currentSupplier: PropTypes.number.isRequired
 };
 
@@ -371,7 +360,6 @@ PreferredSupplier.defaultProps = {
     oldCurrencyCode: null,
     partLoading: false,
     safetyCriticalPart: false,
-    bomType: null,
     oldSupplierId: null,
     oldSupplierName: null
 };

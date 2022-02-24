@@ -64,7 +64,8 @@
                                    OrderIncrement = 1m,
                                    CurrencyUnitPrice = 1m,
                                    DamagesPercent = 0m,
-                                   MinimumDeliveryQty = 1m
+                                   MinimumDeliveryQty = 1m,
+                                   UnitOfMeasure = "NEW"
             };
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
@@ -93,6 +94,7 @@
             this.current.DeliveryFullAddress.Id.Should().Be(this.newFullAddress.Id);
             this.current.MadeInvalidBy.Id.Should().Be(this.madeInvalidBy.Id);
             this.current.Manufacturer.Code.Should().Be(this.manufacturer.Code);
+            this.current.UnitOfMeasure.Should().Be("NEW");
         }
     }
 }

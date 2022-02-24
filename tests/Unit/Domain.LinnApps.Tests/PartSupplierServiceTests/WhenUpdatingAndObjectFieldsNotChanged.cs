@@ -54,9 +54,7 @@
                 OrderIncrement = 15m,
                 ReelOrBoxQty = 16m,
                 LeadTimeWeeks = 17,
-                OverbookingAllowed = "N",
                 DamagesPercent = 19m,
-                WebAddress = "/web",
                 DeliveryInstructions = "INSTRUCT",
                 NotesForBuyer = "NOTES",
                 ManufacturerPartNumber = "MPN",
@@ -87,9 +85,7 @@
             this.current.OrderIncrement.Should().Be(15m);
             this.current.ReelOrBoxQty.Should().Be(16m);
             this.current.LeadTimeWeeks.Should().Be(17);
-            this.current.OverbookingAllowed.Should().Be("N");
             this.current.DamagesPercent.Should().Be(19m);
-            this.current.WebAddress.Should().Be("/web");
             this.current.DeliveryInstructions.Should().Be("INSTRUCT");
             this.current.NotesForBuyer.Should().Be("NOTES");
             this.current.ManufacturerPartNumber.Should().Be("MPN");

@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import {
     InputField,
     Typeahead,
-    collectionSelectorHelpers
+    collectionSelectorHelpers,
+    itemSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import Dialog from '@mui/material/Dialog';
@@ -14,6 +15,7 @@ import Close from '@mui/icons-material/Close';
 import Button from '@mui/material/Button';
 import addressesActions from '../../../actions/addressesActions';
 import AddressUtility from '../../AdressUtility';
+import addressActions from '../../../actions/addressActions';
 
 function WhereTab({
     orderAddressId,
@@ -46,27 +48,69 @@ function WhereTab({
         collectionSelectorHelpers.getSearchLoading(state.addresses)
     );
     const searchAddresses = searchTerm => dispatch(addressesActions.search(searchTerm));
+    const address = useSelector(state => itemSelectorHelpers.getItem(state.address));
+    const [orderAddressDialogOpen, setOrderAddressDialogOpen] = useState(false);
+    const [invoiceAddressDialogOpen, setInvoiceAddressDialogOpen] = useState(false);
 
-    const [addressDialogOpen, setAddressDialogOpen] = useState(false);
+    useEffect(() => {
+        if (address?.addressId) {
+            if (orderAddressDialogOpen) {
+                handleFieldChange('orderAddressId', address.addressId);
+                handleFieldChange('orderFullAddress', address.fullAddress);
+                setOrderAddressDialogOpen(false);
+                dispatch(addressActions.clearItem());
+            }
+            if (invoiceAddressDialogOpen) {
+                handleFieldChange('invoiceAddressId', address.addressId);
+                handleFieldChange('invoiceFullAddress', address.fullAddress);
+                setInvoiceAddressDialogOpen(false);
+                dispatch(addressActions.clearItem());
+            }
+        }
+    }, [address, handleFieldChange, orderAddressDialogOpen, invoiceAddressDialogOpen, dispatch]);
     return (
         <Grid container spacing={3}>
-            <Dialog open={addressDialogOpen} fullWidth maxWidth="md">
+            <Dialog open={orderAddressDialogOpen} fullWidth maxWidth="md">
                 <div>
                     <IconButton
                         className={classes.pullRight}
                         aria-label="Close"
-                        onClick={() => setAddressDialogOpen(false)}
+                        onClick={() => setOrderAddressDialogOpen(false)}
                     >
                         <Close />
                     </IconButton>
                     <div className={classes.dialog}>
                         <AddressUtility
                             inDialogBox
-                            closeDialog={() => setAddressDialogOpen(false)}
+                            closeDialog={() => setOrderAddressDialogOpen(false)}
                         />
                     </div>
                 </div>
             </Dialog>
+            <Dialog open={invoiceAddressDialogOpen} fullWidth maxWidth="md">
+                <div>
+                    <IconButton
+                        className={classes.pullRight}
+                        aria-label="Close"
+                        onClick={() => setInvoiceAddressDialogOpen(false)}
+                    >
+                        <Close />
+                    </IconButton>
+                    <div className={classes.dialog}>
+                        <AddressUtility
+                            inDialogBox
+                            closeDialog={() => setInvoiceAddressDialogOpen(false)}
+                        />
+                    </div>
+                </div>
+            </Dialog>
+            <Grid item xs={4}>
+                <Button variant="outlined" onClick={() => setOrderAddressDialogOpen(true)}>
+                    Create New Order Address
+                </Button>
+            </Grid>
+            <Grid item xs={8} />
+
             <Grid item xs={3}>
                 <Typeahead
                     onSelect={newValue => {
@@ -98,6 +142,12 @@ function WhereTab({
                 />
             </Grid>
             <Grid item xs={3} />
+            <Grid item xs={4}>
+                <Button variant="outlined" onClick={() => setOrderAddressDialogOpen(true)}>
+                    Create New Invoice Address
+                </Button>
+            </Grid>
+            <Grid item xs={8} />
 
             <Grid item xs={3}>
                 <Typeahead
@@ -130,11 +180,6 @@ function WhereTab({
                 />
             </Grid>
             <Grid item xs={3} />
-            <Grid item xs={2}>
-                <Button variant="outlined" onClick={() => setAddressDialogOpen(true)}>
-                    Address Utility
-                </Button>
-            </Grid>
         </Grid>
     );
 }

@@ -9,7 +9,8 @@ import {
     utilities,
     InputField,
     ErrorCard,
-    getItemError
+    getItemError,
+    SnackbarMessage
 } from '@linn-it/linn-form-components-library';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -71,7 +72,9 @@ function Supplier({ creating }) {
     const clearErrors = () => reduxDispatch(supplierActions.clearErrorsForItem());
     const updateSupplier = body => reduxDispatch(supplierActions.update(id, body));
     const addSupplier = body => reduxDispatch(supplierActions.add(body));
-
+    const snackbarVisible = useSelector(reduxState =>
+        itemSelectorHelpers.getSnackbarVisible(reduxState.supplier)
+    );
     useEffect(() => {
         if (creating) {
             dispatch({
@@ -145,6 +148,11 @@ function Supplier({ creating }) {
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
+                <SnackbarMessage
+                    visible={snackbarVisible}
+                    onClose={() => dispatch(supplierActions.setSnackbarVisible(false))}
+                    message="Save Successful"
+                />
                 {supplierLoading || holdChangeLoading ? (
                     <>
                         <Grid item xs={12}>
@@ -341,7 +349,8 @@ function Supplier({ creating }) {
                                                     openedById={state.supplier.openedById}
                                                     openedByName={state.supplier.openedByName}
                                                     dateOpened={state.supplier.dateOpened}
-                                                    closedById={state.supplier.plannerId}
+                                                    closedById={state.supplier.closedById}
+                                                    closedByName={state.supplier.closedByName}
                                                     dateClosed={state.supplier.dateClosed}
                                                     reasonClosed={state.supplier.reasonClosed}
                                                 />

@@ -123,13 +123,12 @@
             current.OrderIncrement = updated.OrderIncrement;
             current.ReelOrBoxQty = updated.ReelOrBoxQty;
             current.LeadTimeWeeks = updated.LeadTimeWeeks;
-            current.OverbookingAllowed = updated.OverbookingAllowed;
             current.DamagesPercent = updated.DamagesPercent;
-            current.WebAddress = updated.WebAddress;
             current.DeliveryInstructions = updated.DeliveryInstructions;
             current.NotesForBuyer = updated.NotesForBuyer;
             current.ManufacturerPartNumber = updated.ManufacturerPartNumber;
             current.VendorPartNumber = updated.VendorPartNumber;
+            current.UnitOfMeasure = updated.UnitOfMeasure;
         }
 
         public PartSupplier CreatePartSupplier(PartSupplier candidate, IEnumerable<string> privileges)
@@ -179,6 +178,7 @@
                 candidate.Manufacturer = this.manufacturerRepository.FindById(candidate.Manufacturer.Code);
             }
 
+            candidate.OverbookingAllowed = "Y";
             return candidate;
         }
 
