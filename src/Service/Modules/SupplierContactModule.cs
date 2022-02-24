@@ -7,7 +7,6 @@
     using Carter.Response;
 
     using Linn.Common.Facade;
-    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.Extensions;
