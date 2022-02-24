@@ -22,6 +22,6 @@
         
         public Person Person { get; set; }
 
-        public Organisation Organisation { get; set; }
+        public Address Address { get; set; }
     }
 }

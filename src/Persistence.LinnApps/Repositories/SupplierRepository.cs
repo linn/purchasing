@@ -33,7 +33,6 @@
                 .Include(s => s.OpenedBy)
                 .Include(s => s.ClosedBy)
                 .Include(s => s.Contacts).ThenInclude(sc => sc.Contact).ThenInclude(c => c.Person)
-                .Include(s => s.Contacts).ThenInclude(sc => sc.Contact).ThenInclude(c => c.Organisation)
                 .First(x => x.SupplierId == key);
         }
 

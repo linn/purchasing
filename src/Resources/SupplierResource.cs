@@ -1,5 +1,7 @@
 ﻿namespace Linn.Purchasing.Resources
 {
+    using System.Collections.Generic;
+
     using Linn.Common.Resources;
 
     public class SupplierResource : HypermediaResource
@@ -91,5 +93,7 @@
         public string Notes { get; set; }
 
         public int OrganisationId { get; set; }
+
+        public IEnumerable<SupplierContactResource> Contacts { get; set; }
     }
 }

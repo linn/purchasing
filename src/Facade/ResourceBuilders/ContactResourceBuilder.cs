@@ -21,7 +21,9 @@
                           PersonId = entity.Person.Id,
                           Comments = entity.Comments,
                           EmailAddress = entity.EmailAddress,
-                          MobileNumber = entity.MobileNumber
+                          MobileNumber = entity.MobileNumber,
+                          FirstName = entity.Person?.FirstName,
+                          LastName = entity.Person?.LastName
                        };
         }
 
