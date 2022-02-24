@@ -9,6 +9,18 @@ export default function partReducer(state = initialState, action) {
                 ...state,
                 supplier: { ...state.supplier, [action.fieldName]: action.payload }
             };
+        case 'updateMainContact':
+            return {
+                ...state,
+                supplier: {
+                    ...state.supplier,
+                    contacts: state.supplier.contacts.map(c =>
+                        c.contact.contactId === action.payload.id
+                            ? { ...c, [action.propertyName]: action.payload.newValue }
+                            : c
+                    )
+                }
+            };
         default:
             return state;
     }

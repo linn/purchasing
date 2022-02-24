@@ -38,6 +38,7 @@ import WhereTab from './tabs/WhereTab';
 import WhoseTab from './tabs/WhoseTab';
 import LifecycleTab from './tabs/LifecycleTab';
 import NotesTab from './tabs/NotesTab';
+import ContactTab from './tabs/ContactTab';
 
 function Supplier({ creating }) {
     const useStyles = makeStyles(theme => ({
@@ -144,7 +145,16 @@ function Supplier({ creating }) {
         }
         setHoldChangeDialogOpen(false);
     };
-
+    const updateContact = (contactId, propertyName, newValue) => {
+        setEditStatus('edit');
+        if (propertyName === 'isMainOrderContact' || propertyName === 'isMainInvoiceContact') {
+            dispatch({
+                type: 'updateMainContact',
+                propertyName,
+                payload: { id: contactId, newValue }
+            });
+        }
+    };
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
@@ -244,6 +254,7 @@ function Supplier({ creating }) {
                                                 <Tab label="Whose" />
                                                 <Tab label="Lifecycle" />
                                                 <Tab label="Notes" />
+                                                <Tab label="Contact" />
                                             </Tabs>
                                         </Box>
                                         {tab === 0 && (
@@ -362,6 +373,23 @@ function Supplier({ creating }) {
                                                     handleFieldChange={handleFieldChange}
                                                     notes={state.supplier.notes}
                                                     organisationId={state.supplier.organisationId}
+                                                />
+                                            </Box>
+                                        )}
+                                        {tab === 7 && (
+                                            <Box sx={{ paddingTop: 3 }}>
+                                                <ContactTab
+                                                    contacts={state.supplier.contacts?.map(c => ({
+                                                        id: c.contact.contactId,
+                                                        isMainOrderContact: c.isMainOrderContact,
+                                                        isMainInvoiceContact:
+                                                            c.isMainInvoiceContact,
+                                                        firstName: c.contact.firstName,
+                                                        lastName: c.contact.lastName,
+                                                        phoneNumber: c.contact.phoneNumber,
+                                                        emailAddress: c.contact.emailAddress
+                                                    }))}
+                                                    updateContact={updateContact}
                                                 />
                                             </Box>
                                         )}
