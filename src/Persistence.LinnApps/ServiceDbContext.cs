@@ -83,7 +83,6 @@
 
         public DbSet<Person> Persons { get; set; }
 
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
