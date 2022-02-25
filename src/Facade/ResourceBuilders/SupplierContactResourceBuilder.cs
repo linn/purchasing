@@ -23,7 +23,8 @@
                            ContactId = entity.ContactId,
                            EmailAddress = entity.EmailAddress,
                            MobileNumber = entity.MobileNumber,
-                           PhoneNumber = entity.PhoneNumber
+                           PhoneNumber = entity.PhoneNumber,
+                           PersonId = entity.Person.Id
                        };
         }
 

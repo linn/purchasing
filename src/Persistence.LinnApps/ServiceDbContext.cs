@@ -345,8 +345,10 @@
             s.Property(e => e.IsMainInvoiceContact).HasColumnName("MAIN_INVOICE_CONTACT");
             s.Property(e => e.IsMainOrderContact).HasColumnName("MAIN_ORDER_CONTACT");
             s.Property(e => e.PhoneNumber).HasColumnName("PHONE_NUMBER");
-            s.Property(e => e.PhoneNumber).HasColumnName("MONILE_PHONE_NUMBER");
+            s.Property(e => e.MobileNumber).HasColumnName("MOBILE_NUMBER");
             s.Property(e => e.EmailAddress).HasColumnName("EMAIL_ADDRESS");
+            s.Property(e => e.JobTitle).HasColumnName("JOB_TITLE");
+            s.Property(e => e.Comments).HasColumnName("COMMENTS");
             s.HasOne(e => e.Person).WithMany().HasForeignKey("PERSON_ID");
         }
 

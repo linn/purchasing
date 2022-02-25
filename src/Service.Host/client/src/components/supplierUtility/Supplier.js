@@ -400,7 +400,8 @@ function Supplier({ creating }) {
                                                         firstName: c.firstName,
                                                         lastName: c.lastName,
                                                         phoneNumber: c.phoneNumber,
-                                                        emailAddress: c.emailAddress
+                                                        emailAddress: c.emailAddress,
+                                                        personId: c.personId
                                                     }))}
                                                     updateContact={updateContact}
                                                     addContact={addContact}
