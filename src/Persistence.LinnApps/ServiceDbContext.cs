@@ -77,8 +77,6 @@
 
         public DbSet<SupplierGroup> SupplierGroups { get; set; }
 
-        public DbSet<Contact> Contacts { get; set; }
-
         public DbSet<SupplierContact> SupplierContacts { get; set; }
 
         public DbSet<Person> Persons { get; set; }
@@ -123,7 +121,6 @@
             this.BuildSupplierGroups(builder);
             this.BuildSupplierContacts(builder);
             this.BuildPersons(builder);
-            this.BuildContacts(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -339,22 +336,6 @@
             entity.HasMany(s => s.Contacts).WithOne().HasForeignKey(c => c.SupplierId);
         }
 
-        private void BuildContacts(ModelBuilder builder)
-        {
-            var s = builder.Entity<Contact>().ToTable("CONTACTS");
-            s.HasKey(a => a.ContactId);
-            s.Property(e => e.MobileNumber).HasColumnName("MOBILE_NUMBER").HasMaxLength(25);
-            s.Property(e => e.EmailAddress).HasColumnName("EMAIL_ADDRESS").HasMaxLength(200);
-            s.Property(e => e.PhoneNumber).HasColumnName("PHONE_NUMBER").HasMaxLength(25);
-            s.Property(e => e.Comments).HasColumnName("COMMENTS").HasMaxLength(200);
-            s.Property(e => e.JobTitle).HasColumnName("JOB_TITLE").HasMaxLength(50);
-            s.Property(e => e.DateInvalid).HasColumnName("DATE_INVALID");
-            s.Property(e => e.DateCreated).HasColumnName("DATE_CREATED");
-            s.Property(e => e.ContactId).HasColumnName("CONTACT_ID");
-            s.HasOne(e => e.Person).WithMany().HasForeignKey("PERSON_ID");
-            s.HasOne(e => e.Address).WithMany().HasForeignKey("ADDRESS_ID");
-        }
-
         private void BuildSupplierContacts(ModelBuilder builder)
         {
             var s = builder.Entity<SupplierContact>().ToTable("SUPPLIER_CONTACTS");
@@ -363,8 +344,10 @@
             s.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID");
             s.Property(e => e.IsMainInvoiceContact).HasColumnName("MAIN_INVOICE_CONTACT");
             s.Property(e => e.IsMainOrderContact).HasColumnName("MAIN_ORDER_CONTACT");
-            s.HasOne(e => e.Contact).WithMany().HasForeignKey(x => x.ContactId);
-            s.Property(e => e.PersonId).HasColumnName("PERSON_ID");
+            s.Property(e => e.PhoneNumber).HasColumnName("PHONE_NUMBER");
+            s.Property(e => e.PhoneNumber).HasColumnName("MONILE_PHONE_NUMBER");
+            s.Property(e => e.EmailAddress).HasColumnName("EMAIL_ADDRESS");
+            s.HasOne(e => e.Person).WithMany().HasForeignKey("PERSON_ID");
         }
 
         private void BuildPersons(ModelBuilder builder)

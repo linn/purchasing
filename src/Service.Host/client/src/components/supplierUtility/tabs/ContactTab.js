@@ -2,10 +2,8 @@ import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import { DataGrid } from '@mui/x-data-grid';
-import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@mui/styles';
-import { collectionSelectorHelpers, TypeaheadTable } from '@linn-it/linn-form-components-library';
-import contactsActions from '../../../actions/contactsActions';
+import { Button } from '@mui/material';
 
 function ContactTab({ contacts, updateContact, addContact }) {
     const useStyles = makeStyles(() => ({
@@ -61,39 +59,6 @@ function ContactTab({ contacts, updateContact, addContact }) {
         [updateContact]
     );
 
-    const contactsSearchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(state.contacts)
-    );
-    const contactsSearchLoading = useSelector(state =>
-        collectionSelectorHelpers.getSearchLoading(state.contacts)
-    );
-
-    const dispatch = useDispatch();
-
-    const searchContacts = searchTerm => dispatch(contactsActions.search(searchTerm));
-
-    const contactsTable = {
-        totalItemCount: contactsSearchResults.length,
-        rows: contactsSearchResults?.map((item, i) => ({
-            id: item.contactId,
-            data: item,
-            values: [
-                { id: `${i}-0`, value: `${item.contactId}` },
-                { id: `${i}-1`, value: `${item.firstName || ''}` },
-                { id: `${i}-2`, value: `${item.lastName || ''}` },
-                { id: `${i}-2`, value: `${item.phoneNumber || ''}` },
-                { id: `${i}-2`, value: `${item.emailAddress || ''}` },
-                {
-                    id: `${i}-2`,
-                    value: `${
-                        item.dateCreated ? new Date(item.dateCreated).toLocaleDateString() : ''
-                    }`
-                }
-            ],
-            links: item.links
-        }))
-    };
-
     return (
         <Grid container spacing={3}>
             <Grid item xs={12}>
@@ -109,42 +74,9 @@ function ContactTab({ contacts, updateContact, addContact }) {
                     onEditRowsModelChange={handleEditRowsModelChange}
                 />
             </Grid>
-
-            <Grid item xs={12}>
-                <TypeaheadTable
-                    table={contactsTable}
-                    columnNames={[
-                        'Id',
-                        'First Name',
-                        'Last Name',
-                        'Phone',
-                        'Email',
-                        'Date Created'
-                    ]}
-                    fetchItems={searchContacts}
-                    modal
-                    placeholder="Search by Id or Name"
-                    links={false}
-                    clearSearch={() => dispatch(contactsActions.clearSearch())}
-                    loading={contactsSearchLoading}
-                    label="Look up an existing contact"
-                    title="Search Contacts"
-                    value=""
-                    onSelect={newValue =>
-                        addContact(
-                            newValue.data.contactId,
-                            newValue.data.firstName,
-                            newValue.data.lastName,
-                            newValue.data.phoneNumber,
-                            newValue.data.emailAddress,
-                            'N',
-                            'N',
-                            newValue.data.personId
-                        )
-                    }
-                    debounce={1000}
-                    minimumSearchTermLength={2}
-                />
+            <Grid item xs={3}>
+                {' '}
+                <Button onClick={addContact}>Add</Button>
             </Grid>
         </Grid>
     );

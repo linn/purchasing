@@ -32,8 +32,6 @@
 
         protected IRepository<Planner, int> PlannerRepository { get; set; }
 
-        protected IRepository<Contact, int> ContactRepository { get; set; }
-
         protected IRepository<Person, int> PersonRepository { get; set; }
 
         protected IRepository<SupplierContact, int> SupplierContactRepository { get; set; }
@@ -50,7 +48,6 @@
             this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
             this.VendorManagerRepository = Substitute.For<IRepository<VendorManager, string>>();
             this.PlannerRepository = Substitute.For<IRepository<Planner, int>>();
-            this.ContactRepository = Substitute.For<IRepository<Contact, int>>();
             this.PersonRepository = Substitute.For<IRepository<Person, int>>();
             this.SupplierContactRepository = Substitute.For<IRepository<SupplierContact, int>>();
         }

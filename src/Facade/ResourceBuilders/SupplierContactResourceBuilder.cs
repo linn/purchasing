@@ -10,21 +10,20 @@
 
     public class SupplierContactResourceBuilder : IBuilder<SupplierContact>
     {
-        private readonly IBuilder<Contact> contactResourceBuilder;
-
-        public SupplierContactResourceBuilder(IBuilder<Contact> contactResourceBuilder)
-        {
-            this.contactResourceBuilder = contactResourceBuilder;
-        }
 
         public SupplierContactResource Build(SupplierContact entity, IEnumerable<string> claims)
         {
             return new SupplierContactResource
                        {
                            SupplierId = entity.SupplierId,
-                           Contact = (ContactResource)this.contactResourceBuilder.Build(entity.Contact, null),
                            IsMainInvoiceContact = entity.IsMainInvoiceContact,
-                           IsMainOrderContact = entity.IsMainOrderContact
+                           IsMainOrderContact = entity.IsMainOrderContact,
+                           LastName = entity.Person.LastName,
+                           FirstName = entity.Person.FirstName,
+                           ContactId = entity.ContactId,
+                           EmailAddress = entity.EmailAddress,
+                           MobileNumber = entity.MobileNumber,
+                           PhoneNumber = entity.PhoneNumber
                        };
         }
 

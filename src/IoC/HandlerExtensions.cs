@@ -45,7 +45,7 @@
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<PriceChangeReasonResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<PartPriceConversionsResource>>()
                 .AddTransient<IHandler, JsonResultHandler<PartCategoryResource>>()
-                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PartCategoryResource>>>()                
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PartCategoryResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<PurchaseOrderResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<PurchaseOrderResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<AddressResource>>()
@@ -54,9 +54,7 @@
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<VendorManagerResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<SupplierGroupResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<SupplierGroupResource>>>()
-                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PlannerResource>>>()
-                .AddTransient<IHandler, JsonResultHandler<ContactResource>>()
-                .AddTransient<IHandler, JsonResultHandler<IEnumerable<ContactResource>>>();
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PlannerResource>>>();
         }
     }
 }

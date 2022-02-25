@@ -131,30 +131,16 @@
                            OrganisationId = resource.OrganisationId,
                            Contacts = resource.Contacts?.Select(c => new SupplierContact
                                                                           {
-                                                                              Contact = new Contact
-                                                                                  {
-                                                                                      ContactId = c.Contact.ContactId,
-                                                                                      Comments = c.Contact.Comments,
-                                                                                      EmailAddress = c.Contact.EmailAddress,
-                                                                                      JobTitle = c.Contact.JobTitle,
-                                                                                      DateCreated = !string.IsNullOrEmpty(c.Contact.DateCreated)
-                                                                                          ? DateTime.Parse(c.Contact.DateCreated) : null,
-                                                                                      DateInvalid = !string.IsNullOrEmpty(c.Contact.DateInvalid)
-                                                                                          ? DateTime.Parse(c.Contact.DateInvalid) : null,
-                                                                                      MobileNumber = c.Contact.MobileNumber,
-                                                                                      PhoneNumber = c.Contact.PhoneNumber,
-                                                                                      Person = c.Contact.PersonId.HasValue 
-                                                                                          ? new Person
-                                                                                          {
-                                                                                              FirstName = c.Contact.FirstName,
-                                                                                              LastName = c.Contact.LastName,
-                                                                                              Id = (int)c.Contact.PersonId
-                                                                                          } 
-                                                                                          : null
-                                                                                  },
-                                                                              ContactId = c.Contact.ContactId,
+                                                                              ContactId = c.ContactId,
                                                                               IsMainInvoiceContact = c.IsMainInvoiceContact,
-                                                                              IsMainOrderContact = c.IsMainOrderContact
+                                                                              IsMainOrderContact = c.IsMainOrderContact,
+                                                                              EmailAddress = c.EmailAddress,
+                                                                              Comments = c.Comments,
+                                                                              JobTitle = c.JobTitle,
+                                                                              MobileNumber = c.MobileNumber,
+                                                                              PhoneNumber = c.PhoneNumber,
+                                                                              Person = c.PersonId.HasValue ? 
+                                                                                  new Person { Id = (int)c.PersonId } : null
                                                                           })
             };
         }

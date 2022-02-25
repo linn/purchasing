@@ -16,8 +16,6 @@
 
         private Supplier updated;
 
-        private Contact updatedContact;
-
         private SupplierContact currentSupplierContact;
 
         private SupplierContact updatedSupplierContact;
@@ -32,21 +30,13 @@
 
             this.updatedPerson = new Person { FirstName = "A", LastName = "CONTACT", Id = 123 };
 
-            this.updatedContact = new Contact
-                                      {
-                                          ContactId = 1, 
-                                          PhoneNumber = "123",
-                                          EmailAddress = "email@address.com",
-                                          Person = this.updatedPerson
-                                      };
-
             this.updatedSupplierContact = new SupplierContact
                                        {
                                            ContactId = 1,
                                            IsMainInvoiceContact = "Y",
                                            IsMainOrderContact = "N",
                                            SupplierId = 1,
-                                           Contact = this.updatedContact
+                                           Person = this.updatedPerson
             };
 
             this.updated = new Supplier
@@ -65,8 +55,8 @@
                                    this.updatedSupplierContact
                                }
             };
-            this.SupplierContactRepository.FindById(this.updatedContact.ContactId).Returns(this.currentSupplierContact);
-            this.ContactRepository.FindById(this.updatedContact.ContactId).Returns(this.updatedContact);
+            this.SupplierContactRepository.FindById(this.updatedSupplierContact.ContactId).Returns(this.currentSupplierContact);
+            this.SupplierContactRepository.FindById(this.updatedSupplierContact.ContactId).Returns(this.updatedSupplierContact);
             this.PersonRepository.FindById(this.updatedPerson.Id).Returns(this.updatedPerson);
             this.Sut.UpdateSupplier(this.current, this.updated, new List<string>());
         }
@@ -78,10 +68,10 @@
             var first = this.current.Contacts.First();
             first.IsMainInvoiceContact.Should().Be(this.updatedSupplierContact.IsMainInvoiceContact);
             first.IsMainOrderContact.Should().Be(this.updatedSupplierContact.IsMainOrderContact);
-            first.Contact.EmailAddress.Should().Be(this.updatedContact.EmailAddress);
-            first.Contact.PhoneNumber.Should().Be(this.updatedContact.PhoneNumber);
-            first.Contact.Person.LastName.Should().Be(this.updatedPerson.LastName);
-            first.Contact.Person.FirstName.Should().Be(this.updatedPerson.FirstName);
+            first.EmailAddress.Should().Be(this.updatedSupplierContact.EmailAddress);
+            first.PhoneNumber.Should().Be(this.updatedSupplierContact.PhoneNumber);
+            first.Person.LastName.Should().Be(this.updatedPerson.LastName);
+            first.Person.FirstName.Should().Be(this.updatedPerson.FirstName);
         }
     }
 }

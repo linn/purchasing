@@ -145,33 +145,11 @@ function Supplier({ creating }) {
         }
         setHoldChangeDialogOpen(false);
     };
-    const addContact = (
-        contactId,
-        firstName,
-        lastName,
-        phoneNumber,
-        emailAddress,
-        isMainOrderContact,
-        isMainInvoiceContact,
-        personId
-    ) => {
-        console.log(personId);
+    const addContact = () => {
         setEditStatus('edit');
         dispatch({
             type: 'addContact',
-            payload: {
-                isMainOrderContact,
-                isMainInvoiceContact,
-                id: contactId,
-                contact: {
-                    contactId,
-                    firstName,
-                    lastName,
-                    phoneNumber,
-                    emailAddress,
-                    personId
-                }
-            }
+            payload: { id: state.supplier.supplierId, contactId: -1 }
         });
     };
     const updateContact = (contactId, propertyName, newValue) => {
@@ -415,14 +393,14 @@ function Supplier({ creating }) {
                                             <Box sx={{ paddingTop: 3 }}>
                                                 <ContactTab
                                                     contacts={state.supplier.contacts?.map(c => ({
-                                                        id: c.contact?.contactId,
+                                                        id: c.contactId,
                                                         isMainOrderContact: c.isMainOrderContact,
                                                         isMainInvoiceContact:
                                                             c.isMainInvoiceContact,
-                                                        firstName: c.contact.firstName,
-                                                        lastName: c.contact.lastName,
-                                                        phoneNumber: c.contact.phoneNumber,
-                                                        emailAddress: c.contact.emailAddress
+                                                        firstName: c.firstName,
+                                                        lastName: c.lastName,
+                                                        phoneNumber: c.phoneNumber,
+                                                        emailAddress: c.emailAddress
                                                     }))}
                                                     updateContact={updateContact}
                                                     addContact={addContact}

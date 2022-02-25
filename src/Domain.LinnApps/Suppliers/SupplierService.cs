@@ -31,8 +31,6 @@
 
         private readonly IRepository<Planner, int> plannerRepository;
         
-        private readonly IRepository<Contact, int> contactRepository;
-        
         private readonly IRepository<Person, int> personRepository;
         
         private readonly IRepository<SupplierContact, int> supplierContactRepository;
@@ -47,7 +45,6 @@
             IRepository<Employee, int> employeeRepository,
             IRepository<VendorManager, string> vendorManagerRepository,
             IRepository<Planner, int> plannerRepository,
-            IRepository<Contact, int> contactRepository,
             IRepository<Person, int> personRepository,
             IRepository<SupplierContact, int> supplierContactRepository)
         {
@@ -60,7 +57,6 @@
             this.employeeRepository = employeeRepository;
             this.vendorManagerRepository = vendorManagerRepository;
             this.plannerRepository = plannerRepository;
-            this.contactRepository = contactRepository;
             this.personRepository = personRepository;
             this.supplierContactRepository = supplierContactRepository;
         }
@@ -301,28 +297,28 @@
                     existingSupplierContact.IsMainInvoiceContact = supplierContact.IsMainInvoiceContact;
                     existingSupplierContact.IsMainOrderContact = supplierContact.IsMainOrderContact;
 
-                    var contact = this.contactRepository.FindById(supplierContact.ContactId);
-                    contact.PhoneNumber = supplierContact.Contact.PhoneNumber;
-                    contact.EmailAddress = supplierContact.Contact.EmailAddress;
+                    existingSupplierContact.PhoneNumber = supplierContact.PhoneNumber;
+                    existingSupplierContact.EmailAddress = supplierContact.EmailAddress;
 
-                    var person = this.personRepository.FindById(supplierContact.Contact.Person.Id);
+                    var person = this.personRepository.FindById(supplierContact.Person.Id);
 
-                    person.FirstName = supplierContact.Contact.Person.FirstName;
-                    person.LastName = supplierContact.Contact.Person.LastName;
+                    person.FirstName = supplierContact.Person.FirstName;
+                    person.LastName = supplierContact.Person.LastName;
 
-                    contact.Person = person;
-                    existingSupplierContact.Contact = contact;
-
+                    existingSupplierContact.Person = person;
                     result.Add(existingSupplierContact);
                 }
                 else
                 {
-                    supplierContact.Contact.Person = this.personRepository.FindById(supplierContact.Contact.Person.Id);
-                    supplierContact.PersonId = supplierContact.Contact.Person.Id;
+                    supplierContact.Person = this.personRepository.FindById(supplierContact.Person.Id);
+                    //supplierContact.PersonId = supplierContact.Person.Id;
+                    // todo - set contactId
 
                     result.Add(supplierContact);
                 }
             }
+
+            
 
             return result;
         }

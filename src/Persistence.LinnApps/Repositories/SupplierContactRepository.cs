@@ -25,7 +25,7 @@
         public override SupplierContact FindById(int key)
         {
             return this.serviceDbContext.SupplierContacts
-                .Include(v => v.Contact).SingleOrDefault(v => v.ContactId == key);
+                .Include(v => v.Person).SingleOrDefault(v => v.ContactId == key);
         }
     }
 }
