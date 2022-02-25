@@ -149,7 +149,7 @@ function Supplier({ creating }) {
         setEditStatus('edit');
         dispatch({
             type: 'addContact',
-            payload: { id: state.supplier.supplierId, contactId: -1 }
+            payload: { supplierId: state.supplier.supplierId, id: -1 }
         });
     };
     const updateContact = (contactId, propertyName, newValue) => {
@@ -173,7 +173,7 @@ function Supplier({ creating }) {
             <Grid container spacing={3}>
                 <SnackbarMessage
                     visible={snackbarVisible}
-                    onClose={() => dispatch(supplierActions.setSnackbarVisible(false))}
+                    onClose={() => reduxDispatch(supplierActions.setSnackbarVisible(false))}
                     message="Save Successful"
                 />
                 {supplierLoading || holdChangeLoading ? (
@@ -392,17 +392,7 @@ function Supplier({ creating }) {
                                         {tab === 7 && (
                                             <Box sx={{ paddingTop: 3 }}>
                                                 <ContactTab
-                                                    contacts={state.supplier.contacts?.map(c => ({
-                                                        id: c.contactId,
-                                                        isMainOrderContact: c.isMainOrderContact,
-                                                        isMainInvoiceContact:
-                                                            c.isMainInvoiceContact,
-                                                        firstName: c.firstName,
-                                                        lastName: c.lastName,
-                                                        phoneNumber: c.phoneNumber,
-                                                        emailAddress: c.emailAddress,
-                                                        personId: c.personId
-                                                    }))}
+                                                    contacts={state.supplier.contacts}
                                                     updateContact={updateContact}
                                                     addContact={addContact}
                                                 />

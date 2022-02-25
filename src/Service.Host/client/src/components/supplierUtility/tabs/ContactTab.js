@@ -15,7 +15,7 @@ function ContactTab({ contacts, updateContact, addContact }) {
 
     const columns = [
         { field: 'id', headerName: 'Id', width: 100 },
-        { field: 'supplierId', headerName: 'Id', width: 100, hidden: true },
+        { field: 'supplierId', headerName: 'Id', width: 100, hide: true },
 
         { field: 'firstName', headerName: 'First Name', width: 200, editable: true },
         { field: 'lastName', headerName: 'Last Name', width: 200, editable: true },

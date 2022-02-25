@@ -131,7 +131,7 @@
                            OrganisationId = resource.OrganisationId,
                            Contacts = resource.Contacts?.Select(c => new SupplierContact
                                                                           {
-                                                                              ContactId = c.ContactId,
+                                                                              ContactId = c.Id,
                                                                               IsMainInvoiceContact = c.IsMainInvoiceContact,
                                                                               IsMainOrderContact = c.IsMainOrderContact,
                                                                               EmailAddress = c.EmailAddress,
@@ -140,7 +140,7 @@
                                                                               MobileNumber = c.MobileNumber,
                                                                               PhoneNumber = c.PhoneNumber,
                                                                               Person = c.PersonId.HasValue ? 
-                                                                                  new Person { Id = (int)c.PersonId } : null
+                                                                                  new Person { Id = (int)c.PersonId, FirstName = c.FirstName, LastName = c.LastName } : null
                                                                           })
             };
         }

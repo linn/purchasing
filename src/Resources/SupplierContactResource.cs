@@ -2,7 +2,7 @@
 {
     public class SupplierContactResource
     {
-        public int ContactId { get; set; }
+        public int Id { get; set; }
 
         public int SupplierId { get; set; }
 

@@ -4,7 +4,6 @@
     using System.Collections.Generic;
 
     using Linn.Common.Facade;
-    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
 
@@ -20,7 +19,7 @@
                            IsMainOrderContact = entity.IsMainOrderContact,
                            LastName = entity.Person.LastName,
                            FirstName = entity.Person.FirstName,
-                           ContactId = entity.ContactId,
+                           Id = entity.ContactId,
                            EmailAddress = entity.EmailAddress,
                            MobileNumber = entity.MobileNumber,
                            PhoneNumber = entity.PhoneNumber,
