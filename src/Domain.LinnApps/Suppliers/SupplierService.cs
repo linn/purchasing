@@ -279,9 +279,20 @@
                 return null;
             }
 
+            var enumerable = supplierContacts.ToList();
+            if (enumerable.Count(x => x.IsMainOrderContact == "Y") > 1)
+            {
+                throw new SupplierException("Cannot have more than one Main Order Contact");
+            }
+
+            if (enumerable.Count(x => x.IsMainInvoiceContact == "Y") > 1)
+            {
+                throw new SupplierException("Cannot have more than one Main Invoice Contact");
+            }
+
             var result = new List<SupplierContact>();
 
-            foreach (var supplierContact in supplierContacts)
+            foreach (var supplierContact in enumerable)
             {
                 var existingSupplierContact = this.supplierContactRepository.FindById(supplierContact.ContactId);
 
