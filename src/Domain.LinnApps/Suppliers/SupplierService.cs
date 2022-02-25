@@ -310,15 +310,11 @@
                 }
                 else
                 {
-                    supplierContact.Person = this.personRepository.FindById(supplierContact.Person.Id);
-                    //supplierContact.PersonId = supplierContact.Person.Id;
-                    // todo - set contactId
-
+                    supplierContact.Person.DateCreated = DateTime.Today;
+                    supplierContact.SupplierId = supplierContact.SupplierId;
                     result.Add(supplierContact);
                 }
             }
-
-            
 
             return result;
         }

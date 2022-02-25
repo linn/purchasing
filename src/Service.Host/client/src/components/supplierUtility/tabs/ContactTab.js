@@ -78,7 +78,6 @@ function ContactTab({ contacts, updateContact, addContact }) {
                 />
             </Grid>
             <Grid item xs={3}>
-                {' '}
                 <Button onClick={addContact}>Add</Button>
             </Grid>
         </Grid>

@@ -149,7 +149,7 @@ function Supplier({ creating }) {
         setEditStatus('edit');
         dispatch({
             type: 'addContact',
-            payload: { supplierId: state.supplier.supplierId, id: -1 }
+            payload: { supplierId: state.supplier.supplierId, id: -1, personId: -1 }
         });
     };
     const updateContact = (contactId, propertyName, newValue) => {

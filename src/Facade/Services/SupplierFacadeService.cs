@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.Linq;
     using System.Linq.Expressions;
 
@@ -37,11 +36,11 @@
             SupplierResource resource, 
             IEnumerable<string> privileges = null)        
         {
-            var candidate = BuildEntityFromResourceHelper(resource);
+            var candidate = this.BuildEntityFromResourceHelper(resource);
             candidate.SupplierId = this.databaseService.GetNextVal("SUPPLIER_SEQ");
 
             candidate.OpenedBy = resource.OpenedById.HasValue
-                ? new Employee {Id = (int)resource.OpenedById } : null;
+                ? new Employee { Id = (int)resource.OpenedById } : null;
             candidate.DateOpened = DateTime.Today;
             return this.domainService.CreateSupplier(candidate, privileges);
         }
@@ -68,7 +67,7 @@
             SupplierResource updateResource, 
             IEnumerable<string> privileges = null)        
         {
-            var updated = BuildEntityFromResourceHelper(updateResource);
+            var updated = this.BuildEntityFromResourceHelper(updateResource);
 
             updated.SupplierId = entity.SupplierId;
 
@@ -80,9 +79,9 @@
             return s => s.SupplierId.ToString().Contains(searchTerm) || s.Name.Contains(searchTerm.ToUpper());
         }
 
-        private static Supplier BuildEntityFromResourceHelper(SupplierResource resource)
+        private Supplier BuildEntityFromResourceHelper(SupplierResource resource)
         {
-            return new Supplier
+            var supplier = new Supplier
                        {
                            Name = resource.Name,
                            Currency = new Currency
@@ -131,7 +130,8 @@
                            OrganisationId = resource.OrganisationId,
                            Contacts = resource.Contacts?.Select(c => new SupplierContact
                                                                           {
-                                                                              ContactId = c.Id,
+                                                                              SupplierId = resource.Id,
+                                                                              ContactId = c.Id > 0 ? c.Id : this.databaseService.GetIdSequence("CONT_SEQ"),
                                                                               IsMainInvoiceContact = c.IsMainInvoiceContact,
                                                                               IsMainOrderContact = c.IsMainOrderContact,
                                                                               EmailAddress = c.EmailAddress,
@@ -139,10 +139,17 @@
                                                                               JobTitle = c.JobTitle,
                                                                               MobileNumber = c.MobileNumber,
                                                                               PhoneNumber = c.PhoneNumber,
-                                                                              Person = c.PersonId.HasValue ? 
-                                                                                  new Person { Id = (int)c.PersonId, FirstName = c.FirstName, LastName = c.LastName } : null
+                                                                              Person =
+                                                                                  new Person
+                                                                                      {
+                                                                                          Id = c.PersonId > 0 ? c.PersonId : this.databaseService.GetNextVal("PERS_SEQ"), 
+                                                                                          FirstName = c.FirstName, 
+                                                                                          LastName = c.LastName
+                                                                                      }
                                                                           })
-            };
+                        };
+         
+            return supplier;
         }
     }
 }
