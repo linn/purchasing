@@ -120,3 +120,5 @@ export const vendorManagers = new ItemType(
 );
 
 export const planners = new ItemType('planners', 'PLANNERS', '/purchasing/suppliers/planners');
+
+export const contacts = new ItemType('contacts', 'CONTACTS', '/purchasing/suppliers/contacts');

@@ -53,8 +53,8 @@
                 .AddTransient<IBuilder<VendorManager>, VendorManagerResourceBuilder>()
                 .AddTransient<IBuilder<Planner>, PlannerResourceBuilder>()
                 .AddTransient<IBuilder<SupplierGroup>, SupplierGroupResourceBuilder>()
-                .AddTransient<IBuilder<Contact>, ContactResourceBuilder>()
-                .AddTransient<IBuilder<SupplierContact>, SupplierContactResourceBuilder>();
+                .AddTransient<IBuilder<SupplierContact>, SupplierContactResourceBuilder>()
+                .AddTransient<IBuilder<Contact>, ContactResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -83,7 +83,7 @@
                 .AddTransient<ISpendsReportFacadeService, SpendsReportFacadeService>()
                 .AddTransient<IFacadeResourceService<Planner, int, PlannerResource, PlannerResource>, PlannerService>()
                 .AddTransient<IFacadeResourceService<SupplierGroup, int, SupplierGroupResource, SupplierGroupResource>, SupplierGroupFacadeService>()
-                .AddTransient<IFacadeResourceService<SupplierContact, int, SupplierContactResource, SupplierContactResource>, SupplierContactService>();
+                .AddTransient<IFacadeResourceService<Contact, int, ContactResource, ContactResource>, ContactsService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)

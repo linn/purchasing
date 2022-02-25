@@ -143,12 +143,14 @@
                                                                                           ? DateTime.Parse(c.Contact.DateInvalid) : null,
                                                                                       MobileNumber = c.Contact.MobileNumber,
                                                                                       PhoneNumber = c.Contact.PhoneNumber,
-                                                                                      Person = new Person
+                                                                                      Person = c.Contact.PersonId.HasValue 
+                                                                                          ? new Person
                                                                                           {
                                                                                               FirstName = c.Contact.FirstName,
                                                                                               LastName = c.Contact.LastName,
-                                                                                              Id = c.Contact.PersonId
-                                                                                          }
+                                                                                              Id = (int)c.Contact.PersonId
+                                                                                          } 
+                                                                                          : null
                                                                                   },
                                                                               ContactId = c.Contact.ContactId,
                                                                               IsMainInvoiceContact = c.IsMainInvoiceContact,

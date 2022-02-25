@@ -56,7 +56,8 @@
         [Test]
         public void ShouldThrowUnauthorisedActionException()
         {
-            this.action.Should().Throw<SupplierException>().WithMessage("Cannot have more than one Main Order Contact");
+            this.action.Should().Throw<SupplierException>()
+                .WithMessage("Cannot have more than one Main Order Contact");
         }
     }
 }

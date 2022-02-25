@@ -41,6 +41,7 @@ import suppliersWithUnacknowledgedOrders from './suppliersWithUnacknowledgedOrde
 import unacknowledgedOrdersReport from './unacknowledgedOrdersReport';
 import planners from './planners';
 import spendByPartReport from './spendByPartReport';
+import contacts from './contacts';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -51,6 +52,7 @@ const rootReducer = history =>
         accountingCompanies,
         address,
         addresses,
+        contacts,
         countries,
         currencies,
         deliveryAddresses,

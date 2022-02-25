@@ -18,7 +18,7 @@
                           DateCreated = entity.DateCreated?.ToString("o"),
                           ContactId = entity.ContactId,
                           JobTitle = entity.JobTitle,
-                          PersonId = entity.Person.Id,
+                          PersonId = entity.Person?.Id,
                           Comments = entity.Comments,
                           EmailAddress = entity.EmailAddress,
                           MobileNumber = entity.MobileNumber,

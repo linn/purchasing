@@ -304,7 +304,6 @@
                     var contact = this.contactRepository.FindById(supplierContact.ContactId);
                     contact.PhoneNumber = supplierContact.Contact.PhoneNumber;
                     contact.EmailAddress = supplierContact.Contact.EmailAddress;
-                   
 
                     var person = this.personRepository.FindById(supplierContact.Contact.Person.Id);
 

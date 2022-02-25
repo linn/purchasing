@@ -20,12 +20,12 @@
         public SupplierContactResource Build(SupplierContact entity, IEnumerable<string> claims)
         {
             return new SupplierContactResource
-            {
-                SupplierId = entity.SupplierId,
-                Contact = (ContactResource)this.contactResourceBuilder.Build(entity.Contact, null),
-                IsMainInvoiceContact = entity.IsMainInvoiceContact,
-                IsMainOrderContact = entity.IsMainOrderContact
-            };
+                       {
+                           SupplierId = entity.SupplierId,
+                           Contact = (ContactResource)this.contactResourceBuilder.Build(entity.Contact, null),
+                           IsMainInvoiceContact = entity.IsMainInvoiceContact,
+                           IsMainOrderContact = entity.IsMainOrderContact
+                       };
         }
 
         public string GetLocation(SupplierContact p)

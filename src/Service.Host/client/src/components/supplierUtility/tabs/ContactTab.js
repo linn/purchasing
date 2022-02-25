@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import { DataGrid } from '@mui/x-data-grid';
 import { makeStyles } from '@mui/styles';
+import { TypeaheadTable } from '@linn-it/linn-form-components-library';
 
 function ContactTab({ contacts, updateContact }) {
     const useStyles = makeStyles(() => ({

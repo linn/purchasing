@@ -18,7 +18,7 @@
 
         public int ContactId { get; set; }
 
-        public int PersonId { get; set; }
+        public int? PersonId { get; set; }
 
         public string FirstName { get; set; }
 
