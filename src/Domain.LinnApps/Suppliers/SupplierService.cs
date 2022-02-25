@@ -140,7 +140,7 @@
                                             ? this.employeeRepository.FindById(updated.ClosedBy.Id)
                                             : null;
 
-            current.Contacts = updated.Contacts;
+            current.Contacts = this.UpdateContacts(updated.Contacts);
         }
 
         public Supplier CreateSupplier(Supplier candidate, IEnumerable<string> privileges)
@@ -270,6 +270,48 @@
 
                 throw new SupplierException(msg);
             }
+        }
+
+        private IEnumerable<SupplierContact> UpdateContacts(IEnumerable<SupplierContact> supplierContacts)
+        {
+            if (supplierContacts == null)
+            {
+                return null;
+            }
+
+            var result = new List<SupplierContact>();
+
+            foreach (var supplierContact in supplierContacts)
+            {
+                var existingSupplierContact = this.supplierContactRepository.FindById(supplierContact.ContactId);
+
+                if (existingSupplierContact != null)
+                {
+                    existingSupplierContact.IsMainInvoiceContact = supplierContact.IsMainInvoiceContact;
+                    existingSupplierContact.IsMainOrderContact = supplierContact.IsMainOrderContact;
+
+                    var contact = this.contactRepository.FindById(supplierContact.ContactId);
+                    contact.PhoneNumber = supplierContact.Contact.PhoneNumber;
+                    contact.EmailAddress = supplierContact.Contact.EmailAddress;
+                   
+
+                    var person = this.personRepository.FindById(supplierContact.Contact.Person.Id);
+
+                    person.FirstName = supplierContact.Contact.Person.FirstName;
+                    person.LastName = supplierContact.Contact.Person.LastName;
+
+                    contact.Person = person;
+                    existingSupplierContact.Contact = contact;
+
+                    result.Add(existingSupplierContact);
+                }
+                else
+                {
+                    result.Add(supplierContact);
+                }
+            }
+
+            return result;
         }
     }
 }

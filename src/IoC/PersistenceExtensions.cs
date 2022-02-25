@@ -72,7 +72,9 @@
                     r => new EntityFrameworkRepository<SupplierGroup, int>(r.GetService<ServiceDbContext>()?.SupplierGroups))
                 .AddTransient<IRepository<Contact, int>, EntityFrameworkRepository<Contact, int>>(
                     r => new EntityFrameworkRepository<Contact, int>(r.GetService<ServiceDbContext>()?.Contacts))
-                .AddTransient<IRepository<SupplierContact, int>, SupplierContactRepository>();
+                .AddTransient<IRepository<SupplierContact, int>, SupplierContactRepository>()
+                .AddTransient<IRepository<Person, int>, EntityFrameworkRepository<Person, int>>(
+                r => new EntityFrameworkRepository<Person, int>(r.GetService<ServiceDbContext>()?.Persons));
         }
     }
 }
