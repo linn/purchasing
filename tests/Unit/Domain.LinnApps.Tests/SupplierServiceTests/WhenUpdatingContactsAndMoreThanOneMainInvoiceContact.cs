@@ -57,7 +57,8 @@
         [Test]
         public void ShouldThrowUnauthorisedActionException()
         {
-            this.action.Should().Throw<SupplierException>().WithMessage("Cannot have more than one Main Invoice Contact");
+            this.action.Should().Throw<SupplierException>()
+                .WithMessage("Cannot have more than one Main Invoice Contact");
         }
     }
 }
