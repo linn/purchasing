@@ -20,7 +20,7 @@
 
         private SupplierContact currentSupplierContact;
 
-        private SupplierContact updateSupplierContact;
+        private SupplierContact updatedSupplierContact;
 
         private Person updatedPerson;
 
@@ -40,7 +40,7 @@
                                           Person = this.updatedPerson
                                       };
 
-            this.updateSupplierContact = new SupplierContact
+            this.updatedSupplierContact = new SupplierContact
                                        {
                                            ContactId = 1,
                                            IsMainInvoiceContact = "Y",
@@ -62,7 +62,7 @@
                 AccountController = new Employee { Id = 123 },
                 Contacts = new List<SupplierContact>
                                {
-                                   this.updateSupplierContact
+                                   this.updatedSupplierContact
                                }
             };
             this.SupplierContactRepository.FindById(this.updatedContact.ContactId).Returns(this.currentSupplierContact);
@@ -76,8 +76,8 @@
         {
             this.current.Contacts.Count().Should().Be(1);
             var first = this.current.Contacts.First();
-            first.IsMainInvoiceContact.Should().Be(this.updateSupplierContact.IsMainInvoiceContact);
-            first.IsMainOrderContact.Should().Be(this.updateSupplierContact.IsMainOrderContact);
+            first.IsMainInvoiceContact.Should().Be(this.updatedSupplierContact.IsMainInvoiceContact);
+            first.IsMainOrderContact.Should().Be(this.updatedSupplierContact.IsMainOrderContact);
             first.Contact.EmailAddress.Should().Be(this.updatedContact.EmailAddress);
             first.Contact.PhoneNumber.Should().Be(this.updatedContact.PhoneNumber);
             first.Contact.Person.LastName.Should().Be(this.updatedPerson.LastName);
