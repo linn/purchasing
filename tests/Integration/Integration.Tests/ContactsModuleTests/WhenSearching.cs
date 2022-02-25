@@ -46,7 +46,7 @@
             this.MockContactRepository.FilterBy(Arg.Any<Expression<Func<Contact, bool>>>())
                 .Returns(this.dataResult.AsQueryable());
             this.Response = this.Client.Get(
-                $"/purchasing/contacts?searchTerm={this.searchTerm}",
+                $"/purchasing/suppliers/contacts?searchTerm={this.searchTerm}",
                 with =>
                     {
                         with.Accept("application/json");

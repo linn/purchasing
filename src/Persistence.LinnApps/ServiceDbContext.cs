@@ -365,6 +365,7 @@
             s.Property(e => e.IsMainInvoiceContact).HasColumnName("MAIN_INVOICE_CONTACT");
             s.Property(e => e.IsMainOrderContact).HasColumnName("MAIN_ORDER_CONTACT");
             s.HasOne(e => e.Contact).WithMany().HasForeignKey(x => x.ContactId);
+            s.Property(e => e.PersonId).HasColumnName("PERSON_ID");
         }
 
         private void BuildPersons(ModelBuilder builder)

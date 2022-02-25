@@ -317,6 +317,9 @@
                 }
                 else
                 {
+                    supplierContact.Contact.Person = this.personRepository.FindById(supplierContact.Contact.Person.Id);
+                    supplierContact.PersonId = supplierContact.Contact.Person.Id;
+
                     result.Add(supplierContact);
                 }
             }

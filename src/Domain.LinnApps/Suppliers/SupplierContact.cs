@@ -10,6 +10,8 @@
 
         public string IsMainInvoiceContact { get; set; }
 
+        public int PersonId { get; set; }
+
         public Contact Contact { get; set; }
     }
 }

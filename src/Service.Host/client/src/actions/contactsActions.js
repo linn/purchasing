@@ -8,7 +8,7 @@ export default new FetchApiActions(
     itemTypes.contacts.actionType,
     itemTypes.contacts.uri,
     actionTypes,
-    config.proxyRoot,
+    config.appRoot,
     null,
     false
 );

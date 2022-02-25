@@ -39,6 +39,14 @@ export default function partReducer(state = initialState, action) {
                     )
                 }
             };
+        case 'addContact':
+            return {
+                ...state,
+                supplier: {
+                    ...state.supplier,
+                    contacts: [...state.supplier.contacts, action.payload]
+                }
+            };
         default:
             return state;
     }

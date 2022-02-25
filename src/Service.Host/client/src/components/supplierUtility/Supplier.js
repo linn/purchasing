@@ -145,6 +145,35 @@ function Supplier({ creating }) {
         }
         setHoldChangeDialogOpen(false);
     };
+    const addContact = (
+        contactId,
+        firstName,
+        lastName,
+        phoneNumber,
+        emailAddress,
+        isMainOrderContact,
+        isMainInvoiceContact,
+        personId
+    ) => {
+        console.log(personId);
+        setEditStatus('edit');
+        dispatch({
+            type: 'addContact',
+            payload: {
+                isMainOrderContact,
+                isMainInvoiceContact,
+                id: contactId,
+                contact: {
+                    contactId,
+                    firstName,
+                    lastName,
+                    phoneNumber,
+                    emailAddress,
+                    personId
+                }
+            }
+        });
+    };
     const updateContact = (contactId, propertyName, newValue) => {
         setEditStatus('edit');
         if (propertyName === 'isMainOrderContact' || propertyName === 'isMainInvoiceContact') {
@@ -386,7 +415,7 @@ function Supplier({ creating }) {
                                             <Box sx={{ paddingTop: 3 }}>
                                                 <ContactTab
                                                     contacts={state.supplier.contacts?.map(c => ({
-                                                        id: c.contact.contactId,
+                                                        id: c.contact?.contactId,
                                                         isMainOrderContact: c.isMainOrderContact,
                                                         isMainInvoiceContact:
                                                             c.isMainInvoiceContact,
@@ -396,6 +425,7 @@ function Supplier({ creating }) {
                                                         emailAddress: c.contact.emailAddress
                                                     }))}
                                                     updateContact={updateContact}
+                                                    addContact={addContact}
                                                 />
                                             </Box>
                                         )}

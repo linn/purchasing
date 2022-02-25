@@ -19,7 +19,7 @@
         public ContactsModule(IFacadeResourceService<Contact, int, ContactResource, ContactResource> contactService)
         {
             this.contactService = contactService;
-            this.Get("/purchasing/contacts", this.SearchContacts);
+            this.Get("/purchasing/suppliers/contacts", this.SearchContacts);
         }
 
         private async Task SearchContacts(HttpRequest req, HttpResponse res)
