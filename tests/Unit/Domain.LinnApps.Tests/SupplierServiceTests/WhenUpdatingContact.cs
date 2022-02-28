@@ -10,7 +10,7 @@
 
     using NUnit.Framework;
 
-    public class WhenUpdatingContactThatAlreadyExists : AuthorisedContext
+    public class WhenUpdatingContact : AuthorisedContext
     {
         private Supplier current;
 
