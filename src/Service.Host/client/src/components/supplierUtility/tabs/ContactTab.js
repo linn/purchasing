@@ -14,7 +14,7 @@ function ContactTab({ contacts, updateContact, addContact }) {
     const classes = useStyles();
 
     const columns = [
-        { field: 'id', headerName: 'Id', width: 100 },
+        { field: 'id', headerName: 'Id', width: 100, hide: true },
         { field: 'supplierId', headerName: 'Id', width: 100, hide: true },
 
         { field: 'firstName', headerName: 'First Name', width: 200, editable: true },
@@ -40,7 +40,7 @@ function ContactTab({ contacts, updateContact, addContact }) {
         },
         { field: 'comments', headerName: 'Comments', width: 250, editable: true },
 
-        { field: 'personId', headerName: 'Id', width: 100 }
+        { field: 'personId', headerName: 'Id', width: 100, hide: true }
     ];
     const [editRowsModel, setEditRowsModel] = useState({});
 

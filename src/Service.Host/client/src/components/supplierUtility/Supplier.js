@@ -124,7 +124,7 @@ function Supplier({ creating }) {
     const userNumber = useSelector(reduxState => getUserNumber(reduxState));
 
     const [holdChangeDialogOpen, setHoldChangeDialogOpen] = useState(false);
-
+    const [newCounter, setNewCounter] = useState(1);
     const changeSupplierHoldStatus = () => {
         if (state.supplier.orderHold === 'Y') {
             reduxDispatch(
@@ -149,8 +149,13 @@ function Supplier({ creating }) {
         setEditStatus('edit');
         dispatch({
             type: 'addContact',
-            payload: { supplierId: state.supplier.supplierId, id: -1, personId: -1 }
+            payload: {
+                supplierId: state.supplier.supplierId,
+                id: 0 - newCounter,
+                personId: 0 - newCounter
+            }
         });
+        setNewCounter(c => c + 1);
     };
     const updateContact = (contactId, propertyName, newValue) => {
         setEditStatus('edit');

@@ -14,7 +14,7 @@ export default function partReducer(state = initialState, action) {
                 ...state,
                 supplier: {
                     ...state.supplier,
-                    contacts: state.supplier.contacts.map(c =>
+                    supplierContacts: state.supplier.supplierContacts.map(c =>
                         c.id === action.payload.id
                             ? { ...c, [action.propertyName]: action.payload.newValue }
                             : c
@@ -26,7 +26,7 @@ export default function partReducer(state = initialState, action) {
                 ...state,
                 supplier: {
                     ...state.supplier,
-                    contacts: state.supplier.contacts.map(c =>
+                    supplierContacts: state.supplier.supplierContacts.map(c =>
                         c.id === action.payload.id
                             ? {
                                   ...c,
@@ -41,7 +41,7 @@ export default function partReducer(state = initialState, action) {
                 ...state,
                 supplier: {
                     ...state.supplier,
-                    contacts: [...state.supplier.contacts, action.payload]
+                    supplierContacts: [...state.supplier.supplierContacts, action.payload]
                 }
             };
         default:
