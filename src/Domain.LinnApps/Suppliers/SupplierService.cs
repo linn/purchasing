@@ -311,7 +311,9 @@
                 else
                 {
                     supplierContact.Person.DateCreated = DateTime.Today;
+                    this.personRepository.Add(supplierContact.Person);
                     supplierContact.SupplierId = supplierContact.SupplierId;
+                    this.supplierContactRepository.Add(supplierContact);
                     result.Add(supplierContact);
                 }
             }
