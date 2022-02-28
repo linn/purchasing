@@ -1,5 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Suppliers
 {
+    using System;
+
     public class SupplierContact
     {
         public int SupplierId { get; set; }
@@ -21,5 +23,7 @@
         public string Comments { get; set; }
 
         public Person Person { get; set; }
+
+        public DateTime? DateCreated { get; set; }
     }
 }

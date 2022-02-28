@@ -299,7 +299,8 @@
 
                     existingSupplierContact.PhoneNumber = supplierContact.PhoneNumber;
                     existingSupplierContact.EmailAddress = supplierContact.EmailAddress;
-
+                    existingSupplierContact.JobTitle = supplierContact.JobTitle;
+                    existingSupplierContact.Comments = supplierContact.Comments;
                     var person = this.personRepository.FindById(supplierContact.Person.Id);
 
                     person.FirstName = supplierContact.Person.FirstName;
@@ -313,6 +314,8 @@
                     supplierContact.Person.DateCreated = DateTime.Today;
                     this.personRepository.Add(supplierContact.Person);
                     supplierContact.SupplierId = supplierContact.SupplierId;
+                    supplierContact.DateCreated = DateTime.Today;
+                    supplierContact.Comments = supplierContact.Comments;
                     this.supplierContactRepository.Add(supplierContact);
                     result.Add(supplierContact);
                 }

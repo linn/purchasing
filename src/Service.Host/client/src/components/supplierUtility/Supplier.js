@@ -267,7 +267,7 @@ function Supplier({ creating }) {
                                                 <Tab label="Whose" />
                                                 <Tab label="Lifecycle" />
                                                 <Tab label="Notes" />
-                                                <Tab label="Contact" />
+                                                <Tab label="Contacts" />
                                             </Tabs>
                                         </Box>
                                         {tab === 0 && (

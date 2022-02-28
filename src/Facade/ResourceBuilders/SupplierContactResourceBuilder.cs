@@ -23,7 +23,9 @@
                            EmailAddress = entity.EmailAddress,
                            MobileNumber = entity.MobileNumber,
                            PhoneNumber = entity.PhoneNumber,
-                           PersonId = entity.Person.Id
+                           PersonId = entity.Person.Id,
+                           JobTitle = entity.JobTitle,
+                           Comments = entity.Comments
                        };
         }
 

@@ -350,6 +350,7 @@
             s.Property(e => e.JobTitle).HasColumnName("JOB_TITLE");
             s.Property(e => e.Comments).HasColumnName("COMMENTS");
             s.HasOne(e => e.Person).WithMany().HasForeignKey("PERSON_ID");
+            s.Property(e => e.DateCreated).HasColumnName("DATE_CREATED");
         }
 
         private void BuildPersons(ModelBuilder builder)

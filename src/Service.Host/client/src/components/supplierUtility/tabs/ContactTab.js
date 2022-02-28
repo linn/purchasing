@@ -19,6 +19,7 @@ function ContactTab({ contacts, updateContact, addContact }) {
 
         { field: 'firstName', headerName: 'First Name', width: 200, editable: true },
         { field: 'lastName', headerName: 'Last Name', width: 200, editable: true },
+        { field: 'jobTitle', headerName: 'Job Title', width: 200, editable: true },
         { field: 'phoneNumber', headerName: 'Phone', width: 150, editable: true },
         { field: 'emailAddress', headerName: 'Email', width: 150, editable: true },
         {
@@ -37,6 +38,8 @@ function ContactTab({ contacts, updateContact, addContact }) {
             valueOptions: ['Y', 'N'],
             editable: true
         },
+        { field: 'comments', headerName: 'Comments', width: 250, editable: true },
+
         { field: 'personId', headerName: 'Id', width: 100 }
     ];
     const [editRowsModel, setEditRowsModel] = useState({});
