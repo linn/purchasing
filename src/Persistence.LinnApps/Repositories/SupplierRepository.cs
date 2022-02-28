@@ -32,7 +32,7 @@
                     .Include(s => s.OrderFullAddress)
                     .Include(s => s.OpenedBy)
                     .Include(s => s.ClosedBy)
-                    .Include(s => s.Contacts)
+                    .Include(s => s.SupplierContacts)
                     .ThenInclude(c => c.Person)
                     .FirstOrDefault(x => x.SupplierId == key);
         }

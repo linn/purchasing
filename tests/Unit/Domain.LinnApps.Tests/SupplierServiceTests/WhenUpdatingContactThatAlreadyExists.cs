@@ -50,7 +50,7 @@
                 PaymentMethod = "PAYMENT METHOD",
                 OrderFullAddress = new FullAddress { AddressString = "ADDRESS", Id = 1 },
                 AccountController = new Employee { Id = 123 },
-                Contacts = new List<SupplierContact>
+                SupplierContacts = new List<SupplierContact>
                                {
                                    this.updatedSupplierContact
                                }
@@ -64,8 +64,8 @@
         [Test]
         public void ShouldUpdateContactAndPerson()
         {
-            this.current.Contacts.Count().Should().Be(1);
-            var first = this.current.Contacts.First();
+            this.current.SupplierContacts.Count().Should().Be(1);
+            var first = this.current.SupplierContacts.First();
             first.IsMainInvoiceContact.Should().Be(this.updatedSupplierContact.IsMainInvoiceContact);
             first.IsMainOrderContact.Should().Be(this.updatedSupplierContact.IsMainOrderContact);
             first.EmailAddress.Should().Be(this.updatedSupplierContact.EmailAddress);

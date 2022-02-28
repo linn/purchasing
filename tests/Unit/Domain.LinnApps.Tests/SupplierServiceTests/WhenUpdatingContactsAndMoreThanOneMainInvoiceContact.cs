@@ -34,7 +34,7 @@
                 OrderFullAddress = new FullAddress { Id = 1 },
                 InvoiceFullAddress = new FullAddress { AddressString = "ADDRESS", Id = 1 },
                 AccountController = new Employee { Id = 123 },
-                Contacts = new List<SupplierContact>
+                SupplierContacts = new List<SupplierContact>
                                                   {
                                                       new SupplierContact
                                                           {

@@ -80,7 +80,7 @@
                 ReasonClosed = entity.ReasonClosed,
                 Notes = entity.Notes,
                 OrganisationId = entity.OrganisationId,
-                Contacts = entity.Contacts?.Select(c =>
+                SupplierContacts = entity.SupplierContacts?.Select(c =>
                     (SupplierContactResource)this.supplierContactResourceBuilder.Build(c, null)),
                 Links = this.BuildLinks(entity, claims).ToArray()
             };

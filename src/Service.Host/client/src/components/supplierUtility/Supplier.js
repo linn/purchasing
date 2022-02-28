@@ -392,7 +392,7 @@ function Supplier({ creating }) {
                                         {tab === 7 && (
                                             <Box sx={{ paddingTop: 3 }}>
                                                 <ContactTab
-                                                    contacts={state.supplier.contacts}
+                                                    contacts={state.supplier.supplierContacts}
                                                     updateContact={updateContact}
                                                     addContact={addContact}
                                                 />

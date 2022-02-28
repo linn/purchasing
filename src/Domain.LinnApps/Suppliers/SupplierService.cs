@@ -136,7 +136,7 @@
                                             ? this.employeeRepository.FindById(updated.ClosedBy.Id)
                                             : null;
 
-            current.Contacts = this.UpdateContacts(updated.Contacts);
+            current.SupplierContacts = this.UpdateContacts(updated.SupplierContacts);
         }
 
         public Supplier CreateSupplier(Supplier candidate, IEnumerable<string> privileges)

@@ -333,7 +333,7 @@
             entity.HasOne(a => a.ClosedBy).WithMany().HasForeignKey("CLOSED_BY");
             entity.Property(a => a.Notes).HasColumnName("NOTES").HasMaxLength(1000);
             entity.Property(a => a.OrganisationId).HasColumnName("ORGANISATION_ID");
-            entity.HasMany(s => s.Contacts).WithOne().HasForeignKey(c => c.SupplierId);
+            entity.HasMany(s => s.SupplierContacts).WithOne().HasForeignKey(c => c.SupplierId);
         }
 
         private void BuildSupplierContacts(ModelBuilder builder)

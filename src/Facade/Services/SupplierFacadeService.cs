@@ -128,7 +128,7 @@
                            ReasonClosed = resource.ReasonClosed,
                            Notes = resource.Notes,
                            OrganisationId = resource.OrganisationId,
-                           Contacts = resource.Contacts?.Select(c => new SupplierContact
+                           SupplierContacts = resource.SupplierContacts?.Select(c => new SupplierContact
                                                                           {
                                                                               SupplierId = resource.Id,
                                                                               ContactId = c.Id > 0 ? c.Id : this.databaseService.GetIdSequence("CONT_SEQ"),

@@ -29,7 +29,7 @@
                                 {
                                     Id = 1, 
                                     Name = "NEW NAME",
-                                    Contacts = new List<SupplierContactResource>
+                                    SupplierContacts = new List<SupplierContactResource>
                                                    {
                                                        new SupplierContactResource
                                                            {
@@ -75,19 +75,19 @@
         [Test]
         public void ShouldCallDomainService()
         {
-            var resourceContact = this.resource.Contacts.First();
+            var resourceContact = this.resource.SupplierContacts.First();
             this.MockDomainService.Received().UpdateSupplier(
                 Arg.Is<Supplier>(s => s.SupplierId == 1  && s.Name == "SUPPLIER"),
                 Arg.Is<Supplier>(s => s.SupplierId == 1 
                                       && s.Name == "NEW NAME"
-                                      && s.Contacts.First().IsMainInvoiceContact == "Y"
-                                      && s.Contacts.First().IsMainOrderContact == "N"
-                                      && s.Contacts.First().Comments == resourceContact.Comments
-                                      && s.Contacts.First().EmailAddress == resourceContact.EmailAddress
-                                      && s.Contacts.First().Person.Id == resourceContact.PersonId
-                                      && s.Contacts.First().JobTitle == resourceContact.JobTitle
-                                      && s.Contacts.First().PhoneNumber == resourceContact.PhoneNumber
-                                      && s.Contacts.First().MobileNumber == resourceContact.MobileNumber),
+                                      && s.SupplierContacts.First().IsMainInvoiceContact == "Y"
+                                      && s.SupplierContacts.First().IsMainOrderContact == "N"
+                                      && s.SupplierContacts.First().Comments == resourceContact.Comments
+                                      && s.SupplierContacts.First().EmailAddress == resourceContact.EmailAddress
+                                      && s.SupplierContacts.First().Person.Id == resourceContact.PersonId
+                                      && s.SupplierContacts.First().JobTitle == resourceContact.JobTitle
+                                      && s.SupplierContacts.First().PhoneNumber == resourceContact.PhoneNumber
+                                      && s.SupplierContacts.First().MobileNumber == resourceContact.MobileNumber),
                 Arg.Any<IEnumerable<string>>());
         }
 

@@ -33,7 +33,7 @@
                                    PaymentMethod = "PAYMENT METHOD",
                                    OrderFullAddress = new FullAddress { AddressString = "ADDRESS", Id = 1 },
                                    AccountController = new Employee { Id = 123 },
-                                   Contacts = new List<SupplierContact>
+                                   SupplierContacts = new List<SupplierContact>
                                                   {
                                                       new SupplierContact
                                                           {

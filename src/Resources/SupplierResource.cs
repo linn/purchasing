@@ -94,6 +94,6 @@
 
         public int OrganisationId { get; set; }
 
-        public IEnumerable<SupplierContactResource> Contacts { get; set; }
+        public IEnumerable<SupplierContactResource> SupplierContacts { get; set; }
     }
 }
