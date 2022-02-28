@@ -105,5 +105,3 @@ export const spendByPartReportActionTypes = makeActionTypes(
     reportTypes.spendByPartReport.actionType,
     false
 );
-
-export const contactsActionTypes = makeActionTypes(itemTypes.contacts.actionType);
