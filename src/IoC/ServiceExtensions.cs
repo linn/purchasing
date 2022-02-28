@@ -52,35 +52,60 @@
                 .AddTransient<IBuilder<Country>, CountryResourceBuilder>()
                 .AddTransient<IBuilder<VendorManager>, VendorManagerResourceBuilder>()
                 .AddTransient<IBuilder<Planner>, PlannerResourceBuilder>()
-                .AddTransient<IBuilder<SupplierGroup>, SupplierGroupResourceBuilder>();
+                .AddTransient<IBuilder<SupplierGroup>, SupplierGroupResourceBuilder>()
+                .AddTransient<IBuilder<SupplierContact>, SupplierContactResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
         {
             return services
-                .AddTransient<IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource>, SigningLimitFacadeService>()
-                .AddTransient<IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>, PartSupplierFacadeService>()
-                .AddTransient<IFacadeResourceService<PreferredSupplierChange, PreferredSupplierChangeKey, PreferredSupplierChangeResource, PreferredSupplierChangeKey>, PreferredSupplierChangeService>()
-                .AddTransient<IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource>, SupplierFacadeService>()
-                .AddTransient<ISupplierHoldService, SupplierHoldService>()
+                .AddTransient<IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource>,
+                    SigningLimitFacadeService>()
+                .AddTransient<
+                    IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource,
+                        PartSupplierResource, PartSupplierSearchResource>, PartSupplierFacadeService>()
+                .AddTransient<
+                    IFacadeResourceService<PreferredSupplierChange, PreferredSupplierChangeKey,
+                        PreferredSupplierChangeResource, PreferredSupplierChangeKey>, PreferredSupplierChangeService>()
+                .AddTransient<IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource>,
+                    SupplierFacadeService>().AddTransient<ISupplierHoldService, SupplierHoldService>()
                 .AddTransient<IPartService, PartService>()
-                .AddTransient<IFacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource>, OrderMethodService>()
-                .AddTransient<IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource>, CurrencyFacadeService>()
-                .AddTransient<IFacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource, LinnDeliveryAddressResource>, LinnDeliveryAddressService>()
-                .AddTransient<IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource>, UnitsOfMeasureService>()
-                .AddTransient<IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource>, PackagingGroupService>()
+                .AddTransient<IFacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource>,
+                    OrderMethodService>()
+                .AddTransient<IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource>,
+                    CurrencyFacadeService>()
+                .AddTransient<
+                    IFacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource,
+                        LinnDeliveryAddressResource>, LinnDeliveryAddressService>()
+                .AddTransient<
+                    IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource>,
+                    UnitsOfMeasureService>()
+                .AddTransient<
+                    IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource>,
+                    PackagingGroupService>()
                 .AddTransient<IFacadeResourceService<Tariff, int, TariffResource, TariffResource>, TariffService>()
-                .AddTransient<IFacadeResourceService<Manufacturer, string, ManufacturerResource, ManufacturerResource>, ManufacturerFacadeService>()
-                .AddTransient<IFacadeResourceFilterService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource>, PurchaseOrderFacadeService>()
-                .AddTransient<IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource>, PriceChangeReasonService>()
-                .AddTransient<IFacadeResourceService<PartCategory, string, PartCategoryResource, PartCategoryResource>, PartCategoriesService>()
+                .AddTransient<IFacadeResourceService<Manufacturer, string, ManufacturerResource, ManufacturerResource>,
+                    ManufacturerFacadeService>()
+                .AddTransient<
+                    IFacadeResourceFilterService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource,
+                        PurchaseOrderSearchResource>, PurchaseOrderFacadeService>()
+                .AddTransient<
+                    IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource,
+                        PriceChangeReasonResource>, PriceChangeReasonService>()
+                .AddTransient<IFacadeResourceService<PartCategory, string, PartCategoryResource, PartCategoryResource>,
+                    PartCategoriesService>()
                 .AddTransient<IPurchaseOrderReportFacadeService, PurchaseOrderReportFacadeService>()
-                .AddTransient<IFacadeResourceFilterService<Address, int, AddressResource, AddressResource, AddressResource>, AddressService>()
-                .AddTransient<IFacadeResourceService<Country, string, CountryResource, CountryResource>, CountryService>()
-                .AddTransient<IFacadeResourceService<VendorManager, string, VendorManagerResource, VendorManagerResource>, VendorManagerFacadeService>()
-                .AddTransient<ISpendsReportFacadeService, SpendsReportFacadeService>()
+                .AddTransient<
+                    IFacadeResourceFilterService<Address, int, AddressResource, AddressResource, AddressResource>,
+                    AddressService>()
+                .AddTransient<IFacadeResourceService<Country, string, CountryResource, CountryResource>,
+                    CountryService>()
+                .AddTransient<
+                    IFacadeResourceService<VendorManager, string, VendorManagerResource, VendorManagerResource>,
+                    VendorManagerFacadeService>().AddTransient<ISpendsReportFacadeService, SpendsReportFacadeService>()
                 .AddTransient<IFacadeResourceService<Planner, int, PlannerResource, PlannerResource>, PlannerService>()
-                .AddTransient<IFacadeResourceService<SupplierGroup, int, SupplierGroupResource, SupplierGroupResource>, SupplierGroupFacadeService>();
+                .AddTransient<IFacadeResourceService<SupplierGroup, int, SupplierGroupResource, SupplierGroupResource>,
+                    SupplierGroupFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)

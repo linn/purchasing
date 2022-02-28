@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Integration.Tests.VendorManagersModule
+﻿namespace Linn.Purchasing.Integration.Tests.VendorManagerModuleTests
 {
     using System.Net.Http;
 

@@ -38,6 +38,7 @@ import WhereTab from './tabs/WhereTab';
 import WhoseTab from './tabs/WhoseTab';
 import LifecycleTab from './tabs/LifecycleTab';
 import NotesTab from './tabs/NotesTab';
+import ContactTab from './tabs/ContactTab';
 
 function Supplier({ creating }) {
     const useStyles = makeStyles(theme => ({
@@ -123,7 +124,7 @@ function Supplier({ creating }) {
     const userNumber = useSelector(reduxState => getUserNumber(reduxState));
 
     const [holdChangeDialogOpen, setHoldChangeDialogOpen] = useState(false);
-
+    const [newCounter, setNewCounter] = useState(1);
     const changeSupplierHoldStatus = () => {
         if (state.supplier.orderHold === 'Y') {
             reduxDispatch(
@@ -144,13 +145,40 @@ function Supplier({ creating }) {
         }
         setHoldChangeDialogOpen(false);
     };
-
+    const addContact = () => {
+        setEditStatus('edit');
+        dispatch({
+            type: 'addContact',
+            payload: {
+                supplierId: state.supplier.supplierId,
+                id: 0 - newCounter,
+                personId: 0 - newCounter
+            }
+        });
+        setNewCounter(c => c + 1);
+    };
+    const updateContact = (contactId, propertyName, newValue) => {
+        setEditStatus('edit');
+        if (propertyName === 'isMainOrderContact' || propertyName === 'isMainInvoiceContact') {
+            dispatch({
+                type: 'updateMainContact',
+                propertyName,
+                payload: { id: contactId, newValue }
+            });
+        } else {
+            dispatch({
+                type: 'updateContactDetail',
+                propertyName,
+                payload: { id: contactId, newValue }
+            });
+        }
+    };
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
                 <SnackbarMessage
                     visible={snackbarVisible}
-                    onClose={() => dispatch(supplierActions.setSnackbarVisible(false))}
+                    onClose={() => reduxDispatch(supplierActions.setSnackbarVisible(false))}
                     message="Save Successful"
                 />
                 {supplierLoading || holdChangeLoading ? (
@@ -244,6 +272,7 @@ function Supplier({ creating }) {
                                                 <Tab label="Whose" />
                                                 <Tab label="Lifecycle" />
                                                 <Tab label="Notes" />
+                                                <Tab label="Contacts" />
                                             </Tabs>
                                         </Box>
                                         {tab === 0 && (
@@ -362,6 +391,15 @@ function Supplier({ creating }) {
                                                     handleFieldChange={handleFieldChange}
                                                     notes={state.supplier.notes}
                                                     organisationId={state.supplier.organisationId}
+                                                />
+                                            </Box>
+                                        )}
+                                        {tab === 7 && (
+                                            <Box sx={{ paddingTop: 3 }}>
+                                                <ContactTab
+                                                    contacts={state.supplier.supplierContacts}
+                                                    updateContact={updateContact}
+                                                    addContact={addContact}
                                                 />
                                             </Box>
                                         )}

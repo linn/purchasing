@@ -14,9 +14,14 @@
     {
         private readonly IAuthorisationService authService;
 
-        public SupplierResourceBuilder(IAuthorisationService authService)
+        private readonly IBuilder<SupplierContact> supplierContactResourceBuilder;
+
+        public SupplierResourceBuilder(
+            IAuthorisationService authService,
+            IBuilder<SupplierContact> supplierContactResourceBuilder)
         {
             this.authService = authService;
+            this.supplierContactResourceBuilder = supplierContactResourceBuilder;
         }
 
         public SupplierResource Build(Supplier entity, IEnumerable<string> claims)
@@ -75,6 +80,8 @@
                 ReasonClosed = entity.ReasonClosed,
                 Notes = entity.Notes,
                 OrganisationId = entity.OrganisationId,
+                SupplierContacts = entity.SupplierContacts?.Select(c =>
+                    (SupplierContactResource)this.supplierContactResourceBuilder.Build(c, null)),
                 Links = this.BuildLinks(entity, claims).ToArray()
             };
         }

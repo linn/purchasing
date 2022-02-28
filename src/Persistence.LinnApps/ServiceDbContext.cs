@@ -77,6 +77,10 @@
 
         public DbSet<SupplierGroup> SupplierGroups { get; set; }
 
+        public DbSet<SupplierContact> SupplierContacts { get; set; }
+
+        public DbSet<Person> Persons { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -115,6 +119,8 @@
             this.BuildUnacknowledgedOrders(builder);
             this.BuildPlanners(builder);
             this.BuildSupplierGroups(builder);
+            this.BuildSupplierContacts(builder);
+            this.BuildPersons(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -327,6 +333,34 @@
             entity.HasOne(a => a.ClosedBy).WithMany().HasForeignKey("CLOSED_BY");
             entity.Property(a => a.Notes).HasColumnName("NOTES").HasMaxLength(1000);
             entity.Property(a => a.OrganisationId).HasColumnName("ORGANISATION_ID");
+            entity.HasMany(s => s.SupplierContacts).WithOne().HasForeignKey(c => c.SupplierId);
+        }
+
+        private void BuildSupplierContacts(ModelBuilder builder)
+        {
+            var s = builder.Entity<SupplierContact>().ToTable("SUPPLIER_CONTACTS");
+            s.HasKey(a => a.ContactId);
+            s.Property(e => e.ContactId).HasColumnName("CONTACT_ID");
+            s.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID");
+            s.Property(e => e.IsMainInvoiceContact).HasColumnName("MAIN_INVOICE_CONTACT");
+            s.Property(e => e.IsMainOrderContact).HasColumnName("MAIN_ORDER_CONTACT");
+            s.Property(e => e.PhoneNumber).HasColumnName("PHONE_NUMBER");
+            s.Property(e => e.MobileNumber).HasColumnName("MOBILE_NUMBER");
+            s.Property(e => e.EmailAddress).HasColumnName("EMAIL_ADDRESS");
+            s.Property(e => e.JobTitle).HasColumnName("JOB_TITLE");
+            s.Property(e => e.Comments).HasColumnName("COMMENTS");
+            s.HasOne(e => e.Person).WithMany().HasForeignKey("PERSON_ID");
+            s.Property(e => e.DateCreated).HasColumnName("DATE_CREATED");
+        }
+
+        private void BuildPersons(ModelBuilder builder)
+        {
+            var p = builder.Entity<Person>().ToTable("PERSONS");
+            p.HasKey(x => x.Id);
+            p.Property(x => x.Id).HasColumnName("PERSON_ID");
+            p.Property(x => x.FirstName).HasColumnName("FIRST_NAME").HasMaxLength(20);
+            p.Property(x => x.LastName).HasColumnName("LAST_NAME").HasMaxLength(20);
+            p.Property(x => x.DateCreated).HasColumnName("DATE_CREATED");
         }
 
         private void BuildSupplierOrderHoldHistories(ModelBuilder builder)

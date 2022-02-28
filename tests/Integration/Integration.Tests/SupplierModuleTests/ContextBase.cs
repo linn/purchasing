@@ -126,7 +126,7 @@
             this.SupplierFacadeService = new SupplierFacadeService(
                 this.MockSupplierRepository,
                 this.TransactionManager,
-                new SupplierResourceBuilder(this.MockAuthService),
+                new SupplierResourceBuilder(this.MockAuthService, new SupplierContactResourceBuilder()),
                 this.MockDomainService,
                 this.MockDatabaseService);
 
@@ -147,7 +147,7 @@
                 this.MockDomainService,
                 this.MockDatabaseService,
                 this.TransactionManager,
-                new SupplierResourceBuilder(this.MockAuthService));
+                new SupplierResourceBuilder(this.MockAuthService, new SupplierContactResourceBuilder()));
 
             this.MockPlannerRepository = Substitute.For<IRepository<Planner, int>>();
             

@@ -48,7 +48,7 @@
                                           OrderMethodName = "METHOD",
                                           OurCurrencyPriceToShowOnOrder = 6m,
                                           ReelOrBoxQty = 7m,
-                                          VendorPartNumber = "VPN"
+                                          VendorPartNumber = "VPN",
                                       };
 
             this.MockPartSupplierRepository

@@ -30,6 +30,10 @@
         private readonly IRepository<VendorManager, string> vendorManagerRepository;
 
         private readonly IRepository<Planner, int> plannerRepository;
+        
+        private readonly IRepository<Person, int> personRepository;
+        
+        private readonly IRepository<SupplierContact, int> supplierContactRepository;
 
         public SupplierService(
             IAuthorisationService authService,
@@ -40,7 +44,9 @@
             IRepository<FullAddress, int> addressRepository,
             IRepository<Employee, int> employeeRepository,
             IRepository<VendorManager, string> vendorManagerRepository,
-            IRepository<Planner, int> plannerRepository)
+            IRepository<Planner, int> plannerRepository,
+            IRepository<Person, int> personRepository,
+            IRepository<SupplierContact, int> supplierContactRepository)
         {
             this.authService = authService;
             this.supplierRepository = supplierRepository;
@@ -51,6 +57,8 @@
             this.employeeRepository = employeeRepository;
             this.vendorManagerRepository = vendorManagerRepository;
             this.plannerRepository = plannerRepository;
+            this.personRepository = personRepository;
+            this.supplierContactRepository = supplierContactRepository;
         }
 
         public void UpdateSupplier(Supplier current, Supplier updated, IEnumerable<string> privileges)
@@ -127,6 +135,8 @@
             current.ClosedBy = updated.ClosedBy != null
                                             ? this.employeeRepository.FindById(updated.ClosedBy.Id)
                                             : null;
+
+            current.SupplierContacts = this.UpdateContacts(updated.SupplierContacts);
         }
 
         public Supplier CreateSupplier(Supplier candidate, IEnumerable<string> privileges)
@@ -256,6 +266,62 @@
 
                 throw new SupplierException(msg);
             }
+        }
+
+        private IEnumerable<SupplierContact> UpdateContacts(IEnumerable<SupplierContact> supplierContacts)
+        {
+            if (supplierContacts == null)
+            {
+                return null;
+            }
+
+            var enumerable = supplierContacts.ToList();
+            if (enumerable.Count(x => x.IsMainOrderContact == "Y") > 1)
+            {
+                throw new SupplierException("Cannot have more than one Main Order Contact");
+            }
+
+            if (enumerable.Count(x => x.IsMainInvoiceContact == "Y") > 1)
+            {
+                throw new SupplierException("Cannot have more than one Main Invoice Contact");
+            }
+
+            var result = new List<SupplierContact>();
+
+            foreach (var supplierContact in enumerable)
+            {
+                var existingSupplierContact = this.supplierContactRepository.FindById(supplierContact.ContactId);
+
+                if (existingSupplierContact != null)
+                {
+                    existingSupplierContact.IsMainInvoiceContact = supplierContact.IsMainInvoiceContact;
+                    existingSupplierContact.IsMainOrderContact = supplierContact.IsMainOrderContact;
+
+                    existingSupplierContact.PhoneNumber = supplierContact.PhoneNumber;
+                    existingSupplierContact.EmailAddress = supplierContact.EmailAddress;
+                    existingSupplierContact.JobTitle = supplierContact.JobTitle;
+                    existingSupplierContact.Comments = supplierContact.Comments;
+                    var person = this.personRepository.FindById(supplierContact.Person.Id);
+
+                    person.FirstName = supplierContact.Person.FirstName;
+                    person.LastName = supplierContact.Person.LastName;
+
+                    existingSupplierContact.Person = person;
+                    result.Add(existingSupplierContact);
+                }
+                else
+                {
+                    supplierContact.Person.DateCreated = DateTime.Today;
+                    this.personRepository.Add(supplierContact.Person);
+                    supplierContact.SupplierId = supplierContact.SupplierId;
+                    supplierContact.DateCreated = DateTime.Today;
+                    supplierContact.Comments = supplierContact.Comments;
+                    this.supplierContactRepository.Add(supplierContact);
+                    result.Add(supplierContact);
+                }
+            }
+
+            return result;
         }
     }
 }

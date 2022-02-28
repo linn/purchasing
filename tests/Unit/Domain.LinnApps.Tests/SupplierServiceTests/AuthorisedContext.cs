@@ -29,7 +29,9 @@
                 this.MockAddressRepository,
                 this.EmployeeRepository,
                 this.VendorManagerRepository,
-                this.PlannerRepository);
+                this.PlannerRepository,
+                this.PersonRepository,
+                this.SupplierContactRepository);
         }
     }
 }
