@@ -9,7 +9,6 @@
 
     public class SupplierContactResourceBuilder : IBuilder<SupplierContact>
     {
-
         public SupplierContactResource Build(SupplierContact entity, IEnumerable<string> claims)
         {
             return new SupplierContactResource
