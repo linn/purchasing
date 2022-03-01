@@ -15,5 +15,7 @@
         public const string SupplierHoldChange = "purchasing.supplier.hold-change";
 
         public const string PurchaseOrderUpdate = "purchase-order.update";
+
+        public const string PlCreditDebitNoteClose = "purchasing.pl-debit-credit-note.close";
     }
 }

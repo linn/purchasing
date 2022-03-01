@@ -12,12 +12,21 @@
     public class PlCreditDebitNoteFacadeService 
         : FacadeFilterResourceService<PlCreditDebitNote, int, PlCreditDebitNoteResource, PlCreditDebitNoteResource, PlCreditDebitNoteResource>
     {
-        public PlCreditDebitNoteFacadeService(IRepository<PlCreditDebitNote, int> repository, ITransactionManager transactionManager, IBuilder<PlCreditDebitNote> builder)
+        private readonly IPlCreditDebitNoteService domainService;
+
+        public PlCreditDebitNoteFacadeService(
+            IRepository<PlCreditDebitNote, int> repository, 
+            ITransactionManager transactionManager, 
+            IBuilder<PlCreditDebitNote> builder,
+            IPlCreditDebitNoteService domainService)
             : base(repository, transactionManager, builder)
         {
+            this.domainService = domainService;
         }
 
-        protected override PlCreditDebitNote CreateFromResource(PlCreditDebitNoteResource resource, IEnumerable<string> privileges = null)
+        protected override PlCreditDebitNote CreateFromResource(
+            PlCreditDebitNoteResource resource, 
+            IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }
@@ -27,10 +36,14 @@
             PlCreditDebitNoteResource updateResource,
             IEnumerable<string> privileges = null)
         {
-            throw new NotImplementedException();
+            if (updateResource.Close.HasValue && (bool)updateResource.Close)
+            {
+                this.domainService.CloseDebitNote(entity, updateResource.ReasonClosed, privileges);
+            }
         }
 
-        protected override Expression<Func<PlCreditDebitNote, bool>> SearchExpression(string searchTerm)
+        protected override Expression<Func<PlCreditDebitNote, bool>> SearchExpression(
+            string searchTerm)
         {
             throw new NotImplementedException();
         }
@@ -45,14 +58,19 @@
             throw new NotImplementedException();
         }
 
-        protected override void DeleteOrObsoleteResource(PlCreditDebitNote entity, IEnumerable<string> privileges = null)
+        protected override void DeleteOrObsoleteResource(
+            PlCreditDebitNote entity, IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }
 
-        protected override Expression<Func<PlCreditDebitNote, bool>> FilterExpression(PlCreditDebitNoteResource searchResource)
+        protected override Expression<Func<PlCreditDebitNote, bool>> FilterExpression(
+            PlCreditDebitNoteResource searchResource)
         {
-            throw new NotImplementedException();
+            var date = string.IsNullOrEmpty(searchResource.DateClosed)
+                           ? (DateTime?)null
+                           : DateTime.Parse(searchResource.DateClosed);
+            return x => x.DateClosed == date;
         }
     }
 }

@@ -31,10 +31,9 @@
             var resource = await req.Bind<PlCreditDebitNoteResource>();
             var results = this.service.FilterBy(new PlCreditDebitNoteResource
                                                     {
-                                                        SupplierName = resource?.SupplierName
+                                                        DateClosed = null
                                                     });
-          
-
+            
             await res.Negotiate(results);
         }
 
@@ -44,8 +43,7 @@
             var result = this.service.Update(
                 req.RouteValues.As<int>("id"),
                 resource,
-                req.HttpContext.GetPrivileges(),
-                req.HttpContext.User.GetEmployeeNumber());
+                req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }

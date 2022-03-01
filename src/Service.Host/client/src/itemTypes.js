@@ -126,11 +126,11 @@ export const contacts = new ItemType('contacts', 'CONTACTS', '/purchasing/suppli
 export const plCreditDebitNote = new ItemType(
     'plCreditDebitNote',
     'PL_CREDIT_DEBIT_NOTE',
-    '/purchasing/pl-crdit-debit-notes'
+    '/purchasing/pl-credit-debit-notes'
 );
 
 export const plCreditDebitNotes = new ItemType(
     'plCreditDebitNotes',
     'PL_CREDIT_DEBIT_NOTES',
-    '/purchasing/pl-crdit-debit-notes'
+    '/purchasing/pl-credit-debit-notes'
 );

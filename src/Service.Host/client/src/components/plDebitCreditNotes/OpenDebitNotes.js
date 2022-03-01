@@ -20,6 +20,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { DataGrid } from '@mui/x-data-grid';
 import { makeStyles } from '@mui/styles';
 import plCreditDebitNoteActions from '../../actions/plCreditDebitNoteActions';
+import plCreditDebitNotesActions from '../../actions/plCreditDebitNotesActions';
 
 function OpenDebitNotes() {
     const dispatch = useDispatch();
@@ -54,6 +55,8 @@ function OpenDebitNotes() {
             float: 'right'
         }
     }));
+
+    useEffect(() => dispatch(plCreditDebitNotesActions.fetch()), [dispatch]);
 
     const classes = useStyles();
 
