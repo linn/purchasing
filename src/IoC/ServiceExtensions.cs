@@ -53,7 +53,8 @@
                 .AddTransient<IBuilder<VendorManager>, VendorManagerResourceBuilder>()
                 .AddTransient<IBuilder<Planner>, PlannerResourceBuilder>()
                 .AddTransient<IBuilder<SupplierGroup>, SupplierGroupResourceBuilder>()
-                .AddTransient<IBuilder<SupplierContact>, SupplierContactResourceBuilder>();
+                .AddTransient<IBuilder<SupplierContact>, SupplierContactResourceBuilder>()
+                .AddTransient<IBuilder<PlCreditDebitNote>, PlCreditDebitNoteResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
