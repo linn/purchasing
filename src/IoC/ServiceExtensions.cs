@@ -53,7 +53,8 @@
                 .AddTransient<IBuilder<VendorManager>, VendorManagerResourceBuilder>()
                 .AddTransient<IBuilder<Planner>, PlannerResourceBuilder>()
                 .AddTransient<IBuilder<SupplierGroup>, SupplierGroupResourceBuilder>()
-                .AddTransient<IBuilder<SupplierContact>, SupplierContactResourceBuilder>();
+                .AddTransient<IBuilder<SupplierContact>, SupplierContactResourceBuilder>()
+                .AddTransient<IBuilder<PlCreditDebitNote>, PlCreditDebitNoteResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -80,7 +81,8 @@
                 .AddTransient<IFacadeResourceService<Country, string, CountryResource, CountryResource>, CountryService>()
                 .AddTransient<IFacadeResourceService<VendorManager, string, VendorManagerResource, VendorManagerResource>, VendorManagerFacadeService>().AddTransient<ISpendsReportFacadeService, SpendsReportFacadeService>()
                 .AddTransient<IFacadeResourceService<Planner, int, PlannerResource, PlannerResource>, PlannerService>()
-                .AddTransient<IFacadeResourceService<SupplierGroup, int, SupplierGroupResource, SupplierGroupResource>, SupplierGroupFacadeService>();
+                .AddTransient<IFacadeResourceService<SupplierGroup, int, SupplierGroupResource, SupplierGroupResource>, SupplierGroupFacadeService>()
+                .AddTransient<IFacadeResourceFilterService<PlCreditDebitNote, int, PlCreditDebitNoteResource, PlCreditDebitNoteResource, PlCreditDebitNoteResource>, PlCreditDebitNoteFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
@@ -99,6 +101,7 @@
                 .AddTransient<IAuthorisationService, AuthorisationService>()
                 .AddTransient<IDatabaseService, DatabaseService>()
                 .AddTransient<ISpendsReportService, SpendsReportService>()
+                .AddTransient<IPlCreditDebitNoteService, PlCreditDebitNoteService>()
 
             // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()

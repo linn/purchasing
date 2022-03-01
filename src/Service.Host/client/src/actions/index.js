@@ -105,3 +105,7 @@ export const spendByPartReportActionTypes = makeActionTypes(
     reportTypes.spendByPartReport.actionType,
     false
 );
+
+export const plCreditDebitNoteActionTypes = makeActionTypes(itemTypes.plCreditDebitNote.actionType);
+
+export const openDebitNotesActionTypes = makeActionTypes(itemTypes.openDebitNotes.actionType);
