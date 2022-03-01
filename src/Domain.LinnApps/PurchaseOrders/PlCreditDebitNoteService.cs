@@ -17,7 +17,8 @@
 
         public PlCreditDebitNote CloseDebitNote(
             PlCreditDebitNote toClose, 
-            string reason, 
+            string reason,
+            int closedBy,
             IEnumerable<string> privileges)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PlCreditDebitNoteClose, privileges))
@@ -27,7 +28,7 @@
 
             toClose.DateClosed = DateTime.Today;
             toClose.ReasonClosed = reason;
-
+            toClose.ClosedBy = closedBy;
             return toClose;
         }
     }

@@ -29,6 +29,7 @@
             this.action = () => this.Sut.CloseDebitNote(
                 this.note,
                 "REASON",
+                33087,
                 new List<string> { AuthorisedAction.PlCreditDebitNoteClose });
         }
 

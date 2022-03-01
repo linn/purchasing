@@ -28,6 +28,7 @@
             this.result = this.Sut.CloseDebitNote(
                 this.note,
                 "REASON",
+                33087,
                 new List<string> { AuthorisedAction.PlCreditDebitNoteClose });
         }
 
@@ -37,6 +38,7 @@
             this.result.NoteNumber.Should().Be(1);
             this.result.DateClosed.Should().Be(DateTime.Today);
             this.result.ReasonClosed.Should().Be("REASON");
+            this.result.ClosedBy.Should().Be(33087);
         }
     }
 }

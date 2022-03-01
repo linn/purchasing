@@ -36,9 +36,9 @@
             PlCreditDebitNoteResource updateResource,
             IEnumerable<string> privileges = null)
         {
-            if (updateResource.Close.HasValue && (bool)updateResource.Close)
+            if (updateResource.ClosedBy.HasValue && (bool)updateResource.Close)
             {
-                this.domainService.CloseDebitNote(entity, updateResource.ReasonClosed, privileges);
+                this.domainService.CloseDebitNote(entity, updateResource.ReasonClosed, (int)updateResource.ClosedBy, privileges);
             }
         }
 

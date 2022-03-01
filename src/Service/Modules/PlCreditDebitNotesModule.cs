@@ -40,6 +40,7 @@
         private async Task UpdateDebitNote(HttpRequest req, HttpResponse res)
         {
             var resource = await req.Bind<PlCreditDebitNoteResource>();
+            resource.ClosedBy = req.HttpContext.User.GetEmployeeNumber();
             var result = this.service.Update(
                 req.RouteValues.As<int>("id"),
                 resource,

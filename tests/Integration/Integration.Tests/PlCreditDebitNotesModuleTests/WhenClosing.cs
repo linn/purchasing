@@ -29,7 +29,8 @@
                                 {
                                     NoteNumber = 1,
                                     Close = true,
-                                    ReasonClosed = "REASON"
+                                    ReasonClosed = "REASON",
+                                    ClosedBy = 22087
                                 };
             this.note = new PlCreditDebitNote
                             {
@@ -47,7 +48,11 @@
 
             this.MockPlCreditDebitNoteRepository.FindById(1).Returns(this.note);
 
-            this.MockDomainService.CloseDebitNote(this.note, this.resource.ReasonClosed, Arg.Any<IEnumerable<string>>())
+            this.MockDomainService.CloseDebitNote(
+                    this.note, 
+                    this.resource.ReasonClosed, 
+                    (int)this.resource.ClosedBy, 
+                    Arg.Any<IEnumerable<string>>())
                 .Returns(this.closed);
             this.Response = this.Client.Put(
                 $"/purchasing/pl-credit-debit-notes/{this.resource.NoteNumber}",

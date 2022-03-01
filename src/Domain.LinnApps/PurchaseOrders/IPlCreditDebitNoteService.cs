@@ -7,6 +7,7 @@
         public PlCreditDebitNote CloseDebitNote(
             PlCreditDebitNote toClose, 
             string reason,
+            int closedBy,
             IEnumerable<string> privileges);
     }
 }
