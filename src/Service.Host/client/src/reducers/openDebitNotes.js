@@ -1,5 +1,5 @@
 import { collectionStoreFactory } from '@linn-it/linn-form-components-library';
-import { plCreditDebitNotesActionTypes as actionTypes } from '../actions';
+import { openDebitNotesActionTypes as actionTypes } from '../actions';
 import * as itemTypes from '../itemTypes';
 
 const defaultState = {
@@ -8,7 +8,7 @@ const defaultState = {
 };
 
 export default collectionStoreFactory(
-    itemTypes.plCreditDebitNotes.actionType,
+    itemTypes.openDebitNotes.actionType,
     actionTypes,
     defaultState
 );

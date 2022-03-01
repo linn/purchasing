@@ -22,15 +22,16 @@
             IFacadeResourceFilterService<PlCreditDebitNote, int, PlCreditDebitNoteResource, PlCreditDebitNoteResource, PlCreditDebitNoteResource> service)
         {
             this.service = service;
-            this.Get("/purchasing/pl-credit-debit-notes", this.GetDebitNotes);
+            this.Get("/purchasing/open-debit-notes", this.GetOpenDebitNotes);
             this.Put("/purchasing/pl-credit-debit-notes/{id}", this.UpdateDebitNote);
         }
 
-        private async Task GetDebitNotes(HttpRequest req, HttpResponse res)
+        private async Task GetOpenDebitNotes(HttpRequest req, HttpResponse res)
         {
             var results = this.service.FilterBy(new PlCreditDebitNoteResource
                                                     {
-                                                        DateClosed = null
+                                                        DateClosed = null,
+                                                        NoteType = "D"
                                                     });
             
             await res.Negotiate(results);

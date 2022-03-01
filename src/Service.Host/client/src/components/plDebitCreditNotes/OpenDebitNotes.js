@@ -20,7 +20,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { DataGrid } from '@mui/x-data-grid';
 import { makeStyles } from '@mui/styles';
 import plCreditDebitNoteActions from '../../actions/plCreditDebitNoteActions';
-import plCreditDebitNotesActions from '../../actions/plCreditDebitNotesActions';
+import openDebitNotesActions from '../../actions/openDebitNotesActions';
 
 function OpenDebitNotes() {
     const dispatch = useDispatch();
@@ -32,11 +32,9 @@ function OpenDebitNotes() {
     const [closeReason, setCloseReason] = useState('');
     const [comments, setComments] = useState('');
 
-    const items = useSelector(state =>
-        collectionSelectorHelpers.getItems(state.plCreditDebitNotes)
-    );
+    const items = useSelector(state => collectionSelectorHelpers.getItems(state.openDebitNotes));
     const itemsLoading = useSelector(state =>
-        collectionSelectorHelpers.getLoading(state.plCreditDebitNotes)
+        collectionSelectorHelpers.getLoading(state.openDebitNotes)
     );
 
     const snackbarVisible = useSelector(state =>
@@ -50,7 +48,7 @@ function OpenDebitNotes() {
 
     useEffect(() => {
         if (updatedItem) {
-            dispatch(plCreditDebitNotesActions.fetch());
+            dispatch(openDebitNotesActions.fetch());
         }
     }, [updatedItem, updateLoading, dispatch]);
 
@@ -64,7 +62,7 @@ function OpenDebitNotes() {
         }
     }));
 
-    useEffect(() => dispatch(plCreditDebitNotesActions.fetch()), [dispatch]);
+    useEffect(() => dispatch(openDebitNotesActions.fetch()), [dispatch]);
 
     const classes = useStyles();
 

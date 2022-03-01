@@ -42,7 +42,7 @@ import unacknowledgedOrdersReport from './unacknowledgedOrdersReport';
 import planners from './planners';
 import spendByPartReport from './spendByPartReport';
 import plCreditDebitNote from './plCreditDebitNote';
-import plCreditDebitNotes from './plCreditDebitNotes';
+import openDebitNotes from './openDebitNotes';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -70,7 +70,7 @@ const rootReducer = history =>
         partSuppliers,
         planners,
         plCreditDebitNote,
-        plCreditDebitNotes,
+        openDebitNotes,
         preferredSupplierChange,
         priceChangeReasons,
         putSupplierOnHold,

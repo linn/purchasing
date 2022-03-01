@@ -28,7 +28,7 @@
                                     new PlCreditDebitNote { NoteNumber = 2 },
                              }.AsQueryable());
             this.Response = this.Client.Get(
-                "/purchasing/pl-credit-debit-notes",
+                "/purchasing/open-debit-notes",
                 with =>
                     {
                         with.Accept("application/json");
