@@ -122,3 +122,15 @@ export const vendorManagers = new ItemType(
 export const planners = new ItemType('planners', 'PLANNERS', '/purchasing/suppliers/planners');
 
 export const contacts = new ItemType('contacts', 'CONTACTS', '/purchasing/suppliers/contacts');
+
+export const plCreditDebitNote = new ItemType(
+    'plCreditDebitNote',
+    'PL_CREDIT_DEBIT_NOTE',
+    '/purchasing/pl-crdit-debit-notes'
+);
+
+export const plCreditDebitNotes = new ItemType(
+    'plCreditDebitNotes',
+    'PL_CREDIT_DEBIT_NOTES',
+    '/purchasing/pl-crdit-debit-notes'
+);

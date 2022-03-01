@@ -27,6 +27,7 @@ import SuppliersWithUnacknowledgedOrders from './reports/SuppliersWithUnacknowle
 import UnacknowledgedOrdersReport from './reports/UnacknowledgedOrdersReport';
 import SpendByPartOptions from './reports/SpendByPartOptions';
 import SpendByPart from './reports/SpendByPart';
+import OpenDebitNotes from './plDebitCreditNotes/OpenDebitNotes';
 
 const Root = ({ store }) => (
     <div>
@@ -137,7 +138,11 @@ const Root = ({ store }) => (
                                     path="/purchasing/reports/spend-by-part/report"
                                     component={SpendByPart}
                                 />
-
+                                <Route
+                                    exact
+                                    path="/purchasing/pl-credit-debit-notes/open-debit-notes"
+                                    component={OpenDebitNotes}
+                                />
                                 <Route component={NotFoundPage} />
                             </Switch>
                         </div>

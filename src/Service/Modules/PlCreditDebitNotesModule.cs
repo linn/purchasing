@@ -22,8 +22,8 @@
             IFacadeResourceFilterService<PlCreditDebitNote, int, PlCreditDebitNoteResource, PlCreditDebitNoteResource, PlCreditDebitNoteResource> service)
         {
             this.service = service;
-            this.Get("inventory/purchasing/debit-notes", this.GetDebitNotes);
-            this.Put("inventory/purchasing/debit-notes/{id}", this.UpdateDebitNote);
+            this.Get("/purchasing/pl-credit-debit-notes", this.GetDebitNotes);
+            this.Put("/purchasing/pl-credit-debit-notes/{id}", this.UpdateDebitNote);
         }
 
         private async Task GetDebitNotes(HttpRequest req, HttpResponse res)
