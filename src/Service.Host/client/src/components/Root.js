@@ -140,7 +140,7 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
-                                    path="/purchasing/pl-credit-debit-notes/open-debit-notes"
+                                    path="/purchasing/open-debit-notes"
                                     component={OpenDebitNotes}
                                 />
                                 <Route component={NotFoundPage} />
