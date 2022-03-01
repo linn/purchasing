@@ -36,10 +36,16 @@
             PlCreditDebitNoteResource updateResource,
             IEnumerable<string> privileges = null)
         {
-            if (updateResource.ClosedBy.HasValue && (bool)updateResource.Close)
+            if (updateResource.ClosedBy.HasValue && updateResource.Close.HasValue && (bool)updateResource.Close)
             {
-                this.domainService.CloseDebitNote(entity, updateResource.ReasonClosed, (int)updateResource.ClosedBy, privileges);
+                this.domainService.CloseDebitNote(
+                    entity, 
+                    updateResource.ReasonClosed, 
+                    (int)updateResource.ClosedBy, 
+                    privileges);
             }
+
+            entity.Notes = updateResource.Notes;
         }
 
         protected override Expression<Func<PlCreditDebitNote, bool>> SearchExpression(
@@ -70,7 +76,7 @@
             var date = string.IsNullOrEmpty(searchResource.DateClosed)
                            ? (DateTime?)null
                            : DateTime.Parse(searchResource.DateClosed);
-            return x => x.DateClosed == date;
+            return x => x.DateClosed == date && x.NoteType == "D";
         }
     }
 }

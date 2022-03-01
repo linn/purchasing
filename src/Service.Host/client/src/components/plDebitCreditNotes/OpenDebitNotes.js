@@ -42,10 +42,18 @@ function OpenDebitNotes() {
     const snackbarVisible = useSelector(state =>
         itemSelectorHelpers.getSnackbarVisible(state.plCreditDebitNote)
     );
-    const updateError = useSelector(reduxState => getItemError(reduxState, 'plCreditDebitNote'));
+    const updateError = useSelector(state => getItemError(state, 'plCreditDebitNote'));
     const updateLoading = useSelector(state =>
         itemSelectorHelpers.getItemLoading(state.plCreditDebitNote)
     );
+    const updatedItem = useSelector(state => itemSelectorHelpers.getItem(state.plCreditDebitNote));
+
+    useEffect(() => {
+        if (updatedItem) {
+            dispatch(plCreditDebitNotesActions.fetch());
+        }
+    }, [updatedItem, updateLoading, dispatch]);
+
     const useStyles = makeStyles(theme => ({
         dialog: {
             margin: theme.spacing(6),

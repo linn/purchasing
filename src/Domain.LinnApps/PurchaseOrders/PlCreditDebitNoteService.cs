@@ -21,10 +21,10 @@
             int closedBy,
             IEnumerable<string> privileges)
         {
-            if (!this.authService.HasPermissionFor(AuthorisedAction.PlCreditDebitNoteClose, privileges))
-            {
-                throw new UnauthorisedActionException("You are not authorised to close debit notes");
-            }
+            // if (!this.authService.HasPermissionFor(AuthorisedAction.PlCreditDebitNoteClose, privileges))
+            // {
+            //     throw new UnauthorisedActionException("You are not authorised to close debit notes");
+            // }
 
             toClose.DateClosed = DateTime.Today;
             toClose.ReasonClosed = reason;

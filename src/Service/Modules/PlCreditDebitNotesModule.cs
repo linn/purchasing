@@ -28,7 +28,6 @@
 
         private async Task GetDebitNotes(HttpRequest req, HttpResponse res)
         {
-            var resource = await req.Bind<PlCreditDebitNoteResource>();
             var results = this.service.FilterBy(new PlCreditDebitNoteResource
                                                     {
                                                         DateClosed = null
