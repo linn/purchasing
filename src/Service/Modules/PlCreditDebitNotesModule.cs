@@ -11,6 +11,7 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.Extensions;
+    using Linn.Purchasing.Service.Models;
 
     using Microsoft.AspNetCore.Http;
 
