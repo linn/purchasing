@@ -129,6 +129,12 @@ export const plCreditDebitNote = new ItemType(
     '/purchasing/pl-credit-debit-notes'
 );
 
+export const plCreditDebitNotes = new ItemType(
+    'plCreditDebitNotes',
+    'PL_CREDIT_DEBIT_NOTES',
+    '/purchasing/pl-credit-debit-notes'
+);
+
 export const openDebitNotes = new ItemType(
     'plCreditDebitNotes',
     'PL_CREDIT_DEBIT_NOTES',

@@ -2,7 +2,9 @@
 {
     using System.Collections.Generic;
 
-    public class PlCreditDebitNoteResource
+    using Linn.Common.Resources;
+
+    public class PlCreditDebitNoteResource : HypermediaResource
     {
         public int NoteNumber { get; set; }
 

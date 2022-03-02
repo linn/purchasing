@@ -65,6 +65,10 @@
             resources.Should().HaveCount(2);
             resources.Should().Contain(a => a.NoteNumber == 1);
             resources.Should().Contain(a => a.NoteNumber == 2);
+            resources.First().Links.First(l => l.Rel == "self").Href
+                .Should().Be("/purchasing/pl-credit-debit-notes/1");
+            resources.Last().Links.First(l => l.Rel == "self").Href
+                .Should().Be("/purchasing/pl-credit-debit-notes/2");
         }
     }
 }

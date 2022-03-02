@@ -1,17 +1,18 @@
 ﻿namespace Linn.Purchasing.Facade.ResourceBuilders
 {
-    using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     using Linn.Common.Facade;
+    using Linn.Common.Resources;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
 
     public class PlCreditDebitNoteResourceBuilder : IBuilder<PlCreditDebitNote>
     {
-    public PlCreditDebitNoteResource Build(PlCreditDebitNote note, IEnumerable<string> claims)
-    {
-        return new PlCreditDebitNoteResource
+        public PlCreditDebitNoteResource Build(PlCreditDebitNote note, IEnumerable<string> claims)
+        {
+            return new PlCreditDebitNoteResource
                    {
                        OrderQty = note.OrderQty,
                        PartNumber = note.PartNumber,
@@ -25,15 +26,22 @@
                        Notes = note.Notes,
                        SupplierName = note.Supplier?.Name,
                        DateCreated = note.DateCreated.ToString("o"),
-                       NoteType = note.NoteType
+                       NoteType = note.NoteType,
+                       Links = this.BuildLinks(note, claims).ToArray()
                    };
-    }
+        }
 
-    public string GetLocation(PlCreditDebitNote p)
-    {
-        throw new NotImplementedException();
-    }
+        public string GetLocation(PlCreditDebitNote p)
+        {
+            return $"/purchasing/pl-credit-debit-notes/{p.NoteNumber}";
+        }
 
-    object IBuilder<PlCreditDebitNote>.Build(PlCreditDebitNote entity, IEnumerable<string> claims) => this.Build(entity, claims);
+        object IBuilder<PlCreditDebitNote>.Build(PlCreditDebitNote entity, IEnumerable<string> claims) 
+            => this.Build(entity, claims);
+
+        private IEnumerable<LinkResource> BuildLinks(PlCreditDebitNote model, IEnumerable<string> claims)
+        {
+            yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
+        }
     }
 }
