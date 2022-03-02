@@ -54,6 +54,7 @@ function Search() {
                         resultLimit={100}
                         loading={searchLoading}
                         history={history}
+                        placeholder="Supplier or Note Number"
                         links
                     />
                 </Grid>

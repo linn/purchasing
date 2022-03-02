@@ -56,7 +56,8 @@
         protected override Expression<Func<PlCreditDebitNote, bool>> SearchExpression(
             string searchTerm)
         {
-            return x => x.NoteNumber.ToString() == searchTerm 
+            return x => x.NoteNumber.ToString() == searchTerm
+                        || x.Supplier.SupplierId.ToString() == searchTerm
                         || x.Supplier.Name.ToUpper().Contains(searchTerm.ToUpper());
         }
 
