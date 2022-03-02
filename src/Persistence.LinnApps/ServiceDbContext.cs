@@ -673,8 +673,7 @@
             entity.Property(a => a.ReturnsOrderNumber).HasColumnName("RETURNS_ORDER_NUMBER");
             entity.Property(a => a.Notes).HasColumnName("NOTES").HasMaxLength(200);
             entity.Property(a => a.ReasonClosed).HasColumnName("REASON_CLOSED").HasMaxLength(2000);
-            entity.Property(a => a.SupplierId).HasColumnName("SUPPLIER_ID");
-            entity.HasOne(a => a.Supplier).WithMany().HasForeignKey(a => a.SupplierId);
+            entity.HasOne(a => a.Supplier).WithMany().HasForeignKey("SUPPLIER_ID");
             entity.Property(a => a.DateCreated).HasColumnName("DATE_CREATED");
         }
     }

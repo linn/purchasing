@@ -23,7 +23,9 @@
         {
             this.service = service;
             this.Get("/purchasing/open-debit-notes", this.GetOpenDebitNotes);
-            this.Put("/purchasing/pl-credit-debit-notes/{id}", this.UpdateDebitNote);
+            this.Get("/purchasing/pl-credit-debit-notes", this.SearchNotes);
+            this.Put("/purchasing/pl-credit-debit-notes/{id}", this.GetNote);
+            this.Get("/purchasing/pl-credit-debit-notes/{id}", this.UpdateDebitNote);
         }
 
         private async Task GetOpenDebitNotes(HttpRequest req, HttpResponse res)
@@ -37,6 +39,15 @@
             await res.Negotiate(results);
         }
 
+        private async Task SearchNotes(HttpRequest req, HttpResponse res)
+        {
+            var search = req.Query.As<string>("searchTerm");
+
+            var results = this.service.Search(search);
+
+            await res.Negotiate(results);
+        }
+
         private async Task UpdateDebitNote(HttpRequest req, HttpResponse res)
         {
             var resource = await req.Bind<PlCreditDebitNoteResource>();
@@ -45,6 +56,14 @@
                 req.RouteValues.As<int>("id"),
                 resource,
                 req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task GetNote(HttpRequest req, HttpResponse res)
+        {
+            var result = this.service.GetById(
+                req.RouteValues.As<int>("id"));
 
             await res.Negotiate(result);
         }

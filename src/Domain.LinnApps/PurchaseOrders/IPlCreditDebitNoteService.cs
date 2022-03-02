@@ -4,10 +4,15 @@
 
     public interface IPlCreditDebitNoteService
     {
-        public PlCreditDebitNote CloseDebitNote(
+        public void CloseDebitNote(
             PlCreditDebitNote toClose, 
             string reason,
             int closedBy,
+            IEnumerable<string> privileges);
+
+        public void UpdatePlCreditDebitNote(
+            PlCreditDebitNote current,
+            PlCreditDebitNote updated,
             IEnumerable<string> privileges);
     }
 }

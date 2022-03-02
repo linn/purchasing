@@ -16,7 +16,7 @@
                        OrderQty = note.OrderQty,
                        PartNumber = note.PartNumber,
                        DateClosed = note.DateClosed?.ToString("o"),
-                       SupplierId = note.SupplierId,
+                       SupplierId = note.Supplier.SupplierId,
                        ClosedBy = note.ClosedBy,
                        NetTotal = note.NetTotal,
                        NoteNumber = note.NoteNumber,
@@ -24,7 +24,8 @@
                        ReturnsOrderNumber = note.ReturnsOrderNumber,
                        Notes = note.Notes,
                        SupplierName = note.Supplier?.Name,
-                       DateCreated = note.DateCreated.ToShortDateString()
+                       DateCreated = note.DateCreated.ToString("o"),
+                       NoteType = note.NoteType
                    };
     }
 

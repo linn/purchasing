@@ -9,6 +9,7 @@
     using FluentAssertions;
 
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -16,7 +17,7 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingAll : ContextBase
+    public class WhenSearching : ContextBase
     {
         [SetUp]
         public void SetUp()
@@ -24,11 +25,19 @@
             this.MockPlCreditDebitNoteRepository.FilterBy(Arg.Any<Expression<Func<PlCreditDebitNote, bool>>>())
                 .Returns(new List<PlCreditDebitNote>
                              {
-                                    new PlCreditDebitNote { NoteNumber = 1 },
-                                    new PlCreditDebitNote { NoteNumber = 2 },
+                                 new PlCreditDebitNote
+                                     {
+                                         NoteNumber = 1, 
+                                         Supplier = new Supplier { Name = "SUPPLIER" }
+                                     },
+                                 new PlCreditDebitNote
+                                     {
+                                         NoteNumber = 2,  
+                                         Supplier = new Supplier { Name = "SUPPLIER 2" }
+                                     }
                              }.AsQueryable());
             this.Response = this.Client.Get(
-                "/purchasing/open-debit-notes",
+                "/purchasing/pl-credit-debit-notes?searchTerm=supplier",
                 with =>
                     {
                         with.Accept("application/json");

@@ -11,32 +11,33 @@
 
     using NUnit.Framework;
 
-    public class WhenClosingADebitNote : ContextBase
+    public class WhenUpdatingANote : ContextBase
     {
         private PlCreditDebitNote note;
+
+        private PlCreditDebitNote updated;
 
         [SetUp]
         public void SetUp()
         {
             this.note = new PlCreditDebitNote { DateCreated = DateTime.UnixEpoch, NoteNumber = 1 };
-            this.MockAuthService.HasPermissionFor(
-                AuthorisedAction.PlCreditDebitNoteClose,
-                Arg.Is<List<string>>(x => x.Contains(AuthorisedAction.PlCreditDebitNoteClose))).Returns(true);
+            this.updated = new PlCreditDebitNote { Notes = "NOTES" };
 
-            this.Sut.CloseDebitNote(
+            this.MockAuthService.HasPermissionFor(
+                AuthorisedAction.PlCreditDebitNoteUpdate,
+                Arg.Is<List<string>>(x => x.Contains(AuthorisedAction.PlCreditDebitNoteUpdate))).Returns(true);
+
+            this.Sut.UpdatePlCreditDebitNote(
                 this.note,
-                "REASON",
-                33087,
-                new List<string> { AuthorisedAction.PlCreditDebitNoteClose });
+                this.updated,
+                new List<string> { AuthorisedAction.PlCreditDebitNoteUpdate });
         }
 
         [Test]
         public void ShouldReturnClosed()
         {
-            this.note.NoteNumber.Should().Be(1);
-            this.note.DateClosed.Should().Be(DateTime.Today);
-            this.note.ReasonClosed.Should().Be("REASON");
-            this.note.ClosedBy.Should().Be(33087);
+            this.note.NoteNumber.Should().Be(this.note.NoteNumber);
+            this.note.Notes.Should().Be(this.updated.Notes);
         }
     }
 }

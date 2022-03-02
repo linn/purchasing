@@ -30,8 +30,6 @@
 
         public string ReasonClosed { get; set; }
 
-        public int? SupplierId { get; set; }
-
         public Supplier Supplier { get; set; }
     }
 }

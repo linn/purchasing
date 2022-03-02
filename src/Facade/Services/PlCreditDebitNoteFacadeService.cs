@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
 
     using Linn.Common.Facade;
@@ -36,22 +37,30 @@
             PlCreditDebitNoteResource updateResource,
             IEnumerable<string> privileges = null)
         {
+            var enumerable = privileges?.ToList();
             if (updateResource.ClosedBy.HasValue && updateResource.Close.HasValue && (bool)updateResource.Close)
             {
                 this.domainService.CloseDebitNote(
                     entity, 
                     updateResource.ReasonClosed, 
                     (int)updateResource.ClosedBy, 
-                    privileges);
+                    enumerable);
             }
 
-            entity.Notes = updateResource.Notes;
+            this.domainService.UpdatePlCreditDebitNote(
+                entity, 
+                new PlCreditDebitNote { Notes = updateResource.Notes }, 
+                enumerable);
         }
 
         protected override Expression<Func<PlCreditDebitNote, bool>> SearchExpression(
             string searchTerm)
         {
-            throw new NotImplementedException();
+            return x => x.NoteNumber.ToString() == searchTerm 
+                        || string.Equals(
+                            x.Supplier.Name, 
+                            searchTerm, 
+                            StringComparison.CurrentCultureIgnoreCase);
         }
 
         protected override void SaveToLogTable(
