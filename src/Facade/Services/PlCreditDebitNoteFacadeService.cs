@@ -57,10 +57,7 @@
             string searchTerm)
         {
             return x => x.NoteNumber.ToString() == searchTerm 
-                        || string.Equals(
-                            x.Supplier.Name, 
-                            searchTerm, 
-                            StringComparison.CurrentCultureIgnoreCase);
+                        || x.Supplier.Name.ToUpper().Contains(searchTerm.ToUpper());
         }
 
         protected override void SaveToLogTable(
