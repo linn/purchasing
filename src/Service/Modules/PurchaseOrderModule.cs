@@ -23,7 +23,7 @@
 
         private readonly IFacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource> orderMethodService;
 
-        private readonly IFacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource, LinnDeliveryAddressResource> 
+        private readonly IFacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource, LinnDeliveryAddressResource>
             deliveryAddressService;
 
         private readonly IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource>
@@ -143,7 +143,6 @@
             await res.Negotiate(result);
         }
 
-
         private async Task GetReq(HttpRequest req, HttpResponse res)
         {
             var id = req.RouteValues.As<int>("id");
@@ -176,8 +175,7 @@
             var resource = await req.Bind<PurchaseOrderReqResource>();
             var result = this.purchaseOrderReqFacadeService.Add(
                 resource,
-                req.HttpContext.GetPrivileges(),
-                null);
+                req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }

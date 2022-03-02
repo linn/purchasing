@@ -24,11 +24,9 @@
 
         public decimal? TotalReqPrice { get; set; }
 
-        public string CurrencyCode { get; set; }
+        public CurrencyResource Currency { get; set; }
 
-        public int? SupplierId { get; set; }
-
-        public string SupplierName { get; set; }
+        public SupplierResource Supplier { get; set; }
 
         public string SupplierContact { get; set; }
 

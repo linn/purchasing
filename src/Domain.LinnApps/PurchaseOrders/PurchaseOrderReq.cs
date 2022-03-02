@@ -2,6 +2,8 @@
 {
     using System;
 
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
+
     public class PurchaseOrderReq
     {
         public int ReqNumber { get; set; }
@@ -26,7 +28,7 @@
 
         public Currency Currency { get; set; }
 
-        public int? SupplierId { get; set; }
+        public Supplier Supplier { get; set; }
 
         public string SupplierName { get; set; }
 
@@ -52,15 +54,15 @@
 
         public DateTime? DateRequired { get; set; }
 
-        public Employee RequestedByEmployee { get; set; }
+        public Employee RequestedBy { get; set; }
 
-        public Employee AuthorisedByEmployee { get; set; }
+        public Employee AuthorisedBy { get; set; }
 
-        public Employee SecondAuthByEmployee { get; set; }
+        public Employee SecondAuthBy { get; set; }
 
-        public Employee FinanceCheckByEmployee { get; set; }
+        public Employee FinanceCheckBy { get; set; }
 
-        public Employee TurnedIntoOrderByEmployee { get; set; }
+        public Employee TurnedIntoOrderBy { get; set; }
 
         public string Nominal { get; set; }
 

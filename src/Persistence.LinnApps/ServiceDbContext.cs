@@ -617,7 +617,7 @@
             entity.Property(e => e.Carriage).HasColumnName("CARRIAGE").HasMaxLength(18);
             entity.Property(e => e.TotalReqPrice).HasColumnName("TOTAL_REQ_PRICE").HasMaxLength(18);
             entity.HasOne(e => e.Currency).WithMany().HasForeignKey("CURRENCY");
-            entity.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID").HasMaxLength(6);
+            entity.HasOne(e => e.Supplier).WithMany().HasForeignKey("SUPPLIER_ID");
             entity.Property(e => e.SupplierName).HasColumnName("SUPPLIER_NAME").HasMaxLength(50);
             entity.Property(e => e.SupplierContact).HasColumnName("SUPPLIER_CONTACT").HasMaxLength(50);
             entity.Property(e => e.AddressLine1).HasColumnName("ADDRESS_1").HasMaxLength(40);
@@ -629,14 +629,14 @@
             entity.Property(e => e.PhoneNumber).HasColumnName("PHONE_NUMBER").HasMaxLength(40);
             entity.Property(e => e.QuoteRef).HasColumnName("QUOTE_REF").HasMaxLength(200);
             entity.Property(e => e.DateRequired).HasColumnName("DATE_REQUIRED");
-            entity.HasOne(e => e.RequestedByEmployee).WithMany().HasForeignKey("REQUESTED_BY");
-            entity.HasOne(e => e.AuthorisedByEmployee).WithMany().HasForeignKey("AUTHORISED_BY");
+            entity.HasOne(e => e.RequestedBy).WithMany().HasForeignKey("REQUESTED_BY");
+            entity.HasOne(e => e.AuthorisedBy).WithMany().HasForeignKey("AUTHORISED_BY");
             entity.Property(e => e.RemarksForOrder).HasColumnName("REMARKS_FOR_ORDER").HasMaxLength(200);
             entity.Property(e => e.Department).HasColumnName("DEPARTMENT").HasMaxLength(10);
             entity.Property(e => e.Nominal).HasColumnName("NOMINAL").HasMaxLength(10);
-            entity.HasOne(e => e.TurnedIntoOrderByEmployee).WithMany().HasForeignKey("TURNED_INTO_ORDER_BY");
-            entity.HasOne(e => e.FinanceCheckByEmployee).WithMany().HasForeignKey("FINANCE_CHECKED_BY");
-            entity.HasOne(e => e.SecondAuthByEmployee).WithMany().HasForeignKey("SECONDARY_AUTH_BY");
+            entity.HasOne(e => e.TurnedIntoOrderBy).WithMany().HasForeignKey("TURNED_INTO_ORDER_BY");
+            entity.HasOne(e => e.FinanceCheckBy).WithMany().HasForeignKey("FINANCE_CHECKED_BY");
+            entity.HasOne(e => e.SecondAuthBy).WithMany().HasForeignKey("SECONDARY_AUTH_BY");
             entity.Property(e => e.Email).HasColumnName("EMAIL_ADDRESS").HasMaxLength(50);
             entity.Property(e => e.InternalNotes).HasColumnName("INTERNAL_ONLY_ORDER_NOTES").HasMaxLength(300);
         }

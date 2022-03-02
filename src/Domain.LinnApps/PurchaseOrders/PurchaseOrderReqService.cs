@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
 {
+    using System;
     using System.Collections.Generic;
 
     using Linn.Common.Authorisation;
@@ -24,7 +25,7 @@
             return entity;
         }
 
-        public void Update(PurchaseOrderReq entity, PurchaseOrderReq updatedEntity, IEnumerable<string> privileges)
+        public bool Update(PurchaseOrderReq entity, PurchaseOrderReq updatedEntity, IEnumerable<string> privileges)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqUpdate, privileges))
             {
@@ -41,8 +42,8 @@
             entity.UnitPrice = updatedEntity.UnitPrice;
             entity.Carriage = updatedEntity.Carriage;
             entity.TotalReqPrice = updatedEntity.TotalReqPrice;
-            entity.CurrencyCode = updatedEntity.CurrencyCode;
-            entity.SupplierId = updatedEntity.SupplierId;
+            entity.Currency = updatedEntity.Currency;
+            entity.Supplier = updatedEntity.Supplier;
             entity.SupplierName = updatedEntity.SupplierName;
             entity.SupplierContact = updatedEntity.SupplierContact;
             entity.AddressLine1 = updatedEntity.AddressLine1;
@@ -50,7 +51,7 @@
             entity.AddressLine3 = updatedEntity.AddressLine3;
             entity.AddressLine4 = updatedEntity.AddressLine4;
             entity.PostCode = updatedEntity.PostCode;
-            entity.CountryCode = updatedEntity.Country.CountryCode;
+            entity.Country = updatedEntity.Country;
             entity.PhoneNumber = updatedEntity.PhoneNumber;
             entity.QuoteRef = updatedEntity.QuoteRef;
             entity.Email = updatedEntity.Email;
@@ -64,6 +65,8 @@
             entity.RemarksForOrder = updatedEntity.RemarksForOrder;
             entity.InternalNotes = updatedEntity.InternalNotes;
             entity.Department = updatedEntity.Department;
+
+            return true;
         }
     }
 }

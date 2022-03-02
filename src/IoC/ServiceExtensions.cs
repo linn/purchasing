@@ -51,7 +51,8 @@
                 .AddTransient<IBuilder<Address>, AddressResourceBuilder>()
                 .AddTransient<IBuilder<Country>, CountryResourceBuilder>()
                 .AddTransient<IBuilder<VendorManager>, VendorManagerResourceBuilder>()
-                .AddTransient<IBuilder<Planner>, PlannerResourceBuilder>();
+                .AddTransient<IBuilder<Planner>, PlannerResourceBuilder>()
+                .AddTransient<IBuilder<PurchaseOrderReq>, PurchaseOrderReqResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -98,6 +99,7 @@
                 .AddTransient<IAuthorisationService, AuthorisationService>()
                 .AddTransient<IDatabaseService, DatabaseService>()
                 .AddTransient<ISpendsReportService, SpendsReportService>()
+                .AddTransient<IPurchaseOrderReqService, PurchaseOrderReqService>()
 
             // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()

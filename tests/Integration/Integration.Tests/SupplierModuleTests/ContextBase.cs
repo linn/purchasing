@@ -82,8 +82,8 @@
 
         protected IDatabaseService MockDatabaseService { get; set; }
 
-        protected IFacadeResourceService<Planner, int, PlannerResource, PlannerResource> PlannerService 
-        { 
+        protected IFacadeResourceService<Planner, int, PlannerResource, PlannerResource> PlannerService
+        {
             get;
             private set;
         }

@@ -4,7 +4,7 @@
 
     public interface IPurchaseOrderReqService
     {
-        public void Update(PurchaseOrderReq entity, PurchaseOrderReq updatedEntity, IEnumerable<string> privileges);
+        public bool Update(PurchaseOrderReq entity, PurchaseOrderReq updatedEntity, IEnumerable<string> privileges);
 
         public PurchaseOrderReq Create(PurchaseOrderReq entity, IEnumerable<string> privileges);
     }

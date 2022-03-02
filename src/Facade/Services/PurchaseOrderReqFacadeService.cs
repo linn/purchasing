@@ -6,7 +6,10 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
+    using Linn.Common.Proxy.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.SearchResources;
 
@@ -15,14 +18,18 @@
     {
         private readonly IPurchaseOrderReqService domainService;
 
+        private IDatabaseService databaseService;
+
         public PurchaseOrderReqFacadeService(
             IRepository<PurchaseOrderReq, int> repository,
             ITransactionManager transactionManager,
             IBuilder<PurchaseOrderReq> resourceBuilder,
-            IPurchaseOrderReqService domainService)
+            IPurchaseOrderReqService domainService,
+            IDatabaseService databaseService)
             : base(repository, transactionManager, resourceBuilder)
         {
             this.domainService = domainService;
+            this.databaseService = databaseService;
         }
 
         protected override PurchaseOrderReq CreateFromResource(
@@ -30,6 +37,9 @@
             IEnumerable<string> privileges = null)
         {
             var newReq = this.BuildEntityFromResourceHelper(resource);
+
+            newReq.ReqNumber = this.databaseService.GetNextVal("BLUE_REQ_SEQ");
+
             return this.domainService.Create(newReq, privileges);
         }
 
@@ -65,14 +75,15 @@
             IEnumerable<string> privileges = null)
         {
            var updateEntity = this.BuildEntityFromResourceHelper(updateResource);
-           this.domainService.Update(entity, updateEntity);
+           updateEntity.ReqNumber = updateResource.ReqNumber;
+
+           this.domainService.Update(entity, updateEntity, privileges);
         }
 
         private PurchaseOrderReq BuildEntityFromResourceHelper(PurchaseOrderReqResource resource)
         {
             return new PurchaseOrderReq
                        {
-                           ReqNumber = resource.ReqNumber,
                            State = resource.State,
                            ReqDate = DateTime.Parse(resource.ReqDate),
                            OrderNumber = resource.OrderNumber,
@@ -82,16 +93,16 @@
                            UnitPrice = resource.UnitPrice,
                            Carriage = resource.Carriage,
                            TotalReqPrice = resource.TotalReqPrice,
-                           CurrencyCode = resource.CurrencyCode,
-                           SupplierId = resource.SupplierId,
-                           SupplierName = resource.SupplierName,
+                           Currency = new Currency { Code = resource.Currency.Code },
+                           Supplier = new Supplier { SupplierId = resource.Supplier.Id, Name = resource.Supplier.Name },
+                           SupplierName = resource.Supplier.Name,
                            SupplierContact = resource.SupplierContact,
                            AddressLine1 = resource.AddressLine1,
                            AddressLine2 = resource.AddressLine2,
                            AddressLine3 = resource.AddressLine3,
                            AddressLine4 = resource.AddressLine4,
                            PostCode = resource.PostCode,
-                           CountryCode = resource.Country.CountryCode,
+                           Country = new Country { CountryCode = resource.Country.CountryCode },
                            PhoneNumber = resource.PhoneNumber,
                            QuoteRef = resource.QuoteRef,
                            Email = resource.Email,
@@ -99,11 +110,11 @@
                                !string.IsNullOrEmpty(resource.DateRequired)
                                    ? DateTime.Parse(resource.DateRequired)
                                    : null,
-                           RequestedBy = resource.RequestedBy.Id,
-                           AuthorisedBy = resource.AuthorisedBy.Id,
-                           SecondAuthBy = resource.SecondAuthBy.Id,
-                           FinanceCheckBy = resource.FinanceCheckBy.Id,
-                           TurnedIntoOrderBy = resource.TurnedIntoOrderBy.Id,
+                           RequestedBy = new Employee { Id = resource.RequestedBy.Id },
+                           AuthorisedBy = new Employee { Id = resource.AuthorisedBy.Id },
+                           SecondAuthBy = new Employee { Id = resource.SecondAuthBy.Id },
+                           FinanceCheckBy = new Employee { Id = resource.FinanceCheckBy.Id },
+                           TurnedIntoOrderBy = new Employee { Id = resource.TurnedIntoOrderBy.Id },
                            Nominal = resource.Nominal,
                            RemarksForOrder = resource.RemarksForOrder,
                            InternalNotes = resource.InternalNotes,
