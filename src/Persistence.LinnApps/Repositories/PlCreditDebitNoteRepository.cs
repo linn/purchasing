@@ -18,12 +18,17 @@
 
         public override PlCreditDebitNote FindById(int key)
         {
-            return this.FindAll().Include(x => x.Supplier).FirstOrDefault(x => x.NoteNumber == key);
+            return this.FindAll().Include(x => x.Supplier).ThenInclude(s => s.OrderFullAddress)
+                .Include(x => x.PurchaseOrder)
+                .FirstOrDefault(x => x.NoteNumber == key);
         }
 
-        public override IQueryable<PlCreditDebitNote> FilterBy(Expression<Func<PlCreditDebitNote, bool>> expression)
+        public override IQueryable<PlCreditDebitNote> FilterBy(
+            Expression<Func<PlCreditDebitNote, bool>> expression)
         {
-            return base.FilterBy(expression).Include(n => n.Supplier);
+            return base.FilterBy(expression)
+                .Include(n => n.Supplier)
+                .Include(x => x.PurchaseOrder).AsNoTracking();
         }
     }
 }

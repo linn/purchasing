@@ -21,12 +21,20 @@
                        ClosedBy = note.ClosedBy,
                        NetTotal = note.NetTotal,
                        NoteNumber = note.NoteNumber,
-                       OriginalOrderNumber = note.OriginalOrderNumber,
+                       OriginalOrderNumber = note.PurchaseOrder?.OrderNumber,
                        ReturnsOrderNumber = note.ReturnsOrderNumber,
                        Notes = note.Notes,
                        SupplierName = note.Supplier?.Name,
                        DateCreated = note.DateCreated.ToString("o"),
                        NoteType = note.NoteType,
+                       SupplierFullAddress = note.Supplier.OrderFullAddress?.AddressString,
+                       OrderUnitOfMeasure = note.OrderUnitOfMeasure,
+                       OrderUnitPrice = note.OrderUnitPrice,
+                       Total = note.Total,
+                       VatTotal = note.VatTotal,
+                       SuppliersDesignation = note.SuppliersDesignation,
+                       OrderContactName = note.PurchaseOrder?.OrderContactName,
+                       SupplierAddress = note.Supplier.OrderFullAddress?.AddressString,
                        Links = this.BuildLinks(note, claims).ToArray()
                    };
         }

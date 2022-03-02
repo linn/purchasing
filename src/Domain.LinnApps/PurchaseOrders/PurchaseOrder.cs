@@ -26,5 +26,7 @@
         public decimal? OverbookQty { get; set; }
 
         public Currency Currency { get; set; }
+
+        public string OrderContactName { get; set; }
     }
 }

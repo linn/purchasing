@@ -32,10 +32,24 @@
 
         public string SupplierName { get; set; }
 
-        public IEnumerable<string> UserPrivileges { get; set; }
-
         public string DateCreated { get; set; }
 
         public bool? Close { get; set; }
+
+        public decimal OrderUnitPrice { get; set; }
+
+        public string OrderUnitOfMeasure { get; set; }
+
+        public decimal VatTotal { get; set; }
+
+        public string SupplierFullAddress { get; set; }
+
+        public decimal Total { get; set; }
+
+        public string OrderContactName { get; set; }
+
+        public string SuppliersDesignation { get; set; }
+
+        public string SupplierAddress { get; set; }
     }
 }

@@ -30,7 +30,7 @@
                                 NoteType = "C",
                                 Notes = "NOTES",
                                 OrderQty = 456,
-                                OriginalOrderNumber = 321,
+                                PurchaseOrder = new PurchaseOrder { OrderNumber = 4567 },
                                 ReturnsOrderNumber = 4321
                             };
             this.MockPlCreditDebitNoteRepository.FindById(this.data.NoteNumber).Returns(this.data);
@@ -70,7 +70,7 @@
             resource.NoteType.Should().Be(this.data.NoteType);
             resource.Notes.Should().Be(this.data.Notes);
             resource.OrderQty.Should().Be(this.data.OrderQty);
-            resource.OriginalOrderNumber.Should().Be(this.data.OriginalOrderNumber);
+            resource.OriginalOrderNumber.Should().Be(this.data.PurchaseOrder.OrderNumber);
             resource.ReturnsOrderNumber.Should().Be(this.data.ReturnsOrderNumber);
         }
     }
