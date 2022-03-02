@@ -24,8 +24,8 @@
             this.service = service;
             this.Get("/purchasing/open-debit-notes", this.GetOpenDebitNotes);
             this.Get("/purchasing/pl-credit-debit-notes", this.SearchNotes);
-            this.Put("/purchasing/pl-credit-debit-notes/{id}", this.GetNote);
-            this.Get("/purchasing/pl-credit-debit-notes/{id}", this.UpdateDebitNote);
+            this.Get("/purchasing/pl-credit-debit-notes/{id}", this.GetNote);
+            this.Put("/purchasing/pl-credit-debit-notes/{id}", this.UpdateDebitNote);
         }
 
         private async Task GetOpenDebitNotes(HttpRequest req, HttpResponse res)

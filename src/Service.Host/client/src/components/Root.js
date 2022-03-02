@@ -29,6 +29,7 @@ import SpendByPartOptions from './reports/SpendByPartOptions';
 import SpendByPart from './reports/SpendByPart';
 import OpenDebitNotes from './plDebitCreditNotes/OpenDebitNotes';
 import Search from './plDebitCreditNotes/Search';
+import Notes from './plDebitCreditNotes/Note';
 
 const Root = ({ store }) => (
     <div>
@@ -143,6 +144,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/pl-credit-debit-notes"
                                     component={Search}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/pl-credit-debit-notes/:id"
+                                    component={Notes}
                                 />
                                 <Route
                                     exact

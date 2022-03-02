@@ -16,6 +16,11 @@
         {
         }
 
+        public override PlCreditDebitNote FindById(int key)
+        {
+            return this.FindAll().Include(x => x.Supplier).FirstOrDefault(x => x.NoteNumber == key);
+        }
+
         public override IQueryable<PlCreditDebitNote> FilterBy(Expression<Func<PlCreditDebitNote, bool>> expression)
         {
             return base.FilterBy(expression).Include(n => n.Supplier);

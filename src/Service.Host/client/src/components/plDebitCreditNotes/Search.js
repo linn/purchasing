@@ -4,7 +4,7 @@ import {
     collectionSelectorHelpers,
     CreateButton,
     Page,
-    Typeahead,
+    TypeaheadTable,
     utilities
 } from '@linn-it/linn-form-components-library';
 import Typography from '@mui/material/Typography';
@@ -37,6 +37,22 @@ function Search() {
 
     const createUrl = utilities.getHref(item, 'create');
 
+    const searchResultsTable = {
+        totalItemCount: searchResults.length,
+        rows: searchResults?.map((res, i) => ({
+            id: res.noteNumber,
+            values: [
+                { id: `${i}-0`, value: `${res.noteNumber}` },
+                { id: `${i}-1`, value: `${res.noteType}` },
+                { id: `${i}-2`, value: `${res.originalOrderNumber || ''}` },
+                { id: `${i}-3`, value: `${res.supplierId || ''}` },
+                { id: `${i}-4`, value: `${res.supplierName || ''}` },
+                { id: `${i}-5`, value: `${res.partNumber || ''}` }
+            ],
+            links: res.links
+        }))
+    };
+
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
@@ -47,15 +63,17 @@ function Search() {
                     <CreateButton createUrl={createUrl} disabled={!createUrl} />
                 </Grid>
                 <Grid item xs={12}>
-                    <Typeahead
-                        items={searchResults}
+                    <TypeaheadTable
+                        table={searchResultsTable}
+                        columnNames={['#', 'Type', 'Order', 'Supplier', 'Name', 'Part']}
+                        links={false}
                         fetchItems={search}
+                        placeholder="Note Number or Supplier"
+                        onSelect={newVal => history.push(utilities.getSelfHref(newVal))}
                         clearSearch={() => {}}
-                        resultLimit={100}
                         loading={searchLoading}
-                        history={history}
-                        placeholder="Supplier or Note Number"
-                        links
+                        debounce={1000}
+                        minimumSearchTermLength={2}
                     />
                 </Grid>
             </Grid>
