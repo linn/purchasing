@@ -19,7 +19,5 @@
         public const string PlCreditDebitNoteClose = "purchasing.pl-debit-credit-note.close";
 
         public const string PlCreditDebitNoteUpdate = "purchasing.pl-debit-credit-note.update";
-
-        public const string PlCreditDebitCreate = "purchasing.pl-debit-credit-note.create";
     }
 }
