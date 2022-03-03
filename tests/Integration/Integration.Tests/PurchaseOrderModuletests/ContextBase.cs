@@ -43,7 +43,7 @@
             get; private set;
         }
 
-        protected IPurchaseOrderReqService PurchaseOrderReqDomainService { get; private set; }
+        protected IPurchaseOrderReqService MockReqDomainService { get; private set; }
 
         protected IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource> CurrencyService { get; private set; }
 
@@ -99,11 +99,8 @@
             this.PackagingGroupService = Substitute
                 .For<IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource>>();
             this.TariffService = Substitute.For<IFacadeResourceService<Tariff, int, TariffResource, TariffResource>>();
-            this.PurchaseOrderReqFacadeService =
-                Substitute
-                    .For<IFacadeResourceFilterService<PurchaseOrderReq, int, PurchaseOrderReqResource, PurchaseOrderReqResource, PurchaseOrderReqSearchResource>>();
 
-            this.PurchaseOrderReqDomainService = Substitute.For<IPurchaseOrderReqService>();
+            this.MockReqDomainService = Substitute.For<IPurchaseOrderReqService>();
 
             this.MockPurchaseOrderReqRepository = Substitute.For<IRepository<PurchaseOrderReq, int>>();
             this.MockDatabaseService = Substitute.For<IDatabaseService>();
@@ -113,7 +110,7 @@
                 this.MockPurchaseOrderReqRepository,
                 this.TransactionManager,
                 new PurchaseOrderReqResourceBuilder(this.MockAuthService),
-                this.PurchaseOrderReqDomainService,
+                this.MockReqDomainService,
                 this.MockDatabaseService);
 
                 this.Log = Substitute.For<ILog>();
