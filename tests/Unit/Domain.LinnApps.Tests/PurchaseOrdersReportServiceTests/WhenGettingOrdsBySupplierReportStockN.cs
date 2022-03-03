@@ -47,7 +47,8 @@
                                                                            BaseNetTotal = 4m,
                                                                            OrderNumber = this.orderNumber,
                                                                            OurQty = 3,
-                                                                           PartNumber = this.partNumber,
+                                                                           Part = new Part { PartNumber = this.partNumber },
+
                                                                            PurchaseDeliveries =
                                                                                new List<PurchaseOrderDelivery>
                                                                                    {
@@ -85,7 +86,8 @@
                                                                            BaseNetTotal = 2.5m,
                                                                            OrderNumber = 1111,
                                                                            OurQty = 3,
-                                                                           PartNumber = "part2",
+                                                                           Part = new Part { PartNumber = "part2" },
+
                                                                            PurchaseDeliveries =
                                                                                new List<PurchaseOrderDelivery>
                                                                                    {

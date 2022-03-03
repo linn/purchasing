@@ -75,7 +75,7 @@
                                                                       {
                                                                           Line = 1,
                                                                           OrderNumber = this.orderNumber1,
-                                                                          PartNumber = "MCAS WAN"
+                                                                          Part = new Part { PartNumber = "MCAS WAN" }
                                                                       }
                                                               }
                                             },
@@ -89,7 +89,8 @@
                                                                       {
                                                                           Line = 1,
                                                                           OrderNumber = this.orderNumber2,
-                                                                          PartNumber = "MCAS 222"
+                                                                          Part = new Part { PartNumber = "MCAS 222" }
+
                                                                       }
                                                               }
                                             },
@@ -103,7 +104,7 @@
                                                                       {
                                                                           Line = 1,
                                                                           OrderNumber = this.orderNumber3,
-                                                                          PartNumber = "RAW 33"
+                                                                          Part = new Part { PartNumber = "RAW 33" }
                                                                       }
                                                               }
                                             }

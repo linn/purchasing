@@ -16,6 +16,8 @@
 
         public int? ReturnsOrderNumber { get; set; }
 
+        public int? ReturnsOrderLine { get; set; }
+
         public decimal NetTotal { get; set; }
 
         public decimal Total { get; set; }
@@ -41,5 +43,7 @@
         public string SuppliersDesignation { get; set; }
 
         public PurchaseOrder PurchaseOrder { get; set; }
+
+        public Currency Currency { get; set; }
     }
 }

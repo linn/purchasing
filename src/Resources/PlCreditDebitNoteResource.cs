@@ -51,5 +51,11 @@
         public string SuppliersDesignation { get; set; }
 
         public string SupplierAddress { get; set; }
+
+        public int? ReturnsOrderLine { get; set; }
+
+        public string Currency { get; set; }
+
+        public IEnumerable<PurchaseOrderDetailResource> OrderDetails { get; set; }
     }
 }

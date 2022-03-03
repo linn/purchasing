@@ -2,6 +2,8 @@
 {
     using System.Collections.Generic;
 
+    using Linn.Purchasing.Domain.LinnApps.Parts;
+
     public class PurchaseOrderDetail
     {
         public string Cancelled { get; set; }
@@ -17,11 +19,9 @@
 
         public int? OurQty { get; set; }
 
-        public string PartNumber { get; set; }
+        public Part Part { get; set; }
 
         public IEnumerable<PurchaseOrderDelivery> PurchaseDeliveries { get; set; }
-
-        public PurchaseOrder PurchaseOrder { get; set; }
 
         public string RohsCompliant { get; set; }
 

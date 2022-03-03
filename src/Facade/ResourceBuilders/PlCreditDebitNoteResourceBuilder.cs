@@ -23,6 +23,7 @@
                        NoteNumber = note.NoteNumber,
                        OriginalOrderNumber = note.PurchaseOrder?.OrderNumber,
                        ReturnsOrderNumber = note.ReturnsOrderNumber,
+                       ReturnsOrderLine = note.ReturnsOrderLine,
                        Notes = note.Notes,
                        SupplierName = note.Supplier?.Name,
                        DateCreated = note.DateCreated.ToString("o"),
@@ -35,6 +36,14 @@
                        SuppliersDesignation = note.SuppliersDesignation,
                        OrderContactName = note.PurchaseOrder?.OrderContactName,
                        SupplierAddress = note.Supplier.OrderFullAddress?.AddressString,
+                       Currency = note.Currency?.Name,
+                       OrderDetails = note.PurchaseOrder?.Details
+                           ?.Select(d => new PurchaseOrderDetailResource
+                                             {
+                                                 Line = d.Line,
+                                                 PartNumber = d.Part?.PartNumber,
+                                                 PartDescription = d.Part?.Description
+                                             }),
                        Links = this.BuildLinks(note, claims).ToArray()
                    };
         }

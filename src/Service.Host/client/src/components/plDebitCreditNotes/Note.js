@@ -41,17 +41,53 @@ function Notes() {
                 <Typography variant="subtitle2">Supplier:</Typography>
             </Grid>
             <Grid item xs={4}>
-                <Typography variant="subtitle2">{note.supplierName}</Typography>
+                <Typography variant="subtitle1">{note.supplierName}</Typography>
             </Grid>
             <Grid item xs={2} />
             <Grid item xs={1}>
                 <Typography variant="subtitle2">Date:</Typography>
             </Grid>
             <Grid item xs={4}>
-                <Typography variant="subtitle2">
-                    {new Date(note.dateCreated).toLocaleDateString()}
+                <Typography variant="subtitle1">
+                    {new Date(note.dateCreated)?.toLocaleDateString()}
                 </Typography>
             </Grid>
+            <Grid item xs={2}>
+                <Typography variant="subtitle2">Your Ref:</Typography>
+            </Grid>
+            <Grid item xs={4}>
+                <Typography variant="subtitle1">{note.orderContactName}</Typography>
+            </Grid>
+            <Grid item xs={6} />
+            <Grid item xs={1}>
+                <Typography variant="subtitle2">Qty:</Typography>
+            </Grid>
+            <Grid item xs={2}>
+                <Typography variant="subtitle1">
+                    {`${note.orderQty} in ${note.orderUnitOfMeasure}`}
+                </Typography>
+            </Grid>
+            <Grid item xs={2}>
+                <Typography variant="subtitle2">Ret Order No:</Typography>
+            </Grid>
+            <Grid item xs={2}>
+                <Typography variant="subtitle1">{note.returnsOrderNumber}</Typography>
+            </Grid>
+            <Grid item xs={2}>
+                <Typography variant="subtitle2">Line:</Typography>
+            </Grid>
+            <Grid item xs={2}>
+                <Typography variant="subtitle1">{note.returnsOrderLine}</Typography>
+            </Grid>
+            <Grid item xs={8} />
+
+            <Grid item xs={1}>
+                <Typography variant="subtitle2">Line:</Typography>
+            </Grid>
+            <Grid item xs={2}>
+                <Typography variant="subtitle1">{note.returnsOrderLine}</Typography>
+            </Grid>
+            <Grid item xs={2} />
         </Grid>
     );
     return (
