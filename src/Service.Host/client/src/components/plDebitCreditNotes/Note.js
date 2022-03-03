@@ -1,15 +1,36 @@
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { itemSelectorHelpers, Loading, Page } from '@linn-it/linn-form-components-library';
+import {
+    itemSelectorHelpers,
+    Loading,
+    Page,
+    InputField,
+    SaveBackCancelButtons
+} from '@linn-it/linn-form-components-library';
 import { useParams } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import { makeStyles } from '@mui/styles';
+import IconButton from '@mui/material/IconButton';
+import Close from '@mui/icons-material/Close';
 import config from '../../config';
 import history from '../../history';
 import { plCreditDebitNote } from '../../itemTypes';
 import plCreditDebitNoteActions from '../../actions/plCreditDebitNoteActions';
 
 function Notes() {
+    const useStyles = makeStyles(theme => ({
+        dialog: {
+            margin: theme.spacing(6),
+            minWidth: theme.spacing(62)
+        },
+        total: {
+            float: 'right'
+        }
+    }));
+    const classes = useStyles();
     const dispatch = useDispatch();
     const item = useSelector(state => itemSelectorHelpers.getItem(state[plCreditDebitNote.item]));
     const loading = useSelector(state =>
@@ -17,6 +38,9 @@ function Notes() {
     );
 
     const [note, setNote] = useState(null);
+    const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+    const [cancelReason, setCancelReason] = useState('');
+
     const { id } = useParams();
 
     useEffect(() => {
@@ -37,6 +61,13 @@ function Notes() {
                     {`Linn ${note.noteType === 'C' ? 'Credit' : 'Debit'} Note ${note.noteNumber}`}
                 </Typography>
             </Grid>
+            {note.cancelled && (
+                <Grid item xs={12}>
+                    <Typography color="secondary" variant="h6">
+                        CANCELLED
+                    </Typography>
+                </Grid>
+            )}
             <Grid item xs={2}>
                 <Typography variant="subtitle2">Supplier:</Typography>
             </Grid>
@@ -72,7 +103,7 @@ function Notes() {
             </Grid>
             <Grid item xs={4} />
             {note.orderDetails?.map(d => (
-                <>
+                <Fragment key={d.line}>
                     <Grid item xs={2}>
                         <Typography variant="subtitle2">Orig Order No:</Typography>
                     </Grid>
@@ -95,7 +126,7 @@ function Notes() {
                     <Grid item xs={6}>
                         <Typography variant="subtitle1">{d.partDescription}</Typography>
                     </Grid>
-                </>
+                </Fragment>
             ))}
             <Grid item xs={2}>
                 <Typography variant="subtitle2">Qty:</Typography>
@@ -171,11 +202,63 @@ function Notes() {
     );
     return (
         note && (
-            <div style={{ width: '874px', margin: '0 auto' }}>
-                <Page history={history} homeUrl={config.appRoot}>
-                    {loading ? <Loading /> : <Content />}
-                </Page>
-            </div>
+            <>
+                <div style={{ width: '874px', margin: '0 auto' }}>
+                    <Page history={history} homeUrl={config.appRoot}>
+                        {loading ? <Loading /> : <Content />}
+                    </Page>
+                </div>
+                <Grid container spacing={3}>
+                    <Dialog open={cancelDialogOpen} fullWidth maxWidth="md">
+                        <div>
+                            <IconButton
+                                className={classes.pullRight}
+                                aria-label="Close"
+                                onClick={() => setCancelDialogOpen(false)}
+                            >
+                                <Close />
+                            </IconButton>
+                            <div className={classes.dialog}>
+                                <Grid item xs={12}>
+                                    <InputField
+                                        fullWidth
+                                        value={cancelReason}
+                                        label="Must give a reason:"
+                                        propertyName="holdReason"
+                                        onChange={(_, newValue) => setCancelReason(newValue)}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <SaveBackCancelButtons
+                                        saveDisabled={!cancelReason}
+                                        backClick={() => setCancelDialogOpen(false)}
+                                        cancelClick={() => setCancelDialogOpen(false)}
+                                        saveClick={() => {
+                                            dispatch(
+                                                plCreditDebitNoteActions.update(id, {
+                                                    noteNumber: id,
+                                                    reasonCancelled: cancelReason
+                                                })
+                                            );
+                                        }}
+                                    />
+                                </Grid>
+                            </div>
+                        </div>
+                    </Dialog>
+                    <Grid item xs={10} />
+
+                    <Grid item xs={2}>
+                        <Button
+                            onClick={() => setCancelDialogOpen(true)}
+                            variant="outlined"
+                            color="secondary"
+                        >
+                            Cancel
+                        </Button>
+                    </Grid>
+                </Grid>
+            </>
         )
     );
 }

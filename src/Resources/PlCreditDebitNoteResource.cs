@@ -59,5 +59,11 @@
         public IEnumerable<PurchaseOrderDetailResource> OrderDetails { get; set; }
 
         public decimal? VatRate { get; set; }
+
+        public bool Cancelled { get; set; }
+
+        public int? Who { get; set; }
+
+        public string ReasonCancelled { get; set; }
     }
 }

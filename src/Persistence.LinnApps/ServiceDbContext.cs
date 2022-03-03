@@ -684,6 +684,9 @@
             entity.HasOne(a => a.Currency).WithMany().HasForeignKey("CURRENCY");
             entity.Property(a => a.ReturnsOrderLine).HasColumnName("RETURNS_ORDER_LINE");
             entity.Property(a => a.VatRate).HasColumnName("VAT_RATE");
+            entity.Property(a => a.CancelledBy).HasColumnName("CANCELLED_BY");
+            entity.Property(a => a.DateCancelled).HasColumnName("DATE_CANCELLED");
+            entity.Property(a => a.ReasonCancelled).HasColumnName("REASON_CANCELLED");
         }
     }
 }

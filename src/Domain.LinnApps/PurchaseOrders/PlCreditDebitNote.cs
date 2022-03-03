@@ -47,5 +47,11 @@
         public Currency Currency { get; set; }
 
         public decimal? VatRate { get; set; }
+
+        public int? CancelledBy { get; set; }
+
+        public DateTime? DateCancelled { get; set; }
+
+        public string ReasonCancelled { get; set; }
     }
 }

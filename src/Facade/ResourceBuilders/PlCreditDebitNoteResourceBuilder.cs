@@ -45,6 +45,7 @@
                                                  PartDescription = d.Part?.Description
                                              }),
                        VatRate = note.VatRate,
+                       Cancelled = note.CancelledBy.HasValue,
                        Links = this.BuildLinks(note, claims).ToArray()
                    };
         }

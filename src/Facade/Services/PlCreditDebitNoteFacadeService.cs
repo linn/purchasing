@@ -38,12 +38,21 @@
             IEnumerable<string> privileges = null)
         {
             var enumerable = privileges?.ToList();
-            if (updateResource.ClosedBy.HasValue && updateResource.Close.HasValue && (bool)updateResource.Close)
+            if (updateResource.Who.HasValue && updateResource.Close.HasValue && (bool)updateResource.Close)
             {
                 this.domainService.CloseDebitNote(
                     entity, 
                     updateResource.ReasonClosed, 
-                    (int)updateResource.ClosedBy, 
+                    (int)updateResource.Who, 
+                    enumerable);
+            }
+
+            if (updateResource.Who.HasValue && !string.IsNullOrEmpty(updateResource.ReasonCancelled))
+            {
+                this.domainService.CloseDebitNote(
+                    entity,
+                    updateResource.ReasonClosed,
+                    (int)updateResource.Who,
                     enumerable);
             }
 

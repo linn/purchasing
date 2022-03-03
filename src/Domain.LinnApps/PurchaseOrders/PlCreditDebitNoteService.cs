@@ -31,6 +31,18 @@
             toClose.ClosedBy = closedBy;
         }
 
+        public void CancelDebitNote(PlCreditDebitNote toCancel, string reason, int closedBy, IEnumerable<string> privileges)
+        {
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PlCreditDebitNoteCancel, privileges))
+            {
+                throw new UnauthorisedActionException("You are not authorised to cancel debit notes");
+            }
+
+            toCancel.DateCancelled = DateTime.Today;
+            toCancel.ReasonCancelled = reason;
+            toCancel.CancelledBy = closedBy;
+        }
+
         public void UpdatePlCreditDebitNote(PlCreditDebitNote current, PlCreditDebitNote updated, IEnumerable<string> privileges)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PlCreditDebitNoteUpdate, privileges))

@@ -10,6 +10,12 @@
             int closedBy,
             IEnumerable<string> privileges);
 
+        public void CancelDebitNote(
+            PlCreditDebitNote toCancel,
+            string reason,
+            int closedBy,
+            IEnumerable<string> privileges);
+
         public void UpdatePlCreditDebitNote(
             PlCreditDebitNote current,
             PlCreditDebitNote updated,
