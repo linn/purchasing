@@ -124,5 +124,5 @@ export const planners = new ItemType('planners', 'PLANNERS', '/purchasing/suppli
 export const purchaseOrderReq = new ItemType(
     'purchaseOrderReq',
     'PURCHASE_ORDER_REQ',
-    '/purchasing/po-req'
+    '/purchasing/purchase-orders/reqs'
 );

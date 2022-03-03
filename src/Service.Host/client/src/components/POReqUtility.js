@@ -4,6 +4,7 @@ import Grid from '@mui/material/Grid';
 import { useSelector, useDispatch } from 'react-redux';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import { useParams } from 'react-router-dom';
 import {
     Page,
     SaveBackCancelButtons,
@@ -17,11 +18,15 @@ import {
     DatePicker
 } from '@linn-it/linn-form-components-library';
 import addressesActions from '../actions/addressesActions';
-import addressActions from '../actions/addressActions';
+// import addressActions from '../actions/addressActions';
+import currenciesActions from '../actions/currenciesActions';
+
 import countriesActions from '../actions/countriesActions';
 // import supplierActions from '../../actions/supplierActions';
-import suppliersActions from '../../actions/suppliersActions';
-import partsActions from '../../actions/partsActions';
+import suppliersActions from '../actions/suppliersActions';
+import partsActions from '../actions/partsActions';
+import poReqActions from '../actions/purchaseOrderReqActions';
+
 import history from '../history';
 import config from '../config';
 
@@ -29,11 +34,11 @@ function POReqUtility({ creating }) {
     const dispatch = useDispatch();
     const suppliersSearchResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(
-            state.suppliers,
-            100,
-            'addressId', //todo update these
-            'addressId',
-            'addressee'
+            state.suppliers
+            // 100,
+            // 'addressId', //todo update these
+            // 'addressId',
+            // 'addressee'
         )
     );
     const suppliersSearchLoading = useSelector(state =>
@@ -82,6 +87,11 @@ function POReqUtility({ creating }) {
     );
     const searchAddresses = searchTerm => dispatch(addressesActions.search(searchTerm));
 
+    const currencies = useSelector(state => collectionSelectorHelpers.getItems(state.currencies));
+    // const currenciesLoading = useSelector(state =>
+    //     collectionSelectorHelpers.getLoading(state.currencies)
+    // );
+
     const [req, setReq] = useState({});
     const snackbarVisible = useSelector(state =>
         itemSelectorHelpers.getSnackbarVisible(state.poReq)
@@ -89,16 +99,29 @@ function POReqUtility({ creating }) {
     const loading = useSelector(state => itemSelectorHelpers.getItemLoading(state.poReq));
     const item = useSelector(state => itemSelectorHelpers.getItem(state.poReq));
     const [editStatus, setEditStatus] = useState('view');
+
     useEffect(() => {
         if (item?.reqNumber) {
             setReq(item);
         }
     }, [item]);
 
+    useEffect(() => dispatch(currenciesActions.fetch()), [dispatch]);
+    const { id } = useParams();
+
+    useEffect(() => {
+        if (id) {
+            dispatch(poReqActions.fetch(id));
+        }
+    }, [id, dispatch]);
     const handleFieldChange = (propertyName, newValue) => {
         setEditStatus('edit');
         setReq(a => ({ ...a, [propertyName]: newValue }));
     };
+
+    const editingAllowed = true;
+
+    const reqStates = [{ id: 0, state: 'todo' }];
 
     return (
         <>
@@ -123,7 +146,7 @@ function POReqUtility({ creating }) {
                                 label="PO Req Number"
                                 propertyName="reqNumber"
                                 onChange={handleFieldChange}
-                                disabled={!creating()}
+                                disabled
                             />
                         </Grid>
 
@@ -138,26 +161,25 @@ function POReqUtility({ creating }) {
                                 onChange={(propertyName, newValue) =>
                                     handleFieldChange(propertyName, newValue)
                                 }
-                                type="number"
                                 disabled={!editingAllowed}
                             />
                         </Grid>
 
-                        <Grid xs={2}>
+                        <Grid item xs={2}>
                             <Button>explain states</Button>
                         </Grid>
 
-                        <Grid xs={2}>
+                        <Grid item xs={2}>
                             <DatePicker
                                 label="Req Date"
-                                value={req.reqDate.toString()}
+                                value={req.reqDate?.toString()}
                                 onChange={newValue => {
                                     handleFieldChange('reqDate', newValue);
                                 }}
                             />
                         </Grid>
 
-                        <Grid xs={12}>
+                        <Grid item xs={12}>
                             <Typeahead
                                 label="Part"
                                 title="Search for a part"
@@ -184,7 +206,6 @@ function POReqUtility({ creating }) {
                                 label="Part Description"
                                 propertyName="partDescription"
                                 onChange={handleFieldChange}
-                                disabled={!creating()}
                                 rows={3}
                             />
                         </Grid>
@@ -196,7 +217,6 @@ function POReqUtility({ creating }) {
                                 label="Quantity"
                                 propertyName="qty"
                                 onChange={handleFieldChange}
-                                disabled={!creating()}
                             />
                         </Grid>
 
@@ -208,7 +228,6 @@ function POReqUtility({ creating }) {
                                 propertyName="currency"
                                 items={currencies.map(x => x.code)}
                                 allowNoValue
-                                disabled={!creating}
                                 onChange={(propertyName, newValue) => {
                                     handleFieldChange(propertyName, newValue);
                                 }}
@@ -224,7 +243,6 @@ function POReqUtility({ creating }) {
                                 number
                                 propertyName="unitPrice"
                                 onChange={handleFieldChange}
-                                disabled={!creating()}
                             />
                         </Grid>
                         <Grid item xs={4}>
@@ -235,7 +253,6 @@ function POReqUtility({ creating }) {
                                 number
                                 propertyName="carriage"
                                 onChange={handleFieldChange}
-                                disabled={!creating()}
                             />
                         </Grid>
                         <Grid item xs={4}>
@@ -246,7 +263,6 @@ function POReqUtility({ creating }) {
                                 number
                                 propertyName="totalReqPrice"
                                 onChange={handleFieldChange}
-                                disabled={!creating()}
                             />
                         </Grid>
 
@@ -265,7 +281,6 @@ function POReqUtility({ creating }) {
                                 value={`${req.supplierId}: ${req.supplierName}`}
                                 loading={suppliersSearchLoading}
                                 fetchItems={searchSuppliers}
-                                disabled={!creating}
                                 links={false}
                                 text
                                 clearSearch={() => {}}
@@ -284,7 +299,6 @@ function POReqUtility({ creating }) {
                                 number
                                 propertyName="supplierContact"
                                 onChange={handleFieldChange}
-                                disabled={!creating()}
                             />
                         </Grid>
                         <Grid xs={12} />
@@ -294,7 +308,7 @@ function POReqUtility({ creating }) {
                                 fullWidth
                                 value={req?.addressLine1}
                                 label="Line 1"
-                                propertyName="line1"
+                                propertyName="addressLine1"
                                 onChange={handleFieldChange}
                             />
                         </Grid>
@@ -304,7 +318,7 @@ function POReqUtility({ creating }) {
                                 fullWidth
                                 value={req?.addressLine2}
                                 label="Line 2"
-                                propertyName="line2"
+                                propertyName="addressLine2"
                                 onChange={handleFieldChange}
                             />
                         </Grid>
@@ -314,7 +328,7 @@ function POReqUtility({ creating }) {
                                 fullWidth
                                 value={req?.addressLine3}
                                 label="Line 3"
-                                propertyName="line3"
+                                propertyName="addressLine3"
                                 onChange={handleFieldChange}
                             />
                         </Grid>
@@ -324,7 +338,7 @@ function POReqUtility({ creating }) {
                                 fullWidth
                                 value={req?.addressLine4}
                                 label="Line 4"
-                                propertyName="line4"
+                                propertyName="addressLine4"
                                 onChange={handleFieldChange}
                             />
                         </Grid>
@@ -332,7 +346,7 @@ function POReqUtility({ creating }) {
                         <Grid item xs={8}>
                             <InputField
                                 fullWidth
-                                value={req?.PostCode}
+                                value={req?.postCode}
                                 label="Postcode"
                                 propertyName="postCode"
                                 onChange={handleFieldChange}
@@ -410,7 +424,7 @@ function POReqUtility({ creating }) {
                         <Grid item xs={6}>
                             <DatePicker
                                 label="Date Required"
-                                value={req.dateRequired.toString()}
+                                value={req.dateRequired?.toString()}
                                 onChange={newValue => {
                                     handleFieldChange('dateRequired', newValue);
                                 }}

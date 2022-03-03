@@ -26,6 +26,7 @@ import AddressUtility from './AdressUtility';
 import SuppliersWithUnacknowledgedOrders from './reports/SuppliersWithUnacknowledgedOrders';
 import SpendByPartOptions from './reports/SpendByPartOptions';
 import SpendByPart from './reports/SpendByPart';
+import POReqUtility from './POReqUtility';
 
 const Root = ({ store }) => (
     <div>
@@ -144,7 +145,17 @@ const Root = ({ store }) => (
                                     path="/purchasing/reports/spend-by-part/report"
                                     component={SpendByPart}
                                 />
-
+                                <Route
+                                    exact
+                                    path="/purchasing/purchase-orders/reqs/:id"
+                                    component={POReqUtility}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/purchase-orders/reqs/create"
+                                    // eslint-disable-next-line react/jsx-props-no-spreading
+                                    render={props => <POReqUtility creating {...props} />}
+                                />
                                 <Route component={NotFoundPage} />
                             </Switch>
                         </div>
