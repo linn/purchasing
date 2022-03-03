@@ -57,5 +57,7 @@
         public string Currency { get; set; }
 
         public IEnumerable<PurchaseOrderDetailResource> OrderDetails { get; set; }
+
+        public decimal? VatRate { get; set; }
     }
 }

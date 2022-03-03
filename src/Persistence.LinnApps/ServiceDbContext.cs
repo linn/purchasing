@@ -683,6 +683,7 @@
             entity.HasOne(a => a.PurchaseOrder).WithMany().HasForeignKey("ORIGINAL_ORDER_NUMBER");
             entity.HasOne(a => a.Currency).WithMany().HasForeignKey("CURRENCY");
             entity.Property(a => a.ReturnsOrderLine).HasColumnName("RETURNS_ORDER_LINE");
+            entity.Property(a => a.VatRate).HasColumnName("VAT_RATE");
         }
     }
 }

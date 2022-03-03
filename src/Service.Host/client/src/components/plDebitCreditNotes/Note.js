@@ -37,13 +37,12 @@ function Notes() {
                     {`Linn ${note.noteType === 'C' ? 'Credit' : 'Debit'} Note ${note.noteNumber}`}
                 </Typography>
             </Grid>
-            <Grid item xs={1}>
+            <Grid item xs={2}>
                 <Typography variant="subtitle2">Supplier:</Typography>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={5}>
                 <Typography variant="subtitle1">{note.supplierName}</Typography>
             </Grid>
-            <Grid item xs={2} />
             <Grid item xs={1}>
                 <Typography variant="subtitle2">Date:</Typography>
             </Grid>
@@ -59,14 +58,6 @@ function Notes() {
                 <Typography variant="subtitle1">{note.orderContactName}</Typography>
             </Grid>
             <Grid item xs={6} />
-            <Grid item xs={1}>
-                <Typography variant="subtitle2">Qty:</Typography>
-            </Grid>
-            <Grid item xs={2}>
-                <Typography variant="subtitle1">
-                    {`${note.orderQty} in ${note.orderUnitOfMeasure}`}
-                </Typography>
-            </Grid>
             <Grid item xs={2}>
                 <Typography variant="subtitle2">Ret Order No:</Typography>
             </Grid>
@@ -79,22 +70,112 @@ function Notes() {
             <Grid item xs={2}>
                 <Typography variant="subtitle1">{note.returnsOrderLine}</Typography>
             </Grid>
-            <Grid item xs={8} />
-
-            <Grid item xs={1}>
-                <Typography variant="subtitle2">Line:</Typography>
+            <Grid item xs={4} />
+            {note.orderDetails?.map(d => (
+                <>
+                    <Grid item xs={2}>
+                        <Typography variant="subtitle2">Orig Order No:</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                        <Typography variant="subtitle1">{note.originalOrderNumber}</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                        <Typography variant="subtitle2">Line:</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                        <Typography variant="subtitle1">{d.line}</Typography>
+                    </Grid>
+                    <Grid item xs={4} />
+                    <Grid item xs={2}>
+                        <Typography variant="subtitle2">Part:</Typography>
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Typography variant="subtitle1">{d.partNumber}</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Typography variant="subtitle1">{d.partDescription}</Typography>
+                    </Grid>
+                </>
+            ))}
+            <Grid item xs={2}>
+                <Typography variant="subtitle2">Qty:</Typography>
             </Grid>
             <Grid item xs={2}>
-                <Typography variant="subtitle1">{note.returnsOrderLine}</Typography>
+                <Typography variant="subtitle1">
+                    {`${note.orderQty} in ${note.orderUnitOfMeasure}`}
+                </Typography>
+            </Grid>
+            <Grid item xs={8} />
+            <Grid item xs={2}>
+                <Typography variant="subtitle2">Unit Price:</Typography>
+            </Grid>
+            <Grid item xs={2}>
+                <Typography variant="subtitle1">{note.orderUnitPrice}</Typography>
             </Grid>
             <Grid item xs={2} />
+            <Grid item xs={2}>
+                <Typography variant="subtitle2">Currency:</Typography>
+            </Grid>
+            <Grid item xs={4}>
+                <Typography variant="subtitle1">{note.currency}</Typography>
+            </Grid>
+            <Grid item xs={2}>
+                <Typography variant="subtitle2">Total Ex-Vat:</Typography>
+            </Grid>
+            <Grid item xs={2}>
+                <Typography variant="subtitle1">{note.netTotal}</Typography>
+            </Grid>
+            <Grid item xs={8} />
+            <Grid item xs={2}>
+                <Typography variant="subtitle2">Vat Total:</Typography>
+            </Grid>
+            <Grid item xs={2}>
+                <Typography variant="subtitle1">
+                    {`${note.vatTotal} at ${note.vatRate}%`}
+                </Typography>
+            </Grid>
+            <Grid item xs={8} />
+            <Grid item xs={2}>
+                <Typography variant="subtitle2">Total Value:</Typography>
+            </Grid>
+            <Grid item xs={2}>
+                <Typography variant="subtitle1">{note.total}</Typography>
+            </Grid>
+            <Grid item xs={8} />
+            <Grid item xs={2}>
+                <Typography variant="subtitle2">Notes:</Typography>
+            </Grid>
+            <Grid item xs={10}>
+                <Typography variant="subtitle1">{note.notes}</Typography>
+            </Grid>
+            <Grid item xs={2} />
+
+            {note.noteType === 'D' && (
+                <>
+                    <Grid item xs={10}>
+                        <Typography variant="subtitle1">
+                            THESE ITEMS ARE RETURNED FOR CREDIT
+                        </Typography>
+                        <Typography variant="subtitle1">DO NOT RESSUPPLY</Typography>
+                    </Grid>
+                    <Grid item xs={2} />
+                </>
+            )}
+
+            <Grid item xs={10}>
+                <Typography variant="subtitle2">
+                    {`THIS IS A PURCHASE LEDGER ${note.noteType === 'D' ? 'DEBIT' : 'CREDIT'} NOTE`}
+                </Typography>
+            </Grid>
         </Grid>
     );
     return (
         note && (
-            <Page history={history} homeUrl={config.appRoot}>
-                {loading ? <Loading /> : <Content />}
-            </Page>
+            <div style={{ width: '874px', margin: '0 auto' }}>
+                <Page history={history} homeUrl={config.appRoot}>
+                    {loading ? <Loading /> : <Content />}
+                </Page>
+            </div>
         )
     );
 }

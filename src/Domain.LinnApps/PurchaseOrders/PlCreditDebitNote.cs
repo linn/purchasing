@@ -45,5 +45,7 @@
         public PurchaseOrder PurchaseOrder { get; set; }
 
         public Currency Currency { get; set; }
+
+        public decimal? VatRate { get; set; }
     }
 }

@@ -44,6 +44,7 @@
                                                  PartNumber = d.Part?.PartNumber,
                                                  PartDescription = d.Part?.Description
                                              }),
+                       VatRate = note.VatRate,
                        Links = this.BuildLinks(note, claims).ToArray()
                    };
         }
