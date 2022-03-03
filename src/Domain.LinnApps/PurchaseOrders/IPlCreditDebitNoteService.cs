@@ -13,7 +13,7 @@
         public void CancelDebitNote(
             PlCreditDebitNote toCancel,
             string reason,
-            int closedBy,
+            int cancelledBy,
             IEnumerable<string> privileges);
 
         public void UpdatePlCreditDebitNote(

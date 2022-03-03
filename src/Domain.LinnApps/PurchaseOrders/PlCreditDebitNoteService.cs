@@ -31,7 +31,7 @@
             toClose.ClosedBy = closedBy;
         }
 
-        public void CancelDebitNote(PlCreditDebitNote toCancel, string reason, int closedBy, IEnumerable<string> privileges)
+        public void CancelDebitNote(PlCreditDebitNote toCancel, string reason, int cancelledBy, IEnumerable<string> privileges)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PlCreditDebitNoteCancel, privileges))
             {
@@ -40,7 +40,7 @@
 
             toCancel.DateCancelled = DateTime.Today;
             toCancel.ReasonCancelled = reason;
-            toCancel.CancelledBy = closedBy;
+            toCancel.CancelledBy = cancelledBy;
         }
 
         public void UpdatePlCreditDebitNote(PlCreditDebitNote current, PlCreditDebitNote updated, IEnumerable<string> privileges)
