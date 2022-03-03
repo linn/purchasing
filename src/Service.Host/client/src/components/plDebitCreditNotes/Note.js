@@ -21,6 +21,7 @@ import config from '../../config';
 import history from '../../history';
 import { plCreditDebitNote } from '../../itemTypes';
 import plCreditDebitNoteActions from '../../actions/plCreditDebitNoteActions';
+import postPdf from '../../actions/postPdfActions';
 
 function Notes() {
     const useStyles = makeStyles(theme => ({
@@ -65,12 +66,13 @@ function Notes() {
         const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
 
         pdf.addImage(data, 'JPG', 0, 0, pdfWidth, pdfHeight);
-        // const blob = pdf.output('blob');
         if (email) {
+            const blob = pdf.output('blob');
+            console.log(blob);
+            dispatch(postPdf(blob, id));
             return;
         }
         pdf.save();
-        // console.log(blob);
     };
 
     const Content = () => (
@@ -272,9 +274,12 @@ function Notes() {
                     </Dialog>
                     <Grid item xs={9} />
 
-                    <Grid item xs={3}>
-                        <Button onClick={() => toPdf(false)} variant="contained">
+                    <Grid item xs={4}>
+                        <Button onClick={() => toPdf(false)} variant="outlined">
                             pdf
+                        </Button>
+                        <Button onClick={() => toPdf(true)} variant="contained">
+                            email
                         </Button>
                         <Button
                             onClick={() => setCancelDialogOpen(true)}

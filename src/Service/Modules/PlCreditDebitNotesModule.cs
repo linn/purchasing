@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
+    using System.IO;
     using System.Threading.Tasks;
 
     using Carter;
@@ -26,6 +27,7 @@
             this.Get("/purchasing/pl-credit-debit-notes", this.SearchNotes);
             this.Get("/purchasing/pl-credit-debit-notes/{id}", this.GetNote);
             this.Put("/purchasing/pl-credit-debit-notes/{id}", this.UpdateDebitNote);
+            this.Post("/purchasing/pl-credit-debit-notes/email/{id}", this.EmailDebitNote);
         }
 
         private async Task GetOpenDebitNotes(HttpRequest req, HttpResponse res)
@@ -57,6 +59,15 @@
                 resource,
                 req.HttpContext.GetPrivileges());
 
+            await res.Negotiate(result);
+        }
+
+        private async Task EmailDebitNote(HttpRequest req, HttpResponse res)
+        {
+            var pdf = req.Body;
+            
+            var result = this.service.GetById(
+                req.RouteValues.As<int>("id"));
             await res.Negotiate(result);
         }
 
