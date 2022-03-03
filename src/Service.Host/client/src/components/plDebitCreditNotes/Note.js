@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     itemSelectorHelpers,
@@ -10,6 +10,8 @@ import {
 import { useParams } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
+import html2canvas from 'html2canvas';
+import { jsPDF as JsPDF } from 'jspdf';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import { makeStyles } from '@mui/styles';
@@ -36,8 +38,8 @@ function Notes() {
     const loading = useSelector(state =>
         itemSelectorHelpers.getItemLoading(state[plCreditDebitNote.item])
     );
+    const pdfRef = useRef();
 
-    const [note, setNote] = useState(null);
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
     const [cancelReason, setCancelReason] = useState('');
 
@@ -49,19 +51,36 @@ function Notes() {
         }
     }, [id, dispatch]);
 
-    useEffect(() => {
-        if (item) {
-            setNote(item);
+    const toPdf = async email => {
+        const element = pdfRef.current;
+        const canvas = await html2canvas(element, {
+            quality: 4,
+            scale: 5
+        });
+        const data = canvas.toDataURL('image/jpg');
+
+        const pdf = new JsPDF();
+        const imgProperties = pdf.getImageProperties(data);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
+
+        pdf.addImage(data, 'JPG', 0, 0, pdfWidth, pdfHeight);
+        // const blob = pdf.output('blob');
+        if (email) {
+            return;
         }
-    }, [item]);
+        pdf.save();
+        // console.log(blob);
+    };
+
     const Content = () => (
         <Grid container spacing={3}>
             <Grid item xs={12}>
                 <Typography variant="h6">
-                    {`Linn ${note.noteType === 'C' ? 'Credit' : 'Debit'} Note ${note.noteNumber}`}
+                    {`Linn ${item.itemType === 'C' ? 'Credit' : 'Debit'} Note ${item.noteNumber}`}
                 </Typography>
             </Grid>
-            {note.cancelled && (
+            {item.cancelled && (
                 <Grid item xs={12}>
                     <Typography color="secondary" variant="h6">
                         CANCELLED
@@ -72,43 +91,43 @@ function Notes() {
                 <Typography variant="subtitle2">Supplier:</Typography>
             </Grid>
             <Grid item xs={5}>
-                <Typography variant="subtitle1">{note.supplierName}</Typography>
+                <Typography variant="subtitle1">{item.supplierName}</Typography>
             </Grid>
             <Grid item xs={1}>
                 <Typography variant="subtitle2">Date:</Typography>
             </Grid>
             <Grid item xs={4}>
                 <Typography variant="subtitle1">
-                    {new Date(note.dateCreated)?.toLocaleDateString()}
+                    {new Date(item.dateCreated)?.toLocaleDateString()}
                 </Typography>
             </Grid>
             <Grid item xs={2}>
                 <Typography variant="subtitle2">Your Ref:</Typography>
             </Grid>
             <Grid item xs={4}>
-                <Typography variant="subtitle1">{note.orderContactName}</Typography>
+                <Typography variant="subtitle1">{item.orderContactName}</Typography>
             </Grid>
             <Grid item xs={6} />
             <Grid item xs={2}>
                 <Typography variant="subtitle2">Ret Order No:</Typography>
             </Grid>
             <Grid item xs={2}>
-                <Typography variant="subtitle1">{note.returnsOrderNumber}</Typography>
+                <Typography variant="subtitle1">{item.returnsOrderNumber}</Typography>
             </Grid>
             <Grid item xs={2}>
                 <Typography variant="subtitle2">Line:</Typography>
             </Grid>
             <Grid item xs={2}>
-                <Typography variant="subtitle1">{note.returnsOrderLine}</Typography>
+                <Typography variant="subtitle1">{item.returnsOrderLine}</Typography>
             </Grid>
             <Grid item xs={4} />
-            {note.orderDetails?.map(d => (
+            {item.orderDetails?.map(d => (
                 <Fragment key={d.line}>
                     <Grid item xs={2}>
                         <Typography variant="subtitle2">Orig Order No:</Typography>
                     </Grid>
                     <Grid item xs={2}>
-                        <Typography variant="subtitle1">{note.originalOrderNumber}</Typography>
+                        <Typography variant="subtitle1">{item.originalOrderNumber}</Typography>
                     </Grid>
                     <Grid item xs={2}>
                         <Typography variant="subtitle2">Line:</Typography>
@@ -133,7 +152,7 @@ function Notes() {
             </Grid>
             <Grid item xs={2}>
                 <Typography variant="subtitle1">
-                    {`${note.orderQty} in ${note.orderUnitOfMeasure}`}
+                    {`${item.orderQty} in ${item.orderUnitOfMeasure}`}
                 </Typography>
             </Grid>
             <Grid item xs={8} />
@@ -141,20 +160,20 @@ function Notes() {
                 <Typography variant="subtitle2">Unit Price:</Typography>
             </Grid>
             <Grid item xs={2}>
-                <Typography variant="subtitle1">{note.orderUnitPrice}</Typography>
+                <Typography variant="subtitle1">{item.orderUnitPrice}</Typography>
             </Grid>
             <Grid item xs={2} />
             <Grid item xs={2}>
                 <Typography variant="subtitle2">Currency:</Typography>
             </Grid>
             <Grid item xs={4}>
-                <Typography variant="subtitle1">{note.currency}</Typography>
+                <Typography variant="subtitle1">{item.currency}</Typography>
             </Grid>
             <Grid item xs={2}>
                 <Typography variant="subtitle2">Total Ex-Vat:</Typography>
             </Grid>
             <Grid item xs={2}>
-                <Typography variant="subtitle1">{note.netTotal}</Typography>
+                <Typography variant="subtitle1">{item.netTotal}</Typography>
             </Grid>
             <Grid item xs={8} />
             <Grid item xs={2}>
@@ -162,7 +181,7 @@ function Notes() {
             </Grid>
             <Grid item xs={2}>
                 <Typography variant="subtitle1">
-                    {`${note.vatTotal} at ${note.vatRate}%`}
+                    {`${item.vatTotal} at ${item.vatRate}%`}
                 </Typography>
             </Grid>
             <Grid item xs={8} />
@@ -170,18 +189,18 @@ function Notes() {
                 <Typography variant="subtitle2">Total Value:</Typography>
             </Grid>
             <Grid item xs={2}>
-                <Typography variant="subtitle1">{note.total}</Typography>
+                <Typography variant="subtitle1">{item.total}</Typography>
             </Grid>
             <Grid item xs={8} />
             <Grid item xs={2}>
                 <Typography variant="subtitle2">Notes:</Typography>
             </Grid>
             <Grid item xs={10}>
-                <Typography variant="subtitle1">{note.notes}</Typography>
+                <Typography variant="subtitle1">{item.items}</Typography>
             </Grid>
             <Grid item xs={2} />
 
-            {note.noteType === 'D' && (
+            {item.itemType === 'D' && (
                 <>
                     <Grid item xs={10}>
                         <Typography variant="subtitle1">
@@ -195,17 +214,22 @@ function Notes() {
 
             <Grid item xs={10}>
                 <Typography variant="subtitle2">
-                    {`THIS IS A PURCHASE LEDGER ${note.noteType === 'D' ? 'DEBIT' : 'CREDIT'} NOTE`}
+                    {`THIS IS A PURCHASE LEDGER ${item.itemType === 'D' ? 'DEBIT' : 'CREDIT'} NOTE`}
                 </Typography>
             </Grid>
         </Grid>
     );
     return (
-        note && (
+        item && (
             <>
-                <div style={{ width: '874px', margin: '0 auto' }}>
+                <div style={{ width: '90%', minWidth: '1200px', margin: '0 auto' }}>
                     <Page history={history} homeUrl={config.appRoot}>
-                        {loading ? <Loading /> : <Content />}
+                        <div
+                            style={{ width: '874px', margin: '0 auto', padding: '60px' }}
+                            ref={pdfRef}
+                        >
+                            {loading ? <Loading /> : <Content />}
+                        </div>
                     </Page>
                 </div>
                 <Grid container spacing={3}>
@@ -236,7 +260,7 @@ function Notes() {
                                         saveClick={() => {
                                             dispatch(
                                                 plCreditDebitNoteActions.update(id, {
-                                                    noteNumber: id,
+                                                    itemNumber: id,
                                                     reasonCancelled: cancelReason
                                                 })
                                             );
@@ -246,12 +270,15 @@ function Notes() {
                             </div>
                         </div>
                     </Dialog>
-                    <Grid item xs={10} />
+                    <Grid item xs={9} />
 
-                    <Grid item xs={2}>
+                    <Grid item xs={3}>
+                        <Button onClick={() => toPdf(false)} variant="contained">
+                            pdf
+                        </Button>
                         <Button
                             onClick={() => setCancelDialogOpen(true)}
-                            variant="outlined"
+                            variant="contained"
                             color="secondary"
                         >
                             Cancel
