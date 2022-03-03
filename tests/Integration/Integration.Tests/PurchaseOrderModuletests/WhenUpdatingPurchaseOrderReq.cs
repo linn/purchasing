@@ -138,6 +138,38 @@
             var resultResource = this.Response.DeserializeBody<PurchaseOrderReqResource>();
             resultResource.Should().NotBeNull();
             resultResource.ReqNumber.Should().Be(this.reqNumber);
+            resultResource.ReqDate.Should().Be(this.resource.ReqDate);
+            resultResource.OrderNumber.Should().Be(this.resource.OrderNumber);
+            resultResource.PartNumber.Should().Be(this.resource.PartNumber);
+            resultResource.PartDescription.Should().Be(this.resource.PartDescription);
+            resultResource.Qty.Should().Be(this.resource.Qty);
+            resultResource.UnitPrice.Should().Be(this.resource.UnitPrice);
+            resultResource.Carriage.Should().Be(this.resource.Carriage);
+            resultResource.TotalReqPrice.Should().Be(this.resource.TotalReqPrice);
+            resultResource.Currency.Code.Should().Be(this.resource.Currency.Code);
+            resultResource.Supplier.Id.Should().Be(this.resource.Supplier.Id);
+            resultResource.Supplier.Name.Should().Be(this.resource.Supplier.Name);
+            resultResource.SupplierContact.Should().Be(this.resource.SupplierContact);
+            resultResource.AddressLine1.Should().Be(this.resource.AddressLine1);
+            resultResource.AddressLine2.Should().Be(this.resource.AddressLine2);
+            resultResource.AddressLine3.Should().Be(this.resource.AddressLine3);
+            resultResource.AddressLine4.Should().Be(this.resource.AddressLine4);
+            resultResource.PostCode.Should().Be(this.resource.PostCode);
+            resultResource.AddressLine1.Should().Be(this.resource.AddressLine1);
+            resultResource.Country.CountryCode.Should().Be(this.resource.Country.CountryCode);
+            resultResource.PhoneNumber.Should().Be(this.resource.PhoneNumber);
+            resultResource.QuoteRef.Should().Be(this.resource.QuoteRef);
+            resultResource.Email.Should().Be(this.resource.Email);
+            resultResource.DateRequired.Should().Be(null);
+            resultResource.RequestedBy.Id.Should().Be(this.resource.RequestedBy.Id);
+            resultResource.AuthorisedBy.Should().Be(null);
+            resultResource.SecondAuthBy.Should().Be(null);
+            resultResource.FinanceCheckBy.Should().Be(null);
+            resultResource.TurnedIntoOrderBy.Should().Be(null);
+            resultResource.Nominal.Should().Be(this.resource.Nominal);
+            resultResource.RemarksForOrder.Should().Be(this.resource.RemarksForOrder);
+            resultResource.InternalNotes.Should().Be(this.resource.InternalNotes);
+            resultResource.Department.Should().Be(this.resource.Department);
         }
 
         [Test]
