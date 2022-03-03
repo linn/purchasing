@@ -7,6 +7,7 @@
     using FluentAssertions;
 
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -19,8 +20,6 @@
         private PlCreditDebitNoteResource resource;
 
         private PlCreditDebitNote note;
-
-        private PlCreditDebitNote closed;
 
         [SetUp]
         public void SetUp()
@@ -35,25 +34,12 @@
             this.note = new PlCreditDebitNote
                             {
                                 NoteNumber = this.resource.NoteNumber,
-                                DateCreated = DateTime.UnixEpoch
+                                DateCreated = DateTime.UnixEpoch,
+                                Supplier = new Supplier { SupplierId = 1 }
                             };
-
-            this.closed = new PlCreditDebitNote
-                              {
-                                  NoteNumber = this.resource.NoteNumber,
-                                  DateClosed = DateTime.Today,
-                                  ReasonClosed = this.resource.ReasonClosed,
-                                  DateCreated = DateTime.UnixEpoch
-                              };
 
             this.MockPlCreditDebitNoteRepository.FindById(1).Returns(this.note);
 
-            this.MockDomainService.CloseDebitNote(
-                    this.note, 
-                    this.resource.ReasonClosed, 
-                    (int)this.resource.ClosedBy, 
-                    Arg.Any<IEnumerable<string>>())
-                .Returns(this.closed);
             this.Response = this.Client.Put(
                 $"/purchasing/pl-credit-debit-notes/{this.resource.NoteNumber}",
                 this.resource,

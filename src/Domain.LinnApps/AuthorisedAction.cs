@@ -17,5 +17,9 @@
         public const string PurchaseOrderUpdate = "purchase-order.update";
 
         public const string PlCreditDebitNoteClose = "purchasing.pl-debit-credit-note.close";
+
+        public const string PlCreditDebitNoteCancel = "purchasing.pl-debit-credit-note.close";
+
+        public const string PlCreditDebitNoteUpdate = "purchasing.pl-debit-credit-note.update";
     }
 }

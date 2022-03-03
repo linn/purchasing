@@ -14,11 +14,19 @@
 
         public int OrderQty { get; set; }
 
-        public int? OriginalOrderNumber { get; set; }
-
         public int? ReturnsOrderNumber { get; set; }
 
+        public int? ReturnsOrderLine { get; set; }
+
         public decimal NetTotal { get; set; }
+
+        public decimal Total { get; set; }
+
+        public decimal OrderUnitPrice { get; set; }
+
+        public string OrderUnitOfMeasure { get; set; }
+
+        public decimal VatTotal { get; set; }
 
         public string Notes { get; set; }
 
@@ -30,8 +38,20 @@
 
         public string ReasonClosed { get; set; }
 
-        public int? SupplierId { get; set; }
-
         public Supplier Supplier { get; set; }
+
+        public string SuppliersDesignation { get; set; }
+
+        public PurchaseOrder PurchaseOrder { get; set; }
+
+        public Currency Currency { get; set; }
+
+        public decimal? VatRate { get; set; }
+
+        public int? CancelledBy { get; set; }
+
+        public DateTime? DateCancelled { get; set; }
+
+        public string ReasonCancelled { get; set; }
     }
 }

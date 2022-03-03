@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
 
     using Linn.Common.Facade;
@@ -36,22 +37,37 @@
             PlCreditDebitNoteResource updateResource,
             IEnumerable<string> privileges = null)
         {
-            if (updateResource.ClosedBy.HasValue && updateResource.Close.HasValue && (bool)updateResource.Close)
+            var enumerable = privileges?.ToList();
+            if (updateResource.Who.HasValue && updateResource.Close.HasValue && (bool)updateResource.Close)
             {
                 this.domainService.CloseDebitNote(
                     entity, 
                     updateResource.ReasonClosed, 
-                    (int)updateResource.ClosedBy, 
-                    privileges);
+                    (int)updateResource.Who, 
+                    enumerable);
             }
 
-            entity.Notes = updateResource.Notes;
+            if (updateResource.Who.HasValue && !string.IsNullOrEmpty(updateResource.ReasonCancelled))
+            {
+                this.domainService.CloseDebitNote(
+                    entity,
+                    updateResource.ReasonClosed,
+                    (int)updateResource.Who,
+                    enumerable);
+            }
+
+            this.domainService.UpdatePlCreditDebitNote(
+                entity, 
+                new PlCreditDebitNote { Notes = updateResource.Notes }, 
+                enumerable);
         }
 
         protected override Expression<Func<PlCreditDebitNote, bool>> SearchExpression(
             string searchTerm)
         {
-            throw new NotImplementedException();
+            return x => x.NoteNumber.ToString() == searchTerm
+                        || x.Supplier.SupplierId.ToString() == searchTerm
+                        || x.Supplier.Name.ToUpper().Contains(searchTerm.ToUpper());
         }
 
         protected override void SaveToLogTable(

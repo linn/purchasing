@@ -21,6 +21,8 @@ import { DataGrid } from '@mui/x-data-grid';
 import { makeStyles } from '@mui/styles';
 import plCreditDebitNoteActions from '../../actions/plCreditDebitNoteActions';
 import openDebitNotesActions from '../../actions/openDebitNotesActions';
+import history from '../../history';
+import config from '../../config';
 
 function OpenDebitNotes() {
     const dispatch = useDispatch();
@@ -127,7 +129,7 @@ function OpenDebitNotes() {
         }
     ];
     return (
-        <Page showBreadcrumbs={false}>
+        <Page history={history} homeUrl={config.appRoot}>
             <SnackbarMessage
                 visible={snackbarVisible}
                 onClose={() => dispatch(plCreditDebitNoteActions.setSnackbarVisible(false))}

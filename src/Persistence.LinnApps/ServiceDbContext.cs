@@ -433,6 +433,9 @@
             entity.Property(o => o.Overbook).HasColumnName("OVERBOOK");
             entity.Property(o => o.OverbookQty).HasColumnName("OVERBOOK_QTY");
             entity.HasOne(o => o.Currency).WithMany().HasForeignKey("CURR_CODE");
+            entity.Property(o => o.OrderContactName).HasColumnName("CONTACT_NAME");
+            entity.Property(o => o.OrderContactName).HasColumnName("CONTACT_NAME");
+            entity.HasMany(o => o.Details).WithOne().HasForeignKey(d => d.OrderNumber);
         }
 
         private void BuildPurchaseOrderDetails(ModelBuilder builder)
@@ -444,14 +447,12 @@
             entity.Property(o => o.Line).HasColumnName("ORDER_LINE");
             entity.Property(o => o.RohsCompliant).HasColumnName("ROHS_COMPLIANT");
             entity.Property(o => o.OurQty).HasColumnName("OUR_QTY");
-            entity.Property(o => o.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
             entity.Property(o => o.SuppliersDesignation).HasColumnName("SUPPLIERS_DESIGNATION").HasMaxLength(2000);
-            entity.HasOne(d => d.PurchaseOrder).WithMany(o => o.Details)
-                .HasForeignKey(d => d.OrderNumber);
             entity.HasMany(d => d.PurchaseDeliveries).WithOne(o => o.PurchaseOrderDetail)
                 .HasForeignKey(o => new { o.OrderNumber, o.OrderLine });
             entity.Property(o => o.BaseNetTotal).HasColumnName("BASE_NET_TOTAL").HasMaxLength(18);
             entity.Property(o => o.NetTotalCurrency).HasColumnName("NET_TOTAL").HasMaxLength(18);
+            entity.HasOne(o => o.Part).WithMany().HasForeignKey("PART_NUMBER");
         }
 
         private void BuildPurchaseOrderDeliveries(ModelBuilder builder)
@@ -669,13 +670,23 @@
             entity.Property(a => a.DateClosed).HasColumnName("DATE_CLOSED");
             entity.Property(a => a.NetTotal).HasColumnName("NET_TOTAL");
             entity.Property(a => a.NoteType).HasColumnName("CDNOTE_TYPE").HasMaxLength(1);
-            entity.Property(a => a.OriginalOrderNumber).HasColumnName("ORIGINAL_ORDER_NUMBER");
             entity.Property(a => a.ReturnsOrderNumber).HasColumnName("RETURNS_ORDER_NUMBER");
             entity.Property(a => a.Notes).HasColumnName("NOTES").HasMaxLength(200);
             entity.Property(a => a.ReasonClosed).HasColumnName("REASON_CLOSED").HasMaxLength(2000);
-            entity.Property(a => a.SupplierId).HasColumnName("SUPPLIER_ID");
-            entity.HasOne(a => a.Supplier).WithMany().HasForeignKey(a => a.SupplierId);
+            entity.HasOne(a => a.Supplier).WithMany().HasForeignKey("SUPPLIER_ID");
             entity.Property(a => a.DateCreated).HasColumnName("DATE_CREATED");
+            entity.Property(a => a.Total).HasColumnName("TOTAL_INC_VAT");
+            entity.Property(a => a.OrderUnitPrice).HasColumnName("ORDER_UNIT_PRICE");
+            entity.Property(a => a.OrderUnitOfMeasure).HasColumnName("ORDER_UNIT_OF_MEASURE");
+            entity.Property(a => a.VatTotal).HasColumnName("VAT_TOTAL");
+            entity.Property(a => a.SuppliersDesignation).HasColumnName("SUPPLIERS_DESIGNATION");
+            entity.HasOne(a => a.PurchaseOrder).WithMany().HasForeignKey("ORIGINAL_ORDER_NUMBER");
+            entity.HasOne(a => a.Currency).WithMany().HasForeignKey("CURRENCY");
+            entity.Property(a => a.ReturnsOrderLine).HasColumnName("RETURNS_ORDER_LINE");
+            entity.Property(a => a.VatRate).HasColumnName("VAT_RATE");
+            entity.Property(a => a.CancelledBy).HasColumnName("CANCELLED_BY");
+            entity.Property(a => a.DateCancelled).HasColumnName("DATE_CANCELLED");
+            entity.Property(a => a.ReasonCancelled).HasColumnName("REASON_CANCELLED");
         }
     }
 }

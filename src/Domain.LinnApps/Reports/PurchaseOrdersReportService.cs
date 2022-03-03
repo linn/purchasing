@@ -64,7 +64,7 @@
         public ResultsModel GetOrdersByPartReport(DateTime from, DateTime to, string partNumber, bool includeCancelled)
         {
             var purchaseOrders = this.purchaseOrderRepository.FilterBy(
-                x => x.Details.Any(z => z.PartNumber == partNumber) && from <= x.OrderDate && x.OrderDate < to);
+                x => x.Details.Any(z => z.Part.PartNumber == partNumber) && from <= x.OrderDate && x.OrderDate < to);
 
             var reportLayout = new SimpleGridLayout(
                 this.reportingHelper,
@@ -83,7 +83,7 @@
                     continue;
                 }
 
-                foreach (var orderDetail in order.Details.Where(d => d.PartNumber == partNumber))
+                foreach (var orderDetail in order.Details.Where(d => d.Part.PartNumber == partNumber))
                 {
                     foreach (var delivery in orderDetail.PurchaseDeliveries)
                     {
@@ -154,7 +154,7 @@
                             continue;
                         }
 
-                        var part = this.partRepository.FindBy(x => x.PartNumber == orderDetail.PartNumber);
+                        var part = this.partRepository.FindBy(x => x.PartNumber == orderDetail.Part.PartNumber);
                         if (stockControlled != "A" && ((stockControlled == "N" && part.StockControlled != "N")
                                                        || (stockControlled == "O" && part.StockControlled != "Y")))
                         {
@@ -400,7 +400,7 @@
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId, ColumnId = "PartNo", TextDisplay = $"{orderDetail.PartNumber}"
+                        RowId = currentRowId, ColumnId = "PartNo", TextDisplay = $"{orderDetail.Part.PartNumber}"
                     });
 
             values.Add(

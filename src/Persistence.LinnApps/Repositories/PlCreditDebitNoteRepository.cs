@@ -16,9 +16,20 @@
         {
         }
 
-        public override IQueryable<PlCreditDebitNote> FilterBy(Expression<Func<PlCreditDebitNote, bool>> expression)
+        public override PlCreditDebitNote FindById(int key)
         {
-            return base.FilterBy(expression).Include(n => n.Supplier);
+            return this.FindAll().Include(x => x.Supplier).ThenInclude(s => s.OrderFullAddress)
+                .Include(x => x.PurchaseOrder).ThenInclude(o => o.Details).ThenInclude(d => d.Part)
+                .Include(x => x.Currency)
+                .FirstOrDefault(x => x.NoteNumber == key);
+        }
+
+        public override IQueryable<PlCreditDebitNote> FilterBy(
+            Expression<Func<PlCreditDebitNote, bool>> expression)
+        {
+            return base.FilterBy(expression)
+                .Include(n => n.Supplier)
+                .Include(x => x.PurchaseOrder).AsNoTracking();
         }
     }
 }

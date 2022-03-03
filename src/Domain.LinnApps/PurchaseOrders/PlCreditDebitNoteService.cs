@@ -15,7 +15,7 @@
             this.authService = authService;
         }
 
-        public PlCreditDebitNote CloseDebitNote(
+        public void CloseDebitNote(
             PlCreditDebitNote toClose, 
             string reason,
             int closedBy,
@@ -29,7 +29,28 @@
             toClose.DateClosed = DateTime.Today;
             toClose.ReasonClosed = reason;
             toClose.ClosedBy = closedBy;
-            return toClose;
+        }
+
+        public void CancelDebitNote(PlCreditDebitNote toCancel, string reason, int cancelledBy, IEnumerable<string> privileges)
+        {
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PlCreditDebitNoteCancel, privileges))
+            {
+                throw new UnauthorisedActionException("You are not authorised to cancel debit notes");
+            }
+
+            toCancel.DateCancelled = DateTime.Today;
+            toCancel.ReasonCancelled = reason;
+            toCancel.CancelledBy = cancelledBy;
+        }
+
+        public void UpdatePlCreditDebitNote(PlCreditDebitNote current, PlCreditDebitNote updated, IEnumerable<string> privileges)
+        {
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PlCreditDebitNoteUpdate, privileges))
+            {
+                throw new UnauthorisedActionException("You are not authorised to update credit/debit notes");
+            }
+
+            current.Notes = updated.Notes;
         }
     }
 }

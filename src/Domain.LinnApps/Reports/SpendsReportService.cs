@@ -149,7 +149,7 @@
                     OrderNumber = s.OrderNumber.Value,
                     OrderLine = s.OrderLine.Value,
                     PartNumber = purchaseOrders.First(po => po.OrderNumber == s.OrderNumber.Value).Details
-                                 .First(x => x.Line == s.OrderLine.Value).PartNumber
+                                 .First(x => x.Line == s.OrderLine.Value).Part?.PartNumber
                 }).ToList();
 
             var distinctPartSpends = partSpends.DistinctBy(x => x.PartNumber).Select(

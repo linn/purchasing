@@ -9,6 +9,7 @@
     using FluentAssertions.Extensions;
 
     using Linn.Common.Reporting.Models;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -49,7 +50,7 @@
                                                                            NetTotalCurrency = 17.23m,
                                                                            OrderNumber = this.orderNumber,
                                                                            OurQty = 3,
-                                                                           PartNumber = this.partNumber,
+                                                                           Part = new Part { PartNumber = this.partNumber },
                                                                            PurchaseDeliveries =
                                                                                new List<PurchaseOrderDelivery>
                                                                                    {
