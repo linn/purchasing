@@ -2,21 +2,21 @@ import { RSAA } from 'redux-api-middleware';
 
 import config from '../config';
 
-const requestPostPdf = {
-    type: 'REQUEST_POST_PDF',
+const requestSendPlNoteEmail = {
+    type: 'REQUEST_SEND_PL_NOTE_EMAIL',
     payload: {}
 };
 
-const receivePostPdf = {
-    type: `RECEIVE_POST_PDF`,
-    payload: () => async (action, state, res) => ({
+const receiveSendPlNoteEmail = {
+    type: `RECEIVE_SEND_PL_NOTE_EMAIL`,
+    payload: async (action, state, res) => ({
         data: await res.json(),
-        item: 'postPdf'
+        item: 'sendPlNoteEmail'
     })
 };
 
 const error = {
-    type: 'POST_PDF_ERROR',
+    type: 'SEND_PL_NOTE_EMAIL_ERROR',
     payload: async (action, state, res) =>
         res
             ? {
@@ -29,7 +29,7 @@ const error = {
             : `Network request failed`
 };
 
-const postPdf = (blob, id) => ({
+export const sendPlNoteEmail = (blob, id) => ({
     [RSAA]: {
         endpoint: `${config.appRoot}/purchasing/pl-credit-debit-notes/email/${id}`,
         method: 'POST',
@@ -39,8 +39,19 @@ const postPdf = (blob, id) => ({
             'Content-type': 'application/pdf'
         },
         body: blob,
-        types: [requestPostPdf, receivePostPdf, error]
+        types: [requestSendPlNoteEmail, receiveSendPlNoteEmail, error]
     }
 });
 
-export default postPdf;
+export const setMessageVisible = visible => {
+    if (visible === true) {
+        return {
+            type: 'SHOW_SEND_PL_NOTE_EMAIL_MESSAGE',
+            payload: {}
+        };
+    }
+    return {
+        type: 'HIDE_SEND_PL_NOTE_EMAIL_MESSAGE',
+        payload: {}
+    };
+};

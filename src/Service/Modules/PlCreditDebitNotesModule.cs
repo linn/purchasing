@@ -1,6 +1,8 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
+    using System;
     using System.IO;
+    using System.Text;
     using System.Threading.Tasks;
 
     using Carter;
@@ -10,19 +12,27 @@
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.Extensions;
 
     using Microsoft.AspNetCore.Http;
 
+    using Org.BouncyCastle.Asn1.Ocsp;
+
     public class PlCreditDebitNotesModule : CarterModule
     {
-        private readonly IFacadeResourceFilterService<PlCreditDebitNote, int, PlCreditDebitNoteResource, PlCreditDebitNoteResource, PlCreditDebitNoteResource> service;
+        private readonly 
+            IFacadeResourceFilterService<PlCreditDebitNote, int, PlCreditDebitNoteResource, PlCreditDebitNoteResource, PlCreditDebitNoteResource> service;
+
+        private readonly IPlCreditDebitNoteEmailService emailService;
 
         public PlCreditDebitNotesModule(
-            IFacadeResourceFilterService<PlCreditDebitNote, int, PlCreditDebitNoteResource, PlCreditDebitNoteResource, PlCreditDebitNoteResource> service)
+            IFacadeResourceFilterService<PlCreditDebitNote, int, PlCreditDebitNoteResource, PlCreditDebitNoteResource, PlCreditDebitNoteResource> service,
+            IPlCreditDebitNoteEmailService emailService)
         {
             this.service = service;
+            this.emailService = emailService;
             this.Get("/purchasing/open-debit-notes", this.GetOpenDebitNotes);
             this.Get("/purchasing/pl-credit-debit-notes", this.SearchNotes);
             this.Get("/purchasing/pl-credit-debit-notes/{id}", this.GetNote);
@@ -64,10 +74,10 @@
 
         private async Task EmailDebitNote(HttpRequest req, HttpResponse res)
         {
-            var pdf = req.Body;
-            
-            var result = this.service.GetById(
-                req.RouteValues.As<int>("id"));
+            using var ms = new MemoryStream();
+            await req.Body.CopyToAsync(ms);
+            var result = this.emailService.SendEmail(1, ms);
+
             await res.Negotiate(result);
         }
 

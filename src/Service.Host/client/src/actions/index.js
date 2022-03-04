@@ -1,4 +1,8 @@
-import { makeActionTypes, makeReportActionTypes } from '@linn-it/linn-form-components-library';
+import {
+    makeActionTypes,
+    makeReportActionTypes,
+    makeProcessActionTypes
+} from '@linn-it/linn-form-components-library';
 import * as itemTypes from '../itemTypes';
 import * as reportTypes from '../reportTypes';
 
@@ -113,3 +117,7 @@ export const plCreditDebitNotesActionTypes = makeActionTypes(
 );
 
 export const openDebitNotesActionTypes = makeActionTypes(itemTypes.openDebitNotes.actionType);
+
+export const sendPlNoteEmailActionTypes = makeProcessActionTypes(
+    itemTypes.sendPlNoteEmail.actionType
+);

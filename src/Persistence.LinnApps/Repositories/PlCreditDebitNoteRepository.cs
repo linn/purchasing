@@ -19,6 +19,7 @@
         public override PlCreditDebitNote FindById(int key)
         {
             return this.FindAll().Include(x => x.Supplier).ThenInclude(s => s.OrderFullAddress)
+                .Include(x => x.Supplier).ThenInclude(s => s.SupplierContacts).ThenInclude(c => c.Person)
                 .Include(x => x.PurchaseOrder).ThenInclude(o => o.Details).ThenInclude(d => d.Part)
                 .Include(x => x.Currency)
                 .FirstOrDefault(x => x.NoteNumber == key);

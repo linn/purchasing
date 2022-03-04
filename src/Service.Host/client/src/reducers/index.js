@@ -44,6 +44,7 @@ import spendByPartReport from './spendByPartReport';
 import plCreditDebitNote from './plCreditDebitNote';
 import plCreditDebitNotes from './plCreditDebitNotes';
 import openDebitNotes from './openDebitNotes';
+import sendPlNoteEmail from './sendPlNoteEmail';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -77,6 +78,7 @@ const rootReducer = history =>
         priceChangeReasons,
         putSupplierOnHold,
         router: connectRouter(history),
+        sendPlNoteEmail,
         signingLimit,
         signingLimits,
         spendBySupplierReport,

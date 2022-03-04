@@ -21,7 +21,7 @@ import config from '../../config';
 import history from '../../history';
 import { plCreditDebitNote } from '../../itemTypes';
 import plCreditDebitNoteActions from '../../actions/plCreditDebitNoteActions';
-import postPdf from '../../actions/postPdfActions';
+import { sendPlNoteEmail } from '../../actions/sendPlNoteEmailActions';
 
 function Notes() {
     const useStyles = makeStyles(theme => ({
@@ -58,18 +58,17 @@ function Notes() {
             quality: 4,
             scale: 5
         });
-        const data = canvas.toDataURL('image/jpg');
+        const data = canvas.toDataURL('image/png');
 
-        const pdf = new JsPDF();
+        const pdf = new JsPDF('p', 'pt', 'a4', true);
         const imgProperties = pdf.getImageProperties(data);
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
 
-        pdf.addImage(data, 'JPG', 0, 0, pdfWidth, pdfHeight);
+        pdf.addImage(data, 'PNG', 0, 0, pdfWidth, pdfHeight, '', 'FAST');
         if (email) {
             const blob = pdf.output('blob');
-            console.log(blob);
-            dispatch(postPdf(blob, id));
+            dispatch(sendPlNoteEmail(blob, id));
             return;
         }
         pdf.save();
@@ -272,7 +271,7 @@ function Notes() {
                             </div>
                         </div>
                     </Dialog>
-                    <Grid item xs={9} />
+                    <Grid item xs={8} />
 
                     <Grid item xs={4}>
                         <Button onClick={() => toPdf(false)} variant="outlined">
