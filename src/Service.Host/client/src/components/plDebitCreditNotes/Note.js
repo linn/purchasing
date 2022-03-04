@@ -14,8 +14,6 @@ import {
 import { useParams } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import html2canvas from 'html2canvas';
-import { jsPDF as JsPDF } from 'jspdf';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import { makeStyles } from '@mui/styles';
@@ -30,6 +28,7 @@ import {
     setMessageVisible,
     clearProcessData
 } from '../../actions/sendPlNoteEmailActions';
+import toPdf from '../../helpers/toPdf';
 
 function Notes() {
     const useStyles = makeStyles(theme => ({
@@ -87,28 +86,6 @@ function Notes() {
             dispatch(plCreditDebitNoteActions.fetch(id));
         }
     }, [id, dispatch]);
-
-    const toPdf = async email => {
-        const element = pdfRef.current;
-        const canvas = await html2canvas(element, {
-            quality: 4,
-            scale: 5
-        });
-        const data = canvas.toDataURL('image/png');
-
-        const pdf = new JsPDF('p', 'pt', 'a4', true);
-        const imgProperties = pdf.getImageProperties(data);
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
-
-        pdf.addImage(data, 'PNG', 0, 0, pdfWidth, pdfHeight, '', 'FAST');
-        if (email) {
-            const blob = pdf.output('blob');
-            dispatch(sendPlNoteEmail(blob, id));
-            return;
-        }
-        pdf.save();
-    };
 
     const Content = () => (
         <Grid container spacing={3}>
@@ -332,7 +309,12 @@ function Notes() {
                     <Grid item xs={8} />
 
                     <Grid item xs={4}>
-                        <Button onClick={() => toPdf(false)} variant="outlined">
+                        <Button
+                            onClick={() =>
+                                toPdf(false, pdfRef, blob => dispatch(sendPlNoteEmail(blob, id)))
+                            }
+                            variant="outlined"
+                        >
                             pdf
                         </Button>
                         <Button
@@ -340,7 +322,7 @@ function Notes() {
                                 setPdfLoading(true);
                                 dispatch(plCreditDebitNoteActions.clearErrorsForItem());
                                 dispatch(clearProcessData);
-                                toPdf(true);
+                                toPdf(true, pdfRef, blob => dispatch(sendPlNoteEmail(blob, id)));
                             }}
                             variant="contained"
                         >
