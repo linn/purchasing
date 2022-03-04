@@ -53,7 +53,7 @@
                     attachment,
                     noteNumber.ToString());
 
-                return new SuccessResult<ProcessResultResource>(new ProcessResultResource(true, "hurrah"));
+                return new SuccessResult<ProcessResultResource>(new ProcessResultResource(true, "Email Requested"));
             }
             catch (Exception e)
             {
