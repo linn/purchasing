@@ -55,3 +55,8 @@ export const setMessageVisible = visible => {
         payload: {}
     };
 };
+
+export const clearProcessData = () => ({
+    type: 'CLEAR_SEND_PL_NOTE_EMAIL_DATA',
+    payload: {}
+});
