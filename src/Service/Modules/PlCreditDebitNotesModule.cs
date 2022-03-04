@@ -72,7 +72,7 @@
         {
             using var ms = new MemoryStream();
             await req.Body.CopyToAsync(ms);
-            var result = this.emailService.SendEmail(1, ms);
+            var result = this.emailService.SendEmail(req.RouteValues.As<int>("id"), ms);
 
             await res.Negotiate(result);
         }

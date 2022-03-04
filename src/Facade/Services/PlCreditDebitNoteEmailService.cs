@@ -28,7 +28,7 @@
         public IResult<ProcessResultResource> SendEmail(int noteNumber, Stream attachment)
         {
             var note = this.noteRepository.FindById(noteNumber);
-            var contact = note.Supplier.SupplierContacts.FirstOrDefault(c => c.IsMainOrderContact == "Y");
+            var contact = note.Supplier.SupplierContacts?.FirstOrDefault(c => c.IsMainOrderContact == "Y");
 
             if (contact == null)
             {
