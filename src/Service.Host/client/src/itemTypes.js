@@ -140,3 +140,9 @@ export const openDebitNotes = new ItemType(
     'PL_CREDIT_DEBIT_NOTES',
     '/purchasing/open-debit-notes'
 );
+
+export const sendPlNoteEmail = new ItemType(
+    'sendPlNoteEmail',
+    'SEND_PL_NOTE_EMAIL',
+    '/purchasing/pl-credit-debit-notes/email/'
+);

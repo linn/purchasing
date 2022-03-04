@@ -35,12 +35,15 @@
             get; private set;
         }
 
+        protected IPlCreditDebitNoteEmailService MockEmailService { get; private set; }
+
         [SetUp]
         public void EstablishContext()
         {
             this.MockPlCreditDebitNoteRepository = Substitute.For<IRepository<PlCreditDebitNote, int>>();
             this.MockTransactionManager = Substitute.For<ITransactionManager>();
             this.MockDomainService = Substitute.For<IPlCreditDebitNoteService>();
+            this.MockEmailService = Substitute.For<IPlCreditDebitNoteEmailService>();
             this.FacadeService = new PlCreditDebitNoteFacadeService(
                 this.MockPlCreditDebitNoteRepository,
                 this.MockTransactionManager,
@@ -51,6 +54,7 @@
                 services =>
                     {
                         services.AddSingleton(this.FacadeService);
+                        services.AddSingleton(this.MockEmailService);
                         services.AddHandlers();
                     },
                 FakeAuthMiddleware.EmployeeMiddleware);

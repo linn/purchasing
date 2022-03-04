@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
+    using System.IO;
     using System.Threading.Tasks;
 
     using Carter;
@@ -9,6 +10,7 @@
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.Extensions;
 
@@ -16,16 +18,22 @@
 
     public class PlCreditDebitNotesModule : CarterModule
     {
-        private readonly IFacadeResourceFilterService<PlCreditDebitNote, int, PlCreditDebitNoteResource, PlCreditDebitNoteResource, PlCreditDebitNoteResource> service;
+        private readonly 
+            IFacadeResourceFilterService<PlCreditDebitNote, int, PlCreditDebitNoteResource, PlCreditDebitNoteResource, PlCreditDebitNoteResource> service;
+
+        private readonly IPlCreditDebitNoteEmailService emailService;
 
         public PlCreditDebitNotesModule(
-            IFacadeResourceFilterService<PlCreditDebitNote, int, PlCreditDebitNoteResource, PlCreditDebitNoteResource, PlCreditDebitNoteResource> service)
+            IFacadeResourceFilterService<PlCreditDebitNote, int, PlCreditDebitNoteResource, PlCreditDebitNoteResource, PlCreditDebitNoteResource> service,
+            IPlCreditDebitNoteEmailService emailService)
         {
             this.service = service;
+            this.emailService = emailService;
             this.Get("/purchasing/open-debit-notes", this.GetOpenDebitNotes);
             this.Get("/purchasing/pl-credit-debit-notes", this.SearchNotes);
             this.Get("/purchasing/pl-credit-debit-notes/{id}", this.GetNote);
             this.Put("/purchasing/pl-credit-debit-notes/{id}", this.UpdateDebitNote);
+            this.Post("/purchasing/pl-credit-debit-notes/email/{id}", this.EmailDebitNote);
         }
 
         private async Task GetOpenDebitNotes(HttpRequest req, HttpResponse res)
@@ -56,6 +64,15 @@
                 req.RouteValues.As<int>("id"),
                 resource,
                 req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task EmailDebitNote(HttpRequest req, HttpResponse res)
+        {
+            using var ms = new MemoryStream();
+            await req.Body.CopyToAsync(ms);
+            var result = this.emailService.SendEmail(req.RouteValues.As<int>("id"), ms);
 
             await res.Negotiate(result);
         }
