@@ -264,18 +264,21 @@ function Notes() {
     return (
         item && (
             <>
+                {loading && (
+                    <Grid style={{ paddingTop: '100px' }} item xs={12}>
+                        <Loading />
+                    </Grid>
+                )}
                 {processResult && !processResult.success && (
                     <Grid style={{ paddingTop: '100px' }} item xs={12}>
                         <ErrorCard errorMessage={processResult.message} />
                     </Grid>
                 )}
-
                 {itemError && (
                     <Grid style={{ paddingTop: '100px' }} item xs={12}>
                         <ErrorCard errorMessage={itemError.details} />
                     </Grid>
                 )}
-
                 <div style={{ width: '90%', minWidth: '1200px', margin: '0 auto' }}>
                     <Page history={history} homeUrl={config.appRoot}>
                         <div
