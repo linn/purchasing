@@ -1,8 +1,6 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
-    using System;
     using System.IO;
-    using System.Text;
     using System.Threading.Tasks;
 
     using Carter;
@@ -17,8 +15,6 @@
     using Linn.Purchasing.Service.Extensions;
 
     using Microsoft.AspNetCore.Http;
-
-    using Org.BouncyCastle.Asn1.Ocsp;
 
     public class PlCreditDebitNotesModule : CarterModule
     {
