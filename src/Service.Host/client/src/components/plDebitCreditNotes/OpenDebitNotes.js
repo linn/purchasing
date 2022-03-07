@@ -66,17 +66,23 @@ function OpenDebitNotes() {
     const classes = useStyles();
 
     useEffect(() => {
-        setRows(
-            items.map(s => ({
-                ...s,
-                id: s.noteNumber,
-                selected: false
-            }))
-        );
+        if (items) {
+            setRows(
+                items.map(s => ({
+                    ...s,
+                    id: s.noteNumber,
+                    selected: false
+                }))
+            );
+        }
     }, [items]);
 
     const handleSelectRow = selected => {
-        setRows(rows.map(r => (selected.includes(r.id) ? { ...r, selected: true } : r)));
+        setRows(
+            rows.map(r =>
+                selected.includes(r.id) ? { ...r, selected: true } : { ...r, selected: false }
+            )
+        );
     };
 
     const [editRowsModel, setEditRowsModel] = useState({});
@@ -181,15 +187,15 @@ function OpenDebitNotes() {
                                         variant="contained"
                                         color="primary"
                                         onClick={() => {
-                                            rows.filter(r => r.selected).forEach(r =>
+                                            rows.filter(r => r.selected).forEach(r => {
                                                 dispatch(
                                                     plCreditDebitNoteActions.update(r.noteNumber, {
                                                         ...r,
                                                         close: true,
                                                         reasonClosed: closeReason
                                                     })
-                                                )
-                                            );
+                                                );
+                                            });
                                             setDialogOpen(false);
                                         }}
                                     >
@@ -229,6 +235,7 @@ function OpenDebitNotes() {
                                             density="standard"
                                             rowHeight={34}
                                             checkboxSelection
+                                            columnBuffer={9}
                                             onSelectionModelChange={handleSelectRow}
                                             editRowsModel={editRowsModel}
                                             onEditRowsModelChange={handleEditRowsModelChange}
