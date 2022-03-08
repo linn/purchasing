@@ -41,6 +41,8 @@ import suppliersWithUnacknowledgedOrders from './suppliersWithUnacknowledgedOrde
 import planners from './planners';
 import spendByPartReport from './spendByPartReport';
 import purchaseOrderReq from './purchaseOrderReq';
+import departments from './departments';
+import nominals from './nominals';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -54,8 +56,10 @@ const rootReducer = history =>
         countries,
         currencies,
         deliveryAddresses,
+        departments,
         employees,
         manufacturers,
+        nominals,
         orderMethods,
         ordersByPart,
         ordersBySupplier,

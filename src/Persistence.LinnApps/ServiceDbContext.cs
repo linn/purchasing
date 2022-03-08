@@ -117,6 +117,8 @@
             this.BuildUnacknowledgedOrders(builder);
             this.BuildPlanners(builder);
             this.BuildPurchaseOrderReqs(builder);
+            this.BuildDepartments(builder);
+            this.BuildNominals(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -632,13 +634,31 @@
             entity.HasOne(e => e.RequestedBy).WithMany().HasForeignKey("REQUESTED_BY");
             entity.HasOne(e => e.AuthorisedBy).WithMany().HasForeignKey("AUTHORISED_BY");
             entity.Property(e => e.RemarksForOrder).HasColumnName("REMARKS_FOR_ORDER").HasMaxLength(200);
-            entity.Property(e => e.Department).HasColumnName("DEPARTMENT").HasMaxLength(10);
-            entity.Property(e => e.Nominal).HasColumnName("NOMINAL").HasMaxLength(10);
+            entity.HasOne(e => e.Department).WithMany().HasForeignKey("DEPARTMENT");
+            //entity.Property(e => e.Department).HasColumnName("DEPARTMENT").HasMaxLength(10);
+            entity.HasOne(e => e.Nominal).WithMany().HasForeignKey("NOMINAL");
+            //entity.Property(e => e.Nominal).HasColumnName("NOMINAL").HasMaxLength(10);
             entity.HasOne(e => e.TurnedIntoOrderBy).WithMany().HasForeignKey("TURNED_INTO_ORDER_BY");
             entity.HasOne(e => e.FinanceCheckBy).WithMany().HasForeignKey("FINANCE_CHECKED_BY");
             entity.HasOne(e => e.SecondAuthBy).WithMany().HasForeignKey("SECONDARY_AUTH_BY");
             entity.Property(e => e.Email).HasColumnName("EMAIL_ADDRESS").HasMaxLength(50);
             entity.Property(e => e.InternalNotes).HasColumnName("INTERNAL_ONLY_ORDER_NOTES").HasMaxLength(300);
+        }
+
+        private void BuildNominals(ModelBuilder builder)
+        {
+            builder.Entity<Nominal>().ToTable("LINN_NOMINALS");
+            builder.Entity<Nominal>().HasKey(n => n.NominalCode);
+            builder.Entity<Nominal>().Property(n => n.NominalCode).HasColumnName("NOMINAL_CODE");
+            builder.Entity<Nominal>().Property(n => n.Description).HasColumnName("DESCRIPTION");
+        }
+
+        private void BuildDepartments(ModelBuilder builder)
+        {
+            var e = builder.Entity<Department>().ToTable("LINN_DEPARTMENTS");
+            e.HasKey(d => d.DepartmentCode);
+            e.Property(d => d.DepartmentCode).HasColumnName("DEPARTMENT_CODE").HasMaxLength(10);
+            e.Property(d => d.Description).HasColumnName("DESCRIPTION").HasMaxLength(50);
         }
     }
 }

@@ -60,12 +60,12 @@
 
         public EmployeeResource TurnedIntoOrderBy { get; set; }
 
-        public string Nominal { get; set; }
+        public NominalResource Nominal { get; set; }
 
         public string RemarksForOrder { get; set; }
 
         public string InternalNotes { get; set; }
 
-        public string Department { get; set; }
+        public DepartmentResource Department { get; set; }
     }
 }

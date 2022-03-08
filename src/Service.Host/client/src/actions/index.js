@@ -110,3 +110,12 @@ export const purchaseOrderReqActionTypes = makeActionTypes(
     itemTypes.purchaseOrderReq.actionType,
     true
 );
+
+export const departmentsActionTypes = makeActionTypes(itemTypes.departments.actionType);
+
+export const nominalsActionTypes = makeActionTypes(itemTypes.nominals.actionType);
+
+export const purchaseOrderReqsActionTypes = makeActionTypes(
+    itemTypes.purchaseOrderReqs.actionType,
+    true
+);

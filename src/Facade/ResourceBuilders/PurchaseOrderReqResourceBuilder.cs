@@ -51,7 +51,7 @@
                            QuoteRef = entity.QuoteRef,
                            Email = entity.Email,
                            DateRequired = entity.DateRequired.HasValue ? entity.DateRequired.Value.ToString("o") : null,
-                           RequestedBy = new EmployeeResource { Id = entity.RequestedBy.Id },
+                           RequestedBy = entity.RequestedBy != null ? new EmployeeResource { Id = entity.RequestedBy.Id } : null,
                            AuthorisedBy = entity.AuthorisedBy != null ? new EmployeeResource { Id = entity.AuthorisedBy.Id } : null,
                            SecondAuthBy = entity.SecondAuthBy != null ? new EmployeeResource { Id = entity.SecondAuthBy.Id } : null,
                            FinanceCheckBy = entity.FinanceCheckBy != null ? new EmployeeResource { Id = entity.FinanceCheckBy.Id } : null,

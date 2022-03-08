@@ -64,12 +64,12 @@
 
         public Employee TurnedIntoOrderBy { get; set; }
 
-        public string Nominal { get; set; }
+        public Nominal Nominal { get; set; }
 
         public string RemarksForOrder { get; set; }
 
         public string InternalNotes { get; set; }
 
-        public string Department { get; set; }
+        public Department Department { get; set; }
     }
 }
