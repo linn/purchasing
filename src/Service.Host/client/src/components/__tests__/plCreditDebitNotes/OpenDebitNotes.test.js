@@ -161,7 +161,7 @@ describe('When updating comment...', () => {
         comment = screen.getByDisplayValue('A COMMENT WE WILL CHANGE');
         fireEvent.change(comment, { target: { value: 'NEW COMMENT' } });
 
-        //save
+        // save
         const saveButton = screen.getByRole('button', { name: 'Save Comments' });
         fireEvent.click(saveButton);
     });
