@@ -64,7 +64,7 @@ describe('On initialise...', () => {
         render(<OpenDebitNotes />);
     });
 
-    test('should fetch openb debit notes', () => {
+    test('should fetch open debit notes', () => {
         expect(fetchOpenDebitNotesSpy).toBeCalledTimes(1);
     });
 });
