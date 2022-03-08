@@ -29,13 +29,12 @@
                                     NoteNumber = 1,
                                     Close = true,
                                     ReasonClosed = "REASON",
-                                    ClosedBy = 22087
                                 };
             this.note = new PlCreditDebitNote
                             {
                                 NoteNumber = this.resource.NoteNumber,
                                 DateCreated = DateTime.UnixEpoch,
-                                Supplier = new Supplier { SupplierId = 1 }
+                                Supplier = new Supplier { SupplierId = 1 },
                             };
 
             this.MockPlCreditDebitNoteRepository.FindById(1).Returns(this.note);
@@ -67,6 +66,27 @@
         {
             var res = this.Response.DeserializeBody<PlCreditDebitNoteResource>();
             res.Should().NotBeNull();
+        }
+
+        [Test]
+        public void ShouldCallCorrectDomainServiceMethod()
+        {
+            this.MockDomainService.Received().CloseDebitNote(
+                Arg.Is<PlCreditDebitNote>(x => x.NoteNumber == this.resource.NoteNumber),
+                this.resource.ReasonClosed,
+                Arg.Any<int>(),
+                Arg.Any<IEnumerable<string>>());
+
+            this.MockDomainService.DidNotReceive().UpdatePlCreditDebitNote(
+                Arg.Any<PlCreditDebitNote>(),
+                Arg.Any<PlCreditDebitNote>(),
+                Arg.Any<IEnumerable<string>>());
+
+            this.MockDomainService.DidNotReceive().CancelDebitNote(
+                Arg.Any<PlCreditDebitNote>(),
+                Arg.Any<string>(),
+                Arg.Any<int>(),
+                Arg.Any<IEnumerable<string>>());
         }
     }
 }

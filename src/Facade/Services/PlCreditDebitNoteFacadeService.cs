@@ -45,21 +45,24 @@
                     updateResource.ReasonClosed, 
                     (int)updateResource.Who, 
                     enumerable);
+                return;
             }
 
             if (updateResource.Who.HasValue && !string.IsNullOrEmpty(updateResource.ReasonCancelled))
             {
-                this.domainService.CloseDebitNote(
+                this.domainService.CancelDebitNote(
                     entity,
                     updateResource.ReasonClosed,
                     (int)updateResource.Who,
                     enumerable);
+                return;
             }
 
             this.domainService.UpdatePlCreditDebitNote(
                 entity, 
                 new PlCreditDebitNote { Notes = updateResource.Notes }, 
                 enumerable);
+            return;
         }
 
         protected override Expression<Func<PlCreditDebitNote, bool>> SearchExpression(

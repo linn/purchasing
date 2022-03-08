@@ -16,10 +16,10 @@
 
         public const string PurchaseOrderUpdate = "purchase-order.update";
 
-        public const string PlCreditDebitNoteClose = "purchasing.pl-debit-credit-note.close";
+        public const string PlCreditDebitNoteClose = "purchasing.pl-credit-debit-note.close";
 
-        public const string PlCreditDebitNoteCancel = "purchasing.pl-debit-credit-note.close";
+        public const string PlCreditDebitNoteCancel = "purchasing.pl-credit-debit-note.cancel";
 
-        public const string PlCreditDebitNoteUpdate = "purchasing.pl-debit-credit-note.update";
+        public const string PlCreditDebitNoteUpdate = "purchasing.pl-credit-debit-note.update";
     }
 }
