@@ -23,7 +23,7 @@ const state = {
                 originalOrderNumber: 1234567,
                 returnsOrderNumber: 7654321,
                 netTotal: 111.111,
-                notes: 'A COMMENT'
+                notes: 'A COMMENT WE WILL CHANGE'
             },
             {
                 noteNumber: 2,
@@ -100,6 +100,7 @@ describe('When data arrives...', () => {
 
 describe('When closing notes...', () => {
     beforeEach(() => {
+        jest.clearAllMocks();
         useSelector.mockImplementation(callback => callback(state));
         render(<OpenDebitNotes />);
         const firstCheckbox = screen.getAllByRole('checkbox')[1];
@@ -137,6 +138,40 @@ describe('When closing notes...', () => {
             expect.objectContaining({
                 reasonClosed: 'SOME REASON',
                 close: true
+            })
+        );
+    });
+});
+
+describe('When updating comment...', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+        useSelector.mockImplementation(callback => callback(state));
+        render(<OpenDebitNotes />);
+
+        // select the row
+        const firstCheckbox = screen.getAllByRole('checkbox')[1];
+        fireEvent.click(firstCheckbox);
+
+        // double click the cell to put it in edit mode
+        let comment = screen.getByText('A COMMENT WE WILL CHANGE');
+        fireEvent.doubleClick(comment);
+
+        // change the value
+        comment = screen.getByDisplayValue('A COMMENT WE WILL CHANGE');
+        fireEvent.change(comment, { target: { value: 'NEW COMMENT' } });
+
+        //save
+        const saveButton = screen.getByRole('button', { name: 'Save Comments' });
+        fireEvent.click(saveButton);
+    });
+
+    test('should call update', () => {
+        expect(updateDebitNoteSpy).toHaveBeenCalledTimes(1);
+        expect(updateDebitNoteSpy).toBeCalledWith(
+            1,
+            expect.objectContaining({
+                notes: 'NEW COMMENT'
             })
         );
     });

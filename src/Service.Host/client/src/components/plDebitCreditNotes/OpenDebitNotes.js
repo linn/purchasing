@@ -235,7 +235,7 @@ function OpenDebitNotes() {
                                             density="standard"
                                             rowHeight={34}
                                             checkboxSelection
-                                            columnBuffer={9}
+                                            columnBuffer={10}
                                             onSelectionModelChange={handleSelectRow}
                                             editRowsModel={editRowsModel}
                                             onEditRowsModelChange={handleEditRowsModelChange}
