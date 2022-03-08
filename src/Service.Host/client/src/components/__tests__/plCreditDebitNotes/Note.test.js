@@ -118,7 +118,7 @@ describe('When credit note...', () => {
         render(<Note />);
     });
 
-    test('should render debit note', () => {
+    test('should render credit note', () => {
         expect(screen.getByText('Linn Debit Note 123')).toBeInTheDocument();
         expect(screen.queryByText('THESE ITEMS ARE RETURNED FOR CREDIT')).not.toBeInTheDocument();
         expect(screen.queryByText('DO NOT RESSUPPLY')).not.toBeInTheDocument();
