@@ -11,7 +11,7 @@ import plCreditDebitNoteActions from '../../../actions/plCreditDebitNoteActions'
 import Note from '../../plDebitCreditNotes/Note';
 import { emailPdf, savePdf } from '../../../helpers/pdf';
 
-jest.mock('../../../helpers/toPdf', () => ({
+jest.mock('../../../helpers/pdf', () => ({
     savePdf: jest.fn(),
     emailPdf: jest.fn()
 }));
