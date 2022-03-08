@@ -155,8 +155,8 @@ describe('When saving pdf...', () => {
         useSelector.mockImplementation(callback => callback(creditNoteState));
         render(<Note />);
 
-        const emailButton = screen.getByRole('button', { name: 'pdf' });
-        fireEvent.click(emailButton);
+        const pdfButton = screen.getByRole('button', { name: 'pdf' });
+        fireEvent.click(pdfButton);
     });
 
     test('should call save pdf function', () => {
