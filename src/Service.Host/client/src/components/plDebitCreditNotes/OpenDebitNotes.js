@@ -246,11 +246,7 @@ function OpenDebitNotes() {
                 </Grid>
                 {updateError && (
                     <Grid item xs={12}>
-                        <ErrorCard
-                            errorMessage={
-                                updateError?.details?.errors?.[0] || updateError.statusText
-                            }
-                        />
+                        <ErrorCard errorMessage={updateError.details || updateError.statusText} />
                     </Grid>
                 )}
                 {itemsLoading || updateLoading ? (
