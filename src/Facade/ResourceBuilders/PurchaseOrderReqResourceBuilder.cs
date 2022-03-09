@@ -39,27 +39,55 @@
                            Carriage = entity.Carriage,
                            TotalReqPrice = entity.TotalReqPrice,
                            Currency = entity.Currency != null ? new CurrencyResource { Code = entity.Currency?.Code } : null,
-                           Supplier = entity.Supplier != null ? new SupplierResource { Id = entity.Supplier.SupplierId, Name = entity.Supplier?.Name } : null,
+                           Supplier = entity.Supplier != null
+                                          ? new SupplierResource
+                                                {
+                                                    Id = entity.Supplier.SupplierId, Name = entity.Supplier?.Name
+                                                }
+                                          : null,
                            SupplierContact = entity.SupplierContact,
                            AddressLine1 = entity.AddressLine1,
                            AddressLine2 = entity.AddressLine2,
                            AddressLine3 = entity.AddressLine3,
                            AddressLine4 = entity.AddressLine4,
                            PostCode = entity.PostCode,
-                           Country = entity.Country != null ? new CountryResource { CountryCode = entity.Country.CountryCode } : null,
+                           Country = entity.Country != null
+                                         ? new CountryResource { CountryCode = entity.Country.CountryCode }
+                                         : null,
                            PhoneNumber = entity.PhoneNumber,
                            QuoteRef = entity.QuoteRef,
                            Email = entity.Email,
                            DateRequired = entity.DateRequired.HasValue ? entity.DateRequired.Value.ToString("o") : null,
-                           RequestedBy = entity.RequestedBy != null ? new EmployeeResource { Id = entity.RequestedBy.Id } : null,
-                           AuthorisedBy = entity.AuthorisedBy != null ? new EmployeeResource { Id = entity.AuthorisedBy.Id } : null,
-                           SecondAuthBy = entity.SecondAuthBy != null ? new EmployeeResource { Id = entity.SecondAuthBy.Id } : null,
-                           FinanceCheckBy = entity.FinanceCheckBy != null ? new EmployeeResource { Id = entity.FinanceCheckBy.Id } : null,
-                           TurnedIntoOrderBy = entity.TurnedIntoOrderBy != null ? new EmployeeResource { Id = entity.TurnedIntoOrderBy.Id } : null,
-                           Nominal = entity.Nominal,
+                           RequestedBy =
+                               entity.RequestedBy != null ? new EmployeeResource { Id = entity.RequestedBy.Id } : null,
+                           AuthorisedBy = entity.AuthorisedBy != null
+                                              ? new EmployeeResource { Id = entity.AuthorisedBy.Id }
+                                              : null,
+                           SecondAuthBy = entity.SecondAuthBy != null
+                                              ? new EmployeeResource { Id = entity.SecondAuthBy.Id }
+                                              : null,
+                           FinanceCheckBy = entity.FinanceCheckBy != null
+                                                ? new EmployeeResource { Id = entity.FinanceCheckBy.Id }
+                                                : null,
+                           TurnedIntoOrderBy = entity.TurnedIntoOrderBy != null
+                                                   ? new EmployeeResource { Id = entity.TurnedIntoOrderBy.Id }
+                                                   : null,
+                           Nominal = entity.Nominal != null
+                                         ? new NominalResource
+                                               {
+                                                   NominalCode = entity.Nominal.NominalCode,
+                                                   Description = entity.Nominal.Description
+                                               }
+                                         : null,
                            RemarksForOrder = entity.RemarksForOrder,
                            InternalNotes = entity.InternalNotes,
-                           Department = entity.Department,
+                           Department = entity.Department != null
+                                            ? new DepartmentResource
+                                                  {
+                                                      DepartmentCode = entity.Department.DepartmentCode,
+                                                      Description = entity.Department.Description
+                                                  }
+                                            : null,
                            Links = this.BuildLinks(entity, claims).ToArray()
                        };
         }
@@ -90,6 +118,21 @@
                 if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqCreate, privileges))
                 {
                     yield return new LinkResource { Rel = "create", Href = this.GetLocation(model) };
+                }
+
+                if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqAuthorise, privileges))
+                {
+                    yield return new LinkResource { Rel = "authorise", Href = this.GetLocation(model) };
+                }
+
+                if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqFinanceCheck, privileges))
+                {
+                    yield return new LinkResource { Rel = "finance-check", Href = this.GetLocation(model) };
+                }
+
+                if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, privileges))
+                {
+                    yield return new LinkResource { Rel = "create-purchase-order", Href = this.GetLocation(model) };
                 }
             }
         }

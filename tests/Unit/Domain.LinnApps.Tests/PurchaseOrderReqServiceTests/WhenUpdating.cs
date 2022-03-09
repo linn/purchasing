@@ -54,13 +54,14 @@
                                    SecondAuthBy = new Employee { Id = 234, FullName = "big dog" },
                                    FinanceCheckBy = new Employee { Id = 999, FullName = "finance person" },
                                    TurnedIntoOrderBy = new Employee { Id = 876, FullName = "some one" },
-                                   Nominal = "dono",
+                                   Nominal = new Nominal { NominalCode = "00001234", Description = "hing" },
                                    RemarksForOrder = "needed asap",
                                    InternalNotes = "pls approv",
-                                   Department = "Team 1"
+                                   Department = new Department { DepartmentCode = "00002345", Description = "Team 1" }
                                };
-            this.MockAuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqUpdate, Arg.Any<IEnumerable<string>>())
-                .Returns(true);
+            this.MockAuthService.HasPermissionFor(
+                AuthorisedAction.PurchaseOrderReqUpdate,
+                Arg.Any<IEnumerable<string>>()).Returns(true);
 
             this.Sut.Update(this.current, this.updated, new List<string>());
         }

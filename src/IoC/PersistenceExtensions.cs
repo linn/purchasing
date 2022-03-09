@@ -64,8 +64,7 @@
                 .AddTransient<IQueryRepository<SupplierSpend>, SupplierSpendRepository>()
                 .AddTransient<IQueryRepository<UnacknowledgedOrders>, UnacknowledgedOrdersRepository>()
                 .AddTransient<IQueryRepository<SuppliersWithUnacknowledgedOrders>, SuppliersWithUnacknowledgedOrdersRepository>()
-                .AddTransient<IRepository<PurchaseOrderReq, int>, EntityFrameworkRepository<PurchaseOrderReq, int>>(
-                    r => new EntityFrameworkRepository<PurchaseOrderReq, int>(r.GetService<ServiceDbContext>()?.PurchaseOrderReqs));
+                .AddTransient<IRepository<PurchaseOrderReq, int>, PurchaseOrderReqRepository>();
         }
     }
 }

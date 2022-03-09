@@ -3,7 +3,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
-    using System.Threading;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
@@ -57,10 +56,10 @@
                                SecondAuthBy = null,
                                FinanceCheckBy = null,
                                TurnedIntoOrderBy = null,
-                               Nominal = "dono",
+                               Nominal = new Nominal { NominalCode = "00001234", Description = "hing" },
                                RemarksForOrder = "needed asap",
                                InternalNotes = "pls approv",
-                               Department = "Team 1"
+                               Department = new Department { DepartmentCode = "00002345", Description = "Team 1" }
                            };
 
             this.MockPurchaseOrderReqRepository.FindById(2023022).Returns(this.req);

@@ -56,47 +56,50 @@
                                     SecondAuthBy = null,
                                     FinanceCheckBy = null,
                                     TurnedIntoOrderBy = null,
-                                    Nominal = "dono",
+                                    Nominal = new NominalResource { NominalCode = "00001234", Description = "hing" },
                                     RemarksForOrder = "needed asap",
                                     InternalNotes = "pls approv",
-                                    Department = "Team 1"
+                                    Department = new DepartmentResource
+                                                     {
+                                                         DepartmentCode = "00002345", Description = "Team 1"
+                                                     }
                                 };
 
             var req = new PurchaseOrderReq
-            {
-                ReqNumber = this.reqNumber,
-                State = "purgatory",
-                ReqDate = 2.March(2022),
-                OrderNumber = 1234,
-                PartNumber = "PCAS 007",
-                PartDescription = "Descrip",
-                Qty = 7,
-                UnitPrice = 8m,
-                Carriage = null,
-                TotalReqPrice = null,
-                Currency = new Currency { Code = "SMC", Name = "Smackeroonies" },
-                Supplier = new Supplier { SupplierId = 111, Name = "Shoap" },
-                SupplierContact = "Lawrence Chaney",
-                AddressLine1 = "The shop",
-                AddressLine2 = "1 Main Street",
-                AddressLine3 = string.Empty,
-                AddressLine4 = "Glesga",
-                PostCode = "G1 1AA",
-                Country = new Country { CountryCode = "GB", Name = "United Kingdolls" },
-                PhoneNumber = "+44 1234567780",
-                QuoteRef = "blah",
-                Email = "LC@gmail",
-                DateRequired = null,
-                RequestedBy = new Employee { Id = 33107, FullName = "me" },
-                AuthorisedBy = null,
-                SecondAuthBy = null,
-                FinanceCheckBy = null,
-                TurnedIntoOrderBy = null,
-                Nominal = "dono",
-                RemarksForOrder = "needed asap",
-                InternalNotes = "pls approv",
-                Department = "Team 1"
-            };
+                          {
+                              ReqNumber = this.reqNumber,
+                              State = "purgatory",
+                              ReqDate = 2.March(2022),
+                              OrderNumber = 1234,
+                              PartNumber = "PCAS 007",
+                              PartDescription = "Descrip",
+                              Qty = 7,
+                              UnitPrice = 8m,
+                              Carriage = null,
+                              TotalReqPrice = null,
+                              Currency = new Currency { Code = "SMC", Name = "Smackeroonies" },
+                              Supplier = new Supplier { SupplierId = 111, Name = "Shoap" },
+                              SupplierContact = "Lawrence Chaney",
+                              AddressLine1 = "The shop",
+                              AddressLine2 = "1 Main Street",
+                              AddressLine3 = string.Empty,
+                              AddressLine4 = "Glesga",
+                              PostCode = "G1 1AA",
+                              Country = new Country { CountryCode = "GB", Name = "United Kingdolls" },
+                              PhoneNumber = "+44 1234567780",
+                              QuoteRef = "blah",
+                              Email = "LC@gmail",
+                              DateRequired = null,
+                              RequestedBy = new Employee { Id = 33107, FullName = "me" },
+                              AuthorisedBy = null,
+                              SecondAuthBy = null,
+                              FinanceCheckBy = null,
+                              TurnedIntoOrderBy = null,
+                              Nominal = new Nominal { NominalCode = "00001234", Description = "hing" },
+                              RemarksForOrder = "needed asap",
+                              InternalNotes = "pls approv",
+                              Department = new Department { DepartmentCode = "00002345", Description = "Team 1" }
+                          };
 
             this.MockPurchaseOrderReqRepository.FindById(this.reqNumber).Returns(req);
 
@@ -112,18 +115,18 @@
         }
 
         [Test]
+        public void ShouldCallRepo()
+        {
+            this.MockPurchaseOrderReqRepository.Received().FindById(2023022);
+        }
+
+        [Test]
         public void ShouldCallUpdate()
         {
             this.MockReqDomainService.Received().Update(
                 Arg.Any<PurchaseOrderReq>(),
                 Arg.Any<PurchaseOrderReq>(),
                 Arg.Any<IEnumerable<string>>());
-        }
-
-        [Test]
-        public void ShouldCallRepo()
-        {
-            this.MockPurchaseOrderReqRepository.Received().FindById(2023022);
         }
 
         [Test]

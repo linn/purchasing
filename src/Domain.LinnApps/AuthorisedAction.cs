@@ -19,5 +19,11 @@
         public const string PurchaseOrderReqUpdate = "purchase-order-req.update";
 
         public const string PurchaseOrderReqCreate = "purchase-order-req.create";
+
+        public const string PurchaseOrderReqAuthorise = "purchase-order-req.authorise";
+
+        public const string PurchaseOrderReqFinanceCheck = "purchase-order-req.finance-check";
+
+        public const string PurchaseOrderCreate = "purchase-order.create";
     }
 }

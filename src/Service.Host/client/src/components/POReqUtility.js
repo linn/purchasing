@@ -16,7 +16,8 @@ import {
     Loading,
     Dropdown,
     DatePicker,
-    TypeaheadTable
+    TypeaheadTable,
+    userSelectors
 } from '@linn-it/linn-form-components-library';
 import addressesActions from '../actions/addressesActions';
 // import addressActions from '../actions/addressActions';
@@ -99,14 +100,19 @@ function POReqUtility({ creating }) {
         collectionSelectorHelpers.getSearchLoading(state.departments)
     );
 
-    const nominalsSearchItems = useSelector(state => collectionSelectorHelpers.getSearchItems(state.nominals));
+    const nominalsSearchItems = useSelector(state =>
+        collectionSelectorHelpers.getSearchItems(state.nominals)
+    );
     const nominalsSearchLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.nominals)
     );
     // .getSearchItems(state)
     // .map(i => ({ ...i, name: i.departmentCode, id: i.departmentCode })),
 
-    const [req, setReq] = useState({});
+    const [req, setReq] = useState({
+        requestedBy: { id: useSelector(reduxState => userSelectors.getUserNumber(reduxState)), fullName: useSelector(reduxState => userSelectors.getUserNumber(reduxState))
+        }
+    });
     const snackbarVisible = useSelector(state =>
         itemSelectorHelpers.getSnackbarVisible(state.purchaseOrderReq)
     );
@@ -118,7 +124,7 @@ function POReqUtility({ creating }) {
 
     useEffect(() => {
         if (item?.reqNumber) {
-            setReq(item);
+            setReq(item);           
         }
     }, [item]);
 
@@ -159,9 +165,16 @@ function POReqUtility({ creating }) {
             links: nom.links
         }))
     };
+
+    const allowedToAuthorise = () => !creating && req?.links.some(l => l.rel === 'authorise');
+    const allowedToFinanceCheck = () =>
+        !creating && req?.links.some(l => l.rel === 'finance-check');
+    const allowedToCreateOrder = () =>
+        !creating && req?.links.some(l => l.rel === 'create-purchase-order');
+
     return (
         <>
-            <Page history={history} homeUrl={config.appRoot}>
+            <Page history={history} homeUrl={config.appRoot} width="xl">
                 {loading ? (
                     <Loading />
                 ) : (
@@ -394,7 +407,7 @@ function POReqUtility({ creating }) {
                                 modal
                                 propertyName="countryCode"
                                 items={countriesSearchResults}
-                                value={req?.countryCode}
+                                value={req?.country?.countryCode}
                                 loading={countriesSearchLoading}
                                 fetchItems={searchCountries}
                                 links={false}
@@ -412,7 +425,7 @@ function POReqUtility({ creating }) {
                         <Grid item xs={4}>
                             <InputField
                                 fullWidth
-                                value={req?.countryName}
+                                value={req?.country?.name}
                                 label="Name"
                                 propertyName="countryName"
                                 onChange={() => {}}
@@ -509,7 +522,7 @@ function POReqUtility({ creating }) {
                         <Grid item xs={8}>
                             <InputField
                                 fullWidth
-                                value={req.nominal?.description}
+                                value={req?.nominal?.description}
                                 label="Description"
                                 disabled
                                 onChange={handleFieldChange}
@@ -519,7 +532,7 @@ function POReqUtility({ creating }) {
                         <Grid item xs={4}>
                             <InputField
                                 fullWidth
-                                value={req.department.department}
+                                value={req?.department?.departmentCode}
                                 label="Dept"
                                 onChange={handleFieldChange}
                                 propertyName="department"
@@ -529,66 +542,23 @@ function POReqUtility({ creating }) {
                         <Grid item xs={8}>
                             <InputField
                                 fullWidth
-                                value={req.department.departmentDescription}
+                                value={req?.department?.description}
                                 label="Description"
                                 disabled
                                 onChange={handleFieldChange}
                             />
                         </Grid>
-
-                        {/* see stores parts ut, potentially get nominal and set department from it
-                            nominalAccount: action.payload.id,
-                        nominal: action.payload.values[0].value,
-                        nominalDescription: action.payload.values[1].value,
-                        department: action.payload.values[2].value,
-                        departmentDescription: action.payload.values[3].value
-                        
-                        */}
-
-                        {/* Cost centre */}
-                        {/* <Grid xs={12}>
-                            <Typeahead
-                                label="Cost Centre"
-                                title="Search for a part"
-                                onSelect={newPart => {
-                                    handleFieldChange('partNumber', newPart.id);
-                                    handleFieldChange('partDescription', newPart.description);
-                                }}
-                                items={partsSearchResults}
-                                loading={partsSearchLoading}
-                                fetchItems={searchTerm => dispatch(partsActions.search(searchTerm))}
-                                clearSearch={() => dispatch(partsActions.clearSearch)}
-                                value={`${req?.partNumber}`}
-                                modal
-                                links={false}
-                                debounce={1000}
-                                minimumSearchTermLength={2}
+                        <Grid item xs={12}>
+                            {/* set on create to current user and don't allow editing after */}
+                            <InputField
+                                fullWidth
+                                value={`${req?.requestedBy?.fullName} (${req?.requestedBy?.id})`}
+                                label="Description"
+                                disabled
+                                onChange={handleFieldChange}
                             />
-                        </Grid> */}
 
-                        {/* Nominal */}
-                        {/* <Grid xs={12}>
-                            <Typeahead
-                                label="Nominal"
-                                title="Search for a part"
-                                onSelect={newPart => {
-                                    handleFieldChange('partNumber', newPart.id);
-                                    handleFieldChange('partDescription', newPart.description);
-                                }}
-                                items={partsSearchResults}
-                                loading={partsSearchLoading}
-                                fetchItems={searchTerm => dispatch(partsActions.search(searchTerm))}
-                                clearSearch={() => dispatch(partsActions.clearSearch)}
-                                value={`${req?.partNumber}`}
-                                modal
-                                links={false}
-                                debounce={1000}
-                                minimumSearchTermLength={2}
-                            />
-                        </Grid> */}
-
-                        <Grid item xs={6}>
-                            <Dropdown
+                            {/* <Dropdown
                                 fullWidth
                                 value={req?.requestedBy?.id}
                                 label="Requested by"
@@ -598,10 +568,21 @@ function POReqUtility({ creating }) {
                                 }))}
                                 propertyName="requestedBy"
                                 onChange={handleEmployeeFieldChange}
-                            />
+                            /> */}
                         </Grid>
 
-                        <Grid item xs={6}>
+                        <Grid item xs={4}>
+                            <Button
+                                color="primary"
+                                variant="contained"
+                                disabled={allowedToAuthorise}
+                                // onClick={handleAuthorise}
+                            >
+                                Authorise
+                            </Button>
+                        </Grid>
+
+                        <Grid item xs={8}>
                             <Dropdown
                                 fullWidth
                                 value={req?.authorisedBy?.id}
@@ -615,7 +596,17 @@ function POReqUtility({ creating }) {
                             />
                         </Grid>
 
-                        <Grid item xs={6}>
+                        <Grid item xs={4}>
+                            <Button
+                                color="primary"
+                                variant="contained"
+                                disabled={allowedToAuthorise}
+                                // onClick={handleAuthorise}
+                            >
+                                Authorise (secondary)
+                            </Button>
+                        </Grid>
+                        <Grid item xs={8}>
                             <Dropdown
                                 fullWidth
                                 value={req?.secondAuthBy?.id}
@@ -629,7 +620,17 @@ function POReqUtility({ creating }) {
                             />
                         </Grid>
 
-                        <Grid item xs={6}>
+                        <Grid item xs={4}>
+                            <Button
+                                color="primary"
+                                variant="contained"
+                                disabled={allowedToFinanceCheck}
+                                // onClick={handleAuthorise}
+                            >
+                                Sign off (finance)
+                            </Button>
+                        </Grid>
+                        <Grid item xs={8}>
                             <Dropdown
                                 fullWidth
                                 value={req?.financeCheckBy?.id}
@@ -642,21 +643,29 @@ function POReqUtility({ creating }) {
                                 onChange={handleEmployeeFieldChange}
                             />
                         </Grid>
-
-                        <Grid item xs={6}>
-                            <Dropdown
-                                fullWidth
-                                value={req?.turnedIntoOrderBy?.id}
-                                label="Turned into order by"
-                                items={employees.map(e => ({
-                                    displayText: `${e.fullName} (${e.id})`,
-                                    id: e.id
-                                }))}
-                                propertyName="turnedIntoOrderBy"
-                                onChange={handleEmployeeFieldChange}
-                            />
+                        <Grid item xs={4}>
+                            <Button
+                                color="primary"
+                                variant="contained"
+                                disabled={allowedToCreateOrder}
+                                // onClick={handleAuthorise}
+                            >
+                                Create Order
+                            </Button>
+                            <Grid item xs={8}>
+                                <Dropdown
+                                    fullWidth
+                                    value={req?.turnedIntoOrderBy?.id}
+                                    label="Turned into order by"
+                                    items={employees.map(e => ({
+                                        displayText: `${e.fullName} (${e.id})`,
+                                        id: e.id
+                                    }))}
+                                    propertyName="turnedIntoOrderBy"
+                                    onChange={handleEmployeeFieldChange}
+                                />
+                            </Grid>
                         </Grid>
-
                         <Grid item xs={6}>
                             <InputField
                                 fullWidth

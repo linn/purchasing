@@ -111,14 +111,35 @@
                                    ? DateTime.Parse(resource.DateRequired)
                                    : null,
                            RequestedBy = new Employee { Id = resource.RequestedBy.Id },
-                           AuthorisedBy = resource.AuthorisedBy != null ? new Employee { Id = resource.AuthorisedBy.Id } : null,
-                           SecondAuthBy = resource.SecondAuthBy != null ? new Employee { Id = resource.SecondAuthBy.Id } : null,
-                           FinanceCheckBy = resource.FinanceCheckBy != null ? new Employee { Id = resource.FinanceCheckBy.Id } : null,
-                           TurnedIntoOrderBy = resource.TurnedIntoOrderBy != null ? new Employee { Id = resource.TurnedIntoOrderBy.Id } : null,
-                           Nominal = resource.Nominal,
+                           AuthorisedBy =
+                               resource.AuthorisedBy != null ? new Employee { Id = resource.AuthorisedBy.Id } : null,
+                           SecondAuthBy =
+                               resource.SecondAuthBy != null ? new Employee { Id = resource.SecondAuthBy.Id } : null,
+                           FinanceCheckBy =
+                               resource.FinanceCheckBy != null
+                                   ? new Employee { Id = resource.FinanceCheckBy.Id }
+                                   : null,
+                           TurnedIntoOrderBy =
+                               resource.TurnedIntoOrderBy != null
+                                   ? new Employee { Id = resource.TurnedIntoOrderBy.Id }
+                                   : null,
+                           Nominal =
+                               resource.Nominal != null
+                                   ? new Nominal
+                                         {
+                                             NominalCode = resource.Nominal.NominalCode,
+                                             Description = resource.Nominal.Description
+                                         }
+                                   : null,
                            RemarksForOrder = resource.RemarksForOrder,
                            InternalNotes = resource.InternalNotes,
-                           Department = resource.Department
+                           Department = resource.Department != null
+                                            ? new Department
+                                                  {
+                                                      DepartmentCode = resource.Department.DepartmentCode,
+                                                      Description = resource.Department.Description
+                                                  }
+                                            : null
                        };
         }
     }

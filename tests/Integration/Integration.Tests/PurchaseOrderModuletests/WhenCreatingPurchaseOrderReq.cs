@@ -55,10 +55,10 @@
                                     SecondAuthBy = null,
                                     FinanceCheckBy = null,
                                     TurnedIntoOrderBy = null,
-                                    Nominal = "dono",
+                                    Nominal = new NominalResource { NominalCode = "00001234", Description = "hing" },
                                     RemarksForOrder = "needed asap",
                                     InternalNotes = "pls approv",
-                                    Department = "Team 1"
+                                    Department = new DepartmentResource { DepartmentCode = "00002345", Description = "Team 1" },
                                 };
 
             var req = new PurchaseOrderReq
@@ -91,10 +91,10 @@
                 SecondAuthBy = null,
                 FinanceCheckBy = null,
                 TurnedIntoOrderBy = null,
-                Nominal = "dono",
+                Nominal = new Nominal { NominalCode = "00001234", Description = "hing" },
                 RemarksForOrder = "needed asap",
                 InternalNotes = "pls approv",
-                Department = "Team 1"
+                Department = new Department { DepartmentCode = "00002345", Description = "Team 1" },
             };
 
             this.MockDatabaseService.GetNextVal("BLUE_REQ_SEQ").Returns(this.reqNumber);
