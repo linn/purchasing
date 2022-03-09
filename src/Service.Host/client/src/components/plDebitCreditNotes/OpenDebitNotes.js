@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     Title,
@@ -27,12 +27,9 @@ import config from '../../config';
 function OpenDebitNotes() {
     const dispatch = useDispatch();
     const [rows, setRows] = useState([]);
-    const [selectedRows, setSelectedRows] = useState([]);
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [commentsDialogOpen, setCommentsDialogOpen] = useState(false);
 
     const [closeReason, setCloseReason] = useState('');
-    const [comments, setComments] = useState('');
 
     const items = useSelector(state => collectionSelectorHelpers.getItems(state.openDebitNotes));
     const itemsLoading = useSelector(state =>
@@ -69,17 +66,26 @@ function OpenDebitNotes() {
     const classes = useStyles();
 
     useEffect(() => {
-        setRows(
-            items.map(s => ({
-                ...s,
-                id: s.noteNumber
-            }))
-        );
+        if (items) {
+            setRows(
+                items.map(s => ({
+                    ...s,
+                    id: s.noteNumber,
+                    selected: false
+                }))
+            );
+        }
     }, [items]);
 
     const handleSelectRow = selected => {
-        setSelectedRows(rows.filter(r => selected.includes(r.id)));
+        setRows(
+            rows.map(r =>
+                selected.includes(r.id) ? { ...r, selected: true } : { ...r, selected: false }
+            )
+        );
     };
+
+    const [editRowsModel, setEditRowsModel] = useState({});
 
     const columns = [
         {
@@ -125,9 +131,22 @@ function OpenDebitNotes() {
         {
             headerName: 'Comments',
             field: 'notes',
-            width: 400
+            width: 400,
+            editable: true
         }
     ];
+
+    const handleEditRowsModelChange = useCallback(model => {
+        setEditRowsModel(model);
+
+        if (model && Object.keys(model)[0]) {
+            const id = parseInt(Object.keys(model)[0], 10);
+            if (model && model[id] && model[id].notes && model[id].notes.value) {
+                const newValue = model[id].notes.value;
+                setRows(r => r.map(row => (row.id === id ? { ...row, notes: newValue } : row)));
+            }
+        }
+    }, []);
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <SnackbarMessage
@@ -168,72 +187,19 @@ function OpenDebitNotes() {
                                         variant="contained"
                                         color="primary"
                                         onClick={() => {
-                                            selectedRows.forEach(r =>
+                                            rows.filter(r => r.selected).forEach(r => {
                                                 dispatch(
                                                     plCreditDebitNoteActions.update(r.noteNumber, {
                                                         ...r,
                                                         close: true,
                                                         reasonClosed: closeReason
                                                     })
-                                                )
-                                            );
+                                                );
+                                            });
                                             setDialogOpen(false);
                                         }}
                                     >
                                         Confirm
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                        </div>
-                    </div>
-                </Dialog>
-
-                <Dialog open={commentsDialogOpen} fullWidth maxWidth="md">
-                    <div>
-                        <IconButton
-                            className={classes.pullRight}
-                            aria-label="Close"
-                            onClick={() => setCommentsDialogOpen(false)}
-                        >
-                            <CloseIcon />
-                        </IconButton>
-                        <div className={classes.dialog}>
-                            <Grid container spacing={3}>
-                                <Grid item xs={12}>
-                                    <Typography variant="h5" gutterBottom>
-                                        Edit Comments
-                                    </Typography>
-                                </Grid>
-
-                                <Grid item xs={12}>
-                                    <InputField
-                                        fullWidth
-                                        value={comments}
-                                        onChange={(_, newValue) => setComments(newValue)}
-                                        label="Comments"
-                                        propertyName="comments"
-                                    />
-                                </Grid>
-                                <Grid item xs={2}>
-                                    <Button
-                                        style={{ marginTop: '22px' }}
-                                        variant="contained"
-                                        color="primary"
-                                        onClick={() => {
-                                            dispatch(
-                                                plCreditDebitNoteActions.update(
-                                                    selectedRows[0].noteNumber,
-                                                    {
-                                                        ...selectedRows[0],
-                                                        notes: comments
-                                                    }
-                                                )
-                                            );
-                                            setSelectedRows([]);
-                                            setCommentsDialogOpen(false);
-                                        }}
-                                    >
-                                        Save
                                     </Button>
                                 </Grid>
                             </Grid>
@@ -265,7 +231,10 @@ function OpenDebitNotes() {
                                             density="standard"
                                             rowHeight={34}
                                             checkboxSelection
+                                            columnBuffer={10}
                                             onSelectionModelChange={handleSelectRow}
+                                            editRowsModel={editRowsModel}
+                                            onEditRowsModelChange={handleEditRowsModelChange}
                                             loading={itemsLoading}
                                             hideFooter
                                             filterModel={{
@@ -280,7 +249,7 @@ function OpenDebitNotes() {
                                         />
                                     </div>
                                 </Grid>
-                                <Grid item xs={2}>
+                                <Grid item xs={3}>
                                     <Button
                                         style={{ marginTop: '22px' }}
                                         colour="primary"
@@ -292,22 +261,33 @@ function OpenDebitNotes() {
                                         Close Selected
                                     </Button>
                                 </Grid>
-                                <Grid item xs={10} />
-                                <Grid item xs={4}>
+                                <Grid item xs={3}>
                                     <Button
                                         style={{ marginTop: '22px' }}
-                                        colour="primary"
-                                        variant="outlined"
-                                        disabled={selectedRows.length !== 1}
+                                        variant="contained"
+                                        color="primary"
                                         onClick={() => {
-                                            setComments(selectedRows[0].notes);
-                                            setCommentsDialogOpen(true);
+                                            rows.filter(s => s.selected).forEach(r =>
+                                                dispatch(
+                                                    plCreditDebitNoteActions.update(r.noteNumber, r)
+                                                )
+                                            );
+                                            setRows(
+                                                items.map(s => ({
+                                                    ...s,
+                                                    id: s.noteNumber,
+                                                    selected: false
+                                                }))
+                                            );
                                         }}
                                     >
-                                        Edit Comments of Selected
+                                        Save Comments
                                     </Button>
                                 </Grid>
-                                <Grid item xs={4} />
+
+                                <Grid item xs={6} />
+
+                                <Grid item xs={8} />
                                 <Grid item xs={4}>
                                     <Typography
                                         className={classes.dialog}

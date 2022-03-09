@@ -28,9 +28,10 @@ import {
     setMessageVisible,
     clearProcessData
 } from '../../actions/sendPlNoteEmailActions';
-import toPdf from '../../helpers/toPdf';
+import { savePdf, emailPdf } from '../../helpers/pdf';
+import logo from './linn-logo.png';
 
-function Notes() {
+function Note() {
     const useStyles = makeStyles(theme => ({
         dialog: {
             margin: theme.spacing(6),
@@ -89,14 +90,30 @@ function Notes() {
 
     const Content = () => (
         <Grid container spacing={3}>
+            <Grid item xs={2}>
+                <img src={logo} alt="linn logo" />
+            </Grid>
+            <Grid item xs={10}>
+                <Typography variant="subtitle2">
+                    Linn Products Ltd, Glasgow Road, Waterfoot, Eaglesham, Glasgow, G76 0EQ,
+                    Scotland, UK
+                </Typography>
+                <Typography variant="subtitle2">Telephone (0)141 307 777</Typography>
+                <Typography variant="caption">
+                    Registered Office: Glasgow Road, Waterfoot, Eaglesham, Glasgow, G76 0EQ,
+                    Scotland, UK.
+                </Typography>
+                <Typography variant="caption">Registered In Scotland Number: SC52366</Typography>
+            </Grid>
+
             <Grid item xs={12}>
                 <SnackbarMessage
                     visible={snackbarVisible && processResult?.success}
                     onClose={() => setSnackbarVisible(false)}
                     message={message}
                 />
-                <Typography variant="h6">
-                    {`Linn ${item.itemType === 'C' ? 'Credit' : 'Debit'} Note ${item.noteNumber}`}
+                <Typography variant="h4">
+                    {`Linn ${item.noteType === 'D' ? 'Debit' : 'Debit'} Note ${item.noteNumber}`}
                 </Typography>
             </Grid>
             {item.cancelled && (
@@ -215,11 +232,11 @@ function Notes() {
                 <Typography variant="subtitle2">Notes:</Typography>
             </Grid>
             <Grid item xs={10}>
-                <Typography variant="subtitle1">{item.items}</Typography>
+                <Typography variant="subtitle1">{item.notes}</Typography>
             </Grid>
             <Grid item xs={2} />
 
-            {item.itemType === 'D' && (
+            {item.noteType === 'D' && (
                 <>
                     <Grid item xs={10}>
                         <Typography variant="subtitle1">
@@ -233,113 +250,102 @@ function Notes() {
 
             <Grid item xs={10}>
                 <Typography variant="subtitle2">
-                    {`THIS IS A PURCHASE LEDGER ${item.itemType === 'D' ? 'DEBIT' : 'CREDIT'} NOTE`}
+                    {`THIS IS A PURCHASE LEDGER ${item.noteType === 'D' ? 'DEBIT' : 'CREDIT'} NOTE`}
                 </Typography>
             </Grid>
         </Grid>
     );
     return (
-        item && (
-            <>
-                {loading && (
-                    <Grid style={{ paddingTop: '100px' }} item xs={12}>
-                        <Loading />
-                    </Grid>
-                )}
-                {processResult && !processResult.success && (
-                    <Grid style={{ paddingTop: '100px' }} item xs={12}>
-                        <ErrorCard errorMessage={processResult.message} />
-                    </Grid>
-                )}
-                {itemError && (
-                    <Grid style={{ paddingTop: '100px' }} item xs={12}>
-                        <ErrorCard errorMessage={itemError.details} />
-                    </Grid>
-                )}
-                <div style={{ width: '90%', minWidth: '1200px', margin: '0 auto' }}>
-                    <Page history={history} homeUrl={config.appRoot}>
-                        <div
-                            style={{ width: '874px', margin: '0 auto', padding: '60px' }}
-                            ref={pdfRef}
-                        >
-                            {loading || processLoading || pdfLoading ? <Loading /> : <Content />}
-                        </div>
-                    </Page>
-                </div>
-                <Grid container spacing={3}>
-                    <Dialog open={cancelDialogOpen} fullWidth maxWidth="md">
-                        <div>
-                            <IconButton
-                                className={classes.pullRight}
-                                aria-label="Close"
-                                onClick={() => setCancelDialogOpen(false)}
-                            >
-                                <Close />
-                            </IconButton>
-                            <div className={classes.dialog}>
-                                <Grid item xs={12}>
-                                    <InputField
-                                        fullWidth
-                                        value={cancelReason}
-                                        label="Must give a reason:"
-                                        propertyName="holdReason"
-                                        onChange={(_, newValue) => setCancelReason(newValue)}
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <SaveBackCancelButtons
-                                        saveDisabled={!cancelReason}
-                                        backClick={() => setCancelDialogOpen(false)}
-                                        cancelClick={() => setCancelDialogOpen(false)}
-                                        saveClick={() => {
-                                            dispatch(plCreditDebitNoteActions.clearErrorsForItem());
-                                            dispatch(
-                                                plCreditDebitNoteActions.update(id, {
-                                                    itemNumber: id,
-                                                    reasonCancelled: cancelReason
-                                                })
-                                            );
-                                            setCancelDialogOpen(false);
-                                        }}
-                                    />
-                                </Grid>
-                            </div>
-                        </div>
-                    </Dialog>
-                    <Grid item xs={8} />
-
-                    <Grid item xs={4}>
-                        <Button
-                            onClick={() =>
-                                toPdf(false, pdfRef, blob => dispatch(sendPlNoteEmail(blob, id)))
-                            }
-                            variant="outlined"
-                        >
-                            pdf
-                        </Button>
-                        <Button
-                            onClick={() => {
-                                setPdfLoading(true);
-                                dispatch(plCreditDebitNoteActions.clearErrorsForItem());
-                                dispatch(clearProcessData);
-                                toPdf(true, pdfRef, blob => dispatch(sendPlNoteEmail(blob, id)));
-                            }}
-                            variant="contained"
-                        >
-                            email
-                        </Button>
-                        <Button
-                            onClick={() => setCancelDialogOpen(true)}
-                            variant="contained"
-                            color="secondary"
-                        >
-                            Cancel
-                        </Button>
-                    </Grid>
+        <>
+            {processResult && !processResult.success && (
+                <Grid style={{ paddingTop: '100px' }} item xs={12}>
+                    <ErrorCard errorMessage={processResult.message} />
                 </Grid>
-            </>
-        )
+            )}
+            {itemError && (
+                <Grid style={{ paddingTop: '100px' }} item xs={12}>
+                    <ErrorCard errorMessage={itemError.details} />
+                </Grid>
+            )}
+            <div style={{ width: '80%', minWidth: '1200px', margin: '0 auto' }}>
+                <Page history={history} homeUrl={config.appRoot}>
+                    <div style={{ width: '874px', margin: '0 auto', padding: '60px' }} ref={pdfRef}>
+                        {loading || processLoading || pdfLoading || !item ? (
+                            <Loading />
+                        ) : (
+                            <Content />
+                        )}
+                    </div>
+                </Page>
+            </div>
+            <Grid container spacing={3}>
+                <Dialog open={cancelDialogOpen} fullWidth maxWidth="md">
+                    <div>
+                        <IconButton
+                            className={classes.pullRight}
+                            aria-label="Close"
+                            onClick={() => setCancelDialogOpen(false)}
+                        >
+                            <Close />
+                        </IconButton>
+                        <div className={classes.dialog}>
+                            <Grid item xs={12}>
+                                <InputField
+                                    fullWidth
+                                    value={cancelReason}
+                                    label="Must give a reason:"
+                                    propertyName="holdReason"
+                                    onChange={(_, newValue) => setCancelReason(newValue)}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <SaveBackCancelButtons
+                                    saveDisabled={!cancelReason}
+                                    backClick={() => setCancelDialogOpen(false)}
+                                    cancelClick={() => setCancelDialogOpen(false)}
+                                    saveClick={() => {
+                                        dispatch(plCreditDebitNoteActions.clearErrorsForItem());
+                                        dispatch(
+                                            plCreditDebitNoteActions.update(id, {
+                                                noteNumber: id,
+                                                reasonCancelled: cancelReason
+                                            })
+                                        );
+                                        setCancelDialogOpen(false);
+                                    }}
+                                />
+                            </Grid>
+                        </div>
+                    </div>
+                </Dialog>
+                <Grid item xs={8} />
+
+                <Grid item xs={4}>
+                    <Button onClick={() => savePdf(pdfRef)} variant="outlined">
+                        pdf
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            setPdfLoading(true);
+                            dispatch(plCreditDebitNoteActions.clearErrorsForItem());
+                            dispatch(clearProcessData);
+                            emailPdf(pdfRef, blob => dispatch(sendPlNoteEmail(blob, id)));
+                        }}
+                        variant="contained"
+                    >
+                        email
+                    </Button>
+                    <Button
+                        onClick={() => setCancelDialogOpen(true)}
+                        variant="contained"
+                        color="secondary"
+                    >
+                        Cancel
+                    </Button>
+                </Grid>
+            </Grid>
+        </>
     );
 }
 
-export default Notes;
+export default Note;
