@@ -321,7 +321,14 @@ function Note() {
                 <Grid item xs={8} />
 
                 <Grid item xs={4}>
-                    <Button onClick={() => savePdf(pdfRef)} variant="outlined">
+                    <Button
+                        onClick={async () => {
+                            setPdfLoading(true);
+                            await savePdf(pdfRef);
+                            setPdfLoading(false);
+                        }}
+                        variant="outlined"
+                    >
                         pdf
                     </Button>
                     <Button
