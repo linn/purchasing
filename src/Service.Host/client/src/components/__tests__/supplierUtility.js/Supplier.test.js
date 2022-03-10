@@ -11,7 +11,8 @@ import supplierActions from '../../../actions/supplierActions';
 import putSupplierOnHoldActions from '../../../actions/putSupplierOnHoldActions';
 import accountingCompaniesActions from '../../../actions/accountingCompaniesActions';
 import Supplier from '../../supplierUtility/Supplier';
-import { supplier } from '../../../itemTypes';
+import plannersActions from '../../../actions/plannersActions';
+import vendorManagersActions from '../../../actions/vendorManagersActions';
 
 jest.mock('react-redux', () => ({
     ...jest.requireActual('react-redux'),
@@ -27,8 +28,13 @@ beforeEach(() => {
 
 const clearSupplierErrorsSpy = jest.spyOn(supplierActions, 'clearErrorsForItem');
 const fetchSupplierSpy = jest.spyOn(supplierActions, 'fetch');
+const fetchAccountingCompaniesSpy = jest.spyOn(accountingCompaniesActions, 'fetch');
+const fetchPlannersSpy = jest.spyOn(plannersActions, 'fetch');
+const fetchVendorManagersSpy = jest.spyOn(vendorManagersActions, 'fetch');
 
 const updateSupplierSpy = jest.spyOn(supplierActions, 'update');
+const setSupplierEditStatusSpy = jest.spyOn(supplierActions, 'setEditStatus');
+
 const addSupplierSpy = jest.spyOn(supplierActions, 'add');
 const putSupplierOnHoldAddSpy = jest.spyOn(putSupplierOnHoldActions, 'add');
 
@@ -75,6 +81,7 @@ const supplierData = {
 
 describe('On initialise...', () => {
     beforeEach(() => {
+        jest.clearAllMocks();
         const initialState = {
             accountingCompanies: { items: [] }
         };
@@ -121,5 +128,379 @@ describe('When supplier data...', () => {
 
     test('should render data', () => {
         expect(screen.getByText('SUPPLIER')).toBeInTheDocument();
+    });
+});
+
+describe('When changing tabs...', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+        const state = {
+            accountingCompanies: { items: [] },
+            supplier: {
+                loading: false,
+                item: {
+                    ...supplierData,
+                    links: [{ rel: 'self', href: '/supplier/123' }]
+                }
+            }
+        };
+        useSelector.mockImplementation(callback => callback(state));
+        render(<Supplier />);
+    });
+    test('should default to General tab and fetch relevant data', () => {
+        expect(screen.getByLabelText('Order Contact Method')).toBeInTheDocument();
+        expect(fetchAccountingCompaniesSpy).toBeCalledTimes(1);
+    });
+    test('should switch to Contacts tab', () => {
+        const tab = screen.getByText('Contacts');
+        fireEvent.click(tab);
+        expect(screen.getByText('First Name')).toBeInTheDocument();
+    });
+    test('should switch to Notes tab', () => {
+        const tab = screen.getByText('Notes');
+        fireEvent.click(tab);
+        expect(screen.getByText('NOTES NOTES NOTES')).toBeInTheDocument();
+    });
+    test('should switch to Lifecycle tab', () => {
+        const tab = screen.getByText('Lifecycle');
+        fireEvent.click(tab);
+        expect(screen.getByLabelText('Reason Closed')).toBeInTheDocument();
+    });
+    test('should switch to Whose tab and fetch data', () => {
+        const tab = screen.getByText('Whose');
+        fireEvent.click(tab);
+        expect(screen.getByLabelText('Account Controller')).toBeInTheDocument();
+        expect(fetchVendorManagersSpy).toBeCalledTimes(1);
+        expect(fetchPlannersSpy).toBeCalledTimes(1);
+    });
+    test('should switch to Where tab', () => {
+        const tab = screen.getByText('Where');
+        fireEvent.click(tab);
+        expect(screen.getByLabelText('Order Addressee')).toBeInTheDocument();
+    });
+    test('should switch to Purch tab', () => {
+        const tab = screen.getByText('Purch');
+        fireEvent.click(tab);
+        expect(screen.getByLabelText('Part Category')).toBeInTheDocument();
+    });
+    test('should switch to Finance tab', () => {
+        const tab = screen.getByText('Finance');
+        fireEvent.click(tab);
+        expect(screen.getByLabelText('Invoice Goes To')).toBeInTheDocument();
+    });
+    test('should switch back to General tab', () => {
+        let tab = screen.getByText('Purch');
+        fireEvent.click(tab);
+        tab = screen.getByText('General');
+        fireEvent.click(tab);
+        expect(screen.getByLabelText('Order Contact Method')).toBeInTheDocument();
+    });
+});
+
+describe('When edit link...', () => {
+    beforeEach(() => {
+        const state = {
+            accountingCompanies: { items: [] },
+            supplier: {
+                loading: false,
+                item: {
+                    ...supplierData,
+                    links: [
+                        { rel: 'self', href: '/supplier/123' },
+                        { rel: 'edit', href: '/supplier/123' }
+                    ]
+                }
+            }
+        };
+        useSelector.mockImplementation(callback => callback(state));
+        render(<Supplier />);
+    });
+
+    test('Page shows correct icon tooltip...', async () => {
+        fireEvent.mouseOver(screen.getByTestId('ModeEditIcon'));
+        expect(await screen.findByText('You have write access to Suppliers')).toBeInTheDocument();
+    });
+});
+
+describe('When no edit link...', () => {
+    beforeEach(() => {
+        const state = {
+            accountingCompanies: { items: [] },
+            supplier: {
+                loading: false,
+                item: {
+                    ...supplierData,
+                    links: [{ rel: 'self', href: '/supplier/123' }]
+                }
+            }
+        };
+        useSelector.mockImplementation(callback => callback(state));
+        render(<Supplier />);
+    });
+
+    test('Page shows correct icon tooltip...', async () => {
+        fireEvent.mouseOver(screen.getByTestId('EditOffIcon'));
+        expect(
+            await screen.findByText('You do not have write access to Suppliers')
+        ).toBeInTheDocument();
+    });
+});
+
+describe('When hold link and supplier not on hold...', () => {
+    beforeEach(() => {
+        const state = {
+            accountingCompanies: { items: [] },
+            supplier: {
+                loading: false,
+                item: {
+                    ...supplierData,
+                    links: [{ rel: 'hold', href: '/supplier/123/hold' }]
+                }
+            }
+        };
+        useSelector.mockImplementation(callback => callback(state));
+        render(<Supplier />);
+        const tab = screen.getByText('Purch');
+        fireEvent.click(tab);
+    });
+
+    test('Page shows PUT ON HOLD button...', () => {
+        expect(screen.getByRole('button', { name: 'PUT ON HOLD' })).toBeInTheDocument();
+    });
+});
+
+describe('When hold link and supplier on hold...', () => {
+    beforeEach(() => {
+        const state = {
+            accountingCompanies: { items: [] },
+            supplier: {
+                loading: false,
+                item: {
+                    ...supplierData,
+                    orderHold: 'Y',
+                    links: [{ rel: 'hold', href: '/supplier/123/hold' }]
+                }
+            }
+        };
+        useSelector.mockImplementation(callback => callback(state));
+        render(<Supplier />);
+        const tab = screen.getByText('Purch');
+        fireEvent.click(tab);
+    });
+
+    test('Page shows TAKE OFF HOLD button...', () => {
+        expect(screen.getByRole('button', { name: 'TAKE OFF HOLD' })).toBeInTheDocument();
+    });
+});
+
+describe('When no hold link...', () => {
+    beforeEach(() => {
+        const state = {
+            accountingCompanies: { items: [] },
+            supplier: {
+                loading: false,
+                item: {
+                    ...supplierData,
+                    orderHold: 'Y',
+                    links: [{ rel: 'self', href: '/supplier/123' }]
+                }
+            }
+        };
+        useSelector.mockImplementation(callback => callback(state));
+        render(<Supplier />);
+        const tab = screen.getByText('Purch');
+        fireEvent.click(tab);
+    });
+
+    test('Page shows no hold change button...', () => {
+        expect(screen.queryByRole('button', { name: 'TAKE OFF HOLD' })).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'PUT ON HOLD' })).not.toBeInTheDocument();
+    });
+});
+
+describe('When putting supplier on hold...', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+        const state = {
+            accountingCompanies: { items: [] },
+            oidc: { user: { profile: { name: 'User Name', employee: '/employees/33087' } } },
+            supplier: {
+                loading: false,
+                item: {
+                    ...supplierData,
+                    orderHold: 'N',
+                    links: [
+                        { rel: 'hold', href: '/supplier/123/hold' },
+                        { rel: 'self', href: '/supplier/123' }
+                    ]
+                }
+            }
+        };
+        useSelector.mockImplementation(callback => callback(state));
+        render(<Supplier />);
+        const tab = screen.getByText('Purch');
+        fireEvent.click(tab);
+        const holdButton = screen.getByRole('button', { name: 'PUT ON HOLD' });
+        fireEvent.click(holdButton);
+        const reasonInput = screen.getByLabelText('Must give a reason:');
+        fireEvent.change(reasonInput, { target: { value: 'SOME REASON TO HOLD' } });
+        const saveButton = screen.getByRole('button', { name: 'Save' });
+        fireEvent.click(saveButton);
+    });
+
+    test('Page dispatch put on hold action...', () => {
+        expect(putSupplierOnHoldAddSpy).toBeCalledTimes(1);
+        expect(putSupplierOnHoldAddSpy).toBeCalledWith(
+            expect.objectContaining({
+                reasonOnHold: 'SOME REASON TO HOLD',
+                putOnHoldBy: 33087,
+                supplierId: 123
+            })
+        );
+    });
+});
+
+describe('When taking supplier off hold...', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+        const state = {
+            accountingCompanies: { items: [] },
+            oidc: { user: { profile: { name: 'User Name', employee: '/employees/33087' } } },
+            supplier: {
+                loading: false,
+                item: {
+                    ...supplierData,
+                    orderHold: 'Y',
+                    links: [
+                        { rel: 'hold', href: '/supplier/123/hold' },
+                        { rel: 'self', href: '/supplier/123' }
+                    ]
+                }
+            }
+        };
+        useSelector.mockImplementation(callback => callback(state));
+        render(<Supplier />);
+        const tab = screen.getByText('Purch');
+        fireEvent.click(tab);
+        const holdButton = screen.getByRole('button', { name: 'TAKE OFF HOLD' });
+        fireEvent.click(holdButton);
+        const reasonInput = screen.getByLabelText('Must give a reason:');
+        fireEvent.change(reasonInput, { target: { value: 'SOME REASON NOT TO HOLD' } });
+        const saveButton = screen.getByRole('button', { name: 'Save' });
+        fireEvent.click(saveButton);
+    });
+
+    test('Page dispatch put on hold action...', () => {
+        expect(putSupplierOnHoldAddSpy).toBeCalledTimes(1);
+        expect(putSupplierOnHoldAddSpy).toBeCalledWith(
+            expect.objectContaining({
+                reasonOffHold: 'SOME REASON NOT TO HOLD',
+                takenOffHoldBy: 33087,
+                supplierId: 123
+            })
+        );
+    });
+});
+
+describe('When field changed...', () => {
+    beforeEach(async () => {
+        jest.clearAllMocks();
+        const state = {
+            accountingCompanies: { items: [] },
+            supplier: {
+                loading: false,
+                editStatus: 'edit',
+                item: {
+                    ...supplierData,
+                    links: [
+                        { rel: 'self', href: '/supplier/123' },
+                        { rel: 'edit', href: '/supplier/123' }
+                    ]
+                }
+            }
+        };
+        useSelector.mockImplementation(callback => callback(state));
+        render(<Supplier />);
+
+        const phoneNumberInput = screen.getByLabelText('Phone Number');
+        fireEvent.change(phoneNumberInput, { target: { value: '0987654321' } });
+    });
+
+    test('shoud set edit status...', () => {
+        expect(setSupplierEditStatusSpy).toBeCalledWith('edit');
+    });
+});
+
+describe('When updating supplier...', () => {
+    beforeEach(async () => {
+        jest.clearAllMocks();
+        const state = {
+            accountingCompanies: { items: [] },
+            supplier: {
+                loading: false,
+                editStatus: 'edit',
+                item: {
+                    ...supplierData,
+                    links: [
+                        { rel: 'self', href: '/supplier/123' },
+                        { rel: 'edit', href: '/supplier/123' }
+                    ]
+                }
+            }
+        };
+        useSelector.mockImplementation(callback => callback(state));
+        render(<Supplier />);
+
+        const phoneNumberInput = screen.getByLabelText('Phone Number');
+        fireEvent.change(phoneNumberInput, { target: { value: '0987654321' } });
+        const saveButton = screen.getByRole('button', { name: 'Save' });
+        fireEvent.click(saveButton);
+    });
+
+    test('shoud clear errors dispatch update action...', () => {
+        expect(clearSupplierErrorsSpy).toBeCalledTimes(1);
+        expect(updateSupplierSpy).toBeCalledWith(
+            123,
+            expect.objectContaining({
+                ...supplierData,
+                phoneNumber: '0987654321'
+            })
+        );
+    });
+});
+
+describe('When creating supplier...', () => {
+    beforeEach(async () => {
+        jest.clearAllMocks();
+        const state = {
+            accountingCompanies: { items: [] },
+            supplier: {
+                loading: false,
+                editStatus: 'edit'
+            }
+        };
+        useSelector.mockImplementation(callback => callback(state));
+        render(<Supplier creating />);
+
+        const nameInput = screen.getByLabelText('Phone Number');
+        fireEvent.change(nameInput, { target: { value: 'NEW SUPPLIER NAME' } });
+        const saveButton = screen.getByRole('button', { name: 'Save' });
+        fireEvent.click(saveButton);
+    });
+
+    test('shoud clear errors dispatch add action...', () => {
+        expect(clearSupplierErrorsSpy).toBeCalledTimes(1);
+        expect(addSupplierSpy).toBeCalledWith(
+            expect.objectContaining({
+                accountingCompany: 'LINN',
+                approvedCarrier: 'N',
+                currencyCode: 'GBP',
+                expenseAccount: 'N',
+                liveOnOracle: 'Y',
+                orderHold: 'N',
+                paymentMethod: 'CHEQUE',
+                phoneNumber: 'NEW SUPPLIER NAME'
+            })
+        );
     });
 });
