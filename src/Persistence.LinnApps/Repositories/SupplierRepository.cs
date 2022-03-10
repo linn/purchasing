@@ -29,7 +29,7 @@
                 .Include(s => s.AccountController)
                 .Include(s => s.Planner)
                 .Include(s => s.VendorManager)
-                .Include(s => s.OrderFullAddress)
+                .Include(s => s.OrderAddress).ThenInclude(a => a.FullAddress)
                 .Include(s => s.OpenedBy)
                 .Include(s => s.ClosedBy)
                 .First(x => x.SupplierId == key);

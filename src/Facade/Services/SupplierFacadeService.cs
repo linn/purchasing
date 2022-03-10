@@ -114,8 +114,8 @@
                            RefersToFc = resource.RefersToFcId.HasValue
                             ? new Supplier { SupplierId = (int)resource.RefersToFcId } : null,
                            PmDeliveryDaysGrace = resource.PmDeliveryDaysGrace,
-                           OrderFullAddress = resource.OrderAddressId.HasValue
-                                                  ? new FullAddress { Id = (int)resource.OrderAddressId } : null,
+                           OrderAddress = resource.OrderAddressId.HasValue
+                                                  ? new Address { AddressId = (int)resource.OrderAddressId } : null,
                            InvoiceFullAddress = resource.InvoiceAddressId.HasValue
                                                   ? new FullAddress { Id = (int)resource.InvoiceAddressId } : null,
                            AccountController = resource.AccountControllerId.HasValue

@@ -15,36 +15,24 @@ import {
     itemSelectorHelpers,
     Loading,
     Dropdown,
-    DatePicker,
     TypeaheadTable,
     userSelectors
 } from '@linn-it/linn-form-components-library';
 import addressesActions from '../actions/addressesActions';
-// import addressActions from '../actions/addressActions';
 import currenciesActions from '../actions/currenciesActions';
 import employeesActions from '../actions/employeesActions';
-import departmentsActions from '../actions/departmentsActions';
 import nominalsActions from '../actions/nominalsActions';
-
 import countriesActions from '../actions/countriesActions';
-// import supplierActions from '../../actions/supplierActions';
 import suppliersActions from '../actions/suppliersActions';
 import partsActions from '../actions/partsActions';
 import poReqActions from '../actions/purchaseOrderReqActions';
-
 import history from '../history';
 import config from '../config';
 
 function POReqUtility({ creating }) {
     const dispatch = useDispatch();
     const suppliersSearchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(
-            state.suppliers
-            // 100,
-            // 'addressId', //todo update these
-            // 'addressId',
-            // 'addressee'
-        )
+        collectionSelectorHelpers.getSearchItems(state.suppliers, 100, 'id', 'id', 'name')
     );
     const suppliersSearchLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.suppliers)
@@ -109,8 +97,13 @@ function POReqUtility({ creating }) {
     // .getSearchItems(state)
     // .map(i => ({ ...i, name: i.departmentCode, id: i.departmentCode })),
 
+    const currentUserId = useSelector(reduxState => userSelectors.getUserNumber(reduxState));
+    const currentUserName = useSelector(reduxState => userSelectors.getUserNumber(reduxState));
+
     const [req, setReq] = useState({
-        requestedBy: { id: useSelector(reduxState => userSelectors.getUserNumber(reduxState)), fullName: useSelector(reduxState => userSelectors.getUserNumber(reduxState))
+        requestedBy: {
+            id: currentUserId,
+            fullName: currentUserName
         }
     });
     const snackbarVisible = useSelector(state =>
@@ -124,7 +117,7 @@ function POReqUtility({ creating }) {
 
     useEffect(() => {
         if (item?.reqNumber) {
-            setReq(item);           
+            setReq(item);
         }
     }, [item]);
 
@@ -148,7 +141,19 @@ function POReqUtility({ creating }) {
         setReq(a => ({ ...a, [propertyName]: { id: newValue.id, fullName: newValue.fullName } }));
     };
 
-    const editingAllowed = true;
+    const handleSupplierChange = newSupplier => {
+        setEditStatus('edit');
+        setReq(a => ({ ...a, supplier: { id: newSupplier.id, name: newSupplier.description } }));
+        console.info(newSupplier);
+
+        // handleFieldChange('supplierId', newValue.id);
+        // handleFieldChange('supplierName', newValue.name);
+        // todo set rest of supplier stuff,
+        // supplier contact
+        // email
+        // phone number
+        // also lookup address    };
+    };
 
     const reqStates = [{ id: 0, state: 'todo' }];
 
@@ -171,6 +176,14 @@ function POReqUtility({ creating }) {
         !creating && req?.links.some(l => l.rel === 'finance-check');
     const allowedToCreateOrder = () =>
         !creating && req?.links.some(l => l.rel === 'create-purchase-order');
+
+    const editingAllowed = creating
+        ? req?.links?.some(l => l.rel === 'create')
+        : req?.links?.some(l => l.rel === 'edit');
+
+    const inputIsValid = () => req?.reqDate?.length && req?.partNumber?.length;
+
+    const canSave = () => editStatus !== 'view' && editingAllowed && inputIsValid;
 
     return (
         <>
@@ -217,12 +230,20 @@ function POReqUtility({ creating }) {
                             <Button>explain states</Button>
                         </Grid>
                         <Grid item xs={2}>
-                            <DatePicker
-                                label="Req Date"
+                            {/* <DatePicker
+                             
                                 value={req.reqDate?.toString()}
                                 onChange={newValue => {
                                     handleFieldChange('reqDate', newValue);
                                 }}
+                            /> */}
+                            <InputField
+                                fullWidth
+                                value={req?.reqDate}
+                                label="Req Date"
+                                propertyName="reqDate"
+                                onChange={handleFieldChange}
+                                type="date"
                             />
                         </Grid>
 
@@ -316,16 +337,13 @@ function POReqUtility({ creating }) {
                         <Grid item xs={6}>
                             <Typeahead
                                 onSelect={newValue => {
-                                    handleFieldChange('supplierId', newValue.id);
-                                    handleFieldChange('supplierName', newValue.name);
-                                    //set rest of supplier stuff, supplier contact etc
-                                    // also lookup address
+                                    handleSupplierChange(newValue);
                                 }}
                                 label="Supplier"
                                 modal
                                 propertyName="supplierId"
                                 items={suppliersSearchResults}
-                                value={`${req.supplierId}: ${req.supplierName}`}
+                                value={`${req?.supplier?.id}: ${req?.supplier?.name}`}
                                 loading={suppliersSearchLoading}
                                 fetchItems={searchSuppliers}
                                 links={false}
@@ -428,7 +446,7 @@ function POReqUtility({ creating }) {
                                 value={req?.country?.name}
                                 label="Name"
                                 propertyName="countryName"
-                                onChange={() => {}}
+                                disabled
                             />
                         </Grid>
 
@@ -699,6 +717,31 @@ function POReqUtility({ creating }) {
                         {/* 
 public string Nominal { get; set; }
 public string Department { get; set; } */}
+
+                        <SaveBackCancelButtons
+                            saveDisabled={canSave}
+                            // backClick={() =>
+                            //     closeDialog ? closeDialog() : history.push('/purchasing')
+                            // }
+                            saveClick={() =>
+                                creating
+                                    ? dispatch(poReqActions.add(req))
+                                    : dispatch(poReqActions.update(req?.reqNumber, req))
+                            }
+                            cancelClick={() => {
+                                setEditStatus('view');
+                                if (creating) {
+                                    setReq({
+                                        requestedBy: {
+                                            id: currentUserId,
+                                            fullName: currentUserName
+                                        }
+                                    });
+                                } else {
+                                    setReq(item);
+                                }
+                            }}
+                        />
                     </Grid>
                 )}
             </Page>

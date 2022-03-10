@@ -118,10 +118,10 @@
             resultResource.SecondAuthBy.Should().Be(null);
             resultResource.FinanceCheckBy.Should().Be(null);
             resultResource.TurnedIntoOrderBy.Should().Be(null);
-            resultResource.Nominal.Should().Be(this.req.Nominal);
+            resultResource.Nominal.NominalCode.Should().Be(this.req.Nominal.NominalCode);
             resultResource.RemarksForOrder.Should().Be(this.req.RemarksForOrder);
             resultResource.InternalNotes.Should().Be(this.req.InternalNotes);
-            resultResource.Department.Should().Be(this.req.Department);
+            resultResource.Department.DepartmentCode.Should().Be(this.req.Department.DepartmentCode);
         }
 
         [Test]

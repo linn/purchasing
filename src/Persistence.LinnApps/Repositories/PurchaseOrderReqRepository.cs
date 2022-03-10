@@ -22,7 +22,6 @@
         public override PurchaseOrderReq FindById(int key)
         {
             var purchaseOrderReq = this.serviceDbContext.PurchaseOrderReqs
-                .Include(r => r.Supplier)
                 .Include(r => r.Currency)
                 .Include(r => r.Country)
                 .Include(r => r.RequestedBy)
@@ -32,6 +31,7 @@
                 .Include(r => r.FinanceCheckBy)
                 .Include(r => r.Nominal)
                 .Include(r => r.Department)
+                .Include(r => r.Supplier).ThenInclude(s => s.OrderAddress)
                 .FirstOrDefault(x => x.ReqNumber == key);
             return purchaseOrderReq;
         }
