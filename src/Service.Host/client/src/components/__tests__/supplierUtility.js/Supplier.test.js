@@ -216,7 +216,7 @@ describe('When edit link...', () => {
         render(<Supplier />);
     });
 
-    test('Page shows correct icon tooltip...', async () => {
+    test('shoud show correct icon tooltip...', async () => {
         fireEvent.mouseOver(screen.getByTestId('ModeEditIcon'));
         expect(await screen.findByText('You have write access to Suppliers')).toBeInTheDocument();
     });
@@ -238,7 +238,7 @@ describe('When no edit link...', () => {
         render(<Supplier />);
     });
 
-    test('Page shows correct icon tooltip...', async () => {
+    test('should show correct icon tooltip...', async () => {
         fireEvent.mouseOver(screen.getByTestId('EditOffIcon'));
         expect(
             await screen.findByText('You do not have write access to Suppliers')
@@ -264,7 +264,7 @@ describe('When hold link and supplier not on hold...', () => {
         fireEvent.click(tab);
     });
 
-    test('Page shows PUT ON HOLD button...', () => {
+    test('should render PUT ON HOLD button...', () => {
         expect(screen.getByRole('button', { name: 'PUT ON HOLD' })).toBeInTheDocument();
     });
 });
@@ -288,7 +288,7 @@ describe('When hold link and supplier on hold...', () => {
         fireEvent.click(tab);
     });
 
-    test('Page shows TAKE OFF HOLD button...', () => {
+    test('should render TAKE OFF HOLD button...', () => {
         expect(screen.getByRole('button', { name: 'TAKE OFF HOLD' })).toBeInTheDocument();
     });
 });
@@ -312,7 +312,7 @@ describe('When no hold link...', () => {
         fireEvent.click(tab);
     });
 
-    test('Page shows no hold change button...', () => {
+    test('should not render any hold change button...', () => {
         expect(screen.queryByRole('button', { name: 'TAKE OFF HOLD' })).not.toBeInTheDocument();
         expect(screen.queryByRole('button', { name: 'PUT ON HOLD' })).not.toBeInTheDocument();
     });
@@ -348,7 +348,7 @@ describe('When putting supplier on hold...', () => {
         fireEvent.click(saveButton);
     });
 
-    test('Page dispatch put on hold action...', () => {
+    test('should dispatch put on hold action...', () => {
         expect(putSupplierOnHoldAddSpy).toBeCalledTimes(1);
         expect(putSupplierOnHoldAddSpy).toBeCalledWith(
             expect.objectContaining({
@@ -426,7 +426,7 @@ describe('When field changed...', () => {
         fireEvent.change(phoneNumberInput, { target: { value: '0987654321' } });
     });
 
-    test('shoud set edit status...', () => {
+    test('should set edit status...', () => {
         expect(setSupplierEditStatusSpy).toBeCalledWith('edit');
     });
 });
