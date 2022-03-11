@@ -48,7 +48,6 @@ function Note() {
         itemSelectorHelpers.getItemLoading(state[plCreditDebitNote.item])
     );
     const pdfRef = useRef();
-
     const itemError = useSelector(state => getItemError(state, plCreditDebitNote.item));
 
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
@@ -304,6 +303,7 @@ function Note() {
                                     backClick={() => setCancelDialogOpen(false)}
                                     cancelClick={() => setCancelDialogOpen(false)}
                                     saveClick={() => {
+                                        dispatch(clearProcessData());
                                         dispatch(plCreditDebitNoteActions.clearErrorsForItem());
                                         dispatch(
                                             plCreditDebitNoteActions.update(id, {
@@ -335,7 +335,7 @@ function Note() {
                         onClick={() => {
                             setPdfLoading(true);
                             dispatch(plCreditDebitNoteActions.clearErrorsForItem());
-                            dispatch(clearProcessData);
+                            dispatch(clearProcessData());
                             emailPdf(pdfRef, blob => dispatch(sendPlNoteEmail(blob, id)));
                         }}
                         disabled={item?.cancelled}

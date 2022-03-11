@@ -414,7 +414,7 @@
             entity.HasKey(m => m.Id);
             entity.Property(e => e.Id).HasColumnName("USER_NUMBER");
             entity.Property(e => e.FullName).HasColumnName("USER_NAME").HasMaxLength(4000);
-            entity.HasOne(e => e.PhoneListEntry).WithOne().HasForeignKey("USER_NUMBER");
+            entity.HasOne(e => e.PhoneListEntry).WithMany().HasForeignKey(e => e.Id);
         }
 
         private void BuildPhoneList(ModelBuilder builder)

@@ -102,7 +102,8 @@
 
             var bccEntry = new Dictionary<string, string>
                                {
-                                   { bccFinancePerson.FullName, bccFinancePerson.PhoneListEntry.EmailAddress }
+                                   { "name", bccFinancePerson.FullName},
+                                   { "address", bccFinancePerson.PhoneListEntry.EmailAddress }
                                };
 
             var bccList = new List<Dictionary<string, string>>
