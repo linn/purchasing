@@ -74,6 +74,15 @@ const creditNoteState = {
     }
 };
 
+const cancelledNoteState = {
+    plCreditDebitNote: {
+        item: {
+            ...commonData,
+            cancelled: true
+        }
+    }
+};
+
 describe('On initialise...', () => {
     beforeEach(() => {
         render(<Note />);
@@ -175,5 +184,24 @@ describe('When sending email...', () => {
 
     test('should call email pdf function', () => {
         expect(emailPdf).toHaveBeenCalled();
+    });
+});
+
+describe('When cancelled note...', () => {
+    beforeEach(() => {
+        useSelector.mockImplementation(callback => callback(cancelledNoteState));
+        render(<Note />);
+
+        const emailButton = screen.getByRole('button', { name: 'email' });
+        fireEvent.click(emailButton);
+    });
+
+    test('should display cancelled status', () => {
+        expect(screen.getByText('CANCELLED')).toBeInTheDocument();
+    });
+    test('should disable buttons', () => {
+        expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+        expect(screen.getByRole('button', { name: 'email' })).toBeDisabled();
+
     });
 });
