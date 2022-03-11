@@ -7,6 +7,7 @@
 
     using Linn.Common.Authorisation;
     using Linn.Common.Email;
+    using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
 
     public class PlCreditDebitNoteService : IPlCreditDebitNoteService
@@ -15,12 +16,16 @@
 
         private readonly IEmailService emailService;
 
+        private readonly IRepository<Employee, int> employeeRepository;
+
         public PlCreditDebitNoteService(
             IAuthorisationService authService,
-            IEmailService emailService)
+            IEmailService emailService,
+            IRepository<Employee, int> employeeRepository)
         {
             this.authService = authService;
             this.emailService = emailService;
+            this.employeeRepository = employeeRepository;
         }
 
         public void CloseDebitNote(
@@ -91,13 +96,27 @@
                            };
             }
 
+            var bccFinancePersonId = note.Supplier.Country.Equals("GB") ? 33039 : 6001;
+
+            var bccFinancePerson = this.employeeRepository.FindById(bccFinancePersonId);
+
+            var bccEntry = new Dictionary<string, string>
+                               {
+                                   { bccFinancePerson.FullName, bccFinancePerson.PhoneListEntry.EmailAddress }
+                               };
+
+            var bccList = new List<Dictionary<string, string>>
+                              {
+                                  bccEntry
+                              };
+
             try
             {
                 this.emailService.SendEmail(
                     contact.EmailAddress.Trim(),
                     $"{contact.Person.FirstName} {contact.Person.LastName}",
                     null,
-                    null,
+                    bccList,
                     sender.PhoneListEntry.EmailAddress.Trim(),
                     sender.FullName,
                     $"Linn Products {note.NoteType.PrintDescription} {note.NoteNumber}",

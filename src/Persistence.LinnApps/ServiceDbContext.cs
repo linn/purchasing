@@ -340,6 +340,7 @@
             entity.Property(a => a.Notes).HasColumnName("NOTES").HasMaxLength(1000);
             entity.Property(a => a.OrganisationId).HasColumnName("ORGANISATION_ID");
             entity.HasMany(s => s.SupplierContacts).WithOne().HasForeignKey(c => c.SupplierId);
+            entity.Property(s => s.Country).HasColumnName("COUNTRY");
         }
 
         private void BuildSupplierContacts(ModelBuilder builder)
