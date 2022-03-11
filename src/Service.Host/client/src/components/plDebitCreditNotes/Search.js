@@ -63,12 +63,17 @@ function Search() {
                     <CreateButton createUrl={createUrl} disabled={!createUrl} />
                 </Grid>
                 <Grid item xs={12}>
+                    <Typography variant="subtitle">
+                        Search by order number, returns order number, note number or supplier.
+                    </Typography>
+                </Grid>
+                <Grid item xs={12}>
                     <TypeaheadTable
                         table={searchResultsTable}
                         columnNames={['#', 'Type', 'Order', 'Supplier', 'Name', 'Part']}
                         links={false}
                         fetchItems={search}
-                        placeholder="Note Number or Supplier"
+                        placeholder="Start typing..."
                         onSelect={newVal => history.push(utilities.getSelfHref(newVal))}
                         clearSearch={() => {}}
                         loading={searchLoading}

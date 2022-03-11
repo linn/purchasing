@@ -70,6 +70,7 @@
         {
             return x => x.NoteNumber.ToString() == searchTerm
                         || x.PurchaseOrder.OrderNumber.ToString() == searchTerm
+                        || x.ReturnsOrderNumber.ToString() == searchTerm
                         || x.Supplier.SupplierId.ToString() == searchTerm
                         || x.Supplier.Name.ToUpper().Contains(searchTerm.ToUpper());
         }
