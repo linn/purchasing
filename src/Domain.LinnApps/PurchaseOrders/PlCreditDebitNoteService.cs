@@ -120,7 +120,7 @@
                     sender.PhoneListEntry.EmailAddress.Trim(),
                     sender.FullName,
                     $"Linn Products {note.NoteType.PrintDescription} {note.NoteNumber}",
-                    string.Empty,
+                    $"Attached is a copy of Linn Products {note.NoteType.PrintDescription} {note.NoteNumber}",
                     pdfAttachment,
                     $"{note.NoteType.PrintDescription} {note.NoteNumber}");
 

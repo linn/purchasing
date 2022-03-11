@@ -48,7 +48,10 @@
                                                                      {
                                                                          EmailAddress = "supplier@address.com",
                                                                          IsMainOrderContact = "Y",
-                                                                         Person = new Person { FirstName = "MR", LastName = "SUPPLIER"}
+                                                                         Person = new Person
+                                                                             {
+                                                                                 FirstName = "MR", LastName = "SUPPLIER"
+                                                                             }
                                                                      }
                                                              }
             };

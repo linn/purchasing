@@ -90,7 +90,7 @@
                this.sender.PhoneListEntry.EmailAddress,
                this.sender.FullName,
                $"Linn Products {this.note.NoteType.PrintDescription} {this.note.NoteNumber}",
-               string.Empty,
+               $"Attached is a copy of Linn Products {this.note.NoteType.PrintDescription} {this.note.NoteNumber}",
                null,
                $"{this.note.NoteType.PrintDescription} {this.note.NoteNumber}");
         }
