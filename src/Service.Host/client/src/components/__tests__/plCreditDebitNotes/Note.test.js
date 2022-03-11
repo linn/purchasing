@@ -202,6 +202,5 @@ describe('When cancelled note...', () => {
     test('should disable buttons', () => {
         expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled();
         expect(screen.getByRole('button', { name: 'email' })).toBeDisabled();
-
     });
 });
