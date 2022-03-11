@@ -81,7 +81,7 @@
            this.MockEmailService.Received().SendEmail(
                this.supplier.SupplierContacts.First(x => x.IsMainOrderContact == "Y").EmailAddress,
                "MR SUPPLIER",
-               Arg.Any<IEnumerable<Dictionary<string, string>>>(),
+               Arg.Any<List<Dictionary<string, string>>>(),
                Arg.Is<IEnumerable<Dictionary<string, string>>>(
                    l => l.FirstOrDefault(x => x.ContainsValue(this.financePerson.PhoneListEntry.EmailAddress)) != null),
                this.sender.PhoneListEntry.EmailAddress,

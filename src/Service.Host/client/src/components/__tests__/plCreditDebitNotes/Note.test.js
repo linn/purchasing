@@ -62,7 +62,7 @@ const debitNoteState = {
         item: {
             ...commonData,
             noteType: 'D',
-            noteTypePrintDescription: 'DEBIT'
+            typePrintDescription: 'DEBIT NOTE'
         }
     }
 };
@@ -71,7 +71,7 @@ const creditNoteState = {
         item: {
             ...commonData,
             noteType: 'C',
-            noteTypePrintDescription: 'CREDIT'
+            typePrintDescription: 'CREDIT NOTE'
         }
     }
 };
@@ -116,7 +116,7 @@ describe('When debit note...', () => {
     });
 
     test('should render debit note', () => {
-        expect(screen.getByText('Linn DEBIT Note 123')).toBeInTheDocument();
+        expect(screen.getByText('Linn DEBIT NOTE 123')).toBeInTheDocument();
         expect(screen.getByText('THESE ITEMS ARE RETURNED FOR CREDIT')).toBeInTheDocument();
         expect(screen.getByText('DO NOT RESSUPPLY')).toBeInTheDocument();
         expect(screen.getByText('THIS IS A PURCHASE LEDGER DEBIT NOTE')).toBeInTheDocument();
@@ -130,7 +130,7 @@ describe('When credit note...', () => {
     });
 
     test('should render credit note', () => {
-        expect(screen.getByText('Linn CREDIT Note 123')).toBeInTheDocument();
+        expect(screen.getByText('Linn CREDIT NOTE 123')).toBeInTheDocument();
         expect(screen.queryByText('THESE ITEMS ARE RETURNED FOR CREDIT')).not.toBeInTheDocument();
         expect(screen.queryByText('DO NOT RESSUPPLY')).not.toBeInTheDocument();
     });
