@@ -27,7 +27,7 @@
                                 PartNumber = "PART",
                                 DateCreated = DateTime.UnixEpoch,
                                 NetTotal = 100,
-                                NoteType = "C",
+                                NoteType = new CreditDebitNoteType { Type = "C" },
                                 Notes = "NOTES",
                                 OrderQty = 456,
                                 PurchaseOrder = new PurchaseOrder { OrderNumber = 4567 },
@@ -67,7 +67,7 @@
             resource.PartNumber.Should().Be(this.data.PartNumber);
             resource.DateCreated.Should().Be(DateTime.UnixEpoch.ToString("o"));
             resource.NetTotal.Should().Be(this.data.NetTotal);
-            resource.NoteType.Should().Be(this.data.NoteType);
+            resource.NoteType.Should().Be(this.data.NoteType.Type);
             resource.Notes.Should().Be(this.data.Notes);
             resource.OrderQty.Should().Be(this.data.OrderQty);
             resource.OriginalOrderNumber.Should().Be(this.data.PurchaseOrder.OrderNumber);

@@ -97,7 +97,7 @@
             var date = string.IsNullOrEmpty(searchResource.DateClosed)
                            ? (DateTime?)null
                            : DateTime.Parse(searchResource.DateClosed);
-            return x => x.DateClosed == date && x.NoteType == searchResource.NoteType;
+            return x => x.DateClosed == date && x.NoteType.Type == searchResource.NoteType;
         }
     }
 }

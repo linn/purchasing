@@ -25,8 +25,19 @@
             this.MockPlCreditDebitNoteRepository.FilterBy(Arg.Any<Expression<Func<PlCreditDebitNote, bool>>>())
                 .Returns(new List<PlCreditDebitNote>
                              {
-                                    new PlCreditDebitNote { NoteNumber = 1, Supplier = new Supplier { SupplierId = 1 } },
-                                    new PlCreditDebitNote { NoteNumber = 2, Supplier = new Supplier { SupplierId = 2 } }
+                                    new PlCreditDebitNote
+                                        {
+                                            NoteNumber = 1, 
+                                            Supplier = new Supplier { SupplierId = 1 },
+                                            NoteType = new CreditDebitNoteType { Type = "D" }
+
+                                        },
+                                    new PlCreditDebitNote
+                                        {
+                                            NoteNumber = 2, 
+                                            Supplier = new Supplier { SupplierId = 2 },
+                                            NoteType = new CreditDebitNoteType { Type = "D" }
+                                        }
                              }.AsQueryable());
             this.Response = this.Client.Get(
                 "/purchasing/open-debit-notes",

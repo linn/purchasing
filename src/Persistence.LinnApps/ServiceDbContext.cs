@@ -124,6 +124,9 @@
             this.BuildSupplierContacts(builder);
             this.BuildPersons(builder);
             this.BuildPlCreditDebitNotes(builder);
+            this.BuildCreditDebitNoteTypes(builder);
+            this.BuildPhoneList(builder);
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -410,6 +413,15 @@
             entity.HasKey(m => m.Id);
             entity.Property(e => e.Id).HasColumnName("USER_NUMBER");
             entity.Property(e => e.FullName).HasColumnName("USER_NAME").HasMaxLength(4000);
+            entity.HasOne(e => e.PhoneListEntry).WithOne().HasForeignKey("USER_NUMBER");
+        }
+
+        private void BuildPhoneList(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PhoneListEntry>().ToTable("PHONE_LIST");
+            entity.HasKey(m => m.UserNumber);
+            entity.Property(e => e.UserNumber).HasColumnName("USER_NUMBER");
+            entity.Property(e => e.EmailAddress).HasColumnName("EMAIL_ADDRESS");
         }
 
         private void BuildFullAddresses(ModelBuilder builder)
@@ -669,7 +681,6 @@
             entity.Property(a => a.ClosedBy).HasColumnName("CLOSED_BY");
             entity.Property(a => a.DateClosed).HasColumnName("DATE_CLOSED");
             entity.Property(a => a.NetTotal).HasColumnName("NET_TOTAL");
-            entity.Property(a => a.NoteType).HasColumnName("CDNOTE_TYPE").HasMaxLength(1);
             entity.Property(a => a.ReturnsOrderNumber).HasColumnName("RETURNS_ORDER_NUMBER");
             entity.Property(a => a.Notes).HasColumnName("NOTES").HasMaxLength(200);
             entity.Property(a => a.ReasonClosed).HasColumnName("REASON_CLOSED").HasMaxLength(2000);
@@ -687,6 +698,16 @@
             entity.Property(a => a.CancelledBy).HasColumnName("CANCELLED_BY");
             entity.Property(a => a.DateCancelled).HasColumnName("DATE_CANCELLED");
             entity.Property(a => a.ReasonCancelled).HasColumnName("REASON_CANCELLED");
+            entity.HasOne(a => a.NoteType).WithMany().HasForeignKey("CDNOTE_TYPE");
+        }
+
+        private void BuildCreditDebitNoteTypes(ModelBuilder builder)
+        {
+            var entity = builder.Entity<CreditDebitNoteType>().ToTable("CDNOTES_TYPES");
+            entity.HasKey(a => a.Type);
+            entity.Property(a => a.Type).HasColumnName("CDNOTE_TYPE");
+            entity.Property(a => a.Description).HasColumnName("DESCRIPTION");
+            entity.Property(a => a.PrintDescription).HasColumnName("PRINT_DESCRIPTION");
         }
     }
 }

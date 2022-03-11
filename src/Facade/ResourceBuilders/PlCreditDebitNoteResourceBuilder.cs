@@ -27,7 +27,6 @@
                        Notes = note.Notes,
                        SupplierName = note.Supplier?.Name,
                        DateCreated = note.DateCreated.ToString("o"),
-                       NoteType = note.NoteType,
                        SupplierFullAddress = note.Supplier.OrderFullAddress?.AddressString,
                        OrderUnitOfMeasure = note.OrderUnitOfMeasure,
                        OrderUnitPrice = note.OrderUnitPrice,
@@ -46,6 +45,8 @@
                                              }),
                        VatRate = note.VatRate,
                        Cancelled = note.CancelledBy.HasValue,
+                       NoteType = note.NoteType.Type,
+                       TypePrintDescription = note.NoteType.PrintDescription,
                        Links = this.BuildLinks(note, claims).ToArray()
                    };
         }

@@ -105,12 +105,12 @@ function Note() {
                     Linn Products Ltd, Glasgow Road, Waterfoot, Eaglesham, Glasgow, G76 0EQ,
                     Scotland, UK
                 </Typography>
-                <Typography variant="subtitle2">Telephone (0)141 307 777</Typography>
-                <Typography variant="caption">
+                <Typography variant="subtitle2">Telephone: (0)141 307 777</Typography>
+                <Typography variant="subtitle2">
                     Registered Office: Glasgow Road, Waterfoot, Eaglesham, Glasgow, G76 0EQ,
                     Scotland, UK.
                 </Typography>
-                <Typography variant="caption">Registered In Scotland Number: SC52366</Typography>
+                <Typography variant="subtitle2">Registered In Scotland Number: SC52366</Typography>
             </Grid>
             <SnackbarMessage
                 visible={snackbarVisible && processResult?.success}
@@ -120,7 +120,7 @@ function Note() {
 
             <Grid item xs={12}>
                 <Typography variant="h4">
-                    {`Linn ${item.noteType === 'D' ? 'Debit' : 'Debit'} Note ${item.noteNumber}`}
+                    {`Linn ${item.typePrintDescription} ${item.noteNumber}`}
                 </Typography>
             </Grid>
             <Grid item xs={2}>
@@ -250,7 +250,7 @@ function Note() {
 
             <Grid item xs={10}>
                 <Typography variant="subtitle2">
-                    {`THIS IS A PURCHASE LEDGER ${item.noteType === 'D' ? 'DEBIT' : 'CREDIT'} NOTE`}
+                    {`THIS IS A PURCHASE LEDGER ${item.typePrintDescription}`}
                 </Typography>
             </Grid>
         </Grid>

@@ -7,63 +7,37 @@
     using Linn.Common.Email;
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
 
     public class PlCreditDebitNoteEmailService : IPlCreditDebitNoteEmailService
     {
-        private readonly IEmailService emailService;
+        private readonly IPlCreditDebitNoteService domainService;
 
         private readonly IRepository<PlCreditDebitNote, int> noteRepository;
 
+        private readonly IRepository<Employee, int> employeeRepository;
+
         public PlCreditDebitNoteEmailService(
-            IEmailService emailService,
+            IPlCreditDebitNoteService domainService,
+            IRepository<Employee, int> employeeRepository,
             IRepository<PlCreditDebitNote, int> repository)
         {
+            this.domainService = domainService;
             this.noteRepository = repository;
-            this.emailService = emailService;
+            this.employeeRepository = employeeRepository;
         }
 
-        public IResult<ProcessResultResource> SendEmail(int noteNumber, Stream attachment)
+        public IResult<ProcessResultResource> SendEmail(
+            int senderUserNumber, int noteNumber, Stream attachment)
         {
             var note = this.noteRepository.FindById(noteNumber);
-            var contact = note.Supplier.SupplierContacts?.FirstOrDefault(c => c.IsMainOrderContact == "Y");
+            var sender = this.employeeRepository.FindById(senderUserNumber);
 
-            if (contact == null)
-            {
-                return new SuccessResult<ProcessResultResource>(
-                    new ProcessResultResource
-                        {
-                            Success = false,
-                            Message = "Supplier has no main order contact"
-                        });
-            }
+            var result = this.domainService.SendEmails(sender, note, attachment);
 
-            try
-            {
-                this.emailService.SendEmail(
-                    contact.EmailAddress, 
-                    $"{contact.Person.FirstName} {contact.Person.LastName}",
-                    null, 
-                    null,
-                    "purchasing@linn.co.uk", 
-                    "Linn",
-                    $"Note {noteNumber}",
-                    string.Empty,
-                    attachment,
-                    noteNumber.ToString());
-
-                return new SuccessResult<ProcessResultResource>(new ProcessResultResource(true, "Email Sent"));
-            }
-            catch (Exception e)
-            {
-                return new SuccessResult<ProcessResultResource>(
-                    new ProcessResultResource
-                        {
-                            Success = false, 
-                            Message = $"Error sending email. Error Message: {e.Message}"
-                        });
-            }
+            return new SuccessResult<ProcessResultResource>(new ProcessResultResource(result.Success, result.Message));
         }
     }
 }

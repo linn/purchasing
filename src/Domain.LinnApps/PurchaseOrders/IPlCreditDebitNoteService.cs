@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
 {
     using System.Collections.Generic;
+    using System.IO;
 
     public interface IPlCreditDebitNoteService
     {
@@ -20,5 +21,10 @@
             PlCreditDebitNote current,
             PlCreditDebitNote updated,
             IEnumerable<string> privileges);
+
+        public ProcessResult SendEmails(
+            Employee sender,
+            PlCreditDebitNote note, 
+            Stream pdfAttachment);
     }
 }
