@@ -28,12 +28,15 @@
                                  new PlCreditDebitNote
                                      {
                                          NoteNumber = 1, 
-                                         Supplier = new Supplier { Name = "SUPPLIER" }
+                                         Supplier = new Supplier { Name = "SUPPLIER" },
+                                         NoteType = new CreditDebitNoteType { Type = "D" }
+
                                      },
                                  new PlCreditDebitNote
                                      {
                                          NoteNumber = 2,  
-                                         Supplier = new Supplier { Name = "SUPPLIER 2" }
+                                         Supplier = new Supplier { Name = "SUPPLIER 2" },
+                                         NoteType = new CreditDebitNoteType { Type = "D" }
                                      }
                              }.AsQueryable());
             this.Response = this.Client.Get(

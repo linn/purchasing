@@ -8,8 +8,6 @@
     {
         public int NoteNumber { get; set; }
 
-        public string NoteType { get; set; }
-
         public string PartNumber { get; set; }
 
         public int OrderQty { get; set; }
@@ -53,5 +51,7 @@
         public DateTime? DateCancelled { get; set; }
 
         public string ReasonCancelled { get; set; }
+
+        public CreditDebitNoteType NoteType { get; set; }
     }
 }

@@ -45,7 +45,7 @@ function Search() {
                 { id: `${i}-0`, value: `${res.noteNumber}` },
                 { id: `${i}-1`, value: `${res.noteType}` },
                 { id: `${i}-2`, value: `${res.originalOrderNumber || ''}` },
-                { id: `${i}-3`, value: `${res.supplierId || ''}` },
+                { id: `${i}-3`, value: `${res.returnsOrderNumber || ''}` },
                 { id: `${i}-4`, value: `${res.supplierName || ''}` },
                 { id: `${i}-5`, value: `${res.partNumber || ''}` }
             ],
@@ -63,12 +63,17 @@ function Search() {
                     <CreateButton createUrl={createUrl} disabled={!createUrl} />
                 </Grid>
                 <Grid item xs={12}>
+                    <Typography variant="subtitle2">
+                        Search by order number, returns order number, note number or supplier.
+                    </Typography>
+                </Grid>
+                <Grid item xs={12}>
                     <TypeaheadTable
                         table={searchResultsTable}
-                        columnNames={['#', 'Type', 'Order', 'Supplier', 'Name', 'Part']}
+                        columnNames={['#', 'Type', 'PO', 'Returns Order', 'Supplier', 'Part']}
                         links={false}
                         fetchItems={search}
-                        placeholder="Note Number or Supplier"
+                        placeholder="Start typing..."
                         onSelect={newVal => history.push(utilities.getSelfHref(newVal))}
                         clearSearch={() => {}}
                         loading={searchLoading}

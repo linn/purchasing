@@ -61,7 +61,8 @@ const debitNoteState = {
     plCreditDebitNote: {
         item: {
             ...commonData,
-            noteType: 'D'
+            noteType: 'D',
+            typePrintDescription: 'DEBIT NOTE'
         }
     }
 };
@@ -69,7 +70,17 @@ const creditNoteState = {
     plCreditDebitNote: {
         item: {
             ...commonData,
-            noteType: 'C'
+            noteType: 'C',
+            typePrintDescription: 'CREDIT NOTE'
+        }
+    }
+};
+
+const cancelledNoteState = {
+    plCreditDebitNote: {
+        item: {
+            ...commonData,
+            cancelled: true
         }
     }
 };
@@ -105,7 +116,7 @@ describe('When debit note...', () => {
     });
 
     test('should render debit note', () => {
-        expect(screen.getByText('Linn Debit Note 123')).toBeInTheDocument();
+        expect(screen.getByText('Linn DEBIT NOTE 123')).toBeInTheDocument();
         expect(screen.getByText('THESE ITEMS ARE RETURNED FOR CREDIT')).toBeInTheDocument();
         expect(screen.getByText('DO NOT RESSUPPLY')).toBeInTheDocument();
         expect(screen.getByText('THIS IS A PURCHASE LEDGER DEBIT NOTE')).toBeInTheDocument();
@@ -119,7 +130,7 @@ describe('When credit note...', () => {
     });
 
     test('should render credit note', () => {
-        expect(screen.getByText('Linn Debit Note 123')).toBeInTheDocument();
+        expect(screen.getByText('Linn CREDIT NOTE 123')).toBeInTheDocument();
         expect(screen.queryByText('THESE ITEMS ARE RETURNED FOR CREDIT')).not.toBeInTheDocument();
         expect(screen.queryByText('DO NOT RESSUPPLY')).not.toBeInTheDocument();
     });
@@ -175,5 +186,23 @@ describe('When sending email...', () => {
 
     test('should call email pdf function', () => {
         expect(emailPdf).toHaveBeenCalled();
+    });
+});
+
+describe('When cancelled note...', () => {
+    beforeEach(() => {
+        useSelector.mockImplementation(callback => callback(cancelledNoteState));
+        render(<Note />);
+
+        const emailButton = screen.getByRole('button', { name: 'email' });
+        fireEvent.click(emailButton);
+    });
+
+    test('should display cancelled status', () => {
+        expect(screen.getByText('CANCELLED')).toBeInTheDocument();
+    });
+    test('should disable buttons', () => {
+        expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+        expect(screen.getByRole('button', { name: 'email' })).toBeDisabled();
     });
 });

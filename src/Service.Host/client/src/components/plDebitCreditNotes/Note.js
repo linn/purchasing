@@ -48,7 +48,6 @@ function Note() {
         itemSelectorHelpers.getItemLoading(state[plCreditDebitNote.item])
     );
     const pdfRef = useRef();
-
     const itemError = useSelector(state => getItemError(state, plCreditDebitNote.item));
 
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
@@ -90,6 +89,13 @@ function Note() {
 
     const Content = () => (
         <Grid container spacing={3}>
+            {item.cancelled && (
+                <Grid item xs={12}>
+                    <Typography color="secondary" variant="h3">
+                        CANCELLED
+                    </Typography>
+                </Grid>
+            )}
             <Grid item xs={2}>
                 <img src={logo} alt="linn logo" />
             </Grid>
@@ -98,31 +104,24 @@ function Note() {
                     Linn Products Ltd, Glasgow Road, Waterfoot, Eaglesham, Glasgow, G76 0EQ,
                     Scotland, UK
                 </Typography>
-                <Typography variant="subtitle2">Telephone (0)141 307 777</Typography>
-                <Typography variant="caption">
+                <Typography variant="subtitle2">Telephone: (0)141 307 777</Typography>
+                <Typography variant="subtitle2">
                     Registered Office: Glasgow Road, Waterfoot, Eaglesham, Glasgow, G76 0EQ,
                     Scotland, UK.
                 </Typography>
-                <Typography variant="caption">Registered In Scotland Number: SC52366</Typography>
+                <Typography variant="subtitle2">Registered In Scotland Number: SC52366</Typography>
             </Grid>
+            <SnackbarMessage
+                visible={snackbarVisible && processResult?.success}
+                onClose={() => setSnackbarVisible(false)}
+                message={message}
+            />
 
             <Grid item xs={12}>
-                <SnackbarMessage
-                    visible={snackbarVisible && processResult?.success}
-                    onClose={() => setSnackbarVisible(false)}
-                    message={message}
-                />
                 <Typography variant="h4">
-                    {`Linn ${item.noteType === 'D' ? 'Debit' : 'Debit'} Note ${item.noteNumber}`}
+                    {`Linn ${item.typePrintDescription} ${item.noteNumber}`}
                 </Typography>
             </Grid>
-            {item.cancelled && (
-                <Grid item xs={12}>
-                    <Typography color="secondary" variant="h6">
-                        CANCELLED
-                    </Typography>
-                </Grid>
-            )}
             <Grid item xs={2}>
                 <Typography variant="subtitle2">Supplier:</Typography>
             </Grid>
@@ -250,7 +249,7 @@ function Note() {
 
             <Grid item xs={10}>
                 <Typography variant="subtitle2">
-                    {`THIS IS A PURCHASE LEDGER ${item.noteType === 'D' ? 'DEBIT' : 'CREDIT'} NOTE`}
+                    {`THIS IS A PURCHASE LEDGER ${item.typePrintDescription}`}
                 </Typography>
             </Grid>
         </Grid>
@@ -304,10 +303,11 @@ function Note() {
                                     backClick={() => setCancelDialogOpen(false)}
                                     cancelClick={() => setCancelDialogOpen(false)}
                                     saveClick={() => {
+                                        dispatch(clearProcessData());
                                         dispatch(plCreditDebitNoteActions.clearErrorsForItem());
                                         dispatch(
                                             plCreditDebitNoteActions.update(id, {
-                                                noteNumber: id,
+                                                noteNumber: Number(id),
                                                 reasonCancelled: cancelReason
                                             })
                                         );
@@ -321,16 +321,24 @@ function Note() {
                 <Grid item xs={8} />
 
                 <Grid item xs={4}>
-                    <Button onClick={() => savePdf(pdfRef)} variant="outlined">
+                    <Button
+                        onClick={async () => {
+                            setPdfLoading(true);
+                            await savePdf(pdfRef);
+                            setPdfLoading(false);
+                        }}
+                        variant="outlined"
+                    >
                         pdf
                     </Button>
                     <Button
                         onClick={() => {
                             setPdfLoading(true);
                             dispatch(plCreditDebitNoteActions.clearErrorsForItem());
-                            dispatch(clearProcessData);
+                            dispatch(clearProcessData());
                             emailPdf(pdfRef, blob => dispatch(sendPlNoteEmail(blob, id)));
                         }}
+                        disabled={item?.cancelled}
                         variant="contained"
                     >
                         email
@@ -339,6 +347,7 @@ function Note() {
                         onClick={() => setCancelDialogOpen(true)}
                         variant="contained"
                         color="secondary"
+                        disabled={item?.cancelled}
                     >
                         Cancel
                     </Button>

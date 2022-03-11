@@ -11,5 +11,7 @@
         public string FullName { get; set; }
 
         public IEnumerable<SigningLimit> SigningLimits { get; set; }
+
+        public PhoneListEntry PhoneListEntry { get; set; }
     }
 }

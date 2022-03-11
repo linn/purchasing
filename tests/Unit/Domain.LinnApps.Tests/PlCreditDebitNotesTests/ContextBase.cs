@@ -1,6 +1,8 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PlCreditDebitNotesTests
 {
     using Linn.Common.Authorisation;
+    using Linn.Common.Email;
+    using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
     using NSubstitute;
@@ -13,11 +15,21 @@
 
         protected IAuthorisationService MockAuthService { get; private set;  }
 
+        protected IEmailService MockEmailService{ get; private set; }
+
+        protected IRepository<Employee, int> MockEmployeeRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
             this.MockAuthService = Substitute.For<IAuthorisationService>();
-            this.Sut = new PlCreditDebitNoteService(this.MockAuthService);
+            this.MockEmailService = Substitute.For<IEmailService>();
+            this.MockEmployeeRepository = Substitute.For<IRepository<Employee, int>>();
+
+            this.Sut = new PlCreditDebitNoteService(
+                this.MockAuthService, 
+                this.MockEmailService, 
+                this.MockEmployeeRepository);
         }
     }
 }

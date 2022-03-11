@@ -71,8 +71,12 @@
         private async Task EmailDebitNote(HttpRequest req, HttpResponse res)
         {
             using var ms = new MemoryStream();
+            
             await req.Body.CopyToAsync(ms);
-            var result = this.emailService.SendEmail(req.RouteValues.As<int>("id"), ms);
+            var result = this.emailService.SendEmail(
+                req.HttpContext.User.GetEmployeeNumber(), 
+                req.RouteValues.As<int>("id"), 
+                ms);
 
             await res.Negotiate(result);
         }

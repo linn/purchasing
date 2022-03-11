@@ -9,12 +9,14 @@ import {
     Page,
     collectionSelectorHelpers,
     itemSelectorHelpers,
-    getItemError
+    getItemError,
+    utilities
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import Dialog from '@mui/material/Dialog';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+import { Link } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import CloseIcon from '@mui/icons-material/Close';
 import { DataGrid } from '@mui/x-data-grid';
@@ -91,7 +93,12 @@ function OpenDebitNotes() {
         {
             headerName: '#',
             field: 'noteNumber',
-            width: 100
+            width: 100,
+            renderCell: params => (
+                <Link to={utilities.getSelfHref(rows?.find(x => x.noteNumber === params.value))}>
+                    {params.value}
+                </Link>
+            )
         },
         {
             headerName: 'Part',

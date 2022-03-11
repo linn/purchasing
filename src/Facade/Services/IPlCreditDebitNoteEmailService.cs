@@ -7,6 +7,6 @@
 
     public interface IPlCreditDebitNoteEmailService
     {
-        IResult<ProcessResultResource> SendEmail(int noteNumber, Stream attachment);
+        IResult<ProcessResultResource> SendEmail(int senderUserNumber, int noteNumber, Stream attachment);
     }
 }

@@ -69,6 +69,8 @@
             string searchTerm)
         {
             return x => x.NoteNumber.ToString() == searchTerm
+                        || x.PurchaseOrder.OrderNumber.ToString() == searchTerm
+                        || x.ReturnsOrderNumber.ToString() == searchTerm
                         || x.Supplier.SupplierId.ToString() == searchTerm
                         || x.Supplier.Name.ToUpper().Contains(searchTerm.ToUpper());
         }
@@ -95,7 +97,7 @@
             var date = string.IsNullOrEmpty(searchResource.DateClosed)
                            ? (DateTime?)null
                            : DateTime.Parse(searchResource.DateClosed);
-            return x => x.DateClosed == date && x.NoteType == searchResource.NoteType;
+            return x => x.DateClosed == date && x.NoteType.Type == searchResource.NoteType;
         }
     }
 }

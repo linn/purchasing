@@ -45,8 +45,7 @@
                     => new EntityFrameworkRepository<FullAddress, int>(r.GetService<ServiceDbContext>()?.FullAddresses))
                 .AddTransient<IRepository<PurchaseOrder, int>, PurchaseOrderRepository>()
                 .AddTransient<IRepository<PurchaseLedger, int>, PurchaseLedgerRepository>()
-                .AddTransient<IRepository<Employee, int>, EntityFrameworkRepository<Employee, int>>(r
-                    => new EntityFrameworkRepository<Employee, int>(r.GetService<ServiceDbContext>()?.Employees))
+                .AddTransient<IRepository<Employee, int>, EmployeeRepository>()
                 .AddTransient<IRepository<PreferredSupplierChange, PreferredSupplierChangeKey>, PreferredSupplierChangeRepository>()
                 .AddTransient<IRepository<PriceChangeReason, string>, EntityFrameworkRepository<PriceChangeReason, string>>(r
                     => new EntityFrameworkRepository<PriceChangeReason, string>(r.GetService<ServiceDbContext>()?.PriceChangeReasons))

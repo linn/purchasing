@@ -65,5 +65,7 @@
         public int? Who { get; set; }
 
         public string ReasonCancelled { get; set; }
+
+        public string TypePrintDescription { get; set; }
     }
 }

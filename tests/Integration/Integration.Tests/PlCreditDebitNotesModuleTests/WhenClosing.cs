@@ -35,6 +35,7 @@
                                 NoteNumber = this.resource.NoteNumber,
                                 DateCreated = DateTime.UnixEpoch,
                                 Supplier = new Supplier { SupplierId = 1 },
+                                NoteType = new CreditDebitNoteType { Type = "C" }
                             };
 
             this.MockPlCreditDebitNoteRepository.FindById(1).Returns(this.note);

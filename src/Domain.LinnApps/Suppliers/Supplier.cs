@@ -79,5 +79,7 @@
         public int OrganisationId { get; set; }
 
         public IEnumerable<SupplierContact> SupplierContacts { get; set; }
+
+        public string Country { get; set; }
     }
 }
