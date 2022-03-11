@@ -8,7 +8,6 @@
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
-    using Linn.Purchasing.Domain.LinnApps.Suppliers.Exceptions;
     using Linn.Purchasing.Resources;
 
     public class PlCreditDebitNoteEmailService : IPlCreditDebitNoteEmailService
@@ -32,11 +31,12 @@
 
             if (contact == null)
             {
-                return new SuccessResult<ProcessResultResource>(new ProcessResultResource
-                                                                    {
-                                                                        Success = false,
-                                                                        Message = "Supplier has no main order contact"
-                                                                    });
+                return new SuccessResult<ProcessResultResource>(
+                    new ProcessResultResource
+                        {
+                            Success = false,
+                            Message = "Supplier has no main order contact"
+                        });
             }
 
             try
@@ -53,12 +53,16 @@
                     attachment,
                     noteNumber.ToString());
 
-                return new SuccessResult<ProcessResultResource>(new ProcessResultResource(true, "Email Requested"));
+                return new SuccessResult<ProcessResultResource>(new ProcessResultResource(true, "Email Sent"));
             }
             catch (Exception e)
             {
                 return new SuccessResult<ProcessResultResource>(
-                    new ProcessResultResource { Success = false, Message = e.Message });
+                    new ProcessResultResource
+                        {
+                            Success = false, 
+                            Message = $"Error sending email. Error Message: {e.Message}"
+                        });
             }
         }
     }
