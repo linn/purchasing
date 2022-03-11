@@ -91,5 +91,9 @@
         public string Notes { get; set; }
 
         public int OrganisationId { get; set; }
+
+        public AddressResource OrderAddress { get; set; }
+
+        public SupplierContactResource SupplierContact { get; set; }
     }
 }

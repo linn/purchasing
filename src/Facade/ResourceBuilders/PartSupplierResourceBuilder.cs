@@ -37,7 +37,6 @@
                            SupplierId = entity.SupplierId,
                            PartDescription = entity.Part.Description,
                            SupplierName = entity.Supplier.Name,
-                          
                            CreatedBy = entity.CreatedBy?.Id,
                            CreatedByName = entity.CreatedBy?.FullName,
                            AddressId = entity.DeliveryFullAddress?.Id,

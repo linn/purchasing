@@ -61,16 +61,16 @@
                            RequestedBy =
                                entity.RequestedBy != null ? new EmployeeResource { Id = entity.RequestedBy.Id } : null,
                            AuthorisedBy = entity.AuthorisedBy != null
-                                              ? new EmployeeResource { Id = entity.AuthorisedBy.Id }
+                                              ? new EmployeeResource { Id = entity.AuthorisedBy.Id, FullName = entity.AuthorisedBy.FullName }
                                               : null,
                            SecondAuthBy = entity.SecondAuthBy != null
-                                              ? new EmployeeResource { Id = entity.SecondAuthBy.Id }
+                                              ? new EmployeeResource { Id = entity.SecondAuthBy.Id, FullName = entity.SecondAuthBy.FullName }
                                               : null,
                            FinanceCheckBy = entity.FinanceCheckBy != null
-                                                ? new EmployeeResource { Id = entity.FinanceCheckBy.Id }
+                                                ? new EmployeeResource { Id = entity.FinanceCheckBy.Id, FullName = entity.FinanceCheckBy.FullName }
                                                 : null,
                            TurnedIntoOrderBy = entity.TurnedIntoOrderBy != null
-                                                   ? new EmployeeResource { Id = entity.TurnedIntoOrderBy.Id }
+                                                   ? new EmployeeResource { Id = entity.TurnedIntoOrderBy.Id, FullName = entity.TurnedIntoOrderBy.FullName }
                                                    : null,
                            Nominal = entity.Nominal != null
                                          ? new NominalResource

@@ -5,6 +5,7 @@
 
     using Linn.Common.Authorisation;
     using Linn.Common.Facade;
+    using Linn.Common.Persistence;
     using Linn.Common.Resources;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -14,9 +15,19 @@
     {
         private readonly IAuthorisationService authService;
 
-        public SupplierResourceBuilder(IAuthorisationService authService)
+        private readonly AddressResourceBuilder addressResourceBuilder;
+
+        private readonly SupplierContactResourceBuilder supplierContactResourceBuilder;
+
+
+        private readonly IRepository<SupplierContact, int> supplierContactRepository;
+
+        public SupplierResourceBuilder(IAuthorisationService authService, IRepository<SupplierContact, int> supplierContactRepository)
         {
             this.authService = authService;
+            this.addressResourceBuilder = new AddressResourceBuilder();
+            this.supplierContactResourceBuilder = new SupplierContactResourceBuilder();
+            this.supplierContactRepository = supplierContactRepository;
         }
 
         public SupplierResource Build(Supplier entity, IEnumerable<string> claims)
@@ -28,6 +39,9 @@
                     Links = this.BuildLinks(null, claims).ToArray()
                 };
             }
+
+            var supplierContact = this.supplierContactRepository.FindBy(
+                    c => c.SupplierId == entity.SupplierId && c.MainOrderContact == "Y");
 
             return new SupplierResource
             {
@@ -75,6 +89,8 @@
                 ReasonClosed = entity.ReasonClosed,
                 Notes = entity.Notes,
                 OrganisationId = entity.OrganisationId,
+                OrderAddress = entity.OrderAddress != null ? this.addressResourceBuilder.Build(entity.OrderAddress, new List<string>()) : null,
+                SupplierContact = supplierContact != null ? this.supplierContactResourceBuilder.Build(supplierContact, new List<string>()) : null,
                 Links = this.BuildLinks(entity, claims).ToArray()
             };
         }

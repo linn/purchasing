@@ -146,10 +146,13 @@ function POReqUtility({ creating }) {
         setReq(a => ({ ...a, supplier: { id: newSupplier.id, name: newSupplier.description } }));
         console.info(newSupplier);
 
+        
         // handleFieldChange('supplierId', newValue.id);
         // handleFieldChange('supplierName', newValue.name);
         // todo set rest of supplier stuff,
         // supplier contact
+        // set country codes
+        // set currency
         // email
         // phone number
         // also lookup address    };
@@ -690,7 +693,7 @@ function POReqUtility({ creating }) {
                                 value={req?.orderNumber}
                                 label="Order Number"
                                 propertyName="orderNumber"
-                                onChange={handleFieldChange}
+                                disabled
                             />
                         </Grid>
 

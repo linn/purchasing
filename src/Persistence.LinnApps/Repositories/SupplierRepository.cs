@@ -57,7 +57,7 @@
 
         public IQueryable<Supplier> FilterBy(Expression<Func<Supplier, bool>> expression)
         {
-            return this.serviceDbContext.Suppliers
+            return this.serviceDbContext.Suppliers.Include(s => s.OrderAddress).ThenInclude(a => a.FullAddress)
                 .AsNoTracking().Where(expression);
         }
     }

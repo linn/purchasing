@@ -33,11 +33,6 @@
 
         public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
 
-        //todo test with these deleted don't think they're needed
-        //public DbSet<PurchaseOrderDetail> PurchaseOrderDetails { get; set; }
-
-        //public DbSet<PurchaseOrderDelivery> PurchaseOrderDeliveries { get; set; }
-
         public DbSet<SigningLimit> SigningLimits { get; set; }
 
         public DbSet<SigningLimitLog> SigningLimitLogs { get; set; }
@@ -80,6 +75,8 @@
 
         public DbSet<PurchaseOrderReq> PurchaseOrderReqs { get; set; }
 
+        public DbSet<SupplierContact> SupplierContacts { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -119,6 +116,8 @@
             this.BuildPurchaseOrderReqs(builder);
             this.BuildDepartments(builder);
             this.BuildNominals(builder);
+            this.BuildSupplierContacts(builder);
+            this.BuildPersons(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -635,9 +634,7 @@
             entity.HasOne(e => e.AuthorisedBy).WithMany().HasForeignKey("AUTHORISED_BY");
             entity.Property(e => e.RemarksForOrder).HasColumnName("REMARKS_FOR_ORDER").HasMaxLength(200);
             entity.HasOne(e => e.Department).WithMany().HasForeignKey("DEPARTMENT");
-            //entity.Property(e => e.Department).HasColumnName("DEPARTMENT").HasMaxLength(10);
             entity.HasOne(e => e.Nominal).WithMany().HasForeignKey("NOMINAL");
-            //entity.Property(e => e.Nominal).HasColumnName("NOMINAL").HasMaxLength(10);
             entity.HasOne(e => e.TurnedIntoOrderBy).WithMany().HasForeignKey("TURNED_INTO_ORDER_BY");
             entity.HasOne(e => e.FinanceCheckBy).WithMany().HasForeignKey("FINANCE_CHECKED_BY");
             entity.HasOne(e => e.SecondAuthBy).WithMany().HasForeignKey("SECONDARY_AUTH_BY");
@@ -659,6 +656,27 @@
             e.HasKey(d => d.DepartmentCode);
             e.Property(d => d.DepartmentCode).HasColumnName("DEPARTMENT_CODE").HasMaxLength(10);
             e.Property(d => d.Description).HasColumnName("DESCRIPTION").HasMaxLength(50);
+        }
+
+        private void BuildSupplierContacts(ModelBuilder builder)
+        {
+            var e = builder.Entity<SupplierContact>().ToTable("SUPPLIER_CONTACTS");
+            e.HasKey(sc => sc.ContactId);
+            e.Property(sc => sc.ContactId).HasColumnName("PERSON_ID").HasMaxLength(8);
+            e.HasOne(sc => sc.Person).WithMany().HasForeignKey("PERSON_ID");
+            e.Property(sc => sc.Email).HasColumnName("EMAIL_ADDRESS").HasMaxLength(200);
+            e.Property(sc => sc.PhoneNumber).HasColumnName("PHONE_NUMBER").HasMaxLength(25);
+            e.Property(sc => sc.SupplierId).HasColumnName("SUPPLIER_ID").HasMaxLength(6);
+            e.Property(sc => sc.MainOrderContact).HasColumnName("MAIN_ORDER_CONTACT").HasMaxLength(1);
+        }
+
+        private void BuildPersons(ModelBuilder builder)
+        {
+            var e = builder.Entity<Person>().ToTable("PERSONS");
+            e.HasKey(sc => sc.PersonId);
+            e.Property(sc => sc.PersonId).HasColumnName("PERSON_ID").HasMaxLength(8);
+            e.Property(sc => sc.FirstName).HasColumnName("FIRST_NAME").HasMaxLength(20);
+            e.Property(sc => sc.LastName).HasColumnName("LAST_NAME").HasMaxLength(30);
         }
     }
 }

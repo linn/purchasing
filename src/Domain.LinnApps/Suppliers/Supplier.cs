@@ -76,5 +76,7 @@
         public string Notes { get; set; }
 
         public int OrganisationId { get; set; }
+
+        public SupplierContact SupplierContact { get; set; }
     }
 }
