@@ -76,7 +76,7 @@
             PlCreditDebitNote note, 
             Stream pdfAttachment)
         {
-            var contact = note.Supplier.SupplierContacts?.FirstOrDefault(c => c.IsMainOrderContact == "Y");
+            var contact = note.Supplier?.SupplierContacts?.FirstOrDefault(c => c.IsMainOrderContact == "Y");
 
             if (contact == null)
             {

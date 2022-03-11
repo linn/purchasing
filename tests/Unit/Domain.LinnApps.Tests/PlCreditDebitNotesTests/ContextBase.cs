@@ -17,19 +17,19 @@
 
         protected IEmailService MockEmailService{ get; private set; }
 
-        protected IRepository<Employee, int> EmployeeRepository { get; private set; }
+        protected IRepository<Employee, int> MockEmployeeRepository { get; private set; }
 
         [SetUp]
         public void SetUpContext()
         {
             this.MockAuthService = Substitute.For<IAuthorisationService>();
             this.MockEmailService = Substitute.For<IEmailService>();
-            this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
+            this.MockEmployeeRepository = Substitute.For<IRepository<Employee, int>>();
 
             this.Sut = new PlCreditDebitNoteService(
                 this.MockAuthService, 
                 this.MockEmailService, 
-                this.EmployeeRepository);
+                this.MockEmployeeRepository);
         }
     }
 }
