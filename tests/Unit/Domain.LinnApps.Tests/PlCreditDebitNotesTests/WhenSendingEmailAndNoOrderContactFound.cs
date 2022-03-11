@@ -17,7 +17,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.result = this.Sut.SendEmails(new Employee(), new PlCreditDebitNote(), Arg.Any<Stream>());
+            this.result = this.Sut.SendEmails(new Employee(), new PlCreditDebitNote(), null);
         }
 
         [Test]

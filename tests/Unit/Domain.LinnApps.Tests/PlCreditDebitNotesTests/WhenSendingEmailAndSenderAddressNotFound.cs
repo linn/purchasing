@@ -35,7 +35,7 @@
                                                                   }
                                        }
                     },
-                Arg.Any<Stream>());
+                null);
         }
 
         [Test]

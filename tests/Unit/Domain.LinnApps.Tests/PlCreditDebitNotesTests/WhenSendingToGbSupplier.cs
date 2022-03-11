@@ -1,7 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PlCreditDebitNotesTests
 {
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
 
     using FluentAssertions;
@@ -49,7 +48,11 @@
                                                                      {
                                                                          EmailAddress = "supplier@address.com",
                                                                          IsMainOrderContact = "Y",
-                                                                         Person = new Person { FirstName = "MR", LastName = "SUPPLIER"}
+                                                                         Person = new Person
+                                                                             {
+                                                                                 FirstName = "MR", 
+                                                                                 LastName = "SUPPLIER"
+                                                                             }
                                                                      }
                                                              }
                                   };
@@ -79,7 +82,7 @@
         public void ShouldCallEmailServiceWithCorrectParameters()
         {
            this.MockEmailService.Received().SendEmail(
-               this.supplier.SupplierContacts.First(x => x.IsMainOrderContact == "Y").EmailAddress,
+               "supplier@address.com",
                "MR SUPPLIER",
                Arg.Any<List<Dictionary<string, string>>>(),
                Arg.Is<IEnumerable<Dictionary<string, string>>>(
