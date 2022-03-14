@@ -83,7 +83,8 @@
                 .AddTransient<IFacadeResourceService<Planner, int, PlannerResource, PlannerResource>, PlannerService>()
                 .AddTransient<IFacadeResourceService<SupplierGroup, int, SupplierGroupResource, SupplierGroupResource>, SupplierGroupFacadeService>()
                 .AddTransient<IFacadeResourceFilterService<PlCreditDebitNote, int, PlCreditDebitNoteResource, PlCreditDebitNoteResource, PlCreditDebitNoteResource>, PlCreditDebitNoteFacadeService>()
-                .AddTransient<IPlCreditDebitNoteEmailService, PlCreditDebitNoteEmailService>();
+                .AddTransient<IPlCreditDebitNoteEmailService, PlCreditDebitNoteEmailService>()
+                .AddTransient<IBulkLeadTimesUpdaterService, BulkLeadTimesUpdaterService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)

@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
+    using System.IO;
     using System.Threading.Tasks;
 
     using Carter;
@@ -43,6 +44,8 @@
 
         private readonly IFacadeResourceService<Planner, int, PlannerResource, PlannerResource> plannerService;
 
+        private readonly IBulkLeadTimesUpdaterService bulkLeadTimesUpdaterService;
+
         public SupplierModule(
             IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource> partSupplierFacadeService,
             IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource> supplierFacadeService,
@@ -51,7 +54,8 @@
             IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource> priceChangeReasonService,
             IFacadeResourceService<PartCategory, string, PartCategoryResource, PartCategoryResource> partCategoryService,
             ISupplierHoldService supplierHoldService,
-            IFacadeResourceService<Planner, int, PlannerResource, PlannerResource> plannerService)
+            IFacadeResourceService<Planner, int, PlannerResource, PlannerResource> plannerService,
+            IBulkLeadTimesUpdaterService bulkLeadTimesUpdaterService)
         {
             this.supplierFacadeService = supplierFacadeService;
             this.partSupplierFacadeService = partSupplierFacadeService;
@@ -61,6 +65,7 @@
             this.partCategoryService = partCategoryService;
             this.supplierHoldService = supplierHoldService;
             this.plannerService = plannerService;
+            this.bulkLeadTimesUpdaterService = bulkLeadTimesUpdaterService;
 
             this.Get("/purchasing/suppliers", this.SearchSuppliers);
             this.Get("/purchasing/suppliers/{id:int}", this.GetSupplier);
@@ -77,10 +82,20 @@
             this.Post("/purchasing/preferred-supplier-changes", this.CreatePreferredSupplierChange);
             this.Get("/purchasing/price-change-reasons", this.GetPriceChangeReasons);
             this.Get("/purchasing/part-suppliers/part-price-conversions", this.GetPartPriceConversions);
+            this.Post("/purchasing/part-suppliers/bulk-lead-times/", this.UploadBulkLeadTimes);
             this.Get("/purchasing/part-categories/", this.SearchPartCategories);
 
             this.Post("/purchasing/suppliers/hold", this.ChangeHoldStatus);
             this.Get("/purchasing/suppliers/planners", this.GetPlanners);
+        }
+
+        private async Task UploadBulkLeadTimes(HttpRequest req, HttpResponse res)
+        {
+            var reader = new StreamReader(req.Body).ReadToEndAsync();
+
+            var result = this.bulkLeadTimesUpdaterService.BulkUpdateFromCsv(reader.Result);
+
+            await res.Negotiate(result);
         }
 
         private async Task GetSupplier(HttpRequest req, HttpResponse res)
