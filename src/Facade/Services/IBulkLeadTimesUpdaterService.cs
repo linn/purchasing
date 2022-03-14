@@ -5,6 +5,6 @@
 
     public interface IBulkLeadTimesUpdaterService
     {
-        SuccessResult<ProcessResultResource> BulkUpdateFromCsv(string csvString);
+        IResult<ProcessResultResource> BulkUpdateFromCsv(string csvString);
     }
 }

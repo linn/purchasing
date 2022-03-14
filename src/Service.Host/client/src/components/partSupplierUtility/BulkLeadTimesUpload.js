@@ -44,7 +44,15 @@ function BulkLeadTimesUpload() {
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
                 <Grid item xs={12}>
-                    <Typography variant="h3">Bulk Lead Times Upload</Typography>
+                    <Typography variant="h3">Bulk Lead Time Changes Uploader</Typography>
+                </Grid>
+                <Grid item xs={12}>
+                    <Typography variant="subtitle1">
+                        Upload a CSV file where each line takes the form:
+                    </Typography>
+                    <Typography variant="subtitle2">
+                        PART NUMBER , [new-lead-time-weeks-value]
+                    </Typography>
                 </Grid>
                 {loading ? (
                     <Grid item xs={12}>

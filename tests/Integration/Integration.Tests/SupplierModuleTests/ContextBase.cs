@@ -160,7 +160,9 @@
                 this.TransactionManager,
                 new PlannerResourceBuilder(this.MockEmployeeRepository));
 
-            this.BulkLeadTimesUpdaterService = new BulkLeadTimesUpdaterService();
+            this.BulkLeadTimesUpdaterService = new BulkLeadTimesUpdaterService(
+                this.MockPartSupplierDomainService,
+                this.TransactionManager);
 
             this.Client = TestClient.With<SupplierModule>(
                 services =>
