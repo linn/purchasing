@@ -96,6 +96,8 @@
 
         protected IPartSupplierService MockPartSupplierDomainService { get; set; }
 
+        protected IBulkLeadTimesUpdaterService BulkLeadTimesUpdaterService { get; set; }
+
         [SetUp]
         public void EstablishContext()
         {
@@ -158,6 +160,8 @@
                 this.TransactionManager,
                 new PlannerResourceBuilder(this.MockEmployeeRepository));
 
+            this.BulkLeadTimesUpdaterService = new BulkLeadTimesUpdaterService();
+
             this.Client = TestClient.With<SupplierModule>(
                 services =>
                     {
@@ -171,6 +175,8 @@
                         services.AddSingleton(this.PartCategoryService);
                         services.AddSingleton(this.SupplierHoldService);
                         services.AddSingleton(this.PlannerService);
+                        services.AddSingleton(this.BulkLeadTimesUpdaterService);
+
                         services.AddHandlers();
                     },
                 FakeAuthMiddleware.EmployeeMiddleware);
