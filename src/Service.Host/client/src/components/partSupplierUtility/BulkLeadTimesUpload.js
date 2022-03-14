@@ -5,7 +5,9 @@ import {
     Page,
     Loading,
     processSelectorHelpers,
-    SaveBackCancelButtons
+    SaveBackCancelButtons,
+    SnackbarMessage,
+    ErrorCard
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -28,6 +30,7 @@ function BulkLeadTimesUpload() {
     const dispatch = useDispatch();
 
     const handleUploadClick = () => {
+        dispatch(bulkLeadTimesUploadActions.clearProcessData());
         const reader = new FileReader();
         reader.onload = () => {
             const binaryStr = reader.result;
@@ -40,18 +43,33 @@ function BulkLeadTimesUpload() {
         processSelectorHelpers.getWorking(state[bulkLeadTimesUpload.item])
     );
 
+    const result = useSelector(state =>
+        processSelectorHelpers.getData(state[bulkLeadTimesUpload.item])
+    );
+
+    const message = useSelector(state =>
+        processSelectorHelpers.getMessageText(state[bulkLeadTimesUpload.item])
+    );
+
+    const snackbarVisible = useSelector(state =>
+        processSelectorHelpers.getMessageVisible(state[bulkLeadTimesUpload.item])
+    );
+    const setSnackbarVisible = () => dispatch(bulkLeadTimesUploadActions.setMessageVisible(false));
+
     return (
         <Page history={history} homeUrl={config.appRoot}>
+            <SnackbarMessage
+                visible={snackbarVisible && result?.success}
+                onClose={() => setSnackbarVisible(false)}
+                message={message}
+            />
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <Typography variant="h3">Bulk Lead Time Changes Uploader</Typography>
                 </Grid>
                 <Grid item xs={12}>
                     <Typography variant="subtitle1">
-                        Upload a CSV file where each line takes the form:
-                    </Typography>
-                    <Typography variant="subtitle2">
-                        PART NUMBER , [new-lead-time-weeks-value]
+                        Upload a CSV file with two columns: Part Number and Lead Time Weeks value
                     </Typography>
                 </Grid>
                 {loading ? (
@@ -62,7 +80,7 @@ function BulkLeadTimesUpload() {
                     <>
                         <Grid item xs={12}>
                             <Box
-                                sx={{ border: '1px dashed grey' }}
+                                sx={{ border: '1px dashed grey', margin: '10px' }}
                                 style={{ cursor: 'pointer' }}
                                 {...getRootProps()}
                             >
@@ -77,6 +95,7 @@ function BulkLeadTimesUpload() {
                                 {file && (
                                     <Chip
                                         label={file.name}
+                                        color="primary"
                                         onDelete={() => setFile(null)}
                                         variant="outlined"
                                     />
@@ -91,6 +110,11 @@ function BulkLeadTimesUpload() {
                                 saveClick={handleUploadClick}
                             />
                         </Grid>
+                        {result && !result.success && (
+                            <Grid item xs={12}>
+                                <ErrorCard errorMessage={result.message} />
+                            </Grid>
+                        )}
                     </>
                 )}
             </Grid>

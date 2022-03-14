@@ -86,7 +86,7 @@
             this.Get("/purchasing/part-categories/", this.SearchPartCategories);
 
             this.Post("/purchasing/suppliers/hold", this.ChangeHoldStatus);
-            this.Get("/purchasing/suppliers/planners", this.GetPlanners);
+            this.Get("/purchasing/suppliers/planners", this.GetPlanners); 
         }
 
         private async Task UploadBulkLeadTimes(HttpRequest req, HttpResponse res)
