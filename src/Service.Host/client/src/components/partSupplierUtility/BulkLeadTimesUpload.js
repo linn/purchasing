@@ -1,12 +1,16 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Page, Loading, processSelectorHelpers } from '@linn-it/linn-form-components-library';
+import {
+    Page,
+    Loading,
+    processSelectorHelpers,
+    SaveBackCancelButtons
+} from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Button from '@mui/material/Button';
 import { useSelector, useDispatch } from 'react-redux';
 
 import bulkLeadTimesUploadActions from '../../actions/bulkLeadTimesUploadActions';
@@ -56,7 +60,7 @@ function BulkLeadTimesUpload() {
                                 {...getRootProps()}
                             >
                                 <Typography
-                                    style={{ paddingTop: '10px', paddingBottom: '50px' }}
+                                    style={{ paddingTop: '10px', paddingBottom: '20px' }}
                                     variant="subtitle2"
                                 >
                                     Drop the file here or click to browse...
@@ -72,11 +76,13 @@ function BulkLeadTimesUpload() {
                                 )}
                             </Box>
                         </Grid>
-                        <Grid item xs={10} />
-                        <Grid item xs={2}>
-                            <Button onClick={handleUploadClick} variant="outlined" color="primary">
-                                UPLOAD
-                            </Button>
+                        <Grid item xs={12}>
+                            <SaveBackCancelButtons
+                                backClick={() => history.push('/purchasing/part-suppliers')}
+                                cancelClick={() => setFile(null)}
+                                saveDisabled={!file}
+                                saveClick={handleUploadClick}
+                            />
                         </Grid>
                     </>
                 )}
