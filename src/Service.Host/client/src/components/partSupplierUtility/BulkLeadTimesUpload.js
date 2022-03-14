@@ -30,7 +30,6 @@ function BulkLeadTimesUpload() {
     const handleUploadClick = () => {
         const reader = new FileReader();
         reader.onload = () => {
-            // Do whatever you want with the file contents
             const binaryStr = reader.result;
             dispatch(bulkLeadTimesUploadActions.requestProcessStart(binaryStr, null));
         };
