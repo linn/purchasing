@@ -347,7 +347,7 @@
                 return new ProcessResult(true, $"{successCount} records updated successfully");
             }
 
-            var errorList = errors
+            var errorMessage = errors
                 .Aggregate(
                     "Updates for the following parts could not be processed: ",
                     (current, error) 
@@ -355,7 +355,7 @@
 
             return new ProcessResult(
                 false,
-                $"{successCount} out of {leadTimeUpdateModels.Count} records updated successfully. {errorList}");
+                $"{successCount} out of {leadTimeUpdateModels.Count} records updated successfully. {errorMessage}");
         }
 
         private static void ValidateFields(PartSupplier candidate)
