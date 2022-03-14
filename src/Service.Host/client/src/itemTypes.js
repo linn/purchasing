@@ -146,3 +146,9 @@ export const sendPlNoteEmail = new ItemType(
     'SEND_PL_NOTE_EMAIL',
     '/purchasing/pl-credit-debit-notes/email/'
 );
+
+export const bulkLeadTimesUpload = new ItemType(
+    'bulkLeadTimesUpload',
+    'BULK_LEAD_TIMES_UPLOAD',
+    '/purchasing/part-suppliers/bulk-lead-times/'
+);

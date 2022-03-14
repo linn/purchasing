@@ -30,6 +30,7 @@ import SpendByPart from './reports/SpendByPart';
 import OpenDebitNotes from './plDebitCreditNotes/OpenDebitNotes';
 import Search from './plDebitCreditNotes/Search';
 import Note from './plDebitCreditNotes/Note';
+import BulkLeadTimesUpload from './partSupplierUtility/BulkLeadTimesUpload';
 
 const Root = ({ store }) => (
     <div>
@@ -73,6 +74,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/part-suppliers"
                                     component={PartSupplierSearch}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/part-suppliers/bulk-lead-times"
+                                    component={BulkLeadTimesUpload}
                                 />
                                 <Route
                                     exact
