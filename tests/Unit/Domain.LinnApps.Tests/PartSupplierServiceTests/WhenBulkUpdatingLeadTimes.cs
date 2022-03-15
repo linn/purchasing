@@ -37,7 +37,7 @@
         }
 
         [Test]
-        public void ShouldReturnError()
+        public void ShouldReturnSuccess()
         {
             this.result.Success.Should().BeTrue();
             this.result.Message.Should().Be(
