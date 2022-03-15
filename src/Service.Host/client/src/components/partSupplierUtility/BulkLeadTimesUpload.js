@@ -7,7 +7,8 @@ import {
     processSelectorHelpers,
     SaveBackCancelButtons,
     SnackbarMessage,
-    ErrorCard
+    ErrorCard,
+    getItemError
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -30,6 +31,7 @@ function BulkLeadTimesUpload() {
     const dispatch = useDispatch();
 
     const handleUploadClick = () => {
+        dispatch(bulkLeadTimesUploadActions.clearErrorsForItem());
         dispatch(bulkLeadTimesUploadActions.clearProcessData());
         const reader = new FileReader();
         reader.onload = () => {
@@ -47,6 +49,8 @@ function BulkLeadTimesUpload() {
         processSelectorHelpers.getData(state[bulkLeadTimesUpload.item])
     );
 
+    const error = useSelector(state => getItemError(state, bulkLeadTimesUpload.item));
+
     const message = useSelector(state =>
         processSelectorHelpers.getMessageText(state[bulkLeadTimesUpload.item])
     );
@@ -58,6 +62,11 @@ function BulkLeadTimesUpload() {
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
+            {error && (
+                <Grid item xs={12}>
+                    <ErrorCard errorMessage={error.details} />
+                </Grid>
+            )}
             <SnackbarMessage
                 visible={snackbarVisible && result?.success}
                 onClose={() => setSnackbarVisible(false)}

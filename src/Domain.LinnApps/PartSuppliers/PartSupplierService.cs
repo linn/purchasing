@@ -319,8 +319,16 @@
             return candidate;
         }
 
-        public ProcessResult BulkUpdateLeadTimes(IEnumerable<LeadTimeUpdateModel> changes)
+        public ProcessResult BulkUpdateLeadTimes(
+            IEnumerable<LeadTimeUpdateModel> changes,
+            IEnumerable<string> privileges)
         {
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
+            {
+                throw new UnauthorisedActionException(
+                    "You are not authorised to update Part Supplier records");
+            }
+
             var successCount = 0;
             var errors = new List<string>();
             var leadTimeUpdateModels = changes.ToList();

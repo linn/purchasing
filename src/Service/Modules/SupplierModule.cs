@@ -93,7 +93,8 @@
         {
             var reader = new StreamReader(req.Body).ReadToEndAsync();
 
-            var result = this.bulkLeadTimesUpdaterService.BulkUpdateFromCsv(reader.Result);
+            var result = this.bulkLeadTimesUpdaterService.BulkUpdateFromCsv(
+                reader.Result, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }

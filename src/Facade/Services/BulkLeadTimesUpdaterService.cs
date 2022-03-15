@@ -23,7 +23,8 @@
             this.transactionManager = transactionManager;
         }
 
-        public IResult<ProcessResultResource> BulkUpdateFromCsv(string csvString)
+        public IResult<ProcessResultResource> BulkUpdateFromCsv(
+            string csvString, IEnumerable<string> privileges)
         {
             var reader = new StringReader(csvString);
             var changes = new List<LeadTimeUpdateModel>();
@@ -36,7 +37,7 @@
                     changes.Add(new LeadTimeUpdateModel(row[0], row[1]));
                 }
 
-                var result = this.domainService.BulkUpdateLeadTimes(changes);
+                var result = this.domainService.BulkUpdateLeadTimes(changes, privileges);
                 this.transactionManager.Commit();
 
                 return new SuccessResult<ProcessResultResource>(
