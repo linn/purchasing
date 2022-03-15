@@ -45,6 +45,7 @@ function BulkLeadTimesUpload() {
             );
         };
         reader.readAsArrayBuffer(file);
+        setFile(null);
     };
 
     const loading = useSelector(state =>
