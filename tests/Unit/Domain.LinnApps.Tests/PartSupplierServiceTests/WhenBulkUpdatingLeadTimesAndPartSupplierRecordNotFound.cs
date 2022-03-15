@@ -28,6 +28,7 @@
                 .ReturnsNull();
 
             this.result = this.Sut.BulkUpdateLeadTimes(
+                1,
                 new List<LeadTimeUpdateModel> { new LeadTimeUpdateModel("PART", "1") },
                 new List<string>());
         }

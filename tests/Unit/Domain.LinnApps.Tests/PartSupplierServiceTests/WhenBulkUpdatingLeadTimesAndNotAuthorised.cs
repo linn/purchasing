@@ -20,7 +20,8 @@
         [SetUp]
         public void SetUp()
         {
-            this.action = () => this.Sut.BulkUpdateLeadTimes(new List<LeadTimeUpdateModel>(), new List<string>());
+            this.action = () => this.Sut.BulkUpdateLeadTimes(
+                1, new List<LeadTimeUpdateModel>(), new List<string>());
         }
 
         [Test]
