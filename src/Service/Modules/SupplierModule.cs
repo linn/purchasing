@@ -82,7 +82,7 @@
             this.Post("/purchasing/preferred-supplier-changes", this.CreatePreferredSupplierChange);
             this.Get("/purchasing/price-change-reasons", this.GetPriceChangeReasons);
             this.Get("/purchasing/part-suppliers/part-price-conversions", this.GetPartPriceConversions);
-            this.Post("/purchasing/part-suppliers/bulk-lead-times/", this.UploadBulkLeadTimes);
+            this.Post("/purchasing/part-suppliers/bulk-lead-times/{supplierId:int}", this.UploadBulkLeadTimes);
             this.Get("/purchasing/part-categories/", this.SearchPartCategories);
 
             this.Post("/purchasing/suppliers/hold", this.ChangeHoldStatus);
@@ -91,10 +91,16 @@
 
         private async Task UploadBulkLeadTimes(HttpRequest req, HttpResponse res)
         {
+            var supplierId = req.RouteValues.As<int>("supplierId");
+            var orgId = req.Query.As<int?>("orgId");
+
             var reader = new StreamReader(req.Body).ReadToEndAsync();
 
             var result = this.bulkLeadTimesUpdaterService.BulkUpdateFromCsv(
-                reader.Result, req.HttpContext.GetPrivileges());
+                supplierId,
+                reader.Result, 
+                req.HttpContext.GetPrivileges(),
+                orgId);
 
             await res.Negotiate(result);
         }

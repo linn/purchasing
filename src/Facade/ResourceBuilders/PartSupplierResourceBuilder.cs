@@ -90,21 +90,17 @@
                 if (this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
                 {
                     yield return new LinkResource { Rel = "edit", Href = this.GetLocation(model) };
+                    yield return new LinkResource
+                                     {
+                                         Rel = "bulk-update-lead-times",
+                                         Href = $"/purchasing/part-suppliers/bulk-lead-times/{model.SupplierId}"
+                                     };
                 }
             }
 
             if (this.authService.HasPermissionFor(AuthorisedAction.PartSupplierCreate, privileges))
             {
                 yield return new LinkResource { Rel = "create", Href = $"/purchasing/part-suppliers/create" };
-            }
-
-            if (this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
-            {
-                yield return new LinkResource
-                                 {
-                                     Rel = "bulk-update-lead-times", 
-                                     Href = "/purchasing/part-suppliers/bulk-lead-times"
-                                 };
             }
         }
     }

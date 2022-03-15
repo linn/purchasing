@@ -15,7 +15,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import { useSelector, useDispatch } from 'react-redux';
-
+import { useParams } from 'react-router';
 import bulkLeadTimesUploadActions from '../../actions/bulkLeadTimesUploadActions';
 import history from '../../history';
 import config from '../../config';
@@ -29,6 +29,7 @@ function BulkLeadTimesUpload() {
     const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
     const dispatch = useDispatch();
+    const { supplierId } = useParams();
 
     const handleUploadClick = () => {
         dispatch(bulkLeadTimesUploadActions.clearErrorsForItem());
@@ -36,7 +37,7 @@ function BulkLeadTimesUpload() {
         const reader = new FileReader();
         reader.onload = () => {
             const binaryStr = reader.result;
-            dispatch(bulkLeadTimesUploadActions.requestProcessStart(binaryStr, null));
+            dispatch(bulkLeadTimesUploadActions.requestProcessStart(binaryStr, supplierId));
         };
         reader.readAsArrayBuffer(file);
     };

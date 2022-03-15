@@ -45,7 +45,7 @@
             var bulkUpdateLeadTimesHref = this.result
                 .Links.SingleOrDefault(x => x.Rel == "bulk-update-lead-times")?.Href;
             bulkUpdateLeadTimesHref.Should()
-                .Be("/purchasing/part-suppliers/bulk-lead-times");
+                .Be("/purchasing/part-suppliers/bulk-lead-times/1");
         }
     }
 }

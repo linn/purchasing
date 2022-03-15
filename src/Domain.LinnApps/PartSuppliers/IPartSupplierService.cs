@@ -11,6 +11,9 @@
         public PreferredSupplierChange CreatePreferredSupplierChange(PreferredSupplierChange candidate, IEnumerable<string> privileges);
 
         public ProcessResult BulkUpdateLeadTimes(
-            IEnumerable<LeadTimeUpdateModel> changes, IEnumerable<string> privileges);
+            int supplierId,
+            IEnumerable<LeadTimeUpdateModel> changes, 
+            IEnumerable<string> privileges,
+            int? organisationId = null);
     }
 }

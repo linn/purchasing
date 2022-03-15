@@ -77,7 +77,7 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
-                                    path="/purchasing/part-suppliers/bulk-lead-times"
+                                    path="/purchasing/part-suppliers/bulk-lead-times/:supplierId"
                                     component={BulkLeadTimesUpload}
                                 />
                                 <Route

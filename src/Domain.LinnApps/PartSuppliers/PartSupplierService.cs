@@ -320,8 +320,10 @@
         }
 
         public ProcessResult BulkUpdateLeadTimes(
+            int supplierId,
             IEnumerable<LeadTimeUpdateModel> changes,
-            IEnumerable<string> privileges)
+            IEnumerable<string> privileges,
+            int? organisationId = null)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
             {
@@ -335,10 +337,21 @@
 
             foreach (var change in leadTimeUpdateModels)
             {
-                var record = this.partSupplierRepository.FindBy(
-                    x => x.PartNumber == change.PartNumber.ToUpper().Trim()
-                         && x.SupplierRanking == 1);
-               
+                PartSupplier record;
+
+                if (organisationId.HasValue)
+                {
+                    record = this.partSupplierRepository.FindBy(
+                        x => x.PartNumber == change.PartNumber.ToUpper().Trim()
+                             && x.Supplier.OrganisationId == organisationId);
+                }
+                else
+                {
+                    record = this.partSupplierRepository.FindBy(
+                        x => x.PartNumber == change.PartNumber.ToUpper().Trim()
+                             && x.SupplierId == supplierId);
+                }
+
                 if (int.TryParse(change.LeadTimeWeeks, out var newLeadTime) && record != null)
                 {
                     record.LeadTimeWeeks = newLeadTime;

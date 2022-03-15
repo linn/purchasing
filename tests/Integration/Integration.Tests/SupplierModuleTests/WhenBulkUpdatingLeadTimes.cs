@@ -20,11 +20,14 @@
         public void SetUp()
         {
             this.MockPartSupplierDomainService.BulkUpdateLeadTimes(
-                    Arg.Any<IEnumerable<LeadTimeUpdateModel>>(), Arg.Any<IEnumerable<string>>())
+                    1,
+                    Arg.Any<IEnumerable<LeadTimeUpdateModel>>(), 
+                    Arg.Any<IEnumerable<string>>(),
+                    null)
                 .Returns(new ProcessResult(true, "success"));
 
             this.Response = this.Client.Post(
-                $"/purchasing/part-suppliers/bulk-lead-times/",
+                $"/purchasing/part-suppliers/bulk-lead-times/1",
                 "PART, 8",
                 with =>
                     {
@@ -43,8 +46,10 @@
         {
             this.MockPartSupplierDomainService.Received()
                 .BulkUpdateLeadTimes(
+                    1,
                     Arg.Any<IEnumerable<LeadTimeUpdateModel>>(),
-                    Arg.Any<IEnumerable<string>>());
+                    Arg.Any<IEnumerable<string>>(),
+                    null);
         }
 
         [Test]
