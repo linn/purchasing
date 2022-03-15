@@ -121,3 +121,7 @@ export const openDebitNotesActionTypes = makeActionTypes(itemTypes.openDebitNote
 export const sendPlNoteEmailActionTypes = makeProcessActionTypes(
     itemTypes.sendPlNoteEmail.actionType
 );
+
+export const bulkLeadTimesUploadActionTypes = makeProcessActionTypes(
+    itemTypes.bulkLeadTimesUpload.actionType
+);

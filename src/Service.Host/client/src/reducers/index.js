@@ -45,6 +45,7 @@ import plCreditDebitNote from './plCreditDebitNote';
 import plCreditDebitNotes from './plCreditDebitNotes';
 import openDebitNotes from './openDebitNotes';
 import sendPlNoteEmail from './sendPlNoteEmail';
+import bulkLeadTimesUpload from './bulkLeadTimesUpload';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -55,6 +56,7 @@ const rootReducer = history =>
         accountingCompanies,
         address,
         addresses,
+        bulkLeadTimesUpload,
         countries,
         currencies,
         deliveryAddresses,

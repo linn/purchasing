@@ -23,11 +23,7 @@ import config from '../../config';
 import history from '../../history';
 import { plCreditDebitNote, sendPlNoteEmail as sendPlNoteEmailItemType } from '../../itemTypes';
 import plCreditDebitNoteActions from '../../actions/plCreditDebitNoteActions';
-import {
-    sendPlNoteEmail,
-    setMessageVisible,
-    clearProcessData
-} from '../../actions/sendPlNoteEmailActions';
+import sendPlNoteEmailActions from '../../actions/sendPlNoteEmailActions';
 import { savePdf, emailPdf } from '../../helpers/pdf';
 import logo from './linn-logo.png';
 
@@ -79,7 +75,7 @@ function Note() {
         }
     }, [processResult]);
 
-    const setSnackbarVisible = () => dispatch(setMessageVisible(false));
+    const setSnackbarVisible = () => dispatch(sendPlNoteEmailActions.setMessageVisible(false));
 
     useEffect(() => {
         if (id) {
@@ -303,7 +299,7 @@ function Note() {
                                     backClick={() => setCancelDialogOpen(false)}
                                     cancelClick={() => setCancelDialogOpen(false)}
                                     saveClick={() => {
-                                        dispatch(clearProcessData());
+                                        dispatch(sendPlNoteEmailActions.clearProcessData());
                                         dispatch(plCreditDebitNoteActions.clearErrorsForItem());
                                         dispatch(
                                             plCreditDebitNoteActions.update(id, {
@@ -335,8 +331,10 @@ function Note() {
                         onClick={() => {
                             setPdfLoading(true);
                             dispatch(plCreditDebitNoteActions.clearErrorsForItem());
-                            dispatch(clearProcessData());
-                            emailPdf(pdfRef, blob => dispatch(sendPlNoteEmail(blob, id)));
+                            dispatch(sendPlNoteEmailActions.clearProcessData());
+                            emailPdf(pdfRef, blob =>
+                                dispatch(sendPlNoteEmailActions.requestProcessStart(blob, id))
+                            );
                         }}
                         disabled={item?.cancelled}
                         variant="contained"

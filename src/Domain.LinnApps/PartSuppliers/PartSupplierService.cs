@@ -319,6 +319,53 @@
             return candidate;
         }
 
+        public ProcessResult BulkUpdateLeadTimes(
+            IEnumerable<LeadTimeUpdateModel> changes,
+            IEnumerable<string> privileges)
+        {
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
+            {
+                throw new UnauthorisedActionException(
+                    "You are not authorised to update Part Supplier records");
+            }
+
+            var successCount = 0;
+            var errors = new List<string>();
+            var leadTimeUpdateModels = changes.ToList();
+
+            foreach (var change in leadTimeUpdateModels)
+            {
+                var record = this.partSupplierRepository.FindBy(
+                    x => x.PartNumber == change.PartNumber.ToUpper().Trim()
+                         && x.SupplierRanking == 1);
+               
+                if (int.TryParse(change.LeadTimeWeeks, out var newLeadTime) && record != null)
+                {
+                    record.LeadTimeWeeks = newLeadTime;
+                    successCount++;
+                }
+                else
+                {
+                    errors.Add(change.PartNumber);
+                }
+            }
+
+            if (!errors.Any())
+            {
+                return new ProcessResult(true, $"{successCount} records updated successfully");
+            }
+
+            var errorMessage = errors
+                .Aggregate(
+                    "Updates for the following parts could not be processed: ",
+                    (current, error) 
+                        => current + $"{error}, ");
+
+            return new ProcessResult(
+                false,
+                $"{successCount} out of {leadTimeUpdateModels.Count} records updated successfully. {errorMessage}");
+        }
+
         private static void ValidateFields(PartSupplier candidate)
         {
             var errors = new List<string>();
