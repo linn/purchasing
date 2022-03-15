@@ -57,6 +57,11 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
+                                    path="/purchasing/suppliers/bulk-lead-times"
+                                    component={BulkLeadTimesUpload}
+                                />
+                                <Route
+                                    exact
                                     path="/purchasing/suppliers/:id"
                                     component={Supplier}
                                 />
@@ -74,11 +79,6 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/part-suppliers"
                                     component={PartSupplierSearch}
-                                />
-                                <Route
-                                    exact
-                                    path="/purchasing/part-suppliers/bulk-lead-times/:supplierId"
-                                    component={BulkLeadTimesUpload}
                                 />
                                 <Route
                                     exact

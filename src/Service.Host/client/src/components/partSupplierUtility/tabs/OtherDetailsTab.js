@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import { Link as RouterLink } from 'react-router-dom';
+
 import { InputField } from '@linn-it/linn-form-components-library';
 
 function OtherDetailsTab({
@@ -10,8 +9,7 @@ function OtherDetailsTab({
     leadTimeWeeks,
     damagesPercent,
     deliveryInstructions,
-    notesForBuyer,
-    bulkUpdateLeadTimesUrl
+    notesForBuyer
 }) {
     return (
         <Grid container spacing={3}>
@@ -25,14 +23,8 @@ function OtherDetailsTab({
                     onChange={handleFieldChange}
                 />
             </Grid>
-            <Grid item xs={4}>
-                {bulkUpdateLeadTimesUrl && (
-                    <RouterLink to={bulkUpdateLeadTimesUrl}>
-                        <Typography variant="button"> Bulk Update Lead Times </Typography>
-                    </RouterLink>
-                )}
-            </Grid>
-            <Grid item xs={4} />
+            <Grid item xs={8} />
+            <Grid item xs={8} />
             <Grid item xs={4}>
                 <InputField
                     fullWidth
@@ -75,16 +67,14 @@ OtherDetailsTab.propTypes = {
     leadTimeWeeks: PropTypes.number,
     damagesPercent: PropTypes.number,
     deliveryInstructions: PropTypes.string,
-    notesForBuyer: PropTypes.string,
-    bulkUpdateLeadTimesUrl: PropTypes.string
+    notesForBuyer: PropTypes.string
 };
 
 OtherDetailsTab.defaultProps = {
     leadTimeWeeks: null,
     damagesPercent: null,
     deliveryInstructions: null,
-    notesForBuyer: null,
-    bulkUpdateLeadTimesUrl: null
+    notesForBuyer: null
 };
 
 export default OtherDetailsTab;

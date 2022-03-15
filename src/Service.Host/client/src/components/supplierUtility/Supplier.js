@@ -76,6 +76,8 @@ function Supplier({ creating }) {
     const snackbarVisible = useSelector(reduxState =>
         itemSelectorHelpers.getSnackbarVisible(reduxState.supplier)
     );
+    const bulkUpdateLeadTimesUrl = utilities.getHref(state.supplier, 'bulk-update-lead-times');
+
     useEffect(() => {
         if (creating) {
             dispatch({
@@ -336,6 +338,7 @@ function Supplier({ creating }) {
                                                     openHoldDialog={() =>
                                                         setHoldChangeDialogOpen(true)
                                                     }
+                                                    bulkUpdateLeadTimesUrl={bulkUpdateLeadTimesUrl}
                                                 />
                                             </Box>
                                         )}

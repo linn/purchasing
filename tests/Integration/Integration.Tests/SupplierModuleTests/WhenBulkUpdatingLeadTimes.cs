@@ -27,7 +27,7 @@
                 .Returns(new ProcessResult(true, "success"));
 
             this.Response = this.Client.Post(
-                $"/purchasing/part-suppliers/bulk-lead-times/1",
+                $"/purchasing/suppliers/bulk-lead-times?supplierId=1",
                 "PART, 8",
                 with =>
                     {

@@ -262,8 +262,6 @@ function PartSupplier({ creating }) {
     const canEdit = () =>
         item?.links.some(l => l.rel === 'edit') || !!utilities.getHref(applicationState, 'create');
 
-    const bulkUpdateLeadTimesUrl = utilities.getHref(state.partSupplier, 'bulk-update-lead-times');
-
     const invalid = () =>
         !state.partSupplier?.partNumber ||
         !state.partSupplier?.orderMethodName ||
@@ -511,7 +509,6 @@ function PartSupplier({ creating }) {
                                                 packWasteStatus={
                                                     state.partSupplier?.packWasteStatus
                                                 }
-                                                bulkUpdateLeadTimesUrl={bulkUpdateLeadTimesUrl}
                                             />
                                         </Box>
                                     )}

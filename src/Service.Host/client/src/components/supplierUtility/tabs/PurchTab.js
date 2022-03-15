@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-
+import Typography from '@mui/material/Typography';
+import { Link as RouterLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import {
@@ -27,7 +28,8 @@ function PurchTab({
     refersToFcName,
     pmDeliveryDaysGrace,
     holdLink,
-    openHoldDialog
+    openHoldDialog,
+    bulkUpdateLeadTimesUrl
 }) {
     const reduxDispatch = useDispatch();
     useEffect(() => {
@@ -176,6 +178,15 @@ function PurchTab({
                 />
             </Grid>
             <Grid item xs={9} />
+            {bulkUpdateLeadTimesUrl && (
+                <>
+                    <Grid item xs={4}>
+                        <RouterLink to={bulkUpdateLeadTimesUrl}>
+                            <Typography variant="button"> Bulk Update Lead Times </Typography>
+                        </RouterLink>
+                    </Grid>
+                </>
+            )}
         </Grid>
     );
 }
@@ -191,7 +202,8 @@ PurchTab.propTypes = {
     refersToFcName: PropTypes.string,
     pmDeliveryDaysGrace: PropTypes.number,
     holdLink: PropTypes.string,
-    openHoldDialog: PropTypes.func.isRequired
+    openHoldDialog: PropTypes.func.isRequired,
+    bulkUpdateLeadTimesUrl: PropTypes.string
 };
 
 PurchTab.defaultProps = {
@@ -203,7 +215,8 @@ PurchTab.defaultProps = {
     refersToFcId: null,
     refersToFcName: null,
     pmDeliveryDaysGrace: null,
-    holdLink: null
+    holdLink: null,
+    bulkUpdateLeadTimesUrl: null
 };
 
 export default PurchTab;

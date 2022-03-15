@@ -90,11 +90,6 @@
                 if (this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
                 {
                     yield return new LinkResource { Rel = "edit", Href = this.GetLocation(model) };
-                    yield return new LinkResource
-                                     {
-                                         Rel = "bulk-update-lead-times",
-                                         Href = $"/purchasing/part-suppliers/bulk-lead-times/{model.SupplierId}"
-                                     };
                 }
             }
 

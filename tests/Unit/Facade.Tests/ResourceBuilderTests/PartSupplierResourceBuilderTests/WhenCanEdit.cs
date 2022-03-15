@@ -38,14 +38,10 @@
         [Test]
         public void ShouldBuildCorrectResourceWithLinks()
         {
-            this.result.Links.Length.Should().Be(5);
+            this.result.Links.Length.Should().Be(4);
             var editHref = this.result.Links.SingleOrDefault(x => x.Rel == "edit")?.Href;
             editHref.Should()
                 .Be("/purchasing/part-suppliers/record?partId=123&supplierId=1");
-            var bulkUpdateLeadTimesHref = this.result
-                .Links.SingleOrDefault(x => x.Rel == "bulk-update-lead-times")?.Href;
-            bulkUpdateLeadTimesHref.Should()
-                .Be("/purchasing/part-suppliers/bulk-lead-times/1");
         }
     }
 }
