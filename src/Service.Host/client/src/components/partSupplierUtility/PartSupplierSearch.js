@@ -57,6 +57,7 @@ function PartSupplierSearch() {
         setOptions({ ...options, [propertyName]: newValue });
 
     const createUrl = utilities.getHref(applicationState, 'create');
+    const bulkUpdateLeadTimesUrl = utilities.getHref(applicationState, 'bulk-update-lead-times');
 
     const search = () =>
         dispatch(
@@ -157,6 +158,14 @@ function PartSupplierSearch() {
                         ))}
                     </List>
                 </Grid>
+                <Grid item xs={4}>
+                    {bulkUpdateLeadTimesUrl && (
+                        <RouterLink to={bulkUpdateLeadTimesUrl}>
+                            <Typography variant="button"> Bulk Update Lead Times </Typography>
+                        </RouterLink>
+                    )}
+                </Grid>
+                <Grid item xs={8} />
             </Grid>
         </Page>
     );
