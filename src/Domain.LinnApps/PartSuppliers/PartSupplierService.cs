@@ -339,11 +339,12 @@
             {
                 PartSupplier record;
 
-                if (supplierGroupId.HasValue)
+                if (supplierGroupId.GetValueOrDefault() != 0)
                 {
                     record = this.partSupplierRepository.FindBy(
                         x => x.PartNumber == change.PartNumber.ToUpper().Trim()
-                             && x.Supplier.OrganisationId == supplierGroupId);
+                             && x.Supplier.Group != null 
+                             && x.Supplier.Group.Id == supplierGroupId);
                 }
                 else
                 {
