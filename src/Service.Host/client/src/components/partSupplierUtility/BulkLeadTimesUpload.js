@@ -39,7 +39,7 @@ function BulkLeadTimesUpload() {
         reader.onload = () => {
             const binaryStr = reader.result;
             dispatch(
-                bulkLeadTimesUploadActions.requestProcessStart(binaryStr, null, {
+                bulkLeadTimesUploadActions.requestProcessStart(binaryStr, {
                     supplierId: queryString.parse(search).supplierId
                 })
             );

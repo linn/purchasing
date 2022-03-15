@@ -333,7 +333,7 @@ function Note() {
                             dispatch(plCreditDebitNoteActions.clearErrorsForItem());
                             dispatch(sendPlNoteEmailActions.clearProcessData());
                             emailPdf(pdfRef, blob =>
-                                dispatch(sendPlNoteEmailActions.requestProcessStart(blob, id))
+                                dispatch(sendPlNoteEmailActions.requestProcessStart(blob, { id }))
                             );
                         }}
                         disabled={item?.cancelled}
