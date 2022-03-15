@@ -20,7 +20,7 @@
         public void SetUp()
         {
             this.MockPartSupplierDomainService.BulkUpdateLeadTimes(
-                    Arg.Any<IEnumerable<LeadTimeUpdateModel>>())
+                    Arg.Any<IEnumerable<LeadTimeUpdateModel>>(), Arg.Any<IEnumerable<string>>())
                 .Returns(new ProcessResult(true, "success"));
 
             this.Response = this.Client.Post(
@@ -42,8 +42,11 @@
         public void ShouldCallDomainService()
         {
             this.MockPartSupplierDomainService.Received()
-                .BulkUpdateLeadTimes(Arg.Any<IEnumerable<LeadTimeUpdateModel>>());
+                .BulkUpdateLeadTimes(
+                    Arg.Any<IEnumerable<LeadTimeUpdateModel>>(),
+                    Arg.Any<IEnumerable<string>>());
         }
+
         [Test]
         public void ShouldCommitChanges()
         {
