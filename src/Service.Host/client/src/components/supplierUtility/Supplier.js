@@ -111,7 +111,7 @@ function Supplier({ creating }) {
     const handleFieldChange = (propertyName, newValue) => {
         setEditStatus('edit');
         let formatted = newValue;
-        if (propertyName === 'plannerId') {
+        if (propertyName === 'plannerId' || propertyName === 'groupId') {
             formatted = Number(newValue);
         }
         dispatch({ type: 'fieldChange', fieldName: propertyName, payload: formatted });
@@ -339,6 +339,7 @@ function Supplier({ creating }) {
                                                         setHoldChangeDialogOpen(true)
                                                     }
                                                     bulkUpdateLeadTimesUrl={bulkUpdateLeadTimesUrl}
+                                                    groupId={state.supplier.groupId}
                                                 />
                                             </Box>
                                         )}

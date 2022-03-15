@@ -14,6 +14,6 @@
             int supplierId,
             IEnumerable<LeadTimeUpdateModel> changes, 
             IEnumerable<string> privileges,
-            int? organisationId = null);
+            int? supplierGroupId = null);
     }
 }

@@ -34,6 +34,7 @@
                     .Include(s => s.ClosedBy)
                     .Include(s => s.SupplierContacts)
                     .ThenInclude(c => c.Person)
+                    .Include(s => s.Group)
                     .FirstOrDefault(x => x.SupplierId == key);
         }
 

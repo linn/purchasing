@@ -36,6 +36,8 @@
 
         protected IRepository<SupplierContact, int> SupplierContactRepository { get; set; }
 
+        protected IRepository<SupplierGroup, int> GroupRepository { get; set; }
+
         [SetUp]
         public void EstablishContext()
         {
@@ -46,6 +48,7 @@
             this.MockSupplierOrderHoldHistory = Substitute.For<IRepository<SupplierOrderHoldHistoryEntry, int>>();
             this.MockAddressRepository = Substitute.For<IRepository<FullAddress, int>>();
             this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
+            this.GroupRepository = Substitute.For<IRepository<SupplierGroup, int>>();
             this.VendorManagerRepository = Substitute.For<IRepository<VendorManager, string>>();
             this.PlannerRepository = Substitute.For<IRepository<Planner, int>>();
             this.PersonRepository = Substitute.For<IRepository<Person, int>>();

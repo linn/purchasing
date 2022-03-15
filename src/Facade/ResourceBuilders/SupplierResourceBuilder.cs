@@ -82,6 +82,7 @@
                 OrganisationId = entity.OrganisationId,
                 SupplierContacts = entity.SupplierContacts?.Select(c =>
                     (SupplierContactResource)this.supplierContactResourceBuilder.Build(c, null)),
+                GroupId = entity.Group?.Id,
                 Links = this.BuildLinks(entity, claims).ToArray()
             };
         }

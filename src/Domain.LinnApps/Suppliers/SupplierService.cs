@@ -27,6 +27,8 @@
 
         private readonly IRepository<Employee, int> employeeRepository;
 
+        private readonly IRepository<SupplierGroup, int> groupRepository;
+
         private readonly IRepository<VendorManager, string> vendorManagerRepository;
 
         private readonly IRepository<Planner, int> plannerRepository;
@@ -46,7 +48,8 @@
             IRepository<VendorManager, string> vendorManagerRepository,
             IRepository<Planner, int> plannerRepository,
             IRepository<Person, int> personRepository,
-            IRepository<SupplierContact, int> supplierContactRepository)
+            IRepository<SupplierContact, int> supplierContactRepository,
+            IRepository<SupplierGroup, int> groupRepository)
         {
             this.authService = authService;
             this.supplierRepository = supplierRepository;
@@ -59,6 +62,7 @@
             this.plannerRepository = plannerRepository;
             this.personRepository = personRepository;
             this.supplierContactRepository = supplierContactRepository;
+            this.groupRepository = groupRepository;
         }
 
         public void UpdateSupplier(Supplier current, Supplier updated, IEnumerable<string> privileges)
@@ -136,6 +140,10 @@
                                             ? this.employeeRepository.FindById(updated.ClosedBy.Id)
                                             : null;
 
+            current.Group = updated.Group != null
+                                   ? this.groupRepository.FindById(updated.Group.Id)
+                                   : null;
+
             current.SupplierContacts = this.UpdateContacts(updated.SupplierContacts);
         }
 
@@ -182,6 +190,10 @@
             candidate.OpenedBy = candidate.OpenedBy != null
                                               ? this.employeeRepository.FindById(candidate.OpenedBy.Id)
                                               : null;
+
+            candidate.Group = candidate.Group != null
+                                     ? this.groupRepository.FindById(candidate.Group.Id)
+                                     : null;
 
             ValidateFields(candidate);
 

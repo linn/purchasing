@@ -152,3 +152,9 @@ export const bulkLeadTimesUpload = new ItemType(
     'BULK_LEAD_TIMES_UPLOAD',
     '/purchasing/suppliers/bulk-lead-times/'
 );
+
+export const supplierGroups = new ItemType(
+    'supplierGroups',
+    'SUPPLIER_GROUPS',
+    '/purchasing/supplier-groups/'
+);

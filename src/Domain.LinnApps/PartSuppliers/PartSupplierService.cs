@@ -323,7 +323,7 @@
             int supplierId,
             IEnumerable<LeadTimeUpdateModel> changes,
             IEnumerable<string> privileges,
-            int? organisationId = null)
+            int? supplierGroupId = null)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
             {
@@ -339,11 +339,11 @@
             {
                 PartSupplier record;
 
-                if (organisationId.HasValue)
+                if (supplierGroupId.HasValue)
                 {
                     record = this.partSupplierRepository.FindBy(
                         x => x.PartNumber == change.PartNumber.ToUpper().Trim()
-                             && x.Supplier.OrganisationId == organisationId);
+                             && x.Supplier.OrganisationId == supplierGroupId);
                 }
                 else
                 {

@@ -81,5 +81,7 @@
         public IEnumerable<SupplierContact> SupplierContacts { get; set; }
 
         public string Country { get; set; }
+
+        public SupplierGroup Group { get; set; }
     }
 }

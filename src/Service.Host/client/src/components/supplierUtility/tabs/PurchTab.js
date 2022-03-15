@@ -15,6 +15,7 @@ import {
 
 import suppliersActions from '../../../actions/suppliersActions';
 import currenciesActions from '../../../actions/currenciesActions';
+import supplierGroupsActions from '../../../actions/supplierGroupsActions';
 import partCategoriesActions from '../../../actions/partCategoriesActions';
 
 function PurchTab({
@@ -29,11 +30,13 @@ function PurchTab({
     pmDeliveryDaysGrace,
     holdLink,
     openHoldDialog,
-    bulkUpdateLeadTimesUrl
+    bulkUpdateLeadTimesUrl,
+    groupId
 }) {
     const reduxDispatch = useDispatch();
     useEffect(() => {
         reduxDispatch(currenciesActions.fetch());
+        reduxDispatch(supplierGroupsActions.fetch());
     }, [reduxDispatch]);
 
     const searchSuppliers = searchTerm => reduxDispatch(suppliersActions.search(searchTerm));
@@ -58,6 +61,11 @@ function PurchTab({
     const partCategoriesSearchLoading = useSelector(reduxState =>
         collectionSelectorHelpers.getSearchLoading(reduxState.partCategories)
     );
+
+    const supplierGroups = useSelector(reduxState =>
+        collectionSelectorHelpers.getItems(reduxState.supplierGroups)
+    );
+
     return (
         <Grid container spacing={3}>
             <Grid item xs={4}>
@@ -171,13 +179,29 @@ function PurchTab({
                 <InputField
                     fullWidth
                     value={pmDeliveryDaysGrace}
-                    label="PM Delivery Days Grance"
+                    label="PM Delivery Days Grace"
                     type="number"
                     propertyName="pmDeliveryDaysGrace"
                     onChange={handleFieldChange}
                 />
             </Grid>
             <Grid item xs={9} />
+            {supplierGroups.length > 0 && (
+                <>
+                    <Grid item xs={4}>
+                        <Dropdown
+                            fullWidth
+                            value={groupId}
+                            label="Supplier Group"
+                            items={supplierGroups.map(g => ({ id: g.id, displayText: g.name }))}
+                            propertyName="groupId"
+                            onChange={handleFieldChange}
+                            allowNoValue
+                        />
+                    </Grid>
+                </>
+            )}
+            <Grid item xs={8} />
             {bulkUpdateLeadTimesUrl && (
                 <>
                     <Grid item xs={4}>
@@ -203,7 +227,8 @@ PurchTab.propTypes = {
     pmDeliveryDaysGrace: PropTypes.number,
     holdLink: PropTypes.string,
     openHoldDialog: PropTypes.func.isRequired,
-    bulkUpdateLeadTimesUrl: PropTypes.string
+    bulkUpdateLeadTimesUrl: PropTypes.string,
+    groupId: PropTypes.number
 };
 
 PurchTab.defaultProps = {
@@ -216,7 +241,8 @@ PurchTab.defaultProps = {
     refersToFcName: null,
     pmDeliveryDaysGrace: null,
     holdLink: null,
-    bulkUpdateLeadTimesUrl: null
+    bulkUpdateLeadTimesUrl: null,
+    groupId: null
 };
 
 export default PurchTab;

@@ -21,6 +21,7 @@ function NotesTab({ handleFieldChange, organisationId, notes }) {
                 <InputField
                     fullWidth
                     value={organisationId}
+                    disabled
                     label="Org Id"
                     rows={4}
                     propertyName="organisationId"
