@@ -10,7 +10,8 @@ import {
     InputField,
     collectionSelectorHelpers,
     Dropdown,
-    Typeahead
+    Typeahead,
+    Loading
 } from '@linn-it/linn-form-components-library';
 
 import suppliersActions from '../../../actions/suppliersActions';
@@ -66,6 +67,18 @@ function PurchTab({
         collectionSelectorHelpers.getItems(reduxState.supplierGroups)
     );
 
+    const supplierGroupsLoading = useSelector(reduxState =>
+        collectionSelectorHelpers.getLoading(reduxState.supplierGroups)
+    );
+    if (supplierGroupsLoading) {
+        return (
+            <Grid container spacing={3}>
+                <Grid item xs={4}>
+                    <Loading />
+                </Grid>
+            </Grid>
+        );
+    }
     return (
         <Grid container spacing={3}>
             <Grid item xs={4}>
@@ -201,7 +214,7 @@ function PurchTab({
                     </Grid>
                 </>
             )}
-            <Grid item xs={8} />
+            <Grid item xs={12} />
             {bulkUpdateLeadTimesUrl && (
                 <>
                     <Grid item xs={4}>
