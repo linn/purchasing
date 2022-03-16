@@ -662,7 +662,7 @@
         {
             var e = builder.Entity<SupplierContact>().ToTable("SUPPLIER_CONTACTS");
             e.HasKey(sc => sc.ContactId);
-            e.Property(sc => sc.ContactId).HasColumnName("PERSON_ID").HasMaxLength(8);
+            e.Property(sc => sc.ContactId).HasColumnName("CONTACT_ID").HasMaxLength(8);
             e.HasOne(sc => sc.Person).WithMany().HasForeignKey("PERSON_ID");
             e.Property(sc => sc.Email).HasColumnName("EMAIL_ADDRESS").HasMaxLength(200);
             e.Property(sc => sc.PhoneNumber).HasColumnName("PHONE_NUMBER").HasMaxLength(25);

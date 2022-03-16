@@ -147,15 +147,16 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
-                                    path="/purchasing/purchase-orders/reqs/:id"
-                                    component={POReqUtility}
-                                />
-                                <Route
-                                    exact
                                     path="/purchasing/purchase-orders/reqs/create"
                                     // eslint-disable-next-line react/jsx-props-no-spreading
                                     render={props => <POReqUtility creating {...props} />}
                                 />
+                                <Route
+                                    exact
+                                    path="/purchasing/purchase-orders/reqs/:id"
+                                    component={POReqUtility}
+                                />
+
                                 <Route component={NotFoundPage} />
                             </Switch>
                         </div>

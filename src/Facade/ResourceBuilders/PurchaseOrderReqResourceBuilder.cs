@@ -38,7 +38,7 @@
                            UnitPrice = entity.UnitPrice,
                            Carriage = entity.Carriage,
                            TotalReqPrice = entity.TotalReqPrice,
-                           Currency = entity.Currency != null ? new CurrencyResource { Code = entity.Currency?.Code } : null,
+                           Currency = entity.Currency != null ? new CurrencyResource { Code = entity.Currency.Code, Name = entity.Currency.Name } : null,
                            Supplier = entity.Supplier != null
                                           ? new SupplierResource
                                                 {
@@ -52,7 +52,7 @@
                            AddressLine4 = entity.AddressLine4,
                            PostCode = entity.PostCode,
                            Country = entity.Country != null
-                                         ? new CountryResource { CountryCode = entity.Country.CountryCode }
+                                         ? new CountryResource { CountryCode = entity.Country.CountryCode, CountryName = entity.Country.Name }
                                          : null,
                            PhoneNumber = entity.PhoneNumber,
                            QuoteRef = entity.QuoteRef,

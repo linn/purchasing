@@ -90,7 +90,10 @@
 
         protected IRepository<Planner, int> MockPlannerRepository { get; private set; }
 
-        protected IRepository<Employee, int> MockEmployeeRepository { get; set; }
+        protected IRepository<Employee, int> MockEmployeeRepository { get; private set; }
+
+        protected IRepository<SupplierContact, int> MockSupplierContactRepository { get; private set; }
+
 
         [SetUp]
         public void EstablishContext()
@@ -103,13 +106,14 @@
             this.Log = Substitute.For<ILog>();
             this.MockAuthService = Substitute.For<IAuthorisationService>();
             this.MockSupplierRepository = Substitute.For<IRepository<Supplier, int>>();
+            this.MockSupplierContactRepository = Substitute.For<IRepository<SupplierContact, int>>();
 
             this.MockDomainService = Substitute.For<ISupplierService>();
             this.MockDatabaseService = Substitute.For<IDatabaseService>();
             this.SupplierFacadeService = new SupplierFacadeService(
                 this.MockSupplierRepository,
                 this.TransactionManager,
-                new SupplierResourceBuilder(this.MockAuthService),
+                new SupplierResourceBuilder(this.MockAuthService, MockSupplierContactRepository),
                 this.MockDomainService,
                 this.MockDatabaseService);
 
@@ -129,9 +133,10 @@
                 this.MockDomainService,
                 this.MockDatabaseService,
                 this.TransactionManager,
-                new SupplierResourceBuilder(this.MockAuthService));
+                new SupplierResourceBuilder(this.MockAuthService, MockSupplierContactRepository));
 
             this.MockPlannerRepository = Substitute.For<IRepository<Planner, int>>();
+            this.MockSupplierContactRepository = Substitute.For<IRepository<SupplierContact, int>>();
             this.MockEmployeeRepository = Substitute.For<IRepository<Employee, int>>();
             this.PlannerService = new PlannerService(
                 this.MockPlannerRepository,

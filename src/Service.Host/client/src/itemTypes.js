@@ -129,7 +129,7 @@ export const purchaseOrderReq = new ItemType(
 
 export const departments = new ItemType('departments', 'DEPARTMENTS', '/inventory/departments');
 
-export const nominals = new ItemType('nominal', 'NOMINAL', '/inventory/nominal-for-department');
+export const nominals = new ItemType('nominal', 'NOMINAL', '/inventory/nominal-accounts');
 
 export const purchaseOrderReqs = new ItemType(
     'purchaseOrderReqs',

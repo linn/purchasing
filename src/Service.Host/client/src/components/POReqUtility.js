@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { useParams } from 'react-router-dom';
+import { makeStyles } from '@mui/styles';
 import {
     Page,
     SaveBackCancelButtons,
@@ -18,7 +19,6 @@ import {
     TypeaheadTable,
     userSelectors
 } from '@linn-it/linn-form-components-library';
-import addressesActions from '../actions/addressesActions';
 import currenciesActions from '../actions/currenciesActions';
 import employeesActions from '../actions/employeesActions';
 import nominalsActions from '../actions/nominalsActions';
@@ -66,27 +66,25 @@ function POReqUtility({ creating }) {
     );
     const searchCountries = searchTerm => dispatch(countriesActions.search(searchTerm));
 
-    const addressesSearchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(
-            state.addresses,
-            100,
-            'addressId',
-            'addressId',
-            'addressee'
-        )
-    );
-    const addressesSearchLoading = useSelector(state =>
-        collectionSelectorHelpers.getSearchLoading(state.addresses)
-    );
-    const searchAddresses = searchTerm => dispatch(addressesActions.search(searchTerm));
+    // const addressesSearchResults = useSelector(state =>
+    //     collectionSelectorHelpers.getSearchItems(
+    //         state.addresses,
+    //         100,
+    //         'addressId',
+    //         'addressId',
+    //         'addressee'
+    //     )
+    // );
+    // const addressesSearchLoading = useSelector(state =>
+    //     collectionSelectorHelpers.getSearchLoading(state.addresses)
+    // );
+    // const searchAddresses = searchTerm => dispatch(addressesActions.search(searchTerm));
 
     const currencies = useSelector(state => collectionSelectorHelpers.getItems(state.currencies));
-    const employees = useSelector(state => collectionSelectorHelpers.getItems(state.employees));
-
-    const departments = useSelector(state => collectionSelectorHelpers.getItems(state.departments));
-    const departmentsSearchLoading = useSelector(state =>
-        collectionSelectorHelpers.getSearchLoading(state.departments)
-    );
+    // const departments = useSelector(state => collectionSelectorHelpers.getItems(state.departments));
+    // const departmentsSearchLoading = useSelector(state =>
+    //     collectionSelectorHelpers.getSearchLoading(state.departments)
+    // );
 
     const nominalsSearchItems = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.nominals)
@@ -98,7 +96,7 @@ function POReqUtility({ creating }) {
     // .map(i => ({ ...i, name: i.departmentCode, id: i.departmentCode })),
 
     const currentUserId = useSelector(reduxState => userSelectors.getUserNumber(reduxState));
-    const currentUserName = useSelector(reduxState => userSelectors.getUserNumber(reduxState));
+    const currentUserName = useSelector(reduxState => userSelectors.getName(reduxState));
 
     const [req, setReq] = useState({
         requestedBy: {
@@ -136,49 +134,51 @@ function POReqUtility({ creating }) {
         setReq(a => ({ ...a, [propertyName]: newValue }));
     };
 
-    const handleEmployeeFieldChange = (propertyName, newValue) => {
-        setEditStatus('edit');
-        setReq(a => ({ ...a, [propertyName]: { id: newValue.id, fullName: newValue.fullName } }));
-    };
-
     const handleSupplierChange = newSupplier => {
         setEditStatus('edit');
-        setReq(a => ({ ...a, supplier: { id: newSupplier.id, name: newSupplier.description } }));
-        console.info(newSupplier);
-
-        
-        // handleFieldChange('supplierId', newValue.id);
-        // handleFieldChange('supplierName', newValue.name);
-        // todo set rest of supplier stuff,
-        // supplier contact
-        // set country codes
-        // set currency
-        // email
-        // phone number
-        // also lookup address    };
+        setReq(a => ({
+            ...a,
+            supplier: { id: newSupplier.id, name: newSupplier.description },
+            supplierContact: newSupplier.supplierContact?.contactName,
+            email: newSupplier.supplierContact?.email,
+            phoneNumber: newSupplier.supplierContact?.phoneNumber,
+            currency: {
+                code: newSupplier.currency?.code,
+                name: newSupplier.currency?.name
+            },
+            country: {
+                countryCode: newSupplier.country?.countryCode,
+                countryName: newSupplier.country?.countryName
+            },
+            addressLine1: newSupplier.orderAddress?.line1,
+            addressLine2: newSupplier.orderAddress?.line2,
+            addressLine3: newSupplier.orderAddress?.line3,
+            addressLine4: newSupplier.orderAddress?.line4,
+            postCode: newSupplier.orderAddress?.postCode
+        }));
     };
 
     const reqStates = [{ id: 0, state: 'todo' }];
 
     const nominalAccountsTable = {
         totalItemCount: nominalsSearchItems.length,
-        rows: nominalsSearchItems?.map((nom, i) => ({
+        rows: nominalsSearchItems?.map(nom => ({
             id: nom.nominalAccountId,
             values: [
-                { id: `${i}-0`, value: `${nom.nominalCode}` },
-                { id: `${i}-1`, value: `${nom.description || ''}` },
-                { id: `${i}-2`, value: `${nom.departmentCode || ''}` },
-                { id: `${i}-3`, value: `${nom.departmentDescription || ''}` }
+                { id: 'nominalCode', value: `${nom.nominalCode}` },
+                { id: 'description', value: `${nom.description || ''}` },
+                { id: 'departmentCode', value: `${nom.departmentCode || ''}` },
+                { id: 'departmentDescription', value: `${nom.description || ''}` }
             ],
             links: nom.links
         }))
     };
 
-    const allowedToAuthorise = () => !creating && req?.links.some(l => l.rel === 'authorise');
+    const allowedToAuthorise = () => !creating && req?.links?.some(l => l.rel === 'authorise');
     const allowedToFinanceCheck = () =>
-        !creating && req?.links.some(l => l.rel === 'finance-check');
+        !creating && req?.links?.some(l => l.rel === 'finance-check');
     const allowedToCreateOrder = () =>
-        !creating && req?.links.some(l => l.rel === 'create-purchase-order');
+        !creating && req?.links?.some(l => l.rel === 'create-purchase-order');
 
     const editingAllowed = creating
         ? req?.links?.some(l => l.rel === 'create')
@@ -187,6 +187,54 @@ function POReqUtility({ creating }) {
     const inputIsValid = () => req?.reqDate?.length && req?.partNumber?.length;
 
     const canSave = () => editStatus !== 'view' && editingAllowed && inputIsValid;
+
+    const handleAuthorise = () => {
+        setEditStatus('edit');
+        if (allowedToAuthorise) {
+            setReq(a => ({ ...a, authorisedBy: { id: currentUserId, fullName: currentUserName } }));
+        }
+    };
+
+    const handleSecondAuth = () => {
+        setEditStatus('edit');
+        if (allowedToAuthorise) {
+            setReq(a => ({ ...a, secondAuthBy: { id: currentUserId, fullName: currentUserName } }));
+        }
+    };
+
+    const handleFinanceCheck = () => {
+        setEditStatus('edit');
+        if (allowedToFinanceCheck) {
+            setReq(a => ({
+                ...a,
+                financeCheckBy: { id: currentUserId, fullName: currentUserName }
+            }));
+        }
+    };
+
+    const handleNominalUpdate = newNominal => {
+        setEditStatus('edit');
+
+        setReq(r => ({
+            ...r,
+            nominal: {
+                nominalCode: newNominal.values.find(x => x.id === 'nominalCode')?.value,
+                description: newNominal.values.find(x => x.id === 'description')?.value
+            },
+            department: {
+                departmentCode: newNominal.values.find(x => x.id === 'departmentCode')?.value,
+                description: newNominal.values.find(x => x.id === 'departmentDescription')?.value
+            }
+        }));
+    };
+
+    const useStyles = makeStyles(theme => ({
+        buttonMarginTop: {
+            marginTop: '28px',
+            height: '40px'
+        }
+    }));
+    const classes = useStyles();
 
     return (
         <>
@@ -202,6 +250,7 @@ function POReqUtility({ creating }) {
                         />
                         <Grid item xs={12}>
                             <Typography variant="h6">Purchase Order Req Utility</Typography>
+                            <span>creating: {!creating}</span>
                         </Grid>
 
                         <Grid item xs={4}>
@@ -281,17 +330,36 @@ function POReqUtility({ creating }) {
                                     onChange={handleFieldChange}
                                 />
                             </Grid>
-                            <Grid item xs={3}>
+                            <Grid item xs={4}>
                                 <Dropdown
                                     fullWidth
-                                    value={req?.currency}
+                                    value={req?.currency?.code}
                                     label="Currency"
                                     propertyName="currency"
-                                    items={currencies.map(x => x.code)}
+                                    items={currencies.map(c => ({
+                                        displayText: c.code,
+                                        id: c.code
+                                    }))}
                                     allowNoValue
                                     onChange={(propertyName, newValue) => {
-                                        handleFieldChange(propertyName, newValue);
+                                        setReq(a => ({
+                                            ...a,
+                                            currency: {
+                                                code: newValue,
+                                                name: currencies.find(x => x.code === newValue)
+                                                    ?.name
+                                            }
+                                        }));
                                     }}
+                                />
+                            </Grid>
+                            <Grid item xs={8}>
+                                <InputField
+                                    fullWidth
+                                    value={req?.currency?.name}
+                                    label="name"
+                                    propertyName="currencyName"
+                                    disabled
                                 />
                             </Grid>
                         </Grid>
@@ -420,8 +488,10 @@ function POReqUtility({ creating }) {
                                 onSelect={newValue => {
                                     setReq(a => ({
                                         ...a,
-                                        countryCode: newValue.countryCode,
-                                        countryName: newValue.countryName
+                                        country: {
+                                            countryCode: newValue.countryCode,
+                                            countryName: newValue.countryName
+                                        }
                                     }));
                                 }}
                                 label="Country Lookup"
@@ -446,7 +516,7 @@ function POReqUtility({ creating }) {
                         <Grid item xs={4}>
                             <InputField
                                 fullWidth
-                                value={req?.country?.name}
+                                value={req?.country?.countryName}
                                 label="Name"
                                 propertyName="countryName"
                                 disabled
@@ -502,40 +572,22 @@ function POReqUtility({ creating }) {
                             {/* Maybe input would be better and fix format? */}
                         </Grid>
 
-                        {/* <Grid item xs={12}>
-                            <Typeahead
-                                label="Department"
-                                title="Search for department"
-                                onSelect={newValue => {
-                                    handleFieldChange('department', newValue.departmentCode);
-                                }}
-                                modal
-                                items={departments}
-                                value={req.department}
-                                loading={departmentsSearchLoading}
-                                fetchItems={searchTerm =>
-                                    dispatch(departmentsActions.search(searchTerm))
-                                }
-                                links={false}
-                                clearSearch={() => dispatch(departmentsActions.clearSearch)}
-                                placeholder=""
-                            />
-                        </Grid> */}
-
                         <Grid item xs={4}>
                             <TypeaheadTable
                                 table={nominalAccountsTable}
                                 columnNames={['Nominal', 'Description', 'Dept', 'Name']}
-                                fetchItems={nominalsActions.search}
+                                fetchItems={searchTerm =>
+                                    dispatch(nominalsActions.search(searchTerm))
+                                }
                                 modal
                                 placeholder="Search Nominal/Dept"
                                 links={false}
-                                clearSearch={nominalsActions.clearSearch}
+                                clearSearch={() => dispatch(nominalsActions.clearSearch)}
                                 loading={nominalsSearchLoading}
                                 label="Nominal"
                                 title="Search Nominals"
                                 value={req?.nominal?.nominalCode}
-                                onSelect={newValue => handleFieldChange('nominalAccount', newValue)}
+                                onSelect={newValue => handleNominalUpdate(newValue)}
                                 debounce={1000}
                                 minimumSearchTermLength={2}
                             />
@@ -570,124 +622,94 @@ function POReqUtility({ creating }) {
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            {/* set on create to current user and don't allow editing after */}
                             <InputField
                                 fullWidth
                                 value={`${req?.requestedBy?.fullName} (${req?.requestedBy?.id})`}
-                                label="Description"
+                                label="Raised By"
                                 disabled
-                                onChange={handleFieldChange}
                             />
-
-                            {/* <Dropdown
-                                fullWidth
-                                value={req?.requestedBy?.id}
-                                label="Requested by"
-                                items={employees.map(e => ({
-                                    displayText: `${e.fullName} (${e.id})`,
-                                    id: e.id
-                                }))}
-                                propertyName="requestedBy"
-                                onChange={handleEmployeeFieldChange}
-                            /> */}
                         </Grid>
 
                         <Grid item xs={4}>
                             <Button
+                                className={classes.buttonMarginTop}
                                 color="primary"
                                 variant="contained"
-                                disabled={allowedToAuthorise}
-                                // onClick={handleAuthorise}
+                                disabled={!allowedToAuthorise()}
+                                onClick={handleAuthorise}
                             >
                                 Authorise
                             </Button>
                         </Grid>
 
                         <Grid item xs={8}>
-                            <Dropdown
+                            <InputField
                                 fullWidth
-                                value={req?.authorisedBy?.id}
+                                value={`${req?.authorisedBy?.fullName} (${req?.authorisedBy?.id})`}
                                 label="Authorised by"
-                                items={employees.map(e => ({
-                                    displayText: `${e.fullName} (${e.id})`,
-                                    id: e.id
-                                }))}
-                                propertyName="authorisedBy"
-                                onChange={handleEmployeeFieldChange}
+                                disabled
                             />
                         </Grid>
 
                         <Grid item xs={4}>
                             <Button
+                                className={classes.buttonMarginTop}
                                 color="primary"
                                 variant="contained"
-                                disabled={allowedToAuthorise}
-                                // onClick={handleAuthorise}
+                                disabled={!allowedToAuthorise()}
+                                onClick={handleSecondAuth}
                             >
                                 Authorise (secondary)
                             </Button>
                         </Grid>
                         <Grid item xs={8}>
-                            <Dropdown
+                            <InputField
                                 fullWidth
-                                value={req?.secondAuthBy?.id}
+                                value={`${req?.secondAuthBy?.fullName} (${req?.secondAuthBy?.id})`}
                                 label="Second auth by"
-                                items={employees.map(e => ({
-                                    displayText: `${e.fullName} (${e.id})`,
-                                    id: e.id
-                                }))}
-                                propertyName="secondAuthBy"
-                                onChange={handleEmployeeFieldChange}
+                                disabled
                             />
                         </Grid>
 
                         <Grid item xs={4}>
                             <Button
+                                className={classes.buttonMarginTop}
                                 color="primary"
                                 variant="contained"
-                                disabled={allowedToFinanceCheck}
-                                // onClick={handleAuthorise}
+                                disabled={!allowedToFinanceCheck()}
+                                onClick={handleFinanceCheck}
                             >
                                 Sign off (finance)
                             </Button>
                         </Grid>
                         <Grid item xs={8}>
-                            <Dropdown
+                            <InputField
                                 fullWidth
-                                value={req?.financeCheckBy?.id}
+                                value={`${req?.financeCheckBy?.fullName} (${req?.financeCheckBy?.id})`}
                                 label="Finance check by"
-                                items={employees.map(e => ({
-                                    displayText: `${e.fullName} (${e.id})`,
-                                    id: e.id
-                                }))}
-                                propertyName="financeCheckBy"
-                                onChange={handleEmployeeFieldChange}
+                                disabled
                             />
                         </Grid>
                         <Grid item xs={4}>
                             <Button
+                                className={classes.buttonMarginTop}
                                 color="primary"
                                 variant="contained"
-                                disabled={allowedToCreateOrder}
-                                // onClick={handleAuthorise}
+                                disabled={!allowedToCreateOrder()}
+                                // onClick={createOrder} - to be linked to purchase order ut when that's built
                             >
                                 Create Order
                             </Button>
-                            <Grid item xs={8}>
-                                <Dropdown
-                                    fullWidth
-                                    value={req?.turnedIntoOrderBy?.id}
-                                    label="Turned into order by"
-                                    items={employees.map(e => ({
-                                        displayText: `${e.fullName} (${e.id})`,
-                                        id: e.id
-                                    }))}
-                                    propertyName="turnedIntoOrderBy"
-                                    onChange={handleEmployeeFieldChange}
-                                />
-                            </Grid>
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={5}>
+                            <InputField
+                                fullWidth
+                                value={`${req?.turnedIntoOrderBy?.fullName} (${req?.turnedIntoOrderBy?.id})`}
+                                label="Turned into order by"
+                                disabled
+                            />
+                        </Grid>
+                        <Grid item xs={3}>
                             <InputField
                                 fullWidth
                                 value={req?.orderNumber}
@@ -716,16 +738,9 @@ function POReqUtility({ creating }) {
                                 onChange={handleFieldChange}
                             />
                         </Grid>
-
-                        {/* 
-public string Nominal { get; set; }
-public string Department { get; set; } */}
-
                         <SaveBackCancelButtons
                             saveDisabled={canSave}
-                            // backClick={() =>
-                            //     closeDialog ? closeDialog() : history.push('/purchasing')
-                            // }
+                            backClick={() => history.push('/purchasing')}
                             saveClick={() =>
                                 creating
                                     ? dispatch(poReqActions.add(req))
