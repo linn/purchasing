@@ -36,7 +36,7 @@
         private readonly IFacadeResourceService<Tariff, int, TariffResource, TariffResource> tariffService;
 
         private readonly
-            IFacadeResourceFilterService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource>
+            IFacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource>
             purchaseOrderFacadeService;
 
         public PurchaseOrderModule(
@@ -46,7 +46,7 @@
             IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource> unitsOfMeasureService,
             IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource> packagingGroupService,
             IFacadeResourceService<Tariff, int, TariffResource, TariffResource> tariffService,
-            IFacadeResourceFilterService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource> purchaseOrderFacadeService)
+            IFacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource> purchaseOrderFacadeService)
         {
             this.currencyService = currencyService;
             this.orderMethodService = orderMethodService;
@@ -61,8 +61,9 @@
             this.Get("/purchasing/purchase-orders/units-of-measure", this.GetUnitsOfMeasure);
             this.Get("/purchasing/purchase-orders/packaging-groups", this.GetPackagingGroups);
             this.Get("/purchasing/purchase-orders/tariffs", this.SearchTariffs);
-            this.Get("/purchasing/purchase-orders/{OrderNumber:int}/over-book", this.SearchPurchaseOrders);
-            this.Put("/purchasing/purchase-orders/{OrderNumber:int}/over-book", this.AllowOverbook);
+            this.Get("/purchasing/purchase-orders", this.SearchPurchaseOrders);
+            this.Get("/purchasing/purchase-orders/{orderNumber:int}", this.GetPurchaseOrder);
+            this.Put("/purchasing/purchase-orders/{orderNumber:int}", this.UpdatePurchaseOrder);
         }
 
         private async Task GetCurrencies(HttpRequest req, HttpResponse res)
@@ -110,18 +111,25 @@
 
         private async Task SearchPurchaseOrders(HttpRequest req, HttpResponse res)
         {
-            var orderNumberSearch = req.Query.As<int>("orderNumber");
-            var result = this.purchaseOrderFacadeService.FilterBy(
-                new PurchaseOrderSearchResource
-                    {
-                        OrderNumberSearchTerm = orderNumberSearch
-                    },
+            var orderNumberSearch = req.Query.As<string>("searchTerm");
+            var result = this.purchaseOrderFacadeService.Search(
+                orderNumberSearch,
                 req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }
 
-        private async Task AllowOverbook(HttpRequest req, HttpResponse res)
+        private async Task GetPurchaseOrder(HttpRequest req, HttpResponse res)
+        {
+            var orderNumber = req.RouteValues.As<int>("orderNumber");
+            var result = this.purchaseOrderFacadeService.GetById(
+                orderNumber,
+                req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task UpdatePurchaseOrder(HttpRequest req, HttpResponse res)
         {
             var resource = await req.Bind<PurchaseOrderResource>();
             resource.Privileges = req.HttpContext.GetPrivileges();

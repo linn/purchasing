@@ -86,3 +86,10 @@ export const spendBySupplierReportActionTypes = makeActionTypes(
     reportTypes.spendBySupplierReport.actionType,
     false
 );
+
+export const purchaseOrderActionTypes = makeActionTypes(itemTypes.purchaseOrder.actionType, true);
+
+export const purchaseOrdersActionTypes = makeActionTypes(
+    itemTypes.purchaseOrders.actionType,
+    false
+);

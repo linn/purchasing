@@ -22,6 +22,8 @@ import OrdersByPartOptions from './reports/OrdersByPartOptions';
 import SpendBySupplier from './reports/SpendBySupplier';
 import SpendBySupplierOptions from './reports/SpendBySupplierOptions';
 import Supplier from './supplierUtility/Supplier';
+import OverbooksSearch from './OverbooksSearch';
+import ViewPurchaseOrderForOverbook from './Overbook';
 
 const Root = ({ store }) => (
     <div>
@@ -108,7 +110,16 @@ const Root = ({ store }) => (
                                     path="/purchasing/reports/spend-by-supplier/report"
                                     component={SpendBySupplier}
                                 />
-
+                                <Route
+                                    exact
+                                    path="/purchasing/purchase-orders/:orderNumber/allow-over-book"
+                                    component={ViewPurchaseOrderForOverbook}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/purchase-orders/allow-over-book"
+                                    component={OverbooksSearch}
+                                />
                                 <Route component={NotFoundPage} />
                             </Switch>
                         </div>

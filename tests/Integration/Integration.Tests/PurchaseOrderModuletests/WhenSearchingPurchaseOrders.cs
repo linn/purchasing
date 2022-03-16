@@ -41,13 +41,13 @@
                                           }
                                   };
 
-            this.PurchaseOrderFacadeService.FilterBy(
-                    Arg.Any<PurchaseOrderSearchResource>(),
+            this.PurchaseOrderFacadeService.Search(
+                    Arg.Any<string>(),
                     Arg.Any<IEnumerable<string>>())
                 .Returns(new SuccessResult<IEnumerable<PurchaseOrderResource>>(this.dataResult));
 
             this.Response = this.Client.Get(
-                $"/purchasing/purchase-orders/{this.orderNumberSearch}/over-book",
+                $"/purchasing/purchase-orders?searchTerm={this.orderNumberSearch}",
 
             with =>
                 {

@@ -62,7 +62,7 @@
                 if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
                 {
                     yield return new LinkResource { Rel = "edit", Href = this.GetLocation(model) };
-                    yield return new LinkResource { Rel = "over-book", Href = $"{this.GetLocation(model)}/over-book" };
+                    yield return new LinkResource { Rel = "allow-over-book", Href = $"{this.GetLocation(model)}/allow-over-book" };
                 }
             }
         }
