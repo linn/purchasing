@@ -17,5 +17,12 @@
             bool includeCancelled,
             string includeCredits,
             string stockControlled);
+
+        ResultsModel GetSuppliersWithUnacknowledgedOrders(
+            int? planner,
+            string vendorManager,
+            bool useSupplierGroup);
+
+        ResultsModel GetUnacknowledgedOrders(int? supplierId, int? supplierGroupId);
     }
 }

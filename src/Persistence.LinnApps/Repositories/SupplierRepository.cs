@@ -21,11 +21,21 @@
         public Supplier FindById(int key)
         {
             return this.serviceDbContext.Suppliers
-                .Include(s => s.InvoiceGoesTo)
-                .Include(s => s.Currency)
-                .Include(s => s.PartCategory)
-                .Include(s => s.RefersToFc)
-                .First(x => x.SupplierId == key);
+                    .Include(s => s.InvoiceGoesTo)
+                    .Include(s => s.Currency)
+                    .Include(s => s.PartCategory)
+                    .Include(s => s.RefersToFc)
+                    .Include(s => s.InvoiceFullAddress)
+                    .Include(s => s.AccountController)
+                    .Include(s => s.Planner)
+                    .Include(s => s.VendorManager)
+                    .Include(s => s.OrderFullAddress)
+                    .Include(s => s.OpenedBy)
+                    .Include(s => s.ClosedBy)
+                    .Include(s => s.SupplierContacts)
+                    .ThenInclude(c => c.Person)
+                    .Include(s => s.Group)
+                    .FirstOrDefault(x => x.SupplierId == key);
         }
 
         public IQueryable<Supplier> FindAll()
@@ -35,7 +45,7 @@
 
         public void Add(Supplier entity)
         {
-            throw new NotImplementedException();
+            this.serviceDbContext.Suppliers.Add(entity);
         }
 
         public void Remove(Supplier entity)

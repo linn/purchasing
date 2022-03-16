@@ -34,6 +34,19 @@ import supplier from './supplier';
 import partCategories from './partCategories';
 import accountingCompanies from './accountingCompanies';
 import putSupplierOnHold from './putSupplierOnHold';
+import address from './address';
+import addresses from './addresses';
+import countries from './countries';
+import suppliersWithUnacknowledgedOrders from './suppliersWithUnacknowledgedOrders';
+import unacknowledgedOrdersReport from './unacknowledgedOrdersReport';
+import planners from './planners';
+import spendByPartReport from './spendByPartReport';
+import plCreditDebitNote from './plCreditDebitNote';
+import plCreditDebitNotes from './plCreditDebitNotes';
+import openDebitNotes from './openDebitNotes';
+import sendPlNoteEmail from './sendPlNoteEmail';
+import bulkLeadTimesUpload from './bulkLeadTimesUpload';
+import supplierGroups from './supplierGroups.';
 import purchaseOrder from './purchaseOrder';
 import purchaseOrders from './purchaseOrders';
 
@@ -44,6 +57,10 @@ const rootReducer = history =>
         oidc,
         historyStore,
         accountingCompanies,
+        address,
+        addresses,
+        bulkLeadTimesUpload,
+        countries,
         currencies,
         deliveryAddresses,
         employees,
@@ -58,18 +75,27 @@ const rootReducer = history =>
         parts,
         partSupplier,
         partSuppliers,
+        planners,
+        plCreditDebitNote,
+        plCreditDebitNotes,
+        openDebitNotes,
         preferredSupplierChange,
         priceChangeReasons,
         purchaseOrder,
         purchaseOrders,
         putSupplierOnHold,
         router: connectRouter(history),
+        sendPlNoteEmail,
         signingLimit,
         signingLimits,
         spendBySupplierReport,
+        spendByPartReport,
         supplier,
+        supplierGroups,
         suppliers,
+        suppliersWithUnacknowledgedOrders,
         tariffs,
+        unacknowledgedOrdersReport,
         unitsOfMeasure,
         vendorManagers,
         ...sharedLibraryReducers,

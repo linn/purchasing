@@ -6,7 +6,7 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
-    using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
 
     public class VendorManagerFacadeService : FacadeResourceService<VendorManager, string, VendorManagerResource, VendorManagerResource>

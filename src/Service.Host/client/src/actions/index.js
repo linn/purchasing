@@ -1,4 +1,8 @@
-import { makeActionTypes } from '@linn-it/linn-form-components-library';
+import {
+    makeActionTypes,
+    makeReportActionTypes,
+    makeProcessActionTypes
+} from '@linn-it/linn-form-components-library';
 import * as itemTypes from '../itemTypes';
 import * as reportTypes from '../reportTypes';
 
@@ -11,11 +15,6 @@ export const signingLimitsActionTypes = makeActionTypes(itemTypes.signingLimits.
 
 export const partSuppliersActionTypes = makeActionTypes(itemTypes.partSuppliers.actionType, false);
 export const partSupplierActionTypes = makeActionTypes(itemTypes.partSupplier.actionType);
-
-export const testAction = () => ({
-    type: 'TEST_ACTION',
-    payload: {}
-});
 
 export const employeesActionTypes = makeActionTypes(itemTypes.employees.actionType);
 
@@ -80,13 +79,53 @@ export const putSupplierOnHoldActionTypes = makeActionTypes(
     true
 );
 
-export const vendorManagersActionTypes = makeActionTypes(itemTypes.vendorManagers.actionType);
+export const addressActionTypes = makeActionTypes(itemTypes.address.actionType, true);
+
+export const addressesActionTypes = makeActionTypes(itemTypes.addresses.actionType, false);
+
+export const countriesActionTypes = makeActionTypes(itemTypes.countries.actionType, false);
+
+export const vendorManagersActionTypes = makeActionTypes(
+    itemTypes.vendorManagers.actionType,
+    false
+);
 
 export const spendBySupplierReportActionTypes = makeActionTypes(
     reportTypes.spendBySupplierReport.actionType,
     false
 );
+export const suppliersWithUnacknowledgedOrdersActionTypes = makeReportActionTypes(
+    reportTypes.suppliersWithUnacknowledgedOrders.actionType
+);
 
+export const unacknowledgedOrdersReportActionTypes = makeReportActionTypes(
+    reportTypes.unacknowledgedOrdersReport.actionType
+);
+
+export const plannersActionTypes = makeActionTypes(itemTypes.planners.actionType);
+
+export const spendByPartReportActionTypes = makeActionTypes(
+    reportTypes.spendByPartReport.actionType,
+    false
+);
+
+export const plCreditDebitNoteActionTypes = makeActionTypes(itemTypes.plCreditDebitNote.actionType);
+
+export const plCreditDebitNotesActionTypes = makeActionTypes(
+    itemTypes.plCreditDebitNotes.actionType
+);
+
+export const openDebitNotesActionTypes = makeActionTypes(itemTypes.openDebitNotes.actionType);
+
+export const sendPlNoteEmailActionTypes = makeProcessActionTypes(
+    itemTypes.sendPlNoteEmail.actionType
+);
+
+export const bulkLeadTimesUploadActionTypes = makeProcessActionTypes(
+    itemTypes.bulkLeadTimesUpload.actionType
+);
+
+export const supplierGroupsActionTypes = makeActionTypes(itemTypes.supplierGroups.actionType);
 export const purchaseOrderActionTypes = makeActionTypes(itemTypes.purchaseOrder.actionType, true);
 
 export const purchaseOrdersActionTypes = makeActionTypes(

@@ -6,6 +6,8 @@
 
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
+    using NSubstitute;
+
     using NUnit.Framework;
 
     public class WhenCreating : AuthorisedContext
@@ -25,8 +27,13 @@
                                      Name = "SUPPLIER",
                                      InvoiceContactMethod = "METHOD",
                                      PaymentDays = 1,
-                                     PaymentMethod = "PAYMENT METHOD"
+                                     PaymentMethod = "PAYMENT METHOD",
+                                     AccountController = new Employee { Id = 1 },
+                                     OrderFullAddress = new FullAddress { Id = 1 }
                                  };
+
+            this.EmployeeRepository.FindById(1).Returns(new Employee { Id = 1 });
+            this.MockAddressRepository.FindById(1).Returns(new FullAddress { Id = 1 });
             this.privileges = new List<string> { "priv" };
             this.result = this.Sut.CreateSupplier(this.candidate, this.privileges);
         }

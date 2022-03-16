@@ -32,8 +32,6 @@
                                      OrderIncrement = 1m,
                                      LeadTimeWeeks = 1,
                                      DateCreated = DateTime.UnixEpoch,
-                                     RohsCompliant = "Y",
-                                     RohsCategory = "COMPLIANT",
                                      CurrencyUnitPrice = 1m,
                                      DamagesPercent = 0m,
                                      MinimumDeliveryQty = 1m,

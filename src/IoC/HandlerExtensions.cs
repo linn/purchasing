@@ -25,6 +25,7 @@
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<SigningLimitResource>>>()
                 .AddTransient<IHandler, SigningLimitApplicationStateResultHandler>()
                 .AddTransient<IHandler, PartSupplierApplicationStateResultHandler>()
+                .AddTransient<IHandler, SuppliersApplicationStateResultHandler>()
                 .AddTransient<IHandler, JsonResultHandler<CurrencyResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<CurrencyResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<OrderMethodResource>>()
@@ -44,10 +45,18 @@
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<PriceChangeReasonResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<PartPriceConversionsResource>>()
                 .AddTransient<IHandler, JsonResultHandler<PartCategoryResource>>()
-                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PartCategoryResource>>>()                
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PartCategoryResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<PurchaseOrderResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<PurchaseOrderResource>>>()
-                .AddTransient<IHandler, JsonResultHandler<IEnumerable<VendorManagerResource>>>();
+                .AddTransient<IHandler, JsonResultHandler<AddressResource>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<AddressResource>>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<CountryResource>>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<VendorManagerResource>>>()
+                .AddTransient<IHandler, JsonResultHandler<SupplierGroupResource>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<SupplierGroupResource>>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PlannerResource>>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PlCreditDebitNoteResource>>>()
+                .AddTransient<IHandler, JsonResultHandler<PlCreditDebitNoteResource>>();
         }
     }
 }

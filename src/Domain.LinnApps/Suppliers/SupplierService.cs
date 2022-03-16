@@ -6,6 +6,7 @@
 
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers.Exceptions;
@@ -22,18 +23,46 @@
 
         private readonly IRepository<SupplierOrderHoldHistoryEntry, int> supplierHoldHistories;
 
+        private readonly IRepository<FullAddress, int> addressRepository;
+
+        private readonly IRepository<Employee, int> employeeRepository;
+
+        private readonly IRepository<SupplierGroup, int> groupRepository;
+
+        private readonly IRepository<VendorManager, string> vendorManagerRepository;
+
+        private readonly IRepository<Planner, int> plannerRepository;
+        
+        private readonly IRepository<Person, int> personRepository;
+        
+        private readonly IRepository<SupplierContact, int> supplierContactRepository;
+
         public SupplierService(
             IAuthorisationService authService,
             IRepository<Supplier, int> supplierRepository,
             IRepository<Currency, string> currencyRepository,
             IRepository<PartCategory, string> partCategoryRepository,
-            IRepository<SupplierOrderHoldHistoryEntry, int> supplierHoldHistories)
+            IRepository<SupplierOrderHoldHistoryEntry, int> supplierHoldHistories,
+            IRepository<FullAddress, int> addressRepository,
+            IRepository<Employee, int> employeeRepository,
+            IRepository<VendorManager, string> vendorManagerRepository,
+            IRepository<Planner, int> plannerRepository,
+            IRepository<Person, int> personRepository,
+            IRepository<SupplierContact, int> supplierContactRepository,
+            IRepository<SupplierGroup, int> groupRepository)
         {
             this.authService = authService;
             this.supplierRepository = supplierRepository;
             this.currencyRepository = currencyRepository;
             this.partCategoryRepository = partCategoryRepository;
             this.supplierHoldHistories = supplierHoldHistories;
+            this.addressRepository = addressRepository;
+            this.employeeRepository = employeeRepository;
+            this.vendorManagerRepository = vendorManagerRepository;
+            this.plannerRepository = plannerRepository;
+            this.personRepository = personRepository;
+            this.supplierContactRepository = supplierContactRepository;
+            this.groupRepository = groupRepository;
         }
 
         public void UpdateSupplier(Supplier current, Supplier updated, IEnumerable<string> privileges)
@@ -67,6 +96,10 @@
             current.NotesForBuyer = updated.NotesForBuyer;
             current.DeliveryDay = updated.DeliveryDay;
             current.PmDeliveryDaysGrace = updated.PmDeliveryDaysGrace;
+            current.DateClosed = updated.DateClosed;
+            current.ReasonClosed = updated.ReasonClosed;
+            current.Notes = updated.Notes;
+            current.OrganisationId = updated.OrganisationId;
 
 
             current.InvoiceGoesTo = updated.InvoiceGoesTo != null
@@ -82,6 +115,36 @@
             current.RefersToFc = updated.RefersToFc != null
                                      ? this.supplierRepository.FindById(updated.RefersToFc.SupplierId)
                                      : null;
+
+            current.OrderFullAddress = updated.OrderFullAddress != null
+                                           ? this.addressRepository.FindById(updated.OrderFullAddress.Id)
+                                           : null;
+
+            current.InvoiceFullAddress = updated.InvoiceFullAddress != null
+                                           ? this.addressRepository.FindById(updated.InvoiceFullAddress.Id)
+                                           : null;
+
+            current.Planner = updated.Planner != null
+                                  ? this.plannerRepository.FindById(updated.Planner.Id)
+                                  : null;
+
+            current.VendorManager = updated.VendorManager != null
+                                        ? this.vendorManagerRepository.FindById(updated.VendorManager.Id)
+                                        : null;
+
+            current.AccountController = updated.AccountController != null
+                                            ? this.employeeRepository.FindById(updated.AccountController.Id)
+                                            : null;
+
+            current.ClosedBy = updated.ClosedBy != null
+                                            ? this.employeeRepository.FindById(updated.ClosedBy.Id)
+                                            : null;
+
+            current.Group = updated.Group != null
+                                   ? this.groupRepository.FindById(updated.Group.Id)
+                                   : null;
+
+            current.SupplierContacts = this.UpdateContacts(updated.SupplierContacts);
         }
 
         public Supplier CreateSupplier(Supplier candidate, IEnumerable<string> privileges)
@@ -104,6 +167,34 @@
             candidate.RefersToFc = candidate.RefersToFc != null
                                        ? this.supplierRepository.FindById(candidate.RefersToFc.SupplierId)
                                        : null;
+
+            candidate.OrderFullAddress = candidate.OrderFullAddress != null
+                                             ? this.addressRepository.FindById(candidate.OrderFullAddress.Id)
+                                             : null;
+
+            candidate.InvoiceFullAddress = candidate.InvoiceFullAddress != null
+                                               ? this.addressRepository.FindById(candidate.InvoiceFullAddress.Id)
+                                               : null;
+
+            candidate.Planner = candidate.Planner != null
+                                               ? this.plannerRepository.FindById(candidate.Planner.Id)
+                                               : null;
+
+            candidate.VendorManager = candidate.VendorManager != null
+                                    ? this.vendorManagerRepository.FindById(candidate.VendorManager.Id)
+                                    : null;
+
+            candidate.AccountController = candidate.AccountController != null
+                                    ? this.employeeRepository.FindById(candidate.AccountController.Id)
+                                    : null;
+            candidate.OpenedBy = candidate.OpenedBy != null
+                                              ? this.employeeRepository.FindById(candidate.OpenedBy.Id)
+                                              : null;
+
+            candidate.Group = candidate.Group != null
+                                     ? this.groupRepository.FindById(candidate.Group.Id)
+                                     : null;
+
             ValidateFields(candidate);
 
             return candidate;
@@ -168,6 +259,16 @@
                 errors.Add("Payment Method");
             }
 
+            if (candidate.AccountController == null)
+            {
+                errors.Add("Account Controller");
+            }
+
+            if (candidate.OrderFullAddress == null)
+            {
+                errors.Add("Order Addressee");
+            }
+
             if (errors.Any())
             {
                 var msg = errors
@@ -177,6 +278,62 @@
 
                 throw new SupplierException(msg);
             }
+        }
+
+        private IEnumerable<SupplierContact> UpdateContacts(IEnumerable<SupplierContact> supplierContacts)
+        {
+            if (supplierContacts == null)
+            {
+                return null;
+            }
+
+            var enumerable = supplierContacts.ToList();
+            if (enumerable.Count(x => x.IsMainOrderContact == "Y") > 1)
+            {
+                throw new SupplierException("Cannot have more than one Main Order Contact");
+            }
+
+            if (enumerable.Count(x => x.IsMainInvoiceContact == "Y") > 1)
+            {
+                throw new SupplierException("Cannot have more than one Main Invoice Contact");
+            }
+
+            var result = new List<SupplierContact>();
+
+            foreach (var supplierContact in enumerable)
+            {
+                var existingSupplierContact = this.supplierContactRepository.FindById(supplierContact.ContactId);
+
+                if (existingSupplierContact != null)
+                {
+                    existingSupplierContact.IsMainInvoiceContact = supplierContact.IsMainInvoiceContact;
+                    existingSupplierContact.IsMainOrderContact = supplierContact.IsMainOrderContact;
+
+                    existingSupplierContact.PhoneNumber = supplierContact.PhoneNumber;
+                    existingSupplierContact.EmailAddress = supplierContact.EmailAddress;
+                    existingSupplierContact.JobTitle = supplierContact.JobTitle;
+                    existingSupplierContact.Comments = supplierContact.Comments;
+                    var person = this.personRepository.FindById(supplierContact.Person.Id);
+
+                    person.FirstName = supplierContact.Person.FirstName;
+                    person.LastName = supplierContact.Person.LastName;
+
+                    existingSupplierContact.Person = person;
+                    result.Add(existingSupplierContact);
+                }
+                else
+                {
+                    supplierContact.Person.DateCreated = DateTime.Today;
+                    this.personRepository.Add(supplierContact.Person);
+                    supplierContact.SupplierId = supplierContact.SupplierId;
+                    supplierContact.DateCreated = DateTime.Today;
+                    supplierContact.Comments = supplierContact.Comments;
+                    this.supplierContactRepository.Add(supplierContact);
+                    result.Add(supplierContact);
+                }
+            }
+
+            return result;
         }
     }
 }

@@ -25,7 +25,14 @@
                 this.MockSupplierRepository,
                 this.MockCurrencyRepository,
                 this.MockPartCategoryRepository,
-                this.MockSupplierOrderHoldHistory);
+                this.MockSupplierOrderHoldHistory,
+                this.MockAddressRepository,
+                this.EmployeeRepository,
+                this.VendorManagerRepository,
+                this.PlannerRepository,
+                this.PersonRepository,
+                this.SupplierContactRepository,
+                this.GroupRepository);
         }
     }
 }

@@ -32,9 +32,7 @@
                                      OrderIncrement = 1m,
                                      LeadTimeWeeks = 1,
                                      DateCreated = DateTime.UnixEpoch,
-                                     RohsCompliant = "Y",
                                      SupplierDesignation = "1234567",
-                                     RohsCategory = "COMPLIANT",
                                      CurrencyUnitPrice = 1m,
                                      DamagesPercent = 0m,
                                      MinimumDeliveryQty = 1m,
@@ -58,6 +56,7 @@
             this.result.SupplierId.Should().Be(1);
             this.result.PartNumber.Should().Be("PART");
             this.result.SupplierDesignation.Should().Be("1234567");
+            this.result.OverbookingAllowed.Should().Be("Y");
         }
     }
 }

@@ -11,8 +11,8 @@
     <PackageReference Include="Linn.Common.Logging" Version="2.0.0" />
     <PackageReference Include="linn.common.persistence" Version="2.1.1" />
     <PackageReference Include="Linn.Common.Proxy.LinnApps" Version="3.0.0" />
-    <PackageReference Include="Linn.Common.Reporting" Version="1.4.0" />
-    <PackageReference Include="Linn.Common.Reporting.Resources" Version="1.2.2" />
+    <PackageReference Include="Linn.Common.Reporting" Version="1.5.0" />
+    <PackageReference Include="Linn.Common.Reporting.Resources" Version="1.3.0" />
     <PackageReference Include="Linn.Common.Serialization" Version="2.1.0" />
   </ItemGroup>
 

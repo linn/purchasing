@@ -5,6 +5,7 @@
 
     using FluentAssertions;
 
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
@@ -23,7 +24,7 @@
         public void SetUp()
         {
             this.id = 1;
-            this.supplier = new Supplier { SupplierId = 1, Name = "SUPPLIER" };
+            this.supplier = new Supplier { SupplierId = 1, Name = "SUPPLIER", OpenedBy = new Employee { Id = 1 } };
 
             this.MockSupplierRepository.FindById(1).Returns(this.supplier);
 

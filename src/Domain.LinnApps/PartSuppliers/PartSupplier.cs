@@ -38,19 +38,11 @@
 
         public string UnitOfMeasure { get; set; }
 
-        public decimal? OrderConversionFactor { get; set; }
-
         public int LeadTimeWeeks { get; set; }
-
-        public int? ContractLeadTimeWeeks { get; set; }
 
         public string OverbookingAllowed { get; set; }
 
         public decimal? DamagesPercent { get; set; }
-
-        public PackagingGroup PackagingGroup { get; set; }
-
-        public string WebAddress { get; set; }
 
         public string DeliveryInstructions { get; set; }
 
@@ -68,8 +60,6 @@
 
         public string JitStatus { get; set; }
 
-        public Tariff Tariff { get; set; }
-
         public Employee CreatedBy { get; set; }
 
         public DateTime DateCreated { get; set; }
@@ -84,19 +74,9 @@
 
         public string VendorPartNumber { get; set; }
 
-        public string RohsCategory { get; set; }
-
-        public string RohsCompliant { get; set; }
-
-        public DateTime? DateRohsCompliant { get; set; }
-
-        public string RohsComments { get; set; }
-
-        public Address DeliveryAddress { get; set; }
+        public FullAddress DeliveryFullAddress { get; set; }
 
         public string PackWasteStatus { get; set; }
-
-        public decimal? DutyPercent { get; set; }
 
         public int? SupplierRanking { get; set; }
     }

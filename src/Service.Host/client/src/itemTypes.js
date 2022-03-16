@@ -119,8 +119,54 @@ export const putSupplierOnHold = new ItemType(
     '/purchasing/suppliers/hold'
 );
 
+export const address = new ItemType('address', 'ADDRESS', '/purchasing/addresses');
+
+export const addresses = new ItemType('address', 'ADDRESSES', '/purchasing/addresses');
+
+export const countries = new ItemType('countries', 'COUNTRIES', '/purchasing/countries');
+
 export const vendorManagers = new ItemType(
     'vendorManagers',
     'VENDOR_MANAGERS',
     '/purchasing/vendor-managers'
+);
+
+export const planners = new ItemType('planners', 'PLANNERS', '/purchasing/suppliers/planners');
+
+export const contacts = new ItemType('contacts', 'CONTACTS', '/purchasing/suppliers/contacts');
+
+export const plCreditDebitNote = new ItemType(
+    'plCreditDebitNote',
+    'PL_CREDIT_DEBIT_NOTE',
+    '/purchasing/pl-credit-debit-notes'
+);
+
+export const plCreditDebitNotes = new ItemType(
+    'plCreditDebitNotes',
+    'PL_CREDIT_DEBIT_NOTES',
+    '/purchasing/pl-credit-debit-notes'
+);
+
+export const openDebitNotes = new ItemType(
+    'plCreditDebitNotes',
+    'PL_CREDIT_DEBIT_NOTES',
+    '/purchasing/open-debit-notes'
+);
+
+export const sendPlNoteEmail = new ItemType(
+    'sendPlNoteEmail',
+    'SEND_PL_NOTE_EMAIL',
+    '/purchasing/pl-credit-debit-notes/email/'
+);
+
+export const bulkLeadTimesUpload = new ItemType(
+    'bulkLeadTimesUpload',
+    'BULK_LEAD_TIMES_UPLOAD',
+    '/purchasing/suppliers/bulk-lead-times/'
+);
+
+export const supplierGroups = new ItemType(
+    'supplierGroups',
+    'SUPPLIER_GROUPS',
+    '/purchasing/supplier-groups/'
 );

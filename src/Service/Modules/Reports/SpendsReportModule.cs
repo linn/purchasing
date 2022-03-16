@@ -1,7 +1,6 @@
 ﻿namespace Linn.Purchasing.Service.Modules.Reports
 {
     using System;
-    using System.IO;
     using System.Net.Mime;
     using System.Threading.Tasks;
 
@@ -10,7 +9,6 @@
     using Carter.Response;
 
     using Linn.Purchasing.Facade.Services;
-    using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.Extensions;
     using Linn.Purchasing.Service.Models;
 
@@ -24,8 +22,11 @@
         {
             this.spendsReportFacadeService = spendsReportFacadeService;
             this.Get("/purchasing/reports/spend-by-supplier", this.GetApp);
+            this.Get("/purchasing/reports/spend-by-part", this.GetApp);
             this.Get("/purchasing/reports/spend-by-supplier/report", this.GetSpendBySupplierReport);
             this.Get("/purchasing/reports/spend-by-supplier/export", this.GetSpendBySupplierExport);
+            this.Get("/purchasing/reports/spend-by-part/report", this.GetSpendByPartReport);
+            this.Get("/purchasing/reports/spend-by-part/export", this.GetSpendByPartExport);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -33,16 +34,45 @@
             await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
         }
 
-        private async Task GetSpendBySupplierExport(HttpRequest req, HttpResponse res)
+        private async Task GetSpendByPartExport(HttpRequest req, HttpResponse res)
         {
-            var vm = req.Query.As<string>("Vm");
+            var supplierId = req.Query.As<int>("Id");
 
-            using Stream stream = this.spendsReportFacadeService.GetSpendBySupplierExport(vm != null ? vm : string.Empty, req.HttpContext.GetPrivileges());
+            using var stream = this.spendsReportFacadeService.GetSpendByPartExport(
+                supplierId,
+                req.HttpContext.GetPrivileges());
 
             var contentDisposition = new ContentDisposition
                                          {
                                              FileName =
-                                                 $"spendBySuppliers{DateTime.Now.ToString("dd-MM-yyyy")}.csv"
+                                                 $"spendByPart_{supplierId}_{DateTime.Now.ToString("dd-MM-yyyy")}.csv"
+                                         };
+
+            stream.Position = 0;
+            await res.FromStream(stream, "text/csv", contentDisposition);
+        }
+
+        private async Task GetSpendByPartReport(HttpRequest req, HttpResponse res)
+        {
+            var supplierId = req.Query.As<int>("Id");
+            var results = this.spendsReportFacadeService.GetSpendByPartReport(
+                supplierId,
+                req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(results);
+        }
+
+        private async Task GetSpendBySupplierExport(HttpRequest req, HttpResponse res)
+        {
+            var vm = req.Query.As<string>("Vm");
+
+            using var stream = this.spendsReportFacadeService.GetSpendBySupplierExport(
+                vm != null ? vm : string.Empty,
+                req.HttpContext.GetPrivileges());
+
+            var contentDisposition = new ContentDisposition
+                                         {
+                                             FileName = $"spendBySuppliers{DateTime.Now.ToString("dd-MM-yyyy")}.csv"
                                          };
 
             stream.Position = 0;
@@ -54,7 +84,8 @@
             var vm = req.Query.As<string>("Vm");
 
             var results = this.spendsReportFacadeService.GetSpendBySupplierReport(
-                vm != null ? vm : string.Empty, req.HttpContext.GetPrivileges());
+                vm != null ? vm : string.Empty,
+                req.HttpContext.GetPrivileges());
 
             await res.Negotiate(results);
         }

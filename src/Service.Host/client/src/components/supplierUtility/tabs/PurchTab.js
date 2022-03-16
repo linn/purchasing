@@ -2,18 +2,21 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-
+import Typography from '@mui/material/Typography';
+import { Link as RouterLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import {
     InputField,
     collectionSelectorHelpers,
     Dropdown,
-    Typeahead
+    Typeahead,
+    Loading
 } from '@linn-it/linn-form-components-library';
 
 import suppliersActions from '../../../actions/suppliersActions';
 import currenciesActions from '../../../actions/currenciesActions';
+import supplierGroupsActions from '../../../actions/supplierGroupsActions';
 import partCategoriesActions from '../../../actions/partCategoriesActions';
 
 function PurchTab({
@@ -27,11 +30,14 @@ function PurchTab({
     refersToFcName,
     pmDeliveryDaysGrace,
     holdLink,
-    openHoldDialog
+    openHoldDialog,
+    bulkUpdateLeadTimesUrl,
+    groupId
 }) {
     const reduxDispatch = useDispatch();
     useEffect(() => {
         reduxDispatch(currenciesActions.fetch());
+        reduxDispatch(supplierGroupsActions.fetch());
     }, [reduxDispatch]);
 
     const searchSuppliers = searchTerm => reduxDispatch(suppliersActions.search(searchTerm));
@@ -56,6 +62,23 @@ function PurchTab({
     const partCategoriesSearchLoading = useSelector(reduxState =>
         collectionSelectorHelpers.getSearchLoading(reduxState.partCategories)
     );
+
+    const supplierGroups = useSelector(reduxState =>
+        collectionSelectorHelpers.getItems(reduxState.supplierGroups)
+    );
+
+    const supplierGroupsLoading = useSelector(reduxState =>
+        collectionSelectorHelpers.getLoading(reduxState.supplierGroups)
+    );
+    if (supplierGroupsLoading) {
+        return (
+            <Grid container spacing={3}>
+                <Grid item xs={4}>
+                    <Loading />
+                </Grid>
+            </Grid>
+        );
+    }
     return (
         <Grid container spacing={3}>
             <Grid item xs={4}>
@@ -169,13 +192,38 @@ function PurchTab({
                 <InputField
                     fullWidth
                     value={pmDeliveryDaysGrace}
-                    label="PM Delivery Days Grance"
+                    label="PM Delivery Days Grace"
                     type="number"
                     propertyName="pmDeliveryDaysGrace"
                     onChange={handleFieldChange}
                 />
             </Grid>
             <Grid item xs={9} />
+            {supplierGroups.length > 0 && (
+                <>
+                    <Grid item xs={4}>
+                        <Dropdown
+                            fullWidth
+                            value={groupId}
+                            label="Supplier Group"
+                            items={supplierGroups.map(g => ({ id: g.id, displayText: g.name }))}
+                            propertyName="groupId"
+                            onChange={handleFieldChange}
+                            allowNoValue
+                        />
+                    </Grid>
+                </>
+            )}
+            <Grid item xs={12} />
+            {bulkUpdateLeadTimesUrl && (
+                <>
+                    <Grid item xs={4}>
+                        <RouterLink to={bulkUpdateLeadTimesUrl}>
+                            <Typography variant="button"> Bulk Update Lead Times </Typography>
+                        </RouterLink>
+                    </Grid>
+                </>
+            )}
         </Grid>
     );
 }
@@ -191,7 +239,9 @@ PurchTab.propTypes = {
     refersToFcName: PropTypes.string,
     pmDeliveryDaysGrace: PropTypes.number,
     holdLink: PropTypes.string,
-    openHoldDialog: PropTypes.func.isRequired
+    openHoldDialog: PropTypes.func.isRequired,
+    bulkUpdateLeadTimesUrl: PropTypes.string,
+    groupId: PropTypes.number
 };
 
 PurchTab.defaultProps = {
@@ -203,7 +253,9 @@ PurchTab.defaultProps = {
     refersToFcId: null,
     refersToFcName: null,
     pmDeliveryDaysGrace: null,
-    holdLink: null
+    holdLink: null,
+    bulkUpdateLeadTimesUrl: null,
+    groupId: null
 };
 
 export default PurchTab;

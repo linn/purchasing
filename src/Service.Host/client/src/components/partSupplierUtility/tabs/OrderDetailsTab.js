@@ -22,9 +22,7 @@ function OrderDetailsTab({
     minimumOrderQty,
     minimumDeliveryQty,
     orderIncrement,
-    orderConversionFactor,
     reelOrBoxQty,
-    fullAddress,
     setPriceChangeDialogOpen,
     creating,
     fetchBasePriceConversion,
@@ -178,17 +176,8 @@ function OrderDetailsTab({
                     onChange={handleFieldChange}
                 />
             </Grid>
-            <Grid item xs={4}>
-                <InputField
-                    fullWidth
-                    value={orderConversionFactor ?? 1}
-                    label="Order Conversion Factor"
-                    type="number"
-                    propertyName="orderConversionFactor"
-                    onChange={handleFieldChange}
-                />
-            </Grid>
-            <Grid item xs={4} />
+
+            <Grid item xs={8} />
             <Grid item xs={4}>
                 <Dropdown
                     fullWidth
@@ -201,20 +190,10 @@ function OrderDetailsTab({
                     }))}
                     allowNoValue
                     onChange={handleFieldChange}
+                    disabled
                 />
             </Grid>
-            <Grid item xs={6}>
-                <InputField
-                    fullWidth
-                    value={fullAddress}
-                    label="fullAddress"
-                    type="number"
-                    rows={10}
-                    propertyName="fullAddress"
-                    onChange={() => {}}
-                />
-            </Grid>
-            <Grid item xs={2} />
+            <Grid item xs={8} />
         </Grid>
     );
 }
@@ -236,9 +215,7 @@ OrderDetailsTab.propTypes = {
     minimumOrderQty: PropTypes.number,
     minimumDeliveryQty: PropTypes.number,
     orderIncrement: PropTypes.number,
-    orderConversionFactor: PropTypes.number,
     reelOrBoxQty: PropTypes.number,
-    fullAddress: PropTypes.string,
     setPriceChangeDialogOpen: PropTypes.func.isRequired,
     creating: PropTypes.bool,
     canEdit: PropTypes.func.isRequired,
@@ -262,9 +239,7 @@ OrderDetailsTab.defaultProps = {
     minimumOrderQty: null,
     minimumDeliveryQty: null,
     orderIncrement: null,
-    orderConversionFactor: null,
-    reelOrBoxQty: null,
-    fullAddress: null
+    reelOrBoxQty: null
 };
 
 export default OrderDetailsTab;

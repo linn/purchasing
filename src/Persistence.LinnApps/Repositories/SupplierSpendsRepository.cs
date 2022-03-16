@@ -6,6 +6,7 @@
 
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Reports.Models;
 
     using Microsoft.EntityFrameworkCore;
 
@@ -20,7 +21,7 @@
 
         public IQueryable<SupplierSpend> FilterBy(Expression<Func<SupplierSpend, bool>> expression)
         {
-            return this.serviceDbContext.SupplierSpends.Include(s => s.Supplier).Where(expression);
+           return this.serviceDbContext.SupplierSpends.Include(s => s.Supplier).Where(expression);
         }
 
         IQueryable<SupplierSpend> IQueryRepository<SupplierSpend>.FindAll()

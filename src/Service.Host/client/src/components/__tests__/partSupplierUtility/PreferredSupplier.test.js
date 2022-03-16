@@ -253,20 +253,3 @@ describe('When price conversions arrive...', () => {
         expect(screen.getByDisplayValue(777)).toBeInTheDocument();
     });
 });
-
-describe('When Part bomType A and not new Supplier not 4415 (Linn)...', () => {
-    beforeEach(() => {
-        cleanup();
-        jest.clearAllMocks();
-        useSelector.mockImplementation(callback => callback(state));
-        render(<PreferredSupplier partNumber={partNumber} bomType="A" />);
-        const supplierDropdown = screen.getByLabelText('Select a New Supplier');
-        fireEvent.change(supplierDropdown, { target: { value: 2 } });
-    });
-
-    test('Should show message', () => {
-        expect(
-            screen.getByText('Tell production to put a labour price on this.')
-        ).toBeInTheDocument();
-    });
-});

@@ -2,10 +2,13 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
+    using Linn.Common.Proxy.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -15,14 +18,18 @@
     {
         private readonly ISupplierService domainService;
 
+        private readonly IDatabaseService databaseService;
+
         public SupplierFacadeService(
             IRepository<Supplier, int> repository, 
             ITransactionManager transactionManager, 
             IBuilder<Supplier> resourceBuilder,
-            ISupplierService domainService)
+            ISupplierService domainService,
+            IDatabaseService databaseService)
             : base(repository, transactionManager, resourceBuilder)
         {
             this.domainService = domainService;
+            this.databaseService = databaseService;
         }
 
         protected override Supplier CreateFromResource(
@@ -30,7 +37,11 @@
             IEnumerable<string> privileges = null)        
         {
             var candidate = this.BuildEntityFromResourceHelper(resource);
+            candidate.SupplierId = this.databaseService.GetNextVal("SUPPLIER_SEQ");
 
+            candidate.OpenedBy = resource.OpenedById.HasValue
+                ? new Employee { Id = (int)resource.OpenedById } : null;
+            candidate.DateOpened = DateTime.Today;
             return this.domainService.CreateSupplier(candidate, privileges);
         }
 
@@ -70,7 +81,7 @@
 
         private Supplier BuildEntityFromResourceHelper(SupplierResource resource)
         {
-            return new Supplier
+            var supplier = new Supplier
                        {
                            Name = resource.Name,
                            Currency = new Currency
@@ -78,8 +89,10 @@
                                               Code = resource.CurrencyCode
                                           },
                            WebAddress = resource.WebAddress,
-                           VendorManager = resource.VendorManager,
-                           Planner = resource.Planner,
+                           VendorManager = !string.IsNullOrEmpty(resource.VendorManagerId) 
+                            ? new VendorManager { Id = resource.VendorManagerId } : null,
+                           Planner = resource.PlannerId.HasValue 
+                                         ? new Planner { Id = (int)resource.PlannerId } : null,
                            InvoiceContactMethod = resource.InvoiceContactMethod,
                            PhoneNumber = resource.PhoneNumber,
                            OrderContactMethod = resource.OrderContactMethod,
@@ -101,8 +114,44 @@
                            DeliveryDay = resource.DeliveryDay,
                            RefersToFc = resource.RefersToFcId.HasValue
                             ? new Supplier { SupplierId = (int)resource.RefersToFcId } : null,
-                           PmDeliveryDaysGrace = resource.PmDeliveryDaysGrace
-                       };
-    }
+                           PmDeliveryDaysGrace = resource.PmDeliveryDaysGrace,
+                           OrderFullAddress = resource.OrderAddressId.HasValue 
+                                                  ? new FullAddress { Id = (int)resource.OrderAddressId } : null,
+                           InvoiceFullAddress = resource.InvoiceAddressId.HasValue
+                                                  ? new FullAddress { Id = (int)resource.InvoiceAddressId } : null,
+                           AccountController = resource.AccountControllerId.HasValue
+                               ? new Employee { Id = (int)resource.AccountControllerId } : null,
+                           ClosedBy = resource.ClosedById.HasValue ? new Employee { Id = (int)resource.ClosedById }
+                                        : null,
+                           DateClosed = !string.IsNullOrEmpty(resource.DateClosed) 
+                                        ? DateTime.Parse(resource.DateClosed) : null,
+                           ReasonClosed = resource.ReasonClosed,
+                           Notes = resource.Notes,
+                           OrganisationId = resource.OrganisationId,
+                           SupplierContacts = resource.SupplierContacts?.Select(c => new SupplierContact
+                                                                          {
+                                                                              SupplierId = resource.Id,
+                                                                              ContactId = c.Id > 0 ? c.Id : this.databaseService.GetIdSequence("CONT_SEQ"),
+                                                                              IsMainInvoiceContact = c.IsMainInvoiceContact,
+                                                                              IsMainOrderContact = c.IsMainOrderContact,
+                                                                              EmailAddress = c.EmailAddress,
+                                                                              Comments = c.Comments,
+                                                                              JobTitle = c.JobTitle,
+                                                                              MobileNumber = c.MobileNumber,
+                                                                              PhoneNumber = c.PhoneNumber,
+                                                                              Person =
+                                                                                  new Person
+                                                                                      {
+                                                                                          Id = c.PersonId > 0 ? c.PersonId : this.databaseService.GetNextVal("PERS_SEQ"), 
+                                                                                          FirstName = c.FirstName, 
+                                                                                          LastName = c.LastName
+                                                                                      }
+                                                                          }),
+                           Group = resource.GroupId.HasValue 
+                                       ? new SupplierGroup { Id = (int)resource.GroupId } : null
+                        };
+         
+            return supplier;
+        }
     }
 }

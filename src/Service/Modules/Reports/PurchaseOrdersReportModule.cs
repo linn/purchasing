@@ -10,6 +10,7 @@
 
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.RequestResources;
     using Linn.Purchasing.Service.Extensions;
     using Linn.Purchasing.Service.Models;
 
@@ -28,6 +29,64 @@
             this.Get("/purchasing/reports/orders-by-supplier/export", this.GetOrdersBySupplierExport);
             this.Get("/purchasing/reports/orders-by-part/report", this.GetOrdersByPartReport);
             this.Get("/purchasing/reports/orders-by-part/export", this.GetOrdersByPartExport);
+            this.Get("/purchasing/reports/suppliers-with-unacknowledged-orders", this.GetSuppliersWithUnacknowledgedOrdersReport);
+            this.Get("/purchasing/reports/unacknowledged-orders", this.GetUnacknowledgedOrdersReport);
+            this.Get("/purchasing/reports/unacknowledged-orders/export", this.GetUnacknowledgedOrdersReportExport);
+        }
+
+        private async Task GetUnacknowledgedOrdersReport(HttpRequest request, HttpResponse response)
+        {
+            var resource = new UnacknowledgedOrdersRequestResource
+                               {
+                                   SupplierId = request.Query.As<int?>("SupplierId"),
+                                   SupplierGroupId = request.Query.As<int?>("SupplierGroupId")
+                               };
+
+            var results = this.purchaseOrderReportFacadeService.GetUnacknowledgedOrdersReport(
+                resource,
+                request.HttpContext.GetPrivileges());
+
+            await response.Negotiate(results);
+        }
+
+        private async Task GetUnacknowledgedOrdersReportExport(HttpRequest request, HttpResponse response)
+        {
+            var resource = new UnacknowledgedOrdersRequestResource
+                               {
+                                   SupplierId = request.Query.As<int?>("SupplierId"),
+                                   SupplierGroupId = request.Query.As<int?>("SupplierGroupId"),
+                                   Name = request.Query.As<string>("Name")
+                               };
+
+            var stream = this.purchaseOrderReportFacadeService.GetUnacknowledgedOrdersReportExport(
+                resource,
+                request.HttpContext.GetPrivileges());
+
+            var fileName = $"Unacknowledged purchase orders for {resource.Name}.csv";
+            if (resource.SupplierId.HasValue)
+            {
+                fileName += $" ({resource.SupplierId}).csv";
+            }
+            var contentDisposition = new ContentDisposition { FileName = fileName };
+
+            stream.Position = 0;
+            await response.FromStream(stream, "text/csv", contentDisposition);
+        }
+
+        private async Task GetSuppliersWithUnacknowledgedOrdersReport(HttpRequest request, HttpResponse response)
+        {
+            var resource = new SuppliersWithUnacknowledgedOrdersRequestResource
+                               {
+                                   VendorManager = request.Query.As<string>("VendorManager"),
+                                   Planner = request.Query.As<int?>("Planner"),
+                                   UseSupplierGroup = request.Query.As<bool>("UseSupplierGroup")
+                               };
+
+            var results = this.purchaseOrderReportFacadeService.GetSuppliersWithUnacknowledgedOrdersReport(
+                resource,
+                request.HttpContext.GetPrivileges());
+
+            await response.Negotiate(results);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)

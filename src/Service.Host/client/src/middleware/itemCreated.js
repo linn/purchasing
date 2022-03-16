@@ -9,7 +9,9 @@ export default () => next => action => {
         if (
             action.type !== actionTypes.signingLimitActionTypes.RECEIVE_NEW_SIGNING_LIMIT &&
             action.type !==
-                actionTypes.preferredSupplierChangeActionTypes.RECEIVE_NEW_PREFERRED_SUPPLIER_CHANGE
+                actionTypes.preferredSupplierChangeActionTypes
+                    .RECEIVE_NEW_PREFERRED_SUPPLIER_CHANGE &&
+            action.type !== actionTypes.addressActionTypes.RECEIVE_NEW_ADDRESS
         ) {
             history.push(utilities.getSelfHref(action.payload.data));
         }

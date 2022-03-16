@@ -58,14 +58,18 @@ function SpendBySupplierReport() {
                     {loading || !reportData ? (
                         <Loading />
                     ) : (
-                        <ReportTable
-                            reportData={reportData}
-                            title={reportData.title}
-                            showTitle
-                            showTotals={false}
-                            placeholderRows={4}
-                            placeholderColumns={4}
-                        />
+                        <>
+                            <ReportTable
+                                reportData={reportData}
+                                title={reportData.title}
+                                showTitle
+                                showTotals
+                                showRowTitles
+                                placeholderRows={4}
+                                placeholderColumns={4}
+                            />
+                            <p>Total number of suppliers: {reportData?.results?.length}</p>
+                        </>
                     )}
                 </Grid>
                 <Grid item xs={12}>

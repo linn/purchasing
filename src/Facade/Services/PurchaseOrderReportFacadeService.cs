@@ -11,8 +11,8 @@
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Common.Serialization;
     using Linn.Purchasing.Domain.LinnApps.Reports;
-    using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.RequestResources;
 
     public class PurchaseOrderReportFacadeService : IPurchaseOrderReportFacadeService
     {
@@ -54,7 +54,6 @@
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
-
         public Stream GetOrdersByPartExport(
             OrdersByPartSearchResource resource,
             IEnumerable<string> privileges)
@@ -78,6 +77,44 @@
             var returnResource = results.ConvertToCsvList();
 
             MemoryStream stream = new MemoryStream();
+            var csvStreamWriter = new CsvStreamWriter(stream);
+            csvStreamWriter.WriteModel(returnResource);
+
+            return stream;
+        }
+
+        public IResult<ReportReturnResource> GetSuppliersWithUnacknowledgedOrdersReport(
+            SuppliersWithUnacknowledgedOrdersRequestResource resource,
+            IEnumerable<string> privileges)
+        {
+            var results = this.domainService.GetSuppliersWithUnacknowledgedOrders(
+                resource.Planner,
+                resource.VendorManager,
+                resource.UseSupplierGroup);
+
+            var returnResource = this.BuildResource(results, privileges);
+
+            return new SuccessResult<ReportReturnResource>(returnResource);
+        }
+
+        public IResult<ReportReturnResource> GetUnacknowledgedOrdersReport(
+            UnacknowledgedOrdersRequestResource resource,
+            IEnumerable<string> privileges)
+        {
+            var results = this.domainService.GetUnacknowledgedOrders(resource.SupplierId, resource.SupplierGroupId);
+
+            var returnResource = this.BuildResource(results, privileges);
+
+            return new SuccessResult<ReportReturnResource>(returnResource);
+        }
+
+        public Stream GetUnacknowledgedOrdersReportExport(UnacknowledgedOrdersRequestResource resource, IEnumerable<string> privileges)
+        {
+            var results = this.domainService.GetUnacknowledgedOrders(resource.SupplierId, resource.SupplierGroupId);
+
+            var returnResource = results.ConvertToCsvList();
+
+            var stream = new MemoryStream();
             var csvStreamWriter = new CsvStreamWriter(stream);
             csvStreamWriter.WriteModel(returnResource);
 
@@ -115,7 +152,6 @@
 
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
-
 
         public Stream GetOrdersBySupplierExport(
             OrdersBySupplierSearchResource resource,

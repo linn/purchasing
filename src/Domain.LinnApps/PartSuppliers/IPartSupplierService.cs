@@ -9,5 +9,11 @@
         public PartSupplier CreatePartSupplier(PartSupplier candidate, IEnumerable<string> privileges);
 
         public PreferredSupplierChange CreatePreferredSupplierChange(PreferredSupplierChange candidate, IEnumerable<string> privileges);
+
+        public ProcessResult BulkUpdateLeadTimes(
+            int supplierId,
+            IEnumerable<LeadTimeUpdateModel> changes, 
+            IEnumerable<string> privileges,
+            int? supplierGroupId = null);
     }
 }

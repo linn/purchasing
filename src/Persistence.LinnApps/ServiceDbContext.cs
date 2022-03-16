@@ -6,6 +6,7 @@
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Reports.Models;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using Microsoft.EntityFrameworkCore;
@@ -28,13 +29,9 @@
 
         public DbSet<PackagingGroup> PackagingGroups { get; set; }
 
-        public DbSet<Address> Addresses { get; set; }
+        public DbSet<FullAddress> FullAddresses { get; set; }
 
         public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
-
-        public DbSet<PurchaseOrderDetail> PurchaseOrderDetails { get; set; }
-
-        public DbSet<PurchaseOrderDelivery> PurchaseOrderDeliveries { get; set; }
 
         public DbSet<SigningLimit> SigningLimits { get; set; }
 
@@ -52,8 +49,6 @@
 
         public DbSet<PurchaseLedger> PurchaseLedgers { get; set; }
 
-        public DbSet<TransactionType> TransactionTypes { get; set; }
-
         public DbSet<PreferredSupplierChange> PreferredSupplierChanges { get; set; }
 
         public DbSet<PriceChangeReason> PriceChangeReasons { get; set; }
@@ -64,9 +59,29 @@
 
         public DbSet<SupplierOrderHoldHistoryEntry> SupplierOrderHoldHistories { get; set; }
 
+        public DbSet<Address> Addresses { get; set; }
+
+        public DbSet<Country> Countries { get; set; }
+        
         public DbSet<VendorManager> VendorManagers { get; set; }
 
         public DbSet<SupplierSpend> SupplierSpends { get; set; }
+
+        public DbSet<UnacknowledgedOrders> UnacknowledgedOrders { get; set; }
+
+        public DbSet<SuppliersWithUnacknowledgedOrders> SuppliersWithUnacknowledgedOrders { get; set; }
+
+        public DbSet<SupplierGroupsWithUnacknowledgedOrders> SupplierGroupsWithUnacknowledgedOrders { get; set; }
+
+        public DbSet<Planner> Planners { get; set; }
+
+        public DbSet<SupplierGroup> SupplierGroups { get; set; }
+
+        public DbSet<SupplierContact> SupplierContacts { get; set; }
+
+        public DbSet<Person> Persons { get; set; }
+
+        public DbSet<PlCreditDebitNote> PlCreditDebitNotes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -79,7 +94,7 @@
             this.BuildEmployees(builder);
             this.BuildPackagingGroups(builder);
             this.BuildManufacturers(builder);
-            this.BuildAddresses(builder);
+            this.BuildFullAddresses(builder);
             this.BuildPurchaseOrders(builder);
             this.BuildPurchaseOrderDetails(builder);
             this.BuildPurchaseOrderDeliveries(builder);
@@ -97,8 +112,21 @@
             this.BuildPartHistory(builder);
             this.BuildPartCategories(builder);
             this.BuildSupplierOrderHoldHistories(builder);
+            this.BuildAddresses(builder);
+            this.BuildCountries(builder);
             this.BuildVendorManagers(builder);
             this.BuildSpendsView(builder);
+            this.BuildUnacknowledgedOrderSuppliers(builder);
+            this.BuildUnacknowledgedOrderSupplierGroups(builder);
+            this.BuildUnacknowledgedOrders(builder);
+            this.BuildPlanners(builder);
+            this.BuildSupplierGroups(builder);
+            this.BuildSupplierContacts(builder);
+            this.BuildPersons(builder);
+            this.BuildPlCreditDebitNotes(builder);
+            this.BuildCreditDebitNoteTypes(builder);
+            this.BuildPhoneList(builder);
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -127,6 +155,37 @@
             entity.Property(e => e.Description).HasColumnName("DESCRIPTION");
         }
 
+        private void BuildPlanners(ModelBuilder builder)
+        {
+            var entity = builder.Entity<Planner>().ToTable("PLANNERS");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnName("PLANNER");
+        }
+
+        private void BuildAddresses(ModelBuilder builder)
+        {
+            var entity = builder.Entity<Address>().ToTable("ADDRESSES");
+            entity.HasKey(e => e.AddressId);
+            entity.Property(e => e.AddressId).HasColumnName("ADDRESS_ID");
+            entity.Property(e => e.Addressee).HasColumnName("ADDRESSEE").HasMaxLength(40);
+            entity.Property(e => e.Addressee2).HasColumnName("ADDRESSEE_2").HasMaxLength(40);
+            entity.Property(e => e.Line1).HasColumnName("ADDRESS_1").HasMaxLength(40);
+            entity.Property(e => e.Line2).HasColumnName("ADDRESS_2").HasMaxLength(40);
+            entity.Property(e => e.Line3).HasColumnName("ADDRESS_3").HasMaxLength(40);
+            entity.Property(e => e.Line4).HasColumnName("ADDRESS_4").HasMaxLength(40);
+            entity.HasOne(e => e.Country).WithMany().HasForeignKey("COUNTRY");
+            entity.Property(e => e.PostCode).HasColumnName("POSTAL_CODE").HasMaxLength(20);
+            entity.HasOne(a => a.FullAddress).WithMany().HasForeignKey(x => x.AddressId);
+        }
+
+        private void BuildCountries(ModelBuilder builder)
+        {
+            var entity = builder.Entity<Country>().ToTable("COUNTRIES");
+            entity.HasKey(c => c.CountryCode);
+            entity.Property(c => c.CountryCode).HasColumnName("COUNTRY_CODE").HasMaxLength(2);
+            entity.Property(c => c.Name).HasColumnName("NAME").HasMaxLength(50);
+        }
+
         private void BuildPreferredSupplierChanges(ModelBuilder builder)
         {
             var entity = builder.Entity<PreferredSupplierChange>().ToTable("PREFERRED_SUPPLIER_CHANGES");
@@ -152,18 +211,12 @@
             var entity = builder.Entity<PartSupplier>().ToTable("PART_SUPPLIERS");
             entity.HasKey(e => new { e.PartNumber, e.SupplierId });
             entity.Property(e => e.ReelOrBoxQty).HasColumnName("REEL_OR_BOX_QTY");
-            entity.Property(e => e.RohsCompliant).HasColumnName("ROHS_COMPLIANT").HasMaxLength(1);
-            entity.Property(e => e.RohsCategory).HasColumnName("ROHS_CATEGORY").HasMaxLength(6);
-            entity.Property(e => e.RohsComments).HasColumnName("ROHS_COMMENTS").HasMaxLength(160);
-            entity.HasOne(e => e.PackagingGroup).WithMany().HasForeignKey("PAGRP_ID");
             entity.HasOne(e => e.CreatedBy).WithMany().HasForeignKey("CREATED_BY");
-            entity.Property(e => e.WebAddress).HasColumnName("WEB_ADDRESS").HasMaxLength(200);
             entity.Property(e => e.MinimumOrderQty).HasColumnName("MINIMUM_ORDER_QTY");
             entity.Property(e => e.OrderIncrement).HasColumnName("ORDER_INCREMENT");
             entity.Property(e => e.CurrencyUnitPrice).HasColumnName("CURRENCY_UNIT_PRICE_OURS");
             entity.Property(e => e.LeadTimeWeeks).HasColumnName("LEAD_TIME_WEEKS");
             entity.HasOne(e => e.MadeInvalidBy).WithMany().HasForeignKey("MADE_INVALID_BY");
-            entity.Property(e => e.OrderConversionFactor).HasColumnName("ORDER_CONV_FACTOR_US_TO_THEM");
             entity.Property(e => e.UnitOfMeasure).HasColumnName("ORDER_UNIT_OF_MEASURE").HasMaxLength(14);
             entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
             entity.HasOne(e => e.Part).WithMany().HasForeignKey(p => p.PartNumber);
@@ -180,7 +233,7 @@
             entity.Property(e => e.OverbookingAllowed).HasColumnName("OVERBOOKING_ALLOWED").HasMaxLength(1);
             entity.Property(e => e.BaseOurUnitPrice).HasColumnName("BASE_OUR_UNIT_PRICE");
             entity.Property(e => e.NotesForBuyer).HasColumnName("NOTES_FOR_BUYER").HasMaxLength(200);
-            entity.HasOne(e => e.DeliveryAddress).WithMany().HasForeignKey("DELIVERY_ADDRESS_ID");
+            entity.HasOne(e => e.DeliveryFullAddress).WithMany().HasForeignKey("DELIVERY_ADDRESS_ID");
             entity.Property(e => e.JitReorderWeeks).HasColumnName("JIT_REORDER_WEEKS");
             entity.Property(e => e.JitReorderOrderNumber).HasColumnName("JIT_REORDER_ORDER_NUMBER");
             entity.Property(e => e.JitReorderOrderLine).HasColumnName("JIT_REORDER_ORDER_LINE");
@@ -191,11 +244,7 @@
             entity.HasOne(e => e.Manufacturer).WithMany().HasForeignKey("MANUFACTURER");
             entity.Property(e => e.ManufacturerPartNumber).HasColumnName("MANUFACTURER_PART_NUMBER").HasMaxLength(20);
             entity.Property(e => e.OurCurrencyPriceToShowOnOrder).HasColumnName("OUR_CURR_PRICE_SHOW_ON_ORDER");
-            entity.HasOne(e => e.Tariff).WithMany().HasForeignKey("TARIFF_ID");
-            entity.Property(e => e.DateRohsCompliant).HasColumnName("DATE_ROHS_COMPLIANT");
             entity.Property(e => e.PackWasteStatus).HasColumnName("PACK_WASTE_STATUS").HasMaxLength(1);
-            entity.Property(e => e.ContractLeadTimeWeeks).HasColumnName("CONTRACT_LEAD_TIME_WEEKS");
-            entity.Property(e => e.DutyPercent).HasColumnName("DUTY_PERCENT");
             entity.Property(e => e.SupplierRanking).HasColumnName("SUPPLIER_RANKING");
         }
 
@@ -257,8 +306,6 @@
             entity.HasKey(a => a.SupplierId);
             entity.Property(a => a.SupplierId).HasColumnName("SUPPLIER_ID");
             entity.Property(a => a.Name).HasColumnName("SUPPLIER_NAME").HasMaxLength(50);
-            entity.Property(a => a.Planner).HasColumnName("PLANNER");
-            entity.Property(a => a.VendorManager).HasColumnName("VENDOR_MANAGER").HasMaxLength(1);
             entity.Property(a => a.WebAddress).HasColumnName("WEB_ADDRESS").HasMaxLength(300);
             entity.Property(a => a.PhoneNumber).HasColumnName("PHONE_NUMBER").HasMaxLength(25);
             entity.Property(a => a.OrderContactMethod).HasColumnName("PREFERRED_CONTACT_METHOD").HasMaxLength(20);
@@ -280,6 +327,48 @@
             entity.Property(a => a.DeliveryDay).HasColumnName("DELIVERY_DAY").HasMaxLength(10);
             entity.HasOne(a => a.RefersToFc).WithMany().HasForeignKey("REFERS_TO_FC_SUPPLIER");
             entity.Property(a => a.PmDeliveryDaysGrace).HasColumnName("PM_DELIVERY_DAYS_GRACE");
+            entity.HasOne(a => a.OrderFullAddress).WithMany().HasForeignKey("ORD_ADDRESS_ID");
+            entity.HasOne(a => a.InvoiceFullAddress).WithMany().HasForeignKey("INV_ADDRESS_ID");
+            entity.HasOne(a => a.VendorManager).WithMany().HasForeignKey("VENDOR_MANAGER");
+            entity.HasOne(a => a.Planner).WithMany().HasForeignKey("PLANNER");
+            entity.HasOne(a => a.AccountController).WithMany().HasForeignKey("ACCOUNT_CONTROLLER");
+            entity.Property(a => a.DateOpened).HasColumnName("DATE_OPENED");
+            entity.HasOne(a => a.OpenedBy).WithMany().HasForeignKey("OPENED_BY");
+            entity.Property(a => a.DateClosed).HasColumnName("DATE_CLOSED");
+            entity.Property(a => a.ReasonClosed).HasColumnName("REASON_CLOSED");
+            entity.HasOne(a => a.ClosedBy).WithMany().HasForeignKey("CLOSED_BY");
+            entity.Property(a => a.Notes).HasColumnName("NOTES").HasMaxLength(1000);
+            entity.Property(a => a.OrganisationId).HasColumnName("ORGANISATION_ID");
+            entity.HasMany(s => s.SupplierContacts).WithOne().HasForeignKey(c => c.SupplierId);
+            entity.Property(s => s.Country).HasColumnName("COUNTRY");
+            entity.HasOne(s => s.Group).WithMany().HasForeignKey("SUPPLIER_GROUP");
+        }
+
+        private void BuildSupplierContacts(ModelBuilder builder)
+        {
+            var s = builder.Entity<SupplierContact>().ToTable("SUPPLIER_CONTACTS");
+            s.HasKey(a => a.ContactId);
+            s.Property(e => e.ContactId).HasColumnName("CONTACT_ID");
+            s.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID");
+            s.Property(e => e.IsMainInvoiceContact).HasColumnName("MAIN_INVOICE_CONTACT");
+            s.Property(e => e.IsMainOrderContact).HasColumnName("MAIN_ORDER_CONTACT");
+            s.Property(e => e.PhoneNumber).HasColumnName("PHONE_NUMBER");
+            s.Property(e => e.MobileNumber).HasColumnName("MOBILE_NUMBER");
+            s.Property(e => e.EmailAddress).HasColumnName("EMAIL_ADDRESS");
+            s.Property(e => e.JobTitle).HasColumnName("JOB_TITLE");
+            s.Property(e => e.Comments).HasColumnName("COMMENTS");
+            s.HasOne(e => e.Person).WithMany().HasForeignKey("PERSON_ID");
+            s.Property(e => e.DateCreated).HasColumnName("DATE_CREATED");
+        }
+
+        private void BuildPersons(ModelBuilder builder)
+        {
+            var p = builder.Entity<Person>().ToTable("PERSONS");
+            p.HasKey(x => x.Id);
+            p.Property(x => x.Id).HasColumnName("PERSON_ID");
+            p.Property(x => x.FirstName).HasColumnName("FIRST_NAME").HasMaxLength(20);
+            p.Property(x => x.LastName).HasColumnName("LAST_NAME").HasMaxLength(20);
+            p.Property(x => x.DateCreated).HasColumnName("DATE_CREATED");
         }
 
         private void BuildSupplierOrderHoldHistories(ModelBuilder builder)
@@ -326,14 +415,23 @@
             entity.HasKey(m => m.Id);
             entity.Property(e => e.Id).HasColumnName("USER_NUMBER");
             entity.Property(e => e.FullName).HasColumnName("USER_NAME").HasMaxLength(4000);
+            entity.HasOne(e => e.PhoneListEntry).WithMany().HasForeignKey(e => e.Id);
         }
 
-        private void BuildAddresses(ModelBuilder builder)
+        private void BuildPhoneList(ModelBuilder builder)
         {
-            var entity = builder.Entity<Address>().ToTable("ADDRESSES_VIEW");
+            var entity = builder.Entity<PhoneListEntry>().ToTable("PHONE_LIST");
+            entity.HasKey(m => m.UserNumber);
+            entity.Property(e => e.UserNumber).HasColumnName("USER_NUMBER");
+            entity.Property(e => e.EmailAddress).HasColumnName("EMAIL_ADDRESS");
+        }
+
+        private void BuildFullAddresses(ModelBuilder builder)
+        {
+            var entity = builder.Entity<FullAddress>().ToTable("ADDRESSES_VIEW");
             entity.HasKey(m => m.Id);
             entity.Property(e => e.Id).HasColumnName("ADDRESS_ID");
-            entity.Property(a => a.FullAddress).HasColumnName("ADDRESS");
+            entity.Property(a => a.AddressString).HasColumnName("ADDRESS");
         }
 
         private void BuildPurchaseOrders(ModelBuilder builder)
@@ -348,6 +446,10 @@
             entity.Property(o => o.OrderDate).HasColumnName("DATE_OF_ORDER");
             entity.Property(o => o.Overbook).HasColumnName("OVERBOOK");
             entity.Property(o => o.OverbookQty).HasColumnName("OVERBOOK_QTY");
+            entity.HasOne(o => o.Currency).WithMany().HasForeignKey("CURR_CODE");
+            entity.Property(o => o.OrderContactName).HasColumnName("CONTACT_NAME");
+            entity.Property(o => o.OrderContactName).HasColumnName("CONTACT_NAME");
+            entity.HasMany(o => o.Details).WithOne().HasForeignKey(d => d.OrderNumber);
         }
 
         private void BuildPurchaseOrderDetails(ModelBuilder builder)
@@ -359,13 +461,12 @@
             entity.Property(o => o.Line).HasColumnName("ORDER_LINE");
             entity.Property(o => o.RohsCompliant).HasColumnName("ROHS_COMPLIANT");
             entity.Property(o => o.OurQty).HasColumnName("OUR_QTY");
-            entity.Property(o => o.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
             entity.Property(o => o.SuppliersDesignation).HasColumnName("SUPPLIERS_DESIGNATION").HasMaxLength(2000);
-            entity.HasOne(d => d.PurchaseOrder).WithMany(o => o.Details)
-                .HasForeignKey(d => d.OrderNumber);
             entity.HasMany(d => d.PurchaseDeliveries).WithOne(o => o.PurchaseOrderDetail)
                 .HasForeignKey(o => new { o.OrderNumber, o.OrderLine });
-            entity.Property(o => o.NetTotal).HasColumnName("NET_TOTAL").HasMaxLength(18);
+            entity.Property(o => o.BaseNetTotal).HasColumnName("BASE_NET_TOTAL").HasMaxLength(18);
+            entity.Property(o => o.NetTotalCurrency).HasColumnName("NET_TOTAL").HasMaxLength(18);
+            entity.HasOne(o => o.Part).WithMany().HasForeignKey("PART_NUMBER");
         }
 
         private void BuildPurchaseOrderDeliveries(ModelBuilder builder)
@@ -436,7 +537,7 @@
         {
             var entity = builder.Entity<LinnDeliveryAddress>().ToTable("LINN_DELIVERY_ADDRESSES");
             entity.HasKey(e => e.AddressId);
-            entity.HasOne(e => e.Address).WithMany().HasForeignKey(e => e.AddressId);
+            entity.HasOne(e => e.FullAddress).WithMany().HasForeignKey(e => e.AddressId);
             entity.Property(e => e.AddressId).HasColumnName("ADDRESS_ID");
             entity.Property(e => e.Description).HasColumnName("DELIVERY_ADDRESS_DESCRIPTION");
             entity.Property(e => e.IsMainDeliveryAddress).HasColumnName("MAIN_DELIVERY_ADDRESS");
@@ -501,8 +602,8 @@
         private void BuildVendorManagers(ModelBuilder builder)
         {
             var entity = builder.Entity<VendorManager>().ToTable("VENDOR_MANAGERS");
-            entity.HasKey(m => m.VmId);
-            entity.Property(e => e.VmId).HasColumnName("VM_ID").HasMaxLength(1);
+            entity.HasKey(m => m.Id);
+            entity.Property(e => e.Id).HasColumnName("VM_ID").HasMaxLength(1);
             entity.Property(e => e.UserNumber).HasColumnName("USER_NUMBER").HasMaxLength(6);
             entity.Property(e => e.PmMeasured).HasColumnName("PM_MEASURED").HasMaxLength(1);
             entity.HasOne(x => x.Employee).WithOne().HasForeignKey<VendorManager>(z => z.UserNumber);
@@ -516,7 +617,99 @@
             entity.Property(e => e.BaseTotal).HasColumnName("BASE_TOTAL");
             entity.Property(e => e.LedgerPeriod).HasColumnName("LEDGER_PERIOD");
             entity.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID");
+            entity.Property(e => e.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(e => e.OrderLine).HasColumnName("ORDER_LINE");
             entity.HasOne(x => x.Supplier).WithMany().HasForeignKey(z => z.SupplierId);
+        }
+
+        private void BuildUnacknowledgedOrders(ModelBuilder builder)
+        {
+            var entity = builder.Entity<UnacknowledgedOrders>().ToTable("UNACKNOWLEDGED_ORDERS_VIEW").HasNoKey();
+            entity.Property(e => e.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(e => e.OrderLine).HasColumnName("ORDER_LINE");
+            entity.Property(e => e.DeliveryNumber).HasColumnName("DELIVERY_SEQ");
+            entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
+            entity.Property(e => e.CallOffDate).HasColumnName("CALL_OFF_DATE");
+            entity.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID");
+            entity.Property(e => e.SupplierName).HasColumnName("SUPPLIER_NAME").HasMaxLength(50);
+            entity.Property(e => e.SuppliersDesignation).HasColumnName("SUPPLIERS_DESIGNATION").HasMaxLength(2000);
+            entity.Property(e => e.OrganisationId).HasColumnName("SUPPLIER_ORGANISATION_ID");
+            entity.Property(e => e.OrderDeliveryQuantity).HasColumnName("ORDER_DELIVERY_QTY");
+            entity.Property(e => e.OurDeliveryQuantity).HasColumnName("OUR_DELIVERY_QTY");
+            entity.Property(e => e.OrderUnitPrice).HasColumnName("ORDER_UNIT_PRICE");
+            entity.Property(e => e.RequestedDate).HasColumnName("REQUESTED_DATE");
+            entity.Property(e => e.SupplierGroupId).HasColumnName("SUPPLIER_GROUP_ID");
+            entity.Property(e => e.SupplierGroupName).HasColumnName("SUPPLIER_GROUP_NAME");
+            entity.Property(e => e.CurrencyCode).HasColumnName("CURRENCY_CODE").HasMaxLength(4);
+        }
+
+        private void BuildUnacknowledgedOrderSuppliers(ModelBuilder builder)
+        {
+            var entity = builder.Entity<SuppliersWithUnacknowledgedOrders>().ToTable("UNACKNOWLEDGED_ORDER_SUPPLIERS").HasNoKey();
+            entity.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID");
+            entity.Property(e => e.SupplierName).HasColumnName("SUPPLIER_NAME").HasMaxLength(50);
+            entity.Property(e => e.SupplierGroupId).HasColumnName("SUPPLIER_GROUP_ID");
+            entity.Property(e => e.VendorManager).HasColumnName("VENDOR_MANAGER").HasMaxLength(1);
+            entity.Property(e => e.Planner).HasColumnName("PLANNER");
+            entity.Property(e => e.SupplierGroupName).HasColumnName("SUPPLIER_GROUP_NAME").HasMaxLength(50);
+        }
+
+        private void BuildUnacknowledgedOrderSupplierGroups(ModelBuilder builder)
+        {
+            var entity = builder.Entity<SupplierGroupsWithUnacknowledgedOrders>().ToTable("UNACK_ORDER_SUPPLIER_GROUPS").HasNoKey();
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.Name).HasColumnName("NAME").HasMaxLength(50);
+            entity.Property(e => e.SupplierGroupId).HasColumnName("SUPPLIER_GROUP_ID");
+            entity.Property(e => e.VendorManager).HasColumnName("VENDOR_MANAGER").HasMaxLength(1);
+            entity.Property(e => e.Planner).HasColumnName("PLANNER");
+            entity.Property(e => e.SupplierGroupName).HasColumnName("SUPPLIER_GROUP_NAME").HasMaxLength(50);
+        }
+        
+        private void BuildSupplierGroups(ModelBuilder builder)
+        {
+            var entity = builder.Entity<SupplierGroup>().ToTable("SUPPLIER_GROUPS");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.Name).HasColumnName("NAME");
+        }
+
+        private void BuildPlCreditDebitNotes(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PlCreditDebitNote>().ToTable("PL_CREDIT_DEBIT_NOTES");
+            entity.HasKey(a => a.NoteNumber);
+            entity.Property(a => a.NoteNumber).HasColumnName("CDNOTE_ID");
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
+            entity.Property(a => a.OrderQty).HasColumnName("ORDER_QTY");
+            entity.Property(a => a.ClosedBy).HasColumnName("CLOSED_BY");
+            entity.Property(a => a.DateClosed).HasColumnName("DATE_CLOSED");
+            entity.Property(a => a.NetTotal).HasColumnName("NET_TOTAL");
+            entity.Property(a => a.ReturnsOrderNumber).HasColumnName("RETURNS_ORDER_NUMBER");
+            entity.Property(a => a.Notes).HasColumnName("NOTES").HasMaxLength(200);
+            entity.Property(a => a.ReasonClosed).HasColumnName("REASON_CLOSED").HasMaxLength(2000);
+            entity.HasOne(a => a.Supplier).WithMany().HasForeignKey("SUPPLIER_ID");
+            entity.Property(a => a.DateCreated).HasColumnName("DATE_CREATED");
+            entity.Property(a => a.Total).HasColumnName("TOTAL_INC_VAT");
+            entity.Property(a => a.OrderUnitPrice).HasColumnName("ORDER_UNIT_PRICE");
+            entity.Property(a => a.OrderUnitOfMeasure).HasColumnName("ORDER_UNIT_OF_MEASURE");
+            entity.Property(a => a.VatTotal).HasColumnName("VAT_TOTAL");
+            entity.Property(a => a.SuppliersDesignation).HasColumnName("SUPPLIERS_DESIGNATION");
+            entity.HasOne(a => a.PurchaseOrder).WithMany().HasForeignKey("ORIGINAL_ORDER_NUMBER");
+            entity.HasOne(a => a.Currency).WithMany().HasForeignKey("CURRENCY");
+            entity.Property(a => a.ReturnsOrderLine).HasColumnName("RETURNS_ORDER_LINE");
+            entity.Property(a => a.VatRate).HasColumnName("VAT_RATE");
+            entity.Property(a => a.CancelledBy).HasColumnName("CANCELLED_BY");
+            entity.Property(a => a.DateCancelled).HasColumnName("DATE_CANCELLED");
+            entity.Property(a => a.ReasonCancelled).HasColumnName("REASON_CANCELLED");
+            entity.HasOne(a => a.NoteType).WithMany().HasForeignKey("CDNOTE_TYPE");
+        }
+
+        private void BuildCreditDebitNoteTypes(ModelBuilder builder)
+        {
+            var entity = builder.Entity<CreditDebitNoteType>().ToTable("CDNOTES_TYPES");
+            entity.HasKey(a => a.Type);
+            entity.Property(a => a.Type).HasColumnName("CDNOTE_TYPE");
+            entity.Property(a => a.Description).HasColumnName("DESCRIPTION");
+            entity.Property(a => a.PrintDescription).HasColumnName("PRINT_DESCRIPTION");
         }
     }
 }

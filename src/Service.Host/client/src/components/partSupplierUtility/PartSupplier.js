@@ -43,7 +43,6 @@ import suppliersActions from '../../actions/suppliersActions';
 import currenciesActions from '../../actions/currenciesActions';
 import OrderDetailsTab from './tabs/OrderDetailsTab';
 import OtherDetailsTab from './tabs/OtherDetailsTab';
-import tariffsActions from '../../actions/tariffsActions';
 import packagingGroupActions from '../../actions/packagingGroupActions';
 import LifecycleTab from './tabs/LifecycleTab';
 import employeesActions from '../../actions/employeesActions';
@@ -52,6 +51,7 @@ import manufacturersActions from '../../actions/manufacturersActions';
 import PreferredSupplier from './PreferredSupplier';
 import PriceChange from './PriceChange';
 import partPriceConversionsActions from '../../actions/partPriceConversionsActions';
+import supplierActions from '../../actions/supplierActions';
 
 function PartSupplier({ creating }) {
     const useStyles = makeStyles(theme => ({
@@ -89,20 +89,6 @@ function PartSupplier({ creating }) {
         collectionSelectorHelpers.getSearchLoading(reduxState.suppliers)
     );
 
-    const searchTariffs = searchTerm => reduxDispatch(tariffsActions.search(searchTerm));
-    const tariffsSearchResults = useSelector(reduxState =>
-        collectionSelectorHelpers.getSearchItems(
-            reduxState.tariffs,
-            100,
-            'id',
-            'code',
-            'description'
-        )
-    );
-    const tariffsSearchLoading = useSelector(reduxState =>
-        collectionSelectorHelpers.getSearchLoading(reduxState.tariffs)
-    );
-
     const searchManufacturers = searchTerm =>
         reduxDispatch(manufacturersActions.search(searchTerm));
     const manufacturersSearchResults = useSelector(reduxState =>
@@ -131,9 +117,7 @@ function PartSupplier({ creating }) {
     const currencies = useSelector(reduxState =>
         collectionSelectorHelpers.getItems(reduxState.currencies)
     );
-    const packagingGroups = useSelector(reduxState =>
-        collectionSelectorHelpers.getItems(reduxState.packagingGroups)
-    );
+
     const employees = useSelector(reduxState =>
         collectionSelectorHelpers.getItems(reduxState.employees)
     );
@@ -241,7 +225,8 @@ function PartSupplier({ creating }) {
                     createdBy: Number(currentUserNumber),
                     dateCreated: new Date(),
                     currencyCode: 'GBP',
-                    orderMethodName: 'MANUAL'
+                    orderMethodName: 'MANUAL',
+                    addressId: 405284
                 }
             });
         } else if (item) {
@@ -284,7 +269,7 @@ function PartSupplier({ creating }) {
         !state.partSupplier?.minimumOrderQty ||
         !state.partSupplier?.orderIncrement ||
         !state.partSupplier?.leadTimeWeeks ||
-        !state.partSupplier?.damagesPercent;
+        (!state.partSupplier?.damagesPercent && state.partSupplier?.damagesPercent !== 0);
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
@@ -313,7 +298,6 @@ function PartSupplier({ creating }) {
                                     close={() => setPreferredSupplierDialogOpen(false)}
                                     refreshPart={refreshPart}
                                     safetyCriticalPart={part?.safetyCriticalPart === 'Y'}
-                                    bomType={part?.bomType}
                                 />
                             </div>
                         </div>
@@ -353,7 +337,7 @@ function PartSupplier({ creating }) {
                 </Dialog>
                 <SnackbarMessage
                     visible={snackbarVisible}
-                    onClose={() => reduxDispatch(partSupplierActions.setSnackbarVisible(false))}
+                    onClose={() => reduxDispatch(supplierActions.setSnackbarVisible(false))}
                     message="Save Successful"
                 />
                 {itemError && (
@@ -414,7 +398,6 @@ function PartSupplier({ creating }) {
                                     <LinkButton
                                         external
                                         newTab
-                                        disabled
                                         to={`${config.proxyRoot}${utilities.getHref(
                                             item,
                                             'supplier'
@@ -476,7 +459,6 @@ function PartSupplier({ creating }) {
                                                 unitOfMeasure={state.partSupplier?.unitOfMeasure}
                                                 deliveryAddresses={deliveryAddresses}
                                                 deliveryAddress={state.partSupplier?.addressId}
-                                                fullAddress={state.partSupplier?.fullAddress}
                                                 orderMethods={orderMethods}
                                                 orderMethod={state.partSupplier?.orderMethodName}
                                                 orderMethodDescription={
@@ -501,9 +483,6 @@ function PartSupplier({ creating }) {
                                                     state.partSupplier?.minimumDeliveryQty
                                                 }
                                                 orderIncrement={state.partSupplier?.orderIncrement}
-                                                orderConversionFactor={
-                                                    state.partSupplier?.orderConversionFactor
-                                                }
                                                 reelOrBoxQty={state.partSupplier?.reelOrBoxQty}
                                                 setPriceChangeDialogOpen={setPriceChangeDialogOpen}
                                                 fetchBasePriceConversion={fetchBasePriceConversion}
@@ -516,14 +495,7 @@ function PartSupplier({ creating }) {
                                             <OtherDetailsTab
                                                 handleFieldChange={handleFieldChange}
                                                 leadTimeWeeks={state.partSupplier?.leadTimeWeeks}
-                                                contractLeadTimeWeeks={
-                                                    state.partSupplier?.contractLeadTimeWeeks
-                                                }
-                                                overbookingAllowed={
-                                                    state.partSupplier?.overbookingAllowed
-                                                }
                                                 damagesPercent={state.partSupplier?.damagesPercent}
-                                                webAddress={state.partSupplier?.webAddress}
                                                 deliveryInstructions={
                                                     state.partSupplier?.deliveryInstructions
                                                 }
@@ -537,16 +509,6 @@ function PartSupplier({ creating }) {
                                                 packWasteStatus={
                                                     state.partSupplier?.packWasteStatus
                                                 }
-                                                packagingGroupId={
-                                                    state.partSupplier?.packagingGroupId
-                                                }
-                                                packagingGroupDescription={
-                                                    state.partSupplier?.packagingGroupDescription
-                                                }
-                                                tariffsSearchResults={tariffsSearchResults}
-                                                tariffsSearchLoading={tariffsSearchLoading}
-                                                searchTariffs={searchTariffs}
-                                                packagingGroups={packagingGroups}
                                             />
                                         </Box>
                                     )}
@@ -591,15 +553,6 @@ function PartSupplier({ creating }) {
                                                 vendorPartNumber={
                                                     state.partSupplier?.vendorPartNumber
                                                 }
-                                                rohsCategory={state.partSupplier?.rohsCategory}
-                                                dateRohsCompliant={
-                                                    state.partSupplier?.dateRohsCompliant
-                                                        ? new Date(
-                                                              state.partSupplier?.dateRohsCompliant
-                                                          )
-                                                        : null
-                                                }
-                                                rohsComments={state.partSupplier?.rohsComments}
                                             />
                                         </Box>
                                     )}

@@ -42,12 +42,12 @@
             this.updated = new Supplier
             {
                 Currency = this.currency,
-                VendorManager = "V",
+                VendorManager = new VendorManager { Id = "V"},
                 WebAddress = "/web",
                 LiveOnOracle = "Y",
                 OrderContactMethod = "EMAIL",
                 PhoneNumber = "123 456 789",
-                Planner = 1,
+                Planner = new Planner { Id = 1 },
                 SuppliersReference = "REF",
                 InvoiceGoesTo = this.otherSupplier,
                 ExpenseAccount = "Y",
@@ -85,7 +85,7 @@
             this.action.Should().Throw<SupplierException>()
                 .WithMessage(
                     "The inputs for the following fields are empty/invalid: Supplier Id, "
-                    + "Supplier Name, Invoice Contact Method, Payment Days, Payment Method, ");
+                    + "Supplier Name, Invoice Contact Method, Payment Days, Payment Method, Account Controller, Order Addressee, ");
         }
     }
 }

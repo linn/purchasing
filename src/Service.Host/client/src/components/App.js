@@ -1,19 +1,15 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Typography from '@mui/material/Typography';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Page, userSelectors } from '@linn-it/linn-form-components-library';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import { Link } from 'react-router-dom';
-import { testAction } from '../actions';
 import config from '../config';
 import history from '../history';
 
 function App() {
     const name = useSelector(state => userSelectors.getName(state));
-    const dispatch = useDispatch();
-
-    useEffect(() => dispatch(testAction('args')), [dispatch]);
 
     return (
         <Page homeUrl={config.appRoot} history={history}>
@@ -36,6 +32,16 @@ function App() {
                 </ListItem>
                 <ListItem component={Link} to="/purchasing/reports/spend-by-supplier" button>
                     <Typography color="primary">Spend By Supplier Report</Typography>
+                </ListItem>
+                <ListItem component={Link} to="/purchasing/reports/spend-by-part" button>
+                    <Typography color="primary">Spend By Part Report</Typography>
+                </ListItem>
+                <ListItem
+                    component={Link}
+                    to="/purchasing/reports/suppliers-with-unacknowledged-orders"
+                    button
+                >
+                    <Typography color="primary">Unacknowledged orders report</Typography>
                 </ListItem>
             </List>
         </Page>

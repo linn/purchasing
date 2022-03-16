@@ -12,10 +12,6 @@
 
         public string SupplierName { get; set; }
 
-        public int? PackingGroup { get; set; }
-
-        public string PackingGroupDescription { get; set; }
-
         public int? CreatedBy { get; set; }
 
         public string CreatedByName { get; set; }
@@ -23,12 +19,6 @@
         public string OrderMethodName { get; set; }
 
         public string OrderMethodDescription { get; set; }
-
-        public int? TariffId { get; set; }
-
-        public string TariffCode { get; set; }
-
-        public string TariffDescription { get; set; }
 
         public string ManufacturerCode { get; set; }
 
@@ -58,31 +48,17 @@
 
         public decimal OrderIncrement { get; set; }
 
-        public decimal? OrderConversionFactor { get; set; }
-
         public decimal? ReelOrBoxQty { get; set; }
 
         public int LeadTimeWeeks { get; set; }
 
-        public int? ContractLeadTimeWeeks { get; set; }
-
-        public string OverbookingAllowed { get; set; }
-
         public decimal? DamagesPercent { get; set; }
-
-        public string WebAddress { get; set; }
 
         public string DeliveryInstructions { get; set; }
 
         public string NotesForBuyer { get; set; }
 
-        public decimal? DutyPercent { get; set; }
-
         public string PackWasteStatus { get; set; }
-
-        public int? PackagingGroupId{ get; set; }
-
-        public string PackagingGroupDescription { get; set; }
 
         public string DateCreated { get; set; }
 
@@ -93,14 +69,6 @@
         public string ManufacturerPartNumber { get; set; }
 
         public string VendorPartNumber { get; set; }
-
-        public string RohsCategory { get; set; }
-
-        public string DateRohsCompliant { get; set; }
-
-        public string RohsCompliant { get; set; }
-
-        public string RohsComments { get; set; }
 
         public int? SupplierRanking { get; set; }
     }

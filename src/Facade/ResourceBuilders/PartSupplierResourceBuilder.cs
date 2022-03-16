@@ -37,12 +37,11 @@
                            SupplierId = entity.SupplierId,
                            PartDescription = entity.Part.Description,
                            SupplierName = entity.Supplier.Name,
-                           PackingGroup = entity.PackagingGroup?.Id,
-                           PackingGroupDescription = entity.PackagingGroup?.Description,
+                          
                            CreatedBy = entity.CreatedBy?.Id,
                            CreatedByName = entity.CreatedBy?.FullName,
-                           AddressId = entity.DeliveryAddress?.Id,
-                           FullAddress = entity.DeliveryAddress?.FullAddress,
+                           AddressId = entity.DeliveryFullAddress?.Id,
+                           FullAddress = entity.DeliveryFullAddress?.AddressString,
                            ManufacturerCode = entity.Manufacturer?.Code,
                            ManufacturerName = entity.Manufacturer?.Name,
                            OrderMethodName = entity.OrderMethod?.Name,
@@ -54,32 +53,18 @@
                            BaseOurUnitPrice = entity.BaseOurUnitPrice,
                            MinimumDeliveryQty = entity.MinimumDeliveryQty,
                            MinimumOrderQty = entity.MinimumOrderQty,
-                           OrderConversionFactor = entity.OrderConversionFactor,
                            OrderIncrement = entity.OrderIncrement,
                            ReelOrBoxQty = entity.ReelOrBoxQty,
                            LeadTimeWeeks = entity.LeadTimeWeeks,
-                           ContractLeadTimeWeeks = entity.ContractLeadTimeWeeks,
-                           OverbookingAllowed = entity.OverbookingAllowed,
                            DamagesPercent = entity.DamagesPercent,
                            DeliveryInstructions = entity.DeliveryInstructions,
-                           WebAddress = entity.WebAddress,
                            NotesForBuyer = entity.NotesForBuyer,
-                           TariffId = entity.Tariff?.Id,
-                           TariffCode = entity.Tariff?.Code,
-                           TariffDescription = entity.Tariff?.Description,
-                           DutyPercent = entity.DutyPercent,
                            PackWasteStatus = entity.PackWasteStatus,
-                           PackagingGroupId = entity?.PackagingGroup?.Id,
-                           PackagingGroupDescription = entity.PackagingGroup?.Description,
                            DateCreated = entity.DateCreated.ToString("o"),
                            DateInvalid = entity.DateInvalid?.ToString("o"),
                            MadeInvalidBy = entity.MadeInvalidBy?.Id,
                            ManufacturerPartNumber = entity.ManufacturerPartNumber,
                            VendorPartNumber = entity.VendorPartNumber,
-                           RohsCategory = entity.RohsCategory,
-                           DateRohsCompliant = entity.DateRohsCompliant?.ToString("o"),
-                           RohsCompliant = entity.RohsCompliant,
-                           RohsComments = entity.RohsComments,
                            SupplierRanking = entity.SupplierRanking,
                            Links = this.BuildLinks(entity, claims).ToArray()
                        };
@@ -101,7 +86,7 @@
                 yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
                 yield return new LinkResource { Rel = "part", Href = $"/parts/{model.Part.Id}" };
 
-                yield return new LinkResource { Rel = "supplier", Href = $"/purchasing/{model.SupplierId}" };
+                yield return new LinkResource { Rel = "supplier", Href = $"/purchasing/suppliers/{model.SupplierId}" };
                 if (this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
                 {
                     yield return new LinkResource { Rel = "edit", Href = this.GetLocation(model) };

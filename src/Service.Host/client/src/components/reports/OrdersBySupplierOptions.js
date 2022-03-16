@@ -20,7 +20,7 @@ function OrdersBySupplierReportOptions() {
         collectionSelectorHelpers.getSearchItems(state.suppliers)
     )?.map(c => ({
         id: c.id,
-        name: c.name.toString(),
+        name: c.id.toString(),
         description: c.name
     }));
     const suppliersSearchLoading = useSelector(state =>
@@ -90,7 +90,7 @@ function OrdersBySupplierReportOptions() {
                         loading={suppliersSearchLoading}
                         fetchItems={searchTerm => dispatch(suppliersActions.search(searchTerm))}
                         clearSearch={() => dispatch(suppliersActions.clearSearch)}
-                        value={`${supplier?.id} - ${supplier?.name}`}
+                        value={`${supplier?.id} - ${supplier?.description}`}
                         modal
                         links={false}
                         debounce={1000}

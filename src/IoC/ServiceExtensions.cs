@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.IoC
 {
-    using System.Collections.Generic;
     using System.Net.Http;
 
     using Amazon.Extensions.NETCore.Setup;
@@ -49,7 +48,13 @@
                 .AddTransient<IBuilder<PartCategory>, PartCategoryResourceBuilder>()
                 .AddTransient<IBuilder<PurchaseOrder>, PurchaseOrderResourceBuilder>()
                 .AddTransient<IBuilder<ResultsModel>, ResultsModelResourceBuilder>()
-                .AddTransient<IBuilder<VendorManager>, VendorManagerResourceBuilder>();
+                .AddTransient<IBuilder<Address>, AddressResourceBuilder>()
+                .AddTransient<IBuilder<Country>, CountryResourceBuilder>()
+                .AddTransient<IBuilder<VendorManager>, VendorManagerResourceBuilder>()
+                .AddTransient<IBuilder<Planner>, PlannerResourceBuilder>()
+                .AddTransient<IBuilder<SupplierGroup>, SupplierGroupResourceBuilder>()
+                .AddTransient<IBuilder<SupplierContact>, SupplierContactResourceBuilder>()
+                .AddTransient<IBuilder<PlCreditDebitNote>, PlCreditDebitNoteResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -72,8 +77,14 @@
                 .AddTransient<IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource>, PriceChangeReasonService>()
                 .AddTransient<IFacadeResourceService<PartCategory, string, PartCategoryResource, PartCategoryResource>, PartCategoriesService>()
                 .AddTransient<IPurchaseOrderReportFacadeService, PurchaseOrderReportFacadeService>()
-                .AddTransient<IFacadeResourceService<VendorManager, string, VendorManagerResource, VendorManagerResource>, VendorManagerFacadeService>()
-                .AddTransient<ISpendsReportFacadeService, SpendsReportFacadeService>();
+                .AddTransient<IFacadeResourceFilterService<Address, int, AddressResource, AddressResource, AddressResource>, AddressService>()
+                .AddTransient<IFacadeResourceService<Country, string, CountryResource, CountryResource>, CountryService>()
+                .AddTransient<IFacadeResourceService<VendorManager, string, VendorManagerResource, VendorManagerResource>, VendorManagerFacadeService>().AddTransient<ISpendsReportFacadeService, SpendsReportFacadeService>()
+                .AddTransient<IFacadeResourceService<Planner, int, PlannerResource, PlannerResource>, PlannerService>()
+                .AddTransient<IFacadeResourceService<SupplierGroup, int, SupplierGroupResource, SupplierGroupResource>, SupplierGroupFacadeService>()
+                .AddTransient<IFacadeResourceFilterService<PlCreditDebitNote, int, PlCreditDebitNoteResource, PlCreditDebitNoteResource, PlCreditDebitNoteResource>, PlCreditDebitNoteFacadeService>()
+                .AddTransient<IPlCreditDebitNoteEmailService, PlCreditDebitNoteEmailService>()
+                .AddTransient<IBulkLeadTimesUpdaterService, BulkLeadTimesUpdaterService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
@@ -92,8 +103,9 @@
                 .AddTransient<IAuthorisationService, AuthorisationService>()
                 .AddTransient<IDatabaseService, DatabaseService>()
                 .AddTransient<ISpendsReportService, SpendsReportService>()
+                .AddTransient<IPlCreditDebitNoteService, PlCreditDebitNoteService>()
 
-            //external services
+            // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
                 .AddTransient<IAutocostPack, AutocostPack>()
                 .AddTransient<ICurrencyPack, CurrencyPack>()

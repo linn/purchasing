@@ -7,6 +7,7 @@
     using Linn.Common.Logging;
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
@@ -81,29 +82,60 @@
 
         protected IDatabaseService MockDatabaseService { get; set; }
 
+        protected IFacadeResourceService<Planner, int, PlannerResource, PlannerResource> PlannerService 
+        { 
+            get;
+            private set;
+        }
+
+        protected IRepository<Planner, int> MockPlannerRepository { get; private set; }
+
+        protected IRepository<Employee, int> MockEmployeeRepository { get; set; }
+
+        protected IRepository<PartSupplier, PartSupplierKey> MockPartSupplierRepository { get; private set; }
+
+        protected IPartSupplierService MockPartSupplierDomainService { get; set; }
+
+        protected IBulkLeadTimesUpdaterService BulkLeadTimesUpdaterService { get; set; }
+
         [SetUp]
         public void EstablishContext()
         {
             this.TransactionManager = Substitute.For<ITransactionManager>();
-            this.PartSupplierFacadeService = 
-                Substitute
-                    .For<IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource>>();
-            this.PartFacadeService = Substitute.For<IPartService>();
-            this.Log = Substitute.For<ILog>();
+
             this.MockAuthService = Substitute.For<IAuthorisationService>();
+
+            this.MockPartSupplierRepository = Substitute.For<IRepository<PartSupplier, PartSupplierKey>>();
+
+            this.MockPartSupplierDomainService = Substitute.For<IPartSupplierService>();
+
+            this.PartSupplierFacadeService = new PartSupplierFacadeService(
+                this.MockPartSupplierRepository,
+                this.TransactionManager,
+                new PartSupplierResourceBuilder(this.MockAuthService),
+                this.MockPartSupplierDomainService);
+
+                this.PartFacadeService = Substitute.For<IPartService>();
+
+            this.Log = Substitute.For<ILog>();
+
             this.MockSupplierRepository = Substitute.For<IRepository<Supplier, int>>();
 
             this.MockDomainService = Substitute.For<ISupplierService>();
+
             this.MockDatabaseService = Substitute.For<IDatabaseService>();
+
             this.SupplierFacadeService = new SupplierFacadeService(
                 this.MockSupplierRepository,
                 this.TransactionManager,
-                new SupplierResourceBuilder(this.MockAuthService),
-                this.MockDomainService);
+                new SupplierResourceBuilder(this.MockAuthService, new SupplierContactResourceBuilder()),
+                this.MockDomainService,
+                this.MockDatabaseService);
 
                 this.PreferredSupplierChangeService = Substitute
                 .For<IFacadeResourceService<PreferredSupplierChange, PreferredSupplierChangeKey, PreferredSupplierChangeResource, PreferredSupplierChangeKey>>();
-            this.PriceChangeReasonService = Substitute
+            
+                this.PriceChangeReasonService = Substitute
                 .For<IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource>>();
 
             this.MockPartCategoriesRepository = Substitute.For<IRepository<PartCategory, string>>();
@@ -117,7 +149,20 @@
                 this.MockDomainService,
                 this.MockDatabaseService,
                 this.TransactionManager,
-                new SupplierResourceBuilder(this.MockAuthService));
+                new SupplierResourceBuilder(this.MockAuthService, new SupplierContactResourceBuilder()));
+
+            this.MockPlannerRepository = Substitute.For<IRepository<Planner, int>>();
+            
+            this.MockEmployeeRepository = Substitute.For<IRepository<Employee, int>>();
+            
+            this.PlannerService = new PlannerService(
+                this.MockPlannerRepository,
+                this.TransactionManager,
+                new PlannerResourceBuilder(this.MockEmployeeRepository));
+
+            this.BulkLeadTimesUpdaterService = new BulkLeadTimesUpdaterService(
+                this.MockPartSupplierDomainService,
+                this.TransactionManager);
 
             this.Client = TestClient.With<SupplierModule>(
                 services =>
@@ -131,6 +176,9 @@
                         services.AddSingleton(this.PriceChangeReasonService);
                         services.AddSingleton(this.PartCategoryService);
                         services.AddSingleton(this.SupplierHoldService);
+                        services.AddSingleton(this.PlannerService);
+                        services.AddSingleton(this.BulkLeadTimesUpdaterService);
+
                         services.AddHandlers();
                     },
                 FakeAuthMiddleware.EmployeeMiddleware);

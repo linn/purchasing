@@ -15,7 +15,7 @@
                        {
                            Description = entity.Description,
                            AddressId = entity.AddressId,
-                           Address = entity.Address.FullAddress
+                           Address = entity.FullAddress.AddressString
                        };
         }
 

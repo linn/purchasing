@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
+    using System.IO;
     using System.Threading.Tasks;
 
     using Carter;
@@ -41,6 +42,10 @@
 
         private readonly ISupplierHoldService supplierHoldService;
 
+        private readonly IFacadeResourceService<Planner, int, PlannerResource, PlannerResource> plannerService;
+
+        private readonly IBulkLeadTimesUpdaterService bulkLeadTimesUpdaterService;
+
         public SupplierModule(
             IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource> partSupplierFacadeService,
             IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource> supplierFacadeService,
@@ -48,7 +53,9 @@
             IPartService partFacadeService,
             IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource> priceChangeReasonService,
             IFacadeResourceService<PartCategory, string, PartCategoryResource, PartCategoryResource> partCategoryService,
-            ISupplierHoldService supplierHoldService)
+            ISupplierHoldService supplierHoldService,
+            IFacadeResourceService<Planner, int, PlannerResource, PlannerResource> plannerService,
+            IBulkLeadTimesUpdaterService bulkLeadTimesUpdaterService)
         {
             this.supplierFacadeService = supplierFacadeService;
             this.partSupplierFacadeService = partSupplierFacadeService;
@@ -57,11 +64,13 @@
             this.priceChangeReasonService = priceChangeReasonService;
             this.partCategoryService = partCategoryService;
             this.supplierHoldService = supplierHoldService;
+            this.plannerService = plannerService;
+            this.bulkLeadTimesUpdaterService = bulkLeadTimesUpdaterService;
 
             this.Get("/purchasing/suppliers", this.SearchSuppliers);
             this.Get("/purchasing/suppliers/{id:int}", this.GetSupplier);
             this.Put("/purchasing/suppliers/{id:int}", this.UpdateSupplier);
-            this.Post("/purchasing/suppliers", this.GetSupplier);
+            this.Post("/purchasing/suppliers", this.CreateSupplier);
 
             this.Get("/purchasing/part-suppliers/record", this.GetPartSupplierRecord);
             this.Put("/purchasing/part-suppliers/record", this.UpdatePartSupplier);
@@ -69,12 +78,31 @@
             this.Post("/purchasing/part-suppliers/record", this.CreatePartSupplier);
 
             this.Get("/purchasing/part-suppliers/application-state", this.GetPartSuppliersState);
+            this.Get("/purchasing/suppliers/application-state", this.GetSuppliersState);
             this.Post("/purchasing/preferred-supplier-changes", this.CreatePreferredSupplierChange);
             this.Get("/purchasing/price-change-reasons", this.GetPriceChangeReasons);
             this.Get("/purchasing/part-suppliers/part-price-conversions", this.GetPartPriceConversions);
+            this.Post("/purchasing/suppliers/bulk-lead-times", this.UploadBulkLeadTimes);
             this.Get("/purchasing/part-categories/", this.SearchPartCategories);
 
             this.Post("/purchasing/suppliers/hold", this.ChangeHoldStatus);
+            this.Get("/purchasing/suppliers/planners", this.GetPlanners); 
+        }
+
+        private async Task UploadBulkLeadTimes(HttpRequest req, HttpResponse res)
+        {
+            var groupId = req.Query.As<int?>("groupId");
+            var supplierId = req.Query.As<int>("supplierId");
+
+            var reader = new StreamReader(req.Body).ReadToEndAsync();
+
+            var result = this.bulkLeadTimesUpdaterService.BulkUpdateFromCsv(
+                supplierId,
+                reader.Result, 
+                req.HttpContext.GetPrivileges(),
+                groupId);
+
+            await res.Negotiate(result);
         }
 
         private async Task GetSupplier(HttpRequest req, HttpResponse res)
@@ -160,6 +188,15 @@
             await res.Negotiate(result);
         }
 
+        private async Task GetSuppliersState(HttpRequest req, HttpResponse res)
+        {
+            var privileges = req.HttpContext.GetPrivileges();
+
+            var result = this.supplierFacadeService.GetApplicationState(privileges);
+
+            await res.Negotiate(result);
+        }
+
         private async Task CreatePartSupplier(HttpRequest req, HttpResponse res)
         {
             var resource = await req.Bind<PartSupplierResource>();
@@ -169,6 +206,19 @@
 
             await res.Negotiate(result);
         }
+
+        private async Task CreateSupplier(HttpRequest req, HttpResponse res)
+        {
+            var resource = await req.Bind<SupplierResource>();
+            resource.OpenedById = req.HttpContext.User.GetEmployeeNumber();
+            var result = this.supplierFacadeService.Add(
+                resource,
+                req.HttpContext.GetPrivileges(),
+                null);
+
+            await res.Negotiate(result);
+        }
+
 
         private async Task CreatePreferredSupplierChange(HttpRequest req, HttpResponse res)
         {
@@ -197,7 +247,6 @@
             var ledger = req.Query.As<string>("ledger");
             var round = req.Query.As<string>("round");
 
-
             var result = this.partFacadeService.GetPrices(
                 partNumber, 
                 newCurrency, 
@@ -224,6 +273,13 @@
             var result = this.supplierHoldService.ChangeSupplierHoldStatus(
                 resource,
                 req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task GetPlanners(HttpRequest req, HttpResponse res)
+        {
+            var result = this.plannerService.GetAll();
 
             await res.Negotiate(result);
         }

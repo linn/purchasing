@@ -6,6 +6,7 @@
 
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers.Exceptions;
@@ -20,11 +21,7 @@
 
         private readonly IRepository<OrderMethod, string> orderMethodRepository;
 
-        private readonly IRepository<Address, int> addressRepository;
-
-        private readonly IRepository<Tariff, int> tariffRepository;
-
-        private readonly IRepository<PackagingGroup, int> packagingGroupRepository;
+        private readonly IRepository<FullAddress, int> addressRepository;
 
         private readonly IRepository<Employee, int> employeeRepository;
 
@@ -47,9 +44,7 @@
             IAuthorisationService authService,
             IRepository<Currency, string> currencyRepository,
             IRepository<OrderMethod, string> orderMethodRepository,
-            IRepository<Address, int> addressRepository,
-            IRepository<Tariff, int> tariffRepository,
-            IRepository<PackagingGroup, int> packagingGroupRepository,
+            IRepository<FullAddress, int> addressRepository,
             IRepository<Employee, int> employeeRepository,
             IRepository<Manufacturer, string> manufacturerRepository,
             IQueryRepository<Part> partRepository,
@@ -63,8 +58,6 @@
             this.currencyRepository = currencyRepository;
             this.orderMethodRepository = orderMethodRepository;
             this.addressRepository = addressRepository;
-            this.tariffRepository = tariffRepository;
-            this.packagingGroupRepository = packagingGroupRepository;
             this.employeeRepository = employeeRepository;
             this.manufacturerRepository = manufacturerRepository;
             this.partRepository = partRepository;
@@ -99,26 +92,11 @@
                 current.Currency = this.currencyRepository.FindById(updated.Currency.Code);
             }
 
-            if (current.DeliveryAddress?.Id != updated.DeliveryAddress?.Id)
+            if (current.DeliveryFullAddress?.Id != updated.DeliveryFullAddress?.Id)
             {
-                current.DeliveryAddress = updated.DeliveryAddress == null 
+                current.DeliveryFullAddress = updated.DeliveryFullAddress == null 
                                               ? null 
-                                              : this.addressRepository.FindById(updated.DeliveryAddress.Id);
-            }
-
-            if (current.Tariff?.Id != updated.Tariff?.Id)
-            {
-                current.Tariff = updated.Tariff == null 
-                                     ? null 
-                                     : this.tariffRepository.FindById(updated.Tariff.Id);
-            }
-
-            if (current.PackagingGroup?.Id != updated.PackagingGroup?.Id)
-            {
-                current.PackagingGroup = updated.PackagingGroup == null 
-                                             ? null 
-                                             : this.packagingGroupRepository
-                                                 .FindById(updated.PackagingGroup.Id);
+                                              : this.addressRepository.FindById(updated.DeliveryFullAddress.Id);
             }
 
             if (current.MadeInvalidBy?.Id != updated.MadeInvalidBy?.Id)
@@ -145,18 +123,12 @@
             current.OrderIncrement = updated.OrderIncrement;
             current.ReelOrBoxQty = updated.ReelOrBoxQty;
             current.LeadTimeWeeks = updated.LeadTimeWeeks;
-            current.ContractLeadTimeWeeks = updated.ContractLeadTimeWeeks;
-            current.OverbookingAllowed = updated.OverbookingAllowed;
             current.DamagesPercent = updated.DamagesPercent;
-            current.WebAddress = updated.WebAddress;
             current.DeliveryInstructions = updated.DeliveryInstructions;
             current.NotesForBuyer = updated.NotesForBuyer;
             current.ManufacturerPartNumber = updated.ManufacturerPartNumber;
             current.VendorPartNumber = updated.VendorPartNumber;
-            current.RohsCategory = updated.RohsCategory;
-            current.DateRohsCompliant = updated.DateRohsCompliant;
-            current.RohsCompliant = updated.RohsCompliant;
-            current.RohsComments = updated.RohsComments;
+            current.UnitOfMeasure = updated.UnitOfMeasure;
         }
 
         public PartSupplier CreatePartSupplier(PartSupplier candidate, IEnumerable<string> privileges)
@@ -190,20 +162,9 @@
                 candidate.Currency = this.currencyRepository.FindById(candidate.Currency.Code);
             }
 
-            if (candidate.DeliveryAddress?.Id != null)
+            if (candidate.DeliveryFullAddress?.Id != null)
             {
-                candidate.DeliveryAddress = this.addressRepository.FindById(candidate.DeliveryAddress.Id);
-            }
-
-            if (candidate.Tariff?.Id != null)
-            {
-                candidate.Tariff = this.tariffRepository.FindById(candidate.Tariff.Id);
-            }
-
-            if (candidate.PackagingGroup?.Id != null)
-            {
-                candidate.PackagingGroup = this.packagingGroupRepository
-                    .FindById(candidate.PackagingGroup.Id);
+                candidate.DeliveryFullAddress = this.addressRepository.FindById(candidate.DeliveryFullAddress.Id);
             }
 
             if (candidate.MadeInvalidBy?.Id != null)
@@ -217,6 +178,7 @@
                 candidate.Manufacturer = this.manufacturerRepository.FindById(candidate.Manufacturer.Code);
             }
 
+            candidate.OverbookingAllowed = "Y";
             return candidate;
         }
 
@@ -253,7 +215,7 @@
 
             if (candidate.OldSupplier != null)
             {
-                if (candidate.NewSupplier.SupplierId == candidate.OldSupplier.SupplierId)
+                if (candidate.NewSupplier.SupplierId == part.PreferredSupplier?.SupplierId)
                 {
                     throw new PartSupplierException(
                         "Selected  supplier is already the preferred supplier for this part.");
@@ -267,8 +229,8 @@
             var newPartSupplier = this.partSupplierRepository.FindById(
                 new PartSupplierKey { PartNumber = part.PartNumber, SupplierId = candidate.NewSupplier.SupplierId });
 
-            if (!newPartSupplier.Supplier.Planner.HasValue
-                || string.IsNullOrEmpty(newPartSupplier.Supplier.VendorManager))
+            if (newPartSupplier.Supplier.Planner == null
+                || newPartSupplier.Supplier.VendorManager == null)
             {
                 throw new PartSupplierException(
                     "Selected supplier is missing planner or vendor manager");
@@ -357,6 +319,71 @@
             return candidate;
         }
 
+        public ProcessResult BulkUpdateLeadTimes(
+            int supplierId,
+            IEnumerable<LeadTimeUpdateModel> changes,
+            IEnumerable<string> privileges,
+            int? supplierGroupId = null)
+        {
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
+            {
+                throw new UnauthorisedActionException(
+                    "You are not authorised to update Part Supplier records");
+            }
+
+            var successCount = 0;
+            var errors = new List<string>();
+            var leadTimeUpdateModels = changes.ToList();
+
+            foreach (var change in leadTimeUpdateModels)
+            {
+                IQueryable<PartSupplier> records;
+
+                if (supplierGroupId.GetValueOrDefault() != 0)
+                {
+                    records = this.partSupplierRepository.FilterBy(
+                        x => x.PartNumber == change.PartNumber.ToUpper().Trim()
+                             && x.Supplier.Group != null 
+                             && x.Supplier.Group.Id == supplierGroupId);
+                }
+                else
+                {
+                    records = this.partSupplierRepository.FilterBy(
+                        x => x.PartNumber == change.PartNumber.ToUpper().Trim()
+                             && x.SupplierId == supplierId);
+                }
+
+                if (int.TryParse(change.LeadTimeWeeks, out var newLeadTime) && records.Any())
+                {
+                    foreach (var record in records)
+                    {
+                        record.LeadTimeWeeks = newLeadTime;
+                    }
+
+                    successCount++;
+                }
+                else
+                {
+                    errors.Add(change.PartNumber);
+                }
+            }
+
+            if (!errors.Any())
+            {
+                return new ProcessResult(true, $"{successCount} records updated successfully");
+            }
+
+            var errorMessage = errors
+                .Aggregate(
+                    "Updates for the following parts could not be processed: ",
+                    (current, error) 
+                        => current + $"{error}, ");
+
+            return new ProcessResult(
+                false,
+                $"{successCount} out of {leadTimeUpdateModels.Count} records updated successfully. {errorMessage}");
+        }
+
         private static void ValidateFields(PartSupplier candidate)
         {
             var errors = new List<string>();
@@ -379,16 +406,6 @@
             if (candidate.LeadTimeWeeks == 0)
             {
                 errors.Add("Lead Time Weeks");
-            }
-
-            if (string.IsNullOrEmpty(candidate.RohsCompliant))
-            {
-                candidate.RohsCompliant = "N";
-            }
-
-            if (string.IsNullOrEmpty(candidate.RohsCategory))
-            {
-                errors.Add("Rohs Category");
             }
 
             if (candidate.OrderMethod == null)

@@ -25,12 +25,15 @@
             return this.partSuppliers
                 .Include(p => p.Part)
                 .Include(p => p.Supplier)
-                .Include(p => p.PackagingGroup)
+                .ThenInclude(p => p.Planner)
+                .Include(p => p.Supplier)
+                .ThenInclude(p => p.VendorManager)
+                .Include(p => p.Supplier)
+                .ThenInclude(p => p.AccountController)
                 .Include(p => p.CreatedBy)
                 .Include(p => p.MadeInvalidBy)
-                .Include(p => p.DeliveryAddress)
+                .Include(p => p.DeliveryFullAddress)
                 .Include(p => p.Manufacturer)
-                .Include(p => p.Tariff)
                 .Include(p => p.OrderMethod)
                 .Include(p => p.Currency)
                 .SingleOrDefault(
@@ -43,7 +46,9 @@
                 .Include(p => p.Supplier)
                 .Include(p => p.Part)
                 .Include(p => p.Currency)
-                .AsNoTracking().Where(expression);
+                .Include(p => p.Supplier)
+                .ThenInclude(p => p.Group)
+                .Where(expression);
         }
     }
 }

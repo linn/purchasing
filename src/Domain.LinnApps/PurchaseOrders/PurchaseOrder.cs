@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps
+﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
 {
     using System;
     using System.Collections.Generic;
@@ -24,5 +24,9 @@
         public string Overbook { get; set; }
 
         public decimal? OverbookQty { get; set; }
+
+        public Currency Currency { get; set; }
+
+        public string OrderContactName { get; set; }
     }
 }

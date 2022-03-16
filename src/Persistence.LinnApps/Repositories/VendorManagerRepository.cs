@@ -3,7 +3,7 @@
     using System.Linq;
 
     using Linn.Common.Persistence.EntityFramework;
-    using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using Microsoft.EntityFrameworkCore;
 
@@ -24,7 +24,7 @@
 
         public override VendorManager FindById(string key)
         {
-            return this.serviceDbContext.VendorManagers.Include(v => v.Employee).SingleOrDefault(v => v.VmId == key);
+            return this.serviceDbContext.VendorManagers.Include(v => v.Employee).SingleOrDefault(v => v.Id == key);
         }
     }
 }

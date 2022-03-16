@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps
+﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
 {
     using System;
 
@@ -6,7 +6,7 @@
     {
         public string Cancelled { get; set; }
 
-        public DateTime DateAdvised { get; set; }
+        public DateTime? DateAdvised { get; set; }
 
         public DateTime DateRequested { get; set; }
 

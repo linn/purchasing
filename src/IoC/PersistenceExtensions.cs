@@ -8,6 +8,7 @@
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Reports.Models;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Persistence.LinnApps;
     using Linn.Purchasing.Persistence.LinnApps.Repositories;
@@ -40,12 +41,11 @@
                     => new EntityFrameworkRepository<Tariff, int>(r.GetService<ServiceDbContext>()?.Tariffs))
                 .AddTransient<IRepository<Manufacturer, string>, EntityFrameworkRepository<Manufacturer, string>>(r
                     => new EntityFrameworkRepository<Manufacturer, string>(r.GetService<ServiceDbContext>()?.Manufacturers))
-                .AddTransient<IRepository<Address, int>, EntityFrameworkRepository<Address, int>>(r
-                    => new EntityFrameworkRepository<Address, int>(r.GetService<ServiceDbContext>()?.Addresses))
+                .AddTransient<IRepository<FullAddress, int>, EntityFrameworkRepository<FullAddress, int>>(r
+                    => new EntityFrameworkRepository<FullAddress, int>(r.GetService<ServiceDbContext>()?.FullAddresses))
                 .AddTransient<IRepository<PurchaseOrder, int>, PurchaseOrderRepository>()
                 .AddTransient<IRepository<PurchaseLedger, int>, PurchaseLedgerRepository>()
-                .AddTransient<IRepository<Employee, int>, EntityFrameworkRepository<Employee, int>>(r
-                    => new EntityFrameworkRepository<Employee, int>(r.GetService<ServiceDbContext>()?.Employees))
+                .AddTransient<IRepository<Employee, int>, EmployeeRepository>()
                 .AddTransient<IRepository<PreferredSupplierChange, PreferredSupplierChangeKey>, PreferredSupplierChangeRepository>()
                 .AddTransient<IRepository<PriceChangeReason, string>, EntityFrameworkRepository<PriceChangeReason, string>>(r
                     => new EntityFrameworkRepository<PriceChangeReason, string>(r.GetService<ServiceDbContext>()?.PriceChangeReasons))
@@ -55,8 +55,24 @@
                     => new EntityFrameworkRepository<PartCategory, string>(r.GetService<ServiceDbContext>()?.PartCategories))
                 .AddTransient<IRepository<SupplierOrderHoldHistoryEntry, int>, EntityFrameworkRepository<SupplierOrderHoldHistoryEntry, int>>(r
                     => new EntityFrameworkRepository<SupplierOrderHoldHistoryEntry, int>(r.GetService<ServiceDbContext>()?.SupplierOrderHoldHistories))
+                .AddTransient<IRepository<Country, string>, EntityFrameworkRepository<Country, string>>(r
+                    => new EntityFrameworkRepository<Country, string>(r.GetService<ServiceDbContext>()?.Countries))
+                .AddTransient<IRepository<Address, int>, AddressRepository>()
                 .AddTransient<IRepository<VendorManager, string>, VendorManagerRepository>()
-                .AddTransient<IQueryRepository<SupplierSpend>, SupplierSpendRepository>();
+                .AddTransient<IRepository<Planner, int>, PlannerRepository>()
+                .AddTransient<IQueryRepository<SupplierSpend>, SupplierSpendRepository>()
+                .AddTransient<IQueryRepository<UnacknowledgedOrders>, EntityFrameworkQueryRepository<UnacknowledgedOrders>>(r
+                    => new EntityFrameworkQueryRepository<UnacknowledgedOrders>(r.GetService<ServiceDbContext>()?.UnacknowledgedOrders))
+                .AddTransient<IQueryRepository<SuppliersWithUnacknowledgedOrders>, EntityFrameworkQueryRepository<SuppliersWithUnacknowledgedOrders>>(r
+                    => new EntityFrameworkQueryRepository<SuppliersWithUnacknowledgedOrders>(r.GetService<ServiceDbContext>()?.SuppliersWithUnacknowledgedOrders))
+                .AddTransient<IQueryRepository<SupplierGroupsWithUnacknowledgedOrders>, EntityFrameworkQueryRepository<SupplierGroupsWithUnacknowledgedOrders>>(r
+                    => new EntityFrameworkQueryRepository<SupplierGroupsWithUnacknowledgedOrders>(r.GetService<ServiceDbContext>()?.SupplierGroupsWithUnacknowledgedOrders))
+                .AddTransient<IRepository<SupplierGroup, int>, EntityFrameworkRepository<SupplierGroup, int>>(
+                    r => new EntityFrameworkRepository<SupplierGroup, int>(r.GetService<ServiceDbContext>()?.SupplierGroups))
+                .AddTransient<IRepository<SupplierContact, int>, SupplierContactRepository>()
+                .AddTransient<IRepository<Person, int>, EntityFrameworkRepository<Person, int>>(
+                r => new EntityFrameworkRepository<Person, int>(r.GetService<ServiceDbContext>()?.Persons))
+                .AddTransient<IRepository<PlCreditDebitNote, int>, PlCreditDebitNoteRepository>();
         }
     }
 }
