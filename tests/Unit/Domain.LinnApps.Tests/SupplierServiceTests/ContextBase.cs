@@ -38,6 +38,8 @@
 
         protected IRepository<SupplierGroup, int> GroupRepository { get; set; }
 
+        protected IRepository<Organisation, int> OrgRepository { get; set; }
+
         [SetUp]
         public void EstablishContext()
         {
@@ -53,6 +55,7 @@
             this.PlannerRepository = Substitute.For<IRepository<Planner, int>>();
             this.PersonRepository = Substitute.For<IRepository<Person, int>>();
             this.SupplierContactRepository = Substitute.For<IRepository<SupplierContact, int>>();
+            this.OrgRepository = Substitute.For<IRepository<Organisation, int>>();
         }
     }
 }

@@ -37,6 +37,8 @@
         
         private readonly IRepository<SupplierContact, int> supplierContactRepository;
 
+        private readonly IRepository<Organisation, int> orgRepository;
+
         public SupplierService(
             IAuthorisationService authService,
             IRepository<Supplier, int> supplierRepository,
@@ -49,7 +51,8 @@
             IRepository<Planner, int> plannerRepository,
             IRepository<Person, int> personRepository,
             IRepository<SupplierContact, int> supplierContactRepository,
-            IRepository<SupplierGroup, int> groupRepository)
+            IRepository<SupplierGroup, int> groupRepository,
+            IRepository<Organisation, int> orgRepository)
         {
             this.authService = authService;
             this.supplierRepository = supplierRepository;
@@ -63,6 +66,7 @@
             this.personRepository = personRepository;
             this.supplierContactRepository = supplierContactRepository;
             this.groupRepository = groupRepository;
+            this.orgRepository = orgRepository;
         }
 
         public void UpdateSupplier(Supplier current, Supplier updated, IEnumerable<string> privileges)
@@ -197,6 +201,15 @@
 
             ValidateFields(candidate);
 
+            this.orgRepository.Add(new Organisation
+                                       {
+                                            OrgId = candidate.OrganisationId,
+                                            AddressId = candidate.OrderFullAddress.Id,
+                                            DateCreated = DateTime.Today,
+                                            PhoneNumber = candidate.PhoneNumber,
+                                            WebAddress = candidate.WebAddress,
+                                            Title = candidate.Name
+                                       });
             return candidate;
         }
 
