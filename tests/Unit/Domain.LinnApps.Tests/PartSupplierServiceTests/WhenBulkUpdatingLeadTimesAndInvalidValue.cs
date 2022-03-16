@@ -27,8 +27,10 @@
                 .Returns(new PartSupplier { PartNumber = "PART" });
 
             this.result = this.Sut.BulkUpdateLeadTimes(
+                1,
                 new List<LeadTimeUpdateModel> { new LeadTimeUpdateModel("PART", "@df") },
-                new List<string>());
+                new List<string>(),
+                null);
         }
 
         [Test]

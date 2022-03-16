@@ -341,6 +341,7 @@
             entity.Property(a => a.OrganisationId).HasColumnName("ORGANISATION_ID");
             entity.HasMany(s => s.SupplierContacts).WithOne().HasForeignKey(c => c.SupplierId);
             entity.Property(s => s.Country).HasColumnName("COUNTRY");
+            entity.HasOne(s => s.Group).WithMany().HasForeignKey("SUPPLIER_GROUP");
         }
 
         private void BuildSupplierContacts(ModelBuilder builder)

@@ -24,6 +24,7 @@ function OtherDetailsTab({
                 />
             </Grid>
             <Grid item xs={8} />
+            <Grid item xs={8} />
             <Grid item xs={4}>
                 <InputField
                     fullWidth

@@ -150,5 +150,11 @@ export const sendPlNoteEmail = new ItemType(
 export const bulkLeadTimesUpload = new ItemType(
     'bulkLeadTimesUpload',
     'BULK_LEAD_TIMES_UPLOAD',
-    '/purchasing/part-suppliers/bulk-lead-times/'
+    '/purchasing/suppliers/bulk-lead-times/'
+);
+
+export const supplierGroups = new ItemType(
+    'supplierGroups',
+    'SUPPLIER_GROUPS',
+    '/purchasing/supplier-groups/'
 );

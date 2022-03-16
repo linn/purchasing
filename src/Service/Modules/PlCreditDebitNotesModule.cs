@@ -33,7 +33,7 @@
             this.Get("/purchasing/pl-credit-debit-notes", this.SearchNotes);
             this.Get("/purchasing/pl-credit-debit-notes/{id}", this.GetNote);
             this.Put("/purchasing/pl-credit-debit-notes/{id}", this.UpdateDebitNote);
-            this.Post("/purchasing/pl-credit-debit-notes/email/{id}", this.EmailDebitNote);
+            this.Post("/purchasing/pl-credit-debit-notes/email", this.EmailDebitNote);
         }
 
         private async Task GetOpenDebitNotes(HttpRequest req, HttpResponse res)
@@ -74,8 +74,8 @@
             
             await req.Body.CopyToAsync(ms);
             var result = this.emailService.SendEmail(
-                req.HttpContext.User.GetEmployeeNumber(), 
-                req.RouteValues.As<int>("id"), 
+                req.HttpContext.User.GetEmployeeNumber(),
+                req.Query.As<int>("id"), 
                 ms);
 
             await res.Negotiate(result);

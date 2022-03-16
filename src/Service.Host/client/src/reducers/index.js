@@ -46,6 +46,7 @@ import plCreditDebitNotes from './plCreditDebitNotes';
 import openDebitNotes from './openDebitNotes';
 import sendPlNoteEmail from './sendPlNoteEmail';
 import bulkLeadTimesUpload from './bulkLeadTimesUpload';
+import supplierGroups from './supplierGroups.';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -86,6 +87,7 @@ const rootReducer = history =>
         spendBySupplierReport,
         spendByPartReport,
         supplier,
+        supplierGroups,
         suppliers,
         suppliersWithUnacknowledgedOrders,
         tariffs,

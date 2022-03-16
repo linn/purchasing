@@ -8,6 +8,9 @@
     public interface IBulkLeadTimesUpdaterService
     {
         IResult<ProcessResultResource> BulkUpdateFromCsv(
-            string csvString, IEnumerable<string> privileges);
+            int supplierId,
+            string csvString,
+            IEnumerable<string> privileges,
+            int? organisationId = null);
     }
 }

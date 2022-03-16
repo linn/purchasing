@@ -146,7 +146,9 @@
                                                                                           FirstName = c.FirstName, 
                                                                                           LastName = c.LastName
                                                                                       }
-                                                                          })
+                                                                          }),
+                           Group = resource.GroupId.HasValue 
+                                       ? new SupplierGroup { Id = (int)resource.GroupId } : null
                         };
          
             return supplier;

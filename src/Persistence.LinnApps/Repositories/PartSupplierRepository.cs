@@ -46,7 +46,9 @@
                 .Include(p => p.Supplier)
                 .Include(p => p.Part)
                 .Include(p => p.Currency)
-                .AsNoTracking().Where(expression);
+                .Include(p => p.Supplier)
+                .ThenInclude(p => p.Group)
+                .Where(expression);
         }
     }
 }

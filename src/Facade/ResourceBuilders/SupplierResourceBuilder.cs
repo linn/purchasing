@@ -82,6 +82,7 @@
                 OrganisationId = entity.OrganisationId,
                 SupplierContacts = entity.SupplierContacts?.Select(c =>
                     (SupplierContactResource)this.supplierContactResourceBuilder.Build(c, null)),
+                GroupId = entity.Group?.Id,
                 Links = this.BuildLinks(entity, claims).ToArray()
             };
         }
@@ -105,6 +106,11 @@
             if (model != null && this.authService.HasPermissionFor(AuthorisedAction.SupplierUpdate, privileges))
             {
                 yield return new LinkResource { Rel = "edit", Href = $"{this.GetLocation(model)}/edit" };
+                yield return new LinkResource
+                                 {
+                                     Rel = "bulk-update-lead-times",
+                                     Href = $"/purchasing/suppliers/bulk-lead-times?supplierId={model.SupplierId}"
+                                 };
             }
 
             if (this.authService.HasPermissionFor(AuthorisedAction.SupplierCreate, privileges))

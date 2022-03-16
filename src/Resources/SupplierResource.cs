@@ -95,5 +95,7 @@
         public int OrganisationId { get; set; }
 
         public IEnumerable<SupplierContactResource> SupplierContacts { get; set; }
+
+        public int? GroupId { get; set; }
     }
 }

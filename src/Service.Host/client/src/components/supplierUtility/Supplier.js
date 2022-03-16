@@ -76,6 +76,8 @@ function Supplier({ creating }) {
     const snackbarVisible = useSelector(reduxState =>
         itemSelectorHelpers.getSnackbarVisible(reduxState.supplier)
     );
+    const bulkUpdateLeadTimesUrl = utilities.getHref(state.supplier, 'bulk-update-lead-times');
+
     useEffect(() => {
         if (creating) {
             dispatch({
@@ -109,7 +111,7 @@ function Supplier({ creating }) {
     const handleFieldChange = (propertyName, newValue) => {
         setEditStatus('edit');
         let formatted = newValue;
-        if (propertyName === 'plannerId') {
+        if (propertyName === 'plannerId' || propertyName === 'groupId') {
             formatted = Number(newValue);
         }
         dispatch({ type: 'fieldChange', fieldName: propertyName, payload: formatted });
@@ -336,6 +338,8 @@ function Supplier({ creating }) {
                                                     openHoldDialog={() =>
                                                         setHoldChangeDialogOpen(true)
                                                     }
+                                                    bulkUpdateLeadTimesUrl={bulkUpdateLeadTimesUrl}
+                                                    groupId={state.supplier.groupId}
                                                 />
                                             </Box>
                                         )}
