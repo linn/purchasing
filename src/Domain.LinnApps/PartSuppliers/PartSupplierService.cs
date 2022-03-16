@@ -337,25 +337,29 @@
 
             foreach (var change in leadTimeUpdateModels)
             {
-                PartSupplier record;
+                IQueryable<PartSupplier> records;
 
                 if (supplierGroupId.GetValueOrDefault() != 0)
                 {
-                    record = this.partSupplierRepository.FindBy(
+                    records = this.partSupplierRepository.FilterBy(
                         x => x.PartNumber == change.PartNumber.ToUpper().Trim()
                              && x.Supplier.Group != null 
                              && x.Supplier.Group.Id == supplierGroupId);
                 }
                 else
                 {
-                    record = this.partSupplierRepository.FindBy(
+                    records = this.partSupplierRepository.FilterBy(
                         x => x.PartNumber == change.PartNumber.ToUpper().Trim()
                              && x.SupplierId == supplierId);
                 }
 
-                if (int.TryParse(change.LeadTimeWeeks, out var newLeadTime) && record != null)
+                if (int.TryParse(change.LeadTimeWeeks, out var newLeadTime) && records.Any())
                 {
-                    record.LeadTimeWeeks = newLeadTime;
+                    foreach (var record in records)
+                    {
+                        record.LeadTimeWeeks = newLeadTime;
+                    }
+
                     successCount++;
                 }
                 else

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
 
     using FluentAssertions;
@@ -23,8 +24,14 @@
                 .HasPermissionFor(AuthorisedAction.PartSupplierUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
-            this.PartSupplierRepository.FindBy(Arg.Any<Expression<Func<PartSupplier, bool>>>())
-                .Returns(new PartSupplier { PartNumber = "PART" });
+            this.PartSupplierRepository.FilterBy(Arg.Any<Expression<Func<PartSupplier, bool>>>())
+                .Returns(new List<PartSupplier>
+                             {
+                                 new PartSupplier 
+                                     { 
+                                         PartNumber = "PART"
+                                     }
+                             }.AsQueryable());
 
             this.result = this.Sut.BulkUpdateLeadTimes(
                 1,

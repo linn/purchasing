@@ -91,7 +91,7 @@
 
         private async Task UploadBulkLeadTimes(HttpRequest req, HttpResponse res)
         {
-            var orgId = req.Query.As<int?>("orgId");
+            var groupId = req.Query.As<int?>("groupId");
             var supplierId = req.Query.As<int>("supplierId");
 
             var reader = new StreamReader(req.Body).ReadToEndAsync();
@@ -100,7 +100,7 @@
                 supplierId,
                 reader.Result, 
                 req.HttpContext.GetPrivileges(),
-                orgId);
+                groupId);
 
             await res.Negotiate(result);
         }
