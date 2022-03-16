@@ -6,14 +6,12 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
-    using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
-    using Linn.Purchasing.Resources.SearchResources;
 
     public class PurchaseOrderFacadeService
-        : FacadeFilterResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource>
+        : FacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource>
     {
         private readonly IPurchaseOrderService domainService;
 
@@ -63,11 +61,6 @@
         protected override Expression<Func<PurchaseOrder, bool>> SearchExpression(string searchTerm)
         {
             return x => x.OrderNumber.ToString().Contains(searchTerm);
-        }
-
-        protected override Expression<Func<PurchaseOrder, bool>> FilterExpression(PurchaseOrderSearchResource searchResource)
-        {
-            throw new NotImplementedException();
         }
 
         private PurchaseOrder BuildEntityFromResourceHelper(PurchaseOrderResource resource)
