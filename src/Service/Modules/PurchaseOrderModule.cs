@@ -14,6 +14,7 @@
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.SearchResources;
     using Linn.Purchasing.Service.Extensions;
+    using Linn.Purchasing.Service.Models;
 
     using Microsoft.AspNetCore.Http;
 
@@ -54,6 +55,8 @@
             this.packagingGroupService = packagingGroupService;
             this.tariffService = tariffService;
             this.purchaseOrderFacadeService = purchaseOrderFacadeService;
+            this.Get("/purchasing/purchase-orders/{orderNumber:int}/allow-over-book/", this.GetApp);
+            this.Get("/purchasing/purchase-orders/allow-over-book", this.GetApp);
             this.Get("/purchasing/purchase-orders/currencies", this.GetCurrencies);
             this.Get("/purchasing/purchase-orders/methods", this.GetOrderMethods);
             this.Get("/purchasing/purchase-orders/delivery-addresses", this.GetDeliveryAddresses);
@@ -63,6 +66,11 @@
             this.Get("/purchasing/purchase-orders", this.SearchPurchaseOrders);
             this.Get("/purchasing/purchase-orders/{orderNumber:int}", this.GetPurchaseOrder);
             this.Put("/purchasing/purchase-orders/{orderNumber:int}", this.UpdatePurchaseOrder);
+        }
+
+        private async Task GetApp(HttpRequest req, HttpResponse res)
+        {
+            await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
         }
 
         private async Task GetCurrencies(HttpRequest req, HttpResponse res)
