@@ -16,7 +16,7 @@
         public PartsReceivedReportModule(ITqmsJobRefService tqmsJobRefService)
         {
             this.tqmsJobRefService = tqmsJobRefService;
-            this.Get("/purchasing/tqms-job-refs", this.GetJobRefs);
+            this.Get("/purchasing/tqms-jobrefs", this.GetJobRefs);
         }
 
         private async Task GetJobRefs(HttpRequest request, HttpResponse response)
