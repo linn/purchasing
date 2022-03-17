@@ -6,10 +6,10 @@ import {
     itemSelectorHelpers,
     Loading,
     Page,
-    SaveBackCancelButtons
+    SaveBackCancelButtons,
+    SnackbarMessage
 } from '@linn-it/linn-form-components-library';
 import { useParams } from 'react-router-dom';
-// import { makeStyles } from '@mui/styles';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import purchaseOrderActions from '../actions/purchaseOrderActions';
@@ -17,16 +17,6 @@ import history from '../history';
 import config from '../config';
 
 function AllowPurchaseOrderOverbook() {
-    // const useStyles = makeStyles(theme => ({
-    //     dialog: {
-    //         margin: theme.spacing(6),
-    //         minWidth: theme.spacing(62)
-    //     },
-    //     total: {
-    //         float: 'right'
-    //     }
-    // }));
-
     const reduxDispatch = useDispatch();
     const { orderNumber } = useParams();
     const [state, setState] = useState({});
@@ -38,6 +28,9 @@ function AllowPurchaseOrderOverbook() {
     const clearErrors = () => reduxDispatch(purchaseOrderActions.clearErrorsForItem());
     const updatePurchaseOrder = () =>
         reduxDispatch(purchaseOrderActions.update(state.orderNumber, state));
+    const snackbarVisible = useSelector(reduxState =>
+        itemSelectorHelpers.getSnackbarVisible(reduxState.purchaseOrder)
+    );
 
     useEffect(() => {
         if (orderNumber) {
@@ -72,6 +65,13 @@ function AllowPurchaseOrderOverbook() {
                 <Loading />
             ) : (
                 <Grid container spacing={3}>
+                    <SnackbarMessage
+                        visible={snackbarVisible}
+                        onClose={() =>
+                            reduxDispatch(purchaseOrderActions.setSnackbarVisible(false))
+                        }
+                        message="Save Successful"
+                    />
                     <Grid item xs={12}>
                         <Typography variant="h3">Allow Overbook UT</Typography>
                     </Grid>
