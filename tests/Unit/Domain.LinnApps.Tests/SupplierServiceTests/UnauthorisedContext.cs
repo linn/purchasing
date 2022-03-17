@@ -32,7 +32,8 @@
                 this.PlannerRepository,
                 this.PersonRepository,
                 this.SupplierContactRepository,
-                this.GroupRepository);
+                this.GroupRepository,
+                this.OrgRepository);
         }
     }
 }

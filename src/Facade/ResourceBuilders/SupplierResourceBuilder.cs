@@ -83,6 +83,7 @@
                 SupplierContacts = entity.SupplierContacts?.Select(c =>
                     (SupplierContactResource)this.supplierContactResourceBuilder.Build(c, null)),
                 GroupId = entity.Group?.Id,
+                Country = entity.Country,
                 Links = this.BuildLinks(entity, claims).ToArray()
             };
         }

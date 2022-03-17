@@ -37,6 +37,8 @@
         
         private readonly IRepository<SupplierContact, int> supplierContactRepository;
 
+        private readonly IRepository<Organisation, int> orgRepository;
+
         public SupplierService(
             IAuthorisationService authService,
             IRepository<Supplier, int> supplierRepository,
@@ -49,7 +51,8 @@
             IRepository<Planner, int> plannerRepository,
             IRepository<Person, int> personRepository,
             IRepository<SupplierContact, int> supplierContactRepository,
-            IRepository<SupplierGroup, int> groupRepository)
+            IRepository<SupplierGroup, int> groupRepository,
+            IRepository<Organisation, int> orgRepository)
         {
             this.authService = authService;
             this.supplierRepository = supplierRepository;
@@ -63,11 +66,26 @@
             this.personRepository = personRepository;
             this.supplierContactRepository = supplierContactRepository;
             this.groupRepository = groupRepository;
+            this.orgRepository = orgRepository;
         }
 
         public void UpdateSupplier(Supplier current, Supplier updated, IEnumerable<string> privileges)
         {
-            if (!this.authService.HasPermissionFor(AuthorisedAction.SupplierUpdate, privileges))
+            var privilegesList = privileges.ToList();
+            if (!string.IsNullOrEmpty(updated.ReasonClosed))
+            {
+                if (!this.authService.HasPermissionFor(AuthorisedAction.SupplierClose, privilegesList))
+                {
+                    throw new UnauthorisedActionException("You are not authorised to close a supplier");
+                }
+
+                current.DateClosed = DateTime.Today;
+                current.ReasonClosed = updated.ReasonClosed;
+                current.ClosedBy = updated.ClosedBy;
+            }
+
+
+            if (!this.authService.HasPermissionFor(AuthorisedAction.SupplierUpdate, privilegesList))
             {
                 throw new UnauthorisedActionException("You are not authorised to update Suppliers");
             }
@@ -96,8 +114,6 @@
             current.NotesForBuyer = updated.NotesForBuyer;
             current.DeliveryDay = updated.DeliveryDay;
             current.PmDeliveryDaysGrace = updated.PmDeliveryDaysGrace;
-            current.DateClosed = updated.DateClosed;
-            current.ReasonClosed = updated.ReasonClosed;
             current.Notes = updated.Notes;
             current.OrganisationId = updated.OrganisationId;
 
@@ -134,10 +150,6 @@
 
             current.AccountController = updated.AccountController != null
                                             ? this.employeeRepository.FindById(updated.AccountController.Id)
-                                            : null;
-
-            current.ClosedBy = updated.ClosedBy != null
-                                            ? this.employeeRepository.FindById(updated.ClosedBy.Id)
                                             : null;
 
             current.Group = updated.Group != null
@@ -196,7 +208,16 @@
                                      : null;
 
             ValidateFields(candidate);
-
+            candidate.Name = candidate.Name.ToUpper();
+            this.orgRepository.Add(new Organisation
+                                       {
+                                            OrgId = candidate.OrganisationId,
+                                            AddressId = candidate.OrderFullAddress.Id,
+                                            DateCreated = DateTime.Today,
+                                            PhoneNumber = candidate.PhoneNumber,
+                                            WebAddress = candidate.WebAddress,
+                                            Title = candidate.Name.ToUpper()
+                                       });
             return candidate;
         }
 

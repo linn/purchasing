@@ -16,12 +16,14 @@ import Button from '@mui/material/Button';
 import addressesActions from '../../../actions/addressesActions';
 import AddressUtility from '../../AdressUtility';
 import addressActions from '../../../actions/addressActions';
+import countriesActions from '../../../actions/countriesActions';
 
 function WhereTab({
     orderAddressId,
     orderFullAddress,
     invoiceAddressId,
     invoiceFullAddress,
+    country,
     handleFieldChange
 }) {
     const dispatch = useDispatch();
@@ -30,7 +32,7 @@ function WhereTab({
             margin: theme.spacing(6),
             minWidth: theme.spacing(62)
         },
-        total: {
+        pullRight: {
             float: 'right'
         }
     }));
@@ -51,7 +53,19 @@ function WhereTab({
     const address = useSelector(state => itemSelectorHelpers.getItem(state.address));
     const [orderAddressDialogOpen, setOrderAddressDialogOpen] = useState(false);
     const [invoiceAddressDialogOpen, setInvoiceAddressDialogOpen] = useState(false);
-
+    const countriesSearchResults = useSelector(state =>
+        collectionSelectorHelpers.getSearchItems(
+            state.countries,
+            100,
+            'countryCode',
+            'countryCode',
+            'countryName'
+        )
+    );
+    const countriesSearchLoading = useSelector(state =>
+        collectionSelectorHelpers.getSearchLoading(state.countries)
+    );
+    const searchCountries = searchTerm => dispatch(countriesActions.search(searchTerm));
     useEffect(() => {
         if (address?.addressId) {
             if (orderAddressDialogOpen) {
@@ -180,6 +194,31 @@ function WhereTab({
                 />
             </Grid>
             <Grid item xs={3} />
+            <Grid item xs={4}>
+                <Typeahead
+                    onSelect={newValue => {
+                        handleFieldChange('country', newValue.countryCode);
+                    }}
+                    label="Country Lookup"
+                    modal
+                    propertyName="country"
+                    items={countriesSearchResults}
+                    value={country}
+                    loading={countriesSearchLoading}
+                    fetchItems={searchCountries}
+                    links={false}
+                    priorityFunction={(i, searchTerm) => {
+                        if (i.countryCode === searchTerm?.toUpperCase()) {
+                            return 1;
+                        }
+                        return 0;
+                    }}
+                    text
+                    placeholder="Search by Name or Code"
+                    minimumSearchTermLength={2}
+                />
+            </Grid>
+            <Grid item xs={8} />
         </Grid>
     );
 }
@@ -189,12 +228,14 @@ WhereTab.propTypes = {
     orderFullAddress: PropTypes.string,
     invoiceAddressId: PropTypes.number,
     invoiceFullAddress: PropTypes.string,
-    handleFieldChange: PropTypes.func.isRequired
+    handleFieldChange: PropTypes.func.isRequired,
+    country: PropTypes.string
 };
 WhereTab.defaultProps = {
     orderAddressId: null,
     orderFullAddress: null,
     invoiceAddressId: null,
-    invoiceFullAddress: null
+    invoiceFullAddress: null,
+    country: null
 };
 export default WhereTab;

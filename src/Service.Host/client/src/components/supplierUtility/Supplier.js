@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useReducer, useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -10,7 +10,8 @@ import {
     InputField,
     ErrorCard,
     getItemError,
-    SnackbarMessage
+    SnackbarMessage,
+    userSelectors
 } from '@linn-it/linn-form-components-library';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -69,6 +70,8 @@ function Supplier({ creating }) {
     const holdChangeLoading = useSelector(reduxState =>
         itemSelectorHelpers.getItemLoading(reduxState.putSupplierOnHold)
     );
+    const currentUserNumber = useSelector(reduxState => userSelectors.getUserNumber(reduxState));
+    const currentUserName = useSelector(reduxState => userSelectors.getName(reduxState));
 
     const clearErrors = () => reduxDispatch(supplierActions.clearErrorsForItem());
     const updateSupplier = body => reduxDispatch(supplierActions.update(id, body));
@@ -77,25 +80,31 @@ function Supplier({ creating }) {
         itemSelectorHelpers.getSnackbarVisible(reduxState.supplier)
     );
     const bulkUpdateLeadTimesUrl = utilities.getHref(state.supplier, 'bulk-update-lead-times');
-
+    const defaults = useMemo(
+        () => ({
+            accountingCompany: 'LINN',
+            liveOnOracle: 'Y',
+            expenseAccount: 'N',
+            currencyCode: 'GBP',
+            approvedCarrier: 'N',
+            paymentMethod: 'CHEQUE',
+            orderHold: 'N',
+            openedById: Number(currentUserNumber),
+            openedByName: currentUserName,
+            vendorManagerId: 'A'
+        }),
+        [currentUserNumber, currentUserName]
+    );
     useEffect(() => {
         if (creating) {
             dispatch({
                 type: 'initialise',
-                payload: {
-                    accountingCompany: 'LINN',
-                    liveOnOracle: 'Y',
-                    expenseAccount: 'N',
-                    currencyCode: 'GBP',
-                    approvedCarrier: 'N',
-                    paymentMethod: 'CHEQUE',
-                    orderHold: 'N'
-                }
+                payload: defaults
             });
         } else if (supplier) {
             dispatch({ type: 'initialise', payload: supplier });
         }
-    }, [supplier, creating]);
+    }, [supplier, creating, currentUserName, currentUserNumber, defaults]);
 
     const canEdit = () => creating || supplier?.links.some(l => l.rel === 'edit');
     const holdLink = () => utilities.getHref(supplier, 'hold');
@@ -356,6 +365,7 @@ function Supplier({ creating }) {
                                                     invoiceFullAddress={
                                                         state.supplier.invoiceFullAddress
                                                     }
+                                                    country={state.supplier.country}
                                                     handleFieldChange={handleFieldChange}
                                                 />
                                             </Box>
@@ -418,11 +428,20 @@ function Supplier({ creating }) {
                                                 addSupplier(state.supplier);
                                             } else {
                                                 clearErrors();
-                                                updateSupplier(state.supplier);
+                                                updateSupplier({
+                                                    ...state.supplier,
+                                                    closedById: state.supplier.reasonClosed
+                                                        ? Number(currentUserNumber)
+                                                        : null
+                                                });
                                             }
                                         }}
                                         cancelClick={() => {
-                                            dispatch({ type: 'initialise', payload: supplier });
+                                            if (creating) {
+                                                dispatch({ type: 'initialise', payload: defaults });
+                                            } else {
+                                                dispatch({ type: 'initialise', payload: supplier });
+                                            }
                                             setEditStatus('view');
                                         }}
                                         backClick={() => history.push('/purchasing/part-suppliers')}

@@ -97,5 +97,7 @@
         public IEnumerable<SupplierContactResource> SupplierContacts { get; set; }
 
         public int? GroupId { get; set; }
+
+        public string Country { get; set; }
     }
 }

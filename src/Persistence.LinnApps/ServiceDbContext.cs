@@ -83,6 +83,8 @@
 
         public DbSet<PlCreditDebitNote> PlCreditDebitNotes { get; set; }
 
+        public DbSet<Organisation> Organisations { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -126,7 +128,7 @@
             this.BuildPlCreditDebitNotes(builder);
             this.BuildCreditDebitNoteTypes(builder);
             this.BuildPhoneList(builder);
-
+            this.BuildOrganisations(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -342,6 +344,19 @@
             entity.HasMany(s => s.SupplierContacts).WithOne().HasForeignKey(c => c.SupplierId);
             entity.Property(s => s.Country).HasColumnName("COUNTRY");
             entity.HasOne(s => s.Group).WithMany().HasForeignKey("SUPPLIER_GROUP");
+        }
+
+        private void BuildOrganisations(ModelBuilder builder)
+        {
+            var entity = builder.Entity<Organisation>().ToTable("ORGANISATIONS");
+            entity.HasKey(c => c.OrgId);
+            entity.Property(c => c.OrgId).HasColumnName("ORG_ID");
+            entity.Property(c => c.AddressId).HasColumnName("ADDRESS_ID");
+            entity.Property(c => c.DateCreated).HasColumnName("DATE_CREATED");
+            entity.Property(c => c.PhoneNumber).HasColumnName("PHONE_NUMBER").HasMaxLength(25);
+            entity.Property(c => c.EmailAddress).HasColumnName("EMAIL_ADDRESS").HasMaxLength(50);
+            entity.Property(c => c.Title).HasColumnName("TITLE").HasMaxLength(80);
+            entity.Property(c => c.WebAddress).HasColumnName("WEB_ADDRESS").HasMaxLength(300);
         }
 
         private void BuildSupplierContacts(ModelBuilder builder)

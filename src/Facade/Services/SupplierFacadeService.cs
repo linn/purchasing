@@ -38,7 +38,7 @@
         {
             var candidate = this.BuildEntityFromResourceHelper(resource);
             candidate.SupplierId = this.databaseService.GetNextVal("SUPPLIER_SEQ");
-
+            candidate.OrganisationId = this.databaseService.GetNextVal("ORG_SEQ");
             candidate.OpenedBy = resource.OpenedById.HasValue
                 ? new Employee { Id = (int)resource.OpenedById } : null;
             candidate.DateOpened = DateTime.Today;
