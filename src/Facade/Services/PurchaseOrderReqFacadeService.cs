@@ -93,8 +93,8 @@
                            UnitPrice = resource.UnitPrice,
                            Carriage = resource.Carriage,
                            TotalReqPrice = resource.TotalReqPrice,
-                           Currency = new Currency { Code = resource.Currency.Code },
-                           Supplier = new Supplier { SupplierId = resource.Supplier.Id, Name = resource.Supplier.Name },
+                           CurrencyCode = resource.Currency.Code,
+                           SupplierId = resource.Supplier.Id,
                            SupplierName = resource.Supplier.Name,
                            SupplierContact = resource.SupplierContact,
                            AddressLine1 = resource.AddressLine1,
@@ -102,7 +102,7 @@
                            AddressLine3 = resource.AddressLine3,
                            AddressLine4 = resource.AddressLine4,
                            PostCode = resource.PostCode,
-                           Country = new Country { CountryCode = resource.Country.CountryCode },
+                           CountryCode = resource.Country.CountryCode,
                            PhoneNumber = resource.PhoneNumber,
                            QuoteRef = resource.QuoteRef,
                            Email = resource.Email,
@@ -110,36 +110,15 @@
                                !string.IsNullOrEmpty(resource.DateRequired)
                                    ? DateTime.Parse(resource.DateRequired)
                                    : null,
-                           RequestedBy = new Employee { Id = resource.RequestedBy.Id },
-                           AuthorisedBy =
-                               resource.AuthorisedBy != null ? new Employee { Id = resource.AuthorisedBy.Id } : null,
-                           SecondAuthBy =
-                               resource.SecondAuthBy != null ? new Employee { Id = resource.SecondAuthBy.Id } : null,
-                           FinanceCheckBy =
-                               resource.FinanceCheckBy != null
-                                   ? new Employee { Id = resource.FinanceCheckBy.Id }
-                                   : null,
-                           TurnedIntoOrderBy =
-                               resource.TurnedIntoOrderBy != null
-                                   ? new Employee { Id = resource.TurnedIntoOrderBy.Id }
-                                   : null,
-                           Nominal =
-                               resource.Nominal != null
-                                   ? new Nominal
-                                         {
-                                             NominalCode = resource.Nominal.NominalCode,
-                                             Description = resource.Nominal.Description
-                                         }
-                                   : null,
+                           RequestedById = resource.RequestedBy.Id,
+                           AuthorisedById = resource.AuthorisedBy?.Id,
+                           SecondAuthById = resource.SecondAuthBy?.Id,
+                           FinanceCheckById =resource.FinanceCheckBy?.Id,
+                           TurnedIntoOrderById = resource.TurnedIntoOrderBy?.Id,
+                           NominalCode =  resource.Nominal?.NominalCode,
                            RemarksForOrder = resource.RemarksForOrder,
                            InternalNotes = resource.InternalNotes,
-                           Department = resource.Department != null
-                                            ? new Department
-                                                  {
-                                                      DepartmentCode = resource.Department.DepartmentCode,
-                                                      Description = resource.Department.Description
-                                                  }
-                                            : null
+                           DepartmentCode = resource.Department?.DepartmentCode
                        };
         }
     }

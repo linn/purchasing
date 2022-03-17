@@ -14,6 +14,7 @@
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.SearchResources;
     using Linn.Purchasing.Service.Extensions;
+    using Linn.Purchasing.Service.Models;
 
     using Microsoft.AspNetCore.Http;
 
@@ -21,24 +22,22 @@
     {
         private readonly IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource> currencyService;
 
+        private readonly
+            IFacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource, LinnDeliveryAddressResource> deliveryAddressService;
+
         private readonly IFacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource> orderMethodService;
 
-        private readonly IFacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource, LinnDeliveryAddressResource>
-            deliveryAddressService;
+        private readonly IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource> packagingGroupService;
 
-        private readonly IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource>
-            unitsOfMeasureService;
+        private readonly
+            IFacadeResourceFilterService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource> purchaseOrderFacadeService;
 
-        private readonly IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource>
-            packagingGroupService;
+        private readonly
+            IFacadeResourceFilterService<PurchaseOrderReq, int, PurchaseOrderReqResource, PurchaseOrderReqResource, PurchaseOrderReqSearchResource> purchaseOrderReqFacadeService;
 
         private readonly IFacadeResourceService<Tariff, int, TariffResource, TariffResource> tariffService;
 
-        private readonly
-            IFacadeResourceFilterService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource>
-            purchaseOrderFacadeService;
-
-        private readonly IFacadeResourceFilterService<PurchaseOrderReq, int, PurchaseOrderReqResource, PurchaseOrderReqResource, PurchaseOrderReqSearchResource> purchaseOrderReqFacadeService;
+        private readonly IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource> unitsOfMeasureService;
 
         public PurchaseOrderModule(
             IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource> currencyService,
@@ -69,21 +68,39 @@
             this.Put("/purchasing/purchase-orders/{OrderNumber:int}/over-book", this.AllowOverbook);
 
             this.Get("/purchasing/purchase-orders/reqs", this.SearchReqs);
+            this.Get("/purchasing/purchase-orders/reqs", this.GetApp);
+            this.Get("/purchasing/purchase-orders/reqs/create", this.GetApp);
             this.Get("/purchasing/purchase-orders/reqs/{id:int}", this.GetReq);
             this.Put("/purchasing/purchase-orders/reqs/{id:int}", this.UpdateReq);
             this.Post("/purchasing/purchase-orders/reqs", this.CreateReq);
         }
 
-        private async Task GetCurrencies(HttpRequest req, HttpResponse res)
+        private async Task GetApp(HttpRequest req, HttpResponse res)
         {
-            var result = this.currencyService.GetAll();
+            await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
+        }
+
+        private async Task AllowOverbook(HttpRequest req, HttpResponse res)
+        {
+            var resource = await req.Bind<PurchaseOrderResource>();
+            resource.Privileges = req.HttpContext.GetPrivileges();
+
+            var result = this.purchaseOrderFacadeService.Update(resource.OrderNumber, resource, resource.Privileges);
 
             await res.Negotiate(result);
         }
 
-        private async Task GetOrderMethods(HttpRequest req, HttpResponse res)
+        private async Task CreateReq(HttpRequest req, HttpResponse res)
         {
-            var result = this.orderMethodService.GetAll();
+            var resource = await req.Bind<PurchaseOrderReqResource>();
+            var result = this.purchaseOrderReqFacadeService.Add(resource, req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task GetCurrencies(HttpRequest req, HttpResponse res)
+        {
+            var result = this.currencyService.GetAll();
 
             await res.Negotiate(result);
         }
@@ -95,9 +112,9 @@
             await res.Negotiate(result);
         }
 
-        private async Task GetUnitsOfMeasure(HttpRequest req, HttpResponse res)
+        private async Task GetOrderMethods(HttpRequest req, HttpResponse res)
         {
-            var result = this.unitsOfMeasureService.GetAll();
+            var result = this.orderMethodService.GetAll();
 
             await res.Negotiate(result);
         }
@@ -105,40 +122,6 @@
         private async Task GetPackagingGroups(HttpRequest req, HttpResponse res)
         {
             var result = this.packagingGroupService.GetAll();
-
-            await res.Negotiate(result);
-        }
-
-        private async Task SearchTariffs(HttpRequest req, HttpResponse res)
-        {
-            var searchTerm = req.Query.As<string>("searchTerm");
-            var result = this.tariffService.Search(searchTerm);
-
-            await res.Negotiate(result);
-        }
-
-        private async Task SearchPurchaseOrders(HttpRequest req, HttpResponse res)
-        {
-            var orderNumberSearch = req.Query.As<int>("orderNumber");
-            var result = this.purchaseOrderFacadeService.FilterBy(
-                new PurchaseOrderSearchResource
-                    {
-                        OrderNumberSearchTerm = orderNumberSearch
-                    },
-                req.HttpContext.GetPrivileges());
-
-            await res.Negotiate(result);
-        }
-
-        private async Task AllowOverbook(HttpRequest req, HttpResponse res)
-        {
-            var resource = await req.Bind<PurchaseOrderResource>();
-            resource.Privileges = req.HttpContext.GetPrivileges();
-
-            var result = this.purchaseOrderFacadeService.Update(
-                resource.OrderNumber,
-                resource,
-                resource.Privileges);
 
             await res.Negotiate(result);
         }
@@ -152,6 +135,23 @@
             await res.Negotiate(result);
         }
 
+        private async Task GetUnitsOfMeasure(HttpRequest req, HttpResponse res)
+        {
+            var result = this.unitsOfMeasureService.GetAll();
+
+            await res.Negotiate(result);
+        }
+
+        private async Task SearchPurchaseOrders(HttpRequest req, HttpResponse res)
+        {
+            var orderNumberSearch = req.Query.As<int>("orderNumber");
+            var result = this.purchaseOrderFacadeService.FilterBy(
+                new PurchaseOrderSearchResource { OrderNumberSearchTerm = orderNumberSearch },
+                req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
         private async Task SearchReqs(HttpRequest req, HttpResponse res)
         {
             var searchTerm = req.Query.As<string>("searchTerm");
@@ -161,21 +161,19 @@
             await res.Negotiate(result);
         }
 
+        private async Task SearchTariffs(HttpRequest req, HttpResponse res)
+        {
+            var searchTerm = req.Query.As<string>("searchTerm");
+            var result = this.tariffService.Search(searchTerm);
+
+            await res.Negotiate(result);
+        }
+
         private async Task UpdateReq(HttpRequest req, HttpResponse res)
         {
             var id = req.RouteValues.As<int>("id");
             var resource = await req.Bind<PurchaseOrderReqResource>();
             var result = this.purchaseOrderReqFacadeService.Update(id, resource, req.HttpContext.GetPrivileges());
-
-            await res.Negotiate(result);
-        }
-
-        private async Task CreateReq(HttpRequest req, HttpResponse res)
-        {
-            var resource = await req.Bind<PurchaseOrderReqResource>();
-            var result = this.purchaseOrderReqFacadeService.Add(
-                resource,
-                req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }

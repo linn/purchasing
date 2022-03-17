@@ -1,8 +1,6 @@
 ﻿namespace Linn.Purchasing.Persistence.LinnApps.Repositories
 {
-    using System;
     using System.Linq;
-    using System.Linq.Expressions;
 
     using Linn.Common.Persistence.EntityFramework;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
@@ -21,18 +19,11 @@
 
         public override PurchaseOrderReq FindById(int key)
         {
-            var purchaseOrderReq = this.serviceDbContext.PurchaseOrderReqs
-                .Include(r => r.Currency)
-                .Include(r => r.Country)
-                .Include(r => r.RequestedBy)
-                .Include(r => r.AuthorisedBy)
-                .Include(r => r.SecondAuthBy)
-                .Include(r => r.TurnedIntoOrderBy)
-                .Include(r => r.FinanceCheckBy)
-                .Include(r => r.Nominal)
-                .Include(r => r.Department)
-                .Include(r => r.Supplier).ThenInclude(s => s.OrderAddress)
-                .FirstOrDefault(x => x.ReqNumber == key);
+            var purchaseOrderReq = this.serviceDbContext.PurchaseOrderReqs.Include(r => r.Currency)
+                .Include(r => r.Country).Include(r => r.RequestedBy).Include(r => r.AuthorisedBy)
+                .Include(r => r.SecondAuthBy).Include(r => r.TurnedIntoOrderBy).Include(r => r.FinanceCheckBy)
+                .Include(r => r.Nominal).Include(r => r.Department).Include(r => r.Supplier)
+                .ThenInclude(s => s.OrderAddress).FirstOrDefault(x => x.ReqNumber == key);
             return purchaseOrderReq;
         }
     }

@@ -59,7 +59,7 @@
                            Email = entity.Email,
                            DateRequired = entity.DateRequired.HasValue ? entity.DateRequired.Value.ToString("o") : null,
                            RequestedBy =
-                               entity.RequestedBy != null ? new EmployeeResource { Id = entity.RequestedBy.Id } : null,
+                               entity.RequestedBy != null ? new EmployeeResource { Id = entity.RequestedBy.Id, FullName = entity.RequestedBy.FullName } : null,
                            AuthorisedBy = entity.AuthorisedBy != null
                                               ? new EmployeeResource { Id = entity.AuthorisedBy.Id, FullName = entity.AuthorisedBy.FullName }
                                               : null,

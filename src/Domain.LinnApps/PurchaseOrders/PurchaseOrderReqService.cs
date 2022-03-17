@@ -42,8 +42,8 @@
             entity.UnitPrice = updatedEntity.UnitPrice;
             entity.Carriage = updatedEntity.Carriage;
             entity.TotalReqPrice = updatedEntity.TotalReqPrice;
-            entity.Currency = updatedEntity.Currency;
-            entity.Supplier = updatedEntity.Supplier;
+            entity.CurrencyCode = updatedEntity.CurrencyCode;
+            entity.SupplierId = updatedEntity.SupplierId;
             entity.SupplierName = updatedEntity.SupplierName;
             entity.SupplierContact = updatedEntity.SupplierContact;
             entity.AddressLine1 = updatedEntity.AddressLine1;
@@ -51,7 +51,7 @@
             entity.AddressLine3 = updatedEntity.AddressLine3;
             entity.AddressLine4 = updatedEntity.AddressLine4;
             entity.PostCode = updatedEntity.PostCode;
-            entity.Country = updatedEntity.Country;
+            entity.CountryCode = updatedEntity.CountryCode;
             entity.PhoneNumber = updatedEntity.PhoneNumber;
             entity.QuoteRef = updatedEntity.QuoteRef;
             entity.Email = updatedEntity.Email;
@@ -61,10 +61,10 @@
             entity.SecondAuthBy = updatedEntity.SecondAuthBy;
             entity.FinanceCheckBy = updatedEntity.FinanceCheckBy;
             entity.TurnedIntoOrderBy = updatedEntity.TurnedIntoOrderBy;
-            entity.Nominal = updatedEntity.Nominal;
+            entity.NominalCode = updatedEntity.NominalCode;
             entity.RemarksForOrder = updatedEntity.RemarksForOrder;
             entity.InternalNotes = updatedEntity.InternalNotes;
-            entity.Department = updatedEntity.Department;
+            entity.DepartmentCode = updatedEntity.DepartmentCode;
 
             return true;
         }

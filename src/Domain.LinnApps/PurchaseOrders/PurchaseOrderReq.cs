@@ -28,7 +28,11 @@
 
         public Currency Currency { get; set; }
 
+        public string CurrencyCode { get; set; }
+
         public Supplier Supplier { get; set; }
+
+        public int SupplierId { get; set; }
 
         public string SupplierName { get; set; }
 
@@ -46,6 +50,8 @@
 
         public Country Country { get; set; }
 
+        public string CountryCode { get; set; }
+
         public string PhoneNumber { get; set; }
 
         public string QuoteRef { get; set; }
@@ -56,20 +62,34 @@
 
         public Employee RequestedBy { get; set; }
 
+        public int RequestedById { get; set; }
+
         public Employee AuthorisedBy { get; set; }
+
+        public int? AuthorisedById { get; set; }
 
         public Employee SecondAuthBy { get; set; }
 
+        public int? SecondAuthById { get; set; }
+
         public Employee FinanceCheckBy { get; set; }
+
+        public int? FinanceCheckById { get; set; }
 
         public Employee TurnedIntoOrderBy { get; set; }
 
+        public int? TurnedIntoOrderById { get; set; }
+
         public Nominal Nominal { get; set; }
+
+        public string NominalCode { get; set; }
 
         public string RemarksForOrder { get; set; }
 
         public string InternalNotes { get; set; }
 
         public Department Department { get; set; }
+
+        public string DepartmentCode { get; set; }
     }
 }
