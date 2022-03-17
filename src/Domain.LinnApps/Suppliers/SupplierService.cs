@@ -71,7 +71,21 @@
 
         public void UpdateSupplier(Supplier current, Supplier updated, IEnumerable<string> privileges)
         {
-            if (!this.authService.HasPermissionFor(AuthorisedAction.SupplierUpdate, privileges))
+            var privilegesList = privileges.ToList();
+            if (!string.IsNullOrEmpty(updated.ReasonClosed))
+            {
+                if (!this.authService.HasPermissionFor(AuthorisedAction.SupplierClose, privilegesList))
+                {
+                    throw new UnauthorisedActionException("You are not authorised to close a supplier");
+                }
+
+                current.DateClosed = DateTime.Today;
+                current.ReasonClosed = updated.ReasonClosed;
+                current.ClosedBy = updated.ClosedBy;
+            }
+
+
+            if (!this.authService.HasPermissionFor(AuthorisedAction.SupplierUpdate, privilegesList))
             {
                 throw new UnauthorisedActionException("You are not authorised to update Suppliers");
             }
@@ -100,8 +114,6 @@
             current.NotesForBuyer = updated.NotesForBuyer;
             current.DeliveryDay = updated.DeliveryDay;
             current.PmDeliveryDaysGrace = updated.PmDeliveryDaysGrace;
-            current.DateClosed = updated.DateClosed;
-            current.ReasonClosed = updated.ReasonClosed;
             current.Notes = updated.Notes;
             current.OrganisationId = updated.OrganisationId;
 
@@ -138,10 +150,6 @@
 
             current.AccountController = updated.AccountController != null
                                             ? this.employeeRepository.FindById(updated.AccountController.Id)
-                                            : null;
-
-            current.ClosedBy = updated.ClosedBy != null
-                                            ? this.employeeRepository.FindById(updated.ClosedBy.Id)
                                             : null;
 
             current.Group = updated.Group != null
@@ -200,7 +208,7 @@
                                      : null;
 
             ValidateFields(candidate);
-
+            candidate.Name = candidate.Name.ToUpper();
             this.orgRepository.Add(new Organisation
                                        {
                                             OrgId = candidate.OrganisationId,
@@ -208,7 +216,7 @@
                                             DateCreated = DateTime.Today,
                                             PhoneNumber = candidate.PhoneNumber,
                                             WebAddress = candidate.WebAddress,
-                                            Title = candidate.Name
+                                            Title = candidate.Name.ToUpper()
                                        });
             return candidate;
         }
