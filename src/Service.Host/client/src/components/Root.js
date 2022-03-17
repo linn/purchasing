@@ -32,6 +32,7 @@ import Search from './plDebitCreditNotes/Search';
 import Note from './plDebitCreditNotes/Note';
 import BulkLeadTimesUpload from './partSupplierUtility/BulkLeadTimesUpload';
 import POReqUtility from './POReqUtility';
+import POReqSearch from './POReqSearch';
 
 const Root = ({ store }) => (
     <div>
@@ -172,6 +173,12 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/purchase-orders/reqs/:id"
                                     component={POReqUtility}
+                                />
+
+                                <Route
+                                    exact
+                                    path="/purchasing/purchase-orders/reqs/"
+                                    component={POReqSearch}
                                 />
 
                                 <Route component={NotFoundPage} />
