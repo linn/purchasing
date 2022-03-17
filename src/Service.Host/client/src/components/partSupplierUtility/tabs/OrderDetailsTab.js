@@ -22,7 +22,6 @@ function OrderDetailsTab({
     minimumOrderQty,
     minimumDeliveryQty,
     orderIncrement,
-    orderConversionFactor,
     reelOrBoxQty,
     setPriceChangeDialogOpen,
     creating,
@@ -177,17 +176,8 @@ function OrderDetailsTab({
                     onChange={handleFieldChange}
                 />
             </Grid>
-            <Grid item xs={4}>
-                <InputField
-                    fullWidth
-                    value={orderConversionFactor ?? 1}
-                    label="Order Conversion Factor"
-                    type="number"
-                    propertyName="orderConversionFactor"
-                    onChange={handleFieldChange}
-                />
-            </Grid>
-            <Grid item xs={4} />
+
+            <Grid item xs={8} />
             <Grid item xs={4}>
                 <Dropdown
                     fullWidth
@@ -225,7 +215,6 @@ OrderDetailsTab.propTypes = {
     minimumOrderQty: PropTypes.number,
     minimumDeliveryQty: PropTypes.number,
     orderIncrement: PropTypes.number,
-    orderConversionFactor: PropTypes.number,
     reelOrBoxQty: PropTypes.number,
     setPriceChangeDialogOpen: PropTypes.func.isRequired,
     creating: PropTypes.bool,
@@ -250,7 +239,6 @@ OrderDetailsTab.defaultProps = {
     minimumOrderQty: null,
     minimumDeliveryQty: null,
     orderIncrement: null,
-    orderConversionFactor: null,
     reelOrBoxQty: null
 };
 

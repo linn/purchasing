@@ -21,8 +21,9 @@
 
         public override IQueryable<PurchaseOrder> FilterBy(Expression<Func<PurchaseOrder, bool>> expression)
         {
-            return this.serviceDbContext.PurchaseOrders.Where(expression).Include(o => o.Details)
-                .ThenInclude(d => d.PurchaseDeliveries).Include(x => x.Supplier)
+            return this.serviceDbContext.PurchaseOrders.Where(expression)
+                .Include(o => o.Details).ThenInclude(d => d.Part)
+                .Include(o => o.Details).ThenInclude(d => d.PurchaseDeliveries).Include(x => x.Supplier)
                 .Include(x => x.Currency)
                 .AsNoTracking();
         }
@@ -34,9 +35,10 @@
 
         public override PurchaseOrder FindById(int key)
         {
-            var purchaseOrder = this.serviceDbContext.PurchaseOrders.Find(key);
-            this.serviceDbContext.Entry(purchaseOrder).Collection(p => p.Details).Load();
-            return purchaseOrder;
+            return this.serviceDbContext
+                .PurchaseOrders
+                .Include(o => o.Details).ThenInclude(d => d.Part)
+                .First(o => o.OrderNumber == key);
         }
     }
 }

@@ -34,6 +34,14 @@
 
         protected IRepository<Planner, int> PlannerRepository { get; set; }
 
+        protected IRepository<Person, int> PersonRepository { get; set; }
+
+        protected IRepository<SupplierContact, int> SupplierContactRepository { get; set; }
+
+        protected IRepository<SupplierGroup, int> GroupRepository { get; set; }
+
+        protected IRepository<Organisation, int> OrgRepository { get; set; }
+
         [SetUp]
         public void EstablishContext()
         {
@@ -45,8 +53,12 @@
             this.MockFullAddressRepository = Substitute.For<IRepository<FullAddress, int>>();
             this.MockAddressRepository = Substitute.For<IRepository<Address, int>>();
             this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
+            this.GroupRepository = Substitute.For<IRepository<SupplierGroup, int>>();
             this.VendorManagerRepository = Substitute.For<IRepository<VendorManager, string>>();
             this.PlannerRepository = Substitute.For<IRepository<Planner, int>>();
+            this.PersonRepository = Substitute.For<IRepository<Person, int>>();
+            this.SupplierContactRepository = Substitute.For<IRepository<SupplierContact, int>>();
+            this.OrgRepository = Substitute.For<IRepository<Organisation, int>>();
         }
     }
 }

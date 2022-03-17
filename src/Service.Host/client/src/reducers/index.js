@@ -38,8 +38,15 @@ import address from './address';
 import addresses from './addresses';
 import countries from './countries';
 import suppliersWithUnacknowledgedOrders from './suppliersWithUnacknowledgedOrders';
+import unacknowledgedOrdersReport from './unacknowledgedOrdersReport';
 import planners from './planners';
 import spendByPartReport from './spendByPartReport';
+import plCreditDebitNote from './plCreditDebitNote';
+import plCreditDebitNotes from './plCreditDebitNotes';
+import openDebitNotes from './openDebitNotes';
+import sendPlNoteEmail from './sendPlNoteEmail';
+import bulkLeadTimesUpload from './bulkLeadTimesUpload';
+import supplierGroups from './supplierGroups.';
 import purchaseOrderReq from './purchaseOrderReq';
 import departments from './departments';
 import nominals from './nominals';
@@ -53,6 +60,7 @@ const rootReducer = history =>
         accountingCompanies,
         address,
         addresses,
+        bulkLeadTimesUpload,
         countries,
         currencies,
         deliveryAddresses,
@@ -71,19 +79,25 @@ const rootReducer = history =>
         partSupplier,
         partSuppliers,
         planners,
+        plCreditDebitNote,
+        plCreditDebitNotes,
+        openDebitNotes,
         preferredSupplierChange,
         priceChangeReasons,
         purchaseOrderReq,
         putSupplierOnHold,
         router: connectRouter(history),
+        sendPlNoteEmail,
         signingLimit,
         signingLimits,
         spendBySupplierReport,
         spendByPartReport,
         supplier,
+        supplierGroups,
         suppliers,
         suppliersWithUnacknowledgedOrders,
         tariffs,
+        unacknowledgedOrdersReport,
         unitsOfMeasure,
         vendorManagers,
         ...sharedLibraryReducers,

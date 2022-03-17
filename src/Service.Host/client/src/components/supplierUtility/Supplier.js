@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useReducer, useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -9,7 +9,9 @@ import {
     utilities,
     InputField,
     ErrorCard,
-    getItemError
+    getItemError,
+    SnackbarMessage,
+    userSelectors
 } from '@linn-it/linn-form-components-library';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -37,6 +39,7 @@ import WhereTab from './tabs/WhereTab';
 import WhoseTab from './tabs/WhoseTab';
 import LifecycleTab from './tabs/LifecycleTab';
 import NotesTab from './tabs/NotesTab';
+import ContactTab from './tabs/ContactTab';
 
 function Supplier({ creating }) {
     const useStyles = makeStyles(theme => ({
@@ -67,29 +70,41 @@ function Supplier({ creating }) {
     const holdChangeLoading = useSelector(reduxState =>
         itemSelectorHelpers.getItemLoading(reduxState.putSupplierOnHold)
     );
+    const currentUserNumber = useSelector(reduxState => userSelectors.getUserNumber(reduxState));
+    const currentUserName = useSelector(reduxState => userSelectors.getName(reduxState));
 
     const clearErrors = () => reduxDispatch(supplierActions.clearErrorsForItem());
     const updateSupplier = body => reduxDispatch(supplierActions.update(id, body));
     const addSupplier = body => reduxDispatch(supplierActions.add(body));
-
+    const snackbarVisible = useSelector(reduxState =>
+        itemSelectorHelpers.getSnackbarVisible(reduxState.supplier)
+    );
+    const bulkUpdateLeadTimesUrl = utilities.getHref(state.supplier, 'bulk-update-lead-times');
+    const defaults = useMemo(
+        () => ({
+            accountingCompany: 'LINN',
+            liveOnOracle: 'Y',
+            expenseAccount: 'N',
+            currencyCode: 'GBP',
+            approvedCarrier: 'N',
+            paymentMethod: 'CHEQUE',
+            orderHold: 'N',
+            openedById: Number(currentUserNumber),
+            openedByName: currentUserName,
+            vendorManagerId: 'A'
+        }),
+        [currentUserNumber, currentUserName]
+    );
     useEffect(() => {
         if (creating) {
             dispatch({
                 type: 'initialise',
-                payload: {
-                    accountingCompany: 'LINN',
-                    liveOnOracle: 'Y',
-                    expenseAccount: 'N',
-                    currencyCode: 'GBP',
-                    approvedCarrier: 'N',
-                    paymentMethod: 'CHEQUE',
-                    orderHold: 'N'
-                }
+                payload: defaults
             });
         } else if (supplier) {
             dispatch({ type: 'initialise', payload: supplier });
         }
-    }, [supplier, creating]);
+    }, [supplier, creating, currentUserName, currentUserNumber, defaults]);
 
     const canEdit = () => creating || supplier?.links.some(l => l.rel === 'edit');
     const holdLink = () => utilities.getHref(supplier, 'hold');
@@ -105,7 +120,7 @@ function Supplier({ creating }) {
     const handleFieldChange = (propertyName, newValue) => {
         setEditStatus('edit');
         let formatted = newValue;
-        if (propertyName === 'plannerId') {
+        if (propertyName === 'plannerId' || propertyName === 'groupId') {
             formatted = Number(newValue);
         }
         dispatch({ type: 'fieldChange', fieldName: propertyName, payload: formatted });
@@ -120,7 +135,7 @@ function Supplier({ creating }) {
     const userNumber = useSelector(reduxState => getUserNumber(reduxState));
 
     const [holdChangeDialogOpen, setHoldChangeDialogOpen] = useState(false);
-
+    const [newCounter, setNewCounter] = useState(1);
     const changeSupplierHoldStatus = () => {
         if (state.supplier.orderHold === 'Y') {
             reduxDispatch(
@@ -141,10 +156,42 @@ function Supplier({ creating }) {
         }
         setHoldChangeDialogOpen(false);
     };
-
+    const addContact = () => {
+        setEditStatus('edit');
+        dispatch({
+            type: 'addContact',
+            payload: {
+                supplierId: state.supplier.supplierId,
+                id: 0 - newCounter,
+                personId: 0 - newCounter
+            }
+        });
+        setNewCounter(c => c + 1);
+    };
+    const updateContact = (contactId, propertyName, newValue) => {
+        setEditStatus('edit');
+        if (propertyName === 'isMainOrderContact' || propertyName === 'isMainInvoiceContact') {
+            dispatch({
+                type: 'updateMainContact',
+                propertyName,
+                payload: { id: contactId, newValue }
+            });
+        } else {
+            dispatch({
+                type: 'updateContactDetail',
+                propertyName,
+                payload: { id: contactId, newValue }
+            });
+        }
+    };
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
+                <SnackbarMessage
+                    visible={snackbarVisible}
+                    onClose={() => reduxDispatch(supplierActions.setSnackbarVisible(false))}
+                    message="Save Successful"
+                />
                 {supplierLoading || holdChangeLoading ? (
                     <>
                         <Grid item xs={12}>
@@ -236,6 +283,7 @@ function Supplier({ creating }) {
                                                 <Tab label="Whose" />
                                                 <Tab label="Lifecycle" />
                                                 <Tab label="Notes" />
+                                                <Tab label="Contacts" />
                                             </Tabs>
                                         </Box>
                                         {tab === 0 && (
@@ -299,6 +347,8 @@ function Supplier({ creating }) {
                                                     openHoldDialog={() =>
                                                         setHoldChangeDialogOpen(true)
                                                     }
+                                                    bulkUpdateLeadTimesUrl={bulkUpdateLeadTimesUrl}
+                                                    groupId={state.supplier.groupId}
                                                 />
                                             </Box>
                                         )}
@@ -315,6 +365,7 @@ function Supplier({ creating }) {
                                                     invoiceFullAddress={
                                                         state.supplier.invoiceFullAddress
                                                     }
+                                                    country={state.supplier.country}
                                                     handleFieldChange={handleFieldChange}
                                                 />
                                             </Box>
@@ -341,7 +392,8 @@ function Supplier({ creating }) {
                                                     openedById={state.supplier.openedById}
                                                     openedByName={state.supplier.openedByName}
                                                     dateOpened={state.supplier.dateOpened}
-                                                    closedById={state.supplier.plannerId}
+                                                    closedById={state.supplier.closedById}
+                                                    closedByName={state.supplier.closedByName}
                                                     dateClosed={state.supplier.dateClosed}
                                                     reasonClosed={state.supplier.reasonClosed}
                                                 />
@@ -356,6 +408,15 @@ function Supplier({ creating }) {
                                                 />
                                             </Box>
                                         )}
+                                        {tab === 7 && (
+                                            <Box sx={{ paddingTop: 3 }}>
+                                                <ContactTab
+                                                    contacts={state.supplier.supplierContacts}
+                                                    updateContact={updateContact}
+                                                    addContact={addContact}
+                                                />
+                                            </Box>
+                                        )}
                                     </Box>
                                 </Grid>
                                 <Grid item xs={12}>
@@ -367,11 +428,20 @@ function Supplier({ creating }) {
                                                 addSupplier(state.supplier);
                                             } else {
                                                 clearErrors();
-                                                updateSupplier(state.supplier);
+                                                updateSupplier({
+                                                    ...state.supplier,
+                                                    closedById: state.supplier.reasonClosed
+                                                        ? Number(currentUserNumber)
+                                                        : null
+                                                });
                                             }
                                         }}
                                         cancelClick={() => {
-                                            dispatch({ type: 'initialise', payload: supplier });
+                                            if (creating) {
+                                                dispatch({ type: 'initialise', payload: defaults });
+                                            } else {
+                                                dispatch({ type: 'initialise', payload: supplier });
+                                            }
                                             setEditStatus('view');
                                         }}
                                         backClick={() => history.push('/purchasing/part-suppliers')}

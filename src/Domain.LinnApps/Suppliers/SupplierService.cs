@@ -29,9 +29,17 @@
 
         private readonly IRepository<Employee, int> employeeRepository;
 
+        private readonly IRepository<SupplierGroup, int> groupRepository;
+
         private readonly IRepository<VendorManager, string> vendorManagerRepository;
 
         private readonly IRepository<Planner, int> plannerRepository;
+        
+        private readonly IRepository<Person, int> personRepository;
+        
+        private readonly IRepository<SupplierContact, int> supplierContactRepository;
+
+        private readonly IRepository<Organisation, int> orgRepository;
 
         public SupplierService(
             IAuthorisationService authService,
@@ -43,7 +51,11 @@
             IRepository<Address, int> addressRepository,
             IRepository<Employee, int> employeeRepository,
             IRepository<VendorManager, string> vendorManagerRepository,
-            IRepository<Planner, int> plannerRepository)
+            IRepository<Planner, int> plannerRepository,
+            IRepository<Person, int> personRepository,
+            IRepository<SupplierContact, int> supplierContactRepository,
+            IRepository<SupplierGroup, int> groupRepository,
+            IRepository<Organisation, int> orgRepository)
         {
             this.authService = authService;
             this.supplierRepository = supplierRepository;
@@ -55,11 +67,29 @@
             this.employeeRepository = employeeRepository;
             this.vendorManagerRepository = vendorManagerRepository;
             this.plannerRepository = plannerRepository;
+            this.personRepository = personRepository;
+            this.supplierContactRepository = supplierContactRepository;
+            this.groupRepository = groupRepository;
+            this.orgRepository = orgRepository;
         }
 
         public void UpdateSupplier(Supplier current, Supplier updated, IEnumerable<string> privileges)
         {
-            if (!this.authService.HasPermissionFor(AuthorisedAction.SupplierUpdate, privileges))
+            var privilegesList = privileges.ToList();
+            if (!string.IsNullOrEmpty(updated.ReasonClosed))
+            {
+                if (!this.authService.HasPermissionFor(AuthorisedAction.SupplierClose, privilegesList))
+                {
+                    throw new UnauthorisedActionException("You are not authorised to close a supplier");
+                }
+
+                current.DateClosed = DateTime.Today;
+                current.ReasonClosed = updated.ReasonClosed;
+                current.ClosedBy = updated.ClosedBy;
+            }
+
+
+            if (!this.authService.HasPermissionFor(AuthorisedAction.SupplierUpdate, privilegesList))
             {
                 throw new UnauthorisedActionException("You are not authorised to update Suppliers");
             }
@@ -88,8 +118,6 @@
             current.NotesForBuyer = updated.NotesForBuyer;
             current.DeliveryDay = updated.DeliveryDay;
             current.PmDeliveryDaysGrace = updated.PmDeliveryDaysGrace;
-            current.DateClosed = updated.DateClosed;
-            current.ReasonClosed = updated.ReasonClosed;
             current.Notes = updated.Notes;
             current.OrganisationId = updated.OrganisationId;
 
@@ -127,9 +155,11 @@
                                             ? this.employeeRepository.FindById(updated.AccountController.Id)
                                             : null;
 
-            current.ClosedBy = updated.ClosedBy != null
-                                            ? this.employeeRepository.FindById(updated.ClosedBy.Id)
-                                            : null;
+            current.Group = updated.Group != null
+                                   ? this.groupRepository.FindById(updated.Group.Id)
+                                   : null;
+
+            current.SupplierContacts = this.UpdateContacts(updated.SupplierContacts);
         }
 
         public Supplier CreateSupplier(Supplier candidate, IEnumerable<string> privileges)
@@ -176,8 +206,21 @@
                                               ? this.employeeRepository.FindById(candidate.OpenedBy.Id)
                                               : null;
 
-            ValidateFields(candidate);
+            candidate.Group = candidate.Group != null
+                                     ? this.groupRepository.FindById(candidate.Group.Id)
+                                     : null;
 
+            ValidateFields(candidate);
+            candidate.Name = candidate.Name.ToUpper();
+            this.orgRepository.Add(new Organisation
+                                       {
+                                            OrgId = candidate.OrganisationId,
+                                            AddressId = candidate.OrderFullAddress.Id,
+                                            DateCreated = DateTime.Today,
+                                            PhoneNumber = candidate.PhoneNumber,
+                                            WebAddress = candidate.WebAddress,
+                                            Title = candidate.Name.ToUpper()
+                                       });
             return candidate;
         }
 
@@ -259,6 +302,62 @@
 
                 throw new SupplierException(msg);
             }
+        }
+
+        private IEnumerable<SupplierContact> UpdateContacts(IEnumerable<SupplierContact> supplierContacts)
+        {
+            if (supplierContacts == null)
+            {
+                return null;
+            }
+
+            var enumerable = supplierContacts.ToList();
+            if (enumerable.Count(x => x.IsMainOrderContact == "Y") > 1)
+            {
+                throw new SupplierException("Cannot have more than one Main Order Contact");
+            }
+
+            if (enumerable.Count(x => x.IsMainInvoiceContact == "Y") > 1)
+            {
+                throw new SupplierException("Cannot have more than one Main Invoice Contact");
+            }
+
+            var result = new List<SupplierContact>();
+
+            foreach (var supplierContact in enumerable)
+            {
+                var existingSupplierContact = this.supplierContactRepository.FindById(supplierContact.ContactId);
+
+                if (existingSupplierContact != null)
+                {
+                    existingSupplierContact.IsMainInvoiceContact = supplierContact.IsMainInvoiceContact;
+                    existingSupplierContact.IsMainOrderContact = supplierContact.IsMainOrderContact;
+
+                    existingSupplierContact.PhoneNumber = supplierContact.PhoneNumber;
+                    existingSupplierContact.EmailAddress = supplierContact.EmailAddress;
+                    existingSupplierContact.JobTitle = supplierContact.JobTitle;
+                    existingSupplierContact.Comments = supplierContact.Comments;
+                    var person = this.personRepository.FindById(supplierContact.Person.Id);
+
+                    person.FirstName = supplierContact.Person.FirstName;
+                    person.LastName = supplierContact.Person.LastName;
+
+                    existingSupplierContact.Person = person;
+                    result.Add(existingSupplierContact);
+                }
+                else
+                {
+                    supplierContact.Person.DateCreated = DateTime.Today;
+                    this.personRepository.Add(supplierContact.Person);
+                    supplierContact.SupplierId = supplierContact.SupplierId;
+                    supplierContact.DateCreated = DateTime.Today;
+                    supplierContact.Comments = supplierContact.Comments;
+                    this.supplierContactRepository.Add(supplierContact);
+                    result.Add(supplierContact);
+                }
+            }
+
+            return result;
         }
     }
 }

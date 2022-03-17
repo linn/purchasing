@@ -17,6 +17,7 @@
                     Arg.Is<string>(
                         x => x.Equals(AuthorisedAction.SupplierCreate) 
                              || x.Equals(AuthorisedAction.SupplierUpdate)
+                             || x.Equals(AuthorisedAction.SupplierClose)
                              || x.Equals(AuthorisedAction.SupplierHoldChange)), 
                     Arg.Any<IEnumerable<string>>())
                 .Returns(true);
@@ -30,7 +31,11 @@
                 this.MockAddressRepository,
                 this.EmployeeRepository,
                 this.VendorManagerRepository,
-                this.PlannerRepository);
+                this.PlannerRepository,
+                this.PersonRepository,
+                this.SupplierContactRepository,
+                this.GroupRepository,
+                this.OrgRepository);
         }
     }
 }

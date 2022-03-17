@@ -5,7 +5,6 @@
     using System.Net;
 
     using FluentAssertions;
-    using FluentAssertions.Extensions;
 
     using Linn.Common.Facade;
     using Linn.Common.Reporting.Resources.ReportResultResources;
@@ -40,7 +39,7 @@
                 .Returns(new SuccessResult<ReportReturnResource>(this.reportReturnResource));
 
             this.Response = this.Client.Get(
-                $"/purchasing/reports/suppliers-with-unacknowledged-orders?startDate={1.March(2025):o}&endDate={31.March(2025):o}&planner=123",
+                $"/purchasing/reports/suppliers-with-unacknowledged-orders?planner=123&vendorManager=A&useSupplierGroup=true",
                 with => { with.Accept("application/json"); }).Result;
         }
 
@@ -48,7 +47,8 @@
         public void ShouldCallFacadeService()
         {
             this.FacadeService.Received().GetSuppliersWithUnacknowledgedOrdersReport(
-                Arg.Is<SuppliersWithUnacknowledgedOrdersRequestResource>(a => a.Planner == 123),
+                Arg.Is<SuppliersWithUnacknowledgedOrdersRequestResource>(
+                    a => a.Planner == 123 && a.VendorManager == "A" && a.UseSupplierGroup == true),
                 Arg.Any<IEnumerable<string>>());
         }
 

@@ -56,6 +56,7 @@
             this.result.SupplierId.Should().Be(1);
             this.result.PartNumber.Should().Be("PART");
             this.result.SupplierDesignation.Should().Be("1234567");
+            this.result.OverbookingAllowed.Should().Be("Y");
         }
     }
 }

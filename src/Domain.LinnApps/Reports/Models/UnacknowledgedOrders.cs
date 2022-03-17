@@ -29,5 +29,11 @@
         public decimal OrderUnitPrice { get; set; }
 
         public DateTime CallOffDate { get; set; }
+
+        public int? SupplierGroupId { get; set; }
+
+        public string SupplierGroupName { get; set; }
+
+        public string CurrencyCode { get; set; }
     }
 }

@@ -123,13 +123,12 @@
             current.OrderIncrement = updated.OrderIncrement;
             current.ReelOrBoxQty = updated.ReelOrBoxQty;
             current.LeadTimeWeeks = updated.LeadTimeWeeks;
-            current.OverbookingAllowed = updated.OverbookingAllowed;
             current.DamagesPercent = updated.DamagesPercent;
-            current.WebAddress = updated.WebAddress;
             current.DeliveryInstructions = updated.DeliveryInstructions;
             current.NotesForBuyer = updated.NotesForBuyer;
             current.ManufacturerPartNumber = updated.ManufacturerPartNumber;
             current.VendorPartNumber = updated.VendorPartNumber;
+            current.UnitOfMeasure = updated.UnitOfMeasure;
         }
 
         public PartSupplier CreatePartSupplier(PartSupplier candidate, IEnumerable<string> privileges)
@@ -179,6 +178,7 @@
                 candidate.Manufacturer = this.manufacturerRepository.FindById(candidate.Manufacturer.Code);
             }
 
+            candidate.OverbookingAllowed = "Y";
             return candidate;
         }
 
@@ -317,6 +317,71 @@
                                      });
 
             return candidate;
+        }
+
+        public ProcessResult BulkUpdateLeadTimes(
+            int supplierId,
+            IEnumerable<LeadTimeUpdateModel> changes,
+            IEnumerable<string> privileges,
+            int? supplierGroupId = null)
+        {
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, privileges))
+            {
+                throw new UnauthorisedActionException(
+                    "You are not authorised to update Part Supplier records");
+            }
+
+            var successCount = 0;
+            var errors = new List<string>();
+            var leadTimeUpdateModels = changes.ToList();
+
+            foreach (var change in leadTimeUpdateModels)
+            {
+                IQueryable<PartSupplier> records;
+
+                if (supplierGroupId.GetValueOrDefault() != 0)
+                {
+                    records = this.partSupplierRepository.FilterBy(
+                        x => x.PartNumber == change.PartNumber.ToUpper().Trim()
+                             && x.Supplier.Group != null 
+                             && x.Supplier.Group.Id == supplierGroupId);
+                }
+                else
+                {
+                    records = this.partSupplierRepository.FilterBy(
+                        x => x.PartNumber == change.PartNumber.ToUpper().Trim()
+                             && x.SupplierId == supplierId);
+                }
+
+                if (int.TryParse(change.LeadTimeWeeks, out var newLeadTime) && records.Any())
+                {
+                    foreach (var record in records)
+                    {
+                        record.LeadTimeWeeks = newLeadTime;
+                    }
+
+                    successCount++;
+                }
+                else
+                {
+                    errors.Add(change.PartNumber);
+                }
+            }
+
+            if (!errors.Any())
+            {
+                return new ProcessResult(true, $"{successCount} records updated successfully");
+            }
+
+            var errorMessage = errors
+                .Aggregate(
+                    "Updates for the following parts could not be processed: ",
+                    (current, error) 
+                        => current + $"{error}, ");
+
+            return new ProcessResult(
+                false,
+                $"{successCount} out of {leadTimeUpdateModels.Count} records updated successfully. {errorMessage}");
         }
 
         private static void ValidateFields(PartSupplier candidate)

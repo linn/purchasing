@@ -15,18 +15,20 @@
     {
         private readonly IAuthorisationService authService;
 
-        private readonly AddressResourceBuilder addressResourceBuilder;
-
-        private readonly SupplierContactResourceBuilder supplierContactResourceBuilder;
-
-
+        private readonly IBuilder<SupplierContact> supplierContactResourceBuilder;
+        
+        private readonly IBuilder<Address> addressResourceBuilder;
+        
         private readonly IRepository<SupplierContact, int> supplierContactRepository;
 
-        public SupplierResourceBuilder(IAuthorisationService authService, IRepository<SupplierContact, int> supplierContactRepository)
+        public SupplierResourceBuilder(IAuthorisationService authService,
+                                       IBuilder<SupplierContact> supplierContactResourceBuilder,
+                                       IBuilder<Address> addressResourceBuilder,
+                                       IRepository<SupplierContact, int> supplierContactRepository)
         {
             this.authService = authService;
-            this.addressResourceBuilder = new AddressResourceBuilder();
-            this.supplierContactResourceBuilder = new SupplierContactResourceBuilder();
+            this.addressResourceBuilder = addressResourceBuilder;
+            this.supplierContactResourceBuilder = supplierContactResourceBuilder;
             this.supplierContactRepository = supplierContactRepository;
         }
 
@@ -89,8 +91,11 @@
                 ReasonClosed = entity.ReasonClosed,
                 Notes = entity.Notes,
                 OrganisationId = entity.OrganisationId,
+                SupplierContacts = entity.SupplierContacts?.Select(c =>
+                    (SupplierContactResource)this.supplierContactResourceBuilder.Build(c, null)),
+                GroupId = entity.Group?.Id,
+                Country = entity.Country,
                 OrderAddress = entity.OrderAddress != null ? this.addressResourceBuilder.Build(entity.OrderAddress, new List<string>()) : null,
-                SupplierContact = supplierContact != null ? this.supplierContactResourceBuilder.Build(supplierContact, new List<string>()) : null,
                 Links = this.BuildLinks(entity, claims).ToArray()
             };
         }
@@ -114,6 +119,11 @@
             if (model != null && this.authService.HasPermissionFor(AuthorisedAction.SupplierUpdate, privileges))
             {
                 yield return new LinkResource { Rel = "edit", Href = $"{this.GetLocation(model)}/edit" };
+                yield return new LinkResource
+                                 {
+                                     Rel = "bulk-update-lead-times",
+                                     Href = $"/purchasing/suppliers/bulk-lead-times?supplierId={model.SupplierId}"
+                                 };
             }
 
             if (this.authService.HasPermissionFor(AuthorisedAction.SupplierCreate, privileges))

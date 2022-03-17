@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
 
     using Linn.Common.Facade;
@@ -35,9 +36,9 @@
             SupplierResource resource,
             IEnumerable<string> privileges = null)
         {
-            var candidate = BuildEntityFromResourceHelper(resource);
+            var candidate = this.BuildEntityFromResourceHelper(resource);
             candidate.SupplierId = this.databaseService.GetNextVal("SUPPLIER_SEQ");
-
+            candidate.OrganisationId = this.databaseService.GetNextVal("ORG_SEQ");
             candidate.OpenedBy = resource.OpenedById.HasValue
                 ? new Employee { Id = (int)resource.OpenedById } : null;
             candidate.DateOpened = DateTime.Today;
@@ -66,7 +67,7 @@
             SupplierResource updateResource,
             IEnumerable<string> privileges = null)
         {
-            var updated = BuildEntityFromResourceHelper(updateResource);
+            var updated = this.BuildEntityFromResourceHelper(updateResource);
 
             updated.SupplierId = entity.SupplierId;
 
@@ -78,9 +79,9 @@
             return s => s.SupplierId.ToString().Contains(searchTerm) || s.Name.Contains(searchTerm.ToUpper());
         }
 
-        private static Supplier BuildEntityFromResourceHelper(SupplierResource resource)
+        private Supplier BuildEntityFromResourceHelper(SupplierResource resource)
         {
-            return new Supplier
+            var supplier = new Supplier
                        {
                            Name = resource.Name,
                            Currency = new Currency
@@ -126,8 +127,31 @@
                                         ? DateTime.Parse(resource.DateClosed) : null,
                            ReasonClosed = resource.ReasonClosed,
                            Notes = resource.Notes,
-                           OrganisationId = resource.OrganisationId
-            };
+                           OrganisationId = resource.OrganisationId,
+                           SupplierContacts = resource.SupplierContacts?.Select(c => new SupplierContact
+                                                                          {
+                                                                              SupplierId = resource.Id,
+                                                                              ContactId = c.Id > 0 ? c.Id : this.databaseService.GetIdSequence("CONT_SEQ"),
+                                                                              IsMainInvoiceContact = c.IsMainInvoiceContact,
+                                                                              IsMainOrderContact = c.IsMainOrderContact,
+                                                                              EmailAddress = c.EmailAddress,
+                                                                              Comments = c.Comments,
+                                                                              JobTitle = c.JobTitle,
+                                                                              MobileNumber = c.MobileNumber,
+                                                                              PhoneNumber = c.PhoneNumber,
+                                                                              Person =
+                                                                                  new Person
+                                                                                      {
+                                                                                          Id = c.PersonId > 0 ? c.PersonId : this.databaseService.GetNextVal("PERS_SEQ"), 
+                                                                                          FirstName = c.FirstName, 
+                                                                                          LastName = c.LastName
+                                                                                      }
+                                                                          }),
+                           Group = resource.GroupId.HasValue 
+                                       ? new SupplierGroup { Id = (int)resource.GroupId } : null
+                        };
+         
+            return supplier;
         }
     }
 }

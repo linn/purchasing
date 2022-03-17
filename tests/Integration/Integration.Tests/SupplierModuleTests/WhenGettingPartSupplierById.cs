@@ -1,12 +1,13 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.SupplierModuleTests
 {
-    using System.Collections.Generic;
     using System.Net;
 
     using FluentAssertions;
 
-    using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.Keys;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
+    using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -18,33 +19,31 @@
     {
         private PartSupplierKey key;
 
-        private PartSupplierResource partSupplierResource;
+        private PartSupplier partSupplier;
 
         [SetUp]
         public void SetUp()
         {
+            this.partSupplier = new PartSupplier
+                                    {
+                                        PartNumber = "PART",
+                                        SupplierId = 100,
+                                        Part = new Part { PartNumber = "PART" },
+                                        Supplier = new Supplier { SupplierId = 100 }
+                                    };
             this.key = new PartSupplierKey
                            {
-                               PartNumber = "A PART",
-                               SupplierId = 1
+                               PartNumber = "PART",
+                               SupplierId = 100
             };
-            this.partSupplierResource = new PartSupplierResource
-                                            {
-                                                PartNumber = "A PART", 
-                                                SupplierId = 1, 
-                                                SupplierName = "SUPPLIER"
-                                            };
-
-            this.PartSupplierFacadeService.GetById(
-                    Arg.Is<PartSupplierKey>(
-                        x => x.PartNumber == this.key.PartNumber && this.key.SupplierId == 1), 
-                    Arg.Any<IEnumerable<string>>())
-                .Returns(new SuccessResult<PartSupplierResource>(this.partSupplierResource));
-
-            this.PartFacadeService.GetPartNumberFromId(100).Returns("A PART");
+            
+            this.PartFacadeService.GetPartNumberFromId(100).Returns(this.partSupplier.Part.PartNumber);
+            this.MockPartSupplierRepository.FindById(Arg.Is<PartSupplierKey>(
+                    k => k.PartNumber == this.partSupplier.PartNumber && k.SupplierId == this.partSupplier.SupplierId))
+                .Returns(this.partSupplier);
 
             this.Response = this.Client.Get(
-                $"/purchasing/part-suppliers/record?partId={100}&supplierId={1}",
+                $"/purchasing/part-suppliers/record?partId={100}&supplierId={100}",
                 with =>
                     {
                         with.Accept("application/json");

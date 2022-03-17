@@ -1,4 +1,8 @@
-import { makeActionTypes, makeReportActionTypes } from '@linn-it/linn-form-components-library';
+import {
+    makeActionTypes,
+    makeReportActionTypes,
+    makeProcessActionTypes
+} from '@linn-it/linn-form-components-library';
 import * as itemTypes from '../itemTypes';
 import * as reportTypes from '../reportTypes';
 
@@ -105,6 +109,24 @@ export const spendByPartReportActionTypes = makeActionTypes(
     reportTypes.spendByPartReport.actionType,
     false
 );
+
+export const plCreditDebitNoteActionTypes = makeActionTypes(itemTypes.plCreditDebitNote.actionType);
+
+export const plCreditDebitNotesActionTypes = makeActionTypes(
+    itemTypes.plCreditDebitNotes.actionType
+);
+
+export const openDebitNotesActionTypes = makeActionTypes(itemTypes.openDebitNotes.actionType);
+
+export const sendPlNoteEmailActionTypes = makeProcessActionTypes(
+    itemTypes.sendPlNoteEmail.actionType
+);
+
+export const bulkLeadTimesUploadActionTypes = makeProcessActionTypes(
+    itemTypes.bulkLeadTimesUpload.actionType
+);
+
+export const supplierGroupsActionTypes = makeActionTypes(itemTypes.supplierGroups.actionType);
 
 export const purchaseOrderReqActionTypes = makeActionTypes(
     itemTypes.purchaseOrderReq.actionType,

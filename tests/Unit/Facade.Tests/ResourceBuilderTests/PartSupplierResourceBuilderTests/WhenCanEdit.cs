@@ -39,8 +39,8 @@
         public void ShouldBuildCorrectResourceWithLinks()
         {
             this.result.Links.Length.Should().Be(4);
-            var href =  this.result.Links.SingleOrDefault(x => x.Rel == "edit")?.Href;
-            href.Should()
+            var editHref = this.result.Links.SingleOrDefault(x => x.Rel == "edit")?.Href;
+            editHref.Should()
                 .Be("/purchasing/part-suppliers/record?partId=123&supplierId=1");
         }
     }

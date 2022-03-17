@@ -13,7 +13,6 @@ import {
     itemSelectorHelpers,
     Loading
 } from '@linn-it/linn-form-components-library';
-import addressesActions from '../actions/addressesActions';
 import addressActions from '../actions/addressActions';
 import countriesActions from '../actions/countriesActions';
 
@@ -22,20 +21,6 @@ import config from '../config';
 
 function AddressUtility({ inDialogBox, closeDialog }) {
     const dispatch = useDispatch();
-    const addressesSearchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(
-            state.addresses,
-            100,
-            'addressId',
-            'addressId',
-            'addressee'
-        )
-    );
-    const addressesSearchLoading = useSelector(state =>
-        collectionSelectorHelpers.getSearchLoading(state.addresses)
-    );
-    const searchAddresses = searchTerm => dispatch(addressesActions.search(searchTerm));
-
     const countriesSearchResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(
             state.countries,
@@ -82,25 +67,6 @@ function AddressUtility({ inDialogBox, closeDialog }) {
                     <Typography variant="h6">Address Utility</Typography>
                 </Grid>
                 <Grid item xs={8}>
-                    <Typeahead
-                        onSelect={newValue => {
-                            setAddress(newValue);
-                        }}
-                        label="Address Lookup (Leave blank if creating new)"
-                        modal
-                        propertyName="addressId"
-                        items={addressesSearchResults}
-                        value={address?.addressId}
-                        loading={addressesSearchLoading}
-                        fetchItems={searchAddresses}
-                        links={false}
-                        text
-                        clearSearch={() => dispatch(addressesActions.clearSearch())}
-                        placeholder="Search by Addressee"
-                        minimumSearchTermLength={3}
-                    />
-                </Grid>
-                <Grid item xs={8}>
                     <InputField
                         fullWidth
                         value={address?.addressee}
@@ -109,6 +75,7 @@ function AddressUtility({ inDialogBox, closeDialog }) {
                         onChange={handleFieldChange}
                     />
                 </Grid>
+                <Grid item xs={4} />
                 <Grid item xs={8}>
                     <InputField
                         fullWidth
@@ -214,11 +181,7 @@ function AddressUtility({ inDialogBox, closeDialog }) {
                         backClick={() =>
                             closeDialog ? closeDialog() : history.push('/purchasing')
                         }
-                        saveClick={() =>
-                            address?.addressId
-                                ? dispatch(addressActions.update(address.addressId, address))
-                                : dispatch(addressActions.add(address))
-                        }
+                        saveClick={() => dispatch(addressActions.add(address))}
                         cancelClick={() => {
                             setEditStatus('view');
                             return closeDialog ? closeDialog() : setAddress({});

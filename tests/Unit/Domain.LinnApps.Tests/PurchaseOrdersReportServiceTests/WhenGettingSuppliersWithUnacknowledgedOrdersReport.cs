@@ -31,28 +31,28 @@
                                  {
                                      new SuppliersWithUnacknowledgedOrders
                                          {
-                                             SupplierId = 1, SupplierName = "one", OrganisationId = 100, Planner = 1, VendorManager = "M"
+                                             SupplierId = 1, SupplierName = "one", Planner = 1, VendorManager = "M"
                                          },
                                      new SuppliersWithUnacknowledgedOrders
                                          {
-                                             SupplierId = 2, SupplierName = "two", OrganisationId = 200, Planner = 1, VendorManager = "M"
+                                             SupplierId = 2, SupplierName = "two", Planner = 1, VendorManager = "M"
                                          },
                                      new SuppliersWithUnacknowledgedOrders
                                          {
-                                             SupplierId = 3, SupplierName = "three", OrganisationId = 300, Planner = 1, VendorManager = "M"
+                                             SupplierId = 3, SupplierName = "three", Planner = 1, VendorManager = "M"
                                          },
                                      new SuppliersWithUnacknowledgedOrders
                                          {
-                                             SupplierId = 4, SupplierName = "four", OrganisationId = 400, Planner = 1, VendorManager = "B"
+                                             SupplierId = 4, SupplierName = "four",  Planner = 1, VendorManager = "B"
                                          },
                                      new SuppliersWithUnacknowledgedOrders
                                          {
-                                             SupplierId = 5, SupplierName = "five", OrganisationId = 500, Planner = 2, VendorManager = "M"
+                                             SupplierId = 5, SupplierName = "five", Planner = 2, VendorManager = "M"
                                          }
                                  }.AsQueryable();
             this.SuppliersWithUnacknowledgedOrdersRepository
                 .FindAll().Returns(this.suppliers);
-            this.result = this.Sut.GetSuppliersWithUnacknowledgedOrders(this.planner, this.vendorManger);
+            this.result = this.Sut.GetSuppliersWithUnacknowledgedOrders(this.planner, this.vendorManger, false);
         }
 
         [Test]
@@ -66,11 +66,12 @@
         {
             this.result.ReportTitle.DisplayValue.Should().Be("Suppliers with unacknowledged orders");
             this.result.RowCount().Should().Be(3);
-            this.result.ColumnCount().Should().Be(4);
+            this.result.ColumnCount().Should().Be(5);
             this.result.GetGridTextValue(0, 0).Should().Be("1");
             this.result.GetGridTextValue(0, 1).Should().Be("one");
-            this.result.GetGridTextValue(0, 2).Should().Be("view");
-            this.result.GetGridTextValue(0, 3).Should().Be("csv");
+            this.result.GetGridTextValue(0, 2).Should().Be(string.Empty);
+            this.result.GetGridTextValue(0, 3).Should().Be("view");
+            this.result.GetGridTextValue(0, 4).Should().Be("csv");
             this.result.GetGridTextValue(1, 0).Should().Be("2");
             this.result.GetGridTextValue(1, 1).Should().Be("two");
             this.result.GetGridTextValue(2, 0).Should().Be("3");

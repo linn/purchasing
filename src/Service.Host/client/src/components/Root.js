@@ -24,8 +24,13 @@ import SpendBySupplier from './reports/SpendBySupplier';
 import Supplier from './supplierUtility/Supplier';
 import AddressUtility from './AdressUtility';
 import SuppliersWithUnacknowledgedOrders from './reports/SuppliersWithUnacknowledgedOrders';
+import UnacknowledgedOrdersReport from './reports/UnacknowledgedOrdersReport';
 import SpendByPartOptions from './reports/SpendByPartOptions';
 import SpendByPart from './reports/SpendByPart';
+import OpenDebitNotes from './plDebitCreditNotes/OpenDebitNotes';
+import Search from './plDebitCreditNotes/Search';
+import Note from './plDebitCreditNotes/Note';
+import BulkLeadTimesUpload from './partSupplierUtility/BulkLeadTimesUpload';
 import POReqUtility from './POReqUtility';
 
 const Root = ({ store }) => (
@@ -36,23 +41,10 @@ const Root = ({ store }) => (
                     <ConnectedRouter history={history}>
                         <div>
                             <Navigation />
-                            <Route exact path="/" render={() => <Redirect to="/purchasing" />} />
-
-                            <Route
-                                path="/"
-                                render={() => {
-                                    document.title = 'Purchasing';
-                                    return false;
-                                }}
-                            />
-                            <Route
-                                exact
-                                path="/purchasing/reports"
-                                render={() => <Redirect to="/purchasing" />}
-                            />
-
                             <Switch>
                                 <Route exact path="/purchasing" component={App} />
+                                <Redirect exact from="/" to="/purchasing" />
+                                <Redirect exact from="/purchasing/reports" to="/purchasing" />
                                 <Route
                                     exact
                                     path="/purchasing/suppliers"
@@ -63,6 +55,11 @@ const Root = ({ store }) => (
                                     path="/purchasing/suppliers/create"
                                     // eslint-disable-next-line react/jsx-props-no-spreading
                                     render={props => <Supplier creating {...props} />}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/suppliers/bulk-lead-times"
+                                    component={BulkLeadTimesUpload}
                                 />
                                 <Route
                                     exact
@@ -137,6 +134,11 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
+                                    path="/purchasing/reports/unacknowledged-orders"
+                                    component={UnacknowledgedOrdersReport}
+                                />
+                                <Route
+                                    exact
                                     path="/purchasing/reports/spend-by-part"
                                     component={SpendByPartOptions}
                                 />
@@ -144,6 +146,21 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/reports/spend-by-part/report"
                                     component={SpendByPart}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/pl-credit-debit-notes"
+                                    component={Search}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/pl-credit-debit-notes/:id"
+                                    component={Note}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/open-debit-notes"
+                                    component={OpenDebitNotes}
                                 />
                                 <Route
                                     exact

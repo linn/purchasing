@@ -51,6 +51,7 @@ import manufacturersActions from '../../actions/manufacturersActions';
 import PreferredSupplier from './PreferredSupplier';
 import PriceChange from './PriceChange';
 import partPriceConversionsActions from '../../actions/partPriceConversionsActions';
+import supplierActions from '../../actions/supplierActions';
 
 function PartSupplier({ creating }) {
     const useStyles = makeStyles(theme => ({
@@ -268,7 +269,7 @@ function PartSupplier({ creating }) {
         !state.partSupplier?.minimumOrderQty ||
         !state.partSupplier?.orderIncrement ||
         !state.partSupplier?.leadTimeWeeks ||
-        !state.partSupplier?.damagesPercent;
+        (!state.partSupplier?.damagesPercent && state.partSupplier?.damagesPercent !== 0);
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
@@ -297,7 +298,6 @@ function PartSupplier({ creating }) {
                                     close={() => setPreferredSupplierDialogOpen(false)}
                                     refreshPart={refreshPart}
                                     safetyCriticalPart={part?.safetyCriticalPart === 'Y'}
-                                    bomType={part?.bomType}
                                 />
                             </div>
                         </div>
@@ -337,7 +337,7 @@ function PartSupplier({ creating }) {
                 </Dialog>
                 <SnackbarMessage
                     visible={snackbarVisible}
-                    onClose={() => reduxDispatch(partSupplierActions.setSnackbarVisible(false))}
+                    onClose={() => reduxDispatch(supplierActions.setSnackbarVisible(false))}
                     message="Save Successful"
                 />
                 {itemError && (
@@ -483,9 +483,6 @@ function PartSupplier({ creating }) {
                                                     state.partSupplier?.minimumDeliveryQty
                                                 }
                                                 orderIncrement={state.partSupplier?.orderIncrement}
-                                                orderConversionFactor={
-                                                    state.partSupplier?.orderConversionFactor
-                                                }
                                                 reelOrBoxQty={state.partSupplier?.reelOrBoxQty}
                                                 setPriceChangeDialogOpen={setPriceChangeDialogOpen}
                                                 fetchBasePriceConversion={fetchBasePriceConversion}
@@ -498,11 +495,7 @@ function PartSupplier({ creating }) {
                                             <OtherDetailsTab
                                                 handleFieldChange={handleFieldChange}
                                                 leadTimeWeeks={state.partSupplier?.leadTimeWeeks}
-                                                overbookingAllowed={
-                                                    state.partSupplier?.overbookingAllowed
-                                                }
                                                 damagesPercent={state.partSupplier?.damagesPercent}
-                                                webAddress={state.partSupplier?.webAddress}
                                                 deliveryInstructions={
                                                     state.partSupplier?.deliveryInstructions
                                                 }

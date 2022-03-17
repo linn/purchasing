@@ -1,15 +1,18 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.SupplierModuleTests
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Net;
 
     using FluentAssertions;
 
-    using Linn.Common.Facade;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
+    using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
-    using Linn.Purchasing.Resources.SearchResources;
 
     using NSubstitute;
 
@@ -21,7 +24,7 @@
 
         private string supplierNameSearch;
 
-        private List<PartSupplierResource> dataResult;
+        private PartSupplier partSupplier;
 
         [SetUp]
         public void SetUp()
@@ -29,21 +32,20 @@
             this.partNumberSearch = "PART";
             this.supplierNameSearch = "SUPPLIER";
 
-            this.dataResult = new List<PartSupplierResource>
-                                  {
-                                      new PartSupplierResource
-                                          {
-                                              PartNumber = "PART", SupplierName = "SUPPLIER", SupplierId = 1
-                                          }
-                                  };
+            this.partSupplier = new PartSupplier
+                                    {
+                                        PartNumber = "PART",
+                                        SupplierId = 100,
+                                        Part = new Part { PartNumber = "PART" },
+                                        Supplier = new Supplier { SupplierId = 100 }
+                                    };
 
-            this.PartSupplierFacadeService.FilterBy(
-                    Arg.Is<PartSupplierSearchResource>(
-                        x => 
-                x.PartNumberSearchTerm == this.partNumberSearch && x.SupplierNameSearchTerm == this.supplierNameSearch),
-                    Arg.Any<IEnumerable<string>>())
-                .Returns(new SuccessResult<IEnumerable<PartSupplierResource>>(this.dataResult));
-
+            this.MockPartSupplierRepository.FilterBy(Arg.Any<Expression<Func<PartSupplier, bool>>>())
+                .Returns(new List<PartSupplier>
+                             {
+                                this.partSupplier
+                             }.AsQueryable());
+            
             this.Response = this.Client.Get(
                 $"/purchasing/part-suppliers?partNumber={this.partNumberSearch}&supplierName={this.supplierNameSearch}",
                 with =>

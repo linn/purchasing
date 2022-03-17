@@ -10,13 +10,15 @@ import {
     ReportTable
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 import history from '../../history';
 import config from '../../config';
 import vendorManagersActions from '../../actions/vendorManagersActions';
 import suppliersWithUnacknowledgedOrdersActions from '../../actions/suppliersWithUnacknowledgedOrdersActions';
 
 function SuppliersWithUnacknowledgedOrders() {
-    const [options, setOptions] = useState({});
+    const [options, setOptions] = useState({ useSupplierGroup: true });
 
     const vendorManagers = useSelector(state =>
         collectionSelectorHelpers.getItems(state.vendorManagers)
@@ -37,18 +39,26 @@ function SuppliersWithUnacknowledgedOrders() {
 
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(vendorManagersActions.fetch());
-    }, [dispatch]);
+        if (!vendorManagers.length > 0) {
+            dispatch(vendorManagersActions.fetch());
+        }
+    }, [dispatch, vendorManagers]);
 
-    useEffect(() => {
-        dispatch(suppliersWithUnacknowledgedOrdersActions.fetchReport(options));
-    }, [dispatch, options]);
-
-    const [vm, setVm] = useState(prevOptions?.vm ? prevOptions.vm : '');
+    const [vm, setVm] = useState(prevOptions?.vendorManager ? prevOptions.vendorManager : '');
 
     const handleVmChange = selectedVm => {
         setVm(selectedVm);
         setOptions({ ...options, vendorManager: selectedVm });
+        dispatch(
+            suppliersWithUnacknowledgedOrdersActions.fetchReport({
+                ...options,
+                vendorManager: selectedVm
+            })
+        );
+    };
+
+    const handleRun = () => {
+        dispatch(suppliersWithUnacknowledgedOrdersActions.fetchReport(options));
     };
 
     return (
@@ -89,18 +99,35 @@ function SuppliersWithUnacknowledgedOrders() {
                             />
                         </Grid>
 
-                        <Grid item xs={8} />
+                        <Grid item xs={8}>
+                            <Button
+                                color="primary"
+                                variant="contained"
+                                onClick={handleRun}
+                                style={{ marginTop: '30px' }}
+                            >
+                                Run Report
+                            </Button>
+                        </Grid>
+                        <Grid item xs={12}>
+                            {!reportData && !reportLoading ? (
+                                <Typography variant="subtitle1" gutterBottom>
+                                    Please select a Vendor Manager or click Run Report
+                                </Typography>
+                            ) : (
+                                ''
+                            )}
+                        </Grid>
                         <Grid item xs={12}>
                             {reportLoading ? (
                                 <Loading />
                             ) : (
                                 <ReportTable
                                     reportData={reportData}
-                                    title={reportData?.title}
                                     showTitle={false}
                                     showTotals={false}
-                                    placeholderRows={4}
-                                    placeholderColumns={2}
+                                    placeholderRows={0}
+                                    placeholderColumns={0}
                                 />
                             )}
                         </Grid>

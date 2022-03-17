@@ -14,9 +14,18 @@
             return new SupplierContactResource
                        {
                            SupplierId = entity.SupplierId,
-                           ContactName = $"{entity.Person?.FirstName} {entity.Person?.LastName}",
-                           Email = entity.Email,
-                           PhoneNumber = entity.PhoneNumber
+                           IsMainInvoiceContact = entity.IsMainInvoiceContact,
+                           IsMainOrderContact = entity.IsMainOrderContact,
+                           LastName = entity.Person.LastName,
+                           FirstName = entity.Person.FirstName,
+                           Id = entity.ContactId,
+                           EmailAddress = entity.EmailAddress,
+                           MobileNumber = entity.MobileNumber,
+                           PhoneNumber = entity.PhoneNumber,
+                           PersonId = entity.Person.Id,
+                           JobTitle = entity.JobTitle,
+                           Comments = entity.Comments,
+                           ContactName = $"{entity.Person?.FirstName} {entity.Person?.LastName}"
                        };
         }
 
@@ -25,9 +34,6 @@
             throw new NotImplementedException();
         }
 
-        object IBuilder<SupplierContact>.Build(SupplierContact entity, IEnumerable<string> claims)
-        {
-            return this.Build(entity, claims);
-        }
+        object IBuilder<SupplierContact>.Build(SupplierContact entity, IEnumerable<string> claims) => this.Build(entity, claims);
     }
 }

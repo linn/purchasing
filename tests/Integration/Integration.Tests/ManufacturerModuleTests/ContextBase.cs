@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Integration.Tests.ManufacturersModule
+﻿namespace Linn.Purchasing.Integration.Tests.ManufacturerModuleTests
 {
     using System.Net.Http;
 
