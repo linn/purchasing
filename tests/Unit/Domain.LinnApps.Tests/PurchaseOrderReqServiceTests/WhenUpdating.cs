@@ -6,7 +6,6 @@
     using FluentAssertions.Extensions;
 
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
-    using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NSubstitute;
 
@@ -23,7 +22,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.current = new PurchaseOrderReq { ReqNumber = this.reqNumber };
+            this.current = new PurchaseOrderReq { ReqNumber = this.reqNumber, RequestedById = 999 };
             this.updated = new PurchaseOrderReq
                                {
                                    ReqNumber = this.reqNumber,
@@ -36,28 +35,29 @@
                                    UnitPrice = 8m,
                                    Carriage = 99m,
                                    TotalReqPrice = 118m,
-                                   Currency = new Currency { Code = "SMC", Name = "Smackeroonies" },
-                                   Supplier = new Supplier { SupplierId = 111, Name = "Shoap" },
+                                   CurrencyCode = "SMC",
+                                   SupplierId = 111,
+                                   SupplierName = "the things shop",
                                    SupplierContact = "Lawrence Chaney",
                                    AddressLine1 = "The shop",
                                    AddressLine2 = "1 Main Street",
                                    AddressLine3 = "town centre",
                                    AddressLine4 = "Glesga",
                                    PostCode = "G1 1AA",
-                                   Country = new Country { CountryCode = "GB", Name = "United Kingdolls" },
+                                   CountryCode = "GB",
                                    PhoneNumber = "+44 1234567780",
                                    QuoteRef = "blah",
                                    Email = "LC@gmail",
                                    DateRequired = 1.January(2023),
-                                   RequestedBy = new Employee { Id = 33107, FullName = "me" },
-                                   AuthorisedBy = new Employee { Id = 123, FullName = "not me" },
-                                   SecondAuthBy = new Employee { Id = 234, FullName = "big dog" },
-                                   FinanceCheckBy = new Employee { Id = 999, FullName = "finance person" },
-                                   TurnedIntoOrderBy = new Employee { Id = 876, FullName = "some one" },
-                                   Nominal = new Nominal { NominalCode = "00001234", Description = "hing" },
+                                   RequestedById = 33107,
+                                   AuthorisedById = 123,
+                                   SecondAuthById = 234,
+                                   FinanceCheckById = 999,
+                                   TurnedIntoOrderById = 876,
+                                   NominalCode = "00001234",
                                    RemarksForOrder = "needed asap",
                                    InternalNotes = "pls approv",
-                                   Department = new Department { DepartmentCode = "00002345", Description = "Team 1" }
+                                   DepartmentCode = "00002345"
                                };
             this.MockAuthService.HasPermissionFor(
                 AuthorisedAction.PurchaseOrderReqUpdate,
@@ -78,9 +78,9 @@
             this.current.UnitPrice.Should().Be(this.updated.UnitPrice);
             this.current.Carriage.Should().Be(this.updated.Carriage);
             this.current.TotalReqPrice.Should().Be(this.updated.TotalReqPrice);
-            this.current.Currency.Code.Should().Be(this.updated.Currency.Code);
-            this.current.Supplier.SupplierId.Should().Be(this.updated.Supplier.SupplierId);
-            this.current.Supplier.Name.Should().Be(this.updated.Supplier.Name);
+            this.current.CurrencyCode.Should().Be(this.updated.CurrencyCode);
+            this.current.SupplierId.Should().Be(this.updated.SupplierId);
+            this.current.SupplierName.Should().Be(this.updated.SupplierName);
             this.current.SupplierContact.Should().Be(this.updated.SupplierContact);
             this.current.AddressLine1.Should().Be(this.updated.AddressLine1);
             this.current.AddressLine2.Should().Be(this.updated.AddressLine2);
@@ -88,16 +88,16 @@
             this.current.AddressLine4.Should().Be(this.updated.AddressLine4);
             this.current.PostCode.Should().Be(this.updated.PostCode);
             this.current.AddressLine1.Should().Be(this.updated.AddressLine1);
-            this.current.Country.CountryCode.Should().Be(this.updated.Country.CountryCode);
+            this.current.CountryCode.Should().Be(this.updated.CountryCode);
             this.current.PhoneNumber.Should().Be(this.updated.PhoneNumber);
             this.current.QuoteRef.Should().Be(this.updated.QuoteRef);
             this.current.Email.Should().Be(this.updated.Email);
             this.current.DateRequired.Should().Be(this.updated.DateRequired);
-            this.current.RequestedBy.Id.Should().Be(this.updated.RequestedBy.Id);
-            this.current.AuthorisedBy.Id.Should().Be(this.current.AuthorisedBy.Id);
-            this.current.SecondAuthBy.Id.Should().Be(this.current.SecondAuthBy.Id);
-            this.current.FinanceCheckBy.Id.Should().Be(this.current.FinanceCheckBy.Id);
-            this.current.TurnedIntoOrderBy.Id.Should().Be(this.current.TurnedIntoOrderBy.Id);
+            this.current.RequestedById.Should().Be(999);//don't let requested by field by updated after create
+            this.current.AuthorisedById.Should().Be(this.current.AuthorisedById);
+            this.current.SecondAuthById.Should().Be(this.current.SecondAuthById);
+            this.current.FinanceCheckById.Should().Be(this.current.FinanceCheckById);
+            this.current.TurnedIntoOrderById.Should().Be(this.current.TurnedIntoOrderById);
             this.current.Nominal.Should().Be(this.updated.Nominal);
             this.current.RemarksForOrder.Should().Be(this.updated.RemarksForOrder);
             this.current.InternalNotes.Should().Be(this.updated.InternalNotes);

@@ -31,7 +31,7 @@
                 OrderContactMethod = "EMAIL",
                 PaymentDays = 1,
                 PaymentMethod = "PAYMENT METHOD",
-                OrderFullAddress = new FullAddress { Id = 1 },
+                OrderAddress = new Address { FullAddress = new FullAddress { AddressString = "ADDRESS", Id = 1 } },
                 InvoiceFullAddress = new FullAddress { AddressString = "ADDRESS", Id = 1 },
                 AccountController = new Employee { Id = 123 },
                 SupplierContacts = new List<SupplierContact>

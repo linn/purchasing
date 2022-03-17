@@ -68,8 +68,6 @@
             this.Put("/purchasing/purchase-orders/{OrderNumber:int}/over-book", this.AllowOverbook);
 
             this.Get("/purchasing/purchase-orders/reqs", this.SearchReqs);
-            this.Get("/purchasing/purchase-orders/reqs", this.GetApp);
-            this.Get("/purchasing/purchase-orders/reqs/create", this.GetApp);
             this.Get("/purchasing/purchase-orders/reqs/{id:int}", this.GetReq);
             this.Put("/purchasing/purchase-orders/reqs/{id:int}", this.UpdateReq);
             this.Post("/purchasing/purchase-orders/reqs", this.CreateReq);

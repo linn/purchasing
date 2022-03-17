@@ -215,7 +215,7 @@
             this.orgRepository.Add(new Organisation
                                        {
                                             OrgId = candidate.OrganisationId,
-                                            AddressId = candidate.OrderFullAddress.Id,
+                                            AddressId = candidate.OrderAddress.AddressId,
                                             DateCreated = DateTime.Today,
                                             PhoneNumber = candidate.PhoneNumber,
                                             WebAddress = candidate.WebAddress,

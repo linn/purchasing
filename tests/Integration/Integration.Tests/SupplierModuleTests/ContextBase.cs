@@ -100,6 +100,7 @@
 
         protected IRepository<SupplierContact, int> MockSupplierContactRepository { get; private set; }
 
+        protected IRepository<FullAddress, int> MockFullAddressRepository { get; private set; }
 
         [SetUp]
         public void EstablishContext()
@@ -111,6 +112,8 @@
             this.MockPartSupplierRepository = Substitute.For<IRepository<PartSupplier, PartSupplierKey>>();
 
             this.MockPartSupplierDomainService = Substitute.For<IPartSupplierService>();
+
+            this.MockFullAddressRepository = Substitute.For<IRepository<FullAddress, int>>();
 
             this.PartSupplierFacadeService = new PartSupplierFacadeService(
                 this.MockPartSupplierRepository,
@@ -132,7 +135,7 @@
             this.SupplierFacadeService = new SupplierFacadeService(
                 this.MockSupplierRepository,
                 this.TransactionManager,
-                new SupplierResourceBuilder(this.MockAuthService, new SupplierContactResourceBuilder(), new AddressResourceBuilder(), MockSupplierContactRepository),
+                new SupplierResourceBuilder(this.MockAuthService, new SupplierContactResourceBuilder(), new AddressResourceBuilder(MockFullAddressRepository), MockSupplierContactRepository),
                 this.MockDomainService,
                 this.MockDatabaseService);
 
@@ -153,7 +156,7 @@
                 this.MockDomainService,
                 this.MockDatabaseService,
                 this.TransactionManager,
-                new SupplierResourceBuilder(this.MockAuthService, new SupplierContactResourceBuilder(), new AddressResourceBuilder(), MockSupplierContactRepository)));
+                new SupplierResourceBuilder(this.MockAuthService, new SupplierContactResourceBuilder(), new AddressResourceBuilder(MockFullAddressRepository), MockSupplierContactRepository));
 
             this.MockPlannerRepository = Substitute.For<IRepository<Planner, int>>();
             this.MockSupplierContactRepository = Substitute.For<IRepository<SupplierContact, int>>();

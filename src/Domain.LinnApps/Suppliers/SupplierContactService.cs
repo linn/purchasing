@@ -13,7 +13,7 @@
 
         public SupplierContact GetMainContactForSupplier(int supplierId)
         {
-            return this.repository.FindBy(s => s.SupplierId == supplierId && s.MainOrderContact == "Y");
+            return this.repository.FindBy(s => s.SupplierId == supplierId && s.IsMainOrderContact == "Y");
         }
     }
 }

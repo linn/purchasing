@@ -29,7 +29,7 @@
                     .Include(s => s.AccountController)
                     .Include(s => s.Planner)
                     .Include(s => s.VendorManager)
-                    .Include(s => s.OrderFullAddress)
+                    .Include(s => s.OrderAddress)
                     .Include(s => s.OpenedBy)
                     .Include(s => s.ClosedBy)
                     .Include(s => s.SupplierContacts)
