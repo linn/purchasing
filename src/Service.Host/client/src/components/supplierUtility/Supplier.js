@@ -428,7 +428,12 @@ function Supplier({ creating }) {
                                                 addSupplier(state.supplier);
                                             } else {
                                                 clearErrors();
-                                                updateSupplier(state.supplier);
+                                                updateSupplier({
+                                                    ...state.supplier,
+                                                    closedById: state.supplier.reasonClosed
+                                                        ? Number(currentUserNumber)
+                                                        : null
+                                                });
                                             }
                                         }}
                                         cancelClick={() => {
