@@ -85,6 +85,8 @@
 
         public DbSet<Organisation> Organisations { get; set; }
 
+        public DbSet<TqmsJobref> TqmsJobrefs { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -129,6 +131,7 @@
             this.BuildCreditDebitNoteTypes(builder);
             this.BuildPhoneList(builder);
             this.BuildOrganisations(builder);
+            this.BuildTqmsJobRefs(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -725,6 +728,14 @@
             entity.Property(a => a.Type).HasColumnName("CDNOTE_TYPE");
             entity.Property(a => a.Description).HasColumnName("DESCRIPTION");
             entity.Property(a => a.PrintDescription).HasColumnName("PRINT_DESCRIPTION");
+        }
+
+        private void BuildTqmsJobRefs(ModelBuilder builder)
+        {
+            var entity = builder.Entity<TqmsJobref>().ToTable("TQMS_JOBREFS");
+            entity.HasKey(a => a.JobRef);
+            entity.Property(a => a.JobRef).HasColumnName("JOBREF");
+            entity.Property(a => a.Date).HasColumnName("JOBREF_DATE");
         }
     }
 }

@@ -74,7 +74,9 @@
                 r => new EntityFrameworkRepository<Person, int>(r.GetService<ServiceDbContext>()?.Persons))
                 .AddTransient<IRepository<PlCreditDebitNote, int>, PlCreditDebitNoteRepository>()
                 .AddTransient<IRepository<Organisation, int>, EntityFrameworkRepository<Organisation, int>>(r
-                    => new EntityFrameworkRepository<Organisation, int>(r.GetService<ServiceDbContext>()?.Organisations));
+                    => new EntityFrameworkRepository<Organisation, int>(r.GetService<ServiceDbContext>()?.Organisations))
+                .AddTransient<IRepository<TqmsJobref, string>, EntityFrameworkRepository<TqmsJobref, string>>(r
+                    => new EntityFrameworkRepository<TqmsJobref, string>(r.GetService<ServiceDbContext>()?.TqmsJobrefs));
         }
     }
 }
