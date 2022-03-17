@@ -9,26 +9,24 @@ import {
     SaveBackCancelButtons
 } from '@linn-it/linn-form-components-library';
 import { useParams } from 'react-router-dom';
-import { makeStyles } from '@mui/styles';
+// import { makeStyles } from '@mui/styles';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import purchaseOrderActions from '../actions/purchaseOrderActions';
 import history from '../history';
 import config from '../config';
-import purchaseOrder from '../reducers/purchaseOrder';
 
-function ViewPurchaseOrderForOverbook() {
-    const useStyles = makeStyles(theme => ({
-        dialog: {
-            margin: theme.spacing(6),
-            minWidth: theme.spacing(62)
-        },
-        total: {
-            float: 'right'
-        }
-    }));
+function AllowPurchaseOrderOverbook() {
+    // const useStyles = makeStyles(theme => ({
+    //     dialog: {
+    //         margin: theme.spacing(6),
+    //         minWidth: theme.spacing(62)
+    //     },
+    //     total: {
+    //         float: 'right'
+    //     }
+    // }));
 
-    const classes = useStyles();
     const reduxDispatch = useDispatch();
     const { orderNumber } = useParams();
     const [state, setState] = useState({});
@@ -88,15 +86,13 @@ function ViewPurchaseOrderForOverbook() {
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        <div className={classes.dialog}>
-                            <InputField
-                                value={state?.orderNumber}
-                                label="Order Number"
-                                propertyName="orderNumber"
-                                onChange={() => {}}
-                                disabled
-                            />
-                        </div>
+                        <InputField
+                            value={state?.orderNumber}
+                            label="Order Number"
+                            propertyName="orderNumber"
+                            onChange={() => {}}
+                            disabled
+                        />
                     </Grid>
                     <Grid item xs={12}>
                         <InputField
@@ -108,25 +104,22 @@ function ViewPurchaseOrderForOverbook() {
                             disabled={state.overbook !== 'Y'}
                         />
                     </Grid>
+                    <Grid item xs={6}>
+                        <SaveBackCancelButtons
+                            saveDisabled={saveDisabled}
+                            saveClick={() => {
+                                setSaveDisabled(true);
+                                clearErrors();
+                                updatePurchaseOrder();
+                            }}
+                            backClick={() =>
+                                history.push('/purchasing/purchase-orders/allow-over-book/')
+                            }
+                        />
+                    </Grid>
                 </Grid>
             )}
-            <Grid item xs={6}>
-                <SaveBackCancelButtons
-                    saveDisabled={saveDisabled}
-                    saveClick={() => {
-                        setSaveDisabled(true);
-                        clearErrors();
-                        updatePurchaseOrder();
-                    }}
-                    cancelClick={() => {
-                        reduxDispatch({ type: 'initialise', payload: purchaseOrder });
-                    }}
-                    backClick={() => history.push('/purchasing/purchase-orders/allow-over-book/')}
-                />
-            </Grid>
-            <Grid item xs={12} />
-            <Grid item xs={12} />
         </Page>
     );
 }
-export default ViewPurchaseOrderForOverbook;
+export default AllowPurchaseOrderOverbook;

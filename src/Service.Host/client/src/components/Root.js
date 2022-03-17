@@ -32,7 +32,7 @@ import Search from './plDebitCreditNotes/Search';
 import Note from './plDebitCreditNotes/Note';
 import BulkLeadTimesUpload from './partSupplierUtility/BulkLeadTimesUpload';
 import OverbooksSearch from './OverbooksSearch';
-import ViewPurchaseOrderForOverbook from './Overbook';
+import AllowPurchaseOrderOverbook from './AllowPurchaseOrderOverbook';
 
 const Root = ({ store }) => (
     <div>
@@ -166,7 +166,7 @@ const Root = ({ store }) => (
                                 <Route
                                     exact
                                     path="/purchasing/purchase-orders/:orderNumber/allow-over-book"
-                                    component={ViewPurchaseOrderForOverbook}
+                                    component={AllowPurchaseOrderOverbook}
                                 />
                                 <Route
                                     exact
