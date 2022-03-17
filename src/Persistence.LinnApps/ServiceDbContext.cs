@@ -733,8 +733,8 @@
         private void BuildTqmsJobRefs(ModelBuilder builder)
         {
             var entity = builder.Entity<TqmsJobref>().ToTable("TQMS_JOBREFS");
-            entity.HasKey(a => a.JobRef);
-            entity.Property(a => a.JobRef).HasColumnName("JOBREF");
+            entity.HasKey(a => a.Jobref);
+            entity.Property(a => a.Jobref).HasColumnName("JOBREF");
             entity.Property(a => a.Date).HasColumnName("JOBREF_DATE");
         }
     }

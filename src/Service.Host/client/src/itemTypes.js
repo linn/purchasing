@@ -158,3 +158,5 @@ export const supplierGroups = new ItemType(
     'SUPPLIER_GROUPS',
     '/purchasing/supplier-groups/'
 );
+
+export const tqmsJobrefs = new ItemType('tqmsJobrefs', 'TQMS_JOBREFS', '/purchasing/tqms-jobrefs/');

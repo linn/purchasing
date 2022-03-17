@@ -2,7 +2,7 @@
 {
     public class TqmsJobRefResource
     {
-        public string JobRef { get; set; }
+        public string Jobref { get; set; }
 
         public string Date { get; set; }
     }

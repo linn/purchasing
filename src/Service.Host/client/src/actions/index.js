@@ -127,3 +127,5 @@ export const bulkLeadTimesUploadActionTypes = makeProcessActionTypes(
 );
 
 export const supplierGroupsActionTypes = makeActionTypes(itemTypes.supplierGroups.actionType);
+
+export const tqmsJobrefsActionTypes = makeActionTypes(itemTypes.tqmsJobrefs.actionType);

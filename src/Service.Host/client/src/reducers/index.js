@@ -47,6 +47,7 @@ import openDebitNotes from './openDebitNotes';
 import sendPlNoteEmail from './sendPlNoteEmail';
 import bulkLeadTimesUpload from './bulkLeadTimesUpload';
 import supplierGroups from './supplierGroups.';
+import tqmsJobrefs from './tqmsJobrefs';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -91,6 +92,7 @@ const rootReducer = history =>
         suppliers,
         suppliersWithUnacknowledgedOrders,
         tariffs,
+        tqmsJobrefs,
         unacknowledgedOrdersReport,
         unitsOfMeasure,
         vendorManagers,

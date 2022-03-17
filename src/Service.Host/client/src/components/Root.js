@@ -31,6 +31,7 @@ import OpenDebitNotes from './plDebitCreditNotes/OpenDebitNotes';
 import Search from './plDebitCreditNotes/Search';
 import Note from './plDebitCreditNotes/Note';
 import BulkLeadTimesUpload from './partSupplierUtility/BulkLeadTimesUpload';
+import PartsReceivedReport from './reports/PartsReceivedReport';
 
 const Root = ({ store }) => (
     <div>
@@ -160,6 +161,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/open-debit-notes"
                                     component={OpenDebitNotes}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/parts-received"
+                                    component={PartsReceivedReport}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>

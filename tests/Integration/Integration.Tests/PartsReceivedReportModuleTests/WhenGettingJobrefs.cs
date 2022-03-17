@@ -26,12 +26,12 @@
                                   {
                                       new TqmsJobref
                                           {
-                                              JobRef = "AA",
+                                              Jobref = "AA",
                                               Date = DateTime.UnixEpoch
                                           },
                                       new TqmsJobref
                                           {
-                                              JobRef = "BB",
+                                              Jobref = "BB",
                                               Date = DateTime.UnixEpoch
                                           }
                                   };
@@ -59,8 +59,8 @@
             resources.Should().NotBeNull();
             resources.Should().HaveCount(2);
 
-            resources.First().JobRef.Should().Be("AA");
-            resources.Last().JobRef.Should().Be("BB");
+            resources.First().Jobref.Should().Be("AA");
+            resources.Last().Jobref.Should().Be("BB");
         }
     }
 }

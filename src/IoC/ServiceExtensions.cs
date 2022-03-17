@@ -84,7 +84,8 @@
                 .AddTransient<IFacadeResourceService<SupplierGroup, int, SupplierGroupResource, SupplierGroupResource>, SupplierGroupFacadeService>()
                 .AddTransient<IFacadeResourceFilterService<PlCreditDebitNote, int, PlCreditDebitNoteResource, PlCreditDebitNoteResource, PlCreditDebitNoteResource>, PlCreditDebitNoteFacadeService>()
                 .AddTransient<IPlCreditDebitNoteEmailService, PlCreditDebitNoteEmailService>()
-                .AddTransient<IBulkLeadTimesUpdaterService, BulkLeadTimesUpdaterService>();
+                .AddTransient<IBulkLeadTimesUpdaterService, BulkLeadTimesUpdaterService>()
+                .AddTransient<ITqmsJobRefService, TqmsJobRefService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)

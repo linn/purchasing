@@ -26,7 +26,7 @@
                 r => new TqmsJobRefResource
                          {
                              Date = r.Date.ToShortDateString(),
-                             JobRef = r.JobRef
+                             Jobref = r.Jobref
                          });
 
             if (limit.HasValue)
