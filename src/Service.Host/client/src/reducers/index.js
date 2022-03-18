@@ -48,6 +48,7 @@ import sendPlNoteEmail from './sendPlNoteEmail';
 import bulkLeadTimesUpload from './bulkLeadTimesUpload';
 import supplierGroups from './supplierGroups.';
 import tqmsJobrefs from './tqmsJobrefs';
+import partsReceivedReport from './partsReceivedReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -64,6 +65,7 @@ const rootReducer = history =>
         deliveryAddresses,
         employees,
         manufacturers,
+        openDebitNotes,
         orderMethods,
         ordersByPart,
         ordersBySupplier,
@@ -77,7 +79,7 @@ const rootReducer = history =>
         planners,
         plCreditDebitNote,
         plCreditDebitNotes,
-        openDebitNotes,
+        partsReceivedReport,
         preferredSupplierChange,
         priceChangeReasons,
         putSupplierOnHold,

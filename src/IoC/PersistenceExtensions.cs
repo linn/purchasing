@@ -76,7 +76,10 @@
                 .AddTransient<IRepository<Organisation, int>, EntityFrameworkRepository<Organisation, int>>(r
                     => new EntityFrameworkRepository<Organisation, int>(r.GetService<ServiceDbContext>()?.Organisations))
                 .AddTransient<IRepository<TqmsJobref, string>, EntityFrameworkRepository<TqmsJobref, string>>(r
-                    => new EntityFrameworkRepository<TqmsJobref, string>(r.GetService<ServiceDbContext>()?.TqmsJobrefs));
+                    => new EntityFrameworkRepository<TqmsJobref, string>(r.GetService<ServiceDbContext>()?.TqmsJobrefs))
+                .AddTransient<IQueryRepository<PartsReceivedViewModel>, EntityFrameworkQueryRepository<PartsReceivedViewModel>>(
+                    r => new EntityFrameworkQueryRepository<PartsReceivedViewModel>(r.GetService<ServiceDbContext>()
+                        ?.TqmsView));
         }
     }
 }

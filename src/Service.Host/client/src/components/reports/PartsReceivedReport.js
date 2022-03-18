@@ -7,7 +7,7 @@ import {
     Typeahead,
     collectionSelectorHelpers,
     CheckboxWithLabel,
-    reportSelectorHelpers,
+    //reportSelectorHelpers,
     Loading,
     Dropdown,
     DatePicker
@@ -18,6 +18,7 @@ import config from '../../config';
 import suppliersActions from '../../actions/suppliersActions';
 import tqmsJobrefsActions from '../../actions/tqmsJobrefsActions';
 import { suppliers, tqmsJobrefs } from '../../itemTypes';
+import partsReceivedReportActions from '../../actions/partsReceivedReportActions';
 
 function PartsReceivedReport() {
     const dispatch = useDispatch();
@@ -161,11 +162,13 @@ function PartsReceivedReport() {
                                 variant="contained"
                                 color="primary"
                                 onClick={() =>
-                                    console.log({
-                                        ...options,
-                                        fromDate: options.fromDate.toISOString(),
-                                        toDate: options.toDate.toISOString()
-                                    })
+                                    dispatch(
+                                        partsReceivedReportActions.fetchReport({
+                                            ...options,
+                                            fromDate: options.fromDate.toISOString(),
+                                            toDate: options.toDate.toISOString()
+                                        })
+                                    )
                                 }
                             >
                                 Run
