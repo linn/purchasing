@@ -128,8 +128,7 @@
                         });
             }
             reportLayout.SetGridData(values);
-            var model = reportLayout.GetResultsModel();
-            return model;
+            return reportLayout.GetResultsModel();
         }
     }
 }
