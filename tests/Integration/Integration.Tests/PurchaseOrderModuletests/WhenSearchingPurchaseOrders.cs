@@ -18,14 +18,14 @@
 
     public class WhenSearchingPurchaseOrders : ContextBase
     {
-        private int orderNumberSearch;
+        private string orderNumberSearch;
 
         private List<PurchaseOrderResource> dataResult;
 
         [SetUp]
         public void SetUp()
         {
-            this.orderNumberSearch = 600179;
+            this.orderNumberSearch = "600179";
 
             this.dataResult = new List<PurchaseOrderResource>
                                   {
@@ -41,13 +41,13 @@
                                           }
                                   };
 
-            this.PurchaseOrderFacadeService.FilterBy(
-                    Arg.Any<PurchaseOrderSearchResource>(),
+            this.PurchaseOrderFacadeService.Search(
+                    this.orderNumberSearch,
                     Arg.Any<IEnumerable<string>>())
                 .Returns(new SuccessResult<IEnumerable<PurchaseOrderResource>>(this.dataResult));
 
             this.Response = this.Client.Get(
-                $"/purchasing/purchase-orders/{this.orderNumberSearch}/over-book",
+                $"/purchasing/purchase-orders?searchTerm={this.orderNumberSearch}",
 
             with =>
                 {

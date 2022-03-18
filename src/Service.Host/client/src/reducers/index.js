@@ -47,6 +47,8 @@ import openDebitNotes from './openDebitNotes';
 import sendPlNoteEmail from './sendPlNoteEmail';
 import bulkLeadTimesUpload from './bulkLeadTimesUpload';
 import supplierGroups from './supplierGroups.';
+import purchaseOrder from './purchaseOrder';
+import purchaseOrders from './purchaseOrders';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -79,6 +81,8 @@ const rootReducer = history =>
         openDebitNotes,
         preferredSupplierChange,
         priceChangeReasons,
+        purchaseOrder,
+        purchaseOrders,
         putSupplierOnHold,
         router: connectRouter(history),
         sendPlNoteEmail,

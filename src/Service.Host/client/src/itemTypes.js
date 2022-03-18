@@ -33,6 +33,18 @@ export const parts = new ItemType('parts', 'PARTS', '/parts');
 
 export const part = new ItemType('part', 'PART', '/parts/manufacturer-data');
 
+export const purchaseOrder = new ItemType(
+    'purchaseOrder',
+    'PURCHASE_ORDER',
+    '/purchasing/purchase-orders'
+);
+
+export const purchaseOrders = new ItemType(
+    'purchaseOrders',
+    'PURCHASE_ORDERS',
+    '/purchasing/purchase-orders'
+);
+
 export const currencies = new ItemType(
     'currencies',
     'CURRENCIES',

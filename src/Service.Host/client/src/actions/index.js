@@ -94,7 +94,6 @@ export const spendBySupplierReportActionTypes = makeActionTypes(
     reportTypes.spendBySupplierReport.actionType,
     false
 );
-
 export const suppliersWithUnacknowledgedOrdersActionTypes = makeReportActionTypes(
     reportTypes.suppliersWithUnacknowledgedOrders.actionType
 );
@@ -127,3 +126,9 @@ export const bulkLeadTimesUploadActionTypes = makeProcessActionTypes(
 );
 
 export const supplierGroupsActionTypes = makeActionTypes(itemTypes.supplierGroups.actionType);
+export const purchaseOrderActionTypes = makeActionTypes(itemTypes.purchaseOrder.actionType, true);
+
+export const purchaseOrdersActionTypes = makeActionTypes(
+    itemTypes.purchaseOrders.actionType,
+    false
+);
