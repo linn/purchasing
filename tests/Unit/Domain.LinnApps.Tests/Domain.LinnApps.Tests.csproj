@@ -20,4 +20,8 @@
     <ProjectReference Include="..\..\..\src\Domain.LinnApps\Domain.LinnApps.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="PartsReceivedReportServiceTests\" />
+  </ItemGroup>
+
 </Project>

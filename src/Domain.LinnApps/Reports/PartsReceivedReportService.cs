@@ -77,7 +77,6 @@
             {
                 var currentRowId = $"{datum.PartNumber}";
 
-
                 values.Add(
                     new CalculationValueModel
                         {
@@ -129,7 +128,8 @@
                         });
             }
             reportLayout.SetGridData(values);
-            return reportLayout.GetResultsModel();
+            var model = reportLayout.GetResultsModel();
+            return model;
         }
     }
 }
