@@ -49,6 +49,11 @@ import bulkLeadTimesUpload from './bulkLeadTimesUpload';
 import supplierGroups from './supplierGroups.';
 import tqmsJobrefs from './tqmsJobrefs';
 import partsReceivedReport from './partsReceivedReport';
+import purchaseOrderReq from './purchaseOrderReq';
+import departments from './departments';
+import nominals from './nominals';
+import purchaseOrder from './purchaseOrder';
+import purchaseOrders from './purchaseOrders';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -63,8 +68,10 @@ const rootReducer = history =>
         countries,
         currencies,
         deliveryAddresses,
+        departments,
         employees,
         manufacturers,
+        nominals,
         openDebitNotes,
         orderMethods,
         ordersByPart,
@@ -82,6 +89,9 @@ const rootReducer = history =>
         partsReceivedReport,
         preferredSupplierChange,
         priceChangeReasons,
+        purchaseOrder,
+        purchaseOrders,
+        purchaseOrderReq,
         putSupplierOnHold,
         router: connectRouter(history),
         sendPlNoteEmail,

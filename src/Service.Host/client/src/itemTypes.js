@@ -33,6 +33,18 @@ export const parts = new ItemType('parts', 'PARTS', '/parts');
 
 export const part = new ItemType('part', 'PART', '/parts/manufacturer-data');
 
+export const purchaseOrder = new ItemType(
+    'purchaseOrder',
+    'PURCHASE_ORDER',
+    '/purchasing/purchase-orders'
+);
+
+export const purchaseOrders = new ItemType(
+    'purchaseOrders',
+    'PURCHASE_ORDERS',
+    '/purchasing/purchase-orders'
+);
+
 export const currencies = new ItemType(
     'currencies',
     'CURRENCIES',
@@ -160,3 +172,18 @@ export const supplierGroups = new ItemType(
 );
 
 export const tqmsJobrefs = new ItemType('tqmsJobrefs', 'TQMS_JOBREFS', '/purchasing/tqms-jobrefs/');
+export const purchaseOrderReq = new ItemType(
+    'purchaseOrderReq',
+    'PURCHASE_ORDER_REQ',
+    '/purchasing/purchase-orders/reqs'
+);
+
+export const departments = new ItemType('departments', 'DEPARTMENTS', '/inventory/departments');
+
+export const nominals = new ItemType('nominal', 'NOMINAL', '/inventory/nominal-accounts');
+
+export const purchaseOrderReqs = new ItemType(
+    'purchaseOrderReqs',
+    'PURCHASE_ORDER_REQS',
+    '/purchasing/purchase-orders/reqs'
+);

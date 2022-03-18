@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.SupplierModuleTests
 {
-    using System.Collections.Generic;
     using System.Net;
 
     using FluentAssertions;
@@ -20,16 +19,14 @@
         [SetUp]
         public void SetUp()
         {
-            
             this.resource = new PartPriceConversionsResource
-            {
-                BaseNewPrice = 100,
-                NewPrice = 100
-            };
+                                {
+                                    BaseNewPrice = 100,
+                                    NewPrice = 100
+                                };
 
             this.PartFacadeService.GetPrices("PART", "USD", 100m, null, null)
                 .Returns(new SuccessResult<PartPriceConversionsResource>(this.resource));
-
 
             this.Response = this.Client.Get(
                 $"/purchasing/part-suppliers/part-price-conversions?partNumber=PART&newCurrency=USD&newPrice=100",

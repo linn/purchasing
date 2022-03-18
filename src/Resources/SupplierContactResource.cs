@@ -25,5 +25,7 @@
         public int PersonId { get; set; }
 
         public string JobTitle { get; set; }
+
+        public string ContactName { get; set; }
     }
 }

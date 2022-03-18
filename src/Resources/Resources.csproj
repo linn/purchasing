@@ -10,8 +10,4 @@
     <PackageReference Include="Linn.Common.Resources" Version="2.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="SearchResources\" />
-  </ItemGroup>
-
 </Project>

@@ -9,7 +9,6 @@ describe('when converting string to title case', () => {
     });
 });
 
-
 describe('when checking if uppercase', () => {
     test('should return true for uppercase', () => {
         const uppercase = '000007CD0F3C';
@@ -25,7 +24,6 @@ describe('when checking if uppercase', () => {
 });
 
 describe('when checking string is empty', () => {
-
     it('should return true for undefined', () => {
         expect(isEmpty(undefined)).toEqual(true);
     });

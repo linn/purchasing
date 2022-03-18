@@ -23,7 +23,9 @@
 
         private readonly IRepository<SupplierOrderHoldHistoryEntry, int> supplierHoldHistories;
 
-        private readonly IRepository<FullAddress, int> addressRepository;
+        private readonly IRepository<FullAddress, int> fullAddressRepository;
+
+        private readonly IRepository<Address, int> addressRepository;
 
         private readonly IRepository<Employee, int> employeeRepository;
 
@@ -45,7 +47,8 @@
             IRepository<Currency, string> currencyRepository,
             IRepository<PartCategory, string> partCategoryRepository,
             IRepository<SupplierOrderHoldHistoryEntry, int> supplierHoldHistories,
-            IRepository<FullAddress, int> addressRepository,
+            IRepository<FullAddress, int> fullAddressRepository,
+            IRepository<Address, int> addressRepository,
             IRepository<Employee, int> employeeRepository,
             IRepository<VendorManager, string> vendorManagerRepository,
             IRepository<Planner, int> plannerRepository,
@@ -59,6 +62,7 @@
             this.currencyRepository = currencyRepository;
             this.partCategoryRepository = partCategoryRepository;
             this.supplierHoldHistories = supplierHoldHistories;
+            this.fullAddressRepository = fullAddressRepository;
             this.addressRepository = addressRepository;
             this.employeeRepository = employeeRepository;
             this.vendorManagerRepository = vendorManagerRepository;
@@ -106,7 +110,7 @@
             current.PaymentDays = updated.PaymentDays;
             current.PaymentMethod = updated.PaymentMethod;
             current.PaysInFc = updated.PaysInFc;
-           
+
             current.ApprovedCarrier = updated.ApprovedCarrier;
             current.AccountingCompany = updated.AccountingCompany;
             current.VatNumber = updated.VatNumber;
@@ -116,7 +120,6 @@
             current.PmDeliveryDaysGrace = updated.PmDeliveryDaysGrace;
             current.Notes = updated.Notes;
             current.OrganisationId = updated.OrganisationId;
-
 
             current.InvoiceGoesTo = updated.InvoiceGoesTo != null
                                         ? this.supplierRepository.FindById(updated.InvoiceGoesTo.SupplierId)
@@ -132,12 +135,12 @@
                                      ? this.supplierRepository.FindById(updated.RefersToFc.SupplierId)
                                      : null;
 
-            current.OrderFullAddress = updated.OrderFullAddress != null
-                                           ? this.addressRepository.FindById(updated.OrderFullAddress.Id)
+            current.OrderAddress = updated.OrderAddress != null
+                                           ? this.addressRepository.FindById(updated.OrderAddress.AddressId)
                                            : null;
 
             current.InvoiceFullAddress = updated.InvoiceFullAddress != null
-                                           ? this.addressRepository.FindById(updated.InvoiceFullAddress.Id)
+                                           ? this.fullAddressRepository.FindById(updated.InvoiceFullAddress.Id)
                                            : null;
 
             current.Planner = updated.Planner != null
@@ -180,12 +183,12 @@
                                        ? this.supplierRepository.FindById(candidate.RefersToFc.SupplierId)
                                        : null;
 
-            candidate.OrderFullAddress = candidate.OrderFullAddress != null
-                                             ? this.addressRepository.FindById(candidate.OrderFullAddress.Id)
+            candidate.OrderAddress = candidate.OrderAddress != null
+                                             ? this.addressRepository.FindById(candidate.OrderAddress.AddressId)
                                              : null;
 
             candidate.InvoiceFullAddress = candidate.InvoiceFullAddress != null
-                                               ? this.addressRepository.FindById(candidate.InvoiceFullAddress.Id)
+                                               ? this.fullAddressRepository.FindById(candidate.InvoiceFullAddress.Id)
                                                : null;
 
             candidate.Planner = candidate.Planner != null
@@ -212,7 +215,7 @@
             this.orgRepository.Add(new Organisation
                                        {
                                             OrgId = candidate.OrganisationId,
-                                            AddressId = candidate.OrderFullAddress.Id,
+                                            AddressId = candidate.OrderAddress.AddressId,
                                             DateCreated = DateTime.Today,
                                             PhoneNumber = candidate.PhoneNumber,
                                             WebAddress = candidate.WebAddress,
@@ -285,7 +288,7 @@
                 errors.Add("Account Controller");
             }
 
-            if (candidate.OrderFullAddress == null)
+            if (candidate.OrderAddress == null)
             {
                 errors.Add("Order Addressee");
             }

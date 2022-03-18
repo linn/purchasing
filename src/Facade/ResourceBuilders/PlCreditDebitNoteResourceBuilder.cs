@@ -27,14 +27,14 @@
                        Notes = note.Notes,
                        SupplierName = note.Supplier?.Name,
                        DateCreated = note.DateCreated.ToString("o"),
-                       SupplierFullAddress = note.Supplier.OrderFullAddress?.AddressString,
+                       SupplierFullAddress = note.Supplier.OrderAddress?.FullAddress?.AddressString,
                        OrderUnitOfMeasure = note.OrderUnitOfMeasure,
                        OrderUnitPrice = note.OrderUnitPrice,
                        Total = note.Total,
                        VatTotal = note.VatTotal,
                        SuppliersDesignation = note.SuppliersDesignation,
                        OrderContactName = note.PurchaseOrder?.OrderContactName,
-                       SupplierAddress = note.Supplier.OrderFullAddress?.AddressString,
+                       SupplierAddress = note.Supplier.OrderAddress?.FullAddress?.AddressString,
                        Currency = note.Currency?.Name,
                        OrderDetails = note.PurchaseOrder?.Details
                            ?.Select(d => new PurchaseOrderDetailResource

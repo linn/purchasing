@@ -40,7 +40,7 @@
                         }));
 
             this.Response = this.Client.Put(
-                $"/purchasing/purchase-orders/{600179}/over-book",
+                $"/purchasing/purchase-orders/600179",
                 this.resource,
                 with =>
                 {
