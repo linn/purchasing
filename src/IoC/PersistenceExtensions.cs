@@ -73,6 +73,7 @@
                 .AddTransient<IRepository<Person, int>, EntityFrameworkRepository<Person, int>>(
                 r => new EntityFrameworkRepository<Person, int>(r.GetService<ServiceDbContext>()?.Persons))
                 .AddTransient<IRepository<PlCreditDebitNote, int>, PlCreditDebitNoteRepository>()
+                .AddTransient<IRepository<PurchaseOrderReq, int>, PurchaseOrderReqRepository>()
                 .AddTransient<IRepository<Organisation, int>, EntityFrameworkRepository<Organisation, int>>(r
                     => new EntityFrameworkRepository<Organisation, int>(r.GetService<ServiceDbContext>()?.Organisations))
                 .AddTransient<IRepository<TqmsJobref, string>, EntityFrameworkRepository<TqmsJobref, string>>(r
