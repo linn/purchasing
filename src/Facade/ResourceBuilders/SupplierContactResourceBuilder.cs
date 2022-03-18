@@ -24,11 +24,12 @@
                            PhoneNumber = entity.PhoneNumber,
                            PersonId = entity.Person.Id,
                            JobTitle = entity.JobTitle,
-                           Comments = entity.Comments
+                           Comments = entity.Comments,
+                           ContactName = $"{entity.Person?.FirstName} {entity.Person?.LastName}"
                        };
         }
 
-        public string GetLocation(SupplierContact p)
+        public string GetLocation(SupplierContact s)
         {
             throw new NotImplementedException();
         }

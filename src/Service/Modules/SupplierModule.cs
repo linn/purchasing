@@ -32,7 +32,7 @@
 
         private readonly IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource> supplierFacadeService;
 
-        private readonly IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource> 
+        private readonly IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource>
             priceChangeReasonService;
 
         private readonly IFacadeResourceService<PartCategory, string, PartCategoryResource, PartCategoryResource>
@@ -140,7 +140,7 @@
             var partNumber = this.partFacadeService.GetPartNumberFromId(partId);
 
             var result = this.partSupplierFacadeService.GetById(
-                new PartSupplierKey 
+                new PartSupplierKey
                     {
                         PartNumber = partNumber,
                         SupplierId = supplierId
@@ -219,7 +219,6 @@
             await res.Negotiate(result);
         }
 
-
         private async Task CreatePreferredSupplierChange(HttpRequest req, HttpResponse res)
         {
             var resource = await req.Bind<PreferredSupplierChangeResource>();
@@ -248,8 +247,8 @@
             var round = req.Query.As<string>("round");
 
             var result = this.partFacadeService.GetPrices(
-                partNumber, 
-                newCurrency, 
+                partNumber,
+                newCurrency,
                 newPrice,
                 ledger,
                 round);

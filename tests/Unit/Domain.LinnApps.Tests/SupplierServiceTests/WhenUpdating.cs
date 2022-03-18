@@ -24,7 +24,9 @@
 
         private PartCategory partCategory;
 
-        private FullAddress address;
+        private FullAddress invAddress;
+
+        private Address address;
 
         private IEnumerable<string> privileges;
 
@@ -38,7 +40,9 @@
 
             this.partCategory = new PartCategory { Category = "CAT" };
 
-            this.address = new FullAddress { AddressString = "ADDRESS", Id = 1 };
+            this.address = new Address { AddressId = 1, FullAddress = new FullAddress { AddressString = "ADDRESS", Id = 1 } };
+
+            this.invAddress = new FullAddress { AddressString = "ADDRESS", Id = 2 };
 
             this.updated = new Supplier
                                {
@@ -67,8 +71,8 @@
                                    DeliveryDay = "FRIDAY",
                                    RefersToFc = this.otherSupplier,
                                    PmDeliveryDaysGrace = 1,
-                                   OrderFullAddress = this.address,
-                                   InvoiceFullAddress = this.address,
+                                   OrderAddress = this.address,
+                                   InvoiceFullAddress = this.invAddress,
                                    AccountController = new Employee { Id = 123 }
                                };
 
@@ -76,6 +80,7 @@
                 .FindById(this.updated.Currency.Code).Returns(this.currency);
             this.MockSupplierRepository.FindById(2).Returns(this.otherSupplier);
             this.MockPartCategoryRepository.FindById("CAT").Returns(this.partCategory);
+            this.MockFullAddressRepository.FindById(2).Returns(this.invAddress);
             this.MockAddressRepository.FindById(1).Returns(this.address);
             this.privileges = new List<string> { "priv" };
             this.VendorManagerRepository.FindById("V").Returns(new VendorManager { Id = "V" });
@@ -117,9 +122,9 @@
             this.current.DeliveryDay.Should().Be(this.updated.DeliveryDay);
             this.current.RefersToFc.SupplierId.Should().Be(this.otherSupplier.SupplierId);
             this.current.PmDeliveryDaysGrace.Should().Be(this.updated.PmDeliveryDaysGrace);
-            this.current.OrderFullAddress.Id.Should().Be(1);
-            this.current.OrderFullAddress.AddressString.Should().Be("ADDRESS");
-            this.current.InvoiceFullAddress.Id.Should().Be(1);
+            this.current.OrderAddress.AddressId.Should().Be(1);
+            this.current.OrderAddress.FullAddress.AddressString.Should().Be("ADDRESS");
+            this.current.InvoiceFullAddress.Id.Should().Be(2);
             this.current.InvoiceFullAddress.AddressString.Should().Be("ADDRESS");
             this.current.AccountController.Id.Should().Be(this.updated.AccountController.Id);
         }

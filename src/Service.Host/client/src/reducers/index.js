@@ -47,6 +47,9 @@ import openDebitNotes from './openDebitNotes';
 import sendPlNoteEmail from './sendPlNoteEmail';
 import bulkLeadTimesUpload from './bulkLeadTimesUpload';
 import supplierGroups from './supplierGroups.';
+import purchaseOrderReq from './purchaseOrderReq';
+import departments from './departments';
+import nominals from './nominals';
 import purchaseOrder from './purchaseOrder';
 import purchaseOrders from './purchaseOrders';
 
@@ -63,8 +66,10 @@ const rootReducer = history =>
         countries,
         currencies,
         deliveryAddresses,
+        departments,
         employees,
         manufacturers,
+        nominals,
         orderMethods,
         ordersByPart,
         ordersBySupplier,
@@ -83,6 +88,7 @@ const rootReducer = history =>
         priceChangeReasons,
         purchaseOrder,
         purchaseOrders,
+        purchaseOrderReq,
         putSupplierOnHold,
         router: connectRouter(history),
         sendPlNoteEmail,

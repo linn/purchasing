@@ -99,5 +99,7 @@
         public int? GroupId { get; set; }
 
         public string Country { get; set; }
+
+        public AddressResource OrderAddress { get; set; }
     }
 }

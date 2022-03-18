@@ -29,12 +29,13 @@
                     .Include(s => s.AccountController)
                     .Include(s => s.Planner)
                     .Include(s => s.VendorManager)
-                    .Include(s => s.OrderFullAddress)
+                    .Include(s => s.OrderAddress)
                     .Include(s => s.OpenedBy)
                     .Include(s => s.ClosedBy)
                     .Include(s => s.SupplierContacts)
                     .ThenInclude(c => c.Person)
                     .Include(s => s.Group)
+                    .Include(s => s.OrderAddress).ThenInclude(a => a.FullAddress)
                     .FirstOrDefault(x => x.SupplierId == key);
         }
 
@@ -60,7 +61,7 @@
 
         public IQueryable<Supplier> FilterBy(Expression<Func<Supplier, bool>> expression)
         {
-            return this.serviceDbContext.Suppliers
+            return this.serviceDbContext.Suppliers.Include(s => s.OrderAddress).ThenInclude(a => a.FullAddress)
                 .AsNoTracking().Where(expression);
         }
     }

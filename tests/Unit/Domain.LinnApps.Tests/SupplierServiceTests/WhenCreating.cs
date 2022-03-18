@@ -23,17 +23,17 @@
         {
             this.candidate = new Supplier
                                  {
-                                     SupplierId = 1, 
+                                     SupplierId = 1,
                                      Name = "SUPPLIER",
                                      InvoiceContactMethod = "METHOD",
                                      PaymentDays = 1,
                                      PaymentMethod = "PAYMENT METHOD",
                                      AccountController = new Employee { Id = 1 },
-                                     OrderFullAddress = new FullAddress { Id = 1 }
+                                     OrderAddress = new Address { AddressId = 1, FullAddress = new FullAddress { Id = 1 } }
                                  };
 
             this.EmployeeRepository.FindById(1).Returns(new Employee { Id = 1 });
-            this.MockAddressRepository.FindById(1).Returns(new FullAddress { Id = 1 });
+            this.MockAddressRepository.FindById(1).Returns(new Address { FullAddress = new FullAddress { Id = 1 } });
             this.privileges = new List<string> { "priv" };
             this.result = this.Sut.CreateSupplier(this.candidate, this.privileges);
         }

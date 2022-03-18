@@ -31,6 +31,7 @@ import OpenDebitNotes from './plDebitCreditNotes/OpenDebitNotes';
 import Search from './plDebitCreditNotes/Search';
 import Note from './plDebitCreditNotes/Note';
 import BulkLeadTimesUpload from './partSupplierUtility/BulkLeadTimesUpload';
+import POReqUtility from './POReqUtility';
 import OverbooksSearch from './OverbooksSearch';
 import AllowPurchaseOrderOverbook from './AllowPurchaseOrderOverbook';
 
@@ -163,6 +164,18 @@ const Root = ({ store }) => (
                                     path="/purchasing/open-debit-notes"
                                     component={OpenDebitNotes}
                                 />
+                                <Route
+                                    exact
+                                    path="/purchasing/purchase-orders/reqs/create"
+                                    // eslint-disable-next-line react/jsx-props-no-spreading
+                                    render={props => <POReqUtility creating {...props} />}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/purchase-orders/reqs/:id"
+                                    component={POReqUtility}
+                                />
+
                                 <Route
                                     exact
                                     path="/purchasing/purchase-orders/:orderNumber/allow-over-book"

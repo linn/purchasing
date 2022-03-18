@@ -26,6 +26,7 @@
                 this.MockCurrencyRepository,
                 this.MockPartCategoryRepository,
                 this.MockSupplierOrderHoldHistory,
+                this.MockFullAddressRepository,
                 this.MockAddressRepository,
                 this.EmployeeRepository,
                 this.VendorManagerRepository,

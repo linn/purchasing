@@ -126,6 +126,20 @@ export const bulkLeadTimesUploadActionTypes = makeProcessActionTypes(
 );
 
 export const supplierGroupsActionTypes = makeActionTypes(itemTypes.supplierGroups.actionType);
+
+export const purchaseOrderReqActionTypes = makeActionTypes(
+    itemTypes.purchaseOrderReq.actionType,
+    true
+);
+
+export const departmentsActionTypes = makeActionTypes(itemTypes.departments.actionType);
+
+export const nominalsActionTypes = makeActionTypes(itemTypes.nominals.actionType);
+
+export const purchaseOrderReqsActionTypes = makeActionTypes(
+    itemTypes.purchaseOrderReqs.actionType,
+    true
+);
 export const purchaseOrderActionTypes = makeActionTypes(itemTypes.purchaseOrder.actionType, true);
 
 export const purchaseOrdersActionTypes = makeActionTypes(

@@ -170,3 +170,19 @@ export const supplierGroups = new ItemType(
     'SUPPLIER_GROUPS',
     '/purchasing/supplier-groups/'
 );
+
+export const purchaseOrderReq = new ItemType(
+    'purchaseOrderReq',
+    'PURCHASE_ORDER_REQ',
+    '/purchasing/purchase-orders/reqs'
+);
+
+export const departments = new ItemType('departments', 'DEPARTMENTS', '/inventory/departments');
+
+export const nominals = new ItemType('nominal', 'NOMINAL', '/inventory/nominal-accounts');
+
+export const purchaseOrderReqs = new ItemType(
+    'purchaseOrderReqs',
+    'PURCHASE_ORDER_REQS',
+    '/purchasing/purchase-orders/reqs'
+);

@@ -56,7 +56,9 @@
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<SupplierGroupResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<PlannerResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<PlCreditDebitNoteResource>>>()
-                .AddTransient<IHandler, JsonResultHandler<PlCreditDebitNoteResource>>();
+                .AddTransient<IHandler, JsonResultHandler<PlCreditDebitNoteResource>>()
+                .AddTransient<IHandler, JsonResultHandler<PurchaseOrderReqResource>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PurchaseOrderReqResource>>>();
         }
     }
 }

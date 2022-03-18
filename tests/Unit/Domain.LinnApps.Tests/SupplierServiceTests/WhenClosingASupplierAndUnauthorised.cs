@@ -23,7 +23,7 @@
 
         private Action action;
 
-        private FullAddress address;
+        private Address address;
 
         private IEnumerable<string> privileges;
 
@@ -33,7 +33,8 @@
             this.currency = new Currency { Code = "USD" };
             this.current = new Supplier { SupplierId = 1, Name = "SUPPLIER" };
 
-            this.address = new FullAddress { AddressString = "ADDRESS", Id = 1 };
+            this.address = new Address { FullAddress = new FullAddress { AddressString = "ADDRESS", Id = 1 } };
+
 
             this.updated = new Supplier
             {
@@ -49,7 +50,7 @@
                 PaymentMethod = "PAYMENT METHOD",
                 AccountingCompany = "LINN",
                 OrderHold = "Y",
-                OrderFullAddress = this.address,
+                OrderAddress = this.address,
                 AccountController = new Employee { Id = 123 },
                 ReasonClosed = "SHUT DOWN",
                 ClosedBy = new Employee { Id = 33087 }
