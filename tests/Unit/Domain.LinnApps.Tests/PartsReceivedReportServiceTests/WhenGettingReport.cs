@@ -80,7 +80,6 @@
                 string.Empty);
         }
 
-
         [Test]
         public void ShouldReturnData()
         {
