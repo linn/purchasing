@@ -50,6 +50,8 @@ import supplierGroups from './supplierGroups.';
 import purchaseOrderReq from './purchaseOrderReq';
 import departments from './departments';
 import nominals from './nominals';
+import purchaseOrder from './purchaseOrder';
+import purchaseOrders from './purchaseOrders';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -84,6 +86,8 @@ const rootReducer = history =>
         openDebitNotes,
         preferredSupplierChange,
         priceChangeReasons,
+        purchaseOrder,
+        purchaseOrders,
         purchaseOrderReq,
         putSupplierOnHold,
         router: connectRouter(history),

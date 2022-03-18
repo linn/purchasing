@@ -94,7 +94,6 @@ export const spendBySupplierReportActionTypes = makeActionTypes(
     reportTypes.spendBySupplierReport.actionType,
     false
 );
-
 export const suppliersWithUnacknowledgedOrdersActionTypes = makeReportActionTypes(
     reportTypes.suppliersWithUnacknowledgedOrders.actionType
 );
@@ -140,4 +139,10 @@ export const nominalsActionTypes = makeActionTypes(itemTypes.nominals.actionType
 export const purchaseOrderReqsActionTypes = makeActionTypes(
     itemTypes.purchaseOrderReqs.actionType,
     true
+);
+export const purchaseOrderActionTypes = makeActionTypes(itemTypes.purchaseOrder.actionType, true);
+
+export const purchaseOrdersActionTypes = makeActionTypes(
+    itemTypes.purchaseOrders.actionType,
+    false
 );
