@@ -102,12 +102,7 @@
                           };
 
             this.MockPurchaseOrderReqRepository.FindById(this.reqNumber).Returns(req);
-
-            this.MockReqDomainService.Update(
-                Arg.Any<PurchaseOrderReq>(),
-                Arg.Any<PurchaseOrderReq>(),
-                Arg.Any<IEnumerable<string>>()).Returns(true);
-
+            
             this.Response = this.Client.Put(
                 "/purchasing/purchase-orders/reqs/2023022",
                 this.resource,

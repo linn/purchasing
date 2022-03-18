@@ -25,7 +25,7 @@
             return entity;
         }
 
-        public bool Update(PurchaseOrderReq entity, PurchaseOrderReq updatedEntity, IEnumerable<string> privileges)
+        public void Update(PurchaseOrderReq entity, PurchaseOrderReq updatedEntity, IEnumerable<string> privileges)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqUpdate, privileges))
             {
@@ -65,8 +65,6 @@
             entity.RemarksForOrder = updatedEntity.RemarksForOrder;
             entity.InternalNotes = updatedEntity.InternalNotes;
             entity.DepartmentCode = updatedEntity.DepartmentCode;
-
-            return true;
         }
     }
 }
