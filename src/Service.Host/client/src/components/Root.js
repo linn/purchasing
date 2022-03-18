@@ -32,6 +32,7 @@ import Search from './plDebitCreditNotes/Search';
 import Note from './plDebitCreditNotes/Note';
 import BulkLeadTimesUpload from './partSupplierUtility/BulkLeadTimesUpload';
 import POReqUtility from './POReqUtility';
+import POReqSearch from './POReqSearch';
 import OverbooksSearch from './OverbooksSearch';
 import AllowPurchaseOrderOverbook from './AllowPurchaseOrderOverbook';
 
@@ -175,7 +176,11 @@ const Root = ({ store }) => (
                                     path="/purchasing/purchase-orders/reqs/:id"
                                     component={POReqUtility}
                                 />
-
+                                <Route
+                                    exact
+                                    path="/purchasing/purchase-orders/reqs"
+                                    component={POReqSearch}
+                                />
                                 <Route
                                     exact
                                     path="/purchasing/purchase-orders/:orderNumber/allow-over-book"

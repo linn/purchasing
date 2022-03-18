@@ -48,6 +48,7 @@ import sendPlNoteEmail from './sendPlNoteEmail';
 import bulkLeadTimesUpload from './bulkLeadTimesUpload';
 import supplierGroups from './supplierGroups.';
 import purchaseOrderReq from './purchaseOrderReq';
+import purchaseOrderReqs from './purchaseOrderReqs';
 import departments from './departments';
 import nominals from './nominals';
 import purchaseOrder from './purchaseOrder';
@@ -87,8 +88,9 @@ const rootReducer = history =>
         preferredSupplierChange,
         priceChangeReasons,
         purchaseOrder,
-        purchaseOrders,
         purchaseOrderReq,
+        purchaseOrderReqs,
+        purchaseOrders,
         putSupplierOnHold,
         router: connectRouter(history),
         sendPlNoteEmail,

@@ -31,6 +31,8 @@ import countriesActions from '../actions/countriesActions';
 import suppliersActions from '../actions/suppliersActions';
 import partsActions from '../actions/partsActions';
 import poReqActions from '../actions/purchaseOrderReqActions';
+import poReqApplicationStateActions from '../actions/purchaseOrderReqApplicationStateActions';
+
 import history from '../history';
 import config from '../config';
 
@@ -114,8 +116,10 @@ function POReqUtility({ creating }) {
     useEffect(() => {
         if (id) {
             dispatch(poReqActions.fetch(id));
+        } else if (creating) {
+            dispatch(poReqApplicationStateActions.fetchState());
         }
-    }, [id, dispatch]);
+    }, [id, dispatch, creating]);
 
     const handleSupplierChange = newSupplier => {
         setEditStatus('edit');
@@ -157,6 +161,10 @@ function POReqUtility({ creating }) {
         }))
     };
 
+    const purchaseOrderReqApplicationState = useSelector(state =>
+        collectionSelectorHelpers.getApplicationState(state.purchaseOrderReq)
+    );
+
     const allowedToAuthorise = () => !creating && req.links?.some(l => l.rel === 'authorise');
     const allowedToFinanceCheck = () =>
         !creating && req.links?.some(l => l.rel === 'finance-check');
@@ -164,7 +172,7 @@ function POReqUtility({ creating }) {
         !creating && req.links?.some(l => l.rel === 'create-purchase-order');
 
     const editingAllowed = creating
-        ? req.links?.some(l => l.rel === 'create')
+        ? purchaseOrderReqApplicationState?.links?.some(l => l.rel === 'create')
         : req.links?.some(l => l.rel === 'edit');
 
     const inputIsInvalid = () => !req.reqDate?.length && !req.supplier?.supplierId?.length; //todo work out which fields are required for save and add 'em here

@@ -58,7 +58,8 @@
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<PlCreditDebitNoteResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<PlCreditDebitNoteResource>>()
                 .AddTransient<IHandler, JsonResultHandler<PurchaseOrderReqResource>>()
-                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PurchaseOrderReqResource>>>();
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PurchaseOrderReqResource>>>()
+                .AddTransient<IHandler, PurchaseOrderReqApplicationStateResultHandler>();
         }
     }
 }

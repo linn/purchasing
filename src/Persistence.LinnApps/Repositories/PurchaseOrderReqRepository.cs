@@ -1,6 +1,9 @@
 ﻿namespace Linn.Purchasing.Persistence.LinnApps.Repositories
 {
+    using System;
+    using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
 
     using Linn.Common.Persistence.EntityFramework;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
@@ -32,6 +35,11 @@
                 .Include(r => r.Supplier).ThenInclude(s => s.OrderAddress)
                 .FirstOrDefault(x => x.ReqNumber == key);
             return purchaseOrderReq;
+        }
+
+        public override IQueryable<PurchaseOrderReq> FilterBy(Expression<Func<PurchaseOrderReq, bool>> expression)
+        {
+            return base.FilterBy(expression).AsNoTracking().Include(r => r.Supplier);
         }
     }
 }
