@@ -30,7 +30,8 @@
                                           FromDate = DateTime.UnixEpoch.ToString("o"),
                                           ToDate = DateTime.UnixEpoch.AddDays(1).ToString("O"),
                                           IncludeNegativeValues = true,
-                                          Jobref = "AA"
+                                          Jobref = "AA",
+                                          OrderBy = "PART"
                                       };
             this.resultsModel = new ResultsModel { ReportTitle = new NameModel("Parts Received Report") };
             this.MockDomainService.GetReport(
@@ -38,13 +39,14 @@
                 this.optionsResource.Supplier,
                 this.optionsResource.FromDate,
                 this.optionsResource.ToDate,
-                this.optionsResource.IncludeNegativeValues).Returns(this.resultsModel);
+                this.optionsResource.IncludeNegativeValues,
+                this.optionsResource.OrderBy).Returns(this.resultsModel);
 
             this.Response = this.Client.Get(
                 $"/purchasing/reports/parts-received?supplier=" 
                 + $"{this.optionsResource.Supplier}&fromDate={this.optionsResource.FromDate}&toDate={this.optionsResource.ToDate}"
                 + $"&includeNegativeValues={this.optionsResource.IncludeNegativeValues}" 
-                + $"&jobref={this.optionsResource.Jobref}",
+                + $"&jobref={this.optionsResource.Jobref}&orderBy={this.optionsResource.OrderBy}",
                 with => { with.Accept("application/json"); }).Result;
         }
 
@@ -62,7 +64,8 @@
                 this.optionsResource.Supplier,
                 this.optionsResource.FromDate,
                 this.optionsResource.ToDate,
-                this.optionsResource.IncludeNegativeValues);
+                this.optionsResource.IncludeNegativeValues,
+                this.optionsResource.OrderBy);
         }
 
         [Test]

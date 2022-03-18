@@ -11,5 +11,7 @@
         public int? Supplier { get; set; }
 
         public bool IncludeNegativeValues { get; set; }
+
+        public string OrderBy { get; set; }
     }
 }

@@ -41,6 +41,7 @@
                                   FromDate = req.Query.As<string>("fromDate"),
                                   ToDate = req.Query.As<string>("toDate"),
                                   Jobref = req.Query.As<string>("jobref"),
+                                  OrderBy = req.Query.As<string>("orderBy"),
                                   IncludeNegativeValues = req.Query.As<bool>("includeNegativeValues")
                               };
 

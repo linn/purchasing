@@ -9,6 +9,7 @@
             int? supplier,
             string fromDate,
             string toDDate,
-            bool includeNegativeValues);
+            bool includeNegativeValues,
+            string orderBy);
     }
 }

@@ -7,10 +7,10 @@ import {
     Typeahead,
     collectionSelectorHelpers,
     CheckboxWithLabel,
-    //reportSelectorHelpers,
     Loading,
     Dropdown,
-    DatePicker
+    DatePicker,
+    ReportTable
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import history from '../../history';
@@ -18,6 +18,7 @@ import config from '../../config';
 import suppliersActions from '../../actions/suppliersActions';
 import tqmsJobrefsActions from '../../actions/tqmsJobrefsActions';
 import { suppliers, tqmsJobrefs } from '../../itemTypes';
+import { partsReceivedReport } from '../../reportTypes';
 import partsReceivedReportActions from '../../actions/partsReceivedReportActions';
 
 function PartsReceivedReport() {
@@ -64,6 +65,10 @@ function PartsReceivedReport() {
             setOptions(o => ({ ...o, jobref: jobrefOptions[0].jobref }));
         }
     }, [jobrefOptions]);
+
+    const loading = useSelector(state => state[partsReceivedReport.item]?.loading);
+
+    const reportData = useSelector(state => state[partsReceivedReport.item]?.data);
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
@@ -174,6 +179,26 @@ function PartsReceivedReport() {
                                 Run
                             </Button>
                         </Grid>
+                    </>
+                )}
+                {loading ? (
+                    <Grid item xs={12}>
+                        <Loading />
+                    </Grid>
+                ) : (
+                    <>
+                        {reportData && (
+                            <Grid item xs={12}>
+                                <ReportTable
+                                    reportData={reportData}
+                                    title={reportData.title}
+                                    showTitle
+                                    showTotals
+                                    placeholderRows={4}
+                                    placeholderColumns={4}
+                                />
+                            </Grid>
+                        )}
                     </>
                 )}
             </Grid>
