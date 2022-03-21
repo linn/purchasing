@@ -8,6 +8,7 @@
 
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources.RequestResources;
+    using Linn.Purchasing.Service.Models;
 
     using Microsoft.AspNetCore.Http;
 
@@ -44,7 +45,11 @@
                                   OrderBy = req.Query.As<string>("orderBy"),
                                   IncludeNegativeValues = req.Query.As<bool>("includeNegativeValues")
                               };
-
+            if (string.IsNullOrEmpty(options.ToDate))
+            {
+                await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
+            }
+            
             var results = this.reportFacadeService.GetReport(options);
 
             await res.Negotiate(results);
