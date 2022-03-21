@@ -153,3 +153,8 @@ export const purchaseOrdersActionTypes = makeActionTypes(
     itemTypes.purchaseOrders.actionType,
     false
 );
+
+export const whatsDueInReportActionTypes = makeActionTypes(
+    reportTypes.whatsDueInReport.actionType,
+    false
+);

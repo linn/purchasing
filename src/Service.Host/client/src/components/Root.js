@@ -35,6 +35,7 @@ import PartsReceivedReport from './reports/PartsReceivedReport';
 import POReqUtility from './POReqUtility';
 import OverbooksSearch from './OverbooksSearch';
 import AllowPurchaseOrderOverbook from './AllowPurchaseOrderOverbook';
+import WhatsDueInReport from './reports/WhatsDueInReport';
 
 const Root = ({ store }) => (
     <div>
@@ -190,6 +191,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/reports/parts-received"
                                     component={PartsReceivedReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/whats-due-in"
+                                    component={WhatsDueInReport}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>

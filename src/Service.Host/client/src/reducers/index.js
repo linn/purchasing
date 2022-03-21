@@ -54,6 +54,7 @@ import departments from './departments';
 import nominals from './nominals';
 import purchaseOrder from './purchaseOrder';
 import purchaseOrders from './purchaseOrders';
+import whatsDueInReport from './whatsDueInReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -108,6 +109,7 @@ const rootReducer = history =>
         unacknowledgedOrdersReport,
         unitsOfMeasure,
         vendorManagers,
+        whatsDueInReport,
         ...sharedLibraryReducers,
         errors
     });
