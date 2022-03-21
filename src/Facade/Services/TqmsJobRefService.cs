@@ -25,7 +25,7 @@
                 .Select(
                 r => new TqmsJobRefResource
                          {
-                             Date = r.Date.ToShortDateString(),
+                             Date = $"{r.Date.ToShortDateString()} {r.Date.ToShortTimeString()}",
                              Jobref = r.Jobref
                          });
 

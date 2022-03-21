@@ -73,14 +73,14 @@
                         new AxisDetailsModel("Qty", "Qty", GridDisplayType.Value) { DecimalPlaces = 0 },
                         new AxisDetailsModel("SupplierName", "Supplier", GridDisplayType.TextValue),
                         new AxisDetailsModel("DateBooked", "Date Booked", GridDisplayType.TextValue),
-                        new AxisDetailsModel("OverstockQty", "Overstock", GridDisplayType.Value) { DecimalPlaces = 0 },
+                        new AxisDetailsModel("OverstockQty", "Overstock", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new AxisDetailsModel("MaterialPrice", "Material Price", GridDisplayType.Value) { DecimalPlaces = 2 }
                     });
 
             var values = new List<CalculationValueModel>();
             foreach (var datum in data)
             {
-                var currentRowId = $"{datum.PartNumber}";
+                var currentRowId = $"{datum.PartNumber + datum.OrderNumber}";
 
                 values.Add(
                     new CalculationValueModel

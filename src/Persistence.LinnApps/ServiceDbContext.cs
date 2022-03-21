@@ -136,7 +136,7 @@
             this.BuildPhoneList(builder);
             this.BuildOrganisations(builder);
             this.BuildTqmsJobRefs(builder);
-            this.BuildTqmsView(builder);
+            this.BuildPartsReceivedView(builder);
             this.BuildPurchaseOrderReqs(builder);
             this.BuildDepartments(builder);
             this.BuildNominals(builder);
@@ -746,7 +746,7 @@
             entity.Property(a => a.Date).HasColumnName("JOBREF_DATE");
         }
 
-        private void BuildTqmsView(ModelBuilder builder)
+        private void BuildPartsReceivedView(ModelBuilder builder)
         {
             var entity = builder.Entity<PartsReceivedViewModel>().ToTable("PARTS_RECEIVED_VIEW").HasNoKey();
             entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER");
