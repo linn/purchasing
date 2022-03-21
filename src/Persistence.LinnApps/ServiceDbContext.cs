@@ -85,6 +85,10 @@
 
         public DbSet<Organisation> Organisations { get; set; }
 
+        public DbSet<TqmsJobref> TqmsJobrefs { get; set; }
+
+        public DbSet<PartsReceivedViewModel> TqmsView { get; set; }
+
         public DbSet<PurchaseOrderReq> PurchaseOrderReqs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -131,6 +135,8 @@
             this.BuildCreditDebitNoteTypes(builder);
             this.BuildPhoneList(builder);
             this.BuildOrganisations(builder);
+            this.BuildTqmsJobRefs(builder);
+            this.BuildPartsReceivedView(builder);
             this.BuildPurchaseOrderReqs(builder);
             this.BuildDepartments(builder);
             this.BuildNominals(builder);
@@ -730,6 +736,32 @@
             entity.Property(a => a.Type).HasColumnName("CDNOTE_TYPE");
             entity.Property(a => a.Description).HasColumnName("DESCRIPTION");
             entity.Property(a => a.PrintDescription).HasColumnName("PRINT_DESCRIPTION");
+        }
+
+        private void BuildTqmsJobRefs(ModelBuilder builder)
+        {
+            var entity = builder.Entity<TqmsJobref>().ToTable("TQMS_JOBREFS");
+            entity.HasKey(a => a.Jobref);
+            entity.Property(a => a.Jobref).HasColumnName("JOBREF");
+            entity.Property(a => a.Date).HasColumnName("JOBREF_DATE");
+        }
+
+        private void BuildPartsReceivedView(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PartsReceivedViewModel>().ToTable("PARTS_RECEIVED_VIEW").HasNoKey();
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER");
+            entity.Property(a => a.JobRef).HasColumnName("JOBREF").HasColumnType("VARCHAR2");
+            entity.Property(a => a.TqmsGroup).HasColumnName("TQMS_GROUP").HasColumnType("VARCHAR2");
+            entity.Property(a => a.OverstockQty).HasColumnName("OVERSTOCK_QTY");
+            entity.Property(a => a.OverStockValue).HasColumnName("OVERSTOCK_VALUE");
+            entity.Property(a => a.OrderNumber).HasColumnName("ORDER_NUMBER").HasColumnType("VARCHAR2");
+            entity.Property(a => a.SupplierId).HasColumnName("SUPP_SUPPLIER_ID");
+            entity.Property(a => a.DateBooked).HasColumnName("DATE_BOOKED");
+            entity.Property(a => a.MaterialPrice).HasColumnName("MATERIAL_PRICE");
+            entity.Property(a => a.PartPrice).HasColumnName("PART_PRICE");
+            entity.Property(a => a.SupplierName).HasColumnName("SUPPLIER_NAME").HasColumnType("VARCHAR2");
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
+            entity.Property(a => a.Qty).HasColumnName("QTY");
         }
 
         private void BuildPurchaseOrderReqs(ModelBuilder builder)

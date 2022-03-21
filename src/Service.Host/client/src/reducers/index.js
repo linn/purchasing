@@ -47,6 +47,8 @@ import openDebitNotes from './openDebitNotes';
 import sendPlNoteEmail from './sendPlNoteEmail';
 import bulkLeadTimesUpload from './bulkLeadTimesUpload';
 import supplierGroups from './supplierGroups.';
+import tqmsJobrefs from './tqmsJobrefs';
+import partsReceivedReport from './partsReceivedReport';
 import purchaseOrderReq from './purchaseOrderReq';
 import departments from './departments';
 import nominals from './nominals';
@@ -70,6 +72,7 @@ const rootReducer = history =>
         employees,
         manufacturers,
         nominals,
+        openDebitNotes,
         orderMethods,
         ordersByPart,
         ordersBySupplier,
@@ -83,7 +86,7 @@ const rootReducer = history =>
         planners,
         plCreditDebitNote,
         plCreditDebitNotes,
-        openDebitNotes,
+        partsReceivedReport,
         preferredSupplierChange,
         priceChangeReasons,
         purchaseOrder,
@@ -101,6 +104,7 @@ const rootReducer = history =>
         suppliers,
         suppliersWithUnacknowledgedOrders,
         tariffs,
+        tqmsJobrefs,
         unacknowledgedOrdersReport,
         unitsOfMeasure,
         vendorManagers,
