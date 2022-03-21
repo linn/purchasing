@@ -24,12 +24,12 @@
         }
 
         public ResultsModel GetReport(
-            string jobref, 
-            int? supplier, 
-            string fromDate, 
-            string toDate, 
-            bool includeNegativeValues,
-            string orderBy)
+            string jobref,
+            int? supplier,
+            string fromDate,
+            string toDate,
+            string orderBy,
+            bool includeNegativeValues = true)
         {
             var from = DateTime.Parse(fromDate).Date;
             var to = DateTime.Parse(toDate).Date.AddDays(1).AddTicks(-1);
@@ -42,6 +42,11 @@
             if (!includeNegativeValues)
             {
                 data = data.Where(x => x.Qty >= 0);
+            }
+
+            if (supplier.HasValue)
+            {
+                data = data.Where(x => x.SupplierId == supplier);
             }
 
             data = orderBy switch
@@ -81,7 +86,7 @@
                     new CalculationValueModel
                         {
                             RowId = currentRowId,
-                            ColumnId = "Name",
+                            ColumnId = "PartNumber",
                             TextDisplay = datum.PartNumber
                         });
                 values.Add(

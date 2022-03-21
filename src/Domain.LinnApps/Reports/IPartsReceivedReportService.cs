@@ -8,8 +8,8 @@
             string jobref,
             int? supplier,
             string fromDate,
-            string toDDate,
-            bool includeNegativeValues,
-            string orderBy);
+            string toDate,
+            string orderBy,
+            bool includeNegativeValues = true);
     }
 }

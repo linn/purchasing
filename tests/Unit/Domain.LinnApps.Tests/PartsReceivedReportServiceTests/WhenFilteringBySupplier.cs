@@ -14,7 +14,7 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingReport : ContextBase
+    public class WhenFilteringBySupplier : ContextBase
     {
         private ResultsModel results;
 
@@ -37,7 +37,8 @@
                                         OverstockQty = 1,
                                         PartPrice = 1,
                                         TqmsGroup = "LINN",
-                                        Qty = 1
+                                        Qty = 1,
+                                        SupplierId = 1
                                     },
                                 new PartsReceivedViewModel
                                     {
@@ -51,7 +52,8 @@
                                         OverstockQty = 2,
                                         PartPrice = 2,
                                         TqmsGroup = "LINN",
-                                        Qty = 2
+                                        Qty = 2,
+                                        SupplierId = 2
                                     },
                                 new PartsReceivedViewModel
                                     {
@@ -65,7 +67,8 @@
                                         OverstockQty = 3,
                                         PartPrice = 3,
                                         TqmsGroup = "LINN",
-                                        Qty = -3
+                                        Qty = 3,
+                                        SupplierId = 3
                                     }
                             };
             this.PartsReceivedView.FilterBy(Arg.Any<Expression<Func<PartsReceivedViewModel, bool>>>())
@@ -73,28 +76,17 @@
 
             this.results = this.Sut.GetReport(
                 "AAA",
-                null,
+                2,
                 DateTime.UnixEpoch.ToString("o"),
                 DateTime.Today.ToString("o"),
                 string.Empty);
         }
 
         [Test]
-        public void ShouldReturnData()
+        public void ShouldReturnFilteredData()
         {
-            this.results.ReportTitle.DisplayValue.Should().Be(
-                $"Parts Received between {DateTime.UnixEpoch.ToShortDateString()} and {DateTime.Today.ToShortDateString()}");
-            this.results.Rows.Count().Should().Be(3);
-        }
-
-        [Test]
-        public void ShouldOrderByDateBooked()
-        {
-            for (var i = 1; i < this.results.Rows.Count(); i++)
-            {
-                var previousDateBooked = DateTime.Parse(this.results.GetGridTextValue(i - 1, 4));
-                DateTime.Parse(this.results.GetGridTextValue(i, 4)).Should().BeOnOrAfter(previousDateBooked);
-            }
+            this.results.Rows.Count().Should().Be(1);
+            this.results.GetGridTextValue(0, 3).Should().Be("SUPPLIER 2");
         }
     }
 }

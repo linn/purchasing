@@ -39,8 +39,8 @@
                 this.optionsResource.Supplier,
                 this.optionsResource.FromDate,
                 this.optionsResource.ToDate,
-                this.optionsResource.IncludeNegativeValues,
-                this.optionsResource.OrderBy).Returns(this.resultsModel);
+                this.optionsResource.OrderBy,
+                this.optionsResource.IncludeNegativeValues).Returns(this.resultsModel);
 
             this.Response = this.Client.Get(
                 $"/purchasing/reports/parts-received?supplier=" 
@@ -64,8 +64,8 @@
                 this.optionsResource.Supplier,
                 this.optionsResource.FromDate,
                 this.optionsResource.ToDate,
-                this.optionsResource.IncludeNegativeValues,
-                this.optionsResource.OrderBy);
+                this.optionsResource.OrderBy,
+                this.optionsResource.IncludeNegativeValues);
         }
 
         [Test]

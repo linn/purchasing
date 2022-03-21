@@ -14,7 +14,7 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingReport : ContextBase
+    public class WhenExcludingNegativeValues : ContextBase
     {
         private ResultsModel results;
 
@@ -76,25 +76,16 @@
                 null,
                 DateTime.UnixEpoch.ToString("o"),
                 DateTime.Today.ToString("o"),
-                string.Empty);
+                string.Empty,
+                false);
         }
 
         [Test]
-        public void ShouldReturnData()
+        public void ShouldReturnOnlyPositiveQtyRows()
         {
-            this.results.ReportTitle.DisplayValue.Should().Be(
-                $"Parts Received between {DateTime.UnixEpoch.ToShortDateString()} and {DateTime.Today.ToShortDateString()}");
-            this.results.Rows.Count().Should().Be(3);
-        }
-
-        [Test]
-        public void ShouldOrderByDateBooked()
-        {
-            for (var i = 1; i < this.results.Rows.Count(); i++)
-            {
-                var previousDateBooked = DateTime.Parse(this.results.GetGridTextValue(i - 1, 4));
-                DateTime.Parse(this.results.GetGridTextValue(i, 4)).Should().BeOnOrAfter(previousDateBooked);
-            }
+            this.results.Rows.Count().Should().Be(2);
+            this.results.GetGridValue(0, 2).Should().BeGreaterOrEqualTo(0);
+            this.results.GetGridValue(1, 2).Should().BeGreaterOrEqualTo(0);
         }
     }
 }

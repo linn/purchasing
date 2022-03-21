@@ -5,8 +5,6 @@
     using System.Linq;
     using System.Linq.Expressions;
 
-    using FluentAssertions;
-
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
 
@@ -14,7 +12,7 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingReport : ContextBase
+    public class WhenOrderingByPart : ContextBase
     {
         private ResultsModel results;
 
@@ -28,7 +26,7 @@
                                 new PartsReceivedViewModel
                                     {
                                         SupplierName = "SUPPLIER 1",
-                                        PartNumber = "PART 1",
+                                        PartNumber = "PART C",
                                         MaterialPrice = 11,
                                         DateBooked = DateTime.UnixEpoch,
                                         OrderNumber = "100 / 1",
@@ -42,7 +40,7 @@
                                 new PartsReceivedViewModel
                                     {
                                         SupplierName = "SUPPLIER 2",
-                                        PartNumber = "PART 2",
+                                        PartNumber = "PART A",
                                         MaterialPrice = 22,
                                         DateBooked = DateTime.UnixEpoch.AddDays(1),
                                         OrderNumber = "200 / 1",
@@ -56,7 +54,7 @@
                                 new PartsReceivedViewModel
                                     {
                                         SupplierName = "SUPPLIER 3",
-                                        PartNumber = "PART 3",
+                                        PartNumber = "PART B",
                                         MaterialPrice = 33,
                                         DateBooked = DateTime.UnixEpoch.AddDays(2),
                                         OrderNumber = "300 / 1",
@@ -76,24 +74,16 @@
                 null,
                 DateTime.UnixEpoch.ToString("o"),
                 DateTime.Today.ToString("o"),
-                string.Empty);
+                "PART");
         }
 
         [Test]
-        public void ShouldReturnData()
-        {
-            this.results.ReportTitle.DisplayValue.Should().Be(
-                $"Parts Received between {DateTime.UnixEpoch.ToShortDateString()} and {DateTime.Today.ToShortDateString()}");
-            this.results.Rows.Count().Should().Be(3);
-        }
-
-        [Test]
-        public void ShouldOrderByDateBooked()
+        public void ShouldOrderByPart()
         {
             for (var i = 1; i < this.results.Rows.Count(); i++)
             {
-                var previousDateBooked = DateTime.Parse(this.results.GetGridTextValue(i - 1, 4));
-                DateTime.Parse(this.results.GetGridTextValue(i, 4)).Should().BeOnOrAfter(previousDateBooked);
+                var previousPart = this.results.GetGridTextValue(i - 1, 0);
+                Assert.IsTrue(string.CompareOrdinal(this.results.GetGridTextValue(i, 0), previousPart) > 0);
             }
         }
     }

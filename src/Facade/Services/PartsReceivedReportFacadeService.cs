@@ -28,8 +28,8 @@
                     options.Supplier,
                     options.FromDate,
                     options.ToDate,
-                    options.IncludeNegativeValues,
-                    options.OrderBy),
+                    options.OrderBy,
+                    options.IncludeNegativeValues),
                 null);
 
             return new SuccessResult<ReportReturnResource>(resource);

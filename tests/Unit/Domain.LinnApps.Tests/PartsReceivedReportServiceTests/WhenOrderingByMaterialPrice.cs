@@ -14,7 +14,7 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingReport : ContextBase
+    public class WhenOrderingByMaterialPrice : ContextBase
     {
         private ResultsModel results;
 
@@ -27,42 +27,42 @@
                             {
                                 new PartsReceivedViewModel
                                     {
-                                        SupplierName = "SUPPLIER 1",
-                                        PartNumber = "PART 1",
-                                        MaterialPrice = 11,
+                                        SupplierName = "SUPPLIER C",
+                                        PartNumber = "PART C",
+                                        MaterialPrice = 33,
                                         DateBooked = DateTime.UnixEpoch,
                                         OrderNumber = "100 / 1",
                                         JobRef = "AAA",
                                         OverStockValue = 1,
-                                        OverstockQty = 1,
+                                        OverstockQty = 3,
                                         PartPrice = 1,
                                         TqmsGroup = "LINN",
                                         Qty = 1
                                     },
                                 new PartsReceivedViewModel
                                     {
-                                        SupplierName = "SUPPLIER 2",
-                                        PartNumber = "PART 2",
+                                        SupplierName = "SUPPLIER A",
+                                        PartNumber = "PART A",
                                         MaterialPrice = 22,
                                         DateBooked = DateTime.UnixEpoch.AddDays(1),
                                         OrderNumber = "200 / 1",
                                         JobRef = "AAA",
                                         OverStockValue = 2,
-                                        OverstockQty = 2,
+                                        OverstockQty = 1,
                                         PartPrice = 2,
                                         TqmsGroup = "LINN",
                                         Qty = 2
                                     },
                                 new PartsReceivedViewModel
                                     {
-                                        SupplierName = "SUPPLIER 3",
-                                        PartNumber = "PART 3",
-                                        MaterialPrice = 33,
+                                        SupplierName = "SUPPLIER B",
+                                        PartNumber = "PART B",
+                                        MaterialPrice = 11,
                                         DateBooked = DateTime.UnixEpoch.AddDays(2),
                                         OrderNumber = "300 / 1",
                                         JobRef = "AAA",
                                         OverStockValue = 3,
-                                        OverstockQty = 3,
+                                        OverstockQty = 2,
                                         PartPrice = 3,
                                         TqmsGroup = "LINN",
                                         Qty = -3
@@ -76,24 +76,16 @@
                 null,
                 DateTime.UnixEpoch.ToString("o"),
                 DateTime.Today.ToString("o"),
-                string.Empty);
+                "MATERIAL PRICE");
         }
 
         [Test]
-        public void ShouldReturnData()
-        {
-            this.results.ReportTitle.DisplayValue.Should().Be(
-                $"Parts Received between {DateTime.UnixEpoch.ToShortDateString()} and {DateTime.Today.ToShortDateString()}");
-            this.results.Rows.Count().Should().Be(3);
-        }
-
-        [Test]
-        public void ShouldOrderByDateBooked()
+        public void ShouldOrderByOverstockQty()
         {
             for (var i = 1; i < this.results.Rows.Count(); i++)
             {
-                var previousDateBooked = DateTime.Parse(this.results.GetGridTextValue(i - 1, 4));
-                DateTime.Parse(this.results.GetGridTextValue(i, 4)).Should().BeOnOrAfter(previousDateBooked);
+                var previousMaterialPrice = this.results.GetGridValue(i - 1, 6);
+                this.results.GetGridValue(1, 6).Should().BeGreaterOrEqualTo(previousMaterialPrice ?? 0);
             }
         }
     }
