@@ -35,6 +35,7 @@ import suppliersActions from '../actions/suppliersActions';
 import partsActions from '../actions/partsActions';
 import poReqActions from '../actions/purchaseOrderReqActions';
 import poReqApplicationStateActions from '../actions/purchaseOrderReqApplicationStateActions';
+import purchaseOrderReqStatesActions from '../actions/purchaseOrderReqStatesActions';
 
 import history from '../history';
 import config from '../config';
@@ -77,6 +78,9 @@ function POReqUtility({ creating }) {
     const searchCountries = searchTerm => dispatch(countriesActions.search(searchTerm));
 
     const currencies = useSelector(state => collectionSelectorHelpers.getItems(state.currencies));
+    const reqStates = useSelector(state =>
+        collectionSelectorHelpers.getItems(state.purchaseOrderReqStates)
+    );
 
     const nominalsSearchItems = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.nominals)
@@ -92,13 +96,16 @@ function POReqUtility({ creating }) {
         requestedBy: {
             id: currentUserId,
             fullName: currentUserName
-        }
+        },
+        reqNumber: 'creating'
     });
     const snackbarVisible = useSelector(state =>
         itemSelectorHelpers.getSnackbarVisible(state.purchaseOrderReq)
     );
     const loading = useSelector(state =>
-        itemSelectorHelpers.getItemLoading(state.purchaseOrderReq)
+        creating
+            ? itemSelectorHelpers.getApplicationStateLoading(state.purchaseOrderReqApplicationState)
+            : itemSelectorHelpers.getItemLoading(state.purchaseOrderReq)
     );
     const item = useSelector(state => itemSelectorHelpers.getItem(state.purchaseOrderReq));
     const clearErrors = () => dispatch(poReqActions.clearErrorsForItem());
@@ -114,6 +121,7 @@ function POReqUtility({ creating }) {
 
     useEffect(() => dispatch(currenciesActions.fetch()), [dispatch]);
     useEffect(() => dispatch(employeesActions.fetch()), [dispatch]);
+    useEffect(() => dispatch(purchaseOrderReqStatesActions.fetch()), [dispatch]);
 
     const { id } = useParams();
     useEffect(() => {
@@ -148,8 +156,6 @@ function POReqUtility({ creating }) {
         }));
     };
 
-    const reqStates = [{ id: 0, displayText: 'todo', state: 'todo' }];
-
     const nominalAccountsTable = {
         totalItemCount: nominalsSearchItems.length,
         rows: nominalsSearchItems?.map(nom => ({
@@ -180,7 +186,8 @@ function POReqUtility({ creating }) {
 
     const inputIsInvalid = () => !req.reqDate?.length && !req.supplier?.supplierId?.length; //todo work out which fields are required for save and add 'em here
 
-    const canSave = () => editStatus !== 'view' && editingAllowed && !inputIsInvalid();
+    const canSave = () =>
+        editStatus !== 'view' && editingAllowed && !inputIsInvalid() && req !== item;
 
     const handleAuthorise = () => {
         setEditStatus('edit');
@@ -271,7 +278,11 @@ function POReqUtility({ creating }) {
                                 >
                                     <Close />
                                 </IconButton>
-                                <div className={classes.centerTextInDialog}>
+                                <Typography
+                                    variant="body1"
+                                    gutterBottom
+                                    className={classes.centerTextInDialog}
+                                >
                                     <p>
                                         <b>
                                             Order is: Draft --{'>'} Authorise Wait --{'>'} Finance
@@ -302,7 +313,7 @@ function POReqUtility({ creating }) {
                                         <b>CANCELLED</b> - Requistion has been cancelled without
                                         ever turning into an order.
                                     </p>
-                                </div>
+                                </Typography>
                             </div>
                         </Dialog>
 
@@ -322,16 +333,20 @@ function POReqUtility({ creating }) {
                         </Grid>
                         <Grid item xs={3}>
                             <Dropdown
-                                items={reqStates.map(e => ({
-                                    displayText: `${e.state}`,
-                                    id: parseInt(e.id, 10)
-                                }))}
+                                // todo onchange - check blue_req_pack.check_br_state_change(originalstate, newstate) and return warning if not allowed
+                                items={reqStates
+                                    ?.sort((a, b) => a.displayOrder - b.displayOrder)
+                                    .map(e => ({
+                                        displayText: e.state,
+                                        id: e.State
+                                    }))}
                                 propertyName="state"
                                 label="State"
                                 value={req.state}
                                 onChange={handleFieldChange}
                                 disabled={!editingAllowed}
                                 fullwidth
+                                allowNoValue={false}
                             />
                         </Grid>
                         <Grid item xs={2}>
@@ -870,7 +885,8 @@ function POReqUtility({ creating }) {
                                         requestedBy: {
                                             id: currentUserId,
                                             fullName: currentUserName
-                                        }
+                                        },
+                                        reqNumber: 'creating'
                                     });
                                 } else {
                                     setReq(item);

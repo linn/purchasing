@@ -53,6 +53,7 @@ import departments from './departments';
 import nominals from './nominals';
 import purchaseOrder from './purchaseOrder';
 import purchaseOrders from './purchaseOrders';
+import purchaseOrderReqStates from './purchaseOrderReqStates';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -90,6 +91,7 @@ const rootReducer = history =>
         purchaseOrder,
         purchaseOrderReq,
         purchaseOrderReqs,
+        purchaseOrderReqStates,
         purchaseOrders,
         putSupplierOnHold,
         router: connectRouter(history),

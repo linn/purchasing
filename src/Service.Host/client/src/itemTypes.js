@@ -186,3 +186,9 @@ export const purchaseOrderReqs = new ItemType(
     'PURCHASE_ORDER_REQS',
     '/purchasing/purchase-orders/reqs'
 );
+
+export const purchaseOrderReqStates = new ItemType(
+    'purchaseOrderReqStates',
+    'PURCHASE_ORDER_REQ_STATES',
+    '/purchasing/purchase-orders/reqs/states'
+);

@@ -146,3 +146,7 @@ export const purchaseOrdersActionTypes = makeActionTypes(
     itemTypes.purchaseOrders.actionType,
     false
 );
+
+export const purchaseOrderReqStatesActionTypes = makeActionTypes(
+    itemTypes.purchaseOrderReqStates.actionType
+);
