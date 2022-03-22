@@ -55,7 +55,8 @@
                 .AddTransient<IBuilder<SupplierGroup>, SupplierGroupResourceBuilder>()
                 .AddTransient<IBuilder<SupplierContact>, SupplierContactResourceBuilder>()
                 .AddTransient<IBuilder<PlCreditDebitNote>, PlCreditDebitNoteResourceBuilder>()
-                .AddTransient<IBuilder<PurchaseOrderReq>, PurchaseOrderReqResourceBuilder>();
+                .AddTransient<IBuilder<PurchaseOrderReq>, PurchaseOrderReqResourceBuilder>()
+                .AddTransient<IBuilder<PurchaseOrderReqState>, PurchaseOrderReqStateResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -87,7 +88,8 @@
                 .AddTransient<IPlCreditDebitNoteEmailService, PlCreditDebitNoteEmailService>()
                 .AddTransient<IBulkLeadTimesUpdaterService, BulkLeadTimesUpdaterService>()
                 .AddTransient<ISpendsReportFacadeService, SpendsReportFacadeService>()
-                .AddTransient<IFacadeResourceFilterService<PurchaseOrderReq, int, PurchaseOrderReqResource, PurchaseOrderReqResource, PurchaseOrderReqSearchResource>, PurchaseOrderReqFacadeService>();
+                .AddTransient<IFacadeResourceFilterService<PurchaseOrderReq, int, PurchaseOrderReqResource, PurchaseOrderReqResource, PurchaseOrderReqSearchResource>, PurchaseOrderReqFacadeService>()
+                .AddTransient<IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource>, PurchaseOrderReqStateFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)

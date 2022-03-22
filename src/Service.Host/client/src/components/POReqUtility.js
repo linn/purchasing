@@ -7,6 +7,9 @@ import Button from '@mui/material/Button';
 import { useParams } from 'react-router-dom';
 import Dialog from '@mui/material/Dialog';
 import IconButton from '@mui/material/IconButton';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import EditOffIcon from '@mui/icons-material/EditOff';
+import Tooltip from '@mui/material/Tooltip';
 import Close from '@mui/icons-material/Close';
 import { makeStyles } from '@mui/styles';
 import {
@@ -243,7 +246,7 @@ function POReqUtility({ creating }) {
                 {loading ? (
                     <Loading />
                 ) : (
-                    <Grid container spacing={1} justifyContent="center">
+                    <Grid container spacing={2} justifyContent="center">
                         <SnackbarMessage
                             visible={snackbarVisible}
                             onClose={() => dispatch(poReqActions.setSnackbarVisible(false))}
@@ -307,7 +310,7 @@ function POReqUtility({ creating }) {
                             <Typography variant="h6">Purchase Order Req Utility</Typography>
                         </Grid>
 
-                        <Grid item xs={4}>
+                        <Grid item xs={2}>
                             <InputField
                                 fullWidth
                                 value={req.reqNumber}
@@ -317,7 +320,7 @@ function POReqUtility({ creating }) {
                                 disabled
                             />
                         </Grid>
-                        <Grid item xs={4}>
+                        <Grid item xs={3}>
                             <Dropdown
                                 items={reqStates.map(e => ({
                                     displayText: `${e.state}`,
@@ -332,11 +335,15 @@ function POReqUtility({ creating }) {
                             />
                         </Grid>
                         <Grid item xs={2}>
-                            <Button onClick={() => setExplainDialogOpen(true)}>
+                            <Button
+                                onClick={() => setExplainDialogOpen(true)}
+                                color="primary"
+                                variant="outlined"
+                            >
                                 explain states
                             </Button>
                         </Grid>
-                        <Grid item xs={2}>
+                        <Grid item xs={3}>
                             {/* <DatePicker
                              
                                 value={req.reqDate?.toString()}
@@ -354,6 +361,25 @@ function POReqUtility({ creating }) {
                                 disabled={!editingAllowed}
                             />
                         </Grid>
+                        <Grid item xs={1}>
+                            {editingAllowed ? (
+                                <Tooltip
+                                    title={`You can ${
+                                        creating ? 'create' : 'edit'
+                                    } purchase order reqs`}
+                                >
+                                    <ModeEditIcon color="primary" />
+                                </Tooltip>
+                            ) : (
+                                <Tooltip
+                                    title={`You do not have permission to ${
+                                        creating ? 'create' : 'edit'
+                                    } purchase order reqs`}
+                                >
+                                    <EditOffIcon color="secondary" />
+                                </Tooltip>
+                            )}
+                        </Grid>
 
                         <Grid item xs={5} container spacing={1}>
                             <Grid item xs={12}>
@@ -370,12 +396,13 @@ function POReqUtility({ creating }) {
                                         dispatch(partsActions.search(searchTerm))
                                     }
                                     clearSearch={() => dispatch(partsActions.clearSearch)}
-                                    value={`${req.partNumber}`}
+                                    value={req.partNumber ? `${req.partNumber}` : null}
                                     modal
                                     links={false}
                                     debounce={1000}
                                     minimumSearchTermLength={2}
                                     disabled={!editingAllowed}
+                                    placeholder="click to set part"
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -386,6 +413,7 @@ function POReqUtility({ creating }) {
                                     propertyName="qty"
                                     onChange={handleFieldChange}
                                     disabled={!editingAllowed}
+                                    type="number"
                                 />
                             </Grid>
                             <Grid item xs={4}>
@@ -443,6 +471,7 @@ function POReqUtility({ creating }) {
                                 propertyName="unitPrice"
                                 onChange={handleFieldChange}
                                 disabled={!editingAllowed}
+                                type="number"
                             />
                         </Grid>
                         <Grid item xs={3}>
@@ -454,6 +483,7 @@ function POReqUtility({ creating }) {
                                 propertyName="carriage"
                                 onChange={handleFieldChange}
                                 disabled={!editingAllowed}
+                                type="number"
                             />
                         </Grid>
                         <Grid item xs={3}>
@@ -465,6 +495,7 @@ function POReqUtility({ creating }) {
                                 propertyName="totalReqPrice"
                                 onChange={handleFieldChange}
                                 disabled={!editingAllowed}
+                                type="number"
                             />
                         </Grid>
 
@@ -477,7 +508,9 @@ function POReqUtility({ creating }) {
                                 modal
                                 propertyName="supplierId"
                                 items={suppliersSearchResults}
-                                value={`${req.supplier?.id}: ${req.supplier?.name}`}
+                                value={
+                                    req.supplier ? `${req.supplier.id}: ${req.supplier.name}` : null
+                                }
                                 loading={suppliersSearchLoading}
                                 fetchItems={searchSuppliers}
                                 links={false}

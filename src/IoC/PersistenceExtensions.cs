@@ -108,7 +108,9 @@
                 .AddTransient<IRepository<Organisation, int>, EntityFrameworkRepository<Organisation, int>>(
                     r => new EntityFrameworkRepository<Organisation, int>(
                         r.GetService<ServiceDbContext>()?.Organisations))
-                .AddTransient<IRepository<PurchaseOrderReq, int>, PurchaseOrderReqRepository>();
+                .AddTransient<IRepository<PurchaseOrderReq, int>, PurchaseOrderReqRepository>()
+                .AddTransient<IRepository<PurchaseOrderReqState, string>, EntityFrameworkRepository<PurchaseOrderReqState, string>>(
+                    r => new EntityFrameworkRepository<PurchaseOrderReqState, string>(r.GetService<ServiceDbContext>()?.PurchaseOrderReqStates));
         }
     }
 }

@@ -12,8 +12,7 @@ import {
     Loading,
     utilities,
     CreateButton,
-    collectionSelectorHelpers,
-    useSearch
+    collectionSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import Divider from '@mui/material/Divider';
 import { Link as RouterLink } from 'react-router-dom';
@@ -58,28 +57,20 @@ function POReqSearch() {
 
     const createUrl = utilities.getHref(applicationState, 'create');
 
-    // useEffect(() => {
-    //     if (
-    //         options.reqNumber.length > 2 ||
-    //         options.part.length > 2 ||
-    //         options.supplier.length > 2
-    //     ) {
-    //         dispatch(
-    //             purchaseOrderReqsActions.searchWithOptions(
-    //                 '',
-    //                 `&reqNumber=${options.reqNumber}&part=${options.part}&supplier=${options.supplier}`
-    //             )
-    //         );
-    //     }
-    // }, [dispatch, options.reqNumber, options.part, options.supplier]);
-
-    useSearch(
-        () => dispatch(purchaseOrderReqsActions.searchWithOptions),
-        '',
-        null,
-        '',
-        `&reqNumber=${options.reqNumber}&part=${options.part}&supplier=${options.supplier}`
-    );
+    useEffect(() => {
+        if (
+            options.reqNumber.length > 2 ||
+            options.part.length > 2 ||
+            options.supplier.length > 2
+        ) {
+            dispatch(
+                purchaseOrderReqsActions.searchWithOptions(
+                    '',
+                    `&reqNumber=${options.reqNumber}&part=${options.part}&supplier=${options.supplier}`
+                )
+            );
+        }
+    }, [dispatch, options.reqNumber, options.part, options.supplier]);
 
     return (
         <Page history={history} homeUrl={config.appRoot} width="m">
@@ -88,7 +79,7 @@ function POReqSearch() {
                     <Typography variant="h4">Purchase Order Reqs Search</Typography>
                 </Grid>
                 <Grid item xs={2}>
-                    <CreateButton createUrl={createUrl} disabled={!createUrl} />
+                    <CreateButton createUrl={createUrl ?? ''} disabled={!createUrl} />
                 </Grid>
                 <Grid item xs={4}>
                     <InputField

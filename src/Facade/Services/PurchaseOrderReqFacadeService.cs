@@ -50,9 +50,9 @@
             PurchaseOrderReqSearchResource searchResource)
         {
             return x => (string.IsNullOrWhiteSpace(searchResource.ReqNumber) || x.ReqNumber.ToString().Contains(searchResource.ReqNumber))
-                && (string.IsNullOrWhiteSpace(searchResource.Part) || x.PartNumber.Contains(searchResource.Part))
+                && (string.IsNullOrWhiteSpace(searchResource.Part) || x.PartNumber.ToUpper().Contains(searchResource.Part.ToUpper()))
                 && (string.IsNullOrWhiteSpace(searchResource.Supplier) || x.SupplierId.ToString().Contains(searchResource.Supplier)
-                    || x.SupplierName.ToString().Contains(searchResource.Supplier));
+                    || x.SupplierName.ToUpper().ToString().Contains(searchResource.Supplier.ToUpper()));
         }
 
         protected override void SaveToLogTable(

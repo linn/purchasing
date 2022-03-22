@@ -37,6 +37,8 @@
 
         private readonly IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource> unitsOfMeasureService;
 
+        private readonly IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource> purchaseOrderReqStateService;
+
         public PurchaseOrderModule(
             IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource> currencyService,
             IFacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource> orderMethodService,
@@ -45,7 +47,8 @@
             IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource> packagingGroupService,
             IFacadeResourceService<Tariff, int, TariffResource, TariffResource> tariffService,
             IFacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource> purchaseOrderFacadeService,
-            IFacadeResourceFilterService<PurchaseOrderReq, int, PurchaseOrderReqResource, PurchaseOrderReqResource, PurchaseOrderReqSearchResource> purchaseOrderReqFacadeService)
+            IFacadeResourceFilterService<PurchaseOrderReq, int, PurchaseOrderReqResource, PurchaseOrderReqResource, PurchaseOrderReqSearchResource> purchaseOrderReqFacadeService,
+            IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource> purchaseOrderReqStateService)
         {
             this.currencyService = currencyService;
             this.orderMethodService = orderMethodService;
@@ -55,6 +58,7 @@
             this.tariffService = tariffService;
             this.purchaseOrderFacadeService = purchaseOrderFacadeService;
             this.purchaseOrderReqFacadeService = purchaseOrderReqFacadeService;
+            this.purchaseOrderReqStateService = purchaseOrderReqStateService;
 
             this.Get("/purchasing/purchase-orders/{orderNumber:int}/allow-over-book/", this.GetApp);
             this.Get("/purchasing/purchase-orders/allow-over-book", this.GetApp);
@@ -69,6 +73,8 @@
             this.Put("/purchasing/purchase-orders/{orderNumber:int}", this.UpdatePurchaseOrder);
 
             this.Get("/purchasing/purchase-orders/reqs", this.SearchReqs);
+            this.Get("/purchasing/purchase-orders/reqs/states", this.GetReqStates);
+
             this.Get("/purchasing/purchase-orders/reqs/application-state", this.GetReqApplicationState);
             this.Get("/purchasing/purchase-orders/reqs/{id:int}", this.GetReq);
             this.Put("/purchasing/purchase-orders/reqs/{id:int}", this.UpdateReq);
@@ -105,6 +111,13 @@
         private async Task GetOrderMethods(HttpRequest req, HttpResponse res)
         {
             var result = this.orderMethodService.GetAll();
+
+            await res.Negotiate(result);
+        }
+
+        private async Task GetReqStates(HttpRequest req, HttpResponse res)
+        {
+            var result = this.purchaseOrderReqStateService.GetAll();
 
             await res.Negotiate(result);
         }

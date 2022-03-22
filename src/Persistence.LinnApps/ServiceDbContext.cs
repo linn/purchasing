@@ -87,6 +87,8 @@
 
         public DbSet<PurchaseOrderReq> PurchaseOrderReqs { get; set; }
 
+        public DbSet<PurchaseOrderReqState> PurchaseOrderReqStates { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -134,6 +136,7 @@
             this.BuildPurchaseOrderReqs(builder);
             this.BuildDepartments(builder);
             this.BuildNominals(builder);
+            this.BuildPurchaseOrderReqStates(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -665,7 +668,8 @@
 
         private void BuildUnacknowledgedOrderSuppliers(ModelBuilder builder)
         {
-            var entity = builder.Entity<SuppliersWithUnacknowledgedOrders>().ToTable("UNACKNOWLEDGED_ORDER_SUPPLIERS").HasNoKey();
+            var entity = builder.Entity<SuppliersWithUnacknowledgedOrders>().ToTable("UNACKNOWLEDGED_ORDER_SUPPLIERS")
+                .HasNoKey();
             entity.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID");
             entity.Property(e => e.SupplierName).HasColumnName("SUPPLIER_NAME").HasMaxLength(50);
             entity.Property(e => e.SupplierGroupId).HasColumnName("SUPPLIER_GROUP_ID");
@@ -676,7 +680,8 @@
 
         private void BuildUnacknowledgedOrderSupplierGroups(ModelBuilder builder)
         {
-            var entity = builder.Entity<SupplierGroupsWithUnacknowledgedOrders>().ToTable("UNACK_ORDER_SUPPLIER_GROUPS").HasNoKey();
+            var entity = builder.Entity<SupplierGroupsWithUnacknowledgedOrders>().ToTable("UNACK_ORDER_SUPPLIER_GROUPS")
+                .HasNoKey();
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.Name).HasColumnName("NAME").HasMaxLength(50);
             entity.Property(e => e.SupplierGroupId).HasColumnName("SUPPLIER_GROUP_ID");
@@ -795,6 +800,16 @@
             e.HasKey(d => d.DepartmentCode);
             e.Property(d => d.DepartmentCode).HasColumnName("DEPARTMENT_CODE").HasMaxLength(10);
             e.Property(d => d.Description).HasColumnName("DESCRIPTION").HasMaxLength(50);
+        }
+
+        private void BuildPurchaseOrderReqStates(ModelBuilder builder)
+        {
+            var e = builder.Entity<PurchaseOrderReqState>().ToTable("BLUE_REQ_STATES");
+            e.HasKey(d => d.State);
+            e.Property(d => d.State).HasColumnName("BR_STATE").HasMaxLength(20);
+            e.Property(d => d.Description).HasColumnName("DESCRIPTION").HasMaxLength(200);
+            e.Property(d => d.DisplayOrder).HasColumnName("DISPLAY_ORDER");
+            e.Property(d => d.IsFinalState).HasColumnName("FINAL_STATE").HasMaxLength(1);
         }
     }
 }
