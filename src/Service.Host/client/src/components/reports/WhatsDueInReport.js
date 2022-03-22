@@ -19,6 +19,7 @@ import suppliersActions from '../../actions/suppliersActions';
 import { suppliers, vendorManagers } from '../../itemTypes';
 import { whatsDueInReport } from '../../reportTypes';
 import vendorManagersActions from '../../actions/vendorManagersActions';
+import whatsDueInReportActions from '../../actions/whatsDueInReportActions';
 
 function WhatsDueInReport() {
     const dispatch = useDispatch();
@@ -66,7 +67,7 @@ function WhatsDueInReport() {
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
                 <Grid item xs={12}>
-                    <Title text="Parts Received Report" />
+                    <Title text="Whats Due In Report" />
                 </Grid>
                 {vendorManagersLoading ? (
                     <Grid item xs={12}>
@@ -154,7 +155,7 @@ function WhatsDueInReport() {
                                 color="primary"
                                 onClick={() =>
                                     dispatch(
-                                        whatsDueInReport.fetchReport({
+                                        whatsDueInReportActions.fetchReport({
                                             ...options,
                                             fromDate: options.fromDate.toISOString(),
                                             toDate: options.toDate.toISOString()

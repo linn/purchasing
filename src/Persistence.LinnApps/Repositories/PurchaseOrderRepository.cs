@@ -30,7 +30,10 @@
 
         public override IQueryable<PurchaseOrder> FindAll()
         {
-            return this.serviceDbContext.PurchaseOrders.Include(a => a.Details);
+            return this.serviceDbContext.PurchaseOrders
+                .Include(o => o.Details).ThenInclude(d => d.PurchaseDeliveries)
+                .Include(o => o.Details).ThenInclude(d => d.Part)
+                .Include(o => o.Supplier);
         }
 
         public override PurchaseOrder FindById(int key)
