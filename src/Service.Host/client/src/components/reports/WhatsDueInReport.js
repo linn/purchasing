@@ -6,7 +6,6 @@ import {
     Title,
     Typeahead,
     collectionSelectorHelpers,
-    CheckboxWithLabel,
     Loading,
     Dropdown,
     DatePicker,
@@ -136,19 +135,7 @@ function WhatsDueInReport() {
                                 onChange={newVal => setOptions(o => ({ ...o, toDate: newVal }))}
                             />
                         </Grid>
-                        <Grid item xs={6} />
-                        <Grid item xs={3}>
-                            <CheckboxWithLabel
-                                label="Include Negative Values"
-                                checked={options.includeNegativeValues}
-                                onChange={() =>
-                                    setOptions(o => ({
-                                        ...o,
-                                        includeNegativeValues: !o.includeNegativeValues
-                                    }))
-                                }
-                            />
-                        </Grid>
+                        <Grid item xs={3} />
                         <Grid item xs={3}>
                             <Button
                                 variant="contained"
