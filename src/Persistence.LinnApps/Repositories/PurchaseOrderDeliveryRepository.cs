@@ -24,7 +24,8 @@
         {
             return this.serviceDbContext.PurchaseOrderDeliveries.AsNoTracking()
                .Include(d => d.PurchaseOrderDetail).ThenInclude(plod => plod.Part)
-              .Include(d => d.PurchaseOrderDetail).ThenInclude(plod => plod.PurchaseOrder).Where(expression);
+               .Include(d => d.PurchaseOrderDetail).ThenInclude(plod => plod.PurchaseOrder)
+               .ThenInclude(plo => plo.Supplier).ThenInclude(s => s.VendorManager).Where(expression);
         }
     }
 }
