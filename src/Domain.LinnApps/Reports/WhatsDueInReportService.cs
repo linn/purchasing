@@ -156,7 +156,6 @@
                         ColumnId = "TotalPrice",
                         Value = datum.QtyOutstanding * datum.UnitPrice ?? 0
                     });
-               
             }
             reportLayout.SetGridData(values);
             return reportLayout.GetResultsModel();
