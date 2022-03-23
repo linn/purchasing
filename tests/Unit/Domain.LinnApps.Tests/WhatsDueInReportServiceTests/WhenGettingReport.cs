@@ -35,8 +35,8 @@
                 var dataRows = this.Repository.FilterBy(x => true);
                 var dataRow = dataRows.First(
                     d => d.OrderNumber.ToString() == this.result.GetGridTextValue(resultRow.RowIndex, 0)
-                         && d.OrderLine == this.result.GetGridValue(resultRow.RowIndex, 1, false)
-                         && d.DeliverySeq == this.result.GetGridValue(resultRow.RowIndex, 2, false));
+                         && d.OrderLine.ToString() == this.result.GetGridTextValue(resultRow.RowIndex, 1)
+                         && d.DeliverySeq.ToString() == this.result.GetGridTextValue(resultRow.RowIndex, 2));
 
                 this.result.GetGridTextValue(resultRow.RowIndex, 4).Should().Be(
                     dataRow.DateAdvised == null
@@ -53,8 +53,8 @@
                 var dataRows = this.Repository.FilterBy(x => true);
                 var dataRow = dataRows.First(
                     d => d.OrderNumber.ToString() == this.result.GetGridTextValue(resultRow.RowIndex, 0)
-                         && d.OrderLine == this.result.GetGridValue(resultRow.RowIndex, 1, false)
-                         && d.DeliverySeq == this.result.GetGridValue(resultRow.RowIndex, 2, false));
+                         && d.OrderLine.ToString() == this.result.GetGridTextValue(resultRow.RowIndex, 1)
+                         && d.DeliverySeq.ToString() == this.result.GetGridTextValue(resultRow.RowIndex, 2));
 
                 this.result.GetGridValue(resultRow.RowIndex, 6).Should()
                     .Be(dataRow.QuantityOutstanding * dataRow.BaseOurUnitPrice); // should be product of price and qty for every row

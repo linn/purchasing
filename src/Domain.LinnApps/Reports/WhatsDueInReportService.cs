@@ -92,8 +92,8 @@
                 new List<AxisDetailsModel>
                     {
                         new AxisDetailsModel("OrderNumber", "Order",  GridDisplayType.TextValue),
-                        new AxisDetailsModel("OrderLine", "Order Line",  GridDisplayType.Value) { DecimalPlaces = 0 },
-                        new AxisDetailsModel("DeliverySequence", "Del", GridDisplayType.Value) { DecimalPlaces = 0 },
+                        new AxisDetailsModel("OrderLine", "Order Line",  GridDisplayType.TextValue),
+                        new AxisDetailsModel("DeliverySequence", "Del", GridDisplayType.TextValue),
                         new AxisDetailsModel("SupplierName", "Supplier", GridDisplayType.TextValue),
                         new AxisDetailsModel("ExpectedDate", "Expected", GridDisplayType.TextValue),
                         new AxisDetailsModel("QtyOutstanding", "Qty", GridDisplayType.Value) { DecimalPlaces = 0 },
@@ -118,14 +118,14 @@
                         {
                             RowId = currentRowId,
                             ColumnId = "OrderLine",
-                            Value = datum.OrderLine
+                            TextDisplay = datum.OrderLine.ToString()
                         });
                 values.Add(
                     new CalculationValueModel
                         {
                             RowId = currentRowId,
                             ColumnId = "DeliverySequence",
-                            Value = datum.DeliverySequence
+                            TextDisplay = datum.DeliverySequence.ToString()
                     });
                 values.Add(
                     new CalculationValueModel
