@@ -28,5 +28,7 @@
         public Currency Currency { get; set; }
 
         public string OrderContactName { get; set; }
+
+        public string OrderMethod { get; set; }
     }
 }

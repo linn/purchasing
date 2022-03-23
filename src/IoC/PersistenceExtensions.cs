@@ -80,7 +80,8 @@
                     => new EntityFrameworkRepository<TqmsJobref, string>(r.GetService<ServiceDbContext>()?.TqmsJobrefs))
                 .AddTransient<IQueryRepository<PartsReceivedViewModel>, EntityFrameworkQueryRepository<PartsReceivedViewModel>>(
                     r => new EntityFrameworkQueryRepository<PartsReceivedViewModel>(r.GetService<ServiceDbContext>()
-                        ?.TqmsView));
+                        ?.TqmsView))
+                .AddTransient<IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey>, PurchaseOrderDeliveryRepository>();
         }
     }
 }

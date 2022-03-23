@@ -41,3 +41,9 @@ export const partsReceivedReport = new ItemType(
     'PARTS_RECEIVED_REPORT',
     '/purchasing/reports/parts-received'
 );
+
+export const whatsDueInReport = new ItemType(
+    'whatsDueInReport',
+    'WHATS_DUE_IN_REPORT',
+    '/purchasing/reports/whats-due-in'
+);

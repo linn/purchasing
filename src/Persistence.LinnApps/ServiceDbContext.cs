@@ -91,6 +91,8 @@
 
         public DbSet<PurchaseOrderReq> PurchaseOrderReqs { get; set; }
 
+        public DbSet<PurchaseOrderDelivery> PurchaseOrderDeliveries { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -475,7 +477,8 @@
             entity.HasOne(o => o.Currency).WithMany().HasForeignKey("CURR_CODE");
             entity.Property(o => o.OrderContactName).HasColumnName("CONTACT_NAME");
             entity.Property(o => o.OrderContactName).HasColumnName("CONTACT_NAME");
-            entity.HasMany(o => o.Details).WithOne().HasForeignKey(d => d.OrderNumber);
+            entity.HasMany(o => o.Details).WithOne(d => d.PurchaseOrder).HasForeignKey(d => d.OrderNumber);
+            entity.Property(o => o.OrderMethod).HasColumnName("PL_ORDER_METHOD");
         }
 
         private void BuildPurchaseOrderDetails(ModelBuilder builder)
@@ -488,11 +491,12 @@
             entity.Property(o => o.RohsCompliant).HasColumnName("ROHS_COMPLIANT");
             entity.Property(o => o.OurQty).HasColumnName("OUR_QTY");
             entity.Property(o => o.SuppliersDesignation).HasColumnName("SUPPLIERS_DESIGNATION").HasMaxLength(2000);
-            entity.HasMany(d => d.PurchaseDeliveries).WithOne(o => o.PurchaseOrderDetail)
+            entity.HasMany(d => d.PurchaseDeliveries).WithOne()
                 .HasForeignKey(o => new { o.OrderNumber, o.OrderLine });
             entity.Property(o => o.BaseNetTotal).HasColumnName("BASE_NET_TOTAL").HasMaxLength(18);
             entity.Property(o => o.NetTotalCurrency).HasColumnName("NET_TOTAL").HasMaxLength(18);
-            entity.HasOne(o => o.Part).WithMany().HasForeignKey("PART_NUMBER");
+            entity.HasOne(o => o.Part).WithMany(p => p.PurchaseOrderDetails).HasForeignKey("PART_NUMBER");
+            entity.Property(o => o.StockPoolCode).HasColumnName("STOCK_POOL_CODE");
         }
 
         private void BuildPurchaseOrderDeliveries(ModelBuilder builder)
@@ -513,6 +517,9 @@
 
             entity.HasOne(d => d.PurchaseOrderDetail).WithMany(o => o.PurchaseDeliveries);
             entity.Property(o => o.NetTotal).HasColumnName("NET_TOTAL").HasMaxLength(18);
+            entity.Property(d => d.QuantityOutstanding).HasColumnName("QTY_OUTSTANDING");
+            entity.Property(d => d.CallOffDate).HasColumnName("CALL_OFF_DATE");
+            entity.Property(d => d.BaseOurUnitPrice).HasColumnName("BASE_OUR_UNIT_PRICE");
         }
 
         private void BuildSigningLimits(ModelBuilder builder)
