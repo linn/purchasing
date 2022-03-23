@@ -11,11 +11,6 @@
     {
         public PurchaseOrderReqStateResource Build(PurchaseOrderReqState entity, IEnumerable<string> claims)
         {
-            if (entity == null)
-            {
-                return new PurchaseOrderReqStateResource();
-            }
-
             return new PurchaseOrderReqStateResource
                        {
                            State = entity.State,
