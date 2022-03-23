@@ -129,7 +129,7 @@ function WhatsDueInReport() {
                                 label="To Date"
                                 propertyName="toDate"
                                 value={options.toDate}
-                                maxDate={new Date()}
+                                maxDate="01/01/2100"
                                 minDate={options.fromDate?.toString() || '01/01/2000'}
                                 onChange={newVal => setOptions(o => ({ ...o, toDate: newVal }))}
                             />
