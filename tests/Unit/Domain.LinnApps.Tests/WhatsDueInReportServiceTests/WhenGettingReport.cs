@@ -34,7 +34,7 @@
             {
                 var dataRows = this.Repository.FilterBy(x => true);
                 var dataRow = dataRows.First(
-                    d => d.OrderNumber == this.result.GetGridValue(resultRow.RowIndex, 0, false)
+                    d => d.OrderNumber.ToString() == this.result.GetGridTextValue(resultRow.RowIndex, 0)
                          && d.OrderLine == this.result.GetGridValue(resultRow.RowIndex, 1, false)
                          && d.DeliverySeq == this.result.GetGridValue(resultRow.RowIndex, 2, false));
 
@@ -52,7 +52,7 @@
             {
                 var dataRows = this.Repository.FilterBy(x => true);
                 var dataRow = dataRows.First(
-                    d => d.OrderNumber == this.result.GetGridValue(resultRow.RowIndex, 0, false)
+                    d => d.OrderNumber.ToString() == this.result.GetGridTextValue(resultRow.RowIndex, 0)
                          && d.OrderLine == this.result.GetGridValue(resultRow.RowIndex, 1, false)
                          && d.DeliverySeq == this.result.GetGridValue(resultRow.RowIndex, 2, false));
 

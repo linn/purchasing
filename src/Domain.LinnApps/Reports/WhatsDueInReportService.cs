@@ -91,7 +91,7 @@
                 null,
                 new List<AxisDetailsModel>
                     {
-                        new AxisDetailsModel("OrderNumber", "Order",  GridDisplayType.Value) { DecimalPlaces = 0 },
+                        new AxisDetailsModel("OrderNumber", "Order",  GridDisplayType.Total),
                         new AxisDetailsModel("OrderLine", "Order Line",  GridDisplayType.Value) { DecimalPlaces = 0 },
                         new AxisDetailsModel("DeliverySequence", "Del", GridDisplayType.Value) { DecimalPlaces = 0 },
                         new AxisDetailsModel("SupplierName", "Supplier", GridDisplayType.TextValue),
@@ -110,7 +110,7 @@
                     {
                         RowId = currentRowId,
                         ColumnId = "OrderNumber",
-                        Value = datum.OrderNumber
+                        TextDisplay = datum.OrderNumber.ToString()
                     });
 
                 values.Add(
