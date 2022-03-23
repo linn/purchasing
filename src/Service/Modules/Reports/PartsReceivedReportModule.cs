@@ -48,6 +48,7 @@
             if (string.IsNullOrEmpty(options.ToDate))
             {
                 await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
+                return;
             }
             
             var results = this.reportFacadeService.GetReport(options);
