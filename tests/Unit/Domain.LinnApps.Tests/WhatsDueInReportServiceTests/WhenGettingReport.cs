@@ -66,8 +66,8 @@
         {
             for (var i = 1; i < this.result.Rows.Count(); i++)
             {
-                var previousOrderNumber = this.result.GetGridValue(i - 1, 0);
-                this.result.GetGridValue(i - 1, 0).Should().BeGreaterOrEqualTo(previousOrderNumber ?? 0);
+                var previousOrderNumber = this.result.GetGridTextValue(i - 1, 0);
+                Assert.IsTrue(string.CompareOrdinal(this.result.GetGridTextValue(i, 0), previousOrderNumber) > 0);
             }
         }
     }

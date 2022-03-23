@@ -47,11 +47,9 @@ function WhatsDueInReport() {
     defaultStartDate.setMonth(defaultStartDate.getMonth() - 1);
 
     const [options, setOptions] = useState({
-        jobref: '',
         fromDate: defaultStartDate,
         toDate: new Date(),
-        orderBy: 'DATE BOOKED',
-        includeNegativeValues: true
+        orderBy: 'ORDER NUMBER'
     });
 
     const handleOptionChange = (propertyName, newValue) => {
@@ -74,11 +72,11 @@ function WhatsDueInReport() {
                     </Grid>
                 ) : (
                     <>
-                        <Grid item xs={4}>
+                        <Grid item xs={3}>
                             <Dropdown
                                 label="Vendor Manager  (leave blank for all)"
                                 propertyName="vendorManager"
-                                value={options.jobref}
+                                value={options.vendorManager}
                                 onChange={handleOptionChange}
                                 items={vendorManagersOptions.map(v => ({
                                     id: v.vmId,
@@ -87,7 +85,7 @@ function WhatsDueInReport() {
                                 allowNoValue
                             />
                         </Grid>
-                        <Grid item xs={4}>
+                        <Grid item xs={3}>
                             <Typeahead
                                 label="Supplier (leave blank for all)"
                                 title="Search for a supplier"
@@ -105,7 +103,7 @@ function WhatsDueInReport() {
                                 minimumSearchTermLength={2}
                             />
                         </Grid>
-                        <Grid item xs={4}>
+                        <Grid item xs={3}>
                             <Dropdown
                                 label="Order By"
                                 propertyName="orderBy"
@@ -114,6 +112,7 @@ function WhatsDueInReport() {
                                 items={['EXPECTED DATE', 'ORDER NUMBER', 'VALUE', 'SUPPLIER']}
                             />
                         </Grid>
+                        <Grid item xs={3} />
 
                         <Grid item xs={3}>
                             <DatePicker
@@ -135,8 +134,10 @@ function WhatsDueInReport() {
                                 onChange={newVal => setOptions(o => ({ ...o, toDate: newVal }))}
                             />
                         </Grid>
-                        <Grid item xs={3} />
-                        <Grid item xs={3}>
+                        <Grid item xs={6} />
+                        <Grid item xs={8} />
+
+                        <Grid item xs={4}>
                             <Button
                                 variant="contained"
                                 color="primary"
@@ -150,7 +151,20 @@ function WhatsDueInReport() {
                                     )
                                 }
                             >
-                                Run
+                                Run Report
+                            </Button>
+                            <Button
+                                color="primary"
+                                variant="outlined"
+                                onClick={() =>
+                                    setOptions({
+                                        fromDate: defaultStartDate,
+                                        toDate: new Date(),
+                                        orderBy: 'ORDER NUMBER'
+                                    })
+                                }
+                            >
+                                Reset Filters
                             </Button>
                         </Grid>
                     </>

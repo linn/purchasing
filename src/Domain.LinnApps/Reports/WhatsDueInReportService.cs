@@ -91,7 +91,7 @@
                 null,
                 new List<AxisDetailsModel>
                     {
-                        new AxisDetailsModel("OrderNumber", "Order",  GridDisplayType.Total),
+                        new AxisDetailsModel("OrderNumber", "Order",  GridDisplayType.TextValue),
                         new AxisDetailsModel("OrderLine", "Order Line",  GridDisplayType.Value) { DecimalPlaces = 0 },
                         new AxisDetailsModel("DeliverySequence", "Del", GridDisplayType.Value) { DecimalPlaces = 0 },
                         new AxisDetailsModel("SupplierName", "Supplier", GridDisplayType.TextValue),
