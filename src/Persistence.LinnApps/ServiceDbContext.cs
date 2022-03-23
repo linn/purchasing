@@ -85,7 +85,13 @@
 
         public DbSet<Organisation> Organisations { get; set; }
 
+        public DbSet<TqmsJobref> TqmsJobrefs { get; set; }
+
+        public DbSet<PartsReceivedViewModel> TqmsView { get; set; }
+
         public DbSet<PurchaseOrderReq> PurchaseOrderReqs { get; set; }
+
+        public DbSet<PurchaseOrderDelivery> PurchaseOrderDeliveries { get; set; }
 
         public DbSet<PurchaseOrderReqState> PurchaseOrderReqStates { get; set; }
 
@@ -133,6 +139,8 @@
             this.BuildCreditDebitNoteTypes(builder);
             this.BuildPhoneList(builder);
             this.BuildOrganisations(builder);
+            this.BuildTqmsJobRefs(builder);
+            this.BuildPartsReceivedView(builder);
             this.BuildPurchaseOrderReqs(builder);
             this.BuildDepartments(builder);
             this.BuildNominals(builder);
@@ -472,7 +480,8 @@
             entity.HasOne(o => o.Currency).WithMany().HasForeignKey("CURR_CODE");
             entity.Property(o => o.OrderContactName).HasColumnName("CONTACT_NAME");
             entity.Property(o => o.OrderContactName).HasColumnName("CONTACT_NAME");
-            entity.HasMany(o => o.Details).WithOne().HasForeignKey(d => d.OrderNumber);
+            entity.HasMany(o => o.Details).WithOne(d => d.PurchaseOrder).HasForeignKey(d => d.OrderNumber);
+            entity.Property(o => o.OrderMethod).HasColumnName("PL_ORDER_METHOD");
         }
 
         private void BuildPurchaseOrderDetails(ModelBuilder builder)
@@ -485,11 +494,12 @@
             entity.Property(o => o.RohsCompliant).HasColumnName("ROHS_COMPLIANT");
             entity.Property(o => o.OurQty).HasColumnName("OUR_QTY");
             entity.Property(o => o.SuppliersDesignation).HasColumnName("SUPPLIERS_DESIGNATION").HasMaxLength(2000);
-            entity.HasMany(d => d.PurchaseDeliveries).WithOne(o => o.PurchaseOrderDetail)
+            entity.HasMany(d => d.PurchaseDeliveries).WithOne()
                 .HasForeignKey(o => new { o.OrderNumber, o.OrderLine });
             entity.Property(o => o.BaseNetTotal).HasColumnName("BASE_NET_TOTAL").HasMaxLength(18);
             entity.Property(o => o.NetTotalCurrency).HasColumnName("NET_TOTAL").HasMaxLength(18);
-            entity.HasOne(o => o.Part).WithMany().HasForeignKey("PART_NUMBER");
+            entity.HasOne(o => o.Part).WithMany(p => p.PurchaseOrderDetails).HasForeignKey("PART_NUMBER");
+            entity.Property(o => o.StockPoolCode).HasColumnName("STOCK_POOL_CODE");
         }
 
         private void BuildPurchaseOrderDeliveries(ModelBuilder builder)
@@ -510,6 +520,9 @@
 
             entity.HasOne(d => d.PurchaseOrderDetail).WithMany(o => o.PurchaseDeliveries);
             entity.Property(o => o.NetTotal).HasColumnName("NET_TOTAL").HasMaxLength(18);
+            entity.Property(d => d.QuantityOutstanding).HasColumnName("QTY_OUTSTANDING");
+            entity.Property(d => d.CallOffDate).HasColumnName("CALL_OFF_DATE");
+            entity.Property(d => d.BaseOurUnitPrice).HasColumnName("BASE_OUR_UNIT_PRICE");
         }
 
         private void BuildSigningLimits(ModelBuilder builder)
@@ -735,6 +748,32 @@
             entity.Property(a => a.Type).HasColumnName("CDNOTE_TYPE");
             entity.Property(a => a.Description).HasColumnName("DESCRIPTION");
             entity.Property(a => a.PrintDescription).HasColumnName("PRINT_DESCRIPTION");
+        }
+
+        private void BuildTqmsJobRefs(ModelBuilder builder)
+        {
+            var entity = builder.Entity<TqmsJobref>().ToTable("TQMS_JOBREFS");
+            entity.HasKey(a => a.Jobref);
+            entity.Property(a => a.Jobref).HasColumnName("JOBREF");
+            entity.Property(a => a.Date).HasColumnName("JOBREF_DATE");
+        }
+
+        private void BuildPartsReceivedView(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PartsReceivedViewModel>().ToTable("PARTS_RECEIVED_VIEW").HasNoKey();
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER");
+            entity.Property(a => a.JobRef).HasColumnName("JOBREF").HasColumnType("VARCHAR2");
+            entity.Property(a => a.TqmsGroup).HasColumnName("TQMS_GROUP").HasColumnType("VARCHAR2");
+            entity.Property(a => a.OverstockQty).HasColumnName("OVERSTOCK_QTY");
+            entity.Property(a => a.OverStockValue).HasColumnName("OVERSTOCK_VALUE");
+            entity.Property(a => a.OrderNumber).HasColumnName("ORDER_NUMBER").HasColumnType("VARCHAR2");
+            entity.Property(a => a.SupplierId).HasColumnName("SUPP_SUPPLIER_ID");
+            entity.Property(a => a.DateBooked).HasColumnName("DATE_BOOKED");
+            entity.Property(a => a.MaterialPrice).HasColumnName("MATERIAL_PRICE");
+            entity.Property(a => a.PartPrice).HasColumnName("PART_PRICE");
+            entity.Property(a => a.SupplierName).HasColumnName("SUPPLIER_NAME").HasColumnType("VARCHAR2");
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
+            entity.Property(a => a.Qty).HasColumnName("QTY");
         }
 
         private void BuildPurchaseOrderReqs(ModelBuilder builder)

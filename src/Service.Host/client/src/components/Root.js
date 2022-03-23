@@ -31,10 +31,12 @@ import OpenDebitNotes from './plDebitCreditNotes/OpenDebitNotes';
 import Search from './plDebitCreditNotes/Search';
 import Note from './plDebitCreditNotes/Note';
 import BulkLeadTimesUpload from './partSupplierUtility/BulkLeadTimesUpload';
+import PartsReceivedReport from './reports/PartsReceivedReport';
 import POReqUtility from './POReqUtility';
 import POReqSearch from './POReqSearch';
 import OverbooksSearch from './OverbooksSearch';
 import AllowPurchaseOrderOverbook from './AllowPurchaseOrderOverbook';
+import WhatsDueInReport from './reports/WhatsDueInReport';
 
 const Root = ({ store }) => (
     <div>
@@ -166,7 +168,6 @@ const Root = ({ store }) => (
                                     component={OpenDebitNotes}
                                 />
                                 <Route
-                                    exact
                                     path="/purchasing/purchase-orders/reqs/create"
                                     // eslint-disable-next-line react/jsx-props-no-spreading
                                     render={props => <POReqUtility creating {...props} />}
@@ -190,6 +191,16 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/purchase-orders/allow-over-book"
                                     component={OverbooksSearch}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/parts-received"
+                                    component={PartsReceivedReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/whats-due-in"
+                                    component={WhatsDueInReport}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>

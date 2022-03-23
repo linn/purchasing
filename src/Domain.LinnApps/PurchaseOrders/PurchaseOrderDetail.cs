@@ -14,7 +14,6 @@
 
         public decimal NetTotalCurrency { get; set; }
 
-
         public int OrderNumber { get; set; }
 
         public int? OurQty { get; set; }
@@ -26,5 +25,9 @@
         public string RohsCompliant { get; set; }
 
         public string SuppliersDesignation { get; set; }
+
+        public string StockPoolCode { get; set; }
+
+        public PurchaseOrder PurchaseOrder { get; set; }
     }
 }

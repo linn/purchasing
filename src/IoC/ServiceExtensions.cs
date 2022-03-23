@@ -87,8 +87,11 @@
                 .AddTransient<IFacadeResourceFilterService<PlCreditDebitNote, int, PlCreditDebitNoteResource, PlCreditDebitNoteResource, PlCreditDebitNoteResource>, PlCreditDebitNoteFacadeService>()
                 .AddTransient<IPlCreditDebitNoteEmailService, PlCreditDebitNoteEmailService>()
                 .AddTransient<IBulkLeadTimesUpdaterService, BulkLeadTimesUpdaterService>()
+                .AddTransient<ITqmsJobRefService, TqmsJobRefService>()
+                .AddTransient<IPartsReceivedReportFacadeService, PartsReceivedReportFacadeService>()
                 .AddTransient<ISpendsReportFacadeService, SpendsReportFacadeService>()
                 .AddTransient<IFacadeResourceFilterService<PurchaseOrderReq, int, PurchaseOrderReqResource, PurchaseOrderReqResource, PurchaseOrderReqSearchResource>, PurchaseOrderReqFacadeService>()
+                .AddTransient<IWhatsDueInReportFacadeService, WhatsDueInReportFacadeService>()
                 .AddTransient<IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource>, PurchaseOrderReqStateFacadeService>();
         }
 
@@ -109,7 +112,9 @@
                 .AddTransient<IDatabaseService, DatabaseService>()
                 .AddTransient<ISpendsReportService, SpendsReportService>()
                 .AddTransient<IPlCreditDebitNoteService, PlCreditDebitNoteService>()
+                .AddTransient<IPartsReceivedReportService, PartsReceivedReportService>()
                 .AddTransient<IPurchaseOrderReqService, PurchaseOrderReqService>()
+                .AddTransient<IWhatsDueInReportService, WhatsDueInReportService>()
 
             // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()

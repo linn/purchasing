@@ -472,7 +472,7 @@
                     {
                         RowId = currentRowId,
                         ColumnId = "ReqDate",
-                        TextDisplay = delivery.DateRequested.ToString("dd-MMM-yyyy")
+                        TextDisplay = delivery.DateRequested?.ToString("dd-MMM-yyyy")
                     });
 
             values.Add(
@@ -526,7 +526,7 @@
                 new CalculationValueModel
                     {
                         RowId = currentRowId, ColumnId = "QtyRec",
-                        Value = delivery.QtyNetReceived
+                        Value = delivery.QtyNetReceived ?? 0
                     });
 
             values.Add(
@@ -563,7 +563,7 @@
                 new CalculationValueModel
                     {
                         RowId = currentRowId, ColumnId = "Qty",
-                        Value = delivery.OurDeliveryQty
+                        Value = delivery.OurDeliveryQty ?? 0
                     });
         }
 
