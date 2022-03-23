@@ -5,5 +5,7 @@
         public int OrderNumber { get; set; }
 
         public int OrderLine { get; set; }
+
+        public int DeliverySequence { get; set; }
     }
 }
