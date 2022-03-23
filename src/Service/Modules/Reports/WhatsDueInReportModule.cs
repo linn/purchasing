@@ -26,6 +26,7 @@
             if (string.IsNullOrEmpty(req.Query.As<string>("fromDate")))
             {
                 await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
+                return;
             }
 
             var results = this.reportFacadeService.GetReport(
