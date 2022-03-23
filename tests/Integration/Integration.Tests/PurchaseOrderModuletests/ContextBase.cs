@@ -74,6 +74,12 @@
             private set;
         }
 
+        protected IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource>
+            PurchaseOrderReqStateFacadeService
+        {
+            get; private set;
+        }
+
         protected IAuthorisationService MockAuthService { get; private set; }
 
         protected IDatabaseService MockDatabaseService { get; set; }
@@ -99,7 +105,8 @@
             this.PackagingGroupService = Substitute
                 .For<IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource>>();
             this.TariffService = Substitute.For<IFacadeResourceService<Tariff, int, TariffResource, TariffResource>>();
-
+            this.PurchaseOrderReqStateFacadeService =
+                Substitute.For<IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource>>();
             this.MockReqDomainService = Substitute.For<IPurchaseOrderReqService>();
 
             this.MockPurchaseOrderReqRepository = Substitute.For<IRepository<PurchaseOrderReq, int>>();
@@ -127,6 +134,7 @@
                         services.AddSingleton(this.UnitsOfMeasureService);
                         services.AddSingleton(this.PackagingGroupService);
                         services.AddSingleton(this.TariffService);
+                        services.AddSingleton(this.PurchaseOrderReqStateFacadeService);
                         services.AddSingleton(this.Log);
                         services.AddHandlers();
                     },

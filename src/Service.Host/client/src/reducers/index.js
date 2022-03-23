@@ -50,11 +50,13 @@ import supplierGroups from './supplierGroups.';
 import tqmsJobrefs from './tqmsJobrefs';
 import partsReceivedReport from './partsReceivedReport';
 import purchaseOrderReq from './purchaseOrderReq';
+import purchaseOrderReqs from './purchaseOrderReqs';
 import departments from './departments';
 import nominals from './nominals';
 import purchaseOrder from './purchaseOrder';
 import purchaseOrders from './purchaseOrders';
 import whatsDueInReport from './whatsDueInReport';
+import purchaseOrderReqStates from './purchaseOrderReqStates';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -91,8 +93,10 @@ const rootReducer = history =>
         preferredSupplierChange,
         priceChangeReasons,
         purchaseOrder,
-        purchaseOrders,
         purchaseOrderReq,
+        purchaseOrderReqs,
+        purchaseOrderReqStates,
+        purchaseOrders,
         putSupplierOnHold,
         router: connectRouter(history),
         sendPlNoteEmail,

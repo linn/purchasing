@@ -81,7 +81,9 @@
                 .AddTransient<IQueryRepository<PartsReceivedViewModel>, EntityFrameworkQueryRepository<PartsReceivedViewModel>>(
                     r => new EntityFrameworkQueryRepository<PartsReceivedViewModel>(r.GetService<ServiceDbContext>()
                         ?.TqmsView))
-                .AddTransient<IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey>, PurchaseOrderDeliveryRepository>();
+                .AddTransient<IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey>, PurchaseOrderDeliveryRepository>()
+                .AddTransient<IRepository<PurchaseOrderReqState, string>, EntityFrameworkRepository<PurchaseOrderReqState, string>>(
+                    r => new EntityFrameworkRepository<PurchaseOrderReqState, string>(r.GetService<ServiceDbContext>()?.PurchaseOrderReqStates));
         }
     }
 }

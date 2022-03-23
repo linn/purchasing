@@ -7,9 +7,7 @@
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
-    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
-    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.SearchResources;
 
@@ -18,7 +16,7 @@
     {
         private readonly IPurchaseOrderReqService domainService;
 
-        private IDatabaseService databaseService;
+        private readonly IDatabaseService databaseService;
 
         public PurchaseOrderReqFacadeService(
             IRepository<PurchaseOrderReq, int> repository,
@@ -51,7 +49,10 @@
         protected override Expression<Func<PurchaseOrderReq, bool>> FilterExpression(
             PurchaseOrderReqSearchResource searchResource)
         {
-            throw new NotImplementedException();
+            return x => (string.IsNullOrWhiteSpace(searchResource.ReqNumber) || x.ReqNumber.ToString().Contains(searchResource.ReqNumber))
+                && (string.IsNullOrWhiteSpace(searchResource.Part) || x.PartNumber.ToUpper().Contains(searchResource.Part.ToUpper()))
+                && (string.IsNullOrWhiteSpace(searchResource.Supplier) || x.SupplierId.ToString().Contains(searchResource.Supplier)
+                    || x.SupplierName.ToUpper().ToString().Contains(searchResource.Supplier.ToUpper()));
         }
 
         protected override void SaveToLogTable(
@@ -66,7 +67,7 @@
 
         protected override Expression<Func<PurchaseOrderReq, bool>> SearchExpression(string searchTerm)
         {
-            return x => x.OrderNumber.ToString().Contains(searchTerm);
+            throw new NotImplementedException();
         }
 
         protected override void UpdateFromResource(
@@ -74,10 +75,10 @@
             PurchaseOrderReqResource updateResource,
             IEnumerable<string> privileges = null)
         {
-           var updateEntity = this.BuildEntityFromResourceHelper(updateResource);
-           updateEntity.ReqNumber = updateResource.ReqNumber;
+            var updateEntity = this.BuildEntityFromResourceHelper(updateResource);
+            updateEntity.ReqNumber = updateResource.ReqNumber;
 
-           this.domainService.Update(entity, updateEntity, privileges);
+            this.domainService.Update(entity, updateEntity, privileges);
         }
 
         private PurchaseOrderReq BuildEntityFromResourceHelper(PurchaseOrderReqResource resource)
@@ -113,9 +114,9 @@
                            RequestedById = resource.RequestedBy.Id,
                            AuthorisedById = resource.AuthorisedBy?.Id,
                            SecondAuthById = resource.SecondAuthBy?.Id,
-                           FinanceCheckById =resource.FinanceCheckBy?.Id,
+                           FinanceCheckById = resource.FinanceCheckBy?.Id,
                            TurnedIntoOrderById = resource.TurnedIntoOrderBy?.Id,
-                           NominalCode =  resource.Nominal?.NominalCode,
+                           NominalCode = resource.Nominal?.NominalCode,
                            RemarksForOrder = resource.RemarksForOrder,
                            InternalNotes = resource.InternalNotes,
                            DepartmentCode = resource.Department?.DepartmentCode

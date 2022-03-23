@@ -7,6 +7,9 @@ import Button from '@mui/material/Button';
 import { useParams } from 'react-router-dom';
 import Dialog from '@mui/material/Dialog';
 import IconButton from '@mui/material/IconButton';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import EditOffIcon from '@mui/icons-material/EditOff';
+import Tooltip from '@mui/material/Tooltip';
 import Close from '@mui/icons-material/Close';
 import { makeStyles } from '@mui/styles';
 import {
@@ -31,6 +34,9 @@ import countriesActions from '../actions/countriesActions';
 import suppliersActions from '../actions/suppliersActions';
 import partsActions from '../actions/partsActions';
 import poReqActions from '../actions/purchaseOrderReqActions';
+import poReqApplicationStateActions from '../actions/purchaseOrderReqApplicationStateActions';
+import purchaseOrderReqStatesActions from '../actions/purchaseOrderReqStatesActions';
+
 import history from '../history';
 import config from '../config';
 
@@ -72,6 +78,9 @@ function POReqUtility({ creating }) {
     const searchCountries = searchTerm => dispatch(countriesActions.search(searchTerm));
 
     const currencies = useSelector(state => collectionSelectorHelpers.getItems(state.currencies));
+    const reqStates = useSelector(state =>
+        collectionSelectorHelpers.getItems(state.purchaseOrderReqStates)
+    );
 
     const nominalsSearchItems = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.nominals)
@@ -83,17 +92,24 @@ function POReqUtility({ creating }) {
     const currentUserId = useSelector(state => userSelectors.getUserNumber(state));
     const currentUserName = useSelector(state => userSelectors.getName(state));
 
-    const [req, setReq] = useState({
+    const defaultCreatingReq = {
         requestedBy: {
-            id: currentUserId,
+            id: parseInt(currentUserId, 10),
             fullName: currentUserName
-        }
-    });
+        },
+        reqNumber: 'creating',
+        state: 'DRAFT',
+        reqDate: new Date()
+    };
+
+    const [req, setReq] = useState(defaultCreatingReq);
     const snackbarVisible = useSelector(state =>
         itemSelectorHelpers.getSnackbarVisible(state.purchaseOrderReq)
     );
     const loading = useSelector(state =>
-        itemSelectorHelpers.getItemLoading(state.purchaseOrderReq)
+        creating
+            ? itemSelectorHelpers.getApplicationStateLoading(state.purchaseOrderReqApplicationState)
+            : itemSelectorHelpers.getItemLoading(state.purchaseOrderReq)
     );
     const item = useSelector(state => itemSelectorHelpers.getItem(state.purchaseOrderReq));
     const clearErrors = () => dispatch(poReqActions.clearErrorsForItem());
@@ -109,13 +125,16 @@ function POReqUtility({ creating }) {
 
     useEffect(() => dispatch(currenciesActions.fetch()), [dispatch]);
     useEffect(() => dispatch(employeesActions.fetch()), [dispatch]);
+    useEffect(() => dispatch(purchaseOrderReqStatesActions.fetch()), [dispatch]);
 
     const { id } = useParams();
     useEffect(() => {
         if (id) {
             dispatch(poReqActions.fetch(id));
+        } else if (creating) {
+            dispatch(poReqApplicationStateActions.fetchState());
         }
-    }, [id, dispatch]);
+    }, [id, dispatch, creating]);
 
     const handleSupplierChange = newSupplier => {
         setEditStatus('edit');
@@ -141,8 +160,6 @@ function POReqUtility({ creating }) {
         }));
     };
 
-    const reqStates = [{ id: 0, displayText: 'todo', state: 'todo' }];
-
     const nominalAccountsTable = {
         totalItemCount: nominalsSearchItems.length,
         rows: nominalsSearchItems?.map(nom => ({
@@ -157,6 +174,10 @@ function POReqUtility({ creating }) {
         }))
     };
 
+    const purchaseOrderReqApplicationState = useSelector(state =>
+        collectionSelectorHelpers.getApplicationState(state.purchaseOrderReq)
+    );
+
     const allowedToAuthorise = () => !creating && req.links?.some(l => l.rel === 'authorise');
     const allowedToFinanceCheck = () =>
         !creating && req.links?.some(l => l.rel === 'finance-check');
@@ -164,12 +185,23 @@ function POReqUtility({ creating }) {
         !creating && req.links?.some(l => l.rel === 'create-purchase-order');
 
     const editingAllowed = creating
-        ? req.links?.some(l => l.rel === 'create')
+        ? purchaseOrderReqApplicationState?.links?.some(l => l.rel === 'create')
         : req.links?.some(l => l.rel === 'edit');
 
-    const inputIsInvalid = () => !req.reqDate?.length && !req.supplier?.supplierId?.length; //todo work out which fields are required for save and add 'em here
+    const inputIsInvalid = () =>
+        !`${req.supplier?.supplierId}`.length ||
+        !req.supplier?.name?.length ||
+        !req.state.length ||
+        !req.reqDate.length ||
+        !`${req.qty}`.length ||
+        !`${req.unitPrice}`.length ||
+        !req.currency?.code.length ||
+        !req.country?.countryCode.length ||
+        !req.nominal?.nominalCode.length ||
+        !req.department?.departmentCode.length;
 
-    const canSave = () => editStatus !== 'view' && editingAllowed && !inputIsInvalid();
+    const canSave = () =>
+        editStatus !== 'view' && editingAllowed && !inputIsInvalid() && req !== item;
 
     const handleAuthorise = () => {
         setEditStatus('edit');
@@ -235,7 +267,7 @@ function POReqUtility({ creating }) {
                 {loading ? (
                     <Loading />
                 ) : (
-                    <Grid container spacing={1} justifyContent="center">
+                    <Grid container spacing={2} justifyContent="center">
                         <SnackbarMessage
                             visible={snackbarVisible}
                             onClose={() => dispatch(poReqActions.setSnackbarVisible(false))}
@@ -260,7 +292,11 @@ function POReqUtility({ creating }) {
                                 >
                                     <Close />
                                 </IconButton>
-                                <div className={classes.centerTextInDialog}>
+                                <Typography
+                                    variant="body1"
+                                    gutterBottom
+                                    className={classes.centerTextInDialog}
+                                >
                                     <p>
                                         <b>
                                             Order is: Draft --{'>'} Authorise Wait --{'>'} Finance
@@ -291,7 +327,7 @@ function POReqUtility({ creating }) {
                                         <b>CANCELLED</b> - Requistion has been cancelled without
                                         ever turning into an order.
                                     </p>
-                                </div>
+                                </Typography>
                             </div>
                         </Dialog>
 
@@ -299,7 +335,7 @@ function POReqUtility({ creating }) {
                             <Typography variant="h6">Purchase Order Req Utility</Typography>
                         </Grid>
 
-                        <Grid item xs={4}>
+                        <Grid item xs={2}>
                             <InputField
                                 fullWidth
                                 value={req.reqNumber}
@@ -309,33 +345,35 @@ function POReqUtility({ creating }) {
                                 disabled
                             />
                         </Grid>
-                        <Grid item xs={4}>
+                        <Grid item xs={3}>
                             <Dropdown
-                                items={reqStates.map(e => ({
-                                    displayText: `${e.state}`,
-                                    id: parseInt(e.id, 10)
-                                }))}
+                                // todo onchange - check blue_req_pack.check_br_state_change(originalstate, newstate) and return warning if not allowed
+                                items={reqStates
+                                    ?.sort((a, b) => a.displayOrder - b.displayOrder)
+                                    .map(e => ({
+                                        displayText: e.state,
+                                        id: e.State
+                                    }))}
                                 propertyName="state"
                                 label="State"
                                 value={req.state}
                                 onChange={handleFieldChange}
                                 disabled={!editingAllowed}
                                 fullwidth
+                                allowNoValue={false}
+                                required
                             />
                         </Grid>
                         <Grid item xs={2}>
-                            <Button onClick={() => setExplainDialogOpen(true)}>
+                            <Button
+                                onClick={() => setExplainDialogOpen(true)}
+                                color="primary"
+                                variant="outlined"
+                            >
                                 explain states
                             </Button>
                         </Grid>
-                        <Grid item xs={2}>
-                            {/* <DatePicker
-                             
-                                value={req.reqDate?.toString()}
-                                onChange={newValue => {
-                                    handleFieldChange('reqDate', newValue);
-                                }}
-                            /> */}
+                        <Grid item xs={3}>
                             <InputField
                                 fullWidth
                                 value={req.reqDate}
@@ -344,7 +382,27 @@ function POReqUtility({ creating }) {
                                 onChange={handleFieldChange}
                                 type="date"
                                 disabled={!editingAllowed}
+                                required
                             />
+                        </Grid>
+                        <Grid item xs={1}>
+                            {editingAllowed ? (
+                                <Tooltip
+                                    title={`You can ${
+                                        creating ? 'create' : 'edit'
+                                    } purchase order reqs`}
+                                >
+                                    <ModeEditIcon color="primary" />
+                                </Tooltip>
+                            ) : (
+                                <Tooltip
+                                    title={`You do not have permission to ${
+                                        creating ? 'create' : 'edit'
+                                    } purchase order reqs`}
+                                >
+                                    <EditOffIcon color="secondary" />
+                                </Tooltip>
+                            )}
                         </Grid>
 
                         <Grid item xs={5} container spacing={1}>
@@ -362,12 +420,13 @@ function POReqUtility({ creating }) {
                                         dispatch(partsActions.search(searchTerm))
                                     }
                                     clearSearch={() => dispatch(partsActions.clearSearch)}
-                                    value={`${req.partNumber}`}
+                                    value={req.partNumber ? `${req.partNumber}` : null}
                                     modal
                                     links={false}
                                     debounce={1000}
                                     minimumSearchTermLength={2}
                                     disabled={!editingAllowed}
+                                    placeholder="click to set part"
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -378,6 +437,8 @@ function POReqUtility({ creating }) {
                                     propertyName="qty"
                                     onChange={handleFieldChange}
                                     disabled={!editingAllowed}
+                                    type="number"
+                                    required
                                 />
                             </Grid>
                             <Grid item xs={4}>
@@ -435,6 +496,8 @@ function POReqUtility({ creating }) {
                                 propertyName="unitPrice"
                                 onChange={handleFieldChange}
                                 disabled={!editingAllowed}
+                                type="number"
+                                required
                             />
                         </Grid>
                         <Grid item xs={3}>
@@ -446,6 +509,7 @@ function POReqUtility({ creating }) {
                                 propertyName="carriage"
                                 onChange={handleFieldChange}
                                 disabled={!editingAllowed}
+                                type="number"
                             />
                         </Grid>
                         <Grid item xs={3}>
@@ -457,6 +521,7 @@ function POReqUtility({ creating }) {
                                 propertyName="totalReqPrice"
                                 onChange={handleFieldChange}
                                 disabled={!editingAllowed}
+                                type="number"
                             />
                         </Grid>
 
@@ -469,7 +534,9 @@ function POReqUtility({ creating }) {
                                 modal
                                 propertyName="supplierId"
                                 items={suppliersSearchResults}
-                                value={`${req.supplier?.id}: ${req.supplier?.name}`}
+                                value={
+                                    req.supplier ? `${req.supplier.id}: ${req.supplier.name}` : null
+                                }
                                 loading={suppliersSearchLoading}
                                 fetchItems={searchSuppliers}
                                 links={false}
@@ -479,6 +546,7 @@ function POReqUtility({ creating }) {
                                 minimumSearchTermLength={3}
                                 fullWidth
                                 disabled={!editingAllowed}
+                                required
                             />
                         </Grid>
                         <Grid item xs={6}>
@@ -620,13 +688,6 @@ function POReqUtility({ creating }) {
                             />
                         </Grid>
                         <Grid item xs={6}>
-                            {/* <DatePicker
-                                label="Date Required"
-                                value={req.dateRequired?.toString()}
-                                onChange={newValue => {
-                                    handleFieldChange('dateRequired', newValue);
-                                }}
-                            /> */}
                             <InputField
                                 fullWidth
                                 value={req.dateRequired}
@@ -636,7 +697,6 @@ function POReqUtility({ creating }) {
                                 type="date"
                                 disabled={!editingAllowed}
                             />
-                            {/* Maybe input would be better and fix format? */}
                         </Grid>
 
                         <Grid item xs={4}>
@@ -812,12 +872,12 @@ function POReqUtility({ creating }) {
                             />
                         </Grid>
                         <SaveBackCancelButtons
-                            saveDisabled={!canSave}
+                            saveDisabled={!canSave()}
                             backClick={() => history.push('/purchasing')}
                             saveClick={() => {
                                 clearErrors();
                                 if (creating) {
-                                    dispatch(poReqActions.add(req));
+                                    dispatch(poReqActions.add({ ...req, reqNumber: -1 }));
                                 } else {
                                     dispatch(poReqActions.update(req.reqNumber, req));
                                 }
@@ -825,12 +885,7 @@ function POReqUtility({ creating }) {
                             cancelClick={() => {
                                 setEditStatus('view');
                                 if (creating) {
-                                    setReq({
-                                        requestedBy: {
-                                            id: currentUserId,
-                                            fullName: currentUserName
-                                        }
-                                    });
+                                    setReq(defaultCreatingReq);
                                 } else {
                                     setReq(item);
                                 }

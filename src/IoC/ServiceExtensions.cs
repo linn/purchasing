@@ -55,7 +55,8 @@
                 .AddTransient<IBuilder<SupplierGroup>, SupplierGroupResourceBuilder>()
                 .AddTransient<IBuilder<SupplierContact>, SupplierContactResourceBuilder>()
                 .AddTransient<IBuilder<PlCreditDebitNote>, PlCreditDebitNoteResourceBuilder>()
-                .AddTransient<IBuilder<PurchaseOrderReq>, PurchaseOrderReqResourceBuilder>();
+                .AddTransient<IBuilder<PurchaseOrderReq>, PurchaseOrderReqResourceBuilder>()
+                .AddTransient<IBuilder<PurchaseOrderReqState>, PurchaseOrderReqStateResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -90,7 +91,8 @@
                 .AddTransient<IPartsReceivedReportFacadeService, PartsReceivedReportFacadeService>()
                 .AddTransient<ISpendsReportFacadeService, SpendsReportFacadeService>()
                 .AddTransient<IFacadeResourceFilterService<PurchaseOrderReq, int, PurchaseOrderReqResource, PurchaseOrderReqResource, PurchaseOrderReqSearchResource>, PurchaseOrderReqFacadeService>()
-                .AddTransient<IWhatsDueInReportFacadeService, WhatsDueInReportFacadeService>();
+                .AddTransient<IWhatsDueInReportFacadeService, WhatsDueInReportFacadeService>()
+                .AddTransient<IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource>, PurchaseOrderReqStateFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)

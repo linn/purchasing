@@ -2,12 +2,10 @@
 {
     public class PurchaseOrderReqSearchResource
     {
-        public int ReqNumber { get; set; }
+        public string ReqNumber { get; set; }
 
-        public string From { get; set; }
+        public string Part { get; set; }
 
-        public string To { get; set; }
-
-        public int SupplierId { get; set; }
+        public string Supplier { get; set; }
     }
 }
