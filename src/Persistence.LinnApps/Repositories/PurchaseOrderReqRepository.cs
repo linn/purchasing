@@ -22,7 +22,7 @@
 
         public override PurchaseOrderReq FindById(int key)
         {
-            var purchaseOrderReq = this.serviceDbContext.PurchaseOrderReqs
+            return this.serviceDbContext.PurchaseOrderReqs
                 .Include(r => r.Currency)
                 .Include(r => r.Country)
                 .Include(r => r.RequestedBy)
@@ -34,7 +34,6 @@
                 .Include(r => r.Department)
                 .Include(r => r.Supplier).ThenInclude(s => s.OrderAddress)
                 .FirstOrDefault(x => x.ReqNumber == key);
-            return purchaseOrderReq;
         }
 
         public override IQueryable<PurchaseOrderReq> FilterBy(Expression<Func<PurchaseOrderReq, bool>> expression)

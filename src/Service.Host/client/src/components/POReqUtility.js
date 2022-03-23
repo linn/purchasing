@@ -92,13 +92,17 @@ function POReqUtility({ creating }) {
     const currentUserId = useSelector(state => userSelectors.getUserNumber(state));
     const currentUserName = useSelector(state => userSelectors.getName(state));
 
-    const [req, setReq] = useState({
+    const defaultCreatingReq = {
         requestedBy: {
-            id: currentUserId,
+            id: parseInt(currentUserId, 10),
             fullName: currentUserName
         },
-        reqNumber: 'creating'
-    });
+        reqNumber: 'creating',
+        state: 'DRAFT',
+        reqDate: new Date()
+    };
+
+    const [req, setReq] = useState(defaultCreatingReq);
     const snackbarVisible = useSelector(state =>
         itemSelectorHelpers.getSnackbarVisible(state.purchaseOrderReq)
     );
@@ -184,7 +188,17 @@ function POReqUtility({ creating }) {
         ? purchaseOrderReqApplicationState?.links?.some(l => l.rel === 'create')
         : req.links?.some(l => l.rel === 'edit');
 
-    const inputIsInvalid = () => !req.reqDate?.length && !req.supplier?.supplierId?.length; //todo work out which fields are required for save and add 'em here
+    const inputIsInvalid = () =>
+        !`${req.supplier?.supplierId}`.length ||
+        !req.supplier?.name?.length ||
+        !req.state.length ||
+        !req.reqDate.length ||
+        !`${req.qty}`.length ||
+        !`${req.unitPrice}`.length ||
+        !req.currency?.code.length ||
+        !req.country?.countryCode.length ||
+        !req.nominal?.nominalCode.length ||
+        !req.department?.departmentCode.length;
 
     const canSave = () =>
         editStatus !== 'view' && editingAllowed && !inputIsInvalid() && req !== item;
@@ -347,6 +361,7 @@ function POReqUtility({ creating }) {
                                 disabled={!editingAllowed}
                                 fullwidth
                                 allowNoValue={false}
+                                required
                             />
                         </Grid>
                         <Grid item xs={2}>
@@ -359,13 +374,6 @@ function POReqUtility({ creating }) {
                             </Button>
                         </Grid>
                         <Grid item xs={3}>
-                            {/* <DatePicker
-                             
-                                value={req.reqDate?.toString()}
-                                onChange={newValue => {
-                                    handleFieldChange('reqDate', newValue);
-                                }}
-                            /> */}
                             <InputField
                                 fullWidth
                                 value={req.reqDate}
@@ -374,6 +382,7 @@ function POReqUtility({ creating }) {
                                 onChange={handleFieldChange}
                                 type="date"
                                 disabled={!editingAllowed}
+                                required
                             />
                         </Grid>
                         <Grid item xs={1}>
@@ -429,6 +438,7 @@ function POReqUtility({ creating }) {
                                     onChange={handleFieldChange}
                                     disabled={!editingAllowed}
                                     type="number"
+                                    required
                                 />
                             </Grid>
                             <Grid item xs={4}>
@@ -487,6 +497,7 @@ function POReqUtility({ creating }) {
                                 onChange={handleFieldChange}
                                 disabled={!editingAllowed}
                                 type="number"
+                                required
                             />
                         </Grid>
                         <Grid item xs={3}>
@@ -535,6 +546,7 @@ function POReqUtility({ creating }) {
                                 minimumSearchTermLength={3}
                                 fullWidth
                                 disabled={!editingAllowed}
+                                required
                             />
                         </Grid>
                         <Grid item xs={6}>
@@ -676,13 +688,6 @@ function POReqUtility({ creating }) {
                             />
                         </Grid>
                         <Grid item xs={6}>
-                            {/* <DatePicker
-                                label="Date Required"
-                                value={req.dateRequired?.toString()}
-                                onChange={newValue => {
-                                    handleFieldChange('dateRequired', newValue);
-                                }}
-                            /> */}
                             <InputField
                                 fullWidth
                                 value={req.dateRequired}
@@ -692,7 +697,6 @@ function POReqUtility({ creating }) {
                                 type="date"
                                 disabled={!editingAllowed}
                             />
-                            {/* Maybe input would be better and fix format? */}
                         </Grid>
 
                         <Grid item xs={4}>
@@ -868,12 +872,12 @@ function POReqUtility({ creating }) {
                             />
                         </Grid>
                         <SaveBackCancelButtons
-                            saveDisabled={!canSave}
+                            saveDisabled={!canSave()}
                             backClick={() => history.push('/purchasing')}
                             saveClick={() => {
                                 clearErrors();
                                 if (creating) {
-                                    dispatch(poReqActions.add(req));
+                                    dispatch(poReqActions.add({ ...req, reqNumber: -1 }));
                                 } else {
                                     dispatch(poReqActions.update(req.reqNumber, req));
                                 }
@@ -881,13 +885,7 @@ function POReqUtility({ creating }) {
                             cancelClick={() => {
                                 setEditStatus('view');
                                 if (creating) {
-                                    setReq({
-                                        requestedBy: {
-                                            id: currentUserId,
-                                            fullName: currentUserName
-                                        },
-                                        reqNumber: 'creating'
-                                    });
+                                    setReq(defaultCreatingReq);
                                 } else {
                                     setReq(item);
                                 }
