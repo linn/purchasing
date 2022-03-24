@@ -38,7 +38,7 @@
                          && d.OrderLine.ToString() == this.result.GetGridTextValue(resultRow.RowIndex, 1)
                          && d.DeliverySeq.ToString() == this.result.GetGridTextValue(resultRow.RowIndex, 2));
 
-                this.result.GetGridTextValue(resultRow.RowIndex, 4).Should().Be(
+                this.result.GetGridTextValue(resultRow.RowIndex, 5).Should().Be(
                     dataRow.DateAdvised == null
                         ? ((DateTime)dataRow.DateRequested).ToShortDateString() // should use DateRequested if DateAdvised is null
                         : ((DateTime)dataRow.DateAdvised).ToShortDateString());
@@ -56,7 +56,7 @@
                          && d.OrderLine.ToString() == this.result.GetGridTextValue(resultRow.RowIndex, 1)
                          && d.DeliverySeq.ToString() == this.result.GetGridTextValue(resultRow.RowIndex, 2));
 
-                this.result.GetGridValue(resultRow.RowIndex, 6).Should()
+                this.result.GetGridValue(resultRow.RowIndex, 7).Should()
                     .Be(dataRow.QuantityOutstanding * dataRow.BaseOurUnitPrice); // should be product of price and qty for every row
             }
         }
