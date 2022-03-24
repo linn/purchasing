@@ -304,6 +304,7 @@ describe('When save clicked when creating...', () => {
                 partNumber: 'SOME PART',
                 orderMethodName: 'METHOD',
                 currencyCode: 'USD',
+                unitOfMeasure: 'ONES',
                 minimumOrderQty: 111,
                 orderIncrement: 222,
                 leadTimeWeeks: 333,
