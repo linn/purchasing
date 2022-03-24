@@ -51,7 +51,6 @@ import manufacturersActions from '../../actions/manufacturersActions';
 import PreferredSupplier from './PreferredSupplier';
 import PriceChange from './PriceChange';
 import partPriceConversionsActions from '../../actions/partPriceConversionsActions';
-import supplierActions from '../../actions/supplierActions';
 
 function PartSupplier({ creating }) {
     const useStyles = makeStyles(theme => ({
@@ -226,6 +225,7 @@ function PartSupplier({ creating }) {
                     dateCreated: new Date(),
                     currencyCode: 'GBP',
                     orderMethodName: 'MANUAL',
+                    unitOfMeasure: 'ONES',
                     addressId: 405284
                 }
             });
@@ -337,7 +337,7 @@ function PartSupplier({ creating }) {
                 </Dialog>
                 <SnackbarMessage
                     visible={snackbarVisible}
-                    onClose={() => reduxDispatch(supplierActions.setSnackbarVisible(false))}
+                    onClose={() => reduxDispatch(partSupplierActions.setSnackbarVisible(false))}
                     message="Save Successful"
                 />
                 {itemError && (
