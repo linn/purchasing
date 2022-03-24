@@ -43,7 +43,7 @@
 
         protected override void DeleteOrObsoleteResource(PurchaseOrderReq entity, IEnumerable<string> privileges = null)
         {
-            throw new NotImplementedException();
+            //todo this.domainService.cancel
         }
 
         protected override Expression<Func<PurchaseOrderReq, bool>> FilterExpression(
@@ -62,7 +62,7 @@
             PurchaseOrderReqResource resource,
             PurchaseOrderReqResource updateResource)
         {
-            throw new NotImplementedException();
+            return;
         }
 
         protected override Expression<Func<PurchaseOrderReq, bool>> SearchExpression(string searchTerm)
