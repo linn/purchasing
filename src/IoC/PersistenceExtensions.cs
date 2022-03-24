@@ -108,7 +108,8 @@
                 .AddTransient<IRepository<Organisation, int>, EntityFrameworkRepository<Organisation, int>>(
                     r => new EntityFrameworkRepository<Organisation, int>(
                         r.GetService<ServiceDbContext>()?.Organisations))
-                .AddTransient<IRepository<PurchaseOrderReq, int>, PurchaseOrderReqRepository>();
+                .AddTransient<IRepository<PurchaseOrderReq, int>, PurchaseOrderReqRepository>()
+                .AddTransient<IRepository<OverbookAllowedByLog, int>, OverbookAllowedByLogRespository>();
         }
     }
 }

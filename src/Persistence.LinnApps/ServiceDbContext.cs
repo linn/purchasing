@@ -87,6 +87,8 @@
 
         public DbSet<PurchaseOrderReq> PurchaseOrderReqs { get; set; }
 
+        public DbSet<OverbookAllowedByLog> AllowOverbookLogs { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -102,6 +104,7 @@
             this.BuildPurchaseOrders(builder);
             this.BuildPurchaseOrderDetails(builder);
             this.BuildPurchaseOrderDeliveries(builder);
+            this.BuildOverbookAllowedBy(builder);
             this.BuildTariffs(builder);
             this.BuildSigningLimits(builder);
             this.BuildSigningLimitLogs(builder);
@@ -507,6 +510,17 @@
 
             entity.HasOne(d => d.PurchaseOrderDetail).WithMany(o => o.PurchaseDeliveries);
             entity.Property(o => o.NetTotal).HasColumnName("NET_TOTAL").HasMaxLength(18);
+        }
+
+        private void BuildOverbookAllowedBy(ModelBuilder builder)
+        {
+            var entity = builder.Entity<OverbookAllowedByLog>().ToTable("PL_OVERBOOK_ALLOWED_BY");
+            entity.HasKey(a => a.Id);
+            entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(o => o.OverbookGrantedBy).HasColumnName("OVERBOOK_GRANTED_BY").HasMaxLength(6);
+            entity.Property(o => o.OverbookDate).HasColumnName("OVERBOOK_DATE");
+            entity.Property(o => o.OverbookGrantedBy).HasColumnName("OVERBOOK_QTY").HasMaxLength(14);
+            entity.Property(o => o.OverbookGrantedBy).HasColumnName("ORDER_LINE").HasMaxLength(6);
         }
 
         private void BuildSigningLimits(ModelBuilder builder)
