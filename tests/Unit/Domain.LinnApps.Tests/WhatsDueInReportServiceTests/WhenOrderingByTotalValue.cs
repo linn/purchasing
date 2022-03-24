@@ -20,13 +20,13 @@
         }
 
         [Test]
-        public void ShouldOrderByTtoalValueDescending()
+        public void ShouldOrderByTotalValueDescending()
         {
             for (var i = 1; i < this.result.Rows.Count(); i++)
             {
-                var currentValue = this.result.GetGridValue(i, 6);
-                var previousValue = this.result.GetGridValue(i - 1, 6);
-                currentValue.Should().BeLessOrEqualTo(previousValue ?? 0);
+                var currentValue = this.result.GetGridValue(i, 7);
+                var previousValue = this.result.GetGridValue(i - 1, 7);
+                currentValue.Should().BeLessOrEqualTo(previousValue ?? 7);
             }
         }
     }
