@@ -23,7 +23,7 @@
         {
             foreach (var row in result.Rows)
             {
-                result.GetGridTextValue(row.RowIndex, 3).Should().Be("SUPPLIER 2");
+                result.GetGridTextValue(row.RowIndex, 4).Should().Be("SUPPLIER 2");
             }
         }
     }
