@@ -1,16 +1,8 @@
-﻿using Linn.Common.Proxy.LinnApps;
-using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
-
-namespace Linn.Purchasing.Persistence.LinnApps.Repositories
+﻿namespace Linn.Purchasing.Persistence.LinnApps.Repositories
 {
-    using System;
-    using System.Linq;
-    using System.Linq.Expressions;
-
     using Linn.Common.Persistence.EntityFramework;
-    using Linn.Purchasing.Domain.LinnApps;
-
-    using Microsoft.EntityFrameworkCore;
+    using Linn.Common.Proxy.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
     public class OverbookAllowedByLogRespository : EntityFrameworkRepository<OverbookAllowedByLog, int>
     {
