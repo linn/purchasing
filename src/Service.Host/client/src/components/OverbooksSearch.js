@@ -36,7 +36,7 @@ function OverbooksSearch() {
                     <Typeahead
                         items={searchResults.map(x => ({
                             ...x,
-                            href: x.links.find(l => l.rel === 'allow-over-book').href
+                            href: x.links.find(l => l.rel === 'allow-over-book')?.href
                         }))}
                         fetchItems={searchOverbookItems}
                         clearSearch={() => {}}

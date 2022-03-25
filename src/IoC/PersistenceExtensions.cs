@@ -83,7 +83,8 @@
                         ?.TqmsView))
                 .AddTransient<IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey>, PurchaseOrderDeliveryRepository>()
                 .AddTransient<IRepository<PurchaseOrderReqState, string>, EntityFrameworkRepository<PurchaseOrderReqState, string>>(
-                    r => new EntityFrameworkRepository<PurchaseOrderReqState, string>(r.GetService<ServiceDbContext>()?.PurchaseOrderReqStates));
+                    r => new EntityFrameworkRepository<PurchaseOrderReqState, string>(r.GetService<ServiceDbContext>()?.PurchaseOrderReqStates))
+                .AddTransient<IRepository<OverbookAllowedByLog, int>, OverbookAllowedByLogRespository>();
         }
     }
 }
