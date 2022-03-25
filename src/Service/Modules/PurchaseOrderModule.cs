@@ -169,7 +169,7 @@
             var resource = await req.Bind<PurchaseOrderResource>();
             resource.Privileges = req.HttpContext.GetPrivileges();
 
-            var result = this.purchaseOrderFacadeService.Update(resource.OrderNumber, resource, resource.Privileges);
+            var result = this.purchaseOrderFacadeService.Update(resource.OrderNumber, resource, resource.Privileges, res.HttpContext.User.GetEmployeeNumber());
 
             await res.Negotiate(result);
         }

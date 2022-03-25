@@ -58,7 +58,7 @@
         public void ShouldCallUpdate()
         {
             this.PurchaseOrderFacadeService.Received()
-                .Update(Arg.Any<int>(), Arg.Any<PurchaseOrderResource>(), Arg.Any<IEnumerable<string>>());
+                .Update(Arg.Any<int>(), Arg.Any<PurchaseOrderResource>(), Arg.Any<IEnumerable<string>>(), Arg.Any<int>());
         }
 
         [Test]
