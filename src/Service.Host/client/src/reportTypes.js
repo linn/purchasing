@@ -35,3 +35,15 @@ export const spendByPartReport = new ItemType(
     'SPEND_BY_PART',
     '/purchasing/reports/spend-by-part/report'
 );
+
+export const partsReceivedReport = new ItemType(
+    'partsReceivedReport',
+    'PARTS_RECEIVED_REPORT',
+    '/purchasing/reports/parts-received'
+);
+
+export const whatsDueInReport = new ItemType(
+    'whatsDueInReport',
+    'WHATS_DUE_IN_REPORT',
+    '/purchasing/reports/whats-due-in'
+);

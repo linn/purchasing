@@ -47,11 +47,16 @@ import openDebitNotes from './openDebitNotes';
 import sendPlNoteEmail from './sendPlNoteEmail';
 import bulkLeadTimesUpload from './bulkLeadTimesUpload';
 import supplierGroups from './supplierGroups.';
+import tqmsJobrefs from './tqmsJobrefs';
+import partsReceivedReport from './partsReceivedReport';
 import purchaseOrderReq from './purchaseOrderReq';
+import purchaseOrderReqs from './purchaseOrderReqs';
 import departments from './departments';
 import nominals from './nominals';
 import purchaseOrder from './purchaseOrder';
 import purchaseOrders from './purchaseOrders';
+import whatsDueInReport from './whatsDueInReport';
+import purchaseOrderReqStates from './purchaseOrderReqStates';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -70,6 +75,7 @@ const rootReducer = history =>
         employees,
         manufacturers,
         nominals,
+        openDebitNotes,
         orderMethods,
         ordersByPart,
         ordersBySupplier,
@@ -83,12 +89,14 @@ const rootReducer = history =>
         planners,
         plCreditDebitNote,
         plCreditDebitNotes,
-        openDebitNotes,
+        partsReceivedReport,
         preferredSupplierChange,
         priceChangeReasons,
         purchaseOrder,
-        purchaseOrders,
         purchaseOrderReq,
+        purchaseOrderReqs,
+        purchaseOrderReqStates,
+        purchaseOrders,
         putSupplierOnHold,
         router: connectRouter(history),
         sendPlNoteEmail,
@@ -101,9 +109,11 @@ const rootReducer = history =>
         suppliers,
         suppliersWithUnacknowledgedOrders,
         tariffs,
+        tqmsJobrefs,
         unacknowledgedOrdersReport,
         unitsOfMeasure,
         vendorManagers,
+        whatsDueInReport,
         ...sharedLibraryReducers,
         errors
     });

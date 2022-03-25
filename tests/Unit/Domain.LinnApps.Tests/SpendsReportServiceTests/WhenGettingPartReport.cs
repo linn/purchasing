@@ -144,14 +144,13 @@
             this.results.ReportTitle.DisplayValue.Should().Be(
                 $"Spend by part report for Supplier: The shop ({this.supplierId}). In base currency, for this financial year and last, excludes factors & VAT.");
             this.results.Rows.Count().Should().Be(3);
-            this.results.Rows.First(x=>x.RowId == "MCAS WAN").Should().NotBeNull();
+            this.results.Rows.First(x => x.RowId == "MCAS WAN").Should().NotBeNull();
             this.results.GetGridTextValue(0, 0).Should().Be("RAW 33");
             this.results.GetGridTextValue(0, 1).Should().Be("A part of some sort");
             this.results.GetGridValue(0, 2).Should().Be(500);
             this.results.GetGridValue(0, 3).Should().Be(0m);
             this.results.GetGridValue(0, 4).Should().Be(0m);
             this.results.GetGridTextValue(1, 0).Should().Be("MCAS 222");
-
         }
     }
 }

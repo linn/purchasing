@@ -171,6 +171,7 @@ export const supplierGroups = new ItemType(
     '/purchasing/supplier-groups/'
 );
 
+export const tqmsJobrefs = new ItemType('tqmsJobrefs', 'TQMS_JOBREFS', '/purchasing/tqms-jobrefs/');
 export const purchaseOrderReq = new ItemType(
     'purchaseOrderReq',
     'PURCHASE_ORDER_REQ',
@@ -185,4 +186,10 @@ export const purchaseOrderReqs = new ItemType(
     'purchaseOrderReqs',
     'PURCHASE_ORDER_REQS',
     '/purchasing/purchase-orders/reqs'
+);
+
+export const purchaseOrderReqStates = new ItemType(
+    'purchaseOrderReqStates',
+    'PURCHASE_ORDER_REQ_STATES',
+    '/purchasing/purchase-orders/reqs/states'
 );

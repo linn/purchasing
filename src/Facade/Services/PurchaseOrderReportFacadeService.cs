@@ -192,7 +192,7 @@
             ResultsModel resultsModel, 
             IEnumerable<string> privileges)
         {
-            return (ReportReturnResource) this.resultsModelResourceBuilder.Build(resultsModel, privileges);
+            return (ReportReturnResource)this.resultsModelResourceBuilder.Build(resultsModel, privileges);
         }
     }
 }

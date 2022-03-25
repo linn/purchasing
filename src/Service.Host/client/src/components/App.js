@@ -23,6 +23,9 @@ function App() {
                 <ListItem component={Link} to="/purchasing/part-suppliers" button>
                     <Typography color="primary">Part Supplier Utility</Typography>
                 </ListItem>
+                <ListItem component={Link} to="/purchasing/purchase-orders/reqs" button>
+                    <Typography color="primary">Purchase Order Reqs Utility</Typography>
+                </ListItem>
                 <Typography variant="h6">Reports</Typography>
                 <ListItem component={Link} to="/purchasing/reports/orders-by-supplier" button>
                     <Typography color="primary">Orders by Supplier Report</Typography>
