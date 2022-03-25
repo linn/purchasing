@@ -73,7 +73,6 @@
             }
 
             entity.State = "CANCELLED";
-            // Look up this ^? Not sure how
         }
 
         public PurchaseOrderReq Create(PurchaseOrderReq entity, IEnumerable<string> privileges)
@@ -105,21 +104,7 @@
             }
 
             return;
-
-            // todo find finance check equivalent of below in old form
-            //var allowedToAuthoriseResult = this.purchaseOrderReqsPack.AllowedToAuthorise(
-            //    stage,
-            //    currentUserId,
-            //    entity.TotalReqPrice.Value,
-            //    entity.DepartmentCode,
-            //    entity.State);
-
-            //if (!allowedToAuthoriseResult.Success)
-            //{
-            //    throw new UnauthorisedActionException(allowedToAuthoriseResult.Message);
-            //}
-
-            //entity.State = allowedToAuthoriseResult.NewState;
+            // todo find finance check equivalent of allowed to authorise checks
             //entity.FinanceCheckById = currentUserId;
         }
 
