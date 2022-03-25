@@ -99,5 +99,10 @@
                            : DateTime.Parse(searchResource.DateClosed);
             return x => x.DateClosed == date && x.NoteType.Type == searchResource.NoteType;
         }
+
+        protected override Expression<Func<PlCreditDebitNote, bool>> FindExpression(PlCreditDebitNoteResource searchResource)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

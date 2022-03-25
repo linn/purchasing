@@ -1,10 +1,7 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
-    using System;
     using System.IO;
-    using System.Linq;
 
-    using Linn.Common.Email;
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps;
