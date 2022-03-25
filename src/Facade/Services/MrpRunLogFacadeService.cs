@@ -8,8 +8,9 @@
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Resources.MaterialRequirements;
+    using Linn.Purchasing.Resources.SearchResources;
 
-    public class MrpRunLogFacadeService : FacadeResourceService<MrpRunLog, int, MrpRunLogResource, MrpRunLogResource>
+    public class MrpRunLogFacadeService : FacadeFilterResourceService<MrpRunLog, int, MrpRunLogResource, MrpRunLogResource, MaterialRequirementsSearchResource>
     {
         public MrpRunLogFacadeService(
             IRepository<MrpRunLog, int> repository,
@@ -52,6 +53,16 @@
             IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
+        }
+
+        protected override Expression<Func<MrpRunLog, bool>> FilterExpression(MaterialRequirementsSearchResource searchResource)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override Expression<Func<MrpRunLog, bool>> FindExpression(MaterialRequirementsSearchResource searchResource)
+        {
+            return a => a.JobRef == searchResource.JobRef;
         }
     }
 }

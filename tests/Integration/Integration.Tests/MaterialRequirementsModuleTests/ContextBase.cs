@@ -6,6 +6,7 @@
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.IoC;
     using Linn.Purchasing.Resources.MaterialRequirements;
+    using Linn.Purchasing.Resources.SearchResources;
     using Linn.Purchasing.Service.Modules;
 
     using Microsoft.Extensions.DependencyInjection;
@@ -20,12 +21,13 @@
 
         protected HttpResponseMessage Response { get; set; }
 
-        protected IFacadeResourceService<MrpRunLog, int, MrpRunLogResource, MrpRunLogResource> MrpRunLogFacadeService { get; private set; }
+        protected IFacadeResourceFilterService<MrpRunLog, int, MrpRunLogResource, MrpRunLogResource, MaterialRequirementsSearchResource> MrpRunLogFacadeService { get; private set; }
 
         [SetUp]
         public void EstablishContext()
         {
-            this.MrpRunLogFacadeService = Substitute.For<IFacadeResourceService<MrpRunLog, int, MrpRunLogResource, MrpRunLogResource>>();
+            this.MrpRunLogFacadeService = Substitute
+                .For<IFacadeResourceFilterService<MrpRunLog, int, MrpRunLogResource, MrpRunLogResource, MaterialRequirementsSearchResource>>();
             this.Client = TestClient.With<MaterialRequirementsModule>(
                 services =>
                     {
