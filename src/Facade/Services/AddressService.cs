@@ -80,5 +80,10 @@
         {
             return x => x.Addressee.ToUpper().Contains(searchResource.Addressee.ToUpper());
         }
+
+        protected override Expression<Func<Address, bool>> FindExpression(AddressResource searchResource)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
