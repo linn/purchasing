@@ -84,6 +84,11 @@
                          || string.IsNullOrEmpty(searchResource.SupplierNameSearchTerm));
         }
 
+        protected override Expression<Func<PartSupplier, bool>> FindExpression(PartSupplierSearchResource searchResource)
+        {
+            throw new NotImplementedException();
+        }
+
         private PartSupplier BuildEntityFromResourceHelper(PartSupplierResource resource)
         {
             return new PartSupplier

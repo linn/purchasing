@@ -55,6 +55,11 @@
                     || x.SupplierName.ToUpper().ToString().Contains(searchResource.Supplier.ToUpper()));
         }
 
+        protected override Expression<Func<PurchaseOrderReq, bool>> FindExpression(PurchaseOrderReqSearchResource searchResource)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override void SaveToLogTable(
             string actionType,
             int userNumber,
