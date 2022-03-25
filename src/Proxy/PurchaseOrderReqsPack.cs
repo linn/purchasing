@@ -26,13 +26,13 @@
                                   CommandType = CommandType.StoredProcedure
                               };
                 var from = new OracleParameter("p_original_state", OracleDbType.Varchar2)
-                                {
-                                    Direction = ParameterDirection.Input, Size = 50, Value = fromState
-                };
+                               {
+                                   Direction = ParameterDirection.Input, Size = 50, Value = fromState
+                               };
                 var to = new OracleParameter("p_new_state", OracleDbType.Varchar2)
-                                  {
-                                      Direction = ParameterDirection.Input, Size = 50, Value = toState
-                                  };
+                             {
+                                 Direction = ParameterDirection.Input, Size = 50, Value = toState
+                             };
                 var result = new OracleParameter(null, OracleDbType.Varchar2)
                                  {
                                      Direction = ParameterDirection.ReturnValue, Size = 2000
@@ -48,5 +48,84 @@
                 return result.Value.ToString() == "TRUE";
             }
         }
+
+        public string AllowedToAuthorise(string stage, int userNumber, decimal value, string dept, string state)
+            {
+                using (var connection = this.databaseService.GetConnection())
+                {
+                    connection.Open();
+                    var cmd = new OracleCommand("blue_req_pack.ok_to_authorise", connection)
+                                  {
+                                      CommandType = CommandType.StoredProcedure
+                                  };
+                    var pstage = new OracleParameter("p_stage", OracleDbType.Varchar2)
+                                   {
+                                       Direction = ParameterDirection.Input,
+                                       Size = 50,
+                                       Value = stage
+                                   };
+                    var puser = new OracleParameter("p_user", OracleDbType.Int32)
+                                 {
+                                     Direction = ParameterDirection.Input,
+                                     Size = 50,
+                                     Value = userNumber
+                    };
+                    var pvalue = new OracleParameter("p_value", OracleDbType.Decimal)
+                                      {
+                                          Direction = ParameterDirection.Input,
+                                          Size = 50,
+                                          Value = value
+                                      };
+                    var pdept = new OracleParameter("p_dept", OracleDbType.Varchar2)
+                                    {
+                                        Direction = ParameterDirection.Input,
+                                        Size = 50,
+                                        Value = dept
+                                    };
+                    var pstate = new OracleParameter("p_state", OracleDbType.Varchar2)
+                                   {
+                                       Direction = ParameterDirection.InputOutput,
+                                       Size = 50,
+                                       Value = state
+                                   };
+                    var result = new OracleParameter(null, OracleDbType.Varchar2)
+                                     {
+                                         Direction = ParameterDirection.ReturnValue,
+                                         Size = 2000
+                                     };
+
+                    cmd.Parameters.Add(result);
+                    cmd.Parameters.Add(pstage);
+                    cmd.Parameters.Add(puser);
+                    cmd.Parameters.Add(pdept);
+                    cmd.Parameters.Add(pstate);
+
+
+                    cmd.ExecuteNonQuery();
+
+                    if (result.Value.ToString() == "TRUE")
+                    {
+                        connection.Close();
+                        return "TRUE";
+                    };
+
+                    var packageMessageCmd = new OracleCommand("blue_req_pack.return_package_message", connection)
+                                                      {
+                                                          CommandType = CommandType.StoredProcedure
+                                                      };
+                    var messageResult = new OracleParameter(null, OracleDbType.Varchar2)
+                                     {
+                                         Direction = ParameterDirection.ReturnValue,
+                                         Size = 2000
+                                     };
+
+                    packageMessageCmd.Parameters.Add(messageResult);
+                    packageMessageCmd.ExecuteNonQuery();
+
+                    connection.Close();
+
+                    return messageResult.Value.ToString();
+                }
+            }
     }
 }

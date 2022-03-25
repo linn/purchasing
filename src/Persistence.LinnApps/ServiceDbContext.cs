@@ -95,6 +95,8 @@
 
         public DbSet<PurchaseOrderReqState> PurchaseOrderReqStates { get; set; }
 
+        public DbSet<PurchaseOrderReqStateChange> PurchaseOrderReqStateChanges { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -145,6 +147,7 @@
             this.BuildDepartments(builder);
             this.BuildNominals(builder);
             this.BuildPurchaseOrderReqStates(builder);
+            this.BuildPurchaseOrderReqStateChanges(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -849,6 +852,16 @@
             e.Property(d => d.Description).HasColumnName("DESCRIPTION").HasMaxLength(200);
             e.Property(d => d.DisplayOrder).HasColumnName("DISPLAY_ORDER");
             e.Property(d => d.IsFinalState).HasColumnName("FINAL_STATE").HasMaxLength(1);
+        }
+
+        private void BuildPurchaseOrderReqStateChanges(ModelBuilder builder)
+        {
+            var e = builder.Entity<PurchaseOrderReqStateChange>().ToTable("BLUE_REQ_STATE_CHANGES");
+            e.HasKey(s => new { s.FromState, s.ToState });
+            e.Property(s => s.FromState).HasColumnName("FROM_STATE").HasMaxLength(20);
+            e.Property(s => s.ToState).HasColumnName("TO_STATE").HasMaxLength(20);
+            e.Property(s => s.UserAllowed).HasColumnName("USER_ALLOWED").HasMaxLength(1);
+            e.Property(s => s.ComputerAllowed).HasColumnName("COMPUTER_STANDARD").HasMaxLength(1);
         }
     }
 }
