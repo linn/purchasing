@@ -14,16 +14,12 @@
 
         private readonly IPurchaseOrderReqsPack purchaseOrderReqsPack;
 
-        private readonly IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey> stateChangesRepository;
-
         public PurchaseOrderReqService(
             IAuthorisationService authService,
-            IPurchaseOrderReqsPack purchaseOrderReqsPack,
-            IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey> statesChangesRepository)
+            IPurchaseOrderReqsPack purchaseOrderReqsPack)
         {
             this.authService = authService;
             this.purchaseOrderReqsPack = purchaseOrderReqsPack;
-            this.stateChangesRepository = stateChangesRepository;
         }
 
         public void Authorise(PurchaseOrderReq entity, IEnumerable<string> privileges, int currentUserId)
@@ -46,24 +42,19 @@
             var stage = !entity.AuthorisedById.HasValue ? "AUTH1" : "AUTH2";
 
             // todo check if totalReqPrice is used on the old form and if any currency conversion is done
-            var allowedToAuthoriseMessage = this.purchaseOrderReqsPack.AllowedToAuthorise(
+            var allowedToAuthoriseResult = this.purchaseOrderReqsPack.AllowedToAuthorise(
                 stage,
                 currentUserId,
                 entity.TotalReqPrice.Value,
                 entity.DepartmentCode,
                 entity.State);
 
-            if (allowedToAuthoriseMessage != "TRUE")
+            if (!allowedToAuthoriseResult.Success)
             {
-                throw new UnauthorisedActionException(allowedToAuthoriseMessage);
+                throw new UnauthorisedActionException(allowedToAuthoriseResult.Message);
             }
 
-            var toState = this.stateChangesRepository
-                .FindBy(x => x.FromState == entity.State && x.ComputerAllowed == "Y").ToState;
-            //todo can maybe get toState ^ from the inputOutput param in purchaseOrderReqsPack.AllowedToAuthorise
-
-            entity.State = toState;
-
+            entity.State = allowedToAuthoriseResult.NewState;
             entity.AuthorisedById = currentUserId;
         }
 
@@ -101,6 +92,37 @@
             return entity;
         }
 
+        public void FinanceApprove(PurchaseOrderReq entity, IEnumerable<string> privileges, int currentUserId)
+        {
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqFinanceCheck, privileges))
+            {
+                throw new UnauthorisedActionException("You are not authorised to perform finance sign off on PO Reqs");
+            }
+
+            if (entity.State != "FINANCE WAIT")
+            {
+                throw new UnauthorisedActionException("Cannot authorise a req that is not in state 'AUTHORISE WAIT'");
+            }
+
+            return;
+
+            // todo find finance check equivalent of below in old form
+            //var allowedToAuthoriseResult = this.purchaseOrderReqsPack.AllowedToAuthorise(
+            //    stage,
+            //    currentUserId,
+            //    entity.TotalReqPrice.Value,
+            //    entity.DepartmentCode,
+            //    entity.State);
+
+            //if (!allowedToAuthoriseResult.Success)
+            //{
+            //    throw new UnauthorisedActionException(allowedToAuthoriseResult.Message);
+            //}
+
+            //entity.State = allowedToAuthoriseResult.NewState;
+            //entity.FinanceCheckById = currentUserId;
+        }
+
         public void Update(PurchaseOrderReq entity, PurchaseOrderReq updatedEntity, IEnumerable<string> privileges)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqUpdate, privileges))
@@ -111,7 +133,7 @@
             var stateChangeAllowed = this.purchaseOrderReqsPack.StateChangeAllowed(entity.State, updatedEntity.State);
             if (!stateChangeAllowed)
             {
-                throw new UnauthorisedActionException(
+                throw new IllegalPoReqStateChangeException(
                     $"Cannot change directly from state '{entity.State}' to '{updatedEntity.State}'");
             }
 

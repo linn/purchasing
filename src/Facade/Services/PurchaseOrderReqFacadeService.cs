@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq.Expressions;
 
+    using Linn.Common.Domain.Exceptions;
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
@@ -12,11 +13,19 @@
     using Linn.Purchasing.Resources.SearchResources;
 
     public class PurchaseOrderReqFacadeService : FacadeFilterResourceService<PurchaseOrderReq, int,
-        PurchaseOrderReqResource, PurchaseOrderReqResource, PurchaseOrderReqSearchResource>
+                                                     PurchaseOrderReqResource, PurchaseOrderReqResource,
+                                                     PurchaseOrderReqSearchResource>,
+                                                 IPurchaseOrderReqFacadeService
     {
+        private readonly IDatabaseService databaseService;
+
         private readonly IPurchaseOrderReqService domainService;
 
-        private readonly IDatabaseService databaseService;
+        private readonly IRepository<PurchaseOrderReq, int> repository;
+
+        private readonly IBuilder<PurchaseOrderReq> resourceBuilder;
+
+        private readonly ITransactionManager transactionManager;
 
         public PurchaseOrderReqFacadeService(
             IRepository<PurchaseOrderReq, int> repository,
@@ -28,6 +37,36 @@
         {
             this.domainService = domainService;
             this.databaseService = databaseService;
+            this.repository = repository;
+            this.resourceBuilder = resourceBuilder;
+            this.transactionManager = transactionManager;
+        }
+
+        public IResult<PurchaseOrderReqResource> Authorise(
+            int reqNumber,
+            IEnumerable<string> privileges,
+            int currentUserNumber)
+        {
+            var entity = this.repository.FindById(reqNumber);
+            if (entity == null)
+            {
+                return new NotFoundResult<PurchaseOrderReqResource>();
+            }
+
+            try
+            {
+                this.domainService.Authorise(entity, privileges, currentUserNumber);
+            }
+            catch (DomainException exception)
+            {
+                return new BadRequestResult<PurchaseOrderReqResource>(
+                    $"Unable to Authorise req {reqNumber} - {exception.Message}");
+            }
+
+            this.transactionManager.Commit();
+
+            return new SuccessResult<PurchaseOrderReqResource>(
+                (PurchaseOrderReqResource) this.resourceBuilder.Build(entity, privileges));
         }
 
         protected override PurchaseOrderReq CreateFromResource(
@@ -43,16 +82,20 @@
 
         protected override void DeleteOrObsoleteResource(PurchaseOrderReq entity, IEnumerable<string> privileges = null)
         {
-            //todo this.domainService.cancel
+            this.domainService.Cancel(entity, privileges);
         }
 
         protected override Expression<Func<PurchaseOrderReq, bool>> FilterExpression(
             PurchaseOrderReqSearchResource searchResource)
         {
-            return x => (string.IsNullOrWhiteSpace(searchResource.ReqNumber) || x.ReqNumber.ToString().Contains(searchResource.ReqNumber))
-                && (string.IsNullOrWhiteSpace(searchResource.Part) || x.PartNumber.ToUpper().Contains(searchResource.Part.ToUpper()))
-                && (string.IsNullOrWhiteSpace(searchResource.Supplier) || x.SupplierId.ToString().Contains(searchResource.Supplier)
-                    || x.SupplierName.ToUpper().ToString().Contains(searchResource.Supplier.ToUpper()));
+            return x =>
+                (string.IsNullOrWhiteSpace(searchResource.ReqNumber)
+                 || x.ReqNumber.ToString().Contains(searchResource.ReqNumber))
+                && (string.IsNullOrWhiteSpace(searchResource.Part)
+                    || x.PartNumber.ToUpper().Contains(searchResource.Part.ToUpper()))
+                && (string.IsNullOrWhiteSpace(searchResource.Supplier)
+                    || x.SupplierId.ToString().Contains(searchResource.Supplier) || x.SupplierName.ToUpper().ToString()
+                        .Contains(searchResource.Supplier.ToUpper()));
         }
 
         protected override void SaveToLogTable(
@@ -62,7 +105,6 @@
             PurchaseOrderReqResource resource,
             PurchaseOrderReqResource updateResource)
         {
-            return;
         }
 
         protected override Expression<Func<PurchaseOrderReq, bool>> SearchExpression(string searchTerm)

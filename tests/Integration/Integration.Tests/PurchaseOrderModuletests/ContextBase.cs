@@ -37,7 +37,7 @@
             get; private set;
         }
 
-        protected IFacadeResourceFilterService<PurchaseOrderReq, int, PurchaseOrderReqResource, PurchaseOrderReqResource, PurchaseOrderReqSearchResource>
+        protected IPurchaseOrderReqFacadeService
             PurchaseOrderReqFacadeService
         {
             get; private set;
