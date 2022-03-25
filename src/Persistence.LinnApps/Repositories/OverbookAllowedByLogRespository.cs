@@ -19,6 +19,7 @@
         public override void Add(OverbookAllowedByLog entity)
         {
             entity.Id = this.databaseService.GetIdSequence("AN_ARBITRARY_SEQUENCE");
+            entity.LogId = entity.Id;
             this.serviceDbContext.AllowOverbookLogs.Add(entity);
         }
     }
