@@ -16,18 +16,22 @@
 
         protected IRepository<PurchaseOrder, int> PurchaseOrderRepository { get; private set; }
 
+        protected IRepository<OverbookAllowedByLog, int> OverbookAllowedByLogRepository { get; private set; }
+
         protected PurchaseOrderFacadeService Sut { get; private set; }
 
         protected ITransactionManager TransactionManager { get; private set; }
+
 
         [SetUp]
         public void SetUpContext()
         {
             this.PurchaseOrderRepository = Substitute.For<IRepository<PurchaseOrder, int>>();
+            this.OverbookAllowedByLogRepository = Substitute.For<IRepository<OverbookAllowedByLog, int>>();
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.DomainService = Substitute.For<IPurchaseOrderService>();
             this.Builder = Substitute.For<IBuilder<PurchaseOrder>>();
-            this.Sut = new PurchaseOrderFacadeService(this.PurchaseOrderRepository, this.TransactionManager, this.Builder, this.DomainService);
+            this.Sut = new PurchaseOrderFacadeService(this.PurchaseOrderRepository, this.TransactionManager, this.Builder, this.DomainService, this.OverbookAllowedByLogRepository);
         }
     }
 }

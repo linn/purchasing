@@ -13,15 +13,18 @@
         : FacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource>
     {
         private readonly IPurchaseOrderService domainService;
+        private readonly IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository;
 
         public PurchaseOrderFacadeService(
             IRepository<PurchaseOrder, int> repository,
             ITransactionManager transactionManager,
             IBuilder<PurchaseOrder> resourceBuilder,
-            IPurchaseOrderService domainService)
+            IPurchaseOrderService domainService,
+            IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository)
             : base(repository, transactionManager, resourceBuilder)
         {
             this.domainService = domainService;
+            this.overbookAllowedByLogRepository = overbookAllowedByLogRepository;
         }
 
         protected override PurchaseOrder CreateFromResource(
@@ -33,12 +36,23 @@
 
         protected override void SaveToLogTable(
             string actionType, 
-            int userNumber, 
+            int userNumber,
             PurchaseOrder entity, 
             PurchaseOrderResource resource, 
             PurchaseOrderResource updateResource)
         {
-            throw new NotImplementedException();
+            var log = new OverbookAllowedByLog
+            {
+                LogAction = actionType,
+                LogTime = DateTime.UtcNow,
+                LogUserNumber = userNumber,
+                OrderNumber = entity.OrderNumber,
+                OrderLine = 1,
+                OverbookQty = entity.OverbookQty,
+                OverbookDate = DateTime.Now,
+                OverbookGrantedBy = userNumber
+            };
+            this.overbookAllowedByLogRepository.Add(log);
         }
 
         protected override void DeleteOrObsoleteResource(

@@ -96,7 +96,7 @@
                 .AddTransient<IFacadeResourceFilterService<PurchaseOrderReq, int, PurchaseOrderReqResource, PurchaseOrderReqResource, PurchaseOrderReqSearchResource>, PurchaseOrderReqFacadeService>()
                 .AddTransient<IWhatsDueInReportFacadeService, WhatsDueInReportFacadeService>()
                 .AddTransient<IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource>, PurchaseOrderReqStateFacadeService>()
-                .AddTransient<IFacadeResourceService<MrpRunLog, int, MrpRunLogResource, MrpRunLogResource>, MrpRunLogFacadeService>();
+                .AddTransient<IFacadeResourceFilterService<MrpRunLog, int, MrpRunLogResource, MrpRunLogResource, MaterialRequirementsSearchResource>, MrpRunLogFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)

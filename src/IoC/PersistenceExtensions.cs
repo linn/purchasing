@@ -85,6 +85,7 @@
                 .AddTransient<IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey>, PurchaseOrderDeliveryRepository>()
                 .AddTransient<IRepository<PurchaseOrderReqState, string>, EntityFrameworkRepository<PurchaseOrderReqState, string>>(
                     r => new EntityFrameworkRepository<PurchaseOrderReqState, string>(r.GetService<ServiceDbContext>()?.PurchaseOrderReqStates))
+                .AddTransient<IRepository<OverbookAllowedByLog, int>, OverbookAllowedByLogRespository>()
                 .AddTransient<IRepository<MrpRunLog, int>, EntityFrameworkRepository<MrpRunLog, int>>(
                     r => new EntityFrameworkRepository<MrpRunLog, int>(r.GetService<ServiceDbContext>()?.MrpRunLogs));
         }
