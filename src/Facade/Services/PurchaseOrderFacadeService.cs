@@ -43,8 +43,6 @@
         {
             var log = new OverbookAllowedByLog
             {
-                LogAction = actionType,
-                LogTime = DateTime.UtcNow,
                 OrderNumber = entity.OrderNumber,
                 OverbookQty = entity.OverbookQty,
                 OverbookDate = DateTime.Now,

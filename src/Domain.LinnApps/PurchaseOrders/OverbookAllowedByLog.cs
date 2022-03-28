@@ -3,7 +3,7 @@
     using System;
     using Linn.Common.Domain;
 
-    public class OverbookAllowedByLog : LogTable
+    public class OverbookAllowedByLog 
     {
         public int Id { get; set; }
 
