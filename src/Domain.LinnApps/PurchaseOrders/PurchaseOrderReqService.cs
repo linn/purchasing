@@ -3,10 +3,8 @@
     using System.Collections.Generic;
 
     using Linn.Common.Authorisation;
-    using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
-    using Linn.Purchasing.Domain.LinnApps.Keys;
 
     public class PurchaseOrderReqService : IPurchaseOrderReqService
     {
@@ -14,9 +12,7 @@
 
         private readonly IPurchaseOrderReqsPack purchaseOrderReqsPack;
 
-        public PurchaseOrderReqService(
-            IAuthorisationService authService,
-            IPurchaseOrderReqsPack purchaseOrderReqsPack)
+        public PurchaseOrderReqService(IAuthorisationService authService, IPurchaseOrderReqsPack purchaseOrderReqsPack)
         {
             this.authService = authService;
             this.purchaseOrderReqsPack = purchaseOrderReqsPack;
@@ -103,9 +99,8 @@
                 throw new UnauthorisedActionException("Cannot authorise a req that is not in state 'AUTHORISE WAIT'");
             }
 
-            return;
             // todo find finance check equivalent of allowed to authorise checks
-            //entity.FinanceCheckById = currentUserId;
+            // entity.FinanceCheckById = currentUserId;
         }
 
         public void Update(PurchaseOrderReq entity, PurchaseOrderReq updatedEntity, IEnumerable<string> privileges)
