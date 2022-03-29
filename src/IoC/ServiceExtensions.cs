@@ -92,7 +92,8 @@
                 .AddTransient<ISpendsReportFacadeService, SpendsReportFacadeService>()
                 .AddTransient<IPurchaseOrderReqFacadeService, PurchaseOrderReqFacadeService>()
                 .AddTransient<IWhatsDueInReportFacadeService, WhatsDueInReportFacadeService>()
-                .AddTransient<IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource>, PurchaseOrderReqStateFacadeService>();
+                .AddTransient<IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource>, PurchaseOrderReqStateFacadeService>()
+                .AddTransient<IOutstandingPoReqsReportFacadeService, OutstandingPoReqsReportFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
@@ -115,6 +116,7 @@
                 .AddTransient<IPartsReceivedReportService, PartsReceivedReportService>()
                 .AddTransient<IPurchaseOrderReqService, PurchaseOrderReqService>()
                 .AddTransient<IWhatsDueInReportService, WhatsDueInReportService>()
+                .AddTransient<IOutstandingPoReqsReportService, OutstandingPoReqsReportService>()
 
             // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()

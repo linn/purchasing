@@ -840,6 +840,7 @@
             entity.HasOne(e => e.SecondAuthBy).WithMany().HasForeignKey(x => x.SecondAuthById);
             entity.Property(e => e.Email).HasColumnName("EMAIL_ADDRESS").HasMaxLength(50);
             entity.Property(e => e.InternalNotes).HasColumnName("INTERNAL_ONLY_ORDER_NOTES").HasMaxLength(300);
+            entity.Property(e => e.Description).HasColumnName("DESCRIPTION").HasMaxLength(2000);
         }
 
         private void BuildNominals(ModelBuilder builder)
