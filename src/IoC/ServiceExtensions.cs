@@ -122,14 +122,15 @@
                 .AddTransient<IPurchaseOrderReqService, PurchaseOrderReqService>()
                 .AddTransient<IWhatsDueInReportService, WhatsDueInReportService>()
                 .AddTransient<IOutstandingPoReqsReportService, OutstandingPoReqsReportService>()
-                .AddTransient<IMaterialRequirementsPlanningService, MaterialRequirementsMaterialRequirementsPlanningService>()
+                .AddTransient<IMaterialRequirementsPlanningService, MaterialRequirementsPlanningService>()
 
             // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
                 .AddTransient<IAutocostPack, AutocostPack>()
                 .AddTransient<ICurrencyPack, CurrencyPack>()
                 .AddTransient<IPurchaseLedgerPack, PurchaseLedgerPack>()
-                .AddTransient<IPurchaseOrderReqsPack, PurchaseOrderReqsPack>();
+                .AddTransient<IPurchaseOrderReqsPack, PurchaseOrderReqsPack>()
+                .AddTransient<IMrpLoadPack, MrpLoadPack>();
         }
     }
 }
