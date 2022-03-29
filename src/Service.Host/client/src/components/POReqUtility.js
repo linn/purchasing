@@ -185,19 +185,21 @@ function POReqUtility({ creating }) {
         collectionSelectorHelpers.getApplicationState(state.purchaseOrderReq)
     );
 
+    const allowedToCancel = () => !creating && req.links?.some(l => l.rel === 'cancel');
     const allowedToAuthorise = () =>
         !creating && req.links?.some(l => l.rel === 'authorise') && req.state === 'AUTHORISE WAIT';
     const allowedTo2ndAuthorise = () =>
         !creating &&
         req.links?.some(l => l.rel === 'authorise') &&
         req.state === 'AUTHORISE 2ND WAIT';
-
     const allowedToFinanceCheck = () =>
         !creating &&
         req.links?.some(l => l.rel === 'finance-check') &&
         req.state === 'FINANCE WAIT';
     const allowedToCreateOrder = () =>
-        !creating && req.links?.some(l => l.rel === 'create-purchase-order') && req.state === 'ORDER WAIT';
+        !creating &&
+        req.links?.some(l => l.rel === 'create-purchase-order') &&
+        req.state === 'ORDER WAIT';
 
     const editingAllowed = creating
         ? purchaseOrderReqApplicationState?.links?.some(l => l.rel === 'create')
@@ -221,7 +223,8 @@ function POReqUtility({ creating }) {
     const handleAuthorise = () => {
         setEditStatus('edit');
         if (allowedToAuthorise) {
-            setReq(a => ({ ...a, authorisedBy: { id: currentUserId, fullName: currentUserName } }));
+            dispatch(poReqActions.postByHref(req.links.find(l => l.rel === 'authorise').href));
+            // setReq(a => ({ ...a, authorisedBy: { id: currentUserId, fullName: currentUserName } }));
         }
     };
 
@@ -248,7 +251,9 @@ function POReqUtility({ creating }) {
     };
 
     const handleCancelClick = () => {
-        // dispatch action to req/id/cancel
+        if (allowedToCancel) {
+            dispatch(poReqActions.postByHref(req.links.find(l => l.rel === 'cancel').href));
+        }
     };
 
     const handleNominalUpdate = newNominal => {
