@@ -80,14 +80,14 @@
             this.Get("/purchasing/purchase-orders/reqs/application-state", this.GetReqApplicationState);
             this.Get("/purchasing/purchase-orders/reqs/{id:int}", this.GetReq);
             this.Put("/purchasing/purchase-orders/reqs/{id:int}", this.UpdateReq);
-            this.Post("/purchasing/purchase-orders/reqs/cancel", this.CancelReq);
-            this.Post("/purchasing/purchase-orders/reqs/authorise", this.AuthoriseReq);
+            this.Post("/purchasing/purchase-orders/reqs/{id:int}/cancel", this.CancelReq);
+            this.Post("/purchasing/purchase-orders/reqs/{id:int}/authorise", this.AuthoriseReq);
             this.Post("/purchasing/purchase-orders/reqs", this.CreateReq);
         }
 
         private async Task AuthoriseReq(HttpRequest req, HttpResponse res)
         {
-            var id = req.RouteValues.As<int>("reqNumber");
+            var id = req.RouteValues.As<int>("id");
             var result = this.purchaseOrderReqFacadeService.Authorise(id, req.HttpContext.GetPrivileges(), req.HttpContext.User.GetEmployeeNumber());
 
             await res.Negotiate(result);
@@ -95,7 +95,7 @@
 
         private async Task CancelReq(HttpRequest req, HttpResponse res)
         {
-            var id = await req.Bind<int>();
+            var id = req.RouteValues.As<int>("id");
             var result = this.purchaseOrderReqFacadeService.DeleteOrObsolete(id, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);

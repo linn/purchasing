@@ -193,15 +193,3 @@ export const purchaseOrderReqStates = new ItemType(
     'PURCHASE_ORDER_REQ_STATES',
     '/purchasing/purchase-orders/reqs/states'
 );
-
-export const poReqsAuthorise = new ItemType(
-    'purchaseOrderReqsAuthorise',
-    'PURCHASE_ORDER_REQS_AUTHORISE',
-    '/purchasing/purchase-orders/reqs/authorise'
-);
-
-export const poReqsCancel = new ItemType(
-    'purchaseOrderReqsCancel',
-    'PURCHASE_ORDER_REQS_CANCEL',
-    '/purchasing/purchase-orders/reqs/cancel'
-);
