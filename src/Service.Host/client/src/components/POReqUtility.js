@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { useMediaQuery } from 'react-responsive';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import { useSelector, useDispatch } from 'react-redux';
+import { Decimal } from 'decimal.js';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { useParams } from 'react-router-dom';
@@ -11,6 +13,9 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import EditOffIcon from '@mui/icons-material/EditOff';
 import Tooltip from '@mui/material/Tooltip';
 import Close from '@mui/icons-material/Close';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import Collapse from '@mui/material/Collapse';
 import { makeStyles } from '@mui/styles';
 import {
     Page,
@@ -98,8 +103,10 @@ function POReqUtility({ creating }) {
             fullName: currentUserName
         },
         reqNumber: 'creating',
-        state: 'DRAFT',
-        reqDate: new Date()
+        state: 'AUTHORISE WAIT',
+        reqDate: `${new Date()}`,
+        partNumber: 'SUNDRY',
+        currency: { code: 'GBP', name: 'UK Sterling' }
     };
 
     const [req, setReq] = useState(defaultCreatingReq);
@@ -248,12 +255,41 @@ function POReqUtility({ creating }) {
         }));
     };
 
-    const useStyles = makeStyles(() => ({
+    const [showCostWarning, setShowCostWarning] = useState(false);
+    const [alreadyShownCostWarning, setAlreadyShownCostWarning] = useState(false);
+
+    useEffect(() => {
+        if (req.unitPrice && req.qty) {
+            let total = Decimal.mul(req.unitPrice, req.qty);
+            if (req.carriage) {
+                total = Decimal.add(total, req.carriage);
+            }
+            if (!alreadyShownCostWarning && total > 250) {
+                setShowCostWarning(true);
+                setAlreadyShownCostWarning(true);
+            }
+            setReq(r => ({
+                ...r,
+                totalReqPrice: total
+            }));
+        }
+    }, [req.qty, req.carriage, req.unitPrice, alreadyShownCostWarning]);
+
+    const useStyles = makeStyles(theme => ({
         buttonMarginTop: {
             marginTop: '28px',
             height: '40px'
         },
         centerTextInDialog: {
+            textAlign: 'center'
+        },
+        cursorPointer: {
+            '&:hover': {
+                cursor: 'pointer'
+            },
+            marginLeft: theme.spacing(2)
+        },
+        centeredIcon: {
             textAlign: 'center'
         }
     }));
@@ -261,9 +297,11 @@ function POReqUtility({ creating }) {
 
     const [explainDialogOpen, setExplainDialogOpen] = useState(false);
 
+    const screenIsSmall = useMediaQuery({ query: `(max-width: 1024px)` });
+
     return (
         <>
-            <Page history={history} homeUrl={config.appRoot} width="m">
+            <Page history={history} homeUrl={config.appRoot} width={screenIsSmall ? 'xl' : 'm'}>
                 {loading ? (
                     <Loading />
                 ) : (
@@ -282,7 +320,28 @@ function POReqUtility({ creating }) {
                                 />
                             </Grid>
                         )}
-
+                        <Collapse in={showCostWarning}>
+                            <Alert
+                                severity="warning"
+                                action={
+                                    <IconButton
+                                        aria-label="close"
+                                        color="inherit"
+                                        size="small"
+                                        onClick={() => {
+                                            setShowCostWarning(false);
+                                        }}
+                                    >
+                                        <Close fontSize="inherit" />
+                                    </IconButton>
+                                }
+                                sx={{ mb: 2 }}
+                            >
+                                <AlertTitle>Warning</AlertTitle>
+                                This req is over £250. <br /> You may want to approach Purchasing
+                                directly to see if they can make cost savings on this purchase
+                            </Alert>
+                        </Collapse>
                         <Dialog open={explainDialogOpen} fullWidth maxWidth="md">
                             <div>
                                 <IconButton
@@ -345,9 +404,11 @@ function POReqUtility({ creating }) {
                                 disabled
                             />
                         </Grid>
-                        <Grid item xs={3}>
+                        <Grid item xs={5}>
                             <Dropdown
-                                // todo onchange - check blue_req_pack.check_br_state_change(originalstate, newstate) and return warning if not allowed
+                                // todo onchange or on save - post & check blue_req_pack.check_br_state_change(originalstate, newstate)
+                                // and return warning if not allowed
+                                //blue req pack.return_package_message might be needed for message, not sure
                                 items={reqStates
                                     ?.sort((a, b) => a.displayOrder - b.displayOrder)
                                     .map(e => ({
@@ -363,15 +424,13 @@ function POReqUtility({ creating }) {
                                 allowNoValue={false}
                                 required
                             />
-                        </Grid>
-                        <Grid item xs={2}>
-                            <Button
+                            <Typography
+                                variant="button"
                                 onClick={() => setExplainDialogOpen(true)}
-                                color="primary"
-                                variant="outlined"
+                                className={classes.cursorPointer}
                             >
-                                explain states
-                            </Button>
+                                <u>Explain states</u>
+                            </Typography>
                         </Grid>
                         <Grid item xs={3}>
                             <InputField
@@ -381,32 +440,33 @@ function POReqUtility({ creating }) {
                                 propertyName="reqDate"
                                 onChange={handleFieldChange}
                                 type="date"
-                                disabled={!editingAllowed}
-                                required
+                                disabled
                             />
                         </Grid>
-                        <Grid item xs={1}>
-                            {editingAllowed ? (
-                                <Tooltip
-                                    title={`You can ${
-                                        creating ? 'create' : 'edit'
-                                    } purchase order reqs`}
-                                >
-                                    <ModeEditIcon color="primary" />
-                                </Tooltip>
-                            ) : (
-                                <Tooltip
-                                    title={`You do not have permission to ${
-                                        creating ? 'create' : 'edit'
-                                    } purchase order reqs`}
-                                >
-                                    <EditOffIcon color="secondary" />
-                                </Tooltip>
-                            )}
+                        <Grid item xs={2}>
+                            <div className={classes.centeredIcon}>
+                                {editingAllowed ? (
+                                    <Tooltip
+                                        title={`You can ${
+                                            creating ? 'create' : 'edit'
+                                        } purchase order reqs`}
+                                    >
+                                        <ModeEditIcon color="primary" />
+                                    </Tooltip>
+                                ) : (
+                                    <Tooltip
+                                        title={`You do not have permission to ${
+                                            creating ? 'create' : 'edit'
+                                        } purchase order reqs`}
+                                    >
+                                        <EditOffIcon color="secondary" />
+                                    </Tooltip>
+                                )}
+                            </div>
                         </Grid>
 
                         <Grid item xs={5} container spacing={1}>
-                            <Grid item xs={12}>
+                            <Grid item xs={8}>
                                 <Typeahead
                                     label="Part"
                                     title="Search for a part"
@@ -429,14 +489,14 @@ function POReqUtility({ creating }) {
                                     placeholder="click to set part"
                                 />
                             </Grid>
-                            <Grid item xs={12}>
+                            <Grid item xs={4}>
                                 <InputField
                                     fullWidth
                                     value={req.qty}
                                     label="Quantity"
                                     propertyName="qty"
                                     onChange={handleFieldChange}
-                                    disabled={!editingAllowed}
+                                    disabled={!editingAllowed || !creating}
                                     type="number"
                                     required
                                 />
@@ -462,7 +522,8 @@ function POReqUtility({ creating }) {
                                             }
                                         }));
                                     }}
-                                    disabled={!editingAllowed}
+                                    disabled={!editingAllowed || !creating}
+                                    required
                                 />
                             </Grid>
                             <Grid item xs={8}>
@@ -474,6 +535,43 @@ function POReqUtility({ creating }) {
                                     disabled
                                 />
                             </Grid>
+
+                            <Grid item xs={4}>
+                                <InputField
+                                    fullWidth
+                                    value={req.unitPrice}
+                                    label="Unit Price"
+                                    number
+                                    propertyName="unitPrice"
+                                    disabled={!editingAllowed || !creating}
+                                    type="number"
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={4}>
+                                <InputField
+                                    fullWidth
+                                    value={req.carriage}
+                                    label="Carriage"
+                                    number
+                                    propertyName="carriage"
+                                    onChange={handleFieldChange}
+                                    disabled={!editingAllowed}
+                                    type="number"
+                                />
+                            </Grid>
+                            <Grid item xs={4}>
+                                <InputField
+                                    fullWidth
+                                    value={req.totalReqPrice}
+                                    label="Total Req Price"
+                                    number
+                                    propertyName="totalReqPrice"
+                                    onChange={handleFieldChange}
+                                    disabled
+                                    type="number"
+                                />
+                            </Grid>
                         </Grid>
                         <Grid item xs={7}>
                             <InputField
@@ -482,50 +580,14 @@ function POReqUtility({ creating }) {
                                 label="Part Description"
                                 propertyName="partDescription"
                                 onChange={handleFieldChange}
-                                rows={7}
+                                rows={8}
                                 disabled={!editingAllowed}
                             />
                         </Grid>
 
-                        <Grid item xs={3}>
-                            <InputField
-                                fullWidth
-                                value={req.unitPrice}
-                                label="Unit Price"
-                                number
-                                propertyName="unitPrice"
-                                onChange={handleFieldChange}
-                                disabled={!editingAllowed}
-                                type="number"
-                                required
-                            />
-                        </Grid>
-                        <Grid item xs={3}>
-                            <InputField
-                                fullWidth
-                                value={req.carriage}
-                                label="Carriage"
-                                number
-                                propertyName="carriage"
-                                onChange={handleFieldChange}
-                                disabled={!editingAllowed}
-                                type="number"
-                            />
-                        </Grid>
-                        <Grid item xs={3}>
-                            <InputField
-                                fullWidth
-                                value={req.totalReqPrice}
-                                label="Total Req Price"
-                                number
-                                propertyName="totalReqPrice"
-                                onChange={handleFieldChange}
-                                disabled={!editingAllowed}
-                                type="number"
-                            />
-                        </Grid>
+                        <Grid item xs={12} />
 
-                        <Grid item xs={6}>
+                        <Grid item xs={3}>
                             <Typeahead
                                 onSelect={newValue => {
                                     handleSupplierChange(newValue);
@@ -534,9 +596,7 @@ function POReqUtility({ creating }) {
                                 modal
                                 propertyName="supplierId"
                                 items={suppliersSearchResults}
-                                value={
-                                    req.supplier ? `${req.supplier.id}: ${req.supplier.name}` : null
-                                }
+                                value={req.supplier ? req.supplier.id : null}
                                 loading={suppliersSearchLoading}
                                 fetchItems={searchSuppliers}
                                 links={false}
@@ -545,11 +605,22 @@ function POReqUtility({ creating }) {
                                 placeholder="Search Suppliers"
                                 minimumSearchTermLength={3}
                                 fullWidth
-                                disabled={!editingAllowed}
+                                disabled={!editingAllowed || !creating}
                                 required
                             />
                         </Grid>
                         <Grid item xs={6}>
+                            <InputField
+                                fullWidth
+                                value={req.supplier?.name}
+                                label="Supplier Name"
+                                number
+                                propertyName="supplierContact"
+                                disabled
+                            />
+                        </Grid>
+                        <Grid item xs={3} />
+                        <Grid item xs={4}>
                             <InputField
                                 fullWidth
                                 value={req.supplierContact}
@@ -561,7 +632,29 @@ function POReqUtility({ creating }) {
                             />
                         </Grid>
 
-                        <Grid item xs={6}>
+                        <Grid item xs={4}>
+                            <InputField
+                                fullWidth
+                                value={req.phoneNumber}
+                                label="Phone Number"
+                                propertyName="phoneNumber"
+                                onChange={handleFieldChange}
+                                disabled={!editingAllowed}
+                            />
+                        </Grid>
+
+                        <Grid item xs={4}>
+                            <InputField
+                                fullWidth
+                                value={req.email}
+                                label="Email Address"
+                                propertyName="email"
+                                onChange={handleFieldChange}
+                                disabled={!editingAllowed}
+                            />
+                        </Grid>
+
+                        <Grid item xs={4}>
                             <InputField
                                 fullWidth
                                 value={req.addressLine1}
@@ -571,7 +664,7 @@ function POReqUtility({ creating }) {
                                 disabled={!editingAllowed}
                             />
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={4}>
                             <InputField
                                 fullWidth
                                 value={req.addressLine2}
@@ -582,7 +675,7 @@ function POReqUtility({ creating }) {
                             />
                         </Grid>
 
-                        <Grid item xs={6}>
+                        <Grid item xs={4}>
                             <InputField
                                 fullWidth
                                 value={req.addressLine3}
@@ -592,7 +685,7 @@ function POReqUtility({ creating }) {
                                 disabled={!editingAllowed}
                             />
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={4}>
                             <InputField
                                 fullWidth
                                 value={req.addressLine4}
@@ -603,7 +696,7 @@ function POReqUtility({ creating }) {
                             />
                         </Grid>
 
-                        <Grid item xs={4}>
+                        <Grid item xs={3}>
                             <InputField
                                 fullWidth
                                 value={req.postCode}
@@ -613,6 +706,9 @@ function POReqUtility({ creating }) {
                                 disabled={!editingAllowed}
                             />
                         </Grid>
+
+                        <Grid item xs={5} />
+
                         <Grid item xs={4}>
                             <Typeahead
                                 onSelect={newValue => {
@@ -642,9 +738,10 @@ function POReqUtility({ creating }) {
                                 placeholder="Search by Name or Code"
                                 minimumSearchTermLength={2}
                                 disabled={!editingAllowed}
+                                required
                             />
                         </Grid>
-                        <Grid item xs={4}>
+                        <Grid item xs={5}>
                             <InputField
                                 fullWidth
                                 value={req.country?.countryName}
@@ -653,31 +750,9 @@ function POReqUtility({ creating }) {
                                 disabled
                             />
                         </Grid>
+                        <Grid item xs={3} />
 
-                        <Grid item xs={12} />
-
-                        <Grid item xs={6}>
-                            <InputField
-                                fullWidth
-                                value={req.phoneNumber}
-                                label="Phone Number"
-                                propertyName="phoneNumber"
-                                onChange={handleFieldChange}
-                                disabled={!editingAllowed}
-                            />
-                        </Grid>
-
-                        <Grid item xs={6}>
-                            <InputField
-                                fullWidth
-                                value={req.email}
-                                label="Email Address"
-                                propertyName="email"
-                                onChange={handleFieldChange}
-                                disabled={!editingAllowed}
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={8}>
                             <InputField
                                 fullWidth
                                 value={req.quoteRef}
@@ -687,7 +762,7 @@ function POReqUtility({ creating }) {
                                 disabled={!editingAllowed}
                             />
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={4}>
                             <InputField
                                 fullWidth
                                 value={req.dateRequired}
@@ -698,6 +773,8 @@ function POReqUtility({ creating }) {
                                 disabled={!editingAllowed}
                             />
                         </Grid>
+
+                        <Grid item xs={12} />
 
                         <Grid item xs={4}>
                             <TypeaheadTable
@@ -718,6 +795,7 @@ function POReqUtility({ creating }) {
                                 debounce={1000}
                                 minimumSearchTermLength={2}
                                 disabled={!editingAllowed}
+                                required
                             />
                         </Grid>
                         <Grid item xs={8}>
@@ -774,7 +852,11 @@ function POReqUtility({ creating }) {
                         <Grid item xs={8}>
                             <InputField
                                 fullWidth
-                                value={`${req.authorisedBy?.fullName} (${req.authorisedBy?.id})`}
+                                value={
+                                    req.authorisedBy
+                                        ? `${req.authorisedBy?.fullName} (${req.authorisedBy?.id})`
+                                        : ''
+                                }
                                 label="Authorised by"
                                 disabled
                             />
@@ -794,7 +876,11 @@ function POReqUtility({ creating }) {
                         <Grid item xs={8}>
                             <InputField
                                 fullWidth
-                                value={`${req.secondAuthBy?.fullName} (${req.secondAuthBy?.id})`}
+                                value={
+                                    req.secondAuthBy
+                                        ? `${req.secondAuthBy?.fullName} (${req.secondAuthBy?.id})`
+                                        : ''
+                                }
                                 label="Second auth by"
                                 disabled
                             />
@@ -814,7 +900,11 @@ function POReqUtility({ creating }) {
                         <Grid item xs={8}>
                             <InputField
                                 fullWidth
-                                value={`${req.financeCheckBy?.fullName} (${req.financeCheckBy?.id})`}
+                                value={
+                                    req.financeCheckBy
+                                        ? `${req.financeCheckBy?.fullName} (${req.financeCheckBy?.id})`
+                                        : ''
+                                }
                                 label="Finance check by"
                                 disabled
                             />
@@ -833,7 +923,11 @@ function POReqUtility({ creating }) {
                         <Grid item xs={5}>
                             <InputField
                                 fullWidth
-                                value={`${req.turnedIntoOrderBy?.fullName} (${req.turnedIntoOrderBy?.id})`}
+                                value={
+                                    req.turnedIntoOrderBy
+                                        ? `${req.turnedIntoOrderBy?.fullName} (${req.turnedIntoOrderBy?.id})`
+                                        : ''
+                                }
                                 label="Turned into order by"
                                 disabled
                             />

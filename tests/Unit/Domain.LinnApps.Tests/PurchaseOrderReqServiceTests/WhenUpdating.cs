@@ -19,14 +19,18 @@
 
         private PurchaseOrderReq updated;
 
+        private readonly string fromState = "DRAFT";
+
+        private readonly string toState = "AUTHORISE WAIT";
+
         [SetUp]
         public void SetUp()
         {
-            this.current = new PurchaseOrderReq { ReqNumber = this.reqNumber, RequestedById = 999 };
+            this.current = new PurchaseOrderReq { ReqNumber = this.reqNumber, RequestedById = 999, State = this.fromState };
             this.updated = new PurchaseOrderReq
                                {
                                    ReqNumber = this.reqNumber,
-                                   State = "purgatory",
+                                   State = this.toState,
                                    ReqDate = 2.March(2022),
                                    OrderNumber = 1234,
                                    PartNumber = "PCAS 007",
@@ -63,6 +67,7 @@
                 AuthorisedAction.PurchaseOrderReqUpdate,
                 Arg.Any<IEnumerable<string>>()).Returns(true);
 
+            this.MockPurchaseOrderReqsPack.StateChangeAllowed(this.fromState, this.toState).Returns(true);
             this.Sut.Update(this.current, this.updated, new List<string>());
         }
 
