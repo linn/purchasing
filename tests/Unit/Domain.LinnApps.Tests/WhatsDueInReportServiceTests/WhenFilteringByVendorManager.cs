@@ -14,7 +14,7 @@
             var result = this.Sut.GetReport(DateTime.UnixEpoch, DateTime.Today, string.Empty, "B", null);
             foreach (var row in result.Rows)
             {
-                result.GetGridTextValue(row.RowIndex, 3).Should()
+                result.GetGridTextValue(row.RowIndex, 4).Should()
                     .Be("SUPPLIER with Vendor Manager B");
             }
         }

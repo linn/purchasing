@@ -24,8 +24,8 @@
         {
             for (var i = 1; i < this.result.Rows.Count(); i++)
             {
-                var previousDateBooked = DateTime.Parse(this.result.GetGridTextValue(i - 1, 4));
-                DateTime.Parse(this.result.GetGridTextValue(i, 4)).Should().BeOnOrAfter(previousDateBooked);
+                var previousDateBooked = DateTime.Parse(this.result.GetGridTextValue(i - 1, 5));
+                DateTime.Parse(this.result.GetGridTextValue(i, 5)).Should().BeOnOrAfter(previousDateBooked);
             }
         }
     }
