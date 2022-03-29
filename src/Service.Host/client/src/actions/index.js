@@ -163,7 +163,7 @@ export const purchaseOrderReqStatesActionTypes = makeActionTypes(
     itemTypes.purchaseOrderReqStates.actionType
 );
 
-export const outstandingPoReqsReportActionTypes = makeActionTypes(
+export const outstandingPoReqsReportActionTypes = makeReportActionTypes(
     reportTypes.outstandingPoReqsReport.actionType,
     false
 );
