@@ -259,7 +259,11 @@ function POReqUtility({ creating }) {
     const [alreadyShownCostWarning, setAlreadyShownCostWarning] = useState(false);
 
     useEffect(() => {
-        if (req.unitPrice && req.qty) {
+        if (
+            req.unitPrice &&
+            req.qty &&
+            (creating || (req.unitPrice !== item.unitPrice && req.qty !== item.qty))
+        ) {
             let total = Decimal.mul(req.unitPrice, req.qty);
             if (req.carriage) {
                 total = Decimal.add(total, req.carriage);
@@ -273,7 +277,7 @@ function POReqUtility({ creating }) {
                 totalReqPrice: total
             }));
         }
-    }, [req.qty, req.carriage, req.unitPrice, alreadyShownCostWarning]);
+    }, [req.qty, req.carriage, req.unitPrice, alreadyShownCostWarning, item.qty, item.unitPrice]);
 
     const useStyles = makeStyles(theme => ({
         buttonMarginTop: {
