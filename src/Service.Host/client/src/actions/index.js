@@ -162,3 +162,9 @@ export const whatsDueInReportActionTypes = makeActionTypes(
 export const purchaseOrderReqStatesActionTypes = makeActionTypes(
     itemTypes.purchaseOrderReqStates.actionType
 );
+
+export const poReqsAuthoriseActionTypes = makeProcessActionTypes(
+    itemTypes.poReqsAuthorise.actionType
+);
+
+export const poReqsCancelActionTypes = makeProcessActionTypes(itemTypes.poReqsCancel.actionType);

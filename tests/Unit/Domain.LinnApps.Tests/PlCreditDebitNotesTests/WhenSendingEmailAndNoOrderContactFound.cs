@@ -1,12 +1,8 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PlCreditDebitNotesTests
 {
-    using System.IO;
-
     using FluentAssertions;
 
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
-
-    using NSubstitute;
 
     using NUnit.Framework;
 

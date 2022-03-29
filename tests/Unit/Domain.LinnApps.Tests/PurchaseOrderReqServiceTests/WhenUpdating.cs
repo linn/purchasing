@@ -13,20 +13,21 @@
 
     public class WhenUpdating : ContextBase
     {
+        private readonly string fromState = "DRAFT";
+
         private readonly int reqNumber = 5678;
+
+        private readonly string toState = "AUTHORISE WAIT";
 
         private PurchaseOrderReq current;
 
         private PurchaseOrderReq updated;
 
-        private readonly string fromState = "DRAFT";
-
-        private readonly string toState = "AUTHORISE WAIT";
-
         [SetUp]
         public void SetUp()
         {
-            this.current = new PurchaseOrderReq { ReqNumber = this.reqNumber, RequestedById = 999, State = this.fromState };
+            this.current =
+                new PurchaseOrderReq { ReqNumber = this.reqNumber, RequestedById = 999, State = this.fromState };
             this.updated = new PurchaseOrderReq
                                {
                                    ReqNumber = this.reqNumber,
@@ -98,7 +99,7 @@
             this.current.QuoteRef.Should().Be(this.updated.QuoteRef);
             this.current.Email.Should().Be(this.updated.Email);
             this.current.DateRequired.Should().Be(this.updated.DateRequired);
-            this.current.RequestedById.Should().Be(999);//don't let requested by field by updated after create
+            this.current.RequestedById.Should().Be(999); // don't let requested by field by updated after create
             this.current.AuthorisedById.Should().Be(this.current.AuthorisedById);
             this.current.SecondAuthById.Should().Be(this.current.SecondAuthById);
             this.current.FinanceCheckById.Should().Be(this.current.FinanceCheckById);

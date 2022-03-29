@@ -185,11 +185,19 @@ function POReqUtility({ creating }) {
         collectionSelectorHelpers.getApplicationState(state.purchaseOrderReq)
     );
 
-    const allowedToAuthorise = () => !creating && req.links?.some(l => l.rel === 'authorise');
+    const allowedToAuthorise = () =>
+        !creating && req.links?.some(l => l.rel === 'authorise') && req.state === 'AUTHORISE WAIT';
+    const allowedTo2ndAuthorise = () =>
+        !creating &&
+        req.links?.some(l => l.rel === 'authorise') &&
+        req.state === 'AUTHORISE 2ND WAIT';
+
     const allowedToFinanceCheck = () =>
-        !creating && req.links?.some(l => l.rel === 'finance-check');
+        !creating &&
+        req.links?.some(l => l.rel === 'finance-check') &&
+        req.state === 'FINANCE WAIT';
     const allowedToCreateOrder = () =>
-        !creating && req.links?.some(l => l.rel === 'create-purchase-order');
+        !creating && req.links?.some(l => l.rel === 'create-purchase-order') && req.state === 'ORDER WAIT';
 
     const editingAllowed = creating
         ? purchaseOrderReqApplicationState?.links?.some(l => l.rel === 'create')
@@ -219,7 +227,7 @@ function POReqUtility({ creating }) {
 
     const handleSecondAuth = () => {
         setEditStatus('edit');
-        if (allowedToAuthorise) {
+        if (allowedTo2ndAuthorise) {
             setReq(a => ({ ...a, secondAuthBy: { id: currentUserId, fullName: currentUserName } }));
         }
     };
@@ -237,6 +245,10 @@ function POReqUtility({ creating }) {
     const handleFieldChange = (propertyName, newValue) => {
         setEditStatus('edit');
         setReq(a => ({ ...a, [propertyName]: newValue }));
+    };
+
+    const handleCancelClick = () => {
+        // dispatch action to req/id/cancel
     };
 
     const handleNominalUpdate = newNominal => {
@@ -262,7 +274,7 @@ function POReqUtility({ creating }) {
         if (
             req.unitPrice &&
             req.qty &&
-            (creating || (req.unitPrice !== item.unitPrice && req.qty !== item.qty))
+            (creating || (req.unitPrice !== item?.unitPrice && req.qty !== item?.qty))
         ) {
             let total = Decimal.mul(req.unitPrice, req.qty);
             if (req.carriage) {
@@ -277,7 +289,15 @@ function POReqUtility({ creating }) {
                 totalReqPrice: total
             }));
         }
-    }, [req.qty, req.carriage, req.unitPrice, alreadyShownCostWarning, item.qty, item.unitPrice]);
+    }, [
+        req.qty,
+        req.carriage,
+        req.unitPrice,
+        alreadyShownCostWarning,
+        item?.qty,
+        item?.unitPrice,
+        creating
+    ]);
 
     const useStyles = makeStyles(theme => ({
         buttonMarginTop: {
@@ -871,7 +891,7 @@ function POReqUtility({ creating }) {
                                 className={classes.buttonMarginTop}
                                 color="primary"
                                 variant="contained"
-                                disabled={!allowedToAuthorise()}
+                                disabled={!allowedTo2ndAuthorise()}
                                 onClick={handleSecondAuth}
                             >
                                 Authorise (secondary)
@@ -969,26 +989,40 @@ function POReqUtility({ creating }) {
                                 disabled={!editingAllowed}
                             />
                         </Grid>
-                        <SaveBackCancelButtons
-                            saveDisabled={!canSave()}
-                            backClick={() => history.push('/purchasing')}
-                            saveClick={() => {
-                                clearErrors();
-                                if (creating) {
-                                    dispatch(poReqActions.add({ ...req, reqNumber: -1 }));
-                                } else {
-                                    dispatch(poReqActions.update(req.reqNumber, req));
-                                }
-                            }}
-                            cancelClick={() => {
-                                setEditStatus('view');
-                                if (creating) {
-                                    setReq(defaultCreatingReq);
-                                } else {
-                                    setReq(item);
-                                }
-                            }}
-                        />
+                        <Grid item xs={6}>
+                            {!creating && (
+                                <Button
+                                    color="secondary"
+                                    variant="contained"
+                                    disabled={!editingAllowed}
+                                    onClick={handleCancelClick}
+                                >
+                                    Cancel Req
+                                </Button>
+                            )}
+                        </Grid>
+                        <Grid item xs={6}>
+                            <SaveBackCancelButtons
+                                saveDisabled={!canSave()}
+                                backClick={() => history.push('/purchasing')}
+                                saveClick={() => {
+                                    clearErrors();
+                                    if (creating) {
+                                        dispatch(poReqActions.add({ ...req, reqNumber: -1 }));
+                                    } else {
+                                        dispatch(poReqActions.update(req.reqNumber, req));
+                                    }
+                                }}
+                                cancelClick={() => {
+                                    setEditStatus('view');
+                                    if (creating) {
+                                        setReq(defaultCreatingReq);
+                                    } else {
+                                        setReq(item);
+                                    }
+                                }}
+                            />
+                        </Grid>
                     </Grid>
                 )}
             </Page>

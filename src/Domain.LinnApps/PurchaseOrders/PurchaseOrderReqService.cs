@@ -25,17 +25,21 @@
                 throw new UnauthorisedActionException("You are not authorised to authorise PO Reqs");
             }
 
-            if (entity.State != "AUTHORISE WAIT")
+            var stage = !entity.AuthorisedById.HasValue ? "AUTH1" : "AUTH2";
+
+            if (stage == "AUTH1" && entity.State != "AUTHORISE WAIT")
             {
                 throw new UnauthorisedActionException("Cannot authorise a req that is not in state 'AUTHORISE WAIT'");
+            }
+            else if (stage == "AUTH2" && entity.State != "AUTHORISE 2ND WAIT")
+            {
+                throw new UnauthorisedActionException("Cannot 2nd authorise a req that is not in state 'AUTHORISE 2ND WAIT'");
             }
 
             if (!entity.TotalReqPrice.HasValue)
             {
                 throw new UnauthorisedActionException("Cannot authorise a req that has no value");
             }
-
-            var stage = !entity.AuthorisedById.HasValue ? "AUTH1" : "AUTH2";
 
             // todo check if totalReqPrice is used on the old form and if any currency conversion is done
             var allowedToAuthoriseResult = this.purchaseOrderReqsPack.AllowedToAuthorise(
@@ -50,8 +54,16 @@
                 throw new UnauthorisedActionException(allowedToAuthoriseResult.Message);
             }
 
-            entity.State = allowedToAuthoriseResult.NewState;
-            entity.AuthorisedById = currentUserId;
+            if (stage == "AUTH1")
+            {
+                entity.State = allowedToAuthoriseResult.NewState;
+                entity.AuthorisedById = currentUserId;
+            }
+            else
+            {
+                entity.State = allowedToAuthoriseResult.NewState;
+                entity.SecondAuthById = currentUserId;
+            }
         }
 
         public void Cancel(PurchaseOrderReq entity, IEnumerable<string> privileges)
@@ -80,7 +92,7 @@
 
             if (entity.State != "DRAFT" && entity.State != "AUTHORISE WAIT")
             {
-                throw new UnauthorisedActionException(
+                throw new IllegalPoReqStateChangeException(
                     "Cannot create new PO req into state other than Draft or Authorise Wait");
             }
 
