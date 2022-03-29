@@ -8,6 +8,7 @@
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
+    using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources.MaterialRequirements;
     using Linn.Purchasing.Resources.SearchResources;
     using Linn.Purchasing.Service.Extensions;
@@ -16,15 +17,25 @@
 
     public class MaterialRequirementsModule : CarterModule
     {
+        private readonly IMaterialRequirementsPlanningFacadeService materialRequirementsPlanningFacadeService;
+
         private readonly IFacadeResourceFilterService<MrpRunLog, int, MrpRunLogResource, MrpRunLogResource, MaterialRequirementsSearchResource> mrpRunLogFacadeService;
 
         public MaterialRequirementsModule(
-            IFacadeResourceFilterService<MrpRunLog, int, MrpRunLogResource, MrpRunLogResource,
-                MaterialRequirementsSearchResource> mrpRunLogFacadeService)
+            IFacadeResourceFilterService<MrpRunLog, int, MrpRunLogResource, MrpRunLogResource, MaterialRequirementsSearchResource> mrpRunLogFacadeService,
+            IMaterialRequirementsPlanningFacadeService materialRequirementsPlanningFacadeService)
         {
+            this.materialRequirementsPlanningFacadeService = materialRequirementsPlanningFacadeService;
             this.mrpRunLogFacadeService = mrpRunLogFacadeService;
             this.Get("/purchasing/material-requirements/run-logs", this.GetAllRunLogs);
             this.Get("/purchasing/material-requirements/run-logs/{id:int}", this.GetRunLogById);
+            this.Post("/purchasing/material-requirements/run-mrp", this.RunMrp);
+        }
+
+        private async Task RunMrp(HttpRequest request, HttpResponse response)
+        {
+            await response.Negotiate(
+                this.materialRequirementsPlanningFacadeService.RunMrp(request.HttpContext.GetPrivileges()));
         }
 
         private async Task GetRunLogById(HttpRequest req, HttpResponse res)

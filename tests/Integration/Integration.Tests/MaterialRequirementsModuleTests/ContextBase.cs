@@ -4,6 +4,7 @@
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
+    using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
     using Linn.Purchasing.Resources.MaterialRequirements;
     using Linn.Purchasing.Resources.SearchResources;
@@ -22,16 +23,20 @@
         protected HttpResponseMessage Response { get; set; }
 
         protected IFacadeResourceFilterService<MrpRunLog, int, MrpRunLogResource, MrpRunLogResource, MaterialRequirementsSearchResource> MrpRunLogFacadeService { get; private set; }
+     
+        protected IMaterialRequirementsPlanningFacadeService MaterialRequirementsPlanningFacadeService { get; private set; }
 
         [SetUp]
         public void EstablishContext()
         {
             this.MrpRunLogFacadeService = Substitute
                 .For<IFacadeResourceFilterService<MrpRunLog, int, MrpRunLogResource, MrpRunLogResource, MaterialRequirementsSearchResource>>();
+            this.MaterialRequirementsPlanningFacadeService = Substitute.For<IMaterialRequirementsPlanningFacadeService>();
             this.Client = TestClient.With<MaterialRequirementsModule>(
                 services =>
                     {
                         services.AddSingleton(this.MrpRunLogFacadeService);
+                        services.AddSingleton(this.MaterialRequirementsPlanningFacadeService);
                         services.AddHandlers();
                     },
                 FakeAuthMiddleware.EmployeeMiddleware);
