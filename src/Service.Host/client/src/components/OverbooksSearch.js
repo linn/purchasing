@@ -39,6 +39,7 @@ function OverbooksSearch() {
                             href: x.links.find(l => l.rel === 'allow-over-book')?.href
                         }))}
                         fetchItems={searchOverbookItems}
+                        placeholder="Search by Order Number"
                         clearSearch={() => {}}
                         resultLimit={100}
                         loading={searchLoading}
