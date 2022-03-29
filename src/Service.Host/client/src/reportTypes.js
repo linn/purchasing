@@ -47,3 +47,9 @@ export const whatsDueInReport = new ItemType(
     'WHATS_DUE_IN_REPORT',
     '/purchasing/reports/whats-due-in'
 );
+
+export const outstandingPoReqsReport = new ItemType(
+    'outstandingPoReqsReport',
+    'OUTSTANDING_PO_REQS_REPORT',
+    '/purchasing/reports/outstanding-po-reqs/report'
+);

@@ -57,6 +57,7 @@ import purchaseOrder from './purchaseOrder';
 import purchaseOrders from './purchaseOrders';
 import whatsDueInReport from './whatsDueInReport';
 import purchaseOrderReqStates from './purchaseOrderReqStates';
+import outstandingPoReqsReport from './outstandingPoReqsReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -79,6 +80,7 @@ const rootReducer = history =>
         orderMethods,
         ordersByPart,
         ordersBySupplier,
+        outstandingPoReqsReport,
         packagingGroups,
         part,
         partCategories,

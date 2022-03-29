@@ -96,6 +96,8 @@
                 .AddTransient<IPurchaseOrderReqFacadeService, PurchaseOrderReqFacadeService>()
                 .AddTransient<IWhatsDueInReportFacadeService, WhatsDueInReportFacadeService>()
                 .AddTransient<IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource>, PurchaseOrderReqStateFacadeService>()
+                .AddTransient<IOutstandingPoReqsReportFacadeService, OutstandingPoReqsReportFacadeService>()
+
                 .AddTransient<IFacadeResourceFilterService<MrpRunLog, int, MrpRunLogResource, MrpRunLogResource, MaterialRequirementsSearchResource>, MrpRunLogFacadeService>();
         }
 
@@ -119,6 +121,7 @@
                 .AddTransient<IPartsReceivedReportService, PartsReceivedReportService>()
                 .AddTransient<IPurchaseOrderReqService, PurchaseOrderReqService>()
                 .AddTransient<IWhatsDueInReportService, WhatsDueInReportService>()
+                .AddTransient<IOutstandingPoReqsReportService, OutstandingPoReqsReportService>()
 
             // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()

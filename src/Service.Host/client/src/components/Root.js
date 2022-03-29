@@ -37,6 +37,7 @@ import POReqSearch from './POReqSearch';
 import OverbooksSearch from './OverbooksSearch';
 import AllowPurchaseOrderOverbook from './AllowPurchaseOrderOverbook';
 import WhatsDueInReport from './reports/WhatsDueInReport';
+import OutstandingPoReqsReport from './reports/OutstandingPoReqsReport';
 
 const Root = ({ store }) => (
     <div>
@@ -201,6 +202,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/reports/whats-due-in"
                                     component={WhatsDueInReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/outstanding-po-reqs"
+                                    component={OutstandingPoReqsReport}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>

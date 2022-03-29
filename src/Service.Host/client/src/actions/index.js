@@ -162,3 +162,8 @@ export const whatsDueInReportActionTypes = makeActionTypes(
 export const purchaseOrderReqStatesActionTypes = makeActionTypes(
     itemTypes.purchaseOrderReqStates.actionType
 );
+
+export const outstandingPoReqsReportActionTypes = makeReportActionTypes(
+    reportTypes.outstandingPoReqsReport.actionType,
+    false
+);
