@@ -93,7 +93,7 @@
                 .AddTransient<ITqmsJobRefService, TqmsJobRefService>()
                 .AddTransient<IPartsReceivedReportFacadeService, PartsReceivedReportFacadeService>()
                 .AddTransient<ISpendsReportFacadeService, SpendsReportFacadeService>()
-                .AddTransient<IFacadeResourceFilterService<PurchaseOrderReq, int, PurchaseOrderReqResource, PurchaseOrderReqResource, PurchaseOrderReqSearchResource>, PurchaseOrderReqFacadeService>()
+                .AddTransient<IPurchaseOrderReqFacadeService, PurchaseOrderReqFacadeService>()
                 .AddTransient<IWhatsDueInReportFacadeService, WhatsDueInReportFacadeService>()
                 .AddTransient<IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource>, PurchaseOrderReqStateFacadeService>()
                 .AddTransient<IFacadeResourceFilterService<MrpRunLog, int, MrpRunLogResource, MrpRunLogResource, MaterialRequirementsSearchResource>, MrpRunLogFacadeService>();
@@ -124,7 +124,8 @@
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
                 .AddTransient<IAutocostPack, AutocostPack>()
                 .AddTransient<ICurrencyPack, CurrencyPack>()
-                .AddTransient<IPurchaseLedgerPack, PurchaseLedgerPack>();
+                .AddTransient<IPurchaseLedgerPack, PurchaseLedgerPack>()
+                .AddTransient<IPurchaseOrderReqsPack, PurchaseOrderReqsPack>();
         }
     }
 }

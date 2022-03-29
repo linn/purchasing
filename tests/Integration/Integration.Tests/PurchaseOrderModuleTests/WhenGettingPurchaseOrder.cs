@@ -1,6 +1,4 @@
-﻿using Linn.Common.Facade;
-
-namespace Linn.Purchasing.Integration.Tests.PurchaseOrderModuleTests
+﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrderModuleTests
 {
     using System.Collections.Generic;
     using System.Net;
@@ -8,6 +6,7 @@ namespace Linn.Purchasing.Integration.Tests.PurchaseOrderModuleTests
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
+    using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
@@ -19,12 +18,12 @@ namespace Linn.Purchasing.Integration.Tests.PurchaseOrderModuleTests
     public class WhenGettingPurchaseOrder : ContextBase
     {
         private PurchaseOrder req;
-        private int orderNumberSearch;
+        private int orderNumber;
 
         [SetUp]
         public void SetUp()
         {
-            this.orderNumberSearch = 600179;
+            this.orderNumber = 600179;
             this.req = new PurchaseOrder()
                            {
                                OrderNumber = 600179,
@@ -36,7 +35,7 @@ namespace Linn.Purchasing.Integration.Tests.PurchaseOrderModuleTests
                                SupplierId = 1224
             };
 
-            this.PurchaseOrderFacadeService.GetById(this.orderNumberSearch, Arg.Any<IEnumerable<string>>())
+            this.PurchaseOrderFacadeService.GetById(this.orderNumber, Arg.Any<IEnumerable<string>>())
                 .ReturnsForAnyArgs(
                     new SuccessResult<PurchaseOrderResource>(
                         new PurchaseOrderResource
@@ -47,7 +46,7 @@ namespace Linn.Purchasing.Integration.Tests.PurchaseOrderModuleTests
                         }));
 
             this.Response = this.Client.Get(
-                $"/purchasing/purchase-orders/{this.orderNumberSearch}",
+                $"/purchasing/purchase-orders/{this.orderNumber}",
                 with =>
                 {
                     with.Accept("application/json");

@@ -11,6 +11,7 @@
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.SearchResources;
     using Linn.Purchasing.Service.Extensions;
@@ -31,13 +32,14 @@
 
         private readonly IFacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource> purchaseOrderFacadeService;
 
-        private readonly IFacadeResourceFilterService<PurchaseOrderReq, int, PurchaseOrderReqResource, PurchaseOrderReqResource, PurchaseOrderReqSearchResource> purchaseOrderReqFacadeService;
+        private readonly IPurchaseOrderReqFacadeService purchaseOrderReqFacadeService;
+
+        private readonly
+            IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource> purchaseOrderReqStateService;
 
         private readonly IFacadeResourceService<Tariff, int, TariffResource, TariffResource> tariffService;
 
         private readonly IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource> unitsOfMeasureService;
-
-        private readonly IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource> purchaseOrderReqStateService;
 
         public PurchaseOrderModule(
             IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource> currencyService,
@@ -47,7 +49,7 @@
             IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource> packagingGroupService,
             IFacadeResourceService<Tariff, int, TariffResource, TariffResource> tariffService,
             IFacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource> purchaseOrderFacadeService,
-            IFacadeResourceFilterService<PurchaseOrderReq, int, PurchaseOrderReqResource, PurchaseOrderReqResource, PurchaseOrderReqSearchResource> purchaseOrderReqFacadeService,
+            IPurchaseOrderReqFacadeService purchaseOrderReqFacadeService,
             IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource> purchaseOrderReqStateService)
         {
             this.currencyService = currencyService;
@@ -78,7 +80,25 @@
             this.Get("/purchasing/purchase-orders/reqs/application-state", this.GetReqApplicationState);
             this.Get("/purchasing/purchase-orders/reqs/{id:int}", this.GetReq);
             this.Put("/purchasing/purchase-orders/reqs/{id:int}", this.UpdateReq);
+            this.Post("/purchasing/purchase-orders/reqs/{id:int}/cancel", this.CancelReq);
+            this.Post("/purchasing/purchase-orders/reqs/{id:int}/authorise", this.AuthoriseReq);
             this.Post("/purchasing/purchase-orders/reqs", this.CreateReq);
+        }
+
+        private async Task AuthoriseReq(HttpRequest req, HttpResponse res)
+        {
+            var id = req.RouteValues.As<int>("id");
+            var result = this.purchaseOrderReqFacadeService.Authorise(id, req.HttpContext.GetPrivileges(), req.HttpContext.User.GetEmployeeNumber());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task CancelReq(HttpRequest req, HttpResponse res)
+        {
+            var id = req.RouteValues.As<int>("id");
+            var result = this.purchaseOrderReqFacadeService.DeleteOrObsolete(id, req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
         }
 
         private async Task CreateReq(HttpRequest req, HttpResponse res)
@@ -115,13 +135,6 @@
             await res.Negotiate(result);
         }
 
-        private async Task GetReqStates(HttpRequest req, HttpResponse res)
-        {
-            var result = this.purchaseOrderReqStateService.GetAll();
-
-            await res.Negotiate(result);
-        }
-
         private async Task GetPackagingGroups(HttpRequest req, HttpResponse res)
         {
             var result = this.packagingGroupService.GetAll();
@@ -150,6 +163,13 @@
         {
             await res.Negotiate(
                 this.purchaseOrderReqFacadeService.GetApplicationState(req.HttpContext.GetPrivileges()));
+        }
+
+        private async Task GetReqStates(HttpRequest req, HttpResponse res)
+        {
+            var result = this.purchaseOrderReqStateService.GetAll();
+
+            await res.Negotiate(result);
         }
 
         private async Task GetUnitsOfMeasure(HttpRequest req, HttpResponse res)

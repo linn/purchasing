@@ -96,6 +96,8 @@
 
         public DbSet<PurchaseOrderReqState> PurchaseOrderReqStates { get; set; }
 
+        public DbSet<PurchaseOrderReqStateChange> PurchaseOrderReqStateChanges { get; set; }
+
         public DbSet<OverbookAllowedByLog> AllowOverbookLogs { get; set; }
 
         public DbSet<MrpRunLog> MrpRunLogs { get; set; }
@@ -151,6 +153,7 @@
             this.BuildDepartments(builder);
             this.BuildNominals(builder);
             this.BuildPurchaseOrderReqStates(builder);
+            this.BuildPurchaseOrderReqStateChanges(builder);
             this.BuildMrRunLogs(builder);
         }
 
@@ -536,11 +539,11 @@
         {
             var entity = builder.Entity<OverbookAllowedByLog>().ToTable("PL_OVERBOOK_ALLOWED_BY");
             entity.HasKey(a => a.Id);
+            entity.Property(o => o.Id).HasColumnName("ID").HasMaxLength(8);
             entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
             entity.Property(o => o.OverbookGrantedBy).HasColumnName("OVERBOOK_GRANTED_BY").HasMaxLength(6);
             entity.Property(o => o.OverbookDate).HasColumnName("OVERBOOK_DATE");
-            entity.Property(o => o.OverbookGrantedBy).HasColumnName("OVERBOOK_QTY").HasMaxLength(14);
-            entity.Property(o => o.OverbookGrantedBy).HasColumnName("ORDER_LINE").HasMaxLength(6);
+            entity.Property(o => o.OverbookQty).HasColumnName("OVERBOOK_QTY").HasMaxLength(14);
         }
 
         private void BuildSigningLimits(ModelBuilder builder)
@@ -867,6 +870,16 @@
             e.Property(d => d.Description).HasColumnName("DESCRIPTION").HasMaxLength(200);
             e.Property(d => d.DisplayOrder).HasColumnName("DISPLAY_ORDER");
             e.Property(d => d.IsFinalState).HasColumnName("FINAL_STATE").HasMaxLength(1);
+        }
+
+        private void BuildPurchaseOrderReqStateChanges(ModelBuilder builder)
+        {
+            var e = builder.Entity<PurchaseOrderReqStateChange>().ToTable("BLUE_REQ_STATE_CHANGES");
+            e.HasKey(s => new { s.FromState, s.ToState });
+            e.Property(s => s.FromState).HasColumnName("FROM_STATE").HasMaxLength(20);
+            e.Property(s => s.ToState).HasColumnName("TO_STATE").HasMaxLength(20);
+            e.Property(s => s.UserAllowed).HasColumnName("USER_ALLOWED").HasMaxLength(1);
+            e.Property(s => s.ComputerAllowed).HasColumnName("COMPUTER_STANDARD").HasMaxLength(1);
         }
 
         private void BuildMrRunLogs(ModelBuilder builder)

@@ -2,7 +2,8 @@
 {
     using System;
     using Linn.Common.Domain;
-    public class OverbookAllowedByLog : LogTable
+
+    public class OverbookAllowedByLog 
     {
         public int Id { get; set; }
 
@@ -13,7 +14,5 @@
         public DateTime OverbookDate { get; set; }
 
         public decimal? OverbookQty { get; set; }
-
-        public int OrderLine { get; set; }
     }
 }
