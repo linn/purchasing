@@ -1,11 +1,14 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Reports
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     using Linn.Common.Persistence;
     using Linn.Common.Reporting.Layouts;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+
+    using MoreLinq;
 
     public class OutstandingPoReqsReportService : IOutstandingPoReqsReportService
     {
@@ -23,7 +26,15 @@
 
         public ResultsModel GetReport(string state)
         {
-            var data = this.reqRepository.FilterBy(x => true);
+            var data = this.reqRepository.FilterBy(x => x.ReqState.IsFinalState.Equals("N"));
+
+            if (!string.IsNullOrEmpty(state))
+            {
+                data = data.Where(x => x.ReqState.State.Equals(state));
+            }
+
+            data = data.OrderBy(x => x.ReqNumber);
+
             var reportLayout = new SimpleGridLayout(
                 this.reportingHelper,
                 CalculationValueModelType.Value,
@@ -62,7 +73,7 @@
                         {
                             RowId = rowId,
                             ColumnId = "ReqState",
-                            TextDisplay = datum.State
+                            TextDisplay = datum.ReqState.State
                         });
                 values.Add(
                     new CalculationValueModel
@@ -83,7 +94,8 @@
                         {
                             RowId = rowId,
                             ColumnId = "Description",
-                            TextDisplay = datum.Description.Substring(0, 200)
+                            TextDisplay = datum.Description.Length > 199 
+                                              ? datum.Description.Substring(0, 200) : datum.Description
                         });
                 values.Add(
                     new CalculationValueModel

@@ -13,9 +13,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import history from '../../history';
 import config from '../../config';
 import { purchaseOrderReqStates } from '../../itemTypes';
-import { whatsDueInReport } from '../../reportTypes';
+import { outstandingPoReqsReport } from '../../reportTypes';
 import purchaseOrderReqStatesActions from '../../actions/purchaseOrderReqStatesActions';
-import whatsDueInReportActions from '../../actions/whatsDueInReportActions';
+import outstandingPoReqsReportActions from '../../actions/outstandingPoReqsReportActions';
 
 function OutstandingPoReqsReport() {
     const dispatch = useDispatch();
@@ -31,9 +31,9 @@ function OutstandingPoReqsReport() {
 
     const [reqState, setReqState] = useState(null);
 
-    const loading = useSelector(state => state[whatsDueInReport.item]?.loading);
+    const loading = useSelector(state => state[outstandingPoReqsReport.item]?.loading);
 
-    const reportData = useSelector(state => state[whatsDueInReport.item]?.data);
+    const reportData = useSelector(state => state[outstandingPoReqsReport.item]?.data);
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
@@ -64,7 +64,13 @@ function OutstandingPoReqsReport() {
                             <Button
                                 variant="contained"
                                 color="primary"
-                                onClick={() => dispatch(whatsDueInReportActions.fetchReport({}))}
+                                onClick={() =>
+                                    dispatch(
+                                        outstandingPoReqsReportActions.fetchReport({
+                                            state: reqState
+                                        })
+                                    )
+                                }
                             >
                                 Run Report
                             </Button>
