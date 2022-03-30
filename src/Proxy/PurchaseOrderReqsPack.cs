@@ -114,7 +114,7 @@
 
                 cmd.Parameters.Add(result);
                 cmd.Parameters.Add(from);
-                cmd.Parameters.Add(from);
+                cmd.Parameters.Add(to);
 
                 cmd.ExecuteNonQuery();
                 connection.Close();
