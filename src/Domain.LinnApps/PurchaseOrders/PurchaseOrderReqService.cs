@@ -127,7 +127,7 @@
             entity.ReqDate = updatedEntity.ReqDate;
             entity.OrderNumber = updatedEntity.OrderNumber;
             entity.PartNumber = updatedEntity.PartNumber;
-            entity.PartDescription = updatedEntity.PartDescription;
+            entity.Description = updatedEntity.Description;
             entity.Qty = updatedEntity.Qty;
             entity.UnitPrice = updatedEntity.UnitPrice;
             entity.Carriage = updatedEntity.Carriage;

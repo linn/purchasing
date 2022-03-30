@@ -576,9 +576,9 @@ function POReqUtility({ creating }) {
                         <Grid item xs={7}>
                             <InputField
                                 fullWidth
-                                value={req.partDescription}
-                                label="Part Description"
-                                propertyName="partDescription"
+                                value={req.description}
+                                label="Description"
+                                propertyName="description"
                                 onChange={handleFieldChange}
                                 rows={8}
                                 disabled={!editingAllowed}

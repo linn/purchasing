@@ -803,7 +803,7 @@
             entity.Property(e => e.OrderNumber).HasColumnName("ORDER_NUMBER");
             entity.Property(e => e.Qty).HasColumnName("QTY").HasMaxLength(19);
             entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
-            entity.Property(e => e.PartDescription).HasColumnName("DESCRIPTION").HasMaxLength(2000);
+            entity.Property(e => e.Description).HasColumnName("DESCRIPTION").HasMaxLength(2000);
             entity.Property(e => e.UnitPrice).HasColumnName("UNIT_PRICE").HasMaxLength(19);
             entity.Property(e => e.Carriage).HasColumnName("CARRIAGE").HasMaxLength(18);
             entity.Property(e => e.TotalReqPrice).HasColumnName("TOTAL_REQ_PRICE").HasMaxLength(18);
@@ -840,7 +840,6 @@
             entity.HasOne(e => e.SecondAuthBy).WithMany().HasForeignKey(x => x.SecondAuthById);
             entity.Property(e => e.Email).HasColumnName("EMAIL_ADDRESS").HasMaxLength(50);
             entity.Property(e => e.InternalNotes).HasColumnName("INTERNAL_ONLY_ORDER_NOTES").HasMaxLength(300);
-            entity.Property(e => e.Description).HasColumnName("DESCRIPTION").HasMaxLength(2000);
             entity.HasOne(e => e.ReqState).WithMany().HasForeignKey(e => e.State);
         }
 

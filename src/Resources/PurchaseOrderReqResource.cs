@@ -8,13 +8,15 @@
 
         public string State { get; set; }
 
+        public string StateDescription { get; set; }
+
         public string ReqDate { get; set; }
 
         public int? OrderNumber { get; set; }
 
         public string PartNumber { get; set; }
 
-        public string PartDescription { get; set; }
+        public string Description { get; set; }
 
         public decimal Qty { get; set; }
 

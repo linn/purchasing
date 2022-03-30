@@ -30,10 +30,11 @@
                        {
                            ReqNumber = entity.ReqNumber,
                            State = entity.State,
+                           StateDescription = entity.ReqState?.Description,
                            ReqDate = entity.ReqDate.ToString("o"),
                            OrderNumber = entity.OrderNumber,
                            PartNumber = entity.PartNumber,
-                           PartDescription = entity.PartDescription,
+                           Description = entity.Description,
                            Qty = entity.Qty,
                            UnitPrice = entity.UnitPrice,
                            Carriage = entity.Carriage,
