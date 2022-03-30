@@ -25,7 +25,7 @@ import { plCreditDebitNote, sendPlNoteEmail as sendPlNoteEmailItemType } from '.
 import plCreditDebitNoteActions from '../../actions/plCreditDebitNoteActions';
 import sendPlNoteEmailActions from '../../actions/sendPlNoteEmailActions';
 import { savePdf, emailPdf } from '../../helpers/pdf';
-import logo from './linn-logo.png';
+import logo from '../../assets/linn-logo.png';
 
 function Note() {
     const useStyles = makeStyles(theme => ({

@@ -32,12 +32,13 @@ import Search from './plDebitCreditNotes/Search';
 import Note from './plDebitCreditNotes/Note';
 import BulkLeadTimesUpload from './partSupplierUtility/BulkLeadTimesUpload';
 import PartsReceivedReport from './reports/PartsReceivedReport';
-import POReqUtility from './POReqUtility';
-import POReqSearch from './POReqSearch';
+import POReqUtility from './POReqs/POReqUtility';
+import POReqSearch from './POReqs/POReqSearch';
 import OverbooksSearch from './OverbooksSearch';
 import AllowPurchaseOrderOverbook from './AllowPurchaseOrderOverbook';
 import WhatsDueInReport from './reports/WhatsDueInReport';
 import OutstandingPoReqsReport from './reports/OutstandingPoReqsReport';
+import POReqPrintout from './POReqs/POReqPrintout';
 
 const Root = ({ store }) => (
     <div>
@@ -51,6 +52,11 @@ const Root = ({ store }) => (
                                 <Route exact path="/purchasing" component={App} />
                                 <Redirect exact from="/" to="/purchasing" />
                                 <Redirect exact from="/purchasing/reports" to="/purchasing" />
+                                <Redirect
+                                    exact
+                                    from="/purchasing/purchase-orders"
+                                    to="/purchasing"
+                                />
                                 <Route
                                     exact
                                     path="/purchasing/suppliers"
@@ -175,8 +181,19 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
+                                    path="/purchasing/purchase-orders/reqs/print"
+                                    // eslint-disable-next-line react/jsx-props-no-spreading
+                                    render={props => <POReqSearch print {...props} />}
+                                />
+                                <Route
+                                    exact
                                     path="/purchasing/purchase-orders/reqs/:id"
                                     component={POReqUtility}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/purchase-orders/reqs/:id/print"
+                                    component={POReqPrintout}
                                 />
                                 <Route
                                     exact

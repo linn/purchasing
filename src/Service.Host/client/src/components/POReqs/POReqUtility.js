@@ -32,18 +32,18 @@ import {
     getItemError,
     ErrorCard
 } from '@linn-it/linn-form-components-library';
-import currenciesActions from '../actions/currenciesActions';
-import employeesActions from '../actions/employeesActions';
-import nominalsActions from '../actions/nominalsActions';
-import countriesActions from '../actions/countriesActions';
-import suppliersActions from '../actions/suppliersActions';
-import partsActions from '../actions/partsActions';
-import poReqActions from '../actions/purchaseOrderReqActions';
-import poReqApplicationStateActions from '../actions/purchaseOrderReqApplicationStateActions';
-import purchaseOrderReqStatesActions from '../actions/purchaseOrderReqStatesActions';
+import currenciesActions from '../../actions/currenciesActions';
+import employeesActions from '../../actions/employeesActions';
+import nominalsActions from '../../actions/nominalsActions';
+import countriesActions from '../../actions/countriesActions';
+import suppliersActions from '../../actions/suppliersActions';
+import partsActions from '../../actions/partsActions';
+import poReqActions from '../../actions/purchaseOrderReqActions';
+import poReqApplicationStateActions from '../../actions/purchaseOrderReqApplicationStateActions';
+import purchaseOrderReqStatesActions from '../../actions/purchaseOrderReqStatesActions';
 
-import history from '../history';
-import config from '../config';
+import history from '../../history';
+import config from '../../config';
 
 function POReqUtility({ creating }) {
     const dispatch = useDispatch();

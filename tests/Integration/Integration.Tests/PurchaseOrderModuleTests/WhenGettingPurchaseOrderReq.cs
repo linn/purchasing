@@ -77,6 +77,8 @@
             var resource = this.Response.DeserializeBody<PurchaseOrderReqResource>();
             resource.Links.Single(x => x.Rel == "self").Href.Should()
                 .Be($"/purchasing/purchase-orders/reqs/{this.reqNumber}");
+            resource.Links.Single(x => x.Rel == "print").Href.Should()
+                .Be($"/purchasing/purchase-orders/reqs/{this.reqNumber}/print");
         }
 
         [Test]

@@ -1,4 +1,5 @@
 import React, { useState, Fragment, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import { makeStyles } from '@mui/styles';
@@ -16,11 +17,11 @@ import {
 } from '@linn-it/linn-form-components-library';
 import Divider from '@mui/material/Divider';
 import { Link as RouterLink } from 'react-router-dom';
-import purchaseOrderReqsActions from '../actions/purchaseOrderReqsActions';
-import history from '../history';
-import config from '../config';
+import purchaseOrderReqsActions from '../../actions/purchaseOrderReqsActions';
+import history from '../../history';
+import config from '../../config';
 
-function POReqSearch() {
+function POReqSearch({ print }) {
     const useStyles = makeStyles(theme => ({
         button: {
             marginLeft: theme.spacing(1),
@@ -76,7 +77,9 @@ function POReqSearch() {
         <Page history={history} homeUrl={config.appRoot} width="m">
             <Grid container spacing={3}>
                 <Grid item xs={10}>
-                    <Typography variant="h4">Purchase Order Reqs Search</Typography>
+                    <Typography variant="h4">
+                        {print ? 'Search For a Req To Print' : 'Purchase Order Reqs Search'}
+                    </Typography>
                 </Grid>
                 <Grid item xs={2}>
                     <CreateButton createUrl={createUrl ?? ''} disabled={!createUrl} />
@@ -120,7 +123,11 @@ function POReqSearch() {
                                 <Link
                                     className={classes.a}
                                     component={RouterLink}
-                                    to={utilities.getSelfHref(req)}
+                                    to={
+                                        print
+                                            ? utilities.getHref(req, 'print')
+                                            : utilities.getSelfHref(req)
+                                    }
                                 >
                                     <ListItem>
                                         <Grid item xs={2}>
@@ -151,5 +158,13 @@ function POReqSearch() {
         </Page>
     );
 }
+
+POReqSearch.propTypes = {
+    print: PropTypes.bool
+};
+
+POReqSearch.defaultProps = {
+    print: false
+};
 
 export default POReqSearch;
