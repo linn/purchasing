@@ -1,6 +1,8 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderReqServiceTests
 {
+    using System;
     using System.Collections.Generic;
+    using System.Linq.Expressions;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
@@ -66,7 +68,14 @@
                 AuthorisedAction.PurchaseOrderReqAuthorise,
                 Arg.Any<IEnumerable<string>>()).Returns(true);
 
-            this.MockPurchaseOrderReqsPack.StateChangeAllowed(this.fromState, this.toState).Returns(true);
+            this.MockReqsStateChangeRepository.FindBy(Arg.Any<Expression<Func<PurchaseOrderReqStateChange, bool>>>())
+                .Returns(
+                    new PurchaseOrderReqStateChange
+                        {
+                            FromState = this.fromState,
+                            ToState = this.toState,
+                            UserAllowed = "Y"
+                        });
 
             this.MockPurchaseOrderReqsPack.AllowedToAuthorise(
                 "AUTH1",

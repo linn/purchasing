@@ -2,6 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq.Expressions;
+
+    using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 
     using FluentAssertions;
 
@@ -9,6 +12,7 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
     using NSubstitute;
+    using NSubstitute.ReturnsExtensions;
 
     using NUnit.Framework;
 
@@ -36,7 +40,8 @@
                 AuthorisedAction.PurchaseOrderReqUpdate,
                 Arg.Any<IEnumerable<string>>()).Returns(true);
 
-            this.MockPurchaseOrderReqsPack.StateChangeAllowed(this.fromState, this.toState).Returns(false);
+            this.MockReqsStateChangeRepository.FindBy(Arg.Any<Expression<Func<PurchaseOrderReqStateChange, bool>>>())
+                .ReturnsNullForAnyArgs();
             this.action = () => this.Sut.Update(this.current, this.updated, new List<string>());
         }
 

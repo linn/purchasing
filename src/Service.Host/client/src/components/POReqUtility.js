@@ -104,7 +104,7 @@ function POReqUtility({ creating }) {
         },
         reqNumber: 'creating',
         state: 'AUTHORISE WAIT',
-        reqDate: `${new Date()}`,
+        reqDate: new Date().toDateString(),
         partNumber: 'SUNDRY',
         currency: { code: 'GBP', name: 'UK Sterling' }
     };
@@ -152,12 +152,11 @@ function POReqUtility({ creating }) {
             email: newSupplier.supplierContact?.email,
             phoneNumber: newSupplier.supplierContact?.phoneNumber,
             currency: {
-                code: newSupplier.currency?.code,
-                name: newSupplier.currency?.name
+                code: newSupplier.currency?.code ?? req.currency?.code,
+                name: newSupplier.currency?.name ?? req.currency?.name
             },
             country: {
-                countryCode: newSupplier.country?.countryCode,
-                countryName: newSupplier.country?.countryName
+                countryCode: newSupplier.country ?? req.country.countryCode
             },
             addressLine1: newSupplier.orderAddress?.line1,
             addressLine2: newSupplier.orderAddress?.line2,
@@ -201,19 +200,20 @@ function POReqUtility({ creating }) {
         req.links?.some(l => l.rel === 'create-purchase-order') &&
         req.state === 'ORDER WAIT';
 
-    const editingAllowed = creating
+    const hasEditPermission = creating
         ? purchaseOrderReqApplicationState?.links?.some(l => l.rel === 'create')
         : req.links?.some(l => l.rel === 'edit');
+    const editingAllowed = req?.state !== 'CANCELLED' && hasEditPermission;
 
     const inputIsInvalid = () =>
-        !`${req.supplier?.supplierId}`.length ||
+        !`${req.supplier?.id}`?.length ||
         !req.supplier?.name?.length ||
         !req.state.length ||
         !req.reqDate.length ||
         !`${req.qty}`.length ||
         !`${req.unitPrice}`.length ||
-        !req.currency?.code.length ||
-        !req.country?.countryCode.length ||
+        !req.currency?.code?.length ||
+        !req.country?.countryCode?.length ||
         !req.nominal?.nominalCode.length ||
         !req.department?.departmentCode.length;
 
@@ -291,7 +291,7 @@ function POReqUtility({ creating }) {
             }
             setReq(r => ({
                 ...r,
-                totalReqPrice: total
+                totalReqPrice: parseInt(total, 10)
             }));
         }
     }, [
@@ -343,9 +343,7 @@ function POReqUtility({ creating }) {
                         {itemError && (
                             <Grid item xs={12}>
                                 <ErrorCard
-                                    errorMessage={
-                                        itemError?.details?.errors?.[0] || itemError.statusText
-                                    }
+                                    errorMessage={itemError?.details ?? itemError.statusText}
                                 />
                             </Grid>
                         )}
@@ -420,7 +418,7 @@ function POReqUtility({ creating }) {
                         </Dialog>
 
                         <Grid item xs={12}>
-                            <Typography variant="h6">Purchase Order Req Utility</Typography>
+                            <Typography variant="h6">Purchase Order Req Utility </Typography>
                         </Grid>
 
                         <Grid item xs={2}>
@@ -435,9 +433,6 @@ function POReqUtility({ creating }) {
                         </Grid>
                         <Grid item xs={5}>
                             <Dropdown
-                                // todo onchange or on save - post & check blue_req_pack.check_br_state_change(originalstate, newstate)
-                                // and return warning if not allowed
-                                //blue req pack.return_package_message might be needed for message, not sure
                                 items={reqStates
                                     ?.sort((a, b) => a.displayOrder - b.displayOrder)
                                     .map(e => ({
@@ -474,7 +469,7 @@ function POReqUtility({ creating }) {
                         </Grid>
                         <Grid item xs={2}>
                             <div className={classes.centeredIcon}>
-                                {editingAllowed ? (
+                                {hasEditPermission ? (
                                     <Tooltip
                                         title={`You can ${
                                             creating ? 'create' : 'edit'
@@ -572,6 +567,7 @@ function POReqUtility({ creating }) {
                                     label="Unit Price"
                                     number
                                     propertyName="unitPrice"
+                                    onChange={handleFieldChange}
                                     disabled={!editingAllowed || !creating}
                                     type="number"
                                     required
@@ -844,6 +840,7 @@ function POReqUtility({ creating }) {
                                 label="Dept"
                                 onChange={() => {}}
                                 propertyName="departmentCode"
+                                required
                                 disabled
                             />
                         </Grid>

@@ -3,8 +3,10 @@
     using System.Collections.Generic;
 
     using Linn.Common.Authorisation;
+    using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
+    using Linn.Purchasing.Domain.LinnApps.Keys;
 
     public class PurchaseOrderReqService : IPurchaseOrderReqService
     {
@@ -12,10 +14,16 @@
 
         private readonly IPurchaseOrderReqsPack purchaseOrderReqsPack;
 
-        public PurchaseOrderReqService(IAuthorisationService authService, IPurchaseOrderReqsPack purchaseOrderReqsPack)
+        private readonly IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey> reqsStateChangeRepository;
+
+        public PurchaseOrderReqService(
+            IAuthorisationService authService,
+            IPurchaseOrderReqsPack purchaseOrderReqsPack,
+            IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey> reqsStateChangeRepository)
         {
             this.authService = authService;
             this.purchaseOrderReqsPack = purchaseOrderReqsPack;
+            this.reqsStateChangeRepository = reqsStateChangeRepository;
         }
 
         public void Authorise(PurchaseOrderReq entity, IEnumerable<string> privileges, int currentUserId)
@@ -29,11 +37,13 @@
 
             if (stage == "AUTH1" && entity.State != "AUTHORISE WAIT")
             {
-                throw new UnauthorisedActionException("Cannot authorise a req that is not in state 'AUTHORISE WAIT'");
+                throw new UnauthorisedActionException("Cannot authorise a req that is not in state 'AUTHORISE WAIT'. Please make sure the req is saved in this state and try again");
             }
-            else if (stage == "AUTH2" && entity.State != "AUTHORISE 2ND WAIT")
+
+            if (stage == "AUTH2" && entity.State != "AUTHORISE 2ND WAIT")
             {
-                throw new UnauthorisedActionException("Cannot 2nd authorise a req that is not in state 'AUTHORISE 2ND WAIT'");
+                throw new UnauthorisedActionException(
+                    "Cannot 2nd authorise a req that is not in state 'AUTHORISE 2ND WAIT'. Please make sure the req is saved in this state and try again");
             }
 
             if (!entity.TotalReqPrice.HasValue)
@@ -74,7 +84,7 @@
                 throw new UnauthorisedActionException("You are not authorised to cancel PO Reqs");
             }
 
-            var stateChangeAllowed = this.purchaseOrderReqsPack.StateChangeAllowed(entity.State, "CANCELLED");
+            var stateChangeAllowed = this.StateChangeAllowed(entity.State, "CANCELLED");
             if (!stateChangeAllowed)
             {
                 throw new IllegalPoReqStateChangeException($"Cannot cancel req from state '{entity.State}'");
@@ -108,7 +118,7 @@
 
             if (entity.State != "FINANCE WAIT")
             {
-                throw new UnauthorisedActionException("Cannot authorise a req that is not in state 'AUTHORISE WAIT'");
+                throw new UnauthorisedActionException("Cannot authorise a req that is not in state 'FINANCE WAIT'. Please make sure the req is saved in this state and try again");
             }
 
             // todo find finance check equivalent of allowed to authorise checks
@@ -122,7 +132,7 @@
                 throw new UnauthorisedActionException("You are not authorised to update PO Reqs");
             }
 
-            var stateChangeAllowed = this.purchaseOrderReqsPack.StateChangeAllowed(entity.State, updatedEntity.State);
+            var stateChangeAllowed = this.StateChangeAllowed(entity.State, updatedEntity.State);
             if (!stateChangeAllowed)
             {
                 throw new IllegalPoReqStateChangeException(
@@ -162,6 +172,15 @@
             entity.RemarksForOrder = updatedEntity.RemarksForOrder;
             entity.InternalNotes = updatedEntity.InternalNotes;
             entity.DepartmentCode = updatedEntity.DepartmentCode;
+        }
+
+        private bool StateChangeAllowed(string from, string to, bool changeIsFromFunction = false)
+        {
+            var stateChange = this.reqsStateChangeRepository.FindBy(
+                x => x.FromState == from && x.ToState == to
+                                         && (x.UserAllowed == "Y"
+                                             || (changeIsFromFunction && x.ComputerAllowed == "Y")));
+            return stateChange != null;
         }
     }
 }

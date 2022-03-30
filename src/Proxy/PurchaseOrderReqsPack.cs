@@ -31,6 +31,7 @@
                               {
                                   CommandType = CommandType.StoredProcedure
                               };
+
                 var pstage = new OracleParameter("p_stage", OracleDbType.Varchar2)
                                  {
                                      Direction = ParameterDirection.Input, Size = 50, Value = stage
@@ -39,7 +40,7 @@
                                 {
                                     Direction = ParameterDirection.Input, Size = 50, Value = userNumber
                                 };
-                var pvalue = new OracleParameter("p_value", OracleDbType.Decimal)
+                var pvalue = new OracleParameter("p_value", OracleDbType.Int32)
                                  {
                                      Direction = ParameterDirection.Input, Size = 50, Value = value
                                  };
@@ -49,22 +50,23 @@
                                 };
                 var pstate = new OracleParameter("p_state", OracleDbType.Varchar2)
                                  {
-                                     Direction = ParameterDirection.InputOutput, Size = 50, Value = state
+                                     Direction = ParameterDirection.InputOutput, Value = state
                                  };
-                var result = new OracleParameter(null, OracleDbType.Varchar2)
+                var result = new OracleParameter(null, OracleDbType.Decimal)
                                  {
-                                     Direction = ParameterDirection.ReturnValue, Size = 2000
+                                     Direction = ParameterDirection.ReturnValue
                                  };
 
                 cmd.Parameters.Add(result);
+                cmd.Parameters.Add(pstate);
+                cmd.Parameters.Add(pvalue);
                 cmd.Parameters.Add(pstage);
                 cmd.Parameters.Add(puser);
                 cmd.Parameters.Add(pdept);
-                cmd.Parameters.Add(pstate);
 
                 cmd.ExecuteNonQuery();
 
-                if (result.Value.ToString() == "TRUE")
+                if (int.Parse(result.Value.ToString()) == 2)
                 {
                     var newState = pstate.Value.ToString();
                     connection.Close();
@@ -87,39 +89,6 @@
                 connection.Close();
 
                 return new AllowedToAuthoriseReqResult { Success = false, Message = returnMessage };
-            }
-        }
-
-        public bool StateChangeAllowed(string fromState, string toState)
-        {
-            using (var connection = this.databaseService.GetConnection())
-            {
-                connection.Open();
-                var cmd = new OracleCommand("blue_req_pack.check_br_state_change", connection)
-                              {
-                                  CommandType = CommandType.StoredProcedure
-                              };
-                var from = new OracleParameter("p_original_state", OracleDbType.Varchar2)
-                               {
-                                   Direction = ParameterDirection.Input, Size = 50, Value = fromState
-                               };
-                var to = new OracleParameter("p_new_state", OracleDbType.Varchar2)
-                             {
-                                 Direction = ParameterDirection.Input, Size = 50, Value = toState
-                             };
-                var result = new OracleParameter(null, OracleDbType.Varchar2)
-                                 {
-                                     Direction = ParameterDirection.ReturnValue, Size = 2000
-                                 };
-
-                cmd.Parameters.Add(result);
-                cmd.Parameters.Add(from);
-                cmd.Parameters.Add(to);
-
-                cmd.ExecuteNonQuery();
-                connection.Close();
-
-                return result.Value.ToString() == "TRUE";
             }
         }
     }
