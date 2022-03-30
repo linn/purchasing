@@ -4,6 +4,7 @@
     using Linn.Common.Persistence.EntityFramework;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Keys;
+    using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
@@ -86,7 +87,9 @@
                     r => new EntityFrameworkRepository<PurchaseOrderReqState, string>(r.GetService<ServiceDbContext>()?.PurchaseOrderReqStates))
                 .AddTransient<IRepository<OverbookAllowedByLog, int>, OverbookAllowedByLogRespository>()
                 .AddTransient<IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>, EntityFrameworkRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>>(
-                    r => new EntityFrameworkRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>(r.GetService<ServiceDbContext>()?.PurchaseOrderReqStateChanges));
+                    r => new EntityFrameworkRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>(r.GetService<ServiceDbContext>()?.PurchaseOrderReqStateChanges))
+                .AddTransient<IRepository<MrpRunLog, int>, EntityFrameworkRepository<MrpRunLog, int>>(
+                    r => new EntityFrameworkRepository<MrpRunLog, int>(r.GetService<ServiceDbContext>()?.MrpRunLogs));
         }
     }
 }

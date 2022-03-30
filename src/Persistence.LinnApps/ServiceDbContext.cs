@@ -2,6 +2,7 @@
 {
     using Linn.Common.Configuration;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
@@ -99,6 +100,8 @@
 
         public DbSet<OverbookAllowedByLog> AllowOverbookLogs { get; set; }
 
+        public DbSet<MrpRunLog> MrpRunLogs { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -151,6 +154,7 @@
             this.BuildNominals(builder);
             this.BuildPurchaseOrderReqStates(builder);
             this.BuildPurchaseOrderReqStateChanges(builder);
+            this.BuildMrRunLogs(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -877,6 +881,23 @@
             e.Property(s => s.ToState).HasColumnName("TO_STATE").HasMaxLength(20);
             e.Property(s => s.UserAllowed).HasColumnName("USER_ALLOWED").HasMaxLength(1);
             e.Property(s => s.ComputerAllowed).HasColumnName("COMPUTER_STANDARD").HasMaxLength(1);
+        }
+
+        private void BuildMrRunLogs(ModelBuilder builder)
+        {
+            var e = builder.Entity<MrpRunLog>().ToTable("MR_RUNLOG");
+            e.HasKey(d => d.MrRunLogId);
+            e.Property(d => d.MrRunLogId).HasColumnName("MR_RUNLOG_ID");
+            e.Property(d => d.JobRef).HasColumnName("JOBREF").HasMaxLength(6);
+            e.Property(d => d.BuildPlanName).HasColumnName("BUILD_PLAN_NAME").HasMaxLength(10);
+            e.Property(d => d.RunDate).HasColumnName("RUNDATE");
+            e.Property(d => d.RunDetails).HasColumnName("RUN_DETAILS").HasMaxLength(2000);
+            e.Property(d => d.FullRun).HasColumnName("FULL_RUN").HasMaxLength(1);
+            e.Property(d => d.Kill).HasColumnName("KILL").HasMaxLength(1);
+            e.Property(d => d.Success).HasColumnName("SUCCESS").HasMaxLength(1);
+            e.Property(d => d.LoadMessage).HasColumnName("LOAD_MESSAGE").HasMaxLength(2000);
+            e.Property(d => d.MrMessage).HasColumnName("MR_MESSAGE").HasMaxLength(2000);
+            e.Property(d => d.DateTidied).HasColumnName("DATE_TIDIED");
         }
     }
 }
