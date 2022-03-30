@@ -21,7 +21,8 @@
 
             if (result.Success)
             {
-                return new SuccessResult<ProcessResultResource>(new ProcessResultResource(result.Success, result.Message));
+                return new SuccessResult<ProcessResultResource>(
+                    new ProcessResultResource(result.Success, result.Message) { ProcessHref = result.ProcessHref });
             }
 
             return new BadRequestResult<ProcessResultResource>(result.Message);
