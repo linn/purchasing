@@ -48,6 +48,7 @@
                         new AxisDetailsModel("ReqNumber", "No",  GridDisplayType.TextValue),
                         new AxisDetailsModel("ReqState", "State",  GridDisplayType.TextValue),
                         new AxisDetailsModel("Date", "Date", GridDisplayType.TextValue),
+                        new AxisDetailsModel("RequestedBy", "Requested By", GridDisplayType.TextValue),
                         new AxisDetailsModel("PartNumber", "Part", GridDisplayType.TextValue),
                         new AxisDetailsModel("Description", "Description", GridDisplayType.TextValue),
                         new AxisDetailsModel("SupplierId", "SupplierId", GridDisplayType.TextValue),
@@ -81,6 +82,13 @@
                             RowId = rowId,
                             ColumnId = "Date",
                             TextDisplay = datum.ReqDate.ToShortDateString()
+                        });
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = rowId,
+                            ColumnId = "RequestedBy",
+                            TextDisplay = datum.RequestedBy?.FullName
                         });
                 values.Add(
                     new CalculationValueModel

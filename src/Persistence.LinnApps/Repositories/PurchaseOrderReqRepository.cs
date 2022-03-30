@@ -39,6 +39,7 @@
         public override IQueryable<PurchaseOrderReq> FilterBy(Expression<Func<PurchaseOrderReq, bool>> expression)
         {
             return base.FilterBy(expression).AsNoTracking()
+                .Include(r => r.RequestedBy)
                 .Include(r => r.Supplier)
                 .Include(r => r.ReqState);
         }
