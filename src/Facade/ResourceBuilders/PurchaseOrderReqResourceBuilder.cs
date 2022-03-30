@@ -137,9 +137,12 @@
         {
             var privileges = claims as string[] ?? claims.ToArray();
 
+
             if (model != null)
             {
                 yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
+
+                yield return new LinkResource { Rel = "print", Href = $"{this.GetLocation(model)}/print" };
 
                 if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqUpdate, privileges))
                 {
