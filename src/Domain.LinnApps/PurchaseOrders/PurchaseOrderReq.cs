@@ -16,8 +16,6 @@
 
         public string PartNumber { get; set; }
 
-        public string PartDescription { get; set; }
-
         public decimal Qty { get; set; }
 
         public decimal UnitPrice { get; set; }

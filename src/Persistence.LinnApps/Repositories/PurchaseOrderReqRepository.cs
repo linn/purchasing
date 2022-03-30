@@ -31,6 +31,7 @@
                 .Include(r => r.FinanceCheckBy)
                 .Include(r => r.Nominal)
                 .Include(r => r.Department)
+                .Include(r => r.ReqState)
                 .Include(r => r.Supplier).ThenInclude(s => s.OrderAddress)
                 .FirstOrDefault(x => x.ReqNumber == key);
         }
