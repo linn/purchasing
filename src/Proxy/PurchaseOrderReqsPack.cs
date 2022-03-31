@@ -42,7 +42,7 @@
                                 };
                 var pvalue = new OracleParameter("p_value", OracleDbType.Int32)
                                  {
-                                     Direction = ParameterDirection.Input, Size = 50, Value = value
+                                     Direction = ParameterDirection.Input, Size = 50, Value = (int) value
                                  };
                 var pdept = new OracleParameter("p_dept", OracleDbType.Varchar2)
                                 {
@@ -50,9 +50,9 @@
                                 };
                 var pstate = new OracleParameter("p_state", OracleDbType.Varchar2)
                                  {
-                                     Direction = ParameterDirection.InputOutput, Value = state
+                                     Direction = ParameterDirection.InputOutput, Size = 50, Value = state
                                  };
-                var result = new OracleParameter(null, OracleDbType.Decimal)
+                var result = new OracleParameter(null, OracleDbType.Int32)
                                  {
                                      Direction = ParameterDirection.ReturnValue
                                  };
