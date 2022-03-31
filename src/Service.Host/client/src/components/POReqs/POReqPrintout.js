@@ -1,17 +1,23 @@
-import React, { Fragment, useEffect, useState, useRef } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
+
+import {
+    Page as PdfPage,
+    Text,
+    View,
+    Document,
+    StyleSheet,
+    Image,
+    PDFViewer
+} from '@react-pdf/renderer';
 import { itemSelectorHelpers, Loading, Page } from '@linn-it/linn-form-components-library';
-import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
 
 import { purchaseOrderReq } from '../../itemTypes';
 import purchaseOrderReqActions from '../../actions/purchaseOrderReqActions';
 import config from '../../config';
 import history from '../../history';
-import { savePdf } from '../../helpers/pdf';
 import logo from '../../assets/linn-logo.png';
 
 function POReqPrintout() {
@@ -20,9 +26,6 @@ function POReqPrintout() {
     const loading = useSelector(state =>
         itemSelectorHelpers.getItemLoading(state[purchaseOrderReq.item])
     );
-    const pdfRef = useRef();
-
-    const [pdfLoading, setPdfLoading] = useState(false);
 
     const { id } = useParams();
 
@@ -32,285 +35,163 @@ function POReqPrintout() {
         }
     }, [id, dispatch]);
 
-    const Content = () => (
-        <Grid container spacing={3}>
-            <Grid item xs={10} />
-            <Grid item xs={2}>
-                <img src={logo} alt="linn logo" />
-            </Grid>
+    const styles = StyleSheet.create({
+        page: { padding: 40, fontSize: 11, fontFamily: 'Helvetica' },
+        table: {
+            width: '100%'
+        },
+        row: {
+            display: 'flex',
+            flexDirection: 'row',
+            //borderTop: '1px solid #EEE',
+            paddingTop: 8,
+            paddingBottom: 8
+        },
+        addressRow: {
+            display: 'flex',
+            flexDirection: 'row'
+        },
+        header: {
+            borderTop: 'none'
+        },
+        bold: {
+            fontWeight: 'bold'
+        },
+        labelTwoColumns: {
+            width: '20%',
+            textAlign: 'right',
+            paddingRight: '10px',
+            textDecoration: 'underline'
+        },
+        labelOneColumn: {
+            width: '10%',
+            textAlign: 'right',
+            paddingRight: '10px',
+            textDecoration: 'underline'
+        },
+        oneColumn: {
+            width: '10%',
+            textAlign: 'left'
+        },
+        twoColumns: {
+            width: '20%',
+            textAlign: 'left'
+        },
+        threeColumns: {
+            width: '30%',
+            textAlign: 'left'
+        },
+        title: {
+            width: '90%',
+            fontSize: 18
+        },
+        image: {
+            width: '10%'
+        },
+        sixColumns: {
+            width: '60%',
+            textAlign: 'left'
+        },
+        eightColumns: {
+            width: '80%',
+            textAlign: 'left'
+        }
+    });
 
-            <Grid item xs={2}>
-                <Typography align="right" variant="subtitle2">
-                    Req Number:
-                </Typography>
-            </Grid>
-            <Grid item xs={2}>
-                <Typography variant="subtitle1">{item.reqNumber}</Typography>
-            </Grid>
-            <Grid item xs={8}>
-                <Typography variant="subtitle1">
-                    {new Date(item.reqDate).toLocaleDateString()}
-                </Typography>
-            </Grid>
+    // Create Document Component
+    const MyDocument = () => (
+        <Document>
+            <PdfPage size="A4" style={styles.page}>
+                <View style={styles.table}>
+                    <View style={[styles.row, styles.bold, styles.header]}>
+                        <Text style={styles.title}>Purchase Order Requisition Details</Text>
+                        <Image style={styles.image} src={logo} />
+                    </View>
+                    <View style={[styles.row]}>
+                        <Text style={styles.labelTwoColumns}>Req Number:</Text>
+                        <Text style={styles.twoColumns}>{item.reqNumber}</Text>
+                        <Text style={styles.sixColumns}>
+                            {new Date(item.reqDate).toDateString()}
+                        </Text>
+                    </View>
+                    <View style={[styles.row]}>
+                        <Text style={styles.labelTwoColumns}>Req State:</Text>
+                        <Text style={styles.twoColumns}>{item.state}</Text>
+                        <Text style={styles.sixColumns}>{item.stateDescription}</Text>
+                    </View>
+                    <View style={[styles.row]}>
+                        <Text style={styles.labelTwoColumns}>Part Number:</Text>
+                        <Text style={styles.twoColumns}>{item.partNumber}</Text>
+                        <Text style={styles.sixColumns}>{item.description}</Text>
+                    </View>
+                    <View style={[styles.row]}>
+                        <Text style={styles.labelTwoColumns}>Quantity:</Text>
+                        <Text style={styles.twoColumns}>{item.qty}</Text>
+                        <View style={styles.sixColumns} />
+                    </View>
+                    <View style={[styles.row]}>
+                        <Text style={styles.labelTwoColumns}>Unit Price:</Text>
+                        <Text style={styles.oneColumn}>{item.unitPrice?.toFixed(2)}</Text>
+                        <Text style={styles.labelTwoColumns}>Carriage:</Text>
+                        <Text style={styles.oneColumn}>{item.carriage?.toFixed(2)}</Text>
+                        <Text style={styles.labelTwoColumns}>Total Price:</Text>
+                        <Text style={styles.oneColumn}>{item.totalReqPrice?.toFixed(2)}</Text>
+                    </View>
 
-            <Grid item xs={2}>
-                <Typography align="right" variant="subtitle2">
-                    Req State:
-                </Typography>
-            </Grid>
-            <Grid item xs={2}>
-                <Typography variant="subtitle1">{item.state}</Typography>
-            </Grid>
-            <Grid item xs={8}>
-                <Typography variant="subtitle1">{item.stateDescription}</Typography>
-            </Grid>
+                    <View style={[styles.row]}>
+                        <Text style={styles.labelTwoColumns}>Currency:</Text>
+                        <Text style={styles.twoColumns}>{item.currency?.name}</Text>
+                        <View style={styles.sixColumns} />
+                    </View>
 
-            <Grid item xs={2}>
-                <Typography align="right" variant="subtitle2">
-                    Part Number:
-                </Typography>
-            </Grid>
-            <Grid item xs={2}>
-                <Typography variant="subtitle1">{item.partNumber}</Typography>
-            </Grid>
-            <Grid item xs={7}>
-                <Typography variant="subtitle1">{item.description}</Typography>
-            </Grid>
+                    <View style={[styles.row]}>
+                        <Text style={styles.labelTwoColumns}>Supplier:</Text>
+                        <Text style={styles.twoColumns}>{item.supplier?.id}</Text>
+                        <Text style={styles.sixColumns}>{item.supplier?.name}</Text>
+                    </View>
 
-            <Grid item xs={12}>
-                <Divider light />
-            </Grid>
-
-            <Grid item xs={2}>
-                <Typography align="right" variant="subtitle2">
-                    Quantity:
-                </Typography>
-            </Grid>
-            <Grid item xs={2}>
-                <Typography variant="subtitle1">{item.qty}</Typography>
-            </Grid>
-            <Grid item xs={8} />
-
-            <Grid item xs={2}>
-                <Typography align="right" variant="subtitle2">
-                    Unit Price:
-                </Typography>
-            </Grid>
-            <Grid item xs={2}>
-                <Typography variant="subtitle1">{item.unitPrice?.toFixed(2)}</Typography>
-            </Grid>
-            <Grid item xs={2}>
-                <Typography align="right" variant="subtitle2">
-                    Carriage:
-                </Typography>
-            </Grid>
-            <Grid item xs={2}>
-                <Typography variant="subtitle1">{item.carriage?.toFixed(2)}</Typography>
-            </Grid>
-            <Grid item xs={2}>
-                <Typography align="right" variant="subtitle2">
-                    Total Price:
-                </Typography>
-            </Grid>
-            <Grid item xs={2}>
-                <Typography variant="subtitle1">{item.totalReqPrice?.toFixed(2)}</Typography>
-            </Grid>
-
-            <Grid item xs={2}>
-                <Typography align="right" variant="subtitle2">
-                    Currency:
-                </Typography>
-            </Grid>
-            <Grid item xs={10}>
-                <Typography variant="subtitle1">{item.currency?.name}</Typography>
-            </Grid>
-
-            <Grid item xs={2}>
-                <Typography align="right" variant="subtitle2">
-                    Date Required:
-                </Typography>
-            </Grid>
-            <Grid item xs={10}>
-                <Typography variant="subtitle1">
-                    {item.dateRequired ? new Date(item.dateRequired).toLocaleDateString() : ''}
-                </Typography>
-            </Grid>
-
-            <Grid item xs={2}>
-                <Typography align="right" variant="subtitle2">
-                    Supplier:
-                </Typography>
-            </Grid>
-            <Grid item xs={2}>
-                <Typography variant="subtitle1">{item.supplier?.id}</Typography>
-            </Grid>
-            <Grid item xs={8}>
-                <Typography variant="subtitle1">{item.supplier?.name}</Typography>
-            </Grid>
-
-            <Grid item xs={2}>
-                <Typography align="right" variant="subtitle2">
-                    Address:
-                </Typography>
-            </Grid>
-            <Grid item xs={10}>
-                <Typography variant="subtitle1">{item.addressLine1}</Typography>
-                <Typography variant="subtitle1">{item.addressLine2}</Typography>
-                <Typography variant="subtitle1">{item.addressLine3}</Typography>
-                <Typography variant="subtitle1">{item.addressLine4}</Typography>
-                <Typography variant="subtitle1">{item.postCode}</Typography>
-                <Typography variant="subtitle1">{item.country?.countryName}</Typography>
-            </Grid>
-
-            <Grid item xs={2}>
-                <Typography align="right" variant="subtitle2">
-                    Contact:
-                </Typography>
-            </Grid>
-            <Grid item xs={10}>
-                <Typography variant="subtitle1">{item.supplierContact}</Typography>
-            </Grid>
-
-            <Grid item xs={2}>
-                <Typography align="right" variant="subtitle2">
-                    Phone Number:
-                </Typography>
-            </Grid>
-            <Grid item xs={10}>
-                <Typography variant="subtitle1">{item.phoneNumber}</Typography>
-            </Grid>
-
-            <Grid item xs={2}>
-                <Typography align="right" variant="subtitle2">
-                    Cost Centre:
-                </Typography>
-            </Grid>
-            <Grid item xs={2}>
-                <Typography variant="subtitle1">{item.department.departmentCode}</Typography>
-            </Grid>
-            <Grid item xs={8}>
-                <Typography variant="subtitle1">{item.department.description}</Typography>
-            </Grid>
-
-            <Grid item xs={2}>
-                <Typography align="right" variant="subtitle2">
-                    Nominal:
-                </Typography>
-            </Grid>
-            <Grid item xs={2}>
-                <Typography variant="subtitle1">{item.nominal.nominalCode}</Typography>
-            </Grid>
-            <Grid item xs={8}>
-                <Typography variant="subtitle1">{item.nominal.description}</Typography>
-            </Grid>
-
-            <Grid item xs={2}>
-                <Typography align="right" variant="subtitle2">
-                    Quote Ref:
-                </Typography>
-            </Grid>
-            <Grid item xs={10}>
-                <Typography variant="subtitle1">{item.quoteRef}</Typography>
-            </Grid>
-
-            <Grid item xs={12}>
-                <Divider light />
-            </Grid>
-
-            <Grid item xs={2}>
-                <Typography align="right" variant="subtitle2">
-                    Requested By:
-                </Typography>
-            </Grid>
-            <Grid item xs={4}>
-                <Typography variant="subtitle1">{item.requestedBy?.fullName}</Typography>
-            </Grid>
-            <Grid item xs={2}>
-                <Typography align="right" variant="subtitle2">
-                    Authorised By:
-                </Typography>
-            </Grid>
-            <Grid item xs={4}>
-                <Typography variant="subtitle1">{item.authorisedBy?.fullName}</Typography>
-            </Grid>
-
-            <Grid item xs={2}>
-                <Typography align="right" variant="subtitle2">
-                    2nd Auth By:
-                </Typography>
-            </Grid>
-            <Grid item xs={4}>
-                <Typography variant="subtitle1">{item.secondAuthBy?.fullName}</Typography>
-            </Grid>
-            <Grid item xs={2}>
-                <Typography align="right" variant="subtitle2">
-                    Finance Check By:
-                </Typography>
-            </Grid>
-            <Grid item xs={4}>
-                <Typography variant="subtitle1">{item.financeCheckBy?.fullName}</Typography>
-            </Grid>
-
-            <Grid item xs={2}>
-                <Typography align="right" variant="subtitle2">
-                    Order By:
-                </Typography>
-            </Grid>
-            <Grid item xs={4}>
-                <Typography variant="subtitle1">{item.turnedIntoOrderBy?.fullName}</Typography>
-            </Grid>
-            <Grid item xs={2}>
-                <Typography align="right" variant="subtitle2">
-                    Order Number:
-                </Typography>
-            </Grid>
-            <Grid item xs={4}>
-                <Typography variant="subtitle1">{item.orderNumber}</Typography>
-            </Grid>
-
-            <Grid item xs={2}>
-                <Typography align="right" variant="subtitle2">
-                    Order Notes:
-                </Typography>
-            </Grid>
-            <Grid item xs={4}>
-                <Typography variant="subtitle1">{item.remarksForOrder}</Typography>
-            </Grid>
-            <Grid item xs={2}>
-                <Typography align="right" variant="subtitle2">
-                    Internal Notes:
-                </Typography>
-            </Grid>
-            <Grid item xs={4}>
-                <Typography variant="subtitle1">{item.internalNotes}</Typography>
-            </Grid>
-        </Grid>
+                    <View style={[styles.row]}>
+                        <Text style={styles.labelTwoColumns}>Address:</Text>
+                        <Text style={styles.eightColumns}>{item.addressLine1}</Text>
+                    </View>
+                    <View style={[styles.addressRow]}>
+                        <View style={styles.twoColumns} />
+                        <Text style={styles.eightColumns}>{item.addressLine2}</Text>
+                    </View>
+                    <View style={[styles.addressRow]}>
+                        <View style={styles.twoColumns} />
+                        <Text style={styles.eightColumns}>{item.addressLine3}</Text>
+                    </View>
+                    <View style={[styles.addressRow]}>
+                        <View style={styles.twoColumns} />
+                        <Text style={styles.eightColumns}>{item.addressLine4}</Text>
+                    </View>
+                    <View style={[styles.addressRow]}>
+                        <View style={styles.twoColumns} />
+                        <Text style={styles.eightColumns}>{item.country?.countryName}</Text>
+                    </View>
+                </View>
+            </PdfPage>
+        </Document>
     );
+
     return (
         <>
-            <div style={{ width: '80%', minWidth: '1200px', margin: '0 auto' }}>
-                <Page history={history} homeUrl={config.appRoot}>
-                    <div style={{ width: '874px', margin: '0 auto', padding: '60px' }} ref={pdfRef}>
-                        {loading || pdfLoading || !item ? <Loading /> : <Content />}
-                    </div>
-                </Page>
-            </div>
-            <Grid container spacing={3}>
-                <Grid item xs={8} />
-
-                <Grid item xs={4}>
-                    <Button
-                        onClick={async () => {
-                            setPdfLoading(true);
-                            await savePdf(pdfRef);
-                            setPdfLoading(false);
-                        }}
-                        variant="outlined"
-                    >
-                        generate pdf
-                    </Button>
-                </Grid>
-            </Grid>
+            <Page history={history} homeUrl={config.appRoot}>
+                {loading || !item ? (
+                    <Loading />
+                ) : (
+                    <Grid container spacing={3}>
+                        <Grid item xs={1} />
+                        <Grid item xs={10}>
+                            <PDFViewer showToolbar width="100%" height="800">
+                                <MyDocument />
+                            </PDFViewer>
+                        </Grid>
+                        <Grid item xs={1} />
+                    </Grid>
+                )}
+            </Page>
         </>
     );
 }
