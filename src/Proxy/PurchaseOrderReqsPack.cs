@@ -58,15 +58,15 @@
                                  };
 
                 cmd.Parameters.Add(result);
-                cmd.Parameters.Add(pstate);
-                cmd.Parameters.Add(pvalue);
                 cmd.Parameters.Add(pstage);
                 cmd.Parameters.Add(puser);
+                cmd.Parameters.Add(pvalue);
                 cmd.Parameters.Add(pdept);
+                cmd.Parameters.Add(pstate);
 
                 cmd.ExecuteNonQuery();
 
-                if (int.Parse(result.Value.ToString()) == 2)
+                if (int.Parse(result.Value.ToString()) != 0)
                 {
                     var newState = pstate.Value.ToString();
                     connection.Close();

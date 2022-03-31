@@ -223,6 +223,7 @@ function POReqUtility({ creating }) {
     const handleAuthorise = () => {
         setEditStatus('edit');
         if (allowedToAuthorise) {
+            clearErrors();
             dispatch(poReqActions.postByHref(req.links.find(l => l.rel === 'authorise').href));
             // setReq(a => ({ ...a, authorisedBy: { id: currentUserId, fullName: currentUserName } }));
         }
@@ -231,6 +232,7 @@ function POReqUtility({ creating }) {
     const handleSecondAuth = () => {
         setEditStatus('edit');
         if (allowedTo2ndAuthorise) {
+            clearErrors();
             setReq(a => ({ ...a, secondAuthBy: { id: currentUserId, fullName: currentUserName } }));
         }
     };
@@ -238,6 +240,7 @@ function POReqUtility({ creating }) {
     const handleFinanceCheck = () => {
         setEditStatus('edit');
         if (allowedToFinanceCheck) {
+            clearErrors();
             setReq(a => ({
                 ...a,
                 financeCheckBy: { id: currentUserId, fullName: currentUserName }
@@ -252,6 +255,7 @@ function POReqUtility({ creating }) {
 
     const handleCancelClick = () => {
         if (allowedToCancel) {
+            clearErrors();
             dispatch(poReqActions.postByHref(req.links.find(l => l.rel === 'cancel').href));
         }
     };
