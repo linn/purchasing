@@ -44,6 +44,7 @@ import purchaseOrderReqStatesActions from '../actions/purchaseOrderReqStatesActi
 
 import history from '../history';
 import config from '../config';
+import { supplier } from '../itemTypes';
 
 function POReqUtility({ creating }) {
     const dispatch = useDispatch();
@@ -125,10 +126,12 @@ function POReqUtility({ creating }) {
     const [editStatus, setEditStatus] = useState('view');
 
     useEffect(() => {
-        if (item?.reqNumber) {
+        if (!creating && item?.reqNumber) {
             setReq(item);
+        } else {
+            dispatch(poReqActions.clearErrorsForItem());
         }
-    }, [item]);
+    }, [item, creating, dispatch]);
 
     useEffect(() => dispatch(currenciesActions.fetch()), [dispatch]);
     useEffect(() => dispatch(employeesActions.fetch()), [dispatch]);
@@ -145,12 +148,16 @@ function POReqUtility({ creating }) {
 
     const handleSupplierChange = newSupplier => {
         setEditStatus('edit');
+        let supplierContact = newSupplier.supplierContacts?.find(x => x.isMainOrderContact === 'Y');
+        if (!supplierContact && newSupplier.supplierContacts?.length) {
+            [supplierContact] = newSupplier.supplierContacts;
+        }
         setReq(a => ({
             ...a,
             supplier: { id: newSupplier.id, name: newSupplier.description },
-            supplierContact: newSupplier.supplierContact?.contactName,
-            email: newSupplier.supplierContact?.email,
-            phoneNumber: newSupplier.supplierContact?.phoneNumber,
+            supplierContact: supplierContact?.contactName,
+            email: supplierContact?.emailAddress,
+            phoneNumber: supplierContact?.phoneNumber,
             currency: {
                 code: newSupplier.currency?.code ?? req.currency?.code,
                 name: newSupplier.currency?.name ?? req.currency?.name
@@ -185,12 +192,8 @@ function POReqUtility({ creating }) {
     );
 
     const allowedToCancel = () => !creating && req.links?.some(l => l.rel === 'cancel');
-    const allowedToAuthorise = () =>
-        !creating && req.links?.some(l => l.rel === 'authorise') && req.state === 'AUTHORISE WAIT';
-    const allowedTo2ndAuthorise = () =>
-        !creating &&
-        req.links?.some(l => l.rel === 'authorise') &&
-        req.state === 'AUTHORISE 2ND WAIT';
+    const allowedToAuthorise = () => !creating && req.state === 'AUTHORISE WAIT';
+    const allowedTo2ndAuthorise = () => !creating && req.state === 'AUTHORISE 2ND WAIT';
     const allowedToFinanceCheck = () =>
         !creating &&
         req.links?.some(l => l.rel === 'finance-check') &&
@@ -200,10 +203,7 @@ function POReqUtility({ creating }) {
         req.links?.some(l => l.rel === 'create-purchase-order') &&
         req.state === 'ORDER WAIT';
 
-    const hasEditPermission = creating
-        ? purchaseOrderReqApplicationState?.links?.some(l => l.rel === 'create')
-        : req.links?.some(l => l.rel === 'edit');
-    const editingAllowed = req?.state !== 'CANCELLED' && hasEditPermission;
+    const editingAllowed = req?.state !== 'CANCELLED';
 
     const inputIsInvalid = () =>
         !`${req.supplier?.id}`?.length ||
@@ -224,8 +224,7 @@ function POReqUtility({ creating }) {
         setEditStatus('edit');
         if (allowedToAuthorise) {
             clearErrors();
-            dispatch(poReqActions.postByHref(req.links.find(l => l.rel === 'authorise').href));
-            // setReq(a => ({ ...a, authorisedBy: { id: currentUserId, fullName: currentUserName } }));
+            dispatch(poReqActions.postByHref(req.links?.find(l => l.rel === 'authorise')?.href));
         }
     };
 
@@ -233,7 +232,7 @@ function POReqUtility({ creating }) {
         setEditStatus('edit');
         if (allowedTo2ndAuthorise) {
             clearErrors();
-            setReq(a => ({ ...a, secondAuthBy: { id: currentUserId, fullName: currentUserName } }));
+            dispatch(poReqActions.postByHref(req.links?.find(l => l.rel === 'authorise')?.href));
         }
     };
 
@@ -241,10 +240,7 @@ function POReqUtility({ creating }) {
         setEditStatus('edit');
         if (allowedToFinanceCheck) {
             clearErrors();
-            setReq(a => ({
-                ...a,
-                financeCheckBy: { id: currentUserId, fullName: currentUserName }
-            }));
+            dispatch(poReqActions.postByHref(req.links.find(l => l.rel === 'finance-check').href));
         }
     };
 
@@ -473,7 +469,7 @@ function POReqUtility({ creating }) {
                         </Grid>
                         <Grid item xs={2}>
                             <div className={classes.centeredIcon}>
-                                {hasEditPermission ? (
+                                {editingAllowed ? (
                                     <Tooltip
                                         title={`You can ${
                                             creating ? 'create' : 'edit'
@@ -482,11 +478,7 @@ function POReqUtility({ creating }) {
                                         <ModeEditIcon color="primary" />
                                     </Tooltip>
                                 ) : (
-                                    <Tooltip
-                                        title={`You do not have permission to ${
-                                            creating ? 'create' : 'edit'
-                                        } purchase order reqs`}
-                                    >
+                                    <Tooltip title="cannot edit cancelled req">
                                         <EditOffIcon color="secondary" />
                                     </Tooltip>
                                 )}

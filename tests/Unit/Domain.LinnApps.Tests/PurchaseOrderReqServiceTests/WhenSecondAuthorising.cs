@@ -64,9 +64,6 @@
                                   InternalNotes = "pls approv",
                                   DepartmentCode = "00002345"
                               };
-            this.MockAuthService.HasPermissionFor(
-                AuthorisedAction.PurchaseOrderReqAuthorise,
-                Arg.Any<IEnumerable<string>>()).Returns(true);
 
             this.MockReqsStateChangeRepository.FindBy(Arg.Any<Expression<Func<PurchaseOrderReqStateChange, bool>>>())
                 .Returns(

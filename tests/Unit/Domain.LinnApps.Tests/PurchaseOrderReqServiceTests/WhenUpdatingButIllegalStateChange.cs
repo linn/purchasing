@@ -36,9 +36,6 @@
             this.current =
                 new PurchaseOrderReq { ReqNumber = this.reqNumber, RequestedById = 999, State = this.fromState };
             this.updated = new PurchaseOrderReq { ReqNumber = this.reqNumber, State = this.toState };
-            this.MockAuthService.HasPermissionFor(
-                AuthorisedAction.PurchaseOrderReqUpdate,
-                Arg.Any<IEnumerable<string>>()).Returns(true);
 
             this.MockReqsStateChangeRepository.FindBy(Arg.Any<Expression<Func<PurchaseOrderReqStateChange, bool>>>())
                 .ReturnsNullForAnyArgs();

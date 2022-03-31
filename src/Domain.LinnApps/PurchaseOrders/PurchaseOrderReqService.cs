@@ -28,11 +28,6 @@
 
         public void Authorise(PurchaseOrderReq entity, IEnumerable<string> privileges, int currentUserId)
         {
-            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqAuthorise, privileges))
-            {
-                throw new UnauthorisedActionException("You are not authorised to authorise PO Reqs");
-            }
-
             var stage = !entity.AuthorisedById.HasValue ? "AUTH1" : "AUTH2";
 
             if (stage == "AUTH1" && entity.State != "AUTHORISE WAIT")
@@ -78,12 +73,6 @@
 
         public void Cancel(PurchaseOrderReq entity, IEnumerable<string> privileges)
         {
-            // todo in facade use delete or obselete resource? just return nothing from save to log
-            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqUpdate, privileges))
-            {
-                throw new UnauthorisedActionException("You are not authorised to cancel PO Reqs");
-            }
-
             var stateChangeAllowed = this.StateChangeAllowed(entity.State, "CANCELLED");
             if (!stateChangeAllowed)
             {
@@ -95,11 +84,6 @@
 
         public PurchaseOrderReq Create(PurchaseOrderReq entity, IEnumerable<string> privileges)
         {
-            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqCreate, privileges))
-            {
-                throw new UnauthorisedActionException("You are not authorised to create PO Reqs");
-            }
-
             if (entity.State != "DRAFT" && entity.State != "AUTHORISE WAIT")
             {
                 throw new IllegalPoReqStateChangeException(
@@ -121,22 +105,21 @@
                 throw new UnauthorisedActionException("Cannot authorise a req that is not in state 'FINANCE WAIT'. Please make sure the req is saved in this state and try again");
             }
 
-            // todo find finance check equivalent of allowed to authorise checks
-            // entity.FinanceCheckById = currentUserId;
+            entity.FinanceCheckById = currentUserId;
+            //todo get next state from state change table instead of hard coding
+            entity.State = "ORDER WAIT";
         }
 
         public void Update(PurchaseOrderReq entity, PurchaseOrderReq updatedEntity, IEnumerable<string> privileges)
         {
-            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqUpdate, privileges))
+            if (entity.State != updatedEntity.State)
             {
-                throw new UnauthorisedActionException("You are not authorised to update PO Reqs");
-            }
-
-            var stateChangeAllowed = this.StateChangeAllowed(entity.State, updatedEntity.State);
-            if (!stateChangeAllowed)
-            {
-                throw new IllegalPoReqStateChangeException(
-                    $"Cannot change directly from state '{entity.State}' to '{updatedEntity.State}'");
+                var stateChangeAllowed = this.StateChangeAllowed(entity.State, updatedEntity.State);
+                if (!stateChangeAllowed)
+                {
+                    throw new IllegalPoReqStateChangeException(
+                        $"Cannot change directly from state '{entity.State}' to '{updatedEntity.State}'");
+                }
             }
 
             entity.ReqNumber = updatedEntity.ReqNumber;

@@ -21,10 +21,6 @@
         [SetUp]
         public void SetUp()
         {
-            this.MockAuthService.HasPermissionFor(
-                AuthorisedAction.PurchaseOrderReqCreate,
-                Arg.Any<IEnumerable<string>>()).Returns(true);
-
             this.action = () => this.Sut.Create(
                 new PurchaseOrderReq { ReqNumber = this.reqNumber, State = "Order" },
                 new List<string>());
