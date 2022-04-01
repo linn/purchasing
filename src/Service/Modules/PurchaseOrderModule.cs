@@ -81,7 +81,6 @@
             this.Get("/purchasing/purchase-orders/reqs/print", this.GetApp);
             this.Get("/purchasing/purchase-orders/reqs/{id:int}/print", this.GetApp);
 
-
             this.Get("/purchasing/purchase-orders/reqs/application-state", this.GetReqApplicationState);
             this.Get("/purchasing/purchase-orders/reqs/{id:int}", this.GetReq);
             this.Put("/purchasing/purchase-orders/reqs/{id:int}", this.UpdateReq);
