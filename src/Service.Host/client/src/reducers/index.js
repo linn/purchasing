@@ -58,6 +58,7 @@ import purchaseOrders from './purchaseOrders';
 import whatsDueInReport from './whatsDueInReport';
 import purchaseOrderReqStates from './purchaseOrderReqStates';
 import outstandingPoReqsReport from './outstandingPoReqsReport';
+import sendPurchaseOrderReqEmail from './sendPurchaseOrderReqEmail';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -102,6 +103,7 @@ const rootReducer = history =>
         putSupplierOnHold,
         router: connectRouter(history),
         sendPlNoteEmail,
+        sendPurchaseOrderReqEmail,
         signingLimit,
         signingLimits,
         spendBySupplierReport,
