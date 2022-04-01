@@ -106,8 +106,7 @@
             }
 
             entity.FinanceCheckById = currentUserId;
-            //todo get next state from state change table instead of hard coding
-            entity.State = "ORDER WAIT";
+            entity.State = this.GetNextState(entity.State, true);
         }
 
         public void Update(PurchaseOrderReq entity, PurchaseOrderReq updatedEntity, IEnumerable<string> privileges)
@@ -164,6 +163,15 @@
                                          && (x.UserAllowed == "Y"
                                              || (changeIsFromFunction && x.ComputerAllowed == "Y")));
             return stateChange != null;
+        }
+
+        private string GetNextState(string from, bool changeIsFromFunction = false)
+        {
+            var stateChange = this.reqsStateChangeRepository.FindBy(
+                x => x.FromState == from 
+                                         && (!changeIsFromFunction && x.UserAllowed == "Y"
+                                             || (changeIsFromFunction && x.ComputerAllowed == "Y")));
+            return stateChange.ToState;
         }
     }
 }
