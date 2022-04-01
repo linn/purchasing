@@ -35,7 +35,7 @@
                                   ReqDate = 2.March(2022),
                                   OrderNumber = 1234,
                                   PartNumber = "PCAS 007",
-                                  PartDescription = "Descrip",
+                                  Description = "Descrip",
                                   Qty = 7,
                                   UnitPrice = 8m,
                                   Carriage = 99m,
