@@ -14,6 +14,8 @@ import EditOffIcon from '@mui/icons-material/EditOff';
 import Tooltip from '@mui/material/Tooltip';
 import Close from '@mui/icons-material/Close';
 import PrintIcon from '@mui/icons-material/Print';
+import Email from '@mui/icons-material/Email';
+import Send from '@mui/icons-material/Send';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Collapse from '@mui/material/Collapse';
@@ -44,6 +46,7 @@ import poReqApplicationStateActions from '../../actions/purchaseOrderReqApplicat
 import purchaseOrderReqStatesActions from '../../actions/purchaseOrderReqStatesActions';
 import history from '../../history';
 import config from '../../config';
+import SendDialog from './SendEmailDialog2';
 
 function POReqUtility({ creating }) {
     const dispatch = useDispatch();
@@ -868,7 +871,7 @@ function POReqUtility({ creating }) {
                             />
                         </Grid>
 
-                        <Grid item xs={4}>
+                        <Grid item xs={3}>
                             <Button
                                 className={classes.buttonMarginTop}
                                 color="primary"
@@ -879,6 +882,48 @@ function POReqUtility({ creating }) {
                                 Authorise
                             </Button>
                         </Grid>
+                        <Grid item xs={1}>
+                            <Tooltip title="Email for authorisation">
+                            <SendDialog
+                                    label="Part"
+                                    title="Search for a part"
+                                    onSelect={newPart => {
+                                        handleFieldChange('partNumber', newPart.id);
+                                        handleFieldChange('description', newPart.description);
+                                    }}
+                                    items={partsSearchResults}
+                                    loading={partsSearchLoading}
+                                    fetchItems={searchTerm =>
+                                        dispatch(partsActions.search(searchTerm))
+                                    }
+                                    clearSearch={() => dispatch(partsActions.clearSearch)}
+                                    value={req.partNumber ? `${req.partNumber}` : null}
+                                    modal
+                                    links={false}
+                                    debounce={1000}
+                                    minimumSearchTermLength={2}
+                                    disabled={!editingAllowed}
+                                    placeholder="click to set part"
+                                    iconOnly
+                                />
+                                
+                                {/* <IconButton
+                                    className={classes.pullRight}
+                                    aria-label="Email"
+                                    onClick={
+                                        () => {} //show new modal with email bits
+                                    }
+                                >
+                                    <Email />
+                                </IconButton> */}
+                            </Tooltip>
+                        </Grid>
+
+                        {/* todo
+                        use like MUI Email icon and maybe Send?
+                        Have like dropdown list of employees, maaaybe filtered maybe not
+                        
+                        */}
 
                         <Grid item xs={8}>
                             <InputField
