@@ -121,6 +121,10 @@ export const sendPlNoteEmailActionTypes = makeProcessActionTypes(
     itemTypes.sendPlNoteEmail.actionType
 );
 
+export const sendPurchaseOrderReqEmailActionTypes = makeProcessActionTypes(
+    itemTypes.sendPurchaseOrderReqEmail.actionType
+);
+
 export const bulkLeadTimesUploadActionTypes = makeProcessActionTypes(
     itemTypes.bulkLeadTimesUpload.actionType
 );

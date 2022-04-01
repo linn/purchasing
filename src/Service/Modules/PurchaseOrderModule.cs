@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
+    using System.IO;
     using System.Threading.Tasks;
 
     using Carter;
@@ -77,11 +78,14 @@
             this.Get("/purchasing/purchase-orders/reqs", this.SearchReqs);
             this.Get("/purchasing/purchase-orders/reqs/states", this.GetReqStates);
             this.Get("/purchasing/purchase-orders/reqs/print", this.GetApp);
+            this.Get("/purchasing/purchase-orders/reqs/{id:int}/print", this.GetApp);
 
             this.Get("/purchasing/purchase-orders/reqs/application-state", this.GetReqApplicationState);
             this.Get("/purchasing/purchase-orders/reqs/{id:int}", this.GetReq);
             this.Put("/purchasing/purchase-orders/reqs/{id:int}", this.UpdateReq);
             this.Post("/purchasing/purchase-orders/reqs/{id:int}/cancel", this.CancelReq);
+            this.Post("/purchasing/purchase-orders/reqs/email", this.EmailReq);
+
             this.Post("/purchasing/purchase-orders/reqs/{id:int}/authorise", this.AuthoriseReq);
             this.Post("/purchasing/purchase-orders/reqs", this.CreateReq);
         }
@@ -98,6 +102,24 @@
         {
             var id = req.RouteValues.As<int>("id");
             var result = this.purchaseOrderReqFacadeService.DeleteOrObsolete(id, req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task EmailReq(HttpRequest req, HttpResponse res)
+        {
+            var reqNumber = req.Query.As<int>("reqNumber");
+
+            var toEmailAddress = req.Query.As<string>("toEmailAddress");
+
+            using var ms = new MemoryStream();
+
+            await req.Body.CopyToAsync(ms);
+            var result = this.purchaseOrderReqFacadeService.SendEmail(
+                req.HttpContext.User.GetEmployeeNumber(),
+                toEmailAddress,
+                reqNumber,
+                ms);
 
             await res.Negotiate(result);
         }

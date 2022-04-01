@@ -101,8 +101,8 @@
         public void ShouldFilterByState()
         {
             this.results.Rows.Count().Should().Be(2);
-            this.results.GetGridTextValue(0, 1).Should().Be(this.stateParameter);
-            this.results.GetGridTextValue(1, 1).Should().Be(this.stateParameter);
+            this.results.GetGridTextValue(0, 0).Should().Be(this.stateParameter);
+            this.results.GetGridTextValue(1, 0).Should().Be(this.stateParameter);
         }
 
         [Test]
@@ -110,8 +110,8 @@
         {
             for (var i = 1; i < this.results.Rows.Count(); i++)
             {
-                var prevNo = this.results.GetGridTextValue(i - 1, 0);
-                Assert.IsTrue(string.CompareOrdinal(this.results.GetGridTextValue(i, 0), prevNo) > 0);
+                var prevNo = this.results.Rows.ElementAt(i - 1).RowId;
+                Assert.IsTrue(string.CompareOrdinal(this.results.Rows.ElementAt(i).RowId, prevNo) > 0);
             }
         }
     }

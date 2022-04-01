@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq.Expressions;
 
     using Linn.Common.Domain.Exceptions;
@@ -67,6 +68,14 @@
 
             return new SuccessResult<PurchaseOrderReqResource>(
                 (PurchaseOrderReqResource) this.resourceBuilder.Build(entity, privileges));
+        }
+
+        public IResult<ProcessResultResource> SendEmail(
+            int senderUserNumber, string toEmailAddress, int reqNumber, Stream attachment)
+        {
+            var result = this.domainService.SendEmails(senderUserNumber, toEmailAddress, reqNumber, attachment);
+            return new SuccessResult<ProcessResultResource>(
+                new ProcessResultResource(result.Success, result.Message));
         }
 
         protected override PurchaseOrderReq CreateFromResource(

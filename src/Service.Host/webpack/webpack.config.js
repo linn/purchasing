@@ -90,6 +90,14 @@ module.exports = {
             react: path.resolve('./node_modules/react'),
             notistack: path.resolve('./node_modules/notistack'),
             '@material-ui/styles': path.resolve('./node_modules/@material-ui/styles')
+        },
+        fallback: {
+            process: path.resolve('./node_modules/process'),
+            zlib: path.resolve('./node_modules/browserify-zlib/lib/index.js'),
+            stream: path.resolve('./node_modules/stream-browserify/index.js'),
+            util: path.resolve('./node_modules/util'),
+            buffer: path.resolve('./node_modules/buffer'),
+            asset: path.resolve('./node_modules/assert')
         }
         //modules: [path.resolve('node_modules'), 'node_modules'].concat(/* ... */)
     },
@@ -99,6 +107,10 @@ module.exports = {
     devtool: 'eval-cheap-module-source-map',
     // From https://github.com/gaearon/react-hot-boilerplate/blob/next/webpack.config.js
     plugins: [
+        new webpack.ProvidePlugin({
+            Buffer: ['buffer', 'Buffer'],
+            process: 'process/browser'
+        }),
         new webpack.NoEmitOnErrorsPlugin(), // do not emit compiled assets that include errors
         new webpack.DefinePlugin({
             'PROCESS.ENV': {
