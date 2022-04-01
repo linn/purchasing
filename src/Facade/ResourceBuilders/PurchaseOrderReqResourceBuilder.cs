@@ -142,22 +142,17 @@
             if (model != null)
             {
                 yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
-
                 yield return new LinkResource { Rel = "print", Href = $"{this.GetLocation(model)}/print" };
-
-                if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqUpdate, privileges))
-                {
-                    yield return new LinkResource { Rel = "edit", Href = this.GetLocation(model) };
-                }
-
-                if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqAuthorise, privileges))
-                {
-                    yield return new LinkResource { Rel = "authorise", Href = this.GetLocation(model) };
-                }
+                yield return new LinkResource { Rel = "edit", Href = this.GetLocation(model) };
+                yield return new LinkResource { Rel = "cancel", Href = $"{this.GetLocation(model)}/cancel" };
+                yield return new LinkResource { Rel = "authorise", Href = $"{this.GetLocation(model)}/authorise" };
 
                 if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqFinanceCheck, privileges))
                 {
-                    yield return new LinkResource { Rel = "finance-check", Href = this.GetLocation(model) };
+                    yield return new LinkResource
+                                     {
+                                         Rel = "finance-check", Href = $"{this.GetLocation(model)}/finance-authorise"
+                                     };
                 }
 
                 if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, privileges))
@@ -166,10 +161,7 @@
                 }
             }
 
-            if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqCreate, privileges))
-            {
-                yield return new LinkResource { Rel = "create", Href = "/purchasing/purchase-orders/reqs/create" };
-            }
+            yield return new LinkResource { Rel = "create", Href = "/purchasing/purchase-orders/reqs/create" };
         }
     }
 }

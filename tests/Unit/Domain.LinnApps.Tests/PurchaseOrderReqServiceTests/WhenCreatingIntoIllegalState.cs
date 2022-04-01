@@ -12,7 +12,7 @@
 
     using NUnit.Framework;
 
-    public class WhenCreatingAndNotAuthorised : ContextBase
+    public class WhenCreatingIntoIllegalState : ContextBase
     {
         private readonly int reqNumber = 5678;
 
@@ -21,19 +21,15 @@
         [SetUp]
         public void SetUp()
         {
-            this.MockAuthService.HasPermissionFor(
-                AuthorisedAction.PurchaseOrderReqCreate,
-                Arg.Any<IEnumerable<string>>()).Returns(false);
-
             this.action = () => this.Sut.Create(
-                new PurchaseOrderReq { ReqNumber = this.reqNumber },
+                new PurchaseOrderReq { ReqNumber = this.reqNumber, State = "Order" },
                 new List<string>());
         }
 
         [Test]
-        public void ShouldThrowUnauthorisedActionException()
+        public void ShouldThrowIllegalStateException()
         {
-            this.action.Should().Throw<UnauthorisedActionException>();
+            this.action.Should().Throw<IllegalPoReqStateChangeException>();
         }
     }
 }
