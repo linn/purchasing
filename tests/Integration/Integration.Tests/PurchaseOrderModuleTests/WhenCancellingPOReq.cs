@@ -31,7 +31,7 @@
                                     ReqDate = 2.March(2022).ToString("o"),
                                     OrderNumber = 1234,
                                     PartNumber = "PCAS 007",
-                                    PartDescription = "Descrip",
+                                    Description = "Descrip",
                                     Qty = 7,
                                     UnitPrice = 8m,
                                     Carriage = null,
@@ -68,7 +68,7 @@
                 ReqDate = 2.March(2022),
                 OrderNumber = 1234,
                 PartNumber = "PCAS 007",
-                PartDescription = "Descrip",
+                Description = "Descrip",
                 Qty = 7,
                 UnitPrice = 8m,
                 Carriage = null,
@@ -137,7 +137,7 @@
             resultResource.ReqDate.Should().Be(this.resource.ReqDate);
             resultResource.OrderNumber.Should().Be(this.resource.OrderNumber);
             resultResource.PartNumber.Should().Be(this.resource.PartNumber);
-            resultResource.PartDescription.Should().Be(this.resource.PartDescription);
+            resultResource.Description.Should().Be(this.resource.Description);
             resultResource.Qty.Should().Be(this.resource.Qty);
             resultResource.UnitPrice.Should().Be(this.resource.UnitPrice);
             resultResource.Carriage.Should().Be(this.resource.Carriage);

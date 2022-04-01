@@ -136,7 +136,7 @@
                            ReqDate = DateTime.Parse(resource.ReqDate),
                            OrderNumber = resource.OrderNumber,
                            PartNumber = resource.PartNumber,
-                           PartDescription = resource.PartDescription,
+                           Description = resource.Description,
                            Qty = resource.Qty,
                            UnitPrice = resource.UnitPrice,
                            Carriage = resource.Carriage,

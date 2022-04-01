@@ -6,6 +6,7 @@
     using Linn.Common.Facade.Carter.Handlers;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.MaterialRequirements;
     using Linn.Purchasing.Service.ResultHandlers;
 
     using Microsoft.Extensions.DependencyInjection;
@@ -62,7 +63,9 @@
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<PurchaseOrderReqResource>>>()
                 .AddTransient<IHandler, PurchaseOrderReqApplicationStateResultHandler>()
                 .AddTransient<IHandler, JsonResultHandler<PurchaseOrderReqStateResource>>()
-                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PurchaseOrderReqStateResource>>>();
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<PurchaseOrderReqStateResource>>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<MrpRunLogResource>>>()
+                .AddTransient<IHandler, JsonResultHandler<MrpRunLogResource>>();
         }
     }
 }

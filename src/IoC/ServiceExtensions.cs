@@ -15,6 +15,7 @@
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Keys;
+    using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
@@ -24,6 +25,7 @@
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Proxy;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.MaterialRequirements;
     using Linn.Purchasing.Resources.SearchResources;
 
     using Microsoft.Extensions.DependencyInjection;
@@ -56,6 +58,7 @@
                 .AddTransient<IBuilder<SupplierContact>, SupplierContactResourceBuilder>()
                 .AddTransient<IBuilder<PlCreditDebitNote>, PlCreditDebitNoteResourceBuilder>()
                 .AddTransient<IBuilder<PurchaseOrderReq>, PurchaseOrderReqResourceBuilder>()
+                .AddTransient<IBuilder<MrpRunLog>, MrpRunLogResourceBuilder>()
                 .AddTransient<IBuilder<PurchaseOrderReqState>, PurchaseOrderReqStateResourceBuilder>();
         }
 
@@ -92,7 +95,10 @@
                 .AddTransient<ISpendsReportFacadeService, SpendsReportFacadeService>()
                 .AddTransient<IPurchaseOrderReqFacadeService, PurchaseOrderReqFacadeService>()
                 .AddTransient<IWhatsDueInReportFacadeService, WhatsDueInReportFacadeService>()
-                .AddTransient<IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource>, PurchaseOrderReqStateFacadeService>();
+                .AddTransient<IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource>, PurchaseOrderReqStateFacadeService>()
+                .AddTransient<IOutstandingPoReqsReportFacadeService, OutstandingPoReqsReportFacadeService>()
+                .AddTransient<IFacadeResourceFilterService<MrpRunLog, int, MrpRunLogResource, MrpRunLogResource, MaterialRequirementsSearchResource>, MrpRunLogFacadeService>()
+                .AddTransient<IMaterialRequirementsPlanningFacadeService, MaterialRequirementsPlanningFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
@@ -115,13 +121,16 @@
                 .AddTransient<IPartsReceivedReportService, PartsReceivedReportService>()
                 .AddTransient<IPurchaseOrderReqService, PurchaseOrderReqService>()
                 .AddTransient<IWhatsDueInReportService, WhatsDueInReportService>()
+                .AddTransient<IOutstandingPoReqsReportService, OutstandingPoReqsReportService>()
+                .AddTransient<IMaterialRequirementsPlanningService, MaterialRequirementsPlanningService>()
 
             // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
                 .AddTransient<IAutocostPack, AutocostPack>()
                 .AddTransient<ICurrencyPack, CurrencyPack>()
                 .AddTransient<IPurchaseLedgerPack, PurchaseLedgerPack>()
-                .AddTransient<IPurchaseOrderReqsPack, PurchaseOrderReqsPack>();
+                .AddTransient<IPurchaseOrderReqsPack, PurchaseOrderReqsPack>()
+                .AddTransient<IMrpLoadPack, MrpLoadPack>();
         }
     }
 }

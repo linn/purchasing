@@ -16,8 +16,6 @@
 
         public string PartNumber { get; set; }
 
-        public string PartDescription { get; set; }
-
         public decimal Qty { get; set; }
 
         public decimal UnitPrice { get; set; }
@@ -91,5 +89,9 @@
         public Department Department { get; set; }
 
         public string DepartmentCode { get; set; }
+
+        public string Description { get; set; }
+
+        public PurchaseOrderReqState ReqState { get; set; }
     }
 }

@@ -1,7 +1,6 @@
 ﻿namespace Linn.Purchasing.Persistence.LinnApps.Repositories
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
 
@@ -32,13 +31,17 @@
                 .Include(r => r.FinanceCheckBy)
                 .Include(r => r.Nominal)
                 .Include(r => r.Department)
+                .Include(r => r.ReqState)
                 .Include(r => r.Supplier).ThenInclude(s => s.OrderAddress)
                 .FirstOrDefault(x => x.ReqNumber == key);
         }
 
         public override IQueryable<PurchaseOrderReq> FilterBy(Expression<Func<PurchaseOrderReq, bool>> expression)
         {
-            return base.FilterBy(expression).AsNoTracking().Include(r => r.Supplier);
+            return base.FilterBy(expression).AsNoTracking()
+                .Include(r => r.RequestedBy)
+                .Include(r => r.Supplier)
+                .Include(r => r.ReqState);
         }
     }
 }

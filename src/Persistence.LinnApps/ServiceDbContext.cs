@@ -2,6 +2,7 @@
 {
     using Linn.Common.Configuration;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
@@ -99,6 +100,8 @@
 
         public DbSet<OverbookAllowedByLog> AllowOverbookLogs { get; set; }
 
+        public DbSet<MrpRunLog> MrpRunLogs { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -151,6 +154,7 @@
             this.BuildNominals(builder);
             this.BuildPurchaseOrderReqStates(builder);
             this.BuildPurchaseOrderReqStateChanges(builder);
+            this.BuildMrRunLogs(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -803,7 +807,7 @@
             entity.Property(e => e.OrderNumber).HasColumnName("ORDER_NUMBER");
             entity.Property(e => e.Qty).HasColumnName("QTY").HasMaxLength(19);
             entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
-            entity.Property(e => e.PartDescription).HasColumnName("DESCRIPTION").HasMaxLength(2000);
+            entity.Property(e => e.Description).HasColumnName("DESCRIPTION").HasMaxLength(2000);
             entity.Property(e => e.UnitPrice).HasColumnName("UNIT_PRICE").HasMaxLength(19);
             entity.Property(e => e.Carriage).HasColumnName("CARRIAGE").HasMaxLength(18);
             entity.Property(e => e.TotalReqPrice).HasColumnName("TOTAL_REQ_PRICE").HasMaxLength(18);
@@ -840,6 +844,7 @@
             entity.HasOne(e => e.SecondAuthBy).WithMany().HasForeignKey(x => x.SecondAuthById);
             entity.Property(e => e.Email).HasColumnName("EMAIL_ADDRESS").HasMaxLength(50);
             entity.Property(e => e.InternalNotes).HasColumnName("INTERNAL_ONLY_ORDER_NOTES").HasMaxLength(300);
+            entity.HasOne(e => e.ReqState).WithMany().HasForeignKey(e => e.State);
         }
 
         private void BuildNominals(ModelBuilder builder)
@@ -876,6 +881,23 @@
             e.Property(s => s.ToState).HasColumnName("TO_STATE").HasMaxLength(20);
             e.Property(s => s.UserAllowed).HasColumnName("USER_ALLOWED").HasMaxLength(1);
             e.Property(s => s.ComputerAllowed).HasColumnName("COMPUTER_STANDARD").HasMaxLength(1);
+        }
+
+        private void BuildMrRunLogs(ModelBuilder builder)
+        {
+            var e = builder.Entity<MrpRunLog>().ToTable("MR_RUNLOG");
+            e.HasKey(d => d.MrRunLogId);
+            e.Property(d => d.MrRunLogId).HasColumnName("MR_RUNLOG_ID");
+            e.Property(d => d.JobRef).HasColumnName("JOBREF").HasMaxLength(6);
+            e.Property(d => d.BuildPlanName).HasColumnName("BUILD_PLAN_NAME").HasMaxLength(10);
+            e.Property(d => d.RunDate).HasColumnName("RUNDATE");
+            e.Property(d => d.RunDetails).HasColumnName("RUN_DETAILS").HasMaxLength(2000);
+            e.Property(d => d.FullRun).HasColumnName("FULL_RUN").HasMaxLength(1);
+            e.Property(d => d.Kill).HasColumnName("KILL").HasMaxLength(1);
+            e.Property(d => d.Success).HasColumnName("SUCCESS").HasMaxLength(1);
+            e.Property(d => d.LoadMessage).HasColumnName("LOAD_MESSAGE").HasMaxLength(2000);
+            e.Property(d => d.MrMessage).HasColumnName("MR_MESSAGE").HasMaxLength(2000);
+            e.Property(d => d.DateTidied).HasColumnName("DATE_TIDIED");
         }
     }
 }

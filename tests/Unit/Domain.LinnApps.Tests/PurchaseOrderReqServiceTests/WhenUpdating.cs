@@ -37,7 +37,7 @@
                                    ReqDate = 2.March(2022),
                                    OrderNumber = 1234,
                                    PartNumber = "PCAS 007",
-                                   PartDescription = "Descrip",
+                                   Description = "Descrip",
                                    Qty = 7,
                                    UnitPrice = 8m,
                                    Carriage = 99m,
@@ -83,7 +83,7 @@
             this.current.ReqDate.Should().Be(this.updated.ReqDate);
             this.current.OrderNumber.Should().Be(this.updated.OrderNumber);
             this.current.PartNumber.Should().Be(this.updated.PartNumber);
-            this.current.PartDescription.Should().Be(this.updated.PartDescription);
+            this.current.Description.Should().Be(this.updated.Description);
             this.current.Qty.Should().Be(this.updated.Qty);
             this.current.UnitPrice.Should().Be(this.updated.UnitPrice);
             this.current.Carriage.Should().Be(this.updated.Carriage);

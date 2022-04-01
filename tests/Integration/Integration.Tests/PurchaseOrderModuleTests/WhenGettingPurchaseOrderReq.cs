@@ -33,7 +33,7 @@
                                ReqDate = 2.March(2022),
                                OrderNumber = 1234,
                                PartNumber = "PCAS 007",
-                               PartDescription = "Descrip",
+                               Description = "Descrip",
                                Qty = 7,
                                UnitPrice = 8m,
                                Carriage = null,
@@ -77,6 +77,8 @@
             var resource = this.Response.DeserializeBody<PurchaseOrderReqResource>();
             resource.Links.Single(x => x.Rel == "self").Href.Should()
                 .Be($"/purchasing/purchase-orders/reqs/{this.reqNumber}");
+            resource.Links.Single(x => x.Rel == "print").Href.Should()
+                .Be($"/purchasing/purchase-orders/reqs/{this.reqNumber}/print");
         }
 
         [Test]
@@ -93,7 +95,7 @@
             resultResource.ReqDate.Should().Be(this.req.ReqDate.ToString("o"));
             resultResource.OrderNumber.Should().Be(this.req.OrderNumber);
             resultResource.PartNumber.Should().Be(this.req.PartNumber);
-            resultResource.PartDescription.Should().Be(this.req.PartDescription);
+            resultResource.Description.Should().Be(this.req.Description);
             resultResource.Qty.Should().Be(this.req.Qty);
             resultResource.UnitPrice.Should().Be(this.req.UnitPrice);
             resultResource.Carriage.Should().Be(this.req.Carriage);

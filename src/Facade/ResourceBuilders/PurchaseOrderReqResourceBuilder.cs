@@ -30,10 +30,11 @@
                        {
                            ReqNumber = entity.ReqNumber,
                            State = entity.State,
+                           StateDescription = entity.ReqState?.Description,
                            ReqDate = entity.ReqDate.ToString("o"),
                            OrderNumber = entity.OrderNumber,
                            PartNumber = entity.PartNumber,
-                           PartDescription = entity.PartDescription,
+                           Description = entity.Description,
                            Qty = entity.Qty,
                            UnitPrice = entity.UnitPrice,
                            Carriage = entity.Carriage,
@@ -137,9 +138,11 @@
         {
             var privileges = claims as string[] ?? claims.ToArray();
 
+
             if (model != null)
             {
                 yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
+                yield return new LinkResource { Rel = "print", Href = $"{this.GetLocation(model)}/print" };
                 yield return new LinkResource { Rel = "edit", Href = this.GetLocation(model) };
                 yield return new LinkResource { Rel = "cancel", Href = $"{this.GetLocation(model)}/cancel" };
                 yield return new LinkResource { Rel = "authorise", Href = $"{this.GetLocation(model)}/authorise" };
