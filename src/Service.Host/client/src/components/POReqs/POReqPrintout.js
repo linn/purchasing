@@ -267,9 +267,7 @@ function POReqPrintout() {
 
                             <View style={[styles.row]}>
                                 <Text style={styles.labelTwoColumns}>Order Number:</Text>
-                                <Text style={styles.eightColumns}>
-                                    {item.orderNumber?.fullName}
-                                </Text>
+                                <Text style={styles.eightColumns}>{item.orderNumber}</Text>
                             </View>
 
                             <View style={[styles.row]}>
