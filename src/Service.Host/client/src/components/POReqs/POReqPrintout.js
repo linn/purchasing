@@ -99,16 +99,13 @@ function POReqPrintout() {
                 textDecoration: 'underline'
             },
             oneColumn: {
-                width: '10%',
-                textAlign: 'left'
+                width: '10%'
             },
             twoColumns: {
-                width: '20%',
-                textAlign: 'left'
+                width: '20%'
             },
             threeColumns: {
-                width: '30%',
-                textAlign: 'left'
+                width: '30%'
             },
             title: {
                 width: '90%',
@@ -117,13 +114,14 @@ function POReqPrintout() {
             image: {
                 width: '10%'
             },
+            fourColumns: {
+                width: '40%'
+            },
             sixColumns: {
-                width: '60%',
-                textAlign: 'left'
+                width: '60%'
             },
             eightColumns: {
-                width: '80%',
-                textAlign: 'left'
+                width: '80%'
             }
         });
         return (
@@ -199,6 +197,89 @@ function POReqPrintout() {
                             <View style={[styles.addressRow]}>
                                 <View style={styles.twoColumns} />
                                 <Text style={styles.eightColumns}>{item.country?.countryName}</Text>
+                            </View>
+
+                            <View style={[styles.row]}>
+                                <Text style={styles.labelTwoColumns}>Contact:</Text>
+                                <Text style={styles.eightColumns}>{item.supplierContact}</Text>
+                            </View>
+
+                            <View style={[styles.row]}>
+                                <Text style={styles.labelTwoColumns}>Phone:</Text>
+                                <Text style={styles.eightColumns}>{item.phoneNumber}</Text>
+                            </View>
+
+                            <View style={[styles.row]}>
+                                <Text style={styles.labelTwoColumns}>Cost Centre:</Text>
+                                <Text style={styles.twoColumns}>
+                                    {item.department?.departmentCode}
+                                </Text>
+                                <Text style={styles.sixColumns}>
+                                    {item.department?.description}
+                                </Text>
+                            </View>
+
+                            <View style={[styles.row]}>
+                                <Text style={styles.labelTwoColumns}>Nominal:</Text>
+                                <Text style={styles.twoColumns}>{item.nominal?.nominalCode}</Text>
+                                <Text style={styles.sixColumns}>{item.nominal?.description}</Text>
+                            </View>
+
+                            <View style={[styles.row]}>
+                                <Text style={styles.labelTwoColumns}>Quote Ref:</Text>
+                                <Text style={styles.eightColumns}>{item.quoteRef}</Text>
+                            </View>
+
+                            <View style={[styles.row]}>
+                                <Text style={styles.labelTwoColumns}>Requested By:</Text>
+                                <Text style={styles.eightColumns}>
+                                    {item.requestedBy?.fullName}
+                                </Text>
+                            </View>
+
+                            <View style={[styles.row]}>
+                                <Text style={styles.labelTwoColumns}>Authorised By:</Text>
+                                <Text style={styles.eightColumns}>
+                                    {item.authorisedBy?.fullName}
+                                </Text>
+                            </View>
+
+                            <View style={[styles.row]}>
+                                <Text style={styles.labelTwoColumns}>2nd Auth By:</Text>
+                                <Text style={styles.eightColumns}>
+                                    {item.secondAuthBy?.fullName}
+                                </Text>
+                            </View>
+
+                            <View style={[styles.row]}>
+                                <Text style={styles.labelTwoColumns}>Finance Check By:</Text>
+                                <Text style={styles.eightColumns}>
+                                    {item.financeCheckBy?.fullName}
+                                </Text>
+                            </View>
+
+                            <View style={[styles.row]}>
+                                <Text style={styles.labelTwoColumns}>Order By:</Text>
+                                <Text style={styles.eightColumns}>
+                                    {item.turnedIntoOrderBy?.fullName}
+                                </Text>
+                            </View>
+
+                            <View style={[styles.row]}>
+                                <Text style={styles.labelTwoColumns}>Order Number:</Text>
+                                <Text style={styles.eightColumns}>
+                                    {item.orderNumber?.fullName}
+                                </Text>
+                            </View>
+
+                            <View style={[styles.row]}>
+                                <Text style={styles.labelTwoColumns}>Order Notes:</Text>
+                                <Text style={styles.eightColumns}>{item.remarksForOrder}</Text>
+                            </View>
+
+                            <View style={[styles.row]}>
+                                <Text style={styles.labelTwoColumns}>Internal Notes:</Text>
+                                <Text style={styles.eightColumns}>{item.internalNotes}</Text>
                             </View>
                         </View>
                     </PdfPage>
