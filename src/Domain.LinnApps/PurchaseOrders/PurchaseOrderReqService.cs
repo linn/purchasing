@@ -152,7 +152,6 @@
                                Message = $"Error sending email. Error Message: {e.Message}"
                            };
             }
-            throw new System.NotImplementedException();
         }
 
         public void Update(PurchaseOrderReq entity, PurchaseOrderReq updatedEntity, IEnumerable<string> privileges)
