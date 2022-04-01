@@ -43,7 +43,7 @@
                 this.MockAuthService,
                 this.MockPurchaseOrderReqsPack,
                 this.EmployeeRepository,
-                this.EmailService
+                this.EmailService,
                 this.MockReqsStateChangeRepository);
         }
     }
