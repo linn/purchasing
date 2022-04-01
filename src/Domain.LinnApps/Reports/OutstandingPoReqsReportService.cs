@@ -150,7 +150,10 @@
             }
 
             reportLayout.SetGridData(values);
-            return reportLayout.GetResultsModel();
+            var model = reportLayout.GetResultsModel();
+
+            model.RowDrillDownTemplates.Add(new DrillDownModel("Id", "/purchasing/purchase-orders/reqs/{textValue}"));
+            return model;
         }
     }
 }
