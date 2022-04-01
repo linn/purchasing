@@ -8,7 +8,6 @@
     using Carter.Request;
     using Carter.Response;
 
-    using Linn.Common.Email;
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
