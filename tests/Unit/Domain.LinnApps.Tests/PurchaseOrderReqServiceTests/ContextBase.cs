@@ -4,6 +4,7 @@
     using Linn.Common.Email;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
+    using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
     using NSubstitute;
@@ -12,8 +13,6 @@
 
     public class ContextBase
     {
-        protected IPurchaseOrderReqService Sut { get; private set; }
-
         protected IAuthorisationService MockAuthService { get; private set; }
 
         protected IPurchaseOrderReqsPack MockPurchaseOrderReqsPack { get; private set; }
@@ -22,6 +21,14 @@
 
         protected IEmailService EmailService { get; private set; }
 
+        protected IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey> MockReqsStateChangeRepository
+        {
+            get;
+            private set;
+        }
+
+        protected IPurchaseOrderReqService Sut { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -29,12 +36,15 @@
             this.MockPurchaseOrderReqsPack = Substitute.For<IPurchaseOrderReqsPack>();
             this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
             this.EmailService = Substitute.For<IEmailService>();
+            this.MockReqsStateChangeRepository =
+                Substitute.For<IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>>();
 
             this.Sut = new PurchaseOrderReqService(
                 this.MockAuthService,
                 this.MockPurchaseOrderReqsPack,
                 this.EmployeeRepository,
-                this.EmailService);
+                this.EmailService
+                this.MockReqsStateChangeRepository);
         }
     }
 }

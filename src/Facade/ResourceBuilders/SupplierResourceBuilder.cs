@@ -40,9 +40,6 @@
                 return new SupplierResource { Links = this.BuildLinks(null, claims).ToArray() };
             }
 
-            var supplierContact = this.supplierContactRepository.FindBy(
-                c => c.SupplierId == entity.SupplierId && c.IsMainOrderContact == "Y");
-
             return new SupplierResource
                        {
                            Id = entity.SupplierId,

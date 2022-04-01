@@ -9,6 +9,7 @@
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
+    using Linn.Purchasing.Domain.LinnApps.Keys;
 
     public class PurchaseOrderReqService : IPurchaseOrderReqService
     {
@@ -20,36 +21,41 @@
 
         private IEmailService emailService;
 
+        private readonly IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey> reqsStateChangeRepository;
+
         public PurchaseOrderReqService(
             IAuthorisationService authService,
             IPurchaseOrderReqsPack purchaseOrderReqsPack,
             IRepository<Employee, int> employeeRepository,
-            IEmailService emailService)
+            IEmailService emailService,
+            IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey> reqsStateChangeRepository)
         {
             this.authService = authService;
             this.purchaseOrderReqsPack = purchaseOrderReqsPack;
             this.employeeRepository = employeeRepository;
             this.emailService = emailService;
+            this.reqsStateChangeRepository = reqsStateChangeRepository;
         }
 
         public void Authorise(PurchaseOrderReq entity, IEnumerable<string> privileges, int currentUserId)
         {
-            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqAuthorise, privileges))
+            var stage = !entity.AuthorisedById.HasValue ? "AUTH1" : "AUTH2";
+
+            if (stage == "AUTH1" && entity.State != "AUTHORISE WAIT")
             {
-                throw new UnauthorisedActionException("You are not authorised to authorise PO Reqs");
+                throw new UnauthorisedActionException("Cannot authorise a req that is not in state 'AUTHORISE WAIT'. Please make sure the req is saved in this state and try again");
             }
 
-            if (entity.State != "AUTHORISE WAIT")
+            if (stage == "AUTH2" && entity.State != "AUTHORISE 2ND WAIT")
             {
-                throw new UnauthorisedActionException("Cannot authorise a req that is not in state 'AUTHORISE WAIT'");
+                throw new UnauthorisedActionException(
+                    "Cannot 2nd authorise a req that is not in state 'AUTHORISE 2ND WAIT'. Please make sure the req is saved in this state and try again");
             }
 
             if (!entity.TotalReqPrice.HasValue)
             {
                 throw new UnauthorisedActionException("Cannot authorise a req that has no value");
             }
-
-            var stage = !entity.AuthorisedById.HasValue ? "AUTH1" : "AUTH2";
 
             // todo check if totalReqPrice is used on the old form and if any currency conversion is done
             var allowedToAuthoriseResult = this.purchaseOrderReqsPack.AllowedToAuthorise(
@@ -64,19 +70,21 @@
                 throw new UnauthorisedActionException(allowedToAuthoriseResult.Message);
             }
 
-            entity.State = allowedToAuthoriseResult.NewState;
-            entity.AuthorisedById = currentUserId;
+            if (stage == "AUTH1")
+            {
+                entity.State = allowedToAuthoriseResult.NewState;
+                entity.AuthorisedById = currentUserId;
+            }
+            else
+            {
+                entity.State = allowedToAuthoriseResult.NewState;
+                entity.SecondAuthById = currentUserId;
+            }
         }
 
         public void Cancel(PurchaseOrderReq entity, IEnumerable<string> privileges)
         {
-            // todo in facade use delete or obselete resource? just return nothing from save to log
-            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqUpdate, privileges))
-            {
-                throw new UnauthorisedActionException("You are not authorised to cancel PO Reqs");
-            }
-
-            var stateChangeAllowed = this.purchaseOrderReqsPack.StateChangeAllowed(entity.State, "CANCELLED");
+            var stateChangeAllowed = this.StateChangeAllowed(entity.State, "CANCELLED");
             if (!stateChangeAllowed)
             {
                 throw new IllegalPoReqStateChangeException($"Cannot cancel req from state '{entity.State}'");
@@ -87,14 +95,9 @@
 
         public PurchaseOrderReq Create(PurchaseOrderReq entity, IEnumerable<string> privileges)
         {
-            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqCreate, privileges))
-            {
-                throw new UnauthorisedActionException("You are not authorised to create PO Reqs");
-            }
-
             if (entity.State != "DRAFT" && entity.State != "AUTHORISE WAIT")
             {
-                throw new UnauthorisedActionException(
+                throw new IllegalPoReqStateChangeException(
                     "Cannot create new PO req into state other than Draft or Authorise Wait");
             }
 
@@ -110,12 +113,12 @@
 
             if (entity.State != "FINANCE WAIT")
             {
-                throw new UnauthorisedActionException("Cannot authorise a req that is not in state 'AUTHORISE WAIT'");
+                throw new UnauthorisedActionException("Cannot authorise a req that is not in state 'FINANCE WAIT'. Please make sure the req is saved in this state and try again");
             }
 
-            return;
-            // todo find finance check equivalent of allowed to authorise checks
-            //entity.FinanceCheckById = currentUserId;
+            entity.FinanceCheckById = currentUserId;
+            //todo get next state from state change table instead of hard coding
+            entity.State = "ORDER WAIT";
         }
 
         public ProcessResult SendEmails(
@@ -154,16 +157,14 @@
 
         public void Update(PurchaseOrderReq entity, PurchaseOrderReq updatedEntity, IEnumerable<string> privileges)
         {
-            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqUpdate, privileges))
+            if (entity.State != updatedEntity.State)
             {
-                throw new UnauthorisedActionException("You are not authorised to update PO Reqs");
-            }
-
-            var stateChangeAllowed = this.purchaseOrderReqsPack.StateChangeAllowed(entity.State, updatedEntity.State);
-            if (!stateChangeAllowed)
-            {
-                throw new IllegalPoReqStateChangeException(
-                    $"Cannot change directly from state '{entity.State}' to '{updatedEntity.State}'");
+                var stateChangeAllowed = this.StateChangeAllowed(entity.State, updatedEntity.State);
+                if (!stateChangeAllowed)
+                {
+                    throw new IllegalPoReqStateChangeException(
+                        $"Cannot change directly from state '{entity.State}' to '{updatedEntity.State}'");
+                }
             }
 
             entity.ReqNumber = updatedEntity.ReqNumber;
@@ -199,6 +200,15 @@
             entity.RemarksForOrder = updatedEntity.RemarksForOrder;
             entity.InternalNotes = updatedEntity.InternalNotes;
             entity.DepartmentCode = updatedEntity.DepartmentCode;
+        }
+
+        private bool StateChangeAllowed(string from, string to, bool changeIsFromFunction = false)
+        {
+            var stateChange = this.reqsStateChangeRepository.FindBy(
+                x => x.FromState == from && x.ToState == to
+                                         && (x.UserAllowed == "Y"
+                                             || (changeIsFromFunction && x.ComputerAllowed == "Y")));
+            return stateChange != null;
         }
     }
 }

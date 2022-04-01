@@ -1,6 +1,8 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderReqServiceTests
 {
+    using System;
     using System.Collections.Generic;
+    using System.Linq.Expressions;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
@@ -13,20 +15,21 @@
 
     public class WhenUpdating : ContextBase
     {
+        private readonly string fromState = "DRAFT";
+
         private readonly int reqNumber = 5678;
+
+        private readonly string toState = "AUTHORISE WAIT";
 
         private PurchaseOrderReq current;
 
         private PurchaseOrderReq updated;
 
-        private readonly string fromState = "DRAFT";
-
-        private readonly string toState = "AUTHORISE WAIT";
-
         [SetUp]
         public void SetUp()
         {
-            this.current = new PurchaseOrderReq { ReqNumber = this.reqNumber, RequestedById = 999, State = this.fromState };
+            this.current =
+                new PurchaseOrderReq { ReqNumber = this.reqNumber, RequestedById = 999, State = this.fromState };
             this.updated = new PurchaseOrderReq
                                {
                                    ReqNumber = this.reqNumber,
@@ -63,11 +66,13 @@
                                    InternalNotes = "pls approv",
                                    DepartmentCode = "00002345"
                                };
-            this.MockAuthService.HasPermissionFor(
-                AuthorisedAction.PurchaseOrderReqUpdate,
-                Arg.Any<IEnumerable<string>>()).Returns(true);
 
-            this.MockPurchaseOrderReqsPack.StateChangeAllowed(this.fromState, this.toState).Returns(true);
+            this.MockReqsStateChangeRepository.FindBy(Arg.Any<Expression<Func<PurchaseOrderReqStateChange, bool>>>())
+                .Returns(
+                    new PurchaseOrderReqStateChange
+                        {
+                            FromState = this.fromState, ToState = this.toState, UserAllowed = "Y"
+                        });
             this.Sut.Update(this.current, this.updated, new List<string>());
         }
 
@@ -98,7 +103,7 @@
             this.current.QuoteRef.Should().Be(this.updated.QuoteRef);
             this.current.Email.Should().Be(this.updated.Email);
             this.current.DateRequired.Should().Be(this.updated.DateRequired);
-            this.current.RequestedById.Should().Be(999);//don't let requested by field by updated after create
+            this.current.RequestedById.Should().Be(999); // don't let requested by field by updated after create
             this.current.AuthorisedById.Should().Be(this.current.AuthorisedById);
             this.current.SecondAuthById.Should().Be(this.current.SecondAuthById);
             this.current.FinanceCheckById.Should().Be(this.current.FinanceCheckById);

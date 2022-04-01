@@ -13,6 +13,7 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import EditOffIcon from '@mui/icons-material/EditOff';
 import Tooltip from '@mui/material/Tooltip';
 import Close from '@mui/icons-material/Close';
+import PrintIcon from '@mui/icons-material/Print';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Collapse from '@mui/material/Collapse';
@@ -41,7 +42,6 @@ import partsActions from '../../actions/partsActions';
 import poReqActions from '../../actions/purchaseOrderReqActions';
 import poReqApplicationStateActions from '../../actions/purchaseOrderReqApplicationStateActions';
 import purchaseOrderReqStatesActions from '../../actions/purchaseOrderReqStatesActions';
-
 import history from '../../history';
 import config from '../../config';
 
@@ -104,7 +104,7 @@ function POReqUtility({ creating }) {
         },
         reqNumber: 'creating',
         state: 'AUTHORISE WAIT',
-        reqDate: `${new Date()}`,
+        reqDate: new Date().toDateString(),
         partNumber: 'SUNDRY',
         currency: { code: 'GBP', name: 'UK Sterling' }
     };
@@ -125,10 +125,12 @@ function POReqUtility({ creating }) {
     const [editStatus, setEditStatus] = useState('view');
 
     useEffect(() => {
-        if (item?.reqNumber) {
+        if (!creating && item?.reqNumber) {
             setReq(item);
+        } else {
+            dispatch(poReqActions.clearErrorsForItem());
         }
-    }, [item]);
+    }, [item, creating, dispatch]);
 
     useEffect(() => dispatch(currenciesActions.fetch()), [dispatch]);
     useEffect(() => dispatch(employeesActions.fetch()), [dispatch]);
@@ -145,19 +147,22 @@ function POReqUtility({ creating }) {
 
     const handleSupplierChange = newSupplier => {
         setEditStatus('edit');
+        let supplierContact = newSupplier.supplierContacts?.find(x => x.isMainOrderContact === 'Y');
+        if (!supplierContact && newSupplier.supplierContacts?.length) {
+            [supplierContact] = newSupplier.supplierContacts;
+        }
         setReq(a => ({
             ...a,
             supplier: { id: newSupplier.id, name: newSupplier.description },
-            supplierContact: newSupplier.supplierContact?.contactName,
-            email: newSupplier.supplierContact?.email,
-            phoneNumber: newSupplier.supplierContact?.phoneNumber,
+            supplierContact: supplierContact?.contactName,
+            email: supplierContact?.emailAddress,
+            phoneNumber: supplierContact?.phoneNumber,
             currency: {
-                code: newSupplier.currency?.code,
-                name: newSupplier.currency?.name
+                code: newSupplier.currency?.code ?? req.currency?.code,
+                name: newSupplier.currency?.name ?? req.currency?.name
             },
             country: {
-                countryCode: newSupplier.country?.countryCode,
-                countryName: newSupplier.country?.countryName
+                countryCode: newSupplier.country ?? req.country.countryCode
             },
             addressLine1: newSupplier.orderAddress?.line1,
             addressLine2: newSupplier.orderAddress?.line2,
@@ -181,29 +186,29 @@ function POReqUtility({ creating }) {
         }))
     };
 
-    const purchaseOrderReqApplicationState = useSelector(state =>
-        collectionSelectorHelpers.getApplicationState(state.purchaseOrderReq)
-    );
-
-    const allowedToAuthorise = () => !creating && req.links?.some(l => l.rel === 'authorise');
+    const allowedToCancel = () => !creating && req.links?.some(l => l.rel === 'cancel');
+    const allowedToAuthorise = () => !creating && req.state === 'AUTHORISE WAIT';
+    const allowedTo2ndAuthorise = () => !creating && req.state === 'AUTHORISE 2ND WAIT';
     const allowedToFinanceCheck = () =>
-        !creating && req.links?.some(l => l.rel === 'finance-check');
+        !creating &&
+        req.links?.some(l => l.rel === 'finance-check') &&
+        req.state === 'FINANCE WAIT';
     const allowedToCreateOrder = () =>
-        !creating && req.links?.some(l => l.rel === 'create-purchase-order');
+        !creating &&
+        req.links?.some(l => l.rel === 'create-purchase-order') &&
+        req.state === 'ORDER WAIT';
 
-    const editingAllowed = creating
-        ? purchaseOrderReqApplicationState?.links?.some(l => l.rel === 'create')
-        : req.links?.some(l => l.rel === 'edit');
+    const editingAllowed = req?.state !== 'CANCELLED';
 
     const inputIsInvalid = () =>
-        !`${req.supplier?.supplierId}`.length ||
+        !`${req.supplier?.id}`?.length ||
         !req.supplier?.name?.length ||
         !req.state.length ||
         !req.reqDate.length ||
         !`${req.qty}`.length ||
         !`${req.unitPrice}`.length ||
-        !req.currency?.code.length ||
-        !req.country?.countryCode.length ||
+        !req.currency?.code?.length ||
+        !req.country?.countryCode?.length ||
         !req.nominal?.nominalCode.length ||
         !req.department?.departmentCode.length;
 
@@ -213,30 +218,37 @@ function POReqUtility({ creating }) {
     const handleAuthorise = () => {
         setEditStatus('edit');
         if (allowedToAuthorise) {
-            setReq(a => ({ ...a, authorisedBy: { id: currentUserId, fullName: currentUserName } }));
+            clearErrors();
+            dispatch(poReqActions.postByHref(req.links?.find(l => l.rel === 'authorise')?.href));
         }
     };
 
     const handleSecondAuth = () => {
         setEditStatus('edit');
-        if (allowedToAuthorise) {
-            setReq(a => ({ ...a, secondAuthBy: { id: currentUserId, fullName: currentUserName } }));
+        if (allowedTo2ndAuthorise) {
+            clearErrors();
+            dispatch(poReqActions.postByHref(req.links?.find(l => l.rel === 'authorise')?.href));
         }
     };
 
     const handleFinanceCheck = () => {
         setEditStatus('edit');
         if (allowedToFinanceCheck) {
-            setReq(a => ({
-                ...a,
-                financeCheckBy: { id: currentUserId, fullName: currentUserName }
-            }));
+            clearErrors();
+            dispatch(poReqActions.postByHref(req.links.find(l => l.rel === 'finance-check').href));
         }
     };
 
     const handleFieldChange = (propertyName, newValue) => {
         setEditStatus('edit');
         setReq(a => ({ ...a, [propertyName]: newValue }));
+    };
+
+    const handleCancelClick = () => {
+        if (allowedToCancel) {
+            clearErrors();
+            dispatch(poReqActions.postByHref(req.links.find(l => l.rel === 'cancel').href));
+        }
     };
 
     const handleNominalUpdate = newNominal => {
@@ -259,7 +271,11 @@ function POReqUtility({ creating }) {
     const [alreadyShownCostWarning, setAlreadyShownCostWarning] = useState(false);
 
     useEffect(() => {
-        if (req.unitPrice && req.qty) {
+        if (
+            req.unitPrice &&
+            req.qty &&
+            (creating || (req.unitPrice !== item?.unitPrice && req.qty !== item?.qty))
+        ) {
             let total = Decimal.mul(req.unitPrice, req.qty);
             if (req.carriage) {
                 total = Decimal.add(total, req.carriage);
@@ -270,10 +286,18 @@ function POReqUtility({ creating }) {
             }
             setReq(r => ({
                 ...r,
-                totalReqPrice: total
+                totalReqPrice: parseInt(total, 10)
             }));
         }
-    }, [req.qty, req.carriage, req.unitPrice, alreadyShownCostWarning]);
+    }, [
+        req.qty,
+        req.carriage,
+        req.unitPrice,
+        alreadyShownCostWarning,
+        item?.qty,
+        item?.unitPrice,
+        creating
+    ]);
 
     const useStyles = makeStyles(theme => ({
         buttonMarginTop: {
@@ -314,9 +338,7 @@ function POReqUtility({ creating }) {
                         {itemError && (
                             <Grid item xs={12}>
                                 <ErrorCard
-                                    errorMessage={
-                                        itemError?.details?.errors?.[0] || itemError.statusText
-                                    }
+                                    errorMessage={itemError?.details ?? itemError.statusText}
                                 />
                             </Grid>
                         )}
@@ -391,7 +413,7 @@ function POReqUtility({ creating }) {
                         </Dialog>
 
                         <Grid item xs={12}>
-                            <Typography variant="h6">Purchase Order Req Utility</Typography>
+                            <Typography variant="h6">Purchase Order Req Utility </Typography>
                         </Grid>
 
                         <Grid item xs={2}>
@@ -406,9 +428,6 @@ function POReqUtility({ creating }) {
                         </Grid>
                         <Grid item xs={5}>
                             <Dropdown
-                                // todo onchange or on save - post & check blue_req_pack.check_br_state_change(originalstate, newstate)
-                                // and return warning if not allowed
-                                //blue req pack.return_package_message might be needed for message, not sure
                                 items={reqStates
                                     ?.sort((a, b) => a.displayOrder - b.displayOrder)
                                     .map(e => ({
@@ -443,7 +462,21 @@ function POReqUtility({ creating }) {
                                 disabled
                             />
                         </Grid>
-                        <Grid item xs={2}>
+
+                        <Grid item xs={1}>
+                            <Tooltip title="Print req screen">
+                                <IconButton
+                                    className={classes.pullRight}
+                                    aria-label="Print"
+                                    onClick={() =>
+                                        history.push(req.links?.find(l => l.rel === 'print')?.href)
+                                    }
+                                >
+                                    <PrintIcon />
+                                </IconButton>
+                            </Tooltip>
+                        </Grid>
+                        <Grid item xs={1}>
                             <div className={classes.centeredIcon}>
                                 {editingAllowed ? (
                                     <Tooltip
@@ -454,11 +487,7 @@ function POReqUtility({ creating }) {
                                         <ModeEditIcon color="primary" />
                                     </Tooltip>
                                 ) : (
-                                    <Tooltip
-                                        title={`You do not have permission to ${
-                                            creating ? 'create' : 'edit'
-                                        } purchase order reqs`}
-                                    >
+                                    <Tooltip title="cannot edit cancelled req">
                                         <EditOffIcon color="secondary" />
                                     </Tooltip>
                                 )}
@@ -472,7 +501,7 @@ function POReqUtility({ creating }) {
                                     title="Search for a part"
                                     onSelect={newPart => {
                                         handleFieldChange('partNumber', newPart.id);
-                                        handleFieldChange('partDescription', newPart.description);
+                                        handleFieldChange('description', newPart.description);
                                     }}
                                     items={partsSearchResults}
                                     loading={partsSearchLoading}
@@ -543,6 +572,7 @@ function POReqUtility({ creating }) {
                                     label="Unit Price"
                                     number
                                     propertyName="unitPrice"
+                                    onChange={handleFieldChange}
                                     disabled={!editingAllowed || !creating}
                                     type="number"
                                     required
@@ -815,6 +845,7 @@ function POReqUtility({ creating }) {
                                 label="Dept"
                                 onChange={() => {}}
                                 propertyName="departmentCode"
+                                required
                                 disabled
                             />
                         </Grid>
@@ -867,7 +898,7 @@ function POReqUtility({ creating }) {
                                 className={classes.buttonMarginTop}
                                 color="primary"
                                 variant="contained"
-                                disabled={!allowedToAuthorise()}
+                                disabled={!allowedTo2ndAuthorise()}
                                 onClick={handleSecondAuth}
                             >
                                 Authorise (secondary)
@@ -965,26 +996,40 @@ function POReqUtility({ creating }) {
                                 disabled={!editingAllowed}
                             />
                         </Grid>
-                        <SaveBackCancelButtons
-                            saveDisabled={!canSave()}
-                            backClick={() => history.push('/purchasing')}
-                            saveClick={() => {
-                                clearErrors();
-                                if (creating) {
-                                    dispatch(poReqActions.add({ ...req, reqNumber: -1 }));
-                                } else {
-                                    dispatch(poReqActions.update(req.reqNumber, req));
-                                }
-                            }}
-                            cancelClick={() => {
-                                setEditStatus('view');
-                                if (creating) {
-                                    setReq(defaultCreatingReq);
-                                } else {
-                                    setReq(item);
-                                }
-                            }}
-                        />
+                        <Grid item xs={6}>
+                            {!creating && (
+                                <Button
+                                    color="secondary"
+                                    variant="contained"
+                                    disabled={!editingAllowed}
+                                    onClick={handleCancelClick}
+                                >
+                                    Cancel Req
+                                </Button>
+                            )}
+                        </Grid>
+                        <Grid item xs={6}>
+                            <SaveBackCancelButtons
+                                saveDisabled={!canSave()}
+                                backClick={() => history.push('/purchasing')}
+                                saveClick={() => {
+                                    clearErrors();
+                                    if (creating) {
+                                        dispatch(poReqActions.add({ ...req, reqNumber: -1 }));
+                                    } else {
+                                        dispatch(poReqActions.update(req.reqNumber, req));
+                                    }
+                                }}
+                                cancelClick={() => {
+                                    setEditStatus('view');
+                                    if (creating) {
+                                        setReq(defaultCreatingReq);
+                                    } else {
+                                        setReq(item);
+                                    }
+                                }}
+                            />
+                        </Grid>
                     </Grid>
                 )}
             </Page>
