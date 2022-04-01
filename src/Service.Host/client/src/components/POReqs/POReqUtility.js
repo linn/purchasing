@@ -13,6 +13,7 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import EditOffIcon from '@mui/icons-material/EditOff';
 import Tooltip from '@mui/material/Tooltip';
 import Close from '@mui/icons-material/Close';
+import PrintIcon from '@mui/icons-material/Print';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Collapse from '@mui/material/Collapse';
@@ -41,10 +42,8 @@ import partsActions from '../../actions/partsActions';
 import poReqActions from '../../actions/purchaseOrderReqActions';
 import poReqApplicationStateActions from '../../actions/purchaseOrderReqApplicationStateActions';
 import purchaseOrderReqStatesActions from '../../actions/purchaseOrderReqStatesActions';
-
-import history from '../history';
-import config from '../config';
-import { supplier } from '../itemTypes';
+import history from '../../history';
+import config from '../../config';
 
 function POReqUtility({ creating }) {
     const dispatch = useDispatch();
@@ -186,10 +185,6 @@ function POReqUtility({ creating }) {
             links: nom.links
         }))
     };
-
-    const purchaseOrderReqApplicationState = useSelector(state =>
-        collectionSelectorHelpers.getApplicationState(state.purchaseOrderReq)
-    );
 
     const allowedToCancel = () => !creating && req.links?.some(l => l.rel === 'cancel');
     const allowedToAuthorise = () => !creating && req.state === 'AUTHORISE WAIT';
@@ -467,7 +462,21 @@ function POReqUtility({ creating }) {
                                 disabled
                             />
                         </Grid>
-                        <Grid item xs={2}>
+
+                        <Grid item xs={1}>
+                            <Tooltip title="Print req screen">
+                                <IconButton
+                                    className={classes.pullRight}
+                                    aria-label="Print"
+                                    onClick={() =>
+                                        history.push(req.links?.find(l => l.rel === 'print')?.href)
+                                    }
+                                >
+                                    <PrintIcon />
+                                </IconButton>
+                            </Tooltip>
+                        </Grid>
+                        <Grid item xs={1}>
                             <div className={classes.centeredIcon}>
                                 {editingAllowed ? (
                                     <Tooltip
@@ -492,7 +501,7 @@ function POReqUtility({ creating }) {
                                     title="Search for a part"
                                     onSelect={newPart => {
                                         handleFieldChange('partNumber', newPart.id);
-                                        handleFieldChange('partDescription', newPart.description);
+                                        handleFieldChange('description', newPart.description);
                                     }}
                                     items={partsSearchResults}
                                     loading={partsSearchLoading}

@@ -298,7 +298,7 @@ function POReqPrintout() {
             <Grid container spacing={3}>
                 <Grid item xs={8} />
 
-                <Grid item xs={4}>
+                <Grid item xs={4} className="hide-when-printing">
                     <Button
                         onClick={async () => {
                             setPdfLoading(true);
