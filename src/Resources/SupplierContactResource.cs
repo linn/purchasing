@@ -22,7 +22,7 @@
 
         public string Comments { get; set; }
 
-        public int PersonId { get; set; }
+        public int? PersonId { get; set; }
 
         public string JobTitle { get; set; }
 

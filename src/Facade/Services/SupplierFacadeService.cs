@@ -142,7 +142,9 @@
                                                                               Person =
                                                                                   new Person
                                                                                       {
-                                                                                          Id = c.PersonId > 0 ? c.PersonId : this.databaseService.GetNextVal("PERS_SEQ"), 
+                                                                                          Id = c.PersonId.GetValueOrDefault() > 0 
+                                                                                              ? c.PersonId.GetValueOrDefault() 
+                                                                                              : this.databaseService.GetNextVal("PERS_SEQ"), 
                                                                                           FirstName = c.FirstName, 
                                                                                           LastName = c.LastName
                                                                                       }

@@ -45,7 +45,6 @@
                 null,
                 new List<AxisDetailsModel>
                     {
-                        new AxisDetailsModel("ReqNumber", "No",  GridDisplayType.TextValue),
                         new AxisDetailsModel("ReqState", "State",  GridDisplayType.TextValue),
                         new AxisDetailsModel("Date", "Date", GridDisplayType.TextValue),
                         new AxisDetailsModel("RequestedBy", "Requested By", GridDisplayType.TextValue),
@@ -62,13 +61,7 @@
             foreach (var datum in data)
             {
                 var rowId = datum.ReqNumber.ToString();
-                values.Add(
-                    new CalculationValueModel
-                        {
-                            RowId = rowId,
-                            ColumnId = "ReqNumber",
-                            TextDisplay = datum.ReqNumber.ToString()
-                        });
+             
                 values.Add(
                     new CalculationValueModel
                         {
@@ -150,7 +143,13 @@
             }
 
             reportLayout.SetGridData(values);
-            return reportLayout.GetResultsModel();
+
+            var model = reportLayout.GetResultsModel();
+
+            model.RowDrillDownTemplates.Add(new DrillDownModel("ReqNumber", "/purchasing/purchase-orders/reqs/{textValue}"));
+            model.RowHeader = "Req";
+
+            return model;
         }
     }
 }

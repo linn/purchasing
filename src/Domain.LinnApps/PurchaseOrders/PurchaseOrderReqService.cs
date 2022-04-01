@@ -1,8 +1,11 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
 {
+    using System;
     using System.Collections.Generic;
+    using System.IO;
 
     using Linn.Common.Authorisation;
+    using Linn.Common.Email;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
@@ -14,15 +17,23 @@
 
         private readonly IPurchaseOrderReqsPack purchaseOrderReqsPack;
 
+        private readonly IRepository<Employee, int> employeeRepository;
+
+        private IEmailService emailService;
+
         private readonly IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey> reqsStateChangeRepository;
 
         public PurchaseOrderReqService(
             IAuthorisationService authService,
             IPurchaseOrderReqsPack purchaseOrderReqsPack,
+            IRepository<Employee, int> employeeRepository,
+            IEmailService emailService,
             IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey> reqsStateChangeRepository)
         {
             this.authService = authService;
             this.purchaseOrderReqsPack = purchaseOrderReqsPack;
+            this.employeeRepository = employeeRepository;
+            this.emailService = emailService;
             this.reqsStateChangeRepository = reqsStateChangeRepository;
         }
 
@@ -107,6 +118,39 @@
 
             entity.FinanceCheckById = currentUserId;
             entity.State = this.GetNextState(entity.State, true);
+        }
+
+        public ProcessResult SendEmails(
+            int sender,
+            string to,
+            int reqNumber, 
+            Stream pdfAttachment)
+        {
+            var from = this.employeeRepository.FindById(sender);
+            try
+            {
+                this.emailService.SendEmail(
+                    to.Trim(),
+                    to.Trim(),
+                    null,
+                    null,
+                    from.PhoneListEntry.EmailAddress.Trim(),
+                    from.FullName,
+                    $"Purchase Order Req {reqNumber}",
+                    $"Attached is a copy of Purchase Order Req {reqNumber}",
+                    pdfAttachment,
+                    $"Purchase Order Req {reqNumber}");
+
+                return new ProcessResult(true, "Email Sent");
+            }
+            catch (Exception e)
+            {
+                return new ProcessResult
+                           {
+                               Success = false,
+                               Message = $"Error sending email. Error Message: {e.Message}"
+                           };
+            }
         }
 
         public void Update(PurchaseOrderReq entity, PurchaseOrderReq updatedEntity, IEnumerable<string> privileges)

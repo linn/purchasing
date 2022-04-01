@@ -1,5 +1,6 @@
 ﻿const path = require('path');
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
     entry: {
@@ -54,7 +55,22 @@ module.exports = {
             }
         ]
     },
+    resolve: {
+        fallback: {
+            process: path.resolve('./node_modules/process'),
+            zlib: path.resolve('./node_modules/browserify-zlib/lib/index.js'),
+            stream: path.resolve('./node_modules/stream-browserify/index.js'),
+            util: path.resolve('./node_modules/util'),
+            buffer: path.resolve('./node_modules/buffer'),
+            asset: path.resolve('./node_modules/assert')
+        }
+        //modules: [path.resolve('node_modules'), 'node_modules'].concat(/* ... */)
+    },
     plugins: [
+        new webpack.ProvidePlugin({
+            Buffer: ['buffer', 'Buffer'],
+            process: 'process/browser'
+        }),
         // To strip all locales except “en”
         new MomentLocalesPlugin()
     ]
