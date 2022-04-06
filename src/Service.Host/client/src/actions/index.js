@@ -171,3 +171,7 @@ export const outstandingPoReqsReportActionTypes = makeReportActionTypes(
     reportTypes.outstandingPoReqsReport.actionType,
     false
 );
+
+export const sendPurchaseOrderReqAuthEmailActionTypes = makeProcessActionTypes(
+    itemTypes.sendPurchaseOrderReqAuthEmail.actionType
+);

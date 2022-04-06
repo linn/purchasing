@@ -206,7 +206,7 @@
                                ? $"/purchasing/reports/unacknowledged-orders?supplierId={row.RowId}&name={results.GetGridTextValue(row.RowIndex, 1)}"
                                : $"/purchasing/reports/unacknowledged-orders?supplierGroupId={row.RowId}&name={results.GetGridTextValue(row.RowIndex, 1)}";
                 results.ValueDrillDownTemplates.Add(new DrillDownModel("view", href, row.RowIndex, 3));
-                
+
                 var exportHref = results.GetGridTextValue(row.RowIndex, 2) == string.Empty
                                ? $"/purchasing/reports/unacknowledged-orders/export?supplierId={row.RowId}&name={results.GetGridTextValue(row.RowIndex, 1)}"
                                : $"/purchasing/reports/unacknowledged-orders/export?supplierGroupId={row.RowId}&name={results.GetGridTextValue(row.RowIndex, 1)}";
@@ -270,7 +270,7 @@
             foreach (var order in orders)
             {
                 var rowId = $"{order.OrderNumber}/{order.OrderLine}/{order.DeliveryNumber}";
-                models.Add(new CalculationValueModel 
+                models.Add(new CalculationValueModel
                                {
                                    RowId = rowId,
                                    ColumnId = "Part Number",
@@ -279,7 +279,7 @@
                                });
                 models.Add(new CalculationValueModel
                                {
-                                   RowId = rowId, ColumnId = "Description", 
+                                   RowId = rowId, ColumnId = "Description",
                                    TextDisplay = order.SuppliersDesignation,
                                    RowTitle = $"{order.OrderNumber}"
                                });
@@ -292,13 +292,13 @@
                                });
                 models.Add(new CalculationValueModel
                                {
-                                   RowId = rowId, ColumnId = "Delivery No", 
+                                   RowId = rowId, ColumnId = "Delivery No",
                                    Value = order.DeliveryNumber,
                                    RowTitle = $"{order.OrderNumber}"
                                });
                 models.Add(new CalculationValueModel
                                {
-                                   RowId = rowId, ColumnId = "Qty", 
+                                   RowId = rowId, ColumnId = "Qty",
                                    Value = order.OrderDeliveryQuantity,
                                    RowTitle = $"{order.OrderNumber}"
                                });
@@ -306,7 +306,7 @@
                                {
                                    RowId = rowId,
                                    ColumnId = "Currency Code",
-                                   TextDisplay = order.CurrencyCode, 
+                                   TextDisplay = order.CurrencyCode,
                                    RowTitle = $"{order.OrderNumber}"
                                });
                 models.Add(new CalculationValueModel
@@ -317,7 +317,7 @@
                                });
                 models.Add(new CalculationValueModel
                                {
-                                   RowId = rowId, ColumnId = "Requested Delivery", 
+                                   RowId = rowId, ColumnId = "Requested Delivery",
                                    TextDisplay = order.RequestedDate.ToString("dd-MMM-yyyy"),
                                    RowTitle = $"{order.OrderNumber}"
                                });

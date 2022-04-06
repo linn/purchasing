@@ -14,5 +14,15 @@
         IResult<PurchaseOrderReqResource> Authorise(int reqNumber, IEnumerable<string> privileges, int currentUserNumber);
 
         IResult<ProcessResultResource> SendEmail(int senderUserNumber, string toEmailAddress, int reqNumber, Stream attachment);
+
+        IResult<ProcessResultResource> SendAuthorisationRequestEmail(
+            int currentUserNumber,
+            int toEmployeeNumber,
+            int reqNumber);
+
+        IResult<ProcessResultResource> SendFinanceCheckRequestEmail(
+            int currentUserNumber,
+            int toEmployeeNumber,
+            int reqNumber);
     }
 }

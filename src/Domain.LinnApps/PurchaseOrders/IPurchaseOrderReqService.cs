@@ -20,5 +20,9 @@
             string to,
             int reqNumber,
             Stream pdfAttachment);
+
+        ProcessResult SendAuthorisationRequestEmail(int currentUser, int toEmp, PurchaseOrderReq req);
+
+        ProcessResult SendFinanceCheckRequestEmail(int currentUser, int toEmp, PurchaseOrderReq req);
     }
 }

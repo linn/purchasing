@@ -86,7 +86,8 @@
             this.Put("/purchasing/purchase-orders/reqs/{id:int}", this.UpdateReq);
             this.Post("/purchasing/purchase-orders/reqs/{id:int}/cancel", this.CancelReq);
             this.Post("/purchasing/purchase-orders/reqs/email", this.EmailReq);
-
+            this.Post("/purchasing/purchase-orders/reqs/email-for-authorisation", this.EmailForReqAuthorisation);
+            this.Post("/purchasing/purchase-orders/reqs/email-for-finance", this.EmailForReqFinanceCheck);
             this.Post("/purchasing/purchase-orders/reqs/{id:int}/authorise", this.AuthoriseReq);
             this.Post("/purchasing/purchase-orders/reqs", this.CreateReq);
         }
@@ -121,6 +122,34 @@
                 toEmailAddress,
                 reqNumber,
                 ms);
+
+            await res.Negotiate(result);
+        }
+
+        private async Task EmailForReqAuthorisation(HttpRequest req, HttpResponse res)
+        {
+            var reqNumber = req.Query.As<int>("reqNumber");
+
+            var toEmployeeId = req.Query.As<int>("toEmployeeId");
+
+            var result = this.purchaseOrderReqFacadeService.SendAuthorisationRequestEmail(
+                req.HttpContext.User.GetEmployeeNumber(),
+                toEmployeeId,
+                reqNumber);
+
+            await res.Negotiate(result);
+        }
+
+        private async Task EmailForReqFinanceCheck(HttpRequest req, HttpResponse res)
+        {
+            var reqNumber = req.Query.As<int>("reqNumber");
+
+            var toEmployeeId = req.Query.As<int>("toEmployeeId");
+
+            var result = this.purchaseOrderReqFacadeService.SendAuthorisationRequestEmail(
+                req.HttpContext.User.GetEmployeeNumber(),
+                toEmployeeId,
+                reqNumber);
 
             await res.Negotiate(result);
         }

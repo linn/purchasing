@@ -44,9 +44,9 @@ import partsActions from '../../actions/partsActions';
 import poReqActions from '../../actions/purchaseOrderReqActions';
 import poReqApplicationStateActions from '../../actions/purchaseOrderReqApplicationStateActions';
 import purchaseOrderReqStatesActions from '../../actions/purchaseOrderReqStatesActions';
+import sendReqAuthEmailActions from '../../actions/sendPurchaseOrderReqAuthEmailActions';
 import history from '../../history';
 import config from '../../config';
-import SendDialog from './SendEmailDialog2';
 
 function POReqUtility({ creating }) {
     const dispatch = useDispatch();
@@ -86,6 +86,8 @@ function POReqUtility({ creating }) {
     const searchCountries = searchTerm => dispatch(countriesActions.search(searchTerm));
 
     const currencies = useSelector(state => collectionSelectorHelpers.getItems(state.currencies));
+    const employees = useSelector(state => collectionSelectorHelpers.getItems(state.employees));
+
     const reqStates = useSelector(state =>
         collectionSelectorHelpers.getItems(state.purchaseOrderReqStates)
     );
@@ -126,6 +128,9 @@ function POReqUtility({ creating }) {
     const itemError = useSelector(state => getItemError(state, 'purchaseOrderReq'));
 
     const [editStatus, setEditStatus] = useState('view');
+    const [explainDialogOpen, setExplainDialogOpen] = useState(false);
+    const [authEmailDialogOpen, setAuthEmailDialogOpen] = useState(false);
+    const [employeeToEmail, setEmployeeToEmail] = useState();
 
     useEffect(() => {
         if (!creating && item?.reqNumber) {
@@ -254,6 +259,16 @@ function POReqUtility({ creating }) {
         }
     };
 
+    const handleSendAuthoriseEmailClick = () => {
+        dispatch(sendReqAuthEmailActions.clearErrorsForItem);
+        dispatch(
+            sendReqAuthEmailActions.requestProcessStart('', {
+                reqNumber: id,
+                toEmployeeId: employeeToEmail
+            })
+        );
+    };
+
     const handleNominalUpdate = newNominal => {
         setEditStatus('edit');
 
@@ -308,7 +323,8 @@ function POReqUtility({ creating }) {
             height: '40px'
         },
         centerTextInDialog: {
-            textAlign: 'center'
+            textAlign: 'center',
+            margin: theme.spacing(2)
         },
         cursorPointer: {
             '&:hover': {
@@ -318,12 +334,13 @@ function POReqUtility({ creating }) {
         },
         centeredIcon: {
             textAlign: 'center'
+        },
+        pullRight: {
+            float: 'right'
         }
     }));
+
     const classes = useStyles();
-
-    const [explainDialogOpen, setExplainDialogOpen] = useState(false);
-
     const screenIsSmall = useMediaQuery({ query: `(max-width: 1024px)` });
 
     return (
@@ -368,7 +385,7 @@ function POReqUtility({ creating }) {
                             </Alert>
                         </Collapse>
                         <Dialog open={explainDialogOpen} fullWidth maxWidth="md">
-                            <div>
+                            <div className={classes.centerTextInDialog}>
                                 <IconButton
                                     className={classes.pullRight}
                                     aria-label="Close"
@@ -376,11 +393,7 @@ function POReqUtility({ creating }) {
                                 >
                                     <Close />
                                 </IconButton>
-                                <Typography
-                                    variant="body1"
-                                    gutterBottom
-                                    className={classes.centerTextInDialog}
-                                >
+                                <Typography variant="body1" gutterBottom>
                                     <p>
                                         <b>
                                             Order is: Draft --{'>'} Authorise Wait --{'>'} Finance
@@ -411,6 +424,49 @@ function POReqUtility({ creating }) {
                                         <b>CANCELLED</b> - Requistion has been cancelled without
                                         ever turning into an order.
                                     </p>
+                                </Typography>
+                            </div>
+                        </Dialog>
+
+                        <Dialog open={authEmailDialogOpen} fullWidth maxWidth="md">
+                            <div className={classes.centerTextInDialog}>
+                                <IconButton
+                                    className={classes.pullRight}
+                                    aria-label="Close"
+                                    onClick={() => setAuthEmailDialogOpen(false)}
+                                >
+                                    <Close />
+                                </IconButton>
+                                <Typography variant="h6">
+                                    Send authorisation request email
+                                </Typography>
+                                <Typography variant="body1" gutterBottom>
+                                    <Grid container spacing={1}>
+                                        <Grid item xs={8}>
+                                            <Dropdown
+                                                fullWidth
+                                                value={employeeToEmail}
+                                                label="Send Email To"
+                                                items={employees.map(e => ({
+                                                    displayText: `${e.fullName} (${e.id})`,
+                                                    id: parseInt(e.id, 10)
+                                                }))}
+                                                propertyName="createdBy"
+                                                onChange={(propertyName, selected) => {
+                                                    console.info(selected);
+                                                    setEmployeeToEmail(selected);
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={4}>
+                                            <Tooltip title="Send" placement="top" className={classes.cursorPointer}>
+                                                <Send
+                                                    className={classes.buttonMarginTop}
+                                                    onClick={() => setAuthEmailDialogOpen(false)}
+                                                />
+                                            </Tooltip>
+                                        </Grid>
+                                    </Grid>
                                 </Typography>
                             </div>
                         </Dialog>
@@ -883,39 +939,20 @@ function POReqUtility({ creating }) {
                             </Button>
                         </Grid>
                         <Grid item xs={1}>
+                            {/* 
+                            button click email icon
+                            opens modal which contains an typeahead
+                            onclick sets an inputfield inside this dialog modal, and there's a send button beside input
+                            click send, fires off send event and closes dialog
+                            need confirmation sues thingy on success */}
                             <Tooltip title="Email for authorisation">
-                            <SendDialog
-                                    label="Part"
-                                    title="Search for a part"
-                                    onSelect={newPart => {
-                                        handleFieldChange('partNumber', newPart.id);
-                                        handleFieldChange('description', newPart.description);
-                                    }}
-                                    items={partsSearchResults}
-                                    loading={partsSearchLoading}
-                                    fetchItems={searchTerm =>
-                                        dispatch(partsActions.search(searchTerm))
-                                    }
-                                    clearSearch={() => dispatch(partsActions.clearSearch)}
-                                    value={req.partNumber ? `${req.partNumber}` : null}
-                                    modal
-                                    links={false}
-                                    debounce={1000}
-                                    minimumSearchTermLength={2}
-                                    disabled={!editingAllowed}
-                                    placeholder="click to set part"
-                                    iconOnly
-                                />
-                                
-                                {/* <IconButton
+                                <IconButton
                                     className={classes.pullRight}
                                     aria-label="Email"
-                                    onClick={
-                                        () => {} //show new modal with email bits
-                                    }
+                                    onClick={() => setAuthEmailDialogOpen(true)}
                                 >
                                     <Email />
-                                </IconButton> */}
+                                </IconButton>
                             </Tooltip>
                         </Grid>
 
