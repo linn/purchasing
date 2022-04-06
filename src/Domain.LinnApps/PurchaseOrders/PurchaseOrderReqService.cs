@@ -265,8 +265,8 @@
         private string GetNextState(string from, bool changeIsFromFunction = false)
         {
             var stateChange = this.reqsStateChangeRepository.FindBy(
-                x => x.FromState == from && (!changeIsFromFunction && x.UserAllowed == "Y"
-                                             || changeIsFromFunction && x.ComputerAllowed == "Y"));
+                x => x.FromState == from && ((!changeIsFromFunction && x.UserAllowed == "Y")
+                                             || (changeIsFromFunction && x.ComputerAllowed == "Y")));
             return stateChange.ToState;
         }
 
@@ -274,7 +274,7 @@
         {
             var stateChange = this.reqsStateChangeRepository.FindBy(
                 x => x.FromState == from && x.ToState == to
-                                         && (x.UserAllowed == "Y" || changeIsFromFunction && x.ComputerAllowed == "Y"));
+                                         && (x.UserAllowed == "Y" || (changeIsFromFunction && x.ComputerAllowed == "Y")));
             return stateChange != null;
         }
     }

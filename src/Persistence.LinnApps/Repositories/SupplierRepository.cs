@@ -62,7 +62,7 @@
         public IQueryable<Supplier> FilterBy(Expression<Func<Supplier, bool>> expression)
         {
             return this.serviceDbContext.Suppliers.Include(s => s.OrderAddress).ThenInclude(a => a.FullAddress)
-                .Include(s => s.SupplierContacts)
+                .Include(s => s.SupplierContacts).ThenInclude(sc => sc.Person)
                 .AsNoTracking().Where(expression);
         }
     }

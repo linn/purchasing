@@ -175,3 +175,7 @@ export const outstandingPoReqsReportActionTypes = makeReportActionTypes(
 export const sendPurchaseOrderReqAuthEmailActionTypes = makeProcessActionTypes(
     itemTypes.sendPurchaseOrderReqAuthEmail.actionType
 );
+
+export const sendPurchaseOrderReqFinanceEmailActionTypes = makeProcessActionTypes(
+    itemTypes.sendPurchaseOrderReqFinanceEmail.actionType
+);

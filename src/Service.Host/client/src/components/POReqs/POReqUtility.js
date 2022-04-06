@@ -33,7 +33,8 @@ import {
     TypeaheadTable,
     userSelectors,
     getItemError,
-    ErrorCard
+    ErrorCard,
+    processSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import currenciesActions from '../../actions/currenciesActions';
 import employeesActions from '../../actions/employeesActions';
@@ -47,6 +48,7 @@ import purchaseOrderReqStatesActions from '../../actions/purchaseOrderReqStatesA
 import sendReqAuthEmailActions from '../../actions/sendPurchaseOrderReqAuthEmailActions';
 import history from '../../history';
 import config from '../../config';
+import { sendPurchaseOrderReqAuthEmail, sendPurchaseOrderReqFinanceEmail } from '../../itemTypes';
 
 function POReqUtility({ creating }) {
     const dispatch = useDispatch();
@@ -118,6 +120,15 @@ function POReqUtility({ creating }) {
     const snackbarVisible = useSelector(state =>
         itemSelectorHelpers.getSnackbarVisible(state.purchaseOrderReq)
     );
+
+    const emailMessageVisible = useSelector(state =>
+        processSelectorHelpers.getMessageVisible(state[sendPurchaseOrderReqAuthEmail.item])
+    );
+
+    const authEmailMessage = useSelector(state =>
+        processSelectorHelpers.getMessageText(state[sendPurchaseOrderReqAuthEmail.item])
+    );
+
     const loading = useSelector(state =>
         creating
             ? itemSelectorHelpers.getApplicationStateLoading(state.purchaseOrderReqApplicationState)
@@ -260,7 +271,8 @@ function POReqUtility({ creating }) {
     };
 
     const handleSendAuthoriseEmailClick = () => {
-        dispatch(sendReqAuthEmailActions.clearErrorsForItem);
+        setAuthEmailDialogOpen(false);
+        // dispatch(sendReqAuthEmailActions.clearProcessData);
         dispatch(
             sendReqAuthEmailActions.requestProcessStart('', {
                 reqNumber: id,
@@ -354,6 +366,13 @@ function POReqUtility({ creating }) {
                             visible={snackbarVisible}
                             onClose={() => dispatch(poReqActions.setSnackbarVisible(false))}
                             message="Save Successful"
+                        />
+                        <SnackbarMessage
+                            visible={emailMessageVisible}
+                            onClose={() =>
+                                dispatch(sendReqAuthEmailActions.setMessageVisible(false))
+                            }
+                            message={authEmailMessage}
                         />
                         {itemError && (
                             <Grid item xs={12}>
@@ -453,16 +472,19 @@ function POReqUtility({ creating }) {
                                                 }))}
                                                 propertyName="createdBy"
                                                 onChange={(propertyName, selected) => {
-                                                    console.info(selected);
                                                     setEmployeeToEmail(selected);
                                                 }}
                                             />
                                         </Grid>
                                         <Grid item xs={4}>
-                                            <Tooltip title="Send" placement="top" className={classes.cursorPointer}>
+                                            <Tooltip
+                                                title="Send"
+                                                placement="top"
+                                                className={classes.cursorPointer}
+                                            >
                                                 <Send
                                                     className={classes.buttonMarginTop}
-                                                    onClick={() => setAuthEmailDialogOpen(false)}
+                                                    onClick={() => handleSendAuthoriseEmailClick()}
                                                 />
                                             </Tooltip>
                                         </Grid>
@@ -939,29 +961,17 @@ function POReqUtility({ creating }) {
                             </Button>
                         </Grid>
                         <Grid item xs={1}>
-                            {/* 
-                            button click email icon
-                            opens modal which contains an typeahead
-                            onclick sets an inputfield inside this dialog modal, and there's a send button beside input
-                            click send, fires off send event and closes dialog
-                            need confirmation sues thingy on success */}
-                            <Tooltip title="Email for authorisation">
+                            <Tooltip title="Email to request authorisation">
                                 <IconButton
-                                    className={classes.pullRight}
+                                    className={classes.buttonMarginTop}
                                     aria-label="Email"
                                     onClick={() => setAuthEmailDialogOpen(true)}
+                                    disabled={creating}
                                 >
                                     <Email />
                                 </IconButton>
                             </Tooltip>
                         </Grid>
-
-                        {/* todo
-                        use like MUI Email icon and maybe Send?
-                        Have like dropdown list of employees, maaaybe filtered maybe not
-                        
-                        */}
-
                         <Grid item xs={8}>
                             <InputField
                                 fullWidth
@@ -999,7 +1009,7 @@ function POReqUtility({ creating }) {
                             />
                         </Grid>
 
-                        <Grid item xs={4}>
+                        <Grid item xs={3}>
                             <Button
                                 className={classes.buttonMarginTop}
                                 color="primary"
@@ -1009,6 +1019,18 @@ function POReqUtility({ creating }) {
                             >
                                 Sign off (finance)
                             </Button>
+                        </Grid>
+                        <Grid item xs={1}>
+                            <Tooltip title="Email to request finance sign off">
+                                <IconButton
+                                    className={classes.buttonMarginTop}
+                                    aria-label="Email"
+                                    onClick={() => setAuthEmailDialogOpen(true)}
+                                    disabled={creating}
+                                >
+                                    <Email />
+                                </IconButton>
+                            </Tooltip>
                         </Grid>
                         <Grid item xs={8}>
                             <InputField
