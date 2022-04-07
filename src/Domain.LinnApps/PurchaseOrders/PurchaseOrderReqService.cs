@@ -127,11 +127,10 @@
         {
             var from = this.employeeRepository.FindById(currentUser);
             var to = this.employeeRepository.FindById(toEmp);
-            var purchaseOrderUrl = $"https://app.linn.co.uk/purchasing/purchase-orders/reqs/{req.ReqNumber}";
-
-            var body = $"{req.RequestedBy.FullName} has placed a request to purchase {req.Description}. Please could you "
-                + $"look at req number {req.ReqNumber} at {purchaseOrderUrl} and authorise as appropriate."
-                + "\nThank you";
+            var reqUrl = $"https://app.linn.co.uk/purchasing/purchase-orders/reqs/{req.ReqNumber}";
+            var body = $"{req.RequestedBy.FullName} has placed a request to purchase {req.Description}.\n"
+                       + $"Please could you look at req number {req.ReqNumber} and authorise as appropriate at \n"
+                       + $"{reqUrl}.\n\nThank you";
             try
             {
                 this.emailService.SendEmail(
@@ -165,7 +164,7 @@
                 this.emailService.SendEmail(
                     to.Trim(),
                     to.Trim(),
-                    null,
+                    new List<Dictionary<string, string>> { new Dictionary<string, string>() { { "name", from.FullName }, { "address", from.PhoneListEntry.EmailAddress.Trim() } } },
                     null,
                     from.PhoneListEntry.EmailAddress.Trim(),
                     from.FullName,
@@ -189,18 +188,21 @@
         {
             var from = this.employeeRepository.FindById(currentUser);
             var to = this.employeeRepository.FindById(toEmp);
-
+            var reqUrl = $"https://app.linn.co.uk/purchasing/purchase-orders/reqs/{req.ReqNumber}";
+            var body = $"{req.RequestedBy.FullName} has placed a request to purchase {req.Description}.\n"
+                       + $"Please could you look at req number {req.ReqNumber} and authorise for finance as appropriate at \n"
+                       + $"{reqUrl}.\n\nThank you";
             try
             {
                 this.emailService.SendEmail(
                     to.PhoneListEntry.EmailAddress.Trim(),
                     to.FullName,
-                    null,
+                    new List<Dictionary<string, string>> { new Dictionary<string, string>() { { "name", from.FullName }, { "address", from.PhoneListEntry.EmailAddress.Trim() } } },
                     null,
                     from.PhoneListEntry.EmailAddress.Trim(),
                     from.FullName,
-                    $"Purchase Order Req {req.ReqNumber} needs Finance sign off",
-                    $"{req.RequestedBy.FullName} has created a req for {req.Qty} {req.Description}",
+                    $"Purchase Order Req {req.ReqNumber} requires finance authorisation",
+                    body,
                     null,
                     string.Empty);
 

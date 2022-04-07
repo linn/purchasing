@@ -46,6 +46,7 @@ import poReqActions from '../../actions/purchaseOrderReqActions';
 import poReqApplicationStateActions from '../../actions/purchaseOrderReqApplicationStateActions';
 import purchaseOrderReqStatesActions from '../../actions/purchaseOrderReqStatesActions';
 import sendReqAuthEmailActions from '../../actions/sendPurchaseOrderReqAuthEmailActions';
+import sendReqFinanceEmailActions from '../../actions/sendPurchaseOrderReqFinanceEmailActions';
 import history from '../../history';
 import config from '../../config';
 import { sendPurchaseOrderReqAuthEmail, sendPurchaseOrderReqFinanceEmail } from '../../itemTypes';
@@ -121,12 +122,20 @@ function POReqUtility({ creating }) {
         itemSelectorHelpers.getSnackbarVisible(state.purchaseOrderReq)
     );
 
-    const emailMessageVisible = useSelector(state =>
+    const authEmailMessageVisible = useSelector(state =>
         processSelectorHelpers.getMessageVisible(state[sendPurchaseOrderReqAuthEmail.item])
     );
 
     const authEmailMessage = useSelector(state =>
         processSelectorHelpers.getMessageText(state[sendPurchaseOrderReqAuthEmail.item])
+    );
+
+    const financeEmailMessageVisible = useSelector(state =>
+        processSelectorHelpers.getMessageVisible(state[sendPurchaseOrderReqFinanceEmail.item])
+    );
+
+    const financeEmailMessage = useSelector(state =>
+        processSelectorHelpers.getMessageText(state[sendPurchaseOrderReqFinanceEmail.item])
     );
 
     const loading = useSelector(state =>
@@ -141,6 +150,7 @@ function POReqUtility({ creating }) {
     const [editStatus, setEditStatus] = useState('view');
     const [explainDialogOpen, setExplainDialogOpen] = useState(false);
     const [authEmailDialogOpen, setAuthEmailDialogOpen] = useState(false);
+    const [financeEmailDialogOpen, setFinanceEmailDialogOpen] = useState(false);
     const [employeeToEmail, setEmployeeToEmail] = useState();
 
     useEffect(() => {
@@ -272,9 +282,20 @@ function POReqUtility({ creating }) {
 
     const handleSendAuthoriseEmailClick = () => {
         setAuthEmailDialogOpen(false);
-        // dispatch(sendReqAuthEmailActions.clearProcessData);
+        dispatch(sendReqAuthEmailActions.clearProcessData);
         dispatch(
             sendReqAuthEmailActions.requestProcessStart('', {
+                reqNumber: id,
+                toEmployeeId: employeeToEmail
+            })
+        );
+    };
+
+    const handleSendFinanceEmailClick = () => {
+        setFinanceEmailDialogOpen(false);
+        dispatch(sendReqFinanceEmailActions.clearProcessData);
+        dispatch(
+            sendReqFinanceEmailActions.requestProcessStart('', {
                 reqNumber: id,
                 toEmployeeId: employeeToEmail
             })
@@ -368,11 +389,18 @@ function POReqUtility({ creating }) {
                             message="Save Successful"
                         />
                         <SnackbarMessage
-                            visible={emailMessageVisible}
+                            visible={authEmailMessageVisible}
                             onClose={() =>
                                 dispatch(sendReqAuthEmailActions.setMessageVisible(false))
                             }
                             message={authEmailMessage}
+                        />
+                        <SnackbarMessage
+                            visible={financeEmailMessageVisible}
+                            onClose={() =>
+                                dispatch(sendReqFinanceEmailActions.setMessageVisible(false))
+                            }
+                            message={financeEmailMessage}
                         />
                         {itemError && (
                             <Grid item xs={12}>
@@ -446,7 +474,6 @@ function POReqUtility({ creating }) {
                                 </Typography>
                             </div>
                         </Dialog>
-
                         <Dialog open={authEmailDialogOpen} fullWidth maxWidth="md">
                             <div className={classes.centerTextInDialog}>
                                 <IconButton
@@ -465,12 +492,12 @@ function POReqUtility({ creating }) {
                                             <Dropdown
                                                 fullWidth
                                                 value={employeeToEmail}
-                                                label="Send Email To"
+                                                label="Send Authorisation Email To"
                                                 items={employees.map(e => ({
                                                     displayText: `${e.fullName} (${e.id})`,
                                                     id: parseInt(e.id, 10)
                                                 }))}
-                                                propertyName="createdBy"
+                                                propertyName="sendTo"
                                                 onChange={(propertyName, selected) => {
                                                     setEmployeeToEmail(selected);
                                                 }}
@@ -493,10 +520,63 @@ function POReqUtility({ creating }) {
                             </div>
                         </Dialog>
 
+                        <Dialog open={financeEmailDialogOpen} fullWidth maxWidth="md">
+                            <div className={classes.centerTextInDialog}>
+                                <IconButton
+                                    className={classes.pullRight}
+                                    aria-label="Close"
+                                    onClick={() => setAuthEmailDialogOpen(false)}
+                                >
+                                    <Close />
+                                </IconButton>
+                                <Typography variant="h6">
+                                    Send finance &quot;sign off request&quot; email
+                                </Typography>
+                                <Typography variant="body1" gutterBottom>
+                                    <Grid container spacing={1}>
+                                        <Grid item xs={12}>
+                                            <i>
+                                                Note: Are you sure you need to email Finance? The
+                                                team monitor the list regularly and check all reqs
+                                                but you can email if it is particularly urgent.
+                                            </i>
+                                        </Grid>
+
+                                        <Grid item xs={8}>
+                                            <Dropdown
+                                                fullWidth
+                                                value={employeeToEmail}
+                                                label="Send Finance Email To"
+                                                items={employees.map(e => ({
+                                                    displayText: `${e.fullName} (${e.id})`,
+                                                    id: parseInt(e.id, 10)
+                                                }))}
+                                                propertyName="sendTo"
+                                                onChange={(propertyName, selected) => {
+                                                    setEmployeeToEmail(selected);
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={4}>
+                                            <Tooltip
+                                                title="Send"
+                                                placement="top"
+                                                className={classes.cursorPointer}
+                                            >
+                                                <Send
+                                                    className={classes.buttonMarginTop}
+                                                    onClick={() => handleSendFinanceEmailClick()}
+                                                />
+                                            </Tooltip>
+                                        </Grid>
+                                    </Grid>
+                                </Typography>
+                            </div>
+                        </Dialog>
+
                         <Grid item xs={12}>
                             <Typography variant="h6">Purchase Order Req Utility </Typography>
                         </Grid>
-
                         <Grid item xs={2}>
                             <InputField
                                 fullWidth
@@ -543,7 +623,6 @@ function POReqUtility({ creating }) {
                                 disabled
                             />
                         </Grid>
-
                         <Grid item xs={1}>
                             <Tooltip title="Print req screen">
                                 <IconButton
@@ -574,7 +653,6 @@ function POReqUtility({ creating }) {
                                 )}
                             </div>
                         </Grid>
-
                         <Grid item xs={5} container spacing={1}>
                             <Grid item xs={8}>
                                 <Typeahead
@@ -695,9 +773,7 @@ function POReqUtility({ creating }) {
                                 disabled={!editingAllowed}
                             />
                         </Grid>
-
                         <Grid item xs={12} />
-
                         <Grid item xs={3}>
                             <Typeahead
                                 onSelect={newValue => {
@@ -742,7 +818,6 @@ function POReqUtility({ creating }) {
                                 disabled={!editingAllowed}
                             />
                         </Grid>
-
                         <Grid item xs={4}>
                             <InputField
                                 fullWidth
@@ -753,7 +828,6 @@ function POReqUtility({ creating }) {
                                 disabled={!editingAllowed}
                             />
                         </Grid>
-
                         <Grid item xs={4}>
                             <InputField
                                 fullWidth
@@ -764,7 +838,6 @@ function POReqUtility({ creating }) {
                                 disabled={!editingAllowed}
                             />
                         </Grid>
-
                         <Grid item xs={4}>
                             <InputField
                                 fullWidth
@@ -785,7 +858,6 @@ function POReqUtility({ creating }) {
                                 disabled={!editingAllowed}
                             />
                         </Grid>
-
                         <Grid item xs={4}>
                             <InputField
                                 fullWidth
@@ -806,7 +878,6 @@ function POReqUtility({ creating }) {
                                 disabled={!editingAllowed}
                             />
                         </Grid>
-
                         <Grid item xs={3}>
                             <InputField
                                 fullWidth
@@ -817,9 +888,7 @@ function POReqUtility({ creating }) {
                                 disabled={!editingAllowed}
                             />
                         </Grid>
-
                         <Grid item xs={5} />
-
                         <Grid item xs={4}>
                             <Typeahead
                                 onSelect={newValue => {
@@ -862,7 +931,6 @@ function POReqUtility({ creating }) {
                             />
                         </Grid>
                         <Grid item xs={3} />
-
                         <Grid item xs={8}>
                             <InputField
                                 fullWidth
@@ -884,9 +952,7 @@ function POReqUtility({ creating }) {
                                 disabled={!editingAllowed}
                             />
                         </Grid>
-
                         <Grid item xs={12} />
-
                         <Grid item xs={4}>
                             <TypeaheadTable
                                 table={nominalAccountsTable}
@@ -948,7 +1014,6 @@ function POReqUtility({ creating }) {
                                 disabled
                             />
                         </Grid>
-
                         <Grid item xs={3}>
                             <Button
                                 className={classes.buttonMarginTop}
@@ -984,7 +1049,6 @@ function POReqUtility({ creating }) {
                                 disabled
                             />
                         </Grid>
-
                         <Grid item xs={4}>
                             <Button
                                 className={classes.buttonMarginTop}
@@ -1008,7 +1072,6 @@ function POReqUtility({ creating }) {
                                 disabled
                             />
                         </Grid>
-
                         <Grid item xs={3}>
                             <Button
                                 className={classes.buttonMarginTop}
@@ -1025,7 +1088,7 @@ function POReqUtility({ creating }) {
                                 <IconButton
                                     className={classes.buttonMarginTop}
                                     aria-label="Email"
-                                    onClick={() => setAuthEmailDialogOpen(true)}
+                                    onClick={() => setFinanceEmailDialogOpen(true)}
                                     disabled={creating}
                                 >
                                     <Email />
@@ -1076,7 +1139,6 @@ function POReqUtility({ creating }) {
                                 disabled
                             />
                         </Grid>
-
                         <Grid item xs={6}>
                             <InputField
                                 fullWidth
@@ -1088,7 +1150,6 @@ function POReqUtility({ creating }) {
                                 disabled={!editingAllowed}
                             />
                         </Grid>
-
                         <Grid item xs={6}>
                             <InputField
                                 fullWidth

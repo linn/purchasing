@@ -146,7 +146,7 @@
 
             var toEmployeeId = req.Query.As<int>("toEmployeeId");
 
-            var result = this.purchaseOrderReqFacadeService.SendAuthorisationRequestEmail(
+            var result = this.purchaseOrderReqFacadeService.SendFinanceCheckRequestEmail(
                 req.HttpContext.User.GetEmployeeNumber(),
                 toEmployeeId,
                 reqNumber);
