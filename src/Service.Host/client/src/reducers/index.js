@@ -59,6 +59,8 @@ import whatsDueInReport from './whatsDueInReport';
 import purchaseOrderReqStates from './purchaseOrderReqStates';
 import outstandingPoReqsReport from './outstandingPoReqsReport';
 import sendPurchaseOrderReqEmail from './sendPurchaseOrderReqEmail';
+import sendPurchaseOrderReqAuthEmail from './sendPurchaseOrderReqAuthEmail';
+import sendPurchaseOrderReqFinanceEmail from './sendPurchaseOrderReqFinanceEmail';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -104,6 +106,8 @@ const rootReducer = history =>
         router: connectRouter(history),
         sendPlNoteEmail,
         sendPurchaseOrderReqEmail,
+        sendPurchaseOrderReqAuthEmail,
+        sendPurchaseOrderReqFinanceEmail,
         signingLimit,
         signingLimits,
         spendBySupplierReport,

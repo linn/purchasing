@@ -15,13 +15,14 @@
     {
         private readonly IAuthorisationService authService;
 
-        private readonly IPurchaseOrderReqsPack purchaseOrderReqsPack;
+        private readonly IEmailService emailService;
 
         private readonly IRepository<Employee, int> employeeRepository;
 
-        private IEmailService emailService;
+        private readonly IPurchaseOrderReqsPack purchaseOrderReqsPack;
 
-        private readonly IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey> reqsStateChangeRepository;
+        private readonly IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>
+            reqsStateChangeRepository;
 
         public PurchaseOrderReqService(
             IAuthorisationService authService,
@@ -43,7 +44,8 @@
 
             if (stage == "AUTH1" && entity.State != "AUTHORISE WAIT")
             {
-                throw new UnauthorisedActionException("Cannot authorise a req that is not in state 'AUTHORISE WAIT'. Please make sure the req is saved in this state and try again");
+                throw new UnauthorisedActionException(
+                    "Cannot authorise a req that is not in state 'AUTHORISE WAIT'. Please make sure the req is saved in this state and try again");
             }
 
             if (stage == "AUTH2" && entity.State != "AUTHORISE 2ND WAIT")
@@ -113,19 +115,48 @@
 
             if (entity.State != "FINANCE WAIT")
             {
-                throw new UnauthorisedActionException("Cannot authorise a req that is not in state 'FINANCE WAIT'. Please make sure the req is saved in this state and try again");
+                throw new UnauthorisedActionException(
+                    "Cannot authorise a req that is not in state 'FINANCE WAIT'. Please make sure the req is saved in this state and try again");
             }
 
             entity.FinanceCheckById = currentUserId;
-            //todo get next state from state change table instead of hard coding
-            entity.State = "ORDER WAIT";
+            entity.State = this.GetNextState(entity.State, true);
         }
 
-        public ProcessResult SendEmails(
-            int sender,
-            string to,
-            int reqNumber, 
-            Stream pdfAttachment)
+        public ProcessResult SendAuthorisationRequestEmail(int currentUser, int toEmp, PurchaseOrderReq req)
+        {
+            var from = this.employeeRepository.FindById(currentUser);
+            var to = this.employeeRepository.FindById(toEmp);
+            var reqUrl = $"https://app.linn.co.uk/purchasing/purchase-orders/reqs/{req.ReqNumber}";
+            var body = $"{req.RequestedBy.FullName} has placed a request to purchase {req.Description}.\n"
+                       + $"Please could you look at req number {req.ReqNumber} and authorise as appropriate at \n"
+                       + $"{reqUrl}.\n\nThank you";
+            try
+            {
+                this.emailService.SendEmail(
+                    to.PhoneListEntry.EmailAddress.Trim(),
+                    to.FullName,
+                    null,
+                    null,
+                    from.PhoneListEntry.EmailAddress.Trim(),
+                    from.FullName,
+                    $"Purchase Order Req {req.ReqNumber} requires authorisation",
+                    body,
+                    null,
+                    string.Empty);
+
+                return new ProcessResult(true, "Email Sent");
+            }
+            catch (Exception e)
+            {
+                return new ProcessResult
+                           {
+                               Success = false, Message = $"Error sending email. Error Message: {e.Message}"
+                           };
+            }
+        }
+
+        public ProcessResult SendEmails(int sender, string to, int reqNumber, Stream pdfAttachment)
         {
             var from = this.employeeRepository.FindById(sender);
             try
@@ -133,7 +164,7 @@
                 this.emailService.SendEmail(
                     to.Trim(),
                     to.Trim(),
-                    null,
+                    new List<Dictionary<string, string>> { new Dictionary<string, string>() { { "name", from.FullName }, { "address", from.PhoneListEntry.EmailAddress.Trim() } } },
                     null,
                     from.PhoneListEntry.EmailAddress.Trim(),
                     from.FullName,
@@ -148,8 +179,40 @@
             {
                 return new ProcessResult
                            {
-                               Success = false,
-                               Message = $"Error sending email. Error Message: {e.Message}"
+                               Success = false, Message = $"Error sending email. Error Message: {e.Message}"
+                           };
+            }
+        }
+
+        public ProcessResult SendFinanceCheckRequestEmail(int currentUser, int toEmp, PurchaseOrderReq req)
+        {
+            var from = this.employeeRepository.FindById(currentUser);
+            var to = this.employeeRepository.FindById(toEmp);
+            var reqUrl = $"https://app.linn.co.uk/purchasing/purchase-orders/reqs/{req.ReqNumber}";
+            var body = $"{req.RequestedBy.FullName} has placed a request to purchase {req.Description}.\n"
+                       + $"Please could you look at req number {req.ReqNumber} and authorise for finance as appropriate at \n"
+                       + $"{reqUrl}.\n\nThank you";
+            try
+            {
+                this.emailService.SendEmail(
+                    to.PhoneListEntry.EmailAddress.Trim(),
+                    to.FullName,
+                    new List<Dictionary<string, string>> { new Dictionary<string, string>() { { "name", from.FullName }, { "address", from.PhoneListEntry.EmailAddress.Trim() } } },
+                    null,
+                    from.PhoneListEntry.EmailAddress.Trim(),
+                    from.FullName,
+                    $"Purchase Order Req {req.ReqNumber} requires finance authorisation",
+                    body,
+                    null,
+                    string.Empty);
+
+                return new ProcessResult(true, "Email Sent");
+            }
+            catch (Exception e)
+            {
+                return new ProcessResult
+                           {
+                               Success = false, Message = $"Error sending email. Error Message: {e.Message}"
                            };
             }
         }
@@ -201,12 +264,19 @@
             entity.DepartmentCode = updatedEntity.DepartmentCode;
         }
 
+        private string GetNextState(string from, bool changeIsFromFunction = false)
+        {
+            var stateChange = this.reqsStateChangeRepository.FindBy(
+                x => x.FromState == from && ((!changeIsFromFunction && x.UserAllowed == "Y")
+                                             || (changeIsFromFunction && x.ComputerAllowed == "Y")));
+            return stateChange.ToState;
+        }
+
         private bool StateChangeAllowed(string from, string to, bool changeIsFromFunction = false)
         {
             var stateChange = this.reqsStateChangeRepository.FindBy(
                 x => x.FromState == from && x.ToState == to
-                                         && (x.UserAllowed == "Y"
-                                             || (changeIsFromFunction && x.ComputerAllowed == "Y")));
+                                         && (x.UserAllowed == "Y" || (changeIsFromFunction && x.ComputerAllowed == "Y")));
             return stateChange != null;
         }
     }

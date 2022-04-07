@@ -199,3 +199,15 @@ export const purchaseOrderReqStates = new ItemType(
     'PURCHASE_ORDER_REQ_STATES',
     '/purchasing/purchase-orders/reqs/states'
 );
+
+export const sendPurchaseOrderReqAuthEmail = new ItemType(
+    'sendPurchaseOrderReqAuthEmail',
+    'SEND_PURCHASE_ORDER_REQ_AUTH_EMAIL',
+    '/purchasing/purchase-orders/reqs/email-for-authorisation'
+);
+
+export const sendPurchaseOrderReqFinanceEmail = new ItemType(
+    'sendPurchaseOrderReqFinanceEmail',
+    'SEND_PURCHASE_ORDER_REQ_FINANCE_EMAIL',
+    '/purchasing/purchase-orders/reqs/email-for-finance'
+);

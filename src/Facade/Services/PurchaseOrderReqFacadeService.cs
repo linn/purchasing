@@ -78,6 +78,37 @@
                 new ProcessResultResource(result.Success, result.Message));
         }
 
+        public IResult<ProcessResultResource> SendAuthorisationRequestEmail(
+            int currentUserNumber, int toEmployeeNumber, int reqNumber)
+        {
+            var req = this.repository.FindById(reqNumber);
+            if (req == null)
+            {
+                return new NotFoundResult<ProcessResultResource>();
+            }
+
+            var result = this.domainService.SendAuthorisationRequestEmail(currentUserNumber, toEmployeeNumber, req);
+
+            return new SuccessResult<ProcessResultResource>(
+                new ProcessResultResource(result.Success, result.Message));
+        }
+
+
+        public IResult<ProcessResultResource> SendFinanceCheckRequestEmail(
+            int currentUserNumber, int toEmployeeNumber, int reqNumber)
+        {
+            var req = this.repository.FindById(reqNumber);
+            if (req == null)
+            {
+                return new NotFoundResult<ProcessResultResource>();
+            }
+
+            var result = this.domainService.SendFinanceCheckRequestEmail(currentUserNumber, toEmployeeNumber, req);
+
+            return new SuccessResult<ProcessResultResource>(
+                new ProcessResultResource(result.Success, result.Message));
+        }
+
         protected override PurchaseOrderReq CreateFromResource(
             PurchaseOrderReqResource resource,
             IEnumerable<string> privileges = null)
