@@ -24,17 +24,9 @@
             this.resultsModelResourceBuilder = resultsModelResourceBuilder;
         }
 
-        public Stream GetSpendBySupplierExport(string vendorManagerId, IEnumerable<string> privileges)
+        public IEnumerable<IEnumerable<string>> GetSpendBySupplierExport(string vendorManagerId, IEnumerable<string> privileges)
         {
-            var results = this.domainService.GetSpendBySupplierReport(vendorManagerId);
-
-            var returnResource = results.ConvertToCsvList();
-
-            var stream = new MemoryStream();
-            var csvStreamWriter = new CsvStreamWriter(stream);
-            csvStreamWriter.WriteModel(returnResource);
-
-            return stream;
+            return this.domainService.GetSpendBySupplierReport(vendorManagerId).ConvertToCsvList();
         }
 
         public IResult<ReportReturnResource> GetSpendBySupplierReport(string vendorManagerId, IEnumerable<string> privileges)
@@ -46,17 +38,9 @@
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
-        public Stream GetSpendByPartExport(int supplierId, IEnumerable<string> privileges)
+        public IEnumerable<IEnumerable<string>> GetSpendByPartExport(int supplierId, IEnumerable<string> privileges)
         {
-            var results = this.domainService.GetSpendByPartReport(supplierId);
-
-            var returnResource = results.ConvertToCsvList();
-
-            var stream = new MemoryStream();
-            var csvStreamWriter = new CsvStreamWriter(stream);
-            csvStreamWriter.WriteModel(returnResource);
-
-            return stream;
+            return this.domainService.GetSpendByPartReport(supplierId).ConvertToCsvList();
         }
 
         public IResult<ReportReturnResource> GetSpendByPartReport(int supplierId, IEnumerable<string> privileges)

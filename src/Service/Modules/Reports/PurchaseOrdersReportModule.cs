@@ -1,7 +1,7 @@
-﻿namespace Linn.Purchasing.Service.Modules.Reports
+﻿using Linn.Common.Facade.Carter.Extensions;
+
+namespace Linn.Purchasing.Service.Modules.Reports
 {
-    using System.IO;
-    using System.Net.Mime;
     using System.Threading.Tasks;
 
     using Carter;
@@ -58,7 +58,7 @@
                                    Name = request.Query.As<string>("Name")
                                };
 
-            var stream = this.purchaseOrderReportFacadeService.GetUnacknowledgedOrdersReportExport(
+            var csv = this.purchaseOrderReportFacadeService.GetUnacknowledgedOrdersReportExport(
                 resource,
                 request.HttpContext.GetPrivileges());
 
@@ -67,10 +67,8 @@
             {
                 fileName += $" ({resource.SupplierId}).csv";
             }
-            var contentDisposition = new ContentDisposition { FileName = fileName };
 
-            stream.Position = 0;
-            await response.FromStream(stream, "text/csv", contentDisposition);
+            await response.FromCsv(csv, fileName);
         }
 
         private async Task GetSuppliersWithUnacknowledgedOrdersReport(HttpRequest request, HttpResponse response)
@@ -102,18 +100,11 @@
             resource.To = req.Query.As<string>("ToDate");
             resource.Cancelled = req.Query.As<string>("Cancelled");
 
-            using Stream stream = this.purchaseOrderReportFacadeService.GetOrdersByPartExport(
+            var csv = this.purchaseOrderReportFacadeService.GetOrdersByPartExport(
                 resource,
                 req.HttpContext.GetPrivileges());
-
-            var contentDisposition = new ContentDisposition
-                                         {
-                                             FileName =
-                                                 $"ordersByPart{resource.From.Substring(0, 10)}_To_{resource.To.Substring(0, 10)}.csv"
-                                         };
-
-            stream.Position = 0;
-            await res.FromStream(stream, "text/csv", contentDisposition);
+            
+            await res.FromCsv(csv, $"ordersByPart{resource.From.Substring(0, 10)}_To_{resource.To.Substring(0, 10)}.csv");
         }
 
         private async Task GetOrdersByPartReport(HttpRequest req, HttpResponse res)
@@ -144,18 +135,11 @@
             resource.Credits = req.Query.As<string>("Credits");
             resource.StockControlled = req.Query.As<string>("StockControlled");
 
-            using Stream stream = this.purchaseOrderReportFacadeService.GetOrdersBySupplierExport(
+            var csv = this.purchaseOrderReportFacadeService.GetOrdersBySupplierExport(
                 resource,
                 req.HttpContext.GetPrivileges());
 
-            var contentDisposition = new ContentDisposition
-                                         {
-                                             FileName =
-                                                 $"ordersBySupplier{resource.From.Substring(0, 10)}_To_{resource.To.Substring(0, 10)}.csv"
-                                         };
-
-            stream.Position = 0;
-            await res.FromStream(stream, "text/csv", contentDisposition);
+            await res.FromCsv(csv, $"ordersBySupplier{resource.From.Substring(0, 10)}_To_{resource.To.Substring(0, 10)}.csv");
         }
 
         private async Task GetOrdersBySupplierReport(HttpRequest req, HttpResponse res)
