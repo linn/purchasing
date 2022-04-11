@@ -11,6 +11,9 @@ import {
 } from '@linn-it/linn-form-components-library';
 import { useParams } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import EditOffIcon from '@mui/icons-material/EditOff';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import purchaseOrderActions from '../actions/purchaseOrderActions';
 import history from '../history';
@@ -24,7 +27,7 @@ function AllowPurchaseOrderOverbook() {
     const overbookLoading = useSelector(reduxState =>
         itemSelectorHelpers.getItemLoading(reduxState.purchaseOrder)
     );
-
+    const canEdit = () => item?.links.some(l => l.rel === 'allow-over-book');
     const clearErrors = () => reduxDispatch(purchaseOrderActions.clearErrorsForItem());
     const updatePurchaseOrder = () =>
         reduxDispatch(purchaseOrderActions.update(state.orderNumber, state));
@@ -72,8 +75,19 @@ function AllowPurchaseOrderOverbook() {
                         }
                         message="Save Successful"
                     />
-                    <Grid item xs={12}>
+                    <Grid item xs={11}>
                         <Typography variant="h3">Allow Overbook UT</Typography>
+                    </Grid>
+                    <Grid item xs={1}>
+                        {canEdit() ? (
+                            <Tooltip title="You have write access to allow overbooking">
+                                <ModeEditIcon fontSize="large" color="primary" />
+                            </Tooltip>
+                        ) : (
+                            <Tooltip title="You do not have write access to allow overbooking">
+                                <EditOffIcon fontSize="large" color="secondary" />
+                            </Tooltip>
+                        )}
                     </Grid>
                     <Grid item xs={12}>
                         <OnOffSwitch
@@ -104,9 +118,9 @@ function AllowPurchaseOrderOverbook() {
                             disabled={state.overbook !== 'Y'}
                         />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12}>
                         <SaveBackCancelButtons
-                            saveDisabled={saveDisabled}
+                            saveDisabled={!canEdit() || saveDisabled}
                             saveClick={() => {
                                 setSaveDisabled(true);
                                 clearErrors();

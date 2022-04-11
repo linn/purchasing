@@ -34,10 +34,7 @@ function OverbooksSearch() {
                 </Grid>
                 <Grid item xs={12}>
                     <Typeahead
-                        items={searchResults.map(x => ({
-                            ...x,
-                            href: x.links.find(l => l.rel === 'allow-over-book')?.href
-                        }))}
+                        items={searchResults}
                         fetchItems={searchOverbookItems}
                         placeholder="Search by Order Number"
                         clearSearch={() => {}}
