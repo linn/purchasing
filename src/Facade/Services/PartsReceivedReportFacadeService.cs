@@ -1,10 +1,15 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
+    using System.IO;
+
     using Linn.Common.Facade;
     using Linn.Common.Reporting.Models;
+    using Linn.Common.Reporting.Resources.Extensions;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Resources.RequestResources;
+    using Linn.Common.Serialization;
+
 
     public class PartsReceivedReportFacadeService : IPartsReceivedReportFacadeService
     {
@@ -33,6 +38,24 @@
                 null);
 
             return new SuccessResult<ReportReturnResource>(resource);
+        }
+
+        public Stream GetReportCsv(PartsReceivedReportRequestResource options)
+        {
+            var result = this.domainService.GetReport(
+                options.Jobref,
+                options.Supplier,
+                options.FromDate,
+                options.ToDate,
+                options.OrderBy,
+                options.IncludeNegativeValues);
+
+            var resource = result.ConvertToCsvList();
+            var stream = new MemoryStream();
+            var csvStreamWriter = new CsvStreamWriter(stream);
+            csvStreamWriter.WriteModel(resource);
+
+            return stream;
         }
     }
 }
