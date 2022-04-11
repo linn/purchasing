@@ -1,6 +1,6 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
-    using System.IO;
+    using System.Collections.Generic;
 
     using Linn.Common.Facade;
     using Linn.Common.Reporting.Resources.ReportResultResources;
@@ -10,7 +10,7 @@
     {
         public IResult<ReportReturnResource> GetReport(PartsReceivedReportRequestResource options);
 
-        public Stream GetReportCsv(PartsReceivedReportRequestResource options);
+        public IEnumerable<IEnumerable<string>> GetReportCsv(PartsReceivedReportRequestResource options);
     }
 }
 

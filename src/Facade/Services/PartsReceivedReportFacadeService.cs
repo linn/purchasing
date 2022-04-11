@@ -1,4 +1,6 @@
-﻿namespace Linn.Purchasing.Facade.Services
+﻿using System.Collections.Generic;
+
+namespace Linn.Purchasing.Facade.Services
 {
     using System.IO;
 
@@ -40,22 +42,15 @@
             return new SuccessResult<ReportReturnResource>(resource);
         }
 
-        public Stream GetReportCsv(PartsReceivedReportRequestResource options)
+        public IEnumerable<IEnumerable<string>> GetReportCsv(PartsReceivedReportRequestResource options)
         {
-            var result = this.domainService.GetReport(
+            return this.domainService.GetReport(
                 options.Jobref,
                 options.Supplier,
                 options.FromDate,
                 options.ToDate,
                 options.OrderBy,
-                options.IncludeNegativeValues);
-
-            var resource = result.ConvertToCsvList();
-            var stream = new MemoryStream();
-            var csvStreamWriter = new CsvStreamWriter(stream);
-            csvStreamWriter.WriteModel(resource);
-
-            return stream;
+                options.IncludeNegativeValues).ConvertToCsvList();
         }
     }
 }

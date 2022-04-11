@@ -1,5 +1,4 @@
 ﻿using System.Net.Mime;
-
 namespace Linn.Purchasing.Service.Modules.Reports
 {
     using System.Threading.Tasks;
@@ -10,6 +9,8 @@ namespace Linn.Purchasing.Service.Modules.Reports
 
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources.RequestResources;
+    
+    using Linn.Purchasing.Service.Extensions;
     using Linn.Purchasing.Service.Models;
 
     using Microsoft.AspNetCore.Http;
@@ -28,7 +29,7 @@ namespace Linn.Purchasing.Service.Modules.Reports
             this.reportFacadeService = reportFacadeService;
             this.Get("/purchasing/tqms-jobrefs", this.GetJobRefs);
             this.Get("/purchasing/reports/parts-received", this.GetReport);
-            this.Get("/purchasing/reports/parts-received", this.GetExport);
+            this.Get("/purchasing/reports/parts-received/export", this.GetExport);
         }
 
         private async Task GetJobRefs(HttpRequest request, HttpResponse response)
@@ -71,16 +72,9 @@ namespace Linn.Purchasing.Service.Modules.Reports
                     IncludeNegativeValues = req.Query.As<bool>("includeNegativeValues")
                 };
             
-            using var stream = this.reportFacadeService.GetReportCsv(options);
+            var csv = this.reportFacadeService.GetReportCsv(options);
 
-            var contentDisposition = new ContentDisposition
-            {
-                FileName =
-                    $"parts_received.csv"
-            };
-
-            stream.Position = 0;
-            await res.FromStream(stream, "text/csv", contentDisposition);
+            await res.FromCsv(csv, "parts_received.csv");
         }
     }
 }
