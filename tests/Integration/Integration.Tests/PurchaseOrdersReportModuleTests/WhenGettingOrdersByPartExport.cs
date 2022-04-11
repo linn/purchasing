@@ -47,7 +47,7 @@
 
             this.FacadeService
                 .GetOrdersByPartExport(Arg.Any<OrdersByPartSearchResource>(), Arg.Any<IEnumerable<string>>())
-                .Returns(new MemoryStream());
+                .Returns(new List<IEnumerable<string>>());
 
             this.Response = this.Client.Get(
                 $"/purchasing/reports/orders-by-part/export?partNumber={"MCP 123"}&fromDate={(1.January(2022).ToLongDateString())}&toDate={(1.February(2022).ToLongDateString())}&cancelled=N",

@@ -17,7 +17,7 @@
     {
         private readonly string partNumber = "MCAS 5";
 
-        private Stream resultsStream;
+        private IEnumerable<IEnumerable<string>> csvData;
 
         [SetUp]
         public void SetUp()
@@ -37,7 +37,7 @@
                             ReportTitle = new NameModel($"Purchase Orders By Part:{this.partNumber}")
                         });
 
-            this.resultsStream = this.Sut.GetOrdersByPartExport(resource, new List<string>());
+            this.csvData = this.Sut.GetOrdersByPartExport(resource, new List<string>());
         }
 
         [Test]
@@ -47,9 +47,9 @@
         }
 
         [Test]
-        public void ShouldReturnMemoryStream()
+        public void ShouldReturnCsv()
         {
-            this.resultsStream.Should().BeOfType<MemoryStream>();
+            this.csvData.Should().BeOfType<IEnumerable<IEnumerable<string>>>();
         }
     }
 }

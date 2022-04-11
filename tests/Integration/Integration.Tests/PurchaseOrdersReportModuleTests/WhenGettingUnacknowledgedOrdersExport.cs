@@ -22,7 +22,7 @@
                 .GetUnacknowledgedOrdersReportExport(
                     Arg.Any<UnacknowledgedOrdersRequestResource>(),
                     Arg.Any<IEnumerable<string>>())
-                .Returns(new MemoryStream());
+                .Returns(new List<IEnumerable<string>>());
 
             this.Response = this.Client.Get(
                 $"/purchasing/reports/unacknowledged-orders/export?supplierId=123&supplierGroupId=456",

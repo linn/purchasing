@@ -14,7 +14,7 @@
 
     public class WhenGettingUnacknowledgedOrdersExport : ContextBase
     {
-        private Stream resultsStream;
+        private IEnumerable<IEnumerable<string>> csvData;
 
         private UnacknowledgedOrdersRequestResource requestResource;
 
@@ -33,7 +33,7 @@
                                        };
             this.DomainService.GetUnacknowledgedOrders(this.supplierId, this.supplierGroupId)
                 .Returns(new ResultsModel { ReportTitle = new NameModel("Title") });
-            this.resultsStream = this.Sut.GetUnacknowledgedOrdersReportExport(this.requestResource, new List<string>());
+            this.csvData = this.Sut.GetUnacknowledgedOrdersReportExport(this.requestResource, new List<string>());
         }
 
         [Test]
@@ -46,7 +46,7 @@
         [Test]
         public void ShouldReturnMemoryStream()
         {
-            this.resultsStream.Should().BeOfType<MemoryStream>();
+            this.csvData.Should().BeOfType<List<List<string>>>();
         }
     }
 }
