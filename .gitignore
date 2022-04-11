@@ -77,3 +77,4 @@ local-update.sh
 .vs
 
 *.tgz
+.idea*
