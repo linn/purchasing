@@ -1,7 +1,6 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrdersReportModuleTests
 {
     using System.Collections.Generic;
-    using System.IO;
     using System.Net;
 
     using FluentAssertions;

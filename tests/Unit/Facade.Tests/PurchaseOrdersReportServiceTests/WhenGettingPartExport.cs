@@ -1,7 +1,6 @@
 ﻿namespace Linn.Purchasing.Facade.Tests.PurchaseOrdersReportServiceTests
 {
     using System.Collections.Generic;
-    using System.IO;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
