@@ -49,7 +49,7 @@
         [Test]
         public void ShouldReturnCsv()
         {
-            this.csvData.Should().BeOfType<IEnumerable<IEnumerable<string>>>();
+            this.csvData.Should().BeOfType<List<List<string>>>();
         }
     }
 }
