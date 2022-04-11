@@ -18,6 +18,7 @@ namespace Linn.Purchasing.Service.Extensions
             var stream = new MemoryStream();
             var csvStreamWriter = new CsvStreamWriter(stream);
             csvStreamWriter.WriteModel(csvData);
+            stream.Position = 0;
             return response.FromStream(
                 stream, 
                 "text/csv", 
