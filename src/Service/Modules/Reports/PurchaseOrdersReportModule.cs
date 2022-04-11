@@ -1,13 +1,13 @@
-﻿using Linn.Common.Facade.Carter.Extensions;
-
-namespace Linn.Purchasing.Service.Modules.Reports
+﻿namespace Linn.Purchasing.Service.Modules.Reports
 {
     using System.Threading.Tasks;
 
     using Carter;
     using Carter.Request;
     using Carter.Response;
-
+    
+    using Linn.Common.Facade.Carter.Extensions;
+    
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.RequestResources;
