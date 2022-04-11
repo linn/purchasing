@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-
-namespace Linn.Purchasing.Facade.Services
+﻿namespace Linn.Purchasing.Facade.Services
 {
-    using System.IO;
+    using System.Collections.Generic;
 
     using Linn.Common.Facade;
     using Linn.Common.Reporting.Models;
@@ -10,7 +8,6 @@ namespace Linn.Purchasing.Facade.Services
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Resources.RequestResources;
-    using Linn.Common.Serialization;
 
 
     public class PartsReceivedReportFacadeService : IPartsReceivedReportFacadeService

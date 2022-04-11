@@ -1,5 +1,4 @@
-﻿using System.Net.Mime;
-namespace Linn.Purchasing.Service.Modules.Reports
+﻿namespace Linn.Purchasing.Service.Modules.Reports
 {
     using System.Threading.Tasks;
 

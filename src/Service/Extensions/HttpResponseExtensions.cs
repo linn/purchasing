@@ -1,12 +1,14 @@
 namespace Linn.Purchasing.Service.Extensions
 {
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Http;
     using System.Collections.Generic;
     using System.IO;
     using System.Net.Mime;
+    using System.Threading.Tasks;
+    
     using Carter.Response;
     using Common.Serialization;
+    
+    using Microsoft.AspNetCore.Http;
     
     public static class HttpResponseExtensions
     {
@@ -22,7 +24,7 @@ namespace Linn.Purchasing.Service.Extensions
             return response.FromStream(
                 stream, 
                 "text/csv", 
-                new ContentDisposition {FileName = fileName});
+                new ContentDisposition { FileName = fileName });
         }
     }
 }
