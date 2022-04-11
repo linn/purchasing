@@ -44,7 +44,7 @@
         }
 
         [Test]
-        public void ShouldReturnMemoryStream()
+        public void ShouldReturnCsv()
         {
             this.csvData.Should().BeOfType<List<List<string>>>();
         }
