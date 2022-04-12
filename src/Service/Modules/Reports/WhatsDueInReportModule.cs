@@ -21,7 +21,6 @@
             this.reportFacadeService = reportFacadeService;
             this.Get("/purchasing/reports/whats-due-in", this.GetReport);
             this.Get("/purchasing/reports/whats-due-in/export", this.GetExport);
-
         }
 
         private async Task GetReport(HttpRequest req, HttpResponse res)
