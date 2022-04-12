@@ -4,6 +4,7 @@
     using System.Collections.Generic;
 
     using Linn.Common.Facade;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
 

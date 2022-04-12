@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
+﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs
 {
     using System.Collections.Generic;
     using System.IO;
