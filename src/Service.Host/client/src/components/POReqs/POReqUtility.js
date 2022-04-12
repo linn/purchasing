@@ -209,7 +209,7 @@ function POReqUtility({ creating }) {
                 { id: 'nominalCode', value: `${nom.nominalCode}` },
                 { id: 'description', value: `${nom.description || ''}` },
                 { id: 'departmentCode', value: `${nom.departmentCode || ''}` },
-                { id: 'departmentDescription', value: `${nom.description || ''}` }
+                { id: 'departmentDescription', value: `${nom.departmentDescription || ''}` }
             ],
             links: nom.links
         }))
@@ -631,6 +631,7 @@ function POReqUtility({ creating }) {
                                     onClick={() =>
                                         history.push(req.links?.find(l => l.rel === 'print')?.href)
                                     }
+                                    disabled={creating}
                                 >
                                     <PrintIcon />
                                 </IconButton>

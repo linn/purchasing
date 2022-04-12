@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import {
@@ -10,6 +10,7 @@ import {
     ReportTable
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
+import queryString from 'query-string';
 import history from '../../history';
 import config from '../../config';
 import { purchaseOrderReqStates } from '../../itemTypes';
@@ -29,7 +30,21 @@ function OutstandingPoReqsReport() {
         dispatch(purchaseOrderReqStatesActions.fetch());
     }, [dispatch]);
 
-    const [reqState, setReqState] = useState(null);
+    const options = useMemo(() => queryString.parse(window.location.search) || {}, []);
+
+    const urlStateParam = `${options?.state}` ?? null;
+
+    useEffect(() => {
+        if (urlStateParam) {
+            dispatch(
+                outstandingPoReqsReportActions.fetchReport({
+                    state: urlStateParam
+                })
+            );
+        }
+    }, [dispatch, urlStateParam]);
+
+    const [reqState, setReqState] = useState(urlStateParam);
 
     const loading = useSelector(state => state[outstandingPoReqsReport.item]?.loading);
 
