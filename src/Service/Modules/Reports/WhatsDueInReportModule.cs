@@ -6,6 +6,7 @@
     using Carter.Request;
     using Carter.Response;
 
+    using Linn.Common.Facade.Carter.Extensions;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Service.Models;
 
@@ -19,6 +20,8 @@
         {
             this.reportFacadeService = reportFacadeService;
             this.Get("/purchasing/reports/whats-due-in", this.GetReport);
+            this.Get("/purchasing/reports/whats-due-in/export", this.GetExport);
+
         }
 
         private async Task GetReport(HttpRequest req, HttpResponse res)
@@ -37,6 +40,18 @@
                 req.Query.As<int?>("supplier"));
 
             await res.Negotiate(results);
+        }
+
+        private async Task GetExport(HttpRequest req, HttpResponse res)
+        {
+            var csvResults = this.reportFacadeService.GetReportCsv(
+                req.Query.As<string>("fromDate"),
+                req.Query.As<string>("toDate"),
+                req.Query.As<string>("orderBy"),
+                req.Query.As<string>("vendorManager"),
+                req.Query.As<int?>("supplier"));
+
+            await res.FromCsv(csvResults, "whats_due_in.csv");
         }
     }
 }
