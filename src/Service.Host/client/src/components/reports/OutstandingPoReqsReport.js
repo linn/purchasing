@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import {
@@ -9,6 +9,7 @@ import {
     Dropdown,
     ReportTable
 } from '@linn-it/linn-form-components-library';
+import { useLocation } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import queryString from 'query-string';
 import history from '../../history';
@@ -30,9 +31,10 @@ function OutstandingPoReqsReport() {
         dispatch(purchaseOrderReqStatesActions.fetch());
     }, [dispatch]);
 
-    const options = useMemo(() => queryString.parse(window.location.search) || {}, []);
+    const { search } = useLocation();
 
-    const urlStateParam = `${options?.state}` ?? null;
+    const urlStateParam = search.length ? queryString.parse(search).state : null;
+    const [reqState, setReqState] = useState(urlStateParam);
 
     useEffect(() => {
         if (urlStateParam) {
@@ -44,11 +46,9 @@ function OutstandingPoReqsReport() {
         }
     }, [dispatch, urlStateParam]);
 
-    const [reqState, setReqState] = useState(urlStateParam);
+    const loading = useSelector(reduxState => reduxState[outstandingPoReqsReport.item]?.loading);
 
-    const loading = useSelector(state => state[outstandingPoReqsReport.item]?.loading);
-
-    const reportData = useSelector(state => state[outstandingPoReqsReport.item]?.data);
+    const reportData = useSelector(reduxState => reduxState[outstandingPoReqsReport.item]?.data);
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
