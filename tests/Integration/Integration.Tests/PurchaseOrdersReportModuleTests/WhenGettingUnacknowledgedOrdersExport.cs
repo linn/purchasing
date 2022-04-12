@@ -1,7 +1,6 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrdersReportModuleTests
 {
     using System.Collections.Generic;
-    using System.IO;
     using System.Net;
 
     using FluentAssertions;
@@ -22,7 +21,7 @@
                 .GetUnacknowledgedOrdersReportExport(
                     Arg.Any<UnacknowledgedOrdersRequestResource>(),
                     Arg.Any<IEnumerable<string>>())
-                .Returns(new MemoryStream());
+                .Returns(new List<IEnumerable<string>>());
 
             this.Response = this.Client.Get(
                 $"/purchasing/reports/unacknowledged-orders/export?supplierId=123&supplierGroupId=456",

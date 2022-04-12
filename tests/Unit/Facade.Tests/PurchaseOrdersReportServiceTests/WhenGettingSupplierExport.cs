@@ -1,7 +1,6 @@
 ﻿namespace Linn.Purchasing.Facade.Tests.PurchaseOrdersReportServiceTests
 {
     using System.Collections.Generic;
-    using System.IO;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
@@ -17,7 +16,7 @@
     {
         private readonly int supplierId = 71234;
 
-        private Stream resultsStream;
+        private IEnumerable<IEnumerable<string>> csvData;
 
         [SetUp]
         public void SetUp()
@@ -41,7 +40,7 @@
                             ReportTitle = new NameModel("Purchase Orders By Supplier - 71234: Dwight K Schrute")
                         });
 
-            this.resultsStream = this.Sut.GetOrdersBySupplierExport(resource, new List<string>());
+            this.csvData = this.Sut.GetOrdersBySupplierExport(resource, new List<string>());
         }
 
         [Test]
@@ -59,9 +58,9 @@
         }
 
         [Test]
-        public void ShouldReturnMemoryStream()
+        public void ShouldReturnCsv()
         {
-            this.resultsStream.Should().BeOfType<MemoryStream>();
+            this.csvData.Should().BeOfType<List<List<string>>>();
         }
     }
 }

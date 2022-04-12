@@ -8,6 +8,8 @@
     using Carter.Request;
     using Carter.Response;
 
+    using Linn.Common.Facade.Carter.Extensions;
+
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Service.Extensions;
     using Linn.Purchasing.Service.Models;
@@ -38,18 +40,11 @@
         {
             var supplierId = req.Query.As<int>("Id");
 
-            using var stream = this.spendsReportFacadeService.GetSpendByPartExport(
+            var csv = this.spendsReportFacadeService.GetSpendByPartExport(
                 supplierId,
                 req.HttpContext.GetPrivileges());
-
-            var contentDisposition = new ContentDisposition
-                                         {
-                                             FileName =
-                                                 $"spendByPart_{supplierId}_{DateTime.Now.ToString("dd-MM-yyyy")}.csv"
-                                         };
-
-            stream.Position = 0;
-            await res.FromStream(stream, "text/csv", contentDisposition);
+            
+            await res.FromCsv(csv, $"spendByPart_{supplierId}_{DateTime.Now.ToString("dd-MM-yyyy")}.csv");
         }
 
         private async Task GetSpendByPartReport(HttpRequest req, HttpResponse res)
@@ -66,7 +61,7 @@
         {
             var vm = req.Query.As<string>("Vm");
 
-            using var stream = this.spendsReportFacadeService.GetSpendBySupplierExport(
+            var csv = this.spendsReportFacadeService.GetSpendBySupplierExport(
                 vm != null ? vm : string.Empty,
                 req.HttpContext.GetPrivileges());
 
@@ -75,8 +70,7 @@
                                              FileName = $"spendBySuppliers{DateTime.Now.ToString("dd-MM-yyyy")}.csv"
                                          };
 
-            stream.Position = 0;
-            await res.FromStream(stream, "text/csv", contentDisposition);
+            await res.FromCsv(csv, $"spendBySuppliers{DateTime.Now.ToString("dd-MM-yyyy")}.csv");
         }
 
         private async Task GetSpendBySupplierReport(HttpRequest req, HttpResponse res)

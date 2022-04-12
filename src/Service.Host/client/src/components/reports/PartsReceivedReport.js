@@ -192,16 +192,6 @@ function PartsReceivedReport() {
                         {reportData && (
                             <>
                                 <Grid item xs={12}>
-                                    <ReportTable
-                                        reportData={reportData}
-                                        title={reportData.title}
-                                        showTitle
-                                        showTotals
-                                        placeholderRows={4}
-                                        placeholderColumns={4}
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
                                     <ExportButton
                                         href={`${
                                             config.appRoot
@@ -212,6 +202,16 @@ function PartsReceivedReport() {
                                                 toDate: options.toDate.toISOString()
                                             }
                                         )}`}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <ReportTable
+                                        reportData={reportData}
+                                        title={reportData.title}
+                                        showTitle
+                                        showTotals
+                                        placeholderRows={4}
+                                        placeholderColumns={4}
                                     />
                                 </Grid>
                             </>
