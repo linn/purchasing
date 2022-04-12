@@ -9,7 +9,9 @@ import {
     Dropdown,
     ReportTable
 } from '@linn-it/linn-form-components-library';
+import { useLocation } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
+import queryString from 'query-string';
 import history from '../../history';
 import config from '../../config';
 import { purchaseOrderReqStates } from '../../itemTypes';
@@ -29,11 +31,24 @@ function OutstandingPoReqsReport() {
         dispatch(purchaseOrderReqStatesActions.fetch());
     }, [dispatch]);
 
-    const [reqState, setReqState] = useState(null);
+    const { search } = useLocation();
 
-    const loading = useSelector(state => state[outstandingPoReqsReport.item]?.loading);
+    const urlStateParam = search.length ? queryString.parse(search).state : null;
+    const [reqState, setReqState] = useState(urlStateParam);
 
-    const reportData = useSelector(state => state[outstandingPoReqsReport.item]?.data);
+    useEffect(() => {
+        if (urlStateParam) {
+            dispatch(
+                outstandingPoReqsReportActions.fetchReport({
+                    state: urlStateParam
+                })
+            );
+        }
+    }, [dispatch, urlStateParam]);
+
+    const loading = useSelector(reduxState => reduxState[outstandingPoReqsReport.item]?.loading);
+
+    const reportData = useSelector(reduxState => reduxState[outstandingPoReqsReport.item]?.data);
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
