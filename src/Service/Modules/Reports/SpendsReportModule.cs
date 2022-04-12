@@ -1,6 +1,4 @@
-﻿using Linn.Common.Facade.Carter.Extensions;
-
-namespace Linn.Purchasing.Service.Modules.Reports
+﻿namespace Linn.Purchasing.Service.Modules.Reports
 {
     using System;
     using System.Net.Mime;
@@ -9,6 +7,8 @@ namespace Linn.Purchasing.Service.Modules.Reports
     using Carter;
     using Carter.Request;
     using Carter.Response;
+
+    using Linn.Common.Facade.Carter.Extensions;
 
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Service.Extensions;
