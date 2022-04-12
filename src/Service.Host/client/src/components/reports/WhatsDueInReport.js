@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
+import queryString from 'query-string';
 import {
     Page,
     Title,
     Typeahead,
     collectionSelectorHelpers,
+    ExportButton,
     Loading,
     Dropdown,
     DatePicker,
@@ -176,16 +178,31 @@ function WhatsDueInReport() {
                 ) : (
                     <>
                         {reportData && (
-                            <Grid item xs={12}>
-                                <ReportTable
-                                    reportData={reportData}
-                                    title={reportData.title}
-                                    showTitle
-                                    showTotals
-                                    placeholderRows={4}
-                                    placeholderColumns={4}
-                                />
-                            </Grid>
+                            <>
+                                <Grid item xs={12}>
+                                    <ExportButton
+                                        href={`${
+                                            config.appRoot
+                                        }/purchasing/reports/whats-due-in/export?${queryString.stringify(
+                                            {
+                                                ...options,
+                                                fromDate: options.fromDate.toISOString(),
+                                                toDate: options.toDate.toISOString()
+                                            }
+                                        )}`}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <ReportTable
+                                        reportData={reportData}
+                                        title={reportData.title}
+                                        showTitle
+                                        showTotals
+                                        placeholderRows={4}
+                                        placeholderColumns={4}
+                                    />
+                                </Grid>
+                            </>
                         )}
                     </>
                 )}
