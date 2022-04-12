@@ -525,7 +525,7 @@ function POReqUtility({ creating }) {
                                 <IconButton
                                     className={classes.pullRight}
                                     aria-label="Close"
-                                    onClick={() => setAuthEmailDialogOpen(false)}
+                                    onClick={() => setFinanceEmailDialogOpen(false)}
                                 >
                                     <Close />
                                 </IconButton>
