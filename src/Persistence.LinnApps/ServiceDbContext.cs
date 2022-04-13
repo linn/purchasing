@@ -102,9 +102,9 @@
 
         public DbSet<MrpRunLog> MrpRunLogs { get; set; }
 
-        public DbSet<WhatsInInspectionViewModel> WhatsInInspectionExcludingFailedView { get; set; }
+        public DbSet<WhatsInInspectionExcludingFailsViewModel> WhatsInInspectionExcludingFailedView { get; set; }
 
-        public DbSet<WhatsInInspectionViewModel> WhatsInInspectionIncludingFailedView { get; set; }
+        public DbSet<WhatsInInspectionIncludingFailsViewModel> WhatsInInspectionIncludingFailedView { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -908,24 +908,24 @@
 
         private void BuildWhatsInInspectionExcludingFailedView(ModelBuilder builder)
         {
-            var e = builder.Entity<WhatsInInspectionViewModel>().ToView("WHATS_IN_INSP_EXCL_FAIL_VIEW");
+            var e = builder.Entity<WhatsInInspectionExcludingFailsViewModel>().ToView("WHATS_IN_INSP_EXCL_FAIL_VIEW");
             e.HasNoKey();
             e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER");
             e.Property(m => m.Description).HasColumnName("DESCRIPTION");
             e.Property(m => m.OurUnitOfMeasure).HasColumnName("OUR_UNIT_OF_MEASURE");
             e.Property(m => m.QtyInStock).HasColumnName("QTY_IN_STOCK");
-            e.Property(m => m.QtyInInspection).HasColumnName("QTY_IN_INSPECTION");
+            e.Property(m => m.QtyInInspection).HasColumnName("QTY_IN_INSP");
         }
 
         private void BuildWhatsInInspectionIncludingFailedView(ModelBuilder builder)
         {
-            var e = builder.Entity<WhatsInInspectionViewModel>().ToView("WHATS_IN_INSP_INC_FAIL_VIEW");
+            var e = builder.Entity<WhatsInInspectionIncludingFailsViewModel>().ToView("WHATS_IN_INSP_INCL_FAIL_VIEW");
             e.HasNoKey();
             e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER");
             e.Property(m => m.Description).HasColumnName("DESCRIPTION");
             e.Property(m => m.OurUnitOfMeasure).HasColumnName("OUR_UNIT_OF_MEASURE");
             e.Property(m => m.QtyInStock).HasColumnName("QTY_IN_STOCK");
-            e.Property(m => m.QtyInInspection).HasColumnName("QTY_IN_INSPECTION");
+            e.Property(m => m.QtyInInspection).HasColumnName("QTY_IN_INSP");
         }
     }
 }

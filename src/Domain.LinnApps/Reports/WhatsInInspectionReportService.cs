@@ -1,5 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Reports
 {
+    using System.Linq;
+
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
 
     public class WhatsInInspectionReportService : IWhatsInInspectionReportService
@@ -18,7 +20,7 @@
             bool excludeFinishedGoods = false,
             bool showBackOrdered = true)
         {
-            var test = this.whatsInInspectionRepository.GetWhatsInInspection();
+            var test = this.whatsInInspectionRepository.GetWhatsInInspection().ToList();
             return new WhatsInInspectionReportModel();
         }
     }
