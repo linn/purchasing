@@ -14,6 +14,8 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Logging;
 
+    using OrderMethod = Linn.Purchasing.Domain.LinnApps.PurchaseOrders.OrderMethod;
+
     public class ServiceDbContext : DbContext
     {
         public static readonly LoggerFactory MyLoggerFactory =
@@ -123,7 +125,6 @@
             this.BuildSigningLimits(builder);
             this.BuildSigningLimitLogs(builder);
             this.BuildCurrencies(builder);
-            this.BuildOrderMethods(builder);
             this.BuildLinnDeliveryAddresses(builder);
             this.BuildUnitsOfMeasure(builder);
             this.BuildPurchaseLedgers(builder);
@@ -156,6 +157,8 @@
             this.BuildPurchaseOrderReqStates(builder);
             this.BuildPurchaseOrderReqStateChanges(builder);
             this.BuildMrRunLogs(builder);
+            this.BuildDocumentTypes(builder);
+            this.BuildPurchaseOrderOrderMethods(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -484,15 +487,22 @@
             entity.Property(o => o.Cancelled).HasColumnName("CANCELLED").HasMaxLength(1);
             entity.Property(o => o.SupplierId).HasColumnName("SUPP_SUPPLIER_ID");
             entity.HasOne(o => o.Supplier).WithMany().HasForeignKey(o => o.SupplierId);
-            entity.Property(o => o.DocumentType).HasColumnName("DOCUMENT_TYPE");
+            entity.Property(o => o.DocumentTypeName).HasColumnName("DOCUMENT_TYPE");
+            entity.HasOne(o => o.DocumentType).WithMany().HasForeignKey(o => o.DocumentTypeName);
             entity.Property(o => o.OrderDate).HasColumnName("DATE_OF_ORDER");
             entity.Property(o => o.Overbook).HasColumnName("OVERBOOK");
             entity.Property(o => o.OverbookQty).HasColumnName("OVERBOOK_QTY");
-            entity.HasOne(o => o.Currency).WithMany().HasForeignKey("CURR_CODE");
-            entity.Property(o => o.OrderContactName).HasColumnName("CONTACT_NAME");
+            entity.Property(o => o.CurrencyCode).HasColumnName("CURR_CODE");
+            entity.HasOne(o => o.Currency).WithMany().HasForeignKey(o => o.CurrencyCode);
             entity.Property(o => o.OrderContactName).HasColumnName("CONTACT_NAME");
             entity.HasMany(o => o.Details).WithOne(d => d.PurchaseOrder).HasForeignKey(d => d.OrderNumber);
-            entity.Property(o => o.OrderMethod).HasColumnName("PL_ORDER_METHOD");
+            entity.Property(o => o.OrderMethodName).HasColumnName("PL_ORDER_METHOD");
+            entity.HasOne(o => o.OrderMethod).WithMany().HasForeignKey(o => o.OrderMethodName);
+            entity.Property(o => o.ExchangeRate).HasColumnName("EXCHANGE_RATE").HasMaxLength(19);
+            entity.Property(o => o.IssuePartsToSupplier).HasColumnName("ISSUE_PARTS_TO_SUPPLIER").HasMaxLength(1);
+            
+            
+
         }
 
         private void BuildPurchaseOrderDetails(ModelBuilder builder)
@@ -509,8 +519,31 @@
                 .HasForeignKey(o => new { o.OrderNumber, o.OrderLine });
             entity.Property(o => o.BaseNetTotal).HasColumnName("BASE_NET_TOTAL").HasMaxLength(18);
             entity.Property(o => o.NetTotalCurrency).HasColumnName("NET_TOTAL").HasMaxLength(18);
-            entity.HasOne(o => o.Part).WithMany(p => p.PurchaseOrderDetails).HasForeignKey("PART_NUMBER");
+            entity.HasOne(o => o.Part).WithMany(p => p.PurchaseOrderDetails).HasForeignKey(o => o.PartNumber);
+            entity.Property(o => o.PartNumber).HasColumnName("PART_NUMBER");
             entity.Property(o => o.StockPoolCode).HasColumnName("STOCK_POOL_CODE");
+            entity.Property(o => o.OriginalOrderNumber).HasColumnName("ORIGINAL_ORDER_NUMBER").HasMaxLength(8);
+            entity.Property(o => o.OriginalOrderLine).HasColumnName("ORIGINAL_ORDER_LINE").HasMaxLength(6);
+
+
+            entity.Property(o => o.OurUnitOfMeasure).HasColumnName("OUR_UNIT_OF_MEASURE").HasMaxLength(14);
+            entity.Property(o => o.OrderUnitOfMeasure).HasColumnName("ORDER_UNIT_OF_MEASURE").HasMaxLength(14);
+            entity.Property(o => o.Duty).HasColumnName("DUTY_PERCENT").HasMaxLength(8);
+
+            entity.Property(o => o.OrderPriceCurrency).HasColumnName("NEXT_ORDER_UNIT_PRICE").HasMaxLength(19);
+            entity.Property(o => o.BaseOrderPrice).HasColumnName("BASE_ORDER_UNIT_PRICE").HasMaxLength(19);
+
+
+            entity.Property(o => o.BaseOurUnitPrice).HasColumnName("BASE_OUR_UNIT_PRICE").HasMaxLength(19);
+            entity.Property(o => o.OurUnitPriceCurrency).HasColumnName("NEXT_OUR_UNIT_PRICE").HasMaxLength(19);
+
+            entity.Property(o => o.VatTotalCurrency).HasColumnName("VAT_TOTAL").HasMaxLength(18);
+            entity.Property(o => o.BaseVatTotal).HasColumnName("BASE_VAT_TOTAL").HasMaxLength(18);
+
+
+            entity.Property(o => o.DetailTotalCurrency).HasColumnName("DETAIL_TOTAL").HasMaxLength(18);
+            entity.Property(o => o.BaseDetailTotal).HasColumnName("BASE_DETAIL_TOTAL").HasMaxLength(18);
+
         }
 
         private void BuildPurchaseOrderDeliveries(ModelBuilder builder)
@@ -899,6 +932,22 @@
             e.Property(d => d.LoadMessage).HasColumnName("LOAD_MESSAGE").HasMaxLength(2000);
             e.Property(d => d.MrMessage).HasColumnName("MR_MESSAGE").HasMaxLength(2000);
             e.Property(d => d.DateTidied).HasColumnName("DATE_TIDIED");
+        }
+
+        private void BuildDocumentTypes(ModelBuilder builder)
+        {
+            var entity = builder.Entity<DocumentType>().ToTable("DOCUMENT_TYPES");
+            entity.HasKey(d => d.Name);
+            entity.Property(d => d.Name).HasColumnName("NAME").HasMaxLength(6);
+            entity.Property(d => d.Description).HasColumnName("DESCRIPTION").HasMaxLength(50);
+        }
+
+        private void BuildPurchaseOrderOrderMethods(ModelBuilder builder)
+        {
+            var entity = builder.Entity<OrderMethod>().ToTable("PL_ORDER_METHODS");
+            entity.HasKey(d => d.Name);
+            entity.Property(d => d.Name).HasColumnName("METHOD").HasMaxLength(10);
+            entity.Property(d => d.Description).HasColumnName("DESCRIPTION").HasMaxLength(50);
         }
     }
 }

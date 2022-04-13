@@ -70,7 +70,7 @@
                                                                                this.suppliersDesignation
                                                                        }
                                                                },
-                                                 DocumentType = "Suhn",
+                                                 DocumentTypeName = "Suhn",
                                                  Currency = new Currency { Code = "EUR" }
                                              },
                                          new PurchaseOrder
@@ -113,7 +113,7 @@
                                                                                this.suppliersDesignation
                                                                        }
                                                                },
-                                                 DocumentType = "Suhn",
+                                                 DocumentTypeName = "Suhn",
                                                  Currency = new Currency { Code = "EUR" }
                                              }
                                      }.AsQueryable();

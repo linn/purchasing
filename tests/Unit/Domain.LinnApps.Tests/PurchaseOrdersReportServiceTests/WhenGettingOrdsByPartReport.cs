@@ -70,7 +70,7 @@
                                                                                this.suppliersDesignation
                                                                        }
                                                                },
-                                                 DocumentType = "Suhn",
+                                                 DocumentTypeName = "Suhn",
                                                  Currency = new Currency { Code = "USD" },
                                                  Supplier = new Supplier
                                                                 {

@@ -7,6 +7,7 @@
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
 
     public class OrderMethodService : FacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource>
