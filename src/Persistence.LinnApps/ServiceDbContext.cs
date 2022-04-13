@@ -102,6 +102,10 @@
 
         public DbSet<MrpRunLog> MrpRunLogs { get; set; }
 
+        public DbSet<WhatsInInspectionViewModel> WhatsInInspectionExcludingFailedView { get; set; }
+
+        public DbSet<WhatsInInspectionViewModel> WhatsInInspectionIncludingFailedView { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -155,6 +159,8 @@
             this.BuildPurchaseOrderReqStates(builder);
             this.BuildPurchaseOrderReqStateChanges(builder);
             this.BuildMrRunLogs(builder);
+            this.BuildWhatsInInspectionExcludingFailedView(builder);
+            this.BuildWhatsInInspectionIncludingFailedView(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -898,6 +904,28 @@
             e.Property(d => d.LoadMessage).HasColumnName("LOAD_MESSAGE").HasMaxLength(2000);
             e.Property(d => d.MrMessage).HasColumnName("MR_MESSAGE").HasMaxLength(2000);
             e.Property(d => d.DateTidied).HasColumnName("DATE_TIDIED");
+        }
+
+        private void BuildWhatsInInspectionExcludingFailedView(ModelBuilder builder)
+        {
+            var e = builder.Entity<WhatsInInspectionViewModel>().ToView("WHATS_IN_INSP_EXCL_FAIL_VIEW");
+            e.HasNoKey();
+            e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER");
+            e.Property(m => m.Description).HasColumnName("DESCRIPTION");
+            e.Property(m => m.OurUnitOfMeasure).HasColumnName("OUR_UNIT_OF_MEASURE");
+            e.Property(m => m.QtyInStock).HasColumnName("QTY_IN_STOCK");
+            e.Property(m => m.QtyInInspection).HasColumnName("QTY_IN_INSPECTION");
+        }
+
+        private void BuildWhatsInInspectionIncludingFailedView(ModelBuilder builder)
+        {
+            var e = builder.Entity<WhatsInInspectionViewModel>().ToView("WHATS_IN_INSP_INC_FAIL_VIEW");
+            e.HasNoKey();
+            e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER");
+            e.Property(m => m.Description).HasColumnName("DESCRIPTION");
+            e.Property(m => m.OurUnitOfMeasure).HasColumnName("OUR_UNIT_OF_MEASURE");
+            e.Property(m => m.QtyInStock).HasColumnName("QTY_IN_STOCK");
+            e.Property(m => m.QtyInInspection).HasColumnName("QTY_IN_INSPECTION");
         }
     }
 }
