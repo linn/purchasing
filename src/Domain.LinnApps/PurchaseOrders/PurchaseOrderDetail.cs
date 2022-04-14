@@ -66,10 +66,11 @@
 
         public int DeliveryConfirmedById { get; set; }
 
-        public CancelledPODetail CancelledDetail { get; set; }
+        //todo map and uncomment these
+        //public CancelledPODetail CancelledDetail { get; set; }
 
         public string InternalComments { get; set; }
 
-        public MrOrder MrOrder { get; set; }
+        //public MrOrder MrOrder { get; set; }
     }
 }

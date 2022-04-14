@@ -62,12 +62,6 @@
 
         public int? AuthorisedById { get; set; }
 
-        public Employee CancelledBy { get; set; }
-
-        public int? CancelledById { get; set; }
-
-        public string ReasonCancelled { get; set; }
-
         public string SentByMethod { get; set; }
 
         public string FilCancelled { get; set; }

@@ -511,10 +511,9 @@
             entity.Property(o => o.Remarks).HasColumnName("REMARKS").HasMaxLength(500);
             entity.Property(o => o.AuthorisedById).HasColumnName("AUTHORISED_BY").HasMaxLength(6);
             entity.HasOne(o => o.AuthorisedBy).WithMany().HasForeignKey(o => o.AuthorisedById);
-            entity.Property(o => o.FilCancelled).HasColumnName("SENT_BY_METHOD").HasMaxLength(1);
+            entity.Property(o => o.FilCancelled).HasColumnName("FIL_CANCELLED").HasMaxLength(1);
             entity.Property(o => o.DateFilCancelled).HasColumnName("DATE_FIL_CANCELLED");
             entity.Property(o => o.PeriodFilCancelled).HasColumnName("PERIOD_FIL_CANCELLED");
-
         }
 
         private void BuildPurchaseOrderDetails(ModelBuilder builder)
@@ -551,7 +550,6 @@
             entity.HasOne(o => o.DeliveryConfirmedBy).WithMany().HasForeignKey(o => o.DeliveryConfirmedById);
             entity.Property(o => o.InternalComments).HasColumnName("INTERNAL_COMMENTS").HasMaxLength(300);
         }
-
 
         private void BuildPurchaseOrderDeliveries(ModelBuilder builder)
         {
