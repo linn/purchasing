@@ -179,3 +179,8 @@ export const sendPurchaseOrderReqAuthEmailActionTypes = makeProcessActionTypes(
 export const sendPurchaseOrderReqFinanceEmailActionTypes = makeProcessActionTypes(
     itemTypes.sendPurchaseOrderReqFinanceEmail.actionType
 );
+
+export const prefSupReceiptsReportActionTypes = makeReportActionTypes(
+    reportTypes.prefSupReceiptsReport.actionType,
+    false
+);
