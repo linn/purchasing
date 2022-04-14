@@ -38,7 +38,7 @@ import OverbooksSearch from './OverbooksSearch';
 import AllowPurchaseOrderOverbook from './AllowPurchaseOrderOverbook';
 import WhatsDueInReport from './reports/WhatsDueInReport';
 import OutstandingPoReqsReport from './reports/OutstandingPoReqsReport';
-import PrefSupReceiptsReport from './reports/PrefSupReceiptsReport'
+import PrefSupReceiptsReport from './reports/PrefSupReceiptsReport';
 import POReqPrintout from './POReqs/POReqPrintout';
 
 const Root = ({ store }) => (
@@ -230,7 +230,7 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/reports/pref-sup-receipts"
                                     component={PrefSupReceiptsReport}
-                                />                                
+                                />
                                 <Route component={NotFoundPage} />
                             </Switch>
                         </div>
