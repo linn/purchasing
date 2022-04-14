@@ -102,6 +102,8 @@
 
         public DbSet<MrpRunLog> MrpRunLogs { get; set; }
 
+        public DbSet<ReceiptPrefSupDiff> ReceiptPrefsupDiffs { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -155,6 +157,7 @@
             this.BuildPurchaseOrderReqStates(builder);
             this.BuildPurchaseOrderReqStateChanges(builder);
             this.BuildMrRunLogs(builder);
+            this.BuildPrefsupVsReceiptsView(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -898,6 +901,29 @@
             e.Property(d => d.LoadMessage).HasColumnName("LOAD_MESSAGE").HasMaxLength(2000);
             e.Property(d => d.MrMessage).HasColumnName("MR_MESSAGE").HasMaxLength(2000);
             e.Property(d => d.DateTidied).HasColumnName("DATE_TIDIED");
+        }
+
+        private void BuildPrefsupVsReceiptsView(ModelBuilder builder)
+        {
+            var entity = builder.Entity<ReceiptPrefSupDiff>().ToTable("PREFSUP_VS_RECEIPTS_VIEW");
+            entity.HasKey(m => m.PlReceiptId);
+            entity.Property(e => e.PlReceiptId).HasColumnName("PLREC_ID");
+            entity.Property(e => e.CurrencyUnitPrice).HasColumnName("CURRENCY_UNIT_PRICE");
+            entity.Property(e => e.Qty).HasColumnName("QTY");
+            entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
+            entity.Property(e => e.Difference).HasColumnName("DIFF");
+            entity.Property(e => e.PrefsupCurrencyUnitPrice).HasColumnName("PREF_SUP_CURRENCY_UNIT_PRICE");
+            entity.Property(e => e.PrefsupBaseUnitPrice).HasColumnName("PS_BASE_UNIT_PRICE");
+            entity.Property(e => e.ReceiptBaseUnitPrice).HasColumnName("RECEIPT_BASE_UNIT_PRICE");
+            entity.Property(e => e.DateBooked).HasColumnName("DATE_BOOKED");
+            entity.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID");
+            entity.Property(e => e.SupplierName).HasColumnName("SUPPLIER_NAME").HasMaxLength(50);
+            entity.Property(e => e.PreferredSupplier).HasColumnName("PREFERRED_SUPPLIER").HasMaxLength(1);
+            entity.Property(e => e.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(e => e.OrderLine).HasColumnName("ORDER_LINE");
+            entity.Property(e => e.OrderCurrency).HasColumnName("ORDER_CURRENCY").HasMaxLength(4);
+            entity.Property(e => e.PrefsupCurrency).HasColumnName("ORDER_CURRENCY").HasMaxLength(4);
+            entity.Property(e => e.MPVReason).HasColumnName("MPV_REASON").HasMaxLength(20);
         }
     }
 }

@@ -53,3 +53,9 @@ export const outstandingPoReqsReport = new ItemType(
     'OUTSTANDING_PO_REQS_REPORT',
     '/purchasing/reports/outstanding-po-reqs/report'
 );
+
+export const prefSupReceiptsReport = new ItemType(
+    'prefSupReceiptsReport',
+    'PREF_SUP_RECEIPTS_REPORT',
+    '/purchasing/reports/pref-sup-receipts/report'
+);
