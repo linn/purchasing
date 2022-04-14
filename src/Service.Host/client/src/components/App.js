@@ -46,6 +46,9 @@ function App() {
                 >
                     <Typography color="primary">Unacknowledged orders report</Typography>
                 </ListItem>
+                <ListItem component={Link} to="/purchasing/reports/pref-sup-receipts" button>
+                    <Typography color="primary">Receipts vs Pref Sup Report</Typography>
+                </ListItem>
             </List>
         </Page>
     );
