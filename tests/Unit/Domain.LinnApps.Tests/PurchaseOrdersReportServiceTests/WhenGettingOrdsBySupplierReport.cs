@@ -56,7 +56,7 @@
                                                                                                QtyNetReceived = 11,
                                                                                                DeliverySeq = 12,
                                                                                                OurDeliveryQty = 13,
-                                                                                               NetTotal = 2m,
+                                                                                               NetTotalCurrency = 2m,
                                                                                                DateRequested =
                                                                                                    new DateTime(
                                                                                                        2021,

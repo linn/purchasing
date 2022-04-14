@@ -46,11 +46,11 @@
         //from mini order trigger:
         //next_our_unit_price = :new.our_price,
         //next_order_unit_price = :new.order_price,
-        public decimal? OrderPriceCurrency { get; set; } //our price
+        public decimal? OrderUnitPriceCurrency { get; set; } //order  price
 
         public decimal? BaseOurUnitPrice { get; set; }
 
-        public decimal? BaseOrderPrice { get; set; }
+        public decimal? BaseOrderUnitPrice { get; set; }
 
         public decimal? VatTotalCurrency { get; set; }
 
@@ -59,6 +59,18 @@
         public decimal? DetailTotalCurrency { get; set; }
 
         public decimal? BaseDetailTotal { get; set; }
+
+        public string DeliveryInstructions { get; set; }
+
+        public Employee DeliveryConfirmedBy { get; set; }
+
+        public int DeliveryConfirmedById { get; set; }
+
+        public CancelledPODetail CancelledDetail { get; set; }
+
+        public string InternalComments { get; set; }
+
+        public MrOrder MrOrder { get; set; }
 
     }
 }

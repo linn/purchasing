@@ -2,7 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
-    
+
+    using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     public class PurchaseOrder
@@ -44,6 +45,42 @@
 
         public string IssuePartsToSupplier { get; set; }
 
+        public int DeliveryAddressId { get; set; }
+
+        public LinnDeliveryAddress DeliveryAddress { get; set; }
+
+        public Employee RequestedBy { get; set; }
+
+        public int RequestedById { get; set; }
+
+        public Employee EnteredBy { get; set; }
+
+        public int EnteredById { get; set; }
+
+        public string QuotationRef { get; set; }
+
+        public Employee AuthorisedBy { get; set; }
+
+        public int? AuthorisedById { get; set; }
+
+        public Employee CancelledBy { get; set; }
+
+        public int? CancelledById { get; set; }
+
+        public string ReasonCancelled { get; set; }
+
+        public string SentByMethod { get; set; }
+
+        public string FilCancelled { get; set; }
+
+        public string Remarks { get; set; }
+
+        public DateTime? DateFilCancelled { get; set; }
+
+        public int? PeriodFilCancelled { get; set; }
+
+
+      
 
     }
 }
