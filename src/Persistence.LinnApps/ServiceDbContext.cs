@@ -162,6 +162,7 @@
             this.BuildDocumentTypes(builder);
             this.BuildPurchaseOrderOrderMethods(builder);
             this.BuildPrefsupVsReceiptsView(builder);
+            this.BuildMrOrders(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
