@@ -10,7 +10,6 @@
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
-    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.SearchResources;
 

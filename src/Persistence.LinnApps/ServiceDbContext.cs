@@ -570,8 +570,16 @@
             entity.Property(o => o.NetTotalCurrency).HasColumnName("NET_TOTAL").HasMaxLength(18);
             entity.Property(d => d.QuantityOutstanding).HasColumnName("QTY_OUTSTANDING");
             entity.Property(d => d.CallOffDate).HasColumnName("CALL_OFF_DATE");
-            entity.Property(d => d.BaseOurUnitPrice).HasColumnName("BASE_OUR_UNIT_PRICE");
             entity.Property(d => d.SupplierConfirmationComment).HasColumnName("SUPPLIER_CONFIRMATION_COMMENT").HasMaxLength(2000);
+            entity.Property(o => o.BaseOurUnitPrice).HasColumnName("BASE_OUR_UNIT_PRICE").HasMaxLength(19);
+            entity.Property(o => o.BaseOrderUnitPrice).HasColumnName("BASE_ORDER_UNIT_PRICE").HasMaxLength(19);
+            entity.Property(o => o.BaseNetTotal).HasColumnName("BASE_NET_TOTAL").HasMaxLength(18);
+            entity.Property(o => o.BaseVatTotal).HasColumnName("BASE_VAT_TOTAL").HasMaxLength(18);
+            entity.Property(o => o.BaseDeliveryTotal).HasColumnName("BASE_DELIVERY_TOTAL").HasMaxLength(18);
+            entity.Property(o => o.OurUnitPriceCurrency).HasColumnName("OUR_UNIT_PRICE").HasMaxLength(19);
+            entity.Property(o => o.OrderUnitPriceCurrency).HasColumnName("ORDER_UNIT_PRICE").HasMaxLength(19);
+            entity.Property(o => o.VatTotalCurrency).HasColumnName("VAT_TOTAL").HasMaxLength(18);
+            entity.Property(o => o.DeliveryTotalCurrency).HasColumnName("DELIVERY_TOTAL").HasMaxLength(18);
         }
 
         private void BuildOverbookAllowedBy(ModelBuilder builder)

@@ -8,7 +8,6 @@
     using Linn.Common.Resources;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
-    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
 
     public class PurchaseOrderReqResourceBuilder : IBuilder<PurchaseOrderReq>

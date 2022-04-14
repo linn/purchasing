@@ -8,7 +8,6 @@
         //which in turn has the department and nominal. Will need to pull it all in
         //with .includes and show it on front end!
 
-
         //PLORP_ID NOT NULL NUMBER(10)
         //PLORL_ORDER_NUMBER NOT NULL NUMBER
         //PLORL_ORDER_LINE NOT NULL NUMBER(6)
@@ -21,4 +20,3 @@
         //NOTES VARCHAR2(200)
     }
 }
- 

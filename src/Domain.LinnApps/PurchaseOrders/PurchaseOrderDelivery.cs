@@ -35,11 +35,10 @@
         public decimal? BaseOurUnitPrice { get; set; }
 
         public string SupplierConfirmationComment { get; set; }
-        
+
         public decimal? OurUnitPriceCurrency { get; set; } //our price
 
         public decimal? OrderUnitPriceCurrency { get; set; } //order_price 
-
 
         public decimal? BaseOrderUnitPrice { get; set; }
 
