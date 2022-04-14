@@ -115,9 +115,9 @@
         {
             var purchaseOrders = this.purchaseOrderRepository.FilterBy(
                 x => x.SupplierId == supplierId && from <= x.OrderDate && x.OrderDate < to
-                     && (includeReturns || x.DocumentType != "RO")
-                     && (includeCredits == "Y" || (includeCredits == "N" && x.DocumentType != "CO")
-                                               || (includeCredits == "O" && x.DocumentType == "CO")));
+                     && (includeReturns || x.DocumentTypeName != "RO")
+                     && (includeCredits == "Y" || (includeCredits == "N" && x.DocumentTypeName != "CO")
+                                               || (includeCredits == "O" && x.DocumentTypeName == "CO")));
 
             var supplier = this.supplierRepository.FindById(supplierId);
 

@@ -22,6 +22,7 @@
         public string DocumentType { get; set; }
 
         public int SupplierId { get; set; }
+        //todo add supplier object, also containing phone number and email address for supplier contact for orders
 
         public decimal? OverbookQty { get; set; }
 

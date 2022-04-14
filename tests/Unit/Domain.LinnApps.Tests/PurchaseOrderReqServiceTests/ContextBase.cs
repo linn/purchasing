@@ -5,6 +5,7 @@
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Keys;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
     using NSubstitute;

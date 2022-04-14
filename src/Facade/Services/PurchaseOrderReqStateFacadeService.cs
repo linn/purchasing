@@ -6,7 +6,7 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
-    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
     using Linn.Purchasing.Resources;
 
     public class PurchaseOrderReqStateFacadeService : FacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource>

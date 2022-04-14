@@ -37,11 +37,11 @@
                      && d.Cancelled == "N" 
                      && d.QuantityOutstanding > 0
                      && d.PurchaseOrderDetail.Part.StockControlled == "Y"
-                     && d.PurchaseOrderDetail.PurchaseOrder.OrderMethod != "CALL OFF"
+                     && d.PurchaseOrderDetail.PurchaseOrder.OrderMethodName != "CALL OFF"
                      && d.PurchaseOrderDetail.PurchaseOrder.Cancelled == "N"
                      && d.PurchaseOrderDetail.Cancelled == "N"
                      & new string[] { "RO", "PO" }.Contains(
-                         d.PurchaseOrderDetail.PurchaseOrder.DocumentType));
+                         d.PurchaseOrderDetail.PurchaseOrder.DocumentTypeName));
 
             if (!string.IsNullOrEmpty(vendorManager))
             {
@@ -55,7 +55,7 @@
                                 AdvisedDate = d.DateAdvised,
                                 CallOffDate = d.CallOffDate,
                                 DeliverySequence = d.DeliverySeq,
-                                DocumentType = d.PurchaseOrderDetail.PurchaseOrder.DocumentType,
+                                DocumentType = d.PurchaseOrderDetail.PurchaseOrder.DocumentTypeName,
                                 ExpectedDate = d.DateAdvised ?? d.DateRequested,
                                 OrderLine = d.OrderLine,
                                 OrderNumber = d.OrderNumber,

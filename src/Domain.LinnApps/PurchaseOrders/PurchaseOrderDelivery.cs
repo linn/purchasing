@@ -12,7 +12,9 @@
 
         public int DeliverySeq { get; set; }
 
-        public decimal? NetTotal { get; set; }
+        public decimal? NetTotalCurrency { get; set; }
+
+        public decimal BaseNetTotal { get; set; }
 
         public int? OrderDeliveryQty { get; set; }
 
@@ -31,5 +33,21 @@
         public DateTime? CallOffDate { get; set; }
 
         public decimal? BaseOurUnitPrice { get; set; }
+
+        public string SupplierConfirmationComment { get; set; }
+
+        public decimal? OurUnitPriceCurrency { get; set; } //our price
+
+        public decimal? OrderUnitPriceCurrency { get; set; } //order_price 
+
+        public decimal? BaseOrderUnitPrice { get; set; }
+
+        public decimal? VatTotalCurrency { get; set; }
+
+        public decimal? BaseVatTotal { get; set; }
+
+        public decimal? DeliveryTotalCurrency { get; set; }
+
+        public decimal? BaseDeliveryTotal { get; set; }
     }
 }

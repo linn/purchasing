@@ -78,7 +78,7 @@
             {
                 OrderNumber = resource.OrderNumber,
                 Cancelled = resource.Cancelled,
-                DocumentType = resource.DocumentType,
+                DocumentTypeName = resource.DocumentType,
                 OrderDate = resource.DateOfOrder,
                 Overbook = resource.Overbook,
                 OverbookQty = resource.OverbookQty,
