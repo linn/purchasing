@@ -91,7 +91,9 @@
                     r => new EntityFrameworkRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>(r.GetService<ServiceDbContext>()?.PurchaseOrderReqStateChanges))
                 .AddTransient<IRepository<MrpRunLog, int>, EntityFrameworkRepository<MrpRunLog, int>>(
                     r => new EntityFrameworkRepository<MrpRunLog, int>(r.GetService<ServiceDbContext>()?.MrpRunLogs))
-                .AddTransient<IQueryRepository<ReceiptPrefSupDiff>, ReceiptPrefSupDiffRepository>();
+                .AddTransient<IQueryRepository<ReceiptPrefSupDiff>, ReceiptPrefSupDiffRepository>()
+                .AddTransient<IRepository<CancelledOrderDetail, int>, EntityFrameworkRepository<CancelledOrderDetail, int>>(
+                    r => new EntityFrameworkRepository<CancelledOrderDetail, int>(r.GetService<ServiceDbContext>()?.CancelledPODetails));
         }
     }
 }

@@ -14,8 +14,6 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Logging;
 
-    using OrderMethod = Linn.Purchasing.Domain.LinnApps.PurchaseOrders.OrderMethod;
-
     public class ServiceDbContext : DbContext
     {
         public static readonly LoggerFactory MyLoggerFactory =
@@ -107,6 +105,8 @@
 
         public DbSet<ReceiptPrefSupDiff> ReceiptPrefsupDiffs { get; set; }
 
+        public DbSet<CancelledOrderDetail> CancelledPODetails { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -163,6 +163,7 @@
             this.BuildPurchaseOrderOrderMethods(builder);
             this.BuildPrefsupVsReceiptsView(builder);
             this.BuildMrOrders(builder);
+            this.BuildCancelledPODetails(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -530,7 +531,7 @@
             entity.Property(o => o.RohsCompliant).HasColumnName("ROHS_COMPLIANT");
             entity.Property(o => o.OurQty).HasColumnName("OUR_QTY");
             entity.Property(o => o.SuppliersDesignation).HasColumnName("SUPPLIERS_DESIGNATION").HasMaxLength(2000);
-            entity.HasMany(d => d.PurchaseDeliveries).WithOne().HasForeignKey(o => new { o.OrderNumber, o.OrderLine });
+            entity.HasMany(d => d.PurchaseDeliveries).WithOne().HasForeignKey(d => new { d.OrderNumber, d.OrderLine });
             entity.Property(o => o.BaseNetTotal).HasColumnName("BASE_NET_TOTAL").HasMaxLength(18);
             entity.Property(o => o.NetTotalCurrency).HasColumnName("NET_TOTAL").HasMaxLength(18);
             entity.HasOne(o => o.Part).WithMany(p => p.PurchaseOrderDetails).HasForeignKey(o => o.PartNumber);
@@ -553,6 +554,8 @@
             entity.Property(o => o.DeliveryConfirmedById).HasColumnName("DELIVERY_CONFIRMED_BY").HasMaxLength(6);
             entity.HasOne(o => o.DeliveryConfirmedBy).WithMany().HasForeignKey(o => o.DeliveryConfirmedById);
             entity.Property(o => o.InternalComments).HasColumnName("INTERNAL_COMMENTS").HasMaxLength(300);
+            entity.HasMany(d => d.CancelledDetails).WithOne().HasForeignKey(cd => new { cd.OrderNumber, cd.LineNumber });
+            entity.HasMany(d => d.MrOrders).WithOne().HasForeignKey(mr => new { mr.OrderNumber, mr.LineNumber });
         }
 
         private void BuildPurchaseOrderDeliveries(ModelBuilder builder)
@@ -996,6 +999,32 @@
             entity.Property(e => e.OrderCurrency).HasColumnName("ORDER_CURRENCY").HasMaxLength(4);
             entity.Property(e => e.PrefsupCurrency).HasColumnName("ORDER_CURRENCY").HasMaxLength(4);
             entity.Property(e => e.MPVReason).HasColumnName("MPV_REASON").HasMaxLength(20);
+        }
+
+        private void BuildCancelledPODetails(ModelBuilder builder)
+        {
+            var entity = builder.Entity<CancelledOrderDetail>().ToTable("PL_CANCELLED_DETAILS");
+            entity.HasKey(e => e.Id);
+            entity.Property(d => d.Id).HasColumnName("PLOC_ID").HasMaxLength(6);
+            entity.Property(d => d.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(d => d.LineNumber).HasColumnName("ORDER_LINE").HasMaxLength(6);
+            entity.Property(d => d.DeliverySequence).HasColumnName("DELIVERY_SEQ").HasMaxLength(6);
+            entity.Property(d => d.DateCancelled).HasColumnName("DATE_ORDER_CANCELLED");
+            entity.Property(d => d.DateFilCancelled).HasColumnName("DATE_FIL_CANCELLED");
+            entity.Property(e => e.CancelledById).HasColumnName("ORDER_CANCELLED_BY").HasMaxLength(6);
+            entity.HasOne(e => e.CancelledBy).WithMany().HasForeignKey(x => x.CancelledById);
+            entity.Property(e => e.FilCancelledById).HasColumnName("FIL_CANCELLED_BY").HasMaxLength(6);
+            entity.HasOne(e => e.FilCancelledBy).WithMany().HasForeignKey(x => x.FilCancelledById);
+            entity.Property(d => d.ReasonCancelled).HasColumnName("REASON_CANCELLED").HasMaxLength(200);
+            entity.Property(d => d.PeriodCancelled).HasColumnName("PERIOD_CANCELLED");
+            entity.Property(d => d.PeriodFilCancelled).HasColumnName("PERIOD_CANCELLED");
+            entity.Property(e => e.ValueCancelled).HasColumnName("VALUE_CANCELLED").HasMaxLength(16);
+            entity.Property(e => e.BaseValueFilCancelled).HasColumnName("BASE_VALUE_FIL_CANCELLED").HasMaxLength(16);
+            entity.Property(e => e.ValueFilCancelled).HasColumnName("VALUE_FIL_CANCELLED").HasMaxLength(16);
+            entity.Property(e => e.DateUncancelled).HasColumnName("DATE_UNCANCELLED");
+            entity.Property(e => e.DateFilUncancelled).HasColumnName("DATE_UNFIL_CANCELLED");
+            entity.Property(e => e.DatePreviouslyCancelled).HasColumnName("DATE_PREVIOUSLY_CANCELLED");
+            entity.Property(e => e.DatePreviouslyFilCancelled).HasColumnName("DATE_PREVIOUSLY_FIL_CANCELLED");
         }
     }
 }
