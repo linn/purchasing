@@ -14,7 +14,7 @@
             OrdersBySupplierSearchResource resource,
             IEnumerable<string> privileges);
 
-        Stream GetOrdersBySupplierExport(
+        IEnumerable<IEnumerable<string>> GetOrdersBySupplierExport(
             OrdersBySupplierSearchResource resource,
             IEnumerable<string> privileges);
 
@@ -22,7 +22,7 @@
             OrdersByPartSearchResource resource,
             IEnumerable<string> privileges);
 
-        Stream GetOrdersByPartExport(
+        IEnumerable<IEnumerable<string>> GetOrdersByPartExport(
             OrdersByPartSearchResource resource,
             IEnumerable<string> privileges);
 
@@ -34,7 +34,7 @@
             UnacknowledgedOrdersRequestResource resource,
             IEnumerable<string> getPrivileges);
 
-        Stream GetUnacknowledgedOrdersReportExport(
+        IEnumerable<IEnumerable<string>> GetUnacknowledgedOrdersReportExport(
             UnacknowledgedOrdersRequestResource resource,
             IEnumerable<string> getPrivileges);
     }

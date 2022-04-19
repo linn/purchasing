@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
 
+    using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     public class PurchaseOrder
@@ -11,7 +12,9 @@
 
         public IEnumerable<PurchaseOrderDetail> Details { get; set; }
 
-        public string DocumentType { get; set; }
+        public string DocumentTypeName { get; set; }
+
+        public DocumentType DocumentType { get; set; }
 
         public DateTime OrderDate { get; set; }
 
@@ -27,8 +30,46 @@
 
         public Currency Currency { get; set; }
 
+        public string CurrencyCode { get; set; }
+
+        //todo make sure this is added in domain from supplier contact when creating
+        //or could show as field on front end and pass back
         public string OrderContactName { get; set; }
 
-        public string OrderMethod { get; set; }
+        public string OrderMethodName { get; set; }
+
+        public OrderMethod OrderMethod { get; set; }
+
+        public decimal? ExchangeRate { get; set; }
+
+        public string IssuePartsToSupplier { get; set; }
+
+        public int DeliveryAddressId { get; set; }
+
+        public LinnDeliveryAddress DeliveryAddress { get; set; }
+
+        public Employee RequestedBy { get; set; }
+
+        public int RequestedById { get; set; }
+
+        public Employee EnteredBy { get; set; }
+
+        public int EnteredById { get; set; }
+
+        public string QuotationRef { get; set; }
+
+        public Employee AuthorisedBy { get; set; }
+
+        public int? AuthorisedById { get; set; }
+
+        public string SentByMethod { get; set; }
+
+        public string FilCancelled { get; set; }
+
+        public string Remarks { get; set; }
+
+        public DateTime? DateFilCancelled { get; set; }
+
+        public int? PeriodFilCancelled { get; set; }
     }
 }

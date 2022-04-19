@@ -54,7 +54,7 @@
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
-        public Stream GetOrdersByPartExport(
+        public IEnumerable<IEnumerable<string>> GetOrdersByPartExport(
             OrdersByPartSearchResource resource,
             IEnumerable<string> privileges)
         {
@@ -74,13 +74,7 @@
                 resource.PartNumber,
                 cancelled);
 
-            var returnResource = results.ConvertToCsvList();
-
-            MemoryStream stream = new MemoryStream();
-            var csvStreamWriter = new CsvStreamWriter(stream);
-            csvStreamWriter.WriteModel(returnResource);
-
-            return stream;
+            return results.ConvertToCsvList();
         }
 
         public IResult<ReportReturnResource> GetSuppliersWithUnacknowledgedOrdersReport(
@@ -108,17 +102,11 @@
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
-        public Stream GetUnacknowledgedOrdersReportExport(UnacknowledgedOrdersRequestResource resource, IEnumerable<string> privileges)
+        public IEnumerable<IEnumerable<string>> GetUnacknowledgedOrdersReportExport(UnacknowledgedOrdersRequestResource resource, IEnumerable<string> privileges)
         {
             var results = this.domainService.GetUnacknowledgedOrders(resource.SupplierId, resource.SupplierGroupId);
 
-            var returnResource = results.ConvertToCsvList();
-
-            var stream = new MemoryStream();
-            var csvStreamWriter = new CsvStreamWriter(stream);
-            csvStreamWriter.WriteModel(returnResource);
-
-            return stream;
+            return results.ConvertToCsvList();
         }
 
         public IResult<ReportReturnResource> GetOrdersBySupplierReport(
@@ -153,7 +141,7 @@
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
-        public Stream GetOrdersBySupplierExport(
+        public IEnumerable<IEnumerable<string>> GetOrdersBySupplierExport(
             OrdersBySupplierSearchResource resource,
             IEnumerable<string> privileges)
         {
@@ -179,13 +167,7 @@
                 resource.Credits,
                 resource.StockControlled);
 
-            var returnResource = results.ConvertToCsvList();
-
-            MemoryStream stream = new MemoryStream();
-            var csvStreamWriter = new CsvStreamWriter(stream);
-            csvStreamWriter.WriteModel(returnResource);
-
-            return stream;
+            return results.ConvertToCsvList();
         }
 
         private ReportReturnResource BuildResource(

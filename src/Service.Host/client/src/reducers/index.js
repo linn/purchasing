@@ -61,6 +61,7 @@ import outstandingPoReqsReport from './outstandingPoReqsReport';
 import sendPurchaseOrderReqEmail from './sendPurchaseOrderReqEmail';
 import sendPurchaseOrderReqAuthEmail from './sendPurchaseOrderReqAuthEmail';
 import sendPurchaseOrderReqFinanceEmail from './sendPurchaseOrderReqFinanceEmail';
+import prefSupReceiptsReport from './prefSupReceiptsReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -96,6 +97,7 @@ const rootReducer = history =>
         plCreditDebitNotes,
         partsReceivedReport,
         preferredSupplierChange,
+        prefSupReceiptsReport,
         priceChangeReasons,
         purchaseOrder,
         purchaseOrderReq,

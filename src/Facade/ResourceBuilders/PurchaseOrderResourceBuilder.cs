@@ -35,7 +35,7 @@
                        {
                            OrderNumber = entity.OrderNumber,
                            Cancelled = entity.Cancelled,
-                           DocumentType = entity.DocumentType,
+                           DocumentType = entity.DocumentTypeName,
                            DateOfOrder = entity.OrderDate,
                            Overbook = entity.Overbook,
                            OverbookQty = entity.OverbookQty,

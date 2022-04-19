@@ -57,7 +57,7 @@
                                                                                                QtyNetReceived = 11,
                                                                                                DeliverySeq = 12,
                                                                                                OurDeliveryQty = 13,
-                                                                                               NetTotal = 2m,
+                                                                                               NetTotalCurrency = 2m,
                                                                                                DateRequested =
                                                                                                    new DateTime(
                                                                                                        2021,
@@ -70,7 +70,7 @@
                                                                                this.suppliersDesignation
                                                                        }
                                                                },
-                                                 DocumentType = "Suhn",
+                                                 DocumentTypeName = "Suhn",
                                                  Currency = new Currency { Code = "EUR" }
                                              },
                                          new PurchaseOrder
@@ -96,7 +96,7 @@
                                                                                                QtyNetReceived = 31,
                                                                                                DeliverySeq = 32,
                                                                                                OurDeliveryQty = 33,
-                                                                                               NetTotal = 32m,
+                                                                                               NetTotalCurrency = 32m,
                                                                                                DateRequested =
                                                                                                    new DateTime(
                                                                                                        2021,
@@ -113,7 +113,7 @@
                                                                                this.suppliersDesignation
                                                                        }
                                                                },
-                                                 DocumentType = "Suhn",
+                                                 DocumentTypeName = "Suhn",
                                                  Currency = new Currency { Code = "EUR" }
                                              }
                                      }.AsQueryable();

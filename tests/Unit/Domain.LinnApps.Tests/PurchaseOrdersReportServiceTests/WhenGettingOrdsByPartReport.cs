@@ -59,7 +59,7 @@
                                                                                                QtyNetReceived = 11,
                                                                                                DeliverySeq = 12,
                                                                                                OurDeliveryQty = 13,
-                                                                                               NetTotal = 2m,
+                                                                                               NetTotalCurrency = 2m,
                                                                                                DateRequested =
                                                                                                    11.November(2021),
                                                                                                DateAdvised =
@@ -70,7 +70,7 @@
                                                                                this.suppliersDesignation
                                                                        }
                                                                },
-                                                 DocumentType = "Suhn",
+                                                 DocumentTypeName = "Suhn",
                                                  Currency = new Currency { Code = "USD" },
                                                  Supplier = new Supplier
                                                                 {

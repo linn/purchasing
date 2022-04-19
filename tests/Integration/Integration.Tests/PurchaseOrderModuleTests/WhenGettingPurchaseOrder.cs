@@ -28,7 +28,7 @@
                            {
                                OrderNumber = 600179,
                                Cancelled = string.Empty,
-                               DocumentType = string.Empty,
+                               DocumentTypeName = string.Empty,
                                OrderDate = 10.January(2021),
                                Overbook = string.Empty,
                                OverbookQty = 1,

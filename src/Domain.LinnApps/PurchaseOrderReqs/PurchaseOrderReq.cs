@@ -1,7 +1,8 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
+﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs
 {
     using System;
 
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     public class PurchaseOrderReq
