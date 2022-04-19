@@ -994,7 +994,6 @@
             e.Property(m => m.Cancelled).HasColumnName("CANCELLED");
             e.Property(m => m.QtyPassed).HasColumnName("PASSED");
             e.Property(m => m.QtyReceived).HasColumnName("RECEIVED");
-
         }
 
         private void BuildDocumentTypes(ModelBuilder builder)
