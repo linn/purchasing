@@ -24,7 +24,6 @@
         private PurchaseOrder model;
 
         [SetUp]
-
         public void SetUp()
         {
             this.model = new PurchaseOrder

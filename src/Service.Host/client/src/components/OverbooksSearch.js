@@ -12,14 +12,13 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import EditOffIcon from '@mui/icons-material/EditOff';
 import Tooltip from '@mui/material/Tooltip';
 import purchaseOrdersActions from '../actions/purchaseOrdersActions';
-import purchaseOrdersApplicationStateActions from '../actions/purchaseOrdersApplicationStateActions';
 import history from '../history';
 import config from '../config';
 
 function OverbooksSearch() {
     const dispatch = useDispatch();
     useEffect(() => dispatch(purchaseOrdersActions.fetch()), [dispatch]);
-    useEffect(() => dispatch(purchaseOrdersApplicationStateActions.fetchState()), [dispatch]);
+    useEffect(() => dispatch(purchaseOrdersActions.fetchState()), [dispatch]);
 
     const searchOverbookItems = searchTerm => dispatch(purchaseOrdersActions.search(searchTerm));
     const searchResults = useSelector(state =>
