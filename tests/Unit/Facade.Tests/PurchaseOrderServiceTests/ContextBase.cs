@@ -1,8 +1,10 @@
 ﻿namespace Linn.Purchasing.Facade.Tests.PurchaseOrderServiceTests
 {
+    using Linn.Common.Authorisation;
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
     using NSubstitute;
 
@@ -22,6 +24,7 @@
 
         protected ITransactionManager TransactionManager { get; private set; }
 
+        protected IAuthorisationService AuthService { get; private set; }
 
         [SetUp]
         public void SetUpContext()
@@ -30,7 +33,8 @@
             this.OverbookAllowedByLogRepository = Substitute.For<IRepository<OverbookAllowedByLog, int>>();
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.DomainService = Substitute.For<IPurchaseOrderService>();
-            this.Builder = Substitute.For<IBuilder<PurchaseOrder>>();
+            this.AuthService = Substitute.For<IAuthorisationService>();
+            this.Builder = new PurchaseOrderResourceBuilder(this.AuthService);
             this.Sut = new PurchaseOrderFacadeService(this.PurchaseOrderRepository, this.TransactionManager, this.Builder, this.DomainService, this.OverbookAllowedByLogRepository);
         }
     }
