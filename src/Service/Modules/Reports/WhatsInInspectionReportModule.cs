@@ -3,6 +3,7 @@
     using System.Threading.Tasks;
 
     using Carter;
+    using Carter.Request;
     using Carter.Response;
 
     using Linn.Purchasing.Facade.Services;
@@ -28,7 +29,12 @@
 
         private async Task GetReport(HttpRequest req, HttpResponse res)
         {
-            var results = this.facadeService.GetReport();
+            var results = this.facadeService.GetReport(
+                req.Query.As<bool>("includePartsWithNoOrderNumber"),
+                req.Query.As<bool>("showStockLocations"),
+                req.Query.As<bool>("includeFailedStock"),
+                req.Query.As<bool>("includeFinishedGoods"),
+                req.Query.As<bool>("showBackOrdered"));
 
             await res.Negotiate(results);
         }

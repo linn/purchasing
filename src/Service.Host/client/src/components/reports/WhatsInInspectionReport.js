@@ -169,18 +169,7 @@ function WhatsInInspectionReport() {
                                                                 {row.qtyInInspection}
                                                             </TableCell>
                                                         </TableRow>
-                                                        <TableRow
-                                                            key={row.partNumber}
-                                                            // align="right"
-                                                            // sx={{
-                                                            //     '&:last-child td, &:last-child th':
-                                                            //         {
-                                                            //             border: 0
-                                                            //         }
-                                                            // }}
-                                                        >
-                                                            <TableCell align="right" colSpan={2} />
-
+                                                        <TableRow key={row.partNumber}>
                                                             <TableCell align="right" colSpan={3}>
                                                                 <ReportTable
                                                                     reportData={

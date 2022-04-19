@@ -73,6 +73,9 @@
                         new AxisDetailsModel("OrderNumber", "Order",  GridDisplayType.TextValue),
                         new AxisDetailsModel("OrderType", "Type",  GridDisplayType.TextValue),
                         new AxisDetailsModel("Qty", "Qty Ordered", GridDisplayType.Value) { DecimalPlaces = 2 },
+                        new AxisDetailsModel("Received", "Qty Received", GridDisplayType.Value) { DecimalPlaces = 2 },
+
+                        new AxisDetailsModel("Passed", "Qty Passed", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new AxisDetailsModel("Cancelled", "Cancelled", GridDisplayType.TextValue)
                     });
             var values = new List<CalculationValueModel>();
@@ -100,6 +103,20 @@
                             RowId = currentRowId,
                             ColumnId = "Qty",
                             Value = model.Qty
+                        });
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
+                            ColumnId = "Received",
+                            Value = model.QtyReceived
+                        });
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
+                            ColumnId = "Passed",
+                            Value = model.QtyPassed
                         });
                 values.Add(
                     new CalculationValueModel

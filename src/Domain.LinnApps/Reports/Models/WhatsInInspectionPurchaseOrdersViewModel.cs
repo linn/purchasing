@@ -13,5 +13,9 @@
         public decimal Qty { get; set; }
 
         public string Cancelled { get; set; }
+
+        public decimal QtyPassed { get; set; }
+
+        public decimal QtyReceived { get; set; }
     }
 }
