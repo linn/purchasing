@@ -8,6 +8,7 @@
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
@@ -94,7 +95,8 @@
                 .AddTransient<IWhatsInInspectionRepository, WhatsInInspectionRepository>()
                 .AddTransient<IQueryRepository<WhatsInInspectionPurchaseOrdersViewModel>, EntityFrameworkQueryRepository<WhatsInInspectionPurchaseOrdersViewModel>>(
                     r => new EntityFrameworkQueryRepository<WhatsInInspectionPurchaseOrdersViewModel>(r.GetService<ServiceDbContext>()
-                        ?.WhatsInInspectionPurchaseOrdersView));
+                        ?.WhatsInInspectionPurchaseOrdersView))
+                .AddTransient<IQueryRepository<ReceiptPrefSupDiff>, ReceiptPrefSupDiffRepository>();
         }
     }
 }

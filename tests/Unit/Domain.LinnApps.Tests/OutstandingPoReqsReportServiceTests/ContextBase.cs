@@ -2,6 +2,7 @@
 {
     using Linn.Common.Persistence;
     using Linn.Common.Reporting.Models;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Reports;
 
