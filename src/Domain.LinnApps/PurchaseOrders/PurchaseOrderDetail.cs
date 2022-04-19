@@ -22,7 +22,7 @@
 
         public string PartNumber { get; set; }
 
-        public IEnumerable<PurchaseOrderDelivery> PurchaseDeliveries { get; set; }
+        public IList<PurchaseOrderDelivery> PurchaseDeliveries { get; set; }
 
         public string RohsCompliant { get; set; }
 
@@ -66,7 +66,7 @@
 
         public int DeliveryConfirmedById { get; set; }
 
-        public IEnumerable<CancelledOrderDetail> CancelledDetails { get; set; }
+        public IList<CancelledOrderDetail> CancelledDetails { get; set; }
 
         public string InternalComments { get; set; }
 
