@@ -26,8 +26,6 @@
 
         public decimal? OverbookQty { get; set; }
 
-        public IEnumerable<string> Privileges { get; set; }
-
         public bool CurrentlyUsingOverbookForm { get; set; }
     }
 }

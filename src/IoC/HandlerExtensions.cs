@@ -61,11 +61,13 @@
                 .AddTransient<IHandler, JsonResultHandler<PlCreditDebitNoteResource>>()
                 .AddTransient<IHandler, JsonResultHandler<PurchaseOrderReqResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<PurchaseOrderReqResource>>>()
+                .AddTransient<IHandler, PurchaseOrderApplicationStateResultHandler>()
                 .AddTransient<IHandler, PurchaseOrderReqApplicationStateResultHandler>()
                 .AddTransient<IHandler, JsonResultHandler<PurchaseOrderReqStateResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<PurchaseOrderReqStateResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<MrpRunLogResource>>>()
-                .AddTransient<IHandler, JsonResultHandler<MrpRunLogResource>>();
+                .AddTransient<IHandler, JsonResultHandler<MrpRunLogResource>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<WhatsInInspectionReportResource>>>();
         }
     }
 }

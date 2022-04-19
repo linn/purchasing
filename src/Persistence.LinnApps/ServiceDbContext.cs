@@ -103,6 +103,12 @@
 
         public DbSet<MrpRunLog> MrpRunLogs { get; set; }
 
+        public DbSet<WhatsInInspectionExcludingFailsViewModel> WhatsInInspectionExcludingFailedView { get; set; }
+
+        public DbSet<WhatsInInspectionIncludingFailsViewModel> WhatsInInspectionIncludingFailedView { get; set; }
+
+        public DbSet<WhatsInInspectionPurchaseOrdersViewModel> WhatsInInspectionPurchaseOrdersView { get; set; }
+        
         public DbSet<ReceiptPrefSupDiff> ReceiptPrefsupDiffs { get; set; }
 
         public DbSet<CancelledOrderDetail> CancelledPODetails { get; set; }
@@ -159,6 +165,9 @@
             this.BuildPurchaseOrderReqStates(builder);
             this.BuildPurchaseOrderReqStateChanges(builder);
             this.BuildMrRunLogs(builder);
+            this.BuildWhatsInInspectionExcludingFailedView(builder);
+            this.BuildWhatsInInspectionIncludingFailedView(builder);
+            this.BuildWhatsInInspectionPurchaseOrdersView(builder);
             this.BuildDocumentTypes(builder);
             this.BuildPurchaseOrderOrderMethods(builder);
             this.BuildPrefsupVsReceiptsView(builder);
@@ -950,6 +959,44 @@
             e.Property(d => d.LoadMessage).HasColumnName("LOAD_MESSAGE").HasMaxLength(2000);
             e.Property(d => d.MrMessage).HasColumnName("MR_MESSAGE").HasMaxLength(2000);
             e.Property(d => d.DateTidied).HasColumnName("DATE_TIDIED");
+        }
+
+        private void BuildWhatsInInspectionExcludingFailedView(ModelBuilder builder)
+        {
+            var e = builder.Entity<WhatsInInspectionExcludingFailsViewModel>().ToView("WHATS_IN_INSP_EXCL_FAIL_VIEW");
+            e.HasNoKey();
+            e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER");
+            e.Property(m => m.Description).HasColumnName("DESCRIPTION");
+            e.Property(m => m.OurUnitOfMeasure).HasColumnName("OUR_UNIT_OF_MEASURE");
+            e.Property(m => m.QtyInStock).HasColumnName("QTY_IN_STOCK");
+            e.Property(m => m.QtyInInspection).HasColumnName("QTY_IN_INSP");
+            e.Property(m => m.MinDate).HasColumnName("MINDATE");
+        }
+
+        private void BuildWhatsInInspectionIncludingFailedView(ModelBuilder builder)
+        {
+            var e = builder.Entity<WhatsInInspectionIncludingFailsViewModel>().ToView("WHATS_IN_INSP_INCL_FAIL_VIEW");
+            e.HasNoKey();
+            e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER");
+            e.Property(m => m.Description).HasColumnName("DESCRIPTION");
+            e.Property(m => m.OurUnitOfMeasure).HasColumnName("OUR_UNIT_OF_MEASURE");
+            e.Property(m => m.QtyInStock).HasColumnName("QTY_IN_STOCK");
+            e.Property(m => m.QtyInInspection).HasColumnName("QTY_IN_INSP");
+            e.Property(m => m.MinDate).HasColumnName("MINDATE");
+        }
+
+        private void BuildWhatsInInspectionPurchaseOrdersView(ModelBuilder builder)
+        {
+            var e = builder.Entity<WhatsInInspectionPurchaseOrdersViewModel>().ToView("WHATS_IN_INSP_PO_VIEW");
+            e.HasNoKey();
+            e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER");
+            e.Property(m => m.State).HasColumnName("STATE");
+            e.Property(m => m.OrderType).HasColumnName("ORDER_TYPE");
+            e.Property(m => m.OrderNumber).HasColumnName("ORDER_NUMBER");
+            e.Property(m => m.Qty).HasColumnName("QTY");
+            e.Property(m => m.Cancelled).HasColumnName("CANCELLED");
+            e.Property(m => m.QtyPassed).HasColumnName("PASSED");
+            e.Property(m => m.QtyReceived).HasColumnName("RECEIVED");
         }
 
         private void BuildDocumentTypes(ModelBuilder builder)

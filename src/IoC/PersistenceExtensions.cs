@@ -10,6 +10,7 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Persistence.LinnApps;
@@ -91,6 +92,10 @@
                     r => new EntityFrameworkRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>(r.GetService<ServiceDbContext>()?.PurchaseOrderReqStateChanges))
                 .AddTransient<IRepository<MrpRunLog, int>, EntityFrameworkRepository<MrpRunLog, int>>(
                     r => new EntityFrameworkRepository<MrpRunLog, int>(r.GetService<ServiceDbContext>()?.MrpRunLogs))
+                .AddTransient<IWhatsInInspectionRepository, WhatsInInspectionRepository>()
+                .AddTransient<IQueryRepository<WhatsInInspectionPurchaseOrdersViewModel>, EntityFrameworkQueryRepository<WhatsInInspectionPurchaseOrdersViewModel>>(
+                    r => new EntityFrameworkQueryRepository<WhatsInInspectionPurchaseOrdersViewModel>(r.GetService<ServiceDbContext>()
+                        ?.WhatsInInspectionPurchaseOrdersView))
                 .AddTransient<IQueryRepository<ReceiptPrefSupDiff>, ReceiptPrefSupDiffRepository>()
                 .AddTransient<IRepository<CancelledOrderDetail, int>, EntityFrameworkRepository<CancelledOrderDetail, int>>(
                     r => new EntityFrameworkRepository<CancelledOrderDetail, int>(r.GetService<ServiceDbContext>()?.CancelledPODetails));

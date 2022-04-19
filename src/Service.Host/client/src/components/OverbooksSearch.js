@@ -1,15 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { collectionSelectorHelpers, Page, Typeahead } from '@linn-it/linn-form-components-library';
+import {
+    collectionSelectorHelpers,
+    Page,
+    Typeahead,
+    utilities
+} from '@linn-it/linn-form-components-library';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import EditOffIcon from '@mui/icons-material/EditOff';
+import Tooltip from '@mui/material/Tooltip';
 import purchaseOrdersActions from '../actions/purchaseOrdersActions';
 import history from '../history';
 import config from '../config';
 
 function OverbooksSearch() {
     const dispatch = useDispatch();
+    useEffect(() => dispatch(purchaseOrdersActions.fetch()), [dispatch]);
+    useEffect(() => dispatch(purchaseOrdersActions.fetchState()), [dispatch]);
 
     const searchOverbookItems = searchTerm => dispatch(purchaseOrdersActions.search(searchTerm));
     const searchResults = useSelector(state =>
@@ -22,6 +31,10 @@ function OverbooksSearch() {
         )
     );
 
+    const item = useSelector(state =>
+        collectionSelectorHelpers.getApplicationState(state.purchaseOrders)
+    );
+    const canSearch = utilities.getHref(item, 'allow-over-book-search');
     const searchLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.purchaseOrders)
     );
@@ -29,8 +42,19 @@ function OverbooksSearch() {
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
-                <Grid item xs={12}>
+                <Grid item xs={11}>
                     <Typography variant="h3">Allow Overbook UT</Typography>
+                </Grid>
+                <Grid item xs={1}>
+                    {canSearch ? (
+                        <Tooltip title="You have write access to allow overbooking">
+                            <ModeEditIcon fontSize="large" color="primary" />
+                        </Tooltip>
+                    ) : (
+                        <Tooltip title="You do not have write access to allow overbooking">
+                            <EditOffIcon fontSize="large" color="secondary" />
+                        </Tooltip>
+                    )}
                 </Grid>
                 <Grid item xs={12}>
                     <Typeahead
@@ -45,6 +69,7 @@ function OverbooksSearch() {
                         loading={searchLoading}
                         history={history}
                         links
+                        disabled={!canSearch}
                     />
                 </Grid>
             </Grid>

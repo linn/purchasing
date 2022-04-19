@@ -59,3 +59,9 @@ export const prefSupReceiptsReport = new ItemType(
     'PREF_SUP_RECEIPTS_REPORT',
     '/purchasing/reports/pref-sup-receipts/report'
 );
+
+export const whatsInInspectionReport = new ItemType(
+    'whatsInInspectionReport',
+    'WHATS_IN_INSPECTION_REPORT',
+    '/purchasing/reports/whats-in-inspection/report'
+);
