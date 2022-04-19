@@ -4,6 +4,7 @@
     using System.Linq;
 
     using Linn.Common.Persistence;
+    using Linn.Common.Reporting.Layouts;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
 
@@ -13,12 +14,16 @@
 
         private readonly IQueryRepository<WhatsInInspectionPurchaseOrdersViewModel> whatsInInspectionPurchaseOrdersViewRepository;
 
+        private readonly IReportingHelper reportingHelper;
+
         public WhatsInInspectionReportService(
             IWhatsInInspectionRepository whatsInInspectionRepository,
-            IQueryRepository<WhatsInInspectionPurchaseOrdersViewModel> whatsInInspectionPurchaseOrdersViewRepository)
+            IQueryRepository<WhatsInInspectionPurchaseOrdersViewModel> whatsInInspectionPurchaseOrdersViewRepository,
+            IReportingHelper reportingHelper)
         {
             this.whatsInInspectionRepository = whatsInInspectionRepository;
             this.whatsInInspectionPurchaseOrdersViewRepository = whatsInInspectionPurchaseOrdersViewRepository;
+            this.reportingHelper = reportingHelper;
         }
 
         public IEnumerable<WhatsInInspectionReportModel> GetReport(
@@ -44,6 +49,7 @@
                                              PartNumber = p.PartNumber,
                                              Description = p.Description, 
                                              MinDate = p.MinDate,
+                                             OurUnitOfMeasure = p.OurUnitOfMeasure,
                                              QtyInStock = p.QtyInStock,
                                              QtyInInspection = p.QtyInInspection,
                                              OrdersBreakdown = this
@@ -54,7 +60,58 @@
         private ResultsModel BuildPurchaseOrdersBreakdown(
             IEnumerable<WhatsInInspectionPurchaseOrdersViewModel> models)
         {
-            return new ResultsModel();
+            var reportLayout = new SimpleGridLayout(
+                this.reportingHelper,
+                CalculationValueModelType.Value,
+                null,
+                $"Orders Breakdown");
+
+            reportLayout.AddColumnComponent(
+                null,
+                new List<AxisDetailsModel>
+                    {
+                        new AxisDetailsModel("OrderNumber", "Order",  GridDisplayType.TextValue),
+                        new AxisDetailsModel("OrderType", "Type",  GridDisplayType.TextValue),
+                        new AxisDetailsModel("Qty", "Qty Ordered", GridDisplayType.Value) { DecimalPlaces = 2 },
+                        new AxisDetailsModel("Cancelled", "Cancelled", GridDisplayType.TextValue)
+                    });
+            var values = new List<CalculationValueModel>();
+
+            foreach (var model in models)
+            {
+                var currentRowId = $"{model.OrderNumber + model.PartNumber}";
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
+                            ColumnId = "OrderNumber",
+                            TextDisplay = model.OrderNumber.ToString()
+                        });
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
+                            ColumnId = "OrderType",
+                            TextDisplay = model.OrderType.ToString()
+                        });
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
+                            ColumnId = "Qty",
+                            Value = model.Qty
+                        });
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
+                            ColumnId = "Cancelled",
+                            TextDisplay = model.Cancelled
+                        });
+            }
+
+            reportLayout.SetGridData(values);
+            return reportLayout.GetResultsModel();
         }
     }
 }

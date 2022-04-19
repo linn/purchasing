@@ -11,8 +11,6 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
 
-    using MoreLinq;
-
     public class WhatsDueInReportService : IWhatsDueInReportService
     {
         private readonly IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> deliveryRepository;
