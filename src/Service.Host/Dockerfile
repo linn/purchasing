@@ -1,12 +1,12 @@
-﻿FROM mcr.microsoft.com/dotnet/runtime:5.0
-FROM mcr.microsoft.com/dotnet/aspnet:5.0
+﻿FROM mcr.microsoft.com/dotnet/runtime:6.0
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
 
 ARG gitBranch=unspecified
 ENV TZ=Europe/London
 
 EXPOSE 5050
 
-COPY bin/release/net5.0/publish/ /app/bin/
+COPY bin/release/net6.0/publish/ /app/bin/
 COPY client/build/ /app/client/build/
 COPY views/ /app/views/
      
