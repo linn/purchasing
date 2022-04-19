@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-	<TargetFramework>net5.0</TargetFramework>
+	<TargetFramework>net6.0</TargetFramework>
     <AssemblyName>Linn.Purchasing.Messaging.Host</AssemblyName>
     <RootNamespace>Linn.Purchasing.Messaging.Host</RootNamespace>
   </PropertyGroup>

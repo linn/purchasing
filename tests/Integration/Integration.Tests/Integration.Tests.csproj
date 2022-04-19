@@ -2,14 +2,14 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-	<TargetFramework>net5.0</TargetFramework>
+	<TargetFramework>net6.0</TargetFramework>
     <AssemblyName>Linn.Purchasing.Integration.Tests</AssemblyName>
     <RootNamespace>Linn.Purchasing.Integration.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Carter" Version="5.2.0" />
-    <PackageReference Include="FluentAssertions" Version="6.5.1" />
+    <PackageReference Include="FluentAssertions" Version="6.6.0" />
     <PackageReference Include="linn.common.persistence" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />

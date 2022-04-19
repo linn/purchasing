@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<TargetFramework>net5.0</TargetFramework>
+	<TargetFramework>net6.0</TargetFramework>
     <AssemblyName>Linn.Purchasing.Facade.Tests</AssemblyName>
     <RootNamespace>Linn.Purchasing.Facade.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentAssertions" Version="6.5.1" />
+    <PackageReference Include="FluentAssertions" Version="6.6.0" />
     <PackageReference Include="Linn.Common.Facade" Version="9.0.0" />
     <PackageReference Include="Linn.Common.Proxy.LinnApps" Version="3.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
