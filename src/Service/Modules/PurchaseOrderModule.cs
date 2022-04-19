@@ -63,6 +63,7 @@
             this.purchaseOrderReqFacadeService = purchaseOrderReqFacadeService;
             this.purchaseOrderReqStateService = purchaseOrderReqStateService;
 
+            this.Get("/purchasing/purchase-orders/application-state", this.GetApplicationState);
             this.Get("/purchasing/purchase-orders/{orderNumber:int}/allow-over-book/", this.GetApp);
             this.Get("/purchasing/purchase-orders/allow-over-book", this.GetApp);
             this.Get("/purchasing/purchase-orders/currencies", this.GetCurrencies);
@@ -218,6 +219,12 @@
                 this.purchaseOrderReqFacadeService.GetApplicationState(req.HttpContext.GetPrivileges()));
         }
 
+        private async Task GetApplicationState(HttpRequest req, HttpResponse res)
+        {
+            await res.Negotiate(
+                this.purchaseOrderFacadeService.GetApplicationState(req.HttpContext.GetPrivileges()));
+        }
+
         private async Task GetReqStates(HttpRequest req, HttpResponse res)
         {
             var result = this.purchaseOrderReqStateService.GetAll();
@@ -266,9 +273,9 @@
         private async Task UpdatePurchaseOrder(HttpRequest req, HttpResponse res)
         {
             var resource = await req.Bind<PurchaseOrderResource>();
-            resource.Privileges = req.HttpContext.GetPrivileges();
+            var privileges = req.HttpContext.GetPrivileges();
 
-            var result = this.purchaseOrderFacadeService.Update(resource.OrderNumber, resource, resource.Privileges, res.HttpContext.User.GetEmployeeNumber());
+            var result = this.purchaseOrderFacadeService.Update(resource.OrderNumber, resource, privileges, res.HttpContext.User.GetEmployeeNumber());
 
             await res.Negotiate(result);
         }

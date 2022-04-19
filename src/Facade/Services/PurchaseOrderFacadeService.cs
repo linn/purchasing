@@ -64,7 +64,7 @@
             IEnumerable<string> privileges = null)
         {
             var updated = this.BuildEntityFromResourceHelper(updateResource);
-            this.domainService.AllowOverbook(entity, updated, updateResource.Privileges);
+            this.domainService.AllowOverbook(entity, updated, privileges);
         }
 
         protected override Expression<Func<PurchaseOrder, bool>> SearchExpression(string searchTerm)

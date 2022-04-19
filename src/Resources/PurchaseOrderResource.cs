@@ -24,7 +24,5 @@
         public int SupplierId { get; set; }
 
         public decimal? OverbookQty { get; set; }
-
-        public IEnumerable<string> Privileges { get; set; }
     }
 }

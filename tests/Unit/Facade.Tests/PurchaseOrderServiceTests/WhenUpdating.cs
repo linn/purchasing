@@ -1,11 +1,13 @@
 ﻿namespace Linn.Purchasing.Facade.Tests.PurchaseOrderServiceTests
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
     using Linn.Common.Facade;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
 
@@ -19,31 +21,22 @@
 
         private IResult<PurchaseOrderResource> result;
 
+        private PurchaseOrder model;
+
         [SetUp]
+
         public void SetUp()
         {
-            this.Builder.Build(Arg.Any<PurchaseOrder>(), Arg.Any<IEnumerable<string>>())
-                .Returns(new PurchaseOrderResource
+            this.model = new PurchaseOrder
                              {
                                  OrderNumber = 600179,
                                  Cancelled = string.Empty,
                                  DocumentType = string.Empty,
-                                 DateOfOrder = 10.January(2021),
+                                 OrderDate = 10.January(2021),
                                  Overbook = "Y",
                                  OverbookQty = 1,
                                  SupplierId = 1224
-                });
-
-            var purchaseOrder = new PurchaseOrder
-                                    {
-                                        OrderNumber = 600179,
-                                        Cancelled = string.Empty,
-                                        DocumentType = string.Empty,
-                                        OrderDate = 10.January(2021),
-                                        Overbook = string.Empty,
-                                        OverbookQty = 0,
-                                        SupplierId = 1224
-                                    };
+            };
 
             this.updateResource = new PurchaseOrderResource()
             {
@@ -55,10 +48,10 @@
                 OverbookQty = 1,
                 SupplierId = 1224
             };
-
-            this.PurchaseOrderRepository.FindById(600179).Returns(purchaseOrder);
-
-            this.result = this.Sut.Update(this.updateResource.OrderNumber, this.updateResource);
+            this.PurchaseOrderRepository.Add(this.model);
+            this.PurchaseOrderRepository.FindById(this.model.OrderNumber).Returns(this.model);
+            this.AuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>()).Returns(true);
+            this.result = this.Sut.Update(this.updateResource.OrderNumber, this.updateResource, new List<string>());
         }
 
         [Test]
@@ -66,9 +59,23 @@
         {
             this.result.Should().BeOfType<SuccessResult<PurchaseOrderResource>>();
             var dataResult = ((SuccessResult<PurchaseOrderResource>)this.result).Data;
-            dataResult.OrderNumber.Should().Be(600179);
-            dataResult.Overbook.Should().Be("Y");
-            dataResult.OverbookQty.Should().Be(1);
+            dataResult.OrderNumber.Should().Be(this.model.OrderNumber);
+            dataResult.Cancelled.Should().Be(this.model.Cancelled);
+            dataResult.DocumentType.Should().Be(this.model.DocumentType);
+            dataResult.DateOfOrder.Should().Be(this.model.OrderDate);
+            dataResult.Overbook.Should().Be(this.model.Overbook);
+            dataResult.OverbookQty.Should().Be(this.model.OverbookQty);
+            dataResult.SupplierId.Should().Be(this.model.SupplierId);
+        }
+
+        [Test]
+        public void ShouldBuildCorrectResourceWithLinks()
+        {
+            this.result.Should().BeOfType<SuccessResult<PurchaseOrderResource>>();
+            var dataResult = ((SuccessResult<PurchaseOrderResource>)this.result).Data;
+            dataResult.Links.Length.Should().Be(4);
+            dataResult.Links.First().Rel.Should().Be("allow-over-book-search");
+            dataResult.Links.First().Href.Should().Be("purchasing/purchase-orders/allow-over-book");
         }
     }
 }
