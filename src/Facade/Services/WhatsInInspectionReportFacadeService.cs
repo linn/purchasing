@@ -28,7 +28,7 @@
             bool includePartsWithNoOrderNumber = false,
             bool showStockLocations = true,
             bool includeFailedStock = false,
-            bool excludeFinishedGoods = false,
+            bool includeFinishedGoods = true,
             bool showBackOrdered = true)
         {
             try
@@ -37,7 +37,7 @@
                     includePartsWithNoOrderNumber,
                     showStockLocations,
                     includeFailedStock,
-                    excludeFinishedGoods,
+                    includeFinishedGoods,
                     showBackOrdered);
 
                 return new SuccessResult<IEnumerable<WhatsInInspectionReportResource>>(

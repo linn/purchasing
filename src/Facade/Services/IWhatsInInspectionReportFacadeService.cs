@@ -11,7 +11,7 @@
             bool includePartsWithNoOrderNumber = false,
             bool showStockLocations = true,
             bool includeFailedStock = false,
-            bool excludeFinishedGoods = false,
+            bool includeFinishedGoods = false,
             bool showBackOrdered = true);
     }
 }
