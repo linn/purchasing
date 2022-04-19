@@ -40,6 +40,7 @@ import WhatsDueInReport from './reports/WhatsDueInReport';
 import OutstandingPoReqsReport from './reports/OutstandingPoReqsReport';
 import PrefSupReceiptsReport from './reports/PrefSupReceiptsReport';
 import POReqPrintout from './POReqs/POReqPrintout';
+import WhatsInInspectionReport from './reports/WhatsInInspectionReport';
 
 const Root = ({ store }) => (
     <div>
@@ -225,6 +226,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/reports/outstanding-po-reqs"
                                     component={OutstandingPoReqsReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/whats-in-inspection"
+                                    component={WhatsInInspectionReport}
                                 />
                                 <Route
                                     exact

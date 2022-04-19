@@ -1,13 +1,11 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
     using System.Collections.Generic;
-    using System.IO;
 
     using Linn.Common.Facade;
     using Linn.Common.Reporting.Models;
     using Linn.Common.Reporting.Resources.Extensions;
     using Linn.Common.Reporting.Resources.ReportResultResources;
-    using Linn.Common.Serialization;
     using Linn.Purchasing.Domain.LinnApps.Reports;
 
     public class SpendsReportFacadeService : ISpendsReportFacadeService

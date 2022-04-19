@@ -100,6 +100,7 @@
                 .AddTransient<IOutstandingPoReqsReportFacadeService, OutstandingPoReqsReportFacadeService>()
                 .AddTransient<IFacadeResourceFilterService<MrpRunLog, int, MrpRunLogResource, MrpRunLogResource, MaterialRequirementsSearchResource>, MrpRunLogFacadeService>()
                 .AddTransient<IMaterialRequirementsPlanningFacadeService, MaterialRequirementsPlanningFacadeService>()
+                .AddTransient<IWhatsInInspectionReportFacadeService, WhatsInInspectionReportFacadeService>()
                 .AddTransient<IPrefSupReceiptsReportFacadeService, PrefSupReceiptsReportFacadeService>();
         }
 
@@ -125,6 +126,7 @@
                 .AddTransient<IWhatsDueInReportService, WhatsDueInReportService>()
                 .AddTransient<IOutstandingPoReqsReportService, OutstandingPoReqsReportService>()
                 .AddTransient<IMaterialRequirementsPlanningService, MaterialRequirementsPlanningService>()
+                .AddTransient<IWhatsInInspectionReportService, WhatsInInspectionReportService>()
                 .AddTransient<IPrefSupReceiptsReportService, PrefSupReceiptsReportService>()
 
             // external services

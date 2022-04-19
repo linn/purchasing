@@ -62,6 +62,7 @@ import sendPurchaseOrderReqEmail from './sendPurchaseOrderReqEmail';
 import sendPurchaseOrderReqAuthEmail from './sendPurchaseOrderReqAuthEmail';
 import sendPurchaseOrderReqFinanceEmail from './sendPurchaseOrderReqFinanceEmail';
 import prefSupReceiptsReport from './prefSupReceiptsReport';
+import whatsInInspectionReport from './whatsInInspectionReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -124,6 +125,7 @@ const rootReducer = history =>
         unitsOfMeasure,
         vendorManagers,
         whatsDueInReport,
+        whatsInInspectionReport,
         ...sharedLibraryReducers,
         errors
     });
