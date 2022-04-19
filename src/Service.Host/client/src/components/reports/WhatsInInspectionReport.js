@@ -191,15 +191,6 @@ function WhatsInInspectionReport() {
                                     </TableContainer>
                                 </Grid>
                             </>
-
-                            /* <ReportTable
-                                        reportData={reportData}
-                                        title={reportData.title}
-                                        showTitle
-                                        showTotals
-                                        placeholderRows={4}
-                                        placeholderColumns={4}
-                                    /> */
                         )}
                     </>
                 )}
