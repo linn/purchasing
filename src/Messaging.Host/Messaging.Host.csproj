@@ -10,7 +10,7 @@
   <ItemGroup>
     <PackageReference Include="Linn.Common.Logging" Version="2.0.0" />
     <PackageReference Include="Linn.Common.Messaging.RabbitMQ.Autofac" Version="2.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
   </ItemGroup>
 
   <ItemGroup>
