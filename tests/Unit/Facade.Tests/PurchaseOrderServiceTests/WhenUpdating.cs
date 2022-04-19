@@ -31,7 +31,6 @@
                              {
                                  OrderNumber = 600179,
                                  Cancelled = string.Empty,
-                                 DocumentType = string.Empty,
                                  OrderDate = 10.January(2021),
                                  Overbook = "Y",
                                  OverbookQty = 1,
@@ -42,7 +41,6 @@
             {
                 OrderNumber = 600179,
                 Cancelled = string.Empty,
-                DocumentType = string.Empty,
                 DateOfOrder = 10.January(2021),
                 Overbook = "Y",
                 OverbookQty = 1,
@@ -61,7 +59,6 @@
             var dataResult = ((SuccessResult<PurchaseOrderResource>)this.result).Data;
             dataResult.OrderNumber.Should().Be(this.model.OrderNumber);
             dataResult.Cancelled.Should().Be(this.model.Cancelled);
-            dataResult.DocumentType.Should().Be(this.model.DocumentType);
             dataResult.DateOfOrder.Should().Be(this.model.OrderDate);
             dataResult.Overbook.Should().Be(this.model.Overbook);
             dataResult.OverbookQty.Should().Be(this.model.OverbookQty);
