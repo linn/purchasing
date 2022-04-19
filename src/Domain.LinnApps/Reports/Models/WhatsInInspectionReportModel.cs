@@ -4,6 +4,6 @@
 
     public class WhatsInInspectionReportModel : WhatsInInspectionViewModel
     {
-        public ResultsModel LocationBreakdown { get; set; }
+        public ResultsModel OrdersBreakdown { get; set; }
     }
 }

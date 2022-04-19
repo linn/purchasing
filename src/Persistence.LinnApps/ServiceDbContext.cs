@@ -106,6 +106,8 @@
 
         public DbSet<WhatsInInspectionIncludingFailsViewModel> WhatsInInspectionIncludingFailedView { get; set; }
 
+        public DbSet<WhatsInInspectionPurchaseOrdersViewModel> WhatsInInspectionPurchaseOrdersView { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -161,6 +163,7 @@
             this.BuildMrRunLogs(builder);
             this.BuildWhatsInInspectionExcludingFailedView(builder);
             this.BuildWhatsInInspectionIncludingFailedView(builder);
+            this.BuildWhatsInInspectionPurchaseOrdersView(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -915,6 +918,7 @@
             e.Property(m => m.OurUnitOfMeasure).HasColumnName("OUR_UNIT_OF_MEASURE");
             e.Property(m => m.QtyInStock).HasColumnName("QTY_IN_STOCK");
             e.Property(m => m.QtyInInspection).HasColumnName("QTY_IN_INSP");
+            e.Property(m => m.MinDate).HasColumnName("MINDATE");
         }
 
         private void BuildWhatsInInspectionIncludingFailedView(ModelBuilder builder)
@@ -926,6 +930,19 @@
             e.Property(m => m.OurUnitOfMeasure).HasColumnName("OUR_UNIT_OF_MEASURE");
             e.Property(m => m.QtyInStock).HasColumnName("QTY_IN_STOCK");
             e.Property(m => m.QtyInInspection).HasColumnName("QTY_IN_INSP");
+            e.Property(m => m.MinDate).HasColumnName("MINDATE");
+        }
+
+        private void BuildWhatsInInspectionPurchaseOrdersView(ModelBuilder builder)
+        {
+            var e = builder.Entity<WhatsInInspectionPurchaseOrdersViewModel>().ToView("WHATS_IN_INSP_PO_VIEW");
+            e.HasNoKey();
+            e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER");
+            e.Property(m => m.State).HasColumnName("STATE");
+            e.Property(m => m.OrderType).HasColumnName("ORDER_TYPE");
+            e.Property(m => m.OrderNumber).HasColumnName("ORDER_NUMBER");
+            e.Property(m => m.Qty).HasColumnName("QTY");
+            e.Property(m => m.Cancelled).HasColumnName("CANCELLED");
         }
     }
 }

@@ -5,6 +5,8 @@
     using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
 
+    using Microsoft.EntityFrameworkCore;
+
     public class WhatsInInspectionRepository : IWhatsInInspectionRepository
     {
         private readonly ServiceDbContext serviceDbContext;
@@ -18,10 +20,12 @@
         {
             if (includeFailed)
             {
-                return this.serviceDbContext.WhatsInInspectionIncludingFailedView.AsQueryable();
+                return this.serviceDbContext.WhatsInInspectionIncludingFailedView
+                    .AsQueryable().AsNoTracking();
             }
 
-            return this.serviceDbContext.WhatsInInspectionExcludingFailedView.AsQueryable();
+            return this.serviceDbContext.WhatsInInspectionExcludingFailedView
+                .AsQueryable().AsNoTracking();
         }
     }
 }

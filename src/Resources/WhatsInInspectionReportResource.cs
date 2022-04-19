@@ -4,6 +4,16 @@
 
     public class WhatsInInspectionReportResource
     {
-        public ReportReturnResource LocationBreakdown { get; set; }
+        public string PartNumber { get; set; }
+
+        public string Description { get; set; }
+
+        public string OurUnitOfMeasure { get; set; }
+
+        public decimal QtyInStock { get; set; }
+
+        public decimal QtyInInspection { get; set; }
+
+        public ReportReturnResource OrdersBreakdown { get; set; }
     }
 }
