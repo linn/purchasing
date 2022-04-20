@@ -14,8 +14,6 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Logging;
 
-    using OrderMethod = Linn.Purchasing.Domain.LinnApps.PurchaseOrders.OrderMethod;
-
     public class ServiceDbContext : DbContext
     {
         public static readonly LoggerFactory MyLoggerFactory =
