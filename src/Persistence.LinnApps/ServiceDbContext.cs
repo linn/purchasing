@@ -971,6 +971,7 @@
             e.Property(m => m.QtyInStock).HasColumnName("QTY_IN_STOCK");
             e.Property(m => m.QtyInInspection).HasColumnName("QTY_IN_INSP");
             e.Property(m => m.MinDate).HasColumnName("MINDATE");
+            e.Property(m => m.RawOrFinished).HasColumnName("RM_FG");
         }
 
         private void BuildWhatsInInspectionIncludingFailedView(ModelBuilder builder)
@@ -983,6 +984,7 @@
             e.Property(m => m.QtyInStock).HasColumnName("QTY_IN_STOCK");
             e.Property(m => m.QtyInInspection).HasColumnName("QTY_IN_INSP");
             e.Property(m => m.MinDate).HasColumnName("MINDATE");
+            e.Property(m => m.RawOrFinished).HasColumnName("RM_FG");
         }
 
         private void BuildWhatsInInspectionPurchaseOrdersView(ModelBuilder builder)

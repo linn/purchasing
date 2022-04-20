@@ -14,6 +14,8 @@
 
         public decimal QtyInInspection { get; set; }
 
+        public string RawOrFinished { get; set; } 
+
         public DateTime? MinDate { get; set; }
     }
 }

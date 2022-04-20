@@ -44,8 +44,19 @@
             var parts = this.whatsInInspectionRepository.GetWhatsInInspection(includeFailedStock)
                 .Where(m => m.MinDate.HasValue).OrderBy(m => m.MinDate).ToList();
 
+            if (!includeFinishedGoods)
+            {
+                parts = parts.Where(p => p.RawOrFinished.Equals("RM")).ToList();
+            }
+
             var orders = this.whatsInInspectionPurchaseOrdersDataRepository.FilterBy(d => d.State.Equals("QC"))
                 .ToList();
+
+            if (!includePartsWithNoOrderNumber)
+            {
+                parts = parts.Where(p => orders.Select(o => o.PartNumber)
+                    .Contains(p.PartNumber)).ToList();
+            }
 
             IEnumerable<WhatsInInspectionStockLocationsData> locationsData = null;
 
