@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrderModuleTests
+﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrderReqModuleTests
 {
     using System.Collections.Generic;
     using System.Net;
@@ -17,7 +17,7 @@
 
     using NUnit.Framework;
 
-    public class WhenCancellingPOReq : ContextBase
+    public class WhenAuthorisingPOReq : ContextBase
     {
         private readonly int reqNumber = 2023022;
 
@@ -28,7 +28,7 @@
         {
             this.resource = new PurchaseOrderReqResource
                                 {
-                                    State = "CANCELLED",
+                                    State = "purgatory",
                                     ReqDate = 2.March(2022).ToString("o"),
                                     OrderNumber = 1234,
                                     PartNumber = "PCAS 007",
@@ -52,7 +52,7 @@
                                     Email = "LC@gmail",
                                     DateRequired = string.Empty,
                                     RequestedBy = new EmployeeResource { Id = 33107, FullName = "me" },
-                                    AuthorisedBy = null,
+                                    AuthorisedBy = new EmployeeResource { Id = 999, FullName = "someone responsible" },
                                     SecondAuthBy = null,
                                     FinanceCheckBy = null,
                                     TurnedIntoOrderBy = null,
@@ -65,7 +65,7 @@
             var req = new PurchaseOrderReq
             {
                 ReqNumber = this.reqNumber,
-                State = "CANCELLED",
+                State = "purgatory",
                 ReqDate = 2.March(2022),
                 OrderNumber = 1234,
                 PartNumber = "PCAS 007",
@@ -88,7 +88,8 @@
                 Email = "LC@gmail",
                 DateRequired = null,
                 RequestedBy = new Employee { Id = 33107, FullName = "me" },
-                AuthorisedBy = null,
+                AuthorisedBy = new Employee { Id = 999, FullName = "someone responsible" },
+                AuthorisedById = 999,
                 SecondAuthBy = null,
                 FinanceCheckBy = null,
                 TurnedIntoOrderBy = null,
@@ -100,21 +101,21 @@
 
             this.MockPurchaseOrderReqRepository.FindById(this.reqNumber).Returns(req);
 
-            this.MockReqDomainService.Cancel(
+            this.MockReqDomainService.Authorise(
                 Arg.Any<PurchaseOrderReq>(),
-                Arg.Any<IEnumerable<string>>());
+                Arg.Any<IEnumerable<string>>(), Arg.Any<int>());
 
             this.Response = this.Client.Post(
-                $"/purchasing/purchase-orders/reqs/{this.reqNumber}/cancel",
+                $"/purchasing/purchase-orders/reqs/{this.reqNumber}/authorise",
                 with => { with.Accept("application/json"); }).Result;
         }
 
         [Test]
         public void ShouldCallCreate()
         {
-            this.MockReqDomainService.Received().Cancel(
+            this.MockReqDomainService.Received().Authorise(
                 Arg.Any<PurchaseOrderReq>(),
-                Arg.Any<IEnumerable<string>>());
+                Arg.Any<IEnumerable<string>>(), Arg.Any<int>());
         }
 
         [Test]
@@ -159,7 +160,7 @@
             resultResource.Email.Should().Be(this.resource.Email);
             resultResource.DateRequired.Should().Be(null);
             resultResource.RequestedBy.Id.Should().Be(this.resource.RequestedBy.Id);
-            resultResource.AuthorisedBy.Should().Be(null);
+            resultResource.AuthorisedBy.Id.Should().Be(999);
             resultResource.SecondAuthBy.Should().Be(null);
             resultResource.FinanceCheckBy.Should().Be(null);
             resultResource.TurnedIntoOrderBy.Should().Be(null);

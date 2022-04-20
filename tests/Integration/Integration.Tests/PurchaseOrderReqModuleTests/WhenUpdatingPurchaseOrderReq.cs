@@ -1,7 +1,8 @@
-﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrderModuleTests
+﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrderReqModuleTests
 {
     using System.Collections.Generic;
     using System.Net;
+    using System.Net.Http.Json;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
@@ -17,7 +18,7 @@
 
     using NUnit.Framework;
 
-    public class WhenAuthorisingPOReq : ContextBase
+    public class WhenUpdatingPurchaseOrderReq : ContextBase
     {
         private readonly int reqNumber = 2023022;
 
@@ -28,6 +29,7 @@
         {
             this.resource = new PurchaseOrderReqResource
                                 {
+                                    ReqNumber = this.reqNumber,
                                     State = "purgatory",
                                     ReqDate = 2.March(2022).ToString("o"),
                                     OrderNumber = 1234,
@@ -52,79 +54,78 @@
                                     Email = "LC@gmail",
                                     DateRequired = string.Empty,
                                     RequestedBy = new EmployeeResource { Id = 33107, FullName = "me" },
-                                    AuthorisedBy = new EmployeeResource { Id = 999, FullName = "someone responsible" },
+                                    AuthorisedBy = null,
                                     SecondAuthBy = null,
                                     FinanceCheckBy = null,
                                     TurnedIntoOrderBy = null,
                                     Nominal = new NominalResource { NominalCode = "00001234", Description = "hing" },
                                     RemarksForOrder = "needed asap",
                                     InternalNotes = "pls approv",
-                                    Department = new DepartmentResource { DepartmentCode = "00002345", Description = "Team 1" },
+                                    Department = new DepartmentResource
+                                                     {
+                                                         DepartmentCode = "00002345", Description = "Team 1"
+                                                     }
                                 };
 
             var req = new PurchaseOrderReq
-            {
-                ReqNumber = this.reqNumber,
-                State = "purgatory",
-                ReqDate = 2.March(2022),
-                OrderNumber = 1234,
-                PartNumber = "PCAS 007",
-                Description = "Descrip",
-                Qty = 7,
-                UnitPrice = 8m,
-                Carriage = null,
-                TotalReqPrice = null,
-                Currency = new Currency { Code = "SMC", Name = "Smackeroonies" },
-                Supplier = new Supplier { SupplierId = 111, Name = "Shoap" },
-                SupplierContact = "Lawrence Chaney",
-                AddressLine1 = "The shop",
-                AddressLine2 = "1 Main Street",
-                AddressLine3 = string.Empty,
-                AddressLine4 = "Glesga",
-                PostCode = "G1 1AA",
-                Country = new Country { CountryCode = "GB", Name = "United Kingdolls" },
-                PhoneNumber = "+44 1234567780",
-                QuoteRef = "blah",
-                Email = "LC@gmail",
-                DateRequired = null,
-                RequestedBy = new Employee { Id = 33107, FullName = "me" },
-                AuthorisedBy = new Employee { Id = 999, FullName = "someone responsible" },
-                AuthorisedById = 999,
-                SecondAuthBy = null,
-                FinanceCheckBy = null,
-                TurnedIntoOrderBy = null,
-                Nominal = new Nominal { NominalCode = "00001234", Description = "hing" },
-                RemarksForOrder = "needed asap",
-                InternalNotes = "pls approv",
-                Department = new Department { DepartmentCode = "00002345", Description = "Team 1" },
-            };
+                          {
+                              ReqNumber = this.reqNumber,
+                              State = "purgatory",
+                              ReqDate = 2.March(2022),
+                              OrderNumber = 1234,
+                              PartNumber = "PCAS 007",
+                              Description = "Descrip",
+                              Qty = 7,
+                              UnitPrice = 8m,
+                              Carriage = null,
+                              TotalReqPrice = null,
+                              Currency = new Currency { Code = "SMC", Name = "Smackeroonies" },
+                              Supplier = new Supplier { SupplierId = 111, Name = "Shoap" },
+                              SupplierContact = "Lawrence Chaney",
+                              AddressLine1 = "The shop",
+                              AddressLine2 = "1 Main Street",
+                              AddressLine3 = string.Empty,
+                              AddressLine4 = "Glesga",
+                              PostCode = "G1 1AA",
+                              Country = new Country { CountryCode = "GB", Name = "United Kingdolls" },
+                              PhoneNumber = "+44 1234567780",
+                              QuoteRef = "blah",
+                              Email = "LC@gmail",
+                              DateRequired = null,
+                              RequestedBy = new Employee { Id = 33107, FullName = "me" },
+                              AuthorisedBy = null,
+                              SecondAuthBy = null,
+                              FinanceCheckBy = null,
+                              TurnedIntoOrderBy = null,
+                              Nominal = new Nominal { NominalCode = "00001234", Description = "hing" },
+                              RemarksForOrder = "needed asap",
+                              InternalNotes = "pls approv",
+                              Department = new Department { DepartmentCode = "00002345", Description = "Team 1" }
+                          };
 
             this.MockPurchaseOrderReqRepository.FindById(this.reqNumber).Returns(req);
-
-            this.MockReqDomainService.Authorise(
-                Arg.Any<PurchaseOrderReq>(),
-                Arg.Any<IEnumerable<string>>(), Arg.Any<int>());
-
-            this.Response = this.Client.Post(
-                $"/purchasing/purchase-orders/reqs/{this.reqNumber}/authorise",
-                with => { with.Accept("application/json"); }).Result;
+            
+            this.Response = this.Client.PutAsJsonAsync(
+                "/purchasing/purchase-orders/reqs/2023022",
+                this.resource).Result;
         }
 
         [Test]
-        public void ShouldCallCreate()
+        public void ShouldCallRepo()
         {
-            this.MockReqDomainService.Received().Authorise(
-                Arg.Any<PurchaseOrderReq>(),
-                Arg.Any<IEnumerable<string>>(), Arg.Any<int>());
+            this.MockPurchaseOrderReqRepository.Received().FindById(2023022);
         }
 
         [Test]
-         public void ShouldCallRepositoryFindById()
+        public void ShouldCallUpdate()
         {
-            this.MockPurchaseOrderReqRepository.Received().FindById(this.reqNumber);
+            this.MockReqDomainService.Received().Update(
+                Arg.Any<PurchaseOrderReq>(),
+                Arg.Any<PurchaseOrderReq>(),
+                Arg.Any<IEnumerable<string>>());
         }
 
-         [Test]
+        [Test]
         public void ShouldCommit()
         {
             this.TransactionManager.Received().Commit();
@@ -160,7 +161,7 @@
             resultResource.Email.Should().Be(this.resource.Email);
             resultResource.DateRequired.Should().Be(null);
             resultResource.RequestedBy.Id.Should().Be(this.resource.RequestedBy.Id);
-            resultResource.AuthorisedBy.Id.Should().Be(999);
+            resultResource.AuthorisedBy.Should().Be(null);
             resultResource.SecondAuthBy.Should().Be(null);
             resultResource.FinanceCheckBy.Should().Be(null);
             resultResource.TurnedIntoOrderBy.Should().Be(null);
@@ -180,7 +181,7 @@
         }
 
         [Test]
-        public void ShouldReturnOk()
+        public void ShouldReturnSuccess()
         {
             this.Response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
