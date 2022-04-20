@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Net;
+    using System.Net.Http.Json;
 
     using FluentAssertions;
 
@@ -40,13 +41,9 @@
 
             this.MockPlCreditDebitNoteRepository.FindById(1).Returns(this.note);
 
-            this.Response = this.Client.Put(
+            this.Response = this.Client.PutAsJsonAsync(
                 $"/purchasing/pl-credit-debit-notes/{this.resource.NoteNumber}",
-                this.resource,
-                with =>
-                    {
-                        with.Accept("application/json");
-                    }).Result;
+                this.resource).Result;
         }
 
         [Test]

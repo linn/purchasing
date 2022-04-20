@@ -3,31 +3,30 @@
     using System.Threading.Tasks;
 
     using Carter;
-    using Carter.Request;
     using Carter.Response;
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Resources;
 
+    using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Routing;
 
-    public class ManufacturerModule : CarterModule
+    public class ManufacturerModule : ICarterModule
     {
-        private readonly IFacadeResourceService<Manufacturer, string, ManufacturerResource, ManufacturerResource>
-            facadeService;
-
-        public ManufacturerModule(IFacadeResourceService<Manufacturer, string, ManufacturerResource, ManufacturerResource> facadeService)
+        public void AddRoutes(IEndpointRouteBuilder app)
         {
-            this.facadeService = facadeService;
-            this.Get("/purchasing/manufacturers", this.SearchManufacturers);
+            app.MapGet("/purchasing/manufacturers", this.SearchManufacturers);
         }
 
-        private async Task SearchManufacturers(HttpRequest req, HttpResponse res)
+        private async Task SearchManufacturers(
+            HttpRequest req,
+            HttpResponse res,
+            string searchTerm,
+            IFacadeResourceService<Manufacturer, string, ManufacturerResource, ManufacturerResource> facadeService)
         {
-            var searchTerm = req.Query.As<string>("searchTerm");
-
-            var result = this.facadeService.Search(searchTerm);
+            var result = facadeService.Search(searchTerm);
 
             await res.Negotiate(result);
         }

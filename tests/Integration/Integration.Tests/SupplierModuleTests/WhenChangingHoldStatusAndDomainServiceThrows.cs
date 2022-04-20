@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Net;
+    using System.Net.Http.Json;
 
     using FluentAssertions;
 
@@ -24,18 +25,14 @@
                 Arg.Any<SupplierOrderHoldHistoryEntry>(),
                 Arg.Any<IEnumerable<string>>()).Throws(new Exception("Something went wrong"));
 
-            this.Response = this.Client.Post(
+            this.Response = this.Client.PostAsJsonAsync(
                 $"/purchasing/suppliers/hold",
                  new SupplierHoldChangeResource
                  {
                      SupplierId = 1,
                      TakenOffHoldBy = 33087,
                      ReasonOffHold = "HOLDING TIGHT"
-                 },
-                with =>
-                    {
-                        with.Accept("application/json");
-                    }).Result;
+                 }).Result;
         }
 
         [Test]

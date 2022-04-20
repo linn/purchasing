@@ -7,16 +7,18 @@
 
     using Linn.Purchasing.Service.Models;
 
+    using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Routing;
 
-    public class ApplicationModule : CarterModule
+    public class ApplicationModule : ICarterModule
     {
-        public ApplicationModule()
+        public void AddRoutes(IEndpointRouteBuilder app)
         {
-            this.Get("/", this.Redirect);
-            this.Get("/purchasing", this.GetApp);
-            this.Get("/purchasing/signin-oidc-client", this.GetApp);
-            this.Get("/purchasing/signin-oidc-silent", this.GetSilentRenew);
+            app.MapGet("/", this.Redirect);
+            app.MapGet("/purchasing", this.GetApp);
+            app.MapGet("/purchasing/signin-oidc-client", this.GetApp);
+            app.MapGet("/purchasing/signin-oidc-silent", this.GetSilentRenew);
         }
 
         private Task Redirect(HttpRequest req, HttpResponse res)

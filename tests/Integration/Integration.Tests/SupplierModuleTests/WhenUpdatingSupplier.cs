@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
+    using System.Net.Http.Json;
 
     using FluentAssertions;
 
@@ -53,10 +54,9 @@
                                     OpenedBy = new Employee { Id = 1 }
                                 };
             this.MockSupplierRepository.FindById(1).Returns(this.supplier);
-            this.Response = this.Client.Put(
+            this.Response = this.Client.PutAsJsonAsync(
                 $"/purchasing/suppliers/{this.resource.Id}",
-                this.resource,
-                with => { with.Accept("application/json"); }).Result;
+                this.resource).Result;
         }
 
         [Test]

@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
+    using System.Net.Http.Json;
 
     using FluentAssertions;
 
@@ -39,13 +40,9 @@
                             OpenedBy = new Employee { Id = 1 }
                         });
 
-            this.Response = this.Client.Post(
+            this.Response = this.Client.PostAsJsonAsync(
                 $"/purchasing/suppliers/hold",
-                this.resource,
-                with =>
-                {
-                    with.Accept("application/json");
-                }).Result;
+                this.resource).Result;
         }
 
         [Test]

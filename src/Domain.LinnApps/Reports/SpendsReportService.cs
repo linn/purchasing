@@ -12,8 +12,6 @@
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
-    using MoreLinq;
-
     public class SpendsReportService : ISpendsReportService
     {
         private readonly IPurchaseLedgerPack purchaseLedgerPack;

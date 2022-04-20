@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.AddressModule
 {
     using System.Net;
+    using System.Net.Http.Json;
 
     using FluentAssertions;
 
@@ -34,13 +35,7 @@
                                        };
             this.CountryRepository.FindById("GB").Returns(new Country { CountryCode = "GB", Name = "GREAT BRITAIN" });
             this.DatabaseService.GetNextVal("ADDR_SEQ").Returns(1);
-            this.Response = this.Client.Post(
-                "/purchasing/addresses",
-                this.addressResource,
-                with =>
-                    {
-                        with.Accept("application/json");
-                    }).Result;
+            this.Response = this.Client.PostAsJsonAsync("/purchasing/addresses", this.addressResource).Result;
         }
 
         [Test]
