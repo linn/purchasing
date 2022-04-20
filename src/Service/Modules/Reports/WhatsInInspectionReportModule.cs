@@ -3,23 +3,21 @@
     using System.Threading.Tasks;
 
     using Carter;
-    using Carter.Request;
     using Carter.Response;
 
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Service.Models;
 
+    using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Routing;
 
-    public class WhatsInInspectionReportModule : CarterModule
+    public class WhatsInInspectionReportModule : ICarterModule
     {
-        private readonly IWhatsInInspectionReportFacadeService facadeService;
-
-        public WhatsInInspectionReportModule(IWhatsInInspectionReportFacadeService facadeService)
+        public void AddRoutes(IEndpointRouteBuilder app)
         {
-            this.facadeService = facadeService;
-            this.Get("/purchasing/reports/whats-in-inspection/report", this.GetReport);
-            this.Get("/purchasing/reports/whats-in-inspection", this.GetApp);
+            app.MapGet("/purchasing/reports/whats-in-inspection/report", this.GetReport);
+            app.MapGet("/purchasing/reports/whats-in-inspection", this.GetApp);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -27,14 +25,22 @@
             await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
         }
 
-        private async Task GetReport(HttpRequest req, HttpResponse res)
+        private async Task GetReport(
+            HttpRequest req,
+            HttpResponse res,
+            IWhatsInInspectionReportFacadeService facadeService,
+            bool includePartsWithNoOrderNumber,
+            bool showStockLocations,
+            bool includeFailedStock,
+            bool includeFinishedGoods,
+            bool showBackOrdered)
         {
-            var results = this.facadeService.GetReport(
-                req.Query.As<bool>("includePartsWithNoOrderNumber"),
-                req.Query.As<bool>("showStockLocations"),
-                req.Query.As<bool>("includeFailedStock"),
-                req.Query.As<bool>("includeFinishedGoods"),
-                req.Query.As<bool>("showBackOrdered"));
+            var results = facadeService.GetReport(
+                includePartsWithNoOrderNumber,
+                showStockLocations,
+                includeFailedStock,
+                includeFinishedGoods,
+                showBackOrdered);
 
             await res.Negotiate(results);
         }

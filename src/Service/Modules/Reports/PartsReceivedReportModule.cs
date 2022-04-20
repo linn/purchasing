@@ -3,7 +3,6 @@
     using System.Threading.Tasks;
 
     using Carter;
-    using Carter.Request;
     using Carter.Response;
 
     using Linn.Common.Facade.Carter.Extensions;
@@ -13,41 +12,47 @@
     
     using Linn.Purchasing.Service.Models;
 
+    using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Routing;
 
-    public class PartsReceivedReportModule : CarterModule
+    public class PartsReceivedReportModule : ICarterModule
     {
-        private readonly ITqmsJobRefService tqmsJobRefService;
-
-        private readonly IPartsReceivedReportFacadeService reportFacadeService;
-
-        public PartsReceivedReportModule(
-            ITqmsJobRefService tqmsJobRefService,
-            IPartsReceivedReportFacadeService reportFacadeService)
+        public void AddRoutes(IEndpointRouteBuilder app)
         {
-            this.tqmsJobRefService = tqmsJobRefService;
-            this.reportFacadeService = reportFacadeService;
-            this.Get("/purchasing/tqms-jobrefs", this.GetJobRefs);
-            this.Get("/purchasing/reports/parts-received", this.GetReport);
-            this.Get("/purchasing/reports/parts-received/export", this.GetExport);
+            app.MapGet("/purchasing/tqms-jobrefs", this.GetJobRefs);
+            app.MapGet("/purchasing/reports/parts-received", this.GetReport);
+            app.MapGet("/purchasing/reports/parts-received/export", this.GetExport);
         }
 
-        private async Task GetJobRefs(HttpRequest request, HttpResponse response)
+        private async Task GetJobRefs(
+            HttpRequest request,
+            HttpResponse response,
+            ITqmsJobRefService tqmsJobRefService)
         {
-            var result = this.tqmsJobRefService.GetMostRecentJobRefs(50);
+            var result = tqmsJobRefService.GetMostRecentJobRefs(50);
             await response.Negotiate(result);
         }
 
-        private async Task GetReport(HttpRequest req, HttpResponse res)
+        private async Task GetReport(
+            HttpRequest req,
+            HttpResponse res,
+            int? supplier,
+            string fromDate,
+            string toDate,
+            string jobref,
+            string orderBy,
+            bool includeNegativeValues,
+            IPartsReceivedReportFacadeService reportFacadeService)
         {
             var options = new PartsReceivedReportRequestResource
                               {
-                                  Supplier = req.Query.As<int?>("supplier"),
-                                  FromDate = req.Query.As<string>("fromDate"),
-                                  ToDate = req.Query.As<string>("toDate"),
-                                  Jobref = req.Query.As<string>("jobref"),
-                                  OrderBy = req.Query.As<string>("orderBy"),
-                                  IncludeNegativeValues = req.Query.As<bool>("includeNegativeValues")
+                                  Supplier = supplier,
+                                  FromDate = fromDate,
+                                  ToDate = toDate, 
+                                  Jobref = jobref, 
+                                  OrderBy = orderBy, 
+                                  IncludeNegativeValues = includeNegativeValues
                               };
             if (string.IsNullOrEmpty(options.ToDate))
             {
@@ -55,24 +60,33 @@
                 return;
             }
             
-            var results = this.reportFacadeService.GetReport(options);
+            var results = reportFacadeService.GetReport(options);
 
             await res.Negotiate(results);
         }
 
-        private async Task GetExport(HttpRequest req, HttpResponse res)
+        private async Task GetExport(
+            HttpRequest req,
+            HttpResponse res,
+            int? supplier,
+            string fromDate,
+            string toDate,
+            string jobref,
+            string orderBy,
+            bool includeNegativeValues,
+            IPartsReceivedReportFacadeService reportFacadeService)
         {
             var options = new PartsReceivedReportRequestResource
                 {
-                    Supplier = req.Query.As<int?>("supplier"),
-                    FromDate = req.Query.As<string>("fromDate"),
-                    ToDate = req.Query.As<string>("toDate"),
-                    Jobref = req.Query.As<string>("jobref"),
-                    OrderBy = req.Query.As<string>("orderBy"),
-                    IncludeNegativeValues = req.Query.As<bool>("includeNegativeValues")
+                    Supplier = supplier, 
+                    FromDate = fromDate, 
+                    ToDate = toDate, 
+                    Jobref = jobref, 
+                    OrderBy = orderBy, 
+                    IncludeNegativeValues = includeNegativeValues
                 };
             
-            var csv = this.reportFacadeService.GetReportCsv(options);
+            var csv = reportFacadeService.GetReportCsv(options);
 
             await res.FromCsv(csv, "parts_received.csv");
         }

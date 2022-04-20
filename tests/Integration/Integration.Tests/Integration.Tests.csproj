@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Carter" Version="5.2.0" />
+    <PackageReference Include="Carter" Version="6.0.0" />
     <PackageReference Include="FluentAssertions" Version="6.6.0" />
     <PackageReference Include="linn.common.persistence" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />

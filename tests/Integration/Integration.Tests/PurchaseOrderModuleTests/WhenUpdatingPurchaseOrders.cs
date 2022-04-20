@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Net;
+    using System.Net.Http.Json;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
@@ -39,13 +40,9 @@
                             OverbookQty = 1,
                         }));
 
-            this.Response = this.Client.Put(
+            this.Response = this.Client.PutAsJsonAsync(
                 $"/purchasing/purchase-orders/600179",
-                this.resource,
-                with =>
-                {
-                    with.Accept("application/json");
-                }).Result;
+                this.resource).Result;
         }
 
         [Test]

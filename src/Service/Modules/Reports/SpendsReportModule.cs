@@ -5,7 +5,6 @@
     using System.Threading.Tasks;
 
     using Carter;
-    using Carter.Request;
     using Carter.Response;
 
     using Linn.Common.Facade.Carter.Extensions;
@@ -14,21 +13,20 @@
     using Linn.Purchasing.Service.Extensions;
     using Linn.Purchasing.Service.Models;
 
+    using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Routing;
 
-    public class SpendsReportModule : CarterModule
+    public class SpendsReportModule : ICarterModule
     {
-        private readonly ISpendsReportFacadeService spendsReportFacadeService;
-
-        public SpendsReportModule(ISpendsReportFacadeService spendsReportFacadeService)
+        public void AddRoutes(IEndpointRouteBuilder app)
         {
-            this.spendsReportFacadeService = spendsReportFacadeService;
-            this.Get("/purchasing/reports/spend-by-supplier", this.GetApp);
-            this.Get("/purchasing/reports/spend-by-part", this.GetApp);
-            this.Get("/purchasing/reports/spend-by-supplier/report", this.GetSpendBySupplierReport);
-            this.Get("/purchasing/reports/spend-by-supplier/export", this.GetSpendBySupplierExport);
-            this.Get("/purchasing/reports/spend-by-part/report", this.GetSpendByPartReport);
-            this.Get("/purchasing/reports/spend-by-part/export", this.GetSpendByPartExport);
+            app.MapGet("/purchasing/reports/spend-by-supplier", this.GetApp);
+            app.MapGet("/purchasing/reports/spend-by-part", this.GetApp);
+            app.MapGet("/purchasing/reports/spend-by-supplier/report", this.GetSpendBySupplierReport);
+            app.MapGet("/purchasing/reports/spend-by-supplier/export", this.GetSpendBySupplierExport);
+            app.MapGet("/purchasing/reports/spend-by-part/report", this.GetSpendByPartReport);
+            app.MapGet("/purchasing/reports/spend-by-part/export", this.GetSpendByPartExport);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -36,33 +34,40 @@
             await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
         }
 
-        private async Task GetSpendByPartExport(HttpRequest req, HttpResponse res)
+        private async Task GetSpendByPartExport(
+            HttpRequest req,
+            HttpResponse res,
+            ISpendsReportFacadeService spendsReportFacadeService,
+            int id)
         {
-            var supplierId = req.Query.As<int>("Id");
-
-            var csv = this.spendsReportFacadeService.GetSpendByPartExport(
-                supplierId,
+            var csv = spendsReportFacadeService.GetSpendByPartExport(
+                id,
                 req.HttpContext.GetPrivileges());
             
-            await res.FromCsv(csv, $"spendByPart_{supplierId}_{DateTime.Now.ToString("dd-MM-yyyy")}.csv");
+            await res.FromCsv(csv, $"spendByPart_{id}_{DateTime.Now.ToString("dd-MM-yyyy")}.csv");
         }
 
-        private async Task GetSpendByPartReport(HttpRequest req, HttpResponse res)
+        private async Task GetSpendByPartReport(
+            HttpRequest req,
+            HttpResponse res,
+            int id,
+            ISpendsReportFacadeService spendsReportFacadeService)
         {
-            var supplierId = req.Query.As<int>("Id");
-            var results = this.spendsReportFacadeService.GetSpendByPartReport(
-                supplierId,
+            var results = spendsReportFacadeService.GetSpendByPartReport(
+                id,
                 req.HttpContext.GetPrivileges());
 
             await res.Negotiate(results);
         }
 
-        private async Task GetSpendBySupplierExport(HttpRequest req, HttpResponse res)
+        private async Task GetSpendBySupplierExport(
+            HttpRequest req,
+            HttpResponse res,
+            ISpendsReportFacadeService spendsReportFacadeService,
+            string vm)
         {
-            var vm = req.Query.As<string>("Vm");
-
-            var csv = this.spendsReportFacadeService.GetSpendBySupplierExport(
-                vm != null ? vm : string.Empty,
+            var csv = spendsReportFacadeService.GetSpendBySupplierExport(
+                vm ?? string.Empty,
                 req.HttpContext.GetPrivileges());
 
             var contentDisposition = new ContentDisposition
@@ -73,12 +78,14 @@
             await res.FromCsv(csv, $"spendBySuppliers{DateTime.Now.ToString("dd-MM-yyyy")}.csv");
         }
 
-        private async Task GetSpendBySupplierReport(HttpRequest req, HttpResponse res)
+        private async Task GetSpendBySupplierReport(
+            HttpRequest req,
+            HttpResponse res,
+            string vm,
+            ISpendsReportFacadeService spendsReportFacadeService)
         {
-            var vm = req.Query.As<string>("Vm");
-
-            var results = this.spendsReportFacadeService.GetSpendBySupplierReport(
-                vm != null ? vm : string.Empty,
+            var results = spendsReportFacadeService.GetSpendBySupplierReport(
+                vm ?? string.Empty,
                 req.HttpContext.GetPrivileges());
 
             await res.Negotiate(results);

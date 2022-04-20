@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Net;
+    using System.Net.Http.Json;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
@@ -104,10 +105,9 @@
                 Arg.Any<PurchaseOrderReq>(),
                 Arg.Any<IEnumerable<string>>()).Returns(req);
 
-            this.Response = this.Client.Post(
+            this.Response = this.Client.PostAsJsonAsync(
                 "/purchasing/purchase-orders/reqs",
-                this.resource,
-                with => { with.Accept("application/json"); }).Result;
+                this.resource).Result;
         }
 
         [Test]

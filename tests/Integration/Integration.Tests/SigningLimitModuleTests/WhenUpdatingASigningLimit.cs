@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Net;
+    using System.Net.Http.Json;
 
     using FluentAssertions;
 
@@ -41,13 +42,9 @@
                                 Links = new[] { new LinkResource("self", $"/purchasing/signing-limits/{this.userNumber}") }
                             }));
 
-            this.Response = this.Client.Put(
+            this.Response = this.Client.PutAsJsonAsync(
                 $"/purchasing/signing-limits/{this.userNumber}",
-                this.resource,
-                with =>
-                    {
-                        with.Accept("application/json");
-                }).Result;
+                this.resource).Result;
         }
 
         [Test]
