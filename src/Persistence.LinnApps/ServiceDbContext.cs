@@ -14,15 +14,13 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Logging;
 
-    using OrderMethod = Linn.Purchasing.Domain.LinnApps.PurchaseOrders.OrderMethod;
-
     public class ServiceDbContext : DbContext
     {
         public static readonly LoggerFactory MyLoggerFactory =
             new LoggerFactory(new[] { new Microsoft.Extensions.Logging.Debug.DebugLoggerProvider() });
 
         public DbSet<PartSupplier> PartSuppliers { get; set; }
-
+        
         public DbSet<Part> Parts { get; set; }
 
         public DbSet<Supplier> Suppliers { get; set; }
@@ -115,6 +113,8 @@
 
         public DbSet<WhatsInInspectionStockLocationsData> WhatsInInspectionStockLocationsView { get; set; }
 
+        public DbSet<WhatsInInspectionBackOrderData> WhatsInInspectionBackOrderView { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -171,10 +171,10 @@
             this.BuildWhatsInInspectionIncludingFailedView(builder);
             this.BuildWhatsInInspectionPurchaseOrdersView(builder);
             this.BuildDocumentTypes(builder);
-            this.BuildPurchaseOrderOrderMethods(builder);
             this.BuildPrefsupVsReceiptsView(builder);
             this.BuildMrOrders(builder);
             this.BuildWhatsInInspectionStockLocationsView(builder);
+            this.BuildWhatsInInspectionBackOrderView(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1009,20 +1009,22 @@
             e.Property(m => m.Qty).HasColumnName("QTY");
             e.Property(m => m.Location).HasColumnName("LOC");
         }
+        
+        private void BuildWhatsInInspectionBackOrderView(ModelBuilder builder)
+        {
+            var e = builder.Entity<WhatsInInspectionBackOrderData>().ToView("WHATS_IN_INSP_BACK_ORDER_VIEW");
+            e.HasNoKey();
+            e.Property(m => m.ArticleNumber).HasColumnName("ARTICLE_NUMBER");
+            e.Property(m => m.Story).HasColumnName("STORY");
+            e.Property(m => m.QtyInInspection).HasColumnName("QTY_IN_INSPECTION");
+            e.Property(m => m.QtyNeeded).HasColumnName("QTY_NEEDED");
+        }
 
         private void BuildDocumentTypes(ModelBuilder builder)
         {
             var entity = builder.Entity<DocumentType>().ToTable("DOCUMENT_TYPES");
             entity.HasKey(d => d.Name);
             entity.Property(d => d.Name).HasColumnName("NAME").HasMaxLength(6);
-            entity.Property(d => d.Description).HasColumnName("DESCRIPTION").HasMaxLength(50);
-        }
-
-        private void BuildPurchaseOrderOrderMethods(ModelBuilder builder)
-        {
-            var entity = builder.Entity<OrderMethod>().ToTable("PL_ORDER_METHODS");
-            entity.HasKey(d => d.Name);
-            entity.Property(d => d.Name).HasColumnName("METHOD").HasMaxLength(10);
             entity.Property(d => d.Description).HasColumnName("DESCRIPTION").HasMaxLength(50);
         }
 

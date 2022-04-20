@@ -99,7 +99,10 @@
                 .AddTransient<IQueryRepository<ReceiptPrefSupDiff>, ReceiptPrefSupDiffRepository>()
                 .AddTransient<IQueryRepository<WhatsInInspectionStockLocationsData>, EntityFrameworkQueryRepository<WhatsInInspectionStockLocationsData>>(
                     r => new EntityFrameworkQueryRepository<WhatsInInspectionStockLocationsData>(r.GetService<ServiceDbContext>()
-                        ?.WhatsInInspectionStockLocationsView));
+                        ?.WhatsInInspectionStockLocationsView))
+                .AddTransient<IQueryRepository<WhatsInInspectionBackOrderData>, EntityFrameworkQueryRepository<WhatsInInspectionBackOrderData>>(
+                    r => new EntityFrameworkQueryRepository<WhatsInInspectionBackOrderData>(r.GetService<ServiceDbContext>()
+                        ?.WhatsInInspectionBackOrderView));
         }
     }
 }

@@ -16,21 +16,25 @@
 
         private readonly IQueryRepository<WhatsInInspectionStockLocationsData> whatsInInspectionStockLocationsDataRepository;
 
+        private readonly IQueryRepository<WhatsInInspectionBackOrderData> whatsInInspectionBackOrderDataRepository;
+
         private readonly IReportingHelper reportingHelper;
 
         public WhatsInInspectionReportService(
             IWhatsInInspectionRepository whatsInInspectionRepository,
             IQueryRepository<WhatsInInspectionPurchaseOrdersData> whatsInInspectionPurchaseOrdersDataRepository,
             IQueryRepository<WhatsInInspectionStockLocationsData> whatsInInspectionStockLocationsDataRepository,
+            IQueryRepository<WhatsInInspectionBackOrderData> whatsInInspectionBackOrderDataRepository,
             IReportingHelper reportingHelper)
         {
             this.whatsInInspectionRepository = whatsInInspectionRepository;
             this.whatsInInspectionPurchaseOrdersDataRepository = whatsInInspectionPurchaseOrdersDataRepository;
             this.whatsInInspectionStockLocationsDataRepository = whatsInInspectionStockLocationsDataRepository;
+            this.whatsInInspectionBackOrderDataRepository = whatsInInspectionBackOrderDataRepository;
             this.reportingHelper = reportingHelper;
         }
 
-        public IEnumerable<PartsInInspectionReportEntry> GetReport(
+        public WhatsInInspectionReport GetReport(
             bool includePartsWithNoOrderNumber = false,
             bool showStockLocations = true,
             bool includeFailedStock = false,
@@ -43,7 +47,9 @@
             var orders = this.whatsInInspectionPurchaseOrdersDataRepository.FilterBy(d => d.State.Equals("QC"))
                 .ToList();
 
-            var locationsData = new List<WhatsInInspectionStockLocationsData>();
+            IEnumerable<WhatsInInspectionStockLocationsData> locationsData = null;
+
+            IEnumerable<WhatsInInspectionBackOrderData> backOrderData = null;
 
             if (showStockLocations)
             {
@@ -64,20 +70,37 @@
                 orders.AddRange(this.whatsInInspectionPurchaseOrdersDataRepository.FilterBy(d => d.State.Equals("FAIL")));
             }
 
-            return parts.Select(p => new PartsInInspectionReportEntry
-                                         {
-                                             PartNumber = p.PartNumber,
-                                             Description = p.Description, 
-                                             MinDate = p.MinDate,
-                                             OurUnitOfMeasure = p.OurUnitOfMeasure,
-                                             QtyInStock = p.QtyInStock,
-                                             QtyInInspection = p.QtyInInspection,
-                                             OrdersBreakdown = this
-                                                 .BuildPurchaseOrdersBreakdown(orders.Where(o => o.PartNumber == p.PartNumber)),
-                                             LocationsBreakdown = showStockLocations ? 
-                                                                      this.BuildLocationsBreakdown(locationsData.Where(o => o.PartNumber == p.PartNumber))
-                                                                    : null
-                                         });
+            var partsResult = parts.Select(p => new PartsInInspectionReportEntry
+                                                    {
+                                                        PartNumber = p.PartNumber,
+                                                        Description = p.Description,
+                                                        MinDate = p.MinDate,
+                                                        OurUnitOfMeasure = p.OurUnitOfMeasure,
+                                                        QtyInStock = p.QtyInStock,
+                                                        QtyInInspection = p.QtyInInspection,
+                                                        OrdersBreakdown = this
+                                                            .BuildPurchaseOrdersBreakdown(orders
+                                                                .Where(o => o.PartNumber == p.PartNumber)),
+                                                        LocationsBreakdown = showStockLocations ?
+                                                                                 this.BuildLocationsBreakdown(
+                                                                                     locationsData.Where(o => o.PartNumber == p.PartNumber))
+                                                                                 : null
+                                                    });
+
+            if (showBackOrdered)
+            {
+                backOrderData = this.whatsInInspectionBackOrderDataRepository
+                    .FindAll().ToList().Where(d => partsResult
+                    .Select(x => x.PartNumber).Contains(d.ArticleNumber));
+            }
+
+            return new WhatsInInspectionReport 
+                       { 
+                           PartsInInspection = partsResult, 
+                           BackOrderData = showBackOrdered 
+                                               ? this.BuildBackOrderResultsModel(backOrderData)
+                                               : null
+                       };
         }
 
         private ResultsModel BuildPurchaseOrdersBreakdown(
@@ -204,6 +227,63 @@
                         ColumnId = "Qty",
                         Value = model.Qty
                     });
+            }
+
+            reportLayout.SetGridData(values);
+            return reportLayout.GetResultsModel();
+        }
+
+        private ResultsModel BuildBackOrderResultsModel(
+            IEnumerable<WhatsInInspectionBackOrderData> models)
+        {
+            var reportLayout = new SimpleGridLayout(
+                this.reportingHelper,
+                CalculationValueModelType.Value,
+                null,
+                $"Orders Breakdown");
+
+            reportLayout.AddColumnComponent(
+                null,
+                new List<AxisDetailsModel>
+                    {
+                        new AxisDetailsModel("ArticleNumber", "Part",  GridDisplayType.TextValue),
+                        new AxisDetailsModel("Story", "Story",  GridDisplayType.TextValue),
+                        new AxisDetailsModel("QtyInInspection", "In Inspection",  GridDisplayType.Value) { DecimalPlaces = 2 },
+                        new AxisDetailsModel("QtyNeeded", "Needed", GridDisplayType.Value) { DecimalPlaces = 2 },
+                    });
+            var values = new List<CalculationValueModel>();
+
+            foreach (var model in models)
+            {
+                var currentRowId = $"{model.ArticleNumber}";
+                values.Add(
+                    new CalculationValueModel
+                    {
+                        RowId = currentRowId,
+                        ColumnId = "ArticleNumber",
+                        TextDisplay = model.ArticleNumber
+                    });
+                values.Add(
+                    new CalculationValueModel
+                    {
+                        RowId = currentRowId,
+                        ColumnId = "Story",
+                        TextDisplay = model.Story
+                    });
+                values.Add(
+                    new CalculationValueModel
+                    {
+                        RowId = currentRowId,
+                        ColumnId = "QtyInInspection",
+                        Value = model.QtyInInspection
+                    });
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
+                            ColumnId = "QtyNeeded",
+                            Value = model.QtyNeeded
+                        });
             }
 
             reportLayout.SetGridData(values);

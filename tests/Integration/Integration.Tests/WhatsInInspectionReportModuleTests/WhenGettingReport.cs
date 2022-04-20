@@ -17,7 +17,7 @@
 
     public class WhenGettingReport : ContextBase
     {
-        private IEnumerable<PartsInInspectionReportEntry> result;
+        private WhatsInInspectionReport result;
 
         private bool includePartsWithNoOrderNumber;
 
@@ -38,14 +38,19 @@
             this.includeFinishedGoods = false;
             this.showBackOrdered = false;
 
-            this.result = new List<PartsInInspectionReportEntry> 
-                              { 
-                                  new PartsInInspectionReportEntry
-                                      {
-                                          PartNumber = "PART",
-                                          OrdersBreakdown = new ResultsModel()
-                                      }
+            this.result = new WhatsInInspectionReport
+                              {
+                                  PartsInInspection = new List<PartsInInspectionReportEntry>
+                                                          {
+                                                              new PartsInInspectionReportEntry
+                                                                  {
+                                                                      PartNumber = "PART",
+                                                                      OrdersBreakdown = new ResultsModel()
+                                                                  }
+                                                          },
+                                BackOrderData = new ResultsModel()
                               };
+        
 
             this.MockDomainService.GetReport(
                 this.includePartsWithNoOrderNumber,
@@ -83,8 +88,8 @@
         [Test]
         public void ShouldReturnReport()
         {
-            var resource = this.Response.DeserializeBody<IEnumerable<WhatsInInspectionReportResource>>();
-            resource.First().PartNumber.Should().Be("PART");
+            var resource = this.Response.DeserializeBody<WhatsInInspectionReportResource>();
+            resource.PartsInInspection.First().PartNumber.Should().Be("PART");
         }
     }
 }
