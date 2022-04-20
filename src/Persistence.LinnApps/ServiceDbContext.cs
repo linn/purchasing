@@ -20,7 +20,7 @@
             new LoggerFactory(new[] { new Microsoft.Extensions.Logging.Debug.DebugLoggerProvider() });
 
         public DbSet<PartSupplier> PartSuppliers { get; set; }
-
+        
         public DbSet<Part> Parts { get; set; }
 
         public DbSet<Supplier> Suppliers { get; set; }
@@ -169,6 +169,7 @@
             this.BuildDocumentTypes(builder);
             this.BuildPrefsupVsReceiptsView(builder);
             this.BuildMrOrders(builder);
+            this.BuildWhatsInInspectionBackOrderView(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -991,6 +992,16 @@
             e.Property(m => m.Cancelled).HasColumnName("CANCELLED");
             e.Property(m => m.QtyPassed).HasColumnName("PASSED");
             e.Property(m => m.QtyReceived).HasColumnName("RECEIVED");
+        }
+
+        private void BuildWhatsInInspectionBackOrderView(ModelBuilder builder)
+        {
+            var e = builder.Entity<WhatsInInspectionBackOrderData>().ToView("WHATS_IN_INSP_BACK_ORDER_VIEW");
+            e.HasNoKey();
+            e.Property(m => m.ArticleNumber).HasColumnName("ARTICLE_NUMBER");
+            e.Property(m => m.Story).HasColumnName("STORY");
+            e.Property(m => m.QtyInInspection).HasColumnName("QTY_IN_INSPECTION");
+            e.Property(m => m.QtyNeeded).HasColumnName("QTY_NEEDED");
         }
 
         private void BuildDocumentTypes(ModelBuilder builder)
