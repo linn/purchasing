@@ -39,7 +39,7 @@
             return new SuccessResult<WhatsInInspectionReportResource>(
                 new WhatsInInspectionReportResource
                     {
-                     PartsInInspection = result.PartsInInspection.Select(m => new WhatsInInspectionReportEntryResource
+                        PartsInInspection = result.PartsInInspection.Select(m => new WhatsInInspectionReportEntryResource
                                                                 {
                                                                     PartNumber = m.PartNumber,
                                                                     Description = m.Description,
@@ -53,7 +53,7 @@
                                                                         .resultsModelResourceBuilder.Build(m.LocationsBreakdown, null) 
                                                                         : null
                                                                 }),
-                     BackOrderData = result.BackOrderData != null 
+                        BackOrderData = result.BackOrderData != null 
                                          ? (ReportReturnResource)this.resultsModelResourceBuilder.Build(result.BackOrderData, null)
                                          : null
                 });
