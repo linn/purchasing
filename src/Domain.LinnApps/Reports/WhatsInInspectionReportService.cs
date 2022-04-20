@@ -12,13 +12,13 @@
     {
         private readonly IWhatsInInspectionRepository whatsInInspectionRepository;
 
-        private readonly IQueryRepository<WhatsInInspectionPurchaseOrdersViewModel> whatsInInspectionPurchaseOrdersViewRepository;
+        private readonly IQueryRepository<WhatsInInspectionPurchaseOrdersData> whatsInInspectionPurchaseOrdersViewRepository;
 
         private readonly IReportingHelper reportingHelper;
 
         public WhatsInInspectionReportService(
             IWhatsInInspectionRepository whatsInInspectionRepository,
-            IQueryRepository<WhatsInInspectionPurchaseOrdersViewModel> whatsInInspectionPurchaseOrdersViewRepository,
+            IQueryRepository<WhatsInInspectionPurchaseOrdersData> whatsInInspectionPurchaseOrdersViewRepository,
             IReportingHelper reportingHelper)
         {
             this.whatsInInspectionRepository = whatsInInspectionRepository;
@@ -26,25 +26,25 @@
             this.reportingHelper = reportingHelper;
         }
 
-        public IEnumerable<WhatsInInspectionReportModel> GetReport(
+        public IEnumerable<PartsInInspectionReportEntry> GetReport(
             bool includePartsWithNoOrderNumber = false,
             bool showStockLocations = true,
             bool includeFailedStock = false,
             bool includeFinishedGoods = true,
             bool showBackOrdered = true)
         {
-            var states = new List<string> { "QC" };
+            var parts = this.whatsInInspectionRepository.GetWhatsInInspection(includeFailedStock)
+                .Where(m => m.MinDate.HasValue).OrderBy(m => m.MinDate);
+
+            var orders = this.whatsInInspectionPurchaseOrdersViewRepository.FilterBy(d => d.State.Equals("QC"))
+                .ToList();
+
             if (includeFailedStock)
             {
-                states.Add("FAIL");
+                orders.AddRange(this.whatsInInspectionPurchaseOrdersViewRepository.FilterBy(d => d.State.Equals("FAIL")));
             }
 
-            var parts = this.whatsInInspectionRepository.GetWhatsInInspection(includeFailedStock)
-                .Where(m => m.MinDate.HasValue).OrderBy(m => m.MinDate).ToList();
-
-            var orders = this.whatsInInspectionPurchaseOrdersViewRepository.FilterBy(d => states.Contains(d.State)).ToList();
-
-            return parts.Select(p => new WhatsInInspectionReportModel
+            return parts.Select(p => new PartsInInspectionReportEntry
                                          {
                                              PartNumber = p.PartNumber,
                                              Description = p.Description, 
@@ -58,7 +58,7 @@
         }
 
         private ResultsModel BuildPurchaseOrdersBreakdown(
-            IEnumerable<WhatsInInspectionPurchaseOrdersViewModel> models)
+            IEnumerable<WhatsInInspectionPurchaseOrdersData> models)
         {
             var reportLayout = new SimpleGridLayout(
                 this.reportingHelper,

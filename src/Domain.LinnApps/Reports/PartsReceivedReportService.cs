@@ -11,12 +11,12 @@
 
     public class PartsReceivedReportService : IPartsReceivedReportService
     {
-        private readonly IQueryRepository<PartsReceivedViewModel> partsReceivedView;
+        private readonly IQueryRepository<PartReceivedRecord> partsReceivedView;
 
         private readonly IReportingHelper reportingHelper;
 
         public PartsReceivedReportService(
-            IQueryRepository<PartsReceivedViewModel> partsReceivedView,
+            IQueryRepository<PartReceivedRecord> partsReceivedView,
             IReportingHelper reportingHelper)
         {
             this.partsReceivedView = partsReceivedView;

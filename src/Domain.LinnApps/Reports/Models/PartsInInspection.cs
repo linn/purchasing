@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class WhatsInInspectionViewModel
+    public class PartsInInspection
     {
         public string PartNumber { get; set; }
 

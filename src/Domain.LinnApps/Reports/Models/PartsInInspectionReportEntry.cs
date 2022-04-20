@@ -2,7 +2,7 @@
 {
     using Linn.Common.Reporting.Models;
 
-    public class WhatsInInspectionReportModel : WhatsInInspectionViewModel
+    public class PartsInInspectionReportEntry : PartsInInspection
     {
         public ResultsModel OrdersBreakdown { get; set; }
     }

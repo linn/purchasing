@@ -17,7 +17,7 @@
 
     public class WhenGettingReport : ContextBase
     {
-        private IEnumerable<WhatsInInspectionReportModel> result;
+        private IEnumerable<PartsInInspectionReportEntry> result;
 
         private bool includePartsWithNoOrderNumber;
 
@@ -38,9 +38,9 @@
             this.includeFinishedGoods = false;
             this.showBackOrdered = false;
 
-            this.result = new List<WhatsInInspectionReportModel> 
+            this.result = new List<PartsInInspectionReportEntry> 
                               { 
-                                  new WhatsInInspectionReportModel
+                                  new PartsInInspectionReportEntry
                                       {
                                           PartNumber = "PART",
                                           OrdersBreakdown = new ResultsModel()

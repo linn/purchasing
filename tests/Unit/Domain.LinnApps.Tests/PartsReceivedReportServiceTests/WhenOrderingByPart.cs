@@ -16,14 +16,14 @@
     {
         private ResultsModel results;
 
-        private IEnumerable<PartsReceivedViewModel> data;
+        private IEnumerable<PartReceivedRecord> data;
 
         [SetUp]
         public void SetUp()
         {
-            this.data = new List<PartsReceivedViewModel>
+            this.data = new List<PartReceivedRecord>
                             {
-                                new PartsReceivedViewModel
+                                new PartReceivedRecord
                                     {
                                         SupplierName = "SUPPLIER 1",
                                         PartNumber = "PART C",
@@ -37,7 +37,7 @@
                                         TqmsGroup = "LINN",
                                         Qty = 1
                                     },
-                                new PartsReceivedViewModel
+                                new PartReceivedRecord
                                     {
                                         SupplierName = "SUPPLIER 2",
                                         PartNumber = "PART A",
@@ -51,7 +51,7 @@
                                         TqmsGroup = "LINN",
                                         Qty = 2
                                     },
-                                new PartsReceivedViewModel
+                                new PartReceivedRecord
                                     {
                                         SupplierName = "SUPPLIER 3",
                                         PartNumber = "PART B",
@@ -66,7 +66,7 @@
                                         Qty = -3
                                     }
                             };
-            this.PartsReceivedView.FilterBy(Arg.Any<Expression<Func<PartsReceivedViewModel, bool>>>())
+            this.PartsReceivedView.FilterBy(Arg.Any<Expression<Func<PartReceivedRecord, bool>>>())
                 .Returns(this.data.AsQueryable());
 
             this.results = this.Sut.GetReport(

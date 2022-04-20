@@ -1,6 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Reports.Models
 {
-    public class WhatsInInspectionPurchaseOrdersViewModel
+    public class WhatsInInspectionPurchaseOrdersData
     {
         public string PartNumber { get; set; }
 

@@ -91,7 +91,7 @@
 
         public DbSet<TqmsJobref> TqmsJobrefs { get; set; }
 
-        public DbSet<PartsReceivedViewModel> TqmsView { get; set; }
+        public DbSet<PartReceivedRecord> TqmsView { get; set; }
 
         public DbSet<PurchaseOrderReq> PurchaseOrderReqs { get; set; }
 
@@ -105,11 +105,11 @@
 
         public DbSet<MrpRunLog> MrpRunLogs { get; set; }
 
-        public DbSet<WhatsInInspectionExcludingFailsViewModel> WhatsInInspectionExcludingFailedView { get; set; }
+        public DbSet<PartsInInspectionExcludingFails> WhatsInInspectionExcludingFailedView { get; set; }
 
-        public DbSet<WhatsInInspectionIncludingFailsViewModel> WhatsInInspectionIncludingFailedView { get; set; }
+        public DbSet<PartsInInspectionIncludingFails> WhatsInInspectionIncludingFailedView { get; set; }
 
-        public DbSet<WhatsInInspectionPurchaseOrdersViewModel> WhatsInInspectionPurchaseOrdersView { get; set; }
+        public DbSet<WhatsInInspectionPurchaseOrdersData> WhatsInInspectionPurchaseOrdersView { get; set; }
         
         public DbSet<ReceiptPrefSupDiff> ReceiptPrefsupDiffs { get; set; }
 
@@ -839,7 +839,7 @@
 
         private void BuildPartsReceivedView(ModelBuilder builder)
         {
-            var entity = builder.Entity<PartsReceivedViewModel>().ToTable("PARTS_RECEIVED_VIEW").HasNoKey();
+            var entity = builder.Entity<PartReceivedRecord>().ToTable("PARTS_RECEIVED_VIEW").HasNoKey();
             entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER");
             entity.Property(a => a.JobRef).HasColumnName("JOBREF").HasColumnType("VARCHAR2");
             entity.Property(a => a.TqmsGroup).HasColumnName("TQMS_GROUP").HasColumnType("VARCHAR2");
@@ -960,7 +960,7 @@
 
         private void BuildWhatsInInspectionExcludingFailedView(ModelBuilder builder)
         {
-            var e = builder.Entity<WhatsInInspectionExcludingFailsViewModel>().ToView("WHATS_IN_INSP_EXCL_FAIL_VIEW");
+            var e = builder.Entity<PartsInInspectionExcludingFails>().ToView("WHATS_IN_INSP_EXCL_FAIL_VIEW");
             e.HasNoKey();
             e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER");
             e.Property(m => m.Description).HasColumnName("DESCRIPTION");
@@ -972,7 +972,7 @@
 
         private void BuildWhatsInInspectionIncludingFailedView(ModelBuilder builder)
         {
-            var e = builder.Entity<WhatsInInspectionIncludingFailsViewModel>().ToView("WHATS_IN_INSP_INCL_FAIL_VIEW");
+            var e = builder.Entity<PartsInInspectionIncludingFails>().ToView("WHATS_IN_INSP_INCL_FAIL_VIEW");
             e.HasNoKey();
             e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER");
             e.Property(m => m.Description).HasColumnName("DESCRIPTION");
@@ -984,7 +984,7 @@
 
         private void BuildWhatsInInspectionPurchaseOrdersView(ModelBuilder builder)
         {
-            var e = builder.Entity<WhatsInInspectionPurchaseOrdersViewModel>().ToView("WHATS_IN_INSP_PO_VIEW");
+            var e = builder.Entity<WhatsInInspectionPurchaseOrdersData>().ToView("WHATS_IN_INSP_PO_VIEW");
             e.HasNoKey();
             e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER");
             e.Property(m => m.State).HasColumnName("STATE");
