@@ -14,8 +14,6 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Logging;
 
-    using OrderMethod = Linn.Purchasing.Domain.LinnApps.PurchaseOrders.OrderMethod;
-
     public class ServiceDbContext : DbContext
     {
         public static readonly LoggerFactory MyLoggerFactory =
@@ -169,7 +167,6 @@
             this.BuildWhatsInInspectionIncludingFailedView(builder);
             this.BuildWhatsInInspectionPurchaseOrdersView(builder);
             this.BuildDocumentTypes(builder);
-            this.BuildPurchaseOrderOrderMethods(builder);
             this.BuildPrefsupVsReceiptsView(builder);
             this.BuildMrOrders(builder);
         }
@@ -1001,14 +998,6 @@
             var entity = builder.Entity<DocumentType>().ToTable("DOCUMENT_TYPES");
             entity.HasKey(d => d.Name);
             entity.Property(d => d.Name).HasColumnName("NAME").HasMaxLength(6);
-            entity.Property(d => d.Description).HasColumnName("DESCRIPTION").HasMaxLength(50);
-        }
-
-        private void BuildPurchaseOrderOrderMethods(ModelBuilder builder)
-        {
-            var entity = builder.Entity<OrderMethod>().ToTable("PL_ORDER_METHODS");
-            entity.HasKey(d => d.Name);
-            entity.Property(d => d.Name).HasColumnName("METHOD").HasMaxLength(10);
             entity.Property(d => d.Description).HasColumnName("DESCRIPTION").HasMaxLength(50);
         }
 
