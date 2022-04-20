@@ -53,8 +53,9 @@
                                                                         .resultsModelResourceBuilder.Build(m.LocationsBreakdown, null) 
                                                                         : null
                                                                 }),
-                     BackOrderData = (ReportReturnResource)this
-                         .resultsModelResourceBuilder.Build(result.BackOrderData, null)
+                     BackOrderData = result.BackOrderData != null 
+                                         ? (ReportReturnResource)this.resultsModelResourceBuilder.Build(result.BackOrderData, null)
+                                         : null
                 });
         }
     }

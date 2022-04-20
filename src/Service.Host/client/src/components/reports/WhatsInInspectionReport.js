@@ -162,7 +162,7 @@ function WhatsInInspectionReport() {
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
-                                                {reportData.map(row => (
+                                                {reportData.partsInInspection.map(row => (
                                                     <>
                                                         <TableRow
                                                             key={row.partNumber}
@@ -210,7 +210,6 @@ function WhatsInInspectionReport() {
                                                                             row.locationsBreakdown
                                                                                 .reportResults[0]
                                                                         }
-                                                                        title={row.title}
                                                                         showTitle={false}
                                                                         showTotals
                                                                         placeholderRows={4}
@@ -224,7 +223,6 @@ function WhatsInInspectionReport() {
                                                                         row.ordersBreakdown
                                                                             .reportResults[0]
                                                                     }
-                                                                    title={row.title}
                                                                     showTitle={false}
                                                                     showTotals
                                                                     placeholderRows={4}
@@ -237,6 +235,19 @@ function WhatsInInspectionReport() {
                                             </TableBody>
                                         </Table>
                                     </TableContainer>
+                                    {reportData.backOrderData && (
+                                        <Grid item xs={12}>
+                                            <ReportTable
+                                                reportData={
+                                                    reportData.backOrderData.reportResults[0]
+                                                }
+                                                showTitle
+                                                title="Parts In Inspection On Purchasing Back Order"
+                                                placeholderRows={4}
+                                                placeholderColumns={4}
+                                            />
+                                        </Grid>
+                                    )}
                                 </Grid>
                             </>
                         )}
