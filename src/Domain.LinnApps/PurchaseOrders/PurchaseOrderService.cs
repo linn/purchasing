@@ -82,28 +82,6 @@
             return order;
         }
 
-        public PurchaseOrder Create(PurchaseOrder newOrder, IEnumerable<string> privileges)
-        {
-            //todo move to facade
-            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, privileges))
-            {
-                throw new UnauthorisedActionException("You are not authorised to create purchase orders");
-            }
-
-            // create order
-            this.orderRepository.Add(newOrder);
-
-            // will this add the details etc?
-
-            // create detail(s)
-
-            // create deliveries maybe only if split deliveries is 0? Are split delivieres pl deliveries or something else?
-
-            // create pl_order_postings
-            // select plorp_seq.nextval into v_plorp from dual;
-            return newOrder;
-        }
-
         public PurchaseOrder Update(PurchaseOrder current, PurchaseOrder updated, IEnumerable<string> privileges)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))

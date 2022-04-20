@@ -43,9 +43,7 @@
         public decimal? Duty { get; set; }
 
         public decimal? OurUnitPriceCurrency { get; set; } //our price
-        //from mini order trigger:
-        //next_our_unit_price = :new.our_price,
-        //next_order_unit_price = :new.order_price,
+
         public decimal? OrderUnitPriceCurrency { get; set; } //order  price
 
         public decimal? BaseOurUnitPrice { get; set; }
