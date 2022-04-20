@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Facade.Tests.PurchaseOrderServiceTests
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
@@ -8,6 +9,7 @@
     using FluentAssertions;
 
     using Linn.Common.Facade;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
 
@@ -22,12 +24,6 @@
         [SetUp]
         public void SetUp()
         {
-            this.Builder.Build(Arg.Any<PurchaseOrder>(), Arg.Any<IEnumerable<string>>())
-                .Returns(new PurchaseOrderResource 
-                    {
-                        OrderNumber = 600179
-                });  
-            
             var purchaseOrders = new List<PurchaseOrder>
                                      {
                                          new PurchaseOrder
@@ -35,11 +31,10 @@
                                                  OrderNumber = 600179
                                              }
                                      };
-
             this.PurchaseOrderRepository.FilterBy(Arg.Any<Expression<Func<PurchaseOrder, bool>>>())
                 .Returns(purchaseOrders.AsQueryable());
-
-             this.result = this.Sut.Search("600179");
+            this.AuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>()).Returns(true);
+            this.result = this.Sut.Search("600179", new List<string>());
         }
 
         [Test]

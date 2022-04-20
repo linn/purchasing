@@ -55,6 +55,10 @@
         {
             var privileges = claims as string[] ?? claims.ToArray();
 
+            if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
+            {
+                yield return new LinkResource { Rel = "allow-over-book-search", Href = $"purchasing/purchase-orders/allow-over-book" };
+            }
             if (model != null)
             {
                 yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
