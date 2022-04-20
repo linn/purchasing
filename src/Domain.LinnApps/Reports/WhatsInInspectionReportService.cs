@@ -38,7 +38,7 @@
             bool showBackOrdered = true)
         {
             var parts = this.whatsInInspectionRepository.GetWhatsInInspection(includeFailedStock)
-                .Where(m => m.MinDate.HasValue).OrderBy(m => m.MinDate);
+                .Where(m => m.MinDate.HasValue).OrderBy(m => m.MinDate).ToList();
 
             var orders = this.whatsInInspectionPurchaseOrdersDataRepository.FilterBy(d => d.State.Equals("QC"))
                 .ToList();

@@ -989,12 +989,12 @@
         {
             var e = builder.Entity<WhatsInInspectionPurchaseOrdersData>().ToView("WHATS_IN_INSP_PO_VIEW");
             e.HasNoKey();
-            e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER");
-            e.Property(m => m.State).HasColumnName("STATE");
-            e.Property(m => m.OrderType).HasColumnName("ORDER_TYPE");
+            e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
+            e.Property(m => m.State).HasColumnName("STATE").HasColumnType("VARCHAR2");
+            e.Property(m => m.OrderType).HasColumnName("ORDER_TYPE").HasColumnType("VARCHAR2");
             e.Property(m => m.OrderNumber).HasColumnName("ORDER_NUMBER");
             e.Property(m => m.Qty).HasColumnName("QTY");
-            e.Property(m => m.Cancelled).HasColumnName("CANCELLED");
+            e.Property(m => m.Cancelled).HasColumnName("CANCELLED").HasColumnType("VARCHAR2");
             e.Property(m => m.QtyPassed).HasColumnName("PASSED");
             e.Property(m => m.QtyReceived).HasColumnName("RECEIVED");
         }
