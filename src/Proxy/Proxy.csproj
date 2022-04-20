@@ -10,7 +10,7 @@
     <PackageReference Include="Linn.Common.Configuration" Version="2.0.0" />
     <PackageReference Include="Linn.Common.Proxy" Version="3.0.1" />
     <PackageReference Include="Linn.Common.Proxy.LinnApps" Version="3.0.0" />
-    <PackageReference Include="MimeKit" Version="2.15.1" />
+    <PackageReference Include="MimeKit" Version="3.2.0" />
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.50" />
   </ItemGroup>
 
