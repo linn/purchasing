@@ -15,5 +15,7 @@
         public decimal QtyInInspection { get; set; }
 
         public ReportReturnResource OrdersBreakdown { get; set; }
+
+        public ReportReturnResource LocationsBreakdown { get; set; }
     }
 }

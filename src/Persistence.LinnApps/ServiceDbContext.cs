@@ -113,6 +113,8 @@
         
         public DbSet<ReceiptPrefSupDiff> ReceiptPrefsupDiffs { get; set; }
 
+        public DbSet<WhatsInInspectionStockLocationsData> WhatsInInspectionStockLocationsView { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -172,6 +174,7 @@
             this.BuildPurchaseOrderOrderMethods(builder);
             this.BuildPrefsupVsReceiptsView(builder);
             this.BuildMrOrders(builder);
+            this.BuildWhatsInInspectionStockLocationsView(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -994,6 +997,17 @@
             e.Property(m => m.Cancelled).HasColumnName("CANCELLED");
             e.Property(m => m.QtyPassed).HasColumnName("PASSED");
             e.Property(m => m.QtyReceived).HasColumnName("RECEIVED");
+        }
+
+        private void BuildWhatsInInspectionStockLocationsView(ModelBuilder builder)
+        {
+            var e = builder.Entity<WhatsInInspectionStockLocationsData>().ToView("WHATS_IN_INSP_ST_LOC_VIEW");
+            e.HasNoKey();
+            e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER");
+            e.Property(m => m.State).HasColumnName("STATE");
+            e.Property(m => m.Batch).HasColumnName("BATCH");
+            e.Property(m => m.Qty).HasColumnName("QTY");
+            e.Property(m => m.Location).HasColumnName("LOC");
         }
 
         private void BuildDocumentTypes(ModelBuilder builder)

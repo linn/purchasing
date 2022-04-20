@@ -46,8 +46,10 @@
                                            QtyInInspection = m.QtyInInspection,
                                            OurUnitOfMeasure = m.OurUnitOfMeasure,
                                            OrdersBreakdown = (ReportReturnResource)this
-                                               .resultsModelResourceBuilder.Build(m.OrdersBreakdown, null)
-                                       }));
+                                               .resultsModelResourceBuilder.Build(m.OrdersBreakdown, null),
+                                           LocationsBreakdown = m.LocationsBreakdown != null ? (ReportReturnResource)this
+                                               .resultsModelResourceBuilder.Build(m.LocationsBreakdown, null) : null
+                }));
         }
     }
 }

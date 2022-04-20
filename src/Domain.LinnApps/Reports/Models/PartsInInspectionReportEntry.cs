@@ -5,5 +5,7 @@
     public class PartsInInspectionReportEntry : PartsInInspection
     {
         public ResultsModel OrdersBreakdown { get; set; }
+
+        public ResultsModel LocationsBreakdown { get; set; }
     }
 }
