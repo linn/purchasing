@@ -4,7 +4,6 @@
     using System.Threading.Tasks;
 
     using Carter;
-    using Carter.ModelBinding;
     using Carter.Request;
     using Carter.Response;
 
@@ -57,25 +56,6 @@
             app.MapPost("/purchasing/purchase-orders/reqs/{id:int}/authorise", this.AuthoriseReq);
             app.MapPost("/purchasing/purchase-orders/reqs", this.CreateReq);
         }
-        // private readonly IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource> currencyService;
-        //
-        // private readonly
-        //     IFacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource, LinnDeliveryAddressResource> deliveryAddressService;
-        //
-        // private readonly IFacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource> orderMethodService;
-        //
-        // private readonly IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource> packagingGroupService;
-        //
-        // private readonly IFacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource> purchaseOrderFacadeService;
-        //
-        // private readonly IPurchaseOrderReqFacadeService purchaseOrderReqFacadeService;
-        //
-        // private readonly
-        //     IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource> purchaseOrderReqStateService;
-        //
-        // private readonly IFacadeResourceService<Tariff, int, TariffResource, TariffResource> tariffService;
-        //
-        // private readonly IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource> unitsOfMeasureService;
 
         private async Task AuthoriseReq(
             HttpRequest req,
