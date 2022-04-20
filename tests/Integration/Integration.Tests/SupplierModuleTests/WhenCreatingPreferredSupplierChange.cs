@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Net;
+    using System.Net.Http.Json;
 
     using FluentAssertions;
 
@@ -35,13 +36,9 @@
                             PartNumber = "PART",
                         }));
 
-            this.Response = this.Client.Post(
+            this.Response = this.Client.PostAsJsonAsync(
                 $"/purchasing/preferred-supplier-changes",
-                this.resource,
-                with =>
-                    {
-                        with.Accept("application/json");
-                    }).Result;
+                this.resource).Result;
         }
 
         [Test]

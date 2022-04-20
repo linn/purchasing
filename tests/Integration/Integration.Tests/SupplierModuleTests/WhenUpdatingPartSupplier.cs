@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Net;
+    using System.Net.Http.Json;
 
     using FluentAssertions;
 
@@ -62,13 +63,9 @@
                             Supplier = new Supplier { SupplierId = this.updateResource.SupplierId }
                         });
 
-            this.Response = this.Client.Put(
+            this.Response = this.Client.PutAsJsonAsync(
                 $"/purchasing/part-suppliers/record?partId={1}&supplierId={100}",
-                this.updateResource,
-                with =>
-                {
-                    with.Accept("application/json");
-                }).Result;
+                this.updateResource).Result;
         }
 
         [Test]

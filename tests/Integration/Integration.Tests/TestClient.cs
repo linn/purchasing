@@ -13,16 +13,17 @@
 
     public static class TestClient
     {
-        public static HttpClient With<T>(Action<IServiceCollection> serviceConfiguration, params Func<RequestDelegate, RequestDelegate>[] middleWares) where T : CarterModule
+        public static HttpClient With<T>(Action<IServiceCollection> serviceConfiguration, params Func<RequestDelegate, RequestDelegate>[] middleWares) where T : ICarterModule
         {
             var server = new TestServer(
                 new WebHostBuilder()
                     .ConfigureServices(
                         services =>
-                        {
-                            services.Apply(serviceConfiguration);
-                            services.AddCarter(configurator: c =>
-                                c.WithModule<T>());
+                            {
+                                services.AddRouting();
+                                services.Apply(serviceConfiguration);
+                                services.AddCarter(configurator: c =>
+                                    c.WithModule<T>());
                         })
                     .Configure(
                         app =>

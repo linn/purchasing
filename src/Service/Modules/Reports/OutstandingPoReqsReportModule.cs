@@ -3,23 +3,21 @@
     using System.Threading.Tasks;
 
     using Carter;
-    using Carter.Request;
     using Carter.Response;
 
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Service.Models;
 
+    using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Routing;
 
-    public class OutstandingPoReqsReportModule : CarterModule
+    public class OutstandingPoReqsReportModule : ICarterModule
     {
-        private readonly IOutstandingPoReqsReportFacadeService reportFacadeService;
-
-        public OutstandingPoReqsReportModule(IOutstandingPoReqsReportFacadeService reportFacadeService)
+        public void AddRoutes(IEndpointRouteBuilder app)
         {
-            this.reportFacadeService = reportFacadeService;
-            this.Get("/purchasing/reports/outstanding-po-reqs/report", this.GetReport);
-            this.Get("/purchasing/reports/outstanding-po-reqs", this.GetApp);
+            app.MapGet("/purchasing/reports/outstanding-po-reqs/report", this.GetReport);
+            app.MapGet("/purchasing/reports/outstanding-po-reqs", this.GetApp);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -27,10 +25,13 @@
             await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
         }
 
-        private async Task GetReport(HttpRequest req, HttpResponse res)
+        private async Task GetReport(
+            HttpRequest req,
+            HttpResponse res,
+            IOutstandingPoReqsReportFacadeService reportFacadeService,
+            string state)
         {
-            var results = this.reportFacadeService.GetReport(
-                req.Query.As<string>("state"));
+            var results = reportFacadeService.GetReport(state);
 
             await res.Negotiate(results);
         }

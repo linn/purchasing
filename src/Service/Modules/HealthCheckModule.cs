@@ -1,14 +1,23 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
+    using System.Threading.Tasks;
+
     using Carter;
 
+    using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Routing;
 
-    public class HealthCheckModule : CarterModule
+    public class HealthCheckModule : ICarterModule
     {
-        public HealthCheckModule()
+        public void AddRoutes(IEndpointRouteBuilder app)
         {
-            this.Get("/healthcheck", async (req, res) => await res.WriteAsync("Ok"));
+            app.MapGet("/healthcheck", this.Ok);
+        }
+
+        private async Task Ok(HttpRequest req, HttpResponse res)
+        {
+            await res.WriteAsync("Ok");
         }
     }
 }

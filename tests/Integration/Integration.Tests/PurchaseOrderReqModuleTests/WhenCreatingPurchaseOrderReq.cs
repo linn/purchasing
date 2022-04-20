@@ -1,7 +1,8 @@
-﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrderModuleTests
+﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrderReqModuleTests
 {
     using System.Collections.Generic;
     using System.Net;
+    using System.Net.Http.Json;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
@@ -17,7 +18,7 @@
 
     using NUnit.Framework;
 
-    public class WhenAuthorisingPOReq : ContextBase
+    public class WhenCreatingPurchaseOrderReq : ContextBase
     {
         private readonly int reqNumber = 2023022;
 
@@ -52,7 +53,7 @@
                                     Email = "LC@gmail",
                                     DateRequired = string.Empty,
                                     RequestedBy = new EmployeeResource { Id = 33107, FullName = "me" },
-                                    AuthorisedBy = new EmployeeResource { Id = 999, FullName = "someone responsible" },
+                                    AuthorisedBy = null,
                                     SecondAuthBy = null,
                                     FinanceCheckBy = null,
                                     TurnedIntoOrderBy = null,
@@ -88,8 +89,7 @@
                 Email = "LC@gmail",
                 DateRequired = null,
                 RequestedBy = new Employee { Id = 33107, FullName = "me" },
-                AuthorisedBy = new Employee { Id = 999, FullName = "someone responsible" },
-                AuthorisedById = 999,
+                AuthorisedBy = null,
                 SecondAuthBy = null,
                 FinanceCheckBy = null,
                 TurnedIntoOrderBy = null,
@@ -99,32 +99,38 @@
                 Department = new Department { DepartmentCode = "00002345", Description = "Team 1" },
             };
 
-            this.MockPurchaseOrderReqRepository.FindById(this.reqNumber).Returns(req);
+            this.MockDatabaseService.GetNextVal("BLUE_REQ_SEQ").Returns(this.reqNumber);
 
-            this.MockReqDomainService.Authorise(
+            this.MockReqDomainService.Create(
                 Arg.Any<PurchaseOrderReq>(),
-                Arg.Any<IEnumerable<string>>(), Arg.Any<int>());
+                Arg.Any<IEnumerable<string>>()).Returns(req);
 
-            this.Response = this.Client.Post(
-                $"/purchasing/purchase-orders/reqs/{this.reqNumber}/authorise",
-                with => { with.Accept("application/json"); }).Result;
+            this.Response = this.Client.PostAsJsonAsync(
+                "/purchasing/purchase-orders/reqs",
+                this.resource).Result;
         }
 
         [Test]
         public void ShouldCallCreate()
         {
-            this.MockReqDomainService.Received().Authorise(
+            this.MockReqDomainService.Received().Create(
                 Arg.Any<PurchaseOrderReq>(),
-                Arg.Any<IEnumerable<string>>(), Arg.Any<int>());
+                Arg.Any<IEnumerable<string>>());
         }
 
         [Test]
-         public void ShouldCallRepositoryFindById()
+         public void ShouldGetNextSeq()
         {
-            this.MockPurchaseOrderReqRepository.Received().FindById(this.reqNumber);
+            this.MockDatabaseService.Received().GetNextVal("BLUE_REQ_SEQ");
         }
 
-         [Test]
+        [Test]
+        public void ShouldCallRepositoryAdd()
+        {
+            this.MockPurchaseOrderReqRepository.Received().Add(Arg.Any<PurchaseOrderReq>());
+        }
+
+        [Test]
         public void ShouldCommit()
         {
             this.TransactionManager.Received().Commit();
@@ -160,7 +166,7 @@
             resultResource.Email.Should().Be(this.resource.Email);
             resultResource.DateRequired.Should().Be(null);
             resultResource.RequestedBy.Id.Should().Be(this.resource.RequestedBy.Id);
-            resultResource.AuthorisedBy.Id.Should().Be(999);
+            resultResource.AuthorisedBy.Should().Be(null);
             resultResource.SecondAuthBy.Should().Be(null);
             resultResource.FinanceCheckBy.Should().Be(null);
             resultResource.TurnedIntoOrderBy.Should().Be(null);
@@ -180,9 +186,9 @@
         }
 
         [Test]
-        public void ShouldReturnOk()
+        public void ShouldReturnCreated()
         {
-            this.Response.StatusCode.Should().Be(HttpStatusCode.OK);
+            this.Response.StatusCode.Should().Be(HttpStatusCode.Created);
         }
     }
 }
