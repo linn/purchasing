@@ -42,7 +42,7 @@
             string toDate,
             string jobref,
             string orderBy,
-            bool includeNegativeValues,
+            bool? includeNegativeValues,
             IPartsReceivedReportFacadeService reportFacadeService)
         {
             var options = new PartsReceivedReportRequestResource
@@ -52,7 +52,7 @@
                                   ToDate = toDate, 
                                   Jobref = jobref, 
                                   OrderBy = orderBy, 
-                                  IncludeNegativeValues = includeNegativeValues
+                                  IncludeNegativeValues = includeNegativeValues ?? false
                               };
             if (string.IsNullOrEmpty(options.ToDate))
             {
@@ -73,7 +73,7 @@
             string toDate,
             string jobref,
             string orderBy,
-            bool includeNegativeValues,
+            bool? includeNegativeValues,
             IPartsReceivedReportFacadeService reportFacadeService)
         {
             var options = new PartsReceivedReportRequestResource
@@ -83,7 +83,7 @@
                     ToDate = toDate, 
                     Jobref = jobref, 
                     OrderBy = orderBy, 
-                    IncludeNegativeValues = includeNegativeValues
+                    IncludeNegativeValues = includeNegativeValues ?? false
                 };
             
             var csv = reportFacadeService.GetReportCsv(options);
