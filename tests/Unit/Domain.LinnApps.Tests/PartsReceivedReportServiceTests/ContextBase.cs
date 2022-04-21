@@ -11,7 +11,7 @@
 
     public class ContextBase
     {
-        protected IQueryRepository<PartsReceivedViewModel> PartsReceivedView { get; private set; }
+        protected IQueryRepository<PartReceivedRecord> PartsReceivedView { get; private set; }
 
         protected IReportingHelper ReportingHelper { get; private set; }
 
@@ -20,7 +20,7 @@
         [SetUp]
         public void SetUpContext()
         {
-            this.PartsReceivedView = Substitute.For<IQueryRepository<PartsReceivedViewModel>>();
+            this.PartsReceivedView = Substitute.For<IQueryRepository<PartReceivedRecord>>();
             this.ReportingHelper = new ReportingHelper();
             this.Sut = new PartsReceivedReportService(this.PartsReceivedView, this.ReportingHelper);
         }

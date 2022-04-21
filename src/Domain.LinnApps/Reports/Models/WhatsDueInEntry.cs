@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class WhatsDueInEntryModel
+    public class WhatsDueInEntry
     {
         public int OrderNumber { get; set; }
 

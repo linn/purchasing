@@ -16,7 +16,7 @@
             this.serviceDbContext = serviceDbContext;
         }
 
-        public IQueryable<WhatsInInspectionViewModel> GetWhatsInInspection(bool includeFailed = false)
+        public IQueryable<PartsInInspection> GetWhatsInInspection(bool includeFailed = false)
         {
             if (includeFailed)
             {

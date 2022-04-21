@@ -6,7 +6,7 @@
 
     public interface IWhatsInInspectionReportService
     {
-        IEnumerable<WhatsInInspectionReportModel> GetReport(
+        WhatsInInspectionReport GetReport(
             bool includePartsWithNoOrderNumber = false,
             bool showStockLocations = true,
             bool includeFailedStock = false,

@@ -1,6 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Reports.Models
 {
-    public class WhatsInInspectionPurchaseOrdersViewModel
+    public class WhatsInInspectionPurchaseOrdersData
     {
         public string PartNumber { get; set; }
 
@@ -17,5 +17,7 @@
         public decimal QtyPassed { get; set; }
 
         public decimal QtyReceived { get; set; }
+
+        public decimal QtyReturned { get; set; }
     }
 }

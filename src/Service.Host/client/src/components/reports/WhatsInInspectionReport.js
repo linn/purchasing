@@ -7,6 +7,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import Typography from '@mui/material/Typography';
 import {
     Page,
     Title,
@@ -125,24 +126,43 @@ function WhatsInInspectionReport() {
                         {reportData && (
                             <>
                                 <Grid item xs={12}>
-                                    <TableContainer>
-                                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                    <TableContainer
+                                        sx={{ overflowX: 'scroll', transform: 'rotateX(180deg)' }}
+                                    >
+                                        <Table
+                                            sx={{ transform: 'rotateX(180deg)' }}
+                                            aria-label="simple table"
+                                        >
                                             <TableHead>
                                                 <TableRow>
-                                                    <TableCell>Part Number</TableCell>
-                                                    <TableCell>Desc</TableCell>
+                                                    <TableCell>
+                                                        <Typography variant="h5">
+                                                            Part Number
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Typography variant="h5">
+                                                            Description
+                                                        </Typography>
+                                                    </TableCell>
 
-                                                    <TableCell align="right">Units</TableCell>
                                                     <TableCell align="right">
-                                                        Qty In Stock
+                                                        <Typography variant="h5">Units</Typography>
                                                     </TableCell>
                                                     <TableCell align="right">
-                                                        Qty In Inspection
+                                                        <Typography variant="h5">
+                                                            Qty In Stock
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        <Typography variant="h5">
+                                                            Qty In Inspection
+                                                        </Typography>
                                                     </TableCell>
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
-                                                {reportData.map(row => (
+                                                {reportData.partsInInspection.map(row => (
                                                     <>
                                                         <TableRow
                                                             key={row.partNumber}
@@ -154,29 +174,55 @@ function WhatsInInspectionReport() {
                                                             }}
                                                         >
                                                             <TableCell component="th" scope="row">
-                                                                {row.partNumber}
+                                                                <Typography variant="h6">
+                                                                    {row.partNumber}
+                                                                </Typography>
                                                             </TableCell>
                                                             <TableCell component="th" scope="row">
-                                                                {row.description}
+                                                                <Typography variant="h6">
+                                                                    {row.description}
+                                                                </Typography>
                                                             </TableCell>
                                                             <TableCell align="right">
-                                                                {row.ourUnitOfMeasure}
+                                                                <Typography variant="h6">
+                                                                    {row.ourUnitOfMeasure}
+                                                                </Typography>
                                                             </TableCell>
                                                             <TableCell align="right">
-                                                                {row.qtyInStock}
+                                                                <Typography variant="h6">
+                                                                    {row.qtyInStock}
+                                                                </Typography>
                                                             </TableCell>
                                                             <TableCell align="right">
-                                                                {row.qtyInInspection}
+                                                                <Typography variant="h6">
+                                                                    {row.qtyInInspection}
+                                                                </Typography>
                                                             </TableCell>
                                                         </TableRow>
                                                         <TableRow key={row.partNumber}>
+                                                            {row.locationsBreakdown && (
+                                                                <TableCell
+                                                                    align="right"
+                                                                    colSpan={2}
+                                                                >
+                                                                    <ReportTable
+                                                                        reportData={
+                                                                            row.locationsBreakdown
+                                                                                .reportResults[0]
+                                                                        }
+                                                                        showTitle={false}
+                                                                        showTotals
+                                                                        placeholderRows={4}
+                                                                        placeholderColumns={4}
+                                                                    />
+                                                                </TableCell>
+                                                            )}
                                                             <TableCell align="right" colSpan={3}>
                                                                 <ReportTable
                                                                     reportData={
                                                                         row.ordersBreakdown
                                                                             .reportResults[0]
                                                                     }
-                                                                    title={row.title}
                                                                     showTitle={false}
                                                                     showTotals
                                                                     placeholderRows={4}
@@ -189,6 +235,19 @@ function WhatsInInspectionReport() {
                                             </TableBody>
                                         </Table>
                                     </TableContainer>
+                                    {reportData.backOrderData && (
+                                        <Grid item xs={12}>
+                                            <ReportTable
+                                                reportData={
+                                                    reportData.backOrderData.reportResults[0]
+                                                }
+                                                showTitle
+                                                title="Parts In Inspection On Purchasing Back Order"
+                                                placeholderRows={4}
+                                                placeholderColumns={4}
+                                            />
+                                        </Grid>
+                                    )}
                                 </Grid>
                             </>
                         )}
