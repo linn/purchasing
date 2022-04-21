@@ -1,5 +1,10 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.WhatsInInspectionReportServiceTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Expressions;
+
     using Linn.Common.Persistence;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Reports;
@@ -38,6 +43,14 @@
             get; private set;
         }
 
+        protected IEnumerable<PartsInInspection> PartsInInspections { get; private set; }
+
+        protected IEnumerable<WhatsInInspectionPurchaseOrdersData> OrdersData { get; private set; }
+
+        protected IEnumerable<WhatsInInspectionStockLocationsData> LocationsData { get; private set; }
+
+        protected IEnumerable<WhatsInInspectionBackOrderData> BackOrderData { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -49,6 +62,147 @@
                 Substitute.For<IQueryRepository<WhatsInInspectionStockLocationsData>>();
             this.WhatsInInspectionBackOrderDataRepository =
                 Substitute.For<IQueryRepository<WhatsInInspectionBackOrderData>>();
+
+            this.PartsInInspections = new List<PartsInInspection>
+                            {
+                                new PartsInInspection
+                                    {
+                                        PartNumber = "PART A",
+                                        Description = "DESC",
+                                        OurUnitOfMeasure = "ONES",
+                                        QtyInStock = 1,
+                                        QtyInInspection = 1,
+                                        RawOrFinished = "FG",
+                                        MinDate = new DateTime(1995, 3, 28)
+                                    },
+                                new PartsInInspection
+                                    {
+                                        PartNumber = "PART B",
+                                        Description = "DESC",
+                                        OurUnitOfMeasure = "ONES",
+                                        QtyInStock = 1,
+                                        QtyInInspection = 1,
+                                        RawOrFinished = "FG",
+                                        MinDate = new DateTime(1993, 3, 28)
+                                    },
+                                new PartsInInspection
+                                    {
+                                        PartNumber = "PART C",
+                                        Description = "DESC",
+                                        OurUnitOfMeasure = "ONES",
+                                        QtyInStock = 1,
+                                        QtyInInspection = 1,
+                                        RawOrFinished = "RM",
+                                        MinDate = new DateTime(1999, 3, 28)
+                                    },
+                                new PartsInInspection
+                                    {
+                                        PartNumber = "PART D",
+                                        Description = "DESC",
+                                        OurUnitOfMeasure = "ONES",
+                                        QtyInStock = 1,
+                                        QtyInInspection = 1,
+                                        RawOrFinished = "RM",
+                                        MinDate = new DateTime(2007, 3, 28)
+                                    }
+                            };
+
+            this.OrdersData = new List<WhatsInInspectionPurchaseOrdersData>
+                                  {
+                                      new WhatsInInspectionPurchaseOrdersData
+                                          {
+                                              PartNumber = "PART A",
+                                              State = "QC"
+                                          },
+                                      new WhatsInInspectionPurchaseOrdersData
+                                          {
+                                              PartNumber = "PART B",
+                                              State = "QC"
+                                          },
+                                      new WhatsInInspectionPurchaseOrdersData
+                                          {
+                                              PartNumber = "PART C",
+                                              State = "QC"
+                                          },
+                                      new WhatsInInspectionPurchaseOrdersData
+                                          {
+                                              PartNumber = "PART D",
+                                              State = "FAIL"
+                                          }
+                                  };
+
+            this.LocationsData = new List<WhatsInInspectionStockLocationsData>
+                                     {
+                                         new WhatsInInspectionStockLocationsData
+                                             {
+                                                 PartNumber = "PART A", 
+                                                 State = "QC", 
+                                                 Batch = "BA", 
+                                                 Location = "LA",
+                                                 Qty = 1
+                                             },
+                                         new WhatsInInspectionStockLocationsData
+                                             {
+                                                 PartNumber = "PART B",
+                                                 State = "QC",
+                                                 Batch = "BB",
+                                                 Location = "LB",
+                                                 Qty = 1
+                                             },
+                                         new WhatsInInspectionStockLocationsData
+                                             {
+                                                 PartNumber = "PART C",
+                                                 State = "QC",
+                                                 Batch = "BC",
+                                                 Location = "LC",
+                                                 Qty = 1
+                                             },
+                                         new WhatsInInspectionStockLocationsData
+                                             {
+                                                 PartNumber = "PART D",
+                                                 State = "FAIL",
+                                                 Batch = "BD",
+                                                 Location = "LD",
+                                                 Qty = 1
+                                             }
+                                     };
+
+            this.BackOrderData = new List<WhatsInInspectionBackOrderData>
+                                     {
+                                         new WhatsInInspectionBackOrderData
+                                             {
+                                                 ArticleNumber = "PART A"
+                                             },
+                                         new WhatsInInspectionBackOrderData
+                                             {
+                                                 ArticleNumber = "PART B"
+                                             },
+                                         new WhatsInInspectionBackOrderData
+                                             {
+                                                 ArticleNumber = "PART C"
+                                             },
+                                         new WhatsInInspectionBackOrderData
+                                             {
+                                                 ArticleNumber = "PART D"
+                                             }
+                                     };
+
+            this.WhatsInInspectionRepository
+                .GetWhatsInInspection(Arg.Any<bool>())
+                .Returns(this.PartsInInspections.AsQueryable());
+
+            this.WhatsInInspectionPurchaseOrdersDataRepository
+                .FilterBy(Arg.Any<Expression<Func<WhatsInInspectionPurchaseOrdersData, bool>>>())
+                .Returns(this.OrdersData.AsQueryable());
+
+            this.WhatsInInspectionStockLocationsDataRepository
+                .FilterBy(Arg.Any<Expression<Func<WhatsInInspectionStockLocationsData, bool>>>())
+                .Returns(this.LocationsData.AsQueryable());
+
+            this.WhatsInInspectionBackOrderDataRepository
+                .FilterBy(Arg.Any<Expression<Func<WhatsInInspectionBackOrderData, bool>>>())
+                .Returns(this.BackOrderData.AsQueryable());
+
 
             this.Sut = new WhatsInInspectionReportService(
                 this.WhatsInInspectionRepository,

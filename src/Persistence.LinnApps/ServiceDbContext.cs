@@ -1022,7 +1022,6 @@
             e.Property(m => m.QtyNeeded).HasColumnName("QTY_NEEDED");
         }
 
-<<<<<<< HEAD
         private void BuildDocumentTypes(ModelBuilder builder)
         {
             var entity = builder.Entity<DocumentType>().ToTable("DOCUMENT_TYPES");
@@ -1031,8 +1030,6 @@
             entity.Property(d => d.Description).HasColumnName("DESCRIPTION").HasMaxLength(50);
         }
 
-=======
->>>>>>> main
         private void BuildMrOrders(ModelBuilder builder)
         {
             var entity = builder.Entity<MrOrder>().ToTable("MR_ORDERS");
