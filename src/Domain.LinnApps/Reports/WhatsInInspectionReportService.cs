@@ -46,7 +46,7 @@
 
             if (!includeFinishedGoods)
             {
-                parts = parts.Where(p => p.RawOrFinished.Equals("RM")).ToList();
+                parts = parts.Where(p => p.RawOrFinished.Equals("R")).ToList();
             }
 
             var orders = this.whatsInInspectionPurchaseOrdersDataRepository.FilterBy(d => d.State.Equals("QC"))
