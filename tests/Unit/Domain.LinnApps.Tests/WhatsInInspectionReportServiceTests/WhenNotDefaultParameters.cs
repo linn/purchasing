@@ -36,9 +36,8 @@
         }
 
         [Test]
-        public void ShouldCallOrdersDataRepoTwice()
+        public void ShouldCallOrdersDataRepoAgainToIncludeFailedParts()
         {
-            // calls repo again to add the included QC = "FAILS" parts
             this.WhatsInInspectionPurchaseOrdersDataRepository.Received(2).FilterBy(
                 Arg.Any<Expression<Func<WhatsInInspectionPurchaseOrdersData, bool>>>());
         }
