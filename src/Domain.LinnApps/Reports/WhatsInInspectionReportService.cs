@@ -127,12 +127,15 @@
                 null,
                 new List<AxisDetailsModel>
                     {
-                        new AxisDetailsModel("OrderNumber", "Order",  GridDisplayType.TextValue),
                         new AxisDetailsModel("OrderType", "Type",  GridDisplayType.TextValue),
+                        new AxisDetailsModel("OrderNumber", "Order",  GridDisplayType.TextValue),
+                        new AxisDetailsModel("Cancelled", "Cancelled", GridDisplayType.TextValue),
                         new AxisDetailsModel("Qty", "Qty Ordered", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new AxisDetailsModel("Received", "Qty Received", GridDisplayType.Value) { DecimalPlaces = 2 },
+                        new AxisDetailsModel("QtyInInsp", "Qty Of Order In Insp", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new AxisDetailsModel("Passed", "Qty Passed", GridDisplayType.Value) { DecimalPlaces = 2 },
-                        new AxisDetailsModel("Cancelled", "Cancelled", GridDisplayType.TextValue)
+                        new AxisDetailsModel("Returned", "Qty Returned", GridDisplayType.Value) { DecimalPlaces = 2 }
+
                     });
             var values = new List<CalculationValueModel>();
 
@@ -171,8 +174,22 @@
                     new CalculationValueModel
                         {
                             RowId = currentRowId,
+                            ColumnId = "QtyInInsp",
+                            Value = model.QtyReceived - model.QtyPassed - model.QtyReturned
+                    });
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
                             ColumnId = "Passed",
                             Value = model.QtyPassed
+                        });
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
+                            ColumnId = "Returned",
+                            Value = model.QtyReturned
                         });
                 values.Add(
                     new CalculationValueModel

@@ -999,6 +999,7 @@
             e.Property(m => m.Cancelled).HasColumnName("CANCELLED").HasColumnType("VARCHAR2");
             e.Property(m => m.QtyPassed).HasColumnName("PASSED");
             e.Property(m => m.QtyReceived).HasColumnName("RECEIVED");
+            e.Property(m => m.QtyReturned).HasColumnName("RETURNED");
         }
 
         private void BuildWhatsInInspectionStockLocationsView(ModelBuilder builder)

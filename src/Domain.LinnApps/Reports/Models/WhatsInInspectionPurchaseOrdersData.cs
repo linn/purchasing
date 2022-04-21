@@ -17,5 +17,7 @@
         public decimal QtyPassed { get; set; }
 
         public decimal QtyReceived { get; set; }
+
+        public decimal QtyReturned { get; set; }
     }
 }
