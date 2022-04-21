@@ -124,11 +124,6 @@
                                               PartNumber = "PART C",
                                               State = "QC"
                                           },
-                                      new WhatsInInspectionPurchaseOrdersData
-                                          {
-                                              PartNumber = "PART D",
-                                              State = "FAIL"
-                                          }
                                   };
 
             this.LocationsData = new List<WhatsInInspectionStockLocationsData>
@@ -160,7 +155,7 @@
                                          new WhatsInInspectionStockLocationsData
                                              {
                                                  PartNumber = "PART D",
-                                                 State = "FAIL",
+                                                 State = "QC",
                                                  Batch = "BD",
                                                  Location = "LD",
                                                  Qty = 1
@@ -200,7 +195,7 @@
                 .Returns(this.LocationsData.AsQueryable());
 
             this.WhatsInInspectionBackOrderDataRepository
-                .FilterBy(Arg.Any<Expression<Func<WhatsInInspectionBackOrderData, bool>>>())
+                .FindAll()
                 .Returns(this.BackOrderData.AsQueryable());
 
 

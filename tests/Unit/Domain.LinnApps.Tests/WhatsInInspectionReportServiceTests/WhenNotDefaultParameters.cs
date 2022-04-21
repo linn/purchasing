@@ -12,34 +12,34 @@
 
     using NUnit.Framework;
 
-    public class WhenDefaultParameters : ContextBase
+    public class WhenNotDefaultParameters : ContextBase
     {
         private WhatsInInspectionReport result;
 
         [SetUp]
         public void SetUp()
         {
-            this.result = this.Sut.GetReport();
+            this.result = this.Sut.GetReport(true, false, true, false, false);
         }
 
         [Test]
         public void ShouldCallRepoWithCorrectParam()
         {
-            this.WhatsInInspectionRepository.Received().GetWhatsInInspection(false);
+            this.WhatsInInspectionRepository.Received().GetWhatsInInspection(true);
         }
 
         [Test]
-        public void ShouldNotIncludePartsWithNoOrderNumber()
+        public void ShouldIncludePartsWithNoOrderNumber()
         {
-            this.result.PartsInInspection.Count().Should().Be(3);
-            this.result.PartsInInspection.All(x => this.OrdersData.Select(o => o.PartNumber).Contains(x.PartNumber))
-                .Should().BeTrue();
+            // PART D has no OrdersData entry
+            this.result.PartsInInspection.Any(x => x.PartNumber.Equals("PART D")); 
         }
 
         [Test]
-        public void ShouldCallOrdersDataRepoOnce()
+        public void ShouldCallOrdersDataRepoTwice()
         {
-            this.WhatsInInspectionPurchaseOrdersDataRepository.Received(1).FilterBy(
+            // calls repo again to add the included QC = "FAILS" parts
+            this.WhatsInInspectionPurchaseOrdersDataRepository.Received(2).FilterBy(
                 Arg.Any<Expression<Func<WhatsInInspectionPurchaseOrdersData, bool>>>());
         }
 
@@ -62,16 +62,16 @@
         }
 
         [Test]
-        public void ShouldBuildLocationsDataReports()
+        public void ShouldNotBuildLocationsDataReports()
         {
             this.result.PartsInInspection
-                .All(x => x.LocationsBreakdown != null).Should().BeTrue();
+                .All(x => x.LocationsBreakdown == null).Should().BeTrue();
         }
 
         [Test]
-        public void ShouldBuildBackOrdersReport()
+        public void ShouldNotBuildBackOrdersReport()
         {
-            this.result.BackOrderData.Should().NotBeNull();
+            this.result.BackOrderData.Should().BeNull();
         }
     }
 }

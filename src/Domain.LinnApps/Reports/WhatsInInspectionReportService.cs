@@ -52,12 +52,6 @@
             var orders = this.whatsInInspectionPurchaseOrdersDataRepository.FilterBy(d => d.State.Equals("QC"))
                 .ToList();
 
-            if (!includePartsWithNoOrderNumber)
-            {
-                parts = parts.Where(p => orders.Select(o => o.PartNumber)
-                    .Contains(p.PartNumber)).ToList();
-            }
-
             IEnumerable<WhatsInInspectionStockLocationsData> locationsData = null;
 
             IEnumerable<WhatsInInspectionBackOrderData> backOrderData = null;
@@ -79,6 +73,12 @@
             if (includeFailedStock)
             {
                 orders.AddRange(this.whatsInInspectionPurchaseOrdersDataRepository.FilterBy(d => d.State.Equals("FAIL")));
+            }
+
+            if (!includePartsWithNoOrderNumber)
+            {
+                parts = parts.Where(p => orders.Select(o => o.PartNumber)
+                    .Contains(p.PartNumber)).ToList();
             }
 
             var partsResult = parts.Select(p => new PartsInInspectionReportEntry
@@ -151,7 +151,7 @@
                         {
                             RowId = currentRowId,
                             ColumnId = "OrderType",
-                            TextDisplay = model.OrderType.ToString()
+                            TextDisplay = model.OrderType
                         });
                 values.Add(
                     new CalculationValueModel
