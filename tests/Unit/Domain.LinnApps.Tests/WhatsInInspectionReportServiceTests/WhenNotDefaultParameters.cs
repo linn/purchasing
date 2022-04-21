@@ -43,24 +43,6 @@
         }
 
         [Test]
-        public void ShouldOrderByMinDate()
-        {
-            for (var i = 1; i < this.result.PartsInInspection.Count(); i++)
-            {
-                var previousDate = this.result.PartsInInspection.ElementAt(i - 1).MinDate;
-                this.result.PartsInInspection.ElementAt(i).MinDate.Should()
-                    .BeOnOrAfter(previousDate.GetValueOrDefault());
-            }
-        }
-
-        [Test]
-        public void ShouldBuildOrdersDataReports()
-        {
-            this.result.PartsInInspection
-                .All(x => x.OrdersBreakdown != null).Should().BeTrue();
-        }
-
-        [Test]
         public void ShouldNotBuildLocationsDataReports()
         {
             this.result.PartsInInspection
