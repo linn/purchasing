@@ -198,7 +198,6 @@
                 .FindAll()
                 .Returns(this.BackOrderData.AsQueryable());
 
-
             this.Sut = new WhatsInInspectionReportService(
                 this.WhatsInInspectionRepository,
                 this.WhatsInInspectionPurchaseOrdersDataRepository,
