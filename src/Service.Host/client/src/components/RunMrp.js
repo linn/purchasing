@@ -9,6 +9,7 @@ import moment from 'moment';
 import history from '../history';
 
 import mrMasterActions from '../actions/mrMasterActions';
+import runMrpActions from '../actions/runMrpActions';
 import { mrMaster as mrMasterItemType } from '../itemTypes';
 
 function RunMrp() {
@@ -32,7 +33,7 @@ function RunMrp() {
     }, [mrMaster, mrMasterLoading]);
 
     const runMrp = () => {
-        dispatch(mrMasterActions.fetchByHref(mrMasterItemType.uri));
+        dispatch(runMrpActions.requestProcessStart());
     };
 
     return (
