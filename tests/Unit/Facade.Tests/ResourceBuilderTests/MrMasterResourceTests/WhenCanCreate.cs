@@ -23,10 +23,18 @@
         [SetUp]
         public void SetUp()
         {
-            this.master = new MrMaster { JobRef = "abc", RunDate = 1.May(2030) };
+            this.master = new MrMaster { JobRef = "abc", RunDate = 1.May(2030), RunLogIdCurrentlyInProgress = 34 };
             this.AuthService.HasPermissionFor(AuthorisedAction.MrpRun, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
             this.result = (MrMasterResource)this.Sut.Build(this.master, new List<string>());
+        }
+
+        [Test]
+        public void ShouldPopulateFields()
+        {
+            this.result.JobRef.Should().Be(this.master.JobRef);
+            this.result.RunDate.Should().Be(this.master.RunDate.ToString("o"));
+            this.result.RunLogIdCurrentlyInProgress.Should().Be(this.master.RunLogIdCurrentlyInProgress);
         }
 
         [Test]

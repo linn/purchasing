@@ -7,5 +7,7 @@
         public string JobRef { get; set; }
 
         public DateTime RunDate { get; set; }
+
+        public int? RunLogIdCurrentlyInProgress { get; set; }
     }
 }

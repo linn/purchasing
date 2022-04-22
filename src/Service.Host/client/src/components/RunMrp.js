@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Page, itemSelectorHelpers } from '@linn-it/linn-form-components-library';
+import {
+    Page,
+    itemSelectorHelpers,
+    processSelectorHelpers
+} from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import { Button } from '@mui/material';
 import Typography from '@mui/material/Typography';
@@ -18,6 +22,7 @@ function RunMrp() {
     const mrMasterLoading = useSelector(state =>
         itemSelectorHelpers.getItemLoading(state.mrMaster)
     );
+    const runMrpResult = useSelector(state => processSelectorHelpers.getData(state.runMrp));
 
     const dispatch = useDispatch();
     useEffect(() => dispatch(mrMasterActions.fetchByHref(mrMasterItemType.uri)), [dispatch]);
@@ -55,7 +60,7 @@ function RunMrp() {
                         </Grid>
                         <Grid item xs={10}>
                             <Typography variant="body1">
-                                {moment(mrMaster.runDate).format('DD MMM YYYY')}
+                                {moment(mrMaster.runDate).format('DD MMM YYYY HH:mm')}
                             </Typography>
                         </Grid>
                     </>

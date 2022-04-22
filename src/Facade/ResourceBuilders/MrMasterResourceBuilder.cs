@@ -25,6 +25,7 @@
             {
                 JobRef = entity.JobRef,
                 RunDate = entity.RunDate.ToString("o"),
+                RunLogIdCurrentlyInProgress = entity.RunLogIdCurrentlyInProgress,
                 Links = this.BuildLinks(entity, claims).ToArray()
             };
         }
