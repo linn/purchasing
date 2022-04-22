@@ -27,5 +27,7 @@
         public const string PlCreditDebitNoteCancel = "purchasing.pl-credit-debit-note.cancel";
 
         public const string PlCreditDebitNoteUpdate = "purchasing.pl-credit-debit-note.update";
+
+        public const string MrpRun = "purchasing.mrp.run-mrp";
     }
 }

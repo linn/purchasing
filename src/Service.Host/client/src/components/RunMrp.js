@@ -32,7 +32,7 @@ function RunMrp() {
     }, [mrMaster, mrMasterLoading]);
 
     const runMrp = () => {
-        dispatch(mrMasterActions.fetch());
+        dispatch(mrMasterActions.fetchByHref(mrMasterItemType.uri));
     };
 
     return (
