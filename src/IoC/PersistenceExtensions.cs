@@ -102,7 +102,9 @@
                         ?.WhatsInInspectionStockLocationsView))
                 .AddTransient<IQueryRepository<WhatsInInspectionBackOrderData>, EntityFrameworkQueryRepository<WhatsInInspectionBackOrderData>>(
                     r => new EntityFrameworkQueryRepository<WhatsInInspectionBackOrderData>(r.GetService<ServiceDbContext>()
-                        ?.WhatsInInspectionBackOrderView));
+                        ?.WhatsInInspectionBackOrderView))
+                .AddTransient<ISingleRecordRepository<MrMaster>, EntityFrameworkSingleRecordRepository<MrMaster>>(
+                    r => new EntityFrameworkSingleRecordRepository<MrMaster>(r.GetService<ServiceDbContext>()?.MrMaster));
         }
     }
 }

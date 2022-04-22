@@ -63,6 +63,9 @@ import sendPurchaseOrderReqAuthEmail from './sendPurchaseOrderReqAuthEmail';
 import sendPurchaseOrderReqFinanceEmail from './sendPurchaseOrderReqFinanceEmail';
 import prefSupReceiptsReport from './prefSupReceiptsReport';
 import whatsInInspectionReport from './whatsInInspectionReport';
+import mrpRunLog from './mrpRunLog';
+import mrpRunLogs from './mrpRunLogs';
+import runMrp from './runMrp';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -80,6 +83,8 @@ const rootReducer = history =>
         departments,
         employees,
         manufacturers,
+        mrpRunLog,
+        mrpRunLogs,
         nominals,
         openDebitNotes,
         orderMethods,
@@ -107,6 +112,7 @@ const rootReducer = history =>
         purchaseOrders,
         putSupplierOnHold,
         router: connectRouter(history),
+        runMrp,
         sendPlNoteEmail,
         sendPurchaseOrderReqEmail,
         sendPurchaseOrderReqAuthEmail,

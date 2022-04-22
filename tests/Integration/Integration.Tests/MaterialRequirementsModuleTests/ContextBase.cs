@@ -26,17 +26,21 @@
      
         protected IMaterialRequirementsPlanningFacadeService MaterialRequirementsPlanningFacadeService { get; private set; }
 
+        protected ISingleRecordFacadeResourceService<MrMaster, MrMasterResource> MasterRecordFacadeService { get; private set; }
+
         [SetUp]
         public void EstablishContext()
         {
             this.MrpRunLogFacadeService = Substitute
                 .For<IFacadeResourceFilterService<MrpRunLog, int, MrpRunLogResource, MrpRunLogResource, MaterialRequirementsSearchResource>>();
             this.MaterialRequirementsPlanningFacadeService = Substitute.For<IMaterialRequirementsPlanningFacadeService>();
+            this.MasterRecordFacadeService = Substitute.For<ISingleRecordFacadeResourceService<MrMaster, MrMasterResource>>();
             this.Client = TestClient.With<MaterialRequirementsModule>(
                 services =>
                     {
                         services.AddSingleton(this.MrpRunLogFacadeService);
                         services.AddSingleton(this.MaterialRequirementsPlanningFacadeService);
+                        services.AddSingleton(this.MasterRecordFacadeService);
                         services.AddHandlers();
                     },
                 FakeAuthMiddleware.EmployeeMiddleware);

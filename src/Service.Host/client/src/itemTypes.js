@@ -211,3 +211,21 @@ export const sendPurchaseOrderReqFinanceEmail = new ItemType(
     'SEND_PURCHASE_ORDER_REQ_FINANCE_EMAIL',
     '/purchasing/purchase-orders/reqs/email-for-finance'
 );
+
+export const mrpRunLog = new ItemType(
+    'mrpRunLog',
+    'MRP_RUN_LOG',
+    '/purchasing/material-requirements/run-logs'
+);
+
+export const mrpRunLogs = new ItemType(
+    'mrpRunLogs',
+    'MRP_RUN_LOGS',
+    '/purchasing/material-requirements/run-logs'
+);
+
+export const runMrp = new ItemType(
+    'runMrp',
+    'RUN_MRP',
+    '/purchasing/material-requirements/run-mrp'
+);

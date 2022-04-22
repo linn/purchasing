@@ -187,3 +187,8 @@ export const prefSupReceiptsReportActionTypes = makeReportActionTypes(
 export const whatsInInspectionReportActionTypes = makeReportActionTypes(
     reportTypes.whatsInInspectionReport.actionType
 );
+
+export const mrpRunLogActionTypes = makeActionTypes(itemTypes.mrpRunLog, true);
+export const mrpRunLogsActionTypes = makeActionTypes(itemTypes.mrpRunLogs.actionType, false);
+
+export const runMrpActionTypes = makeProcessActionTypes(itemTypes.runMrp.actionType);
