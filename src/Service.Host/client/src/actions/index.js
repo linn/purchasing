@@ -188,9 +188,9 @@ export const whatsInInspectionReportActionTypes = makeReportActionTypes(
     reportTypes.whatsInInspectionReport.actionType
 );
 
-export const mrpRunLogActionTypes = makeActionTypes(itemTypes.mrpRunLog, true);
+export const mrpRunLogActionTypes = makeActionTypes(itemTypes.mrpRunLog.actionType, true);
 export const mrpRunLogsActionTypes = makeActionTypes(itemTypes.mrpRunLogs.actionType, false);
 
 export const runMrpActionTypes = makeProcessActionTypes(itemTypes.runMrp.actionType);
 
-export const mrMasterActionTypes = makeActionTypes(itemTypes.mrMaster, false);
+export const mrMasterActionTypes = makeActionTypes(itemTypes.mrMaster.actionType, false);
