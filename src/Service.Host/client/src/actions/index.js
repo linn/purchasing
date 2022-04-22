@@ -192,3 +192,5 @@ export const mrpRunLogActionTypes = makeActionTypes(itemTypes.mrpRunLog, true);
 export const mrpRunLogsActionTypes = makeActionTypes(itemTypes.mrpRunLogs.actionType, false);
 
 export const runMrpActionTypes = makeProcessActionTypes(itemTypes.runMrp.actionType);
+
+export const mrMasterActionTypes = makeActionTypes(itemTypes.mrMaster, false);

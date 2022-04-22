@@ -66,6 +66,7 @@ import whatsInInspectionReport from './whatsInInspectionReport';
 import mrpRunLog from './mrpRunLog';
 import mrpRunLogs from './mrpRunLogs';
 import runMrp from './runMrp';
+import mrMaster from './mrMaster';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -83,6 +84,7 @@ const rootReducer = history =>
         departments,
         employees,
         manufacturers,
+        mrMaster,
         mrpRunLog,
         mrpRunLogs,
         nominals,

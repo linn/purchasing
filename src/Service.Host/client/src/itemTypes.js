@@ -229,3 +229,9 @@ export const runMrp = new ItemType(
     'RUN_MRP',
     '/purchasing/material-requirements/run-mrp'
 );
+
+export const mrMaster = new ItemType(
+    'mrMaster',
+    'MR_MASTER',
+    '/purchasing/material-requirements/last-run'
+);
