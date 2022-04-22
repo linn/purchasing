@@ -39,48 +39,28 @@ function RunMrp() {
         <Page history={history}>
             <Grid container>
                 <Grid item xs={12}>
-                    {mrMaster && !mrMasterLoading ? (
-                        <Typography variant="h6">Last MRP Run</Typography>
-                    ) : (
-                        <></>
-                    )}
+                    <Typography variant="h6">Last MRP Run</Typography>
                 </Grid>
-                <Grid item xs={2}>
-                    {mrMaster && !mrMasterLoading ? (
-                        <>
+                {mrMaster && !mrMasterLoading ? (
+                    <>
+                        <Grid item xs={2}>
                             <Typography variant="subtitle2">JobRef: </Typography>
-                        </>
-                    ) : (
-                        <></>
-                    )}
-                </Grid>
-                <Grid item xs={10}>
-                    {mrMaster && !mrMasterLoading ? (
-                        <>
+                        </Grid>
+                        <Grid item xs={10}>
                             <Typography variant="body1">{mrMaster.jobRef}</Typography>
-                        </>
-                    ) : (
-                        <></>
-                    )}
-                </Grid>
-                <Grid item xs={2}>
-                    {mrMaster && !mrMasterLoading ? (
-                        <>
+                        </Grid>
+                        <Grid item xs={2}>
                             <Typography variant="subtitle2">Run Date: </Typography>
-                        </>
-                    ) : (
-                        <></>
-                    )}
-                </Grid>
-                <Grid item xs={10}>
-                    {mrMaster && !mrMasterLoading ? (
-                        <Typography variant="body1">
-                            {moment(mrMaster.runDate).format('DD MMM YYYY')}
-                        </Typography>
-                    ) : (
-                        <></>
-                    )}
-                </Grid>
+                        </Grid>
+                        <Grid item xs={10}>
+                            <Typography variant="body1">
+                                {moment(mrMaster.runDate).format('DD MMM YYYY')}
+                            </Typography>
+                        </Grid>
+                    </>
+                ) : (
+                    <></>
+                )}
                 <Grid item xs={12}>
                     <Button variant="outlined" onClick={() => runMrp()} disabled={!runMrpAllowed}>
                         Run New MRP
