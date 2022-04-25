@@ -40,7 +40,7 @@ function PrefSupReceiptsReport() {
                 <Grid item xs={3}>
                     <DatePicker
                         label="From Date"
-                        value={options.fromDate}
+                        value={options.fromDate.toString()}
                         propertyName="fromDate"
                         minDate="01/01/2000"
                         maxDate={options.toDate?.toString()}
@@ -51,7 +51,7 @@ function PrefSupReceiptsReport() {
                     <DatePicker
                         label="To Date"
                         propertyName="toDate"
-                        value={options.toDate}
+                        value={options.toDate.toString()}
                         maxDate={new Date()}
                         minDate={options.fromDate?.toString() || '01/01/2000'}
                         onChange={newVal => setOptions(o => ({ ...o, toDate: newVal }))}
