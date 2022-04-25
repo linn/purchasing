@@ -1011,6 +1011,8 @@
             e.Property(m => m.Batch).HasColumnName("BATCH");
             e.Property(m => m.Qty).HasColumnName("QTY");
             e.Property(m => m.Location).HasColumnName("LOC");
+            e.Property(m => m.BatchRef).HasColumnName("BATCH_REF");
+            e.Property(m => m.StockRotationDate).HasColumnName("STOCK_ROTATION_DATE");
         }
         
         private void BuildWhatsInInspectionBackOrderView(ModelBuilder builder)

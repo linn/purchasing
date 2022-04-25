@@ -1,7 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Reports
 {
-    using System.Collections.Generic;
-
+    using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
 
     public interface IWhatsInInspectionReportService
@@ -11,6 +10,12 @@
             bool showStockLocations = true,
             bool includeFailedStock = false,
             bool includeFinishedGoods = true,
-            bool showBackOrdered = true);
+            bool showBackOrdered = true,
+            bool showOrders = true);
+
+        ResultsModel GetTopLevelReport(
+            bool includePartsWithNoOrderNumber = false,
+            bool includeFailedStock = false,
+            bool includeFinishedGoods = true);
     }
 }

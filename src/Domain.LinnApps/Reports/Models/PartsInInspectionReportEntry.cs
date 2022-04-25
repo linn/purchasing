@@ -7,5 +7,7 @@
         public ResultsModel OrdersBreakdown { get; set; }
 
         public ResultsModel LocationsBreakdown { get; set; }
+
+        public string Batch { get; set; }
     }
 }
