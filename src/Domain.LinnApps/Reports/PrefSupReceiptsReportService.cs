@@ -59,7 +59,7 @@
         public ResultsModel GetReport(DateTime fromDate, DateTime toDate)
         {
             var results = this.receiptRepository.FilterBy(
-                e => e.DateBooked >= fromDate & e.DateBooked <= toDate & e.Difference != 0);
+                e => e.DateBooked >= fromDate && e.DateBooked <= toDate && e.Difference != 0);
 
             var reportLayout = new SimpleGridLayout(
                 this.reportingHelper,

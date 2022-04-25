@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import {
@@ -18,11 +19,11 @@ import prefSupReceiptsReportActions from '../../actions/prefSupReceiptsReportAct
 function PrefSupReceiptsReport() {
     const dispatch = useDispatch();
 
-    const queryOptions = queryString.parse(window.location.search);
-    const defaultStartDate = new Date();
+    const location = useLocation();
+    const queryOptions = queryString.parse(location.search);
     const [options, setOptions] = useState({
-        fromDate: queryOptions.fromDate ? queryOptions.fromDate : defaultStartDate,
-        toDate: queryOptions.toDate ? queryOptions.toDate : new Date()
+        fromDate: queryOptions.fromDate ? new Date(queryOptions.fromDate) : new Date(),
+        toDate: queryOptions.toDate ? new Date(queryOptions.toDate) : new Date()
     });
 
     const loading = useSelector(state => state[prefSupReceiptsReport.item]?.loading);
