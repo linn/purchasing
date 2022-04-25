@@ -1,9 +1,11 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
+    using System.Collections.Generic;
     using System.Linq;
 
     using Linn.Common.Facade;
     using Linn.Common.Reporting.Models;
+    using Linn.Common.Reporting.Resources.Extensions;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Resources;
@@ -27,14 +29,16 @@
             bool showStockLocations = true,
             bool includeFailedStock = false,
             bool includeFinishedGoods = true,
-            bool showBackOrdered = true)
+            bool showBackOrdered = true,
+            bool showOrders = true)
         {
             var result = this.domainService.GetReport(
                     includePartsWithNoOrderNumber,
                     showStockLocations,
                     includeFailedStock,
                     includeFinishedGoods,
-                    showBackOrdered);
+                    showBackOrdered,
+                    showOrders);
 
             return new SuccessResult<WhatsInInspectionReportResource>(
                 new WhatsInInspectionReportResource
@@ -46,8 +50,11 @@
                                                                     QtyInStock = m.QtyInStock,
                                                                     QtyInInspection = m.QtyInInspection,
                                                                     OurUnitOfMeasure = m.OurUnitOfMeasure,
-                                                                    OrdersBreakdown = (ReportReturnResource)this
-                                                                        .resultsModelResourceBuilder.Build(m.OrdersBreakdown, null),
+                                                                    Batch = m.Batch,
+                                                                    OrdersBreakdown = m.OrdersBreakdown != null
+                                                                        ? (ReportReturnResource)this
+                                                                            .resultsModelResourceBuilder.Build(m.OrdersBreakdown, null)
+                                                                        : null,
                                                                     LocationsBreakdown = m.LocationsBreakdown != null 
                                                                         ? (ReportReturnResource)this
                                                                         .resultsModelResourceBuilder.Build(m.LocationsBreakdown, null) 
@@ -57,6 +64,17 @@
                                          ? (ReportReturnResource)this.resultsModelResourceBuilder.Build(result.BackOrderData, null)
                                          : null
                 });
+        }
+
+        public IEnumerable<IEnumerable<string>> GetTopLevelExport(
+            bool includePartsWithNoOrderNumber = false,
+            bool includeFailedStock = false,
+            bool includeFinishedGoods = true)
+        {
+            return this.domainService.GetTopLevelReport(
+                includePartsWithNoOrderNumber,
+                includeFailedStock,
+                includeFinishedGoods).ConvertToCsvList();
         }
     }
 }

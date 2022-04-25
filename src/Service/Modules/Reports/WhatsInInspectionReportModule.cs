@@ -1,10 +1,12 @@
 ﻿namespace Linn.Purchasing.Service.Modules.Reports
 {
+    using System;
     using System.Threading.Tasks;
 
     using Carter;
     using Carter.Response;
 
+    using Linn.Common.Facade.Carter.Extensions;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Service.Models;
 
@@ -17,6 +19,7 @@
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/purchasing/reports/whats-in-inspection/report", this.GetReport);
+            app.MapGet("/purchasing/reports/whats-in-inspection/export", this.GetExport);
             app.MapGet("/purchasing/reports/whats-in-inspection", this.GetApp);
         }
 
@@ -33,16 +36,34 @@
             bool showStockLocations,
             bool includeFailedStock,
             bool includeFinishedGoods,
-            bool showBackOrdered)
+            bool showBackOrdered,
+            bool showOrders)
         {
             var results = facadeService.GetReport(
                 includePartsWithNoOrderNumber,
                 showStockLocations,
                 includeFailedStock,
                 includeFinishedGoods,
-                showBackOrdered);
+                showBackOrdered,
+                showOrders);
 
             await res.Negotiate(results);
+        }
+
+        private async Task GetExport(
+            HttpRequest req,
+            HttpResponse res,
+            IWhatsInInspectionReportFacadeService facadeService,
+            bool includePartsWithNoOrderNumber,
+            bool includeFailedStock,
+            bool includeFinishedGoods)
+        {
+            var csvResults = facadeService.GetTopLevelExport(
+                includePartsWithNoOrderNumber,
+                includeFailedStock,
+                includeFinishedGoods);
+            var now = DateTime.Today;
+            await res.FromCsv(csvResults, $"whats_in_insp_{now.Day}-{now.Month}-{now.Year}.csv");
         }
     }
 }

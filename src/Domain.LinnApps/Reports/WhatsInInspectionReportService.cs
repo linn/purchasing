@@ -39,7 +39,8 @@
             bool showStockLocations = true,
             bool includeFailedStock = false,
             bool includeFinishedGoods = true,
-            bool showBackOrdered = true)
+            bool showBackOrdered = true,
+            bool showOrders = true)
         {
             var parts = this.whatsInInspectionRepository.GetWhatsInInspection(includeFailedStock)
                 .Where(m => m.MinDate.HasValue).OrderBy(m => m.MinDate).ToList();
@@ -56,18 +57,15 @@
 
             IEnumerable<WhatsInInspectionBackOrderData> backOrderData = null;
 
-            if (showStockLocations)
+            if (includeFailedStock)
             {
-                if (includeFailedStock)
-                {
-                    locationsData = this.whatsInInspectionStockLocationsDataRepository
-                        .FilterBy(d => d.State.Equals("QC") || d.State.Equals("FAIL")).ToList();
-                }
-                else
-                {
-                    locationsData = this.whatsInInspectionStockLocationsDataRepository
-                        .FilterBy(d => d.State.Equals("QC")).ToList();
-                }
+                locationsData = this.whatsInInspectionStockLocationsDataRepository
+                    .FilterBy(d => d.State.Equals("QC") || d.State.Equals("FAIL")).ToList();
+            }
+            else
+            {
+                locationsData = this.whatsInInspectionStockLocationsDataRepository
+                    .FilterBy(d => d.State.Equals("QC")).ToList();
             }
 
             if (includeFailedStock)
@@ -88,10 +86,13 @@
                                                         MinDate = p.MinDate,
                                                         OurUnitOfMeasure = p.OurUnitOfMeasure,
                                                         QtyInStock = p.QtyInStock,
+                                                        Batch = locationsData.Where(x => x.PartNumber
+                                                            .Equals(p.PartNumber)).OrderBy(l => l.StockRotationDate).First().Batch,
                                                         QtyInInspection = p.QtyInInspection,
-                                                        OrdersBreakdown = this
+                                                        OrdersBreakdown = showOrders ? this
                                                             .BuildPurchaseOrdersBreakdown(orders
-                                                                .Where(o => o.PartNumber == p.PartNumber)),
+                                                                .Where(o => o.PartNumber == p.PartNumber))
+                                                            : null,
                                                         LocationsBreakdown = showStockLocations ?
                                                                                  this.BuildLocationsBreakdown(
                                                                                      locationsData.Where(o => o.PartNumber == p.PartNumber))
@@ -112,6 +113,120 @@
                                                ? this.BuildBackOrderResultsModel(backOrderData)
                                                : null
                        };
+        }
+
+        public ResultsModel GetTopLevelReport(
+            bool includePartsWithNoOrderNumber = false,
+            bool includeFailedStock = false,
+            bool includeFinishedGoods = true)
+        {
+            var data = this.GetReport(
+                includePartsWithNoOrderNumber,
+                true,
+                includeFailedStock,
+                includeFinishedGoods,
+                false,
+                false);
+
+            IEnumerable<WhatsInInspectionStockLocationsData> locationsData = null;
+
+            IEnumerable<WhatsInInspectionBackOrderData> backOrderData = null;
+
+            if (includeFailedStock)
+            {
+                locationsData = this.whatsInInspectionStockLocationsDataRepository
+                    .FilterBy(d => d.State.Equals("QC") || d.State.Equals("FAIL")).ToList();
+            }
+            else
+            {
+                locationsData = this.whatsInInspectionStockLocationsDataRepository
+                    .FilterBy(d => d.State.Equals("QC")).ToList();
+            }
+
+            var reportLayout = new SimpleGridLayout(
+                this.reportingHelper,
+                CalculationValueModelType.Value,
+                null,
+                $"Orders Breakdown");
+
+            reportLayout.AddColumnComponent(
+                null,
+                new List<AxisDetailsModel>
+                    {
+                        new AxisDetailsModel("PartNumber", "PartNumber",  GridDisplayType.TextValue),
+                        new AxisDetailsModel("Description", "Description",  GridDisplayType.TextValue),
+                        new AxisDetailsModel("Batch", "Batch", GridDisplayType.TextValue),
+                        new AxisDetailsModel("Date", "Date", GridDisplayType.TextValue),
+                        new AxisDetailsModel("Units", "Units",  GridDisplayType.TextValue),
+                        new AxisDetailsModel("QtyInStock", "Qty In Stock", GridDisplayType.Value) { DecimalPlaces = 2 },
+                        new AxisDetailsModel("QtyInInspection", "Qty In Inspection", GridDisplayType.Value) { DecimalPlaces = 2 }
+                    });
+
+            var values = new List<CalculationValueModel>();
+
+            foreach (var line in data.PartsInInspection)
+            {
+                var currentRowId = line.PartNumber;
+                
+                var locationLine = locationsData.Where(l => l.PartNumber.Equals(line.PartNumber))
+                    .OrderBy(d => d.StockRotationDate).First();
+
+                var date = locationLine.StockRotationDate;
+
+                values.Add(
+                    new CalculationValueModel
+                    {
+                        RowId = currentRowId,
+                        ColumnId = "PartNumber",
+                        TextDisplay = line.PartNumber
+                    });
+                values.Add(
+                    new CalculationValueModel
+                    {
+                        RowId = currentRowId,
+                        ColumnId = "Description",
+                        TextDisplay = line.Description
+                    });
+                values.Add(
+                    new CalculationValueModel
+                    {
+                        RowId = currentRowId,
+                        ColumnId = "Batch",
+                        TextDisplay = locationLine.BatchRef
+                    });
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
+                            ColumnId = "Date",
+                            TextDisplay = date.HasValue ? $"{date?.Day}/{date?.Month}/{date?.Year}"
+                                              : string.Empty
+                        });
+                values.Add(
+                    new CalculationValueModel
+                    {
+                        RowId = currentRowId,
+                        ColumnId = "Units",
+                        TextDisplay = line.OurUnitOfMeasure
+                    });
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
+                            ColumnId = "QtyInStock",
+                            Value = line.QtyInStock
+                        });
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
+                            ColumnId = "QtyInInspection",
+                            Value = line.QtyInInspection
+                        });
+            }
+
+            reportLayout.SetGridData(values);
+            return reportLayout.GetResultsModel();
         }
 
         private ResultsModel BuildPurchaseOrdersBreakdown(
@@ -135,7 +250,6 @@
                         new AxisDetailsModel("QtyInInsp", "Qty Of Order In Insp", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new AxisDetailsModel("Passed", "Qty Passed", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new AxisDetailsModel("Returned", "Qty Returned", GridDisplayType.Value) { DecimalPlaces = 2 }
-
                     });
             var values = new List<CalculationValueModel>();
 

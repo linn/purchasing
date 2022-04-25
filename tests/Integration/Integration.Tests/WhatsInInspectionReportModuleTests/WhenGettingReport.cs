@@ -29,6 +29,8 @@
 
         private bool showBackOrdered;
 
+        private bool showOrders;
+
         [SetUp]
         public void SetUp()
         {
@@ -37,6 +39,7 @@
             this.includeFailedStock = true;
             this.includeFinishedGoods = false;
             this.showBackOrdered = false;
+            this.showOrders = true;
 
             this.result = new WhatsInInspectionReport
                               {
@@ -64,7 +67,8 @@
                 + $"{this.includePartsWithNoOrderNumber}&showStockLocations={this.showStockLocations}"
                 + $"&includeFailedStock={this.includeFailedStock}"
                 + $"&includeFinishedGoods={this.includeFinishedGoods}" 
-                + $"&showBackOrdered={this.showBackOrdered}",
+                + $"&showBackOrdered={this.showBackOrdered}"
+                + $"&showOrders={this.showOrders}",
                 with => { with.Accept("application/json"); }).Result;
         }
 
