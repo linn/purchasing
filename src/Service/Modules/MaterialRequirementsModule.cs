@@ -20,6 +20,7 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
+            app.MapGet("/purchasing/material-requirements/last-run", this.GetDetails);
             app.MapGet("/purchasing/material-requirements/run-logs", this.GetAllRunLogs);
             app.MapGet("/purchasing/material-requirements/run-logs/{id:int}", this.GetRunLogById);
             app.MapPost("/purchasing/material-requirements/run-mrp", this.RunMrp);
@@ -63,6 +64,16 @@
                     req.HttpContext.GetPrivileges());
                 await res.Negotiate(result);
             }
+        }
+
+        private async Task GetDetails(
+            HttpRequest req,
+            HttpResponse res,
+            ISingleRecordFacadeResourceService<MrMaster, MrMasterResource> masterFacadeService)
+        {
+            var result = masterFacadeService.Get(req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
         }
     }
 }

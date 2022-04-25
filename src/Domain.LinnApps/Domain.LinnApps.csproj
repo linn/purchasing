@@ -13,7 +13,7 @@
     <PackageReference Include="Linn.Common.Domain.LinnApps" Version="1.0.0" />
     <PackageReference Include="Linn.Common.Email" Version="1.0.0" />
     <PackageReference Include="Linn.Common.Pdf" Version="1.0.0" />
-    <PackageReference Include="Linn.Common.Persistence" Version="2.1.1" />
+    <PackageReference Include="Linn.Common.Persistence" Version="3.0.0" />
     <PackageReference Include="Linn.Common.Reporting" Version="1.5.0" />
     <PackageReference Include="morelinq" Version="3.3.2" />
   </ItemGroup>

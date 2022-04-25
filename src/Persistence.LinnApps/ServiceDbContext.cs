@@ -115,6 +115,8 @@
 
         public DbSet<WhatsInInspectionBackOrderData> WhatsInInspectionBackOrderView { get; set; }
 
+        public DbSet<MrMaster> MrMaster { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -175,6 +177,7 @@
             this.BuildMrOrders(builder);
             this.BuildWhatsInInspectionStockLocationsView(builder);
             this.BuildWhatsInInspectionBackOrderView(builder);
+            this.BuildMrMaster(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1064,6 +1067,13 @@
             entity.Property(e => e.OrderCurrency).HasColumnName("ORDER_CURRENCY").HasMaxLength(4);
             entity.Property(e => e.PrefsupCurrency).HasColumnName("ORDER_CURRENCY").HasMaxLength(4);
             entity.Property(e => e.MPVReason).HasColumnName("MPV_REASON").HasMaxLength(20);
+        }
+
+        private void BuildMrMaster(ModelBuilder builder)
+        {
+            var entity = builder.Entity<MrMaster>().ToTable("MR_MASTER").HasNoKey();
+            entity.Property(e => e.JobRef).HasColumnName("JOBREF");
+            entity.Property(e => e.RunDate).HasColumnName("RUNDATE");
         }
     }
 }
