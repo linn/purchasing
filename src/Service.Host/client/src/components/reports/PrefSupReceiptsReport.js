@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import {
@@ -9,6 +10,7 @@ import {
     ReportTable
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
+import queryString from 'query-string';
 import history from '../../history';
 import config from '../../config';
 import { prefSupReceiptsReport } from '../../reportTypes';
@@ -17,10 +19,11 @@ import prefSupReceiptsReportActions from '../../actions/prefSupReceiptsReportAct
 function PrefSupReceiptsReport() {
     const dispatch = useDispatch();
 
-    const defaultStartDate = new Date();
+    const location = useLocation();
+    const queryOptions = queryString.parse(location.search);
     const [options, setOptions] = useState({
-        fromDate: defaultStartDate,
-        toDate: new Date()
+        fromDate: queryOptions.fromDate ? new Date(queryOptions.fromDate) : new Date(),
+        toDate: queryOptions.toDate ? new Date(queryOptions.toDate) : new Date()
     });
 
     const loading = useSelector(state => state[prefSupReceiptsReport.item]?.loading);
@@ -83,7 +86,6 @@ function PrefSupReceiptsReport() {
                                     reportData={reportData}
                                     title={reportData.title}
                                     showTitle
-                                    showRowTitles
                                     showTotals
                                     placeholderRows={4}
                                     placeholderColumns={4}
