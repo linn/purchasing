@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Service.Modules.Reports
 {
+    using System;
     using System.Threading.Tasks;
 
     using Carter;
@@ -61,8 +62,8 @@
                 includePartsWithNoOrderNumber,
                 includeFailedStock,
                 includeFinishedGoods);
-
-            await res.FromCsv(csvResults, "whats_in_inspection.csv");
+            var now = DateTime.Today;
+            await res.FromCsv(csvResults, $"whats_in_insp_{now.Day}-{now.Month}-{now.Year}.csv");
         }
     }
 }
