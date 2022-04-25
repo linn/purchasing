@@ -9,6 +9,7 @@ import {
     ReportTable
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
+import queryString from 'query-string';
 import history from '../../history';
 import config from '../../config';
 import { prefSupReceiptsReport } from '../../reportTypes';
@@ -17,10 +18,11 @@ import prefSupReceiptsReportActions from '../../actions/prefSupReceiptsReportAct
 function PrefSupReceiptsReport() {
     const dispatch = useDispatch();
 
+    const queryOptions = queryString.parse(window.location.search);
     const defaultStartDate = new Date();
     const [options, setOptions] = useState({
-        fromDate: defaultStartDate,
-        toDate: new Date()
+        fromDate: queryOptions.fromDate ? queryOptions.fromDate : defaultStartDate,
+        toDate: queryOptions.toDate ? queryOptions.toDate : new Date()
     });
 
     const loading = useSelector(state => state[prefSupReceiptsReport.item]?.loading);
