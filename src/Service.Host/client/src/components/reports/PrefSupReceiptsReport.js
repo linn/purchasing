@@ -83,7 +83,6 @@ function PrefSupReceiptsReport() {
                                     reportData={reportData}
                                     title={reportData.title}
                                     showTitle
-                                    showRowTitles
                                     showTotals
                                     placeholderRows={4}
                                     placeholderColumns={4}
