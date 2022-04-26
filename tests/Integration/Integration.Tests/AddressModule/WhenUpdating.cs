@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.AddressModule
 {
     using System.Net;
+    using System.Net.Http.Json;
 
     using FluentAssertions;
 
@@ -50,13 +51,9 @@
                                                                  Country = new Country { CountryCode = "NC", Name = "A NEW COUNTRY" }
                                                              });
 
-            this.Response = this.Client.Put(
+            this.Response = this.Client.PutAsJsonAsync(
                 $"/purchasing/addresses/{this.id}",
-                this.resource,
-                with =>
-                {
-                    with.Accept("application/json");
-                }).Result;
+                this.resource).Result;
         }
 
         [Test]

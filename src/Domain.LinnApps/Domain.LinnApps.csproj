@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<TargetFramework>net5.0</TargetFramework>
+	<TargetFramework>net6.0</TargetFramework>
     <AssemblyName>Linn.Purchasing.Domain.LinnApps</AssemblyName>
     <RootNamespace>Linn.Purchasing.Domain.LinnApps</RootNamespace>
   </PropertyGroup>
@@ -13,7 +13,7 @@
     <PackageReference Include="Linn.Common.Domain.LinnApps" Version="1.0.0" />
     <PackageReference Include="Linn.Common.Email" Version="1.0.0" />
     <PackageReference Include="Linn.Common.Pdf" Version="1.0.0" />
-    <PackageReference Include="Linn.Common.Persistence" Version="2.1.1" />
+    <PackageReference Include="Linn.Common.Persistence" Version="3.0.0" />
     <PackageReference Include="Linn.Common.Proxy.LinnApps" Version="3.0.0" />
     <PackageReference Include="Linn.Common.Reporting" Version="1.5.0" />
     <PackageReference Include="morelinq" Version="3.3.2" />

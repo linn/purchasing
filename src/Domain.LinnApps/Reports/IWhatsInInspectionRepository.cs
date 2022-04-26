@@ -6,6 +6,6 @@
 
     public interface IWhatsInInspectionRepository
     {
-        IQueryable<WhatsInInspectionViewModel> GetWhatsInInspection(bool includeFailed = false);
+        IQueryable<PartsInInspection> GetWhatsInInspection(bool includeFailed = false);
     }
 }

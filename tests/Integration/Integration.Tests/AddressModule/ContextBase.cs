@@ -78,6 +78,7 @@
                         services.AddSingleton(this.CountryService);
 
                         services.AddHandlers();
+                        services.AddRouting();
                     },
                 FakeAuthMiddleware.EmployeeMiddleware);
         }

@@ -7,10 +7,13 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import Typography from '@mui/material/Typography';
+import queryString from 'query-string';
 import {
     Page,
     Title,
     CheckboxWithLabel,
+    ExportButton,
     Loading,
     ReportTable
 } from '@linn-it/linn-form-components-library';
@@ -25,10 +28,11 @@ function WhatsInInspectionReport() {
 
     const [options, setOptions] = useState({
         includePartsWithNoOrderNumber: false,
-        showStockLocations: true,
+        showStockLocations: false,
         includeFailedStock: false,
         includeFinishedGoods: true,
-        showBackOrdered: true
+        showBackOrdered: false,
+        showOrders: false
     });
 
     const loading = useSelector(state => state[whatsInInspectionReport.item]?.loading);
@@ -103,6 +107,24 @@ function WhatsInInspectionReport() {
                             }
                         />
                     </Grid>
+                    <Grid item xs={12}>
+                        <CheckboxWithLabel
+                            label="Show Orders"
+                            checked={options.showOrders}
+                            onChange={() =>
+                                setOptions(o => ({
+                                    ...o,
+                                    showOrders: !o.showOrders
+                                }))
+                            }
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Typography variant="subtitle2">
+                            Click run to run the report or export to download a csv of the top level
+                            data (i.e. the report without the orders and locations breakdowns)
+                        </Typography>
+                    </Grid>
                     <Grid item xs={3}>
                         <Button
                             variant="contained"
@@ -113,6 +135,13 @@ function WhatsInInspectionReport() {
                         >
                             Run
                         </Button>
+                        <ExportButton
+                            href={`${
+                                config.appRoot
+                            }/purchasing/reports/whats-in-inspection/export?${queryString.stringify(
+                                options
+                            )}`}
+                        />
                     </Grid>
                 </>
 
@@ -125,24 +154,49 @@ function WhatsInInspectionReport() {
                         {reportData && (
                             <>
                                 <Grid item xs={12}>
-                                    <TableContainer>
-                                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                    <TableContainer
+                                        sx={{ overflowX: 'scroll', transform: 'rotateX(180deg)' }}
+                                    >
+                                        <Table
+                                            sx={{ transform: 'rotateX(180deg)' }}
+                                            aria-label="simple table"
+                                        >
                                             <TableHead>
                                                 <TableRow>
-                                                    <TableCell>Part Number</TableCell>
-                                                    <TableCell>Desc</TableCell>
-
-                                                    <TableCell align="right">Units</TableCell>
-                                                    <TableCell align="right">
-                                                        Qty In Stock
+                                                    <TableCell>
+                                                        <Typography variant="subtitle2">
+                                                            Part Number
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Typography variant="subtitle2">
+                                                            Description
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Typography variant="subtitle2">
+                                                            Oldest Batch
+                                                        </Typography>
                                                     </TableCell>
                                                     <TableCell align="right">
-                                                        Qty In Inspection
+                                                        <Typography variant="subtitle2">
+                                                            Units
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        <Typography variant="subtitle2">
+                                                            Qty In Stock
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        <Typography variant="subtitle2">
+                                                            Qty In Inspection
+                                                        </Typography>
                                                     </TableCell>
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
-                                                {reportData.map(row => (
+                                                {reportData.partsInInspection.map(row => (
                                                     <>
                                                         <TableRow
                                                             key={row.partNumber}
@@ -154,41 +208,90 @@ function WhatsInInspectionReport() {
                                                             }}
                                                         >
                                                             <TableCell component="th" scope="row">
-                                                                {row.partNumber}
+                                                                <Typography variant="subtitle2">
+                                                                    {row.partNumber}
+                                                                </Typography>
                                                             </TableCell>
                                                             <TableCell component="th" scope="row">
-                                                                {row.description}
+                                                                <Typography variant="subtitle2">
+                                                                    {row.description}
+                                                                </Typography>
+                                                            </TableCell>
+                                                            <TableCell component="th" scope="row">
+                                                                <Typography variant="subtitle2">
+                                                                    {row.batch}
+                                                                </Typography>
                                                             </TableCell>
                                                             <TableCell align="right">
-                                                                {row.ourUnitOfMeasure}
+                                                                <Typography variant="subtitle2">
+                                                                    {row.ourUnitOfMeasure}
+                                                                </Typography>
                                                             </TableCell>
                                                             <TableCell align="right">
-                                                                {row.qtyInStock}
+                                                                <Typography variant="subtitle2">
+                                                                    {row.qtyInStock}
+                                                                </Typography>
                                                             </TableCell>
                                                             <TableCell align="right">
-                                                                {row.qtyInInspection}
+                                                                <Typography variant="subtitle2">
+                                                                    {row.qtyInInspection}
+                                                                </Typography>
                                                             </TableCell>
                                                         </TableRow>
                                                         <TableRow key={row.partNumber}>
-                                                            <TableCell align="right" colSpan={3}>
-                                                                <ReportTable
-                                                                    reportData={
-                                                                        row.ordersBreakdown
-                                                                            .reportResults[0]
-                                                                    }
-                                                                    title={row.title}
-                                                                    showTitle={false}
-                                                                    showTotals
-                                                                    placeholderRows={4}
-                                                                    placeholderColumns={4}
-                                                                />
-                                                            </TableCell>
+                                                            {row.locationsBreakdown && (
+                                                                <TableCell
+                                                                    align="right"
+                                                                    colSpan={2}
+                                                                >
+                                                                    <ReportTable
+                                                                        reportData={
+                                                                            row.locationsBreakdown
+                                                                                .reportResults[0]
+                                                                        }
+                                                                        showTitle={false}
+                                                                        showTotals
+                                                                        placeholderRows={4}
+                                                                        placeholderColumns={4}
+                                                                    />
+                                                                </TableCell>
+                                                            )}
+                                                            {row.ordersBreakdown && (
+                                                                <TableCell
+                                                                    align="right"
+                                                                    colSpan={3}
+                                                                >
+                                                                    <ReportTable
+                                                                        reportData={
+                                                                            row.ordersBreakdown
+                                                                                .reportResults[0]
+                                                                        }
+                                                                        showTitle={false}
+                                                                        showTotals
+                                                                        placeholderRows={4}
+                                                                        placeholderColumns={4}
+                                                                    />
+                                                                </TableCell>
+                                                            )}
                                                         </TableRow>
                                                     </>
                                                 ))}
                                             </TableBody>
                                         </Table>
                                     </TableContainer>
+                                    {reportData.backOrderData && (
+                                        <Grid item xs={12}>
+                                            <ReportTable
+                                                reportData={
+                                                    reportData.backOrderData.reportResults[0]
+                                                }
+                                                showTitle
+                                                title="Parts In Inspection On Purchasing Back Order"
+                                                placeholderRows={4}
+                                                placeholderColumns={4}
+                                            />
+                                        </Grid>
+                                    )}
                                 </Grid>
                             </>
                         )}

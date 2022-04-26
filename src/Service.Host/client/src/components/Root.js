@@ -41,6 +41,7 @@ import OutstandingPoReqsReport from './reports/OutstandingPoReqsReport';
 import PrefSupReceiptsReport from './reports/PrefSupReceiptsReport';
 import POReqPrintout from './POReqs/POReqPrintout';
 import WhatsInInspectionReport from './reports/WhatsInInspectionReport';
+import RunMrp from './RunMrp';
 
 const Root = ({ store }) => (
     <div>
@@ -236,6 +237,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/reports/pref-sup-receipts"
                                     component={PrefSupReceiptsReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/material-requirements/run-mrp"
+                                    component={RunMrp}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>

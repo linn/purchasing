@@ -1,25 +1,26 @@
 ﻿namespace Linn.Purchasing.Service.Modules.Reports
 {
+    using System;
     using System.Threading.Tasks;
 
     using Carter;
-    using Carter.Request;
     using Carter.Response;
 
+    using Linn.Common.Facade.Carter.Extensions;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Service.Models;
 
+    using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Routing;
 
-    public class WhatsInInspectionReportModule : CarterModule
+    public class WhatsInInspectionReportModule : ICarterModule
     {
-        private readonly IWhatsInInspectionReportFacadeService facadeService;
-
-        public WhatsInInspectionReportModule(IWhatsInInspectionReportFacadeService facadeService)
+        public void AddRoutes(IEndpointRouteBuilder app)
         {
-            this.facadeService = facadeService;
-            this.Get("/purchasing/reports/whats-in-inspection/report", this.GetReport);
-            this.Get("/purchasing/reports/whats-in-inspection", this.GetApp);
+            app.MapGet("/purchasing/reports/whats-in-inspection/report", this.GetReport);
+            app.MapGet("/purchasing/reports/whats-in-inspection/export", this.GetExport);
+            app.MapGet("/purchasing/reports/whats-in-inspection", this.GetApp);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -27,16 +28,42 @@
             await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
         }
 
-        private async Task GetReport(HttpRequest req, HttpResponse res)
+        private async Task GetReport(
+            HttpRequest req,
+            HttpResponse res,
+            IWhatsInInspectionReportFacadeService facadeService,
+            bool includePartsWithNoOrderNumber,
+            bool showStockLocations,
+            bool includeFailedStock,
+            bool includeFinishedGoods,
+            bool showBackOrdered,
+            bool showOrders)
         {
-            var results = this.facadeService.GetReport(
-                req.Query.As<bool>("includePartsWithNoOrderNumber"),
-                req.Query.As<bool>("showStockLocations"),
-                req.Query.As<bool>("includeFailedStock"),
-                req.Query.As<bool>("includeFinishedGoods"),
-                req.Query.As<bool>("showBackOrdered"));
+            var results = facadeService.GetReport(
+                includePartsWithNoOrderNumber,
+                showStockLocations,
+                includeFailedStock,
+                includeFinishedGoods,
+                showBackOrdered,
+                showOrders);
 
             await res.Negotiate(results);
+        }
+
+        private async Task GetExport(
+            HttpRequest req,
+            HttpResponse res,
+            IWhatsInInspectionReportFacadeService facadeService,
+            bool includePartsWithNoOrderNumber,
+            bool includeFailedStock,
+            bool includeFinishedGoods)
+        {
+            var csvResults = facadeService.GetTopLevelExport(
+                includePartsWithNoOrderNumber,
+                includeFailedStock,
+                includeFinishedGoods);
+            var now = DateTime.Today;
+            await res.FromCsv(csvResults, $"whats_in_insp_{now.Day}-{now.Month}-{now.Year}.csv");
         }
     }
 }

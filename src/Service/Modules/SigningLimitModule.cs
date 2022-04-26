@@ -3,8 +3,6 @@
     using System.Threading.Tasks;
 
     using Carter;
-    using Carter.ModelBinding;
-    using Carter.Request;
     using Carter.Response;
 
     using Linn.Common.Facade;
@@ -12,46 +10,56 @@
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.Extensions;
 
+    using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Routing;
 
-    public class SigningLimitModule : CarterModule
+    public class SigningLimitModule : ICarterModule
     {
-        private readonly IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource> signingLimitFacadeService;
-
-        public SigningLimitModule(IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource> signingLimitFacadeService)
+        public void AddRoutes(IEndpointRouteBuilder app)
         {
-            this.signingLimitFacadeService = signingLimitFacadeService;
-            this.Get("/purchasing/signing-limits", this.GetSigningLimits);
-            this.Get("/purchasing/signing-limits/{id:int}", this.GetSigningLimitById);
-            this.Get("/purchasing/signing-limits/application-state", this.GetApplicationState);
-            this.Post("/purchasing/signing-limits", this.CreateSigningLimit);
-            this.Put("/purchasing/signing-limits/{id:int}", this.UpdateSigningLimit);
-            this.Delete("/purchasing/signing-limits/{id:int}", this.DeleteSigningLimitById);
+            app.MapGet("/purchasing/signing-limits", this.GetSigningLimits);
+            app.MapGet("/purchasing/signing-limits/{id:int}", this.GetSigningLimitById);
+            app.MapGet("/purchasing/signing-limits/application-state", this.GetApplicationState);
+            app.MapPost("/purchasing/signing-limits", this.CreateSigningLimit);
+            app.MapPut("/purchasing/signing-limits/{id:int}", this.UpdateSigningLimit);
+            app.MapDelete("/purchasing/signing-limits/{id:int}", this.DeleteSigningLimitById);
         }
 
-        private async Task GetSigningLimits(HttpRequest req, HttpResponse res)
+        private async Task GetSigningLimits(
+            HttpRequest req,
+            HttpResponse res,
+            IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource> signingLimitFacadeService)
         {
-            await res.Negotiate(this.signingLimitFacadeService.GetAll());
+            await res.Negotiate(signingLimitFacadeService.GetAll());
         }
 
-        private async Task GetApplicationState(HttpRequest req, HttpResponse res)
+        private async Task GetApplicationState(
+            HttpRequest req,
+            HttpResponse res,
+            IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource> signingLimitFacadeService)
         {
-            await res.Negotiate(this.signingLimitFacadeService.GetApplicationState(req.HttpContext.GetPrivileges()));
+            await res.Negotiate(signingLimitFacadeService.GetApplicationState(req.HttpContext.GetPrivileges()));
         }
 
-        private async Task GetSigningLimitById(HttpRequest req, HttpResponse res)
+        private async Task GetSigningLimitById(
+            HttpRequest req,
+            HttpResponse res,
+            int id,
+            IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource> signingLimitFacadeService)
         {
-            var signingLimitId = req.RouteValues.As<int>("id");
-
-            var result = this.signingLimitFacadeService.GetById(signingLimitId, req.HttpContext.GetPrivileges());
+            var result = signingLimitFacadeService.GetById(id, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }
 
-        private async Task CreateSigningLimit(HttpRequest request, HttpResponse response)
+        private async Task CreateSigningLimit(
+            HttpRequest request,
+            HttpResponse response,
+            IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource> signingLimitFacadeService,
+            SigningLimitResource resource)
         {
-            var resource = await request.Bind<SigningLimitResource>();
-            var result = this.signingLimitFacadeService.Add(
+            var result = signingLimitFacadeService.Add(
                 resource,
                 request.HttpContext.GetPrivileges(),
                 request.HttpContext.User.GetEmployeeNumber());
@@ -59,11 +67,14 @@
             await response.Negotiate(result);
         }
 
-        private async Task UpdateSigningLimit(HttpRequest request, HttpResponse response)
+        private async Task UpdateSigningLimit(
+            HttpRequest request,
+            HttpResponse response,
+            int id,
+            SigningLimitResource resource,
+            IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource> signingLimitFacadeService)
         {
-            var id = request.RouteValues.As<int>("id");
-            var resource = await request.Bind<SigningLimitResource>();
-            var result = this.signingLimitFacadeService.Update(
+            var result = signingLimitFacadeService.Update(
                 id,
                 resource,
                 request.HttpContext.GetPrivileges(),
@@ -72,12 +83,14 @@
             await response.Negotiate(result);
         }
 
-        private async Task DeleteSigningLimitById(HttpRequest req, HttpResponse res)
+        private async Task DeleteSigningLimitById(
+            HttpRequest req,
+            HttpResponse res,
+            int id,
+            IFacadeResourceService<SigningLimit, int, SigningLimitResource, SigningLimitResource> signingLimitFacadeService)
         {
-            var signingLimitId = req.RouteValues.As<int>("id");
-
-            var result = this.signingLimitFacadeService.DeleteOrObsolete(
-                signingLimitId,
+            var result = signingLimitFacadeService.DeleteOrObsolete(
+                id,
                 req.HttpContext.GetPrivileges(),
                 req.HttpContext.User.GetEmployeeNumber());
 

@@ -7,11 +7,17 @@
 
     public interface IWhatsInInspectionReportFacadeService
     {
-        IResult<IEnumerable<WhatsInInspectionReportResource>> GetReport(
+        IResult<WhatsInInspectionReportResource> GetReport(
             bool includePartsWithNoOrderNumber = false,
             bool showStockLocations = true,
             bool includeFailedStock = false,
             bool includeFinishedGoods = false,
-            bool showBackOrdered = true);
+            bool showBackOrdered = true,
+            bool showOrders = true);
+
+        IEnumerable<IEnumerable<string>> GetTopLevelExport(
+            bool includePartsWithNoOrderNumber = false,
+            bool includeFailedStock = false,
+            bool includeFinishedGoods = true);
     }
 }

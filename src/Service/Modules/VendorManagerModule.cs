@@ -9,22 +9,23 @@
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
 
+    using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Routing;
 
-    public class VendorManagerModule : CarterModule
+    public class VendorManagerModule : ICarterModule
     {
-        private readonly IFacadeResourceService<VendorManager, string, VendorManagerResource, VendorManagerResource> facadeService;
-
-        public VendorManagerModule(
-            IFacadeResourceService<VendorManager, string, VendorManagerResource, VendorManagerResource> facadeService)
+        public void AddRoutes(IEndpointRouteBuilder app)
         {
-            this.facadeService = facadeService;
-            this.Get("/purchasing/vendor-managers", this.GetAllVendorManagers);
+            app.MapGet("/purchasing/vendor-managers", this.GetAllVendorManagers);
         }
 
-        private async Task GetAllVendorManagers(HttpRequest req, HttpResponse res)
+        private async Task GetAllVendorManagers(
+            HttpRequest req,
+            HttpResponse res,
+            IFacadeResourceService<VendorManager, string, VendorManagerResource, VendorManagerResource> facadeService)
         {
-            var result = this.facadeService.GetAll();
+            var result = facadeService.GetAll();
 
             await res.Negotiate(result);
         }

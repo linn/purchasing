@@ -3,7 +3,6 @@
     using System.Threading.Tasks;
 
     using Carter;
-    using Carter.Request;
     using Carter.Response;
     
     using Linn.Common.Facade.Carter.Extensions;
@@ -14,51 +13,61 @@
     using Linn.Purchasing.Service.Extensions;
     using Linn.Purchasing.Service.Models;
 
+    using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Routing;
 
-    public class PurchaseOrdersReportModule : CarterModule
+    public class PurchaseOrdersReportModule : ICarterModule
     {
-        private readonly IPurchaseOrderReportFacadeService purchaseOrderReportFacadeService;
-
-        public PurchaseOrdersReportModule(IPurchaseOrderReportFacadeService purchaseOrderReportFacadeService)
+        public void AddRoutes(IEndpointRouteBuilder app)
         {
-            this.purchaseOrderReportFacadeService = purchaseOrderReportFacadeService;
-            this.Get("/purchasing/reports/orders-by-supplier", this.GetApp);
-            this.Get("/purchasing/reports/orders-by-part", this.GetApp);
-            this.Get("/purchasing/reports/orders-by-supplier/report", this.GetOrdersBySupplierReport);
-            this.Get("/purchasing/reports/orders-by-supplier/export", this.GetOrdersBySupplierExport);
-            this.Get("/purchasing/reports/orders-by-part/report", this.GetOrdersByPartReport);
-            this.Get("/purchasing/reports/orders-by-part/export", this.GetOrdersByPartExport);
-            this.Get("/purchasing/reports/suppliers-with-unacknowledged-orders", this.GetSuppliersWithUnacknowledgedOrdersReport);
-            this.Get("/purchasing/reports/unacknowledged-orders", this.GetUnacknowledgedOrdersReport);
-            this.Get("/purchasing/reports/unacknowledged-orders/export", this.GetUnacknowledgedOrdersReportExport);
+            app.MapGet("/purchasing/reports/orders-by-supplier", this.GetApp);
+            app.MapGet("/purchasing/reports/orders-by-part", this.GetApp);
+            app.MapGet("/purchasing/reports/orders-by-supplier/report", this.GetOrdersBySupplierReport);
+            app.MapGet("/purchasing/reports/orders-by-supplier/export", this.GetOrdersBySupplierExport);
+            app.MapGet("/purchasing/reports/orders-by-part/report", this.GetOrdersByPartReport);
+            app.MapGet("/purchasing/reports/orders-by-part/export", this.GetOrdersByPartExport);
+            app.MapGet("/purchasing/reports/suppliers-with-unacknowledged-orders", this.GetSuppliersWithUnacknowledgedOrdersReport);
+            app.MapGet("/purchasing/reports/unacknowledged-orders", this.GetUnacknowledgedOrdersReport);
+            app.MapGet("/purchasing/reports/unacknowledged-orders/export", this.GetUnacknowledgedOrdersReportExport);
         }
 
-        private async Task GetUnacknowledgedOrdersReport(HttpRequest request, HttpResponse response)
+        private async Task GetUnacknowledgedOrdersReport(
+            HttpRequest request,
+            HttpResponse response,
+            int? supplierId,
+            int? supplierGroupId,
+            IPurchaseOrderReportFacadeService purchaseOrderReportFacadeService)
         {
             var resource = new UnacknowledgedOrdersRequestResource
                                {
-                                   SupplierId = request.Query.As<int?>("SupplierId"),
-                                   SupplierGroupId = request.Query.As<int?>("SupplierGroupId")
+                                   SupplierId = supplierId,
+                                   SupplierGroupId = supplierGroupId
                                };
 
-            var results = this.purchaseOrderReportFacadeService.GetUnacknowledgedOrdersReport(
+            var results = purchaseOrderReportFacadeService.GetUnacknowledgedOrdersReport(
                 resource,
                 request.HttpContext.GetPrivileges());
 
             await response.Negotiate(results);
         }
 
-        private async Task GetUnacknowledgedOrdersReportExport(HttpRequest request, HttpResponse response)
+        private async Task GetUnacknowledgedOrdersReportExport(
+            HttpRequest request,
+            HttpResponse response,
+            IPurchaseOrderReportFacadeService purchaseOrderReportFacadeService,
+            int? supplierId,
+            int? supplierGroupId,
+            string name)
         {
             var resource = new UnacknowledgedOrdersRequestResource
                                {
-                                   SupplierId = request.Query.As<int?>("SupplierId"),
-                                   SupplierGroupId = request.Query.As<int?>("SupplierGroupId"),
-                                   Name = request.Query.As<string>("Name")
+                                   SupplierId = supplierId,
+                                   SupplierGroupId = supplierGroupId,
+                                   Name = name
                                };
 
-            var csv = this.purchaseOrderReportFacadeService.GetUnacknowledgedOrdersReportExport(
+            var csv = purchaseOrderReportFacadeService.GetUnacknowledgedOrdersReportExport(
                 resource,
                 request.HttpContext.GetPrivileges());
 
@@ -71,16 +80,22 @@
             await response.FromCsv(csv, fileName);
         }
 
-        private async Task GetSuppliersWithUnacknowledgedOrdersReport(HttpRequest request, HttpResponse response)
+        private async Task GetSuppliersWithUnacknowledgedOrdersReport(
+            HttpRequest request,
+            HttpResponse response,
+            IPurchaseOrderReportFacadeService purchaseOrderReportFacadeService,
+            string vendorManager,
+            int? planner,
+            bool useSupplierGroup)
         {
             var resource = new SuppliersWithUnacknowledgedOrdersRequestResource
                                {
-                                   VendorManager = request.Query.As<string>("VendorManager"),
-                                   Planner = request.Query.As<int?>("Planner"),
-                                   UseSupplierGroup = request.Query.As<bool>("UseSupplierGroup")
+                                   VendorManager = vendorManager,
+                                   Planner = planner, 
+                                   UseSupplierGroup = useSupplierGroup
                                };
 
-            var results = this.purchaseOrderReportFacadeService.GetSuppliersWithUnacknowledgedOrdersReport(
+            var results = purchaseOrderReportFacadeService.GetSuppliersWithUnacknowledgedOrdersReport(
                 resource,
                 request.HttpContext.GetPrivileges());
 
@@ -92,70 +107,109 @@
             await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
         }
 
-        private async Task GetOrdersByPartExport(HttpRequest req, HttpResponse res)
+        private async Task GetOrdersByPartExport(
+            HttpRequest req,
+            HttpResponse res,
+            IPurchaseOrderReportFacadeService purchaseOrderReportFacadeService,
+            string partNumber,
+            string fromDate,
+            string toDate,
+            string cancelled)
         {
-            var resource = new OrdersByPartSearchResource();
-            resource.PartNumber = req.Query.As<string>("PartNumber");
-            resource.From = req.Query.As<string>("FromDate");
-            resource.To = req.Query.As<string>("ToDate");
-            resource.Cancelled = req.Query.As<string>("Cancelled");
+            var resource = new OrdersByPartSearchResource
+                               {
+                                   PartNumber = partNumber, From = fromDate, To = toDate, Cancelled = cancelled
+                               };
 
-            var csv = this.purchaseOrderReportFacadeService.GetOrdersByPartExport(
+            var csv = purchaseOrderReportFacadeService.GetOrdersByPartExport(
                 resource,
                 req.HttpContext.GetPrivileges());
             
             await res.FromCsv(csv, $"ordersByPart{resource.From.Substring(0, 10)}_To_{resource.To.Substring(0, 10)}.csv");
         }
 
-        private async Task GetOrdersByPartReport(HttpRequest req, HttpResponse res)
+        private async Task GetOrdersByPartReport(
+            HttpRequest req,
+            HttpResponse res,
+            IPurchaseOrderReportFacadeService purchaseOrderReportFacadeService,
+            string partNumber,
+            string fromDate,
+            string toDate,
+            string cancelled)
         {
-            var resource = new OrdersByPartSearchResource();
-            resource.PartNumber = req.Query.As<string>("PartNumber");
-            resource.From = req.Query.As<string>("FromDate");
-            resource.To = req.Query.As<string>("ToDate");
-            resource.Cancelled = req.Query.As<string>("Cancelled");
+            var resource = new OrdersByPartSearchResource
+                               {
+                                   PartNumber = partNumber,
+                                   From = fromDate,
+                                   To = toDate,
+                                   Cancelled = cancelled
+                               };
 
-            var results = this.purchaseOrderReportFacadeService.GetOrdersByPartReport(
+            var results = purchaseOrderReportFacadeService.GetOrdersByPartReport(
                 resource,
                 req.HttpContext.GetPrivileges());
 
             await res.Negotiate(results);
         }
 
-        private async Task GetOrdersBySupplierExport(HttpRequest req, HttpResponse res)
+        private async Task GetOrdersBySupplierExport(
+            HttpRequest req,
+            HttpResponse res,
+            IPurchaseOrderReportFacadeService purchaseOrderReportFacadeService,
+            int id,
+            string fromDate,
+            string toDate,
+            string returns,
+            string outstanding,
+            string cancelled,
+            string credits,
+            string stockControlled)
         {
-            var resource = new OrdersBySupplierSearchResource();
-            resource.SupplierId = req.Query.As<int>("Id");
-            resource.From = req.Query.As<string>("FromDate");
-            resource.To = req.Query.As<string>("ToDate");
+            var resource = new OrdersBySupplierSearchResource
+                               {
+                                   SupplierId = id,
+                                   From = fromDate,
+                                   To = toDate,
+                                   Returns = returns,
+                                   Outstanding = outstanding,
+                                   Cancelled = cancelled,
+                                   Credits = credits,
+                                   StockControlled = stockControlled
+                               };
 
-            resource.Returns = req.Query.As<string>("Returns");
-            resource.Outstanding = req.Query.As<string>("Outstanding");
-            resource.Cancelled = req.Query.As<string>("Cancelled");
-            resource.Credits = req.Query.As<string>("Credits");
-            resource.StockControlled = req.Query.As<string>("StockControlled");
-
-            var csv = this.purchaseOrderReportFacadeService.GetOrdersBySupplierExport(
+            var csv = purchaseOrderReportFacadeService.GetOrdersBySupplierExport(
                 resource,
                 req.HttpContext.GetPrivileges());
 
             await res.FromCsv(csv, $"ordersBySupplier{resource.From.Substring(0, 10)}_To_{resource.To.Substring(0, 10)}.csv");
         }
 
-        private async Task GetOrdersBySupplierReport(HttpRequest req, HttpResponse res)
+        private async Task GetOrdersBySupplierReport(
+            HttpRequest req,
+            HttpResponse res,
+            IPurchaseOrderReportFacadeService purchaseOrderReportFacadeService,
+            int id,
+            string fromDate,
+            string toDate,
+            string returns,
+            string outstanding,
+            string cancelled,
+            string credits,
+            string stockControlled)
         {
-            var resource = new OrdersBySupplierSearchResource();
-            resource.SupplierId = req.Query.As<int>("Id");
-            resource.From = req.Query.As<string>("FromDate");
-            resource.To = req.Query.As<string>("ToDate");
+            var resource = new OrdersBySupplierSearchResource
+                               {
+                                   SupplierId = id,
+                                   From = fromDate,
+                                   To = toDate,
+                                   Returns = returns,
+                                   Outstanding = outstanding,
+                                   Cancelled = cancelled,
+                                   Credits = credits,
+                                   StockControlled = stockControlled
+                               };
 
-            resource.Returns = req.Query.As<string>("Returns");
-            resource.Outstanding = req.Query.As<string>("Outstanding");
-            resource.Cancelled = req.Query.As<string>("Cancelled");
-            resource.Credits = req.Query.As<string>("Credits");
-            resource.StockControlled = req.Query.As<string>("StockControlled");
-
-            var results = this.purchaseOrderReportFacadeService.GetOrdersBySupplierReport(
+            var results = purchaseOrderReportFacadeService.GetOrdersBySupplierReport(
                 resource,
                 req.HttpContext.GetPrivileges());
 

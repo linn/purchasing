@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class WhatsInInspectionViewModel
+    public class PartsInInspection
     {
         public string PartNumber { get; set; }
 
@@ -13,6 +13,8 @@
         public decimal QtyInStock { get; set; }
 
         public decimal QtyInInspection { get; set; }
+
+        public string RawOrFinished { get; set; } 
 
         public DateTime? MinDate { get; set; }
     }

@@ -3,59 +3,56 @@
     using System.Threading.Tasks;
 
     using Carter;
-    using Carter.ModelBinding;
-    using Carter.Request;
     using Carter.Response;
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Resources;
 
+    using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Routing;
 
-    public class AddressModule : CarterModule
+    public class AddressModule : ICarterModule
     {
-        private readonly IFacadeResourceFilterService<Address, int, AddressResource, AddressResource, AddressResource>
-            addressService;
-
-        private readonly IFacadeResourceService<Country, string, CountryResource, CountryResource> countryService;
-
-        public AddressModule(
-            IFacadeResourceFilterService<Address, int, AddressResource, AddressResource, AddressResource> addressService,
-            IFacadeResourceService<Country, string, CountryResource, CountryResource> countryService)
+        public void AddRoutes(IEndpointRouteBuilder app)
         {
-            this.addressService = addressService;
-            this.countryService = countryService;
-            this.Post("/purchasing/addresses", this.CreateAddress);
-            this.Put("/purchasing/addresses/{id:int}", this.UpdateAddress);
-            this.Get("/purchasing/addresses", this.SearchAddresses);
-            this.Get("/purchasing/countries", this.SearchCountries);
+            app.MapPost("/purchasing/addresses", this.CreateAddress);
+            app.MapPut("/purchasing/addresses/{id:int}", this.UpdateAddress);
+            app.MapGet("/purchasing/addresses", this.SearchAddresses);
+            app.MapGet("/purchasing/countries", this.SearchCountries);
         }
 
-        private async Task CreateAddress(HttpRequest request, HttpResponse response)
+        private async Task CreateAddress(
+            HttpRequest request,
+            HttpResponse response,
+            AddressResource resource,
+            IFacadeResourceFilterService<Address, int, AddressResource, AddressResource, AddressResource> addressService)
         {
-            var resource = await request.Bind<AddressResource>();
-            var result = this.addressService.Add(
-                resource);
+            var result = addressService.Add(resource);
 
             await response.Negotiate(result);
         }
 
-        private async Task UpdateAddress(HttpRequest request, HttpResponse response)
+        private async Task UpdateAddress(
+            HttpRequest request,
+            HttpResponse response,
+            int id,
+            AddressResource resource,
+            IFacadeResourceFilterService<Address, int, AddressResource, AddressResource, AddressResource> addressService)
         {
-            var id = request.RouteValues.As<int>("id");
-            var resource = await request.Bind<AddressResource>();
-            var result = this.addressService.Update(
-                id,
-                resource);
+            var result = addressService.Update(id, resource);
 
             await response.Negotiate(result);
         }
 
-        private async Task SearchAddresses(HttpRequest req, HttpResponse res)
+        private async Task SearchAddresses(
+            HttpRequest req,
+            HttpResponse res,
+            string searchTerm,
+            IFacadeResourceFilterService<Address, int, AddressResource, AddressResource, AddressResource> addressService)
         {
-            var searchTerm = req.Query.As<string>("searchTerm");
-            var result = this.addressService.FilterBy(
+            var result = addressService.FilterBy(
                 new AddressResource
                     {
                         Addressee = searchTerm
@@ -64,10 +61,13 @@
             await res.Negotiate(result);
         }
 
-        private async Task SearchCountries(HttpRequest req, HttpResponse res)
+        private async Task SearchCountries(
+            HttpRequest req, 
+            HttpResponse res,
+            string searchTerm,
+            IFacadeResourceService<Country, string, CountryResource, CountryResource> countryService)
         {
-            var searchTerm = req.Query.As<string>("searchTerm");
-            var result = this.countryService.Search(searchTerm);
+            var result = countryService.Search(searchTerm);
             await res.Negotiate(result);
         }
     }

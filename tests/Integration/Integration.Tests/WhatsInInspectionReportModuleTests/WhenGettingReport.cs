@@ -17,7 +17,7 @@
 
     public class WhenGettingReport : ContextBase
     {
-        private IEnumerable<WhatsInInspectionReportModel> result;
+        private WhatsInInspectionReport result;
 
         private bool includePartsWithNoOrderNumber;
 
@@ -29,6 +29,8 @@
 
         private bool showBackOrdered;
 
+        private bool showOrders;
+
         [SetUp]
         public void SetUp()
         {
@@ -37,15 +39,21 @@
             this.includeFailedStock = true;
             this.includeFinishedGoods = false;
             this.showBackOrdered = false;
+            this.showOrders = true;
 
-            this.result = new List<WhatsInInspectionReportModel> 
-                              { 
-                                  new WhatsInInspectionReportModel
-                                      {
-                                          PartNumber = "PART",
-                                          OrdersBreakdown = new ResultsModel()
-                                      }
+            this.result = new WhatsInInspectionReport
+                              {
+                                  PartsInInspection = new List<PartsInInspectionReportEntry>
+                                                          {
+                                                              new PartsInInspectionReportEntry
+                                                                  {
+                                                                      PartNumber = "PART",
+                                                                      OrdersBreakdown = new ResultsModel()
+                                                                  }
+                                                          },
+                                BackOrderData = new ResultsModel()
                               };
+        
 
             this.MockDomainService.GetReport(
                 this.includePartsWithNoOrderNumber,
@@ -59,7 +67,8 @@
                 + $"{this.includePartsWithNoOrderNumber}&showStockLocations={this.showStockLocations}"
                 + $"&includeFailedStock={this.includeFailedStock}"
                 + $"&includeFinishedGoods={this.includeFinishedGoods}" 
-                + $"&showBackOrdered={this.showBackOrdered}",
+                + $"&showBackOrdered={this.showBackOrdered}"
+                + $"&showOrders={this.showOrders}",
                 with => { with.Accept("application/json"); }).Result;
         }
 
@@ -83,8 +92,8 @@
         [Test]
         public void ShouldReturnReport()
         {
-            var resource = this.Response.DeserializeBody<IEnumerable<WhatsInInspectionReportResource>>();
-            resource.First().PartNumber.Should().Be("PART");
+            var resource = this.Response.DeserializeBody<WhatsInInspectionReportResource>();
+            resource.PartsInInspection.First().PartNumber.Should().Be("PART");
         }
     }
 }

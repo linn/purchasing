@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Net;
+    using System.Net.Http.Json;
 
     using FluentAssertions;
 
@@ -29,13 +30,9 @@
                             UserNumber = 4
                         }));
 
-            this.Response = this.Client.Post(
+            this.Response = this.Client.PostAsJsonAsync(
                 "/purchasing/signing-limits",
-                this.signingLimitResource,
-                with =>
-                    {
-                        with.Accept("application/json");
-                }).Result;
+                this.signingLimitResource).Result;
         }
 
         [Test]

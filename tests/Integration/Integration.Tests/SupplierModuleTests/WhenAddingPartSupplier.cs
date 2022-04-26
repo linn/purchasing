@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Net;
+    using System.Net.Http.Json;
 
     using FluentAssertions;
 
@@ -62,13 +63,9 @@
                                         Supplier = new Supplier { SupplierId = 100 }
                                     };
 
-            this.Response = this.Client.Post(
+            this.Response = this.Client.PostAsJsonAsync(
                 $"/purchasing/part-suppliers/record",
-                this.createResource,
-                with =>
-                {
-                    with.Accept("application/json");
-                }).Result;
+                this.createResource).Result;
         }
 
         [Test]

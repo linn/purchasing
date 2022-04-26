@@ -46,7 +46,7 @@
                 result = result.Where(x => x.PurchaseOrderDetail.PurchaseOrder.Supplier.VendorManager.Id == vendorManager);
             }
 
-            var data = result.Select(d => new WhatsDueInEntryModel
+            var data = result.Select(d => new WhatsDueInEntry
                             {
                                 SupplierId = d.PurchaseOrderDetail.PurchaseOrder.SupplierId,
                                 PartNumber = d.PurchaseOrderDetail.Part.PartNumber,

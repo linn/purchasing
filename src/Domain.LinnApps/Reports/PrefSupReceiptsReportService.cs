@@ -41,7 +41,8 @@
                         new AxisDetailsModel("Supplier", "Supplier", GridDisplayType.TextValue),
                         new AxisDetailsModel("OrderPrice", "Order Price", GridDisplayType.TextValue),
                         new AxisDetailsModel("PrefSupPrice", "Prefsup Price", GridDisplayType.TextValue),
-                        new AxisDetailsModel("Diff", "Diff", GridDisplayType.TextValue)
+                        new AxisDetailsModel("Diff", "Diff", GridDisplayType.TextValue),
+                        new AxisDetailsModel("MPV", "MPV Reason", GridDisplayType.TextValue)
                     });
         }
 
@@ -57,7 +58,8 @@
 
         public ResultsModel GetReport(DateTime fromDate, DateTime toDate)
         {
-            var results = this.receiptRepository.FilterBy(e => e.DateBooked >= fromDate & e.DateBooked <= toDate);
+            var results = this.receiptRepository.FilterBy(
+                e => e.DateBooked >= fromDate && e.DateBooked <= toDate && e.Difference != 0);
 
             var reportLayout = new SimpleGridLayout(
                 this.reportingHelper,
@@ -125,6 +127,9 @@
 
                 values.Add(
                     new CalculationValueModel {RowId = rowId, ColumnId = "Diff", TextDisplay = $"{result.Difference}"});
+
+                values.Add(
+                    new CalculationValueModel {RowId = rowId, ColumnId = "MPV", TextDisplay = $"{result.MPVReason}"});
             }
 
             reportLayout.SetGridData(values);

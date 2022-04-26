@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class PartsReceivedViewModel
+    public class PartReceivedRecord
     {
         public string JobRef { get; set; }
 

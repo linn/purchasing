@@ -81,8 +81,8 @@
                     => new EntityFrameworkRepository<Organisation, int>(r.GetService<ServiceDbContext>()?.Organisations))
                 .AddTransient<IRepository<TqmsJobref, string>, EntityFrameworkRepository<TqmsJobref, string>>(r
                     => new EntityFrameworkRepository<TqmsJobref, string>(r.GetService<ServiceDbContext>()?.TqmsJobrefs))
-                .AddTransient<IQueryRepository<PartsReceivedViewModel>, EntityFrameworkQueryRepository<PartsReceivedViewModel>>(
-                    r => new EntityFrameworkQueryRepository<PartsReceivedViewModel>(r.GetService<ServiceDbContext>()
+                .AddTransient<IQueryRepository<PartReceivedRecord>, EntityFrameworkQueryRepository<PartReceivedRecord>>(
+                    r => new EntityFrameworkQueryRepository<PartReceivedRecord>(r.GetService<ServiceDbContext>()
                         ?.TqmsView))
                 .AddTransient<IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey>, PurchaseOrderDeliveryRepository>()
                 .AddTransient<IRepository<PurchaseOrderReqState, string>, EntityFrameworkRepository<PurchaseOrderReqState, string>>(
@@ -93,10 +93,18 @@
                 .AddTransient<IRepository<MrpRunLog, int>, EntityFrameworkRepository<MrpRunLog, int>>(
                     r => new EntityFrameworkRepository<MrpRunLog, int>(r.GetService<ServiceDbContext>()?.MrpRunLogs))
                 .AddTransient<IWhatsInInspectionRepository, WhatsInInspectionRepository>()
-                .AddTransient<IQueryRepository<WhatsInInspectionPurchaseOrdersViewModel>, EntityFrameworkQueryRepository<WhatsInInspectionPurchaseOrdersViewModel>>(
-                    r => new EntityFrameworkQueryRepository<WhatsInInspectionPurchaseOrdersViewModel>(r.GetService<ServiceDbContext>()
+                .AddTransient<IQueryRepository<WhatsInInspectionPurchaseOrdersData>, EntityFrameworkQueryRepository<WhatsInInspectionPurchaseOrdersData>>(
+                    r => new EntityFrameworkQueryRepository<WhatsInInspectionPurchaseOrdersData>(r.GetService<ServiceDbContext>()
                         ?.WhatsInInspectionPurchaseOrdersView))
                 .AddTransient<IQueryRepository<ReceiptPrefSupDiff>, ReceiptPrefSupDiffRepository>()
+                .AddTransient<IQueryRepository<WhatsInInspectionStockLocationsData>, EntityFrameworkQueryRepository<WhatsInInspectionStockLocationsData>>(
+                    r => new EntityFrameworkQueryRepository<WhatsInInspectionStockLocationsData>(r.GetService<ServiceDbContext>()
+                        ?.WhatsInInspectionStockLocationsView))
+                .AddTransient<IQueryRepository<WhatsInInspectionBackOrderData>, EntityFrameworkQueryRepository<WhatsInInspectionBackOrderData>>(
+                    r => new EntityFrameworkQueryRepository<WhatsInInspectionBackOrderData>(r.GetService<ServiceDbContext>()
+                        ?.WhatsInInspectionBackOrderView))
+                .AddTransient<ISingleRecordRepository<MrMaster>, EntityFrameworkSingleRecordRepository<MrMaster>>(
+                    r => new EntityFrameworkSingleRecordRepository<MrMaster>(r.GetService<ServiceDbContext>()?.MrMaster))
                 .AddTransient<IRepository<CancelledOrderDetail, int>, EntityFrameworkRepository<CancelledOrderDetail, int>>(
                     r => new EntityFrameworkRepository<CancelledOrderDetail, int>(r.GetService<ServiceDbContext>()?.CancelledPODetails));
         }

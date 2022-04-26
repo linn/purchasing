@@ -20,7 +20,7 @@
             new LoggerFactory(new[] { new Microsoft.Extensions.Logging.Debug.DebugLoggerProvider() });
 
         public DbSet<PartSupplier> PartSuppliers { get; set; }
-
+        
         public DbSet<Part> Parts { get; set; }
 
         public DbSet<Supplier> Suppliers { get; set; }
@@ -89,7 +89,7 @@
 
         public DbSet<TqmsJobref> TqmsJobrefs { get; set; }
 
-        public DbSet<PartsReceivedViewModel> TqmsView { get; set; }
+        public DbSet<PartReceivedRecord> TqmsView { get; set; }
 
         public DbSet<PurchaseOrderReq> PurchaseOrderReqs { get; set; }
 
@@ -103,13 +103,19 @@
 
         public DbSet<MrpRunLog> MrpRunLogs { get; set; }
 
-        public DbSet<WhatsInInspectionExcludingFailsViewModel> WhatsInInspectionExcludingFailedView { get; set; }
+        public DbSet<PartsInInspectionExcludingFails> WhatsInInspectionExcludingFailedView { get; set; }
 
-        public DbSet<WhatsInInspectionIncludingFailsViewModel> WhatsInInspectionIncludingFailedView { get; set; }
+        public DbSet<PartsInInspectionIncludingFails> WhatsInInspectionIncludingFailedView { get; set; }
 
-        public DbSet<WhatsInInspectionPurchaseOrdersViewModel> WhatsInInspectionPurchaseOrdersView { get; set; }
+        public DbSet<WhatsInInspectionPurchaseOrdersData> WhatsInInspectionPurchaseOrdersView { get; set; }
         
         public DbSet<ReceiptPrefSupDiff> ReceiptPrefsupDiffs { get; set; }
+
+        public DbSet<WhatsInInspectionStockLocationsData> WhatsInInspectionStockLocationsView { get; set; }
+
+        public DbSet<WhatsInInspectionBackOrderData> WhatsInInspectionBackOrderView { get; set; }
+
+        public DbSet<MrMaster> MrMaster { get; set; }
 
         public DbSet<CancelledOrderDetail> CancelledPODetails { get; set; }
 
@@ -169,9 +175,11 @@
             this.BuildWhatsInInspectionIncludingFailedView(builder);
             this.BuildWhatsInInspectionPurchaseOrdersView(builder);
             this.BuildDocumentTypes(builder);
-            this.BuildPurchaseOrderOrderMethods(builder);
             this.BuildPrefsupVsReceiptsView(builder);
             this.BuildMrOrders(builder);
+            this.BuildWhatsInInspectionStockLocationsView(builder);
+            this.BuildWhatsInInspectionBackOrderView(builder);
+            this.BuildMrMaster(builder);
             this.BuildCancelledPODetails(builder);
         }
 
@@ -842,7 +850,7 @@
 
         private void BuildPartsReceivedView(ModelBuilder builder)
         {
-            var entity = builder.Entity<PartsReceivedViewModel>().ToTable("PARTS_RECEIVED_VIEW").HasNoKey();
+            var entity = builder.Entity<PartReceivedRecord>().ToTable("PARTS_RECEIVED_VIEW").HasNoKey();
             entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER");
             entity.Property(a => a.JobRef).HasColumnName("JOBREF").HasColumnType("VARCHAR2");
             entity.Property(a => a.TqmsGroup).HasColumnName("TQMS_GROUP").HasColumnType("VARCHAR2");
@@ -963,7 +971,7 @@
 
         private void BuildWhatsInInspectionExcludingFailedView(ModelBuilder builder)
         {
-            var e = builder.Entity<WhatsInInspectionExcludingFailsViewModel>().ToView("WHATS_IN_INSP_EXCL_FAIL_VIEW");
+            var e = builder.Entity<PartsInInspectionExcludingFails>().ToView("WHATS_IN_INSP_EXCL_FAIL_VIEW");
             e.HasNoKey();
             e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER");
             e.Property(m => m.Description).HasColumnName("DESCRIPTION");
@@ -971,11 +979,12 @@
             e.Property(m => m.QtyInStock).HasColumnName("QTY_IN_STOCK");
             e.Property(m => m.QtyInInspection).HasColumnName("QTY_IN_INSP");
             e.Property(m => m.MinDate).HasColumnName("MINDATE");
+            e.Property(m => m.RawOrFinished).HasColumnName("RM_FG");
         }
 
         private void BuildWhatsInInspectionIncludingFailedView(ModelBuilder builder)
         {
-            var e = builder.Entity<WhatsInInspectionIncludingFailsViewModel>().ToView("WHATS_IN_INSP_INCL_FAIL_VIEW");
+            var e = builder.Entity<PartsInInspectionIncludingFails>().ToView("WHATS_IN_INSP_INCL_FAIL_VIEW");
             e.HasNoKey();
             e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER");
             e.Property(m => m.Description).HasColumnName("DESCRIPTION");
@@ -983,20 +992,45 @@
             e.Property(m => m.QtyInStock).HasColumnName("QTY_IN_STOCK");
             e.Property(m => m.QtyInInspection).HasColumnName("QTY_IN_INSP");
             e.Property(m => m.MinDate).HasColumnName("MINDATE");
+            e.Property(m => m.RawOrFinished).HasColumnName("RM_FG");
         }
 
         private void BuildWhatsInInspectionPurchaseOrdersView(ModelBuilder builder)
         {
-            var e = builder.Entity<WhatsInInspectionPurchaseOrdersViewModel>().ToView("WHATS_IN_INSP_PO_VIEW");
+            var e = builder.Entity<WhatsInInspectionPurchaseOrdersData>().ToView("WHATS_IN_INSP_PO_VIEW");
+            e.HasNoKey();
+            e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
+            e.Property(m => m.State).HasColumnName("STATE").HasColumnType("VARCHAR2");
+            e.Property(m => m.OrderType).HasColumnName("ORDER_TYPE").HasColumnType("VARCHAR2");
+            e.Property(m => m.OrderNumber).HasColumnName("ORDER_NUMBER");
+            e.Property(m => m.Qty).HasColumnName("QTY");
+            e.Property(m => m.Cancelled).HasColumnName("CANCELLED").HasColumnType("VARCHAR2");
+            e.Property(m => m.QtyPassed).HasColumnName("PASSED");
+            e.Property(m => m.QtyReceived).HasColumnName("RECEIVED");
+            e.Property(m => m.QtyReturned).HasColumnName("RETURNED");
+        }
+
+        private void BuildWhatsInInspectionStockLocationsView(ModelBuilder builder)
+        {
+            var e = builder.Entity<WhatsInInspectionStockLocationsData>().ToView("WHATS_IN_INSP_ST_LOC_VIEW");
             e.HasNoKey();
             e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER");
             e.Property(m => m.State).HasColumnName("STATE");
-            e.Property(m => m.OrderType).HasColumnName("ORDER_TYPE");
-            e.Property(m => m.OrderNumber).HasColumnName("ORDER_NUMBER");
+            e.Property(m => m.Batch).HasColumnName("BATCH");
             e.Property(m => m.Qty).HasColumnName("QTY");
-            e.Property(m => m.Cancelled).HasColumnName("CANCELLED");
-            e.Property(m => m.QtyPassed).HasColumnName("PASSED");
-            e.Property(m => m.QtyReceived).HasColumnName("RECEIVED");
+            e.Property(m => m.Location).HasColumnName("LOC");
+            e.Property(m => m.BatchRef).HasColumnName("BATCH_REF");
+            e.Property(m => m.StockRotationDate).HasColumnName("STOCK_ROTATION_DATE");
+        }
+        
+        private void BuildWhatsInInspectionBackOrderView(ModelBuilder builder)
+        {
+            var e = builder.Entity<WhatsInInspectionBackOrderData>().ToView("WHATS_IN_INSP_BACK_ORDER_VIEW");
+            e.HasNoKey();
+            e.Property(m => m.ArticleNumber).HasColumnName("ARTICLE_NUMBER");
+            e.Property(m => m.Story).HasColumnName("STORY");
+            e.Property(m => m.QtyInInspection).HasColumnName("QTY_IN_INSPECTION");
+            e.Property(m => m.QtyNeeded).HasColumnName("QTY_NEEDED");
         }
 
         private void BuildDocumentTypes(ModelBuilder builder)
@@ -1004,14 +1038,6 @@
             var entity = builder.Entity<DocumentType>().ToTable("DOCUMENT_TYPES");
             entity.HasKey(d => d.Name);
             entity.Property(d => d.Name).HasColumnName("NAME").HasMaxLength(6);
-            entity.Property(d => d.Description).HasColumnName("DESCRIPTION").HasMaxLength(50);
-        }
-
-        private void BuildPurchaseOrderOrderMethods(ModelBuilder builder)
-        {
-            var entity = builder.Entity<OrderMethod>().ToTable("PL_ORDER_METHODS");
-            entity.HasKey(d => d.Name);
-            entity.Property(d => d.Name).HasColumnName("METHOD").HasMaxLength(10);
             entity.Property(d => d.Description).HasColumnName("DESCRIPTION").HasMaxLength(50);
         }
 
@@ -1046,6 +1072,13 @@
             entity.Property(e => e.OrderCurrency).HasColumnName("ORDER_CURRENCY").HasMaxLength(4);
             entity.Property(e => e.PrefsupCurrency).HasColumnName("ORDER_CURRENCY").HasMaxLength(4);
             entity.Property(e => e.MPVReason).HasColumnName("MPV_REASON").HasMaxLength(20);
+        }
+
+        private void BuildMrMaster(ModelBuilder builder)
+        {
+            var entity = builder.Entity<MrMaster>().ToTable("MR_MASTER").HasNoKey();
+            entity.Property(e => e.JobRef).HasColumnName("JOBREF");
+            entity.Property(e => e.RunDate).HasColumnName("RUNDATE");
         }
 
         private void BuildCancelledPODetails(ModelBuilder builder)

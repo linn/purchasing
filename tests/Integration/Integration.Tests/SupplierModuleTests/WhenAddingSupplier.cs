@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Net;
+    using System.Net.Http.Json;
 
     using FluentAssertions;
 
@@ -35,13 +36,9 @@
 
             this.MockDatabaseService.GetNextVal("SUPPLIER_SEQ").Returns(123);
 
-            this.Response = this.Client.Post(
+            this.Response = this.Client.PostAsJsonAsync(
                 $"/purchasing/suppliers",
-                this.resource,
-                with =>
-                {
-                    with.Accept("application/json");
-                }).Result;
+                this.resource).Result;
         }
 
         [Test]
