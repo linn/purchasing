@@ -62,7 +62,7 @@
 
         public int DeliveryConfirmedById { get; set; }
 
-        public IList<CancelledOrderDetailResource> CancelledDetails { get; set; }
+        public IList<CancelledPurchaseOrderDetailResource> CancelledDetails { get; set; }
 
         public string InternalComments { get; set; }
 

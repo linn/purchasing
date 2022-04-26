@@ -11,7 +11,9 @@
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Parts;
+    using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
 
     public class
@@ -20,8 +22,6 @@
     {
         private readonly IPurchaseOrderService domainService;
 
-        private readonly IAuthorisationService authService;
-
         private readonly IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository;
 
         public PurchaseOrderFacadeService(
@@ -29,35 +29,20 @@
             ITransactionManager transactionManager,
             IBuilder<PurchaseOrder> resourceBuilder,
             IPurchaseOrderService domainService,
-            IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository,
-            IAuthorisationService authService)
+            IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository)
             : base(repository, transactionManager, resourceBuilder)
         {
             this.domainService = domainService;
             this.overbookAllowedByLogRepository = overbookAllowedByLogRepository;
-            this.authService = authService;
         }
 
         protected override PurchaseOrder CreateFromResource(
             PurchaseOrderResource resource,
             IEnumerable<string> privileges = null)
         {
-            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, privileges))
-            {
-                throw new UnauthorisedActionException("You are not authorised to create purchase orders");
-            }
+            //var order = this.BuildEntityFromResourceHelper(resource);
+            //this.domainService.CreateOrder(order, privileges);
 
-            // create order
-            var order = this.BuildEntityFromResourceHelper(updateResource);
-
-            // will this add the details etc?
-
-            // create detail(s)
-
-            // create deliveries maybe only if split deliveries is 0? Are split delivieres pl deliveries or something else?
-
-            // create pl_order_postings
-            // select plorp_seq.nextval into v_plorp from dual;
             throw new NotImplementedException();
         }
 
@@ -73,15 +58,17 @@
             PurchaseOrderResource resource,
             PurchaseOrderResource updateResource)
         {
-            // if is overbook form
-            var log = new OverbookAllowedByLog
-                          {
-                              OrderNumber = entity.OrderNumber,
-                              OverbookQty = entity.OverbookQty,
-                              OverbookDate = DateTime.Now,
-                              OverbookGrantedBy = userNumber
-                          };
-            this.overbookAllowedByLogRepository.Add(log);
+            if (updateResource.CurrentlyUsingOverbookForm)
+            {
+                var log = new OverbookAllowedByLog
+                              {
+                                  OrderNumber = entity.OrderNumber,
+                                  OverbookQty = entity.OverbookQty,
+                                  OverbookDate = DateTime.Now,
+                                  OverbookGrantedBy = userNumber
+                              };
+                this.overbookAllowedByLogRepository.Add(log);
+            }
         }
 
         protected override Expression<Func<PurchaseOrder, bool>> SearchExpression(string searchTerm)
@@ -94,10 +81,21 @@
             PurchaseOrderResource updateResource,
             IEnumerable<string> privileges = null)
         {
-            var updated = this.BuildEntityFromResourceHelper(updateResource);
+            if (updateResource.CurrentlyUsingOverbookForm)
+            {
+                this.domainService.AllowOverbook(
+                    entity,
+                    updateResource.Overbook,
+                    updateResource.OverbookQty,
+                    privileges);
+            }
+            else
+            {
+                throw new NotImplementedException();
 
-            //check if overbook form or not, direct to different domain methods
-            this.domainService.AllowOverbook(entity, updated, privileges);
+                //var updated = this.BuildEntityFromResourceHelper(updateResource);
+                //this.domainService.Update(entity, updated, privileges);
+            }
         }
 
         private PurchaseOrder BuildEntityFromResourceHelper(PurchaseOrderResource resource)
@@ -139,109 +137,100 @@
                                                                            BaseNetTotal = d.BaseNetTotal,
                                                                            OrderDeliveryQty = d.OrderDeliveryQty,
                                                                            OrderLine = d.OrderLine,
-                                                                           OrderNumber = 0,
-                                                                           OurDeliveryQty = null,
-                                                                           PurchaseOrderDetail = null,
-                                                                           QtyNetReceived = null,
-                                                                           QuantityOutstanding = null,
-                                                                           CallOffDate = null,
-                                                                           BaseOurUnitPrice = null,
-                                                                           SupplierConfirmationComment = null,
-                                                                           OurUnitPriceCurrency = null,
-                                                                           OrderUnitPriceCurrency = null,
-                                                                           BaseOrderUnitPrice = null,
-                                                                           VatTotalCurrency = null,
-                                                                           BaseVatTotal = null,
-                                                                           DeliveryTotalCurrency = null,
-                                                                           BaseDeliveryTotal = null
+                                                                           OrderNumber = d.OrderNumber,
+                                                                           OurDeliveryQty = d.OurDeliveryQty,
+                                                                           QtyNetReceived = d.QtyNetReceived,
+                                                                           QuantityOutstanding = d.QuantityOutstanding,
+                                                                           CallOffDate = d.CallOffDate,
+                                                                           BaseOurUnitPrice = d.BaseOurUnitPrice,
+                                                                           SupplierConfirmationComment =
+                                                                               d.SupplierConfirmationComment,
+                                                                           OurUnitPriceCurrency =
+                                                                               d.OurUnitPriceCurrency,
+                                                                           OrderUnitPriceCurrency =
+                                                                               d.OrderUnitPriceCurrency,
+                                                                           BaseOrderUnitPrice = d.BaseOrderUnitPrice,
+                                                                           VatTotalCurrency = d.VatTotalCurrency,
+                                                                           BaseVatTotal = d.BaseVatTotal,
+                                                                           DeliveryTotalCurrency =
+                                                                               d.DeliveryTotalCurrency,
+                                                                           BaseDeliveryTotal = d.BaseDeliveryTotal
                                                                        }) as IList<PurchaseOrderDelivery>,
-                                                      RohsCompliant = null,
-                                                      SuppliersDesignation = null,
-                                                      StockPoolCode = null,
-                                                      PurchaseOrder = null,
-                                                      OriginalOrderNumber = null,
-                                                      OriginalOrderLine = null,
-                                                      OurUnitOfMeasure = null,
-                                                      OrderUnitOfMeasure = null,
-                                                      Duty = null,
-                                                      OurUnitPriceCurrency = null,
-                                                      OrderUnitPriceCurrency = null,
-                                                      BaseOurUnitPrice = null,
-                                                      BaseOrderUnitPrice = null,
-                                                      VatTotalCurrency = null,
-                                                      BaseVatTotal = null,
-                                                      DetailTotalCurrency = null,
-                                                      BaseDetailTotal = null,
-                                                      DeliveryInstructions = null,
-                                                      DeliveryConfirmedBy = null,
-                                                      DeliveryConfirmedById = 0,
-                                                      CancelledDetails = null,
-                                                      InternalComments = null,
-                                                      MrOrders = null,
-                                                  }) as IList<PurchaseOrderDetail>
+                                                      RohsCompliant = x.RohsCompliant,
+                                                      SuppliersDesignation = x.SuppliersDesignation,
+                                                      StockPoolCode = x.StockPoolCode,
+                                                      OriginalOrderNumber = x.OriginalOrderNumber,
+                                                      OriginalOrderLine = x.OriginalOrderLine,
+                                                      OurUnitOfMeasure = x.OurUnitOfMeasure,
+                                                      OrderUnitOfMeasure = x.OrderUnitOfMeasure,
+                                                      Duty = x.Duty,
+                                                      OurUnitPriceCurrency = x.OurUnitPriceCurrency,
+                                                      OrderUnitPriceCurrency = x.OrderUnitPriceCurrency,
+                                                      BaseOurUnitPrice = x.BaseOurUnitPrice,
+                                                      BaseOrderUnitPrice = x.BaseOrderUnitPrice,
+                                                      VatTotalCurrency = x.VatTotalCurrency,
+                                                      BaseVatTotal = x.BaseVatTotal,
+                                                      DetailTotalCurrency = x.DetailTotalCurrency,
+                                                      BaseDetailTotal = x.BaseDetailTotal,
+                                                      DeliveryInstructions = x.DeliveryInstructions,
+                                                      //// todo check employee bits once front end done, unsure whether will have doneBy object.Id or just the id int
+                                                      DeliveryConfirmedById = x.DeliveryConfirmedBy.Id,
+                                                      CancelledDetails = x.CancelledDetails.Select(
+                                                                             c => new CancelledOrderDetail
+                                                                                 {
+                                                                                     OrderNumber = c.OrderNumber,
+                                                                                     LineNumber = c.LineNumber,
+                                                                                     DeliverySequence =
+                                                                                         c.DeliverySequence,
+                                                                                     DateCancelled =
+                                                                                         c.DateCancelled,
+                                                                                     CancelledById =
+                                                                                         c.CancelledBy.Id,
+                                                                                     DateFilCancelled =
+                                                                                         c.DateFilCancelled,
+                                                                                     FilCancelledById =
+                                                                                         c.FilCancelledBy.Id,
+                                                                                     ReasonCancelled =
+                                                                                         c.ReasonCancelled,
+                                                                                     Id = c.Id,
+                                                                                     PeriodCancelled =
+                                                                                         c.PeriodCancelled,
+                                                                                     PeriodFilCancelled =
+                                                                                         c.PeriodFilCancelled,
+                                                                                     ValueCancelled =
+                                                                                         c.ValueCancelled,
+                                                                                     DateUncancelled =
+                                                                                         c.DateUncancelled,
+                                                                                     DateFilUncancelled =
+                                                                                         c.DateFilUncancelled,
+                                                                                     DatePreviouslyCancelled =
+                                                                                         c.DatePreviouslyCancelled,
+                                                                                     DatePreviouslyFilCancelled =
+                                                                                         c.DatePreviouslyFilCancelled,
+                                                                                     ValueFilCancelled =
+                                                                                         c.ValueFilCancelled,
+                                                                                     BaseValueFilCancelled =
+                                                                                         c.BaseValueFilCancelled
+                                                                                 }) as IList<CancelledOrderDetail>,
+                                                      InternalComments = x.InternalComments
+                                                      ///// no mr orders as don't want to save them from here
+                                                  }) as IList<PurchaseOrderDetail>,
+                           CurrencyCode = resource.Currency.Code,
+                           OrderContactName = resource.OrderContactName,
+                           OrderMethodName = resource.OrderMethodName,
+                           ExchangeRate = resource.ExchangeRate,
+                           IssuePartsToSupplier = resource.IssuePartsToSupplier,
+                           DeliveryAddressId = resource.DeliveryAddress.AddressId,
+                           RequestedById = resource.RequestedBy.Id,
+                           EnteredById = resource.EnteredBy.Id,
+                           QuotationRef = resource.QuotationRef,
+                           AuthorisedById = resource.AuthorisedBy?.Id,
+                           SentByMethod = resource.SentByMethod,
+                           FilCancelled = resource.FilCancelled,
+                           Remarks = resource.Remarks,
+                           DateFilCancelled = resource.DateFilCancelled,
+                           PeriodFilCancelled = resource.PeriodFilCancelled
                        };
-        }
-
-        public string DocumentTypeName { get; set; }
-
-        public DocumentType DocumentType { get; set; }
-
-        public DateTime OrderDate { get; set; }
-
-        public int OrderNumber { get; set; }
-
-        public Supplier Supplier { get; set; }
-
-        public int SupplierId { get; set; }
-
-        public string Overbook { get; set; }
-
-        public decimal? OverbookQty { get; set; }
-
-        public Currency Currency { get; set; }
-
-        public string CurrencyCode { get; set; }
-
-        //todo make sure this is added in domain from supplier contact when creating
-        //or could show as field on front end and pass back
-        public string OrderContactName { get; set; }
-
-        public string OrderMethodName { get; set; }
-
-        public OrderMethod OrderMethod { get; set; }
-
-        public decimal? ExchangeRate { get; set; }
-
-        public string IssuePartsToSupplier { get; set; }
-
-        public int DeliveryAddressId { get; set; }
-
-        public LinnDeliveryAddress DeliveryAddress { get; set; }
-
-        public Employee RequestedBy { get; set; }
-
-        public int RequestedById { get; set; }
-
-        public Employee EnteredBy { get; set; }
-
-        public int EnteredById { get; set; }
-
-        public string QuotationRef { get; set; }
-
-        public Employee AuthorisedBy { get; set; }
-
-        public int? AuthorisedById { get; set; }
-
-        public string SentByMethod { get; set; }
-
-        public string FilCancelled { get; set; }
-
-        public string Remarks { get; set; }
-
-        public DateTime? DateFilCancelled { get; set; }
-
-        public int? PeriodFilCancelled { get; set; }
-    };
         }
     }
 }
