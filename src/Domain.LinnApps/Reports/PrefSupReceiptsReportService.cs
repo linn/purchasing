@@ -8,6 +8,8 @@
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
 
+    using MoreLinq;
+
     public class PrefSupReceiptsReportService : IPrefSupReceiptsReportService
     {
         private readonly IQueryRepository<ReceiptPrefSupDiff> receiptRepository;
@@ -59,7 +61,9 @@
         public ResultsModel GetReport(DateTime fromDate, DateTime toDate)
         {
             var results = this.receiptRepository.FilterBy(
-                e => e.DateBooked >= fromDate && e.DateBooked <= toDate && e.Difference != 0);
+                e => e.DateBooked >= fromDate && e.DateBooked <= toDate && e.Difference != 0).OrderBy(
+                e => e.Difference,
+                OrderByDirection.Descending);
 
             var reportLayout = new SimpleGridLayout(
                 this.reportingHelper,
@@ -73,7 +77,7 @@
 
             foreach (var result in results)
             {
-                var rowId = $"{result.OrderNumber}/{result.OrderLine}";
+                var rowId = $"{result.OrderNumber}/{result.OrderLine}/{result.PlReceiptId}";
 
                 values.Add(
                     new CalculationValueModel
