@@ -30,7 +30,12 @@ function AllowPurchaseOrderOverbook() {
     const canEdit = () => item?.links.some(l => l.rel === 'allow-over-book');
     const clearErrors = () => reduxDispatch(purchaseOrderActions.clearErrorsForItem());
     const updatePurchaseOrder = () =>
-        reduxDispatch(purchaseOrderActions.update(state.orderNumber, state));
+        reduxDispatch(
+            purchaseOrderActions.update(state.orderNumber, {
+                ...state,
+                currentlyUsingOverbookForm: true
+            })
+        );
     const snackbarVisible = useSelector(reduxState =>
         itemSelectorHelpers.getSnackbarVisible(reduxState.purchaseOrder)
     );

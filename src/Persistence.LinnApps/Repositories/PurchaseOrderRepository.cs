@@ -22,6 +22,7 @@
         public override IQueryable<PurchaseOrder> FilterBy(Expression<Func<PurchaseOrder, bool>> expression)
         {
             return this.serviceDbContext.PurchaseOrders.Where(expression)
+                .Include(o => o.Supplier)
                 .Include(o => o.Details).ThenInclude(d => d.Part)
                 .Include(o => o.Details).ThenInclude(d => d.PurchaseDeliveries).Include(x => x.Supplier)
                 .Include(x => x.Currency)
@@ -31,6 +32,7 @@
         public override IQueryable<PurchaseOrder> FindAll()
         {
             return this.serviceDbContext.PurchaseOrders
+                .Include(o => o.Supplier)
                 .Include(o => o.Details).ThenInclude(d => d.PurchaseDeliveries)
                 .Include(o => o.Details).ThenInclude(d => d.Part)
                 .Include(o => o.Supplier);
@@ -40,6 +42,7 @@
         {
             return this.serviceDbContext
                 .PurchaseOrders
+                .Include(o => o.Supplier)
                 .Include(o => o.Details).ThenInclude(d => d.Part)
                 .First(o => o.OrderNumber == key);
         }

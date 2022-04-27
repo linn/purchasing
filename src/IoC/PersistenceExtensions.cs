@@ -104,7 +104,9 @@
                     r => new EntityFrameworkQueryRepository<WhatsInInspectionBackOrderData>(r.GetService<ServiceDbContext>()
                         ?.WhatsInInspectionBackOrderView))
                 .AddTransient<ISingleRecordRepository<MrMaster>, EntityFrameworkSingleRecordRepository<MrMaster>>(
-                    r => new EntityFrameworkSingleRecordRepository<MrMaster>(r.GetService<ServiceDbContext>()?.MrMaster));
+                    r => new EntityFrameworkSingleRecordRepository<MrMaster>(r.GetService<ServiceDbContext>()?.MrMaster))
+                .AddTransient<IRepository<CancelledOrderDetail, int>, EntityFrameworkRepository<CancelledOrderDetail, int>>(
+                    r => new EntityFrameworkRepository<CancelledOrderDetail, int>(r.GetService<ServiceDbContext>()?.CancelledPurchaseOrderDetails));
         }
     }
 }

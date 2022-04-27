@@ -33,11 +33,10 @@
                                           {
                                               OrderNumber = 600179,
                                               Cancelled = string.Empty,
-                                              DocumentType = string.Empty,
-                                              DateOfOrder = 10.January(2021),
+                                              OrderDate = 10.January(2021),
                                               Overbook = string.Empty,
                                               OverbookQty = 1,
-                                              SupplierId = 1224
+                                              Supplier = new SupplierResource { Id = 1224 }
                                           }
                                   };
 
