@@ -235,3 +235,9 @@ export const mrMaster = new ItemType(
     'MR_MASTER',
     '/purchasing/material-requirements/last-run'
 );
+
+export const applyForecastingPercentageChange = new ItemType(
+    'applyForecastingPercentageChange',
+    'APPLY_FORECASTING_PERCENTAGE_CHANGE',
+    '/purchasing/forecasting/apply-percentage-change'
+);

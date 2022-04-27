@@ -8,6 +8,7 @@
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources.RequestResources;
     using Linn.Purchasing.Service.Extensions;
+    using Linn.Purchasing.Service.Models;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
@@ -18,6 +19,12 @@
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPost("/purchasing/forecasting/apply-percentage-change", this.ApplyPercentageChange);
+            app.MapGet("/purchasing/forecasting/apply-percentage-change", this.GetApp);
+        }
+
+        private async Task GetApp(HttpRequest req, HttpResponse res)
+        {
+            await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
         }
 
         private async Task ApplyPercentageChange(

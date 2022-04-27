@@ -7,6 +7,5 @@ const defaultState = { working: false, messageText: '', messageVisible: false };
 export default processStoreFactory(
     sendPurchaseOrderReqFinanceEmail.actionType,
     actionTypes,
-    defaultState,
-    'REQ FINANCE EMAIL REQUESTED'
+    defaultState
 );
