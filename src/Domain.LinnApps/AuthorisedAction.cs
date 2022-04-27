@@ -29,5 +29,7 @@
         public const string PlCreditDebitNoteUpdate = "purchasing.pl-credit-debit-note.update";
 
         public const string MrpRun = "purchasing.mrp.run-mrp";
+
+        public const string ForecastingApplyPercentageChange = "purchasing.forecasting.apply-percentage-change";
     }
 }
