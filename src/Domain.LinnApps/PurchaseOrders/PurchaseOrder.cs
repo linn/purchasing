@@ -10,7 +10,7 @@
     {
         public string Cancelled { get; set; }
 
-        public IList<PurchaseOrderDetail> Details { get; set; }
+        public ICollection<PurchaseOrderDetail> Details { get; set; }
 
         public string DocumentTypeName { get; set; }
 

@@ -18,11 +18,11 @@
 
     public class WhenUpdatingOverbookFields : ContextBase
     {
-        private PurchaseOrderResource updateResource;
+        private PurchaseOrder model;
 
         private IResult<PurchaseOrderResource> result;
 
-        private PurchaseOrder model;
+        private PurchaseOrderResource updateResource;
 
         [SetUp]
         public void SetUp()
@@ -38,43 +38,60 @@
                                  Supplier = new Supplier { SupplierId = 1224 }
                              };
 
-            this.updateResource = new PurchaseOrderResource()
-            {
-                OrderNumber = 600179,
-                Cancelled = string.Empty,
-                OrderDate = 10.January(2021),
-                Overbook = "Y",
-                OverbookQty = 1,
-                Supplier = new SupplierResource { Id = 1224 },
-                CurrentlyUsingOverbookForm = true
-            };
+            this.updateResource = new PurchaseOrderResource
+                                      {
+                                          OrderNumber = 600179,
+                                          Cancelled = string.Empty,
+                                          OrderDate = 10.January(2021),
+                                          Overbook = "Y",
+                                          OverbookQty = 1,
+                                          Supplier = new SupplierResource { Id = 1224 },
+                                          CurrentlyUsingOverbookForm = true
+                                      };
             this.PurchaseOrderRepository.Add(this.model);
             this.PurchaseOrderRepository.FindById(this.model.OrderNumber).Returns(this.model);
-            this.AuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>()).Returns(true);
+            this.AuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
+                .Returns(true);
             this.result = this.Sut.Update(this.updateResource.OrderNumber, this.updateResource, new List<string>());
-        }
-
-        [Test]
-        public void ShouldReturnSuccess()
-        {
-            this.result.Should().BeOfType<SuccessResult<PurchaseOrderResource>>();
-            var dataResult = ((SuccessResult<PurchaseOrderResource>)this.result).Data;
-            dataResult.OrderNumber.Should().Be(this.model.OrderNumber);
-            dataResult.Cancelled.Should().Be(this.model.Cancelled);
-            dataResult.OrderDate.Should().Be(this.model.OrderDate);
-            dataResult.Overbook.Should().Be(this.model.Overbook);
-            dataResult.OverbookQty.Should().Be(this.model.OverbookQty);
-            dataResult.Supplier.Id.Should().Be(this.model.SupplierId);
         }
 
         [Test]
         public void ShouldBuildCorrectResourceWithLinks()
         {
             this.result.Should().BeOfType<SuccessResult<PurchaseOrderResource>>();
-            var dataResult = ((SuccessResult<PurchaseOrderResource>)this.result).Data;
+            var dataResult = ((SuccessResult<PurchaseOrderResource>) this.result).Data;
             dataResult.Links.Length.Should().Be(4);
             dataResult.Links.First().Rel.Should().Be("allow-over-book-search");
             dataResult.Links.First().Href.Should().Be("purchasing/purchase-orders/allow-over-book");
+        }
+
+        [Test]
+        public void ShouldCallOverbookDomainMethod()
+        {
+            this.DomainService.Received().AllowOverbook(
+                Arg.Any<PurchaseOrder>(),
+                Arg.Any<string>(),
+                Arg.Any<int>(),
+                Arg.Any<List<string>>());
+        }
+
+        [Test]
+        public void ShouldAddToOverbookLogRepo()
+        {
+            this.OverbookAllowedByLogRepository.Received().Add(Arg.Any<OverbookAllowedByLog>());
+        }
+
+        [Test]
+        public void ShouldReturnSuccess()
+        {
+            this.result.Should().BeOfType<SuccessResult<PurchaseOrderResource>>();
+            var dataResult = ((SuccessResult<PurchaseOrderResource>) this.result).Data;
+            dataResult.OrderNumber.Should().Be(this.model.OrderNumber);
+            dataResult.Cancelled.Should().Be(this.model.Cancelled);
+            dataResult.OrderDate.Should().Be(this.model.OrderDate);
+            dataResult.Overbook.Should().Be(this.model.Overbook);
+            dataResult.OverbookQty.Should().Be(this.model.OverbookQty);
+            dataResult.Supplier.Id.Should().Be(this.model.SupplierId);
         }
     }
 }

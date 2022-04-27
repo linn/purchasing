@@ -102,7 +102,7 @@
             return current;
         }
 
-        private void UpdateDetails(IList<PurchaseOrderDetail> currentDetails, IList<PurchaseOrderDetail> updatedDetails)
+        private void UpdateDetails(ICollection<PurchaseOrderDetail> currentDetails, ICollection<PurchaseOrderDetail> updatedDetails)
         {
             foreach (var detail in updatedDetails)
             {

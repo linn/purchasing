@@ -18,7 +18,7 @@
 
         public string Cancelled { get; set; }
 
-        public IList<CancelledOrderDetail> CancelledDetails { get; set; }
+        public ICollection<CancelledOrderDetail> CancelledDetails { get; set; }
 
         public Employee DeliveryConfirmedBy { get; set; }
 
@@ -40,7 +40,7 @@
 
         public int OrderNumber { get; set; }
 
-        public IList<PurchaseOrderPosting> OrderPostings { get; set; }
+        public ICollection<PurchaseOrderPosting> OrderPostings { get; set; }
 
         public string OrderUnitOfMeasure { get; set; }
 
@@ -60,7 +60,7 @@
 
         public string PartNumber { get; set; }
 
-        public IList<PurchaseOrderDelivery> PurchaseDeliveries { get; set; }
+        public ICollection<PurchaseOrderDelivery> PurchaseDeliveries { get; set; }
 
         public PurchaseOrder PurchaseOrder { get; set; }
 

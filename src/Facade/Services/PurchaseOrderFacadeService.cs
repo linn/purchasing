@@ -147,7 +147,7 @@
                                                                      BaseVatTotal = d.BaseVatTotal,
                                                                      DeliveryTotalCurrency = d.DeliveryTotalCurrency,
                                                                      BaseDeliveryTotal = d.BaseDeliveryTotal
-                                                                 }) as IList<PurchaseOrderDelivery>,
+                                                                 }) as ICollection<PurchaseOrderDelivery>,
                                                 RohsCompliant = x.RohsCompliant,
                                                 SuppliersDesignation = x.SuppliersDesignation,
                                                 StockPoolCode = x.StockPoolCode,
@@ -196,9 +196,9 @@
                                                                                         c.ValueFilCancelled,
                                                                                     BaseValueFilCancelled =
                                                                                         c.BaseValueFilCancelled
-                                                                                }) as IList<CancelledOrderDetail>,
+                                                                                }) as ICollection<CancelledOrderDetail>,
                                                 InternalComments = x.InternalComments
-                                            }) as IList<PurchaseOrderDetail>,
+                                            }) as ICollection<PurchaseOrderDetail>,
                            CurrencyCode = resource.Currency.Code,
                            OrderContactName = resource.OrderContactName,
                            OrderMethodName = resource.OrderMethodName,
