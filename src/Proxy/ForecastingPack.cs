@@ -44,7 +44,6 @@
                                   Value = endPeriod
                               };
 
-
             cmd.Parameters.Add(pChange);
             cmd.Parameters.Add(pStartPeriod);
             cmd.Parameters.Add(pEndPeriod);
@@ -80,7 +79,6 @@
                                      Size = 50,
                                      Value = endWeek
                                  };
-
 
             cmd.Parameters.Add(pChange);
             cmd.Parameters.Add(pStartWeek);
