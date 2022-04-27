@@ -136,7 +136,7 @@
                 this.emailService.SendEmail(
                     to.PhoneListEntry.EmailAddress.Trim(),
                     to.FullName,
-                    null,
+                    new List<Dictionary<string, string>> { new Dictionary<string, string>() { { "name", from.FullName }, { "address", from.PhoneListEntry.EmailAddress.Trim() } } },
                     null,
                     from.PhoneListEntry.EmailAddress.Trim(),
                     from.FullName,
@@ -229,7 +229,6 @@
                 }
             }
 
-            entity.ReqNumber = updatedEntity.ReqNumber;
             entity.State = updatedEntity.State;
             entity.ReqDate = updatedEntity.ReqDate;
             entity.OrderNumber = updatedEntity.OrderNumber;
