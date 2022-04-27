@@ -24,13 +24,13 @@
 
         public string ReasonCancelled { get; set; }
 
-        public int Id { get; set; } //ploc_seq.nextval
+        public int Id { get; set; }
 
         public int? PeriodCancelled { get; set; }
 
         public int? PeriodFilCancelled { get; set; }
 
-        public decimal? ValueCancelled { get; set; } //  round(nvl(v_qty_outstanding,0) * :new.base_our_price,2)
+        public decimal? ValueCancelled { get; set; }
 
         public DateTime? DateUncancelled { get; set; }
 

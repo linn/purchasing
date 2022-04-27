@@ -22,7 +22,6 @@
         public DocumentTypeResource DocumentType { get; set; }
 
         public SupplierResource Supplier { get; set; }
-        //todo .include supplier contact for phone number and email address for orders
 
         public decimal? OverbookQty { get; set; }
 

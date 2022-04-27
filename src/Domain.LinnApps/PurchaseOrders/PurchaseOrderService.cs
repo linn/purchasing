@@ -41,6 +41,7 @@
             current.Overbook = allowOverBook;
             current.OverbookQty = overbookQty;
         }
+
         public void CreateOrder(PurchaseOrder order, IEnumerable<string> privileges)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, privileges))
@@ -77,7 +78,8 @@
                                               CancelledById = currentUserId,
                                               ReasonCancelled = detail.Cancelled,
                                               ValueCancelled = detail.BaseDetailTotal
-                                              //// todo check that baseDetailTotal == round(nvl(v_qty_outstanding, 0) * :new.base_our_price, 2)
+                                              //// todo check for valuecancelled that:
+                                              // baseDetailTotal == round(nvl(v_qty_outstanding, 0) * :new.base_our_price, 2)
                                           };
                 detail.Cancelled = "Y";
                 detail.CancelledDetails.Add(cancelledDetail);

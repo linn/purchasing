@@ -69,7 +69,5 @@
         public NominalResource Nominal { get; set; }
 
         public DepartmentResource Department { get; set; }
-        //// build nominal and department from order posting -> nominal account.
-        // They're not actually on the orders/details table
     }
 }
