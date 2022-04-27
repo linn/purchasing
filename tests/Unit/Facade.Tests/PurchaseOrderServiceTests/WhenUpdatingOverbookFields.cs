@@ -52,7 +52,7 @@
             this.PurchaseOrderRepository.FindById(this.model.OrderNumber).Returns(this.model);
             this.AuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
-            this.result = this.Sut.Update(this.updateResource.OrderNumber, this.updateResource, new List<string>());
+            this.result = this.Sut.Update(this.updateResource.OrderNumber, this.updateResource, new List<string>(), 33111);
         }
 
         [Test]
@@ -70,8 +70,8 @@
         {
             this.DomainService.Received().AllowOverbook(
                 Arg.Any<PurchaseOrder>(),
-                Arg.Any<string>(),
-                Arg.Any<int>(),
+                this.model.Overbook,
+                this.model.OverbookQty,
                 Arg.Any<List<string>>());
         }
 
