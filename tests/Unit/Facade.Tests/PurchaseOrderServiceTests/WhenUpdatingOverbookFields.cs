@@ -9,6 +9,7 @@
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
 
     using NSubstitute;
@@ -33,17 +34,18 @@
                                  OrderDate = 10.January(2021),
                                  Overbook = "Y",
                                  OverbookQty = 1,
-                                 SupplierId = 1224
-            };
+                                 SupplierId = 1224,
+                                 Supplier = new Supplier { SupplierId = 1224 }
+                             };
 
             this.updateResource = new PurchaseOrderResource()
             {
                 OrderNumber = 600179,
                 Cancelled = string.Empty,
-                DateOfOrder = 10.January(2021),
+                OrderDate = 10.January(2021),
                 Overbook = "Y",
                 OverbookQty = 1,
-                SupplierId = 1224,
+                Supplier = new SupplierResource { Id = 1224 },
                 CurrentlyUsingOverbookForm = true
             };
             this.PurchaseOrderRepository.Add(this.model);
@@ -59,10 +61,10 @@
             var dataResult = ((SuccessResult<PurchaseOrderResource>)this.result).Data;
             dataResult.OrderNumber.Should().Be(this.model.OrderNumber);
             dataResult.Cancelled.Should().Be(this.model.Cancelled);
-            dataResult.DateOfOrder.Should().Be(this.model.OrderDate);
+            dataResult.OrderDate.Should().Be(this.model.OrderDate);
             dataResult.Overbook.Should().Be(this.model.Overbook);
             dataResult.OverbookQty.Should().Be(this.model.OverbookQty);
-            dataResult.SupplierId.Should().Be(this.model.SupplierId);
+            dataResult.Supplier.Id.Should().Be(this.model.SupplierId);
         }
 
         [Test]

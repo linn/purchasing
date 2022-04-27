@@ -5,15 +5,10 @@
     using System.Linq;
     using System.Linq.Expressions;
 
-    using Linn.Common.Authorisation;
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
-    using Linn.Purchasing.Domain.LinnApps;
-    using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Parts;
-    using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
-    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
 
     public class
@@ -42,8 +37,8 @@
         {
             throw new NotImplementedException();
 
-            //var order = this.BuildEntityFromResourceHelper(resource);
-            //this.domainService.CreateOrder(order, privileges);
+            // var order = this.BuildEntityFromResourceHelper(resource);
+            // this.domainService.CreateOrder(order, privileges);
         }
 
         protected override void DeleteOrObsoleteResource(PurchaseOrder entity, IEnumerable<string> privileges = null)
@@ -93,8 +88,8 @@
             {
                 throw new NotImplementedException();
 
-                //var updated = this.BuildEntityFromResourceHelper(updateResource);
-                //this.domainService.Update(entity, updated, privileges);
+                // var updated = this.BuildEntityFromResourceHelper(updateResource);
+                // this.domainService.Update(entity, updated, privileges);
             }
         }
 
@@ -104,116 +99,106 @@
                        {
                            OrderNumber = resource.OrderNumber,
                            Cancelled = resource.Cancelled,
-                           DocumentTypeName = resource.DocumentType,
-                           OrderDate = resource.DateOfOrder,
+                           DocumentTypeName = resource.DocumentType.Name,
+                           OrderDate = resource.OrderDate,
                            Overbook = resource.Overbook,
                            OverbookQty = resource.OverbookQty,
-                           SupplierId = resource.SupplierId,
-                           Details = resource.Details?.Select(
-                                         x => new PurchaseOrderDetail
-                                                  {
-                                                      Cancelled = x.Cancelled,
-                                                      Line = x.Line,
-                                                      BaseNetTotal = x.BaseNetTotal,
-                                                      NetTotalCurrency = x.NetTotalCurrency,
-                                                      OrderNumber = x.OrderNumber,
-                                                      OurQty = x.OurQty,
-                                                      Part =
-                                                          new Part
-                                                              {
-                                                                  PartNumber = x.PartNumber,
-                                                                  Description = x.PartDescription
-                                                              },
-                                                      PartNumber = x.PartNumber,
-                                                      PurchaseDeliveries =
-                                                          x.PurchaseDeliveries?.Select(
-                                                              d => new PurchaseOrderDelivery
-                                                                       {
-                                                                           Cancelled = d.Cancelled,
-                                                                           DateAdvised = d.DateAdvised,
-                                                                           DateRequested = d.DateRequested,
-                                                                           DeliverySeq = d.DeliverySeq,
-                                                                           NetTotalCurrency = d.NetTotalCurrency,
-                                                                           BaseNetTotal = d.BaseNetTotal,
-                                                                           OrderDeliveryQty = d.OrderDeliveryQty,
-                                                                           OrderLine = d.OrderLine,
-                                                                           OrderNumber = d.OrderNumber,
-                                                                           OurDeliveryQty = d.OurDeliveryQty,
-                                                                           QtyNetReceived = d.QtyNetReceived,
-                                                                           QuantityOutstanding = d.QuantityOutstanding,
-                                                                           CallOffDate = d.CallOffDate,
-                                                                           BaseOurUnitPrice = d.BaseOurUnitPrice,
-                                                                           SupplierConfirmationComment =
-                                                                               d.SupplierConfirmationComment,
-                                                                           OurUnitPriceCurrency =
-                                                                               d.OurUnitPriceCurrency,
-                                                                           OrderUnitPriceCurrency =
-                                                                               d.OrderUnitPriceCurrency,
-                                                                           BaseOrderUnitPrice = d.BaseOrderUnitPrice,
-                                                                           VatTotalCurrency = d.VatTotalCurrency,
-                                                                           BaseVatTotal = d.BaseVatTotal,
-                                                                           DeliveryTotalCurrency =
-                                                                               d.DeliveryTotalCurrency,
-                                                                           BaseDeliveryTotal = d.BaseDeliveryTotal
-                                                                       }) as IList<PurchaseOrderDelivery>,
-                                                      RohsCompliant = x.RohsCompliant,
-                                                      SuppliersDesignation = x.SuppliersDesignation,
-                                                      StockPoolCode = x.StockPoolCode,
-                                                      OriginalOrderNumber = x.OriginalOrderNumber,
-                                                      OriginalOrderLine = x.OriginalOrderLine,
-                                                      OurUnitOfMeasure = x.OurUnitOfMeasure,
-                                                      OrderUnitOfMeasure = x.OrderUnitOfMeasure,
-                                                      Duty = x.Duty,
-                                                      OurUnitPriceCurrency = x.OurUnitPriceCurrency,
-                                                      OrderUnitPriceCurrency = x.OrderUnitPriceCurrency,
-                                                      BaseOurUnitPrice = x.BaseOurUnitPrice,
-                                                      BaseOrderUnitPrice = x.BaseOrderUnitPrice,
-                                                      VatTotalCurrency = x.VatTotalCurrency,
-                                                      BaseVatTotal = x.BaseVatTotal,
-                                                      DetailTotalCurrency = x.DetailTotalCurrency,
-                                                      BaseDetailTotal = x.BaseDetailTotal,
-                                                      DeliveryInstructions = x.DeliveryInstructions,
-                                                      //// todo check employee bits once front end done, unsure whether will have doneBy object.Id or just the id int
-                                                      DeliveryConfirmedById = x.DeliveryConfirmedBy.Id,
-                                                      CancelledDetails = x.CancelledDetails.Select(
-                                                                             c => new CancelledOrderDetail
-                                                                                 {
-                                                                                     OrderNumber = c.OrderNumber,
-                                                                                     LineNumber = c.LineNumber,
-                                                                                     DeliverySequence =
-                                                                                         c.DeliverySequence,
-                                                                                     DateCancelled =
-                                                                                         c.DateCancelled,
-                                                                                     CancelledById =
-                                                                                         c.CancelledBy.Id,
-                                                                                     DateFilCancelled =
-                                                                                         c.DateFilCancelled,
-                                                                                     FilCancelledById =
-                                                                                         c.FilCancelledBy.Id,
-                                                                                     ReasonCancelled =
-                                                                                         c.ReasonCancelled,
-                                                                                     Id = c.Id,
-                                                                                     PeriodCancelled =
-                                                                                         c.PeriodCancelled,
-                                                                                     PeriodFilCancelled =
-                                                                                         c.PeriodFilCancelled,
-                                                                                     ValueCancelled =
-                                                                                         c.ValueCancelled,
-                                                                                     DateUncancelled =
-                                                                                         c.DateUncancelled,
-                                                                                     DateFilUncancelled =
-                                                                                         c.DateFilUncancelled,
-                                                                                     DatePreviouslyCancelled =
-                                                                                         c.DatePreviouslyCancelled,
-                                                                                     DatePreviouslyFilCancelled =
-                                                                                         c.DatePreviouslyFilCancelled,
-                                                                                     ValueFilCancelled =
-                                                                                         c.ValueFilCancelled,
-                                                                                     BaseValueFilCancelled =
-                                                                                         c.BaseValueFilCancelled
-                                                                                 }) as IList<CancelledOrderDetail>,
-                                                      InternalComments = x.InternalComments
-                                                  }) as IList<PurchaseOrderDetail>,
+                           SupplierId = resource.Supplier.Id,
+                           Details =
+                               resource.Details?.Select(
+                                   x => new PurchaseOrderDetail
+                                            {
+                                                Cancelled = x.Cancelled,
+                                                Line = x.Line,
+                                                BaseNetTotal = x.BaseNetTotal,
+                                                NetTotalCurrency = x.NetTotalCurrency,
+                                                OrderNumber = x.OrderNumber,
+                                                OurQty = x.OurQty,
+                                                Part =
+                                                    new Part
+                                                        {
+                                                            PartNumber = x.PartNumber, Description = x.PartDescription
+                                                        },
+                                                PartNumber = x.PartNumber,
+                                                PurchaseDeliveries =
+                                                    x.PurchaseDeliveries?.Select(
+                                                        d => new PurchaseOrderDelivery
+                                                                 {
+                                                                     Cancelled = d.Cancelled,
+                                                                     DateAdvised = d.DateAdvised,
+                                                                     DateRequested = d.DateRequested,
+                                                                     DeliverySeq = d.DeliverySeq,
+                                                                     NetTotalCurrency = d.NetTotalCurrency,
+                                                                     BaseNetTotal = d.BaseNetTotal,
+                                                                     OrderDeliveryQty = d.OrderDeliveryQty,
+                                                                     OrderLine = d.OrderLine,
+                                                                     OrderNumber = d.OrderNumber,
+                                                                     OurDeliveryQty = d.OurDeliveryQty,
+                                                                     QtyNetReceived = d.QtyNetReceived,
+                                                                     QuantityOutstanding = d.QuantityOutstanding,
+                                                                     CallOffDate = d.CallOffDate,
+                                                                     BaseOurUnitPrice = d.BaseOurUnitPrice,
+                                                                     SupplierConfirmationComment =
+                                                                         d.SupplierConfirmationComment,
+                                                                     OurUnitPriceCurrency = d.OurUnitPriceCurrency,
+                                                                     OrderUnitPriceCurrency = d.OrderUnitPriceCurrency,
+                                                                     BaseOrderUnitPrice = d.BaseOrderUnitPrice,
+                                                                     VatTotalCurrency = d.VatTotalCurrency,
+                                                                     BaseVatTotal = d.BaseVatTotal,
+                                                                     DeliveryTotalCurrency = d.DeliveryTotalCurrency,
+                                                                     BaseDeliveryTotal = d.BaseDeliveryTotal
+                                                                 }) as IList<PurchaseOrderDelivery>,
+                                                RohsCompliant = x.RohsCompliant,
+                                                SuppliersDesignation = x.SuppliersDesignation,
+                                                StockPoolCode = x.StockPoolCode,
+                                                OriginalOrderNumber = x.OriginalOrderNumber,
+                                                OriginalOrderLine = x.OriginalOrderLine,
+                                                OurUnitOfMeasure = x.OurUnitOfMeasure,
+                                                OrderUnitOfMeasure = x.OrderUnitOfMeasure,
+                                                Duty = x.Duty,
+                                                OurUnitPriceCurrency = x.OurUnitPriceCurrency,
+                                                OrderUnitPriceCurrency = x.OrderUnitPriceCurrency,
+                                                BaseOurUnitPrice = x.BaseOurUnitPrice,
+                                                BaseOrderUnitPrice = x.BaseOrderUnitPrice,
+                                                VatTotalCurrency = x.VatTotalCurrency,
+                                                BaseVatTotal = x.BaseVatTotal,
+                                                DetailTotalCurrency = x.DetailTotalCurrency,
+                                                BaseDetailTotal = x.BaseDetailTotal,
+                                                DeliveryInstructions = x.DeliveryInstructions,
+                                                DeliveryConfirmedById = x.DeliveryConfirmedBy.Id,
+                                                CancelledDetails = x.CancelledDetails.Select(
+                                                                       c => new CancelledOrderDetail
+                                                                                {
+                                                                                    OrderNumber = c.OrderNumber,
+                                                                                    LineNumber = c.LineNumber,
+                                                                                    DeliverySequence =
+                                                                                        c.DeliverySequence,
+                                                                                    DateCancelled = c.DateCancelled,
+                                                                                    CancelledById = c.CancelledBy.Id,
+                                                                                    DateFilCancelled =
+                                                                                        c.DateFilCancelled,
+                                                                                    FilCancelledById =
+                                                                                        c.FilCancelledBy.Id,
+                                                                                    ReasonCancelled = c.ReasonCancelled,
+                                                                                    Id = c.Id,
+                                                                                    PeriodCancelled = c.PeriodCancelled,
+                                                                                    PeriodFilCancelled =
+                                                                                        c.PeriodFilCancelled,
+                                                                                    ValueCancelled = c.ValueCancelled,
+                                                                                    DateUncancelled = c.DateUncancelled,
+                                                                                    DateFilUncancelled =
+                                                                                        c.DateFilUncancelled,
+                                                                                    DatePreviouslyCancelled =
+                                                                                        c.DatePreviouslyCancelled,
+                                                                                    DatePreviouslyFilCancelled =
+                                                                                        c.DatePreviouslyFilCancelled,
+                                                                                    ValueFilCancelled =
+                                                                                        c.ValueFilCancelled,
+                                                                                    BaseValueFilCancelled =
+                                                                                        c.BaseValueFilCancelled
+                                                                                }) as IList<CancelledOrderDetail>,
+                                                InternalComments = x.InternalComments
+                                            }) as IList<PurchaseOrderDetail>,
                            CurrencyCode = resource.Currency.Code,
                            OrderContactName = resource.OrderContactName,
                            OrderMethodName = resource.OrderMethodName,

@@ -17,14 +17,14 @@
 
     public class WhenGettingPurchaseOrder : ContextBase
     {
-        private PurchaseOrder req;
+        private PurchaseOrder order;
         private int orderNumber;
 
         [SetUp]
         public void SetUp()
         {
             this.orderNumber = 600179;
-            this.req = new PurchaseOrder()
+            this.order = new PurchaseOrder()
                            {
                                OrderNumber = 600179,
                                Cancelled = string.Empty,
@@ -42,7 +42,7 @@
                         {
                             OrderNumber = 600179,
                             OverbookQty = 1,
-                            SupplierId = 1224
+                            Supplier = new SupplierResource { Id = 1224 }
                         }));
 
             this.Response = this.Client.Get(
@@ -69,9 +69,9 @@
         public void ShouldReturnJsonBody()
         {
             var resource = this.Response.DeserializeBody<PurchaseOrderResource>();
-            resource.OrderNumber.Should().Be(this.req.OrderNumber);
-            resource.OverbookQty.Should().Be(this.req.OverbookQty);
-            resource.SupplierId.Should().Be(this.req.SupplierId);
+            resource.OrderNumber.Should().Be(this.order.OrderNumber);
+            resource.OverbookQty.Should().Be(this.order.OverbookQty);
+            resource.Supplier.Id.Should().Be(this.order.SupplierId);
         }
     }
 }

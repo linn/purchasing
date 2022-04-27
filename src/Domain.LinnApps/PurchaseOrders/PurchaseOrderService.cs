@@ -48,6 +48,10 @@
                 throw new UnauthorisedActionException("You are not authorised to create purchase orders");
             }
             // add id to pl_order_postings using next val plorp_seq
+
+            //select nomacc_id
+            //from nominal_accounts where
+            //    nominal = p_nom and department = p_dept;
         }
 
         public PurchaseOrder CancelOrder(PurchaseOrder order, int currentUserId, IEnumerable<string> privileges)
@@ -130,7 +134,6 @@
         {
             current.Cancelled = updated.Cancelled;
             current.DocumentTypeName = updated.DocumentTypeName;
-            current.DocumentType = updated.DocumentType;
             current.OrderDate = updated.OrderDate;
             current.SupplierId = updated.SupplierId;
             current.CurrencyCode = updated.CurrencyCode;

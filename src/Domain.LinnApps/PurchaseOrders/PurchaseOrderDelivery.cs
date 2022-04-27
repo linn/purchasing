@@ -36,9 +36,9 @@
 
         public string SupplierConfirmationComment { get; set; }
 
-        public decimal? OurUnitPriceCurrency { get; set; } //our price
+        public decimal? OurUnitPriceCurrency { get; set; }
 
-        public decimal? OrderUnitPriceCurrency { get; set; } //order_price
+        public decimal? OrderUnitPriceCurrency { get; set; }
 
         public decimal? BaseOrderUnitPrice { get; set; }
 

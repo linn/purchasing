@@ -24,8 +24,6 @@
 
         public int? OurDeliveryQty { get; set; }
 
-        public PurchaseOrderDetailResource PurchaseOrderDetail { get; set; }
-
         public int? QtyNetReceived { get; set; }
 
         public decimal? QuantityOutstanding { get; set; }

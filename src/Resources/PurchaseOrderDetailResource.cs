@@ -20,7 +20,7 @@
 
         public int? OurQty { get; set; }
 
-        public IList<PurchaseOrderDeliveryResource> PurchaseDeliveries { get; set; }
+        public IEnumerable<PurchaseOrderDeliveryResource> PurchaseDeliveries { get; set; }
 
         public string RohsCompliant { get; set; }
 
@@ -40,9 +40,9 @@
 
         public decimal? Duty { get; set; }
 
-        public decimal? OurUnitPriceCurrency { get; set; } //our price
+        public decimal? OurUnitPriceCurrency { get; set; }
 
-        public decimal? OrderUnitPriceCurrency { get; set; } //order  price
+        public decimal? OrderUnitPriceCurrency { get; set; }
 
         public decimal? BaseOurUnitPrice { get; set; }
 
@@ -60,12 +60,16 @@
 
         public EmployeeResource DeliveryConfirmedBy { get; set; }
 
-        public int DeliveryConfirmedById { get; set; }
-
-        public IList<CancelledPurchaseOrderDetailResource> CancelledDetails { get; set; }
+        public IEnumerable<CancelledPurchaseOrderDetailResource> CancelledDetails { get; set; }
 
         public string InternalComments { get; set; }
 
         public IEnumerable<MrOrderResource> MrOrders { get; set; }
+
+        public NominalResource Nominal { get; set; }
+
+        public DepartmentResource Department { get; set; }
+        //// build nominal and department from order posting -> nominal account.
+        // They're not actually on the orders/details table
     }
 }
