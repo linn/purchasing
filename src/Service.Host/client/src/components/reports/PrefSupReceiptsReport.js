@@ -7,6 +7,7 @@ import {
     Title,
     Loading,
     DatePicker,
+    ExportButton,
     ReportTable
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
@@ -30,11 +31,20 @@ function PrefSupReceiptsReport() {
 
     const reportData = useSelector(state => state[prefSupReceiptsReport.item]?.data);
 
+    console.log(options.fromDate.toISOString());
+
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <Title text="Pref Sup Receipts Report" />
+                    <ExportButton
+                        href={
+                            `${config.appRoot}/purchasing/reports/pref-sup-receipts/export` +
+                            `?fromDate=${options.fromDate.toISOString()}` +
+                            `&toDate=${options.toDate.toISOString()}`
+                        }
+                    />
                 </Grid>
 
                 <Grid item xs={3}>
