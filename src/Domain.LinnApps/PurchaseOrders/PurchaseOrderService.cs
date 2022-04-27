@@ -47,8 +47,7 @@
             {
                 throw new UnauthorisedActionException("You are not authorised to create purchase orders");
             }
-            // create pl_order_postings using next val plorp_seq
-
+            // add id to pl_order_postings using next val plorp_seq
         }
 
         public PurchaseOrder CancelOrder(PurchaseOrder order, int currentUserId, IEnumerable<string> privileges)
@@ -108,15 +107,14 @@
 
                     foreach (var delivery in detail.PurchaseDeliveries)
                     {
-                        var currentDelivery = currentDetail.PurchaseDeliveries.FirstOrDefault(x=> x.DeliverySeq == delivery.DeliverySeq)
+                        var currentDelivery = currentDetail.PurchaseDeliveries.FirstOrDefault(x => x.DeliverySeq == delivery.DeliverySeq);
                         if (currentDelivery != null)
                         {
                             this.UpdateDeliveryProperties(currentDelivery, delivery);
                         }
                         else
                         {
-                            //todo check delivery.DeliverySeq of new delivery object is all good once front end done, same with details
-
+                            ////todo check delivery.DeliverySeq of new delivery object is all good once front end done, same with details
                             currentDetail.PurchaseDeliveries.Add(delivery);
                         }
                     }

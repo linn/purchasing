@@ -15,7 +15,7 @@
 
     using NUnit.Framework;
 
-    public class WhenUpdating : ContextBase
+    public class WhenUpdatingOverbookFields : ContextBase
     {
         private PurchaseOrderResource updateResource;
 
@@ -43,7 +43,8 @@
                 DateOfOrder = 10.January(2021),
                 Overbook = "Y",
                 OverbookQty = 1,
-                SupplierId = 1224
+                SupplierId = 1224,
+                CurrentlyUsingOverbookForm = true
             };
             this.PurchaseOrderRepository.Add(this.model);
             this.PurchaseOrderRepository.FindById(this.model.OrderNumber).Returns(this.model);

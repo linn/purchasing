@@ -22,7 +22,7 @@ import OrdersByPartOptions from './reports/OrdersByPartOptions';
 import SpendBySupplierOptions from './reports/SpendBySupplierOptions';
 import SpendBySupplier from './reports/SpendBySupplier';
 import Supplier from './supplierUtility/Supplier';
-import AddressUtility from './AdressUtility';
+import AddressUtility from './AddressUtility';
 import SuppliersWithUnacknowledgedOrders from './reports/SuppliersWithUnacknowledgedOrders';
 import UnacknowledgedOrdersReport from './reports/UnacknowledgedOrdersReport';
 import SpendByPartOptions from './reports/SpendByPartOptions';

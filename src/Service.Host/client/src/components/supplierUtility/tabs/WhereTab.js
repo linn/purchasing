@@ -14,7 +14,7 @@ import IconButton from '@mui/material/IconButton';
 import Close from '@mui/icons-material/Close';
 import Button from '@mui/material/Button';
 import addressesActions from '../../../actions/addressesActions';
-import AddressUtility from '../../AdressUtility';
+import AddressUtility from '../../AddressUtility';
 import addressActions from '../../../actions/addressActions';
 import countriesActions from '../../../actions/countriesActions';
 

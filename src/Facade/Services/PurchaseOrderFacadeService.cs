@@ -40,10 +40,10 @@
             PurchaseOrderResource resource,
             IEnumerable<string> privileges = null)
         {
+            throw new NotImplementedException();
+
             //var order = this.BuildEntityFromResourceHelper(resource);
             //this.domainService.CreateOrder(order, privileges);
-
-            throw new NotImplementedException();
         }
 
         protected override void DeleteOrObsoleteResource(PurchaseOrder entity, IEnumerable<string> privileges = null)
@@ -213,7 +213,6 @@
                                                                                          c.BaseValueFilCancelled
                                                                                  }) as IList<CancelledOrderDetail>,
                                                       InternalComments = x.InternalComments
-                                                      ///// no mr orders as don't want to save them from here
                                                   }) as IList<PurchaseOrderDetail>,
                            CurrencyCode = resource.Currency.Code,
                            OrderContactName = resource.OrderContactName,
