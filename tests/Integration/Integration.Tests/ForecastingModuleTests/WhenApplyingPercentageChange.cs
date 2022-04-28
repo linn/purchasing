@@ -25,11 +25,18 @@
             this.resource = new ApplyForecastingPercentageChangeResource
                                 {
                                     Change = 12, 
-                                    StartPeriod = 1, 
-                                    EndPeriod = 2
+                                    StartMonth = 1, 
+                                    StartYear = 2021,
+                                    EndMonth = 2,
+                                    EndYear = 2021
                                 };
             this.MockDomainService.ApplyPercentageChange(
-                    this.resource.Change, this.resource.StartPeriod, this.resource.EndPeriod, Arg.Any<IEnumerable<string>>())
+                    this.resource.Change, 
+                    this.resource.StartMonth, 
+                    this.resource.StartYear,
+                    this.resource.EndMonth, 
+                    this.resource.EndYear, 
+                    Arg.Any<IEnumerable<string>>())
                 .Returns(new ProcessResult(true, "Success"));
 
             this.Response = this.Client.PostAsJsonAsync(
@@ -55,8 +62,10 @@
         {
             this.MockDomainService.Received().ApplyPercentageChange(
                 this.resource.Change,
-                this.resource.StartPeriod,
-                this.resource.EndPeriod,
+                this.resource.StartMonth,
+                this.resource.StartYear,
+                this.resource.EndMonth,
+                this.resource.EndYear,
                 Arg.Any<List<string>>());
         }
 

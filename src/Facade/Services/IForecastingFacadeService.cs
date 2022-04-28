@@ -4,13 +4,12 @@
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.RequestResources;
 
     public interface IForecastingFacadeService
     {
         IResult<ProcessResultResource> ApplyPercentageChange(
-            decimal change, 
-            int startPeriod, 
-            int endPeriod, 
+            ApplyForecastingPercentageChangeResource resource,
             IEnumerable<string> privileges);
     }
 }

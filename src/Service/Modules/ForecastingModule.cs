@@ -34,7 +34,7 @@
             ApplyForecastingPercentageChangeResource resource)
         {
             await response.Negotiate(facadeService.ApplyPercentageChange(
-                resource.Change, resource.StartPeriod, resource.EndPeriod, request.HttpContext.GetPrivileges()));
+                resource, request.HttpContext.GetPrivileges()));
         }
     }
 }

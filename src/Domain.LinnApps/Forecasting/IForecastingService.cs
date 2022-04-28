@@ -5,6 +5,11 @@
     public interface IForecastingService
     {
         ProcessResult ApplyPercentageChange(
-            decimal change, int startPeriod, int endPeriod, IEnumerable<string> privileges);
+            decimal change, 
+            int startMonth, 
+            int startYear, 
+            int endMonth, 
+            int endYear, 
+            IEnumerable<string> privileges);
     }
 }

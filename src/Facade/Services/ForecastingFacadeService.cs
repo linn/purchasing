@@ -5,6 +5,7 @@
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.Forecasting;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.RequestResources;
 
     public class ForecastingFacadeService : IForecastingFacadeService
     {
@@ -16,9 +17,16 @@
         }
 
         public IResult<ProcessResultResource> ApplyPercentageChange(
-            decimal change, int startPeriod, int endPeriod, IEnumerable<string> privileges)
+            ApplyForecastingPercentageChangeResource resource, IEnumerable<string> privileges)
         {
-            var result = this.domainService.ApplyPercentageChange(change, startPeriod, endPeriod, privileges);
+            var result = this.domainService.ApplyPercentageChange(
+                resource.Change, 
+                resource.StartMonth, 
+                resource.StartYear, 
+                resource.EndMonth, 
+                resource.EndYear, 
+                privileges);
+
             return new SuccessResult<ProcessResultResource>(
                 new ProcessResultResource
                     {
