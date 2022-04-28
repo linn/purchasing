@@ -252,11 +252,6 @@
             entity.QuoteRef = updatedEntity.QuoteRef;
             entity.Email = updatedEntity.Email;
             entity.DateRequired = updatedEntity.DateRequired;
-            entity.RequestedBy = updatedEntity.RequestedBy;
-            entity.AuthorisedBy = updatedEntity.AuthorisedBy;
-            entity.SecondAuthBy = updatedEntity.SecondAuthBy;
-            entity.FinanceCheckBy = updatedEntity.FinanceCheckBy;
-            entity.TurnedIntoOrderBy = updatedEntity.TurnedIntoOrderBy;
             entity.NominalCode = updatedEntity.NominalCode;
             entity.RemarksForOrder = updatedEntity.RemarksForOrder;
             entity.InternalNotes = updatedEntity.InternalNotes;
