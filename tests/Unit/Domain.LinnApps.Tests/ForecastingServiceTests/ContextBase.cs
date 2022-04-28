@@ -21,7 +21,6 @@
 
         protected IRepository<LedgerPeriod, int> MockLedgerPeriodRepository { get; private set; }
 
-
         [SetUp]
         public void SetUpContext()
         {
