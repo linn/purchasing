@@ -7,7 +7,6 @@ import { InputField } from '@linn-it/linn-form-components-library';
 function OtherDetailsTab({
     handleFieldChange,
     leadTimeWeeks,
-    damagesPercent,
     deliveryInstructions,
     notesForBuyer
 }) {
@@ -20,18 +19,6 @@ function OtherDetailsTab({
                     type="number"
                     label="Lead Time Weeks"
                     propertyName="leadTimeWeeks"
-                    onChange={handleFieldChange}
-                />
-            </Grid>
-            <Grid item xs={8} />
-            <Grid item xs={8} />
-            <Grid item xs={4}>
-                <InputField
-                    fullWidth
-                    value={damagesPercent}
-                    type="number"
-                    label="Damages Percent"
-                    propertyName="damagesPercent"
                     onChange={handleFieldChange}
                 />
             </Grid>
@@ -65,14 +52,12 @@ function OtherDetailsTab({
 OtherDetailsTab.propTypes = {
     handleFieldChange: PropTypes.func.isRequired,
     leadTimeWeeks: PropTypes.number,
-    damagesPercent: PropTypes.number,
     deliveryInstructions: PropTypes.string,
     notesForBuyer: PropTypes.string
 };
 
 OtherDetailsTab.defaultProps = {
     leadTimeWeeks: null,
-    damagesPercent: null,
     deliveryInstructions: null,
     notesForBuyer: null
 };
