@@ -10,6 +10,7 @@
     using Linn.Common.Email;
     using Linn.Common.Facade;
     using Linn.Common.Pdf;
+    using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps;
@@ -125,7 +126,13 @@
                 .AddTransient<ISpendsReportService, SpendsReportService>()
                 .AddTransient<IPlCreditDebitNoteService, PlCreditDebitNoteService>()
                 .AddTransient<IPartsReceivedReportService, PartsReceivedReportService>()
-                .AddTransient<IPurchaseOrderReqService, PurchaseOrderReqService>()
+                .AddTransient<IPurchaseOrderReqService>(x => new PurchaseOrderReqService(
+                    ConfigurationManager.Configuration["APP_ROOT"],
+                        x.GetService<IAuthorisationService>(),
+                    x.GetService<IPurchaseOrderReqsPack>(),
+                        x.GetService<IRepository<Employee, int>>(),
+                    x.GetService<IEmailService>(),
+                        x.GetService<IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>>()))
                 .AddTransient<IWhatsDueInReportService, WhatsDueInReportService>()
                 .AddTransient<IOutstandingPoReqsReportService, OutstandingPoReqsReportService>()
                 .AddTransient<IMaterialRequirementsPlanningService, MaterialRequirementsPlanningService>()

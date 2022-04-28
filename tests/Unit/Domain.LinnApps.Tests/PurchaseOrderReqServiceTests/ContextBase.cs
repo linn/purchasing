@@ -41,6 +41,7 @@
                 Substitute.For<IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>>();
 
             this.Sut = new PurchaseOrderReqService(
+                "app.linn",
                 this.MockAuthService,
                 this.MockPurchaseOrderReqsPack,
                 this.EmployeeRepository,

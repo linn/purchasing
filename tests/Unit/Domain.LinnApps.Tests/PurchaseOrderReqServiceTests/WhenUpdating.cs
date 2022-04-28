@@ -33,7 +33,7 @@
                 new PurchaseOrderReq { ReqNumber = this.reqNumber, RequestedById = 999, State = this.fromState };
             this.updated = new PurchaseOrderReq
                                {
-                                   ReqNumber = this.reqNumber,
+                                   ReqNumber = 0,
                                    State = this.toState,
                                    ReqDate = 2.March(2022),
                                    OrderNumber = 1234,
@@ -80,7 +80,6 @@
         [Test]
         public void ShouldUpdate()
         {
-            this.current.ReqNumber.Should().Be(this.reqNumber);
             this.current.ReqDate.Should().Be(this.updated.ReqDate);
             this.current.OrderNumber.Should().Be(this.updated.OrderNumber);
             this.current.PartNumber.Should().Be(this.updated.PartNumber);
@@ -113,6 +112,12 @@
             this.current.RemarksForOrder.Should().Be(this.updated.RemarksForOrder);
             this.current.InternalNotes.Should().Be(this.updated.InternalNotes);
             this.current.Department.Should().Be(this.updated.Department);
+        }
+
+        [Test]
+        public void ShouldNotUpdateReqNumber()
+        {
+            this.current.ReqNumber.Should().Be(this.reqNumber);
         }
     }
 }
