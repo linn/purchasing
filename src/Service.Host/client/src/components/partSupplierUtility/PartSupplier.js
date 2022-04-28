@@ -268,8 +268,7 @@ function PartSupplier({ creating }) {
         !state.partSupplier?.currencyCode ||
         !state.partSupplier?.minimumOrderQty ||
         !state.partSupplier?.orderIncrement ||
-        !state.partSupplier?.leadTimeWeeks ||
-        (!state.partSupplier?.damagesPercent && state.partSupplier?.damagesPercent !== 0);
+        !state.partSupplier?.leadTimeWeeks;
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
@@ -495,7 +494,6 @@ function PartSupplier({ creating }) {
                                             <OtherDetailsTab
                                                 handleFieldChange={handleFieldChange}
                                                 leadTimeWeeks={state.partSupplier?.leadTimeWeeks}
-                                                damagesPercent={state.partSupplier?.damagesPercent}
                                                 deliveryInstructions={
                                                     state.partSupplier?.deliveryInstructions
                                                 }

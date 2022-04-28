@@ -423,11 +423,6 @@
                 errors.Add("Minimum Delivery Quantity");
             }
 
-            if (!candidate.DamagesPercent.HasValue)
-            {
-                errors.Add("Damages Percent");
-            }
-
             if (candidate.Currency == null)
             {
                 errors.Add("Currency");

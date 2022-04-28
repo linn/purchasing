@@ -291,9 +291,6 @@ describe('When save clicked when creating...', () => {
         input = screen.getByLabelText('Lead Time Weeks');
         fireEvent.change(input, { target: { value: 333 } });
 
-        input = screen.getByLabelText('Damages Percent');
-        fireEvent.change(input, { target: { value: 444 } });
-
         const saveButton = await screen.findByRole('button', { name: 'Save' });
         fireEvent.click(saveButton);
 
@@ -307,8 +304,7 @@ describe('When save clicked when creating...', () => {
                 unitOfMeasure: 'ONES',
                 minimumOrderQty: 111,
                 orderIncrement: 222,
-                leadTimeWeeks: 333,
-                damagesPercent: 444
+                leadTimeWeeks: 333
             })
         );
     });
