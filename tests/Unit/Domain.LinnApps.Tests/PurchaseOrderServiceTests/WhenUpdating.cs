@@ -42,7 +42,7 @@
             };
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
-            this.Sut.AllowOverbook(this.current, this.updated, new List<string>());
+            this.Sut.AllowOverbook(this.current, this.updated.Overbook, this.updated.OverbookQty, new List<string>());
         }
 
         [Test]

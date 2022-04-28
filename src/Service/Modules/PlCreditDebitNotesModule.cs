@@ -44,10 +44,10 @@
         private async Task SearchNotes(
             HttpRequest req,
             HttpResponse res,
-            string search,
+            string searchTerm,
             IFacadeResourceFilterService<PlCreditDebitNote, int, PlCreditDebitNoteResource, PlCreditDebitNoteResource, PlCreditDebitNoteResource> service)
         {
-            var results = service.Search(search);
+            var results = service.Search(searchTerm);
 
             await res.Negotiate(results);
         }

@@ -24,7 +24,10 @@
         private readonly IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>
             reqsStateChangeRepository;
 
+        private readonly string appRoot;
+
         public PurchaseOrderReqService(
+            string appRoot,
             IAuthorisationService authService,
             IPurchaseOrderReqsPack purchaseOrderReqsPack,
             IRepository<Employee, int> employeeRepository,
@@ -36,6 +39,7 @@
             this.employeeRepository = employeeRepository;
             this.emailService = emailService;
             this.reqsStateChangeRepository = reqsStateChangeRepository;
+            this.appRoot = appRoot;
         }
 
         public void Authorise(PurchaseOrderReq entity, IEnumerable<string> privileges, int currentUserId)
@@ -127,7 +131,7 @@
         {
             var from = this.employeeRepository.FindById(currentUser);
             var to = this.employeeRepository.FindById(toEmp);
-            var reqUrl = $"https://app.linn.co.uk/purchasing/purchase-orders/reqs/{req.ReqNumber}";
+            var reqUrl = $"{this.appRoot}/purchasing/purchase-orders/reqs/{req.ReqNumber}";
             var body = $"{req.RequestedBy.FullName} has placed a request to purchase {req.Description}.\n"
                        + $"Please could you look at req number {req.ReqNumber} and authorise as appropriate at \n"
                        + $"{reqUrl}.\n\nThank you";
@@ -136,7 +140,7 @@
                 this.emailService.SendEmail(
                     to.PhoneListEntry.EmailAddress.Trim(),
                     to.FullName,
-                    null,
+                    new List<Dictionary<string, string>> { new Dictionary<string, string>() { { "name", from.FullName }, { "address", from.PhoneListEntry.EmailAddress.Trim() } } },
                     null,
                     from.PhoneListEntry.EmailAddress.Trim(),
                     from.FullName,
@@ -188,7 +192,7 @@
         {
             var from = this.employeeRepository.FindById(currentUser);
             var to = this.employeeRepository.FindById(toEmp);
-            var reqUrl = $"https://app.linn.co.uk/purchasing/purchase-orders/reqs/{req.ReqNumber}";
+            var reqUrl = $"{this.appRoot}/purchasing/purchase-orders/reqs/{req.ReqNumber}";
             var body = $"{req.RequestedBy.FullName} has placed a request to purchase {req.Description}.\n"
                        + $"Please could you look at req number {req.ReqNumber} and authorise for finance as appropriate at \n"
                        + $"{reqUrl}.\n\nThank you";
@@ -229,7 +233,6 @@
                 }
             }
 
-            entity.ReqNumber = updatedEntity.ReqNumber;
             entity.State = updatedEntity.State;
             entity.ReqDate = updatedEntity.ReqDate;
             entity.OrderNumber = updatedEntity.OrderNumber;
@@ -253,11 +256,6 @@
             entity.QuoteRef = updatedEntity.QuoteRef;
             entity.Email = updatedEntity.Email;
             entity.DateRequired = updatedEntity.DateRequired;
-            entity.RequestedBy = updatedEntity.RequestedBy;
-            entity.AuthorisedBy = updatedEntity.AuthorisedBy;
-            entity.SecondAuthBy = updatedEntity.SecondAuthBy;
-            entity.FinanceCheckBy = updatedEntity.FinanceCheckBy;
-            entity.TurnedIntoOrderBy = updatedEntity.TurnedIntoOrderBy;
             entity.NominalCode = updatedEntity.NominalCode;
             entity.RemarksForOrder = updatedEntity.RemarksForOrder;
             entity.InternalNotes = updatedEntity.InternalNotes;

@@ -1,8 +1,8 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
+﻿namespace Linn.Purchasing.Resources
 {
     using System;
 
-    public class PurchaseOrderDelivery
+    public class PurchaseOrderDeliveryResource
     {
         public string Cancelled { get; set; }
 
@@ -23,8 +23,6 @@
         public int OrderNumber { get; set; }
 
         public int? OurDeliveryQty { get; set; }
-
-        public PurchaseOrderDetail PurchaseOrderDetail { get; set; }
 
         public int? QtyNetReceived { get; set; }
 
