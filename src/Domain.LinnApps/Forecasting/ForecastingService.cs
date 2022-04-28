@@ -50,7 +50,6 @@
             var endMonthName 
                 = CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(endMonth + 1).ToUpper();
 
-
             var startPeriod = this.ledgerPeriodRepository.FindBy(x 
                 => x.MonthName.StartsWith(startMonthName) && x.MonthName.EndsWith(startYear.ToString()))?.PeriodNumber;
 
