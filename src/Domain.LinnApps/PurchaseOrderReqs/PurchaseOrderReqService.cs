@@ -5,6 +5,7 @@
     using System.IO;
 
     using Linn.Common.Authorisation;
+    using Linn.Common.Configuration;
     using Linn.Common.Email;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
@@ -127,7 +128,8 @@
         {
             var from = this.employeeRepository.FindById(currentUser);
             var to = this.employeeRepository.FindById(toEmp);
-            var reqUrl = $"https://app.linn.co.uk/purchasing/purchase-orders/reqs/{req.ReqNumber}";
+            var appRoot = ConfigurationManager.Configuration["APP_ROOT"];
+            var reqUrl = $"{appRoot}/purchasing/purchase-orders/reqs/{req.ReqNumber}";
             var body = $"{req.RequestedBy.FullName} has placed a request to purchase {req.Description}.\n"
                        + $"Please could you look at req number {req.ReqNumber} and authorise as appropriate at \n"
                        + $"{reqUrl}.\n\nThank you";
@@ -188,7 +190,8 @@
         {
             var from = this.employeeRepository.FindById(currentUser);
             var to = this.employeeRepository.FindById(toEmp);
-            var reqUrl = $"https://app.linn.co.uk/purchasing/purchase-orders/reqs/{req.ReqNumber}";
+            var appRoot = ConfigurationManager.Configuration["APP_ROOT"];
+            var reqUrl = $"{appRoot}/purchasing/purchase-orders/reqs/{req.ReqNumber}";
             var body = $"{req.RequestedBy.FullName} has placed a request to purchase {req.Description}.\n"
                        + $"Please could you look at req number {req.ReqNumber} and authorise for finance as appropriate at \n"
                        + $"{reqUrl}.\n\nThank you";
