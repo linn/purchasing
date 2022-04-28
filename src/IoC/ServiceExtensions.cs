@@ -15,6 +15,7 @@
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
+    using Linn.Purchasing.Domain.LinnApps.Forecasting;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
@@ -51,7 +52,6 @@
                 .AddTransient<IBuilder<PriceChangeReason>, PriceChangeReasonResourceBuilder>()
                 .AddTransient<IBuilder<PartCategory>, PartCategoryResourceBuilder>()
                 .AddTransient<IBuilder<PurchaseOrder>, PurchaseOrderResourceBuilder>()
-                .AddTransient<IBuilder<ResultsModel>, ResultsModelResourceBuilder>()
                 .AddTransient<IBuilder<Address>, AddressResourceBuilder>()
                 .AddTransient<IBuilder<Country>, CountryResourceBuilder>()
                 .AddTransient<IBuilder<VendorManager>, VendorManagerResourceBuilder>()
@@ -62,8 +62,7 @@
                 .AddTransient<IBuilder<PurchaseOrderReq>, PurchaseOrderReqResourceBuilder>()
                 .AddTransient<IBuilder<MrpRunLog>, MrpRunLogResourceBuilder>()
                 .AddTransient<IBuilder<PurchaseOrderReqState>, PurchaseOrderReqStateResourceBuilder>()
-                .AddTransient<IBuilder<MrMaster>, MrMasterResourceBuilder>()
-                ;
+                .AddTransient<IBuilder<MrMaster>, MrMasterResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -105,7 +104,8 @@
                 .AddTransient<IMaterialRequirementsPlanningFacadeService, MaterialRequirementsPlanningFacadeService>()
                 .AddTransient<IWhatsInInspectionReportFacadeService, WhatsInInspectionReportFacadeService>()
                 .AddTransient<IPrefSupReceiptsReportFacadeService, PrefSupReceiptsReportFacadeService>()
-                .AddTransient<ISingleRecordFacadeResourceService<MrMaster, MrMasterResource>, MrMasterFacadeService>();
+                .AddTransient<ISingleRecordFacadeResourceService<MrMaster, MrMasterResource>, MrMasterFacadeService>()
+                .AddTransient<IForecastingFacadeService, ForecastingFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
@@ -138,6 +138,7 @@
                 .AddTransient<IMaterialRequirementsPlanningService, MaterialRequirementsPlanningService>()
                 .AddTransient<IWhatsInInspectionReportService, WhatsInInspectionReportService>()
                 .AddTransient<IPrefSupReceiptsReportService, PrefSupReceiptsReportService>()
+                .AddTransient<IForecastingService, ForecastingService>()
 
             // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
@@ -145,7 +146,8 @@
                 .AddTransient<ICurrencyPack, CurrencyPack>()
                 .AddTransient<IPurchaseLedgerPack, PurchaseLedgerPack>()
                 .AddTransient<IPurchaseOrderReqsPack, PurchaseOrderReqsPack>()
-                .AddTransient<IMrpLoadPack, MrpLoadPack>();
+                .AddTransient<IMrpLoadPack, MrpLoadPack>()
+                .AddTransient<IForecastingPack, ForecastingPack>();
         }
     }
 }

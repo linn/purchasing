@@ -42,6 +42,7 @@ import PrefSupReceiptsReport from './reports/PrefSupReceiptsReport';
 import POReqPrintout from './POReqs/POReqPrintout';
 import WhatsInInspectionReport from './reports/WhatsInInspectionReport';
 import RunMrp from './RunMrp';
+import ApplyForecastingPercentageChange from './ApplyForecastingPercentageChange';
 
 const Root = ({ store }) => (
     <div>
@@ -242,6 +243,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/material-requirements/run-mrp"
                                     component={RunMrp}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/forecasting/apply-percentage-change"
+                                    component={ApplyForecastingPercentageChange}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>

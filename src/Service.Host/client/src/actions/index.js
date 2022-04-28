@@ -194,3 +194,7 @@ export const mrpRunLogsActionTypes = makeActionTypes(itemTypes.mrpRunLogs.action
 export const runMrpActionTypes = makeProcessActionTypes(itemTypes.runMrp.actionType);
 
 export const mrMasterActionTypes = makeActionTypes(itemTypes.mrMaster.actionType, false);
+
+export const applyForecastingPercentageChangeActionTypes = makeProcessActionTypes(
+    itemTypes.applyForecastingPercentageChange.actionType
+);

@@ -67,6 +67,7 @@ import mrpRunLog from './mrpRunLog';
 import mrpRunLogs from './mrpRunLogs';
 import runMrp from './runMrp';
 import mrMaster from './mrMaster';
+import applyForecastingPercentageChange from './applyForecastingPercentageChange';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -77,6 +78,7 @@ const rootReducer = history =>
         accountingCompanies,
         address,
         addresses,
+        applyForecastingPercentageChange,
         bulkLeadTimesUpload,
         countries,
         currencies,

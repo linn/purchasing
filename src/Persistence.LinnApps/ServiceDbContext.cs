@@ -117,6 +117,10 @@
 
         public DbSet<MrMaster> MrMaster { get; set; }
 
+        public DbSet<LedgerPeriod> LedgerPeriods { get; set; }
+
+        public DbSet<LinnWeek> LinnWeeks { get; set; }
+        
         public DbSet<CancelledOrderDetail> CancelledPurchaseOrderDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -180,6 +184,8 @@
             this.BuildWhatsInInspectionStockLocationsView(builder);
             this.BuildWhatsInInspectionBackOrderView(builder);
             this.BuildMrMaster(builder);
+            this.BuildLedgerPeriods(builder);
+            this.BuildLinnWeeks(builder);
             this.BuildCancelledPODetails(builder);
             this.BuildPurchaseOrderPostings(builder);
             this.BuildNominalAccounts(builder);
@@ -1084,6 +1090,23 @@
             entity.Property(e => e.RunDate).HasColumnName("RUNDATE");
         }
 
+        private void BuildLedgerPeriods(ModelBuilder builder)
+        {
+            var entity = builder.Entity<LedgerPeriod>().ToTable("LEDGER_PERIODS");
+            entity.HasKey(e => e.PeriodNumber);
+            entity.Property(d => d.PeriodNumber).HasColumnName("PERIOD_NUMBER");
+            entity.Property(d => d.MonthName).HasColumnName("MONTH_NAME");
+        }
+
+        private void BuildLinnWeeks(ModelBuilder builder)
+        {
+            var entity = builder.Entity<LinnWeek>().ToTable("LINN_WEEKS");
+            entity.HasKey(e => e.WeekNumber);
+            entity.Property(d => d.WeekNumber).HasColumnName("LINN_WEEK_NUMBER");
+            entity.Property(d => d.StartsOn).HasColumnName("LINN_WEEK_START_DATE");
+            entity.Property(d => d.EndsOn).HasColumnName("LINN_WEEK_END_DATE");
+        }
+    
         private void BuildCancelledPODetails(ModelBuilder builder)
         {
             var entity = builder.Entity<CancelledOrderDetail>().ToTable("PL_CANCELLED_DETAILS");
