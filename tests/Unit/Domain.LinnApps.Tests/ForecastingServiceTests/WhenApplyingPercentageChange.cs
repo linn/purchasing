@@ -44,8 +44,8 @@
                 AuthorisedAction.ForecastingApplyPercentageChange,
                 Arg.Any<IEnumerable<string>>()).Returns(true);
             this.MockLedgerPeriodRepository.FindBy(Arg.Any<Expression<Func<LedgerPeriod, bool>>>()).Returns(
-                new LedgerPeriod { PeriodNumber = 9 },
-                new LedgerPeriod { PeriodNumber = 10 });
+                new LedgerPeriod { PeriodNumber = 9, MonthName = "JUL2001" },
+                new LedgerPeriod { PeriodNumber = 10, MonthName = "AUG2001" });
 
             this.MockLinnWeekRepository.FilterBy(Arg.Any<Expression<Func<LinnWeek, bool>>>()).Returns(
                 this.weeksEndingInStartMonth.AsQueryable(),
