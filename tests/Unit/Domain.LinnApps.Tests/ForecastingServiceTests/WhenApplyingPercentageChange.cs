@@ -6,6 +6,7 @@
     using System.Linq.Expressions;
 
     using FluentAssertions;
+    using FluentAssertions.Extensions;
 
     using NSubstitute;
 
@@ -24,12 +25,19 @@
         {
             this.weeksEndingInStartMonth = new List<LinnWeek>
                                                {
-                                                   new LinnWeek { WeekNumber = 1 },
+                                                   new LinnWeek { WeekNumber = 1, StartsOn = 30.June(2001) },
+                                                   new LinnWeek { WeekNumber = 2, StartsOn = 07.July(2021) },
+                                                   new LinnWeek { WeekNumber = 3, StartsOn = 14.July(2021) },
+                                                   new LinnWeek { WeekNumber = 4, StartsOn = 21.July(2021) },
+                                                   new LinnWeek { WeekNumber = 5, StartsOn = 28.July(2021) }
                                                };
 
             this.weeksStartingInEndMonth = new List<LinnWeek>
                                                {
-                                                   new LinnWeek { WeekNumber = 2 },
+                                                   new LinnWeek { WeekNumber = 6, StartsOn = 4.August(2001) },
+                                                   new LinnWeek { WeekNumber = 7, StartsOn = 11.August(2001) },
+                                                   new LinnWeek { WeekNumber = 8, StartsOn = 18.August(2001) },
+                                                   new LinnWeek { WeekNumber = 8, StartsOn = 25.August(2001) }
                                                };
 
             this.MockAuthService.HasPermissionFor(
@@ -55,7 +63,7 @@
         [Test]
         public void ShouldCallSetAutoForecastChangeProcedureForCorrectWeeks()
         {
-            this.MockForecastingPack.Received().SetAutoForecastChange(10, 1, 2);
+            this.MockForecastingPack.Received().SetAutoForecastChange(10, 1, 8);
         }
 
         [Test]
