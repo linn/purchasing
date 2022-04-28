@@ -7,6 +7,5 @@ const defaultState = { working: false, messageText: '', messageVisible: false };
 export default processStoreFactory(
     applyForecastingPercentageChange.actionType,
     actionTypes,
-    defaultState,
-    'MRP RUN'
+    defaultState
 );
