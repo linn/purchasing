@@ -12,6 +12,7 @@ import {
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import queryString from 'query-string';
+import moment from 'moment';
 import history from '../../history';
 import config from '../../config';
 import { prefSupReceiptsReport } from '../../reportTypes';
@@ -39,8 +40,10 @@ function PrefSupReceiptsReport() {
                     <ExportButton
                         href={`${
                             config.appRoot
-                        }/purchasing/reports/pref-sup-receipts/export${queryString.stringify(
-                            options
+                        }/purchasing/reports/pref-sup-receipts/export?fromDate=${moment(
+                            options.fromDate
+                        ).format('DD/MM/YYYY')}&toDate=${moment(options.toDate).format(
+                            'DD/MM/YYYY'
                         )}`}
                     />
                 </Grid>
