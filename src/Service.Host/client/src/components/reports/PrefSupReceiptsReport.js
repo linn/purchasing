@@ -7,6 +7,7 @@ import {
     Title,
     Loading,
     DatePicker,
+    ExportButton,
     ReportTable
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
@@ -35,6 +36,13 @@ function PrefSupReceiptsReport() {
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <Title text="Pref Sup Receipts Report" />
+                    <ExportButton
+                        href={`${
+                            config.appRoot
+                        }/purchasing/reports/pref-sup-receipts/export${queryString.stringify(
+                            options
+                        )}`}
+                    />
                 </Grid>
 
                 <Grid item xs={3}>
