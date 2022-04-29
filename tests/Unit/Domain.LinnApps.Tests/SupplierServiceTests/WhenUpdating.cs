@@ -73,7 +73,8 @@
                                    PmDeliveryDaysGrace = 1,
                                    OrderAddress = this.address,
                                    InvoiceFullAddress = this.invAddress,
-                                   AccountController = new Employee { Id = 123 }
+                                   AccountController = new Employee { Id = 123 },
+                                   Country = "GB"
                                };
 
             this.MockCurrencyRepository
@@ -127,6 +128,7 @@
             this.current.InvoiceFullAddress.Id.Should().Be(2);
             this.current.InvoiceFullAddress.AddressString.Should().Be("ADDRESS");
             this.current.AccountController.Id.Should().Be(this.updated.AccountController.Id);
+            this.current.Country.Should().Be(this.updated.Country);
         }
     }
 }

@@ -115,7 +115,7 @@
             current.PaymentDays = updated.PaymentDays;
             current.PaymentMethod = updated.PaymentMethod;
             current.PaysInFc = updated.PaysInFc;
-
+            current.Country = updated.Country;
             current.ApprovedCarrier = updated.ApprovedCarrier;
             current.AccountingCompany = updated.AccountingCompany;
             current.VatNumber = updated.VatNumber;
@@ -217,6 +217,16 @@
                                      ? this.groupRepository.FindById(candidate.Group.Id)
                                      : null;
 
+            if (candidate.SupplierContacts != null)
+            {
+                foreach (var c in candidate.SupplierContacts)
+                {
+                    c.SupplierId = candidate.SupplierId;
+                }
+
+                candidate.SupplierContacts = candidate.SupplierContacts.ToList();
+            }
+            
             ValidateFields(candidate);
             candidate.Name = candidate.Name.ToUpper();
             this.orgRepository.Add(new Organisation
