@@ -15,9 +15,9 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import EditOffIcon from '@mui/icons-material/EditOff';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import purchaseOrderActions from '../actions/purchaseOrderActions';
-import history from '../history';
-import config from '../config';
+import purchaseOrderActions from '../../actions/purchaseOrderActions';
+import history from '../../history';
+import config from '../../config';
 
 function AllowPurchaseOrderOverbook() {
     const reduxDispatch = useDispatch();

@@ -34,8 +34,8 @@ import BulkLeadTimesUpload from './partSupplierUtility/BulkLeadTimesUpload';
 import PartsReceivedReport from './reports/PartsReceivedReport';
 import POReqUtility from './POReqs/POReqUtility';
 import POReqSearch from './POReqs/POReqSearch';
-import OverbooksSearch from './OverbooksSearch';
-import AllowPurchaseOrderOverbook from './AllowPurchaseOrderOverbook';
+import OverbooksSearch from './PurchaseOrders/OverbooksSearch';
+import AllowPurchaseOrderOverbook from './PurchaseOrders/AllowPurchaseOrderOverbook';
 import WhatsDueInReport from './reports/WhatsDueInReport';
 import OutstandingPoReqsReport from './reports/OutstandingPoReqsReport';
 import PrefSupReceiptsReport from './reports/PrefSupReceiptsReport';
@@ -43,6 +43,8 @@ import POReqPrintout from './POReqs/POReqPrintout';
 import WhatsInInspectionReport from './reports/WhatsInInspectionReport';
 import RunMrp from './RunMrp';
 import ApplyForecastingPercentageChange from './ApplyForecastingPercentageChange';
+import PurchaseOrderUtility from './PurchaseOrders/PurchaseOrderUtility';
+import PurchaseOrdersSearch from './PurchaseOrders/PurchaseOrdersSearch';
 
 const Root = ({ store }) => (
     <div>
@@ -213,6 +215,16 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/purchase-orders/allow-over-book"
                                     component={OverbooksSearch}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/purchase-orders/:orderNumber"
+                                    component={PurchaseOrderUtility}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/purchase-orders/"
+                                    component={PurchaseOrdersSearch}
                                 />
                                 <Route
                                     exact

@@ -62,7 +62,7 @@
                            RequestedBy = new EmployeeResource { Id = entity.RequestedById, FullName = entity.RequestedBy?.FullName },
                            EnteredBy = new EmployeeResource { Id = entity.EnteredById, FullName = entity.EnteredBy?.FullName },
                            QuotationRef = entity.QuotationRef,
-                           AuthorisedBy = entity.AuthorisedById.HasValue ? new EmployeeResource { Id = (int) entity.AuthorisedById, FullName = entity.AuthorisedBy?.FullName } : null,
+                           AuthorisedBy = entity.AuthorisedById.HasValue ? new EmployeeResource { Id = (int)entity.AuthorisedById, FullName = entity.AuthorisedBy?.FullName } : null,
                            SentByMethod = entity.SentByMethod,
                            FilCancelled = entity.FilCancelled,
                            Remarks = entity.Remarks,
