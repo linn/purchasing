@@ -318,7 +318,6 @@ function PurchaseOrderUtility({ creating }) {
                                 </Typography>
                             </div>
                         </Dialog>
-
                         <Grid item xs={12}>
                             <Typography variant="h6">Purchase Order Utility </Typography>
                         </Grid>
@@ -332,8 +331,7 @@ function PurchaseOrderUtility({ creating }) {
                                 disabled
                             />
                         </Grid>
-
-                        <Grid item xs={4}>
+                        <Grid item xs={2}>
                             <InputField
                                 fullWidth
                                 value={order.orderDate}
@@ -370,7 +368,6 @@ function PurchaseOrderUtility({ creating }) {
                                 disabled
                             />
                         </Grid>
-
                         <Grid item xs={3}>
                             <InputField
                                 fullWidth
@@ -414,91 +411,52 @@ function PurchaseOrderUtility({ creating }) {
                                 )}
                             </div>
                         </Grid>
-                        <Grid item xs={5} container spacing={1}>
-                            <Grid item xs={8}>
-                                <Typeahead
-                                    label="Part"
-                                    title="Search for a part"
-                                    onSelect={newPart => {
-                                        handleFieldChange('partNumber', newPart.id);
-                                        handleFieldChange('description', newPart.description);
-                                    }}
-                                    items={partsSearchResults}
-                                    loading={partsSearchLoading}
-                                    fetchItems={searchTerm =>
-                                        dispatch(partsActions.search(searchTerm))
-                                    }
-                                    clearSearch={() => dispatch(partsActions.clearSearch)}
-                                    value={order.partNumber ? `${order.partNumber}` : null}
-                                    modal
-                                    links={false}
-                                    debounce={1000}
-                                    minimumSearchTermLength={2}
-                                    disabled={!editingAllowed}
-                                    placeholder="click to set part"
-                                />
-                            </Grid>
-
-                            <Grid item xs={4}>
-                                <Dropdown
-                                    fullWidth
-                                    value={order.currency?.code}
-                                    label="Currency"
-                                    propertyName="currency"
-                                    items={currencies.map(c => ({
-                                        displayText: c.code,
-                                        id: c.code
-                                    }))}
-                                    allowNoValue
-                                    onChange={(propertyName, newValue) => {
-                                        setOrder(a => ({
-                                            ...a,
-                                            currency: {
-                                                code: newValue,
-                                                name: currencies.find(x => x.code === newValue)
-                                                    ?.name
-                                            }
-                                        }));
-                                    }}
-                                    disabled={!editingAllowed || !creating}
-                                    required
-                                />
-                            </Grid>
-                            <Grid item xs={8}>
-                                <InputField
-                                    fullWidth
-                                    value={order?.currency?.name}
-                                    label="Name"
-                                    propertyName="currencyName"
-                                    disabled
-                                />
-                            </Grid>
-                            <Grid item xs={4}>
-                                <InputField
-                                    fullWidth
-                                    value={order.exchangeRate}
-                                    label="Exchange rate"
-                                    number
-                                    propertyName="exchangeRate"
-                                    onChange={handleFieldChange}
-                                    disabled={!editingAllowed}
-                                    type="number"
-                                />
-                            </Grid>
-                            <Grid item xs={4}>
-                                <InputField
-                                    fullWidth
-                                    value={order.issuePartsToSupplier}
-                                    label="Issue Parts to Supplier"
-                                    number
-                                    propertyName="issuePartsToSupplier"
-                                    onChange={handleFieldChange}
-                                    disabled={!editingAllowed}
-                                />
-                            </Grid>
+                        <Grid item xs={3}>
+                            <Dropdown
+                                fullWidth
+                                value={order.currency?.code}
+                                label="Currency"
+                                propertyName="currency"
+                                items={currencies.map(c => ({
+                                    displayText: c.code,
+                                    id: c.code
+                                }))}
+                                allowNoValue
+                                onChange={(propertyName, newValue) => {
+                                    setOrder(a => ({
+                                        ...a,
+                                        currency: {
+                                            code: newValue,
+                                            name: currencies.find(x => x.code === newValue)?.name
+                                        }
+                                    }));
+                                }}
+                                disabled={!editingAllowed || !creating}
+                                required
+                            />
+                        </Grid>
+                        <Grid item xs={5}>
+                            <InputField
+                                fullWidth
+                                value={order?.currency?.name}
+                                label="Name"
+                                propertyName="currencyName"
+                                disabled
+                            />
+                        </Grid>
+                        <Grid item xs={4}>
+                            <InputField
+                                fullWidth
+                                value={order.exchangeRate}
+                                label="Exchange rate"
+                                number
+                                propertyName="exchangeRate"
+                                onChange={handleFieldChange}
+                                disabled={!editingAllowed}
+                                type="number"
+                            />
                         </Grid>
 
-                        <Grid item xs={12} />
                         <Grid item xs={3}>
                             <Typeahead
                                 onSelect={newValue => {
@@ -531,7 +489,18 @@ function PurchaseOrderUtility({ creating }) {
                                 disabled
                             />
                         </Grid>
-                        <Grid item xs={3} />
+                        <Grid item xs={3}>
+                            <InputField
+                                fullWidth
+                                value={order.issuePartsToSupplier}
+                                label="Issue Parts to Supplier"
+                                number
+                                propertyName="issuePartsToSupplier"
+                                onChange={handleFieldChange}
+                                disabled={!editingAllowed}
+                            />
+                        </Grid>
+
                         <Grid item xs={4}>
                             <InputField
                                 fullWidth
@@ -563,10 +532,20 @@ function PurchaseOrderUtility({ creating }) {
                                 disabled={!editingAllowed}
                             />
                         </Grid>
-                        <Grid item xs={7}>
+                        <Grid item xs={2}>
                             <InputField
                                 fullWidth
-                                value={`${order.deliveryAddress?.addressId} - ${order.deliveryAddress?.address}`}
+                                value={order.deliveryAddress?.addressId}
+                                label="Delivery Address Id"
+                                propertyName="deliveryAddressId"
+                                onChange={handleFieldChange}
+                                disabled={!editingAllowed}
+                            />
+                        </Grid>
+                        <Grid item xs={8}>
+                            <InputField
+                                fullWidth
+                                value={order.deliveryAddress?.address}
                                 label="Delivery Address"
                                 propertyName="deliveryAddress"
                                 onChange={handleFieldChange}
@@ -574,7 +553,6 @@ function PurchaseOrderUtility({ creating }) {
                                 disabled={!editingAllowed}
                             />
                         </Grid>
-
                         <Grid item xs={8}>
                             <InputField
                                 fullWidth
@@ -585,7 +563,6 @@ function PurchaseOrderUtility({ creating }) {
                                 disabled={!editingAllowed}
                             />
                         </Grid>
-
                         <Grid item xs={12} />
                         <Grid item xs={12}>
                             <InputField
@@ -638,7 +615,6 @@ function PurchaseOrderUtility({ creating }) {
                                 disabled
                             />
                         </Grid>
-
                         <Grid item xs={12}>
                             <InputField
                                 fullWidth
@@ -650,34 +626,45 @@ function PurchaseOrderUtility({ creating }) {
                                 disabled={!editingAllowed}
                             />
                         </Grid>
-
                         {/* -------------- fields on details ------------------------- */}
+                        {order.details?.map(detail => (
+                            <>
+                                <Grid item xs={12}>
+                                    <InputField
+                                        fullWidth
+                                        value={detail.line}
+                                        label="Order Line Number"
+                                        propertyName="line"
+                                    />
+                                </Grid>
 
-                        {/* <Grid item xs={2}>
-                            <InputField
-                                fullWidth
-                                value={order.ourQty}
-                                label="Our quantity"
-                                propertyName="ourQty"
-                                onChange={handleFieldChange}
-                                disabled={!editingAllowed || !creating}
-                                type="number"
-                                required
-                            />
-                        </Grid>
-                        <Grid item xs={2}>
-                            <InputField
-                                fullWidth
-                                value={order.orderQty}
-                                label="Order quantity"
-                                propertyName="Order qty"
-                                onChange={handleFieldChange}
-                                disabled={!editingAllowed || !creating}
-                                type="number"
-                                required
-                            />
-                        </Grid>
-
+                                <Grid item xs={2}>
+                                    <InputField
+                                        fullWidth
+                                        value={detail.ourQty}
+                                        label="Our quantity"
+                                        propertyName="ourQty"
+                                        onChange={handleFieldChange}
+                                        disabled={!editingAllowed || !creating}
+                                        type="number"
+                                        required
+                                    />
+                                </Grid>
+                                <Grid item xs={2}>
+                                    <InputField
+                                        fullWidth
+                                        value={order.orderQty}
+                                        label="Order quantity"
+                                        propertyName="Order qty"
+                                        onChange={handleFieldChange}
+                                        disabled={!editingAllowed || !creating}
+                                        type="number"
+                                        required
+                                    />
+                                </Grid>
+                            </>
+                        ))}
+                        {/* 
                         <Grid item xs={4}>
                             <TypeaheadTable
                                 table={nominalAccountsTable}

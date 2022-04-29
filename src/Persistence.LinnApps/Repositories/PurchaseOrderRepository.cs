@@ -43,7 +43,16 @@
             return this.serviceDbContext
                 .PurchaseOrders
                 .Include(o => o.Supplier)
+                .Include(o => o.RequestedBy)
+                .Include(o => o.EnteredBy)
+                .Include(o => o.AuthorisedBy)
+                .Include(o => o.DeliveryAddress).ThenInclude(a => a.FullAddress)
+                .Include(o => o.DocumentType)
+                .Include(o => o.OrderMethod)
+                .Include(o => o.Currency)
                 .Include(o => o.Details).ThenInclude(d => d.Part)
+                .Include(o => o.Details).ThenInclude(d => d.PurchaseDeliveries)
+                .Include(o => o.Details).ThenInclude(d => d.DeliveryConfirmedBy)
                 .First(o => o.OrderNumber == key);
         }
     }
