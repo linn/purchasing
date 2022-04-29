@@ -100,6 +100,7 @@
                            ExpenseAccount = resource.ExpenseAccount,
                            PaymentDays = resource.PaymentDays,
                            PaymentMethod = resource.PaymentMethod,
+                           Country = resource.Country,
                            PaysInFc = resource.PaysInFc,
                            AccountingCompany = resource.AccountingCompany,
                            ApprovedCarrier = resource.ApprovedCarrier,
