@@ -41,7 +41,9 @@ export default function partReducer(state = initialState, action) {
                 ...state,
                 supplier: {
                     ...state.supplier,
-                    supplierContacts: [...state.supplier.supplierContacts, action.payload]
+                    supplierContacts: state.supplier?.supplierContacts
+                        ? [...state.supplier?.supplierContacts, action.payload]
+                        : [action.payload]
                 }
             };
         default:
