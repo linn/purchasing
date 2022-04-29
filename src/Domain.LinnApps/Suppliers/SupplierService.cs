@@ -7,6 +7,7 @@
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
+    using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers.Exceptions;
@@ -41,6 +42,8 @@
 
         private readonly IRepository<Organisation, int> orgRepository;
 
+        private readonly ISupplierPack supplierPack;
+
         public SupplierService(
             IAuthorisationService authService,
             IRepository<Supplier, int> supplierRepository,
@@ -55,7 +58,8 @@
             IRepository<Person, int> personRepository,
             IRepository<SupplierContact, int> supplierContactRepository,
             IRepository<SupplierGroup, int> groupRepository,
-            IRepository<Organisation, int> orgRepository)
+            IRepository<Organisation, int> orgRepository,
+            ISupplierPack supplierPack)
         {
             this.authService = authService;
             this.supplierRepository = supplierRepository;
@@ -71,6 +75,7 @@
             this.supplierContactRepository = supplierContactRepository;
             this.groupRepository = groupRepository;
             this.orgRepository = orgRepository;
+            this.supplierPack = supplierPack;
         }
 
         public void UpdateSupplier(Supplier current, Supplier updated, IEnumerable<string> privileges)
@@ -168,6 +173,8 @@
             {
                 throw new UnauthorisedActionException("You are not authorised to create Suppliers");
             }
+
+            candidate.SupplierId = this.supplierPack.GetNextSupplierKey();
 
             candidate.InvoiceGoesTo = candidate.InvoiceGoesTo != null
                                            ? this.supplierRepository.FindById(candidate.InvoiceGoesTo.SupplierId)
