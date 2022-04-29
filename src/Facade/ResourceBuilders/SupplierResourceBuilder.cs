@@ -17,20 +17,16 @@
 
         private readonly IAuthorisationService authService;
 
-        private readonly IRepository<SupplierContact, int> supplierContactRepository;
-
         private readonly IBuilder<SupplierContact> supplierContactResourceBuilder;
 
         public SupplierResourceBuilder(
             IAuthorisationService authService,
             IBuilder<SupplierContact> supplierContactResourceBuilder,
-            IBuilder<Address> addressResourceBuilder,
-            IRepository<SupplierContact, int> supplierContactRepository)
+            IBuilder<Address> addressResourceBuilder)
         {
             this.authService = authService;
             this.addressResourceBuilder = addressResourceBuilder;
             this.supplierContactResourceBuilder = supplierContactResourceBuilder;
-            this.supplierContactRepository = supplierContactRepository;
         }
 
         public SupplierResource Build(Supplier entity, IEnumerable<string> claims)

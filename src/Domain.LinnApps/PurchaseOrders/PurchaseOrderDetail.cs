@@ -40,7 +40,7 @@
 
         public int OrderNumber { get; set; }
 
-        public ICollection<PurchaseOrderPosting> OrderPostings { get; set; }
+        public PurchaseOrderPosting OrderPosting { get; set; }
 
         public string OrderUnitOfMeasure { get; set; }
 

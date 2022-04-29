@@ -92,8 +92,8 @@ function POReqSearch({ print }) {
                         propertyName="reqNumber"
                         onChange={handleOptionsChange}
                     />
-                </Grid>
-                <Grid item xs={4}>
+                </Grid> 
+                            <Grid item xs={4}>
                     <InputField
                         fullWidth
                         value={options.part}

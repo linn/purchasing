@@ -7,6 +7,7 @@
     using Linn.Common.Facade;
     using Linn.Common.Resources;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
 
@@ -14,9 +15,18 @@
     {
         private readonly IAuthorisationService authService;
 
-        public PurchaseOrderResourceBuilder(IAuthorisationService authService)
+        private readonly IBuilder<LinnDeliveryAddress> deliveryAddressResourceBuilder;
+
+        private readonly IBuilder<PurchaseOrderDetail> detailResourceBuilder;
+
+        public PurchaseOrderResourceBuilder(
+            IAuthorisationService authService,
+            IBuilder<PurchaseOrderDetail> detailResourceBuilder,
+            IBuilder<LinnDeliveryAddress> deliveryAddressResourceBuilder)
         {
             this.authService = authService;
+            this.detailResourceBuilder = detailResourceBuilder;
+            this.deliveryAddressResourceBuilder = deliveryAddressResourceBuilder;
         }
 
         public PurchaseOrderResource Build(PurchaseOrder entity, IEnumerable<string> claims)
@@ -29,6 +39,7 @@
             return new PurchaseOrderResource
                        {
                            OrderNumber = entity.OrderNumber,
+                           Currency = new CurrencyResource { Code = entity.CurrencyCode, Name = entity.Currency?.Name },
                            Cancelled = entity.Cancelled,
                            DocumentType =
                                new DocumentTypeResource
@@ -36,8 +47,27 @@
                                        Name = entity.DocumentType?.Name, Description = entity.DocumentType?.Description
                                    },
                            OrderDate = entity.OrderDate,
+                           OrderMethod =
+                               new OrderMethodResource
+                                   {
+                                       Description = entity.OrderMethod?.Description, Name = entity.OrderMethodName
+                                   },
                            Overbook = entity.Overbook,
                            OverbookQty = entity.OverbookQty,
+                           Details = entity.Details?.Select(d => (PurchaseOrderDetailResource)this.detailResourceBuilder.Build(d, claims)),
+                           OrderContactName = entity.OrderContactName,
+                           ExchangeRate = entity.ExchangeRate,
+                           IssuePartsToSupplier = entity.IssuePartsToSupplier,
+                           DeliveryAddress = entity.DeliveryAddress != null ? (LinnDeliveryAddressResource)this.deliveryAddressResourceBuilder.Build(entity.DeliveryAddress, claims) : null,
+                           RequestedBy = new EmployeeResource { Id = entity.RequestedById, FullName = entity.RequestedBy?.FullName },
+                           EnteredBy = new EmployeeResource { Id = entity.EnteredById, FullName = entity.EnteredBy?.FullName },
+                           QuotationRef = entity.QuotationRef,
+                           AuthorisedBy = entity.AuthorisedById.HasValue ? new EmployeeResource { Id = (int) entity.AuthorisedById, FullName = entity.AuthorisedBy?.FullName } : null,
+                           SentByMethod = entity.SentByMethod,
+                           FilCancelled = entity.FilCancelled,
+                           Remarks = entity.Remarks,
+                           DateFilCancelled = entity.DateFilCancelled,
+                           PeriodFilCancelled = entity.PeriodFilCancelled,
                            Supplier = new SupplierResource
                                           {
                                               Id = entity.Supplier.SupplierId, Name = entity.Supplier.Name
