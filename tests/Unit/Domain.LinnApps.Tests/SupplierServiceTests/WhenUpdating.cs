@@ -64,7 +64,16 @@
                                    PaysInFc = "Y",
                                    ApprovedCarrier = "Y",
                                    AccountingCompany = "LINN",
-                                   VatNumber = "012345",
+                                   SupplierContacts = new List<SupplierContact>
+                                                          {
+                                                              new SupplierContact
+                                                                  {
+                                                                      IsMainInvoiceContact = "Y", 
+                                                                      IsMainOrderContact = "Y",
+                                                                      Person = new Person()
+                                                                  }
+                                                          },
+                                    VatNumber = "012345",
                                    PartCategory = this.partCategory,
                                    OrderHold = "Y",
                                    NotesForBuyer = "NOTES",

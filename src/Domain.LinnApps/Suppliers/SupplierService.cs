@@ -224,7 +224,7 @@
                     c.SupplierId = candidate.SupplierId;
                 }
 
-                candidate.SupplierContacts = candidate.SupplierContacts.ToList();
+                candidate.SupplierContacts = this.UpdateContacts(candidate.SupplierContacts);
             }
             
             ValidateFields(candidate);
@@ -310,6 +310,33 @@
                 errors.Add("Order Addressee");
             }
 
+            if (candidate.SupplierContacts == null)
+            {
+                errors.Add("Supplier Contacts is empty");
+            }
+            else
+            {
+                if (!candidate.SupplierContacts.Any(c => 
+                        !string.IsNullOrEmpty(c.IsMainInvoiceContact) && c.IsMainInvoiceContact.Equals("Y")))
+                {
+                    errors.Add("Main Invoice Contact");
+                }
+                else if (candidate.SupplierContacts.Count(x => x.IsMainInvoiceContact == "Y") > 1)
+                {
+                    errors.Add("Cannot have more than one Main Invoice Contact");
+                }
+
+                if (!candidate.SupplierContacts.Any(c =>
+                        !string.IsNullOrEmpty(c.IsMainOrderContact) && c.IsMainOrderContact.Equals("Y")))
+                {
+                    errors.Add("Main Order Contact");
+                }
+                else if (candidate.SupplierContacts.Count(x => x.IsMainOrderContact == "Y") > 1)
+                {
+                    errors.Add("Cannot have more than one Main Order Contact");
+                }
+            }
+
             if (errors.Any())
             {
                 var msg = errors
@@ -328,20 +355,9 @@
                 return null;
             }
 
-            var enumerable = supplierContacts.ToList();
-            if (enumerable.Count(x => x.IsMainOrderContact == "Y") > 1)
-            {
-                throw new SupplierException("Cannot have more than one Main Order Contact");
-            }
-
-            if (enumerable.Count(x => x.IsMainInvoiceContact == "Y") > 1)
-            {
-                throw new SupplierException("Cannot have more than one Main Invoice Contact");
-            }
-
             var result = new List<SupplierContact>();
 
-            foreach (var supplierContact in enumerable)
+            foreach (var supplierContact in supplierContacts)
             {
                 var existingSupplierContact = this.supplierContactRepository.FindById(supplierContact.ContactId);
 

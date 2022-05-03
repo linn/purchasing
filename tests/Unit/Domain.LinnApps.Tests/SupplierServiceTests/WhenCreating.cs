@@ -28,8 +28,17 @@
                                      PaymentDays = 1,
                                      PaymentMethod = "PAYMENT METHOD",
                                      AccountController = new Employee { Id = 1 },
-                                     OrderAddress = new Address { AddressId = 1, FullAddress = new FullAddress { Id = 1 } }
-                                 };
+                                     OrderAddress = new Address { AddressId = 1, FullAddress = new FullAddress { Id = 1 } },
+                                     SupplierContacts = new List<SupplierContact>
+                                                            {
+                                                                new SupplierContact
+                                                                    {
+                                                                        IsMainInvoiceContact = "Y", 
+                                                                        IsMainOrderContact = "Y",
+                                                                        Person = new Person { Id = 1 }
+                                                                    }
+                                                            }
+            };
 
             this.SupplierPack.GetNextSupplierKey().Returns(1);
             this.EmployeeRepository.FindById(1).Returns(new Employee { Id = 1 });
