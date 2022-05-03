@@ -7,10 +7,12 @@ import {
     Title,
     Loading,
     DatePicker,
+    ExportButton,
     ReportTable
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import queryString from 'query-string';
+import moment from 'moment';
 import history from '../../history';
 import config from '../../config';
 import { prefSupReceiptsReport } from '../../reportTypes';
@@ -35,6 +37,15 @@ function PrefSupReceiptsReport() {
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <Title text="Pref Sup Receipts Report" />
+                    <ExportButton
+                        href={`${
+                            config.appRoot
+                        }/purchasing/reports/pref-sup-receipts/export?fromDate=${moment(
+                            options.fromDate
+                        ).format('DD/MM/YYYY')}&toDate=${moment(options.toDate).format(
+                            'DD/MM/YYYY'
+                        )}`}
+                    />
                 </Grid>
 
                 <Grid item xs={3}>
