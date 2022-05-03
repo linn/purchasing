@@ -1088,6 +1088,7 @@
             var entity = builder.Entity<MrMaster>().ToTable("MR_MASTER").HasNoKey();
             entity.Property(e => e.JobRef).HasColumnName("JOBREF");
             entity.Property(e => e.RunDate).HasColumnName("RUNDATE");
+            entity.Property(e => e.RunLogIdCurrentlyInProgress).HasColumnName("RUNLOG_ID_IN_PROGRESS");
         }
 
         private void BuildLedgerPeriods(ModelBuilder builder)

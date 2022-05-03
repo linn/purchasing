@@ -48,11 +48,11 @@
         private async Task GetAllRunLogs(
             HttpRequest req,
             HttpResponse res,
-            string searchTerm,
+            string jobRef,
             IMaterialRequirementsPlanningFacadeService materialRequirementsPlanningFacadeService,
             IFacadeResourceFilterService<MrpRunLog, int, MrpRunLogResource, MrpRunLogResource, MaterialRequirementsSearchResource> mrpRunLogFacadeService)
         {
-            if (string.IsNullOrEmpty(searchTerm))
+            if (string.IsNullOrEmpty(jobRef))
             {
                 var result = mrpRunLogFacadeService.GetAll(req.HttpContext.GetPrivileges());
                 await res.Negotiate(result);
@@ -60,7 +60,7 @@
             else
             {
                 var result = mrpRunLogFacadeService.FindBy(
-                    new MaterialRequirementsSearchResource { JobRef = searchTerm },
+                    new MaterialRequirementsSearchResource { JobRef = jobRef },
                     req.HttpContext.GetPrivileges());
                 await res.Negotiate(result);
             }
