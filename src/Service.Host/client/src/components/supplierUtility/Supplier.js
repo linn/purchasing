@@ -92,7 +92,8 @@ function Supplier({ creating }) {
             orderHold: 'N',
             openedById: Number(currentUserNumber),
             openedByName: currentUserName,
-            vendorManagerId: 'A'
+            vendorManagerId: 'A',
+            supplierContacts: []
         }),
         [currentUserNumber, currentUserName]
     );
