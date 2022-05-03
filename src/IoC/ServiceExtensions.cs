@@ -112,14 +112,10 @@
         {
             return services.AddTransient<IPartSupplierService, PartSupplierService>()
                 .AddTransient<ISupplierService, SupplierService>()
-                .AddTransient<
-                    IAmazonSimpleEmailService>(
-                    x => new AmazonSimpleEmailServiceClient(x.GetService<AWSOptions>()?.Region))
+                .AddTransient<IAmazonSimpleEmailService>(x => new AmazonSimpleEmailServiceClient(x.GetService<AWSOptions>()?.Region))
                 .AddTransient<IEmailService>(x => new EmailService(x.GetService<IAmazonSimpleEmailService>()))
                 .AddTransient<ITemplateEngine, TemplateEngine>()
-                .AddTransient<
-                    IPdfService>(
-                    x => new PdfService(ConfigurationManager.Configuration["PDF_SERVICE_ROOT"], new HttpClient()))
+                .AddTransient<IPdfService>(x => new PdfService(ConfigurationManager.Configuration["PDF_SERVICE_ROOT"], new HttpClient()))
                 .AddTransient<IReportingHelper, ReportingHelper>()
                 .AddTransient<IPurchaseOrdersReportService, PurchaseOrdersReportService>()
                 .AddTransient<IPurchaseOrderService, PurchaseOrderService>()
@@ -144,9 +140,12 @@
                 .AddTransient<IForecastingService, ForecastingService>()
 
                 // external services
-                .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>().AddTransient<IAutocostPack, AutocostPack>()
-                .AddTransient<ICurrencyPack, CurrencyPack>().AddTransient<IPurchaseLedgerPack, PurchaseLedgerPack>()
-                .AddTransient<IPurchaseOrderReqsPack, PurchaseOrderReqsPack>().AddTransient<IMrpLoadPack, MrpLoadPack>()
+                .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
+                .AddTransient<IAutocostPack, AutocostPack>()
+                .AddTransient<ICurrencyPack, CurrencyPack>()
+                .AddTransient<IPurchaseLedgerPack, PurchaseLedgerPack>()
+                .AddTransient<IPurchaseOrderReqsPack, PurchaseOrderReqsPack>()
+                .AddTransient<IMrpLoadPack, MrpLoadPack>()
                 .AddTransient<IForecastingPack, ForecastingPack>()
                 .AddTransient<ISupplierPack, SupplierPack>();
         }
