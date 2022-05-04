@@ -27,9 +27,11 @@ function PrefSupReceiptsReport() {
         fromDate: queryOptions.fromDate ? new Date(queryOptions.fromDate) : new Date(),
         toDate: queryOptions.toDate ? new Date(queryOptions.toDate) : new Date()
     });
+    const [queryLaunched, setQueryLaunched] = useState(false);
 
     // if come from dashboard
-    if (queryOptions.fromDate && queryOptions.toDate) {
+    if (queryOptions.fromDate && queryOptions.toDate && !queryLaunched) {
+        setQueryLaunched(true);
         dispatch(
             prefSupReceiptsReportActions.fetchReport({
                 fromDate: options.fromDate.toISOString(),
