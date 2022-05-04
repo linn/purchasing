@@ -131,7 +131,7 @@
                            SupplierContacts = resource.SupplierContacts?.Select(c => new SupplierContact
                                                                           {
                                                                               SupplierId = resource.Id,
-                                                                              ContactId = c.Id > 0 ? c.Id : this.databaseService.GetIdSequence("CONT_SEQ"),
+                                                                              ContactId = c.Id > 0 ? c.Id : this.databaseService.GetNextVal("CONT_SEQ"),
                                                                               IsMainInvoiceContact = c.IsMainInvoiceContact,
                                                                               IsMainOrderContact = c.IsMainOrderContact,
                                                                               EmailAddress = c.EmailAddress,

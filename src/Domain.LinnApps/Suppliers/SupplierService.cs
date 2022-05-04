@@ -12,6 +12,8 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers.Exceptions;
 
+    using MoreLinq;
+
     public class SupplierService : ISupplierService
     {
         private readonly IAuthorisationService authService;
@@ -219,12 +221,23 @@
 
             if (candidate.SupplierContacts != null)
             {
-                foreach (var c in candidate.SupplierContacts)
-                {
-                    c.SupplierId = candidate.SupplierId;
-                }
 
-                candidate.SupplierContacts = this.UpdateContacts(candidate.SupplierContacts);
+                var contacts = candidate.SupplierContacts.Select(c => new SupplierContact
+                                                           {
+                                                               Comments = c.Comments,
+                                                               ContactId = c.ContactId,
+                                                               EmailAddress = c.EmailAddress,
+                                                               SupplierId = candidate.SupplierId,
+                                                               IsMainInvoiceContact = c.IsMainInvoiceContact,
+                                                               IsMainOrderContact = c.IsMainOrderContact,
+                                                               JobTitle = c.JobTitle,
+                                                               DateCreated = DateTime.Today,
+                                                               MobileNumber = c.MobileNumber,
+                                                               PhoneNumber = c.PhoneNumber,
+                                                               Person = c.Person
+                                                           });
+
+                candidate.SupplierContacts = this.UpdateContacts(contacts);
             }
             
             ValidateFields(candidate);
