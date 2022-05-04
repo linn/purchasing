@@ -34,7 +34,7 @@
                                        {
                                            ContactId = 1,
                                            IsMainInvoiceContact = "Y",
-                                           IsMainOrderContact = "N",
+                                           IsMainOrderContact = "Y",
                                            SupplierId = 1,
                                            Person = this.updatedPerson
             };

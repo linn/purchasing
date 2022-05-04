@@ -2,6 +2,7 @@
 {
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -42,6 +43,8 @@
 
         protected IRepository<Organisation, int> OrgRepository { get; set; }
 
+        protected ISupplierPack SupplierPack { get; set; }
+
         [SetUp]
         public void EstablishContext()
         {
@@ -59,6 +62,7 @@
             this.PersonRepository = Substitute.For<IRepository<Person, int>>();
             this.SupplierContactRepository = Substitute.For<IRepository<SupplierContact, int>>();
             this.OrgRepository = Substitute.For<IRepository<Organisation, int>>();
+            this.SupplierPack = Substitute.For<ISupplierPack>();
         }
     }
 }

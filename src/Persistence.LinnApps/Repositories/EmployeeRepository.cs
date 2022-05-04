@@ -16,7 +16,8 @@
 
         public override Employee FindById(int key)
         {
-            return this.FilterBy(e => e.Id == key).Include(e => e.PhoneListEntry).FirstOrDefault() ?? base.FindById(key);
+            return this.FilterBy(e => e.Id == key)
+                       .Include(e => e.PhoneListEntry).FirstOrDefault() ?? base.FindById(key);
         }
     }
 }
