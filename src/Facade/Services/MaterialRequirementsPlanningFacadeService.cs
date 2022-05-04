@@ -3,6 +3,7 @@
     using System.Collections.Generic;
 
     using Linn.Common.Facade;
+    using Linn.Common.Resources;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Resources;
 
@@ -22,7 +23,10 @@
             if (result.Success)
             {
                 return new SuccessResult<ProcessResultResource>(
-                    new ProcessResultResource(result.Success, result.Message) { ProcessHref = result.ProcessHref });
+                    new ProcessResultResource(result.Success, result.Message)
+                        {
+                            Links = new LinkResource[] { new LinkResource("status", result.ProcessHref) }
+                        });
             }
 
             return new BadRequestResult<ProcessResultResource>(result.Message);

@@ -130,8 +130,6 @@
 
             IEnumerable<WhatsInInspectionStockLocationsData> locationsData = null;
 
-            IEnumerable<WhatsInInspectionBackOrderData> backOrderData = null;
-
             if (includeFailedStock)
             {
                 locationsData = this.whatsInInspectionStockLocationsDataRepository
