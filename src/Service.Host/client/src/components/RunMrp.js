@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     Page,
-    //processSelectorHelpers,
+    processSelectorHelpers,
     itemSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
@@ -22,7 +22,7 @@ function RunMrp() {
     const mrMasterLoading = useSelector(state =>
         itemSelectorHelpers.getItemLoading(state.mrMaster)
     );
-    //const runMrpResult = useSelector(state => processSelectorHelpers.getData(state.runMrp));
+    const runMrpResult = useSelector(state => processSelectorHelpers.getData(state.runMrp));
 
     const dispatch = useDispatch();
     useEffect(() => dispatch(mrMasterActions.fetchByHref(mrMasterItemType.uri)), [dispatch]);
