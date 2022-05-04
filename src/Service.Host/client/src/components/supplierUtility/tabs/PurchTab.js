@@ -5,7 +5,6 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { Link as RouterLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-
 import {
     InputField,
     collectionSelectorHelpers,
@@ -13,9 +12,7 @@ import {
     Typeahead,
     Loading
 } from '@linn-it/linn-form-components-library';
-
 import suppliersActions from '../../../actions/suppliersActions';
-import currenciesActions from '../../../actions/currenciesActions';
 import supplierGroupsActions from '../../../actions/supplierGroupsActions';
 import partCategoriesActions from '../../../actions/partCategoriesActions';
 
@@ -35,10 +32,6 @@ function PurchTab({
     groupId
 }) {
     const reduxDispatch = useDispatch();
-    useEffect(() => {
-        reduxDispatch(currenciesActions.fetch());
-        reduxDispatch(supplierGroupsActions.fetch());
-    }, [reduxDispatch]);
 
     const searchSuppliers = searchTerm => reduxDispatch(suppliersActions.search(searchTerm));
     const suppliersSearchResults = useSelector(reduxState =>
@@ -70,6 +63,13 @@ function PurchTab({
     const supplierGroupsLoading = useSelector(reduxState =>
         collectionSelectorHelpers.getLoading(reduxState.supplierGroups)
     );
+
+    useEffect(() => {
+        if (!supplierGroups || supplierGroups.length === 0) {
+            reduxDispatch(supplierGroupsActions.fetch());
+        }
+    }, [reduxDispatch, supplierGroups]);
+
     if (supplierGroupsLoading) {
         return (
             <Grid container spacing={3}>
