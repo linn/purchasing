@@ -27,6 +27,18 @@ function PrefSupReceiptsReport() {
         fromDate: queryOptions.fromDate ? new Date(queryOptions.fromDate) : new Date(),
         toDate: queryOptions.toDate ? new Date(queryOptions.toDate) : new Date()
     });
+    const [queryLaunched, setQueryLaunched] = useState(false);
+
+    // if come from dashboard
+    if (queryOptions.fromDate && queryOptions.toDate && !queryLaunched) {
+        setQueryLaunched(true);
+        dispatch(
+            prefSupReceiptsReportActions.fetchReport({
+                fromDate: options.fromDate.toISOString(),
+                toDate: options.toDate.toISOString()
+            })
+        );
+    }
 
     const loading = useSelector(state => state[prefSupReceiptsReport.item]?.loading);
 
@@ -42,8 +54,8 @@ function PrefSupReceiptsReport() {
                             config.appRoot
                         }/purchasing/reports/pref-sup-receipts/export?fromDate=${moment(
                             options.fromDate
-                        ).format('DD/MM/YYYY')}&toDate=${moment(options.toDate).format(
-                            'DD/MM/YYYY'
+                        ).format('DD-MMM-YYYY')}&toDate=${moment(options.toDate).format(
+                            'DD-MMM-YYYY'
                         )}`}
                     />
                 </Grid>

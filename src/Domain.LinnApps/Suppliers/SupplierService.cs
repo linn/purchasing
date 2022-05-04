@@ -12,8 +12,6 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers.Exceptions;
 
-    using MoreLinq;
-
     public class SupplierService : ISupplierService
     {
         private readonly IAuthorisationService authService;
@@ -221,7 +219,6 @@
 
             if (candidate.SupplierContacts != null)
             {
-
                 var contacts = candidate.SupplierContacts.Select(c => new SupplierContact
                                                            {
                                                                Comments = c.Comments,
