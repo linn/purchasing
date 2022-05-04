@@ -55,12 +55,6 @@
         }
 
         [Test]
-        public void ShouldQuerySequence()
-        {
-            this.MockDatabaseService.Received().GetNextVal("SUPPLIER_SEQ");
-        }
-
-        [Test]
         public void ShouldReturnJsonBody()
         {
             var resultResource = this.Response.DeserializeBody<SupplierResource>();

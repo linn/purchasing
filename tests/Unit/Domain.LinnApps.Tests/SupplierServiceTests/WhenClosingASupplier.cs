@@ -40,6 +40,15 @@
                 LiveOnOracle = "Y",
                 OrderContactMethod = "EMAIL",
                 Planner = new Planner { Id = 1 },
+                SupplierContacts = new List<SupplierContact>
+                                       {
+                                           new SupplierContact
+                                               {
+                                                   IsMainInvoiceContact = "Y", 
+                                                   IsMainOrderContact = "Y",
+                                                   Person = new Person()
+                                               }
+                                       },
                 PaymentDays = 1,
                 PaymentMethod = "PAYMENT METHOD",
                 AccountingCompany = "LINN",

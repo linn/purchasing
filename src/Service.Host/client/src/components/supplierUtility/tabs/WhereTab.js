@@ -133,9 +133,11 @@ function WhereTab({
                     }}
                     label="Order Addressee"
                     modal
+                    openModalOnClick={false}
                     propertyName="orderAddressId"
                     items={addressesSearchResults}
                     value={orderAddressId}
+                    handleFieldChange={handleFieldChange}
                     loading={addressesSearchLoading}
                     fetchItems={searchAddresses}
                     links={false}
@@ -157,11 +159,23 @@ function WhereTab({
             </Grid>
             <Grid item xs={3} />
             <Grid item xs={4}>
-                <Button variant="outlined" onClick={() => setOrderAddressDialogOpen(true)}>
+                <Button variant="outlined" onClick={() => setInvoiceAddressDialogOpen(true)}>
                     Create New Invoice Address
                 </Button>
             </Grid>
-            <Grid item xs={8} />
+            <Grid item xs={4}>
+                <Button
+                    variant="outlined"
+                    disabled={!orderAddressId}
+                    onClick={() => {
+                        handleFieldChange('invoiceAddressId', orderAddressId);
+                        handleFieldChange('invoiceFullAddress', orderFullAddress);
+                    }}
+                >
+                    Copy Order Address
+                </Button>
+            </Grid>
+            <Grid item xs={4} />
 
             <Grid item xs={3}>
                 <Typeahead
@@ -169,8 +183,10 @@ function WhereTab({
                         handleFieldChange('invoiceAddressId', newValue.addressId);
                         handleFieldChange('invoiceFullAddress', newValue.fullAddress);
                     }}
+                    handleFieldChange={handleFieldChange}
                     label="Invoice Addressee"
                     modal
+                    openModalOnClick={false}
                     propertyName="invoiceAddressId"
                     items={addressesSearchResults}
                     value={invoiceAddressId}
