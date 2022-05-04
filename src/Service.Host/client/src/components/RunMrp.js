@@ -10,10 +10,11 @@ import {
 import Grid from '@mui/material/Grid';
 import { Button } from '@mui/material';
 import Typography from '@mui/material/Typography';
+import LinearProgress from '@mui/material/LinearProgress';
 import moment from 'moment';
 
 import history from '../history';
-
+import useInterval from '../helpers/useInterval';
 import mrMasterActions from '../actions/mrMasterActions';
 import mrpRunLogActions from '../actions/mrpRunLogActions';
 import runMrpActions from '../actions/runMrpActions';
@@ -74,6 +75,16 @@ function RunMrp() {
         }
     }, [mrpRunLog]);
 
+    useInterval(
+        () => {
+            dispatch(mrpRunLogActions.fetch(currentRunLogId));
+            if (mrpRunLog.jobRef) {
+                dispatch(mrMasterActions.fetchByHref(mrMasterItemType.uri));
+            }
+        },
+        mrMaster?.runLogIdCurrentlyInProgress ? 20000 : null
+    );
+
     const runMrp = () => {
         setRunMrpAllowed(false);
         dispatch(runMrpActions.requestProcessStart());
@@ -85,6 +96,11 @@ function RunMrp() {
                 <Grid item xs={12}>
                     <Typography variant="h6">Last MRP Run</Typography>
                 </Grid>
+                {mrMasterLoading && (
+                    <Grid item xs={12}>
+                        <Loading />
+                    </Grid>
+                )}
                 {mrMaster && !mrMasterLoading ? (
                     <>
                         <Grid item xs={2}>
@@ -102,12 +118,17 @@ function RunMrp() {
                             </Typography>
                         </Grid>
                         {mrMaster?.runLogIdCurrentlyInProgress && (
-                            <Grid item xs={12}>
-                                <Typography variant="subtitle1">
-                                    MRP Run in progress with runlog id {currentRunLogId}...
-                                </Typography>
-                                <Loading />
-                            </Grid>
+                            <>
+                                <Grid item xs={6}>
+                                    <Typography variant="subtitle1">
+                                        MRP Run in progress with runlog id {currentRunLogId}...
+                                    </Typography>
+                                    <LinearProgress
+                                        style={{ marginTop: '20px', marginBottom: '20px' }}
+                                    />
+                                </Grid>
+                                <Grid item xs={6} />
+                            </>
                         )}
                         {message && (
                             <Grid item xs={12}>
@@ -123,6 +144,11 @@ function RunMrp() {
                         Run New MRP
                     </Button>
                 </Grid>
+                {mrpRunLogLoading && (
+                    <Grid item xs={12}>
+                        <Loading />
+                    </Grid>
+                )}
                 {mrpRunLog && !mrpRunLogLoading ? (
                     <>
                         <Grid item xs={12}>
@@ -154,13 +180,9 @@ function RunMrp() {
                             </Typography>
                         </Grid>
                         <Grid item xs={2}>
-                            <Typography variant="subtitle2">JobRef: </Typography>
-                        </Grid>
-                        <Grid item xs={10}>
-                            <Typography variant="body1">{mrpRunLog.jobRef}</Typography>
-                        </Grid>
-                        <Grid item xs={2}>
-                            <Typography variant="subtitle2">Status: </Typography>
+                            <Typography variant="subtitle2">
+                                {mrMaster?.runLogIdCurrentlyInProgress ? 'Current ' : ''} Status:
+                            </Typography>
                         </Grid>
                         <Grid item xs={10}>
                             <Typography
@@ -170,6 +192,12 @@ function RunMrp() {
                             >
                                 {mrpRunLog.loadMessage}
                             </Typography>
+                        </Grid>
+                        <Grid item xs={2}>
+                            <Typography variant="subtitle2">JobRef: </Typography>
+                        </Grid>
+                        <Grid item xs={10}>
+                            <Typography variant="body1">{mrpRunLog.jobRef}</Typography>
                         </Grid>
                         <Grid item xs={2}>
                             <Typography variant="subtitle2">Finished Message: </Typography>
