@@ -1,6 +1,8 @@
 ﻿namespace Linn.Purchasing.Resources
 {
-    public class ProcessResultResource
+    using Linn.Common.Resources;
+
+    public class ProcessResultResource : HypermediaResource
     {
         public ProcessResultResource()
         {
@@ -15,7 +17,5 @@
         public bool Success { get; set; }
 
         public string Message { get; set; }
-
-        public string ProcessHref { get; set; }
     }
 }

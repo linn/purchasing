@@ -59,10 +59,11 @@ function RunMrp() {
 
     useEffect(() => {
         if (runMrpResult) {
-            if (runMrpResult.success && runMrpResult.processHref) {
+            const mrpRunStatusHref = utilities.getHref(runMrpResult, 'status');
+            if (runMrpResult.success && mrpRunStatusHref) {
                 setRunMrpAllowed(false);
                 dispatch(mrMasterActions.fetchByHref(mrMasterItemType.uri));
-                dispatch(mrpRunLogActions.fetchByHref(runMrpResult.processHref));
+                dispatch(mrpRunLogActions.fetchByHref(mrpRunStatusHref));
             } else {
                 setMessage(runMrpResult.message);
             }

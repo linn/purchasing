@@ -91,7 +91,7 @@ const stateWithMrpRunResult = {
         data: {
             success: true,
             message: 'MRP requested with run log id 11663',
-            processHref: '/purchasing/material-requirements/run-logs/11663'
+            links: [{ rel: 'status', href: '/purchasing/material-requirements/run-logs/11663' }]
         }
     }
 };
