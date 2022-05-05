@@ -26,6 +26,8 @@
             app.MapGet("/purchasing/material-requirements/run-logs/{id:int}", this.GetRunLogById);
             app.MapGet("/purchasing/material-requirements/run-mrp", this.GetApp);
             app.MapPost("/purchasing/material-requirements/run-mrp", this.RunMrp);
+
+            app.MapGet("/purchasing/material-requirements/used-on-report", this.GetUsedOnReport);
         }
 
         private async Task RunMrp(
@@ -75,6 +77,16 @@
         {
             var result = masterFacadeService.Get(req.HttpContext.GetPrivileges());
 
+            await res.Negotiate(result);
+        }
+
+        private async Task GetUsedOnReport(
+            HttpRequest req,
+            HttpResponse res,
+            IMrUsedOnReportFacadeService service,
+            string partNumber)
+        {
+            var result = service.GetReport(partNumber);
             await res.Negotiate(result);
         }
         

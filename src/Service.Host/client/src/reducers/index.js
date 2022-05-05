@@ -67,6 +67,7 @@ import mrpRunLog from './mrpRunLog';
 import runMrp from './runMrp';
 import mrMaster from './mrMaster';
 import applyForecastingPercentageChange from './applyForecastingPercentageChange';
+import mrUsedOnReport from './mrUsedOnReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -87,6 +88,7 @@ const rootReducer = history =>
         manufacturers,
         mrMaster,
         mrpRunLog,
+        mrUsedOnReport,
         nominals,
         openDebitNotes,
         orderMethods,

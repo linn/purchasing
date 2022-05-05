@@ -123,6 +123,8 @@
         
         public DbSet<CancelledOrderDetail> CancelledPurchaseOrderDetails { get; set; }
 
+        public DbSet<MrUsedOnRecord> MrUsedOnView { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -189,6 +191,7 @@
             this.BuildCancelledPODetails(builder);
             this.BuildPurchaseOrderPostings(builder);
             this.BuildNominalAccounts(builder);
+            this.BuildMrUsedOnView(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1158,6 +1161,19 @@
             entity.Property(d => d.AccountId).HasColumnName("NOMACC_ID").HasMaxLength(6);
             entity.HasOne(e => e.Department).WithMany().HasForeignKey("DEPARTMENT");
             entity.HasOne(e => e.Nominal).WithMany().HasForeignKey("NOMINAL");
+        }
+
+        private void BuildMrUsedOnView(ModelBuilder builder)
+        {
+            var entity = builder.Entity<MrUsedOnRecord>().ToTable("MR_USED_ON_VIEW").HasNoKey();
+            entity.Property(e => e.JobRef).HasColumnName("JOBREF").HasColumnType("VARCHAR2");
+            entity.Property(e => e.PartNumber).HasColumnName("UO_PART_NUMBER").HasColumnType("VARCHAR2");
+            entity.Property(e => e.Description).HasColumnName("PART_DESCRIPTION");
+            entity.Property(e => e.AssemblyUsedOn).HasColumnName("UO_ASSEMBLY_NUMBER");
+            entity.Property(e => e.AssemblyUsedOnDescription).HasColumnName("ASSEMBLY_DESCRIPTION");
+            entity.Property(e => e.AnnualUsage).HasColumnName("COMP_ANNUAL_USAGE");
+            entity.Property(e => e.QtyUsed).HasColumnName("UO_QTY");
+            entity.Property(e => e.TCoded).HasColumnName("UO_T_CODED");
         }
     }
 }
