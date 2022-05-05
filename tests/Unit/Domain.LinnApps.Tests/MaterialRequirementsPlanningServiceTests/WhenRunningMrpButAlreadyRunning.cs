@@ -8,7 +8,7 @@
 
     using NUnit.Framework;
 
-    public class WhenRunningMrpFails : ContextBase
+    public class WhenRunningMrpButAlreadyRunning : ContextBase
     {
         private ProcessResult result;
 
@@ -19,18 +19,28 @@
         {
             this.runLogId = 1234;
             this.MrpLoadPack.GetNextRunLogId().Returns(this.runLogId);
-            this.MasterRepository.GetRecord().Returns(new MrMaster { JobRef = "abc" });
-
-            this.MrpLoadPack.ScheduleMrp(this.runLogId).Returns(new ProcessResult(false, "not ok"));
+            this.MasterRepository.GetRecord()
+                .Returns(new MrMaster { JobRef = "abc", RunLogIdCurrentlyInProgress = 345 });
             this.result = this.Sut.RunMrp();
         }
 
         [Test]
-        public void ShouldReturnFailResult()
+        public void ShouldNotGetId()
+        {
+            this.MrpLoadPack.DidNotReceive().GetNextRunLogId();
+        }
+
+        [Test]
+        public void ShouldNotRunMrp()
+        {
+            this.MrpLoadPack.DidNotReceive().ScheduleMrp(Arg.Any<int>());
+        }
+
+        [Test]
+        public void ShouldReturnSuccessResult()
         {
             this.result.Success.Should().BeFalse();
-            this.result.Message.Should().Be("not ok");
-            this.result.ProcessHref.Should().BeNull();
+            this.result.Message.Should().Be("MRP is already in progress");
         }
     }
 }
