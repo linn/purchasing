@@ -11,6 +11,7 @@
     using Linn.Purchasing.Resources.MaterialRequirements;
     using Linn.Purchasing.Resources.SearchResources;
     using Linn.Purchasing.Service.Extensions;
+    using Linn.Purchasing.Service.Models;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
@@ -23,6 +24,7 @@
             app.MapGet("/purchasing/material-requirements/last-run", this.GetDetails);
             app.MapGet("/purchasing/material-requirements/run-logs", this.GetAllRunLogs);
             app.MapGet("/purchasing/material-requirements/run-logs/{id:int}", this.GetRunLogById);
+            app.MapGet("/purchasing/material-requirements/run-mrp", this.GetApp);
             app.MapPost("/purchasing/material-requirements/run-mrp", this.RunMrp);
         }
 
@@ -74,6 +76,11 @@
             var result = masterFacadeService.Get(req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
+        }
+        
+        private async Task GetApp(HttpRequest req, HttpResponse res)
+        {
+            await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
         }
     }
 }
