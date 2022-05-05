@@ -64,7 +64,6 @@ import sendPurchaseOrderReqFinanceEmail from './sendPurchaseOrderReqFinanceEmail
 import prefSupReceiptsReport from './prefSupReceiptsReport';
 import whatsInInspectionReport from './whatsInInspectionReport';
 import mrpRunLog from './mrpRunLog';
-import mrpRunLogs from './mrpRunLogs';
 import runMrp from './runMrp';
 import mrMaster from './mrMaster';
 import applyForecastingPercentageChange from './applyForecastingPercentageChange';
@@ -89,7 +88,6 @@ const rootReducer = history =>
         manufacturers,
         mrMaster,
         mrpRunLog,
-        mrpRunLogs,
         mrUsedOnReport,
         nominals,
         openDebitNotes,
