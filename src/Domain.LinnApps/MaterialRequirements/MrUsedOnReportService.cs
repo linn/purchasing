@@ -30,7 +30,8 @@
             var jobref = this.mrMaster.GetRecord().JobRef;
 
             var data = this.usedOnView.FilterBy(
-                x => x.JobRef.Equals(jobref) && x.PartNumber.Equals(partNumber)).ToList();
+                x => x.JobRef.Equals(jobref) && x.PartNumber.Equals(partNumber))
+                .OrderByDescending(x => x.AnnualUsage).ToList();
 
             var reportLayout = new SimpleGridLayout(
                 this.reportingHelper,

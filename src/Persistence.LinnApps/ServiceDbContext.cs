@@ -1166,8 +1166,8 @@
         private void BuildMrUsedOnView(ModelBuilder builder)
         {
             var entity = builder.Entity<MrUsedOnRecord>().ToTable("MR_USED_ON_VIEW").HasNoKey();
-            entity.Property(e => e.JobRef).HasColumnName("JOBREF");
-            entity.Property(e => e.PartNumber).HasColumnName("UO_PART_NUMBER");
+            entity.Property(e => e.JobRef).HasColumnName("JOBREF").HasColumnType("VARCHAR2");
+            entity.Property(e => e.PartNumber).HasColumnName("UO_PART_NUMBER").HasColumnType("VARCHAR2");
             entity.Property(e => e.Description).HasColumnName("PART_DESCRIPTION");
             entity.Property(e => e.AssemblyUsedOn).HasColumnName("UO_ASSEMBLY_NUMBER");
             entity.Property(e => e.AssemblyUsedOnDescription).HasColumnName("ASSEMBLY_DESCRIPTION");
