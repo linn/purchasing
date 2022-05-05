@@ -92,7 +92,7 @@
         }
 
         [Test]
-        public void ShouldOrderByAnnualUsage()
+        public void ShouldOrderByAnnualUsageDesc()
         {
             for (var i = 1; i < this.result.Rows.Count(); i++)
             {
