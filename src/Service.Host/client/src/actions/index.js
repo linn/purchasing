@@ -198,3 +198,7 @@ export const mrMasterActionTypes = makeActionTypes(itemTypes.mrMaster.actionType
 export const applyForecastingPercentageChangeActionTypes = makeProcessActionTypes(
     itemTypes.applyForecastingPercentageChange.actionType
 );
+
+export const mrUsedOnReportActionTypes = makeReportActionTypes(
+    reportTypes.mrusedOnReport.actionType
+);
