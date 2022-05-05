@@ -12,13 +12,9 @@
     {
         private ProcessResult result;
 
-        private int runLogId;
-
         [SetUp]
         public void SetUp()
         {
-            this.runLogId = 1234;
-            this.MrpLoadPack.GetNextRunLogId().Returns(this.runLogId);
             this.MasterRepository.GetRecord()
                 .Returns(new MrMaster { JobRef = "abc", RunLogIdCurrentlyInProgress = 345 });
             this.result = this.Sut.RunMrp();
