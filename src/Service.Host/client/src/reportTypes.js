@@ -66,7 +66,7 @@ export const whatsInInspectionReport = new ItemType(
     '/purchasing/reports/whats-in-inspection/report'
 );
 
-export const mrusedOnReport = new ItemType(
+export const mrUsedOnReport = new ItemType(
     'mrUsedOnReport',
     'MR_USED_ON_REPORT',
     '/purchasing/material-requirements/used-on-report'

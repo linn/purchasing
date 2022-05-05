@@ -199,5 +199,5 @@ export const applyForecastingPercentageChangeActionTypes = makeProcessActionType
 );
 
 export const mrUsedOnReportActionTypes = makeReportActionTypes(
-    reportTypes.mrusedOnReport.actionType
+    reportTypes.mrUsedOnReport.actionType
 );

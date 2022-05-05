@@ -7,7 +7,7 @@ import { Page, Loading, ReportTable, Title } from '@linn-it/linn-form-components
 import { useSelector, useDispatch } from 'react-redux';
 import history from '../../history';
 import config from '../../config';
-import { mrusedOnReport } from '../../reportTypes';
+import { mrUsedOnReport } from '../../reportTypes';
 import mrUsedOnReportActions from '../../actions/mrUsedOnReportActions';
 
 function MrUsedOnReport() {
@@ -19,9 +19,9 @@ function MrUsedOnReport() {
         dispatch(mrUsedOnReportActions.fetchReport({ partNumber }));
     }, [partNumber, dispatch]);
 
-    const loading = useSelector(state => state[mrusedOnReport.item]?.loading);
+    const loading = useSelector(state => state[mrUsedOnReport.item]?.loading);
 
-    const reportData = useSelector(state => state[mrusedOnReport.item]?.data);
+    const reportData = useSelector(state => state[mrUsedOnReport.item]?.data);
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
@@ -37,7 +37,7 @@ function MrUsedOnReport() {
                     <Grid item xs={12}>
                         <ReportTable
                             reportData={reportData}
-                            title={reportData.title}
+                            title={reportData?.title}
                             showTitle
                             showTotals
                             placeholderRows={4}
