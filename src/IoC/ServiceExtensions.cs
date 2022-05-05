@@ -105,7 +105,8 @@
                 .AddTransient<IWhatsInInspectionReportFacadeService, WhatsInInspectionReportFacadeService>()
                 .AddTransient<IPrefSupReceiptsReportFacadeService, PrefSupReceiptsReportFacadeService>()
                 .AddTransient<ISingleRecordFacadeResourceService<MrMaster, MrMasterResource>, MrMasterFacadeService>()
-                .AddTransient<IForecastingFacadeService, ForecastingFacadeService>();
+                .AddTransient<IForecastingFacadeService, ForecastingFacadeService>()
+                .AddTransient<IMrUsedOnReportFacadeService, MrUsedOnReportFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
@@ -138,6 +139,7 @@
                 .AddTransient<IWhatsInInspectionReportService, WhatsInInspectionReportService>()
                 .AddTransient<IPrefSupReceiptsReportService, PrefSupReceiptsReportService>()
                 .AddTransient<IForecastingService, ForecastingService>()
+                .AddTransient<IMrUsedOnReportService, MrUsedOnReportService>()
 
                 // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
