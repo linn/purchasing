@@ -113,7 +113,8 @@
                     r => new EntityFrameworkRepository<CancelledOrderDetail, int>(r.GetService<ServiceDbContext>()?.CancelledPurchaseOrderDetails))
                 .AddTransient<IQueryRepository<MrUsedOnRecord>, EntityFrameworkQueryRepository<MrUsedOnRecord>>(
                     r => new EntityFrameworkQueryRepository<MrUsedOnRecord>(r.GetService<ServiceDbContext>()
-                        ?.MrUsedOnView));
+                        ?.MrUsedOnView))
+                .AddTransient<IQueryRepository<MrHeader>, MrHeaderRepository>();
         }
     }
 }

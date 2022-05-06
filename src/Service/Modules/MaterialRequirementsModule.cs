@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     using Carter;
@@ -15,6 +16,7 @@
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Routing;
 
     public class MaterialRequirementsModule : ICarterModule
@@ -28,6 +30,8 @@
             app.MapPost("/purchasing/material-requirements/run-mrp", this.RunMrp);
 
             app.MapGet("/purchasing/material-requirements/used-on-report", this.GetUsedOnReport);
+         
+            app.MapPost("/purchasing/material-requirements", this.GetMaterialRequirements);
         }
 
         private async Task RunMrp(
@@ -93,6 +97,17 @@
         private async Task GetApp(HttpRequest req, HttpResponse res)
         {
             await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
+        }
+
+        private async Task GetMaterialRequirements(
+            HttpRequest req,
+            HttpResponse res,
+            IMaterialRequirementsReportFacadeService facadeService,
+            MrRequestResource request)
+        {
+            var result = facadeService.GetMaterialRequirements(request, req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
         }
     }
 }
