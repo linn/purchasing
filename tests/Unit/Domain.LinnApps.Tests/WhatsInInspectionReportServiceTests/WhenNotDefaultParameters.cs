@@ -38,7 +38,6 @@
         [Test]
         public void ShouldNotIncludeFinishedGoods()
         {
-            // PART D has no OrdersData entry
             this.result.PartsInInspection.Count().Should().Be(2);
             Assert.IsFalse(this.result.PartsInInspection.Any(x => x.PartNumber.Equals("F")));
         }
