@@ -11,6 +11,7 @@
     using Linn.Purchasing.Resources.MaterialRequirements;
     using Linn.Purchasing.Resources.SearchResources;
     using Linn.Purchasing.Service.Extensions;
+    using Linn.Purchasing.Service.Models;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
@@ -23,7 +24,10 @@
             app.MapGet("/purchasing/material-requirements/last-run", this.GetDetails);
             app.MapGet("/purchasing/material-requirements/run-logs", this.GetAllRunLogs);
             app.MapGet("/purchasing/material-requirements/run-logs/{id:int}", this.GetRunLogById);
+            app.MapGet("/purchasing/material-requirements/run-mrp", this.GetApp);
             app.MapPost("/purchasing/material-requirements/run-mrp", this.RunMrp);
+
+            app.MapGet("/purchasing/material-requirements/used-on-report", this.GetUsedOnReport);
         }
 
         private async Task RunMrp(
@@ -48,11 +52,11 @@
         private async Task GetAllRunLogs(
             HttpRequest req,
             HttpResponse res,
-            string searchTerm,
+            string jobRef,
             IMaterialRequirementsPlanningFacadeService materialRequirementsPlanningFacadeService,
             IFacadeResourceFilterService<MrpRunLog, int, MrpRunLogResource, MrpRunLogResource, MaterialRequirementsSearchResource> mrpRunLogFacadeService)
         {
-            if (string.IsNullOrEmpty(searchTerm))
+            if (string.IsNullOrEmpty(jobRef))
             {
                 var result = mrpRunLogFacadeService.GetAll(req.HttpContext.GetPrivileges());
                 await res.Negotiate(result);
@@ -60,7 +64,7 @@
             else
             {
                 var result = mrpRunLogFacadeService.FindBy(
-                    new MaterialRequirementsSearchResource { JobRef = searchTerm },
+                    new MaterialRequirementsSearchResource { JobRef = jobRef },
                     req.HttpContext.GetPrivileges());
                 await res.Negotiate(result);
             }
@@ -74,6 +78,21 @@
             var result = masterFacadeService.Get(req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
+        }
+
+        private async Task GetUsedOnReport(
+            HttpRequest req,
+            HttpResponse res,
+            IMrUsedOnReportFacadeService service,
+            string partNumber)
+        {
+            var result = service.GetReport(partNumber);
+            await res.Negotiate(result);
+        }
+        
+        private async Task GetApp(HttpRequest req, HttpResponse res)
+        {
+            await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
         }
     }
 }

@@ -24,10 +24,6 @@ function WhoseTab({
     plannerId
 }) {
     const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(plannersActions.fetch());
-        dispatch(vendorManagersActions.fetch());
-    }, [dispatch]);
 
     const searchEmployees = searchTerm => dispatch(employeesActions.search(searchTerm));
     const employeesSearchResults = useSelector(state =>
@@ -46,6 +42,16 @@ function WhoseTab({
     const plannersLoading = useSelector(state =>
         collectionSelectorHelpers.getLoading(state.planners)
     );
+
+    useEffect(() => {
+        if (!planners || planners.length === 0) {
+            dispatch(plannersActions.fetch());
+        }
+        if (!planners || planners.length === 0) {
+            dispatch(vendorManagersActions.fetch());
+        }
+    }, [dispatch, planners, vendorManagers]);
+
     if (plannersLoading || vendorManagersLoading) {
         return <Loading />;
     }

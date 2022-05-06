@@ -1,6 +1,16 @@
 const initialState = { supplier: {} };
 
 export default function partReducer(state = initialState, action) {
+    const isMainOrderContact = state.supplier?.supplierContacts?.some(
+        x => x.isMainOrderContact === 'Y'
+    )
+        ? 'N'
+        : 'Y';
+    const isMainInvoiceContact = state.supplier?.supplierContacts?.some(
+        x => x.isMainInvoiceContact === 'Y'
+    )
+        ? 'N'
+        : 'Y';
     switch (action.type) {
         case 'initialise':
             return { ...state, supplier: action.payload };
@@ -41,7 +51,16 @@ export default function partReducer(state = initialState, action) {
                 ...state,
                 supplier: {
                     ...state.supplier,
-                    supplierContacts: [...state.supplier.supplierContacts, action.payload]
+                    supplierContacts: state.supplier?.supplierContacts
+                        ? [
+                              ...state.supplier?.supplierContacts,
+                              {
+                                  ...action.payload,
+                                  isMainOrderContact,
+                                  isMainInvoiceContact
+                              }
+                          ]
+                        : [{ ...action.payload, isMainOrderContact, isMainInvoiceContact }]
                 }
             };
         default:

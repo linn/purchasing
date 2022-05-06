@@ -124,6 +124,8 @@
         public DbSet<CancelledOrderDetail> CancelledPurchaseOrderDetails { get; set; }
 
         public DbSet<StockLocator> StockLocators { get; set; }
+        
+        public DbSet<MrUsedOnRecord> MrUsedOnView { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -192,6 +194,7 @@
             this.BuildPurchaseOrderPostings(builder);
             this.BuildNominalAccounts(builder);
             this.BuildStockLocators(builder);
+            this.BuildMrUsedOnView(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1091,6 +1094,7 @@
             var entity = builder.Entity<MrMaster>().ToTable("MR_MASTER").HasNoKey();
             entity.Property(e => e.JobRef).HasColumnName("JOBREF");
             entity.Property(e => e.RunDate).HasColumnName("RUNDATE");
+            entity.Property(e => e.RunLogIdCurrentlyInProgress).HasColumnName("RUNLOG_ID_IN_PROGRESS");
         }
 
         private void BuildLedgerPeriods(ModelBuilder builder)
@@ -1170,6 +1174,19 @@
             entity.Property(d => d.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
             entity.Property(d => d.State).HasColumnName("STATE").HasColumnType("VARCHAR2");
             entity.Property(d => d.Qty).HasColumnName("QTY");
+        }
+        
+        private void BuildMrUsedOnView(ModelBuilder builder)
+        {
+            var entity = builder.Entity<MrUsedOnRecord>().ToTable("MR_USED_ON_VIEW").HasNoKey();
+            entity.Property(e => e.JobRef).HasColumnName("JOBREF").HasColumnType("VARCHAR2");
+            entity.Property(e => e.PartNumber).HasColumnName("UO_PART_NUMBER").HasColumnType("VARCHAR2");
+            entity.Property(e => e.Description).HasColumnName("PART_DESCRIPTION");
+            entity.Property(e => e.AssemblyUsedOn).HasColumnName("UO_ASSEMBLY_NUMBER");
+            entity.Property(e => e.AssemblyUsedOnDescription).HasColumnName("ASSEMBLY_DESCRIPTION");
+            entity.Property(e => e.AnnualUsage).HasColumnName("COMP_ANNUAL_USAGE");
+            entity.Property(e => e.QtyUsed).HasColumnName("UO_QTY");
+            entity.Property(e => e.TCoded).HasColumnName("UO_T_CODED");
         }
     }
 }

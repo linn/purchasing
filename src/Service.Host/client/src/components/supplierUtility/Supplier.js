@@ -86,12 +86,14 @@ function Supplier({ creating }) {
             liveOnOracle: 'Y',
             expenseAccount: 'N',
             currencyCode: 'GBP',
+            paysInFc: 'N',
             approvedCarrier: 'N',
             paymentMethod: 'CHEQUE',
             orderHold: 'N',
             openedById: Number(currentUserNumber),
             openedByName: currentUserName,
-            vendorManagerId: 'A'
+            vendorManagerId: 'A',
+            supplierContacts: []
         }),
         [currentUserNumber, currentUserName]
     );
@@ -123,7 +125,15 @@ function Supplier({ creating }) {
         if (propertyName === 'plannerId' || propertyName === 'groupId') {
             formatted = Number(newValue);
         }
+
         dispatch({ type: 'fieldChange', fieldName: propertyName, payload: formatted });
+        if (propertyName === 'currencyCode') {
+            if (newValue === 'GBP') {
+                dispatch({ type: 'fieldChange', fieldName: 'paysInFc', payload: 'N' });
+            } else {
+                dispatch({ type: 'fieldChange', fieldName: 'paysInFc', payload: 'A' });
+            }
+        }
     };
 
     const [holdReason, setHoldReason] = useState('');

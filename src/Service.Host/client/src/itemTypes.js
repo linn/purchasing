@@ -218,12 +218,6 @@ export const mrpRunLog = new ItemType(
     '/purchasing/material-requirements/run-logs'
 );
 
-export const mrpRunLogs = new ItemType(
-    'mrpRunLogs',
-    'MRP_RUN_LOGS',
-    '/purchasing/material-requirements/run-logs'
-);
-
 export const runMrp = new ItemType(
     'runMrp',
     'RUN_MRP',

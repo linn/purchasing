@@ -189,7 +189,6 @@ export const whatsInInspectionReportActionTypes = makeReportActionTypes(
 );
 
 export const mrpRunLogActionTypes = makeActionTypes(itemTypes.mrpRunLog.actionType, true);
-export const mrpRunLogsActionTypes = makeActionTypes(itemTypes.mrpRunLogs.actionType, false);
 
 export const runMrpActionTypes = makeProcessActionTypes(itemTypes.runMrp.actionType);
 
@@ -197,4 +196,8 @@ export const mrMasterActionTypes = makeActionTypes(itemTypes.mrMaster.actionType
 
 export const applyForecastingPercentageChangeActionTypes = makeProcessActionTypes(
     itemTypes.applyForecastingPercentageChange.actionType
+);
+
+export const mrUsedOnReportActionTypes = makeReportActionTypes(
+    reportTypes.mrUsedOnReport.actionType
 );
