@@ -52,7 +52,11 @@
                 .Include(o => o.Currency)
                 .Include(o => o.Details).ThenInclude(d => d.Part)
                 .Include(o => o.Details).ThenInclude(d => d.PurchaseDeliveries)
-                .Include(o => o.Details).ThenInclude(d => d.DeliveryConfirmedBy)
+                .Include(o => o.Details).ThenInclude(d => d.OrderPosting)
+                .ThenInclude(p => p.NominalAccount).ThenInclude(n => n.Nominal)
+                .Include(o => o.Details).ThenInclude(d => d.OrderPosting)
+                .ThenInclude(p => p.NominalAccount).ThenInclude(n => n.Department)
+                //.Include(o => o.Details).ThenInclude(d => d.DeliveryConfirmedBy)
                 .First(o => o.OrderNumber == key);
         }
     }

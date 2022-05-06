@@ -1106,7 +1106,7 @@
             entity.Property(d => d.StartsOn).HasColumnName("LINN_WEEK_START_DATE");
             entity.Property(d => d.EndsOn).HasColumnName("LINN_WEEK_END_DATE");
         }
-    
+
         private void BuildCancelledPODetails(ModelBuilder builder)
         {
             var entity = builder.Entity<CancelledOrderDetail>().ToTable("PL_CANCELLED_DETAILS");
@@ -1154,9 +1154,11 @@
         {
             var entity = builder.Entity<NominalAccount>().ToTable("NOMINAL_ACCOUNTS");
             entity.HasKey(e => e.AccountId);
-            entity.Property(d => d.AccountId).HasColumnName("NOMACC_ID").HasMaxLength(6);
-            entity.HasOne(e => e.Department).WithMany().HasForeignKey("DEPARTMENT");
-            entity.HasOne(e => e.Nominal).WithMany().HasForeignKey("NOMINAL");
+            entity.Property(e => e.AccountId).HasColumnName("NOMACC_ID").HasMaxLength(6);
+            entity.Property(e => e.DepartmentCode).HasColumnName("DEPARTMENT").HasMaxLength(6);
+            entity.Property(e => e.NominalCode).HasColumnName("NOMINAL").HasMaxLength(6);
+            entity.HasOne(e => e.Department).WithMany(x => x.NominalAccounts).HasForeignKey(ac => ac.DepartmentCode);
+            entity.HasOne(e => e.Nominal).WithMany(x => x.NominalAccounts).HasForeignKey(ac => ac.NominalCode);
         }
     }
 }
