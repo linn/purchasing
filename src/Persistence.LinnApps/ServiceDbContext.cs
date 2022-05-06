@@ -123,6 +123,8 @@
         
         public DbSet<CancelledOrderDetail> CancelledPurchaseOrderDetails { get; set; }
 
+        public DbSet<StockLocator> StockLocators { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -189,6 +191,7 @@
             this.BuildCancelledPODetails(builder);
             this.BuildPurchaseOrderPostings(builder);
             this.BuildNominalAccounts(builder);
+            this.BuildStockLocators(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1157,6 +1160,16 @@
             entity.Property(d => d.AccountId).HasColumnName("NOMACC_ID").HasMaxLength(6);
             entity.HasOne(e => e.Department).WithMany().HasForeignKey("DEPARTMENT");
             entity.HasOne(e => e.Nominal).WithMany().HasForeignKey("NOMINAL");
+        }
+
+        private void BuildStockLocators(ModelBuilder builder)
+        {
+            var entity = builder.Entity<StockLocator>().ToTable("STOCK_LOCATORS");
+            entity.HasKey(e => e.Id);
+            entity.Property(d => d.Id).HasColumnName("STOCK_LOCATOR_ID");
+            entity.Property(d => d.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
+            entity.Property(d => d.State).HasColumnName("STATE").HasColumnType("VARCHAR2");
+            entity.Property(d => d.Qty).HasColumnName("QTY");
         }
     }
 }

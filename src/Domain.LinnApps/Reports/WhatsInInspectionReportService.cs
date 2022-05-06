@@ -18,6 +18,8 @@
 
         private readonly IQueryRepository<WhatsInInspectionBackOrderData> whatsInInspectionBackOrderDataRepository;
 
+        private readonly IQueryRepository<StockLocator> stockLocatorRepository;
+
         private readonly IReportingHelper reportingHelper;
 
         public WhatsInInspectionReportService(
@@ -25,12 +27,14 @@
             IQueryRepository<WhatsInInspectionPurchaseOrdersData> whatsInInspectionPurchaseOrdersDataRepository,
             IQueryRepository<WhatsInInspectionStockLocationsData> whatsInInspectionStockLocationsDataRepository,
             IQueryRepository<WhatsInInspectionBackOrderData> whatsInInspectionBackOrderDataRepository,
+            IQueryRepository<StockLocator> stockLocatorRepository,
             IReportingHelper reportingHelper)
         {
             this.whatsInInspectionRepository = whatsInInspectionRepository;
             this.whatsInInspectionPurchaseOrdersDataRepository = whatsInInspectionPurchaseOrdersDataRepository;
             this.whatsInInspectionStockLocationsDataRepository = whatsInInspectionStockLocationsDataRepository;
             this.whatsInInspectionBackOrderDataRepository = whatsInInspectionBackOrderDataRepository;
+            this.stockLocatorRepository = stockLocatorRepository;
             this.reportingHelper = reportingHelper;
         }
 
@@ -85,7 +89,9 @@
                                                         Description = p.Description,
                                                         MinDate = p.MinDate,
                                                         OurUnitOfMeasure = p.OurUnitOfMeasure,
-                                                        QtyInStock = p.QtyInStock,
+                                                        QtyInStock = this.stockLocatorRepository
+                                                            .FilterBy(x => x.PartNumber.Equals(p.PartNumber)
+                                                                           && x.State.Equals("STORES")).Sum(x => x.Qty),
                                                         Batch = locationsData.Where(x => x.PartNumber
                                                             .Equals(p.PartNumber)).OrderBy(l => l.StockRotationDate).First().Batch,
                                                         QtyInInspection = p.QtyInInspection,
@@ -135,12 +141,12 @@
             if (includeFailedStock)
             {
                 locationsData = this.whatsInInspectionStockLocationsDataRepository
-                    .FilterBy(d => d.State.Equals("QC") || d.State.Equals("FAIL")).ToList();
+                    .FilterBy(d => d.State.Equals("QC") || d.State.Equals("FAIL"));
             }
             else
             {
                 locationsData = this.whatsInInspectionStockLocationsDataRepository
-                    .FilterBy(d => d.State.Equals("QC")).ToList();
+                    .FilterBy(d => d.State.Equals("QC"));
             }
 
             var reportLayout = new SimpleGridLayout(
@@ -214,7 +220,9 @@
                         {
                             RowId = currentRowId,
                             ColumnId = "QtyInStock",
-                            Value = line.QtyInStock
+                            Value = this.stockLocatorRepository
+                                .FilterBy(x => x.PartNumber.Equals(line.PartNumber) 
+                                               && x.State.Equals("STORES")).Sum(x => x.Qty)
                         });
                 values.Add(
                     new CalculationValueModel
