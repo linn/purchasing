@@ -51,6 +51,8 @@
 
         protected IEnumerable<WhatsInInspectionBackOrderData> BackOrderData { get; private set; }
 
+        protected IQueryRepository<StockLocator> StockLocatorRepository;
+
         [SetUp]
         public void SetUpContext()
         {
@@ -62,6 +64,7 @@
                 Substitute.For<IQueryRepository<WhatsInInspectionStockLocationsData>>();
             this.WhatsInInspectionBackOrderDataRepository =
                 Substitute.For<IQueryRepository<WhatsInInspectionBackOrderData>>();
+            this.StockLocatorRepository = Substitute.For<IQueryRepository<StockLocator>>();
 
             this.PartsInInspections = new List<PartsInInspection>
                             {
@@ -72,7 +75,7 @@
                                         OurUnitOfMeasure = "ONES",
                                         QtyInStock = 1,
                                         QtyInInspection = 1,
-                                        RawOrFinished = "FG",
+                                        RawOrFinished = "F",
                                         MinDate = new DateTime(1995, 3, 28)
                                     },
                                 new PartsInInspection
@@ -82,7 +85,7 @@
                                         OurUnitOfMeasure = "ONES",
                                         QtyInStock = 1,
                                         QtyInInspection = 1,
-                                        RawOrFinished = "FG",
+                                        RawOrFinished = "F",
                                         MinDate = new DateTime(1993, 3, 28)
                                     },
                                 new PartsInInspection
@@ -92,7 +95,7 @@
                                         OurUnitOfMeasure = "ONES",
                                         QtyInStock = 1,
                                         QtyInInspection = 1,
-                                        RawOrFinished = "RM",
+                                        RawOrFinished = "R",
                                         MinDate = new DateTime(1999, 3, 28)
                                     },
                                 new PartsInInspection
@@ -102,7 +105,7 @@
                                         OurUnitOfMeasure = "ONES",
                                         QtyInStock = 1,
                                         QtyInInspection = 1,
-                                        RawOrFinished = "RM",
+                                        RawOrFinished = "R",
                                         MinDate = new DateTime(2007, 3, 28)
                                     }
                             };
@@ -203,6 +206,7 @@
                 this.WhatsInInspectionPurchaseOrdersDataRepository,
                 this.WhatsInInspectionStockLocationsDataRepository,
                 this.WhatsInInspectionBackOrderDataRepository,
+                this.StockLocatorRepository,
                 this.ReportingHelper);
         }
     }

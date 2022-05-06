@@ -39,6 +39,7 @@
         }
 
         public WhatsInInspectionReport GetReport(
+            bool showGoodStockQty = false,
             bool includePartsWithNoOrderNumber = false,
             bool showStockLocations = true,
             bool includeFailedStock = false,
@@ -89,9 +90,9 @@
                                                         Description = p.Description,
                                                         MinDate = p.MinDate,
                                                         OurUnitOfMeasure = p.OurUnitOfMeasure,
-                                                        QtyInStock = this.stockLocatorRepository
+                                                        QtyInStock = showGoodStockQty ? this.stockLocatorRepository
                                                             .FilterBy(x => x.PartNumber.Equals(p.PartNumber)
-                                                                           && x.State.Equals("STORES")).Sum(x => x.Qty),
+                                                                           && x.State.Equals("STORES")).Sum(x => x.Qty) : null,
                                                         Batch = locationsData.Where(x => x.PartNumber
                                                             .Equals(p.PartNumber)).OrderBy(l => l.StockRotationDate).First().Batch,
                                                         QtyInInspection = p.QtyInInspection,
@@ -122,6 +123,7 @@
         }
 
         public ResultsModel GetTopLevelReport(
+            bool showGoodStockQty = false,
             bool includePartsWithNoOrderNumber = false,
             bool includeFailedStock = false,
             bool includeFinishedGoods = true)

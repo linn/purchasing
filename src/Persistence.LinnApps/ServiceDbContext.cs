@@ -120,7 +120,7 @@
         public DbSet<LedgerPeriod> LedgerPeriods { get; set; }
 
         public DbSet<LinnWeek> LinnWeeks { get; set; }
-        
+
         public DbSet<CancelledOrderDetail> CancelledPurchaseOrderDetails { get; set; }
 
         public DbSet<StockLocator> StockLocators { get; set; }
@@ -985,7 +985,7 @@
         {
             var e = builder.Entity<PartsInInspectionExcludingFails>().ToView("WHATS_IN_INSP_EXCL_FAIL_VIEW");
             e.HasNoKey();
-            e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER");
+            e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
             e.Property(m => m.Description).HasColumnName("DESCRIPTION");
             e.Property(m => m.OurUnitOfMeasure).HasColumnName("OUR_UNIT_OF_MEASURE");
             e.Property(m => m.QtyInStock).HasColumnName("QTY_IN_STOCK");
@@ -998,7 +998,7 @@
         {
             var e = builder.Entity<PartsInInspectionIncludingFails>().ToView("WHATS_IN_INSP_INCL_FAIL_VIEW");
             e.HasNoKey();
-            e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER");
+            e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
             e.Property(m => m.Description).HasColumnName("DESCRIPTION");
             e.Property(m => m.OurUnitOfMeasure).HasColumnName("OUR_UNIT_OF_MEASURE");
             e.Property(m => m.QtyInStock).HasColumnName("QTY_IN_STOCK");
@@ -1026,8 +1026,8 @@
         {
             var e = builder.Entity<WhatsInInspectionStockLocationsData>().ToView("WHATS_IN_INSP_ST_LOC_VIEW");
             e.HasNoKey();
-            e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER");
-            e.Property(m => m.State).HasColumnName("STATE");
+            e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
+            e.Property(m => m.State).HasColumnName("STATE").HasColumnType("VARCHAR2");
             e.Property(m => m.Batch).HasColumnName("BATCH");
             e.Property(m => m.Qty).HasColumnName("QTY");
             e.Property(m => m.Location).HasColumnName("LOC");
@@ -1039,7 +1039,7 @@
         {
             var e = builder.Entity<WhatsInInspectionBackOrderData>().ToView("WHATS_IN_INSP_BACK_ORDER_VIEW");
             e.HasNoKey();
-            e.Property(m => m.ArticleNumber).HasColumnName("ARTICLE_NUMBER");
+            e.Property(m => m.ArticleNumber).HasColumnName("ARTICLE_NUMBER").HasColumnType("VARCHAR2");
             e.Property(m => m.Story).HasColumnName("STORY");
             e.Property(m => m.QtyInInspection).HasColumnName("QTY_IN_INSPECTION");
             e.Property(m => m.QtyNeeded).HasColumnName("QTY_NEEDED");
@@ -1109,7 +1109,7 @@
             entity.Property(d => d.StartsOn).HasColumnName("LINN_WEEK_START_DATE");
             entity.Property(d => d.EndsOn).HasColumnName("LINN_WEEK_END_DATE");
         }
-    
+
         private void BuildCancelledPODetails(ModelBuilder builder)
         {
             var entity = builder.Entity<CancelledOrderDetail>().ToTable("PL_CANCELLED_DETAILS");
