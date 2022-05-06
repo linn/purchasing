@@ -115,7 +115,7 @@
                         {
                             RowId = currentRowId,
                             ColumnId = "DateBooked",
-                            TextDisplay = datum.DateBooked.ToShortDateString()
+                            TextDisplay = datum.DateBooked.ToString("dd/MM/yyyy")
                         });
                 values.Add(
                     new CalculationValueModel

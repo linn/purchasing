@@ -8,6 +8,7 @@
     public interface IWhatsInInspectionReportFacadeService
     {
         IResult<WhatsInInspectionReportResource> GetReport(
+            bool showGoodStockQty = false,
             bool includePartsWithNoOrderNumber = false,
             bool showStockLocations = true,
             bool includeFailedStock = false,
@@ -16,6 +17,7 @@
             bool showOrders = true);
 
         IEnumerable<IEnumerable<string>> GetTopLevelExport(
+            bool showGoodStockQty = false,
             bool includePartsWithNoOrderNumber = false,
             bool includeFailedStock = false,
             bool includeFinishedGoods = true);
