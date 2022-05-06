@@ -129,6 +129,7 @@
             bool includeFinishedGoods = true)
         {
             var data = this.GetReport(
+                showGoodStockQty,
                 includePartsWithNoOrderNumber,
                 true,
                 includeFailedStock,
@@ -156,7 +157,15 @@
                 CalculationValueModelType.Value,
                 null,
                 $"Orders Breakdown");
-
+            if (showGoodStockQty)
+            {
+                reportLayout.AddColumnComponent(
+                    null,
+                    new List<AxisDetailsModel>
+                        {
+                            new AxisDetailsModel("QtyInStock", "Qty In Stock", GridDisplayType.Value) { DecimalPlaces = 2 },
+                        });
+            }
             reportLayout.AddColumnComponent(
                 null,
                 new List<AxisDetailsModel>
@@ -166,7 +175,6 @@
                         new AxisDetailsModel("Batch", "Batch", GridDisplayType.TextValue),
                         new AxisDetailsModel("Date", "Date", GridDisplayType.TextValue),
                         new AxisDetailsModel("Units", "Units",  GridDisplayType.TextValue),
-                        new AxisDetailsModel("QtyInStock", "Qty In Stock", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new AxisDetailsModel("QtyInInspection", "Qty In Inspection", GridDisplayType.Value) { DecimalPlaces = 2 }
                     });
 
@@ -217,15 +225,18 @@
                         ColumnId = "Units",
                         TextDisplay = line.OurUnitOfMeasure
                     });
-                values.Add(
-                    new CalculationValueModel
-                        {
-                            RowId = currentRowId,
-                            ColumnId = "QtyInStock",
-                            Value = this.stockLocatorRepository
-                                .FilterBy(x => x.PartNumber.Equals(line.PartNumber) 
-                                               && x.State.Equals("STORES")).Sum(x => x.Qty)
-                        });
+                if (showGoodStockQty)
+                {
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = currentRowId,
+                                ColumnId = "QtyInStock",
+                                Value = this.stockLocatorRepository
+                                    .FilterBy(x => x.PartNumber.Equals(line.PartNumber)
+                                                   && x.State.Equals("STORES")).Sum(x => x.Qty)
+                            });
+                }
                 values.Add(
                     new CalculationValueModel
                         {
