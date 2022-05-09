@@ -178,6 +178,7 @@
                 candidate.Manufacturer = this.manufacturerRepository.FindById(candidate.Manufacturer.Code);
             }
 
+            candidate.DateCreated = DateTime.Now;
             candidate.OverbookingAllowed = "Y";
             return candidate;
         }

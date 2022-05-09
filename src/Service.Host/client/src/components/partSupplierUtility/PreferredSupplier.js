@@ -39,9 +39,7 @@ function PreferredSupplier({
     const dispatch = useDispatch();
     const postChange = body => dispatch(preferredSupplierChangeActions.add(body));
     useEffect(() => {
-        dispatch(
-            partSuppliersActions.searchWithOptions(null, `&partNumber=${partNumber}&supplierName=`)
-        );
+        dispatch(partSuppliersActions.searchWithOptions(null, `&partNumber=${partNumber}`));
         dispatch(currenciesActions.fetch());
         dispatch(priceChangeReasonsActions.fetch());
     }, [dispatch, partNumber]);
@@ -85,7 +83,10 @@ function PreferredSupplier({
         [dispatch]
     );
 
-    const [formData, setFormData] = useState({ newSupplierId: currentSupplier });
+    const [formData, setFormData] = useState({
+        newSupplierId: currentSupplier,
+        changeReasonCode: 'NEW'
+    });
 
     useEffect(() => {
         if (formData?.newSupplierId) {
@@ -100,7 +101,8 @@ function PreferredSupplier({
                 );
                 setFormData(d => ({
                     ...d,
-                    newCurrency: selectedSupplier.currencyCode
+                    newCurrency: selectedSupplier.currencyCode,
+                    changeReasonCode: 'NEW'
                 }));
             }
         }

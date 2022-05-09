@@ -24,7 +24,8 @@ function WhereTab({
     invoiceAddressId,
     invoiceFullAddress,
     country,
-    handleFieldChange
+    handleFieldChange,
+    supplierName
 }) {
     const dispatch = useDispatch();
     const useStyles = makeStyles(theme => ({
@@ -71,6 +72,8 @@ function WhereTab({
             if (orderAddressDialogOpen) {
                 handleFieldChange('orderAddressId', address.addressId);
                 handleFieldChange('orderFullAddress', address.fullAddress);
+                handleFieldChange('orderFullAddress', address.fullAddress);
+                handleFieldChange('country', address.countryCode);
                 setOrderAddressDialogOpen(false);
                 dispatch(addressActions.clearItem());
             }
@@ -95,6 +98,7 @@ function WhereTab({
                     </IconButton>
                     <div className={classes.dialog}>
                         <AddressUtility
+                            addressee={supplierName}
                             inDialogBox
                             closeDialog={() => setOrderAddressDialogOpen(false)}
                         />
@@ -245,13 +249,15 @@ WhereTab.propTypes = {
     invoiceAddressId: PropTypes.number,
     invoiceFullAddress: PropTypes.string,
     handleFieldChange: PropTypes.func.isRequired,
-    country: PropTypes.string
+    country: PropTypes.string,
+    supplierName: PropTypes.string
 };
 WhereTab.defaultProps = {
     orderAddressId: null,
     orderFullAddress: null,
     invoiceAddressId: null,
     invoiceFullAddress: null,
-    country: null
+    country: null,
+    supplierName: null
 };
 export default WhereTab;

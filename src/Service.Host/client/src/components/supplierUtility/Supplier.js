@@ -89,6 +89,9 @@ function Supplier({ creating }) {
             paysInFc: 'N',
             approvedCarrier: 'N',
             paymentMethod: 'CHEQUE',
+            invoiceContactMethod: 'EMAIL',
+            orderContactMethod: 'EMAIL',
+            paymentDays: 30,
             orderHold: 'N',
             openedById: Number(currentUserNumber),
             openedByName: currentUserName,
@@ -129,8 +132,17 @@ function Supplier({ creating }) {
         dispatch({ type: 'fieldChange', fieldName: propertyName, payload: formatted });
         if (propertyName === 'currencyCode') {
             if (newValue === 'GBP') {
-                dispatch({ type: 'fieldChange', fieldName: 'paysInFc', payload: 'N' });
+                if (state.supplier.paymentMethod === 'FORPAY') {
+                    dispatch({ type: 'fieldChange', fieldName: 'paysInFc', payload: 'A' });
+                } else {
+                    dispatch({ type: 'fieldChange', fieldName: 'paysInFc', payload: 'N' });
+                }
             } else {
+                dispatch({ type: 'fieldChange', fieldName: 'paysInFc', payload: 'A' });
+            }
+        }
+        if (propertyName === 'paymentMethod') {
+            if (state.supplier.currencyCode === 'GBP' && newValue === 'FORPAY') {
                 dispatch({ type: 'fieldChange', fieldName: 'paysInFc', payload: 'A' });
             }
         }
@@ -377,6 +389,7 @@ function Supplier({ creating }) {
                                                     }
                                                     country={state.supplier.country}
                                                     handleFieldChange={handleFieldChange}
+                                                    supplierName={state.supplier.name}
                                                 />
                                             </Box>
                                         )}
