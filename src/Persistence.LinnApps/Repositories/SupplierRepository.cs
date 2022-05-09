@@ -63,6 +63,7 @@
         {
             return this.serviceDbContext.Suppliers.Include(s => s.OrderAddress).ThenInclude(a => a.FullAddress)
                 .Include(s => s.SupplierContacts).ThenInclude(sc => sc.Person)
+                .Include(s => s.Currency)
                 .AsNoTracking().Where(expression);
         }
     }

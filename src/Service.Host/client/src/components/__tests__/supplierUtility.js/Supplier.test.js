@@ -235,11 +235,19 @@ describe('When changing currency...', () => {
         expect(screen.getByText('Always')).toBeInTheDocument();
     });
 
-    test('should change back Never if currency changed back to GBP', () => {
+    test('should change back to Never if currency changed back to GBP', () => {
         const currencyInput = screen.getByLabelText('Currency');
         fireEvent.change(currencyInput, { target: { value: 'GPB' } });
         expect(screen.getByText('GBP')).toBeInTheDocument();
         expect(screen.getByText('Never')).toBeInTheDocument();
+    });
+
+    test('should change to Always if payment method is FORPAY and currency is GBP', () => {
+        const currencyInput = screen.getByLabelText('Currency');
+        fireEvent.change(currencyInput, { target: { value: 'GPB' } });
+        const paymentMethodInput = screen.getByLabelText('Payment Method');
+        fireEvent.change(paymentMethodInput, { target: { value: 'FORPAY' } });
+        expect(screen.getByText('Always')).toBeInTheDocument();
     });
 });
 

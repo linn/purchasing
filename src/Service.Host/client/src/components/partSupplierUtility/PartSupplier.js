@@ -521,7 +521,7 @@ function PartSupplier({ creating }) {
                                                         ? new Date(state.partSupplier?.dateCreated)
                                                         : null
                                                 }
-                                                madeInvalidB={state.partSupplier?.madeInvalidB}
+                                                madeInvalidBy={state.partSupplier?.madeInvalidBy}
                                                 dateInvalid={
                                                     state.partSupplier?.dateInvalid
                                                         ? new Date(state.partSupplier?.dateInvalid)
