@@ -78,9 +78,11 @@
                     });
 
             var values = new List<CalculationValueModel>();
+            var i = 1;
             foreach (var datum in data)
             {
-                var currentRowId = $"{datum.PartNumber + datum.OrderNumber}";
+                var currentRowId = i.ToString();
+                i++;
 
                 values.Add(
                     new CalculationValueModel
