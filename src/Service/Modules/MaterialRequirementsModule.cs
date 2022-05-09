@@ -31,6 +31,7 @@
 
             app.MapGet("/purchasing/material-requirements/used-on-report", this.GetUsedOnReport);
          
+            app.MapGet("/purchasing/material-requirements", this.GetApp);
             app.MapPost("/purchasing/material-requirements", this.GetMaterialRequirements);
         }
 

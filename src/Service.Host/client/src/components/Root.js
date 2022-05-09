@@ -44,6 +44,7 @@ import WhatsInInspectionReport from './reports/WhatsInInspectionReport';
 import RunMrp from './RunMrp';
 import ApplyForecastingPercentageChange from './ApplyForecastingPercentageChange';
 import MrUsedOnReport from './reports/MrUsedOnReport';
+import MaterialRequirements from './materialRequirements/MaterialRequirementsOptions';
 
 const Root = ({ store }) => (
     <div>
@@ -254,6 +255,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/material-requirements/used-on-report"
                                     component={MrUsedOnReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/material-requirements"
+                                    component={MaterialRequirements}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>
