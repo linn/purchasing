@@ -94,7 +94,7 @@ function Typeahead({
 
     const textFieldProp = {
         onKeyDown: handleOnKeyPress,
-        onblur: () => {
+        onBlur: () => {
             if (searchTerm) {
                 onTextFieldChange({ id: searchTerm });
             }
