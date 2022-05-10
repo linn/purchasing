@@ -5,6 +5,7 @@ import Grid from '@mui/material/Grid';
 import Snackbar from '@mui/material/Snackbar';
 import Typography from '@mui/material/Typography';
 import { useLocation } from 'react-router';
+import queryString from 'query-string';
 
 import { mrReport as mrReportItem } from '../../itemTypes';
 import mrReportActions from '../../actions/mrReportActions';
@@ -43,6 +44,14 @@ function MaterialRequirementsReport() {
     useEffect(() => {
         if (options && options.state) {
             dispatch(mrReportActions.postByHref(mrReportItem.uri, options.state));
+        } else if (options && options.search) {
+            const query = queryString.parse(options.search);
+            dispatch(
+                mrReportActions.postByHref(mrReportItem.uri, {
+                    partNumber: query?.partNumber,
+                    jobRef: query?.jobRef
+                })
+            );
         } else {
             history.push('/purchasing/material-requirements');
         }

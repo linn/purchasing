@@ -7,5 +7,7 @@
         public string JobRef { get; set; }
 
         public IEnumerable<string> PartNumbers { get; set; }
+
+        public string PartNumber { get; set; }
     }
 }

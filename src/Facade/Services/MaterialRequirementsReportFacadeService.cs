@@ -21,9 +21,17 @@
 
         public IResult<MrReportResource> GetMaterialRequirements(MrRequestResource request, IEnumerable<string> privileges)
         {
-            var report = this.materialRequirementsReportService.GetMaterialRequirements(request.JobRef, request.PartNumbers);
+            var parts = string.IsNullOrEmpty(request.PartNumber)
+                            ? request.PartNumbers
+                            : new List<string> { request.PartNumber };
+
+            var report = this.materialRequirementsReportService.GetMaterialRequirements(request.JobRef, parts);
+
             return new SuccessResult<MrReportResource>(
-                new MrReportResource { Results = report.Select(r => (MrHeaderResource)this.builder.Build(r, privileges)) });
+                new MrReportResource
+                    {
+                        Results = report.Select(r => (MrHeaderResource)this.builder.Build(r, privileges))
+                    });
         }
     }
 }
