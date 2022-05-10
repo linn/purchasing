@@ -20,7 +20,7 @@ namespace Linn.Purchasing.Service.Modules
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/purchasing/purchase-orders/deliveries", this.Search);
-            app.MapPatch("/purchasing/purchase-orders/deliveries/{orderNumber:int}", this.Patch);
+            app.MapPatch("/purchasing/purchase-orders/deliveries/{orderNumber:int}/{orderLine:int}/{deliverySeq:int}", this.Patch);
         }
 
         private async Task Search(

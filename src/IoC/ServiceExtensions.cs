@@ -62,7 +62,8 @@
                 .AddTransient<IBuilder<PurchaseOrderReq>, PurchaseOrderReqResourceBuilder>()
                 .AddTransient<IBuilder<MrpRunLog>, MrpRunLogResourceBuilder>()
                 .AddTransient<IBuilder<PurchaseOrderReqState>, PurchaseOrderReqStateResourceBuilder>()
-                .AddTransient<IBuilder<MrMaster>, MrMasterResourceBuilder>();
+                .AddTransient<IBuilder<MrMaster>, MrMasterResourceBuilder>()
+                .AddTransient<IBuilder<PurchaseOrderDelivery>, PurchaseOrderDeliveryResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
