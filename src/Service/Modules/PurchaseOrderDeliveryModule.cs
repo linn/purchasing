@@ -1,5 +1,4 @@
-﻿
-namespace Linn.Purchasing.Service.Modules
+﻿namespace Linn.Purchasing.Service.Modules
 {
     using System.Threading.Tasks;
 

@@ -53,7 +53,7 @@
                                  DeliverySeq = this.deliverySequence
                              });
 
-            // todo - could add PatchAsJsonAsync() extension too HttpClient for convention's sale
+            // todo - could add PatchAsJsonAsync() extension too HttpClient for convention's sake
             this.Response = this.Client.PatchAsync( 
                 $"/purchasing/purchase-orders/deliveries/{this.orderNumber}/{this.orderLine}/{this.deliverySequence}",
                 JsonContent.Create(this.resource)).Result;
