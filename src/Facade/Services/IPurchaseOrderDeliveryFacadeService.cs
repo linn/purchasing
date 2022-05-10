@@ -15,7 +15,7 @@
 
         IResult<PurchaseOrderDeliveryResource> PatchDelivery(
             PurchaseOrderDeliveryKey key,
-            PurchaseOrderDeliveryPatchRequestResource requestResource, 
+            PatchRequestResource<PurchaseOrderDeliveryResource> requestResource, 
             IEnumerable<string> privileges);
 
         IResult<ProcessResult> BatchUpdateDeliveries(string csvString, IEnumerable<string> privileges);

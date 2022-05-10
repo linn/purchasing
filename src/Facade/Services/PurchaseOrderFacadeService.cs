@@ -125,7 +125,8 @@
                                                         d => new PurchaseOrderDelivery
                                                                  {
                                                                      Cancelled = d.Cancelled,
-                                                                     DateAdvised = d.DateAdvised,
+                                                                     DateAdvised = string.IsNullOrEmpty(d.DateAdvised) 
+                                                                         ? null : DateTime.Parse(d.DateAdvised),
                                                                      DateRequested = d.DateRequested,
                                                                      DeliverySeq = d.DeliverySeq,
                                                                      NetTotalCurrency = d.NetTotalCurrency,
@@ -146,7 +147,9 @@
                                                                      VatTotalCurrency = d.VatTotalCurrency,
                                                                      BaseVatTotal = d.BaseVatTotal,
                                                                      DeliveryTotalCurrency = d.DeliveryTotalCurrency,
-                                                                     BaseDeliveryTotal = d.BaseDeliveryTotal
+                                                                     BaseDeliveryTotal = d.BaseDeliveryTotal,
+                                                                     RescheduleReason = d.RescheduleReason,
+                                                                     AvailableAtSupplier = d.AvailableAtSupplier
                                                                  }) as ICollection<PurchaseOrderDelivery>,
                                                 RohsCompliant = x.RohsCompliant,
                                                 SuppliersDesignation = x.SuppliersDesignation,

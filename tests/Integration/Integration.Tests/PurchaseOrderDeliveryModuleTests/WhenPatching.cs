@@ -24,7 +24,7 @@
 
         private int deliverySequence;
 
-        private PurchaseOrderDeliveryPatchRequestResource resource;
+        private PatchRequestResource<PurchaseOrderDeliveryResource> resource;
 
         [SetUp]
         public void SetUp()
@@ -32,13 +32,16 @@
             this.orderNumber = 123456;
             this.orderLine = 1;
             this.deliverySequence = 1;
-            this.resource = new PurchaseOrderDeliveryPatchRequestResource
+            this.resource = new PatchRequestResource<PurchaseOrderDeliveryResource>();
+            this.resource.To = new PurchaseOrderDeliveryResource
                                 {
-                                    AdvisedDate = DateTime.Today.ToString("o"),
-                                    Reason = "REASON",
-                                    ConfirmationComment = "Comment",
+                                    DateAdvised = DateTime.Today.ToString("o"),
+                                    RescheduleReason = "REASON",
+                                    SupplierConfirmationComment = "Comment",
                                     AvailableAtSupplier = "Y"
                                 };
+            this.resource.From = new PurchaseOrderDeliveryResource();
+
             this.MockRepository
                 .FindById(
                     Arg.Is<PurchaseOrderDeliveryKey>(

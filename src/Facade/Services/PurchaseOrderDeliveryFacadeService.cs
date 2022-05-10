@@ -47,16 +47,31 @@
 
         public IResult<PurchaseOrderDeliveryResource> PatchDelivery(
             PurchaseOrderDeliveryKey key,
-            PurchaseOrderDeliveryPatchRequestResource requestResource, 
+            PatchRequestResource<PurchaseOrderDeliveryResource> requestResource, 
             IEnumerable<string> privileges)
         {
             var entity = this.repository.FindById(key);
 
-            entity.DateAdvised = string.IsNullOrEmpty(requestResource.AdvisedDate) 
-                                     ? null : DateTime.Parse(requestResource.AdvisedDate);
-            entity.RescheduleReason = requestResource.Reason;
-            entity.SupplierConfirmationComment = requestResource.ConfirmationComment;
-            entity.AvailableAtSupplier = requestResource.AvailableAtSupplier;
+            if (requestResource.From.DateAdvised != requestResource.To.DateAdvised)
+            {
+                entity.DateAdvised = string.IsNullOrEmpty(requestResource.To.DateAdvised)
+                                         ? null : DateTime.Parse(requestResource.To.DateAdvised);
+            }
+
+            if (requestResource.From.RescheduleReason != requestResource.To.RescheduleReason)
+            {
+                entity.RescheduleReason = requestResource.To.RescheduleReason;
+            }
+
+            if (requestResource.From.SupplierConfirmationComment != requestResource.To.SupplierConfirmationComment)
+            {
+                entity.SupplierConfirmationComment = requestResource.To.SupplierConfirmationComment;
+            }
+
+            if (requestResource.From.AvailableAtSupplier != requestResource.To.AvailableAtSupplier)
+            {
+                entity.AvailableAtSupplier = requestResource.To.AvailableAtSupplier;
+            }
 
             this.transactionManager.Commit();
 

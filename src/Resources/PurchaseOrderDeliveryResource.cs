@@ -6,7 +6,7 @@
     {
         public string Cancelled { get; set; }
 
-        public DateTime? DateAdvised { get; set; }
+        public string DateAdvised { get; set; }
 
         public DateTime? DateRequested { get; set; }
 
@@ -47,5 +47,9 @@
         public decimal? DeliveryTotalCurrency { get; set; }
 
         public decimal? BaseDeliveryTotal { get; set; }
+
+        public string RescheduleReason { get; set; }
+
+        public string AvailableAtSupplier { get; set; }
     }
 }
