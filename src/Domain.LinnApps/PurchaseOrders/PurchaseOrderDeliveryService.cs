@@ -42,7 +42,7 @@
                 result = result.Where(x => !x.DateAdvised.HasValue);
             }
 
-            return result;
+            return result.OrderBy(x => x.OrderNumber);
         }
     }
 }
