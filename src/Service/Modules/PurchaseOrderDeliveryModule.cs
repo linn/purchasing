@@ -7,6 +7,7 @@
 
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Facade.Services;
+    using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.RequestResources;
     using Linn.Purchasing.Service.Extensions;
 
@@ -37,7 +38,7 @@
         private async Task Patch(
             HttpRequest req,
             HttpResponse res,
-            PurchaseOrderDeliveryPatchRequestResource resource,
+            PatchRequestResource<PurchaseOrderDeliveryResource> resource,
             int orderNumber,
             int orderLine,
             int deliverySeq,
