@@ -16,10 +16,9 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import mrMasterActions from '../../actions/mrMasterActions';
-import { mrMaster as mrMasterItemType, mrReport } from '../../itemTypes';
+import { mrMaster as mrMasterItemType } from '../../itemTypes';
 import partsActions from '../../actions/partsActions';
 import partActions from '../../actions/partActions';
-import mrReportActions from '../../actions/mrReportActions';
 
 import history from '../../history';
 import Typeahead from './Typeahead';
@@ -114,12 +113,11 @@ function MaterialRequirementsOptions() {
     };
 
     const runReport = () => {
-        displayMessage('running');
         const body = {
             jobRef: mrMaster.jobRef,
             partNumbers: parts.map(p => p.id)
         };
-        dispatch(mrReportActions.postByHref(mrReport.uri, body));
+        history.push('/purchasing/material-requirements/report', body);
     };
 
     const selectedPartsColumns = [
@@ -194,7 +192,7 @@ function MaterialRequirementsOptions() {
                         onClick={runReport}
                         disabled={mrMasterLoading || selectectPartLoading}
                     >
-                        Run New MRP
+                        Run Report
                     </Button>
                 </Grid>
             </Grid>

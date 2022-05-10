@@ -45,6 +45,7 @@ import RunMrp from './RunMrp';
 import ApplyForecastingPercentageChange from './ApplyForecastingPercentageChange';
 import MrUsedOnReport from './reports/MrUsedOnReport';
 import MaterialRequirements from './materialRequirements/MaterialRequirementsOptions';
+import MaterialRequirementsReport from './materialRequirements/MaterialRequirementsReport';
 
 const Root = ({ store }) => (
     <div>
@@ -260,6 +261,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/material-requirements"
                                     component={MaterialRequirements}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/material-requirements/report"
+                                    component={MaterialRequirementsReport}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>
