@@ -12,6 +12,8 @@
 
         public decimal QuantityInStock { get; set; }
 
+        public decimal QuantityForSpares { get; set; }
+
         public decimal QuantityInInspection { get; set; }
 
         public decimal QuantityFaulty { get; set; }
@@ -45,6 +47,10 @@
         public string HasProductionRequirement { get; set; }
         
         public string HasDeliveryForecast { get; set; }
+
+        public string VendorManager { get; set; }
+
+        public string VendorManagerInitials { get; set; }
 
         public IEnumerable<MrDetail> MrDetails { get; set; }
     }

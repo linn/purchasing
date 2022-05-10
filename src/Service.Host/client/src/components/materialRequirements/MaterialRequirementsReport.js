@@ -4,6 +4,9 @@ import { Page, itemSelectorHelpers, Loading } from '@linn-it/linn-form-component
 import Grid from '@mui/material/Grid';
 import Snackbar from '@mui/material/Snackbar';
 import Typography from '@mui/material/Typography';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Stack from '@mui/material/Stack';
+
 import { useLocation } from 'react-router';
 import queryString from 'query-string';
 
@@ -25,6 +28,12 @@ function MaterialRequirementsReport() {
     const mrReportLoading = useSelector(state =>
         itemSelectorHelpers.getItemLoading(state.mrReport)
     );
+
+    const theme = createTheme({
+        typography: {
+            fontSize: 12
+        }
+    });
 
     const displayMessage = useCallback(
         newMessage => {
@@ -75,28 +84,99 @@ function MaterialRequirementsReport() {
 
     return (
         <Page history={history}>
-            <>
-                {mrReportLoading && <Loading />}
-                {selectedItem && (
-                    <Grid container>
-                        <Grid item xs={12}>
-                            ok
+            <ThemeProvider theme={theme}>
+                <>
+                    {mrReportLoading && <Loading />}
+                    {selectedItem && (
+                        <Grid container spacing={1}>
+                            <Grid item xs={10}>
+                                <Typography variant="body2" style={{ fontWeight: 'bold' }}>
+                                    {selectedItem.partNumber}: {selectedItem.partDescription}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={2}>
+                                <Typography variant="body2">
+                                    Jobref: {selectedItem.jobRef}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Stack direction="row" spacing={2}>
+                                    <Typography variant="body2">
+                                        Supplier: {selectedItem.preferredSupplierId} -{' '}
+                                        {selectedItem.preferredSupplierName}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        Currency: {selectedItem.currencyCode}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        Vendor Manager: {selectedItem.vendorManagerInitials}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        Order Units: {selectedItem.orderUnits}
+                                    </Typography>
+                                </Stack>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Stack direction="row" spacing={2}>
+                                    <Typography variant="body2">
+                                        Stock: {selectedItem.quantityInStock}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        For Spares: {selectedItem.quantityForSpares}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        Inspection: {selectedItem.quantityInInspection}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        Faulty: {selectedItem.quantityFaulty}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        Supplier: {selectedItem.quantityAtSupplier}
+                                    </Typography>
+                                </Stack>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Stack direction="row" spacing={2}>
+                                    <Typography variant="body2">
+                                        GBP Price: {selectedItem.baseUnitPrice}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        Currency Price: {selectedItem.currencyUnitPrice}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        Lead Time: {selectedItem.leadTimeWeeks}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        MOQ: {selectedItem.minimumOrderQuantity}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        MDQ: {selectedItem.minimumDeliveryQuantity}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        Order Increment: {selectedItem.orderIncrement}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        Our Units: {selectedItem.ourUnits}
+                                    </Typography>
+                                </Stack>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Stack direction="row" spacing={2}>
+                                    <Typography variant="body2">
+                                        Annual Usage: {selectedItem.annualUsage}
+                                    </Typography>
+                                </Stack>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={10} />
-                        <Grid item xs={2}>
-                            <Typography variant="subtitle1">
-                                Jobref: {selectedItem.jobRef}
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                )}
-            </>
-            <Snackbar
-                open={showMessage}
-                autoHideDuration={3000}
-                onClose={handleClose}
-                message={message}
-            />
+                    )}
+                </>
+                <Snackbar
+                    open={showMessage}
+                    autoHideDuration={3000}
+                    onClose={handleClose}
+                    message={message}
+                />
+            </ThemeProvider>
         </Page>
     );
 }

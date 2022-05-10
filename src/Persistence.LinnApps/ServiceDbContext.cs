@@ -1188,6 +1188,7 @@
             entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
             entity.Property(e => e.PartDescription).HasColumnName("DESCRIPTION").HasColumnType("VARCHAR2");
             entity.Property(e => e.QuantityInStock).HasColumnName("QTY_IN_STOCK");
+            entity.Property(e => e.QuantityForSpares).HasColumnName("QTY_STOCK_FOR_SPARES");
             entity.Property(e => e.QuantityInInspection).HasColumnName("QTY_IN_INSPECTION");
             entity.Property(e => e.QuantityFaulty).HasColumnName("QTY_FAULTY");
             entity.Property(e => e.QuantityAtSupplier).HasColumnName("QTY_AT_SUPPLIER");
@@ -1205,6 +1206,8 @@
             entity.Property(e => e.OrderIncrement).HasColumnName("ORDER_INCREMENT");
             entity.Property(e => e.HasProductionRequirement).HasColumnName("HAS_PRODUCTION_REQT");
             entity.Property(e => e.HasDeliveryForecast).HasColumnName("HAS_DELIVERY_FORECAST");
+            entity.Property(e => e.VendorManager).HasColumnName("VENDOR_MANAGER").HasColumnType("VARCHAR2");
+            entity.Property(e => e.VendorManagerInitials).HasColumnName("VM_INITIALS");
             entity.HasMany(s => s.MrDetails).WithOne().HasForeignKey(c => new { c.JobRef, c.PartNumber });
         }
 

@@ -25,6 +25,7 @@
                            PartNumber = entity.PartNumber,
                            PartDescription = entity.PartDescription,
                            QuantityInStock = entity.QuantityInStock,
+                           QuantityForSpares = entity.QuantityForSpares,
                            QuantityInInspection = entity.QuantityInInspection,
                            QuantityFaulty = entity.QuantityFaulty,
                            QuantityAtSupplier = entity.QuantityAtSupplier,
@@ -42,6 +43,8 @@
                            OrderIncrement = entity.OrderIncrement,
                            HasProductionRequirement = entity.HasProductionRequirement,
                            HasDeliveryForecast = entity.HasDeliveryForecast,
+                           VendorManager = entity.VendorManager,
+                           VendorManagerInitials = entity.VendorManagerInitials,
                            MrDetails = entity.MrDetails?.Select(d => (MrDetailResource)this.detailBuilder.Build(d, claims))
                        };
         }
