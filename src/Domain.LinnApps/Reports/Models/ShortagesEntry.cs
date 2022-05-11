@@ -14,6 +14,6 @@
 
         public int? PurchaseLevel { get; set; }
 
-        public int? SupplierId { get; set; }
+        //public int? SupplierId { get; set; }
     }
 }

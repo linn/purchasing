@@ -19,20 +19,24 @@
         }
 
         public IEnumerable<ResultsModel> GetReport(
-            int? purchaseLevel,
-            int? supplier,
+            int purchaseLevel,
+            int supplier,
             string vendorManager)
         {
             var results = this.shortagesEntryView.FilterBy(x =>
-                (x.SupplierId == supplier) && purchaseLevel <= x.PurchaseLevel &&
-                (vendorManager == "ALL" || vendorManager == x.VendorManagerCode)).ToList();
+                // you might need to pull in preferred supplier from part or something?
+                // It's not mapped at the mo so breaks
+                // maybe ask or get someone to check the old report
+                // (x.SupplierId == supplier) 
+                (x.PurchaseLevel.HasValue && purchaseLevel <= x.PurchaseLevel.Value)
+            && (vendorManager == "ALL" || vendorManager == x.VendorManagerCode)).ToList();
 
             var returnResults = new List<ResultsModel>();
 
-            foreach (var shortagesForPlanner in results.GroupBy(a => new { a.PlannerName}))
+            foreach (var shortagesForPlanner in results.GroupBy(a => new { a.PlannerName }))
             {
                 var model = new ResultsModel();
-                
+
                 model.AddColumn("VendorManagerCode", "Vendor Manager Code");
                 model.AddColumn("VendorManagerName", "Vendor Manager Name");
 
@@ -47,7 +51,7 @@
                 foreach (var vendorManagerRow in distinctVendorManagers)
                 {
                     var row = model.AddRow(vendorManagerRow.VendorManagerCode);
-                    
+
                     model.SetGridTextValue(row.RowIndex, model.ColumnIndex("VendorManagerCode"), vendorManagerRow.VendorManagerCode);
                     model.SetGridTextValue(row.RowIndex, model.ColumnIndex("VendorManagerName"), vendorManagerRow.VendorManagerName);
 

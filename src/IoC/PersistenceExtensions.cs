@@ -110,7 +110,9 @@
                 .AddTransient<IRepository<LedgerPeriod, int>, EntityFrameworkRepository<LedgerPeriod, int>>(r
                     => new EntityFrameworkRepository<LedgerPeriod, int>(r.GetService<ServiceDbContext>()?.LedgerPeriods))
                 .AddTransient<IRepository<CancelledOrderDetail, int>, EntityFrameworkRepository<CancelledOrderDetail, int>>(
-                    r => new EntityFrameworkRepository<CancelledOrderDetail, int>(r.GetService<ServiceDbContext>()?.CancelledPurchaseOrderDetails));
+                    r => new EntityFrameworkRepository<CancelledOrderDetail, int>(r.GetService<ServiceDbContext>()?.CancelledPurchaseOrderDetails))
+                .AddTransient<IRepository<ShortagesEntry, string>, EntityFrameworkRepository<ShortagesEntry, string>>(r
+                    => new EntityFrameworkRepository<ShortagesEntry, string>(r.GetService<ServiceDbContext>()?.ShortagesEntries));
         }
     }
 }

@@ -32,8 +32,8 @@
         private async Task GetReport(
             HttpRequest req,
             HttpResponse res,
-            int? purchaseLevel,
-            int? supplier,
+            int purchaseLevel,
+            int supplier,
             string vendorManager,
             IShortagesReportFacadeService reportFacadeService)
         {
