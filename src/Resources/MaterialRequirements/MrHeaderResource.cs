@@ -2,7 +2,9 @@
 {
     using System.Collections.Generic;
 
-    public class MrHeaderResource
+    using Linn.Common.Resources;
+
+    public class MrHeaderResource : HypermediaResource
     {
         public string JobRef { get; set; }
 
@@ -38,11 +40,11 @@
 
         public decimal CurrencyUnitPrice { get; set; }
 
-        public decimal MinimumOrderQuantity { get; set; }
+        public decimal? MinimumOrderQuantity { get; set; }
 
-        public decimal MinimumDeliveryQuantity { get; set; }
+        public decimal? MinimumDeliveryQuantity { get; set; }
 
-        public decimal OrderIncrement { get; set; }
+        public decimal? OrderIncrement { get; set; }
 
         public string HasProductionRequirement { get; set; }
         

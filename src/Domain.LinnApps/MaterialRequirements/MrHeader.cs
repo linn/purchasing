@@ -38,11 +38,11 @@
 
         public decimal CurrencyUnitPrice { get; set; }
 
-        public decimal MinimumOrderQuantity { get; set; }
+        public decimal? MinimumOrderQuantity { get; set; }
 
-        public decimal MinimumDeliveryQuantity { get; set; }
+        public decimal? MinimumDeliveryQuantity { get; set; }
 
-        public decimal OrderIncrement { get; set; }
+        public decimal? OrderIncrement { get; set; }
 
         public string HasProductionRequirement { get; set; }
         

@@ -5,6 +5,7 @@
     using System.Linq;
 
     using Linn.Common.Facade;
+    using Linn.Common.Resources;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Resources.MaterialRequirements;
 
@@ -45,8 +46,9 @@
                            HasDeliveryForecast = entity.HasDeliveryForecast,
                            VendorManager = entity.VendorManager,
                            VendorManagerInitials = entity.VendorManagerInitials,
-                           MrDetails = entity.MrDetails?.Select(d => (MrDetailResource)this.detailBuilder.Build(d, claims))
-                       };
+                           MrDetails = entity.MrDetails?.Select(d => (MrDetailResource)this.detailBuilder.Build(d, claims)),
+                           Links = this.BuildLinks(entity, claims).ToArray()
+            };
         }
 
         public string GetLocation(MrHeader entity)
@@ -55,5 +57,13 @@
         }
 
         object IBuilder<MrHeader>.Build(MrHeader entity, IEnumerable<string> claims) => this.Build(entity, claims);
+
+        private IEnumerable<LinkResource> BuildLinks(MrHeader entity, IEnumerable<string> claims)
+        {
+            if (entity != null)
+            {
+                yield return new LinkResource { Rel = "part-used-on", Href = $"/purchasing/material-requirements/used-on-report?partNumber={entity.PartNumber}" };
+            }
+        }
     }
 }
