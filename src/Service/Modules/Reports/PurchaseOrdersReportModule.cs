@@ -30,7 +30,6 @@
             app.MapGet("/purchasing/reports/suppliers-with-unacknowledged-orders", this.GetSuppliersWithUnacknowledgedOrdersReport);
             app.MapGet("/purchasing/reports/unacknowledged-orders", this.GetUnacknowledgedOrdersReport);
             app.MapGet("/purchasing/reports/unacknowledged-orders/export", this.GetUnacknowledgedOrdersReportExport);
-            app.MapGet("/purchasing/reports/suppliers-with-unacknowledged-orders", this.GetApp);
         }
 
         private async Task GetUnacknowledgedOrdersReport(
