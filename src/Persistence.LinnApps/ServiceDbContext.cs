@@ -123,6 +123,8 @@
         
         public DbSet<CancelledOrderDetail> CancelledPurchaseOrderDetails { get; set; }
 
+        public DbSet<ShortagesEntry> ShortagesEntries { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -189,6 +191,7 @@
             this.BuildCancelledPODetails(builder);
             this.BuildPurchaseOrderPostings(builder);
             this.BuildNominalAccounts(builder);
+            this.BuildShortagesView(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1157,6 +1160,17 @@
             entity.Property(d => d.AccountId).HasColumnName("NOMACC_ID").HasMaxLength(6);
             entity.HasOne(e => e.Department).WithMany().HasForeignKey("DEPARTMENT");
             entity.HasOne(e => e.Nominal).WithMany().HasForeignKey("NOMINAL");
+        }
+
+        private void BuildShortagesView(ModelBuilder builder)
+        {
+            var entity = builder.Entity<ShortagesEntry>().ToTable("SHORTAGES_VIEW").HasNoKey();
+            entity.Property(a => a.Planner).HasColumnName("PLANNER");
+            entity.Property(a => a.PlannerName).HasColumnName("PLANNER_NAME").HasColumnType("VARCHAR2");
+            entity.Property(a => a.VendorManagerCode).HasColumnName("VM_MANAGER").HasColumnType("VARCHAR2");
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
+            entity.Property(a => a.VendorManagerName).HasColumnName("VM_NAME").HasColumnType("VARCHAR2");
+            entity.Property(a => a.PurchaseLevel).HasColumnName("PURCH_LEVEL");
         }
     }
 }

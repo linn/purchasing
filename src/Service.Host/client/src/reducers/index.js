@@ -68,6 +68,7 @@ import mrpRunLogs from './mrpRunLogs';
 import runMrp from './runMrp';
 import mrMaster from './mrMaster';
 import applyForecastingPercentageChange from './applyForecastingPercentageChange';
+import shortagesReport from './shortagesReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -121,6 +122,7 @@ const rootReducer = history =>
         sendPurchaseOrderReqEmail,
         sendPurchaseOrderReqAuthEmail,
         sendPurchaseOrderReqFinanceEmail,
+        shortagesReport,
         signingLimit,
         signingLimits,
         spendBySupplierReport,
