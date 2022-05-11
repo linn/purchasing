@@ -15,15 +15,29 @@
                        {
                            OrderNumber = entity.OrderNumber,
                            OrderLine = entity.OrderLine,
-                           DeliverySeq = entity.DeliverySeq,
-                           BaseOrderUnitPrice = entity.BaseOrderUnitPrice,
                            OurDeliveryQty = entity.OurDeliveryQty,
                            DateRequested = entity.DateRequested?.ToShortDateString(),
                            DateAdvised = entity.DateAdvised?.ToShortDateString(),
                            RescheduleReason = entity.RescheduleReason,
                            SupplierConfirmationComment = entity.SupplierConfirmationComment,
                            AvailableAtSupplier = entity.AvailableAtSupplier,
-                           PartNumber = entity.PurchaseOrderDetail.PartNumber
+                           PartNumber = entity.PurchaseOrderDetail.PartNumber,
+                           Cancelled = entity.Cancelled,
+                           DeliverySeq = entity.DeliverySeq,
+                           NetTotalCurrency = entity.NetTotalCurrency,
+                           BaseNetTotal = entity.BaseNetTotal,
+                           OrderDeliveryQty = entity.OrderDeliveryQty,
+                           QtyNetReceived = entity.QtyNetReceived,
+                           QuantityOutstanding = entity.QuantityOutstanding,
+                           CallOffDate = entity.CallOffDate,
+                           BaseOurUnitPrice = entity.BaseOurUnitPrice,
+                           OurUnitPriceCurrency = entity.OurUnitPriceCurrency,
+                           OrderUnitPriceCurrency = entity.OrderUnitPriceCurrency,
+                           BaseOrderUnitPrice = entity.BaseOrderUnitPrice,
+                           VatTotalCurrency = entity.VatTotalCurrency,
+                           BaseVatTotal = entity.BaseVatTotal,
+                           DeliveryTotalCurrency = entity.DeliveryTotalCurrency,
+                           BaseDeliveryTotal = entity.BaseDeliveryTotal
                        };
         }
 
@@ -32,6 +46,9 @@
             throw new NotImplementedException();
         }
 
-        object IBuilder<PurchaseOrderDelivery>.Build(PurchaseOrderDelivery entity, IEnumerable<string> claims) => this.Build(entity, claims);
+        object IBuilder<PurchaseOrderDelivery>.Build(PurchaseOrderDelivery entity, IEnumerable<string> claims)
+        {
+            return this.Build(entity, claims);
+        }
     }
 }

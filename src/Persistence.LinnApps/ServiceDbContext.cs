@@ -587,7 +587,7 @@
             entity.Property(o => o.InternalComments).HasColumnName("INTERNAL_COMMENTS").HasMaxLength(300);
             entity.HasMany(d => d.CancelledDetails).WithOne().HasForeignKey(cd => new { cd.OrderNumber, cd.LineNumber });
             entity.HasMany(d => d.MrOrders).WithOne().HasForeignKey(mr => new { mr.OrderNumber, mr.LineNumber });
-            entity.HasMany(d => d.OrderPostings).WithOne().HasForeignKey(p => new { p.OrderNumber, p.LineNumber });
+            entity.HasOne(x => x.OrderPosting).WithOne().HasForeignKey<PurchaseOrderPosting>(p => new { p.OrderNumber, p.LineNumber });
         }
 
         private void BuildPurchaseOrderDeliveries(ModelBuilder builder)
@@ -1163,9 +1163,11 @@
         {
             var entity = builder.Entity<NominalAccount>().ToTable("NOMINAL_ACCOUNTS");
             entity.HasKey(e => e.AccountId);
-            entity.Property(d => d.AccountId).HasColumnName("NOMACC_ID").HasMaxLength(6);
-            entity.HasOne(e => e.Department).WithMany().HasForeignKey("DEPARTMENT");
-            entity.HasOne(e => e.Nominal).WithMany().HasForeignKey("NOMINAL");
+            entity.Property(e => e.AccountId).HasColumnName("NOMACC_ID").HasMaxLength(6);
+            entity.Property(e => e.DepartmentCode).HasColumnName("DEPARTMENT").HasMaxLength(6);
+            entity.Property(e => e.NominalCode).HasColumnName("NOMINAL").HasMaxLength(6);
+            entity.HasOne(e => e.Department).WithMany(x => x.NominalAccounts).HasForeignKey(ac => ac.DepartmentCode);
+            entity.HasOne(e => e.Nominal).WithMany(x => x.NominalAccounts).HasForeignKey(ac => ac.NominalCode);
         }
 
         private void BuildStockLocators(ModelBuilder builder)

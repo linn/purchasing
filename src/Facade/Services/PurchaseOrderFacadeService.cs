@@ -205,7 +205,7 @@
                                             }) as ICollection<PurchaseOrderDetail>,
                            CurrencyCode = resource.Currency.Code,
                            OrderContactName = resource.OrderContactName,
-                           OrderMethodName = resource.OrderMethodName,
+                           OrderMethodName = resource.OrderMethod.Name,
                            ExchangeRate = resource.ExchangeRate,
                            IssuePartsToSupplier = resource.IssuePartsToSupplier,
                            DeliveryAddressId = resource.DeliveryAddress.AddressId,
