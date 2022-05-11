@@ -30,7 +30,7 @@
                 .Returns(new SuccessResult<MrpRunLogResource>(this.mrpRunLog));
 
             this.Response = this.Client.Get(
-                $"/purchasing/material-requirements/run-logs?searchTerm=ABC",
+                $"/purchasing/material-requirements/run-logs?jobRef=ABC",
                 with =>
                     {
                         with.Accept("application/json");

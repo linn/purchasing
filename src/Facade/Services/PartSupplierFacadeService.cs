@@ -77,11 +77,11 @@
 
         protected override Expression<Func<PartSupplier, bool>> FilterExpression(PartSupplierSearchResource searchResource)
         {
-            return x => (x.PartNumber.Contains(searchResource.PartNumberSearchTerm.Trim().ToUpper())
-                        || string.IsNullOrEmpty(searchResource.PartNumberSearchTerm))
+            return x => (string.IsNullOrEmpty(searchResource.PartNumberSearchTerm) 
+                         || x.PartNumber.Contains(searchResource.PartNumberSearchTerm.Trim().ToUpper()))
                         &&
-                        (x.Supplier.Name.Contains(searchResource.SupplierNameSearchTerm.Trim().ToUpper())
-                         || string.IsNullOrEmpty(searchResource.SupplierNameSearchTerm));
+                        (string.IsNullOrEmpty(searchResource.SupplierNameSearchTerm) 
+                         || x.Supplier.Name.Contains(searchResource.SupplierNameSearchTerm.Trim().ToUpper()));
         }
 
         protected override Expression<Func<PartSupplier, bool>> FindExpression(PartSupplierSearchResource searchResource)

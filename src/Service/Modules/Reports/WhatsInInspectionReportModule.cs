@@ -32,6 +32,7 @@
             HttpRequest req,
             HttpResponse res,
             IWhatsInInspectionReportFacadeService facadeService,
+            bool showGoodStockQty,
             bool includePartsWithNoOrderNumber,
             bool showStockLocations,
             bool includeFailedStock,
@@ -40,6 +41,7 @@
             bool showOrders)
         {
             var results = facadeService.GetReport(
+                showGoodStockQty,
                 includePartsWithNoOrderNumber,
                 showStockLocations,
                 includeFailedStock,
@@ -54,11 +56,13 @@
             HttpRequest req,
             HttpResponse res,
             IWhatsInInspectionReportFacadeService facadeService,
+            bool showGoodStockQty,
             bool includePartsWithNoOrderNumber,
             bool includeFailedStock,
             bool includeFinishedGoods)
         {
             var csvResults = facadeService.GetTopLevelExport(
+                showGoodStockQty,
                 includePartsWithNoOrderNumber,
                 includeFailedStock,
                 includeFinishedGoods);

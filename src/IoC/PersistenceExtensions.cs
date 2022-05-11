@@ -110,7 +110,13 @@
                 .AddTransient<IRepository<LedgerPeriod, int>, EntityFrameworkRepository<LedgerPeriod, int>>(r
                     => new EntityFrameworkRepository<LedgerPeriod, int>(r.GetService<ServiceDbContext>()?.LedgerPeriods))
                 .AddTransient<IRepository<CancelledOrderDetail, int>, EntityFrameworkRepository<CancelledOrderDetail, int>>(
-                    r => new EntityFrameworkRepository<CancelledOrderDetail, int>(r.GetService<ServiceDbContext>()?.CancelledPurchaseOrderDetails));
+                    r => new EntityFrameworkRepository<CancelledOrderDetail, int>(r.GetService<ServiceDbContext>()?.CancelledPurchaseOrderDetails))
+                .AddTransient<IQueryRepository<StockLocator>, EntityFrameworkQueryRepository<StockLocator>>(
+                    r => new EntityFrameworkQueryRepository<StockLocator>(r.GetService<ServiceDbContext>()
+                        ?.StockLocators))
+                .AddTransient<IQueryRepository<MrUsedOnRecord>, EntityFrameworkQueryRepository<MrUsedOnRecord>>(
+                    r => new EntityFrameworkQueryRepository<MrUsedOnRecord>(r.GetService<ServiceDbContext>()
+                        ?.MrUsedOnView));
         }
     }
 }

@@ -78,9 +78,11 @@
                     });
 
             var values = new List<CalculationValueModel>();
+            var i = 1;
             foreach (var datum in data)
             {
-                var currentRowId = $"{datum.PartNumber + datum.OrderNumber}";
+                var currentRowId = i.ToString();
+                i++;
 
                 values.Add(
                     new CalculationValueModel
@@ -115,7 +117,7 @@
                         {
                             RowId = currentRowId,
                             ColumnId = "DateBooked",
-                            TextDisplay = datum.DateBooked.ToShortDateString()
+                            TextDisplay = datum.DateBooked.ToString("dd/MM/yyyy")
                         });
                 values.Add(
                     new CalculationValueModel

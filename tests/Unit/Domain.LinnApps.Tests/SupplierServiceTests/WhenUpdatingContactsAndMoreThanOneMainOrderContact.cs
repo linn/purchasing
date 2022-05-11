@@ -39,12 +39,15 @@
                                                           {
                                                               ContactId = 1,
                                                               IsMainOrderContact = "Y",
+                                                              IsMainInvoiceContact = "N",
+
                                                               SupplierId = 1,
                                                           },
                                                       new SupplierContact
                                                           {
                                                               ContactId = 2,
                                                               IsMainOrderContact = "Y",
+                                                              IsMainInvoiceContact = "Y",
                                                               SupplierId = 1,
                                                           }
                                                   }
@@ -54,10 +57,10 @@
         }
 
         [Test]
-        public void ShouldThrowUnauthorisedActionException()
+        public void ShouldThrowException()
         {
             this.action.Should().Throw<SupplierException>()
-                .WithMessage("Cannot have more than one Main Order Contact");
+                .WithMessage("The inputs for the following fields are empty/invalid: Cannot have more than one Main Order Contact, ");
         }
     }
 }

@@ -37,7 +37,6 @@
             IEnumerable<string> privileges = null)
         {
             var candidate = this.BuildEntityFromResourceHelper(resource);
-            candidate.SupplierId = this.databaseService.GetNextVal("SUPPLIER_SEQ");
             candidate.OrganisationId = this.databaseService.GetNextVal("ORG_SEQ");
             candidate.OpenedBy = resource.OpenedById.HasValue
                 ? new Employee { Id = (int)resource.OpenedById } : null;
@@ -101,6 +100,7 @@
                            ExpenseAccount = resource.ExpenseAccount,
                            PaymentDays = resource.PaymentDays,
                            PaymentMethod = resource.PaymentMethod,
+                           Country = resource.Country,
                            PaysInFc = resource.PaysInFc,
                            AccountingCompany = resource.AccountingCompany,
                            ApprovedCarrier = resource.ApprovedCarrier,
@@ -131,7 +131,7 @@
                            SupplierContacts = resource.SupplierContacts?.Select(c => new SupplierContact
                                                                           {
                                                                               SupplierId = resource.Id,
-                                                                              ContactId = c.Id > 0 ? c.Id : this.databaseService.GetIdSequence("CONT_SEQ"),
+                                                                              ContactId = c.Id > 0 ? c.Id : this.databaseService.GetNextVal("CONT_SEQ"),
                                                                               IsMainInvoiceContact = c.IsMainInvoiceContact,
                                                                               IsMainOrderContact = c.IsMainOrderContact,
                                                                               EmailAddress = c.EmailAddress,

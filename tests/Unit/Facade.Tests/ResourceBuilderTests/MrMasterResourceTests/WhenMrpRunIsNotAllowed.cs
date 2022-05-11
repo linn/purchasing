@@ -14,7 +14,7 @@
 
     using NUnit.Framework;
 
-    public class WhenMrpRunIsAllowed : ContextBase
+    public class WhenMrpRunIsNotAllowed : ContextBase
     {
         private MrMaster master;
 
@@ -25,7 +25,7 @@
         {
             this.master = new MrMaster { JobRef = "abc", RunDate = 1.May(2030), RunLogIdCurrentlyInProgress = 34 };
             this.AuthService.HasPermissionFor(AuthorisedAction.MrpRun, Arg.Any<IEnumerable<string>>())
-                .Returns(true);
+                .Returns(false);
             this.result = (MrMasterResource)this.Sut.Build(this.master, new List<string>());
         }
 
@@ -38,13 +38,13 @@
         }
 
         [Test]
-        public void ShouldReturnCorrectLinks()
+        public void ShouldReturnOnlySelfLink()
         {
             this.result.Links.Length.Should().Be(2);
             this.result.Links.First(a => a.Rel == "self").Href.Should()
                 .Be("/purchasing/material-requirements/last-run");
-            this.result.Links.First(a => a.Rel == "run-mrp").Href.Should()
-                .Be("/purchasing/material-requirements/run-mrp");
+            this.result.Links.First(a => a.Rel == "last-run-log").Href.Should()
+                .Be("/purchasing/material-requirements/run-logs?jobRef=abc");
         }
     }
 }
