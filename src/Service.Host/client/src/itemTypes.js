@@ -235,3 +235,15 @@ export const applyForecastingPercentageChange = new ItemType(
     'APPLY_FORECASTING_PERCENTAGE_CHANGE',
     '/purchasing/forecasting/apply-percentage-change'
 );
+
+export const purchaseOrderDelivery = new ItemType(
+    'purchaseOrderDelivery',
+    'PURCHASE_ORDER_DELIVERY',
+    '/purchasing/purchase-orders/deliveries'
+);
+
+export const purchaseOrderDeliveries = new ItemType(
+    'purchaseOrderDeliveries',
+    'PURCHASE_ORDER_DELIVERIES',
+    '/purchasing/purchase-orders/deliveries'
+);

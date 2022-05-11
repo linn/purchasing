@@ -8,7 +8,7 @@
 
         public string DateAdvised { get; set; }
 
-        public DateTime? DateRequested { get; set; }
+        public string DateRequested { get; set; }
 
         public int DeliverySeq { get; set; }
 
@@ -51,5 +51,7 @@
         public string RescheduleReason { get; set; }
 
         public string AvailableAtSupplier { get; set; }
+
+        public string PartNumber { get; set; }
     }
 }

@@ -34,7 +34,7 @@
 
             if (!string.IsNullOrEmpty(orderNumberSearchTerm))
             {
-                result = result.Where(x => x.OrderNumber.ToString().StartsWith(orderNumberSearchTerm));
+                result = result.Where(x => x.OrderNumber.ToString().Contains(orderNumberSearchTerm));
             }
 
             if (!includeAcknowledged)

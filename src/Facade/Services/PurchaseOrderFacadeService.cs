@@ -127,7 +127,8 @@
                                                                      Cancelled = d.Cancelled,
                                                                      DateAdvised = string.IsNullOrEmpty(d.DateAdvised) 
                                                                          ? null : DateTime.Parse(d.DateAdvised),
-                                                                     DateRequested = d.DateRequested,
+                                                                     DateRequested = string.IsNullOrEmpty(d.DateRequested) ? 
+                                                                         null : DateTime.Parse(d.DateRequested),
                                                                      DeliverySeq = d.DeliverySeq,
                                                                      NetTotalCurrency = d.NetTotalCurrency,
                                                                      BaseNetTotal = d.BaseNetTotal,

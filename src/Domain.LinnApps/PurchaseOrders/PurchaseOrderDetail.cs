@@ -22,7 +22,7 @@
 
         public Employee DeliveryConfirmedBy { get; set; }
 
-        public int DeliveryConfirmedById { get; set; }
+        public int? DeliveryConfirmedById { get; set; }
 
         public string DeliveryInstructions { get; set; }
 

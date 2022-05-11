@@ -201,3 +201,12 @@ export const applyForecastingPercentageChangeActionTypes = makeProcessActionType
 export const mrUsedOnReportActionTypes = makeReportActionTypes(
     reportTypes.mrUsedOnReport.actionType
 );
+
+export const purchaseOrderDeliveryActionTypes = makeActionTypes(
+    itemTypes.purchaseOrderDelivery.actionType
+);
+
+export const purchaseOrderDeliveriesActionTypes = makeActionTypes(
+    itemTypes.purchaseOrderDeliveries.actionType,
+    false
+);

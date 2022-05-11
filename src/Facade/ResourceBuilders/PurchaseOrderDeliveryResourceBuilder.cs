@@ -14,7 +14,16 @@
             return new PurchaseOrderDeliveryResource
                        {
                            OrderNumber = entity.OrderNumber,
-                           OrderLine = entity.OrderLine
+                           OrderLine = entity.OrderLine,
+                           DeliverySeq = entity.DeliverySeq,
+                           BaseOrderUnitPrice = entity.BaseOrderUnitPrice,
+                           OurDeliveryQty = entity.OurDeliveryQty,
+                           DateRequested = entity.DateRequested?.ToShortDateString(),
+                           DateAdvised = entity.DateAdvised?.ToShortDateString(),
+                           RescheduleReason = entity.RescheduleReason,
+                           SupplierConfirmationComment = entity.SupplierConfirmationComment,
+                           AvailableAtSupplier = entity.AvailableAtSupplier,
+                           PartNumber = entity.PurchaseOrderDetail.PartNumber
                        };
         }
 

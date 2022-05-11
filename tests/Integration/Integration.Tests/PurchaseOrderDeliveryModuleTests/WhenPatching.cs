@@ -53,7 +53,8 @@
                              {
                                  OrderNumber = this.orderNumber,
                                  OrderLine = this.orderLine,
-                                 DeliverySeq = this.deliverySequence
+                                 DeliverySeq = this.deliverySequence,
+                                 PurchaseOrderDetail = new PurchaseOrderDetail { PartNumber = "PART" }
                              });
 
             // todo - could add PatchAsJsonAsync() extension to HttpClient for convention's sake

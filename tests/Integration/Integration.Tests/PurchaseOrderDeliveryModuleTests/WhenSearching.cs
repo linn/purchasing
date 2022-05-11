@@ -29,7 +29,15 @@
             this.orderSearchTerm = "12345";
             this.includeAcknowledged = true;
 
-            var data = new List<PurchaseOrderDelivery> { new PurchaseOrderDelivery { OrderNumber = 123456 } };
+            var data = new List<PurchaseOrderDelivery> 
+                           { 
+                               new PurchaseOrderDelivery 
+                                   { 
+                                       OrderNumber = 123456, 
+                                       PurchaseOrderDetail = new PurchaseOrderDetail()
+                                   }
+                           };
+
             this.MockDomainService.SearchDeliveries(
                 this.supplierSearchTerm, this.orderSearchTerm, this.includeAcknowledged).Returns(data);
 
