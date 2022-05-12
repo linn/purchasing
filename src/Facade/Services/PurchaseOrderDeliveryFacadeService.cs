@@ -102,7 +102,7 @@
 
                     if (!int.TryParse(new string(row[0].Where(char.IsDigit).ToArray()), out var orderNumber))
                     {
-                        throw new InvalidCastException($"Invalid Order Number: {row[0]}.");
+                        throw new InvalidOperationException($"Invalid Order Number: {row[0]}.");
                     }
 
                     if (
@@ -114,7 +114,7 @@
                             .TryParseExact(
                                 row[1], "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDate))
                     {
-                        throw new InvalidCastException($"Date format not recognised for {orderNumber}.");
+                        throw new InvalidOperationException($"Date format not recognised for {orderNumber}.");
                     }
                     
                     changes.Add(new PurchaseOrderDeliveryUpdate
