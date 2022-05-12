@@ -115,7 +115,7 @@
                             .TryParseExact(
                                 row[1], "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDate))
                     {
-                        throw new InvalidOperationException($"Date format not recognised for {orderNumber}.");
+                        throw new InvalidOperationException($"Date format not recognised for {row[1]}.");
                     }
                     
                     changes.Add(new PurchaseOrderDeliveryUpdate
