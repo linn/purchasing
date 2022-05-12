@@ -96,12 +96,7 @@ const FileUpload = () => {
             />
             <Grid container spacing={3}>
                 <Grid item xs={12}>
-                    <Typography variant="h3">Bulk Lead Time Changes Uploader</Typography>
-                </Grid>
-                <Grid item xs={12}>
-                    <Typography variant="subtitle1">
-                        Upload a CSV file with two columns: Part Number and Lead Time Weeks value
-                    </Typography>
+                    <Typography variant="subtitle1">Upload a CSV file</Typography>
                 </Grid>
                 {loading ? (
                     <Grid item xs={12}>
