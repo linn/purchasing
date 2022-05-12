@@ -16,7 +16,7 @@
             IEnumerable<string> privileges);
 
         BatchUpdateProcessResult BatchUpdateDeliveries(
-            IEnumerable<PurchaseOrderDelivery> changes,
+            IEnumerable<PurchaseOrderDeliveryUpdate> changes,
             IEnumerable<string> privileges);
     }
 }
