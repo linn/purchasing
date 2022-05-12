@@ -10,10 +10,6 @@
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Resources.MaterialRequirements;
 
-    using Microsoft.AspNetCore.Routing.Matching;
-
-    using MoreLinq.Extensions;
-
     public class MrReportResourceBuilder : IBuilder<MrReport>
     {
         public MrReportResource Build(MrReport entity, IEnumerable<string> claims)
