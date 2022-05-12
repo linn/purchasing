@@ -105,8 +105,6 @@
                         throw new InvalidCastException($"Invalid Order Number: {row[0]}.");
                     }
 
-                    DateTime? newDateAdvised = null;
-                    
                     if (
                         !DateTime
                         .TryParseExact(
@@ -127,7 +125,7 @@
                                                       OrderLine = 1, // hardcoded for now
                                                       DeliverySequence = 1 // hardcoded for now since we can't handle split deliveries yet
                                                   },
-                                        NewDateAdvised = newDateAdvised,
+                                        NewDateAdvised = parsedDate,
                                         NewReason = row[2]
                                     });
                 }
