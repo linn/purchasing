@@ -8,7 +8,6 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
-    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
