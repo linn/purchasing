@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
 
@@ -100,6 +101,29 @@
                     var row = line.Split(",");
 
                     var orderNumber = int.Parse(new string(row[0].Where(char.IsDigit).ToArray()));
+                    
+                    DateTime? newDateAdvised = null;
+                    
+                    if (
+                        DateTime
+                        .TryParseExact(
+                            row[1], "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
+                    {
+                        newDateAdvised = parsedDate;
+                    }
+                    else if (
+                        DateTime
+                        .TryParseExact(
+                            row[1], "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDate))
+
+                    {
+                        newDateAdvised = parsedDate;
+                    }
+                    else
+                    {
+                        throw new InvalidCastException("Date format not recognised ");
+                    }
+
                     changes.Add(new PurchaseOrderDeliveryUpdate
                                     {
                                         Key = new PurchaseOrderDeliveryKey
@@ -108,7 +132,7 @@
                                                       OrderLine = 1, // hardcoded for now
                                                       DeliverySequence = 1 // hardcoded for now since we can't handle split deliveries yet
                                                   },
-                                        NewDateAdvised = DateTime.Parse(row[1]),
+                                        NewDateAdvised = newDateAdvised,
                                         NewReason = row[2]
                                     });
                 }

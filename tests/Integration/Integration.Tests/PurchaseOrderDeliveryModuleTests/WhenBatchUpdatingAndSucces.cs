@@ -1,7 +1,6 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrderDeliveryModuleTests
 {
     using System.Collections.Generic;
-    using System.Linq;
     using System.Net;
 
     using FluentAssertions;
@@ -15,7 +14,7 @@
 
     using NUnit.Framework;
 
-    public class WhenUpdatingAndErrors : ContextBase
+    public class WhenBatchUpdatingAndSucces : ContextBase
     {
         [SetUp]
         public void SetUp()
@@ -24,16 +23,12 @@
                 Arg.Any<IEnumerable<PurchaseOrderDeliveryUpdate>>(),
                 Arg.Any<IEnumerable<string>>()).Returns(new BatchUpdateProcessResult
                                                             {
-                                                                Success = false,
-                                                                Message = "Something went wrong!",
-                                                                Errors = new List<Error>
-                                                                             {
-                                                                                 new Error("Id", "Message")
-                                                                             }
+                                                                Success = true,
+                                                                Message = "Success!"
                                                             });
             this.Response = this.Client.Post(
                 $"/purchasing/purchase-orders/deliveries",
-                "PO1,28/03/1995,NEW REASON",
+                $"PO1,28/03/1995,NEW REASON",
                 with =>
                     {
                         with.Accept("application/json");
@@ -64,10 +59,8 @@
         public void ShouldReturnJsonBody()
         {
             var resultResource = this.Response.DeserializeBody<BatchUpdateProcessResultResource>();
-            resultResource.Success.Should().Be(false);
-            resultResource.Message.Should().Be("Something went wrong!");
-            resultResource.Errors.First().Descriptor.Should().Be("Id");
-            resultResource.Errors.First().Message.Should().Be("Message");
+            resultResource.Success.Should().Be(true);
+            resultResource.Message.Should().Be("Success!");
         }
     }
 }
