@@ -1,7 +1,6 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
     using System.Collections.Generic;
-    using System.Linq;
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
@@ -11,9 +10,11 @@
     {
         private readonly IMaterialRequirementsReportService materialRequirementsReportService;
 
-        private readonly IBuilder<MrHeader> builder;
+        private readonly IBuilder<MrReport> builder;
 
-        public MaterialRequirementsReportFacadeService(IMaterialRequirementsReportService materialRequirementsReportService, IBuilder<MrHeader> builder)
+        public MaterialRequirementsReportFacadeService(
+            IMaterialRequirementsReportService materialRequirementsReportService,
+            IBuilder<MrReport> builder)
         {
             this.materialRequirementsReportService = materialRequirementsReportService;
             this.builder = builder;
@@ -27,11 +28,7 @@
 
             var report = this.materialRequirementsReportService.GetMaterialRequirements(request.JobRef, parts);
 
-            return new SuccessResult<MrReportResource>(
-                new MrReportResource
-                    {
-                        Results = report.Select(r => (MrHeaderResource)this.builder.Build(r, privileges))
-                    });
+            return new SuccessResult<MrReportResource>((MrReportResource)this.builder.Build(report, privileges));
         }
     }
 }

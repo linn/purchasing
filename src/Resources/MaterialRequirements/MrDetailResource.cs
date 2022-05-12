@@ -2,14 +2,16 @@
 {
     public class MrDetailResource
     {
-        public string JobRef { get; set; }
+        public string Title { get; set; }
 
-        public string PartNumber { get; set; }
+        public int Segment { get; set; }
 
-        public int LinnWeekNumber { get; set; }
+        public int DisplaySequence { get; set; }
 
-        public decimal? DeliveryForecast { get; set; }
+        public string Value { get; set; }
 
-        public decimal? ProductionRequirement { get; set; }
+        public string Tag { get; set; }
+
+        public MrDetailItemResource Item { get; set; }
     }
 }

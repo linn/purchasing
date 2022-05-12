@@ -20,7 +20,7 @@
             this.MaterialRequirementsReportService = Substitute.For<IMaterialRequirementsReportService>();
             this.Sut = new MaterialRequirementsReportFacadeService(
                 this.MaterialRequirementsReportService,
-                new MrHeaderResourceBuilder(new MrDetailResourceBuilder()));
+                new MrReportResourceBuilder());
         }
     }
 }

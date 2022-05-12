@@ -4,6 +4,6 @@
 
     public interface IMaterialRequirementsReportService
     {
-        public IEnumerable<MrHeader> GetMaterialRequirements(string jobRef, IEnumerable<string> partNumbers);
+        public MrReport GetMaterialRequirements(string jobRef, IEnumerable<string> partNumbers);
     }
 }

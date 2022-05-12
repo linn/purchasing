@@ -52,6 +52,8 @@
 
         public string VendorManagerInitials { get; set; }
 
+        public int PartId { get; set; }
+
         public IEnumerable<MrDetail> MrDetails { get; set; }
     }
 }

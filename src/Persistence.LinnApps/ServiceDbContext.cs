@@ -983,6 +983,7 @@
             e.Property(d => d.LoadMessage).HasColumnName("LOAD_MESSAGE").HasMaxLength(2000);
             e.Property(d => d.MrMessage).HasColumnName("MR_MESSAGE").HasMaxLength(2000);
             e.Property(d => d.DateTidied).HasColumnName("DATE_TIDIED");
+            e.Property(d => d.RunWeekNumber).HasColumnName("RUN_WEEK_NUMBER");
         }
 
         private void BuildWhatsInInspectionExcludingFailedView(ModelBuilder builder)
@@ -1208,6 +1209,7 @@
             entity.Property(e => e.HasDeliveryForecast).HasColumnName("HAS_DELIVERY_FORECAST");
             entity.Property(e => e.VendorManager).HasColumnName("VENDOR_MANAGER").HasColumnType("VARCHAR2");
             entity.Property(e => e.VendorManagerInitials).HasColumnName("VM_INITIALS");
+            entity.Property(e => e.PartId).HasColumnName("PART_ID");
             entity.HasMany(s => s.MrDetails).WithOne().HasForeignKey(c => new { c.JobRef, c.PartNumber });
         }
 

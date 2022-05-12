@@ -1,8 +1,12 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Page, itemSelectorHelpers, Loading } from '@linn-it/linn-form-components-library';
+import {
+    Page,
+    itemSelectorHelpers,
+    Loading,
+    utilities
+} from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
-import Snackbar from '@mui/material/Snackbar';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
@@ -13,6 +17,8 @@ import Button from '@mui/material/Button';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import NotesIcon from '@mui/icons-material/Notes';
 import ShopIcon from '@mui/icons-material/Shop';
+import Link from '@mui/material/Link';
+import { Link as RouterLink } from 'react-router-dom';
 
 import { useLocation } from 'react-router';
 import queryString from 'query-string';
@@ -24,8 +30,6 @@ import history from '../../history';
 import config from '../../config';
 
 function MaterialRequirementsReport() {
-    const [showMessage, setShowMessage] = useState(false);
-    const [message, setMessage] = useState(null);
     const [selectedItem, setSelectedItem] = useState(null);
     const [selectedIndex, setSelectedIndex] = useState(null);
     const [nextPart, setNextPart] = useState(null);
@@ -48,19 +52,6 @@ function MaterialRequirementsReport() {
             }
         }
     });
-
-    const displayMessage = useCallback(
-        newMessage => {
-            setMessage(newMessage);
-            setShowMessage(true);
-        },
-        [setShowMessage]
-    );
-
-    const handleClose = () => {
-        setShowMessage(false);
-        setMessage(null);
-    };
 
     const dispatch = useDispatch();
 
@@ -205,7 +196,7 @@ function MaterialRequirementsReport() {
                                     </Button>
                                 </Tooltip>
                             </Grid>
-                            <Grid item xs={10}>
+                            <Grid item xs={8}>
                                 <Stack direction="row" spacing={2}>
                                     <Typography variant="body2" style={{ fontWeight: 'bold' }}>
                                         {selectedItem.partNumber}
@@ -215,10 +206,22 @@ function MaterialRequirementsReport() {
                                     </Typography>
                                 </Stack>
                             </Grid>
-                            <Grid item xs={2}>
-                                <Typography variant="body2">
-                                    Jobref: {selectedItem.jobRef}
-                                </Typography>
+                            <Grid item xs={4}>
+                                <Stack direction="row" spacing={2}>
+                                    <Typography variant="body2">
+                                        Jobref: {selectedItem.jobRef}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        <Link
+                                            component={RouterLink}
+                                            to={utilities.getHref(selectedItem, 'part')}
+                                            underline="hover"
+                                            color="inherit"
+                                        >
+                                            View Part
+                                        </Link>
+                                    </Typography>
+                                </Stack>
                             </Grid>
                             <Grid item xs={12}>
                                 <Stack direction="row" spacing={2}>
@@ -291,12 +294,6 @@ function MaterialRequirementsReport() {
                         </Grid>
                     )}
                 </>
-                <Snackbar
-                    open={showMessage}
-                    autoHideDuration={3000}
-                    onClose={handleClose}
-                    message={message}
-                />
             </ThemeProvider>
         </Page>
     );

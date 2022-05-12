@@ -39,7 +39,7 @@
             this.MaterialRequirementsReportService.GetMaterialRequirements(
                     this.jobRef,
                     Arg.Is<IList<string>>(a => a.Contains("P1") && a.Count == 1))
-                .Returns(new List<MrHeader> { new MrHeader { JobRef = this.jobRef } });
+                .Returns(new MrReport { Headers = new List<MrHeader> { new MrHeader { JobRef = this.jobRef } } });
 
             this.result = this.Sut.GetMaterialRequirements(this.requestResource, this.privileges);
         }

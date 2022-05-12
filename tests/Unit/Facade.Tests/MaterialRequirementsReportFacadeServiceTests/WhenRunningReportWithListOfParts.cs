@@ -36,7 +36,7 @@
             this.MaterialRequirementsReportService.GetMaterialRequirements(
                     this.jobRef,
                     Arg.Is<IList<string>>(a => a.Contains("A") && a.Contains("B")))
-                .Returns(new List<MrHeader> { new MrHeader { JobRef = this.jobRef } });
+                .Returns(new MrReport { Headers = new List<MrHeader> { new MrHeader { JobRef = this.jobRef } } });
 
             this.result = this.Sut.GetMaterialRequirements(this.requestResource, this.privileges);
         }
