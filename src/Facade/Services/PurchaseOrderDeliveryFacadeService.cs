@@ -105,6 +105,7 @@
                         throw new InvalidOperationException($"Invalid Order Number: {row[0]}.");
                     }
 
+                    // only supports two date formats for now, i.e.  31/01/2000 and 31-jan-2000
                     if (
                         !DateTime
                         .TryParseExact(
