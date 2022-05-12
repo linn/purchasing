@@ -100,30 +100,25 @@
                     // assuming csv lines are in the form <orderNumber>,<newAdvisedDate>,<newReason>
                     var row = line.Split(",");
 
-                    var orderNumber = int.Parse(new string(row[0].Where(char.IsDigit).ToArray()));
-                    
+                    if (!int.TryParse(new string(row[0].Where(char.IsDigit).ToArray()), out var orderNumber))
+                    {
+                        throw new InvalidCastException($"Invalid Order Number: {row[0]}.");
+                    }
+
                     DateTime? newDateAdvised = null;
                     
                     if (
-                        DateTime
+                        !DateTime
                         .TryParseExact(
-                            row[1], "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
+                            row[1], "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate)
+                        &&
+                        !DateTime
+                            .TryParseExact(
+                                row[1], "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDate))
                     {
-                        newDateAdvised = parsedDate;
+                        throw new InvalidCastException($"Date format not recognised for {orderNumber}.");
                     }
-                    else if (
-                        DateTime
-                        .TryParseExact(
-                            row[1], "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDate))
-
-                    {
-                        newDateAdvised = parsedDate;
-                    }
-                    else
-                    {
-                        throw new InvalidCastException("Date format not recognised ");
-                    }
-
+                    
                     changes.Add(new PurchaseOrderDeliveryUpdate
                                     {
                                         Key = new PurchaseOrderDeliveryKey
