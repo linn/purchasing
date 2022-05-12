@@ -125,8 +125,10 @@
                                                         d => new PurchaseOrderDelivery
                                                                  {
                                                                      Cancelled = d.Cancelled,
-                                                                     DateAdvised = d.DateAdvised,
-                                                                     DateRequested = d.DateRequested,
+                                                                     DateAdvised = string.IsNullOrEmpty(d.DateAdvised) 
+                                                                         ? null : DateTime.Parse(d.DateAdvised),
+                                                                     DateRequested = string.IsNullOrEmpty(d.DateRequested) ? 
+                                                                         null : DateTime.Parse(d.DateRequested),
                                                                      DeliverySeq = d.DeliverySeq,
                                                                      NetTotalCurrency = d.NetTotalCurrency,
                                                                      BaseNetTotal = d.BaseNetTotal,
@@ -146,7 +148,9 @@
                                                                      VatTotalCurrency = d.VatTotalCurrency,
                                                                      BaseVatTotal = d.BaseVatTotal,
                                                                      DeliveryTotalCurrency = d.DeliveryTotalCurrency,
-                                                                     BaseDeliveryTotal = d.BaseDeliveryTotal
+                                                                     BaseDeliveryTotal = d.BaseDeliveryTotal,
+                                                                     RescheduleReason = d.RescheduleReason,
+                                                                     AvailableAtSupplier = d.AvailableAtSupplier
                                                                  }) as ICollection<PurchaseOrderDelivery>,
                                                 RohsCompliant = x.RohsCompliant,
                                                 SuppliersDesignation = x.SuppliersDesignation,
