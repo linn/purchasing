@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
 
     using Linn.Common.Facade;
@@ -86,10 +87,51 @@
                 (PurchaseOrderDeliveryResource)this.resourceBuilder.Build(entity, privilegesList));
         }
 
-        public IResult<ProcessResult> BatchUpdateDeliveries(string csvString, IEnumerable<string> privileges)
+        public IResult<BatchUpdateProcessResultResource> BatchUpdateDeliveriesFromCsv(
+            string csvString, IEnumerable<string> privileges)
         {
-            throw new System.NotImplementedException();
-            this.transactionManager.Commit();
+            var reader = new StringReader(csvString);
+            var changes = new List<PurchaseOrderDeliveryUpdate>();
+            try
+            {
+                while (reader.ReadLine() is { } line)
+                {
+                    // assuming csv lines are in the form <orderNumber>,<newAdvisedDate>,<newReason>
+                    var row = line.Split(",");
+
+                    var orderNumber = int.Parse(new string(row[0].Where(char.IsDigit).ToArray()));
+                    changes.Add(new PurchaseOrderDeliveryUpdate
+                                    {
+                                        Key = new PurchaseOrderDeliveryKey
+                                                  {
+                                                      OrderNumber = orderNumber,
+                                                      OrderLine = 1, // hardcoded for now
+                                                      DeliverySequence = 1 // hardcoded for now since we can't handle split deliveries yet
+                                                  },
+                                        NewDateAdvised = DateTime.Parse(row[1]),
+                                        NewReason = row[2]
+                                    });
+                }
+
+                var result = this.domainService.BatchUpdateDeliveries(changes, privileges);
+                this.transactionManager.Commit();
+
+                return new SuccessResult<BatchUpdateProcessResultResource>(
+                    new BatchUpdateProcessResultResource
+                        {
+                            Success = result.Success,
+                            Message = result.Message,
+                            Errors = result.Errors?.Select(e => new ErrorResource
+                                                                   {
+                                                                       Descriptor = e.Descriptor,
+                                                                       Message = e.Message
+                                                                   })
+                        });
+            }
+            catch (Exception e)
+            {
+                return new BadRequestResult<BatchUpdateProcessResultResource>(e.Message);
+            }
         }
 
         private static PurchaseOrderDelivery BuildEntityFromResourceHelper(PurchaseOrderDeliveryResource resource)

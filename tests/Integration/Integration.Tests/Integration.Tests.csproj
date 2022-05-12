@@ -32,7 +32,6 @@
 
   <ItemGroup>
     <Folder Include="ForecastingModuleTests\" />
-    <Folder Include="PurchaseOrderDeliveryModuleTests\" />
     <Folder Include="PartsReceivedReportModuleTests\" />
   </ItemGroup>
 

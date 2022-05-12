@@ -36,12 +36,6 @@
         }
 
         [Test]
-        public void ShouldReturnSuccess()
-        {
-            this.Response.StatusCode.Should().Be(HttpStatusCode.OK);
-        }
-
-        [Test]
         public void ShouldCallDomainService()
         {
             this.MockPartSupplierDomainService.Received()
