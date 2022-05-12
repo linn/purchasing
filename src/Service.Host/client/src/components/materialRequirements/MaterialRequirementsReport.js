@@ -206,9 +206,14 @@ function MaterialRequirementsReport() {
                                 </Tooltip>
                             </Grid>
                             <Grid item xs={10}>
-                                <Typography variant="body2" style={{ fontWeight: 'bold' }}>
-                                    {selectedItem.partNumber}: {selectedItem.partDescription}
-                                </Typography>
+                                <Stack direction="row" spacing={2}>
+                                    <Typography variant="body2" style={{ fontWeight: 'bold' }}>
+                                        {selectedItem.partNumber}
+                                    </Typography>
+                                    <Typography variant="body2" style={{ fontWeight: 'bold' }}>
+                                        {selectedItem.partDescription}
+                                    </Typography>
+                                </Stack>
                             </Grid>
                             <Grid item xs={2}>
                                 <Typography variant="body2">

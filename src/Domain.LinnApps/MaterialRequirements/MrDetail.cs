@@ -8,6 +8,8 @@
 
         public int LinnWeekNumber { get; set; }
 
+        public int Segment { get; set; }
+
         public decimal? DeliveryForecast { get; set; }
 
         public decimal? ProductionRequirement { get; set; }
