@@ -51,6 +51,9 @@
                 .AddTransient<IBuilder<PreferredSupplierChange>, PreferredSupplierChangeResourceBuilder>()
                 .AddTransient<IBuilder<PriceChangeReason>, PriceChangeReasonResourceBuilder>()
                 .AddTransient<IBuilder<PartCategory>, PartCategoryResourceBuilder>()
+                .AddTransient<IBuilder<PurchaseOrderDelivery>, PurchaseOrderDeliveryResourceBuilder>()
+                .AddTransient<IBuilder<PurchaseOrderPosting>, PurchaseOrderPostingResourceBuilder>()
+                .AddTransient<IBuilder<PurchaseOrderDetail>, PurchaseOrderDetailResourceBuilder>()
                 .AddTransient<IBuilder<PurchaseOrder>, PurchaseOrderResourceBuilder>()
                 .AddTransient<IBuilder<Address>, AddressResourceBuilder>()
                 .AddTransient<IBuilder<Country>, CountryResourceBuilder>()
@@ -63,6 +66,7 @@
                 .AddTransient<IBuilder<MrpRunLog>, MrpRunLogResourceBuilder>()
                 .AddTransient<IBuilder<PurchaseOrderReqState>, PurchaseOrderReqStateResourceBuilder>()
                 .AddTransient<IBuilder<MrMaster>, MrMasterResourceBuilder>()
+                .AddTransient<IBuilder<PurchaseOrderDelivery>, PurchaseOrderDeliveryResourceBuilder>()
                 .AddTransient<IBuilder<MrReport>, MrReportResourceBuilder>();
         }
 
@@ -108,6 +112,7 @@
                 .AddTransient<ISingleRecordFacadeResourceService<MrMaster, MrMasterResource>, MrMasterFacadeService>()
                 .AddTransient<IForecastingFacadeService, ForecastingFacadeService>()
                 .AddTransient<IMrUsedOnReportFacadeService, MrUsedOnReportFacadeService>()
+                .AddTransient<IPurchaseOrderDeliveryFacadeService, PurchaseOrderDeliveryFacadeService>()
                 .AddTransient<IMaterialRequirementsReportFacadeService, MaterialRequirementsReportFacadeService>();
         }
 
@@ -142,6 +147,7 @@
                 .AddTransient<IPrefSupReceiptsReportService, PrefSupReceiptsReportService>()
                 .AddTransient<IForecastingService, ForecastingService>()
                 .AddTransient<IMrUsedOnReportService, MrUsedOnReportService>()
+                .AddTransient<IPurchaseOrderDeliveryService, PurchaseOrderDeliveryService>()
                 .AddTransient<IMaterialRequirementsReportService, MaterialRequirementsReportService>()
 
                 // external services

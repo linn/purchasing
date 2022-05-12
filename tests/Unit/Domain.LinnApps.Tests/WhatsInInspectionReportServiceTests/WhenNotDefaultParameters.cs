@@ -19,7 +19,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.result = this.Sut.GetReport(true, false, true, false, false);
+            this.result = this.Sut.GetReport(true, true, false, true, false, false);
         }
 
         [Test]
@@ -33,6 +33,20 @@
         {
             // PART D has no OrdersData entry
             this.result.PartsInInspection.Any(x => x.PartNumber.Equals("PART D")); 
+        }
+
+        [Test]
+        public void ShouldNotIncludeFinishedGoods()
+        {
+            this.result.PartsInInspection.Count().Should().Be(2);
+            Assert.IsFalse(this.result.PartsInInspection.Any(x => x.PartNumber.Equals("F")));
+        }
+
+        [Test]
+        public void ShouldQueryStockLocators()
+        {
+            this.StockLocatorRepository.Received(this.result.PartsInInspection.Count()).FilterBy(
+                Arg.Any<Expression<Func<StockLocator, bool>>>());
         }
 
         [Test]

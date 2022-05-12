@@ -237,3 +237,15 @@ export const applyForecastingPercentageChange = new ItemType(
 );
 
 export const mrReport = new ItemType('mrReport', 'MR_REPORT', '/purchasing/material-requirements');
+
+export const purchaseOrderDelivery = new ItemType(
+    'purchaseOrderDelivery',
+    'PURCHASE_ORDER_DELIVERY',
+    '/purchasing/purchase-orders/deliveries'
+);
+
+export const purchaseOrderDeliveries = new ItemType(
+    'purchaseOrderDeliveries',
+    'PURCHASE_ORDER_DELIVERIES',
+    '/purchasing/purchase-orders/deliveries'
+);

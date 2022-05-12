@@ -68,6 +68,8 @@ import runMrp from './runMrp';
 import mrMaster from './mrMaster';
 import applyForecastingPercentageChange from './applyForecastingPercentageChange';
 import mrUsedOnReport from './mrUsedOnReport';
+import purchaseOrderDelivery from './purchaseOrderDelivery';
+import purchaseOrderDeliveries from './purchaseOrderDeliveries';
 import mrReport from './mrReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
@@ -115,6 +117,8 @@ const rootReducer = history =>
         purchaseOrderReq,
         purchaseOrderReqs,
         purchaseOrderReqStates,
+        purchaseOrderDelivery,
+        purchaseOrderDeliveries,
         purchaseOrders,
         putSupplierOnHold,
         router: connectRouter(history),

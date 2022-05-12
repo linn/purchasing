@@ -120,9 +120,11 @@
         public DbSet<LedgerPeriod> LedgerPeriods { get; set; }
 
         public DbSet<LinnWeek> LinnWeeks { get; set; }
-        
+
         public DbSet<CancelledOrderDetail> CancelledPurchaseOrderDetails { get; set; }
 
+        public DbSet<StockLocator> StockLocators { get; set; }
+        
         public DbSet<MrUsedOnRecord> MrUsedOnView { get; set; }
        
         public DbSet<MrHeader> MrHeaders { get; set; }
@@ -193,6 +195,7 @@
             this.BuildCancelledPODetails(builder);
             this.BuildPurchaseOrderPostings(builder);
             this.BuildNominalAccounts(builder);
+            this.BuildStockLocators(builder);
             this.BuildMrUsedOnView(builder);
             this.BuildMrHeaders(builder);
             this.BuildMrDetails(builder);
@@ -588,7 +591,7 @@
             entity.Property(o => o.InternalComments).HasColumnName("INTERNAL_COMMENTS").HasMaxLength(300);
             entity.HasMany(d => d.CancelledDetails).WithOne().HasForeignKey(cd => new { cd.OrderNumber, cd.LineNumber });
             entity.HasMany(d => d.MrOrders).WithOne().HasForeignKey(mr => new { mr.OrderNumber, mr.LineNumber });
-            entity.HasMany(d => d.OrderPostings).WithOne().HasForeignKey(p => new { p.OrderNumber, p.LineNumber });
+            entity.HasOne(x => x.OrderPosting).WithOne().HasForeignKey<PurchaseOrderPosting>(p => new { p.OrderNumber, p.LineNumber });
         }
 
         private void BuildPurchaseOrderDeliveries(ModelBuilder builder)
@@ -618,6 +621,8 @@
             entity.Property(o => o.OrderUnitPriceCurrency).HasColumnName("ORDER_UNIT_PRICE").HasMaxLength(19);
             entity.Property(o => o.VatTotalCurrency).HasColumnName("VAT_TOTAL").HasMaxLength(18);
             entity.Property(o => o.DeliveryTotalCurrency).HasColumnName("DELIVERY_TOTAL").HasMaxLength(18);
+            entity.Property(o => o.RescheduleReason).HasColumnName("RESCHEDULE_REASON").HasMaxLength(20);
+            entity.Property(o => o.AvailableAtSupplier).HasColumnName("AVAILABLE_AT_SUPPLIER").HasMaxLength(1);
         }
 
         private void BuildOverbookAllowedBy(ModelBuilder builder)
@@ -990,7 +995,7 @@
         {
             var e = builder.Entity<PartsInInspectionExcludingFails>().ToView("WHATS_IN_INSP_EXCL_FAIL_VIEW");
             e.HasNoKey();
-            e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER");
+            e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
             e.Property(m => m.Description).HasColumnName("DESCRIPTION");
             e.Property(m => m.OurUnitOfMeasure).HasColumnName("OUR_UNIT_OF_MEASURE");
             e.Property(m => m.QtyInStock).HasColumnName("QTY_IN_STOCK");
@@ -1003,7 +1008,7 @@
         {
             var e = builder.Entity<PartsInInspectionIncludingFails>().ToView("WHATS_IN_INSP_INCL_FAIL_VIEW");
             e.HasNoKey();
-            e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER");
+            e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
             e.Property(m => m.Description).HasColumnName("DESCRIPTION");
             e.Property(m => m.OurUnitOfMeasure).HasColumnName("OUR_UNIT_OF_MEASURE");
             e.Property(m => m.QtyInStock).HasColumnName("QTY_IN_STOCK");
@@ -1031,8 +1036,8 @@
         {
             var e = builder.Entity<WhatsInInspectionStockLocationsData>().ToView("WHATS_IN_INSP_ST_LOC_VIEW");
             e.HasNoKey();
-            e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER");
-            e.Property(m => m.State).HasColumnName("STATE");
+            e.Property(m => m.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
+            e.Property(m => m.State).HasColumnName("STATE").HasColumnType("VARCHAR2");
             e.Property(m => m.Batch).HasColumnName("BATCH");
             e.Property(m => m.Qty).HasColumnName("QTY");
             e.Property(m => m.Location).HasColumnName("LOC");
@@ -1044,7 +1049,7 @@
         {
             var e = builder.Entity<WhatsInInspectionBackOrderData>().ToView("WHATS_IN_INSP_BACK_ORDER_VIEW");
             e.HasNoKey();
-            e.Property(m => m.ArticleNumber).HasColumnName("ARTICLE_NUMBER");
+            e.Property(m => m.ArticleNumber).HasColumnName("ARTICLE_NUMBER").HasColumnType("VARCHAR2");
             e.Property(m => m.Story).HasColumnName("STORY");
             e.Property(m => m.QtyInInspection).HasColumnName("QTY_IN_INSPECTION");
             e.Property(m => m.QtyNeeded).HasColumnName("QTY_NEEDED");
@@ -1115,7 +1120,7 @@
             entity.Property(d => d.StartsOn).HasColumnName("LINN_WEEK_START_DATE");
             entity.Property(d => d.EndsOn).HasColumnName("LINN_WEEK_END_DATE");
         }
-    
+
         private void BuildCancelledPODetails(ModelBuilder builder)
         {
             var entity = builder.Entity<CancelledOrderDetail>().ToTable("PL_CANCELLED_DETAILS");
@@ -1163,11 +1168,23 @@
         {
             var entity = builder.Entity<NominalAccount>().ToTable("NOMINAL_ACCOUNTS");
             entity.HasKey(e => e.AccountId);
-            entity.Property(d => d.AccountId).HasColumnName("NOMACC_ID").HasMaxLength(6);
-            entity.HasOne(e => e.Department).WithMany().HasForeignKey("DEPARTMENT");
-            entity.HasOne(e => e.Nominal).WithMany().HasForeignKey("NOMINAL");
+            entity.Property(e => e.AccountId).HasColumnName("NOMACC_ID").HasMaxLength(6);
+            entity.Property(e => e.DepartmentCode).HasColumnName("DEPARTMENT").HasMaxLength(6);
+            entity.Property(e => e.NominalCode).HasColumnName("NOMINAL").HasMaxLength(6);
+            entity.HasOne(e => e.Department).WithMany(x => x.NominalAccounts).HasForeignKey(ac => ac.DepartmentCode);
+            entity.HasOne(e => e.Nominal).WithMany(x => x.NominalAccounts).HasForeignKey(ac => ac.NominalCode);
         }
 
+        private void BuildStockLocators(ModelBuilder builder)
+        {
+            var entity = builder.Entity<StockLocator>().ToTable("STOCK_LOCATORS");
+            entity.HasKey(e => e.Id);
+            entity.Property(d => d.Id).HasColumnName("STOCK_LOCATOR_ID");
+            entity.Property(d => d.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
+            entity.Property(d => d.State).HasColumnName("STATE").HasColumnType("VARCHAR2");
+            entity.Property(d => d.Qty).HasColumnName("QTY");
+        }
+        
         private void BuildMrUsedOnView(ModelBuilder builder)
         {
             var entity = builder.Entity<MrUsedOnRecord>().ToTable("MR_USED_ON_VIEW").HasNoKey();

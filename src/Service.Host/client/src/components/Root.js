@@ -34,8 +34,8 @@ import BulkLeadTimesUpload from './partSupplierUtility/BulkLeadTimesUpload';
 import PartsReceivedReport from './reports/PartsReceivedReport';
 import POReqUtility from './POReqs/POReqUtility';
 import POReqSearch from './POReqs/POReqSearch';
-import OverbooksSearch from './OverbooksSearch';
-import AllowPurchaseOrderOverbook from './AllowPurchaseOrderOverbook';
+import OverbooksSearch from './PurchaseOrders/OverbooksSearch';
+import AllowPurchaseOrderOverbook from './PurchaseOrders/AllowPurchaseOrderOverbook';
 import WhatsDueInReport from './reports/WhatsDueInReport';
 import OutstandingPoReqsReport from './reports/OutstandingPoReqsReport';
 import PrefSupReceiptsReport from './reports/PrefSupReceiptsReport';
@@ -43,7 +43,10 @@ import POReqPrintout from './POReqs/POReqPrintout';
 import WhatsInInspectionReport from './reports/WhatsInInspectionReport';
 import RunMrp from './RunMrp';
 import ApplyForecastingPercentageChange from './ApplyForecastingPercentageChange';
+import PurchaseOrderUtility from './PurchaseOrders/PurchaseOrderUtility';
+import PurchaseOrdersSearch from './PurchaseOrders/PurchaseOrdersSearch';
 import MrUsedOnReport from './reports/MrUsedOnReport';
+import AcknowledgeOrdersUtility from './AcknowledgeOrdersUtility';
 import MaterialRequirements from './materialRequirements/MaterialRequirementsOptions';
 import MaterialRequirementsReport from './materialRequirements/MaterialRequirementsReport';
 
@@ -219,6 +222,16 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
+                                    path="/purchasing/purchase-orders/:orderNumber"
+                                    component={PurchaseOrderUtility}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/purchase-orders/"
+                                    component={PurchaseOrdersSearch}
+                                />
+                                <Route
+                                    exact
                                     path="/purchasing/reports/parts-received"
                                     component={PartsReceivedReport}
                                 />
@@ -256,6 +269,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/material-requirements/used-on-report"
                                     component={MrUsedOnReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/purchase-orders/acknowledge"
+                                    component={AcknowledgeOrdersUtility}
                                 />
                                 <Route
                                     exact
