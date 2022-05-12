@@ -47,6 +47,12 @@
         }
 
         [Test]
+        public void ShouldReturnSuccess()
+        {
+            this.Response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+
+        [Test]
         public void ShouldCommitChanges()
         {
             this.TransactionManager.Received()
