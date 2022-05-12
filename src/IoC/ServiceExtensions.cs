@@ -135,7 +135,8 @@
                         x.GetService<IPurchaseOrderReqsPack>(),
                         x.GetService<IRepository<Employee, int>>(),
                         x.GetService<IEmailService>(),
-                        x.GetService<IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>>()))
+                        x.GetService<IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>>(),
+                        x.GetService<IPurchaseOrderAutoOrderPack>()))
                 .AddTransient<IWhatsDueInReportService, WhatsDueInReportService>()
                 .AddTransient<IOutstandingPoReqsReportService, OutstandingPoReqsReportService>()
                 .AddTransient<IMaterialRequirementsPlanningService, MaterialRequirementsPlanningService>()
@@ -152,7 +153,8 @@
                 .AddTransient<IPurchaseOrderReqsPack, PurchaseOrderReqsPack>()
                 .AddTransient<IMrpLoadPack, MrpLoadPack>()
                 .AddTransient<IForecastingPack, ForecastingPack>()
-                .AddTransient<ISupplierPack, SupplierPack>();
+                .AddTransient<ISupplierPack, SupplierPack>()
+                .AddTransient<IPurchaseOrderAutoOrderPack, PurchaseOrderAutoOrderPack>();
         }
     }
 }

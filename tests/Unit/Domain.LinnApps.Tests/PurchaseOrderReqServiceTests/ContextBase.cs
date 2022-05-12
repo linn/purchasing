@@ -6,7 +6,6 @@
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
-    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
     using NSubstitute;
 
@@ -30,6 +29,9 @@
 
         protected IPurchaseOrderReqService Sut { get; private set; }
 
+        protected IPurchaseOrderAutoOrderPack MockPurchaseOrderAutoOrderPack { get; private set; }
+
+
         [SetUp]
         public void SetUpContext()
         {
@@ -39,6 +41,7 @@
             this.EmailService = Substitute.For<IEmailService>();
             this.MockReqsStateChangeRepository =
                 Substitute.For<IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>>();
+            this.MockPurchaseOrderAutoOrderPack = Substitute.For<IPurchaseOrderAutoOrderPack>();
 
             this.Sut = new PurchaseOrderReqService(
                 "app.linn",
@@ -46,7 +49,8 @@
                 this.MockPurchaseOrderReqsPack,
                 this.EmployeeRepository,
                 this.EmailService,
-                this.MockReqsStateChangeRepository);
+                this.MockReqsStateChangeRepository,
+                this.MockPurchaseOrderAutoOrderPack);
         }
     }
 }

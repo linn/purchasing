@@ -157,7 +157,7 @@
 
                 if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, privileges))
                 {
-                    yield return new LinkResource { Rel = "create-purchase-order", Href = this.GetLocation(model) };
+                    yield return new LinkResource { Rel = "create-purchase-order", Href = $"{this.GetLocation(model)}/turn-into-order" };
                 }
             }
 

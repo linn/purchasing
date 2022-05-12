@@ -34,7 +34,8 @@ import {
     userSelectors,
     getItemError,
     ErrorCard,
-    processSelectorHelpers
+    processSelectorHelpers,
+    utilities
 } from '@linn-it/linn-form-components-library';
 import currenciesActions from '../../actions/currenciesActions';
 import employeesActions from '../../actions/employeesActions';
@@ -248,7 +249,7 @@ function POReqUtility({ creating }) {
         setEditStatus('edit');
         if (allowedToAuthorise) {
             clearErrors();
-            dispatch(poReqActions.postByHref(req.links?.find(l => l.rel === 'authorise')?.href));
+            dispatch(poReqActions.postByHref(utilities.getHref(req, 'authorise')));
         }
     };
 
@@ -256,7 +257,7 @@ function POReqUtility({ creating }) {
         setEditStatus('edit');
         if (allowedTo2ndAuthorise) {
             clearErrors();
-            dispatch(poReqActions.postByHref(req.links?.find(l => l.rel === 'authorise')?.href));
+            dispatch(poReqActions.postByHref(utilities.getHref(req, 'authorise')));
         }
     };
 
@@ -264,7 +265,7 @@ function POReqUtility({ creating }) {
         setEditStatus('edit');
         if (allowedToFinanceCheck) {
             clearErrors();
-            dispatch(poReqActions.postByHref(req.links.find(l => l.rel === 'finance-check').href));
+            dispatch(poReqActions.postByHref(utilities.getHref(req, 'finance-check')));
         }
     };
 
@@ -276,7 +277,7 @@ function POReqUtility({ creating }) {
     const handleCancelClick = () => {
         if (allowedToCancel) {
             clearErrors();
-            dispatch(poReqActions.postByHref(req.links.find(l => l.rel === 'cancel').href));
+            dispatch(poReqActions.postByHref(utilities.getHref(req, 'cancel')));
         }
     };
 
@@ -629,7 +630,7 @@ function POReqUtility({ creating }) {
                                     className={classes.pullRight}
                                     aria-label="Print"
                                     onClick={() =>
-                                        history.push(req.links?.find(l => l.rel === 'print')?.href)
+                                        history.push(utilities.getHref(req, 'print'))
                                     }
                                     disabled={creating}
                                 >

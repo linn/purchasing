@@ -7,6 +7,8 @@
     {
         void Update(PurchaseOrderReq entity, PurchaseOrderReq updatedEntity, IEnumerable<string> privileges);
 
+        void CreateOrderFromReq(PurchaseOrderReq entity, IEnumerable<string> privileges, int currentUserId);
+
         PurchaseOrderReq Create(PurchaseOrderReq entity, IEnumerable<string> privileges);
 
         void Cancel(PurchaseOrderReq entity, IEnumerable<string> privileges);

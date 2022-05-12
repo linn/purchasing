@@ -13,18 +13,19 @@
 
     public class PurchaseOrderReqService : IPurchaseOrderReqService
     {
+        private readonly string appRoot;
+
         private readonly IAuthorisationService authService;
 
         private readonly IEmailService emailService;
 
         private readonly IRepository<Employee, int> employeeRepository;
 
+        private readonly IPurchaseOrderAutoOrderPack purchaseOrderAutoOrderPack;
+
         private readonly IPurchaseOrderReqsPack purchaseOrderReqsPack;
 
-        private readonly IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>
-            reqsStateChangeRepository;
-
-        private readonly string appRoot;
+        private readonly IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey> reqsStateChangeRepository;
 
         public PurchaseOrderReqService(
             string appRoot,
@@ -32,7 +33,8 @@
             IPurchaseOrderReqsPack purchaseOrderReqsPack,
             IRepository<Employee, int> employeeRepository,
             IEmailService emailService,
-            IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey> reqsStateChangeRepository)
+            IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey> reqsStateChangeRepository,
+            IPurchaseOrderAutoOrderPack purchaseOrderAutoOrderPack)
         {
             this.authService = authService;
             this.purchaseOrderReqsPack = purchaseOrderReqsPack;
@@ -40,6 +42,7 @@
             this.emailService = emailService;
             this.reqsStateChangeRepository = reqsStateChangeRepository;
             this.appRoot = appRoot;
+            this.purchaseOrderAutoOrderPack = purchaseOrderAutoOrderPack;
         }
 
         public void Authorise(PurchaseOrderReq entity, IEnumerable<string> privileges, int currentUserId)
@@ -78,7 +81,7 @@
 
             if (stage == "AUTH1")
             {
-                entity.State = allowedToAuthoriseResult.NewState;
+                entity.State = "FINANCE WAIT"; // allowedToAuthoriseResult.NewState;
                 entity.AuthorisedById = currentUserId;
             }
             else
@@ -108,6 +111,56 @@
             }
 
             return entity;
+        }
+
+        public void CreateOrderFromReq(PurchaseOrderReq entity, IEnumerable<string> privileges, int currentUserId)
+        {
+            var stage = !entity.AuthorisedById.HasValue ? "AUTH1" : "AUTH2";
+
+            if (entity.State != "ORDER WAIT")
+            {
+                throw new UnauthorisedActionException(
+                    "Cannot create order from a req that is not in state 'ORDER WAIT'. Please make sure the req is saved in this state and try again");
+            }
+
+            if (!entity.AuthorisedById.HasValue)
+            {
+                throw new UnauthorisedActionException("Cannot create order from a req that has not been authorised");
+            }
+
+            var authAllowed = false;
+
+            // todo call below pack and work out what want to do with message in case created unauthd
+            // v_auth:= pl_orders_pack.order_can_be_authorised_by(null, null,:br.turned_into_order_by,
+            // cur_pack.cur_to_base_value(:br.currency,:br.total_req_price),
+            // :br.part_number, 'PO');
+
+            // if not v_auth then
+            // tb_mess.warning('Your signing limit will not cover this req. The order will be created unauthorised');
+            // end if;
+            var createMiniOrderResult = this.purchaseOrderAutoOrderPack.CreateMiniOrderFromReq(
+                entity.NominalCode,
+                entity.DepartmentCode,
+                entity.RequestedById,
+                currentUserId,
+                entity.Description,
+                entity.QuoteRef,
+                entity.RemarksForOrder,
+                entity.PartNumber,
+                entity.SupplierId,
+                entity.Qty,
+                entity.DateRequired,
+                entity.UnitPrice,
+                authAllowed);
+
+            // update mini_order set internal_comments = :br.iNTERNAL_ONLY_ORDER_NOTES
+            // where order_number = v_order_number;
+            // tb_mess.warning('Order number ' || v_order_number || ' created successfully. Hit DO to save and then send to supplier');
+            // else
+            // tb_mess.warning('Order creation failed. ' || pl_auto_order.return_package_message);
+            // end if;
+            // return v_order_number;
+            entity.TurnedIntoOrderById = currentUserId;
         }
 
         public void FinanceApprove(PurchaseOrderReq entity, IEnumerable<string> privileges, int currentUserId)
@@ -140,7 +193,13 @@
                 this.emailService.SendEmail(
                     to.PhoneListEntry.EmailAddress.Trim(),
                     to.FullName,
-                    new List<Dictionary<string, string>> { new Dictionary<string, string>() { { "name", from.FullName }, { "address", from.PhoneListEntry.EmailAddress.Trim() } } },
+                    new List<Dictionary<string, string>>
+                        {
+                            new Dictionary<string, string>
+                                {
+                                    { "name", from.FullName }, { "address", from.PhoneListEntry.EmailAddress.Trim() }
+                                }
+                        },
                     null,
                     from.PhoneListEntry.EmailAddress.Trim(),
                     from.FullName,
@@ -168,7 +227,13 @@
                 this.emailService.SendEmail(
                     to.Trim(),
                     to.Trim(),
-                    new List<Dictionary<string, string>> { new Dictionary<string, string>() { { "name", from.FullName }, { "address", from.PhoneListEntry.EmailAddress.Trim() } } },
+                    new List<Dictionary<string, string>>
+                        {
+                            new Dictionary<string, string>
+                                {
+                                    { "name", from.FullName }, { "address", from.PhoneListEntry.EmailAddress.Trim() }
+                                }
+                        },
                     null,
                     from.PhoneListEntry.EmailAddress.Trim(),
                     from.FullName,
@@ -201,7 +266,13 @@
                 this.emailService.SendEmail(
                     to.PhoneListEntry.EmailAddress.Trim(),
                     to.FullName,
-                    new List<Dictionary<string, string>> { new Dictionary<string, string>() { { "name", from.FullName }, { "address", from.PhoneListEntry.EmailAddress.Trim() } } },
+                    new List<Dictionary<string, string>>
+                        {
+                            new Dictionary<string, string>
+                                {
+                                    { "name", from.FullName }, { "address", from.PhoneListEntry.EmailAddress.Trim() }
+                                }
+                        },
                     null,
                     from.PhoneListEntry.EmailAddress.Trim(),
                     from.FullName,
@@ -265,8 +336,8 @@
         private string GetNextState(string from, bool changeIsFromFunction = false)
         {
             var stateChange = this.reqsStateChangeRepository.FindBy(
-                x => x.FromState == from && ((!changeIsFromFunction && x.UserAllowed == "Y")
-                                             || (changeIsFromFunction && x.ComputerAllowed == "Y")));
+                x => x.FromState == from && (!changeIsFromFunction && x.UserAllowed == "Y"
+                                             || changeIsFromFunction && x.ComputerAllowed == "Y"));
             return stateChange.ToState;
         }
 
@@ -274,7 +345,7 @@
         {
             var stateChange = this.reqsStateChangeRepository.FindBy(
                 x => x.FromState == from && x.ToState == to
-                                         && (x.UserAllowed == "Y" || (changeIsFromFunction && x.ComputerAllowed == "Y")));
+                                         && (x.UserAllowed == "Y" || changeIsFromFunction && x.ComputerAllowed == "Y"));
             return stateChange != null;
         }
     }
