@@ -165,8 +165,12 @@
 
             this.Repository.FindAll().Returns(this.Data.AsQueryable());
 
+<<<<<<< HEAD
             this.Sut = new PurchaseOrderDeliveryService(
                 this.Repository, this.AuthService);
+=======
+            this.Sut = new PurchaseOrderDeliveryService(this.Repository);
+>>>>>>> main
         }
     }
 }
