@@ -1239,9 +1239,12 @@
             entity.Property(e => e.LinnWeekNumber).HasColumnName("LINN_WEEK_NUMBER");
             entity.Property(e => e.Segment).HasColumnName("SEGMENT");
             entity.Property(e => e.WeekAndYear).HasColumnName("WWSYY");
+            entity.Property(e => e.WeekEnding).HasColumnName("WEEK_ENDING_DDMON");
             entity.Property(e => e.DeliveryForecast).HasColumnName("DELIVERY_FORECAST");
             entity.Property(e => e.ProductionRequirement).HasColumnName("PRODUCTION_REQT");
             entity.Property(e => e.Stock).HasColumnName("STOCK");
+            entity.Property(e => e.MinRail).HasColumnName("MIN_RAIL");
+            entity.Property(e => e.MaxRail).HasColumnName("MAX_RAIL");
         }
     }
 }

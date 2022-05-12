@@ -68,12 +68,15 @@
         {
             var detailResources = new List<MrDetailResource>();
             detailResources.AddRange(this.CreateDetails("Week", 6, 0));
+            detailResources.AddRange(this.CreateDetails("Ending", 6, 10));
             if (header.HasProductionRequirement == "Y")
             {
-                 detailResources.AddRange(this.CreateDetails("Production Reqt", 6, 2));
+                 detailResources.AddRange(this.CreateDetails("Production Reqt", 6, 20));
             }
             
-            detailResources.AddRange(this.CreateDetails("Stock", 6, 3));
+            detailResources.AddRange(this.CreateDetails("Stock", 6, 30));
+            detailResources.AddRange(this.CreateDetails("Min Rail", 6, 80));
+            detailResources.AddRange(this.CreateDetails("Max Rail", 6, 90));
 
             foreach (var detail in header.MrDetails)
             {
@@ -95,11 +98,35 @@
                     detail.WeekAndYear,
                     relativeWeek,
                     detail.Segment);
-                
+
+                this.SetValue(
+                    detailResources,
+                    "Ending",
+                    null,
+                    detail.WeekEnding,
+                    relativeWeek,
+                    detail.Segment);
+
                 this.SetValue(
                     detailResources,
                     "Stock",
                     detail.Stock,
+                    null,
+                    relativeWeek,
+                    detail.Segment);
+
+                this.SetValue(
+                    detailResources,
+                    "Min Rail",
+                    detail.MinRail,
+                    null,
+                    relativeWeek,
+                    detail.Segment);
+
+                this.SetValue(
+                    detailResources,
+                    "Max Rail",
+                    detail.MaxRail,
                     null,
                     relativeWeek,
                     detail.Segment);

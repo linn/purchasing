@@ -333,7 +333,6 @@ function MaterialRequirementsReport() {
                                         <Typography variant="body2">
                                             Currency Price: {selectedItem.currencyUnitPrice}
                                         </Typography>
-
                                     </Stack>
                                 </Grid>
                                 <Grid item xs={12}>
