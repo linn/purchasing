@@ -89,7 +89,7 @@
         }
 
         public BatchUpdateProcessResult BatchUpdateDeliveries(
-            IEnumerable<PurchaseOrderDelivery> changes, IEnumerable<string> privileges)
+            IEnumerable<PurchaseOrderDeliveryUpdate> changes, IEnumerable<string> privileges)
         {
             throw new System.NotImplementedException();
         }
