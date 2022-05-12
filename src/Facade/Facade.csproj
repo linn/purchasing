@@ -25,4 +25,10 @@
     <ProjectReference Include="..\Resources\Resources.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Microsoft.AspNetCore.Routing">
+      <HintPath>..\..\..\..\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\6.0.4\ref\net6.0\Microsoft.AspNetCore.Routing.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

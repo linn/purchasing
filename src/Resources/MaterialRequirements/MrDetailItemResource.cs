@@ -4,6 +4,8 @@
     {
         public string TextValue { get; set; }
         
-        public int? Value { get; set; }
+        public decimal? Value { get; set; }
+
+        public string Tag { get; set; }
     }
 }

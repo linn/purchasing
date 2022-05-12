@@ -54,6 +54,6 @@
 
         public string VendorManagerInitials { get; set; }
 
-        public IEnumerable<MrDetailResource> MrDetails { get; set; }
+        public IEnumerable<MrDetailResource> Details { get; set; }
     }
 }

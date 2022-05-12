@@ -17,7 +17,10 @@ import Button from '@mui/material/Button';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import NotesIcon from '@mui/icons-material/Notes';
 import ShopIcon from '@mui/icons-material/Shop';
+import OpenInFullIcon from '@mui/icons-material/OpenInFull';
+import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import Link from '@mui/material/Link';
+import { DataGrid } from '@mui/x-data-grid';
 import { Link as RouterLink } from 'react-router-dom';
 
 import { useLocation } from 'react-router';
@@ -32,6 +35,7 @@ import config from '../../config';
 function MaterialRequirementsReport() {
     const [selectedItem, setSelectedItem] = useState(null);
     const [selectedIndex, setSelectedIndex] = useState(null);
+    const [selectedSegment, setSelectedSegment] = useState(0);
     const [nextPart, setNextPart] = useState(null);
     const [previousPart, setPreviousPart] = useState(null);
 
@@ -116,186 +120,333 @@ function MaterialRequirementsReport() {
         setSelectedIndex(selectedIndex + 1);
     };
 
+    const detailsColumns = [
+        { field: 'title', headerName: '', width: 120 },
+        { field: 'immediate', headerName: '', width: 80 },
+        { field: 'week0', headerName: '', width: 80 },
+        { field: 'week0', headerName: '', width: 80 },
+        { field: 'week1', headerName: '', width: 80 },
+        { field: 'week2', headerName: '', width: 80 },
+        { field: 'week3', headerName: '', width: 80 },
+        { field: 'week4', headerName: '', width: 80 },
+        { field: 'week5', headerName: '', width: 80 },
+        { field: 'week6', headerName: '', width: 80 },
+        { field: 'week7', headerName: '', width: 80 },
+        { field: 'week8', headerName: '', width: 80 },
+        { field: 'week9', headerName: '', width: 80 },
+        { field: 'week10', headerName: '', width: 80 },
+        { field: 'week11', headerName: '', width: 80 },
+        { field: 'week12', headerName: '', width: 80 }
+    ];
+
+    const getRows = (item, segment) => {
+        if (segment === -1) {
+            return item.details.map((b, i) => ({ ...b, id: i }));
+        }
+
+        return item.details.filter(a => a.segment === segment).map((b, i) => ({ ...b, id: i }));
+    };
+    const nextSegment = () => {
+        if (selectedSegment < 5) {
+            setSelectedSegment(selectedSegment + 1);
+        }
+    };
+
+    const previousSegment = () => {
+        if (selectedSegment > 0) {
+            setSelectedSegment(selectedSegment - 1);
+        }
+    };
+
+    const toggleShowAllSegments = () => {
+        if (selectedSegment === -1) {
+            setSelectedSegment(0);
+        } else {
+            setSelectedSegment(-1);
+        }
+    };
+
     return (
-        <Page history={history}>
-            <ThemeProvider theme={theme}>
-                <>
-                    {mrReportLoading && <Loading />}
-                    {selectedItem && (
-                        <Grid container spacing={1}>
-                            <Grid item xs={2} style={{ paddingBottom: '10px' }}>
-                                <Tooltip title="Previous part">
-                                    <Button
-                                        style={{ float: 'left' }}
-                                        color="navBut"
-                                        size="small"
-                                        onClick={goToPreviousPart}
-                                        startIcon={<ArrowBackIcon />}
-                                        disabled={!previousPart}
-                                    >
-                                        {previousPart || 'At first'}
-                                    </Button>
-                                </Tooltip>
-                            </Grid>
-                            <Grid item xs={4} style={{ paddingBottom: '10px' }}>
-                                <Tooltip title="Back To Options">
-                                    <Button
-                                        color="navBut"
-                                        size="small"
-                                        endIcon={<NotesIcon />}
-                                        onClick={backToOptions}
-                                    >
-                                        Options
-                                    </Button>
-                                </Tooltip>
-                            </Grid>
-                            <Grid item xs={4} style={{ paddingBottom: '10px' }}>
-                                <Tooltip title="Order (not yet implemented)">
-                                    <Button
-                                        style={{ float: 'left' }}
-                                        color="navBut"
-                                        size="small"
-                                        endIcon={<ShopIcon />}
-                                        disabled
-                                    >
-                                        Order
-                                    </Button>
-                                </Tooltip>
-                                <Tooltip title="Used On">
-                                    <Button
-                                        style={{ float: 'right' }}
-                                        color="navBut"
-                                        size="small"
-                                        onClick={() => {
-                                            window.open(
-                                                `${config.proxyRoot}${
-                                                    selectedItem.links.find(
-                                                        l => l.rel === 'part-used-on'
-                                                    )?.href
-                                                }`,
-                                                '_blank'
-                                            );
-                                        }}
-                                        endIcon={<ArrowUpwardIcon />}
-                                    >
-                                        Used On
-                                    </Button>
-                                </Tooltip>
-                            </Grid>
-                            <Grid item xs={2} style={{ paddingBottom: '10px' }}>
-                                <Tooltip title="Next part">
-                                    <Button
-                                        style={{ float: 'right' }}
-                                        color="navBut"
-                                        size="small"
-                                        disabled={!nextPart}
-                                        onClick={goToNextPart}
-                                        endIcon={<ArrowForwardIcon />}
-                                    >
-                                        {nextPart || 'At last'}
-                                    </Button>
-                                </Tooltip>
-                            </Grid>
-                            <Grid item xs={8}>
-                                <Stack direction="row" spacing={2}>
-                                    <Typography variant="body2" style={{ fontWeight: 'bold' }}>
-                                        {selectedItem.partNumber}
-                                    </Typography>
-                                    <Typography variant="body2" style={{ fontWeight: 'bold' }}>
-                                        {selectedItem.partDescription}
-                                    </Typography>
-                                </Stack>
-                            </Grid>
-                            <Grid item xs={4}>
-                                <Stack direction="row" spacing={2}>
-                                    <Typography variant="body2">
-                                        Jobref: {selectedItem.jobRef}
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        <Link
-                                            component={RouterLink}
-                                            to={utilities.getHref(selectedItem, 'part')}
-                                            underline="hover"
-                                            color="inherit"
+        <div className="print-landscape">
+            <Page history={history} width="xl">
+                <ThemeProvider theme={theme}>
+                    <div style={{ width: 1300, paddingLeft: '20px' }}>
+                        {mrReportLoading && <Loading />}
+                        {selectedItem && (
+                            <Grid container spacing={1}>
+                                <Grid
+                                    item
+                                    xs={6}
+                                    style={{ paddingBottom: '10px' }}
+                                    className="hide-when-printing"
+                                >
+                                    <Tooltip title="Previous part">
+                                        <Button
+                                            style={{ float: 'left' }}
+                                            color="navBut"
+                                            size="small"
+                                            onClick={goToPreviousPart}
+                                            startIcon={<ArrowBackIcon />}
+                                            disabled={!previousPart}
                                         >
-                                            View Part
-                                        </Link>
-                                    </Typography>
-                                </Stack>
+                                            {previousPart || 'At first'}
+                                        </Button>
+                                    </Tooltip>
+                                </Grid>
+                                <Grid
+                                    item
+                                    xs={4}
+                                    style={{ paddingBottom: '10px' }}
+                                    className="hide-when-printing"
+                                >
+                                    <Stack direction="row" spacing={2}>
+                                        <Tooltip title="Back To Options">
+                                            <Button
+                                                color="navBut"
+                                                size="small"
+                                                endIcon={<NotesIcon />}
+                                                onClick={backToOptions}
+                                            >
+                                                Options
+                                            </Button>
+                                        </Tooltip>
+                                        <Tooltip title="Order (not yet implemented)">
+                                            <Button
+                                                style={{ float: 'left' }}
+                                                color="navBut"
+                                                size="small"
+                                                endIcon={<ShopIcon />}
+                                                disabled
+                                            >
+                                                Order
+                                            </Button>
+                                        </Tooltip>
+                                        <Tooltip title="Used On" className="hide-when-printing">
+                                            <Button
+                                                style={{ float: 'right' }}
+                                                color="navBut"
+                                                size="small"
+                                                onClick={() => {
+                                                    window.open(
+                                                        `${config.proxyRoot}${
+                                                            selectedItem.links.find(
+                                                                l => l.rel === 'part-used-on'
+                                                            )?.href
+                                                        }`,
+                                                        '_blank'
+                                                    );
+                                                }}
+                                                endIcon={<ArrowUpwardIcon />}
+                                            >
+                                                Used On
+                                            </Button>
+                                        </Tooltip>
+                                    </Stack>
+                                </Grid>
+                                <Grid
+                                    item
+                                    xs={2}
+                                    style={{ paddingBottom: '10px' }}
+                                    className="hide-when-printing"
+                                >
+                                    <Tooltip title="Next part">
+                                        <Button
+                                            style={{ float: 'right' }}
+                                            color="navBut"
+                                            size="small"
+                                            disabled={!nextPart}
+                                            onClick={goToNextPart}
+                                            endIcon={<ArrowForwardIcon />}
+                                        >
+                                            {nextPart || 'At last'}
+                                        </Button>
+                                    </Tooltip>
+                                </Grid>
+                                <Grid item xs={8}>
+                                    <Stack direction="row" spacing={2}>
+                                        <Typography variant="body2" style={{ fontWeight: 'bold' }}>
+                                            {selectedItem.partNumber}
+                                        </Typography>
+                                        <Typography variant="body2" style={{ fontWeight: 'bold' }}>
+                                            {selectedItem.partDescription}
+                                        </Typography>
+                                    </Stack>
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <Stack direction="row" spacing={2}>
+                                        <Typography variant="body2">
+                                            Jobref: {selectedItem.jobRef}
+                                        </Typography>
+                                        <Typography variant="body2">
+                                            <Link
+                                                component={RouterLink}
+                                                to={utilities.getHref(selectedItem, 'part')}
+                                                underline="hover"
+                                                color="inherit"
+                                            >
+                                                View Part
+                                            </Link>
+                                        </Typography>
+                                    </Stack>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Stack direction="row" spacing={2}>
+                                        <Typography variant="body2">
+                                            Supplier: {selectedItem.preferredSupplierId}{' '}
+                                            {selectedItem.preferredSupplierName}
+                                        </Typography>
+                                        <Typography variant="body2">
+                                            Currency: {selectedItem.currencyCode}
+                                        </Typography>
+                                        <Typography variant="body2">
+                                            Vendor Manager: {selectedItem.vendorManagerInitials}
+                                        </Typography>
+                                        <Typography variant="body2">
+                                            Order Units: {selectedItem.orderUnits}
+                                        </Typography>
+                                    </Stack>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Stack direction="row" spacing={2}>
+                                        <Typography variant="body2">
+                                            Stock: {selectedItem.quantityInStock}
+                                        </Typography>
+                                        <Typography variant="body2">
+                                            For Spares: {selectedItem.quantityForSpares}
+                                        </Typography>
+                                        <Typography variant="body2">
+                                            Inspection: {selectedItem.quantityInInspection}
+                                        </Typography>
+                                        <Typography variant="body2">
+                                            Faulty: {selectedItem.quantityFaulty}
+                                        </Typography>
+                                        <Typography variant="body2">
+                                            Supplier: {selectedItem.quantityAtSupplier}
+                                        </Typography>
+                                    </Stack>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Stack direction="row" spacing={2}>
+                                        <Typography variant="body2">
+                                            GBP Price: {selectedItem.baseUnitPrice}
+                                        </Typography>
+                                        <Typography variant="body2">
+                                            Currency Price: {selectedItem.currencyUnitPrice}
+                                        </Typography>
+
+                                    </Stack>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Stack direction="row" spacing={2}>
+                                        <Typography variant="body2">
+                                            Lead Time: {selectedItem.leadTimeWeeks}
+                                        </Typography>
+                                        <Typography variant="body2">
+                                            MOQ: {selectedItem.minimumOrderQuantity}
+                                        </Typography>
+                                        <Typography variant="body2">
+                                            MDQ: {selectedItem.minimumDeliveryQuantity}
+                                        </Typography>
+                                        <Typography variant="body2">
+                                            Order Increment: {selectedItem.orderIncrement}
+                                        </Typography>
+                                        <Typography variant="body2">
+                                            Our Units: {selectedItem.ourUnits}
+                                        </Typography>
+                                    </Stack>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Stack direction="row" spacing={2}>
+                                        <Typography variant="body2">
+                                            Annual Usage: {selectedItem.annualUsage}
+                                        </Typography>
+                                    </Stack>
+                                </Grid>
+                                <Grid
+                                    item
+                                    xs={5}
+                                    style={{ padding: '10px' }}
+                                    className="hide-when-printing"
+                                >
+                                    <Tooltip title="Earlier Weeks">
+                                        <Button
+                                            style={{ float: 'left' }}
+                                            color="navBut"
+                                            size="small"
+                                            onClick={previousSegment}
+                                            startIcon={<ArrowBackIcon />}
+                                            disabled={selectedSegment < 1}
+                                        >
+                                            Earlier Weeks
+                                        </Button>
+                                    </Tooltip>
+                                </Grid>
+                                <Grid
+                                    item
+                                    xs={3}
+                                    style={{ padding: '10px' }}
+                                    className="hide-when-printing"
+                                >
+                                    <Tooltip title="All weeks">
+                                        <Button
+                                            color="navBut"
+                                            size="small"
+                                            onClick={toggleShowAllSegments}
+                                            startIcon={
+                                                selectedSegment === -1 ? (
+                                                    <CloseFullscreenIcon />
+                                                ) : (
+                                                    <OpenInFullIcon />
+                                                )
+                                            }
+                                        >
+                                            {selectedSegment === -1
+                                                ? 'Show Quarter'
+                                                : 'Show All Weeks'}
+                                        </Button>
+                                    </Tooltip>
+                                </Grid>
+                                <Grid
+                                    item
+                                    xs={4}
+                                    style={{ padding: '10px' }}
+                                    className="hide-when-printing"
+                                >
+                                    <Tooltip title="Later Weeks">
+                                        <Button
+                                            style={{ float: 'right' }}
+                                            color="navBut"
+                                            size="small"
+                                            disabled={
+                                                selectedSegment === 5 || selectedSegment === -1
+                                            }
+                                            onClick={nextSegment}
+                                            endIcon={<ArrowForwardIcon />}
+                                        >
+                                            Later Weeks
+                                        </Button>
+                                    </Tooltip>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <div style={{ width: 1280 }}>
+                                        <DataGrid
+                                            rows={getRows(selectedItem, selectedSegment)}
+                                            columns={detailsColumns}
+                                            density="compact"
+                                            rowHeight={34}
+                                            headerHeight={1}
+                                            autoHeight
+                                            loading={mrReportLoading}
+                                            hideFooter
+                                        />
+                                    </div>
+                                </Grid>
                             </Grid>
-                            <Grid item xs={12}>
-                                <Stack direction="row" spacing={2}>
-                                    <Typography variant="body2">
-                                        Supplier: {selectedItem.preferredSupplierId}{' '}
-                                        {selectedItem.preferredSupplierName}
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        Currency: {selectedItem.currencyCode}
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        Vendor Manager: {selectedItem.vendorManagerInitials}
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        Order Units: {selectedItem.orderUnits}
-                                    </Typography>
-                                </Stack>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Stack direction="row" spacing={2}>
-                                    <Typography variant="body2">
-                                        Stock: {selectedItem.quantityInStock}
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        For Spares: {selectedItem.quantityForSpares}
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        Inspection: {selectedItem.quantityInInspection}
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        Faulty: {selectedItem.quantityFaulty}
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        Supplier: {selectedItem.quantityAtSupplier}
-                                    </Typography>
-                                </Stack>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Stack direction="row" spacing={2}>
-                                    <Typography variant="body2">
-                                        GBP Price: {selectedItem.baseUnitPrice}
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        Currency Price: {selectedItem.currencyUnitPrice}
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        Lead Time: {selectedItem.leadTimeWeeks}
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        MOQ: {selectedItem.minimumOrderQuantity}
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        MDQ: {selectedItem.minimumDeliveryQuantity}
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        Order Increment: {selectedItem.orderIncrement}
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        Our Units: {selectedItem.ourUnits}
-                                    </Typography>
-                                </Stack>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Stack direction="row" spacing={2}>
-                                    <Typography variant="body2">
-                                        Annual Usage: {selectedItem.annualUsage}
-                                    </Typography>
-                                </Stack>
-                            </Grid>
-                        </Grid>
-                    )}
-                </>
-            </ThemeProvider>
-        </Page>
+                        )}
+                    </div>
+                </ThemeProvider>
+            </Page>
+        </div>
     );
 }
 
