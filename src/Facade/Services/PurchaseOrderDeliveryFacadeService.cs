@@ -58,7 +58,6 @@
                 BuildEntityFromResourceHelper(requestResource.From),
                 BuildEntityFromResourceHelper(requestResource.To),
                 privilegesList);
-            var entity = this.repository.FindById(key);
 
             if (requestResource.From.DateAdvised != requestResource.To.DateAdvised)
             {
