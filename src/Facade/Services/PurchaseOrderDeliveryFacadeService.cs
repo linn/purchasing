@@ -50,38 +50,37 @@
             PatchRequestResource<PurchaseOrderDeliveryResource> requestResource, 
             IEnumerable<string> privileges)
         {
+            var privilegesList = privileges.ToList();
             var entity = this.repository.FindById(key);
 
-            if (requestResource.From.DateAdvised != requestResource.To.DateAdvised)
-            {
-                entity.DateAdvised = string.IsNullOrEmpty(requestResource.To.DateAdvised)
-                                         ? null : DateTime.Parse(requestResource.To.DateAdvised);
-            }
-
-            if (requestResource.From.RescheduleReason != requestResource.To.RescheduleReason)
-            {
-                entity.RescheduleReason = requestResource.To.RescheduleReason;
-            }
-
-            if (requestResource.From.SupplierConfirmationComment != requestResource.To.SupplierConfirmationComment)
-            {
-                entity.SupplierConfirmationComment = requestResource.To.SupplierConfirmationComment;
-            }
-
-            if (requestResource.From.AvailableAtSupplier != requestResource.To.AvailableAtSupplier)
-            {
-                entity.AvailableAtSupplier = requestResource.To.AvailableAtSupplier;
-            }
+            this.domainService.UpdateDelivery(
+                key,
+                BuildEntityFromResourceHelper(requestResource.From),
+                BuildEntityFromResourceHelper(requestResource.To),
+                privilegesList);
 
             this.transactionManager.Commit();
 
             return new SuccessResult<PurchaseOrderDeliveryResource>(
-                (PurchaseOrderDeliveryResource)this.resourceBuilder.Build(entity, privileges));
+                (PurchaseOrderDeliveryResource)this.resourceBuilder.Build(entity, privilegesList));
         }
 
         public IResult<ProcessResult> BatchUpdateDeliveries(string csvString, IEnumerable<string> privileges)
         {
             throw new System.NotImplementedException();
+            this.transactionManager.Commit();
+        }
+
+        private static PurchaseOrderDelivery BuildEntityFromResourceHelper(PurchaseOrderDeliveryResource resource)
+        {
+            return new PurchaseOrderDelivery
+                       {
+                           DateAdvised = string.IsNullOrEmpty(resource.DateAdvised) 
+                                             ? null : DateTime.Parse(resource.DateAdvised),
+                           AvailableAtSupplier = resource.AvailableAtSupplier,
+                           RescheduleReason = resource.RescheduleReason,
+                           SupplierConfirmationComment = resource.SupplierConfirmationComment
+                       };
         }
     }
 }

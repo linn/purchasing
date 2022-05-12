@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
@@ -21,10 +22,13 @@
 
         protected IPurchaseOrderDeliveryService Sut { get; private set; }
 
+        protected IAuthorisationService AuthService { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
             this.Repository = Substitute.For<IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey>>();
+            this.AuthService = Substitute.For<IAuthorisationService>();
             this.Data = new List<PurchaseOrderDelivery>
                             {
                                 new PurchaseOrderDelivery
@@ -161,7 +165,8 @@
 
             this.Repository.FindAll().Returns(this.Data.AsQueryable());
 
-            this.Sut = new PurchaseOrderDeliveryService(this.Repository);
+            this.Sut = new PurchaseOrderDeliveryService(
+                this.Repository, this.AuthService);
         }
     }
 }
