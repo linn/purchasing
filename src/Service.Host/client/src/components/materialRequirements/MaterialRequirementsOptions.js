@@ -25,6 +25,7 @@ import Typeahead from './Typeahead';
 
 function MaterialRequirementsOptions() {
     const [lastPart, setLastPart] = useState('');
+    const [typeaheadPart, setTypeaheadPart] = useState(null);
     const [parts, setParts] = useState([]);
     const [showMessage, setShowMessage] = useState(false);
     const [message, setMessage] = useState(null);
@@ -96,6 +97,7 @@ function MaterialRequirementsOptions() {
                 partActions.fetchByHref(`/parts?searchTerm=${selectedPart.id}&exactOnly=true`)
             );
         }
+        setTypeaheadPart(null);
     };
 
     const handlePartChange = selectedPart => {
@@ -139,6 +141,10 @@ function MaterialRequirementsOptions() {
         }
     ];
 
+    const handleSetTypeaheadPart = (val, val3) => {
+        setTypeaheadPart(val3);
+    };
+
     return (
         <Page history={history}>
             <Grid container>
@@ -162,13 +168,13 @@ function MaterialRequirementsOptions() {
                         fetchItems={searchTerm => dispatch(partsActions.search(searchTerm))}
                         clearSearch={() => clear()}
                         links={false}
+                        value={typeaheadPart}
                         openModalOnClick={false}
                         debounce={1000}
                         minimumSearchTermLength={2}
-                        textFieldEntryAllowed
                         modal
-                        searchButtonOnly
-                        onTextFieldChange={handleTextFieldChange}
+                        handleFieldChange={handleSetTypeaheadPart}
+                        handleReturnPress={handleTextFieldChange}
                     />
                 </Grid>
                 <Grid item xs={6}>

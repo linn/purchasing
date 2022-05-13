@@ -71,8 +71,7 @@ function Typeahead({
     clearTooltipText,
     onClear,
     required,
-    textFieldEntryAllowed,
-    onTextFieldChange
+    handleReturnPress
 }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -86,18 +85,8 @@ function Typeahead({
     };
 
     const handleOnKeyPress = data => {
-        if (data.keyCode === 13 || data.keyCode === 9) {
-            onTextFieldChange({ id: searchTerm });
-            setSearchTerm(null);
-        }
-    };
-
-    const textFieldProp = {
-        onKeyDown: handleOnKeyPress,
-        onBlur: () => {
-            if (searchTerm) {
-                onTextFieldChange({ id: searchTerm });
-            }
+        if (data.keyCode === 13) {
+            handleReturnPress({ id: value });
         }
     };
 
@@ -198,51 +187,58 @@ function Typeahead({
         <>
             {!modal ? <Title text={title} /> : <></>}
             {modal && searchButtonOnly ? (
-                <>
-                    {textFieldEntryAllowed && (
-                        <InputField
-                            value={searchTerm}
-                            label={title}
-                            onChange={handleSearchTermChange}
-                            propertyName={`${propertyName}-input`}
-                            textFieldProps={textFieldProp}
-                        />
-                    )}
-                    <Tooltip title={label}>
-                        <IconButton
-                            style={{ marginTop: '-10px' }}
-                            disabled={disabled}
-                            onClick={() => {
-                                setDialogOpen(true);
-                                clearSearch();
-                            }}
-                            size="large"
-                        >
-                            {SearchIcon()}
-                        </IconButton>
-                    </Tooltip>
-                </>
+                <Tooltip title={label}>
+                    <IconButton
+                        disabled={disabled}
+                        onClick={() => {
+                            setDialogOpen(true);
+                            clearSearch();
+                        }}
+                        size="large"
+                    >
+                        {SearchIcon()}
+                    </IconButton>
+                </Tooltip>
             ) : (
-                <InputField
-                    adornment={SearchIcon(() => setDialogOpen(true))}
-                    propertyName={propertyName}
-                    textFieldProps={{
-                        onClick: () => {
-                            if (!disabled) {
-                                if (openModalOnClick) {
-                                    setDialogOpen(true);
-                                    clearSearch();
+                <>
+                    <InputField
+                        adornment={!handleReturnPress && SearchIcon(() => setDialogOpen(true))}
+                        propertyName={propertyName}
+                        textFieldProps={{
+                            onClick: () => {
+                                if (!disabled) {
+                                    if (openModalOnClick) {
+                                        setDialogOpen(true);
+                                        clearSearch();
+                                    }
                                 }
-                            }
-                        },
-                        disabled
-                    }}
-                    value={modal ? value : searchTerm}
-                    label={label}
-                    placeholder={placeholder}
-                    onChange={onChange()}
-                    required={required}
-                />
+                            },
+                            disabled,
+                            onKeyDown: handleReturnPress ? handleOnKeyPress : null
+                        }}
+                        value={modal ? value : searchTerm}
+                        label={label}
+                        placeholder={placeholder}
+                        onChange={onChange()}
+                        required={required}
+                    />
+                    {handleReturnPress && (
+                        <Tooltip title={label}>
+                            <IconButton
+                                disabled={disabled}
+                                style={{ marginTop: '-10px' }}
+                                onClick={() => {
+                                    setDialogOpen(true);
+                                    setSearchTerm(value);
+                                    handleSearchTermChange(null, value);
+                                }}
+                                size="large"
+                            >
+                                {SearchIcon()}
+                            </IconButton>
+                        </Tooltip>
+                    )}
+                </>
             )}
             {clearable && (
                 <div className={classes.clearButtonInline}>
@@ -333,8 +329,7 @@ Typeahead.propTypes = {
     clearTooltipText: PropTypes.string,
     onClear: PropTypes.func,
     required: PropTypes.bool,
-    textFieldEntryAllowed: PropTypes.bool,
-    onTextFieldChange: PropTypes.func
+    handleReturnPress: PropTypes.func
 };
 
 Typeahead.defaultProps = {
@@ -359,8 +354,7 @@ Typeahead.defaultProps = {
     clearTooltipText: 'Clear',
     required: false,
     onClear: () => {},
-    textFieldEntryAllowed: false,
-    onTextFieldChange: () => {}
+    handleReturnPress: null
 };
 
 export default Typeahead;
