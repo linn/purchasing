@@ -31,13 +31,14 @@
 
             var data = this.usedOnView.FilterBy(
                 x => x.JobRef.Equals(jobref) && x.PartNumber.Equals(partNumber))
-                .OrderByDescending(x => x.AnnualUsage).ToList();
+                ?.OrderByDescending(x => x.AnnualUsage);
 
             var reportLayout = new SimpleGridLayout(
                 this.reportingHelper,
                 CalculationValueModelType.Value,
                 null,
-                $"Part: {partNumber} - {data.First().Description}");
+                $"Part: {partNumber} - " 
+                + $"{(data != null && data.Any() ? data.First().Description : "No results found for part.")}");
 
             reportLayout.AddColumnComponent(
                 null,
@@ -50,44 +51,36 @@
                         new AxisDetailsModel("AnnualUsage", "AnnualUsage", GridDisplayType.Value) { DecimalPlaces = 1 }
                     });
             var values = new List<CalculationValueModel>();
-            foreach (var datum in data)
+            if (data != null)
             {
-                var currentRowId = datum.AssemblyUsedOn;
-                values.Add(
-                    new CalculationValueModel
-                        {
-                            RowId = currentRowId,
-                            ColumnId = "Assembly",
-                            TextDisplay = datum.AssemblyUsedOn
-                        });
-                values.Add(
-                    new CalculationValueModel
-                        {
-                            RowId = currentRowId,
-                            ColumnId = "Description",
-                            TextDisplay = datum.AssemblyUsedOnDescription
-                        });
-                values.Add(
-                    new CalculationValueModel
-                        {
-                            RowId = currentRowId,
-                            ColumnId = "QtyUsed",
-                            Value = datum.QtyUsed
-                        });
-                values.Add(
-                    new CalculationValueModel
-                        {
-                            RowId = currentRowId,
-                            ColumnId = "TCoded",
-                            TextDisplay = datum.TCoded
-                        });
-                values.Add(
-                    new CalculationValueModel
-                        {
-                            RowId = currentRowId,
-                            ColumnId = "AnnualUsage",
-                            Value = datum.AnnualUsage
-                        });
+                foreach (var datum in data)
+                {
+                    var currentRowId = datum.AssemblyUsedOn;
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = currentRowId, ColumnId = "Assembly", TextDisplay = datum.AssemblyUsedOn
+                            });
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = currentRowId,
+                                ColumnId = "Description",
+                                TextDisplay = datum.AssemblyUsedOnDescription
+                            });
+                    values.Add(
+                        new CalculationValueModel {RowId = currentRowId, ColumnId = "QtyUsed", Value = datum.QtyUsed});
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = currentRowId, ColumnId = "TCoded", TextDisplay = datum.TCoded
+                            });
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = currentRowId, ColumnId = "AnnualUsage", Value = datum.AnnualUsage
+                            });
+                }
             }
 
             reportLayout.SetGridData(values);
