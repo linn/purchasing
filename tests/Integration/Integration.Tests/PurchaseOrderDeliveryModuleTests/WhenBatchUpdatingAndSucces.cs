@@ -14,7 +14,7 @@
 
     using NUnit.Framework;
 
-    public class WhenBatchUpdatingAndSucces : ContextBase
+    public class WhenBatchUpdatingAndSuccess : ContextBase
     {
         [SetUp]
         public void SetUp()
