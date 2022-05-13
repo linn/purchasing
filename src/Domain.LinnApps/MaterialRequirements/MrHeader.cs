@@ -47,6 +47,14 @@
         public string HasProductionRequirement { get; set; }
         
         public string HasDeliveryForecast { get; set; }
+        
+        public string HasSalesOrders { get; set; }
+
+        public string HasPurchaseOrders { get; set; }
+
+        public string HasUnauthPurchaseOrders { get; set; }
+        
+        public string HasTriggerBuild { get; set; }
 
         public string VendorManager { get; set; }
 

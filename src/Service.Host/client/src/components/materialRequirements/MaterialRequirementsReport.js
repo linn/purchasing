@@ -391,7 +391,13 @@ function MaterialRequirementsReport() {
                                     style={{ padding: '10px' }}
                                     className="hide-when-printing"
                                 >
-                                    <Tooltip title="All weeks">
+                                    <Tooltip
+                                        title={
+                                            selectedSegment === -1
+                                                ? 'Show Quarter'
+                                                : 'Show All Weeks'
+                                        }
+                                    >
                                         <Button
                                             color="navBut"
                                             size="small"

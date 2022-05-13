@@ -14,14 +14,30 @@
 
         public string WeekAndYear { get; set; }
 
+        public decimal? TriggerBuild { get; set; }
+
+        public decimal? PurchaseOrders { get; set; }
+
+        public decimal? UnauthorisedPurchaseOrders { get; set; }
+
+        public decimal? SalesOrders { get; set; }
+
         public decimal? DeliveryForecast { get; set; }
 
         public decimal? ProductionRequirement { get; set; }
 
-        public decimal? Stock { get; set; }
+        public string Status { get; set; }
 
+        public decimal? Stock { get; set; }
+  
         public decimal? MinRail { get; set; }
 
         public decimal? MaxRail { get; set; }
+
+        public decimal? IdealStock { get; set; }
+        
+        public decimal? RecommendedOrders { get; set; }
+
+        public decimal? RecommenedStock { get; set; }
     }
 }
