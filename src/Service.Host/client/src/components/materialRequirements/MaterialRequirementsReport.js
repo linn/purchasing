@@ -21,6 +21,7 @@ import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import Link from '@mui/material/Link';
 import { DataGrid } from '@mui/x-data-grid';
+import makeStyles from '@mui/styles/makeStyles';
 
 import { useLocation } from 'react-router';
 import queryString from 'query-string';
@@ -91,6 +92,17 @@ function MaterialRequirementsReport() {
         }
     }, [mrReport]);
 
+    const useStyles = makeStyles(() => ({
+        boldText: {
+            fontWeight: 500
+        },
+        newQuarter: {
+            paddingTop: '50px',
+            fontWeight: 500
+        }
+    }));
+    const classes = useStyles();
+
     const backToOptions = () => {
         history.push('/purchasing/material-requirements');
     };
@@ -137,6 +149,24 @@ function MaterialRequirementsReport() {
         { field: 'week11', headerName: '', width: 80 },
         { field: 'week12', headerName: '', width: 80 }
     ];
+
+    const getRowClass = params => {
+        const title = params?.row?.title;
+        const segment = params?.row?.segment;
+        if (title === 'Ending' || title === 'Stock') {
+            return classes.boldText;
+        }
+
+        if (title === 'Week') {
+            if (segment === 0 || selectedSegment > -1) {
+                return classes.boldText;
+            }
+
+            return classes.newQuarter;
+        }
+
+        return null;
+    };
 
     const getRows = (item, segment) => {
         if (segment === -1) {
@@ -450,6 +480,7 @@ function MaterialRequirementsReport() {
                                             autoHeight
                                             loading={mrReportLoading}
                                             hideFooter
+                                            getRowClassName={params => getRowClass(params)}
                                         />
                                     </div>
                                 </Grid>
