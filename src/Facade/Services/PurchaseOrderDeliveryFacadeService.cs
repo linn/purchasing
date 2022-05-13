@@ -60,27 +60,6 @@
                 BuildEntityFromResourceHelper(requestResource.To),
                 privilegesList);
 
-            if (requestResource.From.DateAdvised != requestResource.To.DateAdvised)
-            {
-                entity.DateAdvised = string.IsNullOrEmpty(requestResource.To.DateAdvised)
-                                         ? null : DateTime.Parse(requestResource.To.DateAdvised);
-            }
-
-            if (requestResource.From.RescheduleReason != requestResource.To.RescheduleReason)
-            {
-                entity.RescheduleReason = requestResource.To.RescheduleReason;
-            }
-
-            if (requestResource.From.SupplierConfirmationComment != requestResource.To.SupplierConfirmationComment)
-            {
-                entity.SupplierConfirmationComment = requestResource.To.SupplierConfirmationComment;
-            }
-
-            if (requestResource.From.AvailableAtSupplier != requestResource.To.AvailableAtSupplier)
-            {
-                entity.AvailableAtSupplier = requestResource.To.AvailableAtSupplier;
-            }
-
             this.transactionManager.Commit();
 
             return new SuccessResult<PurchaseOrderDeliveryResource>(
