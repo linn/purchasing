@@ -21,7 +21,6 @@ import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import Link from '@mui/material/Link';
 import { DataGrid } from '@mui/x-data-grid';
-import { Link as RouterLink } from 'react-router-dom';
 
 import { useLocation } from 'react-router';
 import queryString from 'query-string';
@@ -181,16 +180,18 @@ function MaterialRequirementsReport() {
                                     className="hide-when-printing"
                                 >
                                     <Tooltip title="Previous part">
-                                        <Button
-                                            style={{ float: 'left' }}
-                                            color="navBut"
-                                            size="small"
-                                            onClick={goToPreviousPart}
-                                            startIcon={<ArrowBackIcon />}
-                                            disabled={!previousPart}
-                                        >
-                                            {previousPart || 'At first'}
-                                        </Button>
+                                        <span>
+                                            <Button
+                                                style={{ float: 'left' }}
+                                                color="navBut"
+                                                size="small"
+                                                onClick={goToPreviousPart}
+                                                startIcon={<ArrowBackIcon />}
+                                                disabled={!previousPart}
+                                            >
+                                                {previousPart || 'At first'}
+                                            </Button>
+                                        </span>
                                     </Tooltip>
                                 </Grid>
                                 <Grid
@@ -211,15 +212,17 @@ function MaterialRequirementsReport() {
                                             </Button>
                                         </Tooltip>
                                         <Tooltip title="Order (not yet implemented)">
-                                            <Button
-                                                style={{ float: 'left' }}
-                                                color="navBut"
-                                                size="small"
-                                                endIcon={<ShopIcon />}
-                                                disabled
-                                            >
-                                                Order
-                                            </Button>
+                                            <span>
+                                                <Button
+                                                    style={{ float: 'left' }}
+                                                    color="navBut"
+                                                    size="small"
+                                                    endIcon={<ShopIcon />}
+                                                    disabled
+                                                >
+                                                    Order
+                                                </Button>
+                                            </span>
                                         </Tooltip>
                                         <Tooltip title="Used On" className="hide-when-printing">
                                             <Button
@@ -250,16 +253,18 @@ function MaterialRequirementsReport() {
                                     className="hide-when-printing"
                                 >
                                     <Tooltip title="Next part">
-                                        <Button
-                                            style={{ float: 'right' }}
-                                            color="navBut"
-                                            size="small"
-                                            disabled={!nextPart}
-                                            onClick={goToNextPart}
-                                            endIcon={<ArrowForwardIcon />}
-                                        >
-                                            {nextPart || 'At last'}
-                                        </Button>
+                                        <span>
+                                            <Button
+                                                style={{ float: 'right' }}
+                                                color="navBut"
+                                                size="small"
+                                                disabled={!nextPart}
+                                                onClick={goToNextPart}
+                                                endIcon={<ArrowForwardIcon />}
+                                            >
+                                                {nextPart || 'At last'}
+                                            </Button>
+                                        </span>
                                     </Tooltip>
                                 </Grid>
                                 <Grid item xs={8}>
@@ -277,16 +282,14 @@ function MaterialRequirementsReport() {
                                         <Typography variant="body2">
                                             Jobref: {selectedItem.jobRef}
                                         </Typography>
-                                        <Typography variant="body2">
-                                            <Link
-                                                component={RouterLink}
-                                                to={utilities.getHref(selectedItem, 'part')}
-                                                underline="hover"
-                                                color="inherit"
-                                            >
-                                                View Part
-                                            </Link>
-                                        </Typography>
+                                        <Link
+                                            href={utilities.getHref(selectedItem, 'part')}
+                                            underline="hover"
+                                            color="inherit"
+                                            variant="body2"
+                                        >
+                                            View Part
+                                        </Link>
                                     </Stack>
                                 </Grid>
                                 <Grid item xs={12}>
@@ -368,16 +371,18 @@ function MaterialRequirementsReport() {
                                     className="hide-when-printing"
                                 >
                                     <Tooltip title="Earlier Weeks">
-                                        <Button
-                                            style={{ float: 'left' }}
-                                            color="navBut"
-                                            size="small"
-                                            onClick={previousSegment}
-                                            startIcon={<ArrowBackIcon />}
-                                            disabled={selectedSegment < 1}
-                                        >
-                                            Earlier Weeks
-                                        </Button>
+                                        <span>
+                                            <Button
+                                                style={{ float: 'left' }}
+                                                color="navBut"
+                                                size="small"
+                                                onClick={previousSegment}
+                                                startIcon={<ArrowBackIcon />}
+                                                disabled={selectedSegment < 1}
+                                            >
+                                                Earlier Weeks
+                                            </Button>
+                                        </span>
                                     </Tooltip>
                                 </Grid>
                                 <Grid
@@ -412,18 +417,20 @@ function MaterialRequirementsReport() {
                                     className="hide-when-printing"
                                 >
                                     <Tooltip title="Later Weeks">
-                                        <Button
-                                            style={{ float: 'right' }}
-                                            color="navBut"
-                                            size="small"
-                                            disabled={
-                                                selectedSegment === 5 || selectedSegment === -1
-                                            }
-                                            onClick={nextSegment}
-                                            endIcon={<ArrowForwardIcon />}
-                                        >
-                                            Later Weeks
-                                        </Button>
+                                        <span>
+                                            <Button
+                                                style={{ float: 'right' }}
+                                                color="navBut"
+                                                size="small"
+                                                disabled={
+                                                    selectedSegment === 5 || selectedSegment === -1
+                                                }
+                                                onClick={nextSegment}
+                                                endIcon={<ArrowForwardIcon />}
+                                            >
+                                                Later Weeks
+                                            </Button>
+                                        </span>
                                     </Tooltip>
                                 </Grid>
                                 <Grid item xs={12}>
