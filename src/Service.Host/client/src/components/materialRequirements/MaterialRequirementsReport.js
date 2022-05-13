@@ -179,8 +179,8 @@ function MaterialRequirementsReport() {
                                     style={{ paddingBottom: '10px' }}
                                     className="hide-when-printing"
                                 >
-                                    <Tooltip title="Previous part">
-                                        <span>
+                                    <Tooltip title="Previous part" placement="top-start">
+                                        <div>
                                             <Button
                                                 style={{ float: 'left' }}
                                                 color="navBut"
@@ -191,7 +191,7 @@ function MaterialRequirementsReport() {
                                             >
                                                 {previousPart || 'At first'}
                                             </Button>
-                                        </span>
+                                        </div>
                                     </Tooltip>
                                 </Grid>
                                 <Grid
@@ -212,7 +212,7 @@ function MaterialRequirementsReport() {
                                             </Button>
                                         </Tooltip>
                                         <Tooltip title="Order (not yet implemented)">
-                                            <span>
+                                            <div>
                                                 <Button
                                                     style={{ float: 'left' }}
                                                     color="navBut"
@@ -222,7 +222,7 @@ function MaterialRequirementsReport() {
                                                 >
                                                     Order
                                                 </Button>
-                                            </span>
+                                            </div>
                                         </Tooltip>
                                         <Tooltip title="Used On" className="hide-when-printing">
                                             <Button
@@ -252,8 +252,8 @@ function MaterialRequirementsReport() {
                                     style={{ paddingBottom: '10px' }}
                                     className="hide-when-printing"
                                 >
-                                    <Tooltip title="Next part">
-                                        <span>
+                                    <Tooltip title="Next part" placement="top-end">
+                                        <div>
                                             <Button
                                                 style={{ float: 'right' }}
                                                 color="navBut"
@@ -264,7 +264,7 @@ function MaterialRequirementsReport() {
                                             >
                                                 {nextPart || 'At last'}
                                             </Button>
-                                        </span>
+                                        </div>
                                     </Tooltip>
                                 </Grid>
                                 <Grid item xs={8}>
@@ -370,8 +370,8 @@ function MaterialRequirementsReport() {
                                     style={{ padding: '10px' }}
                                     className="hide-when-printing"
                                 >
-                                    <Tooltip title="Earlier Weeks">
-                                        <span>
+                                    <Tooltip title="Earlier Weeks" placement="top-start">
+                                        <div>
                                             <Button
                                                 style={{ float: 'left' }}
                                                 color="navBut"
@@ -382,7 +382,7 @@ function MaterialRequirementsReport() {
                                             >
                                                 Earlier Weeks
                                             </Button>
-                                        </span>
+                                        </div>
                                     </Tooltip>
                                 </Grid>
                                 <Grid
@@ -422,8 +422,8 @@ function MaterialRequirementsReport() {
                                     style={{ padding: '10px' }}
                                     className="hide-when-printing"
                                 >
-                                    <Tooltip title="Later Weeks">
-                                        <span>
+                                    <Tooltip title="Later Weeks" placement="top-end">
+                                        <div>
                                             <Button
                                                 style={{ float: 'right' }}
                                                 color="navBut"
@@ -436,7 +436,7 @@ function MaterialRequirementsReport() {
                                             >
                                                 Later Weeks
                                             </Button>
-                                        </span>
+                                        </div>
                                     </Tooltip>
                                 </Grid>
                                 <Grid item xs={12}>
