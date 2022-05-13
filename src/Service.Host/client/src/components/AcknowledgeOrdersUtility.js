@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { useDropzone } from 'react-dropzone';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     SnackbarMessage,
@@ -13,18 +12,13 @@ import {
     DatePicker,
     Dropdown,
     processSelectorHelpers,
-    getItemError,
-    ErrorCard,
-    SaveBackCancelButtons,
-    Loading
+    getItemError
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import { makeStyles } from '@mui/styles';
 import Accordion from '@mui/material/Accordion';
 import Button from '@mui/material/Button';
 import queryString from 'query-string';
-import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
@@ -39,114 +33,7 @@ import {
 import history from '../history';
 import config from '../config';
 import batchPurchaseOrderDeliveriesUploadActions from '../actions/batchPurchaseOrderDeliveriesUploadActions';
-
-const FileUpload = () => {
-    const [file, setFile] = useState(null);
-    const onDrop = useCallback(acceptedFile => {
-        setFile(acceptedFile[0]);
-    }, []);
-    const { getRootProps, getInputProps } = useDropzone({ onDrop });
-
-    const dispatch = useDispatch();
-
-    const loading = useSelector(state =>
-        processSelectorHelpers.getWorking(state[batchPurchaseOrderDeliveriesUpload.item])
-    );
-
-    const result = useSelector(state =>
-        processSelectorHelpers.getData(state[batchPurchaseOrderDeliveriesUpload.item])
-    );
-
-    const error = useSelector(state =>
-        getItemError(state, batchPurchaseOrderDeliveriesUpload.item)
-    );
-
-    const message = useSelector(state =>
-        processSelectorHelpers.getMessageText(state[batchPurchaseOrderDeliveriesUpload.item])
-    );
-
-    const snackbarVisible = useSelector(state =>
-        processSelectorHelpers.getMessageVisible(state[batchPurchaseOrderDeliveriesUpload.item])
-    );
-    const setSnackbarVisible = () =>
-        dispatch(batchPurchaseOrderDeliveriesUpload.setMessageVisible(false));
-
-    const handleUploadClick = () => {
-        dispatch(batchPurchaseOrderDeliveriesUploadActions.clearErrorsForItem());
-        dispatch(batchPurchaseOrderDeliveriesUploadActions.clearProcessData());
-        const reader = new FileReader();
-        reader.onload = () => {
-            const binaryStr = reader.result;
-            dispatch(batchPurchaseOrderDeliveriesUploadActions.requestProcessStart(binaryStr));
-        };
-        reader.readAsArrayBuffer(file);
-        setFile(null);
-    };
-    return (
-        <>
-            {error && (
-                <Grid item xs={12}>
-                    <ErrorCard errorMessage={error.details} />
-                </Grid>
-            )}
-            <SnackbarMessage
-                visible={snackbarVisible && result?.success}
-                onClose={() => setSnackbarVisible(false)}
-                message={message}
-            />
-            <Grid container spacing={3}>
-                <Grid item xs={12}>
-                    <Typography variant="subtitle1">Upload a CSV file</Typography>
-                </Grid>
-                {loading ? (
-                    <Grid item xs={12}>
-                        <Loading />
-                    </Grid>
-                ) : (
-                    <>
-                        <Grid item xs={12}>
-                            <Box
-                                sx={{ border: '1px dashed grey', margin: '10px' }}
-                                style={{ cursor: 'pointer' }}
-                                {...getRootProps()}
-                            >
-                                <Typography
-                                    style={{ paddingTop: '10px', paddingBottom: '20px' }}
-                                    variant="subtitle2"
-                                >
-                                    Drop the file here or click to browse...
-                                </Typography>
-                                <input {...getInputProps()} />
-
-                                {file && (
-                                    <Chip
-                                        label={file.name}
-                                        color="primary"
-                                        onDelete={() => setFile(null)}
-                                        variant="outlined"
-                                    />
-                                )}
-                            </Box>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <SaveBackCancelButtons
-                                backClick={() => history.push('/purchasing/part-suppliers')}
-                                cancelClick={() => setFile(null)}
-                                saveDisabled={!file}
-                                saveClick={handleUploadClick}
-                            />
-                        </Grid>
-                        {result && !result.success && (
-                            <Grid item xs={12}>
-                                <ErrorCard errorMessage={result.message} />
-                            </Grid>
-                        )}
-                    </>
-                )}
-            </Grid>
-        </>
-    );
-};
+import FileUploader from './FileUploader';
 
 function AcknowledgeOrdersUtility() {
     const dispatch = useDispatch();
@@ -232,6 +119,28 @@ function AcknowledgeOrdersUtility() {
             )
         );
     };
+
+    const uploadLoading = useSelector(state =>
+        processSelectorHelpers.getWorking(state[batchPurchaseOrderDeliveriesUpload.item])
+    );
+
+    const uploadResult = useSelector(state =>
+        processSelectorHelpers.getData(state[batchPurchaseOrderDeliveriesUpload.item])
+    );
+
+    const uploadError = useSelector(state =>
+        getItemError(state, batchPurchaseOrderDeliveriesUpload.item)
+    );
+
+    const uploadMessage = useSelector(state =>
+        processSelectorHelpers.getMessageText(state[batchPurchaseOrderDeliveriesUpload.item])
+    );
+
+    const uploadSnackbarVisible = useSelector(state =>
+        processSelectorHelpers.getMessageVisible(state[batchPurchaseOrderDeliveriesUpload.item])
+    );
+    const setUploadSnackbarVisible = () =>
+        dispatch(batchPurchaseOrderDeliveriesUpload.setMessageVisible(false));
 
     useEffect(() => {
         if (updatedItem) {
@@ -429,18 +338,26 @@ function AcknowledgeOrdersUtility() {
                             </Grid>
                         </AccordionDetails>
                     </Accordion>
-                    <Accordion>
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel2a-content"
-                            id="panel2a-header"
-                        >
-                            <Typography variant="h5">Upload a File</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <FileUpload />
-                        </AccordionDetails>
-                    </Accordion>
+
+                    <FileUploader
+                        prepareUpload={() => {
+                            dispatch(
+                                batchPurchaseOrderDeliveriesUploadActions.clearErrorsForItem()
+                            );
+                            dispatch(batchPurchaseOrderDeliveriesUploadActions.clearProcessData());
+                        }}
+                        doUpload={data =>
+                            dispatch(
+                                batchPurchaseOrderDeliveriesUploadActions.requestProcessStart(data)
+                            )
+                        }
+                        loading={uploadLoading}
+                        result={uploadResult}
+                        error={uploadError}
+                        snackbarVisible={uploadSnackbarVisible}
+                        setSnackbarVisible={setUploadSnackbarVisible}
+                        message={uploadMessage}
+                    />
                 </Grid>
             </Grid>
         </Page>

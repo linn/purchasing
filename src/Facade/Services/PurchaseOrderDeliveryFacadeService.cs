@@ -15,8 +15,6 @@
 
     public class PurchaseOrderDeliveryFacadeService : IPurchaseOrderDeliveryFacadeService
     {
-        private readonly IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> repository;
-
         private readonly IBuilder<PurchaseOrderDelivery> resourceBuilder;
 
         private readonly ITransactionManager transactionManager;
@@ -24,12 +22,10 @@
         private readonly IPurchaseOrderDeliveryService domainService;
 
         public PurchaseOrderDeliveryFacadeService(
-            IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> repository,
             IBuilder<PurchaseOrderDelivery> resourceBuilder,
             IPurchaseOrderDeliveryService domainService,
             ITransactionManager transactionManager)
         {
-            this.repository = repository;
             this.resourceBuilder = resourceBuilder;
             this.domainService = domainService;
             this.transactionManager = transactionManager;
@@ -52,9 +48,7 @@
             IEnumerable<string> privileges)
         {
             var privilegesList = privileges.ToList();
-            var entity = this.repository.FindById(key);
-
-            this.domainService.UpdateDelivery(
+            var entity = this.domainService.UpdateDelivery(
                 key,
                 BuildEntityFromResourceHelper(requestResource.From),
                 BuildEntityFromResourceHelper(requestResource.To),
