@@ -26,6 +26,12 @@
 
         public decimal? ProductionRequirement { get; set; }
 
+        public decimal? FixedBuild { get; set; }
+
+        public decimal? AssumedBuild { get; set; }
+
+        public decimal? SparesRequirement{ get; set; }
+
         public string Status { get; set; }
 
         public decimal? Stock { get; set; }

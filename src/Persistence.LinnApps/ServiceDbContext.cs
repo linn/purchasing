@@ -1227,6 +1227,9 @@
             entity.Property(e => e.HasTriggerBuild).HasColumnName("HAS_TRIGGER_BUILD");
             entity.Property(e => e.HasProductionRequirement).HasColumnName("HAS_PRODUCTION_REQT");
             entity.Property(e => e.HasDeliveryForecast).HasColumnName("HAS_DELIVERY_FORECAST");
+            entity.Property(e => e.HasAssumedBuild).HasColumnName("HAS_ASSUMED_BUILD");
+            entity.Property(e => e.HasFixedBuild).HasColumnName("HAS_FIXED_BUILD");
+            entity.Property(e => e.HasSparesRequirement).HasColumnName("HAS_SPARES_REQT");
             entity.Property(e => e.HasSalesOrders).HasColumnName("HAS_SALES_ORDERS");
             entity.Property(e => e.VendorManager).HasColumnName("VENDOR_MANAGER").HasColumnType("VARCHAR2");
             entity.Property(e => e.VendorManagerInitials).HasColumnName("VM_INITIALS");
@@ -1255,6 +1258,9 @@
             entity.Property(e => e.MinRail).HasColumnName("MIN_RAIL");
             entity.Property(e => e.MaxRail).HasColumnName("MAX_RAIL");
             entity.Property(e => e.IdealStock).HasColumnName("IDEAL_STOCK");
+            entity.Property(e => e.AssumedBuild).HasColumnName("ASSUMED_BUILD");
+            entity.Property(e => e.FixedBuild).HasColumnName("FIXED_BUILD");
+            entity.Property(e => e.SparesRequirement).HasColumnName("SPARES_REQT");
             entity.Property(e => e.RecommendedOrders).HasColumnName("RECOMMENDED_PURCH_ORDERS");
             entity.Property(e => e.RecommenedStock).HasColumnName("RECOMMENDED_STOCK");
         }

@@ -56,6 +56,12 @@
         
         public string HasTriggerBuild { get; set; }
 
+        public string HasFixedBuild { get; set; }
+
+        public string HasAssumedBuild { get; set; }
+
+        public string HasSparesRequirement { get; set; }
+
         public string VendorManager { get; set; }
 
         public string VendorManagerInitials { get; set; }

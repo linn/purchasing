@@ -51,8 +51,6 @@
                 MinimumOrderQuantity = entity.MinimumOrderQuantity,
                 MinimumDeliveryQuantity = entity.MinimumDeliveryQuantity,
                 OrderIncrement = entity.OrderIncrement,
-                HasProductionRequirement = entity.HasProductionRequirement,
-                HasDeliveryForecast = entity.HasDeliveryForecast,
                 VendorManager = entity.VendorManager,
                 VendorManagerInitials = entity.VendorManagerInitials,
                 Details = this.BuildDetails(entity, runWeekNumber),
@@ -65,9 +63,19 @@
             var detailResources = new List<MrDetailResource>();
             detailResources.AddRange(this.CreateDetails("Week", 6, 0));
             detailResources.AddRange(this.CreateDetails("Ending", 6, 10));
+            if (header.HasFixedBuild == "Y")
+            {
+                detailResources.AddRange(this.CreateDetails("Fixed Build", 6, 20));
+            }
+
             if (header.HasTriggerBuild == "Y")
             {
                 detailResources.AddRange(this.CreateDetails("Trigger Build", 6, 100));
+            }
+            
+            if (header.HasAssumedBuild == "Y")
+            {
+                detailResources.AddRange(this.CreateDetails("Assumed Build", 6, 110));
             }
 
             if (header.HasPurchaseOrders == "Y")
@@ -95,6 +103,11 @@
                  detailResources.AddRange(this.CreateDetails("Production Reqt", 6, 400));
             }
 
+            if (header.HasSparesRequirement == "Y")
+            {
+                detailResources.AddRange(this.CreateDetails("Spares Reqt", 6, 900));
+            }
+
             detailResources.AddRange(this.CreateDetails("Status", 6, 990));
             detailResources.AddRange(this.CreateDetails("Stock", 6, 1000));
             detailResources.AddRange(this.CreateDetails("Min Rail", 6, 1100));
@@ -120,6 +133,20 @@
                     "Ending",
                     null,
                     detail.WeekEnding,
+                    relativeWeek,
+                    detail.Segment);
+                this.SetValue(
+                    detailResources,
+                    "Fixed Build",
+                    detail.FixedBuild,
+                    null,
+                    relativeWeek,
+                    detail.Segment);
+                this.SetValue(
+                    detailResources,
+                    "Assumed Build",
+                    detail.AssumedBuild,
+                    null,
                     relativeWeek,
                     detail.Segment);
                 this.SetValue(
@@ -161,6 +188,13 @@
                     detailResources,
                     "Production Reqt",
                     detail.ProductionRequirement,
+                    null,
+                    relativeWeek,
+                    detail.Segment);
+                this.SetValue(
+                    detailResources,
+                    "Spares Reqt",
+                    detail.SparesRequirement,
                     null,
                     relativeWeek,
                     detail.Segment);
