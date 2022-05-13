@@ -3,11 +3,12 @@
     using System.Collections.Generic;
 
     using Linn.Common.Facade;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Resources;
 
     public interface IBulkLeadTimesUpdaterService
     {
-        IResult<ProcessResultResource> BulkUpdateFromCsv(
+        IResult<BatchUpdateProcessResultResource> BulkUpdateFromCsv(
             int supplierId,
             string csvString,
             IEnumerable<string> privileges,

@@ -3,9 +3,11 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Resources;
 
@@ -23,7 +25,7 @@
             this.transactionManager = transactionManager;
         }
 
-        public IResult<ProcessResultResource> BulkUpdateFromCsv(
+        public IResult<BatchUpdateProcessResultResource> BulkUpdateFromCsv(
             int supplierId,
             string csvString,
             IEnumerable<string> privileges,
@@ -43,12 +45,20 @@
                 var result = this.domainService.BulkUpdateLeadTimes(supplierId, changes, privileges, organisationId);
                 this.transactionManager.Commit();
 
-                return new SuccessResult<ProcessResultResource>(
-                    new ProcessResultResource(result.Success, result.Message));
+                return new SuccessResult<BatchUpdateProcessResultResource>(
+                    new BatchUpdateProcessResultResource
+                        {
+                            Message = result.Message,
+                            Success = result.Success,
+                            Errors = result.Errors?.Select(x => new ErrorResource
+                                                                   {
+                                                                        Descriptor = x.Descriptor
+                                                                   })
+                        });
             }
             catch (Exception e)
             {
-                return new BadRequestResult<ProcessResultResource>(e.Message);
+                return new BadRequestResult<BatchUpdateProcessResultResource>(e.Message);
             }
         }
     }

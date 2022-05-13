@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { useDropzone } from 'react-dropzone';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     SnackbarMessage,
@@ -20,8 +19,6 @@ import { makeStyles } from '@mui/styles';
 import Accordion from '@mui/material/Accordion';
 import Button from '@mui/material/Button';
 import queryString from 'query-string';
-import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';

@@ -59,7 +59,7 @@
             return new SuccessResult<PurchaseOrderDeliveryResource>(
                 (PurchaseOrderDeliveryResource)this.resourceBuilder.Build(entity, privilegesList));
         }
-
+        
         public IResult<BatchUpdateProcessResultResource> BatchUpdateDeliveriesFromCsv(
             string csvString, IEnumerable<string> privileges)
         {
