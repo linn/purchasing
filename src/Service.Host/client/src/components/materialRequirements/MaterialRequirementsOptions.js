@@ -4,7 +4,7 @@ import {
     Page,
     itemSelectorHelpers,
     Loading,
-    // Typeahead,
+    Typeahead,
     collectionSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
@@ -21,7 +21,6 @@ import partsActions from '../../actions/partsActions';
 import partActions from '../../actions/partActions';
 
 import history from '../../history';
-import Typeahead from './Typeahead';
 
 function MaterialRequirementsOptions() {
     const [lastPart, setLastPart] = useState('');

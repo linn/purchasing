@@ -1,10 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-    collectionSelectorHelpers,
-    Page,
-    Typeahead
-} from '@linn-it/linn-form-components-library';
+import { collectionSelectorHelpers, Page, Typeahead } from '@linn-it/linn-form-components-library';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import purchaseOrdersActions from '../../actions/purchaseOrdersActions';
