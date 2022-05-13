@@ -157,7 +157,12 @@
 
                 if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, privileges))
                 {
-                    yield return new LinkResource { Rel = "create-purchase-order", Href = $"{this.GetLocation(model)}/turn-into-order" };
+                    yield return new LinkResource { Rel = "turn-req-into-purchase-order", Href = $"{this.GetLocation(model)}/turn-into-order" };
+                }
+
+                if (model.OrderNumber.HasValue)
+                {
+                    yield return new LinkResource { Rel = "view-purchase-order", Href = $"/purchasing/purchase-orders/{model.OrderNumber.Value}" };
                 }
             }
 

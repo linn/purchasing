@@ -19,6 +19,7 @@ import Send from '@mui/icons-material/Send';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Collapse from '@mui/material/Collapse';
+import PageviewIcon from '@mui/icons-material/Pageview';
 import { makeStyles } from '@mui/styles';
 import {
     Page,
@@ -225,8 +226,10 @@ function POReqUtility({ creating }) {
         req.state === 'FINANCE WAIT';
     const allowedToCreateOrder = () =>
         !creating &&
-        req.links?.some(l => l.rel === 'create-purchase-order') &&
+        req.links?.some(l => l.rel === 'turn-req-into-purchase-order') &&
         req.state === 'ORDER WAIT';
+
+    const hasOrderNumber = () => req.links?.some(l => l.rel === 'view-purchase-order');
 
     const editingAllowed = req?.state !== 'CANCELLED';
 
@@ -266,6 +269,16 @@ function POReqUtility({ creating }) {
         if (allowedToFinanceCheck) {
             clearErrors();
             dispatch(poReqActions.postByHref(utilities.getHref(req, 'finance-check')));
+        }
+    };
+
+    const handleCreateOrder = () => {
+        setEditStatus('edit');
+        if (allowedToCreateOrder) {
+            clearErrors();
+            dispatch(
+                poReqActions.postByHref(utilities.getHref(req, 'turn-req-into-purchase-order'))
+            );
         }
     };
 
@@ -629,9 +642,7 @@ function POReqUtility({ creating }) {
                                 <IconButton
                                     className={classes.pullRight}
                                     aria-label="Print"
-                                    onClick={() =>
-                                        history.push(utilities.getHref(req, 'print'))
-                                    }
+                                    onClick={() => history.push(utilities.getHref(req, 'print'))}
                                     disabled={creating}
                                 >
                                     <PrintIcon />
@@ -735,6 +746,7 @@ function POReqUtility({ creating }) {
                                     propertyName="unitPrice"
                                     onChange={handleFieldChange}
                                     disabled={!editingAllowed || !creating}
+                                    decimalPlaces={2}
                                     type="number"
                                     required
                                 />
@@ -749,6 +761,7 @@ function POReqUtility({ creating }) {
                                     onChange={handleFieldChange}
                                     disabled={!editingAllowed}
                                     type="number"
+                                    decimalPlaces={2}
                                 />
                             </Grid>
                             <Grid item xs={4}>
@@ -761,6 +774,7 @@ function POReqUtility({ creating }) {
                                     onChange={handleFieldChange}
                                     disabled
                                     type="number"
+                                    decimalPlaces={2}
                                 />
                             </Grid>
                         </Grid>
@@ -1109,16 +1123,30 @@ function POReqUtility({ creating }) {
                                 disabled
                             />
                         </Grid>
-                        <Grid item xs={4}>
+                        <Grid item xs={3}>
                             <Button
                                 className={classes.buttonMarginTop}
                                 color="primary"
                                 variant="contained"
                                 disabled={!allowedToCreateOrder()}
-                                // onClick={createOrder} - to be linked to purchase order ut when that's built
+                                onClick={handleCreateOrder}
                             >
                                 Create Order
                             </Button>
+                        </Grid>
+                        <Grid item xs={1}>
+                            <Tooltip title="View purchase order">
+                                <IconButton
+                                    className={classes.buttonMarginTop}
+                                    aria-label="View"
+                                    onClick={() =>
+                                        history.push(utilities.getHref(req, 'view-purchase-order'))
+                                    }
+                                    disabled={!hasOrderNumber}
+                                >
+                                    <PageviewIcon />
+                                </IconButton>
+                            </Tooltip>
                         </Grid>
                         <Grid item xs={5}>
                             <InputField

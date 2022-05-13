@@ -5,6 +5,7 @@
     using System.IO;
 
     using Linn.Common.Authorisation;
+    using Linn.Common.Domain.Exceptions;
     using Linn.Common.Email;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
@@ -115,8 +116,6 @@
 
         public void CreateOrderFromReq(PurchaseOrderReq entity, IEnumerable<string> privileges, int currentUserId)
         {
-            var stage = !entity.AuthorisedById.HasValue ? "AUTH1" : "AUTH2";
-
             if (entity.State != "ORDER WAIT")
             {
                 throw new UnauthorisedActionException(
@@ -130,7 +129,9 @@
 
             var authAllowed = false;
 
-            // todo call below pack and work out what want to do with message in case created unauthd
+            // todo call below pack and work out what want to do with message in case created unauthorised
+            //maybe this should be a separate call from the front end?
+
             // v_auth:= pl_orders_pack.order_can_be_authorised_by(null, null,:br.turned_into_order_by,
             // cur_pack.cur_to_base_value(:br.currency,:br.total_req_price),
             // :br.part_number, 'PO');
@@ -153,14 +154,22 @@
                 entity.UnitPrice,
                 authAllowed);
 
+            //todo - put below into wrapper to set internal comments?
             // update mini_order set internal_comments = :br.iNTERNAL_ONLY_ORDER_NOTES
             // where order_number = v_order_number;
+            //todo email to send to supplier
             // tb_mess.warning('Order number ' || v_order_number || ' created successfully. Hit DO to save and then send to supplier');
-            // else
-            // tb_mess.warning('Order creation failed. ' || pl_auto_order.return_package_message);
-            // end if;
-            // return v_order_number;
-            entity.TurnedIntoOrderById = currentUserId;
+
+            if (createMiniOrderResult.Success)
+            {
+                entity.TurnedIntoOrderById = currentUserId;
+                entity.OrderNumber = createMiniOrderResult.OrderNumber;
+                entity.State = this.GetNextState(entity.State, true);
+            }
+            else
+            {
+                throw new DomainException(createMiniOrderResult.Message);
+            }
         }
 
         public void FinanceApprove(PurchaseOrderReq entity, IEnumerable<string> privileges, int currentUserId)
@@ -336,8 +345,8 @@
         private string GetNextState(string from, bool changeIsFromFunction = false)
         {
             var stateChange = this.reqsStateChangeRepository.FindBy(
-                x => x.FromState == from && (!changeIsFromFunction && x.UserAllowed == "Y"
-                                             || changeIsFromFunction && x.ComputerAllowed == "Y"));
+                x => x.FromState == from && ((!changeIsFromFunction && x.UserAllowed == "Y")
+                                             || (changeIsFromFunction && x.ComputerAllowed == "Y")));
             return stateChange.ToState;
         }
 
@@ -345,7 +354,7 @@
         {
             var stateChange = this.reqsStateChangeRepository.FindBy(
                 x => x.FromState == from && x.ToState == to
-                                         && (x.UserAllowed == "Y" || changeIsFromFunction && x.ComputerAllowed == "Y"));
+                                         && (x.UserAllowed == "Y" || (changeIsFromFunction && x.ComputerAllowed == "Y")));
             return stateChange != null;
         }
     }
