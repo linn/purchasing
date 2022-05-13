@@ -247,3 +247,9 @@ export const purchaseOrderDeliveries = new ItemType(
     'PURCHASE_ORDER_DELIVERIES',
     '/purchasing/purchase-orders/deliveries'
 );
+
+export const batchPurchaseOrderDeliveriesUpload = new ItemType(
+    'batchPurchaseOrderDeliveriesUpload',
+    'BATCH_PURCHASE_ORDER_DELIVERIES_UPLOAD',
+    '/purchasing/purchase-orders/deliveries'
+);

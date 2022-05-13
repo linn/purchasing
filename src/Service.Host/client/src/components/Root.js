@@ -220,6 +220,11 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
+                                    path="/purchasing/purchase-orders/acknowledge"
+                                    component={AcknowledgeOrdersUtility}
+                                />
+                                <Route
+                                    exact
                                     path="/purchasing/purchase-orders/:orderNumber"
                                     component={PurchaseOrderUtility}
                                 />

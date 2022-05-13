@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Integration.Tests.SupplierModuleTests
+﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrderDeliveryModuleTests
 {
     using System.Collections.Generic;
     using System.Net;
@@ -6,7 +6,7 @@
     using FluentAssertions;
 
     using Linn.Purchasing.Domain.LinnApps;
-    using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -14,36 +14,25 @@
 
     using NUnit.Framework;
 
-    public class WhenBulkUpdatingLeadTimes : ContextBase
+    public class WhenBatchUpdatingAndSuccess : ContextBase
     {
         [SetUp]
         public void SetUp()
         {
-            this.MockPartSupplierDomainService.BulkUpdateLeadTimes(
-                    1,
-                    Arg.Any<IEnumerable<LeadTimeUpdateModel>>(), 
-                    Arg.Any<IEnumerable<string>>(),
-                    null)
-                .Returns(new ProcessResult(true, "success"));
-
+            this.MockDomainService.BatchUpdateDeliveries(
+                Arg.Any<IEnumerable<PurchaseOrderDeliveryUpdate>>(),
+                Arg.Any<IEnumerable<string>>()).Returns(new BatchUpdateProcessResult
+                                                            {
+                                                                Success = true,
+                                                                Message = "Success!"
+                                                            });
             this.Response = this.Client.Post(
-                $"/purchasing/suppliers/bulk-lead-times?supplierId=1",
-                "PART, 8",
+                $"/purchasing/purchase-orders/deliveries",
+                $"PO1,28/03/1995,NEW REASON",
                 with =>
                     {
                         with.Accept("application/json");
                     }).Result;
-        }
-
-        [Test]
-        public void ShouldCallDomainService()
-        {
-            this.MockPartSupplierDomainService.Received()
-                .BulkUpdateLeadTimes(
-                    1,
-                    Arg.Any<IEnumerable<LeadTimeUpdateModel>>(),
-                    Arg.Any<IEnumerable<string>>(),
-                    null);
         }
 
         [Test]
@@ -55,7 +44,7 @@
         [Test]
         public void ShouldCommitChanges()
         {
-            this.TransactionManager.Received()
+            this.MockTransactionManager.Received()
                 .Commit();
         }
 
@@ -69,9 +58,9 @@
         [Test]
         public void ShouldReturnJsonBody()
         {
-            var resultResource = this.Response.DeserializeBody<ProcessResultResource>();
+            var resultResource = this.Response.DeserializeBody<BatchUpdateProcessResultResource>();
             resultResource.Success.Should().Be(true);
-            resultResource.Message.Should().Be("success");
+            resultResource.Message.Should().Be("Success!");
         }
     }
 }
