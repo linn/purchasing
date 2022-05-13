@@ -2,11 +2,12 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
+    using System.IO;
     using System.Linq;
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
-    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
@@ -50,38 +51,95 @@
             PatchRequestResource<PurchaseOrderDeliveryResource> requestResource, 
             IEnumerable<string> privileges)
         {
+            var privilegesList = privileges.ToList();
             var entity = this.repository.FindById(key);
 
-            if (requestResource.From.DateAdvised != requestResource.To.DateAdvised)
-            {
-                entity.DateAdvised = string.IsNullOrEmpty(requestResource.To.DateAdvised)
-                                         ? null : DateTime.Parse(requestResource.To.DateAdvised);
-            }
-
-            if (requestResource.From.RescheduleReason != requestResource.To.RescheduleReason)
-            {
-                entity.RescheduleReason = requestResource.To.RescheduleReason;
-            }
-
-            if (requestResource.From.SupplierConfirmationComment != requestResource.To.SupplierConfirmationComment)
-            {
-                entity.SupplierConfirmationComment = requestResource.To.SupplierConfirmationComment;
-            }
-
-            if (requestResource.From.AvailableAtSupplier != requestResource.To.AvailableAtSupplier)
-            {
-                entity.AvailableAtSupplier = requestResource.To.AvailableAtSupplier;
-            }
+            this.domainService.UpdateDelivery(
+                key,
+                BuildEntityFromResourceHelper(requestResource.From),
+                BuildEntityFromResourceHelper(requestResource.To),
+                privilegesList);
 
             this.transactionManager.Commit();
 
             return new SuccessResult<PurchaseOrderDeliveryResource>(
-                (PurchaseOrderDeliveryResource)this.resourceBuilder.Build(entity, privileges));
+                (PurchaseOrderDeliveryResource)this.resourceBuilder.Build(entity, privilegesList));
         }
 
-        public IResult<ProcessResult> BatchUpdateDeliveries(string csvString, IEnumerable<string> privileges)
+        public IResult<BatchUpdateProcessResultResource> BatchUpdateDeliveriesFromCsv(
+            string csvString, IEnumerable<string> privileges)
         {
-            throw new System.NotImplementedException();
+            var reader = new StringReader(csvString);
+            var changes = new List<PurchaseOrderDeliveryUpdate>();
+            try
+            {
+                while (reader.ReadLine() is { } line)
+                {
+                    // assuming csv lines are in the form <orderNumber>,<newAdvisedDate>,<newReason>
+                    var row = line.Split(",");
+
+                    if (!int.TryParse(new string(row[0].Where(char.IsDigit).ToArray()), out var orderNumber))
+                    {
+                        throw new InvalidOperationException($"Invalid Order Number: {row[0]}.");
+                    }
+
+                    // only supports two date formats for now, i.e.  31/01/2000 and 31-jan-2000
+                    if (
+                        !DateTime
+                        .TryParseExact(
+                            row[1], "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate)
+                        &&
+                        !DateTime
+                            .TryParseExact(
+                                row[1], "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDate))
+                    {
+                        throw new InvalidOperationException($"Date format not recognised for {row[1]}.");
+                    }
+                    
+                    changes.Add(new PurchaseOrderDeliveryUpdate
+                                    {
+                                        Key = new PurchaseOrderDeliveryKey
+                                                  {
+                                                      OrderNumber = orderNumber,
+                                                      OrderLine = 1, // hardcoded for now
+                                                      DeliverySequence = 1 // hardcoded for now since we can't handle split deliveries yet
+                                                  },
+                                        NewDateAdvised = parsedDate,
+                                        NewReason = row[2]
+                                    });
+                }
+
+                var result = this.domainService.BatchUpdateDeliveries(changes, privileges);
+                this.transactionManager.Commit();
+
+                return new SuccessResult<BatchUpdateProcessResultResource>(
+                    new BatchUpdateProcessResultResource
+                        {
+                            Success = result.Success,
+                            Message = result.Message,
+                            Errors = result.Errors?.Select(e => new ErrorResource
+                                                                   {
+                                                                       Descriptor = e.Descriptor,
+                                                                       Message = e.Message
+                                                                   })
+                        });
+            }
+            catch (Exception e)
+            {
+                return new BadRequestResult<BatchUpdateProcessResultResource>(e.Message);
+            }
+        }
+
+        private static PurchaseOrderDelivery BuildEntityFromResourceHelper(PurchaseOrderDeliveryResource resource)
+        {
+            return new PurchaseOrderDelivery
+                       {
+                           DateAdvised = string.IsNullOrEmpty(resource.DateAdvised) 
+                                             ? null : DateTime.Parse(resource.DateAdvised),
+                           AvailableAtSupplier = resource.AvailableAtSupplier,
+                           RescheduleReason = resource.RescheduleReason,
+                           SupplierConfirmationComment = resource.SupplierConfirmationComment
+                       };
         }
     }
 }

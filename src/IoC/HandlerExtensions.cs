@@ -71,6 +71,7 @@
                 .AddTransient<IHandler, JsonResultHandler<MrMasterResource>>()
                 .AddTransient<IHandler, JsonResultHandler<PurchaseOrderDeliveryResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<PurchaseOrderDeliveryResource>>>()
+                .AddTransient<IHandler, JsonResultHandler<BatchUpdateProcessResultResource>>()
                 .AddTransient<IHandler, JsonResultHandler<MrReportResource>>();
         }
     }

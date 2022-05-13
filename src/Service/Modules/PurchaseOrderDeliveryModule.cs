@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
+    using System.IO;
     using System.Threading.Tasks;
 
     using Carter;
@@ -21,6 +22,7 @@
         {
             app.MapGet("/purchasing/purchase-orders/deliveries", this.Search);
             app.MapPatch("/purchasing/purchase-orders/deliveries/{orderNumber:int}/{orderLine:int}/{deliverySeq:int}", this.Patch);
+            app.MapPost("/purchasing/purchase-orders/deliveries", this.BatchUpdate);
         }
 
         private async Task Search(
@@ -52,6 +54,20 @@
                         DeliverySequence = deliverySeq
                     }, 
                 resource, 
+                req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task BatchUpdate(
+            HttpRequest req,
+            HttpResponse res,
+            IPurchaseOrderDeliveryFacadeService service)
+        {
+            var reader = new StreamReader(req.Body).ReadToEndAsync();
+
+            var result = service.BatchUpdateDeliveriesFromCsv(
+                reader.Result,
                 req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);

@@ -212,3 +212,7 @@ export const purchaseOrderDeliveriesActionTypes = makeActionTypes(
     itemTypes.purchaseOrderDeliveries.actionType,
     false
 );
+
+export const batchPurchaseOrderDeliveriesUploadActionTypes = makeProcessActionTypes(
+    itemTypes.bulkLeadTimesUpload.actionType
+);
