@@ -18,6 +18,8 @@
 
         public decimal? PurchaseOrders { get; set; }
 
+        public decimal? AssumedPurchaseOrders { get; set; }
+
         public decimal? UnauthorisedPurchaseOrders { get; set; }
 
         public decimal? SalesOrders { get; set; }

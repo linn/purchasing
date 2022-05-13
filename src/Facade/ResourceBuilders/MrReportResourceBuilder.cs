@@ -88,6 +88,11 @@
                 detailResources.AddRange(this.CreateDetails("Unauthorised POs", 6, 160));
             }
 
+            if (header.HasAssumedPurchaseOrders == "Y")
+            {
+                detailResources.AddRange(this.CreateDetails("Assumed Purchases", 6, 190));
+            }
+
             if (header.HasDeliveryForecast == "Y")
             {
                 detailResources.AddRange(this.CreateDetails("Sales Forecast", 6, 200));
@@ -112,9 +117,13 @@
             detailResources.AddRange(this.CreateDetails("Stock", 6, 1000));
             detailResources.AddRange(this.CreateDetails("Min Rail", 6, 1100));
             detailResources.AddRange(this.CreateDetails("Max Rail", 6, 1200));
-            detailResources.AddRange(this.CreateDetails("Ideal Stock", 6, 1300));
-            detailResources.AddRange(this.CreateDetails("Recom Orders", 6, 1400));
-            detailResources.AddRange(this.CreateDetails("Recom Stock", 6, 1500));
+
+            if (header.PreferredSupplierId.HasValue && header.PreferredSupplierId != 4415)
+            {
+                detailResources.AddRange(this.CreateDetails("Ideal Stock", 6, 1300));
+                detailResources.AddRange(this.CreateDetails("Recom Orders", 6, 1400));
+                detailResources.AddRange(this.CreateDetails("Recom Stock", 6, 1500));
+            }
 
             foreach (var detail in header.MrDetails)
             {
@@ -172,8 +181,15 @@
                     detail.Segment);
                 this.SetValue(
                     detailResources,
+                    "Assumed Purchases",
+                    detail.AssumedPurchaseOrders,
+                    null,
+                    relativeWeek,
+                    detail.Segment);
+                this.SetValue(
+                    detailResources,
                     "Sales Orders",
-                    detail.DeliveryForecast,
+                    detail.SalesOrders,
                     null,
                     relativeWeek,
                     detail.Segment);

@@ -52,6 +52,8 @@
 
         public string HasPurchaseOrders { get; set; }
 
+        public string HasAssumedPurchaseOrders { get; set; }
+
         public string HasUnauthPurchaseOrders { get; set; }
         
         public string HasTriggerBuild { get; set; }

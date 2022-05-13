@@ -1223,6 +1223,7 @@
             entity.Property(e => e.MinimumDeliveryQuantity).HasColumnName("MINIMUM_DELIVERY_QTY");
             entity.Property(e => e.OrderIncrement).HasColumnName("ORDER_INCREMENT");
             entity.Property(e => e.HasPurchaseOrders).HasColumnName("HAS_PURCH_ORDERS");
+            entity.Property(e => e.HasAssumedPurchaseOrders).HasColumnName("HAS_ASSUMED_PURCH_ORDERS");
             entity.Property(e => e.HasUnauthPurchaseOrders).HasColumnName("HAS_UNAUTH_PURCH_ORDERS");
             entity.Property(e => e.HasTriggerBuild).HasColumnName("HAS_TRIGGER_BUILD");
             entity.Property(e => e.HasProductionRequirement).HasColumnName("HAS_PRODUCTION_REQT");
@@ -1249,6 +1250,7 @@
             entity.Property(e => e.WeekEnding).HasColumnName("WEEK_ENDING_DDMON");
             entity.Property(e => e.TriggerBuild).HasColumnName("TRIGGER_BUILD");
             entity.Property(e => e.PurchaseOrders).HasColumnName("PURCH_ORDERS");
+            entity.Property(e => e.AssumedPurchaseOrders).HasColumnName("ASSUMED_PURCH_ORDERS");
             entity.Property(e => e.UnauthorisedPurchaseOrders).HasColumnName("UNAUTH_PURCH_ORDERS");
             entity.Property(e => e.SalesOrders).HasColumnName("SALES_ORDERS");
             entity.Property(e => e.DeliveryForecast).HasColumnName("DELIVERY_FORECAST");
