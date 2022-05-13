@@ -116,7 +116,8 @@
                         ?.StockLocators))
                 .AddTransient<IQueryRepository<MrUsedOnRecord>, EntityFrameworkQueryRepository<MrUsedOnRecord>>(
                     r => new EntityFrameworkQueryRepository<MrUsedOnRecord>(r.GetService<ServiceDbContext>()
-                        ?.MrUsedOnView));
+                        ?.MrUsedOnView))
+                .AddTransient<IQueryRepository<MrHeader>, MrHeaderRepository>();
         }
     }
 }

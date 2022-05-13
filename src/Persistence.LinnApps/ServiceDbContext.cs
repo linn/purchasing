@@ -126,6 +126,8 @@
         public DbSet<StockLocator> StockLocators { get; set; }
         
         public DbSet<MrUsedOnRecord> MrUsedOnView { get; set; }
+       
+        public DbSet<MrHeader> MrHeaders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -195,6 +197,8 @@
             this.BuildNominalAccounts(builder);
             this.BuildStockLocators(builder);
             this.BuildMrUsedOnView(builder);
+            this.BuildMrHeaders(builder);
+            this.BuildMrDetails(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -984,6 +988,7 @@
             e.Property(d => d.LoadMessage).HasColumnName("LOAD_MESSAGE").HasMaxLength(2000);
             e.Property(d => d.MrMessage).HasColumnName("MR_MESSAGE").HasMaxLength(2000);
             e.Property(d => d.DateTidied).HasColumnName("DATE_TIDIED");
+            e.Property(d => d.RunWeekNumber).HasColumnName("RUN_WEEK_NUMBER");
         }
 
         private void BuildWhatsInInspectionExcludingFailedView(ModelBuilder builder)
@@ -1191,6 +1196,67 @@
             entity.Property(e => e.AnnualUsage).HasColumnName("COMP_ANNUAL_USAGE");
             entity.Property(e => e.QtyUsed).HasColumnName("UO_QTY");
             entity.Property(e => e.TCoded).HasColumnName("UO_T_CODED");
+        }
+
+        private void BuildMrHeaders(ModelBuilder builder)
+        {
+            var entity = builder.Entity<MrHeader>().ToView("V_MRH");
+            entity.HasKey(e => new { e.JobRef, e.PartNumber });
+            entity.Property(e => e.JobRef).HasColumnName("JOBREF").HasColumnType("VARCHAR2");
+            entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
+            entity.Property(e => e.PartDescription).HasColumnName("DESCRIPTION").HasColumnType("VARCHAR2");
+            entity.Property(e => e.QuantityInStock).HasColumnName("QTY_IN_STOCK");
+            entity.Property(e => e.QuantityForSpares).HasColumnName("QTY_STOCK_FOR_SPARES");
+            entity.Property(e => e.QuantityInInspection).HasColumnName("QTY_IN_INSPECTION");
+            entity.Property(e => e.QuantityFaulty).HasColumnName("QTY_FAULTY");
+            entity.Property(e => e.QuantityAtSupplier).HasColumnName("QTY_AT_SUPPLIER");
+            entity.Property(e => e.PreferredSupplierId).HasColumnName("PREFERRED_SUPPLIER");
+            entity.Property(e => e.PreferredSupplierName).HasColumnName("SUPPLIER_NAME").HasColumnType("VARCHAR2");
+            entity.Property(e => e.AnnualUsage).HasColumnName("ANNUAL_USAGE");
+            entity.Property(e => e.BaseUnitPrice).HasColumnName("BASE_UNIT_PRICE");
+            entity.Property(e => e.OurUnits).HasColumnName("OUR_UNIT_OF_MEASURE");
+            entity.Property(e => e.OrderUnits).HasColumnName("ORDER_UNITS");
+            entity.Property(e => e.LeadTimeWeeks).HasColumnName("LEAD_TIME_WEEKS");
+            entity.Property(e => e.CurrencyCode).HasColumnName("CURR_CODE").HasColumnType("VARCHAR2");
+            entity.Property(e => e.CurrencyUnitPrice).HasColumnName("CURRENCY_UNIT_PRICE_OURS");
+            entity.Property(e => e.MinimumOrderQuantity).HasColumnName("MINIMUM_ORDER_QTY");
+            entity.Property(e => e.MinimumDeliveryQuantity).HasColumnName("MINIMUM_DELIVERY_QTY");
+            entity.Property(e => e.OrderIncrement).HasColumnName("ORDER_INCREMENT");
+            entity.Property(e => e.HasPurchaseOrders).HasColumnName("HAS_PURCH_ORDERS");
+            entity.Property(e => e.HasUnauthPurchaseOrders).HasColumnName("HAS_UNAUTH_PURCH_ORDERS");
+            entity.Property(e => e.HasTriggerBuild).HasColumnName("HAS_TRIGGER_BUILD");
+            entity.Property(e => e.HasProductionRequirement).HasColumnName("HAS_PRODUCTION_REQT");
+            entity.Property(e => e.HasDeliveryForecast).HasColumnName("HAS_DELIVERY_FORECAST");
+            entity.Property(e => e.HasSalesOrders).HasColumnName("HAS_SALES_ORDERS");
+            entity.Property(e => e.VendorManager).HasColumnName("VENDOR_MANAGER").HasColumnType("VARCHAR2");
+            entity.Property(e => e.VendorManagerInitials).HasColumnName("VM_INITIALS");
+            entity.Property(e => e.PartId).HasColumnName("PART_ID");
+            entity.HasMany(s => s.MrDetails).WithOne().HasForeignKey(c => new { c.JobRef, c.PartNumber });
+        }
+
+        private void BuildMrDetails(ModelBuilder builder)
+        {
+            var entity = builder.Entity<MrDetail>().ToView("V_MRD");
+            entity.HasKey(e => new { e.JobRef, e.PartNumber, e.LinnWeekNumber });
+            entity.Property(e => e.JobRef).HasColumnName("JOBREF").HasColumnType("VARCHAR2");
+            entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
+            entity.Property(e => e.LinnWeekNumber).HasColumnName("LINN_WEEK_NUMBER");
+            entity.Property(e => e.Segment).HasColumnName("SEGMENT");
+            entity.Property(e => e.WeekAndYear).HasColumnName("WWSYY");
+            entity.Property(e => e.WeekEnding).HasColumnName("WEEK_ENDING_DDMON");
+            entity.Property(e => e.TriggerBuild).HasColumnName("TRIGGER_BUILD");
+            entity.Property(e => e.PurchaseOrders).HasColumnName("PURCH_ORDERS");
+            entity.Property(e => e.UnauthorisedPurchaseOrders).HasColumnName("UNAUTH_PURCH_ORDERS");
+            entity.Property(e => e.SalesOrders).HasColumnName("SALES_ORDERS");
+            entity.Property(e => e.DeliveryForecast).HasColumnName("DELIVERY_FORECAST");
+            entity.Property(e => e.ProductionRequirement).HasColumnName("PRODUCTION_REQT");
+            entity.Property(e => e.Status).HasColumnName("STATUS");
+            entity.Property(e => e.Stock).HasColumnName("STOCK");
+            entity.Property(e => e.MinRail).HasColumnName("MIN_RAIL");
+            entity.Property(e => e.MaxRail).HasColumnName("MAX_RAIL");
+            entity.Property(e => e.IdealStock).HasColumnName("IDEAL_STOCK");
+            entity.Property(e => e.RecommendedOrders).HasColumnName("RECOMMENDED_PURCH_ORDERS");
+            entity.Property(e => e.RecommenedStock).HasColumnName("RECOMMENDED_STOCK");
         }
     }
 }

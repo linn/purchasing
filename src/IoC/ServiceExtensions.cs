@@ -66,7 +66,8 @@
                 .AddTransient<IBuilder<MrpRunLog>, MrpRunLogResourceBuilder>()
                 .AddTransient<IBuilder<PurchaseOrderReqState>, PurchaseOrderReqStateResourceBuilder>()
                 .AddTransient<IBuilder<MrMaster>, MrMasterResourceBuilder>()
-                .AddTransient<IBuilder<PurchaseOrderDelivery>, PurchaseOrderDeliveryResourceBuilder>();
+                .AddTransient<IBuilder<PurchaseOrderDelivery>, PurchaseOrderDeliveryResourceBuilder>()
+                .AddTransient<IBuilder<MrReport>, MrReportResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -111,7 +112,8 @@
                 .AddTransient<ISingleRecordFacadeResourceService<MrMaster, MrMasterResource>, MrMasterFacadeService>()
                 .AddTransient<IForecastingFacadeService, ForecastingFacadeService>()
                 .AddTransient<IMrUsedOnReportFacadeService, MrUsedOnReportFacadeService>()
-                .AddTransient<IPurchaseOrderDeliveryFacadeService, PurchaseOrderDeliveryFacadeService>();
+                .AddTransient<IPurchaseOrderDeliveryFacadeService, PurchaseOrderDeliveryFacadeService>()
+                .AddTransient<IMaterialRequirementsReportFacadeService, MaterialRequirementsReportFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
@@ -146,6 +148,7 @@
                 .AddTransient<IForecastingService, ForecastingService>()
                 .AddTransient<IMrUsedOnReportService, MrUsedOnReportService>()
                 .AddTransient<IPurchaseOrderDeliveryService, PurchaseOrderDeliveryService>()
+                .AddTransient<IMaterialRequirementsReportService, MaterialRequirementsReportService>()
 
                 // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
