@@ -1227,10 +1227,13 @@
             entity.Property(e => e.HasUnauthPurchaseOrders).HasColumnName("HAS_UNAUTH_PURCH_ORDERS");
             entity.Property(e => e.HasTriggerBuild).HasColumnName("HAS_TRIGGER_BUILD");
             entity.Property(e => e.HasProductionRequirement).HasColumnName("HAS_PRODUCTION_REQT");
+            entity.Property(e => e.HasNonProductionRequirement).HasColumnName("HAS_NON_PRODUCTION_REQT");
             entity.Property(e => e.HasDeliveryForecast).HasColumnName("HAS_DELIVERY_FORECAST");
             entity.Property(e => e.HasAssumedBuild).HasColumnName("HAS_ASSUMED_BUILD");
             entity.Property(e => e.HasFixedBuild).HasColumnName("HAS_FIXED_BUILD");
             entity.Property(e => e.HasSparesRequirement).HasColumnName("HAS_SPARES_REQT");
+            entity.Property(e => e.HasProductionRequirementForSpares).HasColumnName("HAS_PROD_REQT_FOR_SPARES");
+            entity.Property(e => e.HasProductionRequirementForNonProduction).HasColumnName("HAS_PROD_REQT_FOR_NONPROD");
             entity.Property(e => e.HasSalesOrders).HasColumnName("HAS_SALES_ORDERS");
             entity.Property(e => e.VendorManager).HasColumnName("VENDOR_MANAGER").HasColumnType("VARCHAR2");
             entity.Property(e => e.VendorManagerInitials).HasColumnName("VM_INITIALS");
@@ -1255,6 +1258,7 @@
             entity.Property(e => e.SalesOrders).HasColumnName("SALES_ORDERS");
             entity.Property(e => e.DeliveryForecast).HasColumnName("DELIVERY_FORECAST");
             entity.Property(e => e.ProductionRequirement).HasColumnName("PRODUCTION_REQT");
+            entity.Property(e => e.NonProductionRequirement).HasColumnName("NON_PRODUCTION_REQT");
             entity.Property(e => e.Status).HasColumnName("STATUS");
             entity.Property(e => e.Stock).HasColumnName("STOCK");
             entity.Property(e => e.MinRail).HasColumnName("MIN_RAIL");
@@ -1263,6 +1267,8 @@
             entity.Property(e => e.AssumedBuild).HasColumnName("ASSUMED_BUILD");
             entity.Property(e => e.FixedBuild).HasColumnName("FIXED_BUILD");
             entity.Property(e => e.SparesRequirement).HasColumnName("SPARES_REQT");
+            entity.Property(e => e.ProductionRequirementForSpares).HasColumnName("PROD_REQT_FOR_SPARES");
+            entity.Property(e => e.ProductionRequirementForNonProduction).HasColumnName("PROD_REQT_FOR_NONPROD");
             entity.Property(e => e.RecommendedOrders).HasColumnName("RECOMMENDED_PURCH_ORDERS");
             entity.Property(e => e.RecommenedStock).HasColumnName("RECOMMENDED_STOCK");
         }

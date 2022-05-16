@@ -93,8 +93,11 @@ function MaterialRequirementsReport() {
     }, [mrReport]);
 
     const useStyles = makeStyles(() => ({
-        boldText: {
+        headerText: {
             fontWeight: 500
+        },
+        boldText: {
+            fontWeight: 550
         },
         newQuarter: {
             paddingTop: '50px',
@@ -153,13 +156,17 @@ function MaterialRequirementsReport() {
     const getRowClass = params => {
         const title = params?.row?.title;
         const segment = params?.row?.segment;
-        if (title === 'Ending' || title === 'Stock') {
+        if (title === 'Stock') {
             return classes.boldText;
+        }
+
+        if (title === 'Ending') {
+            return classes.headerText;
         }
 
         if (title === 'Week') {
             if (segment === 0 || selectedSegment > -1) {
-                return classes.boldText;
+                return classes.headerText;
             }
 
             return classes.newQuarter;
