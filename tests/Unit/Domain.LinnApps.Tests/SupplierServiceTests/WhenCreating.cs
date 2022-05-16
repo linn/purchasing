@@ -43,6 +43,7 @@
             this.SupplierPack.GetNextSupplierKey().Returns(1);
             this.EmployeeRepository.FindById(1).Returns(new Employee { Id = 1 });
             this.MockAddressRepository.FindById(1).Returns(new Address { FullAddress = new FullAddress { Id = 1 } });
+            this.VendorManagerRepository.FindById("A").Returns(new VendorManager { Id = "A", });
             this.privileges = new List<string> { "priv" };
             this.result = this.Sut.CreateSupplier(this.candidate, this.privileges);
         }
@@ -52,6 +53,7 @@
         {
             this.result.SupplierId.Should().Be(1);
             this.result.Name.Should().Be("SUPPLIER");
+            this.result.VendorManager.Id.Should().Be("A");
         }
     }
 }
