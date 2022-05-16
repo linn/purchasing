@@ -45,6 +45,8 @@
         public decimal? OrderIncrement { get; set; }
 
         public string HasProductionRequirement { get; set; }
+
+        public string HasNonProductionRequirement { get; set; }
         
         public string HasDeliveryForecast { get; set; }
         
@@ -52,9 +54,21 @@
 
         public string HasPurchaseOrders { get; set; }
 
+        public string HasAssumedPurchaseOrders { get; set; }
+
         public string HasUnauthPurchaseOrders { get; set; }
         
         public string HasTriggerBuild { get; set; }
+
+        public string HasFixedBuild { get; set; }
+
+        public string HasAssumedBuild { get; set; }
+
+        public string HasSparesRequirement { get; set; }
+
+        public string HasProductionRequirementForSpares { get; set; }
+
+        public string HasProductionRequirementForNonProduction { get; set; }
 
         public string VendorManager { get; set; }
 

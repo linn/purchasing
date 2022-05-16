@@ -51,8 +51,6 @@
                 MinimumOrderQuantity = entity.MinimumOrderQuantity,
                 MinimumDeliveryQuantity = entity.MinimumDeliveryQuantity,
                 OrderIncrement = entity.OrderIncrement,
-                HasProductionRequirement = entity.HasProductionRequirement,
-                HasDeliveryForecast = entity.HasDeliveryForecast,
                 VendorManager = entity.VendorManager,
                 VendorManagerInitials = entity.VendorManagerInitials,
                 Details = this.BuildDetails(entity, runWeekNumber),
@@ -62,12 +60,205 @@
 
         private IEnumerable<MrDetailResource> BuildDetails(MrHeader header, int runWeekNumber)
         {
+            var detailResources = this.BuildResourcesTitles(header);
+
+            foreach (var detail in header.MrDetails)
+            {
+                var relativeWeek = this.CalculateRelativeWeek(detail.LinnWeekNumber, detail.Segment, runWeekNumber);
+                
+                this.SetDetailValuesForWeek(detailResources, relativeWeek, detail);
+            }
+
+            return detailResources.OrderBy(a => a.Segment).ThenBy(b => b.DisplaySequence);
+        }
+
+        private decimal CalculateRelativeWeek(int linnWeekNumber, int segment, int runWeekNumber)
+        {
+            return linnWeekNumber < 0
+                ? -1
+                : Math.Floor((decimal)(linnWeekNumber - runWeekNumber) - (segment * 13));
+        }
+
+        private void SetDetailValuesForWeek(
+            IList<MrDetailResource> detailResources,
+            decimal relativeWeek,
+            MrDetail detail)
+        {
+            this.SetValue(
+                detailResources,
+                "Week",
+                null,
+                detail.WeekAndYear,
+                relativeWeek,
+                detail.Segment);
+            this.SetValue(
+                detailResources,
+                "Ending",
+                null,
+                detail.WeekEnding,
+                relativeWeek,
+                detail.Segment);
+            this.SetValue(
+                detailResources,
+                "Fixed Build",
+                detail.FixedBuild,
+                null,
+                relativeWeek,
+                detail.Segment);
+            this.SetValue(
+                detailResources,
+                "Assumed Build",
+                detail.AssumedBuild,
+                null,
+                relativeWeek,
+                detail.Segment);
+            this.SetValue(
+                detailResources,
+                "Trigger Build",
+                detail.TriggerBuild,
+                null,
+                relativeWeek,
+                detail.Segment);
+            this.SetValue(
+                detailResources,
+                "Purchases",
+                detail.PurchaseOrders,
+                null,
+                relativeWeek,
+                detail.Segment);
+            this.SetValue(
+                detailResources,
+                "Unauthorised POs",
+                detail.UnauthorisedPurchaseOrders,
+                null,
+                relativeWeek,
+                detail.Segment);
+            this.SetValue(
+                detailResources,
+                "Assumed Purchases",
+                detail.AssumedPurchaseOrders,
+                null,
+                relativeWeek,
+                detail.Segment);
+            this.SetValue(
+                detailResources,
+                "Sales Orders",
+                detail.SalesOrders,
+                null,
+                relativeWeek,
+                detail.Segment);
+            this.SetValue(
+                detailResources,
+                "Sales Forecast",
+                detail.DeliveryForecast,
+                null,
+                relativeWeek,
+                detail.Segment);
+            this.SetValue(
+                detailResources,
+                "Production Reqt",
+                detail.ProductionRequirement,
+                null,
+                relativeWeek,
+                detail.Segment);
+            this.SetValue(
+                detailResources,
+                "Prod For Spares",
+                detail.ProductionRequirementForSpares,
+                null,
+                relativeWeek,
+                detail.Segment);
+            this.SetValue(
+                detailResources,
+                "Prod For NonProd",
+                detail.ProductionRequirementForNonProduction,
+                null,
+                relativeWeek,
+                detail.Segment);
+            this.SetValue(
+                detailResources,
+                "Non Prod Reqt",
+                detail.NonProductionRequirement,
+                null,
+                relativeWeek,
+                detail.Segment);
+            this.SetValue(
+                detailResources,
+                "Spares Reqt",
+                detail.SparesRequirement,
+                null,
+                relativeWeek,
+                detail.Segment);
+            this.SetValue(
+                detailResources,
+                "Status",
+                null,
+                detail.Status,
+                relativeWeek,
+                detail.Segment);
+            this.SetValue(
+                detailResources,
+                "Stock",
+                detail.Stock,
+                null,
+                relativeWeek,
+                detail.Segment);
+
+            this.SetValue(
+                detailResources,
+                "Min Rail",
+                detail.MinRail,
+                null,
+                relativeWeek,
+                detail.Segment);
+            this.SetValue(
+                detailResources,
+                "Max Rail",
+                detail.MaxRail,
+                null,
+                relativeWeek,
+                detail.Segment);
+            this.SetValue(
+                detailResources,
+                "Ideal Stock",
+                detail.IdealStock,
+                null,
+                relativeWeek,
+                detail.Segment);
+            this.SetValue(
+                detailResources,
+                "Recom Orders",
+                detail.RecommendedOrders,
+                null,
+                relativeWeek,
+                detail.Segment);
+            this.SetValue(
+                detailResources,
+                "Recom Stock",
+                detail.RecommenedStock,
+                null,
+                relativeWeek,
+                detail.Segment);
+        }
+
+        private IList<MrDetailResource> BuildResourcesTitles(MrHeader header)
+        {
             var detailResources = new List<MrDetailResource>();
             detailResources.AddRange(this.CreateDetails("Week", 6, 0));
             detailResources.AddRange(this.CreateDetails("Ending", 6, 10));
+            if (header.HasFixedBuild == "Y")
+            {
+                detailResources.AddRange(this.CreateDetails("Fixed Build", 6, 20));
+            }
+
             if (header.HasTriggerBuild == "Y")
             {
                 detailResources.AddRange(this.CreateDetails("Trigger Build", 6, 100));
+            }
+
+            if (header.HasAssumedBuild == "Y")
+            {
+                detailResources.AddRange(this.CreateDetails("Assumed Build", 6, 110));
             }
 
             if (header.HasPurchaseOrders == "Y")
@@ -78,6 +269,11 @@
             if (header.HasUnauthPurchaseOrders == "Y")
             {
                 detailResources.AddRange(this.CreateDetails("Unauthorised POs", 6, 160));
+            }
+
+            if (header.HasAssumedPurchaseOrders == "Y")
+            {
+                detailResources.AddRange(this.CreateDetails("Assumed Purchases", 6, 190));
             }
 
             if (header.HasDeliveryForecast == "Y")
@@ -92,133 +288,42 @@
 
             if (header.HasProductionRequirement == "Y")
             {
-                 detailResources.AddRange(this.CreateDetails("Production Reqt", 6, 400));
+                detailResources.AddRange(this.CreateDetails("Production Reqt", 6, 400));
+            }
+
+            if (header.HasProductionRequirementForSpares == "Y")
+            {
+                detailResources.AddRange(this.CreateDetails("Prod For Spares", 6, 500));
+            }
+
+            if (header.HasProductionRequirementForNonProduction == "Y")
+            {
+                detailResources.AddRange(this.CreateDetails("Prod For NonProd", 6, 600));
+            }
+
+            if (header.HasNonProductionRequirement == "Y")
+            {
+                detailResources.AddRange(this.CreateDetails("Non Prod Reqt", 6, 700));
+            }
+
+            if (header.HasSparesRequirement == "Y")
+            {
+                detailResources.AddRange(this.CreateDetails("Spares Reqt", 6, 900));
             }
 
             detailResources.AddRange(this.CreateDetails("Status", 6, 990));
             detailResources.AddRange(this.CreateDetails("Stock", 6, 1000));
             detailResources.AddRange(this.CreateDetails("Min Rail", 6, 1100));
             detailResources.AddRange(this.CreateDetails("Max Rail", 6, 1200));
-            detailResources.AddRange(this.CreateDetails("Ideal Stock", 6, 1300));
-            detailResources.AddRange(this.CreateDetails("Recom Orders", 6, 1400));
-            detailResources.AddRange(this.CreateDetails("Recom Stock", 6, 1500));
 
-            foreach (var detail in header.MrDetails)
+            if (header.PreferredSupplierId.HasValue && header.PreferredSupplierId != 4415)
             {
-                var relativeWeek = detail.LinnWeekNumber < 0
-                                       ? -1
-                                       : Math.Floor((decimal)(detail.LinnWeekNumber - runWeekNumber) - (detail.Segment * 13));
-                this.SetValue(
-                    detailResources,
-                    "Week",
-                    null,
-                    detail.WeekAndYear,
-                    relativeWeek,
-                    detail.Segment);
-                this.SetValue(
-                    detailResources,
-                    "Ending",
-                    null,
-                    detail.WeekEnding,
-                    relativeWeek,
-                    detail.Segment);
-                this.SetValue(
-                    detailResources,
-                    "Trigger Build",
-                    detail.TriggerBuild,
-                    null,
-                    relativeWeek,
-                    detail.Segment);
-                this.SetValue(
-                    detailResources,
-                    "Purchases",
-                    detail.PurchaseOrders,
-                    null,
-                    relativeWeek,
-                    detail.Segment);
-                this.SetValue(
-                    detailResources,
-                    "Unauthorised POs",
-                    detail.UnauthorisedPurchaseOrders,
-                    null,
-                    relativeWeek,
-                    detail.Segment);
-                this.SetValue(
-                    detailResources,
-                    "Sales Orders",
-                    detail.DeliveryForecast,
-                    null,
-                    relativeWeek,
-                    detail.Segment);
-                this.SetValue(
-                    detailResources,
-                    "Sales Forecast",
-                    detail.DeliveryForecast,
-                    null,
-                    relativeWeek,
-                    detail.Segment);
-                this.SetValue(
-                    detailResources,
-                    "Production Reqt",
-                    detail.ProductionRequirement,
-                    null,
-                    relativeWeek,
-                    detail.Segment);
-                this.SetValue(
-                    detailResources,
-                    "Status",
-                    null,
-                    detail.Status,
-                    relativeWeek,
-                    detail.Segment);
-                this.SetValue(
-                    detailResources,
-                    "Stock",
-                    detail.Stock,
-                    null,
-                    relativeWeek,
-                    detail.Segment);
-
-                this.SetValue(
-                    detailResources,
-                    "Min Rail",
-                    detail.MinRail,
-                    null,
-                    relativeWeek,
-                    detail.Segment);
-
-                this.SetValue(
-                    detailResources,
-                    "Max Rail",
-                    detail.MaxRail,
-                    null,
-                    relativeWeek,
-                    detail.Segment);
-
-                this.SetValue(
-                    detailResources,
-                    "Ideal Stock",
-                    detail.IdealStock,
-                    null,
-                    relativeWeek,
-                    detail.Segment);
-                this.SetValue(
-                    detailResources,
-                    "Recom Orders",
-                    detail.RecommendedOrders,
-                    null,
-                    relativeWeek,
-                    detail.Segment);
-                this.SetValue(
-                    detailResources,
-                    "Recom Stock",
-                    detail.RecommenedStock,
-                    null,
-                    relativeWeek,
-                    detail.Segment);
+                detailResources.AddRange(this.CreateDetails("Ideal Stock", 6, 1300));
+                detailResources.AddRange(this.CreateDetails("Recom Orders", 6, 1400));
+                detailResources.AddRange(this.CreateDetails("Recom Stock", 6, 1500));
             }
 
-            return detailResources.OrderBy(a => a.Segment).ThenBy(b => b.DisplaySequence);
+            return detailResources;
         }
 
         private void SetValue(

@@ -18,6 +18,8 @@
 
         public decimal? PurchaseOrders { get; set; }
 
+        public decimal? AssumedPurchaseOrders { get; set; }
+
         public decimal? UnauthorisedPurchaseOrders { get; set; }
 
         public decimal? SalesOrders { get; set; }
@@ -25,6 +27,18 @@
         public decimal? DeliveryForecast { get; set; }
 
         public decimal? ProductionRequirement { get; set; }
+
+        public decimal? NonProductionRequirement { get; set; }
+
+        public decimal? FixedBuild { get; set; }
+
+        public decimal? AssumedBuild { get; set; }
+
+        public decimal? SparesRequirement{ get; set; }
+
+        public decimal? ProductionRequirementForSpares { get; set; }
+
+        public decimal? ProductionRequirementForNonProduction { get; set; }
 
         public string Status { get; set; }
 

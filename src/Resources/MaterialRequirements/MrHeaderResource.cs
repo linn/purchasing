@@ -46,10 +46,6 @@
 
         public decimal? OrderIncrement { get; set; }
 
-        public string HasProductionRequirement { get; set; }
-        
-        public string HasDeliveryForecast { get; set; }
-
         public string VendorManager { get; set; }
 
         public string VendorManagerInitials { get; set; }
