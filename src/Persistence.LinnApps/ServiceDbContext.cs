@@ -127,6 +127,8 @@
         
         public DbSet<MrUsedOnRecord> MrUsedOnView { get; set; }
 
+        public DbSet<RescheduleReason> PlRescheduleReasons { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -195,6 +197,7 @@
             this.BuildNominalAccounts(builder);
             this.BuildStockLocators(builder);
             this.BuildMrUsedOnView(builder);
+            this.BuildPlRescheduleReasons(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1191,6 +1194,13 @@
             entity.Property(e => e.AnnualUsage).HasColumnName("COMP_ANNUAL_USAGE");
             entity.Property(e => e.QtyUsed).HasColumnName("UO_QTY");
             entity.Property(e => e.TCoded).HasColumnName("UO_T_CODED");
+        }
+
+        private void BuildPlRescheduleReasons(ModelBuilder builder)
+        {
+            var entity = builder.Entity<RescheduleReason>().ToTable("PL_RESCHEDULE_REASONS");
+            entity.HasKey(e => e.Reason);
+            entity.Property(e => e.Reason).HasColumnName("RESCHEDULE_REASON");
         }
     }
 }

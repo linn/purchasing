@@ -14,12 +14,16 @@
 
         private readonly IAuthorisationService authService;
 
+        private readonly IRepository<RescheduleReason, string> rescheduleReasonRepository;
+
         public PurchaseOrderDeliveryService(
             IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> repository,
-            IAuthorisationService authService)
+            IAuthorisationService authService,
+            IRepository<RescheduleReason, string> rescheduleReasonRepository)
         {
             this.repository = repository;
             this.authService = authService;
+            this.rescheduleReasonRepository = rescheduleReasonRepository;
         }
 
         public IEnumerable<PurchaseOrderDelivery> SearchDeliveries(
@@ -129,9 +133,11 @@
                             $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}",
                             $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence} has been split over multiple deliveries. Please acknowledge manually."));
                 }
-                else if (change.NewReason == "")
+                else if (!this.rescheduleReasonRepository.FindAll().Select(r => r.Reason).Contains(change.NewReason))
                 {
-                    // check valid change reason
+                    errors.Add(new Error(
+                        $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}", 
+                        $"{change.NewReason} is not a valid reason"));
                 }
                 else
                 {
