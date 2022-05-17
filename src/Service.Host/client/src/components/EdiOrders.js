@@ -3,9 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
     collectionSelectorHelpers,
+    itemSelectorHelpers,
     InputField,
     Loading,
     Page,
+    SnackbarMessage,
     Typeahead
 } from '@linn-it/linn-form-components-library';
 import Typography from '@mui/material/Typography';
@@ -42,6 +44,12 @@ function EdiOrder() {
     const ediOrders = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.ediOrders)
     );
+
+    const emailSending = useSelector(state =>
+        itemSelectorHelpers.getItemLoading(state.sendEdiEmail)
+    );
+
+    const emailSentResult = useSelector(state => itemSelectorHelpers.getItem(state.sendEdiEmail));
 
     const canSendEdi = true;
 
@@ -96,8 +104,20 @@ function EdiOrder() {
         dispatch(sendEdiEmailActions.add(sendEmailOptions));
     };
 
+    const snackbarMessage = () => {
+        if (emailSentResult) {
+            if (emailSentResult.success) {
+                return 'Email will be sent by server';
+            }
+
+            return emailSentResult.message;
+        }
+        return '';
+    };
+
     return (
         <Page history={history} homeUrl={config.appRoot}>
+            <SnackbarMessage visible={emailSentResult} message={snackbarMessage()} />
             <Grid container spacing={3}>
                 <Grid item xs={11}>
                     <Typography variant="h3">PL EDI</Typography>
@@ -173,14 +193,18 @@ function EdiOrder() {
                         Get orders
                     </Button>
                 </Grid>
-                <Grid item xs={3}>
-                    <Button
-                        variant="contained"
-                        disabled={!ediOrders || !ediOrders.length}
-                        onClick={() => handleSendEdiEmail()}
-                    >
-                        Send Emails
-                    </Button>
+                <Grid item xs={9}>
+                    {emailSending ? (
+                        <Loading />
+                    ) : (
+                        <Button
+                            variant="contained"
+                            disabled={!ediOrders || !ediOrders.length || emailSentResult}
+                            onClick={() => handleSendEdiEmail()}
+                        >
+                            Send Emails
+                        </Button>
+                    )}
                 </Grid>
                 <Grid item xs={12}>
                     {ordersLoading ? (

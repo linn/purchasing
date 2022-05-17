@@ -51,7 +51,6 @@ import AcknowledgeOrdersUtility from './AcknowledgeOrdersUtility';
 import MaterialRequirements from './materialRequirements/MaterialRequirementsOptions';
 import MaterialRequirementsReport from './materialRequirements/MaterialRequirementsReport';
 
-
 const Root = ({ store }) => (
     <div>
         <div className="padding-top-when-not-printing">
