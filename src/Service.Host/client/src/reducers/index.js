@@ -65,11 +65,15 @@ import sendPurchaseOrderReqFinanceEmail from './sendPurchaseOrderReqFinanceEmail
 import prefSupReceiptsReport from './prefSupReceiptsReport';
 import whatsInInspectionReport from './whatsInInspectionReport';
 import mrpRunLog from './mrpRunLog';
-import mrpRunLogs from './mrpRunLogs';
 import runMrp from './runMrp';
 import mrMaster from './mrMaster';
 import applyForecastingPercentageChange from './applyForecastingPercentageChange';
 import ediOrders from './ediOrders';
+import mrUsedOnReport from './mrUsedOnReport';
+import purchaseOrderDelivery from './purchaseOrderDelivery';
+import purchaseOrderDeliveries from './purchaseOrderDeliveries';
+import batchPurchaseOrderDeliveriesUpload from './batchPurchaseOrderDeliveriesUpload';
+import mrReport from './mrReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -81,6 +85,7 @@ const rootReducer = history =>
         address,
         addresses,
         applyForecastingPercentageChange,
+        batchPurchaseOrderDeliveriesUpload,
         bulkLeadTimesUpload,
         countries,
         currencies,
@@ -91,7 +96,8 @@ const rootReducer = history =>
         manufacturers,
         mrMaster,
         mrpRunLog,
-        mrpRunLogs,
+        mrReport,
+        mrUsedOnReport,
         nominals,
         openDebitNotes,
         orderMethods,
@@ -116,6 +122,8 @@ const rootReducer = history =>
         purchaseOrderReq,
         purchaseOrderReqs,
         purchaseOrderReqStates,
+        purchaseOrderDelivery,
+        purchaseOrderDeliveries,
         purchaseOrders,
         putSupplierOnHold,
         router: connectRouter(history),

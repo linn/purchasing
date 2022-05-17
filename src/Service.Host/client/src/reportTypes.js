@@ -65,3 +65,9 @@ export const whatsInInspectionReport = new ItemType(
     'WHATS_IN_INSPECTION_REPORT',
     '/purchasing/reports/whats-in-inspection/report'
 );
+
+export const mrUsedOnReport = new ItemType(
+    'mrUsedOnReport',
+    'MR_USED_ON_REPORT',
+    '/purchasing/material-requirements/used-on-report'
+);

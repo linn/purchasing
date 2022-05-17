@@ -57,7 +57,7 @@
 
                 return new ProcessResult(
                     success,
-                    success ? $"MRP scheduled successfully with run log id {runLogId}" : $"Failed to schedule MRP run. {message}");
+                    success ? $"MRP requested with run log id {runLogId}" : $"Failed to schedule MRP run. {message}");
             }
         }
     }

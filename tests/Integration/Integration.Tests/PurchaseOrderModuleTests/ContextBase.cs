@@ -15,7 +15,6 @@
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
     using Linn.Purchasing.Resources;
-    using Linn.Purchasing.Resources.SearchResources;
     using Linn.Purchasing.Service.Modules;
 
     using Microsoft.Extensions.DependencyInjection;
@@ -30,7 +29,7 @@
 
         protected HttpResponseMessage Response { get; set; }
 
-        protected ITransactionManager TransactionManager { get; set; }
+        protected ITransactionManager TransactionManager { get; private set; }
 
         protected IFacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource>
            PurchaseOrderFacadeService
@@ -83,9 +82,9 @@
 
         protected IAuthorisationService MockAuthService { get; private set; }
 
-        protected IDatabaseService MockDatabaseService { get; set; }
+        protected IDatabaseService MockDatabaseService { get; private set; }
 
-        protected IRepository<PurchaseOrderReq, int> MockPurchaseOrderReqRepository { get; set; }
+        protected IRepository<PurchaseOrderReq, int> MockPurchaseOrderReqRepository { get; private set; }
 
         protected ILog Log { get; private set; }
 
@@ -121,7 +120,7 @@
                 this.MockReqDomainService,
                 this.MockDatabaseService);
 
-                this.Log = Substitute.For<ILog>();
+            this.Log = Substitute.For<ILog>();
 
             this.Client = TestClient.With<PurchaseOrderModule>(
                 services =>

@@ -6,6 +6,7 @@
     public interface IWhatsInInspectionReportService
     {
         WhatsInInspectionReport GetReport(
+            bool showGoodStockQty = false,
             bool includePartsWithNoOrderNumber = false,
             bool showStockLocations = true,
             bool includeFailedStock = false,
@@ -14,6 +15,7 @@
             bool showOrders = true);
 
         ResultsModel GetTopLevelReport(
+            bool showGoodStockQty = false,
             bool includePartsWithNoOrderNumber = false,
             bool includeFailedStock = false,
             bool includeFinishedGoods = true);

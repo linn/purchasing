@@ -18,6 +18,8 @@
 
         private readonly IQueryRepository<WhatsInInspectionBackOrderData> whatsInInspectionBackOrderDataRepository;
 
+        private readonly IQueryRepository<StockLocator> stockLocatorRepository;
+
         private readonly IReportingHelper reportingHelper;
 
         public WhatsInInspectionReportService(
@@ -25,16 +27,19 @@
             IQueryRepository<WhatsInInspectionPurchaseOrdersData> whatsInInspectionPurchaseOrdersDataRepository,
             IQueryRepository<WhatsInInspectionStockLocationsData> whatsInInspectionStockLocationsDataRepository,
             IQueryRepository<WhatsInInspectionBackOrderData> whatsInInspectionBackOrderDataRepository,
+            IQueryRepository<StockLocator> stockLocatorRepository,
             IReportingHelper reportingHelper)
         {
             this.whatsInInspectionRepository = whatsInInspectionRepository;
             this.whatsInInspectionPurchaseOrdersDataRepository = whatsInInspectionPurchaseOrdersDataRepository;
             this.whatsInInspectionStockLocationsDataRepository = whatsInInspectionStockLocationsDataRepository;
             this.whatsInInspectionBackOrderDataRepository = whatsInInspectionBackOrderDataRepository;
+            this.stockLocatorRepository = stockLocatorRepository;
             this.reportingHelper = reportingHelper;
         }
 
         public WhatsInInspectionReport GetReport(
+            bool showGoodStockQty = false,
             bool includePartsWithNoOrderNumber = false,
             bool showStockLocations = true,
             bool includeFailedStock = false,
@@ -85,7 +90,9 @@
                                                         Description = p.Description,
                                                         MinDate = p.MinDate,
                                                         OurUnitOfMeasure = p.OurUnitOfMeasure,
-                                                        QtyInStock = p.QtyInStock,
+                                                        QtyInStock = showGoodStockQty ? this.stockLocatorRepository
+                                                            .FilterBy(x => x.PartNumber.Equals(p.PartNumber)
+                                                                           && x.State.Equals("STORES")).Sum(x => x.Qty) : null,
                                                         Batch = locationsData.Where(x => x.PartNumber
                                                             .Equals(p.PartNumber)).OrderBy(l => l.StockRotationDate).First().Batch,
                                                         QtyInInspection = p.QtyInInspection,
@@ -116,11 +123,13 @@
         }
 
         public ResultsModel GetTopLevelReport(
+            bool showGoodStockQty = false,
             bool includePartsWithNoOrderNumber = false,
             bool includeFailedStock = false,
             bool includeFinishedGoods = true)
         {
             var data = this.GetReport(
+                showGoodStockQty,
                 includePartsWithNoOrderNumber,
                 true,
                 includeFailedStock,
@@ -130,17 +139,15 @@
 
             IEnumerable<WhatsInInspectionStockLocationsData> locationsData = null;
 
-            IEnumerable<WhatsInInspectionBackOrderData> backOrderData = null;
-
             if (includeFailedStock)
             {
                 locationsData = this.whatsInInspectionStockLocationsDataRepository
-                    .FilterBy(d => d.State.Equals("QC") || d.State.Equals("FAIL")).ToList();
+                    .FilterBy(d => d.State.Equals("QC") || d.State.Equals("FAIL"));
             }
             else
             {
                 locationsData = this.whatsInInspectionStockLocationsDataRepository
-                    .FilterBy(d => d.State.Equals("QC")).ToList();
+                    .FilterBy(d => d.State.Equals("QC"));
             }
 
             var reportLayout = new SimpleGridLayout(
@@ -148,7 +155,15 @@
                 CalculationValueModelType.Value,
                 null,
                 $"Orders Breakdown");
-
+            if (showGoodStockQty)
+            {
+                reportLayout.AddColumnComponent(
+                    null,
+                    new List<AxisDetailsModel>
+                        {
+                            new AxisDetailsModel("QtyInStock", "Qty In Stock", GridDisplayType.Value) { DecimalPlaces = 2 },
+                        });
+            }
             reportLayout.AddColumnComponent(
                 null,
                 new List<AxisDetailsModel>
@@ -158,7 +173,6 @@
                         new AxisDetailsModel("Batch", "Batch", GridDisplayType.TextValue),
                         new AxisDetailsModel("Date", "Date", GridDisplayType.TextValue),
                         new AxisDetailsModel("Units", "Units",  GridDisplayType.TextValue),
-                        new AxisDetailsModel("QtyInStock", "Qty In Stock", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new AxisDetailsModel("QtyInInspection", "Qty In Inspection", GridDisplayType.Value) { DecimalPlaces = 2 }
                     });
 
@@ -209,13 +223,18 @@
                         ColumnId = "Units",
                         TextDisplay = line.OurUnitOfMeasure
                     });
-                values.Add(
-                    new CalculationValueModel
-                        {
-                            RowId = currentRowId,
-                            ColumnId = "QtyInStock",
-                            Value = line.QtyInStock
-                        });
+                if (showGoodStockQty)
+                {
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = currentRowId,
+                                ColumnId = "QtyInStock",
+                                Value = this.stockLocatorRepository
+                                    .FilterBy(x => x.PartNumber.Equals(line.PartNumber)
+                                                   && x.State.Equals("STORES")).Sum(x => x.Qty)
+                            });
+                }
                 values.Add(
                     new CalculationValueModel
                         {

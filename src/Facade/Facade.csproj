@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Linn.Common.Facade" Version="9.1.0" />
+    <PackageReference Include="Linn.Common.Facade" Version="9.1.1" />
     <PackageReference Include="Linn.Common.Logging" Version="2.0.0" />
     <PackageReference Include="linn.common.persistence" Version="3.0.0" />
     <PackageReference Include="Linn.Common.Proxy.LinnApps" Version="3.0.0" />
@@ -23,6 +23,12 @@
     <ProjectReference Include="..\Persistence\Persistence.csproj" />
     <ProjectReference Include="..\Proxy\Proxy.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.AspNetCore.Routing">
+      <HintPath>..\..\..\..\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\6.0.4\ref\net6.0\Microsoft.AspNetCore.Routing.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

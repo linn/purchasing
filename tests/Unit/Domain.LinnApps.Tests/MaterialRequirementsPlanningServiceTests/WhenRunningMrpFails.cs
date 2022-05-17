@@ -2,6 +2,8 @@
 {
     using FluentAssertions;
 
+    using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
+
     using NSubstitute;
 
     using NUnit.Framework;
@@ -17,6 +19,7 @@
         {
             this.runLogId = 1234;
             this.MrpLoadPack.GetNextRunLogId().Returns(this.runLogId);
+            this.MasterRepository.GetRecord().Returns(new MrMaster { JobRef = "abc" });
 
             this.MrpLoadPack.ScheduleMrp(this.runLogId).Returns(new ProcessResult(false, "not ok"));
             this.result = this.Sut.RunMrp();

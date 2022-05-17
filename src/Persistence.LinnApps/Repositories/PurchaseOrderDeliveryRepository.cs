@@ -27,5 +27,24 @@
                .Include(d => d.PurchaseOrderDetail).ThenInclude(plod => plod.PurchaseOrder)
                .ThenInclude(plo => plo.Supplier).ThenInclude(s => s.VendorManager).Where(expression);
         }
+
+        public override IQueryable<PurchaseOrderDelivery> FindAll()
+        {
+            return this.serviceDbContext.PurchaseOrderDeliveries.AsNoTracking()
+                .Include(d => d.PurchaseOrderDetail).ThenInclude(plod => plod.Part)
+                .Include(d => d.PurchaseOrderDetail).ThenInclude(plod => plod.PurchaseOrder)
+                .ThenInclude(plo => plo.Supplier).ThenInclude(s => s.VendorManager);
+        }
+
+        public override PurchaseOrderDelivery FindById(PurchaseOrderDeliveryKey key)
+        {
+            return this.serviceDbContext.PurchaseOrderDeliveries
+                .Where(x => x.OrderNumber == key.OrderNumber
+                            && x.OrderLine == key.OrderLine
+                            && x.DeliverySeq == key.DeliverySequence)
+                .Include(d => d.PurchaseOrderDetail).ThenInclude(plod => plod.Part)
+                .Include(d => d.PurchaseOrderDetail).ThenInclude(plod => plod.PurchaseOrder)
+                .ThenInclude(plo => plo.Supplier).FirstOrDefault();
+        }
     }
 }

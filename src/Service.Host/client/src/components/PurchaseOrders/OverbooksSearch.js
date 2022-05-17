@@ -11,9 +11,9 @@ import Grid from '@mui/material/Grid';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import EditOffIcon from '@mui/icons-material/EditOff';
 import Tooltip from '@mui/material/Tooltip';
-import purchaseOrdersActions from '../actions/purchaseOrdersActions';
-import history from '../history';
-import config from '../config';
+import purchaseOrdersActions from '../../actions/purchaseOrdersActions';
+import history from '../../history';
+import config from '../../config';
 
 function OverbooksSearch() {
     const dispatch = useDispatch();

@@ -3,9 +3,11 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Resources;
 
@@ -23,11 +25,11 @@
             this.transactionManager = transactionManager;
         }
 
-        public IResult<ProcessResultResource> BulkUpdateFromCsv(
+        public IResult<BatchUpdateProcessResultResource> BulkUpdateFromCsv(
             int supplierId,
             string csvString,
             IEnumerable<string> privileges,
-            int? organisationId = null)
+            int? groupId = null)
         {
             var reader = new StringReader(csvString);
             var changes = new List<LeadTimeUpdateModel>();
@@ -40,15 +42,24 @@
                     changes.Add(new LeadTimeUpdateModel(row[0], row[1]));
                 }
 
-                var result = this.domainService.BulkUpdateLeadTimes(supplierId, changes, privileges, organisationId);
+                var result = this.domainService.BulkUpdateLeadTimes(supplierId, changes, privileges, groupId);
                 this.transactionManager.Commit();
 
-                return new SuccessResult<ProcessResultResource>(
-                    new ProcessResultResource(result.Success, result.Message));
+                return new SuccessResult<BatchUpdateProcessResultResource>(
+                    new BatchUpdateProcessResultResource
+                        {
+                            Message = result.Message,
+                            Success = result.Success,
+                            Errors = result.Errors?.Select(x => new ErrorResource
+                                                                   {
+                                                                        Descriptor = x.Descriptor,
+                                                                        Message = x.Message
+                                                                   })
+                        });
             }
             catch (Exception e)
             {
-                return new BadRequestResult<ProcessResultResource>(e.Message);
+                return new BadRequestResult<BatchUpdateProcessResultResource>(e.Message);
             }
         }
     }

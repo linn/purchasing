@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Facade.Tests.MaterialRequirementsPlanningFacadeServiceTests
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     using FluentAssertions;
 
@@ -23,7 +24,8 @@
         {
             this.privileges = new List<string>();
 
-            this.MaterialRequirementsPlanningService.RunMrp().Returns(new ProcessResult(true, "ok"));
+            this.MaterialRequirementsPlanningService.RunMrp()
+                .Returns(new ProcessResult(true, "ok") { ProcessHref = "/mrp/123" });
 
             this.result = this.Sut.RunMrp(this.privileges);
         }
@@ -41,6 +43,8 @@
             var dataResult = ((SuccessResult<ProcessResultResource>)this.result).Data;
             dataResult.Success.Should().BeTrue();
             dataResult.Message.Should().Be("ok");
+            dataResult.Links.First().Href.Should().Be("/mrp/123");
+            dataResult.Links.First().Rel.Should().Be("status");
         }
     }
 }

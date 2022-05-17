@@ -189,7 +189,6 @@ export const whatsInInspectionReportActionTypes = makeReportActionTypes(
 );
 
 export const mrpRunLogActionTypes = makeActionTypes(itemTypes.mrpRunLog.actionType, true);
-export const mrpRunLogsActionTypes = makeActionTypes(itemTypes.mrpRunLogs.actionType, false);
 
 export const runMrpActionTypes = makeProcessActionTypes(itemTypes.runMrp.actionType);
 
@@ -202,3 +201,23 @@ export const applyForecastingPercentageChangeActionTypes = makeProcessActionType
 export const ediOrdersActionTypes = makeActionTypes(itemTypes.ediOrders.actionType, true);
 
 export const sendEdiEmailActionTypes = makeActionTypes(itemTypes.sendEdiEmail.actionType);
+
+export const mrUsedOnReportActionTypes = makeReportActionTypes(
+    reportTypes.mrUsedOnReport.actionType
+);
+
+export const mrReportActionTypes = makeActionTypes(itemTypes.mrReport.actionType);
+
+export const purchaseOrderDeliveryActionTypes = makeActionTypes(
+    itemTypes.purchaseOrderDelivery.actionType
+);
+
+export const purchaseOrderDeliveriesActionTypes = makeActionTypes(
+    itemTypes.purchaseOrderDeliveries.actionType,
+    false
+);
+
+export const batchPurchaseOrderDeliveriesUploadActionTypes = makeProcessActionTypes(
+    itemTypes.batchPurchaseOrderDeliveriesUpload.actionType,
+    true
+);

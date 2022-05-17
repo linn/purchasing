@@ -35,8 +35,12 @@
                                  Overbook = "Y",
                                  OverbookQty = 1,
                                  SupplierId = 1224,
-                                 Supplier = new Supplier { SupplierId = 1224 }
-                             };
+                                 Supplier = new Supplier { SupplierId = 1224 },
+                                 CurrencyCode = "GBP",
+                                 OrderMethodName = "carrier pigeon",
+                                 RequestedById = 111,
+                                 EnteredById = 222,
+            };
 
             this.updateResource = new PurchaseOrderResource
                                       {
@@ -47,7 +51,9 @@
                                           OverbookQty = 1,
                                           Supplier = new SupplierResource { Id = 1224 },
                                           CurrentlyUsingOverbookForm = true
-                                      };
+
+            };
+
             this.PurchaseOrderRepository.Add(this.model);
             this.PurchaseOrderRepository.FindById(this.model.OrderNumber).Returns(this.model);
             this.AuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
