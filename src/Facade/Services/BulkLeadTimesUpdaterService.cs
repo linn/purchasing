@@ -29,7 +29,7 @@
             int supplierId,
             string csvString,
             IEnumerable<string> privileges,
-            int? organisationId = null)
+            int? groupId = null)
         {
             var reader = new StringReader(csvString);
             var changes = new List<LeadTimeUpdateModel>();
@@ -42,7 +42,7 @@
                     changes.Add(new LeadTimeUpdateModel(row[0], row[1]));
                 }
 
-                var result = this.domainService.BulkUpdateLeadTimes(supplierId, changes, privileges, organisationId);
+                var result = this.domainService.BulkUpdateLeadTimes(supplierId, changes, privileges, groupId);
                 this.transactionManager.Commit();
 
                 return new SuccessResult<BatchUpdateProcessResultResource>(
@@ -52,7 +52,8 @@
                             Success = result.Success,
                             Errors = result.Errors?.Select(x => new ErrorResource
                                                                    {
-                                                                        Descriptor = x.Descriptor
+                                                                        Descriptor = x.Descriptor,
+                                                                        Message = "No record found."
                                                                    })
                         });
             }

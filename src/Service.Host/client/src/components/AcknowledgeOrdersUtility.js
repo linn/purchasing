@@ -12,7 +12,9 @@ import {
     DatePicker,
     Dropdown,
     processSelectorHelpers,
-    getItemError
+    FileUploader,
+    getItemError,
+    ErrorCard
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import { makeStyles } from '@mui/styles';
@@ -33,7 +35,6 @@ import {
 import history from '../history';
 import config from '../config';
 import batchPurchaseOrderDeliveriesUploadActions from '../actions/batchPurchaseOrderDeliveriesUploadActions';
-import FileUploader from './FileUploader';
 
 function AcknowledgeOrdersUtility() {
     const dispatch = useDispatch();
@@ -140,7 +141,7 @@ function AcknowledgeOrdersUtility() {
         processSelectorHelpers.getMessageVisible(state[batchPurchaseOrderDeliveriesUpload.item])
     );
     const setUploadSnackbarVisible = () =>
-        dispatch(batchPurchaseOrderDeliveriesUpload.setMessageVisible(false));
+        dispatch(batchPurchaseOrderDeliveriesUploadActions.setMessageVisible(false));
 
     useEffect(() => {
         if (updatedItem) {
@@ -168,7 +169,6 @@ function AcknowledgeOrdersUtility() {
             dispatch(purchaseOrderDeliveryActions.patch(s.id, { from, to }));
         });
     };
-
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <SnackbarMessage
@@ -177,6 +177,11 @@ function AcknowledgeOrdersUtility() {
                 message="Save Successful"
             />
             <Grid container spacing={3}>
+                {uploadError && (
+                    <Grid item xs={12}>
+                        <ErrorCard errorMessage={uploadError.details} />
+                    </Grid>
+                )}
                 <Grid item xs={12}>
                     <Typography variant="h4">Choose an option: </Typography>
                 </Grid>
@@ -340,23 +345,23 @@ function AcknowledgeOrdersUtility() {
                     </Accordion>
 
                     <FileUploader
-                        prepareUpload={() => {
+                        doUpload={data => {
                             dispatch(
                                 batchPurchaseOrderDeliveriesUploadActions.clearErrorsForItem()
                             );
                             dispatch(batchPurchaseOrderDeliveriesUploadActions.clearProcessData());
-                        }}
-                        doUpload={data =>
                             dispatch(
                                 batchPurchaseOrderDeliveriesUploadActions.requestProcessStart(data)
-                            )
-                        }
+                            );
+                        }}
                         loading={uploadLoading}
                         result={uploadResult}
                         error={uploadError}
                         snackbarVisible={uploadSnackbarVisible}
                         setSnackbarVisible={setUploadSnackbarVisible}
                         message={uploadMessage}
+                        initiallyExpanded={false}
+                        helperText="Upload a csv file with 4 columns, Order Number, Delivery Number, New Advised Date and New Reason. Date must be in a format matching either 31/01/2022 or 31-jan-2022. Advised must be one of the following: ADVISED, AUTO FAIL, AUTO PASS, BROUGHT IN, DECOMMIT, IGNORE, REQUESTED, RESCHEDULE OUT and will default to ADVISED if no value is supplied."
                     />
                 </Grid>
             </Grid>

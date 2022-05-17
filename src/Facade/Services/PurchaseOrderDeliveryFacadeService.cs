@@ -69,25 +69,35 @@
             {
                 while (reader.ReadLine() is { } line)
                 {
-                    // assuming csv lines are in the form <orderNumber>,<newAdvisedDate>,<newReason>
+                    // assuming csv lines are in the form <orderNumber>,<delivery-no>,<newAdvisedDate>,<newReason>
                     var row = line.Split(",");
 
-                    if (!int.TryParse(new string(row[0].Where(char.IsDigit).ToArray()), out var orderNumber))
+                    if (!int.TryParse(
+                            new string(row[0].Trim().Where(char.IsDigit).ToArray()), // strip out non numeric chars 
+                            out var orderNumber))
                     {
                         throw new InvalidOperationException($"Invalid Order Number: {row[0]}.");
                     }
 
+                    if (!int.TryParse(row[1].Trim(), out var delNo))
+                    {
+                        throw new InvalidOperationException($"Invalid Delivery Number: {row[0]} = {row[1]}.");
+                    }
+
+                    var firstFormatSatisfied =
+                        DateTime.TryParseExact(row[2]
+                            .Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate);
+                    var secondFormatSatisfied =
+                        DateTime.TryParseExact(row[2]
+                            .Trim(), "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDate);
+
                     // only supports two date formats for now, i.e.  31/01/2000 and 31-jan-2000
                     if (
-                        !DateTime
-                        .TryParseExact(
-                            row[1], "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate)
+                        !firstFormatSatisfied
                         &&
-                        !DateTime
-                            .TryParseExact(
-                                row[1], "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDate))
+                        !secondFormatSatisfied)
                     {
-                        throw new InvalidOperationException($"Date format not recognised for {row[1]}.");
+                        throw new InvalidOperationException($"Date format not recognised for {row[2]}.");
                     }
                     
                     changes.Add(new PurchaseOrderDeliveryUpdate
@@ -96,10 +106,10 @@
                                                   {
                                                       OrderNumber = orderNumber,
                                                       OrderLine = 1, // hardcoded for now
-                                                      DeliverySequence = 1 // hardcoded for now since we can't handle split deliveries yet
+                                                      DeliverySequence = delNo // hardcoded for now since we can't handle split deliveries yet
                                                   },
                                         NewDateAdvised = parsedDate,
-                                        NewReason = row[2]
+                                        NewReason = row[3].Trim()
                                     });
                 }
 

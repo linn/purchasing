@@ -3,7 +3,6 @@
     using System.Collections.Generic;
 
     using Linn.Common.Facade;
-    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Resources;
 
     public interface IBulkLeadTimesUpdaterService
@@ -12,6 +11,6 @@
             int supplierId,
             string csvString,
             IEnumerable<string> privileges,
-            int? organisationId = null);
+            int? groupId = null);
     }
 }

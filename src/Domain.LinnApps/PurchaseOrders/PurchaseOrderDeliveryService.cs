@@ -107,6 +107,11 @@
             foreach (var change in purchaseOrderDeliveryUpdates)
             {
                 var entity = this.repository.FindById(change.Key);
+                if (string.IsNullOrEmpty(change.NewReason))
+                {
+                    change.NewReason = "ADVISED";
+                }
+
                 if (entity == null)
                 {
                     errors.Add(
@@ -116,12 +121,17 @@
                 }
                 else if (this.repository.FilterBy(
                              x => x.OrderNumber == change.Key.OrderNumber).Count() > 1
-                         || purchaseOrderDeliveryUpdates.Count(c => c.Key.OrderNumber == change.Key.OrderNumber) > 1)
+                         || purchaseOrderDeliveryUpdates.Count(c => c.Key.OrderNumber == change.Key.OrderNumber) > 1
+                         || change.Key.DeliverySequence > 1)
                 {
                     errors.Add(
                         new Error(
                             $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}",
                             $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence} has been split over multiple deliveries. Please acknowledge manually."));
+                }
+                else if (change.NewReason == "")
+                {
+                    // check valid change reason
                 }
                 else
                 {
