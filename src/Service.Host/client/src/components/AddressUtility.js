@@ -19,7 +19,7 @@ import countriesActions from '../actions/countriesActions';
 import history from '../history';
 import config from '../config';
 
-function AddressUtility({ inDialogBox, closeDialog }) {
+function AddressUtility({ inDialogBox, closeDialog, addressee }) {
     const dispatch = useDispatch();
     const countriesSearchResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(
@@ -46,7 +46,10 @@ function AddressUtility({ inDialogBox, closeDialog }) {
         if (item?.addressId) {
             setAddress(item);
         }
-    }, [item]);
+        if (addressee) {
+            setAddress(a => ({ ...a, addressee }));
+        }
+    }, [item, addressee]);
 
     const handleFieldChange = (propertyName, newValue) => {
         setEditStatus('edit');
@@ -203,6 +206,10 @@ function AddressUtility({ inDialogBox, closeDialog }) {
     );
 }
 
-AddressUtility.propTypes = { inDialogBox: PropTypes.bool, closeDialog: PropTypes.func };
-AddressUtility.defaultProps = { inDialogBox: false, closeDialog: null };
+AddressUtility.propTypes = {
+    inDialogBox: PropTypes.bool,
+    closeDialog: PropTypes.func,
+    addressee: PropTypes.string
+};
+AddressUtility.defaultProps = { inDialogBox: false, closeDialog: null, addressee: null };
 export default AddressUtility;

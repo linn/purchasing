@@ -44,6 +44,13 @@
         }
 
         [Test]
+        public void ShouldNotQueryStockLocators()
+        {
+            this.StockLocatorRepository.DidNotReceiveWithAnyArgs().FilterBy(
+                Arg.Any<Expression<Func<StockLocator, bool>>>());
+        }
+
+        [Test]
         public void ShouldOrderByMinDate()
         {
             for (var i = 1; i < this.result.PartsInInspection.Count(); i++)

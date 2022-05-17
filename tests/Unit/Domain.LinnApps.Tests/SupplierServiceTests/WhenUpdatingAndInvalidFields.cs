@@ -56,6 +56,10 @@
                 AccountingCompany = "LINN",
                 VatNumber = "012345",
                 PartCategory = this.partCategory,
+                SupplierContacts = new List<SupplierContact>
+                                       {
+                                           new SupplierContact()
+                                       },
                 OrderHold = "Y",
                 NotesForBuyer = "NOTES",
                 DeliveryDay = "FRIDAY",
@@ -85,7 +89,8 @@
             this.action.Should().Throw<SupplierException>()
                 .WithMessage(
                     "The inputs for the following fields are empty/invalid: Supplier Id, "
-                    + "Supplier Name, Invoice Contact Method, Payment Days, Payment Method, Account Controller, Order Addressee, ");
+                    + "Supplier Name, Invoice Contact Method, Payment Days, "
+                    + "Payment Method, Account Controller, Order Addressee, Main Invoice Contact, Main Order Contact, ");
         }
     }
 }

@@ -51,6 +51,9 @@
                 .AddTransient<IBuilder<PreferredSupplierChange>, PreferredSupplierChangeResourceBuilder>()
                 .AddTransient<IBuilder<PriceChangeReason>, PriceChangeReasonResourceBuilder>()
                 .AddTransient<IBuilder<PartCategory>, PartCategoryResourceBuilder>()
+                .AddTransient<IBuilder<PurchaseOrderDelivery>, PurchaseOrderDeliveryResourceBuilder>()
+                .AddTransient<IBuilder<PurchaseOrderPosting>, PurchaseOrderPostingResourceBuilder>()
+                .AddTransient<IBuilder<PurchaseOrderDetail>, PurchaseOrderDetailResourceBuilder>()
                 .AddTransient<IBuilder<PurchaseOrder>, PurchaseOrderResourceBuilder>()
                 .AddTransient<IBuilder<Address>, AddressResourceBuilder>()
                 .AddTransient<IBuilder<Country>, CountryResourceBuilder>()
@@ -62,7 +65,9 @@
                 .AddTransient<IBuilder<PurchaseOrderReq>, PurchaseOrderReqResourceBuilder>()
                 .AddTransient<IBuilder<MrpRunLog>, MrpRunLogResourceBuilder>()
                 .AddTransient<IBuilder<PurchaseOrderReqState>, PurchaseOrderReqStateResourceBuilder>()
-                .AddTransient<IBuilder<MrMaster>, MrMasterResourceBuilder>();
+                .AddTransient<IBuilder<MrMaster>, MrMasterResourceBuilder>()
+                .AddTransient<IBuilder<PurchaseOrderDelivery>, PurchaseOrderDeliveryResourceBuilder>()
+                .AddTransient<IBuilder<MrReport>, MrReportResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -105,19 +110,20 @@
                 .AddTransient<IWhatsInInspectionReportFacadeService, WhatsInInspectionReportFacadeService>()
                 .AddTransient<IPrefSupReceiptsReportFacadeService, PrefSupReceiptsReportFacadeService>()
                 .AddTransient<ISingleRecordFacadeResourceService<MrMaster, MrMasterResource>, MrMasterFacadeService>()
-                .AddTransient<IForecastingFacadeService, ForecastingFacadeService>();
+                .AddTransient<IForecastingFacadeService, ForecastingFacadeService>()
+                .AddTransient<IMrUsedOnReportFacadeService, MrUsedOnReportFacadeService>()
+                .AddTransient<IPurchaseOrderDeliveryFacadeService, PurchaseOrderDeliveryFacadeService>()
+                .AddTransient<IMaterialRequirementsReportFacadeService, MaterialRequirementsReportFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            return services
-                .AddTransient<IPartSupplierService, PartSupplierService>()
+            return services.AddTransient<IPartSupplierService, PartSupplierService>()
                 .AddTransient<ISupplierService, SupplierService>()
-                .AddTransient<IAmazonSimpleEmailService>(
-                    x => new AmazonSimpleEmailServiceClient(x.GetService<AWSOptions>()?.Region))
+                .AddTransient<IAmazonSimpleEmailService>(x => new AmazonSimpleEmailServiceClient(x.GetService<AWSOptions>()?.Region))
                 .AddTransient<IEmailService>(x => new EmailService(x.GetService<IAmazonSimpleEmailService>()))
-                .AddTransient<ITemplateEngine, TemplateEngine>().AddTransient<IPdfService>(
-                    x => new PdfService(ConfigurationManager.Configuration["PDF_SERVICE_ROOT"], new HttpClient()))
+                .AddTransient<ITemplateEngine, TemplateEngine>()
+                .AddTransient<IPdfService>(x => new PdfService(ConfigurationManager.Configuration["PDF_SERVICE_ROOT"], new HttpClient()))
                 .AddTransient<IReportingHelper, ReportingHelper>()
                 .AddTransient<IPurchaseOrdersReportService, PurchaseOrdersReportService>()
                 .AddTransient<IPurchaseOrderService, PurchaseOrderService>()
@@ -126,12 +132,13 @@
                 .AddTransient<ISpendsReportService, SpendsReportService>()
                 .AddTransient<IPlCreditDebitNoteService, PlCreditDebitNoteService>()
                 .AddTransient<IPartsReceivedReportService, PartsReceivedReportService>()
-                .AddTransient<IPurchaseOrderReqService>(x => new PurchaseOrderReqService(
-                    ConfigurationManager.Configuration["APP_ROOT"],
+                .AddTransient<IPurchaseOrderReqService>(
+                    x => new PurchaseOrderReqService(
+                        ConfigurationManager.Configuration["APP_ROOT"],
                         x.GetService<IAuthorisationService>(),
-                    x.GetService<IPurchaseOrderReqsPack>(),
+                        x.GetService<IPurchaseOrderReqsPack>(),
                         x.GetService<IRepository<Employee, int>>(),
-                    x.GetService<IEmailService>(),
+                        x.GetService<IEmailService>(),
                         x.GetService<IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>>()))
                 .AddTransient<IWhatsDueInReportService, WhatsDueInReportService>()
                 .AddTransient<IOutstandingPoReqsReportService, OutstandingPoReqsReportService>()
@@ -139,15 +146,19 @@
                 .AddTransient<IWhatsInInspectionReportService, WhatsInInspectionReportService>()
                 .AddTransient<IPrefSupReceiptsReportService, PrefSupReceiptsReportService>()
                 .AddTransient<IForecastingService, ForecastingService>()
+                .AddTransient<IMrUsedOnReportService, MrUsedOnReportService>()
+                .AddTransient<IPurchaseOrderDeliveryService, PurchaseOrderDeliveryService>()
+                .AddTransient<IMaterialRequirementsReportService, MaterialRequirementsReportService>()
 
-            // external services
+                // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
                 .AddTransient<IAutocostPack, AutocostPack>()
                 .AddTransient<ICurrencyPack, CurrencyPack>()
                 .AddTransient<IPurchaseLedgerPack, PurchaseLedgerPack>()
                 .AddTransient<IPurchaseOrderReqsPack, PurchaseOrderReqsPack>()
                 .AddTransient<IMrpLoadPack, MrpLoadPack>()
-                .AddTransient<IForecastingPack, ForecastingPack>();
+                .AddTransient<IForecastingPack, ForecastingPack>()
+                .AddTransient<ISupplierPack, SupplierPack>();
         }
     }
 }

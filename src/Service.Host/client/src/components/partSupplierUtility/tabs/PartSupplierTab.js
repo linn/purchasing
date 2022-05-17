@@ -67,6 +67,7 @@ function PartSupplierTab({
                     onSelect={newValue => {
                         handleFieldChange('supplierId', newValue.id);
                         handleFieldChange('supplierName', newValue.name);
+                        handleFieldChange('currencyCode', newValue.currencyCode);
                     }}
                     label="Supplier"
                     modal

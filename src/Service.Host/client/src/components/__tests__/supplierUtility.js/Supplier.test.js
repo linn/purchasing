@@ -197,6 +197,60 @@ describe('When changing tabs...', () => {
     });
 });
 
+describe('When changing currency...', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+        const state = {
+            accountingCompanies: { items: [] },
+            currencies: {
+                loading: false,
+                items: [
+                    { code: 'GBP', name: 'Pounds' },
+                    { code: 'USD', name: 'Dollar Bills' }
+                ]
+            },
+            supplier: {
+                loading: false,
+                item: {
+                    ...supplierData,
+                    links: [{ rel: 'self', href: '/supplier/123' }]
+                }
+            }
+        };
+        useSelector.mockImplementation(callback => callback(state));
+        render(<Supplier />);
+        const tab = screen.getByText('Finance');
+        fireEvent.click(tab);
+    });
+
+    test('should default to GBP with Pays In Foreign Currency: Never', () => {
+        expect(screen.getByText('GBP')).toBeInTheDocument();
+        expect(screen.getByText('Never')).toBeInTheDocument();
+    });
+
+    test('should change to Always if currency changed from GBP', () => {
+        const currencyInput = screen.getByLabelText('Currency');
+        fireEvent.change(currencyInput, { target: { value: 'USD' } });
+        expect(screen.getByText('GBP')).toBeInTheDocument();
+        expect(screen.getByText('Always')).toBeInTheDocument();
+    });
+
+    test('should change back to Never if currency changed back to GBP', () => {
+        const currencyInput = screen.getByLabelText('Currency');
+        fireEvent.change(currencyInput, { target: { value: 'GPB' } });
+        expect(screen.getByText('GBP')).toBeInTheDocument();
+        expect(screen.getByText('Never')).toBeInTheDocument();
+    });
+
+    test('should change to Always if payment method is FORPAY and currency is GBP', () => {
+        const currencyInput = screen.getByLabelText('Currency');
+        fireEvent.change(currencyInput, { target: { value: 'GPB' } });
+        const paymentMethodInput = screen.getByLabelText('Payment Method');
+        fireEvent.change(paymentMethodInput, { target: { value: 'FORPAY' } });
+        expect(screen.getByText('Always')).toBeInTheDocument();
+    });
+});
+
 describe('When edit link...', () => {
     beforeEach(() => {
         const state = {

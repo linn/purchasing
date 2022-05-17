@@ -98,8 +98,6 @@
 
         protected IBulkLeadTimesUpdaterService BulkLeadTimesUpdaterService { get; set; }
 
-        protected IRepository<SupplierContact, int> MockSupplierContactRepository { get; private set; }
-
         protected IRepository<FullAddress, int> MockFullAddressRepository { get; private set; }
 
         [SetUp]
@@ -126,7 +124,6 @@
             this.Log = Substitute.For<ILog>();
 
             this.MockSupplierRepository = Substitute.For<IRepository<Supplier, int>>();
-            this.MockSupplierContactRepository = Substitute.For<IRepository<SupplierContact, int>>();
 
             this.MockDomainService = Substitute.For<ISupplierService>();
 
@@ -135,13 +132,13 @@
             this.SupplierFacadeService = new SupplierFacadeService(
                 this.MockSupplierRepository,
                 this.TransactionManager,
-                new SupplierResourceBuilder(this.MockAuthService, new SupplierContactResourceBuilder(), new AddressResourceBuilder(MockFullAddressRepository), MockSupplierContactRepository),
+                new SupplierResourceBuilder(this.MockAuthService, new SupplierContactResourceBuilder(), new AddressResourceBuilder(MockFullAddressRepository)),
                 this.MockDomainService,
                 this.MockDatabaseService);
 
                 this.PreferredSupplierChangeService = Substitute
                 .For<IFacadeResourceService<PreferredSupplierChange, PreferredSupplierChangeKey, PreferredSupplierChangeResource, PreferredSupplierChangeKey>>();
-            
+
                 this.PriceChangeReasonService = Substitute
                 .For<IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource>>();
 
@@ -156,12 +153,11 @@
                 this.MockDomainService,
                 this.MockDatabaseService,
                 this.TransactionManager,
-                new SupplierResourceBuilder(this.MockAuthService, new SupplierContactResourceBuilder(), new AddressResourceBuilder(MockFullAddressRepository), MockSupplierContactRepository));
+                new SupplierResourceBuilder(this.MockAuthService, new SupplierContactResourceBuilder(), new AddressResourceBuilder(MockFullAddressRepository)));
 
             this.MockPlannerRepository = Substitute.For<IRepository<Planner, int>>();
-            this.MockSupplierContactRepository = Substitute.For<IRepository<SupplierContact, int>>();
             this.MockEmployeeRepository = Substitute.For<IRepository<Employee, int>>();
-            
+
             this.PlannerService = new PlannerService(
                 this.MockPlannerRepository,
                 this.TransactionManager,

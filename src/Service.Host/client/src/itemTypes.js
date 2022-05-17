@@ -218,12 +218,6 @@ export const mrpRunLog = new ItemType(
     '/purchasing/material-requirements/run-logs'
 );
 
-export const mrpRunLogs = new ItemType(
-    'mrpRunLogs',
-    'MRP_RUN_LOGS',
-    '/purchasing/material-requirements/run-logs'
-);
-
 export const runMrp = new ItemType(
     'runMrp',
     'RUN_MRP',
@@ -240,4 +234,24 @@ export const applyForecastingPercentageChange = new ItemType(
     'applyForecastingPercentageChange',
     'APPLY_FORECASTING_PERCENTAGE_CHANGE',
     '/purchasing/forecasting/apply-percentage-change'
+);
+
+export const mrReport = new ItemType('mrReport', 'MR_REPORT', '/purchasing/material-requirements');
+
+export const purchaseOrderDelivery = new ItemType(
+    'purchaseOrderDelivery',
+    'PURCHASE_ORDER_DELIVERY',
+    '/purchasing/purchase-orders/deliveries'
+);
+
+export const purchaseOrderDeliveries = new ItemType(
+    'purchaseOrderDeliveries',
+    'PURCHASE_ORDER_DELIVERIES',
+    '/purchasing/purchase-orders/deliveries'
+);
+
+export const batchPurchaseOrderDeliveriesUpload = new ItemType(
+    'batchPurchaseOrderDeliveriesUpload',
+    'BATCH_PURCHASE_ORDER_DELIVERIES_UPLOAD',
+    '/purchasing/purchase-orders/deliveries'
 );

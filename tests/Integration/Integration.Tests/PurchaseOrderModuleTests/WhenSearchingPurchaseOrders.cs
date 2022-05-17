@@ -10,7 +10,6 @@
     using Linn.Common.Facade;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
-    using Linn.Purchasing.Resources.SearchResources;
 
     using NSubstitute;
 
@@ -47,8 +46,7 @@
 
             this.Response = this.Client.Get(
                 $"/purchasing/purchase-orders?searchTerm={this.orderNumberSearch}",
-
-            with =>
+                with =>
                 {
                     with.Accept("application/json");
                 }).Result;

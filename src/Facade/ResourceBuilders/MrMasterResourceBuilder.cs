@@ -43,7 +43,9 @@
         private IEnumerable<LinkResource> BuildLinks(MrMaster model, IEnumerable<string> claims)
         {
             yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
-            if (this.authService.HasPermissionFor(AuthorisedAction.MrpRun, claims))
+            yield return new LinkResource { Rel = "last-run-log", Href = $"/purchasing/material-requirements/run-logs?jobRef={model.JobRef}" };
+            
+            if (!model.RunLogIdCurrentlyInProgress.HasValue && this.authService.HasPermissionFor(AuthorisedAction.MrpRun, claims))
             {
                 yield return new LinkResource { Rel = "run-mrp", Href = "/purchasing/material-requirements/run-mrp" };
             }

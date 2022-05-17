@@ -49,5 +49,9 @@
         public decimal? DeliveryTotalCurrency { get; set; }
 
         public decimal? BaseDeliveryTotal { get; set; }
+
+        public string RescheduleReason { get; set; }
+
+        public string AvailableAtSupplier { get; set; }
     }
 }
