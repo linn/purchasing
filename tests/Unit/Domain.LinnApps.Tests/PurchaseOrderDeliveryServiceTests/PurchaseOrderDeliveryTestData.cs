@@ -10,7 +10,7 @@
 
     public class PurchaseOrderDeliveryTestData
     {
-        public static List<PurchaseOrderDelivery> Data()
+        public static List<PurchaseOrderDelivery> BuildData()
         {
             return new List<PurchaseOrderDelivery>
                        {

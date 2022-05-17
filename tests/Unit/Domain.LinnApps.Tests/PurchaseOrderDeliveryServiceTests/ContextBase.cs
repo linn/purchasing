@@ -42,7 +42,7 @@
             this.PurchaseLedgerMaster = Substitute.For<ISingleRecordRepository<PurchaseLedgerMaster>>();
             this.MiniOrderRepository = Substitute.For<IRepository<MiniOrder, int>>();
             this.MiniOrderDeliveryRepository = Substitute.For<IRepository<MiniOrderDelivery, MiniOrderDeliveryKey>>();
-            this.Data = PurchaseOrderDeliveryTestData.Data();
+            this.Data = PurchaseOrderDeliveryTestData.BuildData();
             this.Repository.FindAll().Returns(this.Data.AsQueryable());
 
             this.Sut = new PurchaseOrderDeliveryService(
