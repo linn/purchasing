@@ -100,7 +100,7 @@ function BulkLeadTimesUpload() {
                                     onChange={() => setWholeGroup(!wholeGroup)}
                                 />
                             </Grid>
-                        )}{' '}
+                        )}
                         <Grid item xs={12}>
                             <FileUploader
                                 doUpload={handleUploadClick}
@@ -110,7 +110,7 @@ function BulkLeadTimesUpload() {
                                 loading={loading}
                                 title="Bulk Lead Time Changes Uploader"
                                 helperText="Upload a CSV file with two columns: Part Number and Lead Time Weeks value"
-                            />{' '}
+                            />
                         </Grid>
                     </>
                 )}
