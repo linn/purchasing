@@ -107,7 +107,7 @@
                                                   {
                                                       OrderNumber = orderNumber,
                                                       OrderLine = 1, // hardcoded for now
-                                                      DeliverySequence = delNo // hardcoded for now since we can't handle split deliveries yet
+                                                      DeliverySequence = delNo
                                                   },
                                         NewDateAdvised = parsedDate,
                                         NewReason = row[3].Trim()
