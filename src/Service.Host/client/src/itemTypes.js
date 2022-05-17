@@ -241,3 +241,11 @@ export const applyForecastingPercentageChange = new ItemType(
     'APPLY_FORECASTING_PERCENTAGE_CHANGE',
     '/purchasing/forecasting/apply-percentage-change'
 );
+
+export const ediOrders = new ItemType('ediOrders', 'EDI_ORDERS', '/purchasing/edi/orders');
+
+export const sendEdiEmail = new ItemType(
+    'sendEdiEmail',
+    'SEND_EDI_EMAIL',
+    '/purchasing/edi/orders'
+);

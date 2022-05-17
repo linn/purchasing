@@ -3,6 +3,7 @@
     using Linn.Common.Persistence;
     using Linn.Common.Persistence.EntityFramework;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
@@ -109,6 +110,8 @@
                     => new EntityFrameworkRepository<LinnWeek, int>(r.GetService<ServiceDbContext>()?.LinnWeeks))
                 .AddTransient<IRepository<LedgerPeriod, int>, EntityFrameworkRepository<LedgerPeriod, int>>(r
                     => new EntityFrameworkRepository<LedgerPeriod, int>(r.GetService<ServiceDbContext>()?.LedgerPeriods))
+                .AddTransient<IRepository<EdiOrder, int>, EntityFrameworkRepository<EdiOrder, int>>(r
+                    => new EntityFrameworkRepository<EdiOrder, int>(r.GetService<ServiceDbContext>()?.EdiOrders))
                 .AddTransient<IRepository<CancelledOrderDetail, int>, EntityFrameworkRepository<CancelledOrderDetail, int>>(
                     r => new EntityFrameworkRepository<CancelledOrderDetail, int>(r.GetService<ServiceDbContext>()?.CancelledPurchaseOrderDetails));
         }

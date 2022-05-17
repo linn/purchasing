@@ -14,6 +14,7 @@
     using Linn.Common.Proxy.LinnApps;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Forecasting;
     using Linn.Purchasing.Domain.LinnApps.Keys;
@@ -62,7 +63,8 @@
                 .AddTransient<IBuilder<PurchaseOrderReq>, PurchaseOrderReqResourceBuilder>()
                 .AddTransient<IBuilder<MrpRunLog>, MrpRunLogResourceBuilder>()
                 .AddTransient<IBuilder<PurchaseOrderReqState>, PurchaseOrderReqStateResourceBuilder>()
-                .AddTransient<IBuilder<MrMaster>, MrMasterResourceBuilder>();
+                .AddTransient<IBuilder<MrMaster>, MrMasterResourceBuilder>()
+                .AddTransient<IBuilder<EdiOrder>, EdiOrderResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -105,7 +107,8 @@
                 .AddTransient<IWhatsInInspectionReportFacadeService, WhatsInInspectionReportFacadeService>()
                 .AddTransient<IPrefSupReceiptsReportFacadeService, PrefSupReceiptsReportFacadeService>()
                 .AddTransient<ISingleRecordFacadeResourceService<MrMaster, MrMasterResource>, MrMasterFacadeService>()
-                .AddTransient<IForecastingFacadeService, ForecastingFacadeService>();
+                .AddTransient<IForecastingFacadeService, ForecastingFacadeService>()
+                .AddTransient<IEdiOrdersFacadeService, EdiOrdersFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
@@ -139,6 +142,7 @@
                 .AddTransient<IWhatsInInspectionReportService, WhatsInInspectionReportService>()
                 .AddTransient<IPrefSupReceiptsReportService, PrefSupReceiptsReportService>()
                 .AddTransient<IForecastingService, ForecastingService>()
+                .AddTransient<IEdiOrderService, EdiOrderService>()
 
             // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
@@ -147,7 +151,8 @@
                 .AddTransient<IPurchaseLedgerPack, PurchaseLedgerPack>()
                 .AddTransient<IPurchaseOrderReqsPack, PurchaseOrderReqsPack>()
                 .AddTransient<IMrpLoadPack, MrpLoadPack>()
-                .AddTransient<IForecastingPack, ForecastingPack>();
+                .AddTransient<IForecastingPack, ForecastingPack>()
+                .AddTransient<IEdiEmailPack, EdiEmailPack>();
         }
     }
 }

@@ -2,6 +2,7 @@
 {
     using Linn.Common.Configuration;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
@@ -123,6 +124,8 @@
         
         public DbSet<CancelledOrderDetail> CancelledPurchaseOrderDetails { get; set; }
 
+        public DbSet<EdiOrder> EdiOrders { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -189,6 +192,7 @@
             this.BuildCancelledPODetails(builder);
             this.BuildPurchaseOrderPostings(builder);
             this.BuildNominalAccounts(builder);
+            this.BuildEdiOrders(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1157,6 +1161,16 @@
             entity.Property(d => d.AccountId).HasColumnName("NOMACC_ID").HasMaxLength(6);
             entity.HasOne(e => e.Department).WithMany().HasForeignKey("DEPARTMENT");
             entity.HasOne(e => e.Nominal).WithMany().HasForeignKey("NOMINAL");
+        }
+
+        private void BuildEdiOrders(ModelBuilder builder)
+        {
+            var entity = builder.Entity<EdiOrder>().ToTable("PL_EDI");
+            entity.HasKey(e => e.Id);
+            entity.Property(d => d.Id).HasColumnName("PLEDI_ID");
+            entity.Property(d => d.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(d => d.SupplierId).HasColumnName("SUPPLIER_ID");
+            entity.Property(d => d.SequenceNumber).HasColumnName("SEQUENCE_NUMBER");
         }
     }
 }

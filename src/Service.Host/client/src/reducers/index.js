@@ -58,6 +58,7 @@ import purchaseOrders from './purchaseOrders';
 import whatsDueInReport from './whatsDueInReport';
 import purchaseOrderReqStates from './purchaseOrderReqStates';
 import outstandingPoReqsReport from './outstandingPoReqsReport';
+import sendEdiEmail from './sendEdiEmail';
 import sendPurchaseOrderReqEmail from './sendPurchaseOrderReqEmail';
 import sendPurchaseOrderReqAuthEmail from './sendPurchaseOrderReqAuthEmail';
 import sendPurchaseOrderReqFinanceEmail from './sendPurchaseOrderReqFinanceEmail';
@@ -68,6 +69,7 @@ import mrpRunLogs from './mrpRunLogs';
 import runMrp from './runMrp';
 import mrMaster from './mrMaster';
 import applyForecastingPercentageChange from './applyForecastingPercentageChange';
+import ediOrders from './ediOrders';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -84,6 +86,7 @@ const rootReducer = history =>
         currencies,
         deliveryAddresses,
         departments,
+        ediOrders,
         employees,
         manufacturers,
         mrMaster,
@@ -117,6 +120,7 @@ const rootReducer = history =>
         putSupplierOnHold,
         router: connectRouter(history),
         runMrp,
+        sendEdiEmail,
         sendPlNoteEmail,
         sendPurchaseOrderReqEmail,
         sendPurchaseOrderReqAuthEmail,
