@@ -29,6 +29,10 @@
 
         protected ISingleRecordRepository<PurchaseLedgerMaster> PurchaseLedgerMaster { get; private set; }
 
+        protected IRepository<MiniOrder, int> MiniOrderRepository { get; private set; }
+
+        protected IRepository<MiniOrderDelivery, MiniOrderDeliveryKey> MiniOrderDeliveryRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -36,147 +40,18 @@
             this.AuthService = Substitute.For<IAuthorisationService>();
             this.RescheduleReasonRepository = Substitute.For<IRepository<RescheduleReason, string>>();
             this.PurchaseLedgerMaster = Substitute.For<ISingleRecordRepository<PurchaseLedgerMaster>>();
-            this.Data = new List<PurchaseOrderDelivery>
-                            {
-                                new PurchaseOrderDelivery
-                                    {
-                                        OrderNumber = 123451,
-                                        DateAdvised = null,
-                                        PurchaseOrderDetail = new PurchaseOrderDetail
-                                                                  {
-                                                                      PurchaseOrder = new PurchaseOrder
-                                                                          {
-                                                                              SupplierId = 1,
-                                                                              Supplier = new Supplier { Name = "SUPPLIER 1" }
-                                                                          }
-                                                                  }
-                                    },
-                                new PurchaseOrderDelivery
-                                    {
-                                        OrderNumber = 123452,
-                                        DateAdvised = DateTime.Today,
-                                        PurchaseOrderDetail = new PurchaseOrderDetail
-                                                                  {
-                                                                      PurchaseOrder = new PurchaseOrder
-                                                                          {
-                                                                              SupplierId = 2,
-                                                                              Supplier = new Supplier { Name = "SUPPLIER 2" }
-                                                                          }
-                                                                  }
-                                    },
-                                new PurchaseOrderDelivery
-                                    {
-                                        OrderNumber = 123453,
-                                        DateAdvised = null,
-                                        PurchaseOrderDetail = new PurchaseOrderDetail
-                                                                  {
-                                                                      PurchaseOrder = new PurchaseOrder
-                                                                          {
-                                                                              SupplierId = 3,
-                                                                              Supplier = new Supplier { Name = "SUPPLIER 3" }
-                                                                          }
-                                                                  }
-                                    },
-                                new PurchaseOrderDelivery
-                                    {
-                                        OrderNumber = 123455,
-                                        DateAdvised = DateTime.Today,
-                                        PurchaseOrderDetail = new PurchaseOrderDetail
-                                                                  {
-                                                                      PurchaseOrder = new PurchaseOrder
-                                                                          {
-                                                                              SupplierId = 5,
-                                                                              Supplier = new Supplier { Name = "SUPPLIER 5" }
-                                                                          }
-                                                                  }
-                                    },
-                                new PurchaseOrderDelivery
-                                    {
-                                        OrderNumber = 123454,
-                                        DateAdvised = null,
-                                        PurchaseOrderDetail = new PurchaseOrderDetail
-                                                                  {
-                                                                      PurchaseOrder = new PurchaseOrder
-                                                                          {
-                                                                              SupplierId = 4,
-                                                                              Supplier = new Supplier { Name = "SUPPLIER 4" }
-                                                                          }
-                                                                  }
-                                    },
-                                new PurchaseOrderDelivery
-                                    {
-                                        OrderNumber = 223451,
-                                        DateAdvised = null,
-                                        PurchaseOrderDetail = new PurchaseOrderDetail
-                                                                  {
-                                                                      PurchaseOrder = new PurchaseOrder
-                                                                          {
-                                                                              SupplierId = 1,
-                                                                              Supplier = new Supplier { Name = "SUPPLIER 1" }
-                                                                          }
-                                                                  }
-                                    },
-                                new PurchaseOrderDelivery
-                                    {
-                                        OrderNumber = 223452,
-                                        DateAdvised = DateTime.Today,
-                                        PurchaseOrderDetail = new PurchaseOrderDetail
-                                                                  {
-                                                                      PurchaseOrder = new PurchaseOrder
-                                                                          {
-                                                                              SupplierId = 2,
-                                                                              Supplier = new Supplier { Name = "SUPPLIER 2" }
-                                                                          }
-                                                                  }
-                                    },
-                                new PurchaseOrderDelivery
-                                    {
-                                        OrderNumber = 223453,
-                                        DateAdvised = null,
-                                        PurchaseOrderDetail = new PurchaseOrderDetail
-                                                                  {
-                                                                      PurchaseOrder = new PurchaseOrder
-                                                                          {
-                                                                              SupplierId = 3,
-                                                                              Supplier = new Supplier { Name = "SUPPLIER 3" }
-                                                                          }
-                                                                  }
-                                    },
-                                new PurchaseOrderDelivery
-                                    {
-                                        OrderNumber = 223455,
-                                        DateAdvised = DateTime.Today,
-                                        PurchaseOrderDetail = new PurchaseOrderDetail
-                                                                  {
-                                                                      PurchaseOrder = new PurchaseOrder
-                                                                          {
-                                                                              SupplierId = 5,
-                                                                              Supplier = new Supplier { Name = "SUPPLIER 5" }
-                                                                          }
-                                                                  }
-                                    },
-                                new PurchaseOrderDelivery
-                                    {
-                                        OrderNumber = 223454,
-                                        DateAdvised = null,
-                                        PurchaseOrderDetail = new PurchaseOrderDetail
-                                                                  {
-                                                                      PurchaseOrder = new PurchaseOrder
-                                                                          {
-                                                                              SupplierId = 44,
-                                                                              Supplier = new Supplier { Name = "SUPPLIER 44" }
-                                                                          }
-                                                                  }
-                                    },
-                            };
-
+            this.MiniOrderRepository = Substitute.For<IRepository<MiniOrder, int>>();
+            this.MiniOrderDeliveryRepository = Substitute.For<IRepository<MiniOrderDelivery, MiniOrderDeliveryKey>>();
+            this.Data = PurchaseOrderDeliveryTestData.Data();
             this.Repository.FindAll().Returns(this.Data.AsQueryable());
 
             this.Sut = new PurchaseOrderDeliveryService(
                 this.Repository, 
                 this.AuthService, 
                 this.RescheduleReasonRepository,
-                this.PurchaseLedgerMaster);
+                this.PurchaseLedgerMaster,
+                this.MiniOrderRepository,
+                this.MiniOrderDeliveryRepository);
         }
     }
 }

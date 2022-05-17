@@ -62,7 +62,7 @@
                                                                                                NetTotalCurrency = 2m,
                                                                                                DateRequested =
                                                                                                    11.November(2021),
-                                                                                               DateAdvised =
+                                                                                               AdvisedDate =
                                                                                                    11.December(2021)
                                                                                            }
                                                                                    },

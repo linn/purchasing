@@ -480,7 +480,7 @@
                     {
                         RowId = currentRowId,
                         ColumnId = "AdvisedDate",
-                        TextDisplay = delivery.DateAdvised?.ToString("dd-MMM-yyyy")
+                        TextDisplay = delivery.AdvisedDate?.ToString("dd-MMM-yyyy")
                     });
         }
 

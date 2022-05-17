@@ -139,7 +139,7 @@
         {
             return new PurchaseOrderDelivery
                        {
-                           DateAdvised = string.IsNullOrEmpty(resource.DateAdvised) 
+                           AdvisedDate = string.IsNullOrEmpty(resource.DateAdvised) 
                                              ? null : DateTime.Parse(resource.DateAdvised),
                            AvailableAtSupplier = resource.AvailableAtSupplier,
                            RescheduleReason = resource.RescheduleReason,

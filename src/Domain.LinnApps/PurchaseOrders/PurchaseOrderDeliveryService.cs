@@ -19,16 +19,24 @@
 
         private readonly ISingleRecordRepository<PurchaseLedgerMaster> purchaseLedgerMaster;
 
+        private readonly IRepository<MiniOrder, int> miniOrderRepository;
+
+        private readonly IRepository<MiniOrderDelivery, MiniOrderDeliveryKey> miniOrderDeliveryRepository;
+
         public PurchaseOrderDeliveryService(
             IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> repository,
             IAuthorisationService authService,
             IRepository<RescheduleReason, string> rescheduleReasonRepository,
-            ISingleRecordRepository<PurchaseLedgerMaster> purchaseLedgerMaster)
+            ISingleRecordRepository<PurchaseLedgerMaster> purchaseLedgerMaster,
+            IRepository<MiniOrder, int> miniOrderRepository,
+            IRepository<MiniOrderDelivery, MiniOrderDeliveryKey> miniOrderDeliveryRepository)
         {
             this.repository = repository;
             this.authService = authService;
             this.rescheduleReasonRepository = rescheduleReasonRepository;
             this.purchaseLedgerMaster = purchaseLedgerMaster;
+            this.miniOrderRepository = miniOrderRepository;
+            this.miniOrderDeliveryRepository = miniOrderDeliveryRepository;
         }
 
         public IEnumerable<PurchaseOrderDelivery> SearchDeliveries(
@@ -60,7 +68,7 @@
 
             if (!includeAcknowledged)
             {
-                result = result.Where(x => !x.DateAdvised.HasValue);
+                result = result.Where(x => !x.AdvisedDate.HasValue);
             }
 
             return result.OrderBy(x => x.OrderNumber);
@@ -84,9 +92,9 @@
 
             var entity = this.repository.FindById(key);
 
-            if (from.DateAdvised != to.DateAdvised)
+            if (from.AdvisedDate != to.AdvisedDate)
             {
-                entity.DateAdvised = to.DateAdvised;
+                entity.AdvisedDate = to.AdvisedDate;
             }
 
             if (from.RescheduleReason != to.RescheduleReason)
@@ -159,7 +167,7 @@
                 }
                 else
                 {
-                    entity.DateAdvised = change.NewDateAdvised;
+                    entity.AdvisedDate = change.NewDateAdvised;
                     entity.RescheduleReason = change.NewReason;
                     successCount++;
                 }

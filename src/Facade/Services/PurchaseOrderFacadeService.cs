@@ -125,7 +125,7 @@
                                                         d => new PurchaseOrderDelivery
                                                                  {
                                                                      Cancelled = d.Cancelled,
-                                                                     DateAdvised = string.IsNullOrEmpty(d.DateAdvised) 
+                                                                     AdvisedDate = string.IsNullOrEmpty(d.DateAdvised) 
                                                                          ? null : DateTime.Parse(d.DateAdvised),
                                                                      DateRequested = string.IsNullOrEmpty(d.DateRequested) ? 
                                                                          null : DateTime.Parse(d.DateRequested),

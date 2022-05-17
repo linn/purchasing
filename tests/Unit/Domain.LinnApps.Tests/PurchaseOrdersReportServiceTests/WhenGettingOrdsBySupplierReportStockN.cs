@@ -63,7 +63,7 @@
                                                                                                        2021,
                                                                                                        11,
                                                                                                        1),
-                                                                                               DateAdvised = null
+                                                                                               AdvisedDate = null
                                                                                            }
                                                                                    },
                                                                            SuppliersDesignation =
@@ -102,7 +102,7 @@
                                                                                                        2021,
                                                                                                        11,
                                                                                                        3),
-                                                                                               DateAdvised =
+                                                                                               AdvisedDate =
                                                                                                    new DateTime(
                                                                                                        2021,
                                                                                                        12,

@@ -133,6 +133,10 @@
 
         public DbSet<PurchaseLedgerMaster> PurchaseLedgerMaster { get; set; }
 
+        public DbSet<MiniOrder> MiniOrders { get; set; }
+
+        public DbSet<MiniOrderDelivery> MiniOrdersDeliveries { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -205,6 +209,8 @@
             this.BuildMrHeaders(builder);
             this.BuildMrDetails(builder);
             this.BuildPurchaseLedgerMaster(builder);
+            this.BuildMiniOrders(builder);
+            this.BuildMiniOrderDeliveries(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -608,7 +614,7 @@
             entity.Property(o => o.Cancelled).HasColumnName("CANCELLED").HasMaxLength(1);
             entity.Property(o => o.OrderLine).HasColumnName("ORDER_LINE");
             entity.Property(o => o.DeliverySeq).HasColumnName("DELIVERY_SEQ");
-            entity.Property(o => o.DateAdvised).HasColumnName("ADVISED_DATE");
+            entity.Property(o => o.AdvisedDate).HasColumnName("ADVISED_DATE");
             entity.Property(o => o.DateRequested).HasColumnName("REQUESTED_DATE");
             entity.Property(o => o.OurDeliveryQty).HasColumnName("OUR_DELIVERY_QTY").HasMaxLength(19);
             entity.Property(o => o.OrderDeliveryQty).HasColumnName("ORDER_DELIVERY_QTY").HasMaxLength(19);
@@ -1290,6 +1296,24 @@
             entity.Property(e => e.ProductionRequirementForNonProduction).HasColumnName("PROD_REQT_FOR_NONPROD");
             entity.Property(e => e.RecommendedOrders).HasColumnName("RECOMMENDED_PURCH_ORDERS");
             entity.Property(e => e.RecommenedStock).HasColumnName("RECOMMENDED_STOCK");
+        }
+
+        private void BuildMiniOrders(ModelBuilder builder)
+        {
+            var entity = builder.Entity<MiniOrder>().ToTable("MINI_ORDER");
+            entity.HasKey(a => a.OrderNumber);
+            entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(o => o.AdvisedDeliveryDate).HasColumnName("ADVISED_DELIVERY_DATE");
+            entity.Property(o => o.AcknowledgeComment).HasColumnName("ACKNOWLEDGE_COMMENT");
+        }
+
+        private void BuildMiniOrderDeliveries(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PurchaseOrderDelivery>().ToTable("MINI_ORDER_DELIVERIES");
+            entity.HasKey(a => new { a.OrderNumber, a.DeliverySeq});
+            entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(o => o.DeliverySeq).HasColumnName("DELIVERY_SEQ");
+            entity.Property(o => o.AdvisedDate).HasColumnName("ADVISED_DATE");
         }
     }
 }

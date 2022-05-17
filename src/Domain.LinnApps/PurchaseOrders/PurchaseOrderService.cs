@@ -158,7 +158,7 @@
         private void UpdateDeliveryProperties(PurchaseOrderDelivery current, PurchaseOrderDelivery updated)
         {
             current.Cancelled = updated.Cancelled;
-            current.DateAdvised = updated.DateAdvised;
+            current.AdvisedDate = updated.AdvisedDate;
             current.DateRequested = updated.DateRequested;
             current.NetTotalCurrency = updated.NetTotalCurrency;
             current.BaseNetTotal = updated.BaseNetTotal;

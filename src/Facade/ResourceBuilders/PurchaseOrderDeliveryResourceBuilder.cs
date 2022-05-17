@@ -17,7 +17,7 @@
                            OrderLine = entity.OrderLine,
                            OurDeliveryQty = entity.OurDeliveryQty,
                            DateRequested = entity.DateRequested?.ToShortDateString(),
-                           DateAdvised = entity.DateAdvised?.ToShortDateString(),
+                           DateAdvised = entity.AdvisedDate?.ToShortDateString(),
                            RescheduleReason = entity.RescheduleReason,
                            SupplierConfirmationComment = entity.SupplierConfirmationComment,
                            AvailableAtSupplier = entity.AvailableAtSupplier,
