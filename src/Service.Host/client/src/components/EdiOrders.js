@@ -93,8 +93,7 @@ function EdiOrder() {
             additionalEmail,
             additionalText
         };
-        dispatch(sendEdiEmailActions.clearProcessData());
-        dispatch(sendEdiEmailActions.requestProcessStart(sendEmailOptions));
+        dispatch(sendEdiEmailActions.add(sendEmailOptions));
     };
 
     return (
