@@ -32,12 +32,13 @@
         }
 
         public IResult<IEnumerable<PurchaseOrderDeliveryResource>> SearchDeliveries(
-            string supplierSearchTerm, string orderNumberSearchTerm, bool includeAcknowledged)
+            string supplierSearchTerm, string orderNumberSearchTerm, bool includeAcknowledged, bool? exactOrderNumber = false)
         {
             var results = this.domainService.SearchDeliveries(
                 supplierSearchTerm,
                 orderNumberSearchTerm,
-                includeAcknowledged);
+                includeAcknowledged,
+                exactOrderNumber);
             return new SuccessResult<IEnumerable<PurchaseOrderDeliveryResource>>(
                 results.Select(x => (PurchaseOrderDeliveryResource)this.resourceBuilder.Build(x, null)));
         }

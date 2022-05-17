@@ -35,6 +35,7 @@ function BulkLeadTimesUpload() {
             dispatch(bulkLeadTimesUploadActions.clearProcessData());
         }
     }, [search, dispatch]);
+
     const supplier = useSelector(state =>
         itemSelectorHelpers.getItem(state[supplierItemType.item])
     );

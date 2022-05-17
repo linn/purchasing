@@ -39,7 +39,7 @@
                            };
 
             this.MockDomainService.SearchDeliveries(
-                this.supplierSearchTerm, this.orderSearchTerm, this.includeAcknowledged).Returns(data);
+                this.supplierSearchTerm, this.orderSearchTerm, this.includeAcknowledged, null).Returns(data);
 
             this.Response = this.Client.Get(
                 $"/purchasing/purchase-orders/deliveries?" 
@@ -64,7 +64,8 @@
             this.MockDomainService.Received().SearchDeliveries(
                 this.supplierSearchTerm,
                 this.orderSearchTerm,
-                this.includeAcknowledged);
+                this.includeAcknowledged,
+                null);
         }
 
         [Test]

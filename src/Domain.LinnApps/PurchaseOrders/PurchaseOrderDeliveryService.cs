@@ -29,7 +29,8 @@
         public IEnumerable<PurchaseOrderDelivery> SearchDeliveries(
             string supplierSearchTerm,
             string orderNumberSearchTerm,
-            bool includeAcknowledged)
+            bool includeAcknowledged,
+            bool? exactOrderNumber = false)
         {
             var result = this.repository.FindAll();
             if (!string.IsNullOrEmpty(supplierSearchTerm))
@@ -47,7 +48,14 @@
 
             if (!string.IsNullOrEmpty(orderNumberSearchTerm))
             {
-                result = result.Where(x => x.OrderNumber.ToString().Contains(orderNumberSearchTerm));
+                if (exactOrderNumber.GetValueOrDefault())
+                {
+                    result = result.Where(x => x.OrderNumber.ToString().Equals(orderNumberSearchTerm));
+                }
+                else
+                {
+                    result = result.Where(x => x.OrderNumber.ToString().Contains(orderNumberSearchTerm));
+                }
             }
 
             if (!includeAcknowledged)

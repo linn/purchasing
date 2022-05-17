@@ -21,6 +21,7 @@ import { makeStyles } from '@mui/styles';
 import Accordion from '@mui/material/Accordion';
 import Button from '@mui/material/Button';
 import queryString from 'query-string';
+import { useLocation } from 'react-router';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
@@ -38,7 +39,24 @@ import batchPurchaseOrderDeliveriesUploadActions from '../actions/batchPurchaseO
 
 function AcknowledgeOrdersUtility() {
     const dispatch = useDispatch();
+    const { search } = useLocation();
+    const [lookUpExpanded, setLookUpExpanded] = useState(false);
 
+    useEffect(() => {
+        const orderNumberSearchTerm = queryString.parse(search)?.orderNumber;
+        if (orderNumberSearchTerm) {
+            dispatch(
+                purchaseOrderDeliveriesActions.fetchByHref(
+                    `${purchaseOrderDeliveries.uri}?${queryString.stringify({
+                        orderNumberSearchTerm,
+                        includeAcknowledged: true,
+                        exactOrderNumber: true
+                    })}`
+                )
+            );
+            setLookUpExpanded(true);
+        }
+    }, [search, dispatch]);
     const useStyles = makeStyles(() => ({
         gap: {
             marginTop: '20px'
@@ -169,6 +187,7 @@ function AcknowledgeOrdersUtility() {
             dispatch(purchaseOrderDeliveryActions.patch(s.id, { from, to }));
         });
     };
+
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <SnackbarMessage
@@ -186,7 +205,10 @@ function AcknowledgeOrdersUtility() {
                     <Typography variant="h4">Choose an option: </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                    <Accordion>
+                    <Accordion
+                        expanded={lookUpExpanded}
+                        onChange={() => setLookUpExpanded(!lookUpExpanded)}
+                    >
                         <AccordionSummary
                             expandIcon={<ExpandMoreIcon />}
                             aria-controls="panel1a-content"
