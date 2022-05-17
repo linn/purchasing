@@ -24,11 +24,14 @@
 
         protected IAuthorisationService AuthService { get; private set; }
 
+        protected IRepository<RescheduleReason, string> RescheduleReasonRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
             this.Repository = Substitute.For<IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey>>();
             this.AuthService = Substitute.For<IAuthorisationService>();
+            this.RescheduleReasonRepository = Substitute.For<IRepository<RescheduleReason, string>>();
             this.Data = new List<PurchaseOrderDelivery>
                             {
                                 new PurchaseOrderDelivery
@@ -166,7 +169,7 @@
             this.Repository.FindAll().Returns(this.Data.AsQueryable());
 
             this.Sut = new PurchaseOrderDeliveryService(
-                this.Repository, this.AuthService);
+                this.Repository, this.AuthService, this.RescheduleReasonRepository);
         }
     }
 }

@@ -15,8 +15,6 @@
 
     public class PurchaseOrderDeliveryFacadeService : IPurchaseOrderDeliveryFacadeService
     {
-        private readonly IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> repository;
-
         private readonly IBuilder<PurchaseOrderDelivery> resourceBuilder;
 
         private readonly ITransactionManager transactionManager;
@@ -24,24 +22,23 @@
         private readonly IPurchaseOrderDeliveryService domainService;
 
         public PurchaseOrderDeliveryFacadeService(
-            IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> repository,
             IBuilder<PurchaseOrderDelivery> resourceBuilder,
             IPurchaseOrderDeliveryService domainService,
             ITransactionManager transactionManager)
         {
-            this.repository = repository;
             this.resourceBuilder = resourceBuilder;
             this.domainService = domainService;
             this.transactionManager = transactionManager;
         }
 
         public IResult<IEnumerable<PurchaseOrderDeliveryResource>> SearchDeliveries(
-            string supplierSearchTerm, string orderNumberSearchTerm, bool includeAcknowledged)
+            string supplierSearchTerm, string orderNumberSearchTerm, bool includeAcknowledged, bool? exactOrderNumber = false)
         {
             var results = this.domainService.SearchDeliveries(
                 supplierSearchTerm,
                 orderNumberSearchTerm,
-                includeAcknowledged);
+                includeAcknowledged,
+                exactOrderNumber);
             return new SuccessResult<IEnumerable<PurchaseOrderDeliveryResource>>(
                 results.Select(x => (PurchaseOrderDeliveryResource)this.resourceBuilder.Build(x, null)));
         }
@@ -52,9 +49,7 @@
             IEnumerable<string> privileges)
         {
             var privilegesList = privileges.ToList();
-            var entity = this.repository.FindById(key);
-
-            this.domainService.UpdateDelivery(
+            var entity = this.domainService.UpdateDelivery(
                 key,
                 BuildEntityFromResourceHelper(requestResource.From),
                 BuildEntityFromResourceHelper(requestResource.To),
@@ -65,7 +60,7 @@
             return new SuccessResult<PurchaseOrderDeliveryResource>(
                 (PurchaseOrderDeliveryResource)this.resourceBuilder.Build(entity, privilegesList));
         }
-
+        
         public IResult<BatchUpdateProcessResultResource> BatchUpdateDeliveriesFromCsv(
             string csvString, IEnumerable<string> privileges)
         {
@@ -75,25 +70,35 @@
             {
                 while (reader.ReadLine() is { } line)
                 {
-                    // assuming csv lines are in the form <orderNumber>,<newAdvisedDate>,<newReason>
+                    // assuming csv lines are in the form <orderNumber>,<delivery-no>,<newAdvisedDate>,<newReason>
                     var row = line.Split(",");
 
-                    if (!int.TryParse(new string(row[0].Where(char.IsDigit).ToArray()), out var orderNumber))
+                    if (!int.TryParse(
+                            new string(row[0].Trim().Where(char.IsDigit).ToArray()), // strip out non numeric chars 
+                            out var orderNumber))
                     {
                         throw new InvalidOperationException($"Invalid Order Number: {row[0]}.");
                     }
 
+                    if (!int.TryParse(row[1].Trim(), out var delNo))
+                    {
+                        throw new InvalidOperationException($"Invalid Delivery Number: {row[0]} = {row[1]}.");
+                    }
+
+                    var firstFormatSatisfied =
+                        DateTime.TryParseExact(row[2]
+                            .Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate);
+                    var secondFormatSatisfied =
+                        DateTime.TryParseExact(row[2]
+                            .Trim(), "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDate);
+
                     // only supports two date formats for now, i.e.  31/01/2000 and 31-jan-2000
                     if (
-                        !DateTime
-                        .TryParseExact(
-                            row[1], "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate)
+                        !firstFormatSatisfied
                         &&
-                        !DateTime
-                            .TryParseExact(
-                                row[1], "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDate))
+                        !secondFormatSatisfied)
                     {
-                        throw new InvalidOperationException($"Date format not recognised for {row[1]}.");
+                        throw new InvalidOperationException($"Date format not recognised for {row[2]}.");
                     }
                     
                     changes.Add(new PurchaseOrderDeliveryUpdate
@@ -102,10 +107,10 @@
                                                   {
                                                       OrderNumber = orderNumber,
                                                       OrderLine = 1, // hardcoded for now
-                                                      DeliverySequence = 1 // hardcoded for now since we can't handle split deliveries yet
+                                                      DeliverySequence = delNo
                                                   },
                                         NewDateAdvised = parsedDate,
-                                        NewReason = row[2]
+                                        NewReason = row[3].Trim()
                                     });
                 }
 

@@ -31,9 +31,14 @@
             string supplierSearchTerm,
             string orderNumberSearchTerm,
             bool includeAcknowledged,
+            bool? exactOrderNumber,
             IPurchaseOrderDeliveryFacadeService service)
         {
-            var result = service.SearchDeliveries(supplierSearchTerm, orderNumberSearchTerm, includeAcknowledged);
+            var result = service.SearchDeliveries(
+                supplierSearchTerm, 
+                orderNumberSearchTerm, 
+                includeAcknowledged,
+                exactOrderNumber);
             await res.Negotiate(result);
         }
 

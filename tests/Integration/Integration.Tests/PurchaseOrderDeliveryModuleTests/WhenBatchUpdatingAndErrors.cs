@@ -33,7 +33,7 @@
                                                             });
             this.Response = this.Client.Post(
                 $"/purchasing/purchase-orders/deliveries",
-                "PO1,28/03/1995,NEW REASON",
+                "PO1,1,28/03/1995,NEW REASON",
                 with =>
                     {
                         with.Accept("application/json");

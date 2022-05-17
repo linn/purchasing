@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.SupplierModuleTests
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
 
     using FluentAssertions;
@@ -24,7 +25,15 @@
                     Arg.Any<IEnumerable<LeadTimeUpdateModel>>(), 
                     Arg.Any<IEnumerable<string>>(),
                     null)
-                .Returns(new ProcessResult(true, "success"));
+                .Returns(new BatchUpdateProcessResult
+                             {
+                                 Success = true,
+                                 Message = "success",
+                                 Errors = new List<Error>
+                                              {
+                                                  new Error("PART", null)
+                                              }
+                             });
 
             this.Response = this.Client.Post(
                 $"/purchasing/suppliers/bulk-lead-times?supplierId=1",
@@ -69,9 +78,10 @@
         [Test]
         public void ShouldReturnJsonBody()
         {
-            var resultResource = this.Response.DeserializeBody<ProcessResultResource>();
+            var resultResource = this.Response.DeserializeBody<BatchUpdateProcessResultResource>();
             resultResource.Success.Should().Be(true);
             resultResource.Message.Should().Be("success");
+            resultResource.Errors.First().Descriptor.Should().Be("PART");
         }
     }
 }

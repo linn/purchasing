@@ -7,7 +7,10 @@
     public interface IPurchaseOrderDeliveryService
     {
         IEnumerable<PurchaseOrderDelivery> SearchDeliveries(
-            string supplierSearchTerm, string orderNumberSearchTerm, bool includeAcknowledged);
+            string supplierSearchTerm, 
+            string orderNumberSearchTerm, 
+            bool includeAcknowledged, 
+            bool? exactOrderNumber = false);
 
         PurchaseOrderDelivery UpdateDelivery(
             PurchaseOrderDeliveryKey key, 

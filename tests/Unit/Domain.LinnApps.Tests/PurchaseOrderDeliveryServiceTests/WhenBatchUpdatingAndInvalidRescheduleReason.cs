@@ -14,7 +14,7 @@
 
     using NUnit.Framework;
 
-    public class WhenBatchUpdating : ContextBase
+    public class WhenBatchUpdatingAndInvalidRescheduleReason : ContextBase
     {
         private IEnumerable<PurchaseOrderDeliveryUpdate> changes;
 
@@ -31,17 +31,13 @@
                 .HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
             this.key1 = new PurchaseOrderDeliveryKey { OrderNumber = 123456, OrderLine = 1, DeliverySequence = 1 };
-            this.key2 = new PurchaseOrderDeliveryKey { OrderNumber = 123457, OrderLine = 1, DeliverySequence = 1 };
 
             this.changes = new List<PurchaseOrderDeliveryUpdate>
                                {
                                    new PurchaseOrderDeliveryUpdate
                                        {
-                                           Key = this.key1
-                                       },
-                                   new PurchaseOrderDeliveryUpdate
-                                       {
-                                           Key = this.key2
+                                           Key = this.key1,
+                                           NewReason = "INVALID REASON"
                                        }
                                };
 
@@ -56,18 +52,7 @@
                         OrderLine = this.key1.OrderLine,
                         DeliverySeq = this.key1.DeliverySequence
                     });
-            this.Repository.FindById(
-                    Arg.Is<PurchaseOrderDeliveryKey>(
-                        x => x.OrderLine == this.key2.OrderLine && x.OrderNumber == this.key2.OrderNumber
-                                                                && x.DeliverySequence == this.key2.DeliverySequence))
-                .Returns(
-                    new PurchaseOrderDelivery
-                        {
-                            OrderNumber = this.key2.OrderNumber,
-                            OrderLine = this.key2.OrderLine,
-                            DeliverySeq = this.key2.DeliverySequence
-                        });
-
+           
             this.Repository.FilterBy(
                     Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
                 .Returns(
@@ -86,12 +71,12 @@
         }
 
         [Test]
-        public void ShouldReturnSuccessResult()
+        public void ShouldReturnFailResult()
         {
-            this.result.Success.Should().BeTrue();
-            this.result.Message.Should().Be("2 records updated successfully.");
-            this.result.Errors.Should().BeNullOrEmpty();
+            this.result.Success.Should().BeFalse();
+            this.result.Message.Should().Be("0 records updated successfully. The following errors occurred: ");
+            this.result.Errors.First().Descriptor.Should().Be("123456 / 1 / 1");
+            this.result.Errors.First().Message.Should().Be("INVALID REASON is not a valid reason");
         }
     }
 }
-

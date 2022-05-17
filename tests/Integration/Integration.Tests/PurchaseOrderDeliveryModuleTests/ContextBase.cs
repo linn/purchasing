@@ -27,8 +27,6 @@
 
         protected IPurchaseOrderDeliveryFacadeService FacadeService { get; private set; }
 
-        protected IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> MockRepository { get; private set; }
-
         protected IPurchaseOrderDeliveryService MockDomainService { get; private set; }
 
         protected ILog MockLog { get; private set; }
@@ -37,12 +35,10 @@
         public void SetUpContext()
         {
             this.MockTransactionManager = Substitute.For<ITransactionManager>();
-            this.MockRepository = Substitute.For<IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey>>();
             this.MockDomainService = Substitute.For<IPurchaseOrderDeliveryService>();
             this.MockLog = Substitute.For<ILog>();
 
             this.FacadeService = new PurchaseOrderDeliveryFacadeService(
-                this.MockRepository,
                 new PurchaseOrderDeliveryResourceBuilder(),
                 this.MockDomainService,
                 this.MockTransactionManager);

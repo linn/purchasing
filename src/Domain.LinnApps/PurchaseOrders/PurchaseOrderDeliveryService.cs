@@ -14,18 +14,23 @@
 
         private readonly IAuthorisationService authService;
 
+        private readonly IRepository<RescheduleReason, string> rescheduleReasonRepository;
+
         public PurchaseOrderDeliveryService(
             IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> repository,
-            IAuthorisationService authService)
+            IAuthorisationService authService,
+            IRepository<RescheduleReason, string> rescheduleReasonRepository)
         {
             this.repository = repository;
             this.authService = authService;
+            this.rescheduleReasonRepository = rescheduleReasonRepository;
         }
 
         public IEnumerable<PurchaseOrderDelivery> SearchDeliveries(
             string supplierSearchTerm,
             string orderNumberSearchTerm,
-            bool includeAcknowledged)
+            bool includeAcknowledged,
+            bool? exactOrderNumber = false)
         {
             var result = this.repository.FindAll();
             if (!string.IsNullOrEmpty(supplierSearchTerm))
@@ -43,7 +48,14 @@
 
             if (!string.IsNullOrEmpty(orderNumberSearchTerm))
             {
-                result = result.Where(x => x.OrderNumber.ToString().Contains(orderNumberSearchTerm));
+                if (exactOrderNumber.GetValueOrDefault())
+                {
+                    result = result.Where(x => x.OrderNumber.ToString().Equals(orderNumberSearchTerm));
+                }
+                else
+                {
+                    result = result.Where(x => x.OrderNumber.ToString().Contains(orderNumberSearchTerm));
+                }
             }
 
             if (!includeAcknowledged)
@@ -107,6 +119,11 @@
             foreach (var change in purchaseOrderDeliveryUpdates)
             {
                 var entity = this.repository.FindById(change.Key);
+                if (string.IsNullOrEmpty(change.NewReason))
+                {
+                    change.NewReason = "ADVISED";
+                }
+
                 if (entity == null)
                 {
                     errors.Add(
@@ -116,12 +133,19 @@
                 }
                 else if (this.repository.FilterBy(
                              x => x.OrderNumber == change.Key.OrderNumber).Count() > 1
-                         || purchaseOrderDeliveryUpdates.Count(c => c.Key.OrderNumber == change.Key.OrderNumber) > 1)
+                         || purchaseOrderDeliveryUpdates.Count(c => c.Key.OrderNumber == change.Key.OrderNumber) > 1
+                         || change.Key.DeliverySequence > 1)
                 {
                     errors.Add(
                         new Error(
                             $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}",
                             $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence} has been split over multiple deliveries. Please acknowledge manually."));
+                }
+                else if (!this.rescheduleReasonRepository.FindAll().Select(r => r.Reason).Contains(change.NewReason))
+                {
+                    errors.Add(new Error(
+                        $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}", 
+                        $"{change.NewReason} is not a valid reason"));
                 }
                 else
                 {

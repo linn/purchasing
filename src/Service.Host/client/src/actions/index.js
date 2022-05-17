@@ -214,5 +214,6 @@ export const purchaseOrderDeliveriesActionTypes = makeActionTypes(
 );
 
 export const batchPurchaseOrderDeliveriesUploadActionTypes = makeProcessActionTypes(
-    itemTypes.bulkLeadTimesUpload.actionType
+    itemTypes.batchPurchaseOrderDeliveriesUpload.actionType,
+    true
 );

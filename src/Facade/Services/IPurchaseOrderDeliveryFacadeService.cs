@@ -10,7 +10,10 @@
     public interface IPurchaseOrderDeliveryFacadeService
     {
         IResult<IEnumerable<PurchaseOrderDeliveryResource>> SearchDeliveries(
-            string supplierSearchTerm, string orderNumberSearchTerm, bool includeAcknowledged);
+            string supplierSearchTerm, 
+            string orderNumberSearchTerm, 
+            bool includeAcknowledged, 
+            bool? exactOrderNumber = false);
 
         IResult<PurchaseOrderDeliveryResource> PatchDelivery(
             PurchaseOrderDeliveryKey key,

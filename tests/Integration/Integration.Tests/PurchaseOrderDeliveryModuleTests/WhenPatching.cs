@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrderDeliveryModuleTests
 {
     using System;
+    using System.Collections.Generic;
     using System.Net;
     using System.Net.Http.Json;
 
@@ -42,20 +43,21 @@
                                 };
             this.resource.From = new PurchaseOrderDeliveryResource();
 
-            this.MockRepository
-                .FindById(
-                    Arg.Is<PurchaseOrderDeliveryKey>(
-                        k => 
-                            k.OrderNumber == this.orderNumber 
-                            && k.OrderLine == this.orderLine
-                            && k.DeliverySequence == this.deliverySequence))
-                .Returns(new PurchaseOrderDelivery
-                             {
-                                 OrderNumber = this.orderNumber,
-                                 OrderLine = this.orderLine,
-                                 DeliverySeq = this.deliverySequence,
-                                 PurchaseOrderDetail = new PurchaseOrderDetail { PartNumber = "PART" }
-                             });
+            this.MockDomainService.UpdateDelivery(
+                Arg.Is<PurchaseOrderDeliveryKey>(
+                    k => k.OrderNumber == this.orderNumber 
+                         && k.OrderLine == this.orderLine
+                         && k.DeliverySequence == this.deliverySequence),
+                    Arg.Any<PurchaseOrderDelivery>(),
+                    Arg.Any<PurchaseOrderDelivery>(),
+                Arg.Any<IEnumerable<string>>()).Returns(new PurchaseOrderDelivery
+                                                            {
+                                                                OrderNumber = this.orderNumber,
+                                                                PurchaseOrderDetail = new PurchaseOrderDetail
+                                                                    {
+                                                                        PartNumber = "PART"
+                                                                    }
+                                                            });
 
             // todo - could add PatchAsJsonAsync() extension to HttpClient for convention's sake
             this.Response = this.Client.PatchAsync( 
