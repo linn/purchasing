@@ -215,7 +215,7 @@ export const sendPurchaseOrderReqFinanceEmail = new ItemType(
 export const pOReqCheckIfCanAuthOrder = new ItemType(
     'pOReqCheckIfCanAuthOrder',
     'CHECK_IF_CAN_AUTH_ORDER',
-    '/purchasing/purchase-orders/reqs/check-signing-limit-covers'
+    '/purchasing/purchase-orders/reqs/check-signing-limit-covers-po-auth'
 );
 
 export const mrpRunLog = new ItemType(

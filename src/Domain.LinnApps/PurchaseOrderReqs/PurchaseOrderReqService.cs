@@ -92,11 +92,13 @@
             {
                 entity.State = allowedToAuthoriseResult.NewState;
                 entity.AuthorisedById = currentUserId;
+                entity.AuthorisedBy = this.employeeRepository.FindById(currentUserId);
             }
             else
             {
                 entity.State = allowedToAuthoriseResult.NewState;
                 entity.SecondAuthById = currentUserId;
+                entity.SecondAuthBy = this.employeeRepository.FindById(currentUserId);
             }
         }
 
@@ -168,6 +170,7 @@
             if (createMiniOrderResult.Success)
             {
                 entity.TurnedIntoOrderById = currentUserId;
+                entity.TurnedIntoOrderBy = this.employeeRepository.FindById(currentUserId);
                 entity.OrderNumber = createMiniOrderResult.OrderNumber;
                 entity.State = this.GetNextState(entity.State, true);
             }
@@ -215,6 +218,8 @@
             }
 
             entity.FinanceCheckById = currentUserId;
+            entity.FinanceCheckBy = this.employeeRepository.FindById(currentUserId);
+
             entity.State = this.GetNextState(entity.State, true);
         }
 

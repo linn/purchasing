@@ -56,6 +56,7 @@ import {
     sendPurchaseOrderReqFinanceEmail,
     pOReqCheckIfCanAuthOrder
 } from '../../itemTypes';
+import checkIfCanAuthorisePurchaseOrderActions from '../../actions/checkIfCanAuthorisePurchaseOrderActions';
 
 function POReqUtility({ creating }) {
     const dispatch = useDispatch();
@@ -127,7 +128,7 @@ function POReqUtility({ creating }) {
     const snackbarVisible = useSelector(state =>
         itemSelectorHelpers.getSnackbarVisible(state.purchaseOrderReq)
     );
-    const [snackbarMessage, setSnackbarMessage] = 'Save successful';
+    const [snackbarMessage, setSnackbarMessage] = useState('Save successful');
     const authEmailMessageVisible = useSelector(state =>
         processSelectorHelpers.getMessageVisible(state[sendPurchaseOrderReqAuthEmail.item])
     );
@@ -142,10 +143,6 @@ function POReqUtility({ creating }) {
 
     const financeEmailMessage = useSelector(state =>
         processSelectorHelpers.getMessageText(state[sendPurchaseOrderReqFinanceEmail.item])
-    );
-
-    const canAuthOrderMessageVisible = useSelector(state =>
-        processSelectorHelpers.getMessageVisible(state[pOReqCheckIfCanAuthOrder.item])
     );
 
     const canAuthOrderMessage = useSelector(state =>
@@ -289,13 +286,17 @@ function POReqUtility({ creating }) {
     };
 
     const handleCreateOrderButton = () => {
-        dispatch(poReqActions.postByHref(utilities.getHref(req, 'check-signing-limit-covers')));
-        //clear signing limit thingy
-        // set loading spinner for dialog
+        dispatch(checkIfCanAuthorisePurchaseOrderActions.clearErrorsForItem());
+        dispatch(checkIfCanAuthorisePurchaseOrderActions.clearProcessData());
+        dispatch(
+            checkIfCanAuthorisePurchaseOrderActions.requestProcessStart('', {
+                reqNumber: id
+            })
+        );
+        // dispatch(poReqActions.postByHref(utilities.getHref(req, 'check-signing-limit-covers')));
+
         setSigningLimitDialogOpen(true);
     };
-
-    //useeffect to see whether
 
     const handleActuallyCreateOrder = () => {
         setEditStatus('edit');
@@ -517,19 +518,19 @@ function POReqUtility({ creating }) {
 
                         <Dialog open={signingLimitDialogOpen} fullWidth maxWidth="md">
                             <div className={classes.centerTextInDialog}>
-                                {!canAuthOrderMessageVisible ? (
+                                <IconButton
+                                    className={classes.pullRight}
+                                    aria-label="Close"
+                                    onClick={() => setSigningLimitDialogOpen(false)}
+                                >
+                                    <Close />
+                                </IconButton>
+                                {!canAuthOrderMessage ? (
                                     <Loading />
                                 ) : (
                                     <>
-                                        <IconButton
-                                            className={classes.pullRight}
-                                            aria-label="Close"
-                                            onClick={() => setSigningLimitDialogOpen(false)}
-                                        >
-                                            <Close />
-                                        </IconButton>
                                         <Typography variant="h6">
-                                        {canAuthOrderMessage}
+                                            {canAuthOrderMessage}
                                             {/* Your signing limit will not cover this req. The order
                                             will be created unauthorised. Create anyway? */}
                                         </Typography>

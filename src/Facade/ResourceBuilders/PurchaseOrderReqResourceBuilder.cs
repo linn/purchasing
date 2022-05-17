@@ -146,7 +146,7 @@
                 yield return new LinkResource { Rel = "edit", Href = this.GetLocation(model) };
                 yield return new LinkResource { Rel = "cancel", Href = $"{this.GetLocation(model)}/cancel" };
                 yield return new LinkResource { Rel = "authorise", Href = $"{this.GetLocation(model)}/authorise" };
-                yield return new LinkResource { Rel = "check-signing-limit-covers", Href = $"{this.GetLocation(model)}/check-signing-limit-covers" };
+                yield return new LinkResource { Rel = "check-signing-limit-covers", Href = "/purchasing/purchase-orders/check-signing-limit-covers-po-auth" };
 
                 if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqFinanceCheck, privileges))
                 {

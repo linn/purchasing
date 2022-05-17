@@ -67,7 +67,7 @@
                 Arg.Any<PurchaseOrderReq>(), Arg.Any<int>()).Returns(new ProcessResult(true, "can auth"));
 
             this.Response = this.Client.Post(
-                $"/purchasing/purchase-orders/reqs/{this.reqNumber}/check-signing-limit-covers",
+                $"/purchasing/purchase-orders/reqs/check-signing-limit-covers-po-auth?reqNumber={this.reqNumber}",
                 with => { with.Accept("application/json"); }).Result;
         }
 

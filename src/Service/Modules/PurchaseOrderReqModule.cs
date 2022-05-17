@@ -38,11 +38,10 @@
             app.MapPost("/purchasing/purchase-orders/reqs/{id:int}/authorise", this.AuthoriseReq);
             app.MapPost("/purchasing/purchase-orders/reqs/{id:int}/finance-authorise", this.FinanceAuthoriseReq);
             app.MapPost("/purchasing/purchase-orders/reqs/{id:int}/turn-into-order", this.TurnIntoMiniOrder);
-            app.MapPost("/purchasing/purchase-orders/reqs/{id:int}/check-signing-limit-covers", this.CheckIfSigningLimitCoversOrder);
+            app.MapPost("/purchasing/purchase-orders/reqs/check-signing-limit-covers-po-auth", this.CheckIfSigningLimitCoversOrder);
             app.MapPost("/purchasing/purchase-orders/reqs", this.CreateReq);
         }
 
-        
         private async Task AuthoriseReq(
             HttpRequest req,
             HttpResponse res,
@@ -57,10 +56,10 @@
         private async Task CheckIfSigningLimitCoversOrder(
             HttpRequest req,
             HttpResponse res,
-            int id,
+            int reqNumber,
             IPurchaseOrderReqFacadeService purchaseOrderReqFacadeService)
         {
-            var result = purchaseOrderReqFacadeService.CheckIfSigningLimitCoversOrder(id, req.HttpContext.User.GetEmployeeNumber());
+            var result = purchaseOrderReqFacadeService.CheckIfSigningLimitCoversOrder(reqNumber, req.HttpContext.User.GetEmployeeNumber());
 
             await res.Negotiate(result);
         }
