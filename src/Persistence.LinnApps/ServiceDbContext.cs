@@ -131,6 +131,8 @@
 
         public DbSet<RescheduleReason> PlRescheduleReasons { get; set; }
 
+        public DbSet<PurchaseLedgerMaster> PurchaseLedgerMaster { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -202,6 +204,7 @@
             this.BuildPlRescheduleReasons(builder);
             this.BuildMrHeaders(builder);
             this.BuildMrDetails(builder);
+            this.BuildPurchaseLedgerMaster(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1105,6 +1108,12 @@
             entity.Property(e => e.JobRef).HasColumnName("JOBREF");
             entity.Property(e => e.RunDate).HasColumnName("RUNDATE");
             entity.Property(e => e.RunLogIdCurrentlyInProgress).HasColumnName("RUNLOG_ID_IN_PROGRESS");
+        }
+
+        private void BuildPurchaseLedgerMaster(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PurchaseLedgerMaster>().ToTable("PL_LEDGER_MASTER").HasNoKey();
+            entity.Property(e => e.OkToRaiseOrder).HasColumnName("OK_TO_RAISE_ORDERS");
         }
 
         private void BuildLedgerPeriods(ModelBuilder builder)

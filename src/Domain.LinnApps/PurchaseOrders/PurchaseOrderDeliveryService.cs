@@ -7,6 +7,7 @@
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Keys;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
 
     public class PurchaseOrderDeliveryService : IPurchaseOrderDeliveryService
     {
@@ -16,14 +17,18 @@
 
         private readonly IRepository<RescheduleReason, string> rescheduleReasonRepository;
 
+        private readonly ISingleRecordRepository<PurchaseLedgerMaster> purchaseLedgerMaster;
+
         public PurchaseOrderDeliveryService(
             IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> repository,
             IAuthorisationService authService,
-            IRepository<RescheduleReason, string> rescheduleReasonRepository)
+            IRepository<RescheduleReason, string> rescheduleReasonRepository,
+            ISingleRecordRepository<PurchaseLedgerMaster> purchaseLedgerMaster)
         {
             this.repository = repository;
             this.authService = authService;
             this.rescheduleReasonRepository = rescheduleReasonRepository;
+            this.purchaseLedgerMaster = purchaseLedgerMaster;
         }
 
         public IEnumerable<PurchaseOrderDelivery> SearchDeliveries(
@@ -48,14 +53,9 @@
 
             if (!string.IsNullOrEmpty(orderNumberSearchTerm))
             {
-                if (exactOrderNumber.GetValueOrDefault())
-                {
-                    result = result.Where(x => x.OrderNumber.ToString().Equals(orderNumberSearchTerm));
-                }
-                else
-                {
-                    result = result.Where(x => x.OrderNumber.ToString().Contains(orderNumberSearchTerm));
-                }
+                result = exactOrderNumber.GetValueOrDefault() 
+                             ? result.Where(x => x.OrderNumber.ToString().Equals(orderNumberSearchTerm)) 
+                             : result.Where(x => x.OrderNumber.ToString().Contains(orderNumberSearchTerm));
             }
 
             if (!includeAcknowledged)
@@ -75,6 +75,11 @@
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
             {
                 throw new UnauthorisedActionException("You are not authorised to acknowledge orders.");
+            }
+
+            if (!this.purchaseLedgerMaster.GetRecord().OkToRaiseOrder.Equals("Y"))
+            {
+                throw new UnauthorisedActionException("Orders are currently restricted.");
             }
 
             var entity = this.repository.FindById(key);
@@ -109,6 +114,11 @@
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
             {
                 throw new UnauthorisedActionException("You are not authorised to acknowledge orders.");
+            }
+
+            if (!this.purchaseLedgerMaster.GetRecord().OkToRaiseOrder.Equals("Y"))
+            {
+                throw new UnauthorisedActionException("Orders are currently restricted.");
             }
 
             var successCount = 0;

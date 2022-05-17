@@ -119,7 +119,9 @@
                         ?.MrUsedOnView))
                 .AddTransient<IRepository<RescheduleReason, string>, EntityFrameworkRepository<RescheduleReason, string>>(
                     r => new EntityFrameworkRepository<RescheduleReason, string>(r.GetService<ServiceDbContext>()?.PlRescheduleReasons))
-                .AddTransient<IQueryRepository<MrHeader>, MrHeaderRepository>();
+                .AddTransient<IQueryRepository<MrHeader>, MrHeaderRepository>()
+                .AddTransient<ISingleRecordRepository<PurchaseLedgerMaster>, EntityFrameworkSingleRecordRepository<PurchaseLedgerMaster>>(
+                    r => new EntityFrameworkSingleRecordRepository<PurchaseLedgerMaster>(r.GetService<ServiceDbContext>()?.PurchaseLedgerMaster));
         }
     }
 }
