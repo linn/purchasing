@@ -13,15 +13,17 @@
 
     using NUnit.Framework;
 
-    public class WhenSecondAuthorising : ContextBase
+    public class WhenTurningIntoMiniOrder : ContextBase
     {
-        private readonly string fromState = "AUTHORISE 2ND WAIT";
+        private readonly int authoriserUserNumber = 33107;
+
+        private readonly string fromState = "ORDER WAIT";
+
+        private readonly int newOrderNumber = 101137;
 
         private readonly int reqNumber = 5678;
 
-        private readonly int authoriserUserNumber = 999;
-
-        private readonly string toState = "FINANCE WAIT";
+        private readonly string toState = "ORDER";
 
         private PurchaseOrderReq entity;
 
@@ -55,9 +57,9 @@
                                   Email = "LC@gmail",
                                   DateRequired = 1.January(2023),
                                   RequestedById = 33107,
-                                  AuthorisedById = 10111,
+                                  AuthorisedById = 33107,
                                   SecondAuthById = null,
-                                  FinanceCheckById = null,
+                                  FinanceCheckById = 33107,
                                   TurnedIntoOrderById = null,
                                   NominalCode = "00001234",
                                   RemarksForOrder = "needed asap",
@@ -69,26 +71,56 @@
                 .Returns(
                     new PurchaseOrderReqStateChange
                         {
-                            FromState = this.fromState,
-                            ToState = this.toState,
-                            UserAllowed = "Y"
+                            FromState = this.fromState, ToState = this.toState, ComputerAllowed = "Y", UserAllowed = "N"
                         });
 
-            this.MockPurchaseOrderReqsPack.AllowedToAuthorise(
-                "AUTH2",
-                this.authoriserUserNumber,
-                this.entity.TotalReqPrice.Value,
-                this.entity.DepartmentCode,
-                this.fromState).Returns(new AllowedToAuthoriseReqResult { Success = true, NewState = this.toState });
+            this.MockAuthService.HasPermissionFor(
+                AuthorisedAction.PurchaseOrderReqFinanceCheck,
+                Arg.Any<List<string>>()).Returns(true);
 
-            this.Sut.Authorise(this.entity, new List<string>(), this.authoriserUserNumber);
+            this.MockCurrencyPack.CalculateBaseValueFromCurrencyValue(
+                this.entity.CurrencyCode,
+                this.entity.TotalReqPrice.Value).Returns(145m);
+
+            this.MockPurchaseOrdersPack.OrderCanBeAuthorisedBy(
+                null,
+                null,
+                this.authoriserUserNumber,
+                145m,
+                this.entity.PartNumber,
+                "PO").Returns(true);
+
+            this.MockPurchaseOrderAutoOrderPack.CreateMiniOrderFromReq(
+                this.entity.NominalCode,
+                this.entity.DepartmentCode,
+                this.entity.RequestedById,
+                this.authoriserUserNumber,
+                this.entity.Description,
+                this.entity.QuoteRef,
+                this.entity.RemarksForOrder,
+                this.entity.PartNumber,
+                this.entity.SupplierId,
+                this.entity.Qty,
+                this.entity.DateRequired,
+                this.entity.UnitPrice,
+                true).Returns(new CreateOrderFromReqResult { OrderNumber = 101137, Success = true });
+
+            this.Sut.CreateOrderFromReq(this.entity, new List<string>(), this.authoriserUserNumber);
         }
 
         [Test]
-        public void ShouldUpdateStateAndAuthorisedBy()
+        public void ShouldGetNextStateFromStateChangesRepo()
         {
-            this.entity.SecondAuthById.Should().Be(this.authoriserUserNumber);
+            this.MockReqsStateChangeRepository.Received()
+                .FindBy(Arg.Any<Expression<Func<PurchaseOrderReqStateChange, bool>>>());
+        }
+
+        [Test]
+        public void ShouldUpdateFields()
+        {
+            this.entity.TurnedIntoOrderById.Should().Be(this.authoriserUserNumber);
             this.entity.State.Should().Be(this.toState);
+            this.entity.OrderNumber.Should().Be(this.newOrderNumber);
         }
     }
 }

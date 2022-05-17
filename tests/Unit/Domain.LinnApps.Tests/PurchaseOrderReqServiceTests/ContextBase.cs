@@ -31,6 +31,10 @@
 
         protected IPurchaseOrderAutoOrderPack MockPurchaseOrderAutoOrderPack { get; private set; }
 
+        protected ICurrencyPack MockCurrencyPack { get; private set; }
+        protected IPurchaseOrdersPack MockPurchaseOrdersPack { get; private set; }
+
+
 
         [SetUp]
         public void SetUpContext()
@@ -42,6 +46,8 @@
             this.MockReqsStateChangeRepository =
                 Substitute.For<IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>>();
             this.MockPurchaseOrderAutoOrderPack = Substitute.For<IPurchaseOrderAutoOrderPack>();
+            this.MockPurchaseOrdersPack = Substitute.For<IPurchaseOrdersPack>();
+            this.MockCurrencyPack = Substitute.For<ICurrencyPack>();
 
             this.Sut = new PurchaseOrderReqService(
                 "app.linn",
@@ -50,7 +56,9 @@
                 this.EmployeeRepository,
                 this.EmailService,
                 this.MockReqsStateChangeRepository,
-                this.MockPurchaseOrderAutoOrderPack);
+                this.MockPurchaseOrderAutoOrderPack,
+                MockPurchaseOrdersPack,
+                MockCurrencyPack);
         }
     }
 }

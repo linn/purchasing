@@ -212,6 +212,12 @@ export const sendPurchaseOrderReqFinanceEmail = new ItemType(
     '/purchasing/purchase-orders/reqs/email-for-finance'
 );
 
+export const pOReqCheckIfCanAuthOrder = new ItemType(
+    'pOReqCheckIfCanAuthOrder',
+    'CHECK_IF_CAN_AUTH_ORDER',
+    '/purchasing/purchase-orders/reqs/check-signing-limit-covers'
+);
+
 export const mrpRunLog = new ItemType(
     'mrpRunLog',
     'MRP_RUN_LOG',

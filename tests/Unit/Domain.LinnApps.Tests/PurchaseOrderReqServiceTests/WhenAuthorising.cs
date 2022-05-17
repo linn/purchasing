@@ -8,7 +8,6 @@
     using FluentAssertions.Extensions;
 
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
-    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
     using NSubstitute;
 
@@ -16,11 +15,11 @@
 
     public class WhenAuthorising : ContextBase
     {
+        private readonly int authoriserUserNumber = 999;
+
         private readonly string fromState = "AUTHORISE WAIT";
 
         private readonly int reqNumber = 5678;
-
-        private readonly int authoriserUserNumber = 999;
 
         private readonly string toState = "FINANCE WAIT";
 
@@ -70,9 +69,7 @@
                 .Returns(
                     new PurchaseOrderReqStateChange
                         {
-                            FromState = this.fromState,
-                            ToState = this.toState,
-                            UserAllowed = "Y"
+                            FromState = this.fromState, ToState = this.toState, UserAllowed = "Y"
                         });
 
             this.MockPurchaseOrderReqsPack.AllowedToAuthorise(

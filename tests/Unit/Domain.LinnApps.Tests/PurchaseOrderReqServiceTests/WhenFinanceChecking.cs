@@ -13,15 +13,15 @@
 
     using NUnit.Framework;
 
-    public class WhenSecondAuthorising : ContextBase
+    public class WhenFinanceChecking : ContextBase
     {
-        private readonly string fromState = "AUTHORISE 2ND WAIT";
+        private readonly int authoriserUserNumber = 33107;
+
+        private readonly string fromState = "FINANCE WAIT";
 
         private readonly int reqNumber = 5678;
 
-        private readonly int authoriserUserNumber = 999;
-
-        private readonly string toState = "FINANCE WAIT";
+        private readonly string toState = "ORDER WAIT";
 
         private PurchaseOrderReq entity;
 
@@ -55,7 +55,7 @@
                                   Email = "LC@gmail",
                                   DateRequired = 1.January(2023),
                                   RequestedById = 33107,
-                                  AuthorisedById = 10111,
+                                  AuthorisedById = 33107,
                                   SecondAuthById = null,
                                   FinanceCheckById = null,
                                   TurnedIntoOrderById = null,
@@ -69,25 +69,28 @@
                 .Returns(
                     new PurchaseOrderReqStateChange
                         {
-                            FromState = this.fromState,
-                            ToState = this.toState,
-                            UserAllowed = "Y"
+                            FromState = this.fromState, ToState = this.toState, UserAllowed = "Y"
                         });
 
-            this.MockPurchaseOrderReqsPack.AllowedToAuthorise(
-                "AUTH2",
-                this.authoriserUserNumber,
-                this.entity.TotalReqPrice.Value,
-                this.entity.DepartmentCode,
-                this.fromState).Returns(new AllowedToAuthoriseReqResult { Success = true, NewState = this.toState });
 
-            this.Sut.Authorise(this.entity, new List<string>(), this.authoriserUserNumber);
+            this.MockAuthService.HasPermissionFor(
+                AuthorisedAction.PurchaseOrderReqFinanceCheck,
+                Arg.Any<List<string>>()).Returns(true);
+
+            this.Sut.FinanceApprove(this.entity, new List<string>(), this.authoriserUserNumber);
         }
 
         [Test]
-        public void ShouldUpdateStateAndAuthorisedBy()
+        public void ShouldGetNextStateFromStateChangesRepo()
         {
-            this.entity.SecondAuthById.Should().Be(this.authoriserUserNumber);
+            this.MockReqsStateChangeRepository.Received()
+                .FindBy(Arg.Any<Expression<Func<PurchaseOrderReqStateChange, bool>>>());
+        }
+
+        [Test]
+        public void ShouldUpdateStateAndFinanceAuthBy()
+        {
+            this.entity.FinanceCheckById.Should().Be(this.authoriserUserNumber);
             this.entity.State.Should().Be(this.toState);
         }
     }

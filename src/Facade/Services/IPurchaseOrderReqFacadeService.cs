@@ -16,6 +16,8 @@
             IEnumerable<string> privileges,
             int currentUserNumber);
 
+        IResult<ProcessResultResource> CheckIfSigningLimitCoversOrder(int reqNumber, int currentUserNumber);
+
         IResult<PurchaseOrderReqResource> CreateMiniOrderFromReq(
             int reqNumber,
             IEnumerable<string> privileges,

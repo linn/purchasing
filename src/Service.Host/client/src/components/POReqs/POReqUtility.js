@@ -51,7 +51,11 @@ import sendReqAuthEmailActions from '../../actions/sendPurchaseOrderReqAuthEmail
 import sendReqFinanceEmailActions from '../../actions/sendPurchaseOrderReqFinanceEmailActions';
 import history from '../../history';
 import config from '../../config';
-import { sendPurchaseOrderReqAuthEmail, sendPurchaseOrderReqFinanceEmail } from '../../itemTypes';
+import {
+    sendPurchaseOrderReqAuthEmail,
+    sendPurchaseOrderReqFinanceEmail,
+    pOReqCheckIfCanAuthOrder
+} from '../../itemTypes';
 
 function POReqUtility({ creating }) {
     const dispatch = useDispatch();
@@ -123,7 +127,7 @@ function POReqUtility({ creating }) {
     const snackbarVisible = useSelector(state =>
         itemSelectorHelpers.getSnackbarVisible(state.purchaseOrderReq)
     );
-
+    const [snackbarMessage, setSnackbarMessage] = 'Save successful';
     const authEmailMessageVisible = useSelector(state =>
         processSelectorHelpers.getMessageVisible(state[sendPurchaseOrderReqAuthEmail.item])
     );
@@ -140,6 +144,14 @@ function POReqUtility({ creating }) {
         processSelectorHelpers.getMessageText(state[sendPurchaseOrderReqFinanceEmail.item])
     );
 
+    const canAuthOrderMessageVisible = useSelector(state =>
+        processSelectorHelpers.getMessageVisible(state[pOReqCheckIfCanAuthOrder.item])
+    );
+
+    const canAuthOrderMessage = useSelector(state =>
+        processSelectorHelpers.getMessageText(state[pOReqCheckIfCanAuthOrder.item])
+    );
+
     const loading = useSelector(state =>
         creating
             ? itemSelectorHelpers.getApplicationStateLoading(state.purchaseOrderReqApplicationState)
@@ -154,6 +166,7 @@ function POReqUtility({ creating }) {
     const [authEmailDialogOpen, setAuthEmailDialogOpen] = useState(false);
     const [financeEmailDialogOpen, setFinanceEmailDialogOpen] = useState(false);
     const [employeeToEmail, setEmployeeToEmail] = useState();
+    const [signingLimitDialogOpen, setSigningLimitDialogOpen] = useState(false);
 
     useEffect(() => {
         if (!creating && item?.reqNumber) {
@@ -251,6 +264,7 @@ function POReqUtility({ creating }) {
     const handleAuthorise = () => {
         setEditStatus('edit');
         if (allowedToAuthorise) {
+            setSnackbarMessage('Authorisation saved');
             clearErrors();
             dispatch(poReqActions.postByHref(utilities.getHref(req, 'authorise')));
         }
@@ -259,6 +273,7 @@ function POReqUtility({ creating }) {
     const handleSecondAuth = () => {
         setEditStatus('edit');
         if (allowedTo2ndAuthorise) {
+            setSnackbarMessage('Second auth saved');
             clearErrors();
             dispatch(poReqActions.postByHref(utilities.getHref(req, 'authorise')));
         }
@@ -268,14 +283,25 @@ function POReqUtility({ creating }) {
         setEditStatus('edit');
         if (allowedToFinanceCheck) {
             clearErrors();
+            setSnackbarMessage('Finance auth saved');
             dispatch(poReqActions.postByHref(utilities.getHref(req, 'finance-check')));
         }
     };
 
-    const handleCreateOrder = () => {
+    const handleCreateOrderButton = () => {
+        dispatch(poReqActions.postByHref(utilities.getHref(req, 'check-signing-limit-covers')));
+        //clear signing limit thingy
+        // set loading spinner for dialog
+        setSigningLimitDialogOpen(true);
+    };
+
+    //useeffect to see whether
+
+    const handleActuallyCreateOrder = () => {
         setEditStatus('edit');
         if (allowedToCreateOrder) {
             clearErrors();
+            setSnackbarMessage('Order created. See order number field and view order button');
             dispatch(
                 poReqActions.postByHref(utilities.getHref(req, 'turn-req-into-purchase-order'))
             );
@@ -400,7 +426,7 @@ function POReqUtility({ creating }) {
                         <SnackbarMessage
                             visible={snackbarVisible}
                             onClose={() => dispatch(poReqActions.setSnackbarVisible(false))}
-                            message="Save Successful"
+                            message={snackbarMessage}
                         />
                         <SnackbarMessage
                             visible={authEmailMessageVisible}
@@ -488,6 +514,58 @@ function POReqUtility({ creating }) {
                                 </Typography>
                             </div>
                         </Dialog>
+
+                        <Dialog open={signingLimitDialogOpen} fullWidth maxWidth="md">
+                            <div className={classes.centerTextInDialog}>
+                                {!canAuthOrderMessageVisible ? (
+                                    <Loading />
+                                ) : (
+                                    <>
+                                        <IconButton
+                                            className={classes.pullRight}
+                                            aria-label="Close"
+                                            onClick={() => setSigningLimitDialogOpen(false)}
+                                        >
+                                            <Close />
+                                        </IconButton>
+                                        <Typography variant="h6">
+                                        {canAuthOrderMessage}
+                                            {/* Your signing limit will not cover this req. The order
+                                            will be created unauthorised. Create anyway? */}
+                                        </Typography>
+                                        <Typography variant="body1" gutterBottom>
+                                            <Grid container spacing={1}>
+                                                <Grid item xs={4}>
+                                                    <Button
+                                                        className={classes.buttonMarginTop}
+                                                        color="primary"
+                                                        variant="contained"
+                                                        onClick={() =>
+                                                            setSigningLimitDialogOpen(false)
+                                                        }
+                                                    >
+                                                        Cancel
+                                                    </Button>
+                                                </Grid>
+                                                <Grid item xs={4} />
+                                                <Grid item xs={4}>
+                                                    <Button
+                                                        className={classes.buttonMarginTop}
+                                                        color="primary"
+                                                        variant="contained"
+                                                        disabled={!allowedToCreateOrder()}
+                                                        onClick={handleActuallyCreateOrder}
+                                                    >
+                                                        Create Order
+                                                    </Button>
+                                                </Grid>
+                                            </Grid>
+                                        </Typography>
+                                    </>
+                                )}
+                            </div>
+                        </Dialog>
+
                         <Dialog open={authEmailDialogOpen} fullWidth maxWidth="md">
                             <div className={classes.centerTextInDialog}>
                                 <IconButton
@@ -1129,7 +1207,7 @@ function POReqUtility({ creating }) {
                                 color="primary"
                                 variant="contained"
                                 disabled={!allowedToCreateOrder()}
-                                onClick={handleCreateOrder}
+                                onClick={handleCreateOrderButton}
                             >
                                 Create Order
                             </Button>
@@ -1209,6 +1287,7 @@ function POReqUtility({ creating }) {
                                 backClick={() => history.push('/purchasing')}
                                 saveClick={() => {
                                     clearErrors();
+                                    setSnackbarMessage('Save successful');
                                     if (creating) {
                                         dispatch(poReqActions.add({ ...req, reqNumber: -1 }));
                                     } else {

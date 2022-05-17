@@ -70,6 +70,21 @@
                 (PurchaseOrderReqResource)this.resourceBuilder.Build(entity, privileges));
         }
 
+        public IResult<ProcessResultResource> CheckIfSigningLimitCoversOrder(
+            int reqNumber, int currentUserNumber)
+        {
+            var entity = this.repository.FindById(reqNumber);
+            if (entity == null)
+            {
+                return new NotFoundResult<ProcessResultResource>();
+            }
+
+           var result = this.domainService.CheckIfSigningLimitCanAuthorisePurchaseOrder(entity, currentUserNumber);
+
+           return new SuccessResult<ProcessResultResource>(new ProcessResultResource(result.Success, result.Message));
+
+        }
+
         public IResult<PurchaseOrderReqResource> FinanceAuthorise(
             int reqNumber,
             IEnumerable<string> privileges,

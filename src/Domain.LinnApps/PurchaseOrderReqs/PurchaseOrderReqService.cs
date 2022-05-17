@@ -26,6 +26,10 @@
 
         private readonly IPurchaseOrderReqsPack purchaseOrderReqsPack;
 
+        private readonly IPurchaseOrdersPack purchaseOrdersPack;
+
+        private readonly ICurrencyPack currencyPack;
+
         private readonly IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey> reqsStateChangeRepository;
 
         public PurchaseOrderReqService(
@@ -35,7 +39,9 @@
             IRepository<Employee, int> employeeRepository,
             IEmailService emailService,
             IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey> reqsStateChangeRepository,
-            IPurchaseOrderAutoOrderPack purchaseOrderAutoOrderPack)
+            IPurchaseOrderAutoOrderPack purchaseOrderAutoOrderPack,
+            IPurchaseOrdersPack purchaseOrdersPack,
+            ICurrencyPack currencyPack)
         {
             this.authService = authService;
             this.purchaseOrderReqsPack = purchaseOrderReqsPack;
@@ -44,6 +50,8 @@
             this.reqsStateChangeRepository = reqsStateChangeRepository;
             this.appRoot = appRoot;
             this.purchaseOrderAutoOrderPack = purchaseOrderAutoOrderPack;
+            this.purchaseOrdersPack = purchaseOrdersPack;
+            this.currencyPack = currencyPack;
         }
 
         public void Authorise(PurchaseOrderReq entity, IEnumerable<string> privileges, int currentUserId)
@@ -82,7 +90,7 @@
 
             if (stage == "AUTH1")
             {
-                entity.State = "FINANCE WAIT"; // allowedToAuthoriseResult.NewState;
+                entity.State = allowedToAuthoriseResult.NewState;
                 entity.AuthorisedById = currentUserId;
             }
             else
@@ -127,18 +135,21 @@
                 throw new UnauthorisedActionException("Cannot create order from a req that has not been authorised");
             }
 
-            var authAllowed = false;
+            if (!entity.TotalReqPrice.HasValue)
+            {
+                throw new UnauthorisedActionException("Cannot create order from a req without value for price");
+            }
 
-            // todo call below pack and work out what want to do with message in case created unauthorised
-            //maybe this should be a separate call from the front end?
+            var totalInBaseCurr = this.currencyPack.CalculateBaseValueFromCurrencyValue(entity.CurrencyCode, entity.TotalReqPrice.Value);
 
-            // v_auth:= pl_orders_pack.order_can_be_authorised_by(null, null,:br.turned_into_order_by,
-            // cur_pack.cur_to_base_value(:br.currency,:br.total_req_price),
-            // :br.part_number, 'PO');
+            var authAllowed = this.purchaseOrdersPack.OrderCanBeAuthorisedBy(
+                null,
+                null,
+                currentUserId,
+                totalInBaseCurr,
+                entity.PartNumber,
+                "PO");
 
-            // if not v_auth then
-            // tb_mess.warning('Your signing limit will not cover this req. The order will be created unauthorised');
-            // end if;
             var createMiniOrderResult = this.purchaseOrderAutoOrderPack.CreateMiniOrderFromReq(
                 entity.NominalCode,
                 entity.DepartmentCode,
@@ -154,12 +165,6 @@
                 entity.UnitPrice,
                 authAllowed);
 
-            //todo - put below into wrapper to set internal comments?
-            // update mini_order set internal_comments = :br.iNTERNAL_ONLY_ORDER_NOTES
-            // where order_number = v_order_number;
-            //todo email to send to supplier
-            // tb_mess.warning('Order number ' || v_order_number || ' created successfully. Hit DO to save and then send to supplier');
-
             if (createMiniOrderResult.Success)
             {
                 entity.TurnedIntoOrderById = currentUserId;
@@ -170,6 +175,30 @@
             {
                 throw new DomainException(createMiniOrderResult.Message);
             }
+        }
+
+        public ProcessResult CheckIfSigningLimitCanAuthorisePurchaseOrder(PurchaseOrderReq entity, int currentUserId)
+        {
+            if (!entity.TotalReqPrice.HasValue)
+            {
+                throw new DomainException("No req value set so cannot check if signing limit is enough");
+            }
+
+            var totalInBaseCurr = this.currencyPack.CalculateBaseValueFromCurrencyValue(entity.CurrencyCode, entity.TotalReqPrice.Value);
+
+            var authAllowed = this.purchaseOrdersPack.OrderCanBeAuthorisedBy(
+                null,
+                null,
+                currentUserId,
+                totalInBaseCurr,
+                entity.PartNumber,
+                "PO");
+
+            var message = authAllowed
+                              ? "You can authorise this with your signing limit"
+                              : $"Your signing limit will not cover this req (£{totalInBaseCurr}). The order will be created unauthorised";
+
+            return new ProcessResult(authAllowed, message);
         }
 
         public void FinanceApprove(PurchaseOrderReq entity, IEnumerable<string> privileges, int currentUserId)

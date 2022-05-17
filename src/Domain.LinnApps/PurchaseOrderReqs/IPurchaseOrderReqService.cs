@@ -13,6 +13,8 @@
 
         void Cancel(PurchaseOrderReq entity, IEnumerable<string> privileges);
 
+        ProcessResult CheckIfSigningLimitCanAuthorisePurchaseOrder(PurchaseOrderReq entity, int currentUserId);
+
         void Authorise(PurchaseOrderReq entity, IEnumerable<string> privileges, int currentUserId);
 
         void FinanceApprove(PurchaseOrderReq entity, IEnumerable<string> privileges, int currentUserId);
