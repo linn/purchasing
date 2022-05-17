@@ -92,7 +92,7 @@ function WhoseTab({
                 <Dropdown
                     items={vendorManagers.map(v => ({ id: v.vmId, displayText: v.name }))}
                     value={vendorManagerId}
-                    allowNoValue
+                    allowNoValue={false}
                     propertyName="vendorManagerId"
                     label="Vendor Manager"
                     onChange={handleFieldChange}

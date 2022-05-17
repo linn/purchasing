@@ -25,7 +25,8 @@
                 MrMessage = entity.MrMessage,
                 RunDate = entity.RunDate,
                 RunDetails = entity.RunDetails,
-                Success = entity.Success
+                Success = entity.Success,
+                RunWeekNumber = entity.RunWeekNumber
             };
         }
 

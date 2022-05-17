@@ -27,5 +27,7 @@
         public string MrMessage { get; set; }
 
         public DateTime? DateTidied { get; set; }
+
+        public int RunWeekNumber { get; set; }
     }
 }

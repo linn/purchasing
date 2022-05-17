@@ -236,6 +236,8 @@ export const applyForecastingPercentageChange = new ItemType(
     '/purchasing/forecasting/apply-percentage-change'
 );
 
+export const mrReport = new ItemType('mrReport', 'MR_REPORT', '/purchasing/material-requirements');
+
 export const purchaseOrderDelivery = new ItemType(
     'purchaseOrderDelivery',
     'PURCHASE_ORDER_DELIVERY',

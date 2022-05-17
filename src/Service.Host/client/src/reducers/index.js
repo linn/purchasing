@@ -71,6 +71,7 @@ import mrUsedOnReport from './mrUsedOnReport';
 import purchaseOrderDelivery from './purchaseOrderDelivery';
 import purchaseOrderDeliveries from './purchaseOrderDeliveries';
 import batchPurchaseOrderDeliveriesUpload from './batchPurchaseOrderDeliveriesUpload';
+import mrReport from './mrReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -92,6 +93,7 @@ const rootReducer = history =>
         manufacturers,
         mrMaster,
         mrpRunLog,
+        mrReport,
         mrUsedOnReport,
         nominals,
         openDebitNotes,

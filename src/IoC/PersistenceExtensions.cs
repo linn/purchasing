@@ -118,7 +118,8 @@
                     r => new EntityFrameworkQueryRepository<MrUsedOnRecord>(r.GetService<ServiceDbContext>()
                         ?.MrUsedOnView))
                 .AddTransient<IRepository<RescheduleReason, string>, EntityFrameworkRepository<RescheduleReason, string>>(
-                    r => new EntityFrameworkRepository<RescheduleReason, string>(r.GetService<ServiceDbContext>()?.PlRescheduleReasons));
+                    r => new EntityFrameworkRepository<RescheduleReason, string>(r.GetService<ServiceDbContext>()?.PlRescheduleReasons))
+                .AddTransient<IQueryRepository<MrHeader>, MrHeaderRepository>();
         }
     }
 }

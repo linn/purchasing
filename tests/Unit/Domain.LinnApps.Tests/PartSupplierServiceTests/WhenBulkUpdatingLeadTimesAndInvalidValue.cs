@@ -9,8 +9,6 @@
 
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
 
-    using MimeKit.Cryptography;
-
     using NSubstitute;
 
     using NUnit.Framework;
