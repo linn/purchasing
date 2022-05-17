@@ -53,7 +53,7 @@
                             Errors = result.Errors?.Select(x => new ErrorResource
                                                                    {
                                                                         Descriptor = x.Descriptor,
-                                                                        Message = "No record found."
+                                                                        Message = x.Message
                                                                    })
                         });
             }

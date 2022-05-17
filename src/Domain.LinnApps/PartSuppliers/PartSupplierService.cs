@@ -385,7 +385,7 @@
                        {
                            Success = false,
                            Message = $"{successCount} out of {leadTimeUpdateModels.Count} records updated successfully. {errorMessage}",
-                           Errors = errors.Select(e => new Error(e, null))
+                           Errors = errors.Select(e => new Error(e, "No record found."))
                        };
         }
 
