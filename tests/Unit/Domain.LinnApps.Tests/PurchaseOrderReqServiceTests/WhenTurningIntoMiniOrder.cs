@@ -105,6 +105,9 @@
                 this.entity.UnitPrice,
                 true).Returns(new CreateOrderFromReqResult { OrderNumber = 101137, Success = true });
 
+            this.EmployeeRepository.FindById(this.authoriserUserNumber).Returns(
+                new Employee { FullName = "Big Jimbo", Id = this.authoriserUserNumber });
+
             this.Sut.CreateOrderFromReq(this.entity, new List<string>(), this.authoriserUserNumber);
         }
 
@@ -118,7 +121,7 @@
         [Test]
         public void ShouldUpdateFields()
         {
-            this.entity.TurnedIntoOrderById.Should().Be(this.authoriserUserNumber);
+            this.entity.TurnedIntoOrderBy.Id.Should().Be(this.authoriserUserNumber);
             this.entity.State.Should().Be(this.toState);
             this.entity.OrderNumber.Should().Be(this.newOrderNumber);
         }

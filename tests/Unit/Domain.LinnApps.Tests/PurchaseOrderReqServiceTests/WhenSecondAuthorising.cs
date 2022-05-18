@@ -81,13 +81,16 @@
                 this.entity.DepartmentCode,
                 this.fromState).Returns(new AllowedToAuthoriseReqResult { Success = true, NewState = this.toState });
 
+            this.EmployeeRepository.FindById(this.authoriserUserNumber).Returns(
+                new Employee { FullName = "Big Jimbo", Id = this.authoriserUserNumber });
+
             this.Sut.Authorise(this.entity, new List<string>(), this.authoriserUserNumber);
         }
 
         [Test]
         public void ShouldUpdateStateAndAuthorisedBy()
         {
-            this.entity.SecondAuthById.Should().Be(this.authoriserUserNumber);
+            this.entity.SecondAuthBy.Id.Should().Be(this.authoriserUserNumber);
             this.entity.State.Should().Be(this.toState);
         }
     }

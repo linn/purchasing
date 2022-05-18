@@ -77,6 +77,9 @@
                 AuthorisedAction.PurchaseOrderReqFinanceCheck,
                 Arg.Any<List<string>>()).Returns(true);
 
+            this.EmployeeRepository.FindById(this.authoriserUserNumber).Returns(
+                new Employee { FullName = "Big Jimbo", Id = this.authoriserUserNumber });
+
             this.Sut.FinanceApprove(this.entity, new List<string>(), this.authoriserUserNumber);
         }
 
@@ -90,7 +93,7 @@
         [Test]
         public void ShouldUpdateStateAndFinanceAuthBy()
         {
-            this.entity.FinanceCheckById.Should().Be(this.authoriserUserNumber);
+            this.entity.FinanceCheckBy.Id.Should().Be(this.authoriserUserNumber);
             this.entity.State.Should().Be(this.toState);
         }
     }
