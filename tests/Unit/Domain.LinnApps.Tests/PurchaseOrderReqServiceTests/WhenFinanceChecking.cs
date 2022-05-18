@@ -72,7 +72,6 @@
                             FromState = this.fromState, ToState = this.toState, UserAllowed = "Y"
                         });
 
-
             this.MockAuthService.HasPermissionFor(
                 AuthorisedAction.PurchaseOrderReqFinanceCheck,
                 Arg.Any<List<string>>()).Returns(true);

@@ -1,9 +1,5 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderReqServiceTests
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq.Expressions;
-
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
@@ -19,9 +15,9 @@
 
         private readonly int reqNumber = 5678;
 
-        private ProcessResult result;
-
         private PurchaseOrderReq entity;
+
+        private ProcessResult result;
 
         [SetUp]
         public void SetUp()
@@ -75,7 +71,6 @@
                 this.entity.PartNumber,
                 "PO").Returns(false);
 
-
             this.result = this.Sut.CheckIfSigningLimitCanAuthorisePurchaseOrder(this.entity, this.authoriserUserNumber);
         }
 
@@ -83,7 +78,8 @@
         public void ShouldUpdateFields()
         {
             this.result.Success.Should().BeFalse();
-            this.result.Message.Should().Be("Your signing limit will not cover this req (£145). The order will be created unauthorised if you continue");
+            this.result.Message.Should().Be(
+                "Your signing limit will not cover this req (£145). The order will be created unauthorised if you continue");
         }
     }
 }

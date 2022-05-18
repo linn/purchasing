@@ -4,7 +4,6 @@
 
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
-    using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
 
     using Oracle.ManagedDataAccess.Client;
 
@@ -50,7 +49,13 @@
             }
         }
 
-        public bool OrderCanBeAuthorisedBy(int? orderNumber, int? lineNumber, int userNumber, decimal totalValueBase, string part, string documentType)
+        public bool OrderCanBeAuthorisedBy(
+            int? orderNumber,
+            int? lineNumber,
+            int userNumber,
+            decimal totalValueBase,
+            string part,
+            string documentType)
         {
             using (var connection = this.databaseService.GetConnection())
             {
@@ -61,45 +66,31 @@
                               };
                 var ordNo = new OracleParameter("p_order_number", OracleDbType.Int32)
                                 {
-                                    Direction = ParameterDirection.Input,
-                                    Size = 50,
-                                    Value = orderNumber
+                                    Direction = ParameterDirection.Input, Size = 50, Value = orderNumber
                                 };
                 var ordLine = new OracleParameter("p_order_line", OracleDbType.Int32)
                                   {
-                                      Direction = ParameterDirection.Input,
-                                      Size = 50,
-                                      Value = lineNumber
+                                      Direction = ParameterDirection.Input, Size = 50, Value = lineNumber
                                   };
                 var puser = new OracleParameter("p_user", OracleDbType.Int32)
-                                  {
-                                      Direction = ParameterDirection.Input,
-                                      Size = 50,
-                                      Value = userNumber
-                };
-
-                var ptotal = new OracleParameter("p_total", OracleDbType.Decimal)
                                 {
-                                    Direction = ParameterDirection.Input,
-                                    Size = 50,
-                                    Value = totalValueBase
+                                    Direction = ParameterDirection.Input, Size = 50, Value = userNumber
                                 };
 
-
-                var ppart = new OracleParameter("p_part", OracleDbType.Varchar2)
+                var ptotal = new OracleParameter("p_total", OracleDbType.Decimal)
                                  {
-                                     Direction = ParameterDirection.Input,
-                                     Size = 50,
-                                     Value = part
+                                     Direction = ParameterDirection.Input, Size = 50, Value = totalValueBase
                                  };
 
-                var pdocumenttype = new OracleParameter("p_document_type", OracleDbType.Varchar2)
+                var ppart = new OracleParameter("p_part", OracleDbType.Varchar2)
                                 {
-                                    Direction = ParameterDirection.Input,
-                                    Size = 50,
-                                    Value = documentType
-                };
+                                    Direction = ParameterDirection.Input, Size = 50, Value = part
+                                };
 
+                var pdocumenttype = new OracleParameter("p_document_type", OracleDbType.Varchar2)
+                                        {
+                                            Direction = ParameterDirection.Input, Size = 50, Value = documentType
+                                        };
 
                 var result = new OracleParameter(null, OracleDbType.Int32)
                                  {

@@ -70,8 +70,7 @@
                 (PurchaseOrderReqResource)this.resourceBuilder.Build(entity, privileges));
         }
 
-        public IResult<ProcessResultResource> CheckIfSigningLimitCoversOrder(
-            int reqNumber, int currentUserNumber)
+        public IResult<ProcessResultResource> CheckIfSigningLimitCoversOrder(int reqNumber, int currentUserNumber)
         {
             var entity = this.repository.FindById(reqNumber);
             if (entity == null)
@@ -79,10 +78,36 @@
                 return new NotFoundResult<ProcessResultResource>();
             }
 
-           var result = this.domainService.CheckIfSigningLimitCanAuthorisePurchaseOrder(entity, currentUserNumber);
+            var result = this.domainService.CheckIfSigningLimitCanAuthorisePurchaseOrder(entity, currentUserNumber);
 
-           return new SuccessResult<ProcessResultResource>(new ProcessResultResource(result.Success, result.Message));
+            return new SuccessResult<ProcessResultResource>(new ProcessResultResource(result.Success, result.Message));
+        }
 
+        public IResult<PurchaseOrderReqResource> CreateMiniOrderFromReq(
+            int reqNumber,
+            IEnumerable<string> privileges,
+            int currentUserNumber)
+        {
+            var entity = this.repository.FindById(reqNumber);
+            if (entity == null)
+            {
+                return new NotFoundResult<PurchaseOrderReqResource>();
+            }
+
+            try
+            {
+                this.domainService.CreateOrderFromReq(entity, privileges, currentUserNumber);
+            }
+            catch (DomainException exception)
+            {
+                return new BadRequestResult<PurchaseOrderReqResource>(
+                    $"Unable to create order from req {reqNumber} - {exception.Message}");
+            }
+
+            this.transactionManager.Commit();
+
+            return new SuccessResult<PurchaseOrderReqResource>(
+                (PurchaseOrderReqResource)this.resourceBuilder.Build(entity, privileges));
         }
 
         public IResult<PurchaseOrderReqResource> FinanceAuthorise(
@@ -152,33 +177,6 @@
             var result = this.domainService.SendFinanceCheckRequestEmail(currentUserNumber, toEmployeeNumber, req);
 
             return new SuccessResult<ProcessResultResource>(new ProcessResultResource(result.Success, result.Message));
-        }
-
-        public IResult<PurchaseOrderReqResource> CreateMiniOrderFromReq(
-            int reqNumber,
-            IEnumerable<string> privileges,
-            int currentUserNumber)
-        {
-            var entity = this.repository.FindById(reqNumber);
-            if (entity == null)
-            {
-                return new NotFoundResult<PurchaseOrderReqResource>();
-            }
-
-            try
-            {
-                this.domainService.CreateOrderFromReq(entity, privileges, currentUserNumber);
-            }
-            catch (DomainException exception)
-            {
-                return new BadRequestResult<PurchaseOrderReqResource>(
-                    $"Unable to create order from req {reqNumber} - {exception.Message}");
-            }
-
-            this.transactionManager.Commit();
-
-            return new SuccessResult<PurchaseOrderReqResource>(
-                (PurchaseOrderReqResource)this.resourceBuilder.Build(entity, privileges));
         }
 
         protected override PurchaseOrderReq CreateFromResource(

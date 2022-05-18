@@ -158,10 +158,6 @@
                     Direction = ParameterDirection.ReturnValue
                 };
 
-                //FUNCTION Create_Auto_Order_Wrapper(p_part varchar2, p_supplier number, p_qty number, p_date date,
-                //                                   p_order_number out number, p_our_price number default null,
-                //p_auth boolean default false) RETURN NUMBER;
-
                 createCmd.Parameters.Add(result);
                 createCmd.Parameters.Add(p_part);
                 createCmd.Parameters.Add(p_supplier);

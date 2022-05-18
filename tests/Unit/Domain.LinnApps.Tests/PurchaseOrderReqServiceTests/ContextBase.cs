@@ -13,13 +13,19 @@
 
     public class ContextBase
     {
-        protected IAuthorisationService MockAuthService { get; private set; }
-
-        protected IPurchaseOrderReqsPack MockPurchaseOrderReqsPack { get; private set; }
+        protected IEmailService EmailService { get; private set; }
 
         protected IRepository<Employee, int> EmployeeRepository { get; private set; }
 
-        protected IEmailService EmailService { get; private set; }
+        protected IAuthorisationService MockAuthService { get; private set; }
+
+        protected ICurrencyPack MockCurrencyPack { get; private set; }
+
+        protected IPurchaseOrderAutoOrderPack MockPurchaseOrderAutoOrderPack { get; private set; }
+
+        protected IPurchaseOrderReqsPack MockPurchaseOrderReqsPack { get; private set; }
+
+        protected IPurchaseOrdersPack MockPurchaseOrdersPack { get; private set; }
 
         protected IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey> MockReqsStateChangeRepository
         {
@@ -28,13 +34,6 @@
         }
 
         protected IPurchaseOrderReqService Sut { get; private set; }
-
-        protected IPurchaseOrderAutoOrderPack MockPurchaseOrderAutoOrderPack { get; private set; }
-
-        protected ICurrencyPack MockCurrencyPack { get; private set; }
-        protected IPurchaseOrdersPack MockPurchaseOrdersPack { get; private set; }
-
-
 
         [SetUp]
         public void SetUpContext()
@@ -57,8 +56,8 @@
                 this.EmailService,
                 this.MockReqsStateChangeRepository,
                 this.MockPurchaseOrderAutoOrderPack,
-                MockPurchaseOrdersPack,
-                MockCurrencyPack);
+                this.MockPurchaseOrdersPack,
+                this.MockCurrencyPack);
         }
     }
 }

@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq.Expressions;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
@@ -21,8 +20,6 @@
         private readonly string fromState = "FINANCE WAIT";
 
         private readonly int reqNumber = 5678;
-
-        private readonly string toState = "ORDER WAIT";
 
         private PurchaseOrderReq entity;
 
@@ -67,7 +64,6 @@
                                   InternalNotes = "pls approv",
                                   DepartmentCode = "00002345"
                               };
-
 
             this.MockAuthService.HasPermissionFor(
                 AuthorisedAction.PurchaseOrderReqFinanceCheck,
