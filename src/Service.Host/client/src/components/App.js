@@ -23,6 +23,9 @@ function App() {
                 <ListItem component={Link} to="/purchasing/part-suppliers" button>
                     <Typography color="primary">Part Supplier Utility</Typography>
                 </ListItem>
+                <ListItem component={Link} to="/purchasing/purchase-orders" button>
+                    <Typography color="primary">Purchase Order Utility</Typography>
+                </ListItem>
                 <ListItem component={Link} to="/purchasing/purchase-orders/reqs" button>
                     <Typography color="primary">Purchase Order Reqs Utility</Typography>
                 </ListItem>
@@ -51,6 +54,9 @@ function App() {
                 </ListItem>
                 <ListItem component={Link} to="/purchasing/reports/pref-sup-receipts" button>
                     <Typography color="primary">Receipts vs Pref Sup Report</Typography>
+                </ListItem>
+                <ListItem component={Link} to="/purchasing/reports/outstanding-po-reqs" button>
+                    <Typography color="primary">Outstanding PO Reqs</Typography>
                 </ListItem>
             </List>
         </Page>

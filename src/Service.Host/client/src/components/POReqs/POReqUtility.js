@@ -297,8 +297,6 @@ function POReqUtility({ creating }) {
                 reqNumber: id
             })
         );
-        // dispatch(poReqActions.postByHref(utilities.getHref(req, 'check-signing-limit-covers')));
-
         setSigningLimitDialogOpen(true);
     };
 
@@ -533,11 +531,7 @@ function POReqUtility({ creating }) {
                                     <Loading />
                                 ) : (
                                     <>
-                                        <Typography variant="h6">
-                                            {canAuthOrderMessage}
-                                            {/* Your signing limit will not cover this req. The order
-                                            will be created unauthorised. Create anyway? */}
-                                        </Typography>
+                                        <Typography variant="h6">{canAuthOrderMessage}</Typography>
                                         <Typography variant="body1" gutterBottom>
                                             <Grid container spacing={1}>
                                                 <Grid item xs={4}>
