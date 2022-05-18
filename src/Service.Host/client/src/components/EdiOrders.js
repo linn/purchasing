@@ -63,8 +63,6 @@ function EdiOrder() {
 
     const handleSupplierChange = selectedsupplier => {
         setSupplier(selectedsupplier);
-        console.log(selectedsupplier);
-        console.log(canSendEdi());
     };
 
     const handleFieldChange = (propertyName, newValue) => {
