@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq.Expressions;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
@@ -13,13 +14,15 @@
 
     using NUnit.Framework;
 
-    public class WhenFinanceCheckingAndNotAllowed : ContextBase
+    public class WhenCancellingFromUncancellableState : ContextBase
     {
         private readonly int authoriserUserNumber = 33107;
 
-        private readonly string fromState = "FINANCE WAIT";
+        private readonly string fromState = "ORDER";
 
         private readonly int reqNumber = 5678;
+
+        private readonly string toState = "CANCELLED";
 
         private PurchaseOrderReq entity;
 
@@ -65,24 +68,25 @@
                                   DepartmentCode = "00002345"
                               };
 
-            this.MockAuthService.HasPermissionFor(
-                AuthorisedAction.PurchaseOrderReqFinanceCheck,
-                Arg.Any<List<string>>()).Returns(false);
+            this.MockReqsStateChangeRepository.FindBy(Arg.Any<Expression<Func<PurchaseOrderReqStateChange, bool>>>())
+                .Returns((PurchaseOrderReqStateChange)null);
 
-            this.action = () => this.Sut.FinanceApprove(this.entity, new List<string>(), this.authoriserUserNumber);
+            this.EmployeeRepository.FindById(this.authoriserUserNumber).Returns(
+                new Employee { FullName = "Big Jimbo", Id = this.authoriserUserNumber });
+
+            this.action = () => this.Sut.Cancel(this.entity, new List<string>());
         }
 
         [Test]
-        public void ShouldThrowUnauthorisedException()
+        public void ShouldnNotUpdateState()
         {
-            this.action.Should().Throw<UnauthorisedActionException>();
-        }
-
-        [Test]
-        public void ShouldNotUpdateStateOrFinanceAuthBy()
-        {
-            this.entity.FinanceCheckById.Should().Be(null);
             this.entity.State.Should().Be(this.fromState);
+        }
+
+        [Test]
+        public void ShouldThrowIllegalStateException()
+        {
+            this.action.Should().Throw<IllegalPoReqStateChangeException>();
         }
     }
 }

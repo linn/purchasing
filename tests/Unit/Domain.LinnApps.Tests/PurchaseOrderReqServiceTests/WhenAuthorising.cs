@@ -72,10 +72,14 @@
                             FromState = this.fromState, ToState = this.toState, UserAllowed = "Y"
                         });
 
+            this.MockCurrencyPack.CalculateBaseValueFromCurrencyValue(
+                this.entity.CurrencyCode,
+                this.entity.TotalReqPrice.Value).Returns(147m);
+
             this.MockPurchaseOrderReqsPack.AllowedToAuthorise(
                 "AUTH1",
                 this.authoriserUserNumber,
-                this.entity.TotalReqPrice.Value,
+               147m,
                 this.entity.DepartmentCode,
                 this.fromState).Returns(new AllowedToAuthoriseReqResult { Success = true, NewState = this.toState });
 

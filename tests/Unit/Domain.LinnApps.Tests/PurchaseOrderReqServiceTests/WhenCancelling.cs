@@ -2,18 +2,18 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq.Expressions;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
-    using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
 
     using NSubstitute;
 
     using NUnit.Framework;
 
-    public class WhenFinanceCheckingAndNotAllowed : ContextBase
+    public class WhenCancelling : ContextBase
     {
         private readonly int authoriserUserNumber = 33107;
 
@@ -21,9 +21,9 @@
 
         private readonly int reqNumber = 5678;
 
-        private PurchaseOrderReq entity;
+        private readonly string toState = "CANCELLED";
 
-        private Action action;
+        private PurchaseOrderReq entity;
 
         [SetUp]
         public void SetUp()
@@ -65,24 +65,34 @@
                                   DepartmentCode = "00002345"
                               };
 
+            this.MockReqsStateChangeRepository.FindBy(Arg.Any<Expression<Func<PurchaseOrderReqStateChange, bool>>>())
+                .Returns(
+                    new PurchaseOrderReqStateChange
+                        {
+                            FromState = this.fromState, ToState = this.toState, UserAllowed = "Y"
+                        });
+
             this.MockAuthService.HasPermissionFor(
                 AuthorisedAction.PurchaseOrderReqFinanceCheck,
-                Arg.Any<List<string>>()).Returns(false);
+                Arg.Any<List<string>>()).Returns(true);
 
-            this.action = () => this.Sut.FinanceApprove(this.entity, new List<string>(), this.authoriserUserNumber);
+            this.EmployeeRepository.FindById(this.authoriserUserNumber).Returns(
+                new Employee { FullName = "Big Jimbo", Id = this.authoriserUserNumber });
+
+            this.Sut.Cancel(this.entity, new List<string>());
         }
 
         [Test]
-        public void ShouldThrowUnauthorisedException()
+        public void ShouldGetNextStateFromStateChangesRepo()
         {
-            this.action.Should().Throw<UnauthorisedActionException>();
+            this.MockReqsStateChangeRepository.Received()
+                .FindBy(Arg.Any<Expression<Func<PurchaseOrderReqStateChange, bool>>>());
         }
 
         [Test]
-        public void ShouldNotUpdateStateOrFinanceAuthBy()
+        public void ShouldUpdateState()
         {
-            this.entity.FinanceCheckById.Should().Be(null);
-            this.entity.State.Should().Be(this.fromState);
+            this.entity.State.Should().Be(this.toState);
         }
     }
 }

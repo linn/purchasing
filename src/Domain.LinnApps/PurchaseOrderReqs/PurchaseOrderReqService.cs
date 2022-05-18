@@ -72,14 +72,20 @@
 
             if (!entity.TotalReqPrice.HasValue)
             {
-                throw new UnauthorisedActionException("Cannot authorise a req that has no value");
+                throw new ArgumentException("Cannot authorise a req that has no value");
             }
 
-            // todo check if totalReqPrice is used on the old form and if any currency conversion is done
+            if (string.IsNullOrWhiteSpace(entity.NominalCode) || string.IsNullOrWhiteSpace(entity.DepartmentCode))
+            {
+                throw new ArgumentException("Please enter Nominal & Department before Authorising");
+            }
+
+            var totalInBaseCurr = this.currencyPack.CalculateBaseValueFromCurrencyValue(entity.CurrencyCode, entity.TotalReqPrice.Value);
+
             var allowedToAuthoriseResult = this.purchaseOrderReqsPack.AllowedToAuthorise(
                 stage,
                 currentUserId,
-                entity.TotalReqPrice.Value,
+                totalInBaseCurr,
                 entity.DepartmentCode,
                 entity.State);
 
@@ -134,12 +140,12 @@
 
             if (!entity.AuthorisedById.HasValue)
             {
-                throw new UnauthorisedActionException("Cannot create order from a req that has not been authorised");
+                throw new ArgumentException("Cannot create order from a req that has not been authorised");
             }
 
             if (!entity.TotalReqPrice.HasValue)
             {
-                throw new UnauthorisedActionException("Cannot create order from a req without value for price");
+                throw new ArgumentException("Cannot create order from a req without value for price");
             }
 
             var totalInBaseCurr = this.currencyPack.CalculateBaseValueFromCurrencyValue(entity.CurrencyCode, entity.TotalReqPrice.Value);
@@ -184,7 +190,7 @@
         {
             if (!entity.TotalReqPrice.HasValue)
             {
-                throw new DomainException("No req value set so cannot check if signing limit is enough");
+                throw new ArgumentException("No req value set so cannot check if signing limit is enough");
             }
 
             var totalInBaseCurr = this.currencyPack.CalculateBaseValueFromCurrencyValue(entity.CurrencyCode, entity.TotalReqPrice.Value);
