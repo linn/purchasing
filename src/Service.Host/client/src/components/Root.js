@@ -62,11 +62,6 @@ const Root = ({ store }) => (
                                 <Route exact path="/purchasing" component={App} />
                                 <Redirect exact from="/" to="/purchasing" />
                                 <Redirect exact from="/purchasing/reports" to="/purchasing" />
-                                <Redirect
-                                    exact
-                                    from="/purchasing/purchase-orders"
-                                    to="/purchasing"
-                                />
                                 <Route
                                     exact
                                     path="/purchasing/suppliers"
@@ -185,6 +180,11 @@ const Root = ({ store }) => (
                                     component={OpenDebitNotes}
                                 />
                                 <Route
+                                    exact
+                                    path="/purchasing/purchase-orders/"
+                                    component={PurchaseOrdersSearch}
+                                />
+                                <Route
                                     path="/purchasing/purchase-orders/reqs/create"
                                     // eslint-disable-next-line react/jsx-props-no-spreading
                                     render={props => <POReqUtility creating {...props} />}
@@ -229,11 +229,6 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/purchase-orders/:orderNumber"
                                     component={PurchaseOrderUtility}
-                                />
-                                <Route
-                                    exact
-                                    path="/purchasing/purchase-orders/"
-                                    component={PurchaseOrdersSearch}
                                 />
                                 <Route
                                     exact

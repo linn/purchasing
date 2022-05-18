@@ -180,6 +180,10 @@ export const sendPurchaseOrderReqFinanceEmailActionTypes = makeProcessActionType
     itemTypes.sendPurchaseOrderReqFinanceEmail.actionType
 );
 
+export const pOReqCheckIfCanAuthOrderActionTypes = makeProcessActionTypes(
+    itemTypes.pOReqCheckIfCanAuthOrder.actionType
+);
+
 export const prefSupReceiptsReportActionTypes = makeReportActionTypes(
     reportTypes.prefSupReceiptsReport.actionType
 );

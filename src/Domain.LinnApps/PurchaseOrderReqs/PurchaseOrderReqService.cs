@@ -5,6 +5,7 @@
     using System.IO;
 
     using Linn.Common.Authorisation;
+    using Linn.Common.Domain.Exceptions;
     using Linn.Common.Email;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
@@ -13,18 +14,23 @@
 
     public class PurchaseOrderReqService : IPurchaseOrderReqService
     {
+        private readonly string appRoot;
+
         private readonly IAuthorisationService authService;
 
         private readonly IEmailService emailService;
 
         private readonly IRepository<Employee, int> employeeRepository;
 
+        private readonly IPurchaseOrderAutoOrderPack purchaseOrderAutoOrderPack;
+
         private readonly IPurchaseOrderReqsPack purchaseOrderReqsPack;
 
-        private readonly IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>
-            reqsStateChangeRepository;
+        private readonly IPurchaseOrdersPack purchaseOrdersPack;
 
-        private readonly string appRoot;
+        private readonly ICurrencyPack currencyPack;
+
+        private readonly IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey> reqsStateChangeRepository;
 
         public PurchaseOrderReqService(
             string appRoot,
@@ -32,7 +38,10 @@
             IPurchaseOrderReqsPack purchaseOrderReqsPack,
             IRepository<Employee, int> employeeRepository,
             IEmailService emailService,
-            IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey> reqsStateChangeRepository)
+            IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey> reqsStateChangeRepository,
+            IPurchaseOrderAutoOrderPack purchaseOrderAutoOrderPack,
+            IPurchaseOrdersPack purchaseOrdersPack,
+            ICurrencyPack currencyPack)
         {
             this.authService = authService;
             this.purchaseOrderReqsPack = purchaseOrderReqsPack;
@@ -40,6 +49,9 @@
             this.emailService = emailService;
             this.reqsStateChangeRepository = reqsStateChangeRepository;
             this.appRoot = appRoot;
+            this.purchaseOrderAutoOrderPack = purchaseOrderAutoOrderPack;
+            this.purchaseOrdersPack = purchaseOrdersPack;
+            this.currencyPack = currencyPack;
         }
 
         public void Authorise(PurchaseOrderReq entity, IEnumerable<string> privileges, int currentUserId)
@@ -60,14 +72,20 @@
 
             if (!entity.TotalReqPrice.HasValue)
             {
-                throw new UnauthorisedActionException("Cannot authorise a req that has no value");
+                throw new ArgumentException("Cannot authorise a req that has no value");
             }
 
-            // todo check if totalReqPrice is used on the old form and if any currency conversion is done
+            if (string.IsNullOrWhiteSpace(entity.NominalCode) || string.IsNullOrWhiteSpace(entity.DepartmentCode))
+            {
+                throw new ArgumentException("Please enter Nominal & Department before Authorising");
+            }
+
+            var totalInBaseCurr = this.currencyPack.CalculateBaseValueFromCurrencyValue(entity.CurrencyCode, entity.TotalReqPrice.Value);
+
             var allowedToAuthoriseResult = this.purchaseOrderReqsPack.AllowedToAuthorise(
                 stage,
                 currentUserId,
-                entity.TotalReqPrice.Value,
+                totalInBaseCurr,
                 entity.DepartmentCode,
                 entity.State);
 
@@ -80,11 +98,13 @@
             {
                 entity.State = allowedToAuthoriseResult.NewState;
                 entity.AuthorisedById = currentUserId;
+                entity.AuthorisedBy = this.employeeRepository.FindById(currentUserId);
             }
             else
             {
                 entity.State = allowedToAuthoriseResult.NewState;
                 entity.SecondAuthById = currentUserId;
+                entity.SecondAuthBy = this.employeeRepository.FindById(currentUserId);
             }
         }
 
@@ -110,6 +130,86 @@
             return entity;
         }
 
+        public void CreateOrderFromReq(PurchaseOrderReq entity, IEnumerable<string> privileges, int currentUserId)
+        {
+            if (entity.State != "ORDER WAIT")
+            {
+                throw new UnauthorisedActionException(
+                    "Cannot create order from a req that is not in state 'ORDER WAIT'. Please make sure the req is saved in this state and try again");
+            }
+
+            if (!entity.AuthorisedById.HasValue)
+            {
+                throw new ArgumentException("Cannot create order from a req that has not been authorised");
+            }
+
+            if (!entity.TotalReqPrice.HasValue)
+            {
+                throw new ArgumentException("Cannot create order from a req without value for price");
+            }
+
+            var totalInBaseCurr = this.currencyPack.CalculateBaseValueFromCurrencyValue(entity.CurrencyCode, entity.TotalReqPrice.Value);
+
+            var authAllowed = this.purchaseOrdersPack.OrderCanBeAuthorisedBy(
+                null,
+                null,
+                currentUserId,
+                totalInBaseCurr,
+                entity.PartNumber,
+                "PO");
+
+            var createMiniOrderResult = this.purchaseOrderAutoOrderPack.CreateMiniOrderFromReq(
+                entity.NominalCode,
+                entity.DepartmentCode,
+                entity.RequestedById,
+                currentUserId,
+                entity.Description,
+                entity.QuoteRef,
+                entity.RemarksForOrder,
+                entity.PartNumber,
+                entity.SupplierId,
+                entity.Qty,
+                entity.DateRequired,
+                entity.UnitPrice,
+                authAllowed);
+
+            if (createMiniOrderResult.Success)
+            {
+                entity.TurnedIntoOrderById = currentUserId;
+                entity.TurnedIntoOrderBy = this.employeeRepository.FindById(currentUserId);
+                entity.OrderNumber = createMiniOrderResult.OrderNumber;
+                entity.State = this.GetNextState(entity.State, true);
+            }
+            else
+            {
+                throw new DomainException(createMiniOrderResult.Message);
+            }
+        }
+
+        public ProcessResult CheckIfSigningLimitCanAuthorisePurchaseOrder(PurchaseOrderReq entity, int currentUserId)
+        {
+            if (!entity.TotalReqPrice.HasValue)
+            {
+                throw new ArgumentException("No req value set so cannot check if signing limit is enough");
+            }
+
+            var totalInBaseCurr = this.currencyPack.CalculateBaseValueFromCurrencyValue(entity.CurrencyCode, entity.TotalReqPrice.Value);
+
+            var authAllowed = this.purchaseOrdersPack.OrderCanBeAuthorisedBy(
+                null,
+                null,
+                currentUserId,
+                totalInBaseCurr,
+                entity.PartNumber,
+                "PO");
+
+            var message = authAllowed
+                              ? $"Your signing limit allows you to cover authorising this order (£{totalInBaseCurr})"
+                              : $"Your signing limit will not cover this req (£{totalInBaseCurr}). The order will be created unauthorised if you continue";
+
+            return new ProcessResult(authAllowed, message);
+        }
+
         public void FinanceApprove(PurchaseOrderReq entity, IEnumerable<string> privileges, int currentUserId)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqFinanceCheck, privileges))
@@ -124,6 +224,8 @@
             }
 
             entity.FinanceCheckById = currentUserId;
+            entity.FinanceCheckBy = this.employeeRepository.FindById(currentUserId);
+
             entity.State = this.GetNextState(entity.State, true);
         }
 
@@ -140,7 +242,13 @@
                 this.emailService.SendEmail(
                     to.PhoneListEntry.EmailAddress.Trim(),
                     to.FullName,
-                    new List<Dictionary<string, string>> { new Dictionary<string, string>() { { "name", from.FullName }, { "address", from.PhoneListEntry.EmailAddress.Trim() } } },
+                    new List<Dictionary<string, string>>
+                        {
+                            new Dictionary<string, string>
+                                {
+                                    { "name", from.FullName }, { "address", from.PhoneListEntry.EmailAddress.Trim() }
+                                }
+                        },
                     null,
                     from.PhoneListEntry.EmailAddress.Trim(),
                     from.FullName,
@@ -168,7 +276,13 @@
                 this.emailService.SendEmail(
                     to.Trim(),
                     to.Trim(),
-                    new List<Dictionary<string, string>> { new Dictionary<string, string>() { { "name", from.FullName }, { "address", from.PhoneListEntry.EmailAddress.Trim() } } },
+                    new List<Dictionary<string, string>>
+                        {
+                            new Dictionary<string, string>
+                                {
+                                    { "name", from.FullName }, { "address", from.PhoneListEntry.EmailAddress.Trim() }
+                                }
+                        },
                     null,
                     from.PhoneListEntry.EmailAddress.Trim(),
                     from.FullName,
@@ -201,7 +315,13 @@
                 this.emailService.SendEmail(
                     to.PhoneListEntry.EmailAddress.Trim(),
                     to.FullName,
-                    new List<Dictionary<string, string>> { new Dictionary<string, string>() { { "name", from.FullName }, { "address", from.PhoneListEntry.EmailAddress.Trim() } } },
+                    new List<Dictionary<string, string>>
+                        {
+                            new Dictionary<string, string>
+                                {
+                                    { "name", from.FullName }, { "address", from.PhoneListEntry.EmailAddress.Trim() }
+                                }
+                        },
                     null,
                     from.PhoneListEntry.EmailAddress.Trim(),
                     from.FullName,

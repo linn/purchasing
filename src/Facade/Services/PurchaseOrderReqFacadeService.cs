@@ -67,19 +67,80 @@
             this.transactionManager.Commit();
 
             return new SuccessResult<PurchaseOrderReqResource>(
-                (PurchaseOrderReqResource) this.resourceBuilder.Build(entity, privileges));
+                (PurchaseOrderReqResource)this.resourceBuilder.Build(entity, privileges));
         }
 
-        public IResult<ProcessResultResource> SendEmail(
-            int senderUserNumber, string toEmailAddress, int reqNumber, Stream attachment)
+        public IResult<ProcessResultResource> CheckIfSigningLimitCoversOrder(int reqNumber, int currentUserNumber)
         {
-            var result = this.domainService.SendEmails(senderUserNumber, toEmailAddress, reqNumber, attachment);
-            return new SuccessResult<ProcessResultResource>(
-                new ProcessResultResource(result.Success, result.Message));
+            var entity = this.repository.FindById(reqNumber);
+            if (entity == null)
+            {
+                return new NotFoundResult<ProcessResultResource>();
+            }
+
+            var result = this.domainService.CheckIfSigningLimitCanAuthorisePurchaseOrder(entity, currentUserNumber);
+
+            return new SuccessResult<ProcessResultResource>(new ProcessResultResource(result.Success, result.Message));
+        }
+
+        public IResult<PurchaseOrderReqResource> CreateMiniOrderFromReq(
+            int reqNumber,
+            IEnumerable<string> privileges,
+            int currentUserNumber)
+        {
+            var entity = this.repository.FindById(reqNumber);
+            if (entity == null)
+            {
+                return new NotFoundResult<PurchaseOrderReqResource>();
+            }
+
+            try
+            {
+                this.domainService.CreateOrderFromReq(entity, privileges, currentUserNumber);
+            }
+            catch (DomainException exception)
+            {
+                return new BadRequestResult<PurchaseOrderReqResource>(
+                    $"Unable to create order from req {reqNumber} - {exception.Message}");
+            }
+
+            this.transactionManager.Commit();
+
+            return new SuccessResult<PurchaseOrderReqResource>(
+                (PurchaseOrderReqResource)this.resourceBuilder.Build(entity, privileges));
+        }
+
+        public IResult<PurchaseOrderReqResource> FinanceAuthorise(
+            int reqNumber,
+            IEnumerable<string> privileges,
+            int currentUserNumber)
+        {
+            var entity = this.repository.FindById(reqNumber);
+            if (entity == null)
+            {
+                return new NotFoundResult<PurchaseOrderReqResource>();
+            }
+
+            try
+            {
+                this.domainService.FinanceApprove(entity, privileges, currentUserNumber);
+            }
+            catch (DomainException exception)
+            {
+                return new BadRequestResult<PurchaseOrderReqResource>(
+                    $"Unable to Finance Authorise req {reqNumber} - {exception.Message}");
+            }
+
+            this.transactionManager.Commit();
+
+            return new SuccessResult<PurchaseOrderReqResource>(
+                (PurchaseOrderReqResource)this.resourceBuilder.Build(entity, privileges));
         }
 
         public IResult<ProcessResultResource> SendAuthorisationRequestEmail(
-            int currentUserNumber, int toEmployeeNumber, int reqNumber)
+            int currentUserNumber,
+            int toEmployeeNumber,
+            int reqNumber)
         {
             var req = this.repository.FindById(reqNumber);
             if (req == null)
@@ -89,13 +150,23 @@
 
             var result = this.domainService.SendAuthorisationRequestEmail(currentUserNumber, toEmployeeNumber, req);
 
-            return new SuccessResult<ProcessResultResource>(
-                new ProcessResultResource(result.Success, result.Message));
+            return new SuccessResult<ProcessResultResource>(new ProcessResultResource(result.Success, result.Message));
         }
 
+        public IResult<ProcessResultResource> SendEmail(
+            int senderUserNumber,
+            string toEmailAddress,
+            int reqNumber,
+            Stream attachment)
+        {
+            var result = this.domainService.SendEmails(senderUserNumber, toEmailAddress, reqNumber, attachment);
+            return new SuccessResult<ProcessResultResource>(new ProcessResultResource(result.Success, result.Message));
+        }
 
         public IResult<ProcessResultResource> SendFinanceCheckRequestEmail(
-            int currentUserNumber, int toEmployeeNumber, int reqNumber)
+            int currentUserNumber,
+            int toEmployeeNumber,
+            int reqNumber)
         {
             var req = this.repository.FindById(reqNumber);
             if (req == null)
@@ -105,8 +176,7 @@
 
             var result = this.domainService.SendFinanceCheckRequestEmail(currentUserNumber, toEmployeeNumber, req);
 
-            return new SuccessResult<ProcessResultResource>(
-                new ProcessResultResource(result.Success, result.Message));
+            return new SuccessResult<ProcessResultResource>(new ProcessResultResource(result.Success, result.Message));
         }
 
         protected override PurchaseOrderReq CreateFromResource(
@@ -138,7 +208,8 @@
                         .Contains(searchResource.Supplier.ToUpper()));
         }
 
-        protected override Expression<Func<PurchaseOrderReq, bool>> FindExpression(PurchaseOrderReqSearchResource searchResource)
+        protected override Expression<Func<PurchaseOrderReq, bool>> FindExpression(
+            PurchaseOrderReqSearchResource searchResource)
         {
             throw new NotImplementedException();
         }

@@ -7,23 +7,26 @@
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
+    using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
 
     using NSubstitute;
 
     using NUnit.Framework;
 
-    public class WhenSecondAuthorising : ContextBase
+    public class WhenCancellingFromUncancellableState : ContextBase
     {
-        private readonly string fromState = "AUTHORISE 2ND WAIT";
+        private readonly int authoriserUserNumber = 33107;
+
+        private readonly string fromState = "ORDER";
 
         private readonly int reqNumber = 5678;
 
-        private readonly int authoriserUserNumber = 999;
-
-        private readonly string toState = "FINANCE WAIT";
+        private readonly string toState = "CANCELLED";
 
         private PurchaseOrderReq entity;
+
+        private Action action;
 
         [SetUp]
         public void SetUp()
@@ -55,7 +58,7 @@
                                   Email = "LC@gmail",
                                   DateRequired = 1.January(2023),
                                   RequestedById = 33107,
-                                  AuthorisedById = 10111,
+                                  AuthorisedById = 33107,
                                   SecondAuthById = null,
                                   FinanceCheckById = null,
                                   TurnedIntoOrderById = null,
@@ -66,36 +69,24 @@
                               };
 
             this.MockReqsStateChangeRepository.FindBy(Arg.Any<Expression<Func<PurchaseOrderReqStateChange, bool>>>())
-                .Returns(
-                    new PurchaseOrderReqStateChange
-                        {
-                            FromState = this.fromState,
-                            ToState = this.toState,
-                            UserAllowed = "Y"
-                        });
-
-            this.MockCurrencyPack.CalculateBaseValueFromCurrencyValue(
-                this.entity.CurrencyCode,
-                this.entity.TotalReqPrice.Value).Returns(147m);
-
-            this.MockPurchaseOrderReqsPack.AllowedToAuthorise(
-                "AUTH2",
-                this.authoriserUserNumber,
-                147m,
-                this.entity.DepartmentCode,
-                this.fromState).Returns(new AllowedToAuthoriseReqResult { Success = true, NewState = this.toState });
+                .Returns((PurchaseOrderReqStateChange)null);
 
             this.EmployeeRepository.FindById(this.authoriserUserNumber).Returns(
                 new Employee { FullName = "Big Jimbo", Id = this.authoriserUserNumber });
 
-            this.Sut.Authorise(this.entity, new List<string>(), this.authoriserUserNumber);
+            this.action = () => this.Sut.Cancel(this.entity, new List<string>());
         }
 
         [Test]
-        public void ShouldUpdateStateAndAuthorisedBy()
+        public void ShouldnNotUpdateState()
         {
-            this.entity.SecondAuthBy.Id.Should().Be(this.authoriserUserNumber);
-            this.entity.State.Should().Be(this.toState);
+            this.entity.State.Should().Be(this.fromState);
+        }
+
+        [Test]
+        public void ShouldThrowIllegalStateException()
+        {
+            this.action.Should().Throw<IllegalPoReqStateChangeException>();
         }
     }
 }
