@@ -149,6 +149,10 @@ function POReqUtility({ creating }) {
         processSelectorHelpers.getMessageText(state[pOReqCheckIfCanAuthOrder.item])
     );
 
+    const canAuthOrderMessageVisible = useSelector(state =>
+        processSelectorHelpers.getMessageVisible(state[pOReqCheckIfCanAuthOrder.item])
+    );
+
     const loading = useSelector(state =>
         creating
             ? itemSelectorHelpers.getApplicationStateLoading(state.purchaseOrderReqApplicationState)
@@ -525,7 +529,7 @@ function POReqUtility({ creating }) {
                                 >
                                     <Close />
                                 </IconButton>
-                                {!canAuthOrderMessage ? (
+                                {!canAuthOrderMessageVisible ? (
                                     <Loading />
                                 ) : (
                                     <>

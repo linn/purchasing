@@ -83,7 +83,7 @@
         public void ShouldUpdateFields()
         {
             this.result.Success.Should().BeFalse();
-            this.result.Message.Should().Be("Your signing limit will not cover this req (£145). The order will be created unauthorised");
+            this.result.Message.Should().Be("Your signing limit will not cover this req (£145). The order will be created unauthorised if you continue");
         }
     }
 }

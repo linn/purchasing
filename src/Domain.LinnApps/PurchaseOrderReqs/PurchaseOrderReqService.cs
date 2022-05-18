@@ -198,8 +198,8 @@
                 "PO");
 
             var message = authAllowed
-                              ? "You can authorise this with your signing limit"
-                              : $"Your signing limit will not cover this req (£{totalInBaseCurr}). The order will be created unauthorised";
+                              ? $"Your signing limit allows you to cover authorising this order (£{totalInBaseCurr})"
+                              : $"Your signing limit will not cover this req (£{totalInBaseCurr}). The order will be created unauthorised if you continue";
 
             return new ProcessResult(authAllowed, message);
         }

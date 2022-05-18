@@ -68,6 +68,7 @@ import runMrp from './runMrp';
 import mrMaster from './mrMaster';
 import applyForecastingPercentageChange from './applyForecastingPercentageChange';
 import mrUsedOnReport from './mrUsedOnReport';
+import pOReqCheckIfCanAuthOrder from './pOReqCheckIfCanAuthOrder';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -100,12 +101,13 @@ const rootReducer = history =>
         partCategories,
         partPriceConversions,
         parts,
+        partsReceivedReport,
         partSupplier,
         partSuppliers,
         planners,
         plCreditDebitNote,
         plCreditDebitNotes,
-        partsReceivedReport,
+        pOReqCheckIfCanAuthOrder,
         preferredSupplierChange,
         prefSupReceiptsReport,
         priceChangeReasons,
