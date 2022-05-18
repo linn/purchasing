@@ -63,6 +63,5 @@
             var resource = this.Response.DeserializeBody<ProcessResultResource>();
             resource.Should().NotBeNull();
         }
-        
     }
 }

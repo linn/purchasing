@@ -69,7 +69,6 @@
 
                 cmd.Parameters.Add(supplierIdParam);
 
-
                 var altEmailParam = new OracleParameter("p_alt_email", OracleDbType.Varchar2)
                                           {
                                               Direction = ParameterDirection.Input,
