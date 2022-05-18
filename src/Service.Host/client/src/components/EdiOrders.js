@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
@@ -8,7 +8,8 @@ import {
     Loading,
     Page,
     SnackbarMessage,
-    Typeahead
+    Typeahead,
+    utilities
 } from '@linn-it/linn-form-components-library';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -25,6 +26,15 @@ import history from '../history';
 import config from '../config';
 
 function EdiOrder() {
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(suppliersActions.fetchState());
+    }, [dispatch]);
+
+    const applicationState = useSelector(state =>
+        collectionSelectorHelpers.getApplicationState(state.suppliers)
+    );
     const suppliersSearchResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.suppliers)
     )?.map(c => ({
@@ -52,14 +62,12 @@ function EdiOrder() {
 
     const emailSentResult = useSelector(state => itemSelectorHelpers.getItem(state.sendEdiEmail));
 
-    const dispatch = useDispatch();
-
     const [supplier, setSupplier] = useState({ id: '', name: 'click to set supplier', links: [] });
     const [altEmail, setAltEmail] = useState('');
     const [additionalEmail, setAdditionalEmail] = useState('');
     const [additionalText, setAdditionalText] = useState('');
 
-    const canSendEdi = () => supplier?.links.some(l => l.rel === 'edi');
+    const sendEdiUrl = utilities.getHref(applicationState, 'edi');
 
     const handleSupplierChange = selectedsupplier => {
         setSupplier(selectedsupplier);
@@ -124,7 +132,7 @@ function EdiOrder() {
                     <Typography variant="h3">PL EDI</Typography>
                 </Grid>
                 <Grid item xs={1}>
-                    {canSendEdi() ? (
+                    {sendEdiUrl? (
                         <Tooltip title="You have access to send Edi emails">
                             <ModeEditIcon fontSize="large" color="primary" />
                         </Tooltip>
@@ -181,7 +189,7 @@ function EdiOrder() {
                     <Button
                         variant="contained"
                         color="primary"
-                        disabled={!canSendEdi() || !supplier.id}
+                        disabled={!sendEdiUrl || !supplier.id}
                         onClick={() =>
                             dispatch(
                                 ediOrdersActions.searchWithOptions(
