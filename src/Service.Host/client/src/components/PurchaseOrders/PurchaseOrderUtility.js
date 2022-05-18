@@ -26,7 +26,7 @@ import {
     Loading,
     Dropdown,
     TypeaheadTable,
-    userSelectors,
+    //userSelectors,
     getItemError,
     ErrorCard,
     utilities
@@ -34,7 +34,7 @@ import {
 import currenciesActions from '../../actions/currenciesActions';
 import employeesActions from '../../actions/employeesActions';
 import nominalsActions from '../../actions/nominalsActions';
-import countriesActions from '../../actions/countriesActions';
+//import countriesActions from '../../actions/countriesActions';
 import suppliersActions from '../../actions/suppliersActions';
 // import partsActions from '../../actions/partsActions';
 import history from '../../history';
@@ -81,32 +81,32 @@ function PurchaseOrderUtility({ creating }) {
     );
     const searchSuppliers = searchTerm => dispatch(suppliersActions.search(searchTerm));
 
-    const partsSearchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(state.parts)
-    ).map(c => ({
-        id: c.partNumber,
-        name: c.partNumber,
-        partNumber: c.partNumber,
-        description: c.description
-    }));
+    // const partsSearchResults = useSelector(state =>
+    //     collectionSelectorHelpers.getSearchItems(state.parts)
+    // ).map(c => ({
+    //     id: c.partNumber,
+    //     name: c.partNumber,
+    //     partNumber: c.partNumber,
+    //     description: c.description
+    // }));
 
-    const partsSearchLoading = useSelector(state =>
-        collectionSelectorHelpers.getSearchLoading(state.parts)
-    );
+    // const partsSearchLoading = useSelector(state =>
+    //     collectionSelectorHelpers.getSearchLoading(state.parts)
+    // );
 
-    const countriesSearchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(
-            state.countries,
-            100,
-            'countryCode',
-            'countryCode',
-            'countryName'
-        )
-    );
-    const countriesSearchLoading = useSelector(state =>
-        collectionSelectorHelpers.getSearchLoading(state.countries)
-    );
-    const searchCountries = searchTerm => dispatch(countriesActions.search(searchTerm));
+    // const countriesSearchResults = useSelector(state =>
+    //     collectionSelectorHelpers.getSearchItems(
+    //         state.countries,
+    //         100,
+    //         'countryCode',
+    //         'countryCode',
+    //         'countryName'
+    //     )
+    // );
+    // const countriesSearchLoading = useSelector(state =>
+    //     collectionSelectorHelpers.getSearchLoading(state.countries)
+    // );
+    // const searchCountries = searchTerm => dispatch(countriesActions.search(searchTerm));
 
     const currencies = useSelector(state => collectionSelectorHelpers.getItems(state.currencies));
     const employees = useSelector(state => collectionSelectorHelpers.getItems(state.employees));
@@ -118,8 +118,8 @@ function PurchaseOrderUtility({ creating }) {
         collectionSelectorHelpers.getSearchLoading(state.nominals)
     );
 
-    const currentUserId = useSelector(state => userSelectors.getUserNumber(state));
-    const currentUserName = useSelector(state => userSelectors.getName(state));
+    // const currentUserId = useSelector(state => userSelectors.getUserNumber(state));
+    // const currentUserName = useSelector(state => userSelectors.getName(state));
 
     const snackbarVisible = useSelector(state =>
         itemSelectorHelpers.getSnackbarVisible(state.purchaseOrderReq)
@@ -146,19 +146,19 @@ function PurchaseOrderUtility({ creating }) {
         }))
     };
 
-    const allowedToCancel = () => !creating && order.links?.some(l => l.rel === 'cancel');
+    // const allowedToCancel = () => !creating && order.links?.some(l => l.rel === 'cancel');
     const allowedToAuthorise = () => !creating && order.links?.some(l => l.rel === 'authorise');
 
     const editingAllowed =
         false && order.links?.some(l => l.rel === 'edit') && order.cancelled === 'N';
 
-    const inputIsInvalid = () => true;
+    // const inputIsInvalid = () => true;
 
-    const canSave = () =>
-        editStatus !== 'view' && editingAllowed && !inputIsInvalid() && order !== item;
+    // const canSave = () =>
+    //     editStatus !== 'view' && editingAllowed && !inputIsInvalid() && order !== item;
 
     const handleAuthorise = () => {
-        setEditStatus('edit');
+        // setEditStatus('edit');
         if (allowedToAuthorise) {
             clearErrors();
             dispatch(purchaseOrderActions.postByHref(utilities.getHref(item, 'authorise')));
@@ -166,19 +166,19 @@ function PurchaseOrderUtility({ creating }) {
     };
 
     const handleFieldChange = (propertyName, newValue) => {
-        setEditStatus('edit');
+        //setEditStatus('edit');
         setOrder(a => ({ ...a, [propertyName]: newValue }));
     };
 
-    const handleCancelClick = () => {
-        if (allowedToCancel) {
-            clearErrors();
-            dispatch(purchaseOrderActions.postByHref(utilities.getHref(item, 'cancel')));
-        }
-    };
+    // const handleCancelClick = () => {
+    //     if (allowedToCancel) {
+    //         clearErrors();
+    //         dispatch(purchaseOrderActions.postByHref(utilities.getHref(item, 'cancel')));
+    //     }
+    // };
 
     const handleSendAuthoriseEmailClick = () => {
-        // setAuthEmailDialogOpen(false);
+        setAuthEmailDialogOpen(false);
         // dispatch(sendOrderAuthEmailActions.clearProcessData);
         // dispatch(
         //     sendOrderAuthEmailActions.requestProcessStart('', {
@@ -189,7 +189,7 @@ function PurchaseOrderUtility({ creating }) {
     };
 
     const handleNominalUpdate = newNominal => {
-        setEditStatus('edit');
+        //setEditStatus('edit');
 
         setOrder(r => ({
             ...r,
@@ -393,9 +393,9 @@ function PurchaseOrderUtility({ creating }) {
 
                         <Grid item xs={3}>
                             <Typeahead
-                                onSelect={newValue => {
-                                    // handleSupplierChange(newValue);
-                                }}
+                                // onSelect={newValue => {
+                                //     handleSupplierChange(newValue);
+                                // }}
                                 label="Supplier"
                                 modal
                                 propertyName="supplierId"

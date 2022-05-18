@@ -46,6 +46,9 @@ import ApplyForecastingPercentageChange from './ApplyForecastingPercentageChange
 import PurchaseOrderUtility from './PurchaseOrders/PurchaseOrderUtility';
 import PurchaseOrdersSearch from './PurchaseOrders/PurchaseOrdersSearch';
 import MrUsedOnReport from './reports/MrUsedOnReport';
+import AcknowledgeOrdersUtility from './AcknowledgeOrdersUtility';
+import MaterialRequirements from './materialRequirements/MaterialRequirementsOptions';
+import MaterialRequirementsReport from './materialRequirements/MaterialRequirementsReport';
 
 const Root = ({ store }) => (
     <div>
@@ -219,6 +222,11 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
+                                    path="/purchasing/purchase-orders/acknowledge"
+                                    component={AcknowledgeOrdersUtility}
+                                />
+                                <Route
+                                    exact
                                     path="/purchasing/purchase-orders/:orderNumber"
                                     component={PurchaseOrderUtility}
                                 />
@@ -261,6 +269,21 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/material-requirements/used-on-report"
                                     component={MrUsedOnReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/purchase-orders/acknowledge"
+                                    component={AcknowledgeOrdersUtility}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/material-requirements"
+                                    component={MaterialRequirements}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/material-requirements/report"
+                                    component={MaterialRequirementsReport}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>

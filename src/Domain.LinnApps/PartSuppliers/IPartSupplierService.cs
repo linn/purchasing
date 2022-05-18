@@ -10,7 +10,7 @@
 
         public PreferredSupplierChange CreatePreferredSupplierChange(PreferredSupplierChange candidate, IEnumerable<string> privileges);
 
-        public ProcessResult BulkUpdateLeadTimes(
+        public BatchUpdateProcessResult BulkUpdateLeadTimes(
             int supplierId,
             IEnumerable<LeadTimeUpdateModel> changes, 
             IEnumerable<string> privileges,

@@ -33,6 +33,8 @@
 
         protected IMrUsedOnReportFacadeService UsedOnReportFacadeService { get; private set; }
 
+        protected IMaterialRequirementsReportFacadeService MaterialRequirementsReportFacadeService { get; private set; }
+
         [SetUp]
         public void EstablishContext()
         {
@@ -44,6 +46,8 @@
             this.UsedOnReportFacadeService = new MrUsedOnReportFacadeService(
                 this.MockUsedOnReportDomainService,
                 new ResultsModelResourceBuilder());
+            this.MaterialRequirementsReportFacadeService = Substitute.For<IMaterialRequirementsReportFacadeService>();
+
             this.Client = TestClient.With<MaterialRequirementsModule>(
                 services =>
                     {
@@ -51,6 +55,7 @@
                         services.AddSingleton(this.MaterialRequirementsPlanningFacadeService);
                         services.AddSingleton(this.MasterRecordFacadeService);
                         services.AddSingleton(this.UsedOnReportFacadeService);
+                        services.AddSingleton(this.MaterialRequirementsReportFacadeService);
                         services.AddHandlers();
                     },
                 FakeAuthMiddleware.EmployeeMiddleware);

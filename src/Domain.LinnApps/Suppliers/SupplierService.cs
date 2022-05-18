@@ -204,7 +204,7 @@
 
             candidate.VendorManager = candidate.VendorManager != null
                                     ? this.vendorManagerRepository.FindById(candidate.VendorManager.Id)
-                                    : null;
+                                    : this.vendorManagerRepository.FindById("A");
 
             candidate.AccountController = candidate.AccountController != null
                                     ? this.employeeRepository.FindById(candidate.AccountController.Id)

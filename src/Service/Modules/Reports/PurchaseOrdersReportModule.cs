@@ -86,13 +86,13 @@
             IPurchaseOrderReportFacadeService purchaseOrderReportFacadeService,
             string vendorManager,
             int? planner,
-            bool useSupplierGroup)
+            bool? useSupplierGroup)
         {
             var resource = new SuppliersWithUnacknowledgedOrdersRequestResource
                                {
                                    VendorManager = vendorManager,
                                    Planner = planner, 
-                                   UseSupplierGroup = useSupplierGroup
+                                   UseSupplierGroup = useSupplierGroup ?? false
                                };
 
             var results = purchaseOrderReportFacadeService.GetSuppliersWithUnacknowledgedOrdersReport(

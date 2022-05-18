@@ -68,6 +68,10 @@ import runMrp from './runMrp';
 import mrMaster from './mrMaster';
 import applyForecastingPercentageChange from './applyForecastingPercentageChange';
 import mrUsedOnReport from './mrUsedOnReport';
+import purchaseOrderDelivery from './purchaseOrderDelivery';
+import purchaseOrderDeliveries from './purchaseOrderDeliveries';
+import batchPurchaseOrderDeliveriesUpload from './batchPurchaseOrderDeliveriesUpload';
+import mrReport from './mrReport';
 import pOReqCheckIfCanAuthOrder from './pOReqCheckIfCanAuthOrder';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
@@ -80,6 +84,7 @@ const rootReducer = history =>
         address,
         addresses,
         applyForecastingPercentageChange,
+        batchPurchaseOrderDeliveriesUpload,
         bulkLeadTimesUpload,
         countries,
         currencies,
@@ -89,6 +94,7 @@ const rootReducer = history =>
         manufacturers,
         mrMaster,
         mrpRunLog,
+        mrReport,
         mrUsedOnReport,
         nominals,
         openDebitNotes,
@@ -115,6 +121,8 @@ const rootReducer = history =>
         purchaseOrderReq,
         purchaseOrderReqs,
         purchaseOrderReqStates,
+        purchaseOrderDelivery,
+        purchaseOrderDeliveries,
         purchaseOrders,
         putSupplierOnHold,
         router: connectRouter(history),
