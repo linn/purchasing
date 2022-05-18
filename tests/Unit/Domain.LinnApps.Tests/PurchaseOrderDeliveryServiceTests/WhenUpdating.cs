@@ -1,6 +1,8 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderDeliveryServiceTests
 {
+    using System;
     using System.Collections.Generic;
+    using System.Linq.Expressions;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
@@ -58,6 +60,11 @@
                                  OrderLine = 1,
                                  OrderNumber = 123456
                 });
+            this.MiniOrderRepository.FindById(this.key.OrderNumber)
+                .Returns(new MiniOrder { OrderNumber = this.key.OrderNumber, });
+
+            this.MiniOrderDeliveryRepository.FindBy(Arg.Any<Expression<Func<MiniOrderDelivery, bool>>>())
+                .Returns(new MiniOrderDelivery { OrderNumber = this.key.OrderNumber });
 
             this.result = this.Sut
                 .UpdateDelivery(this.key, this.fromState, this.toState, new List<string>());

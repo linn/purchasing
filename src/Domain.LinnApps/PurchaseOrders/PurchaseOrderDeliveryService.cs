@@ -91,10 +91,15 @@
             }
 
             var entity = this.repository.FindById(key);
+            var miniOrder = this.miniOrderRepository.FindById(key.OrderNumber);
+            var miniOrderDelivery = this.miniOrderDeliveryRepository.FindBy(
+                x => x.OrderNumber == key.OrderNumber && x.DeliverySequence == key.DeliverySequence);
 
             if (from.AdvisedDate != to.AdvisedDate)
             {
                 entity.AdvisedDate = to.AdvisedDate;
+                miniOrder.AdvisedDeliveryDate = to.AdvisedDate;
+                miniOrderDelivery.AdvisedDate = to.AdvisedDate;
             }
 
             if (from.RescheduleReason != to.RescheduleReason)
@@ -105,6 +110,7 @@
             if (from.SupplierConfirmationComment != to.SupplierConfirmationComment)
             {
                 entity.SupplierConfirmationComment = to.SupplierConfirmationComment;
+                miniOrder.AcknowledgeComment = to.SupplierConfirmationComment;
             }
 
             if (from.AvailableAtSupplier != to.AvailableAtSupplier)
@@ -137,6 +143,10 @@
             foreach (var change in purchaseOrderDeliveryUpdates)
             {
                 var entity = this.repository.FindById(change.Key);
+                var miniOrder = this.miniOrderRepository.FindById(change.Key.OrderNumber);
+                var miniOrderDelivery = this.miniOrderDeliveryRepository.FindBy(
+                    x => x.OrderNumber == change.Key.OrderNumber && x.DeliverySequence == change.Key.DeliverySequence);
+
                 if (string.IsNullOrEmpty(change.NewReason))
                 {
                     change.NewReason = "ADVISED";
@@ -169,6 +179,8 @@
                 {
                     entity.AdvisedDate = change.NewDateAdvised;
                     entity.RescheduleReason = change.NewReason;
+                    miniOrder.AdvisedDeliveryDate = change.NewDateAdvised;
+                    miniOrderDelivery.AdvisedDate = change.NewDateAdvised;
                     successCount++;
                 }
             }
