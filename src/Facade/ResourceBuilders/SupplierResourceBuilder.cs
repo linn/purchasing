@@ -133,6 +133,12 @@
             {
                 yield return new LinkResource { Rel = "hold", Href = "/purchasing/suppliers/hold" };
             }
+
+
+            if (this.authService.HasPermissionFor(AuthorisedAction.SendEdi, privileges))
+            {
+                yield return new LinkResource { Rel = "edi", Href = "/purchasing/edi/orders" };
+            }
         }
     }
 }

@@ -30,7 +30,8 @@ function EdiOrder() {
     )?.map(c => ({
         id: c.id,
         name: c.id.toString(),
-        description: c.name
+        description: c.name,
+        links: c.links
     }));
 
     const suppliersSearchLoading = useSelector(state =>
@@ -51,17 +52,19 @@ function EdiOrder() {
 
     const emailSentResult = useSelector(state => itemSelectorHelpers.getItem(state.sendEdiEmail));
 
-    const canSendEdi = true;
-
     const dispatch = useDispatch();
 
-    const [supplier, setSupplier] = useState({ id: '', name: 'click to set supplier' });
+    const [supplier, setSupplier] = useState({ id: '', name: 'click to set supplier', links: [] });
     const [altEmail, setAltEmail] = useState('');
     const [additionalEmail, setAdditionalEmail] = useState('');
     const [additionalText, setAdditionalText] = useState('');
 
+    const canSendEdi = () => supplier?.links.some(l => l.rel === 'edi');
+
     const handleSupplierChange = selectedsupplier => {
         setSupplier(selectedsupplier);
+        console.log(selectedsupplier);
+        console.log(canSendEdi());
     };
 
     const handleFieldChange = (propertyName, newValue) => {
@@ -123,7 +126,7 @@ function EdiOrder() {
                     <Typography variant="h3">PL EDI</Typography>
                 </Grid>
                 <Grid item xs={1}>
-                    {canSendEdi ? (
+                    {canSendEdi() ? (
                         <Tooltip title="You have access to send Edi emails">
                             <ModeEditIcon fontSize="large" color="primary" />
                         </Tooltip>
@@ -180,7 +183,7 @@ function EdiOrder() {
                     <Button
                         variant="contained"
                         color="primary"
-                        disabled={!canSendEdi || !supplier.id}
+                        disabled={!canSendEdi() || !supplier.id}
                         onClick={() =>
                             dispatch(
                                 ediOrdersActions.searchWithOptions(

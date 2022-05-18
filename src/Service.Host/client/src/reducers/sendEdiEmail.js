@@ -1,10 +1,10 @@
-import { collectionStoreFactory } from '@linn-it/linn-form-components-library';
+import { itemStoreFactory } from '@linn-it/linn-form-components-library';
 import { sendEdiEmailActionTypes as actionTypes } from '../actions';
 import * as itemTypes from '../itemTypes';
 
 const defaultState = {
-    success: null,
-    message: ''
+    loading: false,
+    item: null
 };
 
-export default collectionStoreFactory(itemTypes.sendEdiEmail.actionType, actionTypes, defaultState);
+export default itemStoreFactory(itemTypes.sendEdiEmail.actionType, actionTypes, defaultState);
