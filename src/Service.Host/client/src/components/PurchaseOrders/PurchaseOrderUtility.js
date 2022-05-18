@@ -125,7 +125,7 @@ function PurchaseOrderUtility({ creating }) {
         itemSelectorHelpers.getSnackbarVisible(state.purchaseOrderReq)
     );
 
-    const [editStatus, setEditStatus] = useState('view');
+    // const [editStatus, setEditStatus] = useState('view');
     const [authEmailDialogOpen, setAuthEmailDialogOpen] = useState(false);
     const [employeeToEmail, setEmployeeToEmail] = useState();
 
