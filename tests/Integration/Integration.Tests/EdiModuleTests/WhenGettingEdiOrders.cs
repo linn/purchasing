@@ -21,7 +21,7 @@
         {
             var orders = new List<EdiOrder>
                              {
-                                 new EdiOrder() {Id = 1, OrderNumber = 1}, new EdiOrder() {Id = 1, OrderNumber = 2}
+                                 new EdiOrder { Id = 1, OrderNumber = 1 }, new EdiOrder { Id = 1, OrderNumber = 2 }
                              };
             this.MockDomainService.GetEdiOrders(41193)
                 .Returns(orders);

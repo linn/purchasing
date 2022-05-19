@@ -132,7 +132,7 @@ function EdiOrder() {
                     <Typography variant="h3">PL EDI</Typography>
                 </Grid>
                 <Grid item xs={1}>
-                    {sendEdiUrl? (
+                    {sendEdiUrl ? (
                         <Tooltip title="You have access to send Edi emails">
                             <ModeEditIcon fontSize="large" color="primary" />
                         </Tooltip>

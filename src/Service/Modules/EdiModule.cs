@@ -17,7 +17,7 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/purchasing/edi", this.GetEdiOrders);
+            app.MapGet("/purchasing/edi", this.GetApp);
             app.MapGet("/purchasing/edi/orders", this.GetEdiOrders);
             app.MapPost("/purchasing/edi/orders", this.SendEdiOrder);
         }

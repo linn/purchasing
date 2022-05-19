@@ -1,10 +1,7 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.Edi;
@@ -13,9 +10,9 @@
 
     public class EdiOrdersFacadeService : IEdiOrdersFacadeService
     {
-        private IEdiOrderService domainService;
+        private readonly IEdiOrderService domainService;
 
-        private IBuilder<EdiOrder> builder;
+        private readonly IBuilder<EdiOrder> builder;
 
         public EdiOrdersFacadeService(IEdiOrderService domainService, IBuilder<EdiOrder> builder)
         {

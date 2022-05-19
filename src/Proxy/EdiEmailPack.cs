@@ -1,11 +1,6 @@
 ﻿namespace Linn.Purchasing.Proxy
 {
-    using System;
-    using System.Collections.Generic;
     using System.Data;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
