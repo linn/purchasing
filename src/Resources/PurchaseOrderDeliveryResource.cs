@@ -1,7 +1,5 @@
 ﻿namespace Linn.Purchasing.Resources
 {
-    using System;
-
     public class PurchaseOrderDeliveryResource
     {
         public string Cancelled { get; set; }
@@ -28,7 +26,7 @@
 
         public decimal? QuantityOutstanding { get; set; }
 
-        public DateTime? CallOffDate { get; set; }
+        public string CallOffDate { get; set; }
 
         public decimal? BaseOurUnitPrice { get; set; }
 

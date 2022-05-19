@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
+    using System.Collections.Generic;
     using System.IO;
     using System.Threading.Tasks;
 
@@ -23,6 +24,7 @@
             app.MapGet("/purchasing/purchase-orders/deliveries", this.Search);
             app.MapPatch("/purchasing/purchase-orders/deliveries/{orderNumber:int}/{orderLine:int}/{deliverySeq:int}", this.Patch);
             app.MapPost("/purchasing/purchase-orders/deliveries", this.BatchUpdate);
+            app.MapPut("/purchasing/purchase-orders/{orderNumber:int}/{orderLine:int}/deliveries", this.PatchDeliveries);
         }
 
         private async Task Search(
@@ -77,5 +79,23 @@
 
             await res.Negotiate(result);
         }
+
+        private async Task PatchDeliveries(
+            HttpRequest req,
+            HttpResponse res,
+            IEnumerable<PurchaseOrderDeliveryResource> resource,
+            int orderNumber,
+            int orderLine,
+            IPurchaseOrderDeliveryFacadeService service)
+        {
+            var result = service.UpdateDeliveriesForDetail(
+                orderNumber,
+                orderLine,
+                resource,
+                req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
     }
 }

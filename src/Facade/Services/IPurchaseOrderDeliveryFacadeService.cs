@@ -21,5 +21,11 @@
             IEnumerable<string> privileges);
 
         IResult<BatchUpdateProcessResultResource> BatchUpdateDeliveriesFromCsv(string csvString, IEnumerable<string> privileges);
+
+        IResult<IEnumerable<PurchaseOrderDeliveryResource>> UpdateDeliveriesForDetail(
+            int orderNumber,
+            int orderLine,
+            IEnumerable<PurchaseOrderDeliveryResource> resource,
+            IEnumerable<string> privileges);
     }
 }

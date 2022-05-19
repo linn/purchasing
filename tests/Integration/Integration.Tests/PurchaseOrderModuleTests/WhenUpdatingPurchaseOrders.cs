@@ -5,7 +5,6 @@
     using System.Net.Http.Json;
 
     using FluentAssertions;
-    using FluentAssertions.Extensions;
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Integration.Tests.Extensions;

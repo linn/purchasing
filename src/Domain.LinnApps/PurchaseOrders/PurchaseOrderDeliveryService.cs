@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -23,13 +24,16 @@
 
         private readonly IRepository<MiniOrderDelivery, MiniOrderDeliveryKey> miniOrderDeliveryRepository;
 
+        private readonly IRepository<PurchaseOrder, int> purchaseOrderRepository;
+
         public PurchaseOrderDeliveryService(
             IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> repository,
             IAuthorisationService authService,
             IRepository<RescheduleReason, string> rescheduleReasonRepository,
             ISingleRecordRepository<PurchaseLedgerMaster> purchaseLedgerMaster,
             IRepository<MiniOrder, int> miniOrderRepository,
-            IRepository<MiniOrderDelivery, MiniOrderDeliveryKey> miniOrderDeliveryRepository)
+            IRepository<MiniOrderDelivery, MiniOrderDeliveryKey> miniOrderDeliveryRepository,
+            IRepository<PurchaseOrder, int> purchaseOrderRepository)
         {
             this.repository = repository;
             this.authService = authService;
@@ -37,6 +41,7 @@
             this.purchaseLedgerMaster = purchaseLedgerMaster;
             this.miniOrderRepository = miniOrderRepository;
             this.miniOrderDeliveryRepository = miniOrderDeliveryRepository;
+            this.purchaseOrderRepository = purchaseOrderRepository;
         }
 
         public IEnumerable<PurchaseOrderDelivery> SearchDeliveries(
@@ -200,6 +205,44 @@
                        {
                            Success = true, Message = $"{successCount} records updated successfully."
                        };
+        }
+
+        public void UpdateDeliveriesForOrderLine(
+            int orderNumber,
+            int orderLine,
+            IEnumerable<PurchaseOrderDelivery> updated,
+            IEnumerable<string> privileges)
+        {
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
+            {
+                throw new UnauthorisedActionException("You are not authorised to Split deliveries");
+            }
+
+            var order = this.purchaseOrderRepository
+                .FindById(orderNumber);
+            var detail = order?.Details.SingleOrDefault(x => x.Line == orderLine);
+
+            if (detail == null)
+            {
+                throw new PurchaseOrderDeliveryException($"order line not found: {orderNumber} / {orderLine}.");
+            }
+
+            if (order.OrderMethod.Name.Equals("CALL OFF"))
+            {
+                throw new PurchaseOrderDeliveryException(
+                    "You cannot raise a split delivery for a CALL OFF. It is raised automatically on delivery.");
+            }
+
+            var updateDeliveriesForOrderLine = updated.ToList();
+
+            if (detail.OurQty.GetValueOrDefault() != updateDeliveriesForOrderLine
+                    .Sum(x => x.OrderDeliveryQty.GetValueOrDefault()))
+            {
+                throw new PurchaseOrderDeliveryException(
+                    "You must match the order qty when splitting deliveries.");
+            }
+
+            detail.PurchaseDeliveries = updateDeliveriesForOrderLine;
         }
     }
 }

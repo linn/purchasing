@@ -61,8 +61,7 @@
                     });
             this.Repository.FindById(
                     Arg.Is<PurchaseOrderDeliveryKey>(
-                        x => x.OrderLine == this.key2.OrderLine && x.OrderNumber == this.key2.OrderNumber
-                                                                && x.DeliverySequence == this.key2.DeliverySequence))
+                        x => x.OrderLine == this.key2.OrderLine && x.OrderNumber == this.key2.OrderNumber && x.DeliverySequence == this.key2.DeliverySequence))
                 .Returns(
                     new PurchaseOrderDelivery
                         {
@@ -85,6 +84,13 @@
                                                                               Reason = "ADVISED"
                                                                           }
                                                                   }.AsQueryable());
+
+            this.MiniOrderRepository.FindById(this.key1.OrderNumber)
+                .Returns(new MiniOrder { OrderNumber = this.key1.OrderNumber });
+            this.MiniOrderRepository.FindById(this.key2.OrderNumber)
+                .Returns(new MiniOrder { OrderNumber = this.key2.OrderNumber });
+            this.MiniOrderDeliveryRepository.FindBy(Arg.Any<Expression<Func<MiniOrderDelivery, bool>>>())
+                .Returns(new MiniOrderDelivery { OrderNumber = this.key1.OrderNumber });
             this.result = this.Sut.BatchUpdateDeliveries(this.changes, new List<string>());
         }
 

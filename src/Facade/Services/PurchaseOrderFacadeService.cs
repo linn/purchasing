@@ -10,14 +10,16 @@
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.RequestResources;
 
     public class
-        PurchaseOrderFacadeService : FacadeResourceService<PurchaseOrder, int, PurchaseOrderResource,
-            PurchaseOrderResource>
+        PurchaseOrderFacadeService : FacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource>
     {
         private readonly IPurchaseOrderService domainService;
 
         private readonly IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository;
+
+        private readonly ITransactionManager transactionManager;
 
         public PurchaseOrderFacadeService(
             IRepository<PurchaseOrder, int> repository,
@@ -29,6 +31,21 @@
         {
             this.domainService = domainService;
             this.overbookAllowedByLogRepository = overbookAllowedByLogRepository;
+            this.transactionManager = transactionManager;
+        }
+
+        public IResult<PurchaseOrder> Patch(
+            int orderNumber,
+            PatchRequestResource<PurchaseOrderResource> patchResource, 
+            IEnumerable<string> privileges)
+        {
+            if (!patchResource.From.Details.Equals(patchResource.To.Details))
+            {
+                
+            }
+
+            this.transactionManager.Commit();
+            throw new NotImplementedException();
         }
 
         protected override PurchaseOrder CreateFromResource(
@@ -43,6 +60,7 @@
 
         protected override void DeleteOrObsoleteResource(PurchaseOrder entity, IEnumerable<string> privileges = null)
         {
+            this.transactionManager.Commit();
             throw new NotImplementedException();
         }
 
@@ -138,8 +156,9 @@
                                                                      OurDeliveryQty = d.OurDeliveryQty,
                                                                      QtyNetReceived = d.QtyNetReceived,
                                                                      QuantityOutstanding = d.QuantityOutstanding,
-                                                                     CallOffDate = d.CallOffDate,
-                                                                     BaseOurUnitPrice = d.BaseOurUnitPrice,
+                                                                     CallOffDate = string.IsNullOrEmpty(d.CallOffDate)
+                                                                         ? null : DateTime.Parse(d.CallOffDate),
+                                                                    BaseOurUnitPrice = d.BaseOurUnitPrice,
                                                                      SupplierConfirmationComment =
                                                                          d.SupplierConfirmationComment,
                                                                      OurUnitPriceCurrency = d.OurUnitPriceCurrency,

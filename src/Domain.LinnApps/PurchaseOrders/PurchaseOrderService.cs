@@ -96,41 +96,41 @@
             }
 
             this.UpdateOrderProperties(current, updated);
-            this.UpdateDetails(current.Details, updated.Details);
+            //this.UpdateDetails(current.Details, updated.Details);
             //Update pl_order_postings? Or just on create? todo investigate
 
             return current;
         }
 
-        private void UpdateDetails(ICollection<PurchaseOrderDetail> currentDetails, ICollection<PurchaseOrderDetail> updatedDetails)
-        {
-            foreach (var detail in updatedDetails)
-            {
-                var currentDetail = currentDetails.FirstOrDefault(x => x.Line == detail.Line);
-                if (currentDetail != null)
-                {
-                    this.UpdateDetailProperties(currentDetail, detail);
-
-                    foreach (var delivery in detail.PurchaseDeliveries)
-                    {
-                        var currentDelivery = currentDetail.PurchaseDeliveries.FirstOrDefault(x => x.DeliverySeq == delivery.DeliverySeq);
-                        if (currentDelivery != null)
-                        {
-                            this.UpdateDeliveryProperties(currentDelivery, delivery);
-                        }
-                        else
-                        {
-                            ////todo check delivery.DeliverySeq of new delivery object is all good once front end done, same with details
-                            currentDetail.PurchaseDeliveries.Add(delivery);
-                        }
-                    }
-                }
-                else
-                {
-                    currentDetails.Add(detail);
-                }
-            }
-        }
+        // private void UpdateDetails(ICollection<PurchaseOrderDetail> currentDetails, ICollection<PurchaseOrderDetail> updatedDetails)
+        // {
+        //     foreach (var detail in updatedDetails)
+        //     {
+        //         var currentDetail = currentDetails.FirstOrDefault(x => x.Line == detail.Line);
+        //         if (currentDetail != null)
+        //         {
+        //             this.UpdateDetailProperties(currentDetail, detail);
+        //
+        //             foreach (var delivery in detail.PurchaseDeliveries)
+        //             {
+        //                 var currentDelivery = currentDetail.PurchaseDeliveries.FirstOrDefault(x => x.DeliverySeq == delivery.DeliverySeq);
+        //                 if (currentDelivery != null)
+        //                 {
+        //                     this.UpdateDeliveryProperties(currentDelivery, delivery);
+        //                 }
+        //                 else
+        //                 {
+        //                     ////todo check delivery.DeliverySeq of new delivery object is all good once front end done, same with details
+        //                     currentDetail.PurchaseDeliveries.Add(delivery);
+        //                 }
+        //             }
+        //         }
+        //         else
+        //         {
+        //             currentDetails.Add(detail);
+        //         }
+        //     }
+        // }
 
         private void UpdateOrderProperties(PurchaseOrder current, PurchaseOrder updated)
         {

@@ -33,6 +33,8 @@
 
         protected IRepository<MiniOrderDelivery, MiniOrderDeliveryKey> MiniOrderDeliveryRepository { get; private set; }
 
+        protected IRepository<PurchaseOrder, int> PurchaseOrderRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -42,6 +44,7 @@
             this.PurchaseLedgerMaster = Substitute.For<ISingleRecordRepository<PurchaseLedgerMaster>>();
             this.MiniOrderRepository = Substitute.For<IRepository<MiniOrder, int>>();
             this.MiniOrderDeliveryRepository = Substitute.For<IRepository<MiniOrderDelivery, MiniOrderDeliveryKey>>();
+            this.PurchaseOrderRepository = Substitute.For<IRepository<PurchaseOrder, int>>();
             this.Data = PurchaseOrderDeliveryTestData.BuildData();
             this.Repository.FindAll().Returns(this.Data.AsQueryable());
 
@@ -51,7 +54,8 @@
                 this.RescheduleReasonRepository,
                 this.PurchaseLedgerMaster,
                 this.MiniOrderRepository,
-                this.MiniOrderDeliveryRepository);
+                this.MiniOrderDeliveryRepository,
+                this.PurchaseOrderRepository);
         }
     }
 }

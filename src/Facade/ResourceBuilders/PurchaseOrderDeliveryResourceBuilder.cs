@@ -29,7 +29,7 @@
                            OrderDeliveryQty = entity.OrderDeliveryQty,
                            QtyNetReceived = entity.QtyNetReceived,
                            QuantityOutstanding = entity.QuantityOutstanding,
-                           CallOffDate = entity.CallOffDate,
+                           CallOffDate = entity.CallOffDate?.ToString("o"),
                            BaseOurUnitPrice = entity.BaseOurUnitPrice,
                            OurUnitPriceCurrency = entity.OurUnitPriceCurrency,
                            OrderUnitPriceCurrency = entity.OrderUnitPriceCurrency,
