@@ -207,7 +207,7 @@
                        };
         }
 
-        public void UpdateDeliveriesForOrderLine(
+        public IEnumerable<PurchaseOrderDelivery> UpdateDeliveriesForOrderLine(
             int orderNumber,
             int orderLine,
             IEnumerable<PurchaseOrderDelivery> updated,
@@ -215,7 +215,7 @@
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
             {
-                throw new UnauthorisedActionException("You are not authorised to Split deliveries");
+                throw new UnauthorisedActionException("You are not authorised to split deliveries");
             }
 
             var order = this.purchaseOrderRepository
@@ -236,13 +236,15 @@
             var updateDeliveriesForOrderLine = updated.ToList();
 
             if (detail.OurQty.GetValueOrDefault() != updateDeliveriesForOrderLine
-                    .Sum(x => x.OrderDeliveryQty.GetValueOrDefault()))
+                    .Sum(x => x.OurDeliveryQty.GetValueOrDefault()))
             {
                 throw new PurchaseOrderDeliveryException(
                     "You must match the order qty when splitting deliveries.");
             }
 
             detail.PurchaseDeliveries = updateDeliveriesForOrderLine;
+
+            return detail.PurchaseDeliveries;
         }
     }
 }

@@ -179,13 +179,10 @@
                                                                    DeliveryTotalCurrency = d.DeliveryTotalCurrency,
                                                                    BaseDeliveryTotal = d.BaseDeliveryTotal,
                                                                    RescheduleReason = d.RescheduleReason,
-                                                                   AvailableAtSupplier = d.AvailableAtSupplier
-                                                                   // todo - I need to map these if I'm doing a PUT. The Resource/Entity will need to be a complete representation of the db entry
-                                                                   // otherwise Data loss will occur since I'll be completely replacing the deliveries with this Data. 
-                                                                   
-                                                                   // CallOff Ref
-                                                                   // FilCancelled
-                                                                   // QtyPassedForPayment
+                                                                   AvailableAtSupplier = d.AvailableAtSupplier,
+                                                                   CallOffRef = d.CallOffRef,
+                                                                   FilCancelled = d.FilCancelled,
+                                                                   QtyPassedForPayment = d.QtyPassedForPayment
                                                                }),
                 privileges);
 

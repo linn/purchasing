@@ -53,5 +53,11 @@
         public string RescheduleReason { get; set; }
 
         public string AvailableAtSupplier { get; set; }
+
+        public string CallOffRef { get; set; }
+
+        public string FilCancelled { get; set; }
+        
+        public decimal? QtyPassedForPayment { get; set; }
     }
 }

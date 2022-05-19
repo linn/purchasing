@@ -22,7 +22,7 @@
             IEnumerable<PurchaseOrderDeliveryUpdate> changes,
             IEnumerable<string> privileges);
 
-        void UpdateDeliveriesForOrderLine(
+        IEnumerable<PurchaseOrderDelivery> UpdateDeliveriesForOrderLine(
             int orderNumber,
             int orderLine,
             IEnumerable<PurchaseOrderDelivery> updated,

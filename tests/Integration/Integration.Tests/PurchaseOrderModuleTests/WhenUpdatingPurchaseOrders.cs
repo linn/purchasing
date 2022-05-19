@@ -21,13 +21,12 @@
         [SetUp]
         public void SetUp()
         {
-
             this.resource = new PurchaseOrderResource
-            {
-                OrderNumber = 600179,
-                Overbook = "Y",
-                OverbookQty = 1
-            };
+                                {
+                                    OrderNumber = 600179,
+                                    Overbook = "Y",
+                                    OverbookQty = 1
+                                };
 
             this.PurchaseOrderFacadeService.Update(Arg.Any<int>(), Arg.Any<PurchaseOrderResource>())
                 .ReturnsForAnyArgs(

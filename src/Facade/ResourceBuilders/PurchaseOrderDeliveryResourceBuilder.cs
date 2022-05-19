@@ -37,7 +37,10 @@
                            VatTotalCurrency = entity.VatTotalCurrency,
                            BaseVatTotal = entity.BaseVatTotal,
                            DeliveryTotalCurrency = entity.DeliveryTotalCurrency,
-                           BaseDeliveryTotal = entity.BaseDeliveryTotal
+                           BaseDeliveryTotal = entity.BaseDeliveryTotal,
+                           CallOffRef = entity.CallOffRef,
+                           FilCancelled = entity.FilCancelled,
+                           QtyPassedForPayment = entity.QtyPassedForPayment
                        };
         }
 

@@ -19,13 +19,13 @@
             var server = new TestServer(
                 new WebHostBuilder()
                     .ConfigureServices(
-                        services =>
+                        services => 
                             {
                                 services.AddRouting();
                                 services.Apply(serviceConfiguration);
                                 services.AddCarter(configurator: c =>
                                     c.WithModule<T>());
-                        })
+                            })
                     .Configure(
                         app =>
                             {

@@ -34,20 +34,6 @@
             this.transactionManager = transactionManager;
         }
 
-        public IResult<PurchaseOrder> Patch(
-            int orderNumber,
-            PatchRequestResource<PurchaseOrderResource> patchResource, 
-            IEnumerable<string> privileges)
-        {
-            if (!patchResource.From.Details.Equals(patchResource.To.Details))
-            {
-                
-            }
-
-            this.transactionManager.Commit();
-            throw new NotImplementedException();
-        }
-
         protected override PurchaseOrder CreateFromResource(
             PurchaseOrderResource resource,
             IEnumerable<string> privileges = null)
