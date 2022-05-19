@@ -74,6 +74,7 @@ import purchaseOrderDelivery from './purchaseOrderDelivery';
 import purchaseOrderDeliveries from './purchaseOrderDeliveries';
 import batchPurchaseOrderDeliveriesUpload from './batchPurchaseOrderDeliveriesUpload';
 import mrReport from './mrReport';
+import pOReqCheckIfCanAuthOrder from './pOReqCheckIfCanAuthOrder';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -109,12 +110,13 @@ const rootReducer = history =>
         partCategories,
         partPriceConversions,
         parts,
+        partsReceivedReport,
         partSupplier,
         partSuppliers,
         planners,
         plCreditDebitNote,
         plCreditDebitNotes,
-        partsReceivedReport,
+        pOReqCheckIfCanAuthOrder,
         preferredSupplierChange,
         prefSupReceiptsReport,
         priceChangeReasons,

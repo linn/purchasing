@@ -19,6 +19,7 @@ import Send from '@mui/icons-material/Send';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Collapse from '@mui/material/Collapse';
+import PageviewIcon from '@mui/icons-material/Pageview';
 import { makeStyles } from '@mui/styles';
 import {
     Page,
@@ -34,7 +35,8 @@ import {
     userSelectors,
     getItemError,
     ErrorCard,
-    processSelectorHelpers
+    processSelectorHelpers,
+    utilities
 } from '@linn-it/linn-form-components-library';
 import currenciesActions from '../../actions/currenciesActions';
 import employeesActions from '../../actions/employeesActions';
@@ -49,7 +51,12 @@ import sendReqAuthEmailActions from '../../actions/sendPurchaseOrderReqAuthEmail
 import sendReqFinanceEmailActions from '../../actions/sendPurchaseOrderReqFinanceEmailActions';
 import history from '../../history';
 import config from '../../config';
-import { sendPurchaseOrderReqAuthEmail, sendPurchaseOrderReqFinanceEmail } from '../../itemTypes';
+import {
+    sendPurchaseOrderReqAuthEmail,
+    sendPurchaseOrderReqFinanceEmail,
+    pOReqCheckIfCanAuthOrder
+} from '../../itemTypes';
+import checkIfCanAuthorisePurchaseOrderActions from '../../actions/checkIfCanAuthorisePurchaseOrderActions';
 
 function POReqUtility({ creating }) {
     const dispatch = useDispatch();
@@ -121,7 +128,7 @@ function POReqUtility({ creating }) {
     const snackbarVisible = useSelector(state =>
         itemSelectorHelpers.getSnackbarVisible(state.purchaseOrderReq)
     );
-
+    const [snackbarMessage, setSnackbarMessage] = useState('Save successful');
     const authEmailMessageVisible = useSelector(state =>
         processSelectorHelpers.getMessageVisible(state[sendPurchaseOrderReqAuthEmail.item])
     );
@@ -138,6 +145,14 @@ function POReqUtility({ creating }) {
         processSelectorHelpers.getMessageText(state[sendPurchaseOrderReqFinanceEmail.item])
     );
 
+    const canAuthOrderMessage = useSelector(state =>
+        processSelectorHelpers.getMessageText(state[pOReqCheckIfCanAuthOrder.item])
+    );
+
+    const canAuthOrderMessageVisible = useSelector(state =>
+        processSelectorHelpers.getMessageVisible(state[pOReqCheckIfCanAuthOrder.item])
+    );
+
     const loading = useSelector(state =>
         creating
             ? itemSelectorHelpers.getApplicationStateLoading(state.purchaseOrderReqApplicationState)
@@ -152,6 +167,7 @@ function POReqUtility({ creating }) {
     const [authEmailDialogOpen, setAuthEmailDialogOpen] = useState(false);
     const [financeEmailDialogOpen, setFinanceEmailDialogOpen] = useState(false);
     const [employeeToEmail, setEmployeeToEmail] = useState();
+    const [signingLimitDialogOpen, setSigningLimitDialogOpen] = useState(false);
 
     useEffect(() => {
         if (!creating && item?.reqNumber) {
@@ -224,8 +240,10 @@ function POReqUtility({ creating }) {
         req.state === 'FINANCE WAIT';
     const allowedToCreateOrder = () =>
         !creating &&
-        req.links?.some(l => l.rel === 'create-purchase-order') &&
+        req.links?.some(l => l.rel === 'turn-req-into-purchase-order') &&
         req.state === 'ORDER WAIT';
+
+    const hasOrderNumber = () => req.links?.some(l => l.rel === 'view-purchase-order');
 
     const editingAllowed = req?.state !== 'CANCELLED';
 
@@ -247,16 +265,18 @@ function POReqUtility({ creating }) {
     const handleAuthorise = () => {
         setEditStatus('edit');
         if (allowedToAuthorise) {
+            setSnackbarMessage('Authorisation saved');
             clearErrors();
-            dispatch(poReqActions.postByHref(req.links?.find(l => l.rel === 'authorise')?.href));
+            dispatch(poReqActions.postByHref(utilities.getHref(req, 'authorise')));
         }
     };
 
     const handleSecondAuth = () => {
         setEditStatus('edit');
         if (allowedTo2ndAuthorise) {
+            setSnackbarMessage('Second auth saved');
             clearErrors();
-            dispatch(poReqActions.postByHref(req.links?.find(l => l.rel === 'authorise')?.href));
+            dispatch(poReqActions.postByHref(utilities.getHref(req, 'authorise')));
         }
     };
 
@@ -264,7 +284,30 @@ function POReqUtility({ creating }) {
         setEditStatus('edit');
         if (allowedToFinanceCheck) {
             clearErrors();
-            dispatch(poReqActions.postByHref(req.links.find(l => l.rel === 'finance-check').href));
+            setSnackbarMessage('Finance auth saved');
+            dispatch(poReqActions.postByHref(utilities.getHref(req, 'finance-check')));
+        }
+    };
+
+    const handleCreateOrderButton = () => {
+        dispatch(checkIfCanAuthorisePurchaseOrderActions.clearErrorsForItem());
+        dispatch(checkIfCanAuthorisePurchaseOrderActions.clearProcessData());
+        dispatch(
+            checkIfCanAuthorisePurchaseOrderActions.requestProcessStart('', {
+                reqNumber: id
+            })
+        );
+        setSigningLimitDialogOpen(true);
+    };
+
+    const handleActuallyCreateOrder = () => {
+        setEditStatus('edit');
+        if (allowedToCreateOrder) {
+            clearErrors();
+            setSnackbarMessage('Order created. See order number field and view order button');
+            dispatch(
+                poReqActions.postByHref(utilities.getHref(req, 'turn-req-into-purchase-order'))
+            );
         }
     };
 
@@ -276,7 +319,7 @@ function POReqUtility({ creating }) {
     const handleCancelClick = () => {
         if (allowedToCancel) {
             clearErrors();
-            dispatch(poReqActions.postByHref(req.links.find(l => l.rel === 'cancel').href));
+            dispatch(poReqActions.postByHref(utilities.getHref(req, 'cancel')));
         }
     };
 
@@ -386,7 +429,7 @@ function POReqUtility({ creating }) {
                         <SnackbarMessage
                             visible={snackbarVisible}
                             onClose={() => dispatch(poReqActions.setSnackbarVisible(false))}
-                            message="Save Successful"
+                            message={snackbarMessage}
                         />
                         <SnackbarMessage
                             visible={authEmailMessageVisible}
@@ -474,6 +517,54 @@ function POReqUtility({ creating }) {
                                 </Typography>
                             </div>
                         </Dialog>
+
+                        <Dialog open={signingLimitDialogOpen} fullWidth maxWidth="md">
+                            <div className={classes.centerTextInDialog}>
+                                <IconButton
+                                    className={classes.pullRight}
+                                    aria-label="Close"
+                                    onClick={() => setSigningLimitDialogOpen(false)}
+                                >
+                                    <Close />
+                                </IconButton>
+                                {!canAuthOrderMessageVisible ? (
+                                    <Loading />
+                                ) : (
+                                    <>
+                                        <Typography variant="h6">{canAuthOrderMessage}</Typography>
+                                        <Typography variant="body1" gutterBottom>
+                                            <Grid container spacing={1}>
+                                                <Grid item xs={4}>
+                                                    <Button
+                                                        className={classes.buttonMarginTop}
+                                                        color="primary"
+                                                        variant="contained"
+                                                        onClick={() =>
+                                                            setSigningLimitDialogOpen(false)
+                                                        }
+                                                    >
+                                                        Cancel
+                                                    </Button>
+                                                </Grid>
+                                                <Grid item xs={4} />
+                                                <Grid item xs={4}>
+                                                    <Button
+                                                        className={classes.buttonMarginTop}
+                                                        color="primary"
+                                                        variant="contained"
+                                                        disabled={!allowedToCreateOrder()}
+                                                        onClick={handleActuallyCreateOrder}
+                                                    >
+                                                        Create Order
+                                                    </Button>
+                                                </Grid>
+                                            </Grid>
+                                        </Typography>
+                                    </>
+                                )}
+                            </div>
+                        </Dialog>
+
                         <Dialog open={authEmailDialogOpen} fullWidth maxWidth="md">
                             <div className={classes.centerTextInDialog}>
                                 <IconButton
@@ -628,9 +719,7 @@ function POReqUtility({ creating }) {
                                 <IconButton
                                     className={classes.pullRight}
                                     aria-label="Print"
-                                    onClick={() =>
-                                        history.push(req.links?.find(l => l.rel === 'print')?.href)
-                                    }
+                                    onClick={() => history.push(utilities.getHref(req, 'print'))}
                                     disabled={creating}
                                 >
                                     <PrintIcon />
@@ -734,6 +823,7 @@ function POReqUtility({ creating }) {
                                     propertyName="unitPrice"
                                     onChange={handleFieldChange}
                                     disabled={!editingAllowed || !creating}
+                                    decimalPlaces={2}
                                     type="number"
                                     required
                                 />
@@ -748,6 +838,7 @@ function POReqUtility({ creating }) {
                                     onChange={handleFieldChange}
                                     disabled={!editingAllowed}
                                     type="number"
+                                    decimalPlaces={2}
                                 />
                             </Grid>
                             <Grid item xs={4}>
@@ -760,6 +851,7 @@ function POReqUtility({ creating }) {
                                     onChange={handleFieldChange}
                                     disabled
                                     type="number"
+                                    decimalPlaces={2}
                                 />
                             </Grid>
                         </Grid>
@@ -1108,16 +1200,30 @@ function POReqUtility({ creating }) {
                                 disabled
                             />
                         </Grid>
-                        <Grid item xs={4}>
+                        <Grid item xs={3}>
                             <Button
                                 className={classes.buttonMarginTop}
                                 color="primary"
                                 variant="contained"
                                 disabled={!allowedToCreateOrder()}
-                                // onClick={createOrder} - to be linked to purchase order ut when that's built
+                                onClick={handleCreateOrderButton}
                             >
                                 Create Order
                             </Button>
+                        </Grid>
+                        <Grid item xs={1}>
+                            <Tooltip title="View purchase order">
+                                <IconButton
+                                    className={classes.buttonMarginTop}
+                                    aria-label="View"
+                                    onClick={() =>
+                                        history.push(utilities.getHref(req, 'view-purchase-order'))
+                                    }
+                                    disabled={!hasOrderNumber}
+                                >
+                                    <PageviewIcon />
+                                </IconButton>
+                            </Tooltip>
                         </Grid>
                         <Grid item xs={5}>
                             <InputField
@@ -1180,6 +1286,7 @@ function POReqUtility({ creating }) {
                                 backClick={() => history.push('/purchasing')}
                                 saveClick={() => {
                                     clearErrors();
+                                    setSnackbarMessage('Save successful');
                                     if (creating) {
                                         dispatch(poReqActions.add({ ...req, reqNumber: -1 }));
                                     } else {

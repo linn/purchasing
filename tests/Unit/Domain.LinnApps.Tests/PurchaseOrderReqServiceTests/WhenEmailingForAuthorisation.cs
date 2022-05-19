@@ -1,8 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderReqServiceTests
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq.Expressions;
+    using System.IO;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
@@ -13,17 +12,17 @@
 
     using NUnit.Framework;
 
-    public class WhenAuthorising : ContextBase
+    public class WhenEmailingForAuthorisation : ContextBase
     {
-        private readonly int authoriserUserNumber = 999;
+        private readonly int currentUserNumber = 5512;
 
-        private readonly string fromState = "AUTHORISE WAIT";
+        private readonly string fromState = "FINANCE WAIT";
 
         private readonly int reqNumber = 5678;
 
-        private readonly string toState = "FINANCE WAIT";
-
         private PurchaseOrderReq entity;
+
+        private ProcessResult result;
 
         [SetUp]
         public void SetUp()
@@ -55,6 +54,7 @@
                                   Email = "LC@gmail",
                                   DateRequired = 1.January(2023),
                                   RequestedById = 33107,
+                                  RequestedBy = new Employee { Id = 33107, FullName = "me" },
                                   AuthorisedById = null,
                                   SecondAuthById = null,
                                   FinanceCheckById = null,
@@ -65,35 +65,61 @@
                                   DepartmentCode = "00002345"
                               };
 
-            this.MockReqsStateChangeRepository.FindBy(Arg.Any<Expression<Func<PurchaseOrderReqStateChange, bool>>>())
-                .Returns(
-                    new PurchaseOrderReqStateChange
-                        {
-                            FromState = this.fromState, ToState = this.toState, UserAllowed = "Y"
-                        });
+            this.MockAuthService.HasPermissionFor(
+                AuthorisedAction.PurchaseOrderReqFinanceCheck,
+                Arg.Any<List<string>>()).Returns(true);
 
-            this.MockCurrencyPack.CalculateBaseValueFromCurrencyValue(
-                this.entity.CurrencyCode,
-                this.entity.TotalReqPrice.Value).Returns(147m);
+            this.EmployeeRepository.FindById(this.currentUserNumber).Returns(
+                new Employee
+                    {
+                        FullName = "Big Jimbo",
+                        Id = this.currentUserNumber,
+                        PhoneListEntry = new PhoneListEntry { EmailAddress = "bigjim@gmail " }
+                    });
+            this.EmployeeRepository.FindById(213).Returns(
+                new Employee
+                    {
+                        FullName = "stormZee",
+                        Id = this.currentUserNumber,
+                        PhoneListEntry = new PhoneListEntry { EmailAddress = "bigstormz@gmail" }
+                    });
 
-            this.MockPurchaseOrderReqsPack.AllowedToAuthorise(
-                "AUTH1",
-                this.authoriserUserNumber,
-               147m,
-                this.entity.DepartmentCode,
-                this.fromState).Returns(new AllowedToAuthoriseReqResult { Success = true, NewState = this.toState });
+            this.EmailService.SendEmail(
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                Arg.Any<IEnumerable<Dictionary<string, string>>>(),
+                Arg.Any<IEnumerable<Dictionary<string, string>>>(),
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                Arg.Any<Stream>(),
+                Arg.Any<string>());
 
-            this.EmployeeRepository.FindById(this.authoriserUserNumber).Returns(
-                new Employee { FullName = "Big Jimbo", Id = this.authoriserUserNumber });
-
-            this.Sut.Authorise(this.entity, new List<string>(), this.authoriserUserNumber);
+            this.result = this.Sut.SendAuthorisationRequestEmail(this.currentUserNumber, 213, this.entity);
         }
 
         [Test]
-        public void ShouldUpdateStateAndAuthorisedBy()
+        public void ShouldCallProxyWithCorrectParams()
         {
-            this.entity.AuthorisedBy.Id.Should().Be(this.authoriserUserNumber);
-            this.entity.State.Should().Be(this.toState);
+            this.EmailService.Received().SendEmail(
+                "bigstormz@gmail",
+                "stormZee",
+                Arg.Any<IEnumerable<Dictionary<string, string>>>(),
+                Arg.Any<IEnumerable<Dictionary<string, string>>>(),
+                "bigjim@gmail",
+                "Big Jimbo",
+                $"Purchase Order Req {this.entity.ReqNumber} requires authorisation",
+                Arg.Any<string>(),
+                Arg.Any<Stream>(),
+                string.Empty);
+        }
+
+        [Test]
+        public void ShouldReturnSuccess()
+        {
+            this.result.Success.Should().BeTrue();
+            this.result.Message.Should().Be("Email Sent");
         }
     }
 }

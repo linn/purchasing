@@ -28,7 +28,6 @@
             app.MapGet("/purchasing/purchase-orders/reqs/print", this.GetApp);
             app.MapGet("/purchasing/purchase-orders/reqs/{id:int}/print", this.GetApp);
             app.MapGet("/purchasing/purchase-orders/reqs/create", this.GetApp);
-
             app.MapGet("/purchasing/purchase-orders/reqs/application-state", this.GetReqApplicationState);
             app.MapGet("/purchasing/purchase-orders/reqs/{id:int}", this.GetReq);
             app.MapPut("/purchasing/purchase-orders/reqs/{id:int}", this.UpdateReq);
@@ -37,6 +36,9 @@
             app.MapPost("/purchasing/purchase-orders/reqs/email-for-authorisation", this.EmailForReqAuthorisation);
             app.MapPost("/purchasing/purchase-orders/reqs/email-for-finance", this.EmailForReqFinanceCheck);
             app.MapPost("/purchasing/purchase-orders/reqs/{id:int}/authorise", this.AuthoriseReq);
+            app.MapPost("/purchasing/purchase-orders/reqs/{id:int}/finance-authorise", this.FinanceAuthoriseReq);
+            app.MapPost("/purchasing/purchase-orders/reqs/{id:int}/turn-into-order", this.TurnIntoMiniOrder);
+            app.MapPost("/purchasing/purchase-orders/reqs/check-signing-limit-covers-po-auth", this.CheckIfSigningLimitCoversOrder);
             app.MapPost("/purchasing/purchase-orders/reqs", this.CreateReq);
         }
 
@@ -47,6 +49,39 @@
             IPurchaseOrderReqFacadeService purchaseOrderReqFacadeService)
         {
             var result = purchaseOrderReqFacadeService.Authorise(id, req.HttpContext.GetPrivileges(), req.HttpContext.User.GetEmployeeNumber());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task CheckIfSigningLimitCoversOrder(
+            HttpRequest req,
+            HttpResponse res,
+            int reqNumber,
+            IPurchaseOrderReqFacadeService purchaseOrderReqFacadeService)
+        {
+            var result = purchaseOrderReqFacadeService.CheckIfSigningLimitCoversOrder(reqNumber, req.HttpContext.User.GetEmployeeNumber());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task FinanceAuthoriseReq(
+            HttpRequest req,
+            HttpResponse res,
+            int id,
+            IPurchaseOrderReqFacadeService purchaseOrderReqFacadeService)
+        {
+            var result = purchaseOrderReqFacadeService.FinanceAuthorise(id, req.HttpContext.GetPrivileges(), req.HttpContext.User.GetEmployeeNumber());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task TurnIntoMiniOrder(
+            HttpRequest req,
+            HttpResponse res,
+            int id,
+            IPurchaseOrderReqFacadeService purchaseOrderReqFacadeService)
+        {
+            var result = purchaseOrderReqFacadeService.CreateMiniOrderFromReq(id, req.HttpContext.GetPrivileges(), req.HttpContext.User.GetEmployeeNumber());
 
             await res.Negotiate(result);
         }

@@ -6,7 +6,6 @@
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
-    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
     using NSubstitute;
 
@@ -14,13 +13,19 @@
 
     public class ContextBase
     {
-        protected IAuthorisationService MockAuthService { get; private set; }
-
-        protected IPurchaseOrderReqsPack MockPurchaseOrderReqsPack { get; private set; }
+        protected IEmailService EmailService { get; private set; }
 
         protected IRepository<Employee, int> EmployeeRepository { get; private set; }
 
-        protected IEmailService EmailService { get; private set; }
+        protected IAuthorisationService MockAuthService { get; private set; }
+
+        protected ICurrencyPack MockCurrencyPack { get; private set; }
+
+        protected IPurchaseOrderAutoOrderPack MockPurchaseOrderAutoOrderPack { get; private set; }
+
+        protected IPurchaseOrderReqsPack MockPurchaseOrderReqsPack { get; private set; }
+
+        protected IPurchaseOrdersPack MockPurchaseOrdersPack { get; private set; }
 
         protected IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey> MockReqsStateChangeRepository
         {
@@ -39,6 +44,9 @@
             this.EmailService = Substitute.For<IEmailService>();
             this.MockReqsStateChangeRepository =
                 Substitute.For<IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>>();
+            this.MockPurchaseOrderAutoOrderPack = Substitute.For<IPurchaseOrderAutoOrderPack>();
+            this.MockPurchaseOrdersPack = Substitute.For<IPurchaseOrdersPack>();
+            this.MockCurrencyPack = Substitute.For<ICurrencyPack>();
 
             this.Sut = new PurchaseOrderReqService(
                 "app.linn",
@@ -46,7 +54,10 @@
                 this.MockPurchaseOrderReqsPack,
                 this.EmployeeRepository,
                 this.EmailService,
-                this.MockReqsStateChangeRepository);
+                this.MockReqsStateChangeRepository,
+                this.MockPurchaseOrderAutoOrderPack,
+                this.MockPurchaseOrdersPack,
+                this.MockCurrencyPack);
         }
     }
 }
