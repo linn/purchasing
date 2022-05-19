@@ -2,6 +2,7 @@
 {
     using Linn.Common.Configuration;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
@@ -122,6 +123,7 @@
         public DbSet<LinnWeek> LinnWeeks { get; set; }
 
         public DbSet<CancelledOrderDetail> CancelledPurchaseOrderDetails { get; set; }
+        public DbSet<EdiOrder> EdiOrders { get; set; }
 
         public DbSet<StockLocator> StockLocators { get; set; }
         
@@ -197,6 +199,7 @@
             this.BuildCancelledPODetails(builder);
             this.BuildPurchaseOrderPostings(builder);
             this.BuildNominalAccounts(builder);
+            this.BuildEdiOrders(builder);
             this.BuildStockLocators(builder);
             this.BuildMrUsedOnView(builder);
             this.BuildPlRescheduleReasons(builder);
@@ -1281,6 +1284,16 @@
             entity.Property(e => e.ProductionRequirementForNonProduction).HasColumnName("PROD_REQT_FOR_NONPROD");
             entity.Property(e => e.RecommendedOrders).HasColumnName("RECOMMENDED_PURCH_ORDERS");
             entity.Property(e => e.RecommenedStock).HasColumnName("RECOMMENDED_STOCK");
+        }
+
+        private void BuildEdiOrders(ModelBuilder builder)
+        {
+            var entity = builder.Entity<EdiOrder>().ToTable("PL_EDI");
+            entity.HasKey(e => e.Id);
+            entity.Property(d => d.Id).HasColumnName("PLEDI_ID");
+            entity.Property(d => d.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(d => d.SupplierId).HasColumnName("SUPPLIER_ID");
+            entity.Property(d => d.SequenceNumber).HasColumnName("SEQUENCE_NUMBER");
         }
     }
 }

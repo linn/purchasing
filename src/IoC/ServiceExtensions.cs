@@ -14,6 +14,7 @@
     using Linn.Common.Proxy.LinnApps;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Forecasting;
     using Linn.Purchasing.Domain.LinnApps.Keys;
@@ -66,6 +67,7 @@
                 .AddTransient<IBuilder<MrpRunLog>, MrpRunLogResourceBuilder>()
                 .AddTransient<IBuilder<PurchaseOrderReqState>, PurchaseOrderReqStateResourceBuilder>()
                 .AddTransient<IBuilder<MrMaster>, MrMasterResourceBuilder>()
+                .AddTransient<IBuilder<EdiOrder>, EdiOrderResourceBuilder>()
                 .AddTransient<IBuilder<PurchaseOrderDelivery>, PurchaseOrderDeliveryResourceBuilder>()
                 .AddTransient<IBuilder<MrReport>, MrReportResourceBuilder>();
         }
@@ -111,6 +113,7 @@
                 .AddTransient<IPrefSupReceiptsReportFacadeService, PrefSupReceiptsReportFacadeService>()
                 .AddTransient<ISingleRecordFacadeResourceService<MrMaster, MrMasterResource>, MrMasterFacadeService>()
                 .AddTransient<IForecastingFacadeService, ForecastingFacadeService>()
+                .AddTransient<IEdiOrdersFacadeService, EdiOrdersFacadeService>()
                 .AddTransient<IMrUsedOnReportFacadeService, MrUsedOnReportFacadeService>()
                 .AddTransient<IPurchaseOrderDeliveryFacadeService, PurchaseOrderDeliveryFacadeService>()
                 .AddTransient<IMaterialRequirementsReportFacadeService, MaterialRequirementsReportFacadeService>();
@@ -149,6 +152,7 @@
                 .AddTransient<IWhatsInInspectionReportService, WhatsInInspectionReportService>()
                 .AddTransient<IPrefSupReceiptsReportService, PrefSupReceiptsReportService>()
                 .AddTransient<IForecastingService, ForecastingService>()
+                .AddTransient<IEdiOrderService, EdiOrderService>()
                 .AddTransient<IMrUsedOnReportService, MrUsedOnReportService>()
                 .AddTransient<IPurchaseOrderDeliveryService, PurchaseOrderDeliveryService>()
                 .AddTransient<IMaterialRequirementsReportService, MaterialRequirementsReportService>()
@@ -161,6 +165,7 @@
                 .AddTransient<IPurchaseOrderReqsPack, PurchaseOrderReqsPack>()
                 .AddTransient<IMrpLoadPack, MrpLoadPack>()
                 .AddTransient<IForecastingPack, ForecastingPack>()
+                .AddTransient<IEdiEmailPack, EdiEmailPack>()
                 .AddTransient<ISupplierPack, SupplierPack>()
                 .AddTransient<IPurchaseOrderAutoOrderPack, PurchaseOrderAutoOrderPack>();
         }

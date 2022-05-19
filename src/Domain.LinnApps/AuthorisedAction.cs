@@ -31,5 +31,7 @@
         public const string MrpRun = "purchasing.mrp.run-mrp";
 
         public const string ForecastingApplyPercentageChange = "purchasing.forecasting.apply-percentage-change";
+
+        public const string SendEdi = "purchasing.edi.send";
     }
 }

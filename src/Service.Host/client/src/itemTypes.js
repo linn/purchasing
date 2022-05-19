@@ -242,6 +242,14 @@ export const applyForecastingPercentageChange = new ItemType(
     '/purchasing/forecasting/apply-percentage-change'
 );
 
+export const ediOrders = new ItemType('ediOrders', 'EDI_ORDERS', '/purchasing/edi/orders');
+
+export const sendEdiEmail = new ItemType(
+    'sendEdiEmail',
+    'SEND_EDI_EMAIL',
+    '/purchasing/edi/orders'
+);
+
 export const mrReport = new ItemType('mrReport', 'MR_REPORT', '/purchasing/material-requirements');
 
 export const purchaseOrderDelivery = new ItemType(
