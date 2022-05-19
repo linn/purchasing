@@ -38,11 +38,6 @@ namespace Linn.Purchasing.Service.Host
             services.AddMessagingServices();
 
             services.AddCarter();
-            services.Configure<JsonOptions>(
-                options =>
-                    {
-                        options.SerializerOptions.IncludeFields = true;
-                    });
             services.AddLinnAuthentication(
                 options =>
                     {
