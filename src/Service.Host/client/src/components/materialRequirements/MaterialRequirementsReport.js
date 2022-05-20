@@ -67,7 +67,9 @@ function MaterialRequirementsReport() {
             dispatch(
                 mrReportActions.postByHref(mrReportItem.uri, {
                     partNumber: query?.partNumber,
-                    jobRef: query?.jobRef
+                    jobRef: query?.jobRef,
+                    typeOfReport: 'MR',
+                    partSelector: 'Select Parts'
                 })
             );
         } else {

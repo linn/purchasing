@@ -116,7 +116,7 @@ function MaterialRequirementsOptions() {
     const runReport = () => {
         const body = {
             typeOfReport: 'MR',
-            partsSelector: 'Select Parts',
+            partSelector: 'Select Parts',
             jobRef: mrMaster.jobRef,
             partNumbers: parts.map(p => p.id)
         };
