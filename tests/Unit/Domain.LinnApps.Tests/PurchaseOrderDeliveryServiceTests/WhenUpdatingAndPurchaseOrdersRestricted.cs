@@ -7,13 +7,14 @@
 
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Keys;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
     using NSubstitute;
 
     using NUnit.Framework;
 
-    public class WhenUpdatingAndNotAuthorised : ContextBase
+    public class WhenUpdatingAndPurchaseOrdersRestricted : ContextBase
     {
         private Action action;
 
@@ -21,11 +22,11 @@
         public void SetUp()
         {
             this.AuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
-                .Returns(false);
-
+                .Returns(true);
+            this.PurchaseLedgerMaster.GetRecord().Returns(new PurchaseLedgerMaster { OkToRaiseOrder = "N" });
             this.action = () => this.Sut.UpdateDelivery(
-                new PurchaseOrderDeliveryKey(), 
-                new PurchaseOrderDelivery(), 
+                new PurchaseOrderDeliveryKey(),
+                new PurchaseOrderDelivery(),
                 new PurchaseOrderDelivery(),
                 new List<string>());
         }
@@ -34,7 +35,7 @@
         public void ShouldThrowUnauthorisedActionException()
         {
             this.action.Should().Throw<UnauthorisedActionException>()
-                .WithMessage("You are not authorised to acknowledge orders.");
+                .WithMessage("Orders are currently restricted.");
         }
     }
 }

@@ -1,9 +1,9 @@
 ﻿namespace Linn.Purchasing.Resources.RequestResources
 {
-    public class PatchRequestResource<T>
+    public class PatchRequestResource<TResource>
     {
-        public T From { get; set; }
+        public TResource From { get; set; }
 
-        public T To { get; set; }
+        public TResource To { get; set; }
     }
 }

@@ -6,14 +6,14 @@
     using FluentAssertions;
 
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
-    using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
     using NSubstitute;
+    using NSubstitute.ReturnsExtensions;
 
     using NUnit.Framework;
 
-    public class WhenUpdatingAndNotAuthorised : ContextBase
+    public class WhenUpdatingDeliveriesAndOrderLineNotFound : ContextBase
     {
         private Action action;
 
@@ -21,20 +21,20 @@
         public void SetUp()
         {
             this.AuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
-                .Returns(false);
-
-            this.action = () => this.Sut.UpdateDelivery(
-                new PurchaseOrderDeliveryKey(), 
-                new PurchaseOrderDelivery(), 
-                new PurchaseOrderDelivery(),
+                .Returns(true);
+            this.PurchaseOrderRepository.FindById(1).ReturnsNull();
+            this.action = () => this.Sut.UpdateDeliveriesForOrderLine(
+                1,
+                1,
+                new List<PurchaseOrderDelivery>(),
                 new List<string>());
         }
 
         [Test]
-        public void ShouldThrowUnauthorisedActionException()
+        public void ShouldThrowException()
         {
-            this.action.Should().Throw<UnauthorisedActionException>()
-                .WithMessage("You are not authorised to acknowledge orders.");
+            this.action.Should().Throw<PurchaseOrderDeliveryException>()
+                .WithMessage("order line not found: 1 / 1.");
         }
     }
 }

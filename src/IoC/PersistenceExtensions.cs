@@ -122,7 +122,13 @@
                         ?.MrUsedOnView))
                 .AddTransient<IRepository<RescheduleReason, string>, EntityFrameworkRepository<RescheduleReason, string>>(
                     r => new EntityFrameworkRepository<RescheduleReason, string>(r.GetService<ServiceDbContext>()?.PlRescheduleReasons))
-                .AddTransient<IQueryRepository<MrHeader>, MrHeaderRepository>();
+                .AddTransient<IQueryRepository<MrHeader>, MrHeaderRepository>()
+                .AddTransient<ISingleRecordRepository<PurchaseLedgerMaster>, EntityFrameworkSingleRecordRepository<PurchaseLedgerMaster>>(
+                    r => new EntityFrameworkSingleRecordRepository<PurchaseLedgerMaster>(r.GetService<ServiceDbContext>()?.PurchaseLedgerMaster))
+                .AddTransient<IRepository<MiniOrder, int>, EntityFrameworkRepository<MiniOrder, int>>(
+                    r => new EntityFrameworkRepository<MiniOrder, int>(r.GetService<ServiceDbContext>()?.MiniOrders))
+                .AddTransient<IRepository<MiniOrderDelivery, MiniOrderDeliveryKey>, EntityFrameworkRepository<MiniOrderDelivery, MiniOrderDeliveryKey>>(
+                    r => new EntityFrameworkRepository<MiniOrderDelivery, MiniOrderDeliveryKey>(r.GetService<ServiceDbContext>()?.MiniOrdersDeliveries));
         }
     }
 }

@@ -13,7 +13,7 @@
 
     using NUnit.Framework;
 
-    public class WhenUpdatingAndNotAuthorised : ContextBase
+    public class WhenUpdatingDeliveriesAndUnauthorised : ContextBase
     {
         private Action action;
 
@@ -23,10 +23,10 @@
             this.AuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(false);
 
-            this.action = () => this.Sut.UpdateDelivery(
-                new PurchaseOrderDeliveryKey(), 
-                new PurchaseOrderDelivery(), 
-                new PurchaseOrderDelivery(),
+            this.action = () => this.Sut.UpdateDeliveriesForOrderLine(
+                1,
+                1,
+                new List<PurchaseOrderDelivery>(),
                 new List<string>());
         }
 
@@ -34,7 +34,7 @@
         public void ShouldThrowUnauthorisedActionException()
         {
             this.action.Should().Throw<UnauthorisedActionException>()
-                .WithMessage("You are not authorised to acknowledge orders.");
+                .WithMessage("You are not authorised to split deliveries");
         }
     }
 }

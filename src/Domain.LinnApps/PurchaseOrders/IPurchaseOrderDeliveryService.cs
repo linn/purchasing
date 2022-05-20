@@ -21,5 +21,11 @@
         BatchUpdateProcessResult BatchUpdateDeliveries(
             IEnumerable<PurchaseOrderDeliveryUpdate> changes,
             IEnumerable<string> privileges);
+
+        IEnumerable<PurchaseOrderDelivery> UpdateDeliveriesForOrderLine(
+            int orderNumber,
+            int orderLine,
+            IEnumerable<PurchaseOrderDelivery> updated,
+            IEnumerable<string> privileges);
     }
 }
