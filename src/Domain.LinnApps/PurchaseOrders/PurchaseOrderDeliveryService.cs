@@ -73,7 +73,7 @@
 
             if (!includeAcknowledged)
             {
-                result = result.Where(x => !x.AdvisedDate.HasValue);
+                result = result.Where(x => !x.DateAdvised.HasValue);
             }
 
             return result.OrderBy(x => x.OrderNumber);
@@ -100,11 +100,11 @@
             var miniOrderDelivery = this.miniOrderDeliveryRepository.FindBy(
                 x => x.OrderNumber == key.OrderNumber && x.DeliverySequence == key.DeliverySequence);
 
-            if (from.AdvisedDate != to.AdvisedDate)
+            if (from.DateAdvised != to.DateAdvised)
             {
-                entity.AdvisedDate = to.AdvisedDate;
-                miniOrder.AdvisedDeliveryDate = to.AdvisedDate;
-                miniOrderDelivery.AdvisedDate = to.AdvisedDate;
+                entity.DateAdvised = to.DateAdvised;
+                miniOrder.AdvisedDeliveryDate = to.DateAdvised;
+                miniOrderDelivery.AdvisedDate = to.DateAdvised;
             }
 
             if (from.RescheduleReason != to.RescheduleReason)
@@ -182,7 +182,7 @@
                 }
                 else
                 {
-                    entity.AdvisedDate = change.NewDateAdvised;
+                    entity.DateAdvised = change.NewDateAdvised;
                     entity.RescheduleReason = change.NewReason;
                     miniOrder.AdvisedDeliveryDate = change.NewDateAdvised;
                     miniOrderDelivery.AdvisedDate = change.NewDateAdvised;

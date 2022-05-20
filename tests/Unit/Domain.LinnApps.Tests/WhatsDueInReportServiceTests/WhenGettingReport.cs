@@ -39,9 +39,9 @@
                          && d.DeliverySeq.ToString() == this.result.GetGridTextValue(resultRow.RowIndex, 2));
 
                 this.result.GetGridTextValue(resultRow.RowIndex, 5).Should().Be(
-                    dataRow.AdvisedDate == null
-                        ? ((DateTime)dataRow.DateRequested).ToShortDateString() // should use DateRequested if AdvisedDate is null
-                        : ((DateTime)dataRow.AdvisedDate).ToShortDateString());
+                    dataRow.DateAdvised == null
+                        ? ((DateTime)dataRow.DateRequested).ToShortDateString() // should use DateRequested if DateAdvised is null
+                        : ((DateTime)dataRow.DateAdvised).ToShortDateString());
             }
         }
 

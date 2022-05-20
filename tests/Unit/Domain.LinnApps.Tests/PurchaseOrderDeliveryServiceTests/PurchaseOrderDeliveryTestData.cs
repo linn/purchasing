@@ -17,7 +17,7 @@
                            new PurchaseOrderDelivery
                                {
                                    OrderNumber = 123451,
-                                   AdvisedDate = null,
+                                   DateAdvised = null,
                                    PurchaseOrderDetail = new PurchaseOrderDetail
                                                              {
                                                                  PurchaseOrder = new PurchaseOrder
@@ -33,7 +33,7 @@
                            new PurchaseOrderDelivery
                                {
                                    OrderNumber = 123452,
-                                   AdvisedDate = DateTime.Today,
+                                   DateAdvised = DateTime.Today,
                                    PurchaseOrderDetail = new PurchaseOrderDetail
                                                              {
                                                                  PurchaseOrder = new PurchaseOrder
@@ -49,7 +49,7 @@
                            new PurchaseOrderDelivery
                                {
                                    OrderNumber = 123453,
-                                   AdvisedDate = null,
+                                   DateAdvised = null,
                                    PurchaseOrderDetail = new PurchaseOrderDetail
                                                              {
                                                                  PurchaseOrder = new PurchaseOrder
@@ -65,7 +65,7 @@
                            new PurchaseOrderDelivery
                                {
                                    OrderNumber = 123455,
-                                   AdvisedDate = DateTime.Today,
+                                   DateAdvised = DateTime.Today,
                                    PurchaseOrderDetail = new PurchaseOrderDetail
                                                              {
                                                                  PurchaseOrder = new PurchaseOrder
@@ -81,7 +81,7 @@
                            new PurchaseOrderDelivery
                                {
                                    OrderNumber = 123454,
-                                   AdvisedDate = null,
+                                   DateAdvised = null,
                                    PurchaseOrderDetail = new PurchaseOrderDetail
                                                              {
                                                                  PurchaseOrder = new PurchaseOrder
@@ -97,7 +97,7 @@
                            new PurchaseOrderDelivery
                                {
                                    OrderNumber = 223451,
-                                   AdvisedDate = null,
+                                   DateAdvised = null,
                                    PurchaseOrderDetail = new PurchaseOrderDetail
                                                              {
                                                                  PurchaseOrder = new PurchaseOrder
@@ -113,7 +113,7 @@
                            new PurchaseOrderDelivery
                                {
                                    OrderNumber = 223452,
-                                   AdvisedDate = DateTime.Today,
+                                   DateAdvised = DateTime.Today,
                                    PurchaseOrderDetail = new PurchaseOrderDetail
                                                              {
                                                                  PurchaseOrder = new PurchaseOrder
@@ -129,7 +129,7 @@
                            new PurchaseOrderDelivery
                                {
                                    OrderNumber = 223453,
-                                   AdvisedDate = null,
+                                   DateAdvised = null,
                                    PurchaseOrderDetail = new PurchaseOrderDetail
                                                              {
                                                                  PurchaseOrder = new PurchaseOrder
@@ -145,7 +145,7 @@
                            new PurchaseOrderDelivery
                                {
                                    OrderNumber = 223455,
-                                   AdvisedDate = DateTime.Today,
+                                   DateAdvised = DateTime.Today,
                                    PurchaseOrderDetail = new PurchaseOrderDetail
                                                              {
                                                                  PurchaseOrder = new PurchaseOrder
@@ -161,7 +161,7 @@
                            new PurchaseOrderDelivery
                                {
                                    OrderNumber = 223454,
-                                   AdvisedDate = null,
+                                   DateAdvised = null,
                                    PurchaseOrderDetail = new PurchaseOrderDetail
                                                              {
                                                                  PurchaseOrder = new PurchaseOrder

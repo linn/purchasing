@@ -24,7 +24,7 @@
                                      new PurchaseOrderDelivery
                                          {
                                              OurDeliveryQty = 100,
-                                             AdvisedDate = 28.March(1995)
+                                             DateAdvised = 28.March(1995)
                                          }
                                  };
             this.AuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
@@ -58,7 +58,7 @@
         {
             this.result.Count().Should().Be(1);
             this.result.First().OurDeliveryQty.Should().Be(100);
-            this.result.First().AdvisedDate.Should().Be(28.March(1995));
+            this.result.First().DateAdvised.Should().Be(28.March(1995));
         }
     }
 }

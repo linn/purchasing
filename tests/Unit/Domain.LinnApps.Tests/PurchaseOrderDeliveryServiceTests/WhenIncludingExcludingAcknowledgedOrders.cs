@@ -21,7 +21,7 @@
         public void ShouldOnlyReturnExactSupplierMatches()
         {
             Assert.IsTrue(
-                this.result.All(x => !x.AdvisedDate.HasValue));
+                this.result.All(x => !x.DateAdvised.HasValue));
         }
     }
 }

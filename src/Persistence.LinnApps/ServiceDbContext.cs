@@ -614,7 +614,7 @@
             entity.Property(o => o.Cancelled).HasColumnName("CANCELLED").HasMaxLength(1);
             entity.Property(o => o.OrderLine).HasColumnName("ORDER_LINE");
             entity.Property(o => o.DeliverySeq).HasColumnName("DELIVERY_SEQ");
-            entity.Property(o => o.AdvisedDate).HasColumnName("ADVISED_DATE");
+            entity.Property(o => o.DateAdvised).HasColumnName("ADVISED_DATE");
             entity.Property(o => o.DateRequested).HasColumnName("REQUESTED_DATE");
             entity.Property(o => o.OurDeliveryQty).HasColumnName("OUR_DELIVERY_QTY").HasMaxLength(19);
             entity.Property(o => o.OrderDeliveryQty).HasColumnName("ORDER_DELIVERY_QTY").HasMaxLength(19);
@@ -1316,7 +1316,7 @@
             entity.HasKey(a => new { a.OrderNumber, a.DeliverySeq});
             entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
             entity.Property(o => o.DeliverySeq).HasColumnName("DELIVERY_SEQ");
-            entity.Property(o => o.AdvisedDate).HasColumnName("ADVISED_DATE");
+            entity.Property(o => o.DateAdvised).HasColumnName("ADVISED_DATE");
         }
     }
 }

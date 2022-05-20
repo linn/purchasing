@@ -29,8 +29,8 @@
             DateTime fromDate, DateTime toDate, string orderBy, string vendorManager, int? supplier)
         {
             var result = this.deliveryRepository.FilterBy(
-                d => (d.AdvisedDate.HasValue 
-                          ? d.AdvisedDate >= fromDate && d.AdvisedDate < toDate 
+                d => (d.DateAdvised.HasValue 
+                          ? d.DateAdvised >= fromDate && d.DateAdvised < toDate 
                           : d.DateRequested >= fromDate && d.DateRequested < toDate)
                      && d.Cancelled == "N" 
                      && d.QuantityOutstanding > 0
@@ -50,11 +50,11 @@
                             {
                                 SupplierId = d.PurchaseOrderDetail.PurchaseOrder.SupplierId,
                                 PartNumber = d.PurchaseOrderDetail.Part.PartNumber,
-                                AdvisedDate = d.AdvisedDate,
+                                AdvisedDate = d.DateAdvised,
                                 CallOffDate = d.CallOffDate,
                                 DeliverySequence = d.DeliverySeq,
                                 DocumentType = d.PurchaseOrderDetail.PurchaseOrder.DocumentTypeName,
-                                ExpectedDate = d.AdvisedDate ?? d.DateRequested,
+                                ExpectedDate = d.DateAdvised ?? d.DateRequested,
                                 OrderLine = d.OrderLine,
                                 OrderNumber = d.OrderNumber,
                                 UnitPrice = d.BaseOurUnitPrice,

@@ -6,7 +6,7 @@
     {
         public string Cancelled { get; set; }
 
-        public DateTime? AdvisedDate { get; set; }
+        public DateTime? DateAdvised { get; set; }
 
         public DateTime? DateRequested { get; set; }
 

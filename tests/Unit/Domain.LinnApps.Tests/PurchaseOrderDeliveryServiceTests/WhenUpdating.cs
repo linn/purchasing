@@ -45,7 +45,7 @@
 
             this.toState = new PurchaseOrderDelivery
                                {
-                                   AdvisedDate = 10.March(2001),
+                                   DateAdvised = 10.March(2001),
                                    SupplierConfirmationComment = "COMMENT",
                                    RescheduleReason = "ADVISED",
                                    AvailableAtSupplier = "Y"
@@ -73,7 +73,7 @@
         [Test]
         public void ShouldUpdate()
         {
-            this.result.AdvisedDate.Should().Be(this.toState.AdvisedDate);
+            this.result.DateAdvised.Should().Be(this.toState.DateAdvised);
             this.result.SupplierConfirmationComment.Should().Be(this.toState.SupplierConfirmationComment);
             this.result.RescheduleReason.Should().Be(this.toState.RescheduleReason);
             this.result.AvailableAtSupplier.Should().Be(this.toState.AvailableAtSupplier);

@@ -62,7 +62,7 @@
                                                                                                        2021,
                                                                                                        11,
                                                                                                        1),
-                                                                                               AdvisedDate =
+                                                                                               DateAdvised =
                                                                                                    new DateTime(
                                                                                                        2021,
                                                                                                        12,

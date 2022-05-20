@@ -150,7 +150,7 @@
                                                                    DeliverySeq = d.DeliverySeq,
                                                                    OurDeliveryQty = d.OurDeliveryQty,
                                                                    Cancelled = d.Cancelled,
-                                                                   AdvisedDate =
+                                                                   DateAdvised =
                                                                        string.IsNullOrEmpty(d.DateAdvised)
                                                                            ? null
                                                                            : DateTime.Parse(d.DateAdvised),
@@ -194,7 +194,7 @@
         {
             return new PurchaseOrderDelivery
                        {
-                           AdvisedDate = string.IsNullOrEmpty(resource.DateAdvised) 
+                           DateAdvised = string.IsNullOrEmpty(resource.DateAdvised) 
                                              ? null : DateTime.Parse(resource.DateAdvised),
                            AvailableAtSupplier = resource.AvailableAtSupplier,
                            RescheduleReason = resource.RescheduleReason,
