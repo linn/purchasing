@@ -1315,13 +1315,13 @@
 
         private void BuildMiniOrderDeliveries(ModelBuilder builder)
         {
-            var entity = builder.Entity<PurchaseOrderDelivery>().ToTable("MINI_ORDER_DELIVERIES");
-            entity.HasKey(a => new { a.OrderNumber, a.DeliverySeq});
+            var entity = builder.Entity<MiniOrderDelivery>().ToTable("MINI_ORDER_DELIVERIES");
+            entity.HasKey(a => new { a.OrderNumber, a.DeliverySequence });
             entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
-            entity.Property(o => o.DeliverySeq).HasColumnName("DELIVERY_SEQ");
-            entity.Property(o => o.DateAdvised).HasColumnName("ADVISED_DATE");
+            entity.Property(o => o.DeliverySequence).HasColumnName("DELIVERY_SEQ");
+            entity.Property(o => o.AdvisedDate).HasColumnName("ADVISED_DATE");
         }
-        
+
         private void BuildEdiOrders(ModelBuilder builder)
         {
             var entity = builder.Entity<EdiOrder>().ToTable("PL_EDI");
