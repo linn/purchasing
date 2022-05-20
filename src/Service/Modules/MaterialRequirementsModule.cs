@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
-    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     using Carter;
@@ -16,7 +15,6 @@
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Routing;
 
     public class MaterialRequirementsModule : ICarterModule

@@ -238,6 +238,7 @@
             var entity = builder.Entity<Planner>().ToTable("PLANNERS");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id).HasColumnName("PLANNER");
+            entity.Property(e => e.ShowAsMrOption).HasColumnName("SHOW_AS_MR_OPTION").HasMaxLength(1).HasColumnType("VARCHAR2");
         }
 
         private void BuildAddresses(ModelBuilder builder)
@@ -1251,6 +1252,7 @@
             entity.Property(e => e.VendorManager).HasColumnName("VENDOR_MANAGER").HasColumnType("VARCHAR2");
             entity.Property(e => e.VendorManagerInitials).HasColumnName("VM_INITIALS");
             entity.Property(e => e.PartId).HasColumnName("PART_ID");
+            entity.Property(e => e.Planner).HasColumnName("PLANNER");
             entity.HasMany(s => s.MrDetails).WithOne().HasForeignKey(c => new { c.JobRef, c.PartNumber });
         }
 

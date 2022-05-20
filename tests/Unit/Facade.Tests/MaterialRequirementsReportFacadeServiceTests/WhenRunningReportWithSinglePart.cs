@@ -32,12 +32,18 @@
             this.partNumber = "P1";
             this.requestResource = new MrRequestResource
                                        {
-                                           JobRef = this.jobRef, PartNumber = this.partNumber, PartNumbers = null
+                                           JobRef = this.jobRef,
+                                           TypeOfReport = "MR",
+                                           PartSelector = null,
+                                           PartNumber = this.partNumber,
+                                           PartNumbers = null
                                        };
             this.privileges = new List<string>();
 
             this.MaterialRequirementsReportService.GetMaterialRequirements(
                     this.jobRef,
+                    this.requestResource.TypeOfReport,
+                    this.requestResource.PartSelector,
                     Arg.Is<IList<string>>(a => a.Contains("P1") && a.Count == 1))
                 .Returns(
                     new MrReport
@@ -56,6 +62,8 @@
         {
             this.MaterialRequirementsReportService.Received().GetMaterialRequirements(
                 this.jobRef,
+                this.requestResource.TypeOfReport,
+                this.requestResource.PartSelector,
                 Arg.Is<IList<string>>(a => a.Contains("P1") && a.Count == 1));
         }
 

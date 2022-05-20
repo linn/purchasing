@@ -26,7 +26,11 @@
                             ? request.PartNumbers
                             : new List<string> { request.PartNumber };
 
-            var report = this.materialRequirementsReportService.GetMaterialRequirements(request.JobRef, parts);
+            var report = this.materialRequirementsReportService.GetMaterialRequirements(
+                request.JobRef,
+                request.TypeOfReport,
+                request.PartSelector,
+                parts);
 
             return new SuccessResult<MrReportResource>((MrReportResource)this.builder.Build(report, privileges));
         }

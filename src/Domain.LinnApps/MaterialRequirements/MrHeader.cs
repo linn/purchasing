@@ -76,6 +76,8 @@
 
         public int PartId { get; set; }
 
+        public int? Planner { get; set; }
+
         public IEnumerable<MrDetail> MrDetails { get; set; }
     }
 }

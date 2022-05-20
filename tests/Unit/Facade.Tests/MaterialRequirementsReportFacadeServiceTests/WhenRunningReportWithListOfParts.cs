@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
 
     using FluentAssertions;
 
@@ -29,12 +30,18 @@
             this.jobRef = "ABC";
             this.requestResource = new MrRequestResource
                                        {
-                                           JobRef = this.jobRef, PartNumber = null, PartNumbers = new List<string> { "A", "B" }
+                                           JobRef = this.jobRef,
+                                           TypeOfReport = "MR",
+                                           PartSelector = "Select Parts",
+                                           PartNumber = null,
+                                           PartNumbers = new List<string> { "A", "B" }
                                        };
             this.privileges = new List<string>();
 
             this.MaterialRequirementsReportService.GetMaterialRequirements(
                     this.jobRef,
+                    this.requestResource.TypeOfReport,
+                    this.requestResource.PartSelector,
                     Arg.Is<IList<string>>(a => a.Contains("A") && a.Contains("B")))
                 .Returns(
                     new MrReport
@@ -52,7 +59,9 @@
         public void ShouldCallService()
         {
             this.MaterialRequirementsReportService.Received().GetMaterialRequirements(
-                this.jobRef,
+                this.jobRef, 
+                this.requestResource.TypeOfReport,
+                this.requestResource.PartSelector,
                 Arg.Is<IList<string>>(a => a.Contains("A") && a.Contains("B")));
         }
 
