@@ -2,18 +2,17 @@ import React, { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import {
+    InputField,
     Page,
     Dropdown,
     Title,
     collectionSelectorHelpers,
-    Loading,
-    Typeahead
+    Loading
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import history from '../../history';
 import config from '../../config';
-import { suppliers, vendorManagers } from '../../itemTypes';
-import suppliersActions from '../../actions/suppliersActions';
+import { vendorManagers } from '../../itemTypes';
 import vendorManagersActions from '../../actions/vendorManagersActions';
 
 function ShortagesReportOptions() {
@@ -28,20 +27,8 @@ function ShortagesReportOptions() {
         dispatch(vendorManagersActions.fetch());
     }, [dispatch]);
 
-    const suppliersSearchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(state[suppliers.item])
-    )?.map(c => ({
-        id: c.id,
-        name: c.id.toString(),
-        description: c.name
-    }));
-    const suppliersSearchLoading = useSelector(state =>
-        collectionSelectorHelpers.getSearchLoading(state.suppliers)
-    );
-
     const [options, setOptions] = useState({
         purchaseLevel: 3,
-        supplier: 0,
         vendorManager: 'ALL'
     });
 
@@ -54,7 +41,6 @@ function ShortagesReportOptions() {
             pathname: `/purchasing/reports/shortages/report`,
             search:
                 `?purchaseLevel=${options.purchaseLevel}` +
-                `&supplier=${options.supplier}` +
                 `&vendorManager=${options.vendorManager}`
         });
 
@@ -68,7 +54,7 @@ function ShortagesReportOptions() {
                     </Grid>
                 ) : (
                     <>
-                        <Grid item xs={3}>
+                        <Grid item xs={5}>
                             <Dropdown
                                 label="Vendor Manager  (leave blank for all)"
                                 propertyName="vendorManager"
@@ -81,22 +67,14 @@ function ShortagesReportOptions() {
                                 allowNoValue
                             />
                         </Grid>
-                        <Grid item xs={3}>
-                            <Typeahead
-                                label="Supplier (leave blank for all)"
-                                title="Search for a supplier"
-                                onSelect={newValue => handleOptionChange('supplier', newValue.id)}
-                                items={suppliersSearchResults}
-                                loading={suppliersSearchLoading}
-                                fetchItems={searchTerm =>
-                                    dispatch(suppliersActions.search(searchTerm))
-                                }
-                                clearSearch={() => dispatch(suppliersActions.clearSearch)}
-                                value={options.supplier}
-                                modal
-                                links={false}
-                                debounce={1000}
-                                minimumSearchTermLength={2}
+                        <Grid item xs={5}>
+                            <InputField
+                                propertyName="purchaseLevel"
+                                label="Purchase Level"
+                                type="number"
+                                fullWidth
+                                value={options.purchaseLevel}
+                                onChange={handleOptionChange}
                             />
                         </Grid>
                         <Grid item xs={12}>

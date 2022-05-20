@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Reports
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -12,24 +13,18 @@
         private readonly IRepository<ShortagesEntry, string> shortagesEntryView;
 
         public ShortagesReportService(
-            IRepository<ShortagesEntry, string> shortagesEntryView,
-            IReportingHelper reportingHelper)
+            IRepository<ShortagesEntry, string> shortagesEntryView)
         {
             this.shortagesEntryView = shortagesEntryView;
         }
 
         public IEnumerable<ResultsModel> GetReport(
             int purchaseLevel,
-            int supplier,
             string vendorManager)
         {
-            var results = this.shortagesEntryView.FilterBy(x =>
-                // you might need to pull in preferred supplier from part or something?
-                // It's not mapped at the mo so breaks
-                // maybe ask or get someone to check the old report
-                // (x.SupplierId == supplier) 
-                (x.PurchaseLevel.HasValue && purchaseLevel <= x.PurchaseLevel.Value)
-            && (vendorManager == "ALL" || vendorManager == x.VendorManagerCode)).ToList();
+            
+            var results = this.shortagesEntryView.FilterBy(x => (Convert.ToInt32(x.PurchaseLevel) <= purchaseLevel) &&
+                                                                            (vendorManager == "ALL" || vendorManager == x.VendorManagerCode)).ToList();
 
             var returnResults = new List<ResultsModel>();
 
@@ -42,11 +37,18 @@
 
                 model.ReportTitle = new NameModel(
                     $"Purchasing shortages planner");
-
                 model.RowHeader = "Planner";
 
                 var distinctVendorManagers = shortagesForPlanner.DistinctBy(x => x.VendorManagerCode);
                 var distinctLevels = shortagesForPlanner.DistinctBy(x => x.PurchaseLevel);
+
+                foreach (var level in distinctLevels)
+                {
+                    model.AddColumn(
+                        $"PurchaseLevel{level.PurchaseLevel}",
+                        level.PurchaseLevel.ToString(),
+                        GridDisplayType.Value);
+                }
 
                 foreach (var vendorManagerRow in distinctVendorManagers)
                 {
@@ -57,10 +59,7 @@
 
                     foreach (var level in distinctLevels)
                     {
-                        model.AddColumn($"PurchaseLevel{level.PurchaseLevel}", level.PurchaseLevel.ToString(), GridDisplayType.Value);
-
                         var numberOfShortagesForLevel = shortagesForPlanner.Count(x => x.PurchaseLevel == level.PurchaseLevel && x.VendorManagerCode == vendorManagerRow.VendorManagerCode);
-
                         model.SetGridValue(row.RowIndex, model.ColumnIndex($"PurchaseLevel{level.PurchaseLevel}"), numberOfShortagesForLevel);
                     }
                 }

@@ -68,7 +68,8 @@
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<MrpRunLogResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<MrpRunLogResource>>()
                 .AddTransient<IHandler, JsonResultHandler<WhatsInInspectionReportResource>>()
-                .AddTransient<IHandler, JsonResultHandler<MrMasterResource>>();
+                .AddTransient<IHandler, JsonResultHandler<MrMasterResource>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<ReportReturnResource>>>();
         }
     }
 }

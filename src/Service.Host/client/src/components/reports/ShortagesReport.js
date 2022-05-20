@@ -48,7 +48,6 @@ function ShortagesReport() {
                             href={
                                 `${config.appRoot}/purchasing/reports/shortages/report` +
                                 `?purchaseLevel=${options.purchaseLevel}` +
-                                `&supplier=${options.supplier}` +
                                 `&vendorManager=${options.vendorManager}`
                             }
                         />
@@ -61,15 +60,16 @@ function ShortagesReport() {
                         <Loading />
                     ) : (
                         <>
-                            <ReportTable
-                                reportData={reportData}
-                                title={reportData.title}
-                                showTitle
-                                showTotals
-                                placeholderRows={4}
-                                placeholderColumns={4}
-                            />
-                            <p>Total number of suppliers: {reportData?.results?.length}</p>
+                            {reportData.map(report => (
+                                <ReportTable
+                                    reportData={report.reportResults[0]}
+                                    title={report.reportResults[0].title}
+                                    showTitle
+                                    showTotals
+                                    placeholderRows={4}
+                                    placeholderColumns={4}
+                                />
+                            ))}
                         </>
                     )}
                 </Grid>

@@ -35,20 +35,18 @@
                                         VendorManagerName = "Test",
                                         PartNumber = "Test Part",
                                         PlannerName = "Test Planner",
-                                        VendorManagerCode = "T",
+                                        VendorManagerCode = "R",
                                         Planner = 1,
-                                        PurchaseLevel = 1,
-                                        SupplierId = 123
+                                        PurchaseLevel = "1"
                                     },
                                 new ShortagesEntry()
                                     {
                                         VendorManagerName = "Test",
                                         PartNumber = "Second Test Part",
                                         PlannerName = "Second Test Planner",
-                                        VendorManagerCode = "T",
+                                        VendorManagerCode = "S",
                                         Planner = 1,
-                                        PurchaseLevel = 1,
-                                        SupplierId = 456
+                                        PurchaseLevel = "1"
                                     },
                                 new ShortagesEntry()
                                     {
@@ -57,8 +55,7 @@
                                         PlannerName = "Test Planner",
                                         VendorManagerCode = "T",
                                         Planner = 1,
-                                        PurchaseLevel = 1,
-                                        SupplierId = 123
+                                        PurchaseLevel = "1"
                                     },
                                 new ShortagesEntry()
                                     {
@@ -67,8 +64,7 @@
                                         PlannerName = "Test Planner",
                                         VendorManagerCode = "T",
                                         Planner = 1,
-                                        PurchaseLevel = 5,
-                                        SupplierId = 456
+                                        PurchaseLevel = "5"
                                     }
                             };
             this.ShortagesRepository = Substitute.For<IRepository<ShortagesEntry, string>>();
@@ -76,7 +72,7 @@
                 .Returns(this.Data.AsQueryable());
 
             var reportingHelper = new ReportingHelper();
-            this.Sut = new ShortagesReportService(this.ShortagesRepository, reportingHelper);
+            this.Sut = new ShortagesReportService(this.ShortagesRepository);
         }
     }
 }

@@ -32,15 +32,13 @@
         private async Task GetReport(
             HttpRequest req,
             HttpResponse res,
-            int purchaseLevel,
-            int supplier,
+            string purchaseLevel, 
             string vendorManager,
             IShortagesReportFacadeService reportFacadeService)
         {
             var options = new ShortagesReportRequestResource
                               {
                                   PurchaseLevel = purchaseLevel,
-                                  Supplier = supplier,
                                   VendorManager = vendorManager
                               };
 

@@ -4,11 +4,11 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Reporting.Models;
+    using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Resources.RequestResources;
 
     public interface IShortagesReportFacadeService
     {
-        public IResult<IEnumerable<ResultsModel>> GetReport(ShortagesReportRequestResource options);
+        public IResult<IEnumerable<ReportReturnResource>> GetReport(ShortagesReportRequestResource options);
     }
 }
-

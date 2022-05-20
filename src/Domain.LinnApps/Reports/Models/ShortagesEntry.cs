@@ -2,7 +2,7 @@
 {
     public class ShortagesEntry
     {
-        public int? Planner { get; set; }
+        public int Planner { get; set; }
 
         public string PlannerName { get; set; }
 
@@ -12,8 +12,6 @@
 
         public string VendorManagerName { get; set; }
 
-        public int? PurchaseLevel { get; set; }
-
-        //public int? SupplierId { get; set; }
+        public string PurchaseLevel { get; set; }
     }
 }

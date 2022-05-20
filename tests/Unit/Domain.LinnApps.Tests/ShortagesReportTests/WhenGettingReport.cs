@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
 
     using FluentAssertions;
@@ -20,7 +21,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.results = this.Sut.GetReport(3, 0, "ALL");
+            this.results = this.Sut.GetReport(3, "ALL");
         }
 
 
@@ -34,6 +35,7 @@
         public void ShouldReturnData()
         {
             this.results.Should().HaveCount(2);
+            this.results.FirstOrDefault().ReportTitle.DisplayValue.Should().Be("Purchasing shortages planner");
         }
     }
 }
