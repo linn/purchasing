@@ -5,6 +5,7 @@ import {
     itemSelectorHelpers,
     Loading,
     Typeahead,
+    Dropdown,
     collectionSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
@@ -16,9 +17,13 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import mrMasterActions from '../../actions/mrMasterActions';
-import { mrMaster as mrMasterItemType } from '../../itemTypes';
+import {
+    mrMaster as mrMasterItemType,
+    mrReportOptions as mrReportOptionsItemType
+} from '../../itemTypes';
 import partsActions from '../../actions/partsActions';
 import partActions from '../../actions/partActions';
+import mrReportOptionsActions from '../../actions/mrReportOptionsActions';
 
 import history from '../../history';
 
@@ -28,9 +33,16 @@ function MaterialRequirementsOptions() {
     const [parts, setParts] = useState([]);
     const [showMessage, setShowMessage] = useState(false);
     const [message, setMessage] = useState(null);
+    const [partSelector, setPartSelector] = useState('Select Parts');
     const mrMaster = useSelector(state => itemSelectorHelpers.getItem(state.mrMaster));
     const mrMasterLoading = useSelector(state =>
         itemSelectorHelpers.getItemLoading(state.mrMaster)
+    );
+    const mrReportOptions = useSelector(state =>
+        itemSelectorHelpers.getItem(state.mrReportOptions)
+    );
+    const mrReportOptionsLoading = useSelector(state =>
+        itemSelectorHelpers.getItemLoading(state.mrReportOptions)
     );
 
     const partsSearchResults = useSelector(state =>
@@ -77,6 +89,10 @@ function MaterialRequirementsOptions() {
 
     const dispatch = useDispatch();
     useEffect(() => dispatch(mrMasterActions.fetchByHref(mrMasterItemType.uri)), [dispatch]);
+    useEffect(
+        () => dispatch(mrReportOptionsActions.fetchByHref(mrReportOptionsItemType.uri)),
+        [dispatch]
+    );
 
     useEffect(() => {
         if (selectedPartDetails) {
@@ -116,7 +132,7 @@ function MaterialRequirementsOptions() {
     const runReport = () => {
         const body = {
             typeOfReport: 'MR',
-            partSelector: 'Select Parts',
+            partSelector,
             jobRef: mrMaster.jobRef,
             partNumbers: parts.map(p => p.id)
         };
@@ -142,8 +158,8 @@ function MaterialRequirementsOptions() {
         }
     ];
 
-    const handleSetTypeaheadPart = (val, val3) => {
-        setTypeaheadPart(val3);
+    const handleSetTypeaheadPart = (_, part) => {
+        setTypeaheadPart(part);
     };
 
     return (
@@ -158,6 +174,21 @@ function MaterialRequirementsOptions() {
                     ) : (
                         <Typography variant="subtitle1">Jobref: {mrMaster?.jobRef}</Typography>
                     )}
+                </Grid>
+                <Grid item xs={12}>
+                    <Dropdown
+                        propertyName="Parts Options"
+                        label="Parts Options"
+                        value={partSelector}
+                        items={mrReportOptions?.partSelectorOptions
+                            ?.sort((a, b) => a.displaySequence - b.displaySequence)
+                            .map(e => ({
+                                displayText: e.displayText,
+                                id: e.option
+                            }))}
+                        optionsLoading={mrReportOptionsLoading}
+                        onChange={(_, value) => setPartSelector(value)}
+                    />
                 </Grid>
                 <Grid item xs={6}>
                     <Typeahead
@@ -197,7 +228,7 @@ function MaterialRequirementsOptions() {
                     <Button
                         variant="outlined"
                         onClick={runReport}
-                        disabled={mrMasterLoading || selectectPartLoading}
+                        disabled={mrMasterLoading || selectectPartLoading || mrReportOptionsLoading}
                     >
                         Run Report
                     </Button>

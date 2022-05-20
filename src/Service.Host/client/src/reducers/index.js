@@ -74,6 +74,7 @@ import purchaseOrderDelivery from './purchaseOrderDelivery';
 import purchaseOrderDeliveries from './purchaseOrderDeliveries';
 import batchPurchaseOrderDeliveriesUpload from './batchPurchaseOrderDeliveriesUpload';
 import mrReport from './mrReport';
+import mrReportOptions from './mrReportOptions';
 import pOReqCheckIfCanAuthOrder from './pOReqCheckIfCanAuthOrder';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
@@ -98,6 +99,7 @@ const rootReducer = history =>
         mrMaster,
         mrpRunLog,
         mrReport,
+        mrReportOptions,
         mrUsedOnReport,
         nominals,
         openDebitNotes,

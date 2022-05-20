@@ -251,6 +251,11 @@ export const sendEdiEmail = new ItemType(
 );
 
 export const mrReport = new ItemType('mrReport', 'MR_REPORT', '/purchasing/material-requirements');
+export const mrReportOptions = new ItemType(
+    'mrReportOptions',
+    'MR_REPORT_OPTIONS',
+    '/purchasing/material-requirements/options'
+);
 
 export const purchaseOrderDelivery = new ItemType(
     'purchaseOrderDelivery',
