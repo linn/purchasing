@@ -97,9 +97,25 @@
             }
 
             this.UpdateOrderProperties(current, updated);
-
+            this.UpdateDetails(current.Details, updated.Details);
             // Update pl_order_postings? Or just on create? todo investigate
             return current;
+        }
+
+        private void UpdateDetails(ICollection<PurchaseOrderDetail> currentDetails, ICollection<PurchaseOrderDetail> updatedDetails)
+        {
+            foreach (var detail in updatedDetails)
+            {
+                var currentDetail = currentDetails.FirstOrDefault(x => x.Line == detail.Line);
+                if (currentDetail != null)
+                {
+                    this.UpdateDetailProperties(currentDetail, detail);
+                }
+                else
+                {
+                    currentDetails.Add(detail);
+                }
+            }
         }
 
         private void UpdateOrderProperties(PurchaseOrder current, PurchaseOrder updated)
