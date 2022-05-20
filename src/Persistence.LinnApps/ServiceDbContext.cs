@@ -1319,7 +1319,7 @@
             entity.HasKey(a => new { a.OrderNumber, a.DeliverySequence });
             entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
             entity.Property(o => o.DeliverySequence).HasColumnName("DELIVERY_SEQ");
-            entity.Property(o => o.DeliverySequence).HasColumnName("ADVISED_DATE");
+            entity.Property(o => o.AdvisedDate).HasColumnName("ADVISED_DATE");
         }
 
         private void BuildEdiOrders(ModelBuilder builder)
