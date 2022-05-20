@@ -9,5 +9,7 @@
             string requestTypeOfReport,
             string requestPartSelector,
             IEnumerable<string> parts);
+
+        MrReportOptions GetOptions();
     }
 }

@@ -32,6 +32,7 @@
             app.MapGet("/purchasing/material-requirements", this.GetApp);
             app.MapGet("/purchasing/material-requirements/report", this.GetApp);
             app.MapPost("/purchasing/material-requirements", this.GetMaterialRequirements);
+            app.MapGet("/purchasing/material-requirements/options", this.GetMaterialRequirementsOptions);
         }
 
         private async Task RunMrp(
@@ -107,6 +108,15 @@
         {
             var result = facadeService.GetMaterialRequirements(request, req.HttpContext.GetPrivileges());
 
+            await res.Negotiate(result);
+        }
+
+        private async Task GetMaterialRequirementsOptions(
+            HttpRequest req,
+            HttpResponse res,
+            IMaterialRequirementsReportFacadeService facadeService)
+        {
+            var result = facadeService.GetOptions(req.HttpContext.GetPrivileges());
             await res.Negotiate(result);
         }
     }

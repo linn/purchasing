@@ -8,5 +8,7 @@
     public interface IMaterialRequirementsReportFacadeService
     {
         IResult<MrReportResource> GetMaterialRequirements(MrRequestResource request, IEnumerable<string> privileges);
+
+        IResult<MrReportOptionsResource> GetOptions(IEnumerable<string> privileges);
     }
 }

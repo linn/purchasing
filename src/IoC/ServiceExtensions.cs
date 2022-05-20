@@ -69,7 +69,8 @@
                 .AddTransient<IBuilder<MrMaster>, MrMasterResourceBuilder>()
                 .AddTransient<IBuilder<EdiOrder>, EdiOrderResourceBuilder>()
                 .AddTransient<IBuilder<PurchaseOrderDelivery>, PurchaseOrderDeliveryResourceBuilder>()
-                .AddTransient<IBuilder<MrReport>, MrReportResourceBuilder>();
+                .AddTransient<IBuilder<MrReport>, MrReportResourceBuilder>()
+                .AddTransient<IBuilder<MrReportOptions>, MrReportOptionsResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
