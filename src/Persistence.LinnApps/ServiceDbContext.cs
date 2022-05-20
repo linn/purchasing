@@ -639,7 +639,7 @@
             entity.Property(o => o.RescheduleReason).HasColumnName("RESCHEDULE_REASON").HasMaxLength(20);
             entity.Property(o => o.AvailableAtSupplier).HasColumnName("AVAILABLE_AT_SUPPLIER").HasMaxLength(1);
             entity.Property(o => o.FilCancelled).HasColumnName("FIL_CANCELLED").HasMaxLength(1);
-            entity.Property(o => o.CallOffRef).HasColumnName("CALL_OF_REF").HasMaxLength(50);
+            entity.Property(o => o.CallOffRef).HasColumnName("CALL_OFF_REF").HasMaxLength(50);
             entity.Property(o => o.QtyPassedForPayment).HasColumnName("QTY_PASSED_FOR_PAYMENT");
         }
 
