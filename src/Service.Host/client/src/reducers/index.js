@@ -58,6 +58,7 @@ import purchaseOrders from './purchaseOrders';
 import whatsDueInReport from './whatsDueInReport';
 import purchaseOrderReqStates from './purchaseOrderReqStates';
 import outstandingPoReqsReport from './outstandingPoReqsReport';
+import sendEdiEmail from './sendEdiEmail';
 import sendPurchaseOrderReqEmail from './sendPurchaseOrderReqEmail';
 import sendPurchaseOrderReqAuthEmail from './sendPurchaseOrderReqAuthEmail';
 import sendPurchaseOrderReqFinanceEmail from './sendPurchaseOrderReqFinanceEmail';
@@ -67,11 +68,13 @@ import mrpRunLog from './mrpRunLog';
 import runMrp from './runMrp';
 import mrMaster from './mrMaster';
 import applyForecastingPercentageChange from './applyForecastingPercentageChange';
+import ediOrders from './ediOrders';
 import mrUsedOnReport from './mrUsedOnReport';
 import purchaseOrderDelivery from './purchaseOrderDelivery';
 import purchaseOrderDeliveries from './purchaseOrderDeliveries';
 import batchPurchaseOrderDeliveriesUpload from './batchPurchaseOrderDeliveriesUpload';
 import mrReport from './mrReport';
+import pOReqCheckIfCanAuthOrder from './pOReqCheckIfCanAuthOrder';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -89,6 +92,7 @@ const rootReducer = history =>
         currencies,
         deliveryAddresses,
         departments,
+        ediOrders,
         employees,
         manufacturers,
         mrMaster,
@@ -106,12 +110,13 @@ const rootReducer = history =>
         partCategories,
         partPriceConversions,
         parts,
+        partsReceivedReport,
         partSupplier,
         partSuppliers,
         planners,
         plCreditDebitNote,
         plCreditDebitNotes,
-        partsReceivedReport,
+        pOReqCheckIfCanAuthOrder,
         preferredSupplierChange,
         prefSupReceiptsReport,
         priceChangeReasons,
@@ -125,6 +130,7 @@ const rootReducer = history =>
         putSupplierOnHold,
         router: connectRouter(history),
         runMrp,
+        sendEdiEmail,
         sendPlNoteEmail,
         sendPurchaseOrderReqEmail,
         sendPurchaseOrderReqAuthEmail,

@@ -3,7 +3,6 @@ import { useMediaQuery } from 'react-responsive';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import { useSelector, useDispatch } from 'react-redux';
-//import { Decimal } from 'decimal.js';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { useParams } from 'react-router-dom';
@@ -16,13 +15,9 @@ import Close from '@mui/icons-material/Close';
 import PrintIcon from '@mui/icons-material/Print';
 import Email from '@mui/icons-material/Email';
 import Send from '@mui/icons-material/Send';
-//import Alert from '@mui/material/Alert';
-// import AlertTitle from '@mui/material/AlertTitle';
-// import Collapse from '@mui/material/Collapse';
 import { makeStyles } from '@mui/styles';
 import {
     Page,
-    //SaveBackCancelButtons,
     collectionSelectorHelpers,
     Typeahead,
     InputField,
@@ -35,14 +30,13 @@ import {
     getItemError,
     ErrorCard,
     utilities
-    //processSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import currenciesActions from '../../actions/currenciesActions';
 import employeesActions from '../../actions/employeesActions';
 import nominalsActions from '../../actions/nominalsActions';
 //import countriesActions from '../../actions/countriesActions';
 import suppliersActions from '../../actions/suppliersActions';
-//import partsActions from '../../actions/partsActions';
+// import partsActions from '../../actions/partsActions';
 import history from '../../history';
 import config from '../../config';
 import purchaseOrderActions from '../../actions/purchaseOrderActions';
@@ -131,15 +125,7 @@ function PurchaseOrderUtility({ creating }) {
         itemSelectorHelpers.getSnackbarVisible(state.purchaseOrderReq)
     );
 
-    // const authEmailMessageVisible = useSelector(state =>
-    //     processSelectorHelpers.getMessageVisible(state[sendPurchaseOrderReqAuthEmail.item])
-    // );
-
-    // const authEmailMessage = useSelector(state =>
-    //     processSelectorHelpers.getMessageText(state[sendPurchaseOrderReqAuthEmail.item])
-    // );
-
-    //const [editStatus, setEditStatus] = useState('view');
+    // const [editStatus, setEditStatus] = useState('view');
     const [authEmailDialogOpen, setAuthEmailDialogOpen] = useState(false);
     const [employeeToEmail, setEmployeeToEmail] = useState();
 

@@ -146,6 +146,7 @@
                 yield return new LinkResource { Rel = "edit", Href = this.GetLocation(model) };
                 yield return new LinkResource { Rel = "cancel", Href = $"{this.GetLocation(model)}/cancel" };
                 yield return new LinkResource { Rel = "authorise", Href = $"{this.GetLocation(model)}/authorise" };
+                yield return new LinkResource { Rel = "check-signing-limit-covers", Href = "/purchasing/purchase-orders/check-signing-limit-covers-po-auth" };
 
                 if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderReqFinanceCheck, privileges))
                 {
@@ -157,7 +158,12 @@
 
                 if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, privileges))
                 {
-                    yield return new LinkResource { Rel = "create-purchase-order", Href = this.GetLocation(model) };
+                    yield return new LinkResource { Rel = "turn-req-into-purchase-order", Href = $"{this.GetLocation(model)}/turn-into-order" };
+                }
+
+                if (model.OrderNumber.HasValue)
+                {
+                    yield return new LinkResource { Rel = "view-purchase-order", Href = $"/purchasing/purchase-orders/{model.OrderNumber.Value}" };
                 }
             }
 
