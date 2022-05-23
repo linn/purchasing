@@ -27,5 +27,9 @@
             int orderLine,
             IEnumerable<PurchaseOrderDeliveryResource> resource,
             IEnumerable<string> privileges);
+
+        IResult<IEnumerable<PurchaseOrderDeliveryResource>> GetDeliveriesForDetail(
+            int orderNumber,
+            int orderLine);
     }
 }

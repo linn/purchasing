@@ -48,7 +48,8 @@
             string supplierSearchTerm,
             string orderNumberSearchTerm,
             bool includeAcknowledged,
-            bool? exactOrderNumber = false)
+            bool? exactOrderNumber = false,
+            int? orderLine = null)
         {
             var result = this.repository.FindAll();
             if (!string.IsNullOrEmpty(supplierSearchTerm))
@@ -69,6 +70,10 @@
                 result = exactOrderNumber.GetValueOrDefault() 
                              ? result.Where(x => x.OrderNumber.ToString().Equals(orderNumberSearchTerm)) 
                              : result.Where(x => x.OrderNumber.ToString().Contains(orderNumberSearchTerm));
+                if (orderLine.HasValue)
+                {
+                    result = result.Where(x => x.OrderLine == orderLine);
+                }
             }
 
             if (!includeAcknowledged)

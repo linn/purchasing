@@ -190,6 +190,14 @@
             return new SuccessResult<IEnumerable<PurchaseOrderDeliveryResource>>(purchaseOrderDeliveryResources);
         }
 
+        public IResult<IEnumerable<PurchaseOrderDeliveryResource>> GetDeliveriesForDetail(int orderNumber, int orderLine)
+        {
+            var res = this.domainService.SearchDeliveries(null, orderNumber.ToString(), true, true, orderLine);
+
+            return new SuccessResult<IEnumerable<PurchaseOrderDeliveryResource>>(
+                res.Select(x => (PurchaseOrderDeliveryResource)this.resourceBuilder.Build(x, null)));
+        }
+
         private static PurchaseOrderDelivery BuildEntityFromResourceHelper(PurchaseOrderDeliveryResource resource)
         {
             return new PurchaseOrderDelivery

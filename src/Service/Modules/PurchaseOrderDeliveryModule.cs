@@ -24,6 +24,7 @@
             app.MapPatch("/purchasing/purchase-orders/deliveries/{orderNumber:int}/{orderLine:int}/{deliverySeq:int}", this.Patch);
             app.MapPost("/purchasing/purchase-orders/deliveries", this.BatchUpdate);
             app.MapPut("/purchasing/purchase-orders/{orderNumber:int}/{orderLine:int}/deliveries", this.UpdateDeliveriesForOrderLine);
+            app.MapGet("/purchasing/purchase-orders/{orderNumber:int}/{orderLine:int}/deliveries", this.GetDeliveriesForOrderLine);
         }
 
         private async Task Search(
@@ -40,6 +41,17 @@
                 orderNumberSearchTerm, 
                 includeAcknowledged,
                 exactOrderNumber);
+            await res.Negotiate(result);
+        }
+
+        private async Task GetDeliveriesForOrderLine(
+            HttpRequest req,
+            HttpResponse res,
+            int orderNumber,
+            int orderLine,
+            IPurchaseOrderDeliveryFacadeService service)
+        {
+            var result = service.GetDeliveriesForDetail(orderNumber, orderLine);
             await res.Negotiate(result);
         }
 
