@@ -15,7 +15,7 @@
                        {
                            PartSelectorOptions =
                                model.PartSelectorOptions.Select(this.BuildOptionResource),
-                           DangerLevelOptions = model.DangerLevelOptions.Select(this.BuildOptionResource)
+                           StockLevelOptions = model.StockLevelOptions.Select(this.BuildOptionResource)
                        };
         }
 

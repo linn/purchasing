@@ -24,6 +24,7 @@ import {
 import partsActions from '../../actions/partsActions';
 import partActions from '../../actions/partActions';
 import mrReportOptionsActions from '../../actions/mrReportOptionsActions';
+import mrReportActions from '../../actions/mrReportActions';
 
 import history from '../../history';
 
@@ -34,6 +35,7 @@ function MaterialRequirementsOptions() {
     const [showMessage, setShowMessage] = useState(false);
     const [message, setMessage] = useState(null);
     const [partSelector, setPartSelector] = useState('Select Parts');
+    const [stockLevelSelector, setStockLevelSelector] = useState('0-4');
     const mrMaster = useSelector(state => itemSelectorHelpers.getItem(state.mrMaster));
     const mrMasterLoading = useSelector(state =>
         itemSelectorHelpers.getItemLoading(state.mrMaster)
@@ -130,11 +132,13 @@ function MaterialRequirementsOptions() {
     };
 
     const runReport = () => {
+        dispatch(mrReportActions.clearItem());
         const body = {
             typeOfReport: 'MR',
             partSelector,
             jobRef: mrMaster.jobRef,
-            partNumbers: parts.map(p => p.id)
+            partNumbers: parts.map(p => p.id),
+            stockLevelSelector
         };
         history.push('/purchasing/material-requirements/report', body);
     };
@@ -160,6 +164,14 @@ function MaterialRequirementsOptions() {
 
     const handleSetTypeaheadPart = (_, part) => {
         setTypeaheadPart(part);
+    };
+
+    const notReadyToRun = () => {
+        if (partSelector === 'Select Parts' && parts.length === 0) {
+            return true;
+        }
+
+        return false;
     };
 
     return (
@@ -190,45 +202,69 @@ function MaterialRequirementsOptions() {
                         onChange={(_, value) => setPartSelector(value)}
                     />
                 </Grid>
-                <Grid item xs={6}>
-                    <Typeahead
-                        label="Part"
-                        title="Search for a part"
-                        onSelect={handlePartChange}
-                        items={partsSearchResults}
-                        loading={partsSearchLoading}
-                        fetchItems={searchTerm => dispatch(partsActions.search(searchTerm))}
-                        clearSearch={() => clear()}
-                        links={false}
-                        value={typeaheadPart}
-                        openModalOnClick={false}
-                        debounce={1000}
-                        minimumSearchTermLength={2}
-                        modal
-                        handleFieldChange={handleSetTypeaheadPart}
-                        handleReturnPress={handleTextFieldChange}
-                    />
-                </Grid>
-                <Grid item xs={6}>
-                    <Typography variant="subtitle1">Selected Parts</Typography>
-                    <DataGrid
-                        rows={parts}
-                        columns={selectedPartsColumns}
-                        pageSize={5}
-                        rowsPerPageOptions={[5]}
-                        density="compact"
-                        rowHeight={34}
-                        headerHeight={34}
-                        autoHeight
-                        loading={selectectPartLoading}
-                        hideFooter
+                {partSelector === 'Select Parts' && (
+                    <>
+                        <Grid item xs={6}>
+                            <Typeahead
+                                label="Part"
+                                title="Search for a part"
+                                onSelect={handlePartChange}
+                                items={partsSearchResults}
+                                loading={partsSearchLoading}
+                                fetchItems={searchTerm => dispatch(partsActions.search(searchTerm))}
+                                clearSearch={() => clear()}
+                                links={false}
+                                value={typeaheadPart}
+                                openModalOnClick={false}
+                                debounce={1000}
+                                minimumSearchTermLength={2}
+                                modal
+                                handleFieldChange={handleSetTypeaheadPart}
+                                handleReturnPress={handleTextFieldChange}
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Typography variant="subtitle1">Selected Parts</Typography>
+                            <DataGrid
+                                rows={parts}
+                                columns={selectedPartsColumns}
+                                pageSize={5}
+                                rowsPerPageOptions={[5]}
+                                density="compact"
+                                rowHeight={34}
+                                headerHeight={34}
+                                autoHeight
+                                loading={selectectPartLoading}
+                                hideFooter
+                            />
+                        </Grid>
+                    </>
+                )}
+                <Grid item xs={12}>
+                    <Dropdown
+                        propertyName="Stock Level Options"
+                        label="Stock Level Options"
+                        value={stockLevelSelector}
+                        items={mrReportOptions?.stockLevelOptions
+                            ?.sort((a, b) => a.displaySequence - b.displaySequence)
+                            .map(e => ({
+                                displayText: e.displayText,
+                                id: e.option
+                            }))}
+                        optionsLoading={mrReportOptionsLoading}
+                        onChange={(_, value) => setStockLevelSelector(value)}
                     />
                 </Grid>
                 <Grid item xs={12}>
                     <Button
                         variant="outlined"
                         onClick={runReport}
-                        disabled={mrMasterLoading || selectectPartLoading || mrReportOptionsLoading}
+                        disabled={
+                            mrMasterLoading ||
+                            selectectPartLoading ||
+                            mrReportOptionsLoading ||
+                            notReadyToRun()
+                        }
                     >
                         Run Report
                     </Button>

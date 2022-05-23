@@ -78,6 +78,8 @@
 
         public int? Planner { get; set; }
 
+        public int? DangerLevel { get; set; }
+
         public IEnumerable<MrDetail> MrDetails { get; set; }
     }
 }

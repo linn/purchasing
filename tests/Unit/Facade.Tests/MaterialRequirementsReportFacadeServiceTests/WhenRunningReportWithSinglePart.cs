@@ -36,7 +36,8 @@
                                            TypeOfReport = "MR",
                                            PartSelector = null,
                                            PartNumber = this.partNumber,
-                                           PartNumbers = null
+                                           PartNumbers = null,
+                                           StockLevelSelector = "1"
                                        };
             this.privileges = new List<string>();
 
@@ -44,6 +45,7 @@
                     this.jobRef,
                     this.requestResource.TypeOfReport,
                     this.requestResource.PartSelector,
+                    this.requestResource.StockLevelSelector,
                     Arg.Is<IList<string>>(a => a.Contains("P1") && a.Count == 1))
                 .Returns(
                     new MrReport
@@ -64,6 +66,7 @@
                 this.jobRef,
                 this.requestResource.TypeOfReport,
                 this.requestResource.PartSelector,
+                this.requestResource.StockLevelSelector,
                 Arg.Is<IList<string>>(a => a.Contains("P1") && a.Count == 1));
         }
 

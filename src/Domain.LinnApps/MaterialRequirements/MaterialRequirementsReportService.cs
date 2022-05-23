@@ -5,9 +5,13 @@
     using System.Linq;
     using System.Linq.Expressions;
 
+    using Amazon.SimpleEmail;
+
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
+
+    using Org.BouncyCastle.Asn1.Crmf;
 
     public class MaterialRequirementsReportService : IMaterialRequirementsReportService
     {
@@ -41,6 +45,7 @@
             string jobRef,
             string typeOfReport,
             string partSelector,
+            string stockLevelSelector,
             IEnumerable<string> partNumbers)
         {
             if (string.IsNullOrEmpty(jobRef))
@@ -66,11 +71,26 @@
                 this.filterQuery = a => a.JobRef == jobRef && a.Planner == planner;
             }
 
+            var results = this.repository.FilterBy(this.filterQuery);
+
+            switch (stockLevelSelector)
+            {
+                case "0-4":
+                    results = results.Where(a => a.DangerLevel >= 0 && a.DangerLevel <= 4);
+                    break;
+                case "0-2":
+                    results = results.Where(a => a.DangerLevel >= 0 && a.DangerLevel <= 2);
+                    break;
+                case "0" or "1" or "2" or "3" or "4":
+                    results = results.Where(a => a.DangerLevel == int.Parse(stockLevelSelector));
+                    break;
+            }
+
             var report = new MrReport
                              {
                                  JobRef = jobRef,
                                  RunWeekNumber = runLog.RunWeekNumber,
-                                 Headers = this.repository.FilterBy(this.filterQuery).ToList()
+                                 Headers = results
                              };
             return report;
         }
@@ -81,7 +101,17 @@
                                           {
                                               new ReportOption("Select Parts", "Select Parts", 0)
                                           };
-            var dangerLevelOptions = new List<ReportOption> { new ReportOption("All Danger Levels", "All", 0) };
+            var stockLevelOptions = new List<ReportOption>
+                                        {
+                                            new ReportOption("0-4", "Danger Levels 0 - 4", 0),
+                                            new ReportOption("0-2", "Danger Levels 0 - 2", 1),
+                                            new ReportOption("All", "All Stock Levels", 2),
+                                            new ReportOption("0", "Danger Level 0 Short for triggered builds", 3),
+                                            new ReportOption("1", "Danger Level 1 Short now", 4),
+                                            new ReportOption("2", "Danger Level 2 Zero at lead time", 5),
+                                            new ReportOption("3", "Danger Level 3 Low at lead time", 6),
+                                            new ReportOption("4", "Danger Level 4 Very low before lead time", 7)
+                                        };
 
             var planners = this.plannerRepository.FindAll();
 
@@ -99,7 +129,7 @@
 
             return new MrReportOptions
                        {
-                           PartSelectorOptions = partSelectorOptions, DangerLevelOptions = dangerLevelOptions
+                           PartSelectorOptions = partSelectorOptions, StockLevelOptions = stockLevelOptions
                        };
         }
     }

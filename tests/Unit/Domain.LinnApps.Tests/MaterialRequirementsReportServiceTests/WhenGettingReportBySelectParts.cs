@@ -40,7 +40,12 @@
                 .Returns(new MrpRunLog { RunWeekNumber = this.runWeekNumber });
             this.MrHeaderRepository.FilterBy(Arg.Any<Expression<Func<MrHeader, bool>>>()).Returns(
                 new List<MrHeader> { new MrHeader { PartNumber = "P1" }, new MrHeader { PartNumber = "P2" } }.AsQueryable());
-            this.result = this.Sut.GetMaterialRequirements(this.jobRef, this.typeOfReport, this.partSelector, this.partNumbers);
+            this.result = this.Sut.GetMaterialRequirements(
+                this.jobRef,
+                this.typeOfReport,
+                this.partSelector,
+                null,
+                this.partNumbers);
         }
 
         [Test]

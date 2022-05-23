@@ -34,6 +34,7 @@
                 request.JobRef,
                 request.TypeOfReport,
                 request.PartSelector,
+                request.StockLevelSelector,
                 parts);
 
             return new SuccessResult<MrReportResource>((MrReportResource)this.builder.Build(report, privileges));

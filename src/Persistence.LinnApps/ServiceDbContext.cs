@@ -1253,6 +1253,7 @@
             entity.Property(e => e.VendorManagerInitials).HasColumnName("VM_INITIALS");
             entity.Property(e => e.PartId).HasColumnName("PART_ID");
             entity.Property(e => e.Planner).HasColumnName("PLANNER");
+            entity.Property(e => e.DangerLevel).HasColumnName("DANGER_LEVEL");
             entity.HasMany(s => s.MrDetails).WithOne().HasForeignKey(c => new { c.JobRef, c.PartNumber });
         }
 

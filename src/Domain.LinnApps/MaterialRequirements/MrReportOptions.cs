@@ -6,6 +6,6 @@
     {
         public IEnumerable<ReportOption> PartSelectorOptions { get; set; }
 
-        public IEnumerable<ReportOption> DangerLevelOptions { get; set; }
+        public IEnumerable<ReportOption> StockLevelOptions { get; set; }
     }
 }

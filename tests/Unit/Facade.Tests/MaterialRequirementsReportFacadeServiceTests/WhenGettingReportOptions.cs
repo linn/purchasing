@@ -34,7 +34,7 @@
                                                                      Option = "1"
                                                                  }
                                                          },
-                                 DangerLevelOptions = new List<ReportOption>()
+                                 StockLevelOptions = new List<ReportOption>()
                              });
 
             this.result = this.Sut.GetOptions(this.privileges);
