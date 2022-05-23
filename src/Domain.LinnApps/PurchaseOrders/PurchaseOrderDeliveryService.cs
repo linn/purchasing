@@ -81,7 +81,7 @@
                 result = result.Where(x => !x.DateAdvised.HasValue);
             }
 
-            return result.OrderBy(x => x.OrderNumber);
+            return result.OrderBy(x => x.OrderNumber).ThenBy(x => x.OrderLine).ThenBy(x => x.DeliverySeq);
         }
 
         public PurchaseOrderDelivery UpdateDelivery(

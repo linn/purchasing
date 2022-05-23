@@ -16,6 +16,9 @@ import {
     ErrorCard
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
+import Dialog from '@mui/material/Dialog';
+import IconButton from '@mui/material/IconButton';
+import Close from '@mui/icons-material/Close';
 import { makeStyles } from '@mui/styles';
 import Accordion from '@mui/material/Accordion';
 import Button from '@mui/material/Button';
@@ -35,11 +38,14 @@ import {
 import history from '../history';
 import config from '../config';
 import batchPurchaseOrderDeliveriesUploadActions from '../actions/batchPurchaseOrderDeliveriesUploadActions';
+import SplitDeliveriesUtility from './SplitDeliveriesUtility';
 
 function AcknowledgeOrdersUtility() {
     const dispatch = useDispatch();
     const { search } = useLocation();
     const [lookUpExpanded, setLookUpExpanded] = useState(false);
+    const [splitDeliveriesDialogOpen, setSplitDeliveriesDialogOpen] = useState(false);
+    const [deliveriesToSplit, setDeliveriesToSplit] = useState();
 
     useEffect(() => {
         const orderNumberSearchTerm = queryString.parse(search)?.orderNumber;
@@ -99,7 +105,31 @@ function AcknowledgeOrdersUtility() {
     const columns = [
         { field: 'id', headerName: 'Id', width: 100, hide: true },
         { field: 'orderNumber', headerName: 'Order', width: 100 },
-        { field: 'orderLine', headerName: 'Line', width: 100 },
+        {
+            field: 'orderLine',
+            headerName: 'Line',
+            width: 100,
+            renderCell: params => (
+                <>
+                    {params.row.orderLine}{' '}
+                    <Button
+                        onClick={() => {
+                            setDeliveriesToSplit(
+                                rows.filter(
+                                    d =>
+                                        d.orderNumber === params.row.orderNumber &&
+                                        d.orderLine === params.row.orderLine
+                                )
+                            );
+                            setSplitDeliveriesDialogOpen(true);
+                        }}
+                    >
+                        SPLIT
+                    </Button>
+                </>
+            )
+        },
+
         { field: 'deliverySeq', headerName: 'Delivery', width: 100 },
         { field: 'baseOrderUnitPrice', headerName: 'Unit Price', width: 100 },
         { field: 'partNumber', headerName: 'Part', width: 100 },
@@ -195,6 +225,26 @@ function AcknowledgeOrdersUtility() {
                 message="Save Successful"
             />
             <Grid container spacing={3}>
+                <Dialog open={splitDeliveriesDialogOpen} fullWidth maxWidth="lg">
+                    <div>
+                        <IconButton
+                            style={{ float: 'right' }}
+                            aria-label="Close"
+                            onClick={() => setSplitDeliveriesDialogOpen(false)}
+                        >
+                            <Close />
+                        </IconButton>
+                        <div className={classes.dialog}>
+                            <SplitDeliveriesUtility
+                                orderNumber={123456}
+                                orderLine={1}
+                                inDialogBox
+                                deliveries={deliveriesToSplit}
+                            />
+                        </div>
+                    </div>
+                </Dialog>
+
                 {uploadError && (
                     <Grid item xs={12}>
                         <ErrorCard errorMessage={uploadError.details} />
@@ -278,6 +328,7 @@ function AcknowledgeOrdersUtility() {
                                         columns={columns}
                                         rowHeight={34}
                                         autoHeight
+                                        disableSelectionOnClick
                                         loading={itemsLoading || updateLoading}
                                         hideFooter
                                         checkboxSelection
