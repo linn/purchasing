@@ -60,13 +60,17 @@
             {
                 this.filterQuery = a => a.JobRef == jobRef && partNumbers.Contains(a.PartNumber);
             }
+            else if (partSelector.StartsWith("Planner"))
+            {
+                var planner = int.Parse(partSelector.Substring(7));
+                this.filterQuery = a => a.JobRef == jobRef && a.Planner == planner;
+            }
 
             var report = new MrReport
                              {
                                  JobRef = jobRef,
                                  RunWeekNumber = runLog.RunWeekNumber,
-                                 Headers = this.repository.FilterBy(
-                                     this.filterQuery).ToList()
+                                 Headers = this.repository.FilterBy(this.filterQuery).ToList()
                              };
             return report;
         }
