@@ -239,6 +239,8 @@ function AcknowledgeOrdersUtility() {
                                 orderNumber={123456}
                                 orderLine={1}
                                 inDialogBox
+                                cancelClick={() => setSplitDeliveriesDialogOpen(false)}
+                                backClick={() => setSplitDeliveriesDialogOpen(false)}
                                 deliveries={deliveriesToSplit}
                             />
                         </div>
