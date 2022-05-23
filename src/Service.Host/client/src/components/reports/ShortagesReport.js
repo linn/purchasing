@@ -3,14 +3,12 @@ import {
     Loading,
     ReportTable,
     BackButton,
-    ExportButton,
     reportSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import { useSelector, useDispatch } from 'react-redux';
 import queryString from 'query-string';
 import history from '../../history';
-import config from '../../config';
 import shortagesReportActions from '../../actions/shortagesReportActions';
 
 function ShortagesReport() {
@@ -43,19 +41,6 @@ function ShortagesReport() {
                     <BackButton backClick={() => handleBackClick(history, options)} />
                 </Grid>
                 <Grid item xs={12}>
-                    {!loading && reportData ? (
-                        <ExportButton
-                            href={
-                                `${config.appRoot}/purchasing/reports/shortages/report` +
-                                `?purchaseLevel=${options.purchaseLevel}` +
-                                `&vendorManager=${options.vendorManager}`
-                            }
-                        />
-                    ) : (
-                        <></>
-                    )}
-                </Grid>
-                <Grid item xs={12}>
                     {loading || !reportData ? (
                         <Loading />
                     ) : (
@@ -64,6 +49,7 @@ function ShortagesReport() {
                                 <ReportTable
                                     reportData={report.reportResults[0]}
                                     title={report.reportResults[0].title}
+                                    key={report.reportResults[0].PlannerName}
                                     showTitle
                                     showTotals
                                     placeholderRows={4}

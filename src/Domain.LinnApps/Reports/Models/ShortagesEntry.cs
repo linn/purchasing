@@ -12,6 +12,6 @@
 
         public string VendorManagerName { get; set; }
 
-        public string PurchaseLevel { get; set; }
+        public int PurchaseLevel { get; set; }
     }
 }

@@ -18,12 +18,11 @@
     {
         protected IShortagesReportService Sut { get; private set; }
 
-        protected IRepository<ShortagesEntry, string> ShortagesRepository { get; private set; }
+        protected IQueryRepository<ShortagesEntry> ShortagesRepository { get; private set; }
 
         protected IEnumerable<ShortagesEntry> Data { get; private set; }
 
         protected IReportingHelper ReportingHelper { get; private set; }
-
 
         [SetUp]
         public void SetUpContext()
@@ -37,7 +36,7 @@
                                         PlannerName = "Test Planner",
                                         VendorManagerCode = "R",
                                         Planner = 1,
-                                        PurchaseLevel = "1"
+                                        PurchaseLevel = 1
                                     },
                                 new ShortagesEntry()
                                     {
@@ -46,7 +45,7 @@
                                         PlannerName = "Second Test Planner",
                                         VendorManagerCode = "S",
                                         Planner = 1,
-                                        PurchaseLevel = "1"
+                                        PurchaseLevel = 1
                                     },
                                 new ShortagesEntry()
                                     {
@@ -55,7 +54,7 @@
                                         PlannerName = "Test Planner",
                                         VendorManagerCode = "T",
                                         Planner = 1,
-                                        PurchaseLevel = "1"
+                                        PurchaseLevel = 1
                                     },
                                 new ShortagesEntry()
                                     {
@@ -64,10 +63,10 @@
                                         PlannerName = "Test Planner",
                                         VendorManagerCode = "T",
                                         Planner = 1,
-                                        PurchaseLevel = "5"
+                                        PurchaseLevel = 5
                                     }
                             };
-            this.ShortagesRepository = Substitute.For<IRepository<ShortagesEntry, string>>();
+            this.ShortagesRepository = Substitute.For<IQueryRepository<ShortagesEntry>>();
             this.ShortagesRepository.FilterBy(Arg.Any<Expression<Func<ShortagesEntry, bool>>>())
                 .Returns(this.Data.AsQueryable());
 

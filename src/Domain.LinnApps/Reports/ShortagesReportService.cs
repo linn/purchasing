@@ -10,10 +10,10 @@
 
     public class ShortagesReportService : IShortagesReportService
     {
-        private readonly IRepository<ShortagesEntry, string> shortagesEntryView;
+        private readonly IQueryRepository<ShortagesEntry> shortagesEntryView;
 
         public ShortagesReportService(
-            IRepository<ShortagesEntry, string> shortagesEntryView)
+            IQueryRepository<ShortagesEntry> shortagesEntryView)
         {
             this.shortagesEntryView = shortagesEntryView;
         }
@@ -22,16 +22,14 @@
             int purchaseLevel,
             string vendorManager)
         {
-            
-            var results = this.shortagesEntryView.FilterBy(x => (Convert.ToInt32(x.PurchaseLevel) <= purchaseLevel) &&
-                                                                            (vendorManager == "ALL" || vendorManager == x.VendorManagerCode)).ToList();
+            var results = this.shortagesEntryView.FilterBy(x =>
+                x.PurchaseLevel <= purchaseLevel && (vendorManager == "ALL" || vendorManager == x.VendorManagerCode)).ToList();
 
             var returnResults = new List<ResultsModel>();
 
             foreach (var shortagesForPlanner in results.GroupBy(a => new { a.PlannerName }))
             {
                 var model = new ResultsModel();
-
                 model.AddColumn("VendorManagerCode", "Vendor Manager Code");
                 model.AddColumn("VendorManagerName", "Vendor Manager Name");
 
@@ -40,7 +38,7 @@
                 model.RowHeader = "Planner";
 
                 var distinctVendorManagers = shortagesForPlanner.DistinctBy(x => x.VendorManagerCode);
-                var distinctLevels = shortagesForPlanner.DistinctBy(x => x.PurchaseLevel);
+                var distinctLevels = shortagesForPlanner.DistinctBy(x => x.PurchaseLevel).OrderBy(x => x.PurchaseLevel);
 
                 foreach (var level in distinctLevels)
                 {
