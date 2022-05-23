@@ -35,7 +35,7 @@
                                 }.ToArray();
 
             this.Response = this.Client.PutAsJsonAsync(
-                $"/purchasing/purchase-orders/123456/1/deliveries",
+                $"/purchasing/purchase-orders/deliveries/123456/1",
                 this.resource).Result;
         }
 

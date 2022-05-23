@@ -34,7 +34,7 @@
                                 }.ToArray();
             this.MockDomainService.SearchDeliveries(null, "123456", true, true, 1).Returns(this.data);
             this.Response = this.Client.Get(
-                $"/purchasing/purchase-orders/123456/1/deliveries",
+                $"/purchasing/purchase-orders/deliveries/123456/1/",
                 with =>
                     {
                         with.Accept("application/json");
