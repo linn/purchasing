@@ -365,11 +365,7 @@ function POReqUtility({ creating }) {
     const [alreadyShownCostWarning, setAlreadyShownCostWarning] = useState(false);
 
     useEffect(() => {
-        if (
-            req.unitPrice &&
-            req.qty &&
-            (creating || (req.unitPrice !== item?.unitPrice && req.qty !== item?.qty))
-        ) {
+        if (req.unitPrice && req.qty) {
             let total = Decimal.mul(req.unitPrice, req.qty);
             if (req.carriage) {
                 total = Decimal.add(total, req.carriage);
@@ -380,18 +376,10 @@ function POReqUtility({ creating }) {
             }
             setReq(r => ({
                 ...r,
-                totalReqPrice: parseInt(total, 10)
+                totalReqPrice: parseFloat(total).toFixed(2)
             }));
         }
-    }, [
-        req.qty,
-        req.carriage,
-        req.unitPrice,
-        alreadyShownCostWarning,
-        item?.qty,
-        item?.unitPrice,
-        creating
-    ]);
+    }, [req.qty, req.carriage, req.unitPrice, alreadyShownCostWarning, creating]);
 
     const useStyles = makeStyles(theme => ({
         buttonMarginTop: {
@@ -844,7 +832,7 @@ function POReqUtility({ creating }) {
                             <Grid item xs={4}>
                                 <InputField
                                     fullWidth
-                                    value={req.totalReqPrice}
+                                    value={parseFloat(req.totalReqPrice).toFixed(2)}
                                     label="Total Req Price"
                                     number
                                     propertyName="totalReqPrice"
