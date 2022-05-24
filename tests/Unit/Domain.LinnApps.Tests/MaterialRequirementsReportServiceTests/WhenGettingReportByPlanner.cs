@@ -45,8 +45,6 @@
                 null);
         }
 
-
-
         [Test]
         public void ShouldReturnReport()
         {
