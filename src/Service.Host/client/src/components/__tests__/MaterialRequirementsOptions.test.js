@@ -104,7 +104,7 @@ describe('When report options are returned...', () => {
         expect(screen.getByText('Select Parts')).toBeInTheDocument();
     });
 
-    test('Should show  stock dropdown', () => {
+    test('Should show stock dropdown', () => {
         expect(screen.getByText('Danger Levels 0 - 4')).toBeInTheDocument();
     });
 });

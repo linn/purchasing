@@ -506,6 +506,7 @@ function MaterialRequirementsReport() {
                                             autoHeight
                                             loading={mrReportLoading}
                                             hideFooter
+                                            columnBuffer={15}
                                             getRowClassName={params => getRowClass(params)}
                                         />
                                     </div>
