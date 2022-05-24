@@ -67,7 +67,9 @@ function MaterialRequirementsReport() {
             dispatch(
                 mrReportActions.postByHref(mrReportItem.uri, {
                     partNumber: query?.partNumber,
-                    jobRef: query?.jobRef
+                    jobRef: query?.jobRef,
+                    typeOfReport: 'MR',
+                    partSelector: 'Select Parts'
                 })
             );
         } else {
@@ -208,6 +210,23 @@ function MaterialRequirementsReport() {
                 <ThemeProvider theme={theme}>
                     <div style={{ width: 1300, paddingLeft: '20px' }}>
                         {mrReportLoading && <Loading />}
+                        {!selectedItem && (
+                            <>
+                                <Typography variant="body2" style={{ fontWeight: 'bold' }}>
+                                    No results found for selected options
+                                </Typography>
+                                <Tooltip title="Back To Options">
+                                    <Button
+                                        color="navBut"
+                                        size="small"
+                                        endIcon={<NotesIcon />}
+                                        onClick={backToOptions}
+                                    >
+                                        Back To Options
+                                    </Button>
+                                </Tooltip>
+                            </>
+                        )}
                         {selectedItem && (
                             <Grid container spacing={1}>
                                 <Grid
@@ -487,6 +506,7 @@ function MaterialRequirementsReport() {
                                             autoHeight
                                             loading={mrReportLoading}
                                             hideFooter
+                                            columnBuffer={15}
                                             getRowClassName={params => getRowClass(params)}
                                         />
                                     </div>
