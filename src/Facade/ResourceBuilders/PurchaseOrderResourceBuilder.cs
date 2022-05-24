@@ -30,7 +30,7 @@
             this.authService = authService;
             this.detailResourceBuilder = detailResourceBuilder;
             this.deliveryAddressResourceBuilder = deliveryAddressResourceBuilder;
-            addressResourceBuilder = addressResourceBuilder;
+            this.addressResourceBuilder = addressResourceBuilder;
         }
 
         public PurchaseOrderResource Build(PurchaseOrder entity, IEnumerable<string> claims)

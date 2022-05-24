@@ -56,7 +56,8 @@
                 .ThenInclude(p => p.NominalAccount).ThenInclude(n => n.Nominal)
                 .Include(o => o.Details).ThenInclude(d => d.OrderPosting)
                 .ThenInclude(p => p.NominalAccount).ThenInclude(n => n.Department)
-                .Include(p => p.OrderAddress).ThenInclude(x=>x.FullAddress)
+                .Include(p => p.OrderAddress).ThenInclude(x => x.FullAddress)
+                .Include(p => p.OrderAddress).ThenInclude(x => x.Country)
                 //.Include(o => o.Details).ThenInclude(d => d.DeliveryConfirmedBy)
                 .First(o => o.OrderNumber == key);
         }
