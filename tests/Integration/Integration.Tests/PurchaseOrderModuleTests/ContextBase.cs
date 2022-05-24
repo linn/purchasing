@@ -86,6 +86,8 @@
 
         protected IRepository<PurchaseOrderReq, int> MockPurchaseOrderReqRepository { get; private set; }
 
+        protected IPurchaseOrderDeliveryFacadeService deliveryFacadeService { get; private set; }
+
         protected ILog Log { get; private set; }
 
         [SetUp]

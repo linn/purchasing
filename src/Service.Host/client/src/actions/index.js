@@ -202,6 +202,10 @@ export const applyForecastingPercentageChangeActionTypes = makeProcessActionType
     itemTypes.applyForecastingPercentageChange.actionType
 );
 
+export const ediOrdersActionTypes = makeActionTypes(itemTypes.ediOrders.actionType, true);
+
+export const sendEdiEmailActionTypes = makeActionTypes(itemTypes.sendEdiEmail.actionType);
+
 export const mrUsedOnReportActionTypes = makeReportActionTypes(
     reportTypes.mrUsedOnReport.actionType
 );

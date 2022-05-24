@@ -43,6 +43,7 @@ import POReqPrintout from './POReqs/POReqPrintout';
 import WhatsInInspectionReport from './reports/WhatsInInspectionReport';
 import RunMrp from './RunMrp';
 import ApplyForecastingPercentageChange from './ApplyForecastingPercentageChange';
+import EdiOrders from './EdiOrders';
 import PurchaseOrderUtility from './PurchaseOrders/PurchaseOrderUtility';
 import PurchaseOrdersSearch from './PurchaseOrders/PurchaseOrdersSearch';
 import MrUsedOnReport from './reports/MrUsedOnReport';
@@ -271,6 +272,7 @@ const Root = ({ store }) => (
                                     path="/purchasing/forecasting/apply-percentage-change"
                                     component={ApplyForecastingPercentageChange}
                                 />
+                                <Route exact path="/purchasing/edi" component={EdiOrders} />
                                 <Route
                                     exact
                                     path="/purchasing/material-requirements/used-on-report"

@@ -352,7 +352,7 @@
                         new AxisDetailsModel("Delivery", "Delivery", GridDisplayType.TextValue),
                         new AxisDetailsModel("Qty", "Qty", GridDisplayType.TextValue),
                         new AxisDetailsModel("ReqDate", "Req Date", GridDisplayType.TextValue),
-                        new AxisDetailsModel("AdvisedDate", "Advised Date", GridDisplayType.TextValue)
+                        new AxisDetailsModel("DateAdvised", "Advised Date", GridDisplayType.TextValue)
                     });
         }
 
@@ -479,7 +479,7 @@
                 new CalculationValueModel
                     {
                         RowId = currentRowId,
-                        ColumnId = "AdvisedDate",
+                        ColumnId = "DateAdvised",
                         TextDisplay = delivery.DateAdvised?.ToString("dd-MMM-yyyy")
                     });
         }
