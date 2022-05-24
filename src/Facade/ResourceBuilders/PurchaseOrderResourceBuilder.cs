@@ -13,6 +13,8 @@
 
     public class PurchaseOrderResourceBuilder : IBuilder<PurchaseOrder>
     {
+        private readonly IBuilder<Address> addressResourceBuilder;
+
         private readonly IAuthorisationService authService;
 
         private readonly IBuilder<LinnDeliveryAddress> deliveryAddressResourceBuilder;
@@ -22,11 +24,13 @@
         public PurchaseOrderResourceBuilder(
             IAuthorisationService authService,
             IBuilder<PurchaseOrderDetail> detailResourceBuilder,
-            IBuilder<LinnDeliveryAddress> deliveryAddressResourceBuilder)
+            IBuilder<LinnDeliveryAddress> deliveryAddressResourceBuilder,
+            IBuilder<Address> addressResourceBuilder)
         {
             this.authService = authService;
             this.detailResourceBuilder = detailResourceBuilder;
             this.deliveryAddressResourceBuilder = deliveryAddressResourceBuilder;
+            addressResourceBuilder = addressResourceBuilder;
         }
 
         public PurchaseOrderResource Build(PurchaseOrder entity, IEnumerable<string> claims)
@@ -54,24 +58,44 @@
                                    },
                            Overbook = entity.Overbook,
                            OverbookQty = entity.OverbookQty,
-                           Details = entity.Details?.Select(d => (PurchaseOrderDetailResource)this.detailResourceBuilder.Build(d, claims)),
+                           Details =
+                               entity.Details?.Select(
+                                   d => (PurchaseOrderDetailResource)this.detailResourceBuilder.Build(d, claims)),
                            OrderContactName = entity.OrderContactName,
                            ExchangeRate = entity.ExchangeRate,
                            IssuePartsToSupplier = entity.IssuePartsToSupplier,
-                           DeliveryAddress = entity.DeliveryAddress != null ? (LinnDeliveryAddressResource)this.deliveryAddressResourceBuilder.Build(entity.DeliveryAddress, claims) : null,
-                           RequestedBy = new EmployeeResource { Id = entity.RequestedById, FullName = entity.RequestedBy?.FullName },
-                           EnteredBy = new EmployeeResource { Id = entity.EnteredById, FullName = entity.EnteredBy?.FullName },
+                           DeliveryAddress =
+                               entity.DeliveryAddress != null
+                                   ? (LinnDeliveryAddressResource)this.deliveryAddressResourceBuilder.Build(
+                                       entity.DeliveryAddress,
+                                       claims)
+                                   : null,
+                           RequestedBy =
+                               new EmployeeResource
+                                   {
+                                       Id = entity.RequestedById, FullName = entity.RequestedBy?.FullName
+                                   },
+                           EnteredBy =
+                               new EmployeeResource { Id = entity.EnteredById, FullName = entity.EnteredBy?.FullName },
                            QuotationRef = entity.QuotationRef,
-                           AuthorisedBy = entity.AuthorisedById.HasValue ? new EmployeeResource { Id = (int)entity.AuthorisedById, FullName = entity.AuthorisedBy?.FullName } : null,
+                           AuthorisedBy =
+                               entity.AuthorisedById.HasValue
+                                   ? new EmployeeResource
+                                         {
+                                             Id = (int)entity.AuthorisedById, FullName = entity.AuthorisedBy?.FullName
+                                         }
+                                   : null,
                            SentByMethod = entity.SentByMethod,
                            FilCancelled = entity.FilCancelled,
                            Remarks = entity.Remarks,
                            DateFilCancelled = entity.DateFilCancelled,
                            PeriodFilCancelled = entity.PeriodFilCancelled,
-                           Supplier = new SupplierResource
-                                          {
-                                              Id = entity.Supplier.SupplierId, Name = entity.Supplier.Name
-                                          },
+                           Supplier =
+                               new SupplierResource { Id = entity.Supplier.SupplierId, Name = entity.Supplier.Name },
+                           OrderAddress =
+                               entity.OrderAddress != null
+                                   ? (AddressResource)this.addressResourceBuilder.Build(entity.OrderAddress, claims)
+                                   : null,
                            Links = this.BuildLinks(entity, claims).ToArray()
                        };
         }

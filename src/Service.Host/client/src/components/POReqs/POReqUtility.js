@@ -380,7 +380,7 @@ function POReqUtility({ creating }) {
             }
             setReq(r => ({
                 ...r,
-                totalReqPrice: parseInt(total, 10)
+                totalReqPrice: parseFloat(total).toFixed(2)
             }));
         }
     }, [

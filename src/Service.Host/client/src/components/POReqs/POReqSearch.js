@@ -56,8 +56,6 @@ function POReqSearch({ print }) {
     const handleOptionsChange = (propertyName, newValue) =>
         setOptions({ ...options, [propertyName]: newValue });
 
-    const createUrl = utilities.getHref(applicationState, 'create');
-
     useEffect(() => {
         if (
             options.reqNumber.length > 2 ||
@@ -82,7 +80,7 @@ function POReqSearch({ print }) {
                     </Typography>
                 </Grid>
                 <Grid item xs={2}>
-                    <CreateButton createUrl={createUrl ?? ''} disabled={!createUrl} />
+                    <CreateButton createUrl="/purchasing/purchase-orders/reqs/create" />
                 </Grid>
                 <Grid item xs={4}>
                     <InputField

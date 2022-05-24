@@ -365,8 +365,12 @@ function PurchaseOrderUtility({ creating }) {
                                 <IconButton
                                     className={classes.pullRight}
                                     aria-label="Print"
-                                    onClick={() => history.push(utilities.getHref(item, 'print'))}
-                                    disabled
+                                    onClick={() =>
+                                        history.push(
+                                            `/purchasing/purchase-orders/${order.orderNumber}/print`
+                                        )
+                                    }
+                                    //todo change to utilities.getHref(item, 'print')
                                     //={creating}
                                 >
                                     <PrintIcon />
