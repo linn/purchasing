@@ -5,13 +5,9 @@
     using System.Linq;
     using System.Linq.Expressions;
 
-    using Amazon.SimpleEmail;
-
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
-
-    using Org.BouncyCastle.Asn1.Crmf;
 
     public class MaterialRequirementsReportService : IMaterialRequirementsReportService
     {
