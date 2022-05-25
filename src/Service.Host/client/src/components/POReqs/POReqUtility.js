@@ -1054,13 +1054,13 @@ function POReqUtility({ creating }) {
                                     dispatch(nominalsActions.search(searchTerm))
                                 }
                                 modal
-                                placeholder="Search Nominal/Dept"
+                                placeholder="Search Dept/Nominal"
                                 links={false}
                                 clearSearch={() => dispatch(nominalsActions.clearSearch)}
                                 loading={nominalsSearchLoading}
-                                label="Nominal"
-                                title="Search Nominals"
-                                value={req.nominal?.nominalCode}
+                                label="Department"
+                                title="Search Department"
+                                value={req.department?.departmentCode}
                                 onSelect={newValue => handleNominalUpdate(newValue)}
                                 debounce={1000}
                                 minimumSearchTermLength={2}
@@ -1071,7 +1071,7 @@ function POReqUtility({ creating }) {
                         <Grid item xs={8}>
                             <InputField
                                 fullWidth
-                                value={req.nominal?.description}
+                                value={req.department?.description}
                                 label="Description"
                                 disabled
                                 onChange={handleFieldChange}
@@ -1081,10 +1081,10 @@ function POReqUtility({ creating }) {
                         <Grid item xs={4}>
                             <InputField
                                 fullWidth
-                                value={req.department?.departmentCode}
-                                label="Dept"
+                                value={req.nominal?.nominalCode}
+                                label="Nominal"
                                 onChange={() => {}}
-                                propertyName="departmentCode"
+                                propertyName="nominalCode"
                                 required
                                 disabled
                             />
@@ -1092,9 +1092,9 @@ function POReqUtility({ creating }) {
                         <Grid item xs={8}>
                             <InputField
                                 fullWidth
-                                value={req.department?.description}
+                                value={req.nominal?.description}
                                 label="Description"
-                                propertyName="departmentDescription"
+                                propertyName="nominalDescription"
                                 onChange={() => {}}
                                 disabled
                             />
