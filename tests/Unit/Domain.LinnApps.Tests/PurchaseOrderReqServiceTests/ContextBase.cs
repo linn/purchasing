@@ -5,7 +5,9 @@
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Keys;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NSubstitute;
 
@@ -35,6 +37,10 @@
 
         protected IPurchaseOrderReqService Sut { get; private set; }
 
+        protected IQueryRepository<Part> MockPartRepository { get; private set; }
+
+        protected IRepository<Supplier, int> MockSupplierRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -47,6 +53,8 @@
             this.MockPurchaseOrderAutoOrderPack = Substitute.For<IPurchaseOrderAutoOrderPack>();
             this.MockPurchaseOrdersPack = Substitute.For<IPurchaseOrdersPack>();
             this.MockCurrencyPack = Substitute.For<ICurrencyPack>();
+            this.MockSupplierRepository = Substitute.For<IRepository<Supplier, int>>();
+            this.MockPartRepository = Substitute.For<IQueryRepository<Part>>();
 
             this.Sut = new PurchaseOrderReqService(
                 "app.linn",
@@ -57,7 +65,9 @@
                 this.MockReqsStateChangeRepository,
                 this.MockPurchaseOrderAutoOrderPack,
                 this.MockPurchaseOrdersPack,
-                this.MockCurrencyPack);
+                this.MockCurrencyPack,
+                this.MockPartRepository,
+                this.MockSupplierRepository);
         }
     }
 }

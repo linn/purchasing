@@ -11,6 +11,8 @@
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Keys;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     public class PurchaseOrderReqService : IPurchaseOrderReqService
     {
@@ -32,6 +34,11 @@
 
         private readonly IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey> reqsStateChangeRepository;
 
+        private readonly IQueryRepository<Part> partRepository;
+
+        private readonly IRepository<Supplier, int> supplierRepository;
+
+
         public PurchaseOrderReqService(
             string appRoot,
             IAuthorisationService authService,
@@ -41,7 +48,9 @@
             IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey> reqsStateChangeRepository,
             IPurchaseOrderAutoOrderPack purchaseOrderAutoOrderPack,
             IPurchaseOrdersPack purchaseOrdersPack,
-            ICurrencyPack currencyPack)
+            ICurrencyPack currencyPack,
+            IQueryRepository<Part> partRepository,
+            IRepository<Supplier, int> supplierRepository)
         {
             this.authService = authService;
             this.purchaseOrderReqsPack = purchaseOrderReqsPack;
@@ -52,6 +61,8 @@
             this.purchaseOrderAutoOrderPack = purchaseOrderAutoOrderPack;
             this.purchaseOrdersPack = purchaseOrdersPack;
             this.currencyPack = currencyPack;
+            this.partRepository = partRepository;
+            this.supplierRepository = supplierRepository;
         }
 
         public void Authorise(PurchaseOrderReq entity, IEnumerable<string> privileges, int currentUserId)
@@ -125,6 +136,26 @@
             {
                 throw new IllegalPoReqStateChangeException(
                     "Cannot create new PO req into state other than Draft or Authorise Wait");
+            }
+
+            var part = this.partRepository.FindBy(p => p.PartNumber == entity.PartNumber);
+            if (part.StockControlled == "Y")
+            {
+                throw new UnauthorisedActionException(
+                    "Cannot raise a PO Req for stock controlled part");
+            }
+
+            var supplier = this.supplierRepository.FindById(entity.SupplierId);
+            if (supplier.DateClosed.HasValue && supplier.DateClosed.Value <= DateTime.Now)
+            {
+                throw new UnauthorisedActionException(
+                    $"Supplier {supplier.SupplierId} ({supplier.Name}) is closed, can't raise po req to them");
+            }
+
+            if (supplier.OrderHold == "Y")
+            {
+                throw new UnauthorisedActionException(
+                    $"Supplier {supplier.SupplierId} ({supplier.Name}) is on hold, can't raise po req to them right now");
             }
 
             return entity;
@@ -351,6 +382,26 @@
                     throw new IllegalPoReqStateChangeException(
                         $"Cannot change directly from state '{entity.State}' to '{updatedEntity.State}'");
                 }
+            }
+
+            var part = this.partRepository.FindBy(p => p.PartNumber == entity.PartNumber);
+            if (part.StockControlled == "Y")
+            {
+                throw new UnauthorisedActionException(
+                    "Cannot raise a PO Req for stock controlled part");
+            }
+
+            var supplier = this.supplierRepository.FindById(entity.SupplierId);
+            if (supplier.DateClosed.HasValue && supplier.DateClosed.Value <= DateTime.Now)
+            {
+                throw new UnauthorisedActionException(
+                    $"Supplier {supplier.SupplierId} ({supplier.Name}) is closed, can't raise po req to them");
+            }
+
+            if (supplier.OrderHold == "Y")
+            {
+                throw new UnauthorisedActionException(
+                    $"Supplier {supplier.SupplierId} ({supplier.Name}) is on hold, can't raise po req to them right now");
             }
 
             entity.State = updatedEntity.State;

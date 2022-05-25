@@ -145,7 +145,9 @@
                         x.GetService<IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>>(),
                         x.GetService<IPurchaseOrderAutoOrderPack>(),
                         x.GetService<IPurchaseOrdersPack>(),
-                        x.GetService<ICurrencyPack>()))
+                        x.GetService<ICurrencyPack>(),
+                        x.GetService<IQueryRepository<Part>>(),
+                        x.GetService<IRepository<Supplier, int>>()))
                 .AddTransient<IWhatsDueInReportService, WhatsDueInReportService>()
                 .AddTransient<IOutstandingPoReqsReportService, OutstandingPoReqsReportService>()
                 .AddTransient<IMaterialRequirementsPlanningService, MaterialRequirementsPlanningService>()
