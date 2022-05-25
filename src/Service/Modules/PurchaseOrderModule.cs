@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Net;
     using System.Threading.Tasks;
 
     using Carter;
@@ -37,6 +38,8 @@
             app.MapGet("/purchasing/purchase-orders/tariffs", this.SearchTariffs);
             app.MapGet("/purchasing/purchase-orders", this.SearchPurchaseOrders);
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}", this.GetPurchaseOrder);
+            app.MapGet("/purchasing/purchase-orders/{orderNumber:int}/html", this.GetPurchaseOrderHtml);
+
             app.MapPut("/purchasing/purchase-orders/{orderNumber:int}", this.UpdatePurchaseOrder);
         }
 
@@ -89,17 +92,27 @@
             HttpRequest req,
             HttpResponse res,
             int orderNumber,
-            IFacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource> purchaseOrderFacadeService)
+            IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
             var result = purchaseOrderFacadeService.GetById(orderNumber, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }
 
+        private async Task GetPurchaseOrderHtml(HttpRequest req, HttpResponse res, int orderNumber, IPurchaseOrderFacadeService purchaseOrderFacadeService)
+        {
+            var result = purchaseOrderFacadeService.GetOrderAsHtml(orderNumber);
+
+            res.ContentType = "text/html";
+            res.StatusCode = (int)HttpStatusCode.OK;
+
+            await res.WriteAsync(result);
+        }
+
         private async Task GetApplicationState(
             HttpRequest req,
             HttpResponse res,
-            IFacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource> purchaseOrderFacadeService)
+            IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
             await res.Negotiate(purchaseOrderFacadeService.GetApplicationState(req.HttpContext.GetPrivileges()));
         }
@@ -118,7 +131,7 @@
             HttpRequest req,
             HttpResponse res,
             string searchTerm,
-            IFacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource> purchaseOrderFacadeService)
+            IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
             var result = purchaseOrderFacadeService.Search(searchTerm, req.HttpContext.GetPrivileges());
             await res.Negotiate(result);
@@ -139,7 +152,7 @@
             HttpRequest req,
             HttpResponse res,
             PurchaseOrderResource resource,
-            IFacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource> purchaseOrderFacadeService)
+            IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
             var privileges = req.HttpContext.GetPrivileges();
 

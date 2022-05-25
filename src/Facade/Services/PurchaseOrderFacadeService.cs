@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
 
@@ -12,14 +13,19 @@
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.RequestResources;
 
+    using RazorEngineCore;
+
     public class
-        PurchaseOrderFacadeService : FacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource>
+        PurchaseOrderFacadeService : FacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource>, IPurchaseOrderFacadeService
     {
         private readonly IPurchaseOrderService domainService;
 
         private readonly IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository;
 
         private readonly ITransactionManager transactionManager;
+
+        private readonly IRepository<PurchaseOrder, int> orderRepository;
+
 
         public PurchaseOrderFacadeService(
             IRepository<PurchaseOrder, int> repository,
@@ -32,6 +38,30 @@
             this.domainService = domainService;
             this.overbookAllowedByLogRepository = overbookAllowedByLogRepository;
             this.transactionManager = transactionManager;
+            this.orderRepository = repository;
+        }
+
+        public string GetOrderAsHtml(int orderNumber)
+        {
+            using (var file = new StreamReader("../Service.Host/views/" + @"\" + "PurchaseOrder.cshtml"))
+            {
+                var fileRead = file.ReadToEnd();
+                var razorEngine = new RazorEngine();
+
+                IRazorEngineCompiledTemplate<RazorEngineTemplateBase<PurchaseOrder>> template = razorEngine.Compile<RazorEngineTemplateBase<PurchaseOrder>>(fileRead);
+
+                //var template = razorEngine.Compile(fileRead);
+
+                var order = this.orderRepository.FindById(orderNumber);
+                string result = template.Run(instance =>
+                    {
+                        instance.Model = order;
+                    });
+
+                //var result = template.Run(order);
+
+                return result;
+            }
         }
 
         protected override PurchaseOrder CreateFromResource(
