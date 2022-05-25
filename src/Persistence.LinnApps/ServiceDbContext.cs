@@ -571,7 +571,6 @@
             entity.Property(o => o.PeriodFilCancelled).HasColumnName("PERIOD_FIL_CANCELLED");
             entity.Property(o => o.OrderAddressId).HasColumnName("ORDER_ADDRESS_ID");
             entity.HasOne(o => o.OrderAddress).WithMany().HasForeignKey(o => o.OrderAddressId);
-
         }
 
         private void BuildPurchaseOrderDetails(ModelBuilder builder)

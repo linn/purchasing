@@ -103,41 +103,6 @@
             return current;
         }
 
-        //public ProcessResult SendEmails(int sender, string to, int reqNumber, Stream pdfAttachment)
-        //{
-        //    var from = this.employeeRepository.FindById(sender);
-        //    try
-        //    {
-        //        this.emailService.SendEmail(
-        //            to.Trim(),
-        //            to.Trim(),
-        //            new List<Dictionary<string, string>>
-        //                {
-        //                    new Dictionary<string, string>
-        //                        {
-        //                            { "name", from.FullName }, { "address", from.PhoneListEntry.EmailAddress.Trim() }
-        //                        }
-        //                },
-        //            null,
-        //            from.PhoneListEntry.EmailAddress.Trim(),
-        //            from.FullName,
-        //            $"Purchase Order Req {reqNumber}",
-        //            $"Attached is a copy of Purchase Order Req {reqNumber}",
-        //            pdfAttachment,
-        //            $"Purchase Order Req {reqNumber}");
-
-        //        return new ProcessResult(true, "Email Sent");
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return new ProcessResult
-        //        {
-        //            Success = false,
-        //            Message = $"Error sending email. Error Message: {e.Message}"
-        //        };
-        //    }
-        //}
-
         private void UpdateDetails(ICollection<PurchaseOrderDetail> currentDetails, ICollection<PurchaseOrderDetail> updatedDetails)
         {
             foreach (var detail in updatedDetails)

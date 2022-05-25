@@ -50,15 +50,11 @@
 
                 IRazorEngineCompiledTemplate<RazorEngineTemplateBase<PurchaseOrder>> template = razorEngine.Compile<RazorEngineTemplateBase<PurchaseOrder>>(fileRead);
 
-                //var template = razorEngine.Compile(fileRead);
-
                 var order = this.orderRepository.FindById(orderNumber);
                 string result = template.Run(instance =>
                     {
                         instance.Model = order;
                     });
-
-                //var result = template.Run(order);
 
                 return result;
             }
