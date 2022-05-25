@@ -71,5 +71,7 @@
         public string SuppliersDesignation { get; set; }
 
         public decimal? VatTotalCurrency { get; set; }
+
+        public decimal? OrderConversionFactor { get; set; }
     }
 }

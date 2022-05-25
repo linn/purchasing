@@ -7,6 +7,7 @@
     using FluentAssertions.Extensions;
 
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrder;
 
     using NSubstitute;
 
@@ -24,14 +25,18 @@
                                      new PurchaseOrderDelivery
                                          {
                                              OurDeliveryQty = 100,
+                                             DeliverySeq = 1,
+                                             OrderNumber = 1,
                                              DateAdvised = 28.March(1995)
                                          }
                                  };
             this.AuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
+            this.MiniOrderRepository.FindById(1).Returns(new MiniOrder());
             this.PurchaseOrderRepository.FindById(1).Returns(new PurchaseOrder
                                                                  {
                                                                      OrderNumber = 1,
+                                                                     DocumentTypeName = "PO",
                                                                      OrderMethod = new OrderMethod
                                                                          {
                                                                              Name = "METHOD"

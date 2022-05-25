@@ -9,6 +9,7 @@
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrder;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NSubstitute;

@@ -23,7 +23,7 @@
             app.MapGet("/purchasing/purchase-orders/deliveries", this.Search);
             app.MapPatch("/purchasing/purchase-orders/deliveries/{orderNumber:int}/{orderLine:int}/{deliverySeq:int}", this.Patch);
             app.MapPost("/purchasing/purchase-orders/deliveries", this.BatchUpdate);
-            app.MapPut("/purchasing/purchase-orders/deliveries/{orderNumber:int}/{orderLine:int}/", this.UpdateDeliveriesForOrderLine);
+            app.MapPost("/purchasing/purchase-orders/deliveries/{orderNumber:int}/{orderLine:int}/", this.UpdateDeliveriesForOrderLine);
             app.MapGet("/purchasing/purchase-orders/deliveries/{orderNumber:int}/{orderLine:int}/", this.GetDeliveriesForOrderLine);
         }
 

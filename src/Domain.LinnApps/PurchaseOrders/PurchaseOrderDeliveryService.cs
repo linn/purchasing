@@ -3,12 +3,15 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection.Metadata;
 
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
+    using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrder;
 
     public class PurchaseOrderDeliveryService : IPurchaseOrderDeliveryService
     {
@@ -20,7 +23,7 @@
 
         private readonly ISingleRecordRepository<PurchaseLedgerMaster> purchaseLedgerMaster;
 
-        private readonly IRepository<MiniOrder, int> miniOrderRepository;
+        private readonly IRepository<MiniOrder.MiniOrder, int> miniOrderRepository;
 
         private readonly IRepository<MiniOrderDelivery, MiniOrderDeliveryKey> miniOrderDeliveryRepository;
 
@@ -31,7 +34,7 @@
             IAuthorisationService authService,
             IRepository<RescheduleReason, string> rescheduleReasonRepository,
             ISingleRecordRepository<PurchaseLedgerMaster> purchaseLedgerMaster,
-            IRepository<MiniOrder, int> miniOrderRepository,
+            IRepository<MiniOrder.MiniOrder, int> miniOrderRepository,
             IRepository<MiniOrderDelivery, MiniOrderDeliveryKey> miniOrderDeliveryRepository,
             IRepository<PurchaseOrder, int> purchaseOrderRepository)
         {
@@ -101,15 +104,17 @@
             }
 
             var entity = this.repository.FindById(key);
-            var miniOrder = this.miniOrderRepository.FindById(key.OrderNumber);
-            var miniOrderDelivery = this.miniOrderDeliveryRepository.FindBy(
-                x => x.OrderNumber == key.OrderNumber && x.DeliverySequence == key.DeliverySequence);
-
+            
             if (from.DateAdvised != to.DateAdvised)
             {
                 entity.DateAdvised = to.DateAdvised;
-                miniOrder.AdvisedDeliveryDate = to.DateAdvised;
-                miniOrderDelivery.AdvisedDate = to.DateAdvised;
+                this.UpdateMiniOrder(
+                    key.OrderNumber, 
+                    to.DateAdvised, 
+                    null,
+                    null, 
+                    null,
+                    null);
             }
 
             if (from.RescheduleReason != to.RescheduleReason)
@@ -120,7 +125,13 @@
             if (from.SupplierConfirmationComment != to.SupplierConfirmationComment)
             {
                 entity.SupplierConfirmationComment = to.SupplierConfirmationComment;
-                miniOrder.AcknowledgeComment = to.SupplierConfirmationComment;
+                this.UpdateMiniOrder(
+                    key.OrderNumber, 
+                    null, 
+                    null, 
+                    null, 
+                    to.SupplierConfirmationComment,
+                    null);
             }
 
             if (from.AvailableAtSupplier != to.AvailableAtSupplier)
@@ -140,10 +151,7 @@
                 throw new UnauthorisedActionException("You are not authorised to acknowledge orders.");
             }
 
-            if (!this.purchaseLedgerMaster.GetRecord().OkToRaiseOrder.Equals("Y"))
-            {
-                throw new UnauthorisedActionException("Orders are currently restricted.");
-            }
+            this.CheckOkToRaiseOrders();
 
             var successCount = 0;
 
@@ -153,10 +161,7 @@
             foreach (var change in purchaseOrderDeliveryUpdates)
             {
                 var entity = this.repository.FindById(change.Key);
-                var miniOrder = this.miniOrderRepository.FindById(change.Key.OrderNumber);
-                var miniOrderDelivery = this.miniOrderDeliveryRepository.FindBy(
-                    x => x.OrderNumber == change.Key.OrderNumber && x.DeliverySequence == change.Key.DeliverySequence);
-
+                
                 if (string.IsNullOrEmpty(change.NewReason))
                 {
                     change.NewReason = "ADVISED";
@@ -189,8 +194,13 @@
                 {
                     entity.DateAdvised = change.NewDateAdvised;
                     entity.RescheduleReason = change.NewReason;
-                    miniOrder.AdvisedDeliveryDate = change.NewDateAdvised;
-                    miniOrderDelivery.AdvisedDate = change.NewDateAdvised;
+                    this.UpdateMiniOrder(
+                        change.Key.OrderNumber, 
+                        change.NewDateAdvised, 
+                        null, 
+                        null, 
+                        null, 
+                        null);
                     successCount++;
                 }
             }
@@ -232,24 +242,156 @@
                 throw new PurchaseOrderDeliveryException($"order line not found: {orderNumber} / {orderLine}.");
             }
 
-            if (order.OrderMethod.Name.Equals("CALL OFF"))
+            if (order.OrderMethod.Name == "CALL OFF")
             {
                 throw new PurchaseOrderDeliveryException(
                     "You cannot raise a split delivery for a CALL OFF. It is raised automatically on delivery.");
             }
 
-            var updateDeliveriesForOrderLine = updated.ToList();
+            if (order.Cancelled == "Y")
+            {
+                throw new PurchaseOrderDeliveryException("Cannot split deliveries - Order is cancelled.");
+            }
 
-            if (detail.OurQty.GetValueOrDefault() != updateDeliveriesForOrderLine
+            if (order.DocumentTypeName != "PO")
+            {
+                throw new PurchaseOrderDeliveryException("Cannot split deliveries - Order is not a PO.");
+            }
+
+            if (order.Cancelled == "Y")
+            {
+                throw new PurchaseOrderDeliveryException("Cannot split deliveries - Order is cancelled.");
+            }
+
+            var updatedDeliveriesForOrderLine = updated.ToList();
+
+            if (detail.OurQty.GetValueOrDefault() != updatedDeliveriesForOrderLine
                     .Sum(x => x.OurDeliveryQty.GetValueOrDefault()))
             {
                 throw new PurchaseOrderDeliveryException(
                     "You must match the order qty when splitting deliveries.");
             }
 
-            detail.PurchaseDeliveries = updateDeliveriesForOrderLine;
+            var list = detail.PurchaseDeliveries.ToArray();
+
+            var newDeliveries = updatedDeliveriesForOrderLine.Select(
+                del =>
+                    {
+                        var existing = list.FirstOrDefault(x => x.DeliverySeq == del.DeliverySeq);
+                        if (existing != null)
+                        {
+                            return existing; // todo - update the existing delivery           
+                        } 
+
+                        return new PurchaseOrderDelivery
+                                         {
+                                             DeliverySeq = del.DeliverySeq,
+                                             OurDeliveryQty = del.OurDeliveryQty,
+                                             OrderDeliveryQty = del.OurDeliveryQty / detail.OrderConversionFactor,
+                                             OurUnitPrice = detail.OurUnitPriceCurrency,
+                                             OrderUnitPrice = detail.OrderUnitPriceCurrency,
+                                             DateRequested = del.DateRequested,
+                                             DateAdvised = del.DateAdvised,
+                                             CallOffDate = DateTime.Now,
+                                             Cancelled = "N",
+                                             CallOffRef = null,
+                                             OrderNumber = orderNumber,
+                                             OrderLine = orderLine,
+                                             FilCancelled = "N",
+                                             NetTotalCurrency = Math.Round(
+                                                 del.OurDeliveryQty.GetValueOrDefault()
+                                                 * detail.OurUnitPriceCurrency.GetValueOrDefault(),
+                                                 2),
+                                             //// todo - VatTotalCurrency
+                                             //// todo - DeliveryTotalCurrency
+                                             SupplierConfirmationComment = null,
+                                             BaseOurUnitPrice = del.BaseOurUnitPrice,
+                                             BaseOrderUnitPrice = del.BaseOrderUnitPrice,
+                                             BaseNetTotal = Math.Round(
+                                                 del.OurDeliveryQty.GetValueOrDefault()
+                                                 * del.BaseOurUnitPrice.GetValueOrDefault(),
+                                                 2),
+                                             //// todo - BaseVatTotal
+                                             //// todo - BaseDeliveryTotal
+                                             QuantityOutstanding = del.OurDeliveryQty,
+                                             QtyNetReceived = 0,
+                                             QtyPassedForPayment = 0,
+                                             RescheduleReason = del.DateAdvised.HasValue ? "ADVISED" : "REQUESTED",
+                                             AvailableAtSupplier = del.AvailableAtSupplier
+                                         };
+                    });
+
+            detail.PurchaseDeliveries = newDeliveries;
+
+            // set mini order date requested to be first date requested of newly split deliveries
+            // and write the new deliveries list the mini order to keep it in sync
+            this.UpdateMiniOrder(
+                orderNumber, 
+                null,
+                updatedDeliveriesForOrderLine.MinBy(x => x.DateRequested)?.DateRequested, 
+                null, 
+                null,
+                updatedDeliveriesForOrderLine);
 
             return detail.PurchaseDeliveries;
+        }
+
+        private void CheckOkToRaiseOrders()
+        {
+            if (!this.purchaseLedgerMaster.GetRecord().OkToRaiseOrder.Equals("Y"))
+            {
+                throw new UnauthorisedActionException("Orders are currently restricted.");
+            }
+        }
+
+        // syncs any delivery changes back to the mini_order
+        // keeping this 'temporary' code in a dedicated method so it's clear and easy to remove
+        private void UpdateMiniOrder(
+            int orderNumber, 
+            DateTime? advisedDeliveryDate, 
+            DateTime? requestedDate, 
+            int? numberOfSplitDeliveries,
+            string supplierConfirmationComment,
+            IEnumerable<PurchaseOrderDelivery> updatedDeliveries)
+        {
+            var miniOrder = this.miniOrderRepository.FindById(orderNumber);
+            var miniOrderDelivery = this.miniOrderDeliveryRepository.FindBy(
+                x => x.OrderNumber == orderNumber && x.DeliverySequence == 1);
+
+            if (requestedDate.HasValue)
+            {
+                miniOrder.RequestedDeliveryDate = requestedDate;
+            }
+
+            if (numberOfSplitDeliveries.HasValue)
+            {
+                miniOrder.NumberOfSplitDeliveries = numberOfSplitDeliveries.Value;
+            }
+
+            if (advisedDeliveryDate.HasValue)
+            {
+                miniOrderDelivery.AdvisedDate = advisedDeliveryDate;
+                miniOrder.AdvisedDeliveryDate = advisedDeliveryDate;
+            }
+
+            if (supplierConfirmationComment != null)
+            {
+                miniOrder.AcknowledgeComment = supplierConfirmationComment;
+            }
+
+            if (updatedDeliveries != null)
+            {
+                miniOrder.Deliveries = updatedDeliveries
+                    .Select(del => new MiniOrderDelivery
+                                       {
+                                           AdvisedDate = del.DateAdvised,
+                                           RequestedDate = del.DateRequested,
+                                           DeliverySequence = del.DeliverySeq,
+                                           OrderNumber = del.OrderNumber,
+                                           AvailableAtSupplier = del.AvailableAtSupplier,
+                                           OurQty = del.OurDeliveryQty
+                                       });
+            }
         }
     }
 }

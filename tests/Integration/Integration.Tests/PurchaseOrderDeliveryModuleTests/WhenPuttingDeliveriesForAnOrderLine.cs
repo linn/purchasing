@@ -34,7 +34,7 @@
                                         }
                                 }.ToArray();
 
-            this.Response = this.Client.PutAsJsonAsync(
+            this.Response = this.Client.PostAsJsonAsync(
                 $"/purchasing/purchase-orders/deliveries/123456/1",
                 this.resource).Result;
         }
