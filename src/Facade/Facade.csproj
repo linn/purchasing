@@ -14,6 +14,7 @@
     <PackageReference Include="Linn.Common.Reporting" Version="1.5.0" />
     <PackageReference Include="Linn.Common.Reporting.Resources" Version="1.3.0" />
     <PackageReference Include="Linn.Common.Serialization" Version="2.1.0" />
+    <PackageReference Include="RazorEngineCore" Version="2022.1.2" />
   </ItemGroup>
 
   <ItemGroup>

@@ -7,6 +7,7 @@
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
+    using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -15,7 +16,7 @@
 
     using NUnit.Framework;
 
-    public class WhenUpdating : ContextBase
+    public class WhenUpdatingButClosedSupplier : ContextBase
     {
         private readonly string fromState = "DRAFT";
 
@@ -26,6 +27,8 @@
         private readonly int supplierId = 77442;
 
         private readonly string toState = "AUTHORISE WAIT";
+
+        private Action action;
 
         private PurchaseOrderReq current;
 
@@ -90,51 +93,17 @@
                 .Returns(new Part { StockControlled = "N" });
 
             this.MockSupplierRepository.FindById(this.supplierId).Returns(
-                new Supplier { SupplierId = this.supplierId, Name = "pesto shop", DateClosed = null });
-            this.Sut.Update(this.current, this.updated, new List<string>());
+                new Supplier
+                    {
+                        SupplierId = this.supplierId, Name = "pesto shop", DateClosed = DateTime.Now.AddDays(-1)
+                    });
+            this.action = () => this.Sut.Update(this.current, this.updated, new List<string>());
         }
 
         [Test]
-        public void ShouldNotUpdateReqNumber()
+        public void ShouldThrowIllegalStateException()
         {
-            this.current.ReqNumber.Should().Be(this.reqNumber);
-        }
-
-        [Test]
-        public void ShouldUpdate()
-        {
-            this.current.ReqDate.Should().Be(this.updated.ReqDate);
-            this.current.OrderNumber.Should().Be(this.updated.OrderNumber);
-            this.current.PartNumber.Should().Be(this.updated.PartNumber);
-            this.current.Description.Should().Be(this.updated.Description);
-            this.current.Qty.Should().Be(this.updated.Qty);
-            this.current.UnitPrice.Should().Be(this.updated.UnitPrice);
-            this.current.Carriage.Should().Be(this.updated.Carriage);
-            this.current.TotalReqPrice.Should().Be(this.updated.TotalReqPrice);
-            this.current.CurrencyCode.Should().Be(this.updated.CurrencyCode);
-            this.current.SupplierId.Should().Be(this.updated.SupplierId);
-            this.current.SupplierName.Should().Be(this.updated.SupplierName);
-            this.current.SupplierContact.Should().Be(this.updated.SupplierContact);
-            this.current.AddressLine1.Should().Be(this.updated.AddressLine1);
-            this.current.AddressLine2.Should().Be(this.updated.AddressLine2);
-            this.current.AddressLine3.Should().Be(this.updated.AddressLine3);
-            this.current.AddressLine4.Should().Be(this.updated.AddressLine4);
-            this.current.PostCode.Should().Be(this.updated.PostCode);
-            this.current.AddressLine1.Should().Be(this.updated.AddressLine1);
-            this.current.CountryCode.Should().Be(this.updated.CountryCode);
-            this.current.PhoneNumber.Should().Be(this.updated.PhoneNumber);
-            this.current.QuoteRef.Should().Be(this.updated.QuoteRef);
-            this.current.Email.Should().Be(this.updated.Email);
-            this.current.DateRequired.Should().Be(this.updated.DateRequired);
-            this.current.RequestedById.Should().Be(999); // don't let requested by field by updated after create
-            this.current.AuthorisedById.Should().Be(this.current.AuthorisedById);
-            this.current.SecondAuthById.Should().Be(this.current.SecondAuthById);
-            this.current.FinanceCheckById.Should().Be(this.current.FinanceCheckById);
-            this.current.TurnedIntoOrderById.Should().Be(this.current.TurnedIntoOrderById);
-            this.current.Nominal.Should().Be(this.updated.Nominal);
-            this.current.RemarksForOrder.Should().Be(this.updated.RemarksForOrder);
-            this.current.InternalNotes.Should().Be(this.updated.InternalNotes);
-            this.current.Department.Should().Be(this.updated.Department);
+            this.action.Should().Throw<UnauthorisedActionException>();
         }
     }
 }

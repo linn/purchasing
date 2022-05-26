@@ -360,19 +360,7 @@ function PurchaseOrderUtility({ creating }) {
                                 disabled
                             />
                         </Grid>
-                        <Grid item xs={1}>
-                            <Tooltip title="Print Order screen">
-                                <IconButton
-                                    className={classes.pullRight}
-                                    aria-label="Print"
-                                    onClick={() => history.push(utilities.getHref(item, 'print'))}
-                                    disabled
-                                    //={creating}
-                                >
-                                    <PrintIcon />
-                                </IconButton>
-                            </Tooltip>
-                        </Grid>
+                        <Grid item xs={1} />
                         <Grid item xs={1}>
                             <div className={classes.centeredIcon}>
                                 {editingAllowed ? (
