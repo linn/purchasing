@@ -1273,6 +1273,7 @@ function POReqUtility({ creating }) {
                                 saveDisabled={!canSave()}
                                 backClick={() => history.push('/purchasing')}
                                 saveClick={() => {
+                                    setEditStatus('view');
                                     clearErrors();
                                     setSnackbarMessage('Save successful');
                                     if (creating) {
