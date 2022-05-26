@@ -11,7 +11,6 @@
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
-    using Linn.Purchasing.Resources.RequestResources;
 
     using RazorEngineCore;
 
@@ -25,7 +24,6 @@
         private readonly ITransactionManager transactionManager;
 
         private readonly IRepository<PurchaseOrder, int> orderRepository;
-
 
         public PurchaseOrderFacadeService(
             IRepository<PurchaseOrder, int> repository,
@@ -155,9 +153,9 @@
                                                         d => new PurchaseOrderDelivery
                                                                  {
                                                                      Cancelled = d.Cancelled,
-                                                                     DateAdvised = string.IsNullOrEmpty(d.DateAdvised) 
+                                                                     DateAdvised = string.IsNullOrEmpty(d.DateAdvised)
                                                                          ? null : DateTime.Parse(d.DateAdvised),
-                                                                     DateRequested = string.IsNullOrEmpty(d.DateRequested) ? 
+                                                                     DateRequested = string.IsNullOrEmpty(d.DateRequested) ?
                                                                          null : DateTime.Parse(d.DateRequested),
                                                                      DeliverySeq = d.DeliverySeq,
                                                                      NetTotalCurrency = d.NetTotalCurrency,

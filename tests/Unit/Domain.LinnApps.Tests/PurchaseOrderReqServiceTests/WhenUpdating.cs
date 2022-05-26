@@ -19,7 +19,11 @@
     {
         private readonly string fromState = "DRAFT";
 
+        private readonly string partNo = "Pesto jar";
+
         private readonly int reqNumber = 5678;
+
+        private readonly int supplierId = 77442;
 
         private readonly string toState = "AUTHORISE WAIT";
 
@@ -27,20 +31,17 @@
 
         private PurchaseOrderReq updated;
 
-        private readonly int supplierId = 77442;
-
-        private readonly string partNo = "Pesto jar";
-
-
         [SetUp]
         public void SetUp()
         {
-            this.current =
-                new PurchaseOrderReq
-                    {
-                        ReqNumber = this.reqNumber, RequestedById = 999, State = this.fromState, SupplierId = this.supplierId,
-                        PartNumber = this.partNo
-                };
+            this.current = new PurchaseOrderReq
+                               {
+                                   ReqNumber = this.reqNumber,
+                                   RequestedById = 999,
+                                   State = this.fromState,
+                                   SupplierId = this.supplierId,
+                                   PartNumber = this.partNo
+                               };
             this.updated = new PurchaseOrderReq
                                {
                                    ReqNumber = 0,
@@ -75,8 +76,8 @@
                                    NominalCode = "00001234",
                                    RemarksForOrder = "needed asap",
                                    InternalNotes = "pls approv",
-                                   DepartmentCode = "00002345",
-            };
+                                   DepartmentCode = "00002345"
+                               };
 
             this.MockReqsStateChangeRepository.FindBy(Arg.Any<Expression<Func<PurchaseOrderReqStateChange, bool>>>())
                 .Returns(
@@ -86,21 +87,17 @@
                         });
 
             this.MockPartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
-                .Returns(
-                    new Part
-                        {
-                            StockControlled = "N"
-                        });
+                .Returns(new Part { StockControlled = "N" });
 
-            this.MockSupplierRepository.FindById(this.supplierId)
-                .Returns(
-                    new Supplier
-                        {
-                            SupplierId = this.supplierId,
-                            Name = "pesto shop",
-                            DateClosed = null
-                        });
+            this.MockSupplierRepository.FindById(this.supplierId).Returns(
+                new Supplier { SupplierId = this.supplierId, Name = "pesto shop", DateClosed = null });
             this.Sut.Update(this.current, this.updated, new List<string>());
+        }
+
+        [Test]
+        public void ShouldNotUpdateReqNumber()
+        {
+            this.current.ReqNumber.Should().Be(this.reqNumber);
         }
 
         [Test]
@@ -138,12 +135,6 @@
             this.current.RemarksForOrder.Should().Be(this.updated.RemarksForOrder);
             this.current.InternalNotes.Should().Be(this.updated.InternalNotes);
             this.current.Department.Should().Be(this.updated.Department);
-        }
-
-        [Test]
-        public void ShouldNotUpdateReqNumber()
-        {
-            this.current.ReqNumber.Should().Be(this.reqNumber);
         }
     }
 }

@@ -38,7 +38,6 @@
 
         private readonly IRepository<Supplier, int> supplierRepository;
 
-
         public PurchaseOrderReqService(
             string appRoot,
             IAuthorisationService authService,
@@ -138,25 +137,9 @@
                     "Cannot create new PO req into state other than Draft or Authorise Wait");
             }
 
-            var part = this.partRepository.FindBy(p => p.PartNumber == entity.PartNumber);
-            if (part.StockControlled == "Y")
-            {
-                throw new UnauthorisedActionException(
-                    "Cannot raise a PO Req for stock controlled part");
-            }
+            this.CheckIfCanOrderFromSupplier(entity);
 
-            var supplier = this.supplierRepository.FindById(entity.SupplierId);
-            if (supplier.DateClosed.HasValue && supplier.DateClosed.Value <= DateTime.Now)
-            {
-                throw new UnauthorisedActionException(
-                    $"Supplier {supplier.SupplierId} ({supplier.Name}) is closed, can't raise po req to them");
-            }
-
-            if (supplier.OrderHold == "Y")
-            {
-                throw new UnauthorisedActionException(
-                    $"Supplier {supplier.SupplierId} ({supplier.Name}) is on hold, can't raise po req to them right now");
-            }
+            this.CheckPartIsNotStockControlled(entity);
 
             return entity;
         }
@@ -384,25 +367,9 @@
                 }
             }
 
-            var part = this.partRepository.FindBy(p => p.PartNumber == entity.PartNumber);
-            if (part.StockControlled == "Y")
-            {
-                throw new UnauthorisedActionException(
-                    "Cannot raise a PO Req for stock controlled part");
-            }
+            this.CheckIfCanOrderFromSupplier(entity);
 
-            var supplier = this.supplierRepository.FindById(entity.SupplierId);
-            if (supplier.DateClosed.HasValue && supplier.DateClosed.Value <= DateTime.Now)
-            {
-                throw new UnauthorisedActionException(
-                    $"Supplier {supplier.SupplierId} ({supplier.Name}) is closed, can't raise po req to them");
-            }
-
-            if (supplier.OrderHold == "Y")
-            {
-                throw new UnauthorisedActionException(
-                    $"Supplier {supplier.SupplierId} ({supplier.Name}) is on hold, can't raise po req to them right now");
-            }
+            this.CheckPartIsNotStockControlled(entity);
 
             entity.State = updatedEntity.State;
             entity.ReqDate = updatedEntity.ReqDate;
@@ -447,6 +414,32 @@
                 x => x.FromState == from && x.ToState == to
                                          && (x.UserAllowed == "Y" || (changeIsFromFunction && x.ComputerAllowed == "Y")));
             return stateChange != null;
+        }
+
+        private void CheckIfCanOrderFromSupplier(PurchaseOrderReq entity)
+        {
+            var supplier = this.supplierRepository.FindById(entity.SupplierId);
+            if (supplier.DateClosed.HasValue && supplier.DateClosed.Value <= DateTime.Now)
+            {
+                throw new UnauthorisedActionException(
+                    $"Supplier {supplier.SupplierId} ({supplier.Name}) is closed, can't raise po req to them");
+            }
+
+            if (supplier.OrderHold == "Y")
+            {
+                throw new UnauthorisedActionException(
+                    $"Supplier {supplier.SupplierId} ({supplier.Name}) is on hold, can't raise po req to them right now");
+            }
+        }
+
+        private void CheckPartIsNotStockControlled(PurchaseOrderReq entity)
+        {
+            var part = this.partRepository.FindBy(p => p.PartNumber == entity.PartNumber);
+            if (part.StockControlled == "Y")
+            {
+                throw new UnauthorisedActionException(
+                    "Cannot raise a PO Req for stock controlled part");
+            }
         }
     }
 }

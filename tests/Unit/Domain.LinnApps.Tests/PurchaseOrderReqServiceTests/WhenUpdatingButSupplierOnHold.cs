@@ -20,30 +20,31 @@
     {
         private readonly string fromState = "DRAFT";
 
-        private readonly int reqNumber = 5678;
+        private readonly string partNo = "Pesto jar";
 
-        private readonly string toState = "AUTHORISE WAIT";
+        private readonly int reqNumber = 5678;
 
         private readonly int supplierId = 77442;
 
-        private readonly string partNo = "Pesto jar";
+        private readonly string toState = "AUTHORISE WAIT";
+
+        private Action action;
 
         private PurchaseOrderReq current;
 
         private PurchaseOrderReq updated;
 
-        private Action action;
-
-
         [SetUp]
         public void SetUp()
         {
-            this.current =
-                new PurchaseOrderReq
-                    {
-                        ReqNumber = this.reqNumber, RequestedById = 999, State = this.fromState, SupplierId = this.supplierId,
-                        PartNumber = this.partNo
-                };
+            this.current = new PurchaseOrderReq
+                               {
+                                   ReqNumber = this.reqNumber,
+                                   RequestedById = 999,
+                                   State = this.fromState,
+                                   SupplierId = this.supplierId,
+                                   PartNumber = this.partNo
+                               };
             this.updated = new PurchaseOrderReq
                                {
                                    ReqNumber = 0,
@@ -78,8 +79,8 @@
                                    NominalCode = "00001234",
                                    RemarksForOrder = "needed asap",
                                    InternalNotes = "pls approv",
-                                   DepartmentCode = "00002345",
-            };
+                                   DepartmentCode = "00002345"
+                               };
 
             this.MockReqsStateChangeRepository.FindBy(Arg.Any<Expression<Func<PurchaseOrderReqStateChange, bool>>>())
                 .Returns(
@@ -89,20 +90,13 @@
                         });
 
             this.MockPartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
-                .Returns(
-                    new Part
-                        {
-                            StockControlled = "N"
-                        });
+                .Returns(new Part { StockControlled = "N" });
 
-            this.MockSupplierRepository.FindById(this.supplierId)
-                .Returns(
-                    new Supplier
-                        {
-                            SupplierId = this.supplierId,
-                            Name = "pesto shop",
-                            DateClosed = DateTime.Now.AddDays(-1)
-                        });
+            this.MockSupplierRepository.FindById(this.supplierId).Returns(
+                new Supplier
+                    {
+                        SupplierId = this.supplierId, Name = "pesto shop", DateClosed = DateTime.Now.AddDays(-1)
+                    });
             this.action = () => this.Sut.Update(this.current, this.updated, new List<string>());
         }
 
