@@ -1,7 +1,5 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
-    using System;
-    using System.Collections.Generic;
     using System.Net;
     using System.Threading.Tasks;
 
@@ -14,13 +12,11 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
-    using Linn.Purchasing.Resources.RequestResources;
     using Linn.Purchasing.Service.Extensions;
     using Linn.Purchasing.Service.Models;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Routing;
 
     public class PurchaseOrderModule : ICarterModule
@@ -39,13 +35,20 @@
             app.MapGet("/purchasing/purchase-orders", this.SearchPurchaseOrders);
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}", this.GetPurchaseOrder);
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}/html", this.GetPurchaseOrderHtml);
-
             app.MapPut("/purchasing/purchase-orders/{orderNumber:int}", this.UpdatePurchaseOrder);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
         {
             await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
+        }
+
+        private async Task GetApplicationState(
+            HttpRequest req,
+            HttpResponse res,
+            IPurchaseOrderFacadeService purchaseOrderFacadeService)
+        {
+            await res.Negotiate(purchaseOrderFacadeService.GetApplicationState(req.HttpContext.GetPrivileges()));
         }
 
         private async Task GetCurrencies(
@@ -99,7 +102,11 @@
             await res.Negotiate(result);
         }
 
-        private async Task GetPurchaseOrderHtml(HttpRequest req, HttpResponse res, int orderNumber, IPurchaseOrderFacadeService purchaseOrderFacadeService)
+        private async Task GetPurchaseOrderHtml(
+            HttpRequest req,
+            HttpResponse res,
+            int orderNumber,
+            IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
             var result = purchaseOrderFacadeService.GetOrderAsHtml(orderNumber);
 
@@ -107,14 +114,6 @@
             res.StatusCode = (int)HttpStatusCode.OK;
 
             await res.WriteAsync(result);
-        }
-
-        private async Task GetApplicationState(
-            HttpRequest req,
-            HttpResponse res,
-            IPurchaseOrderFacadeService purchaseOrderFacadeService)
-        {
-            await res.Negotiate(purchaseOrderFacadeService.GetApplicationState(req.HttpContext.GetPrivileges()));
         }
 
         private async Task GetUnitsOfMeasure(
@@ -156,7 +155,11 @@
         {
             var privileges = req.HttpContext.GetPrivileges();
 
-            var result = purchaseOrderFacadeService.Update(resource.OrderNumber, resource, privileges, res.HttpContext.User.GetEmployeeNumber());
+            var result = purchaseOrderFacadeService.Update(
+                resource.OrderNumber,
+                resource,
+                privileges,
+                res.HttpContext.User.GetEmployeeNumber());
 
             await res.Negotiate(result);
         }
