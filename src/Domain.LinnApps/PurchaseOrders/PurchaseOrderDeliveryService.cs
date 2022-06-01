@@ -9,6 +9,7 @@
     using Linn.Common.Persistence;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
+    using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrder;
@@ -29,6 +30,8 @@
 
         private readonly IRepository<PurchaseOrder, int> purchaseOrderRepository;
 
+        private readonly IPurchaseOrdersPack purchaseOrdersPack;
+
         public PurchaseOrderDeliveryService(
             IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> repository,
             IAuthorisationService authService,
@@ -36,7 +39,8 @@
             ISingleRecordRepository<PurchaseLedgerMaster> purchaseLedgerMaster,
             IRepository<MiniOrder.MiniOrder, int> miniOrderRepository,
             IRepository<MiniOrderDelivery, MiniOrderDeliveryKey> miniOrderDeliveryRepository,
-            IRepository<PurchaseOrder, int> purchaseOrderRepository)
+            IRepository<PurchaseOrder, int> purchaseOrderRepository,
+            IPurchaseOrdersPack purchaseOrdersPack)
         {
             this.repository = repository;
             this.authService = authService;
@@ -45,6 +49,7 @@
             this.miniOrderRepository = miniOrderRepository;
             this.miniOrderDeliveryRepository = miniOrderDeliveryRepository;
             this.purchaseOrderRepository = purchaseOrderRepository;
+            this.purchaseOrdersPack = purchaseOrdersPack;
         }
 
         public IEnumerable<PurchaseOrderDelivery> SearchDeliveries(
@@ -278,11 +283,51 @@
                 del =>
                     {
                         var existing = list.FirstOrDefault(x => x.DeliverySeq == del.DeliverySeq);
+                        var vatAmount = Math.Round(
+                            this.purchaseOrdersPack.GetVatAmountSupplier(
+                                detail.OrderUnitPriceCurrency.GetValueOrDefault() * del.OurDeliveryQty.GetValueOrDefault(),
+                                order.SupplierId),
+                            2);
+
+                        var baseVatAmount = Math.Round(
+                            this.purchaseOrdersPack.GetVatAmountSupplier(
+                                del.BaseOurUnitPrice.GetValueOrDefault() * del.OurDeliveryQty.GetValueOrDefault(),
+                                order.SupplierId),
+                            2);
                         if (existing != null)
                         {
-                            return existing; // todo - update the existing delivery           
-                        } 
-
+                            existing.OurDeliveryQty = del.OurDeliveryQty;
+                            existing.OrderDeliveryQty = del.OurDeliveryQty / detail.OrderConversionFactor;
+                            existing.OurUnitPrice = detail.OurUnitPriceCurrency;
+                            existing.DateRequested = del.DateRequested;
+                            existing.DateAdvised = del.DateAdvised;
+                            existing.CallOffDate = DateTime.Now;
+                            existing.NetTotalCurrency = Math.Round(
+                                del.OurDeliveryQty.GetValueOrDefault()
+                                * detail.OurUnitPriceCurrency.GetValueOrDefault(),
+                                2);
+                            existing.VatTotalCurrency = vatAmount;
+                            existing.DeliveryTotalCurrency = Math.Round(
+                                                                 detail.OrderUnitPriceCurrency.GetValueOrDefault()
+                                                                 * del.OurDeliveryQty.GetValueOrDefault(),
+                                                                 2) + vatAmount;
+                            existing.BaseOurUnitPrice = del.BaseOurUnitPrice;
+                            existing.BaseOrderUnitPrice = del.BaseOrderUnitPrice;
+                            existing.BaseNetTotal = Math.Round(
+                                del.OurDeliveryQty.GetValueOrDefault() * detail.BaseOurUnitPrice.GetValueOrDefault(),
+                                2);
+                            existing.BaseVatTotal = baseVatAmount;
+                            existing.BaseDeliveryTotal = Math.Round(
+                                (del.OurDeliveryQty.GetValueOrDefault() * detail.BaseOurUnitPrice.GetValueOrDefault())
+                                + baseVatAmount,
+                                2);
+                            existing.QuantityOutstanding =
+                                del.OurDeliveryQty - existing.OurDeliveryQty + existing.QuantityOutstanding;
+                            existing.RescheduleReason = del.DateAdvised.HasValue ? "ADVISED" : "REQUESTED";
+                            existing.AvailableAtSupplier = del.AvailableAtSupplier;
+                            return existing;          
+                        }
+                        
                         return new PurchaseOrderDelivery
                                          {
                                              DeliverySeq = del.DeliverySeq,
@@ -302,17 +347,23 @@
                                                  del.OurDeliveryQty.GetValueOrDefault()
                                                  * detail.OurUnitPriceCurrency.GetValueOrDefault(),
                                                  2),
-                                             //// todo - VatTotalCurrency
-                                             //// todo - DeliveryTotalCurrency
+                                             VatTotalCurrency = vatAmount,
+                                             DeliveryTotalCurrency = Math.Round(
+                                                 detail.OrderUnitPriceCurrency.GetValueOrDefault() * del.OurDeliveryQty.GetValueOrDefault(), 2)
+                                             + vatAmount,
                                              SupplierConfirmationComment = null,
                                              BaseOurUnitPrice = del.BaseOurUnitPrice,
                                              BaseOrderUnitPrice = del.BaseOrderUnitPrice,
                                              BaseNetTotal = Math.Round(
                                                  del.OurDeliveryQty.GetValueOrDefault()
-                                                 * del.BaseOurUnitPrice.GetValueOrDefault(),
+                                                 * detail.BaseOurUnitPrice.GetValueOrDefault(),
                                                  2),
-                                             //// todo - BaseVatTotal
-                                             //// todo - BaseDeliveryTotal
+                                             BaseVatTotal = baseVatAmount,
+                                             BaseDeliveryTotal = Math.Round(
+                                                     (del.OurDeliveryQty.GetValueOrDefault() 
+                                                      * detail.BaseOurUnitPrice.GetValueOrDefault()) 
+                                                     + baseVatAmount, 
+                                                     2), 
                                              QuantityOutstanding = del.OurDeliveryQty,
                                              QtyNetReceived = 0,
                                              QtyPassedForPayment = 0,
