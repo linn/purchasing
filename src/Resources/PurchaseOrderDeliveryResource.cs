@@ -14,15 +14,15 @@
 
         public decimal BaseNetTotal { get; set; }
 
-        public int? OrderDeliveryQty { get; set; }
+        public decimal? OrderDeliveryQty { get; set; }
 
         public int OrderLine { get; set; }
 
         public int OrderNumber { get; set; }
 
-        public int? OurDeliveryQty { get; set; }
+        public decimal? OurDeliveryQty { get; set; }
 
-        public int? QtyNetReceived { get; set; }
+        public decimal? QtyNetReceived { get; set; }
 
         public decimal? QuantityOutstanding { get; set; }
 

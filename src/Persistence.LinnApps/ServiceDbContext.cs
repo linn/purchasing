@@ -9,6 +9,7 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
@@ -610,40 +611,43 @@
             entity.HasMany(d => d.CancelledDetails).WithOne().HasForeignKey(cd => new { cd.OrderNumber, cd.LineNumber });
             entity.HasMany(d => d.MrOrders).WithOne().HasForeignKey(mr => new { mr.OrderNumber, mr.LineNumber });
             entity.HasOne(x => x.OrderPosting).WithOne().HasForeignKey<PurchaseOrderPosting>(p => new { p.OrderNumber, p.LineNumber });
+            entity.Property(o => o.OrderConversionFactor).HasColumnName("ORDER_CONVERSION_FACTOR");
         }
 
         private void BuildPurchaseOrderDeliveries(ModelBuilder builder)
         {
             var entity = builder.Entity<PurchaseOrderDelivery>().ToTable("PL_DELIVERIES");
             entity.HasKey(a => new { a.DeliverySeq, a.OrderNumber, a.OrderLine });
-            entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
-            entity.Property(o => o.Cancelled).HasColumnName("CANCELLED").HasMaxLength(1);
-            entity.Property(o => o.OrderLine).HasColumnName("ORDER_LINE");
+            
+
             entity.Property(o => o.DeliverySeq).HasColumnName("DELIVERY_SEQ");
-            entity.Property(o => o.DateAdvised).HasColumnName("ADVISED_DATE");
-            entity.Property(o => o.DateRequested).HasColumnName("REQUESTED_DATE");
             entity.Property(o => o.OurDeliveryQty).HasColumnName("OUR_DELIVERY_QTY").HasMaxLength(19);
             entity.Property(o => o.OrderDeliveryQty).HasColumnName("ORDER_DELIVERY_QTY").HasMaxLength(19);
-            entity.Property(o => o.QtyNetReceived).HasColumnName("QTY_NET_RECEIVED").HasMaxLength(19);
-            entity.HasOne(d => d.PurchaseOrderDetail).WithMany(o => o.PurchaseDeliveries);
-            entity.Property(o => o.NetTotalCurrency).HasColumnName("NET_TOTAL").HasMaxLength(18);
-            entity.Property(d => d.QuantityOutstanding).HasColumnName("QTY_OUTSTANDING");
+            entity.Property(o => o.DateRequested).HasColumnName("REQUESTED_DATE");
+            entity.Property(o => o.DateAdvised).HasColumnName("ADVISED_DATE");
             entity.Property(d => d.CallOffDate).HasColumnName("CALL_OFF_DATE");
+            entity.Property(o => o.Cancelled).HasColumnName("CANCELLED").HasMaxLength(1);
+            entity.Property(o => o.CallOffRef).HasColumnName("CALL_OFF_REF").HasMaxLength(50);
+            entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(o => o.OrderLine).HasColumnName("ORDER_LINE");
+            entity.Property(o => o.FilCancelled).HasColumnName("FIL_CANCELLED").HasMaxLength(1);
+            entity.Property(o => o.NetTotalCurrency).HasColumnName("NET_TOTAL").HasMaxLength(18);
+            entity.Property(o => o.VatTotalCurrency).HasColumnName("VAT_TOTAL").HasMaxLength(18);
+            entity.Property(o => o.DeliveryTotalCurrency).HasColumnName("DELIVERY_TOTAL").HasMaxLength(18);
             entity.Property(d => d.SupplierConfirmationComment).HasColumnName("SUPPLIER_CONFIRMATION_COMMENT").HasMaxLength(2000);
             entity.Property(o => o.BaseOurUnitPrice).HasColumnName("BASE_OUR_UNIT_PRICE").HasMaxLength(19);
             entity.Property(o => o.BaseOrderUnitPrice).HasColumnName("BASE_ORDER_UNIT_PRICE").HasMaxLength(19);
             entity.Property(o => o.BaseNetTotal).HasColumnName("BASE_NET_TOTAL").HasMaxLength(18);
             entity.Property(o => o.BaseVatTotal).HasColumnName("BASE_VAT_TOTAL").HasMaxLength(18);
             entity.Property(o => o.BaseDeliveryTotal).HasColumnName("BASE_DELIVERY_TOTAL").HasMaxLength(18);
-            entity.Property(o => o.OurUnitPriceCurrency).HasColumnName("OUR_UNIT_PRICE").HasMaxLength(19);
-            entity.Property(o => o.OrderUnitPriceCurrency).HasColumnName("ORDER_UNIT_PRICE").HasMaxLength(19);
-            entity.Property(o => o.VatTotalCurrency).HasColumnName("VAT_TOTAL").HasMaxLength(18);
-            entity.Property(o => o.DeliveryTotalCurrency).HasColumnName("DELIVERY_TOTAL").HasMaxLength(18);
+            entity.Property(o => o.OurUnitPrice).HasColumnName("OUR_UNIT_PRICE");
+            entity.Property(o => o.OrderUnitPrice).HasColumnName("ORDER_UNIT_PRICE");
+            entity.Property(d => d.QuantityOutstanding).HasColumnName("QTY_OUTSTANDING");
+            entity.Property(o => o.QtyPassedForPayment).HasColumnName("QTY_PASSED_FOR_PAYMENT");
+            entity.Property(o => o.QtyNetReceived).HasColumnName("QTY_NET_RECEIVED").HasMaxLength(19);
             entity.Property(o => o.RescheduleReason).HasColumnName("RESCHEDULE_REASON").HasMaxLength(20);
             entity.Property(o => o.AvailableAtSupplier).HasColumnName("AVAILABLE_AT_SUPPLIER").HasMaxLength(1);
-            entity.Property(o => o.FilCancelled).HasColumnName("FIL_CANCELLED").HasMaxLength(1);
-            entity.Property(o => o.CallOffRef).HasColumnName("CALL_OFF_REF").HasMaxLength(50);
-            entity.Property(o => o.QtyPassedForPayment).HasColumnName("QTY_PASSED_FOR_PAYMENT");
+            entity.HasOne(d => d.PurchaseOrderDetail).WithMany(o => o.PurchaseDeliveries);
         }
 
         private void BuildOverbookAllowedBy(ModelBuilder builder)
@@ -1316,6 +1320,9 @@
             entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
             entity.Property(o => o.AdvisedDeliveryDate).HasColumnName("ADVISED_DELIVERY_DATE");
             entity.Property(o => o.AcknowledgeComment).HasColumnName("ACKNOWLEDGE_COMMENT");
+            entity.Property(o => o.RequestedDeliveryDate).HasColumnName("REQUESTED_DELIVERY_DATE");
+            entity.Property(o => o.NumberOfSplitDeliveries).HasColumnName("NUMBER_OF_SPLIT_DELIVERIES");
+            entity.HasMany(d => d.Deliveries).WithOne(del => del.Order).HasForeignKey(del => del.OrderNumber);
         }
 
         private void BuildMiniOrderDeliveries(ModelBuilder builder)
@@ -1325,6 +1332,9 @@
             entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
             entity.Property(o => o.DeliverySequence).HasColumnName("DELIVERY_SEQ");
             entity.Property(o => o.AdvisedDate).HasColumnName("ADVISED_DATE");
+            entity.Property(o => o.RequestedDate).HasColumnName("REQUESTED_DATE");
+            entity.Property(o => o.OurQty).HasColumnName("OUR_QTY");
+            entity.Property(o => o.AvailableAtSupplier).HasColumnName("AVAILABLE_AT_SUPPLIER");
         }
 
         private void BuildEdiOrders(ModelBuilder builder)

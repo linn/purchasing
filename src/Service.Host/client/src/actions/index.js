@@ -219,7 +219,7 @@ export const purchaseOrderDeliveryActionTypes = makeActionTypes(
 
 export const purchaseOrderDeliveriesActionTypes = makeActionTypes(
     itemTypes.purchaseOrderDeliveries.actionType,
-    false
+    true
 );
 
 export const batchPurchaseOrderDeliveriesUploadActionTypes = makeProcessActionTypes(

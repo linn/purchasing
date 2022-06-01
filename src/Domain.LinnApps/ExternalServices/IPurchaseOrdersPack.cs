@@ -11,5 +11,7 @@
             string documentType);
 
         bool OrderIsCompleteSql(int orderNumber, int lineNumber);
+
+        decimal GetVatAmountSupplier(decimal total, int supplierId);
     }
 }

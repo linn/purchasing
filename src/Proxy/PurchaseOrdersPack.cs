@@ -21,7 +21,7 @@
             using (var connection = this.databaseService.GetConnection())
             {
                 connection.Open();
-                var cmd = new OracleCommand("pl_orders_pack.order_is_complete_sql ", connection)
+                var cmd = new OracleCommand("pl_orders_pack.order_is_complete_sql", connection)
                               {
                                   CommandType = CommandType.StoredProcedure
                               };
@@ -47,6 +47,40 @@
 
                 return result.Value.ToString() == "TRUE";
             }
+        }
+
+        public decimal GetVatAmountSupplier(decimal total, int supplierId)
+        {
+            using var connection = this.databaseService.GetConnection();
+            connection.Open();
+            var cmd = new OracleCommand("pl_orders_pack.get_vat_amount_supplier", connection) 
+                          {
+                              CommandType = CommandType.StoredProcedure
+                          };
+            var result = new OracleParameter("p_order", OracleDbType.Decimal) 
+                             {
+                                 Direction = ParameterDirection.ReturnValue
+                             };
+            var paramTotal = new OracleParameter("p_total", OracleDbType.Decimal) 
+                                 {
+                                     Direction = ParameterDirection.Input,
+                                     Size = 50,
+                                     Value = total
+                                 };
+            var paramSupplierId = new OracleParameter("p_supp", OracleDbType.Int32)
+                                      {
+                                          Direction = ParameterDirection.Input,
+                                          Size = 50, Value = supplierId
+                                      };
+               
+            cmd.Parameters.Add(result);
+            cmd.Parameters.Add(paramSupplierId);
+            cmd.Parameters.Add(paramTotal);
+
+            cmd.ExecuteNonQuery();
+            connection.Close();
+
+            return decimal.Parse(result.Value.ToString());
         }
 
         public bool OrderCanBeAuthorisedBy(

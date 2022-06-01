@@ -31,19 +31,20 @@
             this.PurchaseOrderRepository.FindById(1).Returns(new PurchaseOrder
             {
                 OrderNumber = 1,
+                DocumentTypeName = "PO",
                 OrderMethod = new OrderMethod
                                   {
                                       Name = "METHOD"
                                   },
                 Details = new List<PurchaseOrderDetail>
-                                                                                   {
-                                                                                       new PurchaseOrderDetail
-                                                                                           {
-                                                                                               Line = 1,
-                                                                                               OurQty = 100,
-                                                                                               PurchaseDeliveries = deliveries
-                                                                                           }
-                                                                                   }
+                              {
+                                  new PurchaseOrderDetail
+                                      {
+                                          Line = 1,
+                                          OurQty = 100,
+                                          PurchaseDeliveries = deliveries
+                                      }
+                              }
             });
             this.action = () => this.Sut.UpdateDeliveriesForOrderLine(
                 1,

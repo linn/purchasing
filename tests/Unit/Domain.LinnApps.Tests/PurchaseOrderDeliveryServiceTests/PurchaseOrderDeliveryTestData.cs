@@ -130,6 +130,7 @@
                                {
                                    OrderNumber = 223453,
                                    DateAdvised = null,
+                                   OrderLine = 3,
                                    PurchaseOrderDetail = new PurchaseOrderDetail
                                                              {
                                                                  PurchaseOrder = new PurchaseOrder
