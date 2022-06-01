@@ -3,16 +3,14 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Reflection.Metadata;
 
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
-    using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
-    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrder;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
 
     public class PurchaseOrderDeliveryService : IPurchaseOrderDeliveryService
     {
@@ -24,7 +22,7 @@
 
         private readonly ISingleRecordRepository<PurchaseLedgerMaster> purchaseLedgerMaster;
 
-        private readonly IRepository<MiniOrder.MiniOrder, int> miniOrderRepository;
+        private readonly IRepository<MiniOrder, int> miniOrderRepository;
 
         private readonly IRepository<MiniOrderDelivery, MiniOrderDeliveryKey> miniOrderDeliveryRepository;
 
@@ -37,7 +35,7 @@
             IAuthorisationService authService,
             IRepository<RescheduleReason, string> rescheduleReasonRepository,
             ISingleRecordRepository<PurchaseLedgerMaster> purchaseLedgerMaster,
-            IRepository<MiniOrder.MiniOrder, int> miniOrderRepository,
+            IRepository<MiniOrder, int> miniOrderRepository,
             IRepository<MiniOrderDelivery, MiniOrderDeliveryKey> miniOrderDeliveryRepository,
             IRepository<PurchaseOrder, int> purchaseOrderRepository,
             IPurchaseOrdersPack purchaseOrdersPack)

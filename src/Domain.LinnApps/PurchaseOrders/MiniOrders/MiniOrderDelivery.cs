@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrder
+﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders
 {
     using System;
 
