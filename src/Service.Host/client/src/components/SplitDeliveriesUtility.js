@@ -43,7 +43,6 @@ function SplitDeliveriesUtility({ orderNumber, orderLine, inDialogBox, deliverie
         setChangesMade(true);
         if (model && Object.keys(model)[0]) {
             const id = Object.keys(model)[0];
-            //console.log(model);
             const propertyName = Object.keys(model[id])[0];
             if (model && model[id] && model[id][propertyName] && model[id][propertyName].value) {
                 const newValue = model[id][propertyName].value;
