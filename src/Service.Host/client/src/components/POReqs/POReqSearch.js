@@ -41,9 +41,9 @@ function POReqSearch({ print }) {
     const results = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.purchaseOrderReqs)
     );
-    const applicationState = useSelector(state =>
-        collectionSelectorHelpers.getApplicationState(state.purchaseOrderReqs)
-    );
+    // const applicationState = useSelector(state =>
+    //     collectionSelectorHelpers.getApplicationState(state.purchaseOrderReqs)
+    // );
 
     const dispatch = useDispatch();
 
