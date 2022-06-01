@@ -240,14 +240,14 @@
 
             var order = this.purchaseOrderRepository
                 .FindById(orderNumber);
-            var detail = order?.Details.SingleOrDefault(x => x.Line == orderLine);
+            var detail = order?.Details?.SingleOrDefault(x => x.Line == orderLine);
 
             if (detail == null)
             {
                 throw new PurchaseOrderDeliveryException($"order line not found: {orderNumber} / {orderLine}.");
             }
 
-            if (order.OrderMethod.Name == "CALL OFF")
+            if (order.OrderMethod?.Name == "CALL OFF")
             {
                 throw new PurchaseOrderDeliveryException(
                     "You cannot raise a split delivery for a CALL OFF. It is raised automatically on delivery.");
@@ -261,11 +261,6 @@
             if (order.DocumentTypeName != "PO")
             {
                 throw new PurchaseOrderDeliveryException("Cannot split deliveries - Order is not a PO.");
-            }
-
-            if (order.Cancelled == "Y")
-            {
-                throw new PurchaseOrderDeliveryException("Cannot split deliveries - Order is cancelled.");
             }
 
             var updatedDeliveriesForOrderLine = updated.ToList();
@@ -291,9 +286,12 @@
 
                         var baseVatAmount = Math.Round(
                             this.purchaseOrdersPack.GetVatAmountSupplier(
-                                del.BaseOurUnitPrice.GetValueOrDefault() * del.OurDeliveryQty.GetValueOrDefault(),
+                                detail.BaseOurUnitPrice.GetValueOrDefault() * del.OurDeliveryQty.GetValueOrDefault(),
                                 order.SupplierId),
                             2);
+                        var reason = del.DateAdvised.HasValue ? "ADVISED" : "REQUESTED";
+
+                        // update the existing record if it exists
                         if (existing != null)
                         {
                             existing.OurDeliveryQty = del.OurDeliveryQty;
@@ -323,11 +321,12 @@
                                 2);
                             existing.QuantityOutstanding =
                                 del.OurDeliveryQty - existing.OurDeliveryQty + existing.QuantityOutstanding;
-                            existing.RescheduleReason = del.DateAdvised.HasValue ? "ADVISED" : "REQUESTED";
+                            existing.RescheduleReason = reason;
                             existing.AvailableAtSupplier = del.AvailableAtSupplier;
                             return existing;          
                         }
                         
+                        // or create a new record
                         return new PurchaseOrderDelivery
                                          {
                                              DeliverySeq = del.DeliverySeq,
@@ -367,7 +366,7 @@
                                              QuantityOutstanding = del.OurDeliveryQty,
                                              QtyNetReceived = 0,
                                              QtyPassedForPayment = 0,
-                                             RescheduleReason = del.DateAdvised.HasValue ? "ADVISED" : "REQUESTED",
+                                             RescheduleReason = reason,
                                              AvailableAtSupplier = del.AvailableAtSupplier
                                          };
                     });
@@ -375,7 +374,7 @@
             detail.PurchaseDeliveries = newDeliveries;
 
             // set mini order date requested to be first date requested of newly split deliveries
-            // and write the new deliveries list the mini order to keep it in sync
+            // and write the new deliveries list to the mini order to keep it in sync
             this.UpdateMiniOrder(
                 orderNumber, 
                 null,
