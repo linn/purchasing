@@ -141,33 +141,10 @@
             current.PeriodFilCancelled = updated.PeriodFilCancelled;
         }
 
-        private void UpdateDeliveryProperties(PurchaseOrderDelivery current, PurchaseOrderDelivery updated)
-        {
-            current.Cancelled = updated.Cancelled;
-            current.DateAdvised = updated.DateAdvised;
-            current.DateRequested = updated.DateRequested;
-            current.NetTotalCurrency = updated.NetTotalCurrency;
-            current.BaseNetTotal = updated.BaseNetTotal;
-            current.OrderDeliveryQty = updated.OrderDeliveryQty;
-            current.OurDeliveryQty = updated.OurDeliveryQty;
-            current.QtyNetReceived = updated.QtyNetReceived;
-            current.QuantityOutstanding = updated.QuantityOutstanding;
-            current.CallOffDate = updated.CallOffDate;
-            current.BaseOurUnitPrice = updated.BaseOurUnitPrice;
-            current.SupplierConfirmationComment = updated.SupplierConfirmationComment;
-            current.OurUnitPriceCurrency = updated.OurUnitPriceCurrency;
-            current.OrderUnitPriceCurrency = updated.OrderUnitPriceCurrency;
-            current.BaseOrderUnitPrice = updated.BaseOrderUnitPrice;
-            current.VatTotalCurrency = updated.VatTotalCurrency;
-            current.BaseVatTotal = updated.BaseVatTotal;
-            current.DeliveryTotalCurrency = updated.DeliveryTotalCurrency;
-            current.BaseDeliveryTotal = updated.BaseDeliveryTotal;
-        }
-
         private void UpdateDetailProperties(PurchaseOrderDetail current, PurchaseOrderDetail updated)
         {
             current.PartNumber = updated.PartNumber;
-            current.Cancelled = updated.Cancelled; 
+            current.Cancelled = updated.Cancelled;
             current.BaseNetTotal = updated.BaseNetTotal;
             current.NetTotalCurrency = updated.NetTotalCurrency;
             current.OurQty = updated.OurQty;

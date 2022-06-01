@@ -248,6 +248,7 @@
             var entity = builder.Entity<Planner>().ToTable("PLANNERS");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id).HasColumnName("PLANNER");
+            entity.Property(e => e.ShowAsMrOption).HasColumnName("SHOW_AS_MR_OPTION").HasMaxLength(1).HasColumnType("VARCHAR2");
         }
 
         private void BuildAddresses(ModelBuilder builder)
@@ -570,6 +571,8 @@
             entity.Property(o => o.FilCancelled).HasColumnName("FIL_CANCELLED").HasMaxLength(1);
             entity.Property(o => o.DateFilCancelled).HasColumnName("DATE_FIL_CANCELLED");
             entity.Property(o => o.PeriodFilCancelled).HasColumnName("PERIOD_FIL_CANCELLED");
+            entity.Property(o => o.OrderAddressId).HasColumnName("ORDER_ADDRESS_ID");
+            entity.HasOne(o => o.OrderAddress).WithMany().HasForeignKey(o => o.OrderAddressId);
         }
 
         private void BuildPurchaseOrderDetails(ModelBuilder builder)
@@ -1273,6 +1276,8 @@
             entity.Property(e => e.VendorManager).HasColumnName("VENDOR_MANAGER").HasColumnType("VARCHAR2");
             entity.Property(e => e.VendorManagerInitials).HasColumnName("VM_INITIALS");
             entity.Property(e => e.PartId).HasColumnName("PART_ID");
+            entity.Property(e => e.Planner).HasColumnName("PLANNER");
+            entity.Property(e => e.DangerLevel).HasColumnName("DANGER_LEVEL");
             entity.HasMany(s => s.MrDetails).WithOne().HasForeignKey(c => new { c.JobRef, c.PartNumber });
         }
 

@@ -50,6 +50,7 @@ import MrUsedOnReport from './reports/MrUsedOnReport';
 import AcknowledgeOrdersUtility from './AcknowledgeOrdersUtility';
 import MaterialRequirements from './materialRequirements/MaterialRequirementsOptions';
 import MaterialRequirementsReport from './materialRequirements/MaterialRequirementsReport';
+import PurchaseOrderPrintout from './PurchaseOrders/PurchaseOrderPrintout';
 
 const Root = ({ store }) => (
     <div>
@@ -230,6 +231,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/purchase-orders/:orderNumber"
                                     component={PurchaseOrderUtility}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/purchase-orders/:orderNumber/print"
+                                    component={PurchaseOrderPrintout}
                                 />
                                 <Route
                                     exact

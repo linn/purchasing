@@ -53,6 +53,7 @@
                 OrderIncrement = entity.OrderIncrement,
                 VendorManager = entity.VendorManager,
                 VendorManagerInitials = entity.VendorManagerInitials,
+                Planner = entity.Planner,
                 Details = this.BuildDetails(entity, runWeekNumber),
                 Links = this.BuildHeaderLinks(entity).ToArray()
             };
@@ -345,7 +346,7 @@
 
         private IEnumerable<MrDetailResource> CreateDetails(string title, int segments, int sequence)
         {
-            for (int j = 0; j < segments; j++)
+            for (var j = 0; j < segments; j++)
             {
                 yield return new MrDetailResource { DisplaySequence = sequence, Segment = j, Title = title };
             }

@@ -4,6 +4,13 @@
 
     public interface IMaterialRequirementsReportService
     {
-        public MrReport GetMaterialRequirements(string jobRef, IEnumerable<string> partNumbers);
+        MrReport GetMaterialRequirements(
+            string requestJobRef,
+            string requestTypeOfReport,
+            string requestPartSelector,
+            string stockLevelSelector,
+            IEnumerable<string> parts);
+
+        MrReportOptions GetOptions();
     }
 }

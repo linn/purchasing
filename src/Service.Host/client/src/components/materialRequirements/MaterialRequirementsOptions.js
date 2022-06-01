@@ -5,6 +5,7 @@ import {
     itemSelectorHelpers,
     Loading,
     Typeahead,
+    Dropdown,
     collectionSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
@@ -16,9 +17,14 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import mrMasterActions from '../../actions/mrMasterActions';
-import { mrMaster as mrMasterItemType } from '../../itemTypes';
+import {
+    mrMaster as mrMasterItemType,
+    mrReportOptions as mrReportOptionsItemType
+} from '../../itemTypes';
 import partsActions from '../../actions/partsActions';
 import partActions from '../../actions/partActions';
+import mrReportOptionsActions from '../../actions/mrReportOptionsActions';
+import mrReportActions from '../../actions/mrReportActions';
 
 import history from '../../history';
 
@@ -28,9 +34,17 @@ function MaterialRequirementsOptions() {
     const [parts, setParts] = useState([]);
     const [showMessage, setShowMessage] = useState(false);
     const [message, setMessage] = useState(null);
+    const [partSelector, setPartSelector] = useState('Select Parts');
+    const [stockLevelSelector, setStockLevelSelector] = useState('0-4');
     const mrMaster = useSelector(state => itemSelectorHelpers.getItem(state.mrMaster));
     const mrMasterLoading = useSelector(state =>
         itemSelectorHelpers.getItemLoading(state.mrMaster)
+    );
+    const mrReportOptions = useSelector(state =>
+        itemSelectorHelpers.getItem(state.mrReportOptions)
+    );
+    const mrReportOptionsLoading = useSelector(state =>
+        itemSelectorHelpers.getItemLoading(state.mrReportOptions)
     );
 
     const partsSearchResults = useSelector(state =>
@@ -77,6 +91,10 @@ function MaterialRequirementsOptions() {
 
     const dispatch = useDispatch();
     useEffect(() => dispatch(mrMasterActions.fetchByHref(mrMasterItemType.uri)), [dispatch]);
+    useEffect(
+        () => dispatch(mrReportOptionsActions.fetchByHref(mrReportOptionsItemType.uri)),
+        [dispatch]
+    );
 
     useEffect(() => {
         if (selectedPartDetails) {
@@ -114,9 +132,13 @@ function MaterialRequirementsOptions() {
     };
 
     const runReport = () => {
+        dispatch(mrReportActions.clearItem());
         const body = {
+            typeOfReport: 'MR',
+            partSelector,
             jobRef: mrMaster.jobRef,
-            partNumbers: parts.map(p => p.id)
+            partNumbers: parts.map(p => p.id),
+            stockLevelSelector
         };
         history.push('/purchasing/material-requirements/report', body);
     };
@@ -140,8 +162,16 @@ function MaterialRequirementsOptions() {
         }
     ];
 
-    const handleSetTypeaheadPart = (val, val3) => {
-        setTypeaheadPart(val3);
+    const handleSetTypeaheadPart = (_, part) => {
+        setTypeaheadPart(part);
+    };
+
+    const notReadyToRun = () => {
+        if (partSelector === 'Select Parts' && parts.length === 0) {
+            return true;
+        }
+
+        return false;
     };
 
     return (
@@ -157,45 +187,84 @@ function MaterialRequirementsOptions() {
                         <Typography variant="subtitle1">Jobref: {mrMaster?.jobRef}</Typography>
                     )}
                 </Grid>
-                <Grid item xs={6}>
-                    <Typeahead
-                        label="Part"
-                        title="Search for a part"
-                        onSelect={handlePartChange}
-                        items={partsSearchResults}
-                        loading={partsSearchLoading}
-                        fetchItems={searchTerm => dispatch(partsActions.search(searchTerm))}
-                        clearSearch={() => clear()}
-                        links={false}
-                        value={typeaheadPart}
-                        openModalOnClick={false}
-                        debounce={1000}
-                        minimumSearchTermLength={2}
-                        modal
-                        handleFieldChange={handleSetTypeaheadPart}
-                        handleReturnPress={handleTextFieldChange}
+                <Grid item xs={12}>
+                    <Dropdown
+                        propertyName="Parts Options"
+                        label="Parts Options"
+                        value={partSelector}
+                        items={mrReportOptions?.partSelectorOptions
+                            ?.sort((a, b) => a.displaySequence - b.displaySequence)
+                            .map(e => ({
+                                displayText: e.displayText,
+                                id: e.option
+                            }))}
+                        optionsLoading={mrReportOptionsLoading}
+                        onChange={(_, value) => setPartSelector(value)}
                     />
                 </Grid>
-                <Grid item xs={6}>
-                    <Typography variant="subtitle1">Selected Parts</Typography>
-                    <DataGrid
-                        rows={parts}
-                        columns={selectedPartsColumns}
-                        pageSize={5}
-                        rowsPerPageOptions={[5]}
-                        density="compact"
-                        rowHeight={34}
-                        headerHeight={34}
-                        autoHeight
-                        loading={selectectPartLoading}
-                        hideFooter
+                {partSelector === 'Select Parts' && (
+                    <>
+                        <Grid item xs={6}>
+                            <Typeahead
+                                label="Part"
+                                title="Search for a part"
+                                onSelect={handlePartChange}
+                                items={partsSearchResults}
+                                loading={partsSearchLoading}
+                                fetchItems={searchTerm => dispatch(partsActions.search(searchTerm))}
+                                clearSearch={() => clear()}
+                                links={false}
+                                value={typeaheadPart}
+                                openModalOnClick={false}
+                                debounce={1000}
+                                minimumSearchTermLength={2}
+                                modal
+                                handleFieldChange={handleSetTypeaheadPart}
+                                handleReturnPress={handleTextFieldChange}
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Typography variant="subtitle1">Selected Parts</Typography>
+                            <DataGrid
+                                rows={parts}
+                                columns={selectedPartsColumns}
+                                pageSize={5}
+                                rowsPerPageOptions={[5]}
+                                density="compact"
+                                rowHeight={34}
+                                headerHeight={34}
+                                autoHeight
+                                loading={selectectPartLoading}
+                                hideFooter
+                            />
+                        </Grid>
+                    </>
+                )}
+                <Grid item xs={12}>
+                    <Dropdown
+                        propertyName="Stock Level Options"
+                        label="Stock Level Options"
+                        value={stockLevelSelector}
+                        items={mrReportOptions?.stockLevelOptions
+                            ?.sort((a, b) => a.displaySequence - b.displaySequence)
+                            .map(e => ({
+                                displayText: e.displayText,
+                                id: e.option
+                            }))}
+                        optionsLoading={mrReportOptionsLoading}
+                        onChange={(_, value) => setStockLevelSelector(value)}
                     />
                 </Grid>
                 <Grid item xs={12}>
                     <Button
                         variant="outlined"
                         onClick={runReport}
-                        disabled={mrMasterLoading || selectectPartLoading}
+                        disabled={
+                            mrMasterLoading ||
+                            selectectPartLoading ||
+                            mrReportOptionsLoading ||
+                            notReadyToRun()
+                        }
                     >
                         Run Report
                     </Button>

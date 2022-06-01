@@ -23,6 +23,7 @@
             return new PlannerResource
                        {
                            Id = entity.Id,
+                           ShowAsMrOption = entity.ShowAsMrOption,
                            EmployeeName = this.employeeRepository.FindById(entity.Id)?.FullName
                        };
         }

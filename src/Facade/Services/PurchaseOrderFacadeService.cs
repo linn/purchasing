@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
 
@@ -10,16 +11,19 @@
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
-    using Linn.Purchasing.Resources.RequestResources;
+
+    using RazorEngineCore;
 
     public class
-        PurchaseOrderFacadeService : FacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource>
+        PurchaseOrderFacadeService : FacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource>, IPurchaseOrderFacadeService
     {
         private readonly IPurchaseOrderService domainService;
 
         private readonly IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository;
 
         private readonly ITransactionManager transactionManager;
+
+        private readonly IRepository<PurchaseOrder, int> orderRepository;
 
         public PurchaseOrderFacadeService(
             IRepository<PurchaseOrder, int> repository,
@@ -32,6 +36,26 @@
             this.domainService = domainService;
             this.overbookAllowedByLogRepository = overbookAllowedByLogRepository;
             this.transactionManager = transactionManager;
+            this.orderRepository = repository;
+        }
+
+        public string GetOrderAsHtml(int orderNumber)
+        {
+            using (var file = new StreamReader("../Service.Host/views/" + @"\" + "PurchaseOrder.cshtml"))
+            {
+                var fileRead = file.ReadToEnd();
+                var razorEngine = new RazorEngine();
+
+                IRazorEngineCompiledTemplate<RazorEngineTemplateBase<PurchaseOrder>> template = razorEngine.Compile<RazorEngineTemplateBase<PurchaseOrder>>(fileRead);
+
+                var order = this.orderRepository.FindById(orderNumber);
+                string result = template.Run(instance =>
+                    {
+                        instance.Model = order;
+                    });
+
+                return result;
+            }
         }
 
         protected override PurchaseOrder CreateFromResource(
@@ -129,9 +153,9 @@
                                                         d => new PurchaseOrderDelivery
                                                                  {
                                                                      Cancelled = d.Cancelled,
-                                                                     DateAdvised = string.IsNullOrEmpty(d.DateAdvised) 
+                                                                     DateAdvised = string.IsNullOrEmpty(d.DateAdvised)
                                                                          ? null : DateTime.Parse(d.DateAdvised),
-                                                                     DateRequested = string.IsNullOrEmpty(d.DateRequested) ? 
+                                                                     DateRequested = string.IsNullOrEmpty(d.DateRequested) ?
                                                                          null : DateTime.Parse(d.DateRequested),
                                                                      DeliverySeq = d.DeliverySeq,
                                                                      NetTotalCurrency = d.NetTotalCurrency,

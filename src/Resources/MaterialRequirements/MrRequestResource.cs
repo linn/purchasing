@@ -6,6 +6,12 @@
     {
         public string JobRef { get; set; }
 
+        public string TypeOfReport { get; set; }
+
+        public string PartSelector { get; set; }
+
+        public string StockLevelSelector { get; set; }
+
         public IEnumerable<string> PartNumbers { get; set; }
 
         public string PartNumber { get; set; }
