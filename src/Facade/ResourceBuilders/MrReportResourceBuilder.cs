@@ -242,7 +242,7 @@
                 detail.Segment);
         }
 
-        private IList<MrDetailResource> BuildResourcesTitles(MrHeader header)
+        private IList<MrDetailResource> BuildResourcesTitles(MrHeader header, bool showAllLines = false)
         {
             var detailResources = new List<MrDetailResource>();
             detailResources.AddRange(this.CreateDetails("Week", 6, 0));
@@ -319,9 +319,13 @@
 
             if (header.PreferredSupplierId.HasValue && header.PreferredSupplierId != 4415)
             {
-                detailResources.AddRange(this.CreateDetails("Ideal Stock", 6, 1300));
+                if (showAllLines)
+                {
+                    detailResources.AddRange(this.CreateDetails("Ideal Stock", 6, 1300));
+                    detailResources.AddRange(this.CreateDetails("Recom Stock", 6, 1500));
+                }
+
                 detailResources.AddRange(this.CreateDetails("Recom Orders", 6, 1400));
-                detailResources.AddRange(this.CreateDetails("Recom Stock", 6, 1500));
             }
 
             return detailResources;
