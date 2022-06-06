@@ -206,7 +206,7 @@ function MaterialRequirementsOptions() {
                     <>
                         <Grid item xs={6}>
                             <Typeahead
-                                label="Part"
+                                label="Select Part (with <Return> or search using icon)"
                                 title="Search for a part"
                                 onSelect={handlePartChange}
                                 items={partsSearchResults}
