@@ -9,6 +9,7 @@
             string requestTypeOfReport,
             string requestPartSelector,
             string stockLevelSelector,
+            string orderBySelector,
             IEnumerable<string> parts);
 
         MrReportOptions GetOptions();

@@ -42,6 +42,7 @@
                 this.typeOfReport,
                 this.partSelector,
                 null,
+                "supplier/part",
                 null);
         }
 

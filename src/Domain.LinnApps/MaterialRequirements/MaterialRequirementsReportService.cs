@@ -42,6 +42,7 @@
             string typeOfReport,
             string partSelector,
             string stockLevelSelector,
+            string orderBySelector,
             IEnumerable<string> partNumbers)
         {
             if (string.IsNullOrEmpty(jobRef))
@@ -82,6 +83,13 @@
                     break;
             }
 
+            results = orderBySelector switch
+                {
+                    "part" => results.OrderBy(a => a.PartNumber),
+                    "supplier/part" => results.OrderBy(a => a.PreferredSupplierId).ThenBy(b => b.PartNumber),
+                    _ => results
+                };
+
             var report = new MrReport
                              {
                                  JobRef = jobRef,
@@ -109,6 +117,12 @@
                                             new ReportOption("4", "Danger Level 4 Very low before lead time", 7)
                                         };
 
+            var orderByOptions = new List<ReportOption>
+                                        {
+                                            new ReportOption("supplier/part", "Supplier Id Then Part", 0),
+                                            new ReportOption("part", "Part Number", 1)
+                                        };
+
             var planners = this.plannerRepository.FindAll();
 
             foreach (var planner in planners.Where(a => a.ShowAsMrOption == "Y"))
@@ -125,7 +139,9 @@
 
             return new MrReportOptions
                        {
-                           PartSelectorOptions = partSelectorOptions, StockLevelOptions = stockLevelOptions
+                           PartSelectorOptions = partSelectorOptions,
+                           StockLevelOptions = stockLevelOptions,
+                           OrderByOptions = orderByOptions
                        };
         }
     }

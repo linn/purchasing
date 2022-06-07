@@ -15,7 +15,8 @@
                        {
                            PartSelectorOptions =
                                model.PartSelectorOptions.Select(this.BuildOptionResource),
-                           StockLevelOptions = model.StockLevelOptions.Select(this.BuildOptionResource)
+                           StockLevelOptions = model.StockLevelOptions.Select(this.BuildOptionResource),
+                           OrderByOptions = model.OrderByOptions.Select(this.BuildOptionResource)
                        };
         }
 

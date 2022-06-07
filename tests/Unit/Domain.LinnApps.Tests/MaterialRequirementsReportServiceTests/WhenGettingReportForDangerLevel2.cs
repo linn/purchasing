@@ -50,6 +50,7 @@
                 this.typeOfReport,
                 this.partSelector,
                 "2",
+                "supplier/part",
                 this.partNumbers);
         }
 

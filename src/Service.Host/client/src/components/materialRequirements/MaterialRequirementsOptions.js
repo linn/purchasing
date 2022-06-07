@@ -36,6 +36,7 @@ function MaterialRequirementsOptions() {
     const [message, setMessage] = useState(null);
     const [partSelector, setPartSelector] = useState('Select Parts');
     const [stockLevelSelector, setStockLevelSelector] = useState('0-4');
+    const [orderBySelector, setOrderBySelector] = useState('supplier/part');
     const mrMaster = useSelector(state => itemSelectorHelpers.getItem(state.mrMaster));
     const mrMasterLoading = useSelector(state =>
         itemSelectorHelpers.getItemLoading(state.mrMaster)
@@ -138,7 +139,8 @@ function MaterialRequirementsOptions() {
             partSelector,
             jobRef: mrMaster.jobRef,
             partNumbers: parts.map(p => p.id),
-            stockLevelSelector
+            stockLevelSelector,
+            orderBySelector
         };
         history.push('/purchasing/material-requirements/report', body);
     };
@@ -255,6 +257,21 @@ function MaterialRequirementsOptions() {
                         onChange={(_, value) => setStockLevelSelector(value)}
                     />
                 </Grid>
+                <Grid item xs={12}>
+                    <Dropdown
+                        propertyName="Order By"
+                        label="Order By"
+                        value={orderBySelector}
+                        items={mrReportOptions?.orderByOptions
+                            ?.sort((a, b) => a.displaySequence - b.displaySequence)
+                            .map(e => ({
+                                displayText: e.displayText,
+                                id: e.option
+                            }))}
+                        optionsLoading={mrReportOptionsLoading}
+                        onChange={(_, value) => setOrderBySelector(value)}
+                    />
+                </Grid> 
                 <Grid item xs={12}>
                     <Button
                         variant="outlined"

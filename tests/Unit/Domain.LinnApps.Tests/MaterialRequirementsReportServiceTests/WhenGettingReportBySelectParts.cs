@@ -45,6 +45,7 @@
                 this.typeOfReport,
                 this.partSelector,
                 null,
+                "supplier/part",
                 this.partNumbers);
         }
 

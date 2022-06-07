@@ -61,5 +61,13 @@
             this.result.StockLevelOptions.First(a => a.DisplaySequence == 7).Option.Should().Be("4");
             this.result.StockLevelOptions.First(a => a.DisplaySequence == 7).DisplayText.Should().Be("Danger Level 4 Very low before lead time");
         }
+
+        [Test]
+        public void ShouldReturnOrderByOptions()
+        {
+            this.result.OrderByOptions.Should().HaveCount(2);
+            this.result.OrderByOptions.First(a => a.DisplaySequence == 0).Option.Should().Be("supplier/part");
+            this.result.OrderByOptions.First(a => a.DisplaySequence == 1).Option.Should().Be("part");
+        }
     }
 }
