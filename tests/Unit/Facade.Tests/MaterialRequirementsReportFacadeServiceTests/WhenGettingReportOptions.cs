@@ -34,7 +34,8 @@
                                                                      Option = "1"
                                                                  }
                                                          },
-                                 StockLevelOptions = new List<ReportOption>()
+                                 StockLevelOptions = new List<ReportOption>(),
+                                 OrderByOptions = new List<ReportOption>()
                              });
 
             this.result = this.Sut.GetOptions(this.privileges);

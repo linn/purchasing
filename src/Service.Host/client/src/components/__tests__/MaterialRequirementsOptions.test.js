@@ -148,7 +148,8 @@ describe('When report is run...', () => {
             typeOfReport: 'MR',
             partNumbers: [],
             partSelector: 'Planner123',
-            stockLevelSelector: '0-4'
+            stockLevelSelector: '0-4',
+            orderBySelector: 'supplier/part'
         });
     });
 });

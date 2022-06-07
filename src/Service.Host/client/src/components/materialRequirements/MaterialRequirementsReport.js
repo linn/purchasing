@@ -113,6 +113,10 @@ function MaterialRequirementsReport() {
     };
 
     const goToPreviousPart = () => {
+        if (selectedIndex === 0) {
+            return;
+        }
+
         setNextPart(selectedItem.partNumber);
         if (selectedIndex === 1) {
             setPreviousPart(null);
@@ -125,6 +129,10 @@ function MaterialRequirementsReport() {
     };
 
     const goToNextPart = () => {
+        if (selectedIndex === mrReport.results.length - 1) {
+            return;
+        }
+
         setPreviousPart(selectedItem.partNumber);
         if (selectedIndex === mrReport.results.length - 2) {
             setNextPart(null);
@@ -204,8 +212,16 @@ function MaterialRequirementsReport() {
         }
     };
 
+    const onKeyPressed = data => {
+        if (data.keyCode === 37) {
+            goToPreviousPart();
+        } else if (data.keyCode === 39) {
+            goToNextPart();
+        }
+    };
+
     return (
-        <div className="print-landscape">
+        <div className="print-landscape" onKeyDown={onKeyPressed} tabIndex={-1} role="textbox">
             <Page history={history} width="xl">
                 <ThemeProvider theme={theme}>
                     <div style={{ width: 1300, paddingLeft: '20px' }}>
@@ -235,28 +251,21 @@ function MaterialRequirementsReport() {
                                     style={{ paddingBottom: '10px' }}
                                     className="hide-when-printing"
                                 >
-                                    <Tooltip title="Previous part" placement="top-start">
-                                        <div>
-                                            <Button
-                                                style={{ float: 'left' }}
-                                                color="navBut"
-                                                size="small"
-                                                onClick={goToPreviousPart}
-                                                startIcon={<ArrowBackIcon />}
-                                                disabled={!previousPart}
-                                            >
-                                                {previousPart || 'At first'}
-                                            </Button>
-                                        </div>
-                                    </Tooltip>
-                                </Grid>
-                                <Grid
-                                    item
-                                    xs={4}
-                                    style={{ paddingBottom: '10px' }}
-                                    className="hide-when-printing"
-                                >
                                     <Stack direction="row" spacing={2}>
+                                        <Tooltip title="Previous part" placement="top-start">
+                                            <div>
+                                                <Button
+                                                    style={{ float: 'left', marginRight: '60px' }}
+                                                    color="navBut"
+                                                    size="small"
+                                                    onClick={goToPreviousPart}
+                                                    startIcon={<ArrowBackIcon />}
+                                                    disabled={!previousPart}
+                                                >
+                                                    {previousPart || 'At first'}
+                                                </Button>
+                                            </div>
+                                        </Tooltip>
                                         <Tooltip title="Back To Options">
                                             <Button
                                                 color="navBut"
@@ -267,10 +276,18 @@ function MaterialRequirementsReport() {
                                                 Options
                                             </Button>
                                         </Tooltip>
+                                    </Stack>
+                                </Grid>
+                                <Grid
+                                    item
+                                    xs={4}
+                                    style={{ paddingBottom: '10px' }}
+                                    className="hide-when-printing"
+                                >
+                                    <Stack direction="row" spacing={4}>
                                         <Tooltip title="Order (not yet implemented)">
                                             <div>
                                                 <Button
-                                                    style={{ float: 'left' }}
                                                     color="navBut"
                                                     size="small"
                                                     endIcon={<ShopIcon />}

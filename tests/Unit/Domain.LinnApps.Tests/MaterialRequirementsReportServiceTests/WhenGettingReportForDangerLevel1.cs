@@ -50,6 +50,7 @@
                 this.typeOfReport,
                 this.partSelector,
                 "1",
+                "part",
                 this.partNumbers);
         }
 

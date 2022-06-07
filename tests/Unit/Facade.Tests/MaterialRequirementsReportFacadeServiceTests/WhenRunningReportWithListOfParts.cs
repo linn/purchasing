@@ -43,6 +43,7 @@
                     this.requestResource.TypeOfReport,
                     this.requestResource.PartSelector,
                     this.requestResource.StockLevelSelector,
+                    this.requestResource.OrderBySelector,
                     Arg.Is<IList<string>>(a => a.Contains("A") && a.Contains("B")))
                 .Returns(
                     new MrReport
@@ -64,6 +65,7 @@
                 this.requestResource.TypeOfReport,
                 this.requestResource.PartSelector,
                 this.requestResource.StockLevelSelector,
+                this.requestResource.OrderBySelector,
                 Arg.Is<IList<string>>(a => a.Contains("A") && a.Contains("B")));
         }
 

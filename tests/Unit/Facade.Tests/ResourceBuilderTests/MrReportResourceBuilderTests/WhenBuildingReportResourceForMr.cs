@@ -53,7 +53,7 @@
         public void ShouldCreateAllDetailsForFirstPart()
         {
             var part1Result = this.result.Results.First(a => a.PartNumber == "P1");
-            part1Result.Details.Should().HaveCount(132);
+            part1Result.Details.Should().HaveCount(120);
             part1Result.Details.Should().Contain(a => a.Segment == 0);
             part1Result.Details.Should().Contain(a => a.Segment == 1);
             var part1Details1Resources = part1Result.Details.Where(a => a.Segment == 0).ToList();
@@ -77,9 +77,9 @@
             part1Details1Resources.First(a => a.Title == "Stock").Week0.Should().Be(originalPart1Details.Stock.ToString());
             part1Details1Resources.First(a => a.Title == "Min Rail").Week0.Should().Be(originalPart1Details.MinRail.ToString());
             part1Details1Resources.First(a => a.Title == "Max Rail").Week0.Should().Be(originalPart1Details.MaxRail.ToString());
-            part1Details1Resources.First(a => a.Title == "Ideal Stock").Week0.Should().Be(originalPart1Details.IdealStock.ToString());
+            part1Details1Resources.Should().NotContain(a => a.Title == "Ideal Stock");
             part1Details1Resources.First(a => a.Title == "Recom Orders").Week0.Should().Be(originalPart1Details.RecommendedOrders.ToString());
-            part1Details1Resources.First(a => a.Title == "Recom Stock").Week0.Should().Be(originalPart1Details.RecommenedStock.ToString());
+            part1Details1Resources.Should().NotContain(a => a.Title == "Recom Stock");
         }
 
         [Test]
