@@ -271,7 +271,7 @@ function MaterialRequirementsOptions() {
                         optionsLoading={mrReportOptionsLoading}
                         onChange={(_, value) => setOrderBySelector(value)}
                     />
-                </Grid> 
+                </Grid>
                 <Grid item xs={12}>
                     <Button
                         variant="outlined"

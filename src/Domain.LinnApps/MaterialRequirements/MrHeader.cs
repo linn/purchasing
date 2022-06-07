@@ -80,6 +80,8 @@
 
         public int? DangerLevel { get; set; }
 
+        public int? WeeksUntilDangerous { get; set; }
+
         public IEnumerable<MrDetail> MrDetails { get; set; }
     }
 }
