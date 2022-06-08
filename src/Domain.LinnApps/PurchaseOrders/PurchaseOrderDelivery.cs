@@ -57,11 +57,7 @@
         public string CallOffRef { get; set; }
 
         public string FilCancelled { get; set; }
-        
+
         public decimal? QtyPassedForPayment { get; set; }
-
-        public decimal? OrderUnitPrice { get; set; }
-
-        public decimal? OurUnitPrice { get; set; }
     }
 }

@@ -618,8 +618,6 @@
         {
             var entity = builder.Entity<PurchaseOrderDelivery>().ToTable("PL_DELIVERIES");
             entity.HasKey(a => new { a.DeliverySeq, a.OrderNumber, a.OrderLine });
-            
-
             entity.Property(o => o.DeliverySeq).HasColumnName("DELIVERY_SEQ");
             entity.Property(o => o.OurDeliveryQty).HasColumnName("OUR_DELIVERY_QTY").HasMaxLength(19);
             entity.Property(o => o.OrderDeliveryQty).HasColumnName("ORDER_DELIVERY_QTY").HasMaxLength(19);
@@ -640,8 +638,8 @@
             entity.Property(o => o.BaseNetTotal).HasColumnName("BASE_NET_TOTAL").HasMaxLength(18);
             entity.Property(o => o.BaseVatTotal).HasColumnName("BASE_VAT_TOTAL").HasMaxLength(18);
             entity.Property(o => o.BaseDeliveryTotal).HasColumnName("BASE_DELIVERY_TOTAL").HasMaxLength(18);
-            entity.Property(o => o.OurUnitPrice).HasColumnName("OUR_UNIT_PRICE");
-            entity.Property(o => o.OrderUnitPrice).HasColumnName("ORDER_UNIT_PRICE");
+            entity.Property(o => o.OurUnitPriceCurrency).HasColumnName("OUR_UNIT_PRICE");
+            entity.Property(o => o.OrderUnitPriceCurrency).HasColumnName("ORDER_UNIT_PRICE");
             entity.Property(d => d.QuantityOutstanding).HasColumnName("QTY_OUTSTANDING");
             entity.Property(o => o.QtyPassedForPayment).HasColumnName("QTY_PASSED_FOR_PAYMENT");
             entity.Property(o => o.QtyNetReceived).HasColumnName("QTY_NET_RECEIVED").HasMaxLength(19);

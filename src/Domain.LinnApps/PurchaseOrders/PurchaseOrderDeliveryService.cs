@@ -294,7 +294,7 @@
                         {
                             existing.OurDeliveryQty = del.OurDeliveryQty;
                             existing.OrderDeliveryQty = del.OurDeliveryQty / detail.OrderConversionFactor;
-                            existing.OurUnitPrice = detail.OurUnitPriceCurrency;
+                            existing.OurUnitPriceCurrency = detail.OurUnitPriceCurrency;
                             existing.DateRequested = del.DateRequested;
                             existing.DateAdvised = del.DateAdvised;
                             existing.CallOffDate = DateTime.Now;
@@ -330,8 +330,8 @@
                                              DeliverySeq = del.DeliverySeq,
                                              OurDeliveryQty = del.OurDeliveryQty,
                                              OrderDeliveryQty = del.OurDeliveryQty / detail.OrderConversionFactor,
-                                             OurUnitPrice = detail.OurUnitPriceCurrency,
-                                             OrderUnitPrice = detail.OrderUnitPriceCurrency,
+                                             OurUnitPriceCurrency = detail.OurUnitPriceCurrency,
+                                             OrderUnitPriceCurrency = detail.OrderUnitPriceCurrency,
                                              DateRequested = del.DateRequested,
                                              DateAdvised = del.DateAdvised,
                                              CallOffDate = DateTime.Now,

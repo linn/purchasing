@@ -94,7 +94,7 @@
             updated.DeliverySeq.Should().Be(1);
             updated.OurDeliveryQty.Should().Be(updateData.OurDeliveryQty);
             updated.OrderDeliveryQty.Should().Be(updateData.OurDeliveryQty / this.line.OrderConversionFactor);
-            updated.OurUnitPrice.Should().Be(this.line.OurUnitPriceCurrency);
+            updated.OurUnitPriceCurrency.Should().Be(this.line.OurUnitPriceCurrency);
             updated.DateRequested.Should().Be(updateData.DateRequested);
             updated.DateAdvised.Should().Be(updateData.DateAdvised);
             updated.CallOffDate.Should().BeCloseTo(DateTime.Now, new TimeSpan(0, 1, 0));
