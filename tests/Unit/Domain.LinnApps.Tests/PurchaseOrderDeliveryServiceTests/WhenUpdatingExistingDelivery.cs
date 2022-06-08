@@ -40,7 +40,7 @@
                                             OrderNumber = 123456,
                                             OurDeliveryQty = 123,
                                             OrderDeliveryQty = 123,
-                                            OurUnitPrice = 555,
+                                            OurUnitPriceCurrency = 555,
                                             DeliverySeq = 1,
                                             OrderLine = 1,
                                         };
@@ -107,7 +107,7 @@
             var updated = this.result.First();
             updated.OurDeliveryQty.Should().Be(updateData.OurDeliveryQty);
             updated.OrderDeliveryQty.Should().Be(updateData.OurDeliveryQty / this.line.OrderConversionFactor);
-            updated.OurUnitPrice.Should().Be(this.line.OurUnitPriceCurrency);
+            updated.OurUnitPriceCurrency.Should().Be(this.line.OurUnitPriceCurrency);
             updated.DateRequested.Should().Be(updateData.DateRequested);
             updated.DateAdvised.Should().Be(updateData.DateAdvised);
             updated.CallOffDate.Should().BeCloseTo(DateTime.Now, new TimeSpan(0, 1, 0));

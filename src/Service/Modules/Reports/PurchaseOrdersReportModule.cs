@@ -124,7 +124,7 @@
             var csv = purchaseOrderReportFacadeService.GetOrdersByPartExport(
                 resource,
                 req.HttpContext.GetPrivileges());
-            
+
             await res.FromCsv(csv, $"ordersByPart{resource.From.Substring(0, 10)}_To_{resource.To.Substring(0, 10)}.csv");
         }
 

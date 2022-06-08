@@ -64,7 +64,7 @@
         public ResultsModel GetOrdersByPartReport(DateTime from, DateTime to, string partNumber, bool includeCancelled)
         {
             var purchaseOrders = this.purchaseOrderRepository.FilterBy(
-                x => x.Details.Any(z => z.Part.PartNumber == partNumber) && from <= x.OrderDate && x.OrderDate < to);
+                x => x.Details.Any(z => z.Part.PartNumber == partNumber) && from.Date <= x.OrderDate && x.OrderDate < to.Date.AddDays(1));
 
             var reportLayout = new SimpleGridLayout(
                 this.reportingHelper,
@@ -114,7 +114,7 @@
             string stockControlled)
         {
             var purchaseOrders = this.purchaseOrderRepository.FilterBy(
-                x => x.SupplierId == supplierId && from <= x.OrderDate && x.OrderDate < to
+                x => x.SupplierId == supplierId && from.Date <= x.OrderDate && x.OrderDate < to.Date.AddDays(1)
                      && (includeReturns || x.DocumentTypeName != "RO")
                      && (includeCredits == "Y" || (includeCredits == "N" && x.DocumentTypeName != "CO")
                                                || (includeCredits == "O" && x.DocumentTypeName == "CO")));
@@ -388,13 +388,13 @@
             decimal ledgerQty,
             string currencyCode)
         {
-            var currentRowId = $"{orderDetail.OrderNumber}/{orderDetail.Line}";
+            var currentRowId = $"{orderDetail.OrderNumber}/{orderDetail.Line}/{delivery.DeliverySeq}";
             values.Add(
                 new CalculationValueModel
                     {
                         RowId = currentRowId,
                         ColumnId = "OrderLine",
-                        TextDisplay = $"{orderDetail.OrderNumber}/{orderDetail.Line}"
+                        TextDisplay = $"{orderDetail.OrderNumber}/Line{orderDetail.Line}/Delivery{delivery.DeliverySeq}"
                     });
 
             values.Add(
@@ -491,13 +491,13 @@
             PurchaseOrderDelivery delivery,
             string currencyCode)
         {
-            var currentRowId = $"{orderDetail.OrderNumber}/{orderDetail.Line}";
+            var currentRowId = $"{orderDetail.OrderNumber}/{orderDetail.Line}/{delivery.DeliverySeq}";
             values.Add(
                 new CalculationValueModel
                     {
                         RowId = currentRowId,
                         ColumnId = "OrderLine",
-                        TextDisplay = $"{orderDetail.OrderNumber}/{orderDetail.Line}"
+                        TextDisplay = $"{orderDetail.OrderNumber}/Line{orderDetail.Line}/Delivery{delivery.DeliverySeq}"
                     });
 
             values.Add(
