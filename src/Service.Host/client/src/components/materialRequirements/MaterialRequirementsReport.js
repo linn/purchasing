@@ -148,7 +148,6 @@ function MaterialRequirementsReport() {
         { field: 'title', headerName: '', width: 120 },
         { field: 'immediate', headerName: '', width: 80 },
         { field: 'week0', headerName: '', width: 80 },
-        { field: 'week0', headerName: '', width: 80 },
         { field: 'week1', headerName: '', width: 80 },
         { field: 'week2', headerName: '', width: 80 },
         { field: 'week3', headerName: '', width: 80 },
@@ -185,12 +184,32 @@ function MaterialRequirementsReport() {
         return null;
     };
 
+    const mapItems = items =>
+        items.map((b, i) => ({
+            ...b,
+            id: i,
+            immediate: b.immediateItem.textValue || b.immediateItem.value,
+            week0: b.week0Item.textValue || b.week0Item.value,
+            week1: b.week1Item.textValue || b.week1Item.value,
+            week2: b.week2Item.textValue || b.week2Item.value,
+            week3: b.week3Item.textValue || b.week3Item.value,
+            week4: b.week4Item.textValue || b.week4Item.value,
+            week5: b.week5Item.textValue || b.week5Item.value,
+            week6: b.week6Item.textValue || b.week6Item.value,
+            week7: b.week7Item.textValue || b.week7Item.value,
+            week8: b.week8Item.textValue || b.week8Item.value,
+            week9: b.week9Item.textValue || b.week9Item.value,
+            week10: b.week10Item.textValue || b.week10Item.value,
+            week11: b.week11Item.textValue || b.week11Item.value,
+            week12: b.week12Item.textValue || b.week12Item.value
+        }));
+
     const getRows = (item, segment) => {
         if (segment === -1) {
-            return item.details.map((b, i) => ({ ...b, id: i }));
+            return mapItems(item.details);
         }
 
-        return item.details.filter(a => a.segment === segment).map((b, i) => ({ ...b, id: i }));
+        return mapItems(item.details.filter(a => a.segment === segment));
     };
     const nextSegment = () => {
         if (selectedSegment < 5) {
