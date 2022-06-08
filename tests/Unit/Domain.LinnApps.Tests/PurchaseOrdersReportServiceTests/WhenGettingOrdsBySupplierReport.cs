@@ -6,6 +6,7 @@
     using System.Linq.Expressions;
 
     using FluentAssertions;
+    using FluentAssertions.Extensions;
 
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Parts;
@@ -51,22 +52,27 @@
                                                                            PurchaseDeliveries =
                                                                                new List<PurchaseOrderDelivery>
                                                                                    {
-                                                                                       new PurchaseOrderDelivery
+                                                                                        new PurchaseOrderDelivery
                                                                                            {
                                                                                                QtyNetReceived = 11,
-                                                                                               DeliverySeq = 12,
+                                                                                               DeliverySeq = 1,
                                                                                                OurDeliveryQty = 13,
                                                                                                NetTotalCurrency = 2m,
                                                                                                DateRequested =
-                                                                                                   new DateTime(
-                                                                                                       2021,
-                                                                                                       11,
-                                                                                                       1),
+                                                                                                   1.November(2021),
                                                                                                DateAdvised =
-                                                                                                   new DateTime(
-                                                                                                       2021,
-                                                                                                       12,
-                                                                                                       1)
+                                                                                                   1.December(2021)
+                                                                                           },
+                                                                                       new PurchaseOrderDelivery
+                                                                                           {
+                                                                                               QtyNetReceived = 11,
+                                                                                               DeliverySeq = 2,
+                                                                                               OurDeliveryQty = 13,
+                                                                                               NetTotalCurrency = 2m,
+                                                                                               DateRequested =
+                                                                                                   19.November(2021),
+                                                                                               DateAdvised =
+                                                                                                   19.December(2021)
                                                                                            }
                                                                                    },
                                                                            SuppliersDesignation =
@@ -123,10 +129,10 @@
         {
             this.results.ReportTitle.DisplayValue.Should()
                 .Be($"Purchase Orders By Supplier - {this.supplierId}: We sell stuff");
-            this.results.Rows.Count().Should().Be(1);
+            this.results.Rows.Count().Should().Be(2);
             var row = this.results.Rows.First();
-            row.RowId.Should().Be($"{this.orderNumber}/1");
-            this.results.GetGridTextValue(0, 0).Should().Be($"{this.orderNumber}/1");
+            row.RowId.Should().Be($"{this.orderNumber}/1/1");
+            this.results.GetGridTextValue(0, 0).Should().Be($"{this.orderNumber}/Line1/Delivery1");
             this.results.GetGridTextValue(0, 1).Should().Be(this.partNumber);
             this.results.GetGridTextValue(0, 2).Should().Be(this.suppliersDesignation);
             this.results.GetGridTextValue(0, 3).Should().Be("3");
@@ -135,10 +141,12 @@
             this.results.GetGridValue(0, 6).Should().Be(14.88m);
             this.results.GetGridTextValue(0, 7).Should().Be("USD");
             this.results.GetGridValue(0, 8).Should().Be(17.34m);
-            this.results.GetGridTextValue(0, 9).Should().Be("12");
+            this.results.GetGridTextValue(0, 9).Should().Be("1");
             this.results.GetGridTextValue(0, 10).Should().Be("13");
             this.results.GetGridTextValue(0, 11).Should().Be("01-Nov-2021");
             this.results.GetGridTextValue(0, 12).Should().Be("01-Dec-2021");
+            this.results.GetGridTextValue(1, 0).Should().Be($"{this.orderNumber}/Line1/Delivery2");
+            this.results.GetGridTextValue(1, 9).Should().Be("2");
         }
     }
 }

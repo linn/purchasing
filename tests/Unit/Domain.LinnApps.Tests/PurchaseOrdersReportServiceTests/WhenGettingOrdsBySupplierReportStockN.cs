@@ -172,8 +172,8 @@
 
             // doesn't have 2 rows because second part is stock controlled but filter set to non stock controlled
             var row = this.results.Rows.First();
-            row.RowId.Should().Be($"{this.orderNumber}/1");
-            this.results.GetGridTextValue(0, 0).Should().Be($"{this.orderNumber}/1");
+            row.RowId.Should().Be($"{this.orderNumber}/1/12");
+            this.results.GetGridTextValue(0, 0).Should().Be($"{this.orderNumber}/Line1/Delivery12");
             this.results.GetGridTextValue(0, 1).Should().Be(this.partNumber);
             this.results.GetGridTextValue(0, 2).Should().Be(this.suppliersDesignation);
             this.results.GetGridTextValue(0, 3).Should().Be("3");
