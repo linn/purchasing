@@ -611,7 +611,7 @@
             entity.HasMany(d => d.CancelledDetails).WithOne().HasForeignKey(cd => new { cd.OrderNumber, cd.LineNumber });
             entity.HasMany(d => d.MrOrders).WithOne().HasForeignKey(mr => new { mr.OrderNumber, mr.LineNumber });
             entity.HasOne(x => x.OrderPosting).WithOne().HasForeignKey<PurchaseOrderPosting>(p => new { p.OrderNumber, p.LineNumber });
-            entity.Property(o => o.OrderConversionFactor).HasColumnName("ORDER_CONVERSION_FACTOR");
+            entity.Property(o => o.OrderConversionFactor).HasColumnName("ORDER_CONV_FACTOR");
         }
 
         private void BuildPurchaseOrderDeliveries(ModelBuilder builder)
