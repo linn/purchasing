@@ -83,12 +83,12 @@
 
                 if (leadTimeWeek == detail.LinnWeekNumber)
                 {
-                    tags.Add(new MrTag("Ending", "red"));
+                    tags.Add(new MrTag("Ending", "redBoxOutline"));
                 }
 
                 if (dangerWeek == detail.LinnWeekNumber)
                 {
-                    tags.Add(new MrTag("Stock", "red"));
+                    tags.Add(new MrTag("Stock", "redBoxOutline"));
                 }
 
                 this.SetDetailValuesForWeek(detailResources, relativeWeek, detail, tags);

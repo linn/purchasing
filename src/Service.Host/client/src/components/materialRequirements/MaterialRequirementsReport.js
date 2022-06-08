@@ -104,6 +104,11 @@ function MaterialRequirementsReport() {
         newQuarter: {
             paddingTop: '50px',
             fontWeight: 500
+        },
+        redBoxOutline: {
+            borderStyle: 'solid',
+            borderColor: 'red !important',
+            borderWidth: 'thin'
         }
     }));
     const classes = useStyles();
@@ -144,11 +149,29 @@ function MaterialRequirementsReport() {
         setSelectedIndex(selectedIndex + 1);
     };
 
+    const getCellClass = params => {
+        switch (params.field) {
+            case 'week1':
+                if (params.row.week1Item.tag) {
+                    return classes[params.row.week1Item.tag];
+                }
+
+                return null;
+            default:
+                return null;
+        }
+    };
+
     const detailsColumns = [
         { field: 'title', headerName: '', width: 120 },
         { field: 'immediate', headerName: '', width: 80 },
         { field: 'week0', headerName: '', width: 80 },
-        { field: 'week1', headerName: '', width: 80 },
+        {
+            field: 'week1',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
         { field: 'week2', headerName: '', width: 80 },
         { field: 'week3', headerName: '', width: 80 },
         { field: 'week4', headerName: '', width: 80 },
