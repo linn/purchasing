@@ -85,6 +85,8 @@
 
                 foreach (var orderDetail in order.Details.Where(d => d.Part.PartNumber == partNumber))
                 {
+                    var isFirstDelivery = true;
+
                     foreach (var delivery in orderDetail.PurchaseDeliveries)
                     {
                         if (!includeCancelled && (orderDetail.Cancelled == "Y" || delivery.Cancelled == "Y"))
@@ -92,7 +94,8 @@
                             continue;
                         }
 
-                        ExtractDetailsForPartReport(values, order, orderDetail, delivery, order.Currency.Code);
+                        ExtractDetailsForPartReport(values, order, orderDetail, delivery, order.Currency.Code, isFirstDelivery);
+                        isFirstDelivery = false;
                     }
                 }
             }
@@ -147,6 +150,7 @@
                         continue;
                     }
 
+                    var isFirstDelivery = true;
                     foreach (var delivery in orderDetail.PurchaseDeliveries)
                     {
                         if (!includeCancelled && (orderDetail.Cancelled == "Y" || delivery.Cancelled == "Y"))
@@ -171,7 +175,8 @@
 
                         var totalLedgerQty = ledgerQtys.Sum(x => x.TransType == "C" ? x.Qty : -x.Qty);
 
-                        ExtractSupplierReportDetails(values, orderDetail, delivery, totalLedgerQty, order.Currency.Code);
+                        ExtractSupplierReportDetails(values, orderDetail, delivery, totalLedgerQty, order.Currency.Code, isFirstDelivery);
+                        isFirstDelivery = false;
                     }
                 }
             }
@@ -386,7 +391,8 @@
             PurchaseOrderDetail orderDetail,
             PurchaseOrderDelivery delivery,
             decimal ledgerQty,
-            string currencyCode)
+            string currencyCode,
+            bool isFirstDelivery)
         {
             var currentRowId = $"{orderDetail.OrderNumber}/{orderDetail.Line}/{delivery.DeliverySeq}";
             values.Add(
@@ -414,14 +420,6 @@
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId,
-                        ColumnId = "QtyOrd",
-                        TextDisplay = orderDetail.OurQty.HasValue ? orderDetail.OurQty.Value.ToString() : "0"
-                    });
-
-            values.Add(
-                new CalculationValueModel
-                    {
                         RowId = currentRowId, ColumnId = "QtyRec", TextDisplay = delivery.QtyNetReceived.ToString()
                     });
 
@@ -435,25 +433,35 @@
                 new CalculationValueModel
                     {
                         RowId = currentRowId,
-                        ColumnId = "BaseNetTotal",
-                        Value = orderDetail.BaseNetTotal,
-                        CurrencyCode = "GBP"
-                    });
-
-            values.Add(
-                new CalculationValueModel
-                    {
-                        RowId = currentRowId,
                         ColumnId = "Currency",
                         TextDisplay = currencyCode
                     });
-            values.Add(
-                new CalculationValueModel
-                    {
-                        RowId = currentRowId,
-                        ColumnId = "NetTotalCurrency",
-                        Value = orderDetail.NetTotalCurrency
-                });
+
+            if (isFirstDelivery)
+            {
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
+                            ColumnId = "QtyOrd",
+                            TextDisplay = orderDetail.OurQty.HasValue ? orderDetail.OurQty.Value.ToString() : "0"
+                        });
+
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
+                            ColumnId = "BaseNetTotal",
+                            Value = orderDetail.BaseNetTotal,
+                            CurrencyCode = "GBP"
+                        });
+
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId, ColumnId = "NetTotalCurrency", Value = orderDetail.NetTotalCurrency
+                        });
+            }
 
             values.Add(
                 new CalculationValueModel
@@ -489,7 +497,8 @@
             PurchaseOrder order,
             PurchaseOrderDetail orderDetail,
             PurchaseOrderDelivery delivery,
-            string currencyCode)
+            string currencyCode,
+            bool isFirstDelivery)
         {
             var currentRowId = $"{orderDetail.OrderNumber}/{orderDetail.Line}/{delivery.DeliverySeq}";
             values.Add(
@@ -517,24 +526,8 @@
             values.Add(
                 new CalculationValueModel
                     {
-                        RowId = currentRowId,
-                        ColumnId = "QtyOrd",
-                        Value = orderDetail.OurQty.HasValue ? orderDetail.OurQty.Value : 0
-                    });
-
-            values.Add(
-                new CalculationValueModel
-                    {
                         RowId = currentRowId, ColumnId = "QtyRec",
                         Value = delivery.QtyNetReceived ?? 0
-                    });
-
-            values.Add(
-                new CalculationValueModel
-                    {
-                        RowId = currentRowId,
-                        ColumnId = "BaseNetTotal",
-                        Value = orderDetail.BaseNetTotal
                     });
 
             values.Add(
@@ -545,13 +538,27 @@
                         TextDisplay = currencyCode
                     });
 
-            values.Add(
-                new CalculationValueModel
-                    {
-                        RowId = currentRowId,
-                        ColumnId = "NetTotalCurrency",
-                        Value = orderDetail.NetTotalCurrency
-                    });
+            if (isFirstDelivery)
+            {
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
+                            ColumnId = "QtyOrd",
+                            Value = orderDetail.OurQty.HasValue ? orderDetail.OurQty.Value : 0
+                        });
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId, ColumnId = "BaseNetTotal", Value = orderDetail.BaseNetTotal
+                        });
+
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId, ColumnId = "NetTotalCurrency", Value = orderDetail.NetTotalCurrency
+                        });
+            }
 
             values.Add(
                 new CalculationValueModel

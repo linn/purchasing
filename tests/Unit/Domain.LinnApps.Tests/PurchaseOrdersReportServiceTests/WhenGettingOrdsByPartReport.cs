@@ -57,7 +57,7 @@
                                                                                        new PurchaseOrderDelivery
                                                                                            {
                                                                                                QtyNetReceived = 11,
-                                                                                               DeliverySeq = 1,
+                                                                                               DeliverySeq = 2,
                                                                                                OurDeliveryQty = 13,
                                                                                                NetTotalCurrency = 2m,
                                                                                                DateRequested =
@@ -68,7 +68,7 @@
                                                                                        new PurchaseOrderDelivery
                                                                                            {
                                                                                                QtyNetReceived = 11,
-                                                                                               DeliverySeq = 2,
+                                                                                               DeliverySeq = 3,
                                                                                                OurDeliveryQty = 13,
                                                                                                NetTotalCurrency = 2m,
                                                                                                DateRequested =
@@ -121,8 +121,8 @@
             this.results.ReportTitle.DisplayValue.Should().Be($"Purchase Orders By Part: {this.partNumber}");
             this.results.Rows.Count().Should().Be(2);
             var row = this.results.Rows.First();
-            row.RowId.Should().Be($"{this.orderNumber}/1/1");
-            this.results.GetGridTextValue(0, 0).Should().Be($"{this.orderNumber}/Line1/Delivery1");
+            row.RowId.Should().Be($"{this.orderNumber}/1/2");
+            this.results.GetGridTextValue(0, 0).Should().Be($"{this.orderNumber}/Line1/Delivery2");
             this.results.GetGridTextValue(0, 1).Should().Be(this.orderDate.ToString("dd-MMM-yyyy"));
             this.results.GetGridTextValue(0, 2).Should().Be($"{this.supplierId}: We sell stuff");
             this.results.GetGridValue(0, 3).Should().Be(3);
@@ -130,10 +130,29 @@
             this.results.GetGridValue(0, 5).Should().Be(14.12m);
             this.results.GetGridTextValue(0, 6).Should().Be("USD");
             this.results.GetGridValue(0, 7).Should().Be(17.23m);
-            this.results.GetGridTextValue(0, 8).Should().Be("1");
+            this.results.GetGridTextValue(0, 8).Should().Be("2");
             this.results.GetGridValue(0, 9).Should().Be(13);
-            this.results.GetGridTextValue(1, 0).Should().Be($"{this.orderNumber}/Line1/Delivery2");
-            this.results.GetGridTextValue(1, 8).Should().Be("2");
+            this.results.GetGridTextValue(1, 0).Should().Be($"{this.orderNumber}/Line1/Delivery3");
+            this.results.GetGridTextValue(1, 8).Should().Be("3");
+        }
+
+        [Test]
+        public void ShouldOnlyPopulateTotalsColumnsForFirstDelivery()
+        {
+            this.results.GetGridValue(0, 3).Should().Be(3);
+            this.results.GetGridValue(1, 3).Should().BeNull();
+
+            this.results.GetGridValue(0, 4).Should().Be(11);
+            this.results.GetGridValue(1, 4).Should().Be(11);
+
+            this.results.GetGridValue(0, 5).Should().Be(14.12m);
+            this.results.GetGridValue(1, 5).Should().BeNull();
+
+            this.results.GetGridTextValue(0, 6).Should().Be("USD");
+            this.results.GetGridTextValue(1, 6).Should().Be("USD");
+
+            this.results.GetGridValue(0, 7).Should().Be(17.23m);
+            this.results.GetGridValue(1, 7).Should().BeNull();
         }
     }
 }
