@@ -36,6 +36,7 @@ import {
     getItemError,
     ErrorCard,
     processSelectorHelpers,
+    getPreviousPaths,
     utilities
 } from '@linn-it/linn-form-components-library';
 import currenciesActions from '../../actions/currenciesActions';
@@ -57,6 +58,7 @@ import {
     pOReqCheckIfCanAuthOrder
 } from '../../itemTypes';
 import checkIfCanAuthorisePurchaseOrderActions from '../../actions/checkIfCanAuthorisePurchaseOrderActions';
+import handleBackClick from '../../helpers/handleBackClick';
 
 function POReqUtility({ creating }) {
     const dispatch = useDispatch();
@@ -111,6 +113,8 @@ function POReqUtility({ creating }) {
 
     const currentUserId = useSelector(state => userSelectors.getUserNumber(state));
     const currentUserName = useSelector(state => userSelectors.getName(state));
+
+    const previousPaths = useSelector(state => getPreviousPaths(state));
 
     const defaultCreatingReq = {
         requestedBy: {
@@ -1275,7 +1279,7 @@ function POReqUtility({ creating }) {
                         <Grid item xs={6}>
                             <SaveBackCancelButtons
                                 saveDisabled={!canSave()}
-                                backClick={() => history.push('/purchasing')}
+                                backClick={() => handleBackClick(previousPaths, history.goBack)}
                                 saveClick={() => {
                                     setEditStatus('view');
                                     clearErrors();

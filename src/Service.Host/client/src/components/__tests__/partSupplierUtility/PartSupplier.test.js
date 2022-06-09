@@ -104,7 +104,7 @@ const stateWhereCreating = {
     partSupplier: {
         loading: false,
         editStatus: 'create',
-        item: { supplierName: 'SUPPLIER', partNumber: 'PART', links: [{ rel: 'create' }] }
+        item: null
     },
     partSuppliers: {
         applicationState: { links: [{ href: '/create', rel: 'create' }] }

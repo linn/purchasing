@@ -108,6 +108,8 @@ function PreferredSupplier({
         }
     }, [formData?.newSupplierId, suppliers, dispatch]);
 
+    const [saveDisabled, setSaveDisabled] = useState(true);
+
     useEffect(() => {
         if (partPriceConversionsResult) {
             setFormData(d => ({
@@ -115,10 +117,9 @@ function PreferredSupplier({
                 newPrice: partPriceConversionsResult.newPrice,
                 baseNewPrice: partPriceConversionsResult.baseNewPrice
             }));
+            setSaveDisabled(false);
         }
     }, [partPriceConversionsResult]);
-
-    const [saveDisabled, setSaveDisabled] = useState(true);
 
     const handleFieldChange = (propertyName, newValue) => {
         if (propertyName === 'newSupplierId') {
