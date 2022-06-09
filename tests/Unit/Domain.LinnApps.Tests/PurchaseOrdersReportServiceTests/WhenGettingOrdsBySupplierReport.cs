@@ -148,5 +148,28 @@
             this.results.GetGridTextValue(1, 0).Should().Be($"{this.orderNumber}/Line1/Delivery2");
             this.results.GetGridTextValue(1, 9).Should().Be("2");
         }
+
+        [Test]
+        public void ShouldOnlyPopulateTotalsColumnsForFirstDelivery()
+        {
+            this.results.GetGridTextValue(0, 3).Should().Be("3");
+            this.results.GetGridTextValue(1, 3).Should().BeNull();
+
+            this.results.GetGridTextValue(0, 4).Should().Be("11");
+            this.results.GetGridTextValue(1, 4).Should().Be("11");
+
+            this.results.GetGridTextValue(0, 5).Should().Be("77");
+            this.results.GetGridTextValue(1, 5).Should().Be("77");
+
+            this.results.GetGridValue(0, 6).Should().Be(14.88m);
+            this.results.GetGridValue(1, 6).Should().BeNull();
+
+            this.results.GetGridTextValue(0, 7).Should().Be("USD");
+            this.results.GetGridTextValue(1, 7).Should().Be("USD");
+
+
+            this.results.GetGridValue(0, 8).Should().Be(17.34m);
+            this.results.GetGridValue(1, 8).Should().BeNull();
+        }
     }
 }

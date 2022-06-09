@@ -234,10 +234,9 @@ function POReqUtility({ creating }) {
     const allowedToCancel = () => !creating && req.links?.some(l => l.rel === 'cancel');
     const allowedToAuthorise = () => !creating && req.state === 'AUTHORISE WAIT';
     const allowedTo2ndAuthorise = () => !creating && req.state === 'AUTHORISE 2ND WAIT';
+    const userHasFinancePower = () => req.links?.some(l => l.rel === 'finance-check');
     const allowedToFinanceCheck = () =>
-        !creating &&
-        req.links?.some(l => l.rel === 'finance-check') &&
-        req.state === 'FINANCE WAIT';
+        !creating && userHasFinancePower && req.state === 'FINANCE WAIT';
     const allowedToCreateOrder = () =>
         !creating &&
         req.links?.some(l => l.rel === 'turn-req-into-purchase-order') &&
@@ -308,6 +307,7 @@ function POReqUtility({ creating }) {
             dispatch(
                 poReqActions.postByHref(utilities.getHref(req, 'turn-req-into-purchase-order'))
             );
+            setSigningLimitDialogOpen(false);
         }
     };
 
@@ -762,7 +762,9 @@ function POReqUtility({ creating }) {
                                     label="Quantity"
                                     propertyName="qty"
                                     onChange={handleFieldChange}
-                                    disabled={!editingAllowed || !creating}
+                                    disabled={
+                                        (!editingAllowed || !creating) && !userHasFinancePower()
+                                    }
                                     type="number"
                                     required
                                 />
@@ -810,7 +812,9 @@ function POReqUtility({ creating }) {
                                     number
                                     propertyName="unitPrice"
                                     onChange={handleFieldChange}
-                                    disabled={!editingAllowed || !creating}
+                                    disabled={
+                                        (!editingAllowed || !creating) && !userHasFinancePower()
+                                    }
                                     decimalPlaces={2}
                                     type="number"
                                     required
