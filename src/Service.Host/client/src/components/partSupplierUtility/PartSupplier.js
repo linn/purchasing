@@ -66,12 +66,14 @@ function PartSupplier({ creating }) {
     const classes = useStyles();
     const reduxDispatch = useDispatch();
 
+    const [errorMessage, setErrorMessage] = useState(null);
+
     const searchParts = searchTerm => reduxDispatch(partsActions.search(searchTerm));
     const partsSearchResults = useSelector(reduxState =>
         collectionSelectorHelpers.getSearchItems(
             reduxState.parts,
             100,
-            'partNumber',
+            'id',
             'partNumber',
             'description'
         )
@@ -185,6 +187,8 @@ function PartSupplier({ creating }) {
         itemSelectorHelpers.getItem(reduxState.partPriceConversions)
     );
 
+    const [partId, setPartId] = useState(null);
+
     useEffect(() => {
         if (partPriceConversionsResult) {
             dispatch({
@@ -217,7 +221,8 @@ function PartSupplier({ creating }) {
     }, [query, reduxDispatch]);
 
     useEffect(() => {
-        if (creating) {
+        if (creating && !state.partSupplier.dateCreated) {
+            setErrorMessage(null);
             dispatch({
                 type: 'initialise',
                 payload: {
@@ -229,10 +234,20 @@ function PartSupplier({ creating }) {
                     addressId: 405284
                 }
             });
-        } else if (item) {
+        } else if (item && !creating) {
             dispatch({ type: 'initialise', payload: item });
         }
-    }, [item, creating, currentUserNumber]);
+    }, [item, creating, currentUserNumber, state.partSupplier.dateCreated]);
+
+    useEffect(() => {
+        if (creating && item) {
+            setErrorMessage('Record for this part and supplier already exists');
+            reduxDispatch(partSupplierActions.clearItem());
+        }
+        if (!creating) {
+            setErrorMessage(null);
+        }
+    }, [item, creating, reduxDispatch]);
 
     const handleFieldChange = (propertyName, newValue) => {
         let formatted = newValue;
@@ -257,6 +272,17 @@ function PartSupplier({ creating }) {
             return;
         }
         dispatch({ type: 'fieldChange', fieldName: propertyName, payload: formatted });
+
+        if (propertyName === 'supplierId') {
+            if (partId) {
+                reduxDispatch(
+                    partSupplierActions.fetchByHref(
+                        `${partSupplier.uri}?partId=${partId}&supplierId=${formatted}`
+                    )
+                );
+            }
+            setErrorMessage(null);
+        }
     };
 
     const canEdit = () =>
@@ -344,8 +370,13 @@ function PartSupplier({ creating }) {
                         <ErrorCard errorMessage={itemError.details} />
                     </Grid>
                 )}
+                {errorMessage && (
+                    <Grid item xs={12}>
+                        <ErrorCard errorMessage={errorMessage} />
+                    </Grid>
+                )}
                 <Grid container spacing={3}>
-                    {loading ? (
+                    {loading && !creating ? (
                         <Grid item xs={12}>
                             <Loading />
                         </Grid>
@@ -446,6 +477,7 @@ function PartSupplier({ creating }) {
                                                 part={part}
                                                 canEdit={canEdit}
                                                 creating={creating}
+                                                setPartId={newVal => setPartId(newVal)}
                                             />
                                         </Box>
                                     )}
@@ -563,6 +595,7 @@ function PartSupplier({ creating }) {
                             saveDisabled={!canEdit() || invalid() || editStatus === 'view'}
                             saveClick={() => {
                                 clearErrors();
+                                setErrorMessage(null);
                                 if (creating) {
                                     createPartSupplier(state.partSupplier);
                                 } else {
