@@ -151,11 +151,75 @@ function MaterialRequirementsReport() {
 
     const getCellClass = params => {
         switch (params.field) {
+            case 'immediate':
+                if (params.row.immediateItem.tag) {
+                    return classes[params.row.immediateItem.tag];
+                }
+                return null;
+            case 'week0':
+                if (params.row.week0Item.tag) {
+                    return classes[params.row.week0Item.tag];
+                }
+                return null;
             case 'week1':
                 if (params.row.week1Item.tag) {
                     return classes[params.row.week1Item.tag];
                 }
-
+                return null;
+            case 'week2':
+                if (params.row.week2Item.tag) {
+                    return classes[params.row.week2Item.tag];
+                }
+                return null;
+            case 'week3':
+                if (params.row.week3Item.tag) {
+                    return classes[params.row.week3Item.tag];
+                }
+                return null;
+            case 'week4':
+                if (params.row.week4Item.tag) {
+                    return classes[params.row.week4Item.tag];
+                }
+                return null;
+            case 'week5':
+                if (params.row.week5Item.tag) {
+                    return classes[params.row.week5Item.tag];
+                }
+                return null;
+            case 'week6':
+                if (params.row.week6Item.tag) {
+                    return classes[params.row.week6Item.tag];
+                }
+                return null;
+            case 'week7':
+                if (params.row.week7Item.tag) {
+                    return classes[params.row.week7Item.tag];
+                }
+                return null;
+            case 'week8':
+                if (params.row.week8Item.tag) {
+                    return classes[params.row.week8Item.tag];
+                }
+                return null;
+            case 'week9':
+                if (params.row.week9Item.tag) {
+                    return classes[params.row.week9Item.tag];
+                }
+                return null;
+            case 'week10':
+                if (params.row.week10Item.tag) {
+                    return classes[params.row.week10Item.tag];
+                }
+                return null;
+            case 'week11':
+                if (params.row.week11Item.tag) {
+                    return classes[params.row.week11Item.tag];
+                }
+                return null;
+            case 'week12':
+                if (params.row.week12Item.tag) {
+                    return classes[params.row.week12Item.tag];
+                }
                 return null;
             default:
                 return null;
@@ -164,25 +228,90 @@ function MaterialRequirementsReport() {
 
     const detailsColumns = [
         { field: 'title', headerName: '', width: 120 },
-        { field: 'immediate', headerName: '', width: 80 },
-        { field: 'week0', headerName: '', width: 80 },
+        {
+            field: 'immediate',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
+        {
+            field: 'week0',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
         {
             field: 'week1',
             headerName: '',
             width: 80,
             cellClassName: params => getCellClass(params)
         },
-        { field: 'week2', headerName: '', width: 80 },
-        { field: 'week3', headerName: '', width: 80 },
-        { field: 'week4', headerName: '', width: 80 },
-        { field: 'week5', headerName: '', width: 80 },
-        { field: 'week6', headerName: '', width: 80 },
-        { field: 'week7', headerName: '', width: 80 },
-        { field: 'week8', headerName: '', width: 80 },
-        { field: 'week9', headerName: '', width: 80 },
-        { field: 'week10', headerName: '', width: 80 },
-        { field: 'week11', headerName: '', width: 80 },
-        { field: 'week12', headerName: '', width: 80 }
+        {
+            field: 'week2',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
+        {
+            field: 'week3',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
+        {
+            field: 'week4',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
+        {
+            field: 'week5',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
+        {
+            field: 'week6',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
+        {
+            field: 'week7',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
+        {
+            field: 'week8',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
+        {
+            field: 'week9',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
+        {
+            field: 'week10',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
+        {
+            field: 'week11',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
+        {
+            field: 'week12',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        }
     ];
 
     const getRowClass = params => {

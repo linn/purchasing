@@ -80,6 +80,27 @@
             part1Details1Resources.Should().NotContain(a => a.Title == "Ideal Stock");
             part1Details1Resources.First(a => a.Title == "Recom Orders").Week0.Should().Be(originalPart1Details.RecommendedOrders.ToString());
             part1Details1Resources.Should().NotContain(a => a.Title == "Recom Stock");
+
+            part1Details1Resources.First(a => a.Title == "Week").Week0Item.TextValue.Should().Be(originalPart1Details.WeekAndYear);
+            part1Details1Resources.First(a => a.Title == "Ending").Week0Item.TextValue.Should().Be(originalPart1Details.WeekEnding);
+            part1Details1Resources.First(a => a.Title == "Fixed Build").Week0Item.Value.Should().Be(originalPart1Details.FixedBuild);
+            part1Details1Resources.First(a => a.Title == "Assumed Build").Week0Item.Value.Should().Be(originalPart1Details.AssumedBuild);
+            part1Details1Resources.First(a => a.Title == "Trigger Build").Week0Item.Value.Should().Be(originalPart1Details.TriggerBuild);
+            part1Details1Resources.First(a => a.Title == "Purchases").Week0Item.Value.Should().Be(originalPart1Details.PurchaseOrders);
+            part1Details1Resources.First(a => a.Title == "Unauthorised POs").Week0Item.Value.Should().Be(originalPart1Details.UnauthorisedPurchaseOrders);
+            part1Details1Resources.First(a => a.Title == "Assumed Purchases").Week0Item.Value.Should().Be(originalPart1Details.AssumedPurchaseOrders);
+            part1Details1Resources.First(a => a.Title == "Sales Orders").Week0Item.Value.Should().Be(originalPart1Details.SalesOrders);
+            part1Details1Resources.First(a => a.Title == "Sales Forecast").Week0Item.Value.Should().Be(originalPart1Details.DeliveryForecast);
+            part1Details1Resources.First(a => a.Title == "Production Reqt").Week0Item.Value.Should().Be(originalPart1Details.ProductionRequirement);
+            part1Details1Resources.First(a => a.Title == "Prod For Spares").Week0Item.Value.Should().Be(originalPart1Details.ProductionRequirementForSpares);
+            part1Details1Resources.First(a => a.Title == "Prod For NonProd").Week0Item.Value.Should().Be(originalPart1Details.ProductionRequirementForNonProduction);
+            part1Details1Resources.First(a => a.Title == "Non Prod Reqt").Week0Item.Value.Should().Be(originalPart1Details.NonProductionRequirement);
+            part1Details1Resources.First(a => a.Title == "Spares Reqt").Week0Item.Value.Should().Be(originalPart1Details.SparesRequirement);
+            part1Details1Resources.First(a => a.Title == "Status").Week0Item.TextValue.Should().Be(originalPart1Details.Status);
+            part1Details1Resources.First(a => a.Title == "Stock").Week0Item.Value.Should().Be(originalPart1Details.Stock);
+            part1Details1Resources.First(a => a.Title == "Min Rail").Week0Item.Value.Should().Be(originalPart1Details.MinRail);
+            part1Details1Resources.First(a => a.Title == "Max Rail").Week0Item.Value.Should().Be(originalPart1Details.MaxRail);
+            part1Details1Resources.First(a => a.Title == "Recom Orders").Week0Item.Value.Should().Be(originalPart1Details.RecommendedOrders);
         }
 
         [Test]
@@ -124,6 +145,16 @@
                      == $"/purchasing/material-requirements/used-on-report?partNumber={this.MrHeader1.PartNumber}");
             part1Resource.Links.Should().Contain(
                 a => a.Rel == "part" && a.Href == $"/parts/{this.MrHeader1.PartId}");
+        }
+
+        [Test]
+        public void ShouldSetTagDetailsForFirstPart()
+        {
+            var part1Result = this.result.Results.First(a => a.PartNumber == "P1");
+            var part1Details1Resources = part1Result.Details.Where(a => a.Segment == 0).ToList();
+            var originalPart1Details = this.MrHeader1.MrDetails.First(a => a.Segment == 0);
+            part1Details1Resources.First(a => a.Title == "Ending").Week3Item.Tag.Should().Be("redBoxOutline");
+            part1Details1Resources.First(a => a.Title == "Stock").Week3Item.Tag.Should().Be("redBoxOutline");
         }
     }
 }
