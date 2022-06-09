@@ -152,7 +152,7 @@ function MaterialRequirementsReport() {
     const getCellClass = params => {
         switch (params.field) {
             case 'immediate':
-                if (params.row.immediateItem.tag) {
+                if (params.row.immediateItem?.tag) {
                     return classes[params.row.immediateItem.tag];
                 }
                 return null;
@@ -340,7 +340,7 @@ function MaterialRequirementsReport() {
         items.map((b, i) => ({
             ...b,
             id: i,
-            immediate: b.immediateItem.textValue || b.immediateItem.value,
+            immediate: b.immediateItem?.textValue || b.immediateItem?.value,
             week0: b.week0Item.textValue || b.week0Item.value,
             week1: b.week1Item.textValue || b.week1Item.value,
             week2: b.week2Item.textValue || b.week2Item.value,
