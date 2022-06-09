@@ -1,17 +1,178 @@
 ﻿@inherits RazorEngineCore.RazorEngineTemplateBase<Linn.Purchasing.Domain.LinnApps.PurchaseOrders.PurchaseOrder>
 @{
-    <div>
-        <h1>Linn Purchase Order</h1>
-        <p>The following is passed into this razor file and loaded from the db</p>
-        
-        <p>Order number is: @Model.OrderNumber, Order Date: @Model.OrderDate</p>
-
-        @foreach (var purchaseOrderDetail in Model.Details)
-        {
-            <p>Line number: @purchaseOrderDetail.Line</p>
-            //todo add custom razorEngineTemplate as in https://github.com/adoconnection/RazorEngineCore/issues/77
-            //to allow use of @Include to bring in partials/reuseable components
-            //@Html.Partial("_PODetail.cshtml", purchaseOrderDetail)
+    // .grid-container {
+    // display: grid;
+    // grid-template-columns: auto auto auto;
+    // padding: 10px;
+    // }
+    // body {
+    // font-family: 'Courier New', Courier, monospace;
+    // font-size: 12px;
+    // font-weight: bold;
+    // margin: 40px;
+    // }
+    <style>
+       
+        .grid-item {
+            padding: 20px;
+            text-align: center;
         }
-           </div>
+
+        .whole-row-grid-container {
+            display: grid;
+            grid-template-columns: auto;
+            padding: 10px;
+        }
+
+        .logo { grid-area: logo; }
+
+        .auto { grid-area: auto; }
+
+        .item1 {
+            grid-area: item1;
+        }
+
+        .item2 {
+            grid-area: item2;
+        }
+
+        .address { grid-area: address; }
+
+        .regoff {
+            font-size: 0.5em;
+            grid-area: regoff;
+        }
+
+        .orderno { grid-area: orderno; font-weight: bold;  }
+
+        .title { grid-area: title; font-weight: bold; }
+
+        .date { grid-area: date; text-align: center }
+        .supplierName { grid-area: supplierName; }
+        .deliveryTo { grid-area: deliveryTo; }
+        .deliveryToText { grid-area: deliveryToText; text-align: right }
+
+        .requestedByText { grid-area: requestedByText; text-align: right }
+        .enteredByText { grid-area: enteredByText; text-align: right }
+
+        .contactText { grid-area: contactText; text-align: right }
+        .authByText { grid-area: authByText; text-align: right }
+
+        
+        .requestedBy { grid-area: requestedBy; }
+        .contact { grid-area: contact; }
+        .enteredBy { grid-area: enteredBy; }
+        .authBy { grid-area: authBy; }
+
+        
+
+        .grid-container {
+            display: grid;
+            column-gap: 10px;
+            row-gap: 5px;
+            grid-template-areas:
+                               'logo item1 blank1 item2 item2 blank2'
+                               'logo address address address address address'
+                               'blank3 regoff regoff regoff regoff regoff'
+                               'orderno orderno title title date date'
+                               'supplierName supplierName supplierName deliveryToText deliveryTo deliveryTo'
+                               ' requestedByText requestedBy blank5  contactText contact blank6'
+                               ' enteredByText enteredBy blank7  authByText authBy blank8';
+            padding: 10px;
+        }
+    </style>
+    <div class="grid-container">
+        <div class="logo">
+            <img src="../client/assets/linn-logo.png"/>
+        </div>
+        <div class="item1">
+            <p>
+                <b>Purchase Order</b>
+            </p>
+        </div>
+
+        <div class="item2">
+            <p>
+                <b>SUPPLIER COPY</b>
+            </p>
+        </div>
+        <div class="address">
+            @{
+                // todo make sure this is right address
+            }
+            <p>
+                @Model.DeliveryAddress.FullAddress.AddressString
+            </p>
+        </div>
+        <div class="regoff">
+            <span>Registered office small text todo</span>
+        </div>
+        <div class="orderno">
+            <p>Order number: @Model.OrderNumber</p>
+        </div>
+        <div class="title">
+            <p>Purchase Order</p>
+        </div>
+        <div class="date">
+            <p>Date: @Model.OrderDate.ToString("dd-MMM-yyyy")</p>
+        </div>
+        
+        <div class="supplierName">
+            <pre>
+            @Model.Supplier.Name @Model.Supplier.SupplierId
+            @Model.Supplier.OrderAddress.Line1
+            @Model.Supplier.OrderAddress.Line2
+            @Model.Supplier.OrderAddress.Line3
+            @Model.Supplier.OrderAddress.Line4
+            @Model.Supplier.OrderAddress.PostCode
+            @Model.Supplier.OrderAddress.Country.Name
+</pre>
+        </div>
+        
+        
+        
+        <div class="deliveryToText">
+            <pre>Deliver To</pre>
+        </div>
+        <div class="deliveryTo">
+             <pre>@Model.DeliveryAddress.FullAddress.AddressString</pre>
+        </div>
+        
+        <div class="requestedByText">
+            <span>Requested By</span>
+        </div>
+        <div class="requestedBy">
+            <span>@Model.RequestedBy.FullName</span>
+        </div>
+        <div class="contactText">
+            <span>Contact</span>
+        </div>
+        <div class="contact">
+            <span>@Model.OrderContactName</span>
+        </div>
+        <div class="enteredByText">
+            <span>Entered By</span>
+        </div>
+        <div class="enteredBy">
+            <span>@Model.EnteredBy.FullName</span>
+        </div>
+        <div class="authByText">
+            <span>Auth By</span>
+        </div>
+        <div class="authBy">
+            <span>@Model.AuthorisedBy.FullName</span>
+        </div>
+    </div>
+
+    @foreach (var purchaseOrderDetail in Model.Details)
+    {
+        <p>Line number: @purchaseOrderDetail.Line</p>
+
+        <p>Part Number: @purchaseOrderDetail.PartNumber - @purchaseOrderDetail.Part.Description</p>
+
+        // in future could look at making a reusable partial component but but awkward with this:
+        // add custom razorEngineTemplate as in https://github.com/adoconnection/RazorEngineCore/issues/77
+    }
+
+
 }
