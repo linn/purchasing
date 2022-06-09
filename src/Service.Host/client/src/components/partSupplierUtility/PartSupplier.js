@@ -221,8 +221,13 @@ function PartSupplier({ creating }) {
     }, [query, reduxDispatch]);
 
     useEffect(() => {
-        if (creating && !state.partSupplier.dateCreated) {
+        if (creating) {
             setErrorMessage(null);
+        }
+    }, [creating, reduxDispatch]);
+
+    useEffect(() => {
+        if (creating && !state.partSupplier.dateCreated) {
             dispatch({
                 type: 'initialise',
                 payload: {
@@ -240,14 +245,23 @@ function PartSupplier({ creating }) {
     }, [item, creating, currentUserNumber, state.partSupplier.dateCreated]);
 
     useEffect(() => {
-        if (creating && item) {
+        if (
+            creating &&
+            state.partSupplier.partNumber &&
+            item?.partNumber === state.partSupplier.partNumber &&
+            item?.supplierId === state.partSupplier.supplierId
+        ) {
             setErrorMessage('Record for this part and supplier already exists');
-            reduxDispatch(partSupplierActions.clearItem());
-        }
-        if (!creating) {
+        } else {
             setErrorMessage(null);
         }
-    }, [item, creating, reduxDispatch]);
+    }, [
+        item,
+        creating,
+        reduxDispatch,
+        state.partSupplier.partNumber,
+        state.partSupplier.supplierId
+    ]);
 
     const handleFieldChange = (propertyName, newValue) => {
         let formatted = newValue;
@@ -376,7 +390,7 @@ function PartSupplier({ creating }) {
                     </Grid>
                 )}
                 <Grid container spacing={3}>
-                    {loading && !creating ? (
+                    {loading ? (
                         <Grid item xs={12}>
                             <Loading />
                         </Grid>
