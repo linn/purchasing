@@ -81,7 +81,72 @@ const stateWithReport = {
                             immediateItem: {
                                 textValue: 'IMM',
                                 value: null,
-                                tag: 'TagValue'
+                                tag: null
+                            },
+                            week0Item: {
+                                textValue: '19/22',
+                                value: null,
+                                tag: null
+                            },
+                            week1Item: {
+                                textValue: '20/22',
+                                value: null,
+                                tag: null
+                            },
+                            week2Item: {
+                                textValue: '21/22',
+                                value: null,
+                                tag: null
+                            },
+                            week3Item: {
+                                textValue: '22/22',
+                                value: null,
+                                tag: null
+                            },
+                            week4Item: {
+                                textValue: '23/22',
+                                value: null,
+                                tag: null
+                            },
+                            week5Item: {
+                                textValue: '24/22',
+                                value: null,
+                                tag: null
+                            },
+                            week6Item: {
+                                textValue: '25/22',
+                                value: null,
+                                tag: null
+                            },
+                            week7Item: {
+                                textValue: '26/22',
+                                value: null,
+                                tag: null
+                            },
+                            week8Item: {
+                                textValue: '27/22',
+                                value: null,
+                                tag: null
+                            },
+                            week9Item: {
+                                textValue: '28/22',
+                                value: null,
+                                tag: null
+                            },
+                            week10Item: {
+                                textValue: '29/22',
+                                value: null,
+                                tag: null
+                            },
+                            week11Item: {
+                                textValue: '30/22',
+                                value: null,
+                                tag: null
+                            },
+                            week12Item: {
+                                textValue: '31/22',
+                                value: null,
+                                tag: null
                             }
                         },
                         {
@@ -106,6 +171,71 @@ const stateWithReport = {
                                 textValue: 'IMM',
                                 value: null,
                                 tag: 'TagValue'
+                            },
+                            week0Item: {
+                                textValue: '13May',
+                                value: null,
+                                tag: null
+                            },
+                            week1Item: {
+                                textValue: '20May',
+                                value: null,
+                                tag: null
+                            },
+                            week2Item: {
+                                textValue: '27May',
+                                value: null,
+                                tag: null
+                            },
+                            week3Item: {
+                                textValue: '03Jun',
+                                value: null,
+                                tag: null
+                            },
+                            week4Item: {
+                                textValue: '10Jun',
+                                value: null,
+                                tag: null
+                            },
+                            week5Item: {
+                                textValue: '17Jun',
+                                value: null,
+                                tag: null
+                            },
+                            week6Item: {
+                                textValue: '24Jun',
+                                value: null,
+                                tag: null
+                            },
+                            week7Item: {
+                                textValue: '01Jul',
+                                value: null,
+                                tag: null
+                            },
+                            week8Item: {
+                                textValue: '08Jul',
+                                value: null,
+                                tag: null
+                            },
+                            week9Item: {
+                                textValue: '15Jul',
+                                value: null,
+                                tag: null
+                            },
+                            week10Item: {
+                                textValue: '22Jul',
+                                value: null,
+                                tag: null
+                            },
+                            week11Item: {
+                                textValue: '29Jul',
+                                value: null,
+                                tag: null
+                            },
+                            week12Item: {
+                                textValue: '05Aug',
+                                value: null,
+                                tag: null
                             }
                         },
                         {
@@ -129,7 +259,72 @@ const stateWithReport = {
                             immediateItem: {
                                 textValue: null,
                                 value: 2433,
-                                tag: 'TagValue'
+                                tag: null
+                            },
+                            week0Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week1Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week2Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week3Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week4Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week5Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week6Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week7Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week8Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week9Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week10Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week11Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week12Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
                             }
                         },
                         {
@@ -153,7 +348,72 @@ const stateWithReport = {
                             immediateItem: {
                                 textValue: null,
                                 value: 4503,
-                                tag: 'TagValue'
+                                tag: null
+                            },
+                            week0Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week1Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week2Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week3Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week4Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week5Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week6Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week7Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week8Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week9Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week10Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week11Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week12Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
                             }
                         },
                         {
@@ -177,7 +437,72 @@ const stateWithReport = {
                             immediateItem: {
                                 textValue: null,
                                 value: 1,
-                                tag: 'TagValue'
+                                tag: null
+                            },
+                            week0Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week1Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week2Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week3Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week4Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week5Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week6Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week7Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week8Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week9Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week10Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week11Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week12Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
                             }
                         },
                         {
@@ -201,7 +526,72 @@ const stateWithReport = {
                             immediateItem: {
                                 textValue: null,
                                 value: 36,
-                                tag: 'TagValue'
+                                tag: null
+                            },
+                            week0Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
+                            },
+                            week1Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
+                            },
+                            week2Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
+                            },
+                            week3Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
+                            },
+                            week4Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
+                            },
+                            week5Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
+                            },
+                            week6Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
+                            },
+                            week7Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
+                            },
+                            week8Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
+                            },
+                            week9Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
+                            },
+                            week10Item: {
+                                textValue: null,
+                                value: 12,
+                                tag: null
+                            },
+                            week11Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
+                            },
+                            week12Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
                             }
                         },
                         {
@@ -225,7 +615,72 @@ const stateWithReport = {
                             immediateItem: {
                                 textValue: null,
                                 value: null,
-                                tag: 'TagValue'
+                                tag: null
+                            },
+                            week0Item: {
+                                textValue: 'H',
+                                value: null,
+                                tag: null
+                            },
+                            week1Item: {
+                                textValue: 'H',
+                                value: null,
+                                tag: null
+                            },
+                            week2Item: {
+                                textValue: 'H',
+                                value: null,
+                                tag: null
+                            },
+                            week3Item: {
+                                textValue: 'H',
+                                value: null,
+                                tag: null
+                            },
+                            week4Item: {
+                                textValue: 'H',
+                                value: null,
+                                tag: null
+                            },
+                            week5Item: {
+                                textValue: 'H',
+                                value: null,
+                                tag: null
+                            },
+                            week6Item: {
+                                textValue: 'H',
+                                value: null,
+                                tag: null
+                            },
+                            week7Item: {
+                                textValue: 'H',
+                                value: null,
+                                tag: null
+                            },
+                            week8Item: {
+                                textValue: 'H',
+                                value: null,
+                                tag: null
+                            },
+                            week9Item: {
+                                textValue: 'H',
+                                value: null,
+                                tag: null
+                            },
+                            week10Item: {
+                                textValue: 'H',
+                                value: null,
+                                tag: null
+                            },
+                            week11Item: {
+                                textValue: 'H',
+                                value: null,
+                                tag: null
+                            },
+                            week12Item: {
+                                textValue: 'H',
+                                value: null,
+                                tag: null
                             }
                         },
                         {
@@ -249,7 +704,72 @@ const stateWithReport = {
                             immediateItem: {
                                 textValue: null,
                                 value: 181,
-                                tag: 'TagValue'
+                                tag: null
+                            },
+                            week0Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week1Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week2Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week3Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week4Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week5Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week6Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week7Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week8Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week9Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week10Item: {
+                                textValue: null,
+                                value: 7105,
+                                tag: null
+                            },
+                            week11Item: {
+                                textValue: null,
+                                value: 7105,
+                                tag: null
+                            },
+                            week12Item: {
+                                textValue: null,
+                                value: 7105,
+                                tag: null
                             }
                         },
                         {
@@ -273,7 +793,72 @@ const stateWithReport = {
                             immediateItem: {
                                 textValue: null,
                                 value: null,
-                                tag: 'TagValue'
+                                tag: null
+                            },
+                            week0Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
+                            },
+                            week1Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
+                            },
+                            week2Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
+                            },
+                            week3Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
+                            },
+                            week4Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
+                            },
+                            week5Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
+                            },
+                            week6Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
+                            },
+                            week7Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
+                            },
+                            week8Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
+                            },
+                            week9Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
+                            },
+                            week10Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
+                            },
+                            week11Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
+                            },
+                            week12Item: {
+                                textValue: null,
+                                value: 0,
+                                tag: null
                             }
                         },
                         {
@@ -297,7 +882,72 @@ const stateWithReport = {
                             immediateItem: {
                                 textValue: null,
                                 value: null,
-                                tag: 'TagValue'
+                                tag: null
+                            },
+                            week0Item: {
+                                textValue: null,
+                                value: 200,
+                                tag: null
+                            },
+                            week1Item: {
+                                textValue: null,
+                                value: 200,
+                                tag: null
+                            },
+                            week2Item: {
+                                textValue: null,
+                                value: 200,
+                                tag: null
+                            },
+                            week3Item: {
+                                textValue: null,
+                                value: 200,
+                                tag: null
+                            },
+                            week4Item: {
+                                textValue: null,
+                                value: 200,
+                                tag: null
+                            },
+                            week5Item: {
+                                textValue: null,
+                                value: 200,
+                                tag: null
+                            },
+                            week6Item: {
+                                textValue: null,
+                                value: 200,
+                                tag: null
+                            },
+                            week7Item: {
+                                textValue: null,
+                                value: 200,
+                                tag: null
+                            },
+                            week8Item: {
+                                textValue: null,
+                                value: 200,
+                                tag: null
+                            },
+                            week9Item: {
+                                textValue: null,
+                                value: 200,
+                                tag: null
+                            },
+                            week10Item: {
+                                textValue: null,
+                                value: 200,
+                                tag: null
+                            },
+                            week11Item: {
+                                textValue: null,
+                                value: 200,
+                                tag: null
+                            },
+                            week12Item: {
+                                textValue: null,
+                                value: 200,
+                                tag: null
                             }
                         },
                         {
@@ -321,7 +971,72 @@ const stateWithReport = {
                             immediateItem: {
                                 textValue: null,
                                 value: null,
-                                tag: 'TagValue'
+                                tag: null
+                            },
+                            week0Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week1Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week2Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week3Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week4Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week5Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week6Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week7Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week8Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week9Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week10Item: {
+                                textValue: null,
+                                value: 7105,
+                                tag: null
+                            },
+                            week11Item: {
+                                textValue: null,
+                                value: 7105,
+                                tag: null
+                            },
+                            week12Item: {
+                                textValue: null,
+                                value: 7105,
+                                tag: null
                             }
                         },
                         {
@@ -345,7 +1060,72 @@ const stateWithReport = {
                             immediateItem: {
                                 textValue: null,
                                 value: null,
-                                tag: 'TagValue'
+                                tag: null
+                            },
+                            week0Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week1Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week2Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week3Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week4Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week5Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week6Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week7Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week8Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week9Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week10Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week11Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
+                            },
+                            week12Item: {
+                                textValue: null,
+                                value: null,
+                                tag: null
                             }
                         },
                         {
@@ -369,7 +1149,72 @@ const stateWithReport = {
                             immediateItem: {
                                 textValue: null,
                                 value: null,
-                                tag: 'TagValue'
+                                tag: null
+                            },
+                            week0Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week1Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week2Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week3Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week4Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week5Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week6Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week7Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week8Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week9Item: {
+                                textValue: null,
+                                value: 7117,
+                                tag: null
+                            },
+                            week10Item: {
+                                textValue: null,
+                                value: 7105,
+                                tag: null
+                            },
+                            week11Item: {
+                                textValue: null,
+                                value: 7105,
+                                tag: null
+                            },
+                            week12Item: {
+                                textValue: null,
+                                value: 7105,
+                                tag: null
                             }
                         },
                         {
