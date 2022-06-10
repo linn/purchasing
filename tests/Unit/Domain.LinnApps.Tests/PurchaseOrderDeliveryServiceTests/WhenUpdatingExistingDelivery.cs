@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
@@ -90,6 +91,9 @@
             this.AuthService.HasPermissionFor(
                     AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
+
+            this.DeliveryRepository.FindBy(Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
+                .Returns(this.existingDelivery);
 
             this.MiniOrderRepository.FindById(this.order.OrderNumber).Returns(new MiniOrder { });
             this.result = this.Sut.UpdateDeliveriesForOrderLine(

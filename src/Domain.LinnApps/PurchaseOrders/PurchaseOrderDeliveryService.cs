@@ -30,6 +30,8 @@
 
         private readonly IPurchaseOrdersPack purchaseOrdersPack;
 
+        private readonly IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> deliveryRepository;
+
         public PurchaseOrderDeliveryService(
             IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> repository,
             IAuthorisationService authService,
@@ -38,7 +40,8 @@
             IRepository<MiniOrder, int> miniOrderRepository,
             IRepository<MiniOrderDelivery, MiniOrderDeliveryKey> miniOrderDeliveryRepository,
             IRepository<PurchaseOrder, int> purchaseOrderRepository,
-            IPurchaseOrdersPack purchaseOrdersPack)
+            IPurchaseOrdersPack purchaseOrdersPack,
+            IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> deliveryRepository)
         {
             this.repository = repository;
             this.authService = authService;
@@ -48,6 +51,7 @@
             this.miniOrderDeliveryRepository = miniOrderDeliveryRepository;
             this.purchaseOrderRepository = purchaseOrderRepository;
             this.purchaseOrdersPack = purchaseOrdersPack;
+            this.deliveryRepository = deliveryRepository;
         }
 
         public IEnumerable<PurchaseOrderDelivery> SearchDeliveries(
@@ -292,6 +296,10 @@
                         // update the existing record if it exists
                         if (existing != null)
                         {
+                            var seq = existing.DeliverySeq;
+                            existing = this.deliveryRepository.FindBy(
+                                d => d.OrderNumber == orderNumber && d.OrderLine == orderLine
+                                                                  && d.DeliverySeq == seq);
                             existing.OurDeliveryQty = del.OurDeliveryQty;
                             existing.OrderDeliveryQty = del.OurDeliveryQty / detail.OrderConversionFactor;
                             existing.OurUnitPriceCurrency = detail.OurUnitPriceCurrency;
@@ -369,7 +377,7 @@
                                          };
                     });
 
-            detail.PurchaseDeliveries = newDeliveries;
+            detail.PurchaseDeliveries = newDeliveries.ToList();
 
             // set mini order date requested to be first date requested of newly split deliveries
             // and write the new deliveries list to the mini order to keep it in sync

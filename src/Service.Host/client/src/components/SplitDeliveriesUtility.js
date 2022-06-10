@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DataGrid } from '@mui/x-data-grid';
 import PropTypes from 'prop-types';
@@ -9,22 +9,31 @@ import {
     Page,
     SaveBackCancelButtons,
     SnackbarMessage,
-    itemSelectorHelpers
+    itemSelectorHelpers,
+    getItemError,
+    ErrorCard,
+    InputField
 } from '@linn-it/linn-form-components-library';
 import history from '../history';
 import config from '../config';
 import purchaseOrderDeliveriesActions from '../actions/purchaseOrderDeliveriesActions';
-import { purchaseOrderDeliveries } from '../itemTypes';
+import purchaseOrderActions from '../actions/purchaseOrderActions';
+import { purchaseOrderDeliveries, purchaseOrder } from '../itemTypes';
 
 function SplitDeliveriesUtility({ orderNumber, orderLine, inDialogBox, deliveries, backClick }) {
     const dispatch = useDispatch();
+    const error = useSelector(state => getItemError(state, purchaseOrderDeliveries.item));
+    const order = useSelector(state => itemSelectorHelpers.getItem(state[purchaseOrder.item]));
+    const orderLoading = useSelector(state =>
+        itemSelectorHelpers.getItemLoading(state[purchaseOrder.item])
+    );
 
     const columns = [
         { field: 'id', headerName: 'Id', width: 100, hide: true },
         { field: 'deliverySeq', headerName: 'Delivery', width: 100 },
         { field: 'ourDeliveryQty', headerName: 'Qty', width: 100, editable: true },
-        { field: 'dateRequested', headerName: 'Request Date', width: 100 },
-        { field: 'dateAdvised', headerName: 'Advised Date', width: 100 },
+        { field: 'dateRequested', headerName: 'Request Date', width: 100, editable: true },
+        { field: 'dateAdvised', headerName: 'Advised Date', width: 100, editable: true },
         {
             field: 'availableAtSupplier',
             headerName: 'Available at Supplier?',
@@ -37,6 +46,12 @@ function SplitDeliveriesUtility({ orderNumber, orderLine, inDialogBox, deliverie
     const [editRowsModel, setEditRowsModel] = useState({});
     const [changesMade, setChangesMade] = useState(false);
     const [rows, setRows] = useState(deliveries);
+
+    useEffect(() => {
+        if (deliveries) {
+            dispatch(purchaseOrderActions.fetch(deliveries[0].orderNumber));
+        }
+    }, [deliveries, dispatch]);
 
     const handleEditRowsModelChange = model => {
         setEditRowsModel(model);
@@ -76,6 +91,9 @@ function SplitDeliveriesUtility({ orderNumber, orderLine, inDialogBox, deliverie
             }
         ]);
     };
+    const orderQty = () => order?.details?.find(x => x.line === deliveries[0].orderLine)?.ourQty;
+    const total = () =>
+        rows.length > 0 ? rows.map(r => Number(r.ourDeliveryQty)).reduce((a, b) => a + b, 0) : 0;
 
     const content = () => (
         <Grid container spacing={3}>
@@ -84,7 +102,33 @@ function SplitDeliveriesUtility({ orderNumber, orderLine, inDialogBox, deliverie
                 onClose={() => dispatch(purchaseOrderDeliveriesActions.setSnackbarVisible(false))}
                 message="Split Successful"
             />
-            <Typography variant="h5">Split Deliveries</Typography>
+            <Grid item xs={12}>
+                <Typography variant="h5">Split Deliveries</Typography>
+            </Grid>
+            <Grid item xs={3}>
+                <InputField
+                    propertyName="orderQty"
+                    label="Qty On Order"
+                    value={orderQty()}
+                    onChange={() => {}}
+                />
+            </Grid>
+            <Grid item xs={3}>
+                <InputField
+                    propertyName="orderQty"
+                    label="Qty On Order"
+                    type="number"
+                    error={!orderLoading && total() !== orderQty()}
+                    value={total()}
+                    onChange={() => {}}
+                />
+            </Grid>
+            <Grid item xs={6} />
+            {error && (
+                <Grid item xs={12}>
+                    <ErrorCard errorMessage={error.details} />
+                </Grid>
+            )}
             <Grid item xs={12}>
                 <DataGrid
                     rows={rows}
@@ -107,11 +151,15 @@ function SplitDeliveriesUtility({ orderNumber, orderLine, inDialogBox, deliverie
             </Grid>
             <Grid item xs={12}>
                 <SaveBackCancelButtons
-                    cancelClick={() => setChangesMade(false)}
+                    cancelClick={() => {
+                        setChangesMade(false);
+                        setRows(deliveries);
+                    }}
                     backClick={backClick}
                     saveDisabled={!changesMade}
                     saveClick={() => {
                         setChangesMade(false);
+                        dispatch(purchaseOrderDeliveriesActions.clearErrorsForItem());
                         dispatch(
                             purchaseOrderDeliveriesActions.postByHref(
                                 `/purchasing/purchase-orders/deliveries/${orderNumber}/${orderLine}`,
@@ -141,7 +189,9 @@ SplitDeliveriesUtility.propTypes = {
     orderNumber: PropTypes.number.isRequired,
     orderLine: PropTypes.number.isRequired,
     inDialogBox: PropTypes.bool,
-    deliveries: PropTypes.arrayOf(PropTypes.shape({})),
+    deliveries: PropTypes.arrayOf(
+        PropTypes.shape({ orderNumber: PropTypes.number, orderLine: PropTypes.number })
+    ),
     backClick: PropTypes.func.isRequired
 };
 
