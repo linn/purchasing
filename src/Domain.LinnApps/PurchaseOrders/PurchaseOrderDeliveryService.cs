@@ -280,6 +280,12 @@
                 del =>
                     {
                         var existing = list.FirstOrDefault(x => x.DeliverySeq == del.DeliverySeq);
+                        var x = this.purchaseOrdersPack.GetVatAmountSupplier(
+                            detail.OrderUnitPriceCurrency.GetValueOrDefault() * del.OurDeliveryQty.GetValueOrDefault(),
+                            order.SupplierId);
+                        var y = this.purchaseOrdersPack.GetVatAmountSupplier(
+                            detail.BaseOurUnitPrice.GetValueOrDefault() * del.OurDeliveryQty.GetValueOrDefault(),
+                            order.SupplierId);
                         var vatAmount = Math.Round(
                             this.purchaseOrdersPack.GetVatAmountSupplier(
                                 detail.OrderUnitPriceCurrency.GetValueOrDefault() * del.OurDeliveryQty.GetValueOrDefault(),
