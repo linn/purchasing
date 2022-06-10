@@ -114,7 +114,7 @@ function SplitDeliveriesUtility({ orderNumber, orderLine, inDialogBox, deliverie
                         setChangesMade(false);
                         dispatch(
                             purchaseOrderDeliveriesActions.postByHref(
-                                `${config.appRoot}/purchasing/purchase-orders/deliveries/${orderNumber}/${orderLine}`,
+                                `/purchasing/purchase-orders/deliveries/${orderNumber}/${orderLine}`,
                                 rows
                             )
                         );

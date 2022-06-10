@@ -1321,19 +1321,19 @@
             entity.Property(o => o.AcknowledgeComment).HasColumnName("ACKNOWLEDGE_COMMENT");
             entity.Property(o => o.RequestedDeliveryDate).HasColumnName("REQUESTED_DELIVERY_DATE");
             entity.Property(o => o.NumberOfSplitDeliveries).HasColumnName("NUMBER_OF_SPLIT_DELIVERIES");
-            entity.HasMany(d => d.Deliveries).WithOne(del => del.Order).HasForeignKey(del => del.OrderNumber);
         }
 
         private void BuildMiniOrderDeliveries(ModelBuilder builder)
         {
             var entity = builder.Entity<MiniOrderDelivery>().ToTable("MINI_ORDER_DELIVERIES");
             entity.HasKey(a => new { a.OrderNumber, a.DeliverySequence });
-            entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
-            entity.Property(o => o.DeliverySequence).HasColumnName("DELIVERY_SEQ");
-            entity.Property(o => o.AdvisedDate).HasColumnName("ADVISED_DATE");
-            entity.Property(o => o.RequestedDate).HasColumnName("REQUESTED_DATE");
-            entity.Property(o => o.OurQty).HasColumnName("OUR_QTY");
-            entity.Property(o => o.AvailableAtSupplier).HasColumnName("AVAILABLE_AT_SUPPLIER");
+            entity.Property(d => d.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(d => d.DeliverySequence).HasColumnName("DELIVERY_SEQ");
+            entity.Property(d => d.AdvisedDate).HasColumnName("ADVISED_DATE");
+            entity.Property(d => d.RequestedDate).HasColumnName("REQUESTED_DATE");
+            entity.Property(d => d.OurQty).HasColumnName("OUR_QTY");
+            entity.Property(d => d.AvailableAtSupplier).HasColumnName("AVAILABLE_AT_SUPPLIER");
+            entity.HasOne(d => d.Order).WithMany(o => o.Deliveries).HasForeignKey(d => d.OrderNumber);
         }
 
         private void BuildEdiOrders(ModelBuilder builder)

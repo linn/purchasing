@@ -377,7 +377,7 @@
                 orderNumber, 
                 null,
                 updatedDeliveriesForOrderLine.MinBy(x => x.DateRequested)?.DateRequested, 
-                null, 
+                updatedDeliveriesForOrderLine.Count, 
                 null,
                 updatedDeliveriesForOrderLine);
 
@@ -430,7 +430,23 @@
             if (updatedDeliveries != null)
             {
                 miniOrder.Deliveries = updatedDeliveries
-                    .Select(del => new MiniOrderDelivery
+                    .Select(del =>
+                        {
+                            var existing =
+                                miniOrder.Deliveries?.FirstOrDefault(d => d.DeliverySequence == del.DeliverySeq);
+
+                            if (existing != null)
+                            {
+                                existing = this.miniOrderDeliveryRepository.FindBy(
+                                    d => d.OrderNumber == orderNumber && d.DeliverySequence == del.DeliverySeq);
+                                existing.AdvisedDate = del.DateAdvised;
+                                existing.RequestedDate = del.DateRequested;
+                                existing.AvailableAtSupplier = del.AvailableAtSupplier;
+                                existing.OurQty = del.OurDeliveryQty;
+                                return existing;
+                            }
+
+                            return new MiniOrderDelivery
                                        {
                                            AdvisedDate = del.DateAdvised,
                                            RequestedDate = del.DateRequested,
@@ -438,7 +454,8 @@
                                            OrderNumber = del.OrderNumber,
                                            AvailableAtSupplier = del.AvailableAtSupplier,
                                            OurQty = del.OurDeliveryQty
-                                       });
+                                       };
+                        }).ToList();
             }
         }
     }
