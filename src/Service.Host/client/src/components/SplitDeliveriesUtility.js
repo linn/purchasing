@@ -23,6 +23,10 @@ import { purchaseOrderDeliveries, purchaseOrder } from '../itemTypes';
 function SplitDeliveriesUtility({ orderNumber, orderLine, inDialogBox, deliveries, backClick }) {
     const dispatch = useDispatch();
     const error = useSelector(state => getItemError(state, purchaseOrderDeliveries.item));
+    const loading = useSelector(state =>
+        itemSelectorHelpers.getItemLoading(state[purchaseOrderDeliveries.item])
+    );
+
     const order = useSelector(state => itemSelectorHelpers.getItem(state[purchaseOrder.item]));
     const orderLoading = useSelector(state =>
         itemSelectorHelpers.getItemLoading(state[purchaseOrder.item])
@@ -136,7 +140,7 @@ function SplitDeliveriesUtility({ orderNumber, orderLine, inDialogBox, deliverie
                     rowHeight={34}
                     autoHeight
                     disableSelectionOnClick
-                    loading={false}
+                    loading={loading}
                     hideFooter
                     checkboxSelection
                     onSelectionModelChange={handleSelectRow}
