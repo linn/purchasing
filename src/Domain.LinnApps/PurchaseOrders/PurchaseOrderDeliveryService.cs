@@ -388,6 +388,9 @@
             return detail.PurchaseDeliveries;
         }
 
+        // syncs changes to the deliveries list back to the mini order
+        // keeping this 'temporary' code in a dedicated method so it's clear and easy to remove
+        // separate public method so that it can be called from the facade (and subsequently Commit()'ted) in the correct order 
         public void UpdateMiniOrderDeliveries(IEnumerable<PurchaseOrderDelivery> updated)
         {
             var purchaseOrderDeliveries = updated.ToList();
@@ -430,7 +433,7 @@
             }
         }
 
-        // syncs any delivery changes back to the mini_order
+        // syncs changes back to the mini_order
         // keeping this 'temporary' code in a dedicated method so it's clear and easy to remove
         private void UpdateMiniOrder(
             int orderNumber, 
