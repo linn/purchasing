@@ -458,8 +458,10 @@
 
             if (advisedDeliveryDate.HasValue)
             {
-                miniOrderDelivery.AdvisedDate = advisedDeliveryDate;
-                miniOrder.AdvisedDeliveryDate = advisedDeliveryDate;
+                if (miniOrderDelivery != null)
+                {
+                    miniOrder.AdvisedDeliveryDate = advisedDeliveryDate;
+                }
             }
 
             if (supplierConfirmationComment != null)
