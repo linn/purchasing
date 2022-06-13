@@ -27,7 +27,7 @@
                            Remarks = entity.Remarks,
                            SupplierContact = entity.SupplierContact,
                            UnauthorisedWarning = string.IsNullOrEmpty(entity.AuthorisedBy) ? "**Unauthorised**" : null,
-                           Links = this.BuildLinks(entity, claims).ToArray(),
+                           Links = this.BuildLinks(entity).ToArray(),
                            Deliveries = entity.Deliveries.Select(d => new MrDeliveryResource
                                                                           {
                                                                               JobRef = d.JobRef,
@@ -50,10 +50,18 @@
 
         object IBuilder<MrPurchaseOrderDetail>.Build(MrPurchaseOrderDetail entity, IEnumerable<string> claims) => this.Build(entity, claims);
 
-        private IEnumerable<LinkResource> BuildLinks(MrPurchaseOrderDetail model, IEnumerable<string> claims)
+        private IEnumerable<LinkResource> BuildLinks(MrPurchaseOrderDetail model)
         {
-            yield return new LinkResource { Rel = "view-order", Href = $"/purchasing/purchase-orders/{model.OrderNumber}" };
-            yield return new LinkResource { Rel = "acknowledge-deliveries", Href = $"/purchasing/purchase-orders/acknowledge?orderNumber={model.OrderNumber}" };
+            yield return new LinkResource
+                             {
+                                 Rel = "view-order",
+                                 Href = $"/purchasing/purchase-orders/{model.OrderNumber}"
+                             };
+            yield return new LinkResource
+                             {
+                                 Rel = "acknowledge-deliveries",
+                                 Href = $"/purchasing/purchase-orders/acknowledge?orderNumber={model.OrderNumber}"
+                             };
         }
     }
 }

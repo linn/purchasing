@@ -40,8 +40,8 @@
                 .Returns(
                     new List<MrPurchaseOrderDetail>
                         {
-                            new MrPurchaseOrderDetail { OrderNumber = 1, Deliveries = new List<MrPurchaseOrderDelivery>()},
-                            new MrPurchaseOrderDetail { OrderNumber = 2, Deliveries = new List<MrPurchaseOrderDelivery>()}
+                            new MrPurchaseOrderDetail { OrderNumber = 1, Deliveries = new List<MrPurchaseOrderDelivery>() },
+                            new MrPurchaseOrderDetail { OrderNumber = 2, Deliveries = new List<MrPurchaseOrderDelivery>() }
                         });
 
             this.result = this.Sut.GetMaterialRequirementOrders(this.requestResource, this.privileges);
