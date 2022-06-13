@@ -196,7 +196,7 @@
                     privileges);
                 this.transactionManager.Commit();
 
-                // update the mini order to keep it in sync
+                // update the mini order to keep its deliveries in sync
                 this.domainService.UpdateMiniOrderDeliveries(entities);
                 this.transactionManager.Commit();
 
