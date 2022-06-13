@@ -19,15 +19,24 @@ import NotesIcon from '@mui/icons-material/Notes';
 import ShopIcon from '@mui/icons-material/Shop';
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
+import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import Link from '@mui/material/Link';
 import { DataGrid } from '@mui/x-data-grid';
 import makeStyles from '@mui/styles/makeStyles';
 
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+
 import { useLocation } from 'react-router';
 import queryString from 'query-string';
 
-import { mrReport as mrReportItem } from '../../itemTypes';
+import moment from 'moment';
+import { mrReport as mrReportItem, mrReportOrders as mrReportOrdersItem } from '../../itemTypes';
 import mrReportActions from '../../actions/mrReportActions';
+import mrReportOrdersActions from '../../actions/mrReportOrdersActions';
 
 import history from '../../history';
 import config from '../../config';
@@ -44,6 +53,11 @@ function MaterialRequirementsReport() {
     const mrReport = useSelector(state => itemSelectorHelpers.getItem(state.mrReport));
     const mrReportLoading = useSelector(state =>
         itemSelectorHelpers.getItemLoading(state.mrReport)
+    );
+
+    const mrReportOrders = useSelector(state => itemSelectorHelpers.getItem(state.mrReportOrders));
+    const mrReportOrdersLoading = useSelector(state =>
+        itemSelectorHelpers.getItemLoading(state.mrReportOrders)
     );
 
     const theme = createTheme({
@@ -87,12 +101,20 @@ function MaterialRequirementsReport() {
                 setNextPart(null);
             }
             setPreviousPart(null);
+
+            dispatch(
+                mrReportOrdersActions.postByHref(mrReportOrdersItem.uri, {
+                    partNumbers: mrReport.results.map(r => r.partNumber),
+                    jobRef: mrReport.results[0].jobRef
+                })
+            );
         } else {
             setSelectedItem(null);
             setNextPart(null);
             setPreviousPart(null);
+            dispatch(mrReportOrdersActions.clearItem());
         }
-    }, [mrReport]);
+    }, [mrReport, dispatch]);
 
     const useStyles = makeStyles(() => ({
         headerText: {
@@ -391,6 +413,76 @@ function MaterialRequirementsReport() {
         }
     };
 
+    const showRow = row => (
+        <>
+            <TableRow key={`${row.orderNumber}/${row.orderLine}/h1`}>
+                <TableCell component="th" scope="row">
+                    <Link
+                        href={utilities.getHref(row, 'view-order')}
+                        underline="hover"
+                        color="inherit"
+                        variant="body2"
+                    >
+                        {row.orderNumber}
+                    </Link>
+                </TableCell>
+                <TableCell>{row.orderLine}</TableCell>
+                <TableCell>{moment(row.dateOfOrder).format('DD MMM YYYY')}</TableCell>
+                <TableCell>{row.supplierId}</TableCell>
+                <TableCell>{row.supplierName}</TableCell>
+                <TableCell />
+                <TableCell align="right">{row.quantity}</TableCell>
+                <TableCell align="right">{row.quantityReceived}</TableCell>
+                <TableCell align="right">{row.quantityInvoiced}</TableCell>
+                <TableCell />
+                <TableCell />
+                <TableCell>{row.unauthorisedWarning}</TableCell>
+            </TableRow>
+            <TableRow key={`${row.orderNumber}/${row.orderLine}/h2`}>
+                <TableCell />
+                <TableCell colSpan={2}>
+                    <Button
+                        color="navBut"
+                        size="small"
+                        onClick={() => {
+                            window.open(
+                                `${config.proxyRoot}${utilities.getHref(
+                                    row,
+                                    'acknowledge-deliveries'
+                                )}`,
+                                '_blank'
+                            );
+                        }}
+                        startIcon={<ModeEditOutlineOutlinedIcon />}
+                    >
+                        Ack/Update Deliveries
+                    </Button>
+                </TableCell>
+                <TableCell colSpan={4}>Contact: {row.supplierContact}</TableCell>
+                <TableCell colSpan={5}>{row.remarks}</TableCell>
+            </TableRow>
+            {row.deliveries.map(a => (
+                <TableRow key={`${row.orderNumber}/${row.orderLine}/${row.deliverySequence}`}>
+                    <TableCell />
+                    <TableCell />
+                    <TableCell />
+                    <TableCell />
+                    <TableCell />
+                    <TableCell>{a.deliverySequence}</TableCell>
+                    <TableCell align="right">{a.deliveryQuantity}</TableCell>
+                    <TableCell align="right">{a.quantityReceived}</TableCell>
+                    <TableCell />
+                    <TableCell>{moment(a.requestedDeliveryDate).format('DD MMM YYYY')}</TableCell>
+                    <TableCell>
+                        {a.advisedDeliveryDate &&
+                            moment(a.advisedDeliveryDate).format('DD MMM YYYY')}
+                    </TableCell>
+                    <TableCell>{a.reference}</TableCell>
+                </TableRow>
+            ))}
+        </>
+    );
+
     return (
         <div className="print-landscape" onKeyDown={onKeyPressed} tabIndex={-1} role="textbox">
             <Page history={history} width="xl">
@@ -475,11 +567,10 @@ function MaterialRequirementsReport() {
                                                 size="small"
                                                 onClick={() => {
                                                     window.open(
-                                                        `${config.proxyRoot}${
-                                                            selectedItem.links.find(
-                                                                l => l.rel === 'part-used-on'
-                                                            )?.href
-                                                        }`,
+                                                        `${config.proxyRoot}${utilities.getHref(
+                                                            selectedItem,
+                                                            'part-used-on'
+                                                        )}`,
                                                         '_blank'
                                                     );
                                                 }}
@@ -521,11 +612,8 @@ function MaterialRequirementsReport() {
                                         </Typography>
                                     </Stack>
                                 </Grid>
-                                <Grid item xs={4}>
+                                <Grid item xs={2}>
                                     <Stack direction="row" spacing={2}>
-                                        <Typography variant="body2">
-                                            Jobref: {selectedItem.jobRef}
-                                        </Typography>
                                         <Link
                                             href={utilities.getHref(selectedItem, 'part')}
                                             underline="hover"
@@ -536,7 +624,14 @@ function MaterialRequirementsReport() {
                                         </Link>
                                     </Stack>
                                 </Grid>
-                                <Grid item xs={12}>
+                                <Grid item xs={2}>
+                                    <Stack direction="row" spacing={2}>
+                                        <Typography variant="body2">
+                                            Jobref: {selectedItem.jobRef}
+                                        </Typography>
+                                    </Stack>
+                                </Grid>
+                                <Grid item xs={8}>
                                     <Stack direction="row" spacing={2}>
                                         <Typography variant="body2">
                                             Supplier: {selectedItem.preferredSupplierId}{' '}
@@ -551,6 +646,18 @@ function MaterialRequirementsReport() {
                                         <Typography variant="body2">
                                             Order Units: {selectedItem.orderUnits}
                                         </Typography>
+                                    </Stack>
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <Stack direction="row" spacing={2}>
+                                        <Link
+                                            href={utilities.getHref(selectedItem, 'part-supplier')}
+                                            underline="hover"
+                                            color="inherit"
+                                            variant="body2"
+                                        >
+                                            View Part Supplier
+                                        </Link>
                                     </Stack>
                                 </Grid>
                                 <Grid item xs={12}>
@@ -699,6 +806,46 @@ function MaterialRequirementsReport() {
                                         />
                                     </div>
                                 </Grid>
+                                {mrReportOrders && (
+                                    <Grid item xs={12}>
+                                        <div style={{ paddingTop: '50px' }}>
+                                            <Table sx={{ maxWidth: 1280 }} size="small">
+                                                <TableHead>
+                                                    <TableRow>
+                                                        <TableCell>Order</TableCell>
+                                                        <TableCell>Line</TableCell>
+                                                        <TableCell>Date</TableCell>
+                                                        <TableCell>Supplier</TableCell>
+                                                        <TableCell>Supplier Name</TableCell>
+                                                        <TableCell>Delivery</TableCell>
+                                                        <TableCell align="right">
+                                                            Qty Ordered
+                                                        </TableCell>
+                                                        <TableCell align="right">
+                                                            Qty Received
+                                                        </TableCell>
+                                                        <TableCell align="right">
+                                                            Qty Invoiced
+                                                        </TableCell>
+                                                        <TableCell>Requested</TableCell>
+                                                        <TableCell>Advised</TableCell>
+                                                        <TableCell>Ref</TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+                                                    {mrReportOrders.orders.map(row => showRow(row))}
+                                                </TableBody>
+                                            </Table>
+                                        </div>
+                                    </Grid>
+                                )}
+                                {mrReportOrdersLoading && (
+                                    <Grid item xs={12}>
+                                        <Typography variant="body2" style={{ fontWeight: 'bold' }}>
+                                            Just checking for orders...
+                                        </Typography>
+                                    </Grid>
+                                )}
                             </Grid>
                         )}
                     </div>

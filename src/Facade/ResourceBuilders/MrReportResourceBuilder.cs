@@ -396,6 +396,7 @@
                                  Href = $"/purchasing/material-requirements/used-on-report?partNumber={entity.PartNumber}"
                              };
             yield return new LinkResource { Rel = "part", Href = $"/parts/{entity.PartId}" };
+            yield return new LinkResource { Rel = "part-supplier", Href = $"/purchasing/part-suppliers/record?partId={entity.PartId}&supplierId={entity.PreferredSupplierId}" };
         }
 
         private void SetRelativeWeekValue(

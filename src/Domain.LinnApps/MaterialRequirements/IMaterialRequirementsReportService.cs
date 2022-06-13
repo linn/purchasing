@@ -13,5 +13,9 @@
             IEnumerable<string> parts);
 
         MrReportOptions GetOptions();
+
+        IEnumerable<MrPurchaseOrderDetail> GetMaterialRequirementsOrders(
+            string requestJobRef,
+            IEnumerable<string> parts);
     }
 }
