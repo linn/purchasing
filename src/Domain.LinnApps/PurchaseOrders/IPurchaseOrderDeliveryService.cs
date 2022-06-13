@@ -28,5 +28,7 @@
             int orderLine,
             IEnumerable<PurchaseOrderDelivery> updated,
             IEnumerable<string> privileges);
+
+        void UpdateMiniOrderDeliveries(IEnumerable<PurchaseOrderDelivery> updated);
     }
 }

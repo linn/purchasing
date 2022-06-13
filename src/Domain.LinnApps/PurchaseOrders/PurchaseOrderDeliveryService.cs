@@ -120,7 +120,6 @@
                     to.DateAdvised, 
                     null,
                     null, 
-                    null,
                     null);
             }
 
@@ -137,8 +136,7 @@
                     null, 
                     null, 
                     null, 
-                    to.SupplierConfirmationComment,
-                    null);
+                    to.SupplierConfirmationComment);
             }
 
             if (from.AvailableAtSupplier != to.AvailableAtSupplier)
@@ -204,7 +202,6 @@
                     this.UpdateMiniOrder(
                         change.Key.OrderNumber, 
                         change.NewDateAdvised, 
-                        null, 
                         null, 
                         null, 
                         null);
@@ -381,16 +378,48 @@
             detail.PurchaseDeliveries = newDeliveries.ToList();
 
             // set mini order date requested to be first date requested of newly split deliveries
-            // and write the new deliveries list to the mini order to keep it in sync
             this.UpdateMiniOrder(
                 orderNumber, 
                 null,
                 updatedDeliveriesForOrderLine.MinBy(x => x.DateRequested)?.DateRequested, 
                 updatedDeliveriesForOrderLine.Count, 
-                null,
-                updatedDeliveriesForOrderLine);
+                null);
 
             return detail.PurchaseDeliveries;
+        }
+
+        public void UpdateMiniOrderDeliveries(IEnumerable<PurchaseOrderDelivery> updated)
+        {
+            var purchaseOrderDeliveries = updated.ToList();
+            var miniOrder = this.miniOrderRepository.FindById(purchaseOrderDeliveries.First().OrderNumber);
+
+            miniOrder.Deliveries = purchaseOrderDeliveries
+                .Select(del =>
+                    {
+                        var existing =
+                            miniOrder.Deliveries?.FirstOrDefault(d => d.DeliverySequence == del.DeliverySeq);
+
+                        if (existing != null)
+                        {
+                            existing = this.miniOrderDeliveryRepository.FindBy(
+                                d => d.OrderNumber == miniOrder.OrderNumber && d.DeliverySequence == del.DeliverySeq);
+                            existing.AdvisedDate = del.DateAdvised;
+                            existing.RequestedDate = del.DateRequested;
+                            existing.AvailableAtSupplier = del.AvailableAtSupplier;
+                            existing.OurQty = del.OurDeliveryQty;
+                            return existing;
+                        }
+
+                        return new MiniOrderDelivery
+                                   {
+                                       AdvisedDate = del.DateAdvised,
+                                       RequestedDate = del.DateRequested,
+                                       DeliverySequence = del.DeliverySeq,
+                                       OrderNumber = del.OrderNumber,
+                                       AvailableAtSupplier = del.AvailableAtSupplier,
+                                       OurQty = del.OurDeliveryQty
+                                   };
+                    }).ToList();
         }
 
         private void CheckOkToRaiseOrders()
@@ -408,8 +437,7 @@
             DateTime? advisedDeliveryDate, 
             DateTime? requestedDate, 
             int? numberOfSplitDeliveries,
-            string supplierConfirmationComment,
-            IEnumerable<PurchaseOrderDelivery> updatedDeliveries)
+            string supplierConfirmationComment)
         {
             var miniOrder = this.miniOrderRepository.FindById(orderNumber);
             var miniOrderDelivery = this.miniOrderDeliveryRepository.FindBy(
@@ -434,37 +462,6 @@
             if (supplierConfirmationComment != null)
             {
                 miniOrder.AcknowledgeComment = supplierConfirmationComment;
-            }
-
-            if (updatedDeliveries != null)
-            {
-                miniOrder.Deliveries = updatedDeliveries
-                    .Select(del =>
-                        {
-                            var existing =
-                                miniOrder.Deliveries?.FirstOrDefault(d => d.DeliverySequence == del.DeliverySeq);
-
-                            if (existing != null)
-                            {
-                                existing = this.miniOrderDeliveryRepository.FindBy(
-                                    d => d.OrderNumber == orderNumber && d.DeliverySequence == del.DeliverySeq);
-                                existing.AdvisedDate = del.DateAdvised;
-                                existing.RequestedDate = del.DateRequested;
-                                existing.AvailableAtSupplier = del.AvailableAtSupplier;
-                                existing.OurQty = del.OurDeliveryQty;
-                                return existing;
-                            }
-
-                            return new MiniOrderDelivery
-                                       {
-                                           AdvisedDate = del.DateAdvised,
-                                           RequestedDate = del.DateRequested,
-                                           DeliverySequence = del.DeliverySeq,
-                                           OrderNumber = del.OrderNumber,
-                                           AvailableAtSupplier = del.AvailableAtSupplier,
-                                           OurQty = del.OurDeliveryQty
-                                       };
-                        }).ToList();
             }
         }
     }
