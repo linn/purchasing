@@ -6,7 +6,6 @@
     using System.IO;
     using System.Linq;
 
-    using Linn.Common.Domain.Exceptions;
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Keys;
@@ -197,6 +196,7 @@
                     privileges);
                 this.transactionManager.Commit();
 
+                // update the mini order to keep it in sync
                 this.domainService.UpdateMiniOrderDeliveries(entities);
                 this.transactionManager.Commit();
 
