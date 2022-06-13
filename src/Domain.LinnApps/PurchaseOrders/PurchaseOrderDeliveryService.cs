@@ -280,12 +280,7 @@
                 del =>
                     {
                         var existing = list.FirstOrDefault(x => x.DeliverySeq == del.DeliverySeq);
-                        var x = this.purchaseOrdersPack.GetVatAmountSupplier(
-                            detail.OrderUnitPriceCurrency.GetValueOrDefault() * del.OurDeliveryQty.GetValueOrDefault(),
-                            order.SupplierId);
-                        var y = this.purchaseOrdersPack.GetVatAmountSupplier(
-                            detail.BaseOurUnitPrice.GetValueOrDefault() * del.OurDeliveryQty.GetValueOrDefault(),
-                            order.SupplierId);
+                       
                         var vatAmount = Math.Round(
                             this.purchaseOrdersPack.GetVatAmountSupplier(
                                 detail.OrderUnitPriceCurrency.GetValueOrDefault() * del.OurDeliveryQty.GetValueOrDefault(),
@@ -321,8 +316,8 @@
                                                                  detail.OrderUnitPriceCurrency.GetValueOrDefault()
                                                                  * del.OurDeliveryQty.GetValueOrDefault(),
                                                                  2) + vatAmount;
-                            existing.BaseOurUnitPrice = del.BaseOurUnitPrice;
-                            existing.BaseOrderUnitPrice = del.BaseOrderUnitPrice;
+                            existing.BaseOurUnitPrice = detail.BaseOurUnitPrice;
+                            existing.BaseOrderUnitPrice = detail.BaseOrderUnitPrice;
                             existing.BaseNetTotal = Math.Round(
                                 del.OurDeliveryQty.GetValueOrDefault() * detail.BaseOurUnitPrice.GetValueOrDefault(),
                                 2);

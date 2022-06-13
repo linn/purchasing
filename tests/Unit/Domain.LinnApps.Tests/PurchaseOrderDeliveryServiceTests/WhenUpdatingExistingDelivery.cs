@@ -124,8 +124,8 @@
                 Math.Round(
                     this.line.OrderUnitPriceCurrency.GetValueOrDefault() * updated.OurDeliveryQty.GetValueOrDefault(),
                     2) + this.vatAmount);
-            updated.BaseOurUnitPrice.Should().Be(updateData.BaseOurUnitPrice);
-            updated.BaseOrderUnitPrice.Should().Be(updateData.BaseOrderUnitPrice);
+            updated.BaseOurUnitPrice.Should().Be(this.line.BaseOurUnitPrice);
+            updated.BaseOrderUnitPrice.Should().Be(this.line.BaseOrderUnitPrice);
             updated.BaseNetTotal.Should().Be(Math.Round(
                 updateData.OurDeliveryQty.GetValueOrDefault() * this.line.BaseOurUnitPrice.GetValueOrDefault(),
                 2));
