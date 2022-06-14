@@ -53,7 +53,7 @@
                                                                                            }
                                                                                    }
                                                                  });
-            this.DeliveryRepository.FindBy(Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
+            this.Repository.FindBy(Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
                 .Returns(deliveries.First());
             this.result = this.Sut.UpdateDeliveriesForOrderLine(
                 1,

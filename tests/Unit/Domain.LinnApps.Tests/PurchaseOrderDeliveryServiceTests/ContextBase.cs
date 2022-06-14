@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderDeliveryServiceTests
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -19,7 +18,7 @@
 
     public class ContextBase
     {
-        protected IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> Repository { get; private set; }
+        protected IPurchaseOrderDeliveryRepository Repository { get; private set; }
 
         protected IEnumerable<PurchaseOrderDelivery> Data { get; private set; }
 
@@ -39,12 +38,10 @@
 
         protected IPurchaseOrdersPack PurchaseOrdersPack { get; private set; }
 
-        protected IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> DeliveryRepository { get; private set; }
-
         [SetUp]
         public void SetUpContext()
         {
-            this.Repository = Substitute.For<IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey>>();
+            this.Repository = Substitute.For<IPurchaseOrderDeliveryRepository>();
             this.AuthService = Substitute.For<IAuthorisationService>();
             this.RescheduleReasonRepository = Substitute.For<IRepository<RescheduleReason, string>>();
             this.PurchaseLedgerMaster = Substitute.For<ISingleRecordRepository<PurchaseLedgerMaster>>();
@@ -54,7 +51,6 @@
             this.Data = PurchaseOrderDeliveryTestData.BuildData();
             this.Repository.FindAll().Returns(this.Data.AsQueryable());
             this.PurchaseOrdersPack = Substitute.For<IPurchaseOrdersPack>();
-            this.DeliveryRepository = Substitute.For<IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey>>();
 
             this.Sut = new PurchaseOrderDeliveryService(
                 this.Repository, 
@@ -64,8 +60,7 @@
                 this.MiniOrderRepository,
                 this.MiniOrderDeliveryRepository,
                 this.PurchaseOrderRepository,
-                this.PurchaseOrdersPack,
-                this.DeliveryRepository);
+                this.PurchaseOrdersPack);
         }
     }
 }

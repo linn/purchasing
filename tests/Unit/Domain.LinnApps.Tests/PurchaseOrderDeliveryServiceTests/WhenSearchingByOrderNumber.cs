@@ -21,7 +21,7 @@
         public void ShouldOnlyReturnDeliveriesForOrdersThatStartWithTheSearchTerm()
         {
             Assert.IsTrue(
-                this.result.All(x => x.OrderNumber.ToString().StartsWith("12345")));
+                this.result.All(x => x.OrderNumber.ToString().Equals("12345")));
         }
     }
 }

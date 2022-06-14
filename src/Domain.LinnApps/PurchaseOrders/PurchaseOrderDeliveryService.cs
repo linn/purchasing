@@ -14,7 +14,7 @@
 
     public class PurchaseOrderDeliveryService : IPurchaseOrderDeliveryService
     {
-        private readonly IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> repository;
+        private readonly IPurchaseOrderDeliveryRepository repository;
 
         private readonly IAuthorisationService authService;
 
@@ -30,18 +30,15 @@
 
         private readonly IPurchaseOrdersPack purchaseOrdersPack;
 
-        private readonly IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> deliveryRepository;
-
         public PurchaseOrderDeliveryService(
-            IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> repository,
+            IPurchaseOrderDeliveryRepository repository,
             IAuthorisationService authService,
             IRepository<RescheduleReason, string> rescheduleReasonRepository,
             ISingleRecordRepository<PurchaseLedgerMaster> purchaseLedgerMaster,
             IRepository<MiniOrder, int> miniOrderRepository,
             IRepository<MiniOrderDelivery, MiniOrderDeliveryKey> miniOrderDeliveryRepository,
             IRepository<PurchaseOrder, int> purchaseOrderRepository,
-            IPurchaseOrdersPack purchaseOrdersPack,
-            IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> deliveryRepository)
+            IPurchaseOrdersPack purchaseOrdersPack)
         {
             this.repository = repository;
             this.authService = authService;
@@ -51,17 +48,34 @@
             this.miniOrderDeliveryRepository = miniOrderDeliveryRepository;
             this.purchaseOrderRepository = purchaseOrderRepository;
             this.purchaseOrdersPack = purchaseOrdersPack;
-            this.deliveryRepository = deliveryRepository;
         }
 
         public IEnumerable<PurchaseOrderDelivery> SearchDeliveries(
             string supplierSearchTerm,
             string orderNumberSearchTerm,
             bool includeAcknowledged,
-            bool? exactOrderNumber = false,
             int? orderLine = null)
         {
             var result = this.repository.FindAll();
+
+            if (!string.IsNullOrEmpty(orderNumberSearchTerm))
+            {
+                if (orderNumberSearchTerm.Contains("*"))
+                {
+                    result = this.repository.SearchByOrderWithWildcard(orderNumberSearchTerm
+                        .Replace("*", "%")).AsQueryable();
+                }
+                else
+                {
+                    result = result.Where(x => x.OrderNumber.ToString().Equals(orderNumberSearchTerm));
+                }
+
+                if (orderLine.HasValue)
+                {
+                    result = result.Where(x => x.OrderLine == orderLine);
+                }
+            }
+
             if (!string.IsNullOrEmpty(supplierSearchTerm))
             {
                 if (int.TryParse(supplierSearchTerm, out var supplierId))
@@ -72,17 +86,6 @@
                 {
                     result = result.Where(
                         x => x.PurchaseOrderDetail.PurchaseOrder.Supplier.Name.Contains(supplierSearchTerm.ToUpper()));
-                }
-            }
-
-            if (!string.IsNullOrEmpty(orderNumberSearchTerm))
-            {
-                result = exactOrderNumber.GetValueOrDefault() 
-                             ? result.Where(x => x.OrderNumber.ToString().Equals(orderNumberSearchTerm)) 
-                             : result.Where(x => x.OrderNumber.ToString().Contains(orderNumberSearchTerm));
-                if (orderLine.HasValue)
-                {
-                    result = result.Where(x => x.OrderLine == orderLine);
                 }
             }
 
@@ -295,7 +298,7 @@
                         if (existing != null)
                         {
                             var seq = existing.DeliverySeq;
-                            existing = this.deliveryRepository.FindBy(
+                            existing = this.repository.FindBy(
                                 d => d.OrderNumber == orderNumber && d.OrderLine == orderLine
                                                                   && d.DeliverySeq == seq);
                             existing.OurDeliveryQty = del.OurDeliveryQty;

@@ -92,7 +92,7 @@
                     AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
-            this.DeliveryRepository.FindBy(Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
+            this.Repository.FindBy(Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
                 .Returns(this.existingDelivery);
 
             this.MiniOrderRepository.FindById(this.order.OrderNumber).Returns(new MiniOrder { });

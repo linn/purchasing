@@ -32,13 +32,12 @@
         }
 
         public IResult<IEnumerable<PurchaseOrderDeliveryResource>> SearchDeliveries(
-            string supplierSearchTerm, string orderNumberSearchTerm, bool includeAcknowledged, bool? exactOrderNumber = false)
+            string supplierSearchTerm, string orderNumberSearchTerm, bool includeAcknowledged)
         {
             var results = this.domainService.SearchDeliveries(
                 supplierSearchTerm,
                 orderNumberSearchTerm,
-                includeAcknowledged,
-                exactOrderNumber);
+                includeAcknowledged);
             return new SuccessResult<IEnumerable<PurchaseOrderDeliveryResource>>(
                 results.Select(x => (PurchaseOrderDeliveryResource)this.resourceBuilder.Build(x, null)));
         }
@@ -210,7 +209,7 @@
 
         public IResult<IEnumerable<PurchaseOrderDeliveryResource>> GetDeliveriesForDetail(int orderNumber, int orderLine)
         {
-            var res = this.domainService.SearchDeliveries(null, orderNumber.ToString(), true, true, orderLine);
+            var res = this.domainService.SearchDeliveries(null, orderNumber.ToString(), true, orderLine);
 
             return new SuccessResult<IEnumerable<PurchaseOrderDeliveryResource>>(
                 res.Select(x => (PurchaseOrderDeliveryResource)this.resourceBuilder.Build(x, null)));
