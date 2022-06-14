@@ -1,7 +1,5 @@
 ﻿namespace Linn.Purchasing.Facade.Tests.ResourceBuilderTests.MrReportResourceBuilderTests
 {
-    using System.Collections.Generic;
-
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Facade.ResourceBuilders;

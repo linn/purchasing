@@ -86,7 +86,7 @@
                                                                  MaxRail = 400,
                                                                  IdealStock = 23,
                                                                  RecommendedOrders = 1,
-                                                                 RecommenedStock = 250,
+                                                                 RecommendedStock = 250,
                                                                  QuantityAvailableAtSupplier = 20
                                                              }
                                                      }
@@ -159,7 +159,7 @@
                                                                  MaxRail = 400,
                                                                  IdealStock = 23,
                                                                  RecommendedOrders = 1,
-                                                                 RecommenedStock = 250
+                                                                 RecommendedStock = 250
                                                              }
                                                      }
                                  };

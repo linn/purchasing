@@ -279,7 +279,7 @@
             this.SetValue(
                 detailResources,
                 "Recom Stock",
-                detail.RecommenedStock,
+                detail.RecommendedStock,
                 null,
                 relativeWeek,
                 detail.Segment);

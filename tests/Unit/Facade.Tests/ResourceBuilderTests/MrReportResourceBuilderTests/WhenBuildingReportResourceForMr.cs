@@ -86,7 +86,7 @@
                                                                  MaxRail = 400,
                                                                  IdealStock = 23,
                                                                  RecommendedOrders = 1,
-                                                                 RecommenedStock = 250
+                                                                 RecommendedStock = 250
                                                              },
                                                          new MrDetail
                                                              {
@@ -115,7 +115,7 @@
                                                                  MaxRail = 400,
                                                                  IdealStock = 23,
                                                                  RecommendedOrders = 1,
-                                                                 RecommenedStock = 250
+                                                                 RecommendedStock = 250
                                                              },
                                                          new MrDetail
                                                              {
@@ -144,7 +144,7 @@
                                                                  MaxRail = 400,
                                                                  IdealStock = 23,
                                                                  RecommendedOrders = 1,
-                                                                 RecommenedStock = 250
+                                                                 RecommendedStock = 250
                                                              }
                                                      }
                                  };
@@ -216,7 +216,7 @@
                                                                  MaxRail = 400,
                                                                  IdealStock = 23,
                                                                  RecommendedOrders = 1,
-                                                                 RecommenedStock = 250
+                                                                 RecommendedStock = 250
                                                              },
                                                          new MrDetail
                                                              {
@@ -245,7 +245,7 @@
                                                                  MaxRail = 400,
                                                                  IdealStock = 23,
                                                                  RecommendedOrders = 1,
-                                                                 RecommenedStock = 250
+                                                                 RecommendedStock = 250
                                                              }
                                                      }
                                  };
