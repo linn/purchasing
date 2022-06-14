@@ -21,6 +21,7 @@
                            DateOfOrder = entity.DateOfOrder.ToString("o"),
                            SupplierId = entity.SupplierId,
                            SupplierName = entity.SupplierName,
+                           PartNumber = entity.PartNumber,
                            Quantity = entity.OurQuantity,
                            QuantityReceived = entity.QuantityReceived,
                            QuantityInvoiced = entity.QuantityInvoiced,
@@ -28,18 +29,20 @@
                            SupplierContact = entity.SupplierContact,
                            UnauthorisedWarning = string.IsNullOrEmpty(entity.AuthorisedBy) ? "**Unauthorised**" : null,
                            Links = this.BuildLinks(entity).ToArray(),
-                           Deliveries = entity.Deliveries.Select(d => new MrDeliveryResource
-                                                                          {
-                                                                              JobRef = d.JobRef,
-                                                                              OrderNumber = d.OrderNumber,
-                                                                              OrderLine = d.OrderLine,
-                                                                              DeliverySequence = d.DeliverySequence,
-                                                                              DeliveryQuantity = d.Quantity,
-                                                                              QuantityReceived = d.QuantityReceived,
-                                                                              AdvisedDeliveryDate = d.AdvisedDeliveryDate?.ToString("o"),
-                                                                              RequestedDeliveryDate = d.RequestedDeliveryDate?.ToString("o"),
-                                                                              Reference = d.Reference
-                                                                          })
+                           Deliveries = entity.Deliveries
+                               .OrderBy(a => a.DeliverySequence)
+                               .Select(d => new MrDeliveryResource
+                                                {
+                                                    JobRef = d.JobRef,
+                                                    OrderNumber = d.OrderNumber,
+                                                    OrderLine = d.OrderLine,
+                                                    DeliverySequence = d.DeliverySequence,
+                                                    DeliveryQuantity = d.Quantity,
+                                                    QuantityReceived = d.QuantityReceived,
+                                                    AdvisedDeliveryDate = d.AdvisedDeliveryDate?.ToString("o"),
+                                                    RequestedDeliveryDate = d.RequestedDeliveryDate?.ToString("o"),
+                                                    Reference = d.Reference
+                                                })
                        };
         }
 

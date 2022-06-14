@@ -18,6 +18,8 @@
 
         public string SupplierName { get; set; }
 
+        public string PartNumber { get; set; }
+
         public decimal Quantity { get; set; }
         
         public decimal? QuantityReceived { get; set; }

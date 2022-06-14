@@ -156,7 +156,7 @@
             var results =
                 this.purchaseOrdersRepository.FilterBy(a => a.JobRef == jobRef && parts.Contains(a.PartNumber));
 
-            return results;
+            return results.OrderBy(a => a.OrderNumber).ThenBy(b => b.OrderLine);
         }
     }
 }
