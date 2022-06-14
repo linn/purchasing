@@ -53,5 +53,7 @@
         public decimal? RecommendedOrders { get; set; }
 
         public decimal? RecommenedStock { get; set; }
+
+        public decimal? QuantityAvailableAtSupplier { get; set; }
     }
 }

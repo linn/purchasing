@@ -91,6 +91,21 @@
                     tags.Add(new MrTag("Stock", "redBoxOutline"));
                 }
 
+                if (detail.LinnWeekNumber < 0 && detail.PurchaseOrders > 0)
+                {
+                    // immediate week with purchase orders
+                    tags.Add(
+                        detail.QuantityAvailableAtSupplier >= detail.PurchaseOrders
+                            ? new MrTag("Purchases", "greenBoxOutline")
+                            : new MrTag("Purchases", "blueBoxOutline"));
+                }
+
+                if (detail.LinnWeekNumber < 0 && detail.UnauthorisedPurchaseOrders > 0)
+                {
+                    // immediate week with unauthorised purchase orders
+                    tags.Add(new MrTag("Unauthorised POs", "blueBoxOutline"));
+                }
+
                 this.SetDetailValuesForWeek(detailResources, relativeWeek, detail, tags);
             }
 
@@ -152,14 +167,16 @@
                 detail.PurchaseOrders,
                 null,
                 relativeWeek,
-                detail.Segment);
+                detail.Segment,
+                tags.FirstOrDefault(a => a.Title == "Purchases"));
             this.SetValue(
                 detailResources,
                 "Unauthorised POs",
                 detail.UnauthorisedPurchaseOrders,
                 null,
                 relativeWeek,
-                detail.Segment);
+                detail.Segment,
+                tags.FirstOrDefault(a => a.Title == "Unauthorised POs"));
             this.SetValue(
                 detailResources,
                 "Assumed Purchases",

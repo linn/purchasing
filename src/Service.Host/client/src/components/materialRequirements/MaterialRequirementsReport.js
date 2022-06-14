@@ -142,6 +142,16 @@ function MaterialRequirementsReport() {
             borderStyle: 'solid',
             borderColor: 'red !important',
             borderWidth: 'thin'
+        },
+        blueBoxOutline: {
+            borderStyle: 'solid',
+            borderColor: 'blue !important',
+            borderWidth: 'thin'
+        },
+        greenBoxOutline: {
+            borderStyle: 'solid',
+            borderColor: 'green !important',
+            borderWidth: 'thin'
         }
     }));
     const classes = useStyles();
