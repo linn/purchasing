@@ -19,7 +19,7 @@
 
     public class ContextBase
     {
-        protected IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> Repository { get; private set; }
+        protected IPurchaseOrderDeliveryRepository Repository { get; private set; }
 
         protected IReportingHelper ReportingHelper { get; private set; }
 
@@ -141,7 +141,7 @@
                                                                   }
                                     }
                             };
-            this.Repository = Substitute.For<IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey>>();
+            this.Repository = Substitute.For<IPurchaseOrderDeliveryRepository>();
 
             this.Repository.FilterBy(Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
                 .Returns(this.Data.AsQueryable());

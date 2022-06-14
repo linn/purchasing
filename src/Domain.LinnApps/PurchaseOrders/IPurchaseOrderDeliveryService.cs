@@ -10,7 +10,6 @@
             string supplierSearchTerm,
             string orderNumberSearchTerm,
             bool includeAcknowledged,
-            bool? exactOrderNumber = false,
             int? orderLine = null);
 
         PurchaseOrderDelivery UpdateDelivery(

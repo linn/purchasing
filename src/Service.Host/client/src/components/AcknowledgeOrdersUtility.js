@@ -55,8 +55,7 @@ function AcknowledgeOrdersUtility() {
                 purchaseOrderDeliveriesActions.fetchByHref(
                     `${purchaseOrderDeliveries.uri}?${queryString.stringify({
                         orderNumberSearchTerm,
-                        includeAcknowledged: true,
-                        exactOrderNumber: true
+                        includeAcknowledged: true
                     })}`
                 )
             );
@@ -208,8 +207,7 @@ function AcknowledgeOrdersUtility() {
                 purchaseOrderDeliveriesActions.fetchByHref(
                     `${purchaseOrderDeliveries.uri}?${queryString.stringify({
                         orderNumberSearchTerm,
-                        includeAcknowledged: true,
-                        exactOrderNumber: true
+                        includeAcknowledged: true
                     })}`
                 )
             );

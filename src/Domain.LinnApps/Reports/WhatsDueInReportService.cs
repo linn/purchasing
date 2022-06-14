@@ -13,13 +13,13 @@
 
     public class WhatsDueInReportService : IWhatsDueInReportService
     {
-        private readonly IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> deliveryRepository;
+        private readonly IPurchaseOrderDeliveryRepository deliveryRepository;
 
         private readonly IReportingHelper reportingHelper;
 
         public WhatsDueInReportService(
             IReportingHelper reportingHelper,
-            IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> deliveryRepository)
+            IPurchaseOrderDeliveryRepository deliveryRepository)
         {
             this.deliveryRepository = deliveryRepository;
             this.reportingHelper = reportingHelper;

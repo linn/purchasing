@@ -14,7 +14,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.result = this.Sut.SearchDeliveries(null, "223453", true, true, 3);
+            this.result = this.Sut.SearchDeliveries(null, "223453", true, 3);
         }
 
         [Test]
@@ -22,7 +22,7 @@
         {
             Assert.IsTrue(
                 this.result.All(
-                    x => x.OrderNumber.ToString().StartsWith("223453")
+                    x => x.OrderNumber.ToString().Equals("223453")
                     && x.OrderLine == 3));
         }
     }
