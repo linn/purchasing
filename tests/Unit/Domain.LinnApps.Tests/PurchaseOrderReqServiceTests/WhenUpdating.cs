@@ -7,8 +7,9 @@
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
-    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NSubstitute;
 
@@ -18,7 +19,11 @@
     {
         private readonly string fromState = "DRAFT";
 
+        private readonly string partNo = "Pesto jar";
+
         private readonly int reqNumber = 5678;
+
+        private readonly int supplierId = 77442;
 
         private readonly string toState = "AUTHORISE WAIT";
 
@@ -29,22 +34,28 @@
         [SetUp]
         public void SetUp()
         {
-            this.current =
-                new PurchaseOrderReq { ReqNumber = this.reqNumber, RequestedById = 999, State = this.fromState };
+            this.current = new PurchaseOrderReq
+                               {
+                                   ReqNumber = this.reqNumber,
+                                   RequestedById = 999,
+                                   State = this.fromState,
+                                   SupplierId = this.supplierId,
+                                   PartNumber = this.partNo
+                               };
             this.updated = new PurchaseOrderReq
                                {
                                    ReqNumber = 0,
                                    State = this.toState,
                                    ReqDate = 2.March(2022),
                                    OrderNumber = 1234,
-                                   PartNumber = "PCAS 007",
+                                   PartNumber = this.partNo,
                                    Description = "Descrip",
                                    Qty = 7,
                                    UnitPrice = 8m,
                                    Carriage = 99m,
                                    TotalReqPrice = 118m,
                                    CurrencyCode = "SMC",
-                                   SupplierId = 111,
+                                   SupplierId = this.supplierId,
                                    SupplierName = "the things shop",
                                    SupplierContact = "Lawrence Chaney",
                                    AddressLine1 = "The shop",
@@ -74,7 +85,19 @@
                         {
                             FromState = this.fromState, ToState = this.toState, UserAllowed = "Y"
                         });
+
+            this.MockPartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
+                .Returns(new Part { StockControlled = "N" });
+
+            this.MockSupplierRepository.FindById(this.supplierId).Returns(
+                new Supplier { SupplierId = this.supplierId, Name = "pesto shop", DateClosed = null });
             this.Sut.Update(this.current, this.updated, new List<string>());
+        }
+
+        [Test]
+        public void ShouldNotUpdateReqNumber()
+        {
+            this.current.ReqNumber.Should().Be(this.reqNumber);
         }
 
         [Test]
@@ -112,12 +135,6 @@
             this.current.RemarksForOrder.Should().Be(this.updated.RemarksForOrder);
             this.current.InternalNotes.Should().Be(this.updated.InternalNotes);
             this.current.Department.Should().Be(this.updated.Department);
-        }
-
-        [Test]
-        public void ShouldNotUpdateReqNumber()
-        {
-            this.current.ReqNumber.Should().Be(this.reqNumber);
         }
     }
 }

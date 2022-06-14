@@ -67,7 +67,9 @@ function MaterialRequirementsReport() {
             dispatch(
                 mrReportActions.postByHref(mrReportItem.uri, {
                     partNumber: query?.partNumber,
-                    jobRef: query?.jobRef
+                    jobRef: query?.jobRef,
+                    typeOfReport: 'MR',
+                    partSelector: 'Select Parts'
                 })
             );
         } else {
@@ -102,6 +104,11 @@ function MaterialRequirementsReport() {
         newQuarter: {
             paddingTop: '50px',
             fontWeight: 500
+        },
+        redBoxOutline: {
+            borderStyle: 'solid',
+            borderColor: 'red !important',
+            borderWidth: 'thin'
         }
     }));
     const classes = useStyles();
@@ -111,6 +118,10 @@ function MaterialRequirementsReport() {
     };
 
     const goToPreviousPart = () => {
+        if (selectedIndex === 0) {
+            return;
+        }
+
         setNextPart(selectedItem.partNumber);
         if (selectedIndex === 1) {
             setPreviousPart(null);
@@ -123,6 +134,10 @@ function MaterialRequirementsReport() {
     };
 
     const goToNextPart = () => {
+        if (selectedIndex === mrReport.results.length - 1) {
+            return;
+        }
+
         setPreviousPart(selectedItem.partNumber);
         if (selectedIndex === mrReport.results.length - 2) {
             setNextPart(null);
@@ -134,23 +149,169 @@ function MaterialRequirementsReport() {
         setSelectedIndex(selectedIndex + 1);
     };
 
+    const getCellClass = params => {
+        switch (params.field) {
+            case 'immediate':
+                if (params.row.immediateItem?.tag) {
+                    return classes[params.row.immediateItem.tag];
+                }
+                return null;
+            case 'week0':
+                if (params.row.week0Item.tag) {
+                    return classes[params.row.week0Item.tag];
+                }
+                return null;
+            case 'week1':
+                if (params.row.week1Item.tag) {
+                    return classes[params.row.week1Item.tag];
+                }
+                return null;
+            case 'week2':
+                if (params.row.week2Item.tag) {
+                    return classes[params.row.week2Item.tag];
+                }
+                return null;
+            case 'week3':
+                if (params.row.week3Item.tag) {
+                    return classes[params.row.week3Item.tag];
+                }
+                return null;
+            case 'week4':
+                if (params.row.week4Item.tag) {
+                    return classes[params.row.week4Item.tag];
+                }
+                return null;
+            case 'week5':
+                if (params.row.week5Item.tag) {
+                    return classes[params.row.week5Item.tag];
+                }
+                return null;
+            case 'week6':
+                if (params.row.week6Item.tag) {
+                    return classes[params.row.week6Item.tag];
+                }
+                return null;
+            case 'week7':
+                if (params.row.week7Item.tag) {
+                    return classes[params.row.week7Item.tag];
+                }
+                return null;
+            case 'week8':
+                if (params.row.week8Item.tag) {
+                    return classes[params.row.week8Item.tag];
+                }
+                return null;
+            case 'week9':
+                if (params.row.week9Item.tag) {
+                    return classes[params.row.week9Item.tag];
+                }
+                return null;
+            case 'week10':
+                if (params.row.week10Item.tag) {
+                    return classes[params.row.week10Item.tag];
+                }
+                return null;
+            case 'week11':
+                if (params.row.week11Item.tag) {
+                    return classes[params.row.week11Item.tag];
+                }
+                return null;
+            case 'week12':
+                if (params.row.week12Item.tag) {
+                    return classes[params.row.week12Item.tag];
+                }
+                return null;
+            default:
+                return null;
+        }
+    };
+
     const detailsColumns = [
         { field: 'title', headerName: '', width: 120 },
-        { field: 'immediate', headerName: '', width: 80 },
-        { field: 'week0', headerName: '', width: 80 },
-        { field: 'week0', headerName: '', width: 80 },
-        { field: 'week1', headerName: '', width: 80 },
-        { field: 'week2', headerName: '', width: 80 },
-        { field: 'week3', headerName: '', width: 80 },
-        { field: 'week4', headerName: '', width: 80 },
-        { field: 'week5', headerName: '', width: 80 },
-        { field: 'week6', headerName: '', width: 80 },
-        { field: 'week7', headerName: '', width: 80 },
-        { field: 'week8', headerName: '', width: 80 },
-        { field: 'week9', headerName: '', width: 80 },
-        { field: 'week10', headerName: '', width: 80 },
-        { field: 'week11', headerName: '', width: 80 },
-        { field: 'week12', headerName: '', width: 80 }
+        {
+            field: 'immediate',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
+        {
+            field: 'week0',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
+        {
+            field: 'week1',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
+        {
+            field: 'week2',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
+        {
+            field: 'week3',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
+        {
+            field: 'week4',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
+        {
+            field: 'week5',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
+        {
+            field: 'week6',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
+        {
+            field: 'week7',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
+        {
+            field: 'week8',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
+        {
+            field: 'week9',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
+        {
+            field: 'week10',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
+        {
+            field: 'week11',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        },
+        {
+            field: 'week12',
+            headerName: '',
+            width: 80,
+            cellClassName: params => getCellClass(params)
+        }
     ];
 
     const getRowClass = params => {
@@ -175,12 +336,32 @@ function MaterialRequirementsReport() {
         return null;
     };
 
+    const mapItems = items =>
+        items.map((b, i) => ({
+            ...b,
+            id: i,
+            immediate: b.immediateItem?.textValue || b.immediateItem?.value,
+            week0: b.week0Item.textValue || b.week0Item.value,
+            week1: b.week1Item.textValue || b.week1Item.value,
+            week2: b.week2Item.textValue || b.week2Item.value,
+            week3: b.week3Item.textValue || b.week3Item.value,
+            week4: b.week4Item.textValue || b.week4Item.value,
+            week5: b.week5Item.textValue || b.week5Item.value,
+            week6: b.week6Item.textValue || b.week6Item.value,
+            week7: b.week7Item.textValue || b.week7Item.value,
+            week8: b.week8Item.textValue || b.week8Item.value,
+            week9: b.week9Item.textValue || b.week9Item.value,
+            week10: b.week10Item.textValue || b.week10Item.value,
+            week11: b.week11Item.textValue || b.week11Item.value,
+            week12: b.week12Item.textValue || b.week12Item.value
+        }));
+
     const getRows = (item, segment) => {
         if (segment === -1) {
-            return item.details.map((b, i) => ({ ...b, id: i }));
+            return mapItems(item.details);
         }
 
-        return item.details.filter(a => a.segment === segment).map((b, i) => ({ ...b, id: i }));
+        return mapItems(item.details.filter(a => a.segment === segment));
     };
     const nextSegment = () => {
         if (selectedSegment < 5) {
@@ -202,12 +383,37 @@ function MaterialRequirementsReport() {
         }
     };
 
+    const onKeyPressed = data => {
+        if (data.keyCode === 37) {
+            goToPreviousPart();
+        } else if (data.keyCode === 39) {
+            goToNextPart();
+        }
+    };
+
     return (
-        <div className="print-landscape">
+        <div className="print-landscape" onKeyDown={onKeyPressed} tabIndex={-1} role="textbox">
             <Page history={history} width="xl">
                 <ThemeProvider theme={theme}>
                     <div style={{ width: 1300, paddingLeft: '20px' }}>
                         {mrReportLoading && <Loading />}
+                        {!selectedItem && (
+                            <>
+                                <Typography variant="body2" style={{ fontWeight: 'bold' }}>
+                                    No results found for selected options
+                                </Typography>
+                                <Tooltip title="Back To Options">
+                                    <Button
+                                        color="navBut"
+                                        size="small"
+                                        endIcon={<NotesIcon />}
+                                        onClick={backToOptions}
+                                    >
+                                        Back To Options
+                                    </Button>
+                                </Tooltip>
+                            </>
+                        )}
                         {selectedItem && (
                             <Grid container spacing={1}>
                                 <Grid
@@ -216,28 +422,21 @@ function MaterialRequirementsReport() {
                                     style={{ paddingBottom: '10px' }}
                                     className="hide-when-printing"
                                 >
-                                    <Tooltip title="Previous part" placement="top-start">
-                                        <div>
-                                            <Button
-                                                style={{ float: 'left' }}
-                                                color="navBut"
-                                                size="small"
-                                                onClick={goToPreviousPart}
-                                                startIcon={<ArrowBackIcon />}
-                                                disabled={!previousPart}
-                                            >
-                                                {previousPart || 'At first'}
-                                            </Button>
-                                        </div>
-                                    </Tooltip>
-                                </Grid>
-                                <Grid
-                                    item
-                                    xs={4}
-                                    style={{ paddingBottom: '10px' }}
-                                    className="hide-when-printing"
-                                >
                                     <Stack direction="row" spacing={2}>
+                                        <Tooltip title="Previous part" placement="top-start">
+                                            <div>
+                                                <Button
+                                                    style={{ float: 'left', marginRight: '60px' }}
+                                                    color="navBut"
+                                                    size="small"
+                                                    onClick={goToPreviousPart}
+                                                    startIcon={<ArrowBackIcon />}
+                                                    disabled={!previousPart}
+                                                >
+                                                    {previousPart || 'At first'}
+                                                </Button>
+                                            </div>
+                                        </Tooltip>
                                         <Tooltip title="Back To Options">
                                             <Button
                                                 color="navBut"
@@ -248,10 +447,18 @@ function MaterialRequirementsReport() {
                                                 Options
                                             </Button>
                                         </Tooltip>
+                                    </Stack>
+                                </Grid>
+                                <Grid
+                                    item
+                                    xs={4}
+                                    style={{ paddingBottom: '10px' }}
+                                    className="hide-when-printing"
+                                >
+                                    <Stack direction="row" spacing={4}>
                                         <Tooltip title="Order (not yet implemented)">
                                             <div>
                                                 <Button
-                                                    style={{ float: 'left' }}
                                                     color="navBut"
                                                     size="small"
                                                     endIcon={<ShopIcon />}
@@ -487,6 +694,7 @@ function MaterialRequirementsReport() {
                                             autoHeight
                                             loading={mrReportLoading}
                                             hideFooter
+                                            columnBuffer={15}
                                             getRowClassName={params => getRowClass(params)}
                                         />
                                     </div>

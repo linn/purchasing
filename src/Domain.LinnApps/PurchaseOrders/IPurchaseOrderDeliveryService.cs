@@ -7,19 +7,26 @@
     public interface IPurchaseOrderDeliveryService
     {
         IEnumerable<PurchaseOrderDelivery> SearchDeliveries(
-            string supplierSearchTerm, 
-            string orderNumberSearchTerm, 
-            bool includeAcknowledged, 
-            bool? exactOrderNumber = false);
+            string supplierSearchTerm,
+            string orderNumberSearchTerm,
+            bool includeAcknowledged,
+            bool? exactOrderNumber = false,
+            int? orderLine = null);
 
         PurchaseOrderDelivery UpdateDelivery(
-            PurchaseOrderDeliveryKey key, 
-            PurchaseOrderDelivery from, 
-            PurchaseOrderDelivery to, 
+            PurchaseOrderDeliveryKey key,
+            PurchaseOrderDelivery from,
+            PurchaseOrderDelivery to,
             IEnumerable<string> privileges);
 
         BatchUpdateProcessResult BatchUpdateDeliveries(
             IEnumerable<PurchaseOrderDeliveryUpdate> changes,
+            IEnumerable<string> privileges);
+
+        IEnumerable<PurchaseOrderDelivery> UpdateDeliveriesForOrderLine(
+            int orderNumber,
+            int orderLine,
+            IEnumerable<PurchaseOrderDelivery> updated,
             IEnumerable<string> privileges);
     }
 }

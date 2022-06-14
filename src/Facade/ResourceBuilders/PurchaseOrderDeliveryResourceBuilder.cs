@@ -29,7 +29,7 @@
                            OrderDeliveryQty = entity.OrderDeliveryQty,
                            QtyNetReceived = entity.QtyNetReceived,
                            QuantityOutstanding = entity.QuantityOutstanding,
-                           CallOffDate = entity.CallOffDate,
+                           CallOffDate = entity.CallOffDate?.ToString("o"),
                            BaseOurUnitPrice = entity.BaseOurUnitPrice,
                            OurUnitPriceCurrency = entity.OurUnitPriceCurrency,
                            OrderUnitPriceCurrency = entity.OrderUnitPriceCurrency,
@@ -37,7 +37,10 @@
                            VatTotalCurrency = entity.VatTotalCurrency,
                            BaseVatTotal = entity.BaseVatTotal,
                            DeliveryTotalCurrency = entity.DeliveryTotalCurrency,
-                           BaseDeliveryTotal = entity.BaseDeliveryTotal
+                           BaseDeliveryTotal = entity.BaseDeliveryTotal,
+                           CallOffRef = entity.CallOffRef,
+                           FilCancelled = entity.FilCancelled,
+                           QtyPassedForPayment = entity.QtyPassedForPayment
                        };
         }
 

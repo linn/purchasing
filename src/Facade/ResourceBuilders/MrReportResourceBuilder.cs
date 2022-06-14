@@ -53,6 +53,7 @@
                 OrderIncrement = entity.OrderIncrement,
                 VendorManager = entity.VendorManager,
                 VendorManagerInitials = entity.VendorManagerInitials,
+                Planner = entity.Planner,
                 Details = this.BuildDetails(entity, runWeekNumber),
                 Links = this.BuildHeaderLinks(entity).ToArray()
             };
@@ -61,12 +62,36 @@
         private IEnumerable<MrDetailResource> BuildDetails(MrHeader header, int runWeekNumber)
         {
             var detailResources = this.BuildResourcesTitles(header);
+            var leadTimeWeek = 0;
+            var dangerWeek = 0;
+
+            if (header.LeadTimeWeeks.HasValue)
+            {
+                leadTimeWeek = runWeekNumber + header.LeadTimeWeeks.Value;
+            }
+
+            if (header.WeeksUntilDangerous.HasValue)
+            {
+                dangerWeek = runWeekNumber + header.WeeksUntilDangerous.Value;
+            }
 
             foreach (var detail in header.MrDetails)
             {
                 var relativeWeek = this.CalculateRelativeWeek(detail.LinnWeekNumber, detail.Segment, runWeekNumber);
-                
-                this.SetDetailValuesForWeek(detailResources, relativeWeek, detail);
+
+                var tags = new List<MrTag>();
+
+                if (leadTimeWeek == detail.LinnWeekNumber)
+                {
+                    tags.Add(new MrTag("Ending", "redBoxOutline"));
+                }
+
+                if (dangerWeek == detail.LinnWeekNumber)
+                {
+                    tags.Add(new MrTag("Stock", "redBoxOutline"));
+                }
+
+                this.SetDetailValuesForWeek(detailResources, relativeWeek, detail, tags);
             }
 
             return detailResources.OrderBy(a => a.Segment).ThenBy(b => b.DisplaySequence);
@@ -82,7 +107,8 @@
         private void SetDetailValuesForWeek(
             IList<MrDetailResource> detailResources,
             decimal relativeWeek,
-            MrDetail detail)
+            MrDetail detail,
+            IList<MrTag> tags)
         {
             this.SetValue(
                 detailResources,
@@ -97,7 +123,8 @@
                 null,
                 detail.WeekEnding,
                 relativeWeek,
-                detail.Segment);
+                detail.Segment,
+                tags.FirstOrDefault(a => a.Title == "Ending"));
             this.SetValue(
                 detailResources,
                 "Fixed Build",
@@ -202,8 +229,8 @@
                 detail.Stock,
                 null,
                 relativeWeek,
-                detail.Segment);
-
+                detail.Segment,
+                tags.FirstOrDefault(a => a.Title == "Stock"));
             this.SetValue(
                 detailResources,
                 "Min Rail",
@@ -241,7 +268,7 @@
                 detail.Segment);
         }
 
-        private IList<MrDetailResource> BuildResourcesTitles(MrHeader header)
+        private IList<MrDetailResource> BuildResourcesTitles(MrHeader header, bool showAllLines = false)
         {
             var detailResources = new List<MrDetailResource>();
             detailResources.AddRange(this.CreateDetails("Week", 6, 0));
@@ -318,9 +345,13 @@
 
             if (header.PreferredSupplierId.HasValue && header.PreferredSupplierId != 4415)
             {
-                detailResources.AddRange(this.CreateDetails("Ideal Stock", 6, 1300));
+                if (showAllLines)
+                {
+                    detailResources.AddRange(this.CreateDetails("Ideal Stock", 6, 1300));
+                    detailResources.AddRange(this.CreateDetails("Recom Stock", 6, 1500));
+                }
+
                 detailResources.AddRange(this.CreateDetails("Recom Orders", 6, 1400));
-                detailResources.AddRange(this.CreateDetails("Recom Stock", 6, 1500));
             }
 
             return detailResources;
@@ -332,7 +363,8 @@
             decimal? value,
             string textValue,
             decimal relativeWeek,
-            int segment)
+            int segment,
+            MrTag tag = null)
         {
             var detail = detailResources.FirstOrDefault(x => x.Title == title && x.Segment == segment);
             if (detail == null)
@@ -340,12 +372,12 @@
                 return;
             }
 
-            this.SetRelativeWeekValue(detail, relativeWeek, value, textValue);
+            this.SetRelativeWeekValue(detail, relativeWeek, value, textValue, tag?.Tag);
         }
 
         private IEnumerable<MrDetailResource> CreateDetails(string title, int segments, int sequence)
         {
-            for (int j = 0; j < segments; j++)
+            for (var j = 0; j < segments; j++)
             {
                 yield return new MrDetailResource { DisplaySequence = sequence, Segment = j, Title = title };
             }
@@ -366,52 +398,70 @@
             yield return new LinkResource { Rel = "part", Href = $"/parts/{entity.PartId}" };
         }
 
-        private void SetRelativeWeekValue(MrDetailResource detail, decimal relativeWeek, decimal? value, string textValue)
+        private void SetRelativeWeekValue(
+            MrDetailResource detail,
+            decimal relativeWeek,
+            decimal? value,
+            string textValue,
+            string tag)
         {
             var stringValue = string.IsNullOrEmpty(textValue) ? value.ToString() : textValue;
             switch (relativeWeek)
             {
                 case -1:
-                    detail.ImmediateItem = new MrDetailItemResource { Tag = "TagValue", Value = value, TextValue = textValue };
+                    detail.ImmediateItem = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
                     detail.Immediate = stringValue;
                     break;
                 case 0:
+                    detail.Week0Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
                     detail.Week0 = stringValue;
                     break;
                 case 1:
+                    detail.Week1Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
                     detail.Week1 = stringValue;
                     break;
                 case 2:
+                    detail.Week2Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
                     detail.Week2 = stringValue;
                     break;
                 case 3:
+                    detail.Week3Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
                     detail.Week3 = stringValue;
                     break;
                 case 4:
+                    detail.Week4Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
                     detail.Week4 = stringValue;
                     break;
                 case 5:
+                    detail.Week5Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
                     detail.Week5 = stringValue;
                     break;
                 case 6:
+                    detail.Week6Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
                     detail.Week6 = stringValue;
                     break;
                 case 7:
+                    detail.Week7Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
                     detail.Week7 = stringValue;
                     break;
                 case 8:
+                    detail.Week8Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
                     detail.Week8 = stringValue;
                     break;
                 case 9:
+                    detail.Week9Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
                     detail.Week9 = stringValue;
                     break;
                 case 10:
+                    detail.Week10Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
                     detail.Week10 = stringValue;
                     break;
                 case 11:
+                    detail.Week11Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
                     detail.Week11 = stringValue;
                     break;
                 case 12:
+                    detail.Week12Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
                     detail.Week12 = stringValue;
                     break;
                 default:

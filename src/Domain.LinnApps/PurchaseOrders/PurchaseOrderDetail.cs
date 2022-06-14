@@ -60,7 +60,7 @@
 
         public string PartNumber { get; set; }
 
-        public ICollection<PurchaseOrderDelivery> PurchaseDeliveries { get; set; }
+        public IEnumerable<PurchaseOrderDelivery> PurchaseDeliveries { get; set; }
 
         public PurchaseOrder PurchaseOrder { get; set; }
 
@@ -71,5 +71,7 @@
         public string SuppliersDesignation { get; set; }
 
         public decimal? VatTotalCurrency { get; set; }
+
+        public decimal? OrderConversionFactor { get; set; }
     }
 }

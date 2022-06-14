@@ -21,7 +21,7 @@
             using (var connection = this.databaseService.GetConnection())
             {
                 connection.Open();
-                var cmd = new OracleCommand("pl_orders_pack.order_is_complete_sql ", connection)
+                var cmd = new OracleCommand("pl_orders_pack.order_is_complete_sql", connection)
                               {
                                   CommandType = CommandType.StoredProcedure
                               };
@@ -46,6 +46,103 @@
                 connection.Close();
 
                 return result.Value.ToString() == "TRUE";
+            }
+        }
+
+        public decimal GetVatAmountSupplier(decimal total, int supplierId)
+        {
+            using var connection = this.databaseService.GetConnection();
+            connection.Open();
+            var cmd = new OracleCommand("pl_orders_pack.get_vat_amount_supplier", connection) 
+                          {
+                              CommandType = CommandType.StoredProcedure
+                          };
+            var result = new OracleParameter("p_order", OracleDbType.Decimal) 
+                             {
+                                 Direction = ParameterDirection.ReturnValue
+                             };
+            var paramTotal = new OracleParameter("p_total", OracleDbType.Decimal) 
+                                 {
+                                     Direction = ParameterDirection.Input,
+                                     Size = 50,
+                                     Value = total
+                                 };
+            var paramSupplierId = new OracleParameter("p_supp", OracleDbType.Int32)
+                                      {
+                                          Direction = ParameterDirection.Input,
+                                          Size = 50, Value = supplierId
+                                      };
+               
+            cmd.Parameters.Add(result);
+            cmd.Parameters.Add(paramSupplierId);
+            cmd.Parameters.Add(paramTotal);
+
+            cmd.ExecuteNonQuery();
+            connection.Close();
+
+            return decimal.Parse(result.Value.ToString());
+        }
+
+        public bool OrderCanBeAuthorisedBy(
+            int? orderNumber,
+            int? lineNumber,
+            int userNumber,
+            decimal totalValueBase,
+            string part,
+            string documentType)
+        {
+            using (var connection = this.databaseService.GetConnection())
+            {
+                connection.Open();
+                var cmd = new OracleCommand("pl_orders_pack.Order_Can_Be_Auth_By_Wrapper", connection)
+                              {
+                                  CommandType = CommandType.StoredProcedure
+                              };
+                var ordNo = new OracleParameter("p_order_number", OracleDbType.Int32)
+                                {
+                                    Direction = ParameterDirection.Input, Size = 50, Value = orderNumber
+                                };
+                var ordLine = new OracleParameter("p_order_line", OracleDbType.Int32)
+                                  {
+                                      Direction = ParameterDirection.Input, Size = 50, Value = lineNumber
+                                  };
+                var puser = new OracleParameter("p_user", OracleDbType.Int32)
+                                {
+                                    Direction = ParameterDirection.Input, Size = 50, Value = userNumber
+                                };
+
+                var ptotal = new OracleParameter("p_total", OracleDbType.Decimal)
+                                 {
+                                     Direction = ParameterDirection.Input, Size = 50, Value = totalValueBase
+                                 };
+
+                var ppart = new OracleParameter("p_part", OracleDbType.Varchar2)
+                                {
+                                    Direction = ParameterDirection.Input, Size = 50, Value = part
+                                };
+
+                var pdocumenttype = new OracleParameter("p_document_type", OracleDbType.Varchar2)
+                                        {
+                                            Direction = ParameterDirection.Input, Size = 50, Value = documentType
+                                        };
+
+                var result = new OracleParameter(null, OracleDbType.Int32)
+                                 {
+                                     Direction = ParameterDirection.ReturnValue
+                                 };
+
+                cmd.Parameters.Add(result);
+                cmd.Parameters.Add(ordNo);
+                cmd.Parameters.Add(ordLine);
+                cmd.Parameters.Add(puser);
+                cmd.Parameters.Add(ptotal);
+                cmd.Parameters.Add(ppart);
+                cmd.Parameters.Add(pdocumenttype);
+
+                cmd.ExecuteNonQuery();
+                connection.Close();
+
+                return int.Parse(result.Value.ToString()) == 1;
             }
         }
     }

@@ -180,6 +180,10 @@ export const sendPurchaseOrderReqFinanceEmailActionTypes = makeProcessActionType
     itemTypes.sendPurchaseOrderReqFinanceEmail.actionType
 );
 
+export const pOReqCheckIfCanAuthOrderActionTypes = makeProcessActionTypes(
+    itemTypes.pOReqCheckIfCanAuthOrder.actionType
+);
+
 export const prefSupReceiptsReportActionTypes = makeReportActionTypes(
     reportTypes.prefSupReceiptsReport.actionType
 );
@@ -198,11 +202,16 @@ export const applyForecastingPercentageChangeActionTypes = makeProcessActionType
     itemTypes.applyForecastingPercentageChange.actionType
 );
 
+export const ediOrdersActionTypes = makeActionTypes(itemTypes.ediOrders.actionType, true);
+
+export const sendEdiEmailActionTypes = makeActionTypes(itemTypes.sendEdiEmail.actionType);
+
 export const mrUsedOnReportActionTypes = makeReportActionTypes(
     reportTypes.mrUsedOnReport.actionType
 );
 
 export const mrReportActionTypes = makeActionTypes(itemTypes.mrReport.actionType);
+export const mrReportOptionsActionTypes = makeActionTypes(itemTypes.mrReportOptions.actionType);
 
 export const purchaseOrderDeliveryActionTypes = makeActionTypes(
     itemTypes.purchaseOrderDelivery.actionType
@@ -210,7 +219,7 @@ export const purchaseOrderDeliveryActionTypes = makeActionTypes(
 
 export const purchaseOrderDeliveriesActionTypes = makeActionTypes(
     itemTypes.purchaseOrderDeliveries.actionType,
-    false
+    true
 );
 
 export const batchPurchaseOrderDeliveriesUploadActionTypes = makeProcessActionTypes(

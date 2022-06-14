@@ -33,7 +33,8 @@
         [Test]
         public void ShouldThrowUnauthorisedActionException()
         {
-            this.action.Should().Throw<UnauthorisedActionException>();
+            this.action.Should().Throw<UnauthorisedActionException>()
+                .WithMessage("You are not authorised to acknowledge orders.");
         }
     }
 }

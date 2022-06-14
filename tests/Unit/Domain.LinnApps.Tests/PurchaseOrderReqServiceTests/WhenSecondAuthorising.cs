@@ -8,7 +8,6 @@
     using FluentAssertions.Extensions;
 
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
-    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
     using NSubstitute;
 
@@ -75,12 +74,19 @@
                             UserAllowed = "Y"
                         });
 
+            this.MockCurrencyPack.CalculateBaseValueFromCurrencyValue(
+                this.entity.CurrencyCode,
+                this.entity.TotalReqPrice.Value).Returns(147m);
+
             this.MockPurchaseOrderReqsPack.AllowedToAuthorise(
                 "AUTH2",
                 this.authoriserUserNumber,
-                this.entity.TotalReqPrice.Value,
+                147m,
                 this.entity.DepartmentCode,
                 this.fromState).Returns(new AllowedToAuthoriseReqResult { Success = true, NewState = this.toState });
+
+            this.EmployeeRepository.FindById(this.authoriserUserNumber).Returns(
+                new Employee { FullName = "Big Jimbo", Id = this.authoriserUserNumber });
 
             this.Sut.Authorise(this.entity, new List<string>(), this.authoriserUserNumber);
         }
@@ -88,7 +94,7 @@
         [Test]
         public void ShouldUpdateStateAndAuthorisedBy()
         {
-            this.entity.SecondAuthById.Should().Be(this.authoriserUserNumber);
+            this.entity.SecondAuthBy.Id.Should().Be(this.authoriserUserNumber);
             this.entity.State.Should().Be(this.toState);
         }
     }

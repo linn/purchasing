@@ -212,6 +212,12 @@ export const sendPurchaseOrderReqFinanceEmail = new ItemType(
     '/purchasing/purchase-orders/reqs/email-for-finance'
 );
 
+export const pOReqCheckIfCanAuthOrder = new ItemType(
+    'pOReqCheckIfCanAuthOrder',
+    'CHECK_IF_CAN_AUTH_ORDER',
+    '/purchasing/purchase-orders/reqs/check-signing-limit-covers-po-auth'
+);
+
 export const mrpRunLog = new ItemType(
     'mrpRunLog',
     'MRP_RUN_LOG',
@@ -236,7 +242,20 @@ export const applyForecastingPercentageChange = new ItemType(
     '/purchasing/forecasting/apply-percentage-change'
 );
 
+export const ediOrders = new ItemType('ediOrders', 'EDI_ORDERS', '/purchasing/edi/orders');
+
+export const sendEdiEmail = new ItemType(
+    'sendEdiEmail',
+    'SEND_EDI_EMAIL',
+    '/purchasing/edi/orders'
+);
+
 export const mrReport = new ItemType('mrReport', 'MR_REPORT', '/purchasing/material-requirements');
+export const mrReportOptions = new ItemType(
+    'mrReportOptions',
+    'MR_REPORT_OPTIONS',
+    '/purchasing/material-requirements/options'
+);
 
 export const purchaseOrderDelivery = new ItemType(
     'purchaseOrderDelivery',

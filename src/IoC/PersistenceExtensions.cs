@@ -3,6 +3,7 @@
     using Linn.Common.Persistence;
     using Linn.Common.Persistence.EntityFramework;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
@@ -10,6 +11,7 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
     using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -109,6 +111,8 @@
                     => new EntityFrameworkRepository<LinnWeek, int>(r.GetService<ServiceDbContext>()?.LinnWeeks))
                 .AddTransient<IRepository<LedgerPeriod, int>, EntityFrameworkRepository<LedgerPeriod, int>>(r
                     => new EntityFrameworkRepository<LedgerPeriod, int>(r.GetService<ServiceDbContext>()?.LedgerPeriods))
+                .AddTransient<IRepository<EdiOrder, int>, EntityFrameworkRepository<EdiOrder, int>>(r
+                    => new EntityFrameworkRepository<EdiOrder, int>(r.GetService<ServiceDbContext>()?.EdiOrders))
                 .AddTransient<IRepository<CancelledOrderDetail, int>, EntityFrameworkRepository<CancelledOrderDetail, int>>(
                     r => new EntityFrameworkRepository<CancelledOrderDetail, int>(r.GetService<ServiceDbContext>()?.CancelledPurchaseOrderDetails))
                 .AddTransient<IQueryRepository<StockLocator>, EntityFrameworkQueryRepository<StockLocator>>(
@@ -119,7 +123,13 @@
                         ?.MrUsedOnView))
                 .AddTransient<IRepository<RescheduleReason, string>, EntityFrameworkRepository<RescheduleReason, string>>(
                     r => new EntityFrameworkRepository<RescheduleReason, string>(r.GetService<ServiceDbContext>()?.PlRescheduleReasons))
-                .AddTransient<IQueryRepository<MrHeader>, MrHeaderRepository>();
+                .AddTransient<IQueryRepository<MrHeader>, MrHeaderRepository>()
+                .AddTransient<ISingleRecordRepository<PurchaseLedgerMaster>, EntityFrameworkSingleRecordRepository<PurchaseLedgerMaster>>(
+                    r => new EntityFrameworkSingleRecordRepository<PurchaseLedgerMaster>(r.GetService<ServiceDbContext>()?.PurchaseLedgerMaster))
+                .AddTransient<IRepository<MiniOrder, int>, EntityFrameworkRepository<MiniOrder, int>>(
+                    r => new EntityFrameworkRepository<MiniOrder, int>(r.GetService<ServiceDbContext>()?.MiniOrders))
+                .AddTransient<IRepository<MiniOrderDelivery, MiniOrderDeliveryKey>, EntityFrameworkRepository<MiniOrderDelivery, MiniOrderDeliveryKey>>(
+                    r => new EntityFrameworkRepository<MiniOrderDelivery, MiniOrderDeliveryKey>(r.GetService<ServiceDbContext>()?.MiniOrdersDeliveries));
         }
     }
 }

@@ -43,12 +43,14 @@ import POReqPrintout from './POReqs/POReqPrintout';
 import WhatsInInspectionReport from './reports/WhatsInInspectionReport';
 import RunMrp from './RunMrp';
 import ApplyForecastingPercentageChange from './ApplyForecastingPercentageChange';
+import EdiOrders from './EdiOrders';
 import PurchaseOrderUtility from './PurchaseOrders/PurchaseOrderUtility';
 import PurchaseOrdersSearch from './PurchaseOrders/PurchaseOrdersSearch';
 import MrUsedOnReport from './reports/MrUsedOnReport';
 import AcknowledgeOrdersUtility from './AcknowledgeOrdersUtility';
 import MaterialRequirements from './materialRequirements/MaterialRequirementsOptions';
 import MaterialRequirementsReport from './materialRequirements/MaterialRequirementsReport';
+import PurchaseOrderPrintout from './PurchaseOrders/PurchaseOrderPrintout';
 
 const Root = ({ store }) => (
     <div>
@@ -62,11 +64,6 @@ const Root = ({ store }) => (
                                 <Route exact path="/purchasing" component={App} />
                                 <Redirect exact from="/" to="/purchasing" />
                                 <Redirect exact from="/purchasing/reports" to="/purchasing" />
-                                <Redirect
-                                    exact
-                                    from="/purchasing/purchase-orders"
-                                    to="/purchasing"
-                                />
                                 <Route
                                     exact
                                     path="/purchasing/suppliers"
@@ -185,6 +182,11 @@ const Root = ({ store }) => (
                                     component={OpenDebitNotes}
                                 />
                                 <Route
+                                    exact
+                                    path="/purchasing/purchase-orders/"
+                                    component={PurchaseOrdersSearch}
+                                />
+                                <Route
                                     path="/purchasing/purchase-orders/reqs/create"
                                     // eslint-disable-next-line react/jsx-props-no-spreading
                                     render={props => <POReqUtility creating {...props} />}
@@ -232,8 +234,8 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
-                                    path="/purchasing/purchase-orders/"
-                                    component={PurchaseOrdersSearch}
+                                    path="/purchasing/purchase-orders/:orderNumber/print"
+                                    component={PurchaseOrderPrintout}
                                 />
                                 <Route
                                     exact
@@ -270,6 +272,7 @@ const Root = ({ store }) => (
                                     path="/purchasing/forecasting/apply-percentage-change"
                                     component={ApplyForecastingPercentageChange}
                                 />
+                                <Route exact path="/purchasing/edi" component={EdiOrders} />
                                 <Route
                                     exact
                                     path="/purchasing/material-requirements/used-on-report"

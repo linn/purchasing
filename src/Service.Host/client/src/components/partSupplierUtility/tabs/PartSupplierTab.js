@@ -27,14 +27,16 @@ function PartSupplierTab({
     part,
     setPreferredSupplierDialogOpen,
     canEdit,
-    creating
+    creating,
+    setPartId
 }) {
     return (
         <Grid container spacing={3}>
             <Grid item xs={4}>
                 <Typeahead
                     onSelect={newValue => {
-                        handleFieldChange('partNumber', newValue.id);
+                        handleFieldChange('partNumber', newValue.partNumber);
+                        setPartId(newValue.id);
                         handleFieldChange('partDescription', newValue.description);
                         handleFieldChange('designation', newValue.description);
                     }}
@@ -159,6 +161,7 @@ PartSupplierTab.propTypes = {
     suppliersSearchResults: PropTypes.arrayOf(PropTypes.shape({})),
     suppliersSearchLoading: PropTypes.bool,
     searchSuppliers: PropTypes.func.isRequired,
+    setPartId: PropTypes.func.isRequired,
     part: PropTypes.shape({
         manufacturers: PropTypes.arrayOf(
             PropTypes.shape({

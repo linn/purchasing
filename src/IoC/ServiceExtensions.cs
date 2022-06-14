@@ -14,6 +14,7 @@
     using Linn.Common.Proxy.LinnApps;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Forecasting;
     using Linn.Purchasing.Domain.LinnApps.Keys;
@@ -66,8 +67,10 @@
                 .AddTransient<IBuilder<MrpRunLog>, MrpRunLogResourceBuilder>()
                 .AddTransient<IBuilder<PurchaseOrderReqState>, PurchaseOrderReqStateResourceBuilder>()
                 .AddTransient<IBuilder<MrMaster>, MrMasterResourceBuilder>()
+                .AddTransient<IBuilder<EdiOrder>, EdiOrderResourceBuilder>()
                 .AddTransient<IBuilder<PurchaseOrderDelivery>, PurchaseOrderDeliveryResourceBuilder>()
-                .AddTransient<IBuilder<MrReport>, MrReportResourceBuilder>();
+                .AddTransient<IBuilder<MrReport>, MrReportResourceBuilder>()
+                .AddTransient<IBuilder<MrReportOptions>, MrReportOptionsResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -86,7 +89,7 @@
                 .AddTransient<IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource>, PackagingGroupService>()
                 .AddTransient<IFacadeResourceService<Tariff, int, TariffResource, TariffResource>, TariffService>()
                 .AddTransient<IFacadeResourceService<Manufacturer, string, ManufacturerResource, ManufacturerResource>, ManufacturerFacadeService>()
-                .AddTransient<IFacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource>, PurchaseOrderFacadeService>()
+                .AddTransient<IPurchaseOrderFacadeService, PurchaseOrderFacadeService>()
                 .AddTransient<IFacadeResourceService<PriceChangeReason, string, PriceChangeReasonResource, PriceChangeReasonResource>, PriceChangeReasonService>()
                 .AddTransient<IFacadeResourceService<PartCategory, string, PartCategoryResource, PartCategoryResource>, PartCategoriesService>()
                 .AddTransient<IPurchaseOrderReportFacadeService, PurchaseOrderReportFacadeService>()
@@ -111,6 +114,7 @@
                 .AddTransient<IPrefSupReceiptsReportFacadeService, PrefSupReceiptsReportFacadeService>()
                 .AddTransient<ISingleRecordFacadeResourceService<MrMaster, MrMasterResource>, MrMasterFacadeService>()
                 .AddTransient<IForecastingFacadeService, ForecastingFacadeService>()
+                .AddTransient<IEdiOrdersFacadeService, EdiOrdersFacadeService>()
                 .AddTransient<IMrUsedOnReportFacadeService, MrUsedOnReportFacadeService>()
                 .AddTransient<IPurchaseOrderDeliveryFacadeService, PurchaseOrderDeliveryFacadeService>()
                 .AddTransient<IMaterialRequirementsReportFacadeService, MaterialRequirementsReportFacadeService>();
@@ -139,13 +143,19 @@
                         x.GetService<IPurchaseOrderReqsPack>(),
                         x.GetService<IRepository<Employee, int>>(),
                         x.GetService<IEmailService>(),
-                        x.GetService<IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>>()))
+                        x.GetService<IRepository<PurchaseOrderReqStateChange, PurchaseOrderReqStateChangeKey>>(),
+                        x.GetService<IPurchaseOrderAutoOrderPack>(),
+                        x.GetService<IPurchaseOrdersPack>(),
+                        x.GetService<ICurrencyPack>(),
+                        x.GetService<IQueryRepository<Part>>(),
+                        x.GetService<IRepository<Supplier, int>>()))
                 .AddTransient<IWhatsDueInReportService, WhatsDueInReportService>()
                 .AddTransient<IOutstandingPoReqsReportService, OutstandingPoReqsReportService>()
                 .AddTransient<IMaterialRequirementsPlanningService, MaterialRequirementsPlanningService>()
                 .AddTransient<IWhatsInInspectionReportService, WhatsInInspectionReportService>()
                 .AddTransient<IPrefSupReceiptsReportService, PrefSupReceiptsReportService>()
                 .AddTransient<IForecastingService, ForecastingService>()
+                .AddTransient<IEdiOrderService, EdiOrderService>()
                 .AddTransient<IMrUsedOnReportService, MrUsedOnReportService>()
                 .AddTransient<IPurchaseOrderDeliveryService, PurchaseOrderDeliveryService>()
                 .AddTransient<IMaterialRequirementsReportService, MaterialRequirementsReportService>()
@@ -158,7 +168,9 @@
                 .AddTransient<IPurchaseOrderReqsPack, PurchaseOrderReqsPack>()
                 .AddTransient<IMrpLoadPack, MrpLoadPack>()
                 .AddTransient<IForecastingPack, ForecastingPack>()
-                .AddTransient<ISupplierPack, SupplierPack>();
+                .AddTransient<IEdiEmailPack, EdiEmailPack>()
+                .AddTransient<ISupplierPack, SupplierPack>()
+                .AddTransient<IPurchaseOrderAutoOrderPack, PurchaseOrderAutoOrderPack>();
         }
     }
 }

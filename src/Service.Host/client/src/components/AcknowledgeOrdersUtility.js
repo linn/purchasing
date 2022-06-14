@@ -13,9 +13,11 @@ import {
     processSelectorHelpers,
     FileUploader,
     getItemError,
-    ErrorCard
+    ErrorCard,
+    SaveBackCancelButtons
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
+import Dialog from '@mui/material/Dialog';
 import { makeStyles } from '@mui/styles';
 import Accordion from '@mui/material/Accordion';
 import Button from '@mui/material/Button';
@@ -35,14 +37,19 @@ import {
 import history from '../history';
 import config from '../config';
 import batchPurchaseOrderDeliveriesUploadActions from '../actions/batchPurchaseOrderDeliveriesUploadActions';
+import SplitDeliveriesUtility from './SplitDeliveriesUtility';
 
 function AcknowledgeOrdersUtility() {
     const dispatch = useDispatch();
     const { search } = useLocation();
     const [lookUpExpanded, setLookUpExpanded] = useState(false);
+    const [splitDeliveriesDialogOpen, setSplitDeliveriesDialogOpen] = useState(false);
+    const [applyChangesDialogOpen, setApplyChangesDialogOpen] = useState(false);
+
+    const [deliveriesToSplit, setDeliveriesToSplit] = useState();
+    const orderNumberSearchTerm = queryString.parse(search)?.orderNumber;
 
     useEffect(() => {
-        const orderNumberSearchTerm = queryString.parse(search)?.orderNumber;
         if (orderNumberSearchTerm) {
             dispatch(
                 purchaseOrderDeliveriesActions.fetchByHref(
@@ -55,10 +62,14 @@ function AcknowledgeOrdersUtility() {
             );
             setLookUpExpanded(true);
         }
-    }, [search, dispatch]);
-    const useStyles = makeStyles(() => ({
+    }, [orderNumberSearchTerm, dispatch]);
+    const useStyles = makeStyles(theme => ({
         gap: {
-            marginTop: '20px'
+            marginTop: theme.spacing(4)
+        },
+        dialog: {
+            margin: theme.spacing(6),
+            minWidth: theme.spacing(62)
         }
     }));
     const classes = useStyles();
@@ -84,7 +95,7 @@ function AcknowledgeOrdersUtility() {
         collectionSelectorHelpers.getLoading(state[purchaseOrderDeliveries.item])
     );
 
-    const snackbarVisible = useSelector(state =>
+    const purchaseOrderDeliverySnackbarVisible = useSelector(state =>
         itemSelectorHelpers.getSnackbarVisible(state[purchaseOrderDelivery.item])
     );
 
@@ -99,7 +110,31 @@ function AcknowledgeOrdersUtility() {
     const columns = [
         { field: 'id', headerName: 'Id', width: 100, hide: true },
         { field: 'orderNumber', headerName: 'Order', width: 100 },
-        { field: 'orderLine', headerName: 'Line', width: 100 },
+        {
+            field: 'orderLine',
+            headerName: 'Line',
+            width: 100,
+            renderCell: params => (
+                <>
+                    {params.row.orderLine}{' '}
+                    <Button
+                        onClick={() => {
+                            setDeliveriesToSplit(
+                                rows.filter(
+                                    d =>
+                                        d.orderNumber === params.row.orderNumber &&
+                                        d.orderLine === params.row.orderLine
+                                )
+                            );
+                            setSplitDeliveriesDialogOpen(true);
+                        }}
+                    >
+                        SPLIT
+                    </Button>
+                </>
+            )
+        },
+
         { field: 'deliverySeq', headerName: 'Delivery', width: 100 },
         { field: 'baseOrderUnitPrice', headerName: 'Unit Price', width: 100 },
         { field: 'partNumber', headerName: 'Part', width: 100 },
@@ -171,6 +206,7 @@ function AcknowledgeOrdersUtility() {
     }, [updatedItem, dispatch, searchOptions]);
 
     const handleSaveClick = () => {
+        setApplyChangesDialogOpen(false);
         const selectedRows = rows.filter(r => r.selected);
         selectedRows.forEach(s => {
             const from = items.find(
@@ -184,17 +220,135 @@ function AcknowledgeOrdersUtility() {
                 availableAtSupplier: newValues.availableAtSupplier
             };
             dispatch(purchaseOrderDeliveryActions.patch(s.id, { from, to }));
+            setRows([]);
         });
+    };
+
+    const refreshResults = () => {
+        setRows([]);
+        if (searchOptions.orderNumberSearchTerm || searchOptions.supplierSearchTerm) {
+            dispatch(
+                purchaseOrderDeliveriesActions.fetchByHref(
+                    `${purchaseOrderDeliveries.uri}?${queryString.stringify(searchOptions)}`
+                )
+            );
+        } else if (orderNumberSearchTerm) {
+            dispatch(
+                purchaseOrderDeliveriesActions.fetchByHref(
+                    `${purchaseOrderDeliveries.uri}?${queryString.stringify({
+                        orderNumberSearchTerm,
+                        includeAcknowledged: true,
+                        exactOrderNumber: true
+                    })}`
+                )
+            );
+        }
     };
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <SnackbarMessage
-                visible={snackbarVisible}
+                visible={purchaseOrderDeliverySnackbarVisible}
                 onClose={() => dispatch(purchaseOrderDeliveryActions.setSnackbarVisible(false))}
                 message="Save Successful"
             />
+
             <Grid container spacing={3}>
+                <Dialog open={splitDeliveriesDialogOpen} fullWidth maxWidth="lg">
+                    <div className={classes.dialog}>
+                        <SplitDeliveriesUtility
+                            orderNumber={123456}
+                            orderLine={1}
+                            inDialogBox
+                            cancelClick={() => setSplitDeliveriesDialogOpen(false)}
+                            backClick={() => {
+                                setSplitDeliveriesDialogOpen(false);
+                                refreshResults();
+                            }}
+                            deliveries={deliveriesToSplit}
+                        />
+                    </div>
+                </Dialog>
+                <Dialog open={applyChangesDialogOpen} fullWidth maxWidth="lg">
+                    <div className={classes.dialog}>
+                        <Grid container spacing={3}>
+                            <Grid item xs={3}>
+                                <DatePicker
+                                    label="Advised Date"
+                                    value={newValues.dateAdvised}
+                                    propertyName="dateAdvised"
+                                    minDate="01/01/2000"
+                                    maxDate="01/01/2100"
+                                    onChange={newVal =>
+                                        setNewValues(o => ({ ...o, dateAdvised: newVal }))
+                                    }
+                                />
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Dropdown
+                                    label="Reason"
+                                    propertyName="rescheduleReason"
+                                    allowNoValue
+                                    value={newValues.rescheduleReason}
+                                    onChange={(_, newVal) =>
+                                        setNewValues(o => ({
+                                            ...o,
+                                            rescheduleReason: newVal
+                                        }))
+                                    }
+                                    items={[
+                                        'ADVISED',
+                                        'AUTO FAIL',
+                                        'AUTO PASS',
+                                        'BROUGHT IN',
+                                        'DECOMMIT',
+                                        'IGNORE',
+                                        'REQUESTED',
+                                        'RESCHEDULE OUT'
+                                    ]}
+                                />
+                            </Grid>
+                            <Grid item xs={3}>
+                                <InputField
+                                    value={newValues.supplierConfirmationComment}
+                                    propertyName="supplierConfirmationComment"
+                                    fullWidth
+                                    label="Comment"
+                                    onChange={(_, newVal) =>
+                                        setNewValues(o => ({
+                                            ...o,
+                                            supplierConfirmationComment: newVal
+                                        }))
+                                    }
+                                />
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Dropdown
+                                    label="Available at Supplier"
+                                    propertyName="availableAtSupplier"
+                                    value={newValues.availableAtSupplier}
+                                    allowNoValue
+                                    onChange={(_, newVal) =>
+                                        setNewValues(o => ({
+                                            ...o,
+                                            availableAtSupplier: newVal
+                                        }))
+                                    }
+                                    items={['Y', 'N']}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <SaveBackCancelButtons
+                                    saveClick={handleSaveClick}
+                                    cancelClick={() => setApplyChangesDialogOpen(false)}
+                                    backClick={() => setApplyChangesDialogOpen(false)}
+                                    saveDisabled={false}
+                                />
+                            </Grid>
+                        </Grid>
+                    </div>
+                </Dialog>
+
                 {uploadError && (
                     <Grid item xs={12}>
                         <ErrorCard errorMessage={uploadError.details} />
@@ -278,6 +432,7 @@ function AcknowledgeOrdersUtility() {
                                         columns={columns}
                                         rowHeight={34}
                                         autoHeight
+                                        disableSelectionOnClick
                                         loading={itemsLoading || updateLoading}
                                         hideFooter
                                         checkboxSelection
@@ -285,80 +440,12 @@ function AcknowledgeOrdersUtility() {
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <Typography variant="h5">Apply Changes To Selected</Typography>
-                                </Grid>
-                                <Grid item xs={3}>
-                                    <DatePicker
-                                        label="Advised Date"
-                                        value={newValues.dateAdvised}
-                                        propertyName="dateAdvised"
-                                        minDate="01/01/2000"
-                                        maxDate="01/01/2100"
-                                        onChange={newVal =>
-                                            setNewValues(o => ({ ...o, dateAdvised: newVal }))
-                                        }
-                                    />
-                                </Grid>
-                                <Grid item xs={3}>
-                                    <Dropdown
-                                        label="Reason"
-                                        propertyName="rescheduleReason"
-                                        allowNoValue
-                                        value={newValues.rescheduleReason}
-                                        onChange={(_, newVal) =>
-                                            setNewValues(o => ({
-                                                ...o,
-                                                rescheduleReason: newVal
-                                            }))
-                                        }
-                                        items={[
-                                            'ADVISED',
-                                            'AUTO FAIL',
-                                            'AUTO PASS',
-                                            'BROUGHT IN',
-                                            'DECOMMIT',
-                                            'IGNORE',
-                                            'REQUESTED',
-                                            'RESCHEDULE OUT'
-                                        ]}
-                                    />
-                                </Grid>
-                                <Grid item xs={3}>
-                                    <InputField
-                                        value={newValues.supplierConfirmationComment}
-                                        propertyName="supplierConfirmationComment"
-                                        fullWidth
-                                        label="Comment"
-                                        onChange={(_, newVal) =>
-                                            setNewValues(o => ({
-                                                ...o,
-                                                supplierConfirmationComment: newVal
-                                            }))
-                                        }
-                                    />
-                                </Grid>
-                                <Grid item xs={3}>
-                                    <Dropdown
-                                        label="Available at Supplier"
-                                        propertyName="availableAtSupplier"
-                                        value={newValues.availableAtSupplier}
-                                        allowNoValue
-                                        onChange={(_, newVal) =>
-                                            setNewValues(o => ({
-                                                ...o,
-                                                availableAtSupplier: newVal
-                                            }))
-                                        }
-                                        items={['Y', 'N']}
-                                    />
-                                </Grid>
-                                <Grid item xs={3}>
                                     <Button
-                                        variant="contained"
-                                        color="primary"
-                                        onClick={handleSaveClick}
+                                        variant="outlined"
+                                        disabled={!rows.some(r => r.selected)}
+                                        onClick={() => setApplyChangesDialogOpen(true)}
                                     >
-                                        Save
+                                        Apply Changes To Selected
                                     </Button>
                                 </Grid>
                             </Grid>
