@@ -212,6 +212,7 @@ export const mrUsedOnReportActionTypes = makeReportActionTypes(
 
 export const mrReportActionTypes = makeActionTypes(itemTypes.mrReport.actionType);
 export const mrReportOptionsActionTypes = makeActionTypes(itemTypes.mrReportOptions.actionType);
+export const mrReportOrdersActionTypes = makeActionTypes(itemTypes.mrReportOrders.actionType);
 
 export const purchaseOrderDeliveryActionTypes = makeActionTypes(
     itemTypes.purchaseOrderDelivery.actionType

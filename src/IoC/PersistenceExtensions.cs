@@ -124,6 +124,7 @@
                 .AddTransient<IRepository<RescheduleReason, string>, EntityFrameworkRepository<RescheduleReason, string>>(
                     r => new EntityFrameworkRepository<RescheduleReason, string>(r.GetService<ServiceDbContext>()?.PlRescheduleReasons))
                 .AddTransient<IQueryRepository<MrHeader>, MrHeaderRepository>()
+                .AddTransient<IQueryRepository<MrPurchaseOrderDetail>, MrPurchaseOrderRepository>()
                 .AddTransient<ISingleRecordRepository<PurchaseLedgerMaster>, EntityFrameworkSingleRecordRepository<PurchaseLedgerMaster>>(
                     r => new EntityFrameworkSingleRecordRepository<PurchaseLedgerMaster>(r.GetService<ServiceDbContext>()?.PurchaseLedgerMaster))
                 .AddTransient<IRepository<MiniOrder, int>, EntityFrameworkRepository<MiniOrder, int>>(

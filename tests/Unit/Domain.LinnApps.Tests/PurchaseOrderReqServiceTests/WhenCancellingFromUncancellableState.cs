@@ -22,8 +22,6 @@
 
         private readonly int reqNumber = 5678;
 
-        private readonly string toState = "CANCELLED";
-
         private PurchaseOrderReq entity;
 
         private Action action;
@@ -78,7 +76,7 @@
         }
 
         [Test]
-        public void ShouldnNotUpdateState()
+        public void ShouldNotUpdateState()
         {
             this.entity.State.Should().Be(this.fromState);
         }

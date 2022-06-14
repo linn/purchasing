@@ -145,6 +145,8 @@
                      == $"/purchasing/material-requirements/used-on-report?partNumber={this.MrHeader1.PartNumber}");
             part1Resource.Links.Should().Contain(
                 a => a.Rel == "part" && a.Href == $"/parts/{this.MrHeader1.PartId}");
+            part1Resource.Links.Should().Contain(
+                a => a.Rel == "part-supplier" && a.Href == $"/purchasing/part-suppliers/record?partId={this.MrHeader1.PartId}&supplierId={this.MrHeader1.PreferredSupplierId}");
         }
 
         [Test]
