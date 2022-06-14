@@ -20,4 +20,8 @@
     <ProjectReference Include="..\Domain.LinnApps\Domain.LinnApps.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Repositories\MiniOrder\" />
+  </ItemGroup>
+
 </Project>

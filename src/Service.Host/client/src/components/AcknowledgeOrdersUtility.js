@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -195,36 +195,7 @@ function AcknowledgeOrdersUtility() {
     const setUploadSnackbarVisible = () =>
         dispatch(batchPurchaseOrderDeliveriesUploadActions.setMessageVisible(false));
 
-    useEffect(() => {
-        if (updatedItem) {
-            dispatch(
-                purchaseOrderDeliveriesActions.fetchByHref(
-                    `${purchaseOrderDeliveries.uri}?${queryString.stringify(searchOptions)}`
-                )
-            );
-        }
-    }, [updatedItem, dispatch, searchOptions]);
-
-    const handleSaveClick = () => {
-        setApplyChangesDialogOpen(false);
-        const selectedRows = rows.filter(r => r.selected);
-        selectedRows.forEach(s => {
-            const from = items.find(
-                i => `${i.orderNumber}/${i.orderLine}/${i.deliverySeq}` === s.id
-            );
-            const to = {
-                ...from,
-                supplierConfirmationComment: newValues.supplierConfirmationComment,
-                dateAdvised: newValues.dateAdvised,
-                rescheduleReason: newValues.rescheduleReason,
-                availableAtSupplier: newValues.availableAtSupplier
-            };
-            dispatch(purchaseOrderDeliveryActions.patch(s.id, { from, to }));
-            setRows([]);
-        });
-    };
-
-    const refreshResults = () => {
+    const refreshResults = useCallback(() => {
         setRows([]);
         if (searchOptions.orderNumberSearchTerm || searchOptions.supplierSearchTerm) {
             dispatch(
@@ -243,6 +214,31 @@ function AcknowledgeOrdersUtility() {
                 )
             );
         }
+    }, [dispatch, searchOptions, orderNumberSearchTerm]);
+
+    useEffect(() => {
+        if (updatedItem) {
+            refreshResults();
+        }
+    }, [updatedItem, dispatch, searchOptions, refreshResults]);
+
+    const handleSaveClick = () => {
+        setApplyChangesDialogOpen(false);
+        const selectedRows = rows.filter(r => r.selected);
+        selectedRows.forEach(s => {
+            const from = items.find(
+                i => `${i.orderNumber}/${i.orderLine}/${i.deliverySeq}` === s.id
+            );
+            const to = {
+                ...from,
+                supplierConfirmationComment: newValues.supplierConfirmationComment,
+                dateAdvised: newValues.dateAdvised,
+                rescheduleReason: newValues.rescheduleReason,
+                availableAtSupplier: newValues.availableAtSupplier
+            };
+            dispatch(purchaseOrderDeliveryActions.patch(s.id, { from, to }));
+            setRows([]);
+        });
     };
 
     return (

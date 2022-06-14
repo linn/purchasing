@@ -39,6 +39,8 @@
 
         protected IPurchaseOrdersPack PurchaseOrdersPack { get; private set; }
 
+        protected IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> DeliveryRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -52,6 +54,7 @@
             this.Data = PurchaseOrderDeliveryTestData.BuildData();
             this.Repository.FindAll().Returns(this.Data.AsQueryable());
             this.PurchaseOrdersPack = Substitute.For<IPurchaseOrdersPack>();
+            this.DeliveryRepository = Substitute.For<IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey>>();
 
             this.Sut = new PurchaseOrderDeliveryService(
                 this.Repository, 
@@ -61,7 +64,8 @@
                 this.MiniOrderRepository,
                 this.MiniOrderDeliveryRepository,
                 this.PurchaseOrderRepository,
-                this.PurchaseOrdersPack);
+                this.PurchaseOrdersPack,
+                this.DeliveryRepository);
         }
     }
 }

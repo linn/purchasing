@@ -30,6 +30,8 @@
 
         private readonly IPurchaseOrdersPack purchaseOrdersPack;
 
+        private readonly IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> deliveryRepository;
+
         public PurchaseOrderDeliveryService(
             IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> repository,
             IAuthorisationService authService,
@@ -38,7 +40,8 @@
             IRepository<MiniOrder, int> miniOrderRepository,
             IRepository<MiniOrderDelivery, MiniOrderDeliveryKey> miniOrderDeliveryRepository,
             IRepository<PurchaseOrder, int> purchaseOrderRepository,
-            IPurchaseOrdersPack purchaseOrdersPack)
+            IPurchaseOrdersPack purchaseOrdersPack,
+            IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> deliveryRepository)
         {
             this.repository = repository;
             this.authService = authService;
@@ -48,6 +51,7 @@
             this.miniOrderDeliveryRepository = miniOrderDeliveryRepository;
             this.purchaseOrderRepository = purchaseOrderRepository;
             this.purchaseOrdersPack = purchaseOrdersPack;
+            this.deliveryRepository = deliveryRepository;
         }
 
         public IEnumerable<PurchaseOrderDelivery> SearchDeliveries(
@@ -116,7 +120,6 @@
                     to.DateAdvised, 
                     null,
                     null, 
-                    null,
                     null);
             }
 
@@ -133,8 +136,7 @@
                     null, 
                     null, 
                     null, 
-                    to.SupplierConfirmationComment,
-                    null);
+                    to.SupplierConfirmationComment);
             }
 
             if (from.AvailableAtSupplier != to.AvailableAtSupplier)
@@ -200,7 +202,6 @@
                     this.UpdateMiniOrder(
                         change.Key.OrderNumber, 
                         change.NewDateAdvised, 
-                        null, 
                         null, 
                         null, 
                         null);
@@ -276,6 +277,7 @@
                 del =>
                     {
                         var existing = list.FirstOrDefault(x => x.DeliverySeq == del.DeliverySeq);
+                       
                         var vatAmount = Math.Round(
                             this.purchaseOrdersPack.GetVatAmountSupplier(
                                 detail.OrderUnitPriceCurrency.GetValueOrDefault() * del.OurDeliveryQty.GetValueOrDefault(),
@@ -292,6 +294,10 @@
                         // update the existing record if it exists
                         if (existing != null)
                         {
+                            var seq = existing.DeliverySeq;
+                            existing = this.deliveryRepository.FindBy(
+                                d => d.OrderNumber == orderNumber && d.OrderLine == orderLine
+                                                                  && d.DeliverySeq == seq);
                             existing.OurDeliveryQty = del.OurDeliveryQty;
                             existing.OrderDeliveryQty = del.OurDeliveryQty / detail.OrderConversionFactor;
                             existing.OurUnitPriceCurrency = detail.OurUnitPriceCurrency;
@@ -307,8 +313,8 @@
                                                                  detail.OrderUnitPriceCurrency.GetValueOrDefault()
                                                                  * del.OurDeliveryQty.GetValueOrDefault(),
                                                                  2) + vatAmount;
-                            existing.BaseOurUnitPrice = del.BaseOurUnitPrice;
-                            existing.BaseOrderUnitPrice = del.BaseOrderUnitPrice;
+                            existing.BaseOurUnitPrice = detail.BaseOurUnitPrice;
+                            existing.BaseOrderUnitPrice = detail.BaseOrderUnitPrice;
                             existing.BaseNetTotal = Math.Round(
                                 del.OurDeliveryQty.GetValueOrDefault() * detail.BaseOurUnitPrice.GetValueOrDefault(),
                                 2);
@@ -369,19 +375,54 @@
                                          };
                     });
 
-            detail.PurchaseDeliveries = newDeliveries;
+            detail.PurchaseDeliveries = newDeliveries.ToList();
 
             // set mini order date requested to be first date requested of newly split deliveries
-            // and write the new deliveries list to the mini order to keep it in sync
             this.UpdateMiniOrder(
                 orderNumber, 
                 null,
                 updatedDeliveriesForOrderLine.MinBy(x => x.DateRequested)?.DateRequested, 
-                null, 
-                null,
-                updatedDeliveriesForOrderLine);
+                updatedDeliveriesForOrderLine.Count, 
+                null);
 
             return detail.PurchaseDeliveries;
+        }
+
+        // syncs changes to the deliveries list back to the mini order
+        // keeping this 'temporary' code in a dedicated method so it's clear and easy to remove
+        // separate public method so that it can be called from the facade (and subsequently Commit()'ted) in the correct order 
+        public void UpdateMiniOrderDeliveries(IEnumerable<PurchaseOrderDelivery> updated)
+        {
+            var purchaseOrderDeliveries = updated.ToList();
+            var miniOrder = this.miniOrderRepository.FindById(purchaseOrderDeliveries.First().OrderNumber);
+
+            miniOrder.Deliveries = purchaseOrderDeliveries
+                .Select(del =>
+                    {
+                        var existing =
+                            miniOrder.Deliveries?.FirstOrDefault(d => d.DeliverySequence == del.DeliverySeq);
+
+                        if (existing != null)
+                        {
+                            existing = this.miniOrderDeliveryRepository.FindBy(
+                                d => d.OrderNumber == miniOrder.OrderNumber && d.DeliverySequence == del.DeliverySeq);
+                            existing.AdvisedDate = del.DateAdvised;
+                            existing.RequestedDate = del.DateRequested;
+                            existing.AvailableAtSupplier = del.AvailableAtSupplier;
+                            existing.OurQty = del.OurDeliveryQty;
+                            return existing;
+                        }
+
+                        return new MiniOrderDelivery
+                                   {
+                                       AdvisedDate = del.DateAdvised,
+                                       RequestedDate = del.DateRequested,
+                                       DeliverySequence = del.DeliverySeq,
+                                       OrderNumber = del.OrderNumber,
+                                       AvailableAtSupplier = del.AvailableAtSupplier,
+                                       OurQty = del.OurDeliveryQty
+                                   };
+                    }).ToList();
         }
 
         private void CheckOkToRaiseOrders()
@@ -392,15 +433,14 @@
             }
         }
 
-        // syncs any delivery changes back to the mini_order
+        // syncs changes back to the mini_order
         // keeping this 'temporary' code in a dedicated method so it's clear and easy to remove
         private void UpdateMiniOrder(
             int orderNumber, 
             DateTime? advisedDeliveryDate, 
             DateTime? requestedDate, 
             int? numberOfSplitDeliveries,
-            string supplierConfirmationComment,
-            IEnumerable<PurchaseOrderDelivery> updatedDeliveries)
+            string supplierConfirmationComment)
         {
             var miniOrder = this.miniOrderRepository.FindById(orderNumber);
             var miniOrderDelivery = this.miniOrderDeliveryRepository.FindBy(
@@ -418,27 +458,15 @@
 
             if (advisedDeliveryDate.HasValue)
             {
-                miniOrderDelivery.AdvisedDate = advisedDeliveryDate;
-                miniOrder.AdvisedDeliveryDate = advisedDeliveryDate;
+                if (miniOrderDelivery != null)
+                {
+                    miniOrder.AdvisedDeliveryDate = advisedDeliveryDate;
+                }
             }
 
             if (supplierConfirmationComment != null)
             {
                 miniOrder.AcknowledgeComment = supplierConfirmationComment;
-            }
-
-            if (updatedDeliveries != null)
-            {
-                miniOrder.Deliveries = updatedDeliveries
-                    .Select(del => new MiniOrderDelivery
-                                       {
-                                           AdvisedDate = del.DateAdvised,
-                                           RequestedDate = del.DateRequested,
-                                           DeliverySequence = del.DeliverySeq,
-                                           OrderNumber = del.OrderNumber,
-                                           AvailableAtSupplier = del.AvailableAtSupplier,
-                                           OurQty = del.OurDeliveryQty
-                                       });
             }
         }
     }
