@@ -34,7 +34,7 @@
 
         public decimal? AssumedBuild { get; set; }
 
-        public decimal? SparesRequirement{ get; set; }
+        public decimal? SparesRequirement { get; set; }
 
         public decimal? ProductionRequirementForSpares { get; set; }
 
@@ -52,6 +52,8 @@
         
         public decimal? RecommendedOrders { get; set; }
 
-        public decimal? RecommenedStock { get; set; }
+        public decimal? RecommendedStock { get; set; }
+
+        public decimal? QuantityAvailableAtSupplier { get; set; }
     }
 }

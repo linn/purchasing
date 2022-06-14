@@ -1349,7 +1349,8 @@
             entity.Property(e => e.ProductionRequirementForSpares).HasColumnName("PROD_REQT_FOR_SPARES");
             entity.Property(e => e.ProductionRequirementForNonProduction).HasColumnName("PROD_REQT_FOR_NONPROD");
             entity.Property(e => e.RecommendedOrders).HasColumnName("RECOMMENDED_PURCH_ORDERS");
-            entity.Property(e => e.RecommenedStock).HasColumnName("RECOMMENDED_STOCK");
+            entity.Property(e => e.RecommendedStock).HasColumnName("RECOMMENDED_STOCK");
+            entity.Property(e => e.QuantityAvailableAtSupplier).HasColumnName("AVAILABLE_QTY_AT_SUPPLIER");
         }
 
         private void BuildMiniOrders(ModelBuilder builder)

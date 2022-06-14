@@ -47,6 +47,7 @@ function MaterialRequirementsReport() {
     const [selectedSegment, setSelectedSegment] = useState(0);
     const [nextPart, setNextPart] = useState(null);
     const [previousPart, setPreviousPart] = useState(null);
+    const [selectedPurchaseOrders, setSelectedPurchaseOrders] = useState([]);
 
     const options = useLocation();
 
@@ -116,6 +117,16 @@ function MaterialRequirementsReport() {
         }
     }, [mrReport, dispatch]);
 
+    useEffect(() => {
+        if (mrReportOrders?.orders && selectedItem) {
+            setSelectedPurchaseOrders(
+                mrReportOrders.orders.filter(a => a.partNumber === selectedItem.partNumber)
+            );
+        } else {
+            setSelectedPurchaseOrders([]);
+        }
+    }, [mrReportOrders, selectedItem]);
+
     const useStyles = makeStyles(() => ({
         headerText: {
             fontWeight: 500
@@ -130,6 +141,16 @@ function MaterialRequirementsReport() {
         redBoxOutline: {
             borderStyle: 'solid',
             borderColor: 'red !important',
+            borderWidth: 'thin'
+        },
+        blueBoxOutline: {
+            borderStyle: 'solid',
+            borderColor: 'blue !important',
+            borderWidth: 'thin'
+        },
+        greenBoxOutline: {
+            borderStyle: 'solid',
+            borderColor: 'green !important',
             borderWidth: 'thin'
         }
     }));
@@ -164,7 +185,7 @@ function MaterialRequirementsReport() {
         if (selectedIndex === mrReport.results.length - 2) {
             setNextPart(null);
         } else {
-            setNextPart(mrReport.results[selectedIndex + 1].partNumber);
+            setNextPart(mrReport.results[selectedIndex + 2].partNumber);
         }
 
         setSelectedItem(mrReport.results[selectedIndex + 1]);
@@ -438,6 +459,25 @@ function MaterialRequirementsReport() {
                 <TableCell />
                 <TableCell>{row.unauthorisedWarning}</TableCell>
             </TableRow>
+            {row.deliveries.map(a => (
+                <TableRow key={`${row.orderNumber}/${row.orderLine}/${a.deliverySequence}`}>
+                    <TableCell />
+                    <TableCell />
+                    <TableCell />
+                    <TableCell />
+                    <TableCell />
+                    <TableCell>{a.deliverySequence}</TableCell>
+                    <TableCell align="right">{a.deliveryQuantity}</TableCell>
+                    <TableCell align="right">{a.quantityReceived}</TableCell>
+                    <TableCell />
+                    <TableCell>{moment(a.requestedDeliveryDate).format('DD MMM YYYY')}</TableCell>
+                    <TableCell>
+                        {a.advisedDeliveryDate &&
+                            moment(a.advisedDeliveryDate).format('DD MMM YYYY')}
+                    </TableCell>
+                    <TableCell>{a.reference}</TableCell>
+                </TableRow>
+            ))}
             <TableRow key={`${row.orderNumber}/${row.orderLine}/h2`}>
                 <TableCell />
                 <TableCell colSpan={2}>
@@ -461,25 +501,6 @@ function MaterialRequirementsReport() {
                 <TableCell colSpan={4}>Contact: {row.supplierContact}</TableCell>
                 <TableCell colSpan={5}>{row.remarks}</TableCell>
             </TableRow>
-            {row.deliveries.map(a => (
-                <TableRow key={`${row.orderNumber}/${row.orderLine}/${row.deliverySequence}`}>
-                    <TableCell />
-                    <TableCell />
-                    <TableCell />
-                    <TableCell />
-                    <TableCell />
-                    <TableCell>{a.deliverySequence}</TableCell>
-                    <TableCell align="right">{a.deliveryQuantity}</TableCell>
-                    <TableCell align="right">{a.quantityReceived}</TableCell>
-                    <TableCell />
-                    <TableCell>{moment(a.requestedDeliveryDate).format('DD MMM YYYY')}</TableCell>
-                    <TableCell>
-                        {a.advisedDeliveryDate &&
-                            moment(a.advisedDeliveryDate).format('DD MMM YYYY')}
-                    </TableCell>
-                    <TableCell>{a.reference}</TableCell>
-                </TableRow>
-            ))}
         </>
     );
 
@@ -806,7 +827,7 @@ function MaterialRequirementsReport() {
                                         />
                                     </div>
                                 </Grid>
-                                {mrReportOrders && (
+                                {selectedPurchaseOrders.length > 0 && (
                                     <Grid item xs={12}>
                                         <div style={{ paddingTop: '50px' }}>
                                             <Table sx={{ maxWidth: 1280 }} size="small">
@@ -833,7 +854,9 @@ function MaterialRequirementsReport() {
                                                     </TableRow>
                                                 </TableHead>
                                                 <TableBody>
-                                                    {mrReportOrders.orders.map(row => showRow(row))}
+                                                    {selectedPurchaseOrders.map(row =>
+                                                        showRow(row)
+                                                    )}
                                                 </TableBody>
                                             </Table>
                                         </div>
