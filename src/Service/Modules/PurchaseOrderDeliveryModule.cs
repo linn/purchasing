@@ -11,6 +11,7 @@
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.RequestResources;
     using Linn.Purchasing.Service.Extensions;
+    using Linn.Purchasing.Service.Models;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
@@ -20,6 +21,7 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
+            app.MapGet("/purchasing/purchase-orders/acknowledge", this.GetApp);
             app.MapGet("/purchasing/purchase-orders/deliveries", this.Search);
             app.MapPatch("/purchasing/purchase-orders/deliveries/{orderNumber:int}/{orderLine:int}/{deliverySeq:int}", this.Patch);
             app.MapPost("/purchasing/purchase-orders/deliveries", this.BatchUpdate);
@@ -108,5 +110,9 @@
             await res.Negotiate(result);
         }
 
+        private async Task GetApp(HttpRequest req, HttpResponse res)
+        {
+            await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
+        }
     }
 }
