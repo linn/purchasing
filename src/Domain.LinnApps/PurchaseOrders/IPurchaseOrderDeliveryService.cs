@@ -10,7 +10,6 @@
             string supplierSearchTerm,
             string orderNumberSearchTerm,
             bool includeAcknowledged,
-            bool? exactOrderNumber = false,
             int? orderLine = null);
 
         PurchaseOrderDelivery UpdateDelivery(
@@ -28,5 +27,7 @@
             int orderLine,
             IEnumerable<PurchaseOrderDelivery> updated,
             IEnumerable<string> privileges);
+
+        void UpdateMiniOrderDeliveries(IEnumerable<PurchaseOrderDelivery> updated);
     }
 }

@@ -21,8 +21,6 @@
 
         private PurchaseOrderDeliveryKey key1;
 
-        private PurchaseOrderDeliveryKey key2;
-
         private BatchUpdateProcessResult result;
 
         [SetUp]

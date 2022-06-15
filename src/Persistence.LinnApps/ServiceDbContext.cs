@@ -124,6 +124,7 @@
         public DbSet<LinnWeek> LinnWeeks { get; set; }
 
         public DbSet<CancelledOrderDetail> CancelledPurchaseOrderDetails { get; set; }
+
         public DbSet<EdiOrder> EdiOrders { get; set; }
 
         public DbSet<StockLocator> StockLocators { get; set; }
@@ -139,6 +140,8 @@
         public DbSet<MiniOrder> MiniOrders { get; set; }
 
         public DbSet<MiniOrderDelivery> MiniOrdersDeliveries { get; set; }
+
+        public DbSet<MrPurchaseOrderDetail> MrOutstandingPurchaseOrders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -215,6 +218,8 @@
             this.BuildPurchaseLedgerMaster(builder);
             this.BuildMiniOrders(builder);
             this.BuildMiniOrderDeliveries(builder);
+            this.BuildMrPurchaseOrderDetails(builder);
+            this.BuildMrCallOffs(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1280,6 +1285,41 @@
             entity.HasMany(s => s.MrDetails).WithOne().HasForeignKey(c => new { c.JobRef, c.PartNumber });
         }
 
+        private void BuildMrPurchaseOrderDetails(ModelBuilder builder)
+        {
+            var entity = builder.Entity<MrPurchaseOrderDetail>().ToView("MR_OUTSTANDING_POS");
+            entity.HasKey(e => new { e.JobRef, e.OrderNumber, e.OrderLine });
+            entity.Property(e => e.JobRef).HasColumnName("JOBREF").HasColumnType("VARCHAR2");
+            entity.Property(e => e.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(e => e.OrderLine).HasColumnName("ORDER_LINE");
+            entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
+            entity.Property(e => e.DateOfOrder).HasColumnName("DATE_OF_ORDER");
+            entity.Property(e => e.OurQuantity).HasColumnName("OUR_QTY");
+            entity.Property(e => e.QuantityReceived).HasColumnName("QTY_RECEIVED");
+            entity.Property(e => e.QuantityInvoiced).HasColumnName("QTY_INVOICED");
+            entity.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID");
+            entity.Property(e => e.SupplierName).HasColumnName("SUPPLIER_NAME").HasColumnType("VARCHAR2");
+            entity.Property(e => e.SupplierContact).HasColumnName("CONTACT_AT_SUPPLIER").HasColumnType("VARCHAR2");
+            entity.Property(e => e.Remarks).HasColumnName("REMARKS").HasColumnType("VARCHAR2");
+            entity.Property(e => e.AuthorisedBy).HasColumnName("AUTHORIZED_BY").HasColumnType("VARCHAR2");
+            entity.HasMany(s => s.Deliveries).WithOne().HasForeignKey(c => new { c.JobRef, c.OrderNumber, c.OrderLine });
+        }
+
+        private void BuildMrCallOffs(ModelBuilder builder)
+        {
+            var entity = builder.Entity<MrPurchaseOrderDelivery>().ToView("MR_CALL_OFFS");
+            entity.HasKey(e => new { e.JobRef, e.OrderNumber, e.OrderLine, e.DeliverySequence });
+            entity.Property(e => e.JobRef).HasColumnName("JOBREF").HasColumnType("VARCHAR2");
+            entity.Property(e => e.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(e => e.OrderLine).HasColumnName("ORDER_LINE");
+            entity.Property(e => e.DeliverySequence).HasColumnName("CALL_OFF_NUMBER");
+            entity.Property(e => e.Quantity).HasColumnName("CALL_OFF_QTY");
+            entity.Property(e => e.QuantityReceived).HasColumnName("QTY_RECEIVED");
+            entity.Property(e => e.RequestedDeliveryDate).HasColumnName("REQUESTED_DELIVERY_DATE");
+            entity.Property(e => e.AdvisedDeliveryDate).HasColumnName("ADVISED_DELIVERY_DATE");
+            entity.Property(e => e.Reference).HasColumnName("REFERENCE");
+        }
+
         private void BuildMrDetails(ModelBuilder builder)
         {
             var entity = builder.Entity<MrDetail>().ToView("V_MRD");
@@ -1309,7 +1349,8 @@
             entity.Property(e => e.ProductionRequirementForSpares).HasColumnName("PROD_REQT_FOR_SPARES");
             entity.Property(e => e.ProductionRequirementForNonProduction).HasColumnName("PROD_REQT_FOR_NONPROD");
             entity.Property(e => e.RecommendedOrders).HasColumnName("RECOMMENDED_PURCH_ORDERS");
-            entity.Property(e => e.RecommenedStock).HasColumnName("RECOMMENDED_STOCK");
+            entity.Property(e => e.RecommendedStock).HasColumnName("RECOMMENDED_STOCK");
+            entity.Property(e => e.QuantityAvailableAtSupplier).HasColumnName("AVAILABLE_QTY_AT_SUPPLIER");
         }
 
         private void BuildMiniOrders(ModelBuilder builder)
@@ -1321,19 +1362,19 @@
             entity.Property(o => o.AcknowledgeComment).HasColumnName("ACKNOWLEDGE_COMMENT");
             entity.Property(o => o.RequestedDeliveryDate).HasColumnName("REQUESTED_DELIVERY_DATE");
             entity.Property(o => o.NumberOfSplitDeliveries).HasColumnName("NUMBER_OF_SPLIT_DELIVERIES");
-            entity.HasMany(d => d.Deliveries).WithOne(del => del.Order).HasForeignKey(del => del.OrderNumber);
         }
 
         private void BuildMiniOrderDeliveries(ModelBuilder builder)
         {
             var entity = builder.Entity<MiniOrderDelivery>().ToTable("MINI_ORDER_DELIVERIES");
             entity.HasKey(a => new { a.OrderNumber, a.DeliverySequence });
-            entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
-            entity.Property(o => o.DeliverySequence).HasColumnName("DELIVERY_SEQ");
-            entity.Property(o => o.AdvisedDate).HasColumnName("ADVISED_DATE");
-            entity.Property(o => o.RequestedDate).HasColumnName("REQUESTED_DATE");
-            entity.Property(o => o.OurQty).HasColumnName("OUR_QTY");
-            entity.Property(o => o.AvailableAtSupplier).HasColumnName("AVAILABLE_AT_SUPPLIER");
+            entity.Property(d => d.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(d => d.DeliverySequence).HasColumnName("DELIVERY_SEQ");
+            entity.Property(d => d.AdvisedDate).HasColumnName("ADVISED_DATE");
+            entity.Property(d => d.RequestedDate).HasColumnName("REQUESTED_DATE");
+            entity.Property(d => d.OurQty).HasColumnName("OUR_QTY");
+            entity.Property(d => d.AvailableAtSupplier).HasColumnName("AVAILABLE_AT_SUPPLIER");
+            entity.HasOne(d => d.Order).WithMany(o => o.Deliveries).HasForeignKey(d => d.OrderNumber);
         }
 
         private void BuildEdiOrders(ModelBuilder builder)

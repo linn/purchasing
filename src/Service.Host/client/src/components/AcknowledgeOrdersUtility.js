@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -55,8 +55,7 @@ function AcknowledgeOrdersUtility() {
                 purchaseOrderDeliveriesActions.fetchByHref(
                     `${purchaseOrderDeliveries.uri}?${queryString.stringify({
                         orderNumberSearchTerm,
-                        includeAcknowledged: true,
-                        exactOrderNumber: true
+                        includeAcknowledged: true
                     })}`
                 )
             );
@@ -195,15 +194,31 @@ function AcknowledgeOrdersUtility() {
     const setUploadSnackbarVisible = () =>
         dispatch(batchPurchaseOrderDeliveriesUploadActions.setMessageVisible(false));
 
-    useEffect(() => {
-        if (updatedItem) {
+    const refreshResults = useCallback(() => {
+        setRows([]);
+        if (searchOptions.orderNumberSearchTerm || searchOptions.supplierSearchTerm) {
             dispatch(
                 purchaseOrderDeliveriesActions.fetchByHref(
                     `${purchaseOrderDeliveries.uri}?${queryString.stringify(searchOptions)}`
                 )
             );
+        } else if (orderNumberSearchTerm) {
+            dispatch(
+                purchaseOrderDeliveriesActions.fetchByHref(
+                    `${purchaseOrderDeliveries.uri}?${queryString.stringify({
+                        orderNumberSearchTerm,
+                        includeAcknowledged: true
+                    })}`
+                )
+            );
         }
-    }, [updatedItem, dispatch, searchOptions]);
+    }, [dispatch, searchOptions, orderNumberSearchTerm]);
+
+    useEffect(() => {
+        if (updatedItem) {
+            refreshResults();
+        }
+    }, [updatedItem, dispatch, searchOptions, refreshResults]);
 
     const handleSaveClick = () => {
         setApplyChangesDialogOpen(false);
@@ -222,27 +237,6 @@ function AcknowledgeOrdersUtility() {
             dispatch(purchaseOrderDeliveryActions.patch(s.id, { from, to }));
             setRows([]);
         });
-    };
-
-    const refreshResults = () => {
-        setRows([]);
-        if (searchOptions.orderNumberSearchTerm || searchOptions.supplierSearchTerm) {
-            dispatch(
-                purchaseOrderDeliveriesActions.fetchByHref(
-                    `${purchaseOrderDeliveries.uri}?${queryString.stringify(searchOptions)}`
-                )
-            );
-        } else if (orderNumberSearchTerm) {
-            dispatch(
-                purchaseOrderDeliveriesActions.fetchByHref(
-                    `${purchaseOrderDeliveries.uri}?${queryString.stringify({
-                        orderNumberSearchTerm,
-                        includeAcknowledged: true,
-                        exactOrderNumber: true
-                    })}`
-                )
-            );
-        }
     };
 
     return (

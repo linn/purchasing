@@ -19,10 +19,10 @@
             this.resultsModelResourceBuilder = resultsModelResourceBuilder;
         }
 
-        public IResult<ReportReturnResource> GetReport(string partNumber)
+        public IResult<ReportReturnResource> GetReport(string partNumber, string jobRef)
         {
             var resource = (ReportReturnResource)this.resultsModelResourceBuilder.Build(
-                this.reportService.GetUsedOn(partNumber),
+                this.reportService.GetUsedOn(partNumber, jobRef),
                 null);
 
             return new SuccessResult<ReportReturnResource>(resource);

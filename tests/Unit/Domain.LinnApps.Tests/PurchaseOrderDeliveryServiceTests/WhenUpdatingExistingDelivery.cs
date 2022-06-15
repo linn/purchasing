@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
@@ -91,6 +92,9 @@
                     AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
+            this.Repository.FindBy(Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
+                .Returns(this.existingDelivery);
+
             this.MiniOrderRepository.FindById(this.order.OrderNumber).Returns(new MiniOrder { });
             this.result = this.Sut.UpdateDeliveriesForOrderLine(
                 this.order.OrderNumber,
@@ -120,8 +124,8 @@
                 Math.Round(
                     this.line.OrderUnitPriceCurrency.GetValueOrDefault() * updated.OurDeliveryQty.GetValueOrDefault(),
                     2) + this.vatAmount);
-            updated.BaseOurUnitPrice.Should().Be(updateData.BaseOurUnitPrice);
-            updated.BaseOrderUnitPrice.Should().Be(updateData.BaseOrderUnitPrice);
+            updated.BaseOurUnitPrice.Should().Be(this.line.BaseOurUnitPrice);
+            updated.BaseOrderUnitPrice.Should().Be(this.line.BaseOrderUnitPrice);
             updated.BaseNetTotal.Should().Be(Math.Round(
                 updateData.OurDeliveryQty.GetValueOrDefault() * this.line.BaseOurUnitPrice.GetValueOrDefault(),
                 2));

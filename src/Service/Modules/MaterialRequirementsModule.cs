@@ -32,6 +32,7 @@
             app.MapGet("/purchasing/material-requirements", this.GetApp);
             app.MapGet("/purchasing/material-requirements/report", this.GetApp);
             app.MapPost("/purchasing/material-requirements", this.GetMaterialRequirements);
+            app.MapPost("/purchasing/material-requirements/orders", this.GetPurchaseOrders);
             app.MapGet("/purchasing/material-requirements/options", this.GetMaterialRequirementsOptions);
         }
 
@@ -89,9 +90,10 @@
             HttpRequest req,
             HttpResponse res,
             IMrUsedOnReportFacadeService service,
-            string partNumber)
+            string partNumber,
+            string jobRef)
         {
-            var result = service.GetReport(partNumber);
+            var result = service.GetReport(partNumber, jobRef);
             await res.Negotiate(result);
         }
         
@@ -107,6 +109,17 @@
             MrRequestResource request)
         {
             var result = facadeService.GetMaterialRequirements(request, req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task GetPurchaseOrders(
+            HttpRequest req,
+            HttpResponse res,
+            IMaterialRequirementsReportFacadeService facadeService,
+            MrRequestResource request)
+        {
+            var result = facadeService.GetMaterialRequirementOrders(request, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }

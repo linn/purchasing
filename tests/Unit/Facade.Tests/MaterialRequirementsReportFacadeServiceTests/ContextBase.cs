@@ -21,7 +21,8 @@
             this.Sut = new MaterialRequirementsReportFacadeService(
                 this.MaterialRequirementsReportService,
                 new MrReportResourceBuilder(),
-                new MrReportOptionsResourceBuilder());
+                new MrReportOptionsResourceBuilder(),
+                new MrPurchaseOrderResourceBuilder());
         }
     }
 }

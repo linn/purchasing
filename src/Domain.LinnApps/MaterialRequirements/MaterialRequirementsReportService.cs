@@ -21,6 +21,8 @@
 
         private readonly IRepository<Employee, int> employeeRepository;
 
+        private readonly IQueryRepository<MrPurchaseOrderDetail> purchaseOrdersRepository;
+
         private Expression<Func<MrHeader, bool>> filterQuery;
 
         public MaterialRequirementsReportService(
@@ -28,13 +30,15 @@
             IRepository<MrpRunLog, int> runLogRepository,
             ISingleRecordRepository<MrMaster> masterRepository,
             IRepository<Planner, int> plannerRepository,
-            IRepository<Employee, int> employeeRepository)
+            IRepository<Employee, int> employeeRepository,
+            IQueryRepository<MrPurchaseOrderDetail> purchaseOrdersRepository)
         {
             this.repository = repository;
             this.runLogRepository = runLogRepository;
             this.masterRepository = masterRepository;
             this.plannerRepository = plannerRepository;
             this.employeeRepository = employeeRepository;
+            this.purchaseOrdersRepository = purchaseOrdersRepository;
         }
 
         public MrReport GetMaterialRequirements(
@@ -143,6 +147,16 @@
                            StockLevelOptions = stockLevelOptions,
                            OrderByOptions = orderByOptions
                        };
+        }
+
+        public IEnumerable<MrPurchaseOrderDetail> GetMaterialRequirementsOrders(
+            string jobRef,
+            IEnumerable<string> parts)
+        {
+            var results =
+                this.purchaseOrdersRepository.FilterBy(a => a.JobRef == jobRef && parts.Contains(a.PartNumber));
+
+            return results.OrderBy(a => a.OrderNumber).ThenBy(b => b.OrderLine);
         }
     }
 }

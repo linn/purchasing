@@ -91,6 +91,21 @@
                     tags.Add(new MrTag("Stock", "redBoxOutline"));
                 }
 
+                if (detail.LinnWeekNumber < 0 && detail.PurchaseOrders > 0)
+                {
+                    // immediate week with purchase orders
+                    tags.Add(
+                        detail.QuantityAvailableAtSupplier >= detail.PurchaseOrders
+                            ? new MrTag("Purchases", "greenBoxOutline")
+                            : new MrTag("Purchases", "blueBoxOutline"));
+                }
+
+                if (detail.LinnWeekNumber < 0 && detail.UnauthorisedPurchaseOrders > 0)
+                {
+                    // immediate week with unauthorised purchase orders
+                    tags.Add(new MrTag("Unauthorised POs", "blueBoxOutline"));
+                }
+
                 this.SetDetailValuesForWeek(detailResources, relativeWeek, detail, tags);
             }
 
@@ -152,14 +167,16 @@
                 detail.PurchaseOrders,
                 null,
                 relativeWeek,
-                detail.Segment);
+                detail.Segment,
+                tags.FirstOrDefault(a => a.Title == "Purchases"));
             this.SetValue(
                 detailResources,
                 "Unauthorised POs",
                 detail.UnauthorisedPurchaseOrders,
                 null,
                 relativeWeek,
-                detail.Segment);
+                detail.Segment,
+                tags.FirstOrDefault(a => a.Title == "Unauthorised POs"));
             this.SetValue(
                 detailResources,
                 "Assumed Purchases",
@@ -262,7 +279,7 @@
             this.SetValue(
                 detailResources,
                 "Recom Stock",
-                detail.RecommenedStock,
+                detail.RecommendedStock,
                 null,
                 relativeWeek,
                 detail.Segment);
@@ -393,9 +410,10 @@
             yield return new LinkResource
                              {
                                  Rel = "part-used-on",
-                                 Href = $"/purchasing/material-requirements/used-on-report?partNumber={entity.PartNumber}"
+                                 Href = $"/purchasing/material-requirements/used-on-report?partNumber={entity.PartNumber}&jobRef={entity.JobRef}"
                              };
             yield return new LinkResource { Rel = "part", Href = $"/parts/{entity.PartId}" };
+            yield return new LinkResource { Rel = "part-supplier", Href = $"/purchasing/part-suppliers/record?partId={entity.PartId}&supplierId={entity.PreferredSupplierId}" };
         }
 
         private void SetRelativeWeekValue(
@@ -410,59 +428,45 @@
             {
                 case -1:
                     detail.ImmediateItem = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
-                    detail.Immediate = stringValue;
                     break;
                 case 0:
                     detail.Week0Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
-                    detail.Week0 = stringValue;
                     break;
                 case 1:
                     detail.Week1Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
-                    detail.Week1 = stringValue;
                     break;
                 case 2:
                     detail.Week2Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
-                    detail.Week2 = stringValue;
                     break;
                 case 3:
                     detail.Week3Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
-                    detail.Week3 = stringValue;
                     break;
                 case 4:
                     detail.Week4Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
-                    detail.Week4 = stringValue;
                     break;
                 case 5:
                     detail.Week5Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
-                    detail.Week5 = stringValue;
                     break;
                 case 6:
                     detail.Week6Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
-                    detail.Week6 = stringValue;
                     break;
                 case 7:
                     detail.Week7Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
-                    detail.Week7 = stringValue;
                     break;
                 case 8:
                     detail.Week8Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
-                    detail.Week8 = stringValue;
                     break;
                 case 9:
                     detail.Week9Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
-                    detail.Week9 = stringValue;
                     break;
                 case 10:
                     detail.Week10Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
-                    detail.Week10 = stringValue;
                     break;
                 case 11:
                     detail.Week11Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
-                    detail.Week11 = stringValue;
                     break;
                 case 12:
                     detail.Week12Item = new MrDetailItemResource { Tag = tag, Value = value, TextValue = textValue };
-                    detail.Week12 = stringValue;
                     break;
                 default:
                     throw new DomainException("Invalid relative week calculation");

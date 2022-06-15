@@ -70,6 +70,7 @@
                 .AddTransient<IBuilder<EdiOrder>, EdiOrderResourceBuilder>()
                 .AddTransient<IBuilder<PurchaseOrderDelivery>, PurchaseOrderDeliveryResourceBuilder>()
                 .AddTransient<IBuilder<MrReport>, MrReportResourceBuilder>()
+                .AddTransient<IBuilder<MrPurchaseOrderDetail>, MrPurchaseOrderResourceBuilder>()
                 .AddTransient<IBuilder<MrReportOptions>, MrReportOptionsResourceBuilder>();
         }
 

@@ -19,15 +19,24 @@ import NotesIcon from '@mui/icons-material/Notes';
 import ShopIcon from '@mui/icons-material/Shop';
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
+import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import Link from '@mui/material/Link';
 import { DataGrid } from '@mui/x-data-grid';
 import makeStyles from '@mui/styles/makeStyles';
 
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+
 import { useLocation } from 'react-router';
 import queryString from 'query-string';
 
-import { mrReport as mrReportItem } from '../../itemTypes';
+import moment from 'moment';
+import { mrReport as mrReportItem, mrReportOrders as mrReportOrdersItem } from '../../itemTypes';
 import mrReportActions from '../../actions/mrReportActions';
+import mrReportOrdersActions from '../../actions/mrReportOrdersActions';
 
 import history from '../../history';
 import config from '../../config';
@@ -38,12 +47,18 @@ function MaterialRequirementsReport() {
     const [selectedSegment, setSelectedSegment] = useState(0);
     const [nextPart, setNextPart] = useState(null);
     const [previousPart, setPreviousPart] = useState(null);
+    const [selectedPurchaseOrders, setSelectedPurchaseOrders] = useState([]);
 
     const options = useLocation();
 
     const mrReport = useSelector(state => itemSelectorHelpers.getItem(state.mrReport));
     const mrReportLoading = useSelector(state =>
         itemSelectorHelpers.getItemLoading(state.mrReport)
+    );
+
+    const mrReportOrders = useSelector(state => itemSelectorHelpers.getItem(state.mrReportOrders));
+    const mrReportOrdersLoading = useSelector(state =>
+        itemSelectorHelpers.getItemLoading(state.mrReportOrders)
     );
 
     const theme = createTheme({
@@ -87,12 +102,30 @@ function MaterialRequirementsReport() {
                 setNextPart(null);
             }
             setPreviousPart(null);
+
+            dispatch(
+                mrReportOrdersActions.postByHref(mrReportOrdersItem.uri, {
+                    partNumbers: mrReport.results.map(r => r.partNumber),
+                    jobRef: mrReport.results[0].jobRef
+                })
+            );
         } else {
             setSelectedItem(null);
             setNextPart(null);
             setPreviousPart(null);
+            dispatch(mrReportOrdersActions.clearItem());
         }
-    }, [mrReport]);
+    }, [mrReport, dispatch]);
+
+    useEffect(() => {
+        if (mrReportOrders?.orders && selectedItem) {
+            setSelectedPurchaseOrders(
+                mrReportOrders.orders.filter(a => a.partNumber === selectedItem.partNumber)
+            );
+        } else {
+            setSelectedPurchaseOrders([]);
+        }
+    }, [mrReportOrders, selectedItem]);
 
     const useStyles = makeStyles(() => ({
         headerText: {
@@ -108,6 +141,16 @@ function MaterialRequirementsReport() {
         redBoxOutline: {
             borderStyle: 'solid',
             borderColor: 'red !important',
+            borderWidth: 'thin'
+        },
+        blueBoxOutline: {
+            borderStyle: 'solid',
+            borderColor: 'blue !important',
+            borderWidth: 'thin'
+        },
+        greenBoxOutline: {
+            borderStyle: 'solid',
+            borderColor: 'green !important',
             borderWidth: 'thin'
         }
     }));
@@ -142,7 +185,7 @@ function MaterialRequirementsReport() {
         if (selectedIndex === mrReport.results.length - 2) {
             setNextPart(null);
         } else {
-            setNextPart(mrReport.results[selectedIndex + 1].partNumber);
+            setNextPart(mrReport.results[selectedIndex + 2].partNumber);
         }
 
         setSelectedItem(mrReport.results[selectedIndex + 1]);
@@ -341,19 +384,19 @@ function MaterialRequirementsReport() {
             ...b,
             id: i,
             immediate: b.immediateItem?.textValue || b.immediateItem?.value,
-            week0: b.week0Item.textValue || b.week0Item.value,
-            week1: b.week1Item.textValue || b.week1Item.value,
-            week2: b.week2Item.textValue || b.week2Item.value,
-            week3: b.week3Item.textValue || b.week3Item.value,
-            week4: b.week4Item.textValue || b.week4Item.value,
-            week5: b.week5Item.textValue || b.week5Item.value,
-            week6: b.week6Item.textValue || b.week6Item.value,
-            week7: b.week7Item.textValue || b.week7Item.value,
-            week8: b.week8Item.textValue || b.week8Item.value,
-            week9: b.week9Item.textValue || b.week9Item.value,
-            week10: b.week10Item.textValue || b.week10Item.value,
-            week11: b.week11Item.textValue || b.week11Item.value,
-            week12: b.week12Item.textValue || b.week12Item.value
+            week0: b.week0Item?.textValue || b.week0Item?.value,
+            week1: b.week1Item?.textValue || b.week1Item?.value,
+            week2: b.week2Item?.textValue || b.week2Item?.value,
+            week3: b.week3Item?.textValue || b.week3Item?.value,
+            week4: b.week4Item?.textValue || b.week4Item?.value,
+            week5: b.week5Item?.textValue || b.week5Item?.value,
+            week6: b.week6Item?.textValue || b.week6Item?.value,
+            week7: b.week7Item?.textValue || b.week7Item?.value,
+            week8: b.week8Item?.textValue || b.week8Item?.value,
+            week9: b.week9Item?.textValue || b.week9Item?.value,
+            week10: b.week10Item?.textValue || b.week10Item?.value,
+            week11: b.week11Item?.textValue || b.week11Item?.value,
+            week12: b.week12Item?.textValue || b.week12Item?.value
         }));
 
     const getRows = (item, segment) => {
@@ -390,6 +433,76 @@ function MaterialRequirementsReport() {
             goToNextPart();
         }
     };
+
+    const showRow = row => (
+        <>
+            <TableRow key={`${row.orderNumber}/${row.orderLine}/h1`}>
+                <TableCell component="th" scope="row">
+                    <Link
+                        href={utilities.getHref(row, 'view-order')}
+                        underline="hover"
+                        color="inherit"
+                        variant="body2"
+                    >
+                        {row.orderNumber}
+                    </Link>
+                </TableCell>
+                <TableCell>{row.orderLine}</TableCell>
+                <TableCell>{moment(row.dateOfOrder).format('DD MMM YYYY')}</TableCell>
+                <TableCell>{row.supplierId}</TableCell>
+                <TableCell>{row.supplierName}</TableCell>
+                <TableCell />
+                <TableCell align="right">{row.quantity}</TableCell>
+                <TableCell align="right">{row.quantityReceived}</TableCell>
+                <TableCell align="right">{row.quantityInvoiced}</TableCell>
+                <TableCell />
+                <TableCell />
+                <TableCell>{row.unauthorisedWarning}</TableCell>
+            </TableRow>
+            {row.deliveries.map(a => (
+                <TableRow key={`${row.orderNumber}/${row.orderLine}/${a.deliverySequence}`}>
+                    <TableCell />
+                    <TableCell />
+                    <TableCell />
+                    <TableCell />
+                    <TableCell />
+                    <TableCell>{a.deliverySequence}</TableCell>
+                    <TableCell align="right">{a.deliveryQuantity}</TableCell>
+                    <TableCell align="right">{a.quantityReceived}</TableCell>
+                    <TableCell />
+                    <TableCell>{moment(a.requestedDeliveryDate).format('DD MMM YYYY')}</TableCell>
+                    <TableCell>
+                        {a.advisedDeliveryDate &&
+                            moment(a.advisedDeliveryDate).format('DD MMM YYYY')}
+                    </TableCell>
+                    <TableCell>{a.reference}</TableCell>
+                </TableRow>
+            ))}
+            <TableRow key={`${row.orderNumber}/${row.orderLine}/h2`}>
+                <TableCell />
+                <TableCell colSpan={2}>
+                    <Button
+                        color="navBut"
+                        size="small"
+                        onClick={() => {
+                            window.open(
+                                `${config.proxyRoot}${utilities.getHref(
+                                    row,
+                                    'acknowledge-deliveries'
+                                )}`,
+                                '_blank'
+                            );
+                        }}
+                        startIcon={<ModeEditOutlineOutlinedIcon />}
+                    >
+                        Ack/Update Deliveries
+                    </Button>
+                </TableCell>
+                <TableCell colSpan={4}>Contact: {row.supplierContact}</TableCell>
+                <TableCell colSpan={5}>{row.remarks}</TableCell>
+            </TableRow>
+        </>
+    );
 
     return (
         <div className="print-landscape" onKeyDown={onKeyPressed} tabIndex={-1} role="textbox">
@@ -475,11 +588,10 @@ function MaterialRequirementsReport() {
                                                 size="small"
                                                 onClick={() => {
                                                     window.open(
-                                                        `${config.proxyRoot}${
-                                                            selectedItem.links.find(
-                                                                l => l.rel === 'part-used-on'
-                                                            )?.href
-                                                        }`,
+                                                        `${config.proxyRoot}${utilities.getHref(
+                                                            selectedItem,
+                                                            'part-used-on'
+                                                        )}`,
                                                         '_blank'
                                                     );
                                                 }}
@@ -521,11 +633,8 @@ function MaterialRequirementsReport() {
                                         </Typography>
                                     </Stack>
                                 </Grid>
-                                <Grid item xs={4}>
+                                <Grid item xs={2}>
                                     <Stack direction="row" spacing={2}>
-                                        <Typography variant="body2">
-                                            Jobref: {selectedItem.jobRef}
-                                        </Typography>
                                         <Link
                                             href={utilities.getHref(selectedItem, 'part')}
                                             underline="hover"
@@ -536,7 +645,14 @@ function MaterialRequirementsReport() {
                                         </Link>
                                     </Stack>
                                 </Grid>
-                                <Grid item xs={12}>
+                                <Grid item xs={2}>
+                                    <Stack direction="row" spacing={2}>
+                                        <Typography variant="body2">
+                                            Jobref: {selectedItem.jobRef}
+                                        </Typography>
+                                    </Stack>
+                                </Grid>
+                                <Grid item xs={8}>
                                     <Stack direction="row" spacing={2}>
                                         <Typography variant="body2">
                                             Supplier: {selectedItem.preferredSupplierId}{' '}
@@ -551,6 +667,18 @@ function MaterialRequirementsReport() {
                                         <Typography variant="body2">
                                             Order Units: {selectedItem.orderUnits}
                                         </Typography>
+                                    </Stack>
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <Stack direction="row" spacing={2}>
+                                        <Link
+                                            href={utilities.getHref(selectedItem, 'part-supplier')}
+                                            underline="hover"
+                                            color="inherit"
+                                            variant="body2"
+                                        >
+                                            View Part Supplier
+                                        </Link>
                                     </Stack>
                                 </Grid>
                                 <Grid item xs={12}>
@@ -699,6 +827,48 @@ function MaterialRequirementsReport() {
                                         />
                                     </div>
                                 </Grid>
+                                {selectedPurchaseOrders.length > 0 && (
+                                    <Grid item xs={12}>
+                                        <div style={{ paddingTop: '50px' }}>
+                                            <Table sx={{ maxWidth: 1280 }} size="small">
+                                                <TableHead>
+                                                    <TableRow>
+                                                        <TableCell>Order</TableCell>
+                                                        <TableCell>Line</TableCell>
+                                                        <TableCell>Date</TableCell>
+                                                        <TableCell>Supplier</TableCell>
+                                                        <TableCell>Supplier Name</TableCell>
+                                                        <TableCell>Delivery</TableCell>
+                                                        <TableCell align="right">
+                                                            Qty Ordered
+                                                        </TableCell>
+                                                        <TableCell align="right">
+                                                            Qty Received
+                                                        </TableCell>
+                                                        <TableCell align="right">
+                                                            Qty Invoiced
+                                                        </TableCell>
+                                                        <TableCell>Requested</TableCell>
+                                                        <TableCell>Advised</TableCell>
+                                                        <TableCell>Ref</TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+                                                    {selectedPurchaseOrders.map(row =>
+                                                        showRow(row)
+                                                    )}
+                                                </TableBody>
+                                            </Table>
+                                        </div>
+                                    </Grid>
+                                )}
+                                {mrReportOrdersLoading && (
+                                    <Grid item xs={12}>
+                                        <Typography variant="body2" style={{ fontWeight: 'bold' }}>
+                                            Just checking for orders...
+                                        </Typography>
+                                    </Grid>
+                                )}
                             </Grid>
                         )}
                     </div>

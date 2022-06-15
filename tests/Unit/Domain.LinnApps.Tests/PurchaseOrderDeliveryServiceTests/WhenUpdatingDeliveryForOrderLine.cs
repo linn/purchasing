@@ -1,7 +1,9 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderDeliveryServiceTests
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
@@ -51,6 +53,8 @@
                                                                                            }
                                                                                    }
                                                                  });
+            this.Repository.FindBy(Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
+                .Returns(deliveries.First());
             this.result = this.Sut.UpdateDeliveriesForOrderLine(
                 1,
                 1,
