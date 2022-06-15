@@ -48,10 +48,10 @@
             {
                 throw new UnauthorisedActionException("You are not authorised to create purchase orders");
             }
-            // add id to pl_order_postings using next val plorp_seq
 
-            //select nomacc_id
-            //from nominal_accounts where
+            // add id to pl_order_postings using next val plorp_seq
+            // select nomacc_id
+            // from nominal_accounts where
             //    nominal = p_nom and department = p_dept;
         }
 
@@ -78,7 +78,8 @@
                                               CancelledById = currentUserId,
                                               ReasonCancelled = detail.Cancelled,
                                               ValueCancelled = detail.BaseDetailTotal
-                                              //// todo check for valuecancelled that:
+
+                                              // todo check for valuecancelled that:
                                               // baseDetailTotal == round(nvl(v_qty_outstanding, 0) * :new.base_our_price, 2)
                                           };
                 detail.Cancelled = "Y";
@@ -97,8 +98,7 @@
 
             this.UpdateOrderProperties(current, updated);
             this.UpdateDetails(current.Details, updated.Details);
-            //Update pl_order_postings? Or just on create? todo investigate
-
+            // Update pl_order_postings? Or just on create? todo investigate
             return current;
         }
 
@@ -110,20 +110,6 @@
                 if (currentDetail != null)
                 {
                     this.UpdateDetailProperties(currentDetail, detail);
-
-                    foreach (var delivery in detail.PurchaseDeliveries)
-                    {
-                        var currentDelivery = currentDetail.PurchaseDeliveries.FirstOrDefault(x => x.DeliverySeq == delivery.DeliverySeq);
-                        if (currentDelivery != null)
-                        {
-                            this.UpdateDeliveryProperties(currentDelivery, delivery);
-                        }
-                        else
-                        {
-                            ////todo check delivery.DeliverySeq of new delivery object is all good once front end done, same with details
-                            currentDetail.PurchaseDeliveries.Add(delivery);
-                        }
-                    }
                 }
                 else
                 {
@@ -155,33 +141,10 @@
             current.PeriodFilCancelled = updated.PeriodFilCancelled;
         }
 
-        private void UpdateDeliveryProperties(PurchaseOrderDelivery current, PurchaseOrderDelivery updated)
-        {
-            current.Cancelled = updated.Cancelled;
-            current.DateAdvised = updated.DateAdvised;
-            current.DateRequested = updated.DateRequested;
-            current.NetTotalCurrency = updated.NetTotalCurrency;
-            current.BaseNetTotal = updated.BaseNetTotal;
-            current.OrderDeliveryQty = updated.OrderDeliveryQty;
-            current.OurDeliveryQty = updated.OurDeliveryQty;
-            current.QtyNetReceived = updated.QtyNetReceived;
-            current.QuantityOutstanding = updated.QuantityOutstanding;
-            current.CallOffDate = updated.CallOffDate;
-            current.BaseOurUnitPrice = updated.BaseOurUnitPrice;
-            current.SupplierConfirmationComment = updated.SupplierConfirmationComment;
-            current.OurUnitPriceCurrency = updated.OurUnitPriceCurrency;
-            current.OrderUnitPriceCurrency = updated.OrderUnitPriceCurrency;
-            current.BaseOrderUnitPrice = updated.BaseOrderUnitPrice;
-            current.VatTotalCurrency = updated.VatTotalCurrency;
-            current.BaseVatTotal = updated.BaseVatTotal;
-            current.DeliveryTotalCurrency = updated.DeliveryTotalCurrency;
-            current.BaseDeliveryTotal = updated.BaseDeliveryTotal;
-        }
-
         private void UpdateDetailProperties(PurchaseOrderDetail current, PurchaseOrderDetail updated)
         {
             current.PartNumber = updated.PartNumber;
-            current.Cancelled = updated.Cancelled; 
+            current.Cancelled = updated.Cancelled;
             current.BaseNetTotal = updated.BaseNetTotal;
             current.NetTotalCurrency = updated.NetTotalCurrency;
             current.OurQty = updated.OurQty;

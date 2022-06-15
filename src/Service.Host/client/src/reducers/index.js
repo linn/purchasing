@@ -58,16 +58,25 @@ import purchaseOrders from './purchaseOrders';
 import whatsDueInReport from './whatsDueInReport';
 import purchaseOrderReqStates from './purchaseOrderReqStates';
 import outstandingPoReqsReport from './outstandingPoReqsReport';
+import sendEdiEmail from './sendEdiEmail';
 import sendPurchaseOrderReqEmail from './sendPurchaseOrderReqEmail';
 import sendPurchaseOrderReqAuthEmail from './sendPurchaseOrderReqAuthEmail';
 import sendPurchaseOrderReqFinanceEmail from './sendPurchaseOrderReqFinanceEmail';
 import prefSupReceiptsReport from './prefSupReceiptsReport';
 import whatsInInspectionReport from './whatsInInspectionReport';
 import mrpRunLog from './mrpRunLog';
-import mrpRunLogs from './mrpRunLogs';
 import runMrp from './runMrp';
 import mrMaster from './mrMaster';
 import applyForecastingPercentageChange from './applyForecastingPercentageChange';
+import ediOrders from './ediOrders';
+import mrUsedOnReport from './mrUsedOnReport';
+import purchaseOrderDelivery from './purchaseOrderDelivery';
+import purchaseOrderDeliveries from './purchaseOrderDeliveries';
+import batchPurchaseOrderDeliveriesUpload from './batchPurchaseOrderDeliveriesUpload';
+import mrReport from './mrReport';
+import mrReportOptions from './mrReportOptions';
+import pOReqCheckIfCanAuthOrder from './pOReqCheckIfCanAuthOrder';
+import mrReportOrders from './mrReportOrders';
 import shortagesReport from './shortagesReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
@@ -80,16 +89,21 @@ const rootReducer = history =>
         address,
         addresses,
         applyForecastingPercentageChange,
+        batchPurchaseOrderDeliveriesUpload,
         bulkLeadTimesUpload,
         countries,
         currencies,
         deliveryAddresses,
         departments,
+        ediOrders,
         employees,
         manufacturers,
         mrMaster,
         mrpRunLog,
-        mrpRunLogs,
+        mrReport,
+        mrReportOptions,
+        mrReportOrders,
+        mrUsedOnReport,
         nominals,
         openDebitNotes,
         orderMethods,
@@ -101,12 +115,13 @@ const rootReducer = history =>
         partCategories,
         partPriceConversions,
         parts,
+        partsReceivedReport,
         partSupplier,
         partSuppliers,
         planners,
         plCreditDebitNote,
         plCreditDebitNotes,
-        partsReceivedReport,
+        pOReqCheckIfCanAuthOrder,
         preferredSupplierChange,
         prefSupReceiptsReport,
         priceChangeReasons,
@@ -114,10 +129,13 @@ const rootReducer = history =>
         purchaseOrderReq,
         purchaseOrderReqs,
         purchaseOrderReqStates,
+        purchaseOrderDelivery,
+        purchaseOrderDeliveries,
         purchaseOrders,
         putSupplierOnHold,
         router: connectRouter(history),
         runMrp,
+        sendEdiEmail,
         sendPlNoteEmail,
         sendPurchaseOrderReqEmail,
         sendPurchaseOrderReqAuthEmail,

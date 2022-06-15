@@ -22,7 +22,7 @@
 
         public Employee DeliveryConfirmedBy { get; set; }
 
-        public int DeliveryConfirmedById { get; set; }
+        public int? DeliveryConfirmedById { get; set; }
 
         public string DeliveryInstructions { get; set; }
 
@@ -40,7 +40,7 @@
 
         public int OrderNumber { get; set; }
 
-        public ICollection<PurchaseOrderPosting> OrderPostings { get; set; }
+        public PurchaseOrderPosting OrderPosting { get; set; }
 
         public string OrderUnitOfMeasure { get; set; }
 
@@ -71,5 +71,7 @@
         public string SuppliersDesignation { get; set; }
 
         public decimal? VatTotalCurrency { get; set; }
+
+        public decimal? OrderConversionFactor { get; set; }
     }
 }

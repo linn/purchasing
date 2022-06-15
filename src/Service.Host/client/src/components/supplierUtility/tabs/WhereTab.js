@@ -24,7 +24,8 @@ function WhereTab({
     invoiceAddressId,
     invoiceFullAddress,
     country,
-    handleFieldChange
+    handleFieldChange,
+    supplierName
 }) {
     const dispatch = useDispatch();
     const useStyles = makeStyles(theme => ({
@@ -71,6 +72,8 @@ function WhereTab({
             if (orderAddressDialogOpen) {
                 handleFieldChange('orderAddressId', address.addressId);
                 handleFieldChange('orderFullAddress', address.fullAddress);
+                handleFieldChange('orderFullAddress', address.fullAddress);
+                handleFieldChange('country', address.countryCode);
                 setOrderAddressDialogOpen(false);
                 dispatch(addressActions.clearItem());
             }
@@ -95,6 +98,7 @@ function WhereTab({
                     </IconButton>
                     <div className={classes.dialog}>
                         <AddressUtility
+                            addressee={supplierName}
                             inDialogBox
                             closeDialog={() => setOrderAddressDialogOpen(false)}
                         />
@@ -133,9 +137,11 @@ function WhereTab({
                     }}
                     label="Order Addressee"
                     modal
+                    openModalOnClick={false}
                     propertyName="orderAddressId"
                     items={addressesSearchResults}
                     value={orderAddressId}
+                    handleFieldChange={handleFieldChange}
                     loading={addressesSearchLoading}
                     fetchItems={searchAddresses}
                     links={false}
@@ -157,11 +163,23 @@ function WhereTab({
             </Grid>
             <Grid item xs={3} />
             <Grid item xs={4}>
-                <Button variant="outlined" onClick={() => setOrderAddressDialogOpen(true)}>
+                <Button variant="outlined" onClick={() => setInvoiceAddressDialogOpen(true)}>
                     Create New Invoice Address
                 </Button>
             </Grid>
-            <Grid item xs={8} />
+            <Grid item xs={4}>
+                <Button
+                    variant="outlined"
+                    disabled={!orderAddressId}
+                    onClick={() => {
+                        handleFieldChange('invoiceAddressId', orderAddressId);
+                        handleFieldChange('invoiceFullAddress', orderFullAddress);
+                    }}
+                >
+                    Copy Order Address
+                </Button>
+            </Grid>
+            <Grid item xs={4} />
 
             <Grid item xs={3}>
                 <Typeahead
@@ -169,8 +187,10 @@ function WhereTab({
                         handleFieldChange('invoiceAddressId', newValue.addressId);
                         handleFieldChange('invoiceFullAddress', newValue.fullAddress);
                     }}
+                    handleFieldChange={handleFieldChange}
                     label="Invoice Addressee"
                     modal
+                    openModalOnClick={false}
                     propertyName="invoiceAddressId"
                     items={addressesSearchResults}
                     value={invoiceAddressId}
@@ -229,13 +249,15 @@ WhereTab.propTypes = {
     invoiceAddressId: PropTypes.number,
     invoiceFullAddress: PropTypes.string,
     handleFieldChange: PropTypes.func.isRequired,
-    country: PropTypes.string
+    country: PropTypes.string,
+    supplierName: PropTypes.string
 };
 WhereTab.defaultProps = {
     orderAddressId: null,
     orderFullAddress: null,
     invoiceAddressId: null,
     invoiceFullAddress: null,
-    country: null
+    country: null,
+    supplierName: null
 };
 export default WhereTab;

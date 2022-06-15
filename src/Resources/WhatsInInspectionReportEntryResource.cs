@@ -10,7 +10,7 @@
 
         public string OurUnitOfMeasure { get; set; }
 
-        public decimal QtyInStock { get; set; }
+        public decimal? QtyInStock { get; set; }
 
         public decimal QtyInInspection { get; set; }
 

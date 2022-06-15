@@ -6,6 +6,6 @@
 
     public interface IPrefSupReceiptsReportService
     {
-        ResultsModel GetReport(DateTime fromDate, DateTime toDate);
+        ResultsModel GetReport(DateTime fromDate, DateTime toDate, bool justGBP = false);
     }
 }

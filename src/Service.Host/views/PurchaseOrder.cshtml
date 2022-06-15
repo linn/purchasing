@@ -1,0 +1,17 @@
+﻿@inherits RazorEngineCore.RazorEngineTemplateBase<Linn.Purchasing.Domain.LinnApps.PurchaseOrders.PurchaseOrder>
+@{
+    <div>
+        <h1>Linn Purchase Order</h1>
+        <p>The following is passed into this razor file and loaded from the db</p>
+        
+        <p>Order number is: @Model.OrderNumber, Order Date: @Model.OrderDate</p>
+
+        @foreach (var purchaseOrderDetail in Model.Details)
+        {
+            <p>Line number: @purchaseOrderDetail.Line</p>
+            //todo add custom razorEngineTemplate as in https://github.com/adoconnection/RazorEngineCore/issues/77
+            //to allow use of @Include to bring in partials/reuseable components
+            //@Html.Partial("_PODetail.cshtml", purchaseOrderDetail)
+        }
+           </div>
+}

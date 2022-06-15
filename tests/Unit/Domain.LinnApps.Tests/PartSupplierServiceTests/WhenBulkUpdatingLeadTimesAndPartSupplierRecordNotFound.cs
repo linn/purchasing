@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
 
     using FluentAssertions;
@@ -15,7 +16,7 @@
 
     public class WhenBulkUpdatingLeadTimesAndPartSupplierRecordNotFound : ContextBase
     {
-        private ProcessResult result;
+        private BatchUpdateProcessResult result;
 
         [SetUp]
         public void SetUp()
@@ -38,7 +39,8 @@
         {
             this.result.Success.Should().BeFalse();
             this.result.Message.Should().Be(
-                "0 out of 1 records updated successfully. Updates for the following parts could not be processed: PART, ");
+                "0 out of 1 records updated successfully. Updates for the following parts could not be processed: ");
+            this.result.Errors.First().Descriptor.Should().Be("PART");
         }
     }
 }

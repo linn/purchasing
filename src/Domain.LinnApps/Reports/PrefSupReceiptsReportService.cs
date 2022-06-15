@@ -48,8 +48,13 @@
                     });
         }
 
-        public string GetReportCurrencyValue(decimal currencyValue, string currency, decimal GBPValue)
+        public string GetReportCurrencyValue(decimal currencyValue, string currency, decimal GBPValue, bool justGBP)
         {
+            if (justGBP)
+            {
+                return GBPValue.ToString();
+            }
+
             if (currency == "GBP")
             {
                 return $"{GBPValue} GBP";
@@ -58,7 +63,7 @@
             return $"{currencyValue} {currency} \n{GBPValue} GBP";
         }
 
-        public ResultsModel GetReport(DateTime fromDate, DateTime toDate)
+        public ResultsModel GetReport(DateTime fromDate, DateTime toDate, bool justGBP = false)
         {
             var results = this.receiptRepository.FilterBy(
                 e => e.DateBooked >= fromDate && e.DateBooked <= toDate && e.Difference != 0).OrderBy(
@@ -115,7 +120,8 @@
                             TextDisplay = this.GetReportCurrencyValue(
                                 result.CurrencyUnitPrice,
                                 result.OrderCurrency,
-                                result.ReceiptBaseUnitPrice)
+                                result.ReceiptBaseUnitPrice,
+                                justGBP)
                         });
 
                 values.Add(
@@ -126,7 +132,8 @@
                             TextDisplay = this.GetReportCurrencyValue(
                                 result.PrefsupCurrencyUnitPrice,
                                 result.PrefsupCurrency,
-                                result.PrefsupBaseUnitPrice)
+                                result.PrefsupBaseUnitPrice,
+                                justGBP)
                         });
 
                 values.Add(

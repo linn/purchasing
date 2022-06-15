@@ -4,6 +4,7 @@
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
+    using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
     using Linn.Purchasing.Resources.MaterialRequirements;
@@ -28,6 +29,12 @@
 
         protected ISingleRecordFacadeResourceService<MrMaster, MrMasterResource> MasterRecordFacadeService { get; private set; }
 
+        protected IMrUsedOnReportService MockUsedOnReportDomainService { get; private set; }
+
+        protected IMrUsedOnReportFacadeService UsedOnReportFacadeService { get; private set; }
+
+        protected IMaterialRequirementsReportFacadeService MaterialRequirementsReportFacadeService { get; private set; }
+
         [SetUp]
         public void EstablishContext()
         {
@@ -35,12 +42,20 @@
                 .For<IFacadeResourceFilterService<MrpRunLog, int, MrpRunLogResource, MrpRunLogResource, MaterialRequirementsSearchResource>>();
             this.MaterialRequirementsPlanningFacadeService = Substitute.For<IMaterialRequirementsPlanningFacadeService>();
             this.MasterRecordFacadeService = Substitute.For<ISingleRecordFacadeResourceService<MrMaster, MrMasterResource>>();
+            this.MockUsedOnReportDomainService = Substitute.For<IMrUsedOnReportService>();
+            this.UsedOnReportFacadeService = new MrUsedOnReportFacadeService(
+                this.MockUsedOnReportDomainService,
+                new ResultsModelResourceBuilder());
+            this.MaterialRequirementsReportFacadeService = Substitute.For<IMaterialRequirementsReportFacadeService>();
+
             this.Client = TestClient.With<MaterialRequirementsModule>(
                 services =>
                     {
                         services.AddSingleton(this.MrpRunLogFacadeService);
                         services.AddSingleton(this.MaterialRequirementsPlanningFacadeService);
                         services.AddSingleton(this.MasterRecordFacadeService);
+                        services.AddSingleton(this.UsedOnReportFacadeService);
+                        services.AddSingleton(this.MaterialRequirementsReportFacadeService);
                         services.AddHandlers();
                     },
                 FakeAuthMiddleware.EmployeeMiddleware);

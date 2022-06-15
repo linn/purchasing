@@ -25,11 +25,9 @@
 
         public decimal? OverbookQty { get; set; }
 
-        public IList<PurchaseOrderDetailResource> Details { get; set; }
+        public IEnumerable<PurchaseOrderDetailResource> Details { get; set; }
 
         public string OrderContactName { get; set; }
-
-        public string OrderMethodName { get; set; }
 
         public decimal? ExchangeRate { get; set; }
 
@@ -56,5 +54,7 @@
         public int? PeriodFilCancelled { get; set; }
 
         public bool CurrentlyUsingOverbookForm { get; set; }
+
+        public AddressResource OrderAddress { get; set; }
     }
 }

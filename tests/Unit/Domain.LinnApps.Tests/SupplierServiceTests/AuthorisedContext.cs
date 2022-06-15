@@ -35,7 +35,8 @@
                 this.PersonRepository,
                 this.SupplierContactRepository,
                 this.GroupRepository,
-                this.OrgRepository);
+                this.OrgRepository,
+                this.SupplierPack);
         }
     }
 }

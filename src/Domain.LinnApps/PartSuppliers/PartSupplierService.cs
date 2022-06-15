@@ -178,6 +178,7 @@
                 candidate.Manufacturer = this.manufacturerRepository.FindById(candidate.Manufacturer.Code);
             }
 
+            candidate.DateCreated = DateTime.Now;
             candidate.OverbookingAllowed = "Y";
             return candidate;
         }
@@ -319,7 +320,7 @@
             return candidate;
         }
 
-        public ProcessResult BulkUpdateLeadTimes(
+        public BatchUpdateProcessResult BulkUpdateLeadTimes(
             int supplierId,
             IEnumerable<LeadTimeUpdateModel> changes,
             IEnumerable<string> privileges,
@@ -370,18 +371,22 @@
 
             if (!errors.Any())
             {
-                return new ProcessResult(true, $"{successCount} records updated successfully");
+                return new BatchUpdateProcessResult
+                           {
+                               Success = true, 
+                               Message = $"{successCount} records updated successfully",
+                           };
             }
 
-            var errorMessage = errors
-                .Aggregate(
-                    "Updates for the following parts could not be processed: ",
-                    (current, error) 
-                        => current + $"{error}, ");
+            var errorMessage = 
+                    "Updates for the following parts could not be processed: ";
 
-            return new ProcessResult(
-                false,
-                $"{successCount} out of {leadTimeUpdateModels.Count} records updated successfully. {errorMessage}");
+            return new BatchUpdateProcessResult 
+                       {
+                           Success = false,
+                           Message = $"{successCount} out of {leadTimeUpdateModels.Count} records updated successfully. {errorMessage}",
+                           Errors = errors.Select(e => new Error(e, "No record found."))
+                       };
         }
 
         private static void ValidateFields(PartSupplier candidate)

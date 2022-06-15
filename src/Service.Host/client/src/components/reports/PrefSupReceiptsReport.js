@@ -7,10 +7,12 @@ import {
     Title,
     Loading,
     DatePicker,
+    ExportButton,
     ReportTable
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import queryString from 'query-string';
+import moment from 'moment';
 import history from '../../history';
 import config from '../../config';
 import { prefSupReceiptsReport } from '../../reportTypes';
@@ -25,6 +27,18 @@ function PrefSupReceiptsReport() {
         fromDate: queryOptions.fromDate ? new Date(queryOptions.fromDate) : new Date(),
         toDate: queryOptions.toDate ? new Date(queryOptions.toDate) : new Date()
     });
+    const [queryLaunched, setQueryLaunched] = useState(false);
+
+    // if come from dashboard
+    if (queryOptions.fromDate && queryOptions.toDate && !queryLaunched) {
+        setQueryLaunched(true);
+        dispatch(
+            prefSupReceiptsReportActions.fetchReport({
+                fromDate: options.fromDate.toISOString(),
+                toDate: options.toDate.toISOString()
+            })
+        );
+    }
 
     const loading = useSelector(state => state[prefSupReceiptsReport.item]?.loading);
 
@@ -35,6 +49,15 @@ function PrefSupReceiptsReport() {
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <Title text="Pref Sup Receipts Report" />
+                    <ExportButton
+                        href={`${
+                            config.appRoot
+                        }/purchasing/reports/pref-sup-receipts/export?fromDate=${moment(
+                            options.fromDate
+                        ).format('DD-MMM-YYYY')}&toDate=${moment(options.toDate).format(
+                            'DD-MMM-YYYY'
+                        )}`}
+                    />
                 </Grid>
 
                 <Grid item xs={3}>

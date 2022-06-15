@@ -31,6 +31,8 @@
 
         private bool showOrders;
 
+        private bool showGoodStockQty;
+
         [SetUp]
         public void SetUp()
         {
@@ -40,6 +42,7 @@
             this.includeFinishedGoods = false;
             this.showBackOrdered = false;
             this.showOrders = true;
+            this.showGoodStockQty = true;
 
             this.result = new WhatsInInspectionReport
                               {
@@ -56,6 +59,7 @@
         
 
             this.MockDomainService.GetReport(
+                this.showGoodStockQty,
                 this.includePartsWithNoOrderNumber,
                 this.showStockLocations,
                 this.includeFailedStock,
@@ -68,7 +72,8 @@
                 + $"&includeFailedStock={this.includeFailedStock}"
                 + $"&includeFinishedGoods={this.includeFinishedGoods}" 
                 + $"&showBackOrdered={this.showBackOrdered}"
-                + $"&showOrders={this.showOrders}",
+                + $"&showOrders={this.showOrders}"
+                + $"&showGoodStockQty={this.showGoodStockQty}",
                 with => { with.Accept("application/json"); }).Result;
         }
 
@@ -82,6 +87,7 @@
         public void ShouldPassCorrectOptionsToDomainService()
         {
             this.MockDomainService.Received().GetReport(
+                this.showGoodStockQty,
                 this.includePartsWithNoOrderNumber,
                 this.showStockLocations,
                 this.includeFailedStock,

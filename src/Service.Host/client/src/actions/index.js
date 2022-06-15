@@ -180,6 +180,10 @@ export const sendPurchaseOrderReqFinanceEmailActionTypes = makeProcessActionType
     itemTypes.sendPurchaseOrderReqFinanceEmail.actionType
 );
 
+export const pOReqCheckIfCanAuthOrderActionTypes = makeProcessActionTypes(
+    itemTypes.pOReqCheckIfCanAuthOrder.actionType
+);
+
 export const prefSupReceiptsReportActionTypes = makeReportActionTypes(
     reportTypes.prefSupReceiptsReport.actionType
 );
@@ -189,7 +193,6 @@ export const whatsInInspectionReportActionTypes = makeReportActionTypes(
 );
 
 export const mrpRunLogActionTypes = makeActionTypes(itemTypes.mrpRunLog.actionType, true);
-export const mrpRunLogsActionTypes = makeActionTypes(itemTypes.mrpRunLogs.actionType, false);
 
 export const runMrpActionTypes = makeProcessActionTypes(itemTypes.runMrp.actionType);
 
@@ -199,7 +202,33 @@ export const applyForecastingPercentageChangeActionTypes = makeProcessActionType
     itemTypes.applyForecastingPercentageChange.actionType
 );
 
-export const shortagesReportActionTypes = makeActionTypes(
+export const ediOrdersActionTypes = makeActionTypes(itemTypes.ediOrders.actionType, true);
+
+export const sendEdiEmailActionTypes = makeActionTypes(itemTypes.sendEdiEmail.actionType);
+
+export const mrUsedOnReportActionTypes = makeReportActionTypes(
+    reportTypes.mrUsedOnReport.actionType
+);
+
+export const mrReportActionTypes = makeActionTypes(itemTypes.mrReport.actionType);
+export const mrReportOptionsActionTypes = makeActionTypes(itemTypes.mrReportOptions.actionType);
+export const mrReportOrdersActionTypes = makeActionTypes(itemTypes.mrReportOrders.actionType);
+
+export const purchaseOrderDeliveryActionTypes = makeActionTypes(
+    itemTypes.purchaseOrderDelivery.actionType
+);
+
+export const purchaseOrderDeliveriesActionTypes = makeActionTypes(
+    itemTypes.purchaseOrderDeliveries.actionType,
+    true
+);
+
+export const batchPurchaseOrderDeliveriesUploadActionTypes = makeProcessActionTypes(
+    itemTypes.batchPurchaseOrderDeliveriesUpload.actionType,
+    true
+);
+
+  export const shortagesReportActionTypes = makeActionTypes(
     reportTypes.shortagesReport.actionType,
     false
 );

@@ -23,8 +23,14 @@ function App() {
                 <ListItem component={Link} to="/purchasing/part-suppliers" button>
                     <Typography color="primary">Part Supplier Utility</Typography>
                 </ListItem>
+                <ListItem component={Link} to="/purchasing/purchase-orders" button>
+                    <Typography color="primary">Purchase Order Utility</Typography>
+                </ListItem>
                 <ListItem component={Link} to="/purchasing/purchase-orders/reqs" button>
                     <Typography color="primary">Purchase Order Reqs Utility</Typography>
+                </ListItem>
+                <ListItem component={Link} to="/purchasing/edi" button>
+                    <Typography color="primary">Send EDI Orders</Typography>
                 </ListItem>
                 <Typography variant="h6">Reports</Typography>
                 <ListItem component={Link} to="/purchasing/reports/orders-by-supplier" button>
@@ -42,6 +48,9 @@ function App() {
                 <ListItem component={Link} to="/purchasing/material-requirements/run-mrp" button>
                     <Typography color="primary">Run Mrp</Typography>
                 </ListItem>
+                <ListItem component={Link} to="/purchasing/material-requirements" button>
+                    <Typography color="primary">MR Report</Typography>
+                </ListItem>
                 <ListItem
                     component={Link}
                     to="/purchasing/reports/suppliers-with-unacknowledged-orders"
@@ -51,6 +60,9 @@ function App() {
                 </ListItem>
                 <ListItem component={Link} to="/purchasing/reports/pref-sup-receipts" button>
                     <Typography color="primary">Receipts vs Pref Sup Report</Typography>
+                </ListItem>
+                <ListItem component={Link} to="/purchasing/reports/outstanding-po-reqs" button>
+                    <Typography color="primary">Outstanding PO Reqs</Typography>
                 </ListItem>
             </List>
         </Page>

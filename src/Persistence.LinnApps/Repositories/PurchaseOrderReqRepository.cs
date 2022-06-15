@@ -40,6 +40,8 @@
         {
             return base.FilterBy(expression).AsNoTracking()
                 .Include(r => r.RequestedBy)
+                .Include(r => r.Department)
+                .Include(r => r.Nominal)
                 .Include(r => r.Supplier)
                 .Include(r => r.ReqState);
         }

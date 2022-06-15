@@ -66,6 +66,12 @@ export const whatsInInspectionReport = new ItemType(
     '/purchasing/reports/whats-in-inspection/report'
 );
 
+export const mrUsedOnReport = new ItemType(
+    'mrUsedOnReport',
+    'MR_USED_ON_REPORT',
+    '/purchasing/material-requirements/used-on-report'
+);
+
 export const shortagesReport = new ItemType(
     'shortagesReport',
     'SHORTAGES_REPORT',

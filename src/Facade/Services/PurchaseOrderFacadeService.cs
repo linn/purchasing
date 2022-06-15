@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
 
@@ -11,13 +12,18 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
 
+    using RazorEngineCore;
+
     public class
-        PurchaseOrderFacadeService : FacadeResourceService<PurchaseOrder, int, PurchaseOrderResource,
-            PurchaseOrderResource>
+        PurchaseOrderFacadeService : FacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource>, IPurchaseOrderFacadeService
     {
         private readonly IPurchaseOrderService domainService;
 
         private readonly IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository;
+
+        private readonly ITransactionManager transactionManager;
+
+        private readonly IRepository<PurchaseOrder, int> orderRepository;
 
         public PurchaseOrderFacadeService(
             IRepository<PurchaseOrder, int> repository,
@@ -29,6 +35,27 @@
         {
             this.domainService = domainService;
             this.overbookAllowedByLogRepository = overbookAllowedByLogRepository;
+            this.transactionManager = transactionManager;
+            this.orderRepository = repository;
+        }
+
+        public string GetOrderAsHtml(int orderNumber)
+        {
+            using (var file = new StreamReader("../Service.Host/views/" + @"\" + "PurchaseOrder.cshtml"))
+            {
+                var fileRead = file.ReadToEnd();
+                var razorEngine = new RazorEngine();
+
+                IRazorEngineCompiledTemplate<RazorEngineTemplateBase<PurchaseOrder>> template = razorEngine.Compile<RazorEngineTemplateBase<PurchaseOrder>>(fileRead);
+
+                var order = this.orderRepository.FindById(orderNumber);
+                string result = template.Run(instance =>
+                    {
+                        instance.Model = order;
+                    });
+
+                return result;
+            }
         }
 
         protected override PurchaseOrder CreateFromResource(
@@ -43,6 +70,7 @@
 
         protected override void DeleteOrObsoleteResource(PurchaseOrder entity, IEnumerable<string> privileges = null)
         {
+            this.transactionManager.Commit();
             throw new NotImplementedException();
         }
 
@@ -125,8 +153,10 @@
                                                         d => new PurchaseOrderDelivery
                                                                  {
                                                                      Cancelled = d.Cancelled,
-                                                                     DateAdvised = d.DateAdvised,
-                                                                     DateRequested = d.DateRequested,
+                                                                     DateAdvised = string.IsNullOrEmpty(d.DateAdvised)
+                                                                         ? null : DateTime.Parse(d.DateAdvised),
+                                                                     DateRequested = string.IsNullOrEmpty(d.DateRequested) ?
+                                                                         null : DateTime.Parse(d.DateRequested),
                                                                      DeliverySeq = d.DeliverySeq,
                                                                      NetTotalCurrency = d.NetTotalCurrency,
                                                                      BaseNetTotal = d.BaseNetTotal,
@@ -136,8 +166,9 @@
                                                                      OurDeliveryQty = d.OurDeliveryQty,
                                                                      QtyNetReceived = d.QtyNetReceived,
                                                                      QuantityOutstanding = d.QuantityOutstanding,
-                                                                     CallOffDate = d.CallOffDate,
-                                                                     BaseOurUnitPrice = d.BaseOurUnitPrice,
+                                                                     CallOffDate = string.IsNullOrEmpty(d.CallOffDate)
+                                                                         ? null : DateTime.Parse(d.CallOffDate),
+                                                                    BaseOurUnitPrice = d.BaseOurUnitPrice,
                                                                      SupplierConfirmationComment =
                                                                          d.SupplierConfirmationComment,
                                                                      OurUnitPriceCurrency = d.OurUnitPriceCurrency,
@@ -146,7 +177,9 @@
                                                                      VatTotalCurrency = d.VatTotalCurrency,
                                                                      BaseVatTotal = d.BaseVatTotal,
                                                                      DeliveryTotalCurrency = d.DeliveryTotalCurrency,
-                                                                     BaseDeliveryTotal = d.BaseDeliveryTotal
+                                                                     BaseDeliveryTotal = d.BaseDeliveryTotal,
+                                                                     RescheduleReason = d.RescheduleReason,
+                                                                     AvailableAtSupplier = d.AvailableAtSupplier
                                                                  }) as ICollection<PurchaseOrderDelivery>,
                                                 RohsCompliant = x.RohsCompliant,
                                                 SuppliersDesignation = x.SuppliersDesignation,
@@ -201,7 +234,7 @@
                                             }) as ICollection<PurchaseOrderDetail>,
                            CurrencyCode = resource.Currency.Code,
                            OrderContactName = resource.OrderContactName,
-                           OrderMethodName = resource.OrderMethodName,
+                           OrderMethodName = resource.OrderMethod.Name,
                            ExchangeRate = resource.ExchangeRate,
                            IssuePartsToSupplier = resource.IssuePartsToSupplier,
                            DeliveryAddressId = resource.DeliveryAddress.AddressId,

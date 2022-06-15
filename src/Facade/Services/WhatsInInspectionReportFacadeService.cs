@@ -25,6 +25,7 @@
         }
 
         public IResult<WhatsInInspectionReportResource> GetReport(
+            bool showGoodStockQty = false,
             bool includePartsWithNoOrderNumber = false,
             bool showStockLocations = true,
             bool includeFailedStock = false,
@@ -33,6 +34,7 @@
             bool showOrders = true)
         {
             var result = this.domainService.GetReport(
+                    showGoodStockQty,
                     includePartsWithNoOrderNumber,
                     showStockLocations,
                     includeFailedStock,
@@ -67,11 +69,13 @@
         }
 
         public IEnumerable<IEnumerable<string>> GetTopLevelExport(
+            bool showGoodStockQty = false,
             bool includePartsWithNoOrderNumber = false,
             bool includeFailedStock = false,
             bool includeFinishedGoods = true)
         {
             return this.domainService.GetTopLevelReport(
+                showGoodStockQty,
                 includePartsWithNoOrderNumber,
                 includeFailedStock,
                 includeFinishedGoods).ConvertToCsvList();

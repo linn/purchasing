@@ -15,7 +15,6 @@
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
     using Linn.Purchasing.Resources;
-    using Linn.Purchasing.Resources.SearchResources;
     using Linn.Purchasing.Service.Modules;
 
     using Microsoft.Extensions.DependencyInjection;
@@ -28,46 +27,37 @@
     {
         protected HttpClient Client { get; set; }
 
-        protected HttpResponseMessage Response { get; set; }
-
-        protected ITransactionManager TransactionManager { get; set; }
-
-        protected IFacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource>
-           PurchaseOrderFacadeService
-        {
-            get; private set;
-        }
-
-        protected IPurchaseOrderReqFacadeService
-            PurchaseOrderReqFacadeService
-        {
-            get; private set;
-        }
-
-        protected IPurchaseOrderReqService MockReqDomainService { get; private set; }
-
-        protected IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource> CurrencyService { get; private set; }
-
-        protected IFacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource> OrderMethodService { get; private set; }
-
-        protected IFacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource, LinnDeliveryAddressResource>
-            DeliveryAddressService
-        {
-            get; private set;
-        }
-
-        protected IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource>
-            UnitsOfMeasureService
-        {
-            get; private set;
-        }
-
-        protected IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource>
-            PackagingGroupService
+        protected IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource> CurrencyService
         {
             get;
             private set;
         }
+
+        protected IFacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource, LinnDeliveryAddressResource> DeliveryAddressService { get; private set; }
+
+        protected IPurchaseOrderDeliveryFacadeService deliveryFacadeService { get; private set; }
+
+        protected ILog Log { get; private set; }
+
+        protected IAuthorisationService MockAuthService { get; private set; }
+
+        protected IDatabaseService MockDatabaseService { get; private set; }
+
+        protected IRepository<PurchaseOrderReq, int> MockPurchaseOrderReqRepository { get; private set; }
+
+        protected IPurchaseOrderReqService MockReqDomainService { get; private set; }
+
+        protected IFacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource> OrderMethodService { get; private set; }
+
+        protected IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource> PackagingGroupService { get; private set; }
+
+        protected IPurchaseOrderFacadeService PurchaseOrderFacadeService { get; private set; }
+
+        protected IPurchaseOrderReqFacadeService PurchaseOrderReqFacadeService { get; private set; }
+
+        protected IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource> PurchaseOrderReqStateFacadeService { get; private set; }
+
+        protected HttpResponseMessage Response { get; set; }
 
         protected IFacadeResourceService<Tariff, int, TariffResource, TariffResource> TariffService
         {
@@ -75,28 +65,17 @@
             private set;
         }
 
-        protected IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource>
-            PurchaseOrderReqStateFacadeService
-        {
-            get; private set;
-        }
+        protected ITransactionManager TransactionManager { get; private set; }
 
-        protected IAuthorisationService MockAuthService { get; private set; }
-
-        protected IDatabaseService MockDatabaseService { get; set; }
-
-        protected IRepository<PurchaseOrderReq, int> MockPurchaseOrderReqRepository { get; set; }
-
-        protected ILog Log { get; private set; }
+        protected IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource> UnitsOfMeasureService { get; private set; }
 
         [SetUp]
         public void EstablishContext()
         {
             this.TransactionManager = Substitute.For<ITransactionManager>();
-            this.PurchaseOrderFacadeService =
-                Substitute
-                    .For<IFacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource>>();
-            this.CurrencyService = Substitute.For<IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource>>();
+            this.PurchaseOrderFacadeService = Substitute.For<IPurchaseOrderFacadeService>();
+            this.CurrencyService =
+                Substitute.For<IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource>>();
             this.OrderMethodService = Substitute
                 .For<IFacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource>>();
             this.DeliveryAddressService = Substitute
@@ -106,8 +85,8 @@
             this.PackagingGroupService = Substitute
                 .For<IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource>>();
             this.TariffService = Substitute.For<IFacadeResourceService<Tariff, int, TariffResource, TariffResource>>();
-            this.PurchaseOrderReqStateFacadeService =
-                Substitute.For<IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource>>();
+            this.PurchaseOrderReqStateFacadeService = Substitute
+                .For<IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource>>();
             this.MockReqDomainService = Substitute.For<IPurchaseOrderReqService>();
 
             this.MockPurchaseOrderReqRepository = Substitute.For<IRepository<PurchaseOrderReq, int>>();
@@ -121,7 +100,7 @@
                 this.MockReqDomainService,
                 this.MockDatabaseService);
 
-                this.Log = Substitute.For<ILog>();
+            this.Log = Substitute.For<ILog>();
 
             this.Client = TestClient.With<PurchaseOrderModule>(
                 services =>

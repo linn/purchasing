@@ -4,9 +4,9 @@
 
     using Carter;
     using Carter.Response;
-    
+
     using Linn.Common.Facade.Carter.Extensions;
-    
+
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.RequestResources;
@@ -86,13 +86,13 @@
             IPurchaseOrderReportFacadeService purchaseOrderReportFacadeService,
             string vendorManager,
             int? planner,
-            bool useSupplierGroup)
+            bool? useSupplierGroup)
         {
             var resource = new SuppliersWithUnacknowledgedOrdersRequestResource
                                {
                                    VendorManager = vendorManager,
                                    Planner = planner, 
-                                   UseSupplierGroup = useSupplierGroup
+                                   UseSupplierGroup = useSupplierGroup ?? false
                                };
 
             var results = purchaseOrderReportFacadeService.GetSuppliersWithUnacknowledgedOrdersReport(
@@ -124,7 +124,7 @@
             var csv = purchaseOrderReportFacadeService.GetOrdersByPartExport(
                 resource,
                 req.HttpContext.GetPrivileges());
-            
+
             await res.FromCsv(csv, $"ordersByPart{resource.From.Substring(0, 10)}_To_{resource.To.Substring(0, 10)}.csv");
         }
 

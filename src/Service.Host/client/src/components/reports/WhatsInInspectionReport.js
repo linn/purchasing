@@ -32,7 +32,8 @@ function WhatsInInspectionReport() {
         includeFailedStock: false,
         includeFinishedGoods: true,
         showBackOrdered: false,
-        showOrders: false
+        showOrders: false,
+        showGoodStockQty: false
     });
 
     const loading = useSelector(state => state[whatsInInspectionReport.item]?.loading);
@@ -45,6 +46,18 @@ function WhatsInInspectionReport() {
                 <div className="hide-when-printing">
                     <Grid item xs={12}>
                         <Title text="Whats In Inspection Report" />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <CheckboxWithLabel
+                            label="Show good stock qty"
+                            checked={options.showGoodStockQty}
+                            onChange={() =>
+                                setOptions(o => ({
+                                    ...o,
+                                    showGoodStockQty: !o.showGoodStockQty
+                                }))
+                            }
+                        />
                     </Grid>
                     <Grid item xs={12}>
                         <CheckboxWithLabel

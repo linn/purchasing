@@ -130,8 +130,11 @@ function FinanceTab({
                 <Dropdown
                     fullWidth
                     value={paysInFc}
-                    label="Payment Method"
-                    items={['A', 'S', 'N']}
+                    label="Pays In Foreign Currency?"
+                    items={[
+                        { id: 'A', displayText: 'Always' },
+                        { id: 'N', displayText: 'Never' }
+                    ]}
                     propertyName="paysInFc"
                     onChange={handleFieldChange}
                     allowNoValue

@@ -16,17 +16,17 @@
 
         public decimal BaseNetTotal { get; set; }
 
-        public int? OrderDeliveryQty { get; set; }
+        public decimal? OrderDeliveryQty { get; set; }
 
         public int OrderLine { get; set; }
 
         public int OrderNumber { get; set; }
 
-        public int? OurDeliveryQty { get; set; }
+        public decimal? OurDeliveryQty { get; set; }
 
         public PurchaseOrderDetail PurchaseOrderDetail { get; set; }
 
-        public int? QtyNetReceived { get; set; }
+        public decimal? QtyNetReceived { get; set; }
 
         public decimal? QuantityOutstanding { get; set; }
 
@@ -49,5 +49,15 @@
         public decimal? DeliveryTotalCurrency { get; set; }
 
         public decimal? BaseDeliveryTotal { get; set; }
+
+        public string RescheduleReason { get; set; }
+
+        public string AvailableAtSupplier { get; set; }
+
+        public string CallOffRef { get; set; }
+
+        public string FilCancelled { get; set; }
+
+        public decimal? QtyPassedForPayment { get; set; }
     }
 }

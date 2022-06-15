@@ -71,5 +71,9 @@
         public DateTime? DateFilCancelled { get; set; }
 
         public int? PeriodFilCancelled { get; set; }
+
+        public int OrderAddressId { get; set; }
+
+        public Address OrderAddress { get; set; }
     }
 }

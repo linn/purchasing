@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
+    using System.Net;
     using System.Threading.Tasks;
 
     using Carter;
@@ -9,6 +10,7 @@
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.Extensions;
     using Linn.Purchasing.Service.Models;
@@ -32,12 +34,21 @@
             app.MapGet("/purchasing/purchase-orders/tariffs", this.SearchTariffs);
             app.MapGet("/purchasing/purchase-orders", this.SearchPurchaseOrders);
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}", this.GetPurchaseOrder);
+            app.MapGet("/purchasing/purchase-orders/{orderNumber:int}/html", this.GetPurchaseOrderHtml);
             app.MapPut("/purchasing/purchase-orders/{orderNumber:int}", this.UpdatePurchaseOrder);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
         {
             await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
+        }
+
+        private async Task GetApplicationState(
+            HttpRequest req,
+            HttpResponse res,
+            IPurchaseOrderFacadeService purchaseOrderFacadeService)
+        {
+            await res.Negotiate(purchaseOrderFacadeService.GetApplicationState(req.HttpContext.GetPrivileges()));
         }
 
         private async Task GetCurrencies(
@@ -84,19 +95,25 @@
             HttpRequest req,
             HttpResponse res,
             int orderNumber,
-            IFacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource> purchaseOrderFacadeService)
+            IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
             var result = purchaseOrderFacadeService.GetById(orderNumber, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }
 
-        private async Task GetApplicationState(
+        private async Task GetPurchaseOrderHtml(
             HttpRequest req,
             HttpResponse res,
-            IFacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource> purchaseOrderFacadeService)
+            int orderNumber,
+            IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
-            await res.Negotiate(purchaseOrderFacadeService.GetApplicationState(req.HttpContext.GetPrivileges()));
+            var result = purchaseOrderFacadeService.GetOrderAsHtml(orderNumber);
+
+            res.ContentType = "text/html";
+            res.StatusCode = (int)HttpStatusCode.OK;
+
+            await res.WriteAsync(result);
         }
 
         private async Task GetUnitsOfMeasure(
@@ -113,7 +130,7 @@
             HttpRequest req,
             HttpResponse res,
             string searchTerm,
-            IFacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource> purchaseOrderFacadeService)
+            IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
             var result = purchaseOrderFacadeService.Search(searchTerm, req.HttpContext.GetPrivileges());
             await res.Negotiate(result);
@@ -134,11 +151,15 @@
             HttpRequest req,
             HttpResponse res,
             PurchaseOrderResource resource,
-            IFacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource> purchaseOrderFacadeService)
+            IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
             var privileges = req.HttpContext.GetPrivileges();
 
-            var result = purchaseOrderFacadeService.Update(resource.OrderNumber, resource, privileges, res.HttpContext.User.GetEmployeeNumber());
+            var result = purchaseOrderFacadeService.Update(
+                resource.OrderNumber,
+                resource,
+                privileges,
+                res.HttpContext.User.GetEmployeeNumber());
 
             await res.Negotiate(result);
         }

@@ -75,10 +75,7 @@ describe('When component mounts...', () => {
         expect(fetchReasonsSpy).toBeCalledTimes(1);
         expect(fetchPartSuppliersSpy).toBeCalledTimes(1);
         expect(clearErrorsSpy).toBeCalledTimes(1);
-        expect(fetchPartSuppliersSpy).toBeCalledWith(
-            null,
-            `&partNumber=${partNumber}&supplierName=`
-        );
+        expect(fetchPartSuppliersSpy).toBeCalledWith(null, `&partNumber=${partNumber}`);
     });
 });
 

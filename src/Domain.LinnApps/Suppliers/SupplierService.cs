@@ -7,6 +7,7 @@
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
+    using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers.Exceptions;
@@ -41,6 +42,8 @@
 
         private readonly IRepository<Organisation, int> orgRepository;
 
+        private readonly ISupplierPack supplierPack;
+
         public SupplierService(
             IAuthorisationService authService,
             IRepository<Supplier, int> supplierRepository,
@@ -55,7 +58,8 @@
             IRepository<Person, int> personRepository,
             IRepository<SupplierContact, int> supplierContactRepository,
             IRepository<SupplierGroup, int> groupRepository,
-            IRepository<Organisation, int> orgRepository)
+            IRepository<Organisation, int> orgRepository,
+            ISupplierPack supplierPack)
         {
             this.authService = authService;
             this.supplierRepository = supplierRepository;
@@ -71,6 +75,7 @@
             this.supplierContactRepository = supplierContactRepository;
             this.groupRepository = groupRepository;
             this.orgRepository = orgRepository;
+            this.supplierPack = supplierPack;
         }
 
         public void UpdateSupplier(Supplier current, Supplier updated, IEnumerable<string> privileges)
@@ -110,7 +115,7 @@
             current.PaymentDays = updated.PaymentDays;
             current.PaymentMethod = updated.PaymentMethod;
             current.PaysInFc = updated.PaysInFc;
-
+            current.Country = updated.Country;
             current.ApprovedCarrier = updated.ApprovedCarrier;
             current.AccountingCompany = updated.AccountingCompany;
             current.VatNumber = updated.VatNumber;
@@ -169,6 +174,8 @@
                 throw new UnauthorisedActionException("You are not authorised to create Suppliers");
             }
 
+            candidate.SupplierId = this.supplierPack.GetNextSupplierKey();
+
             candidate.InvoiceGoesTo = candidate.InvoiceGoesTo != null
                                            ? this.supplierRepository.FindById(candidate.InvoiceGoesTo.SupplierId)
                                            : null;
@@ -197,7 +204,7 @@
 
             candidate.VendorManager = candidate.VendorManager != null
                                     ? this.vendorManagerRepository.FindById(candidate.VendorManager.Id)
-                                    : null;
+                                    : this.vendorManagerRepository.FindById("A");
 
             candidate.AccountController = candidate.AccountController != null
                                     ? this.employeeRepository.FindById(candidate.AccountController.Id)
@@ -210,6 +217,26 @@
                                      ? this.groupRepository.FindById(candidate.Group.Id)
                                      : null;
 
+            if (candidate.SupplierContacts != null)
+            {
+                var contacts = candidate.SupplierContacts.Select(c => new SupplierContact
+                                                           {
+                                                               Comments = c.Comments,
+                                                               ContactId = c.ContactId,
+                                                               EmailAddress = c.EmailAddress,
+                                                               SupplierId = candidate.SupplierId,
+                                                               IsMainInvoiceContact = c.IsMainInvoiceContact,
+                                                               IsMainOrderContact = c.IsMainOrderContact,
+                                                               JobTitle = c.JobTitle,
+                                                               DateCreated = DateTime.Today,
+                                                               MobileNumber = c.MobileNumber,
+                                                               PhoneNumber = c.PhoneNumber,
+                                                               Person = c.Person
+                                                           });
+
+                candidate.SupplierContacts = this.UpdateContacts(contacts);
+            }
+            
             ValidateFields(candidate);
             candidate.Name = candidate.Name.ToUpper();
             this.orgRepository.Add(new Organisation
@@ -293,6 +320,33 @@
                 errors.Add("Order Addressee");
             }
 
+            if (candidate.SupplierContacts == null)
+            {
+                errors.Add("Supplier Contacts is empty");
+            }
+            else
+            {
+                if (!candidate.SupplierContacts.Any(c => 
+                        !string.IsNullOrEmpty(c.IsMainInvoiceContact) && c.IsMainInvoiceContact.Equals("Y")))
+                {
+                    errors.Add("Main Invoice Contact");
+                }
+                else if (candidate.SupplierContacts.Count(x => x.IsMainInvoiceContact == "Y") > 1)
+                {
+                    errors.Add("Cannot have more than one Main Invoice Contact");
+                }
+
+                if (!candidate.SupplierContacts.Any(c =>
+                        !string.IsNullOrEmpty(c.IsMainOrderContact) && c.IsMainOrderContact.Equals("Y")))
+                {
+                    errors.Add("Main Order Contact");
+                }
+                else if (candidate.SupplierContacts.Count(x => x.IsMainOrderContact == "Y") > 1)
+                {
+                    errors.Add("Cannot have more than one Main Order Contact");
+                }
+            }
+
             if (errors.Any())
             {
                 var msg = errors
@@ -311,20 +365,9 @@
                 return null;
             }
 
-            var enumerable = supplierContacts.ToList();
-            if (enumerable.Count(x => x.IsMainOrderContact == "Y") > 1)
-            {
-                throw new SupplierException("Cannot have more than one Main Order Contact");
-            }
-
-            if (enumerable.Count(x => x.IsMainInvoiceContact == "Y") > 1)
-            {
-                throw new SupplierException("Cannot have more than one Main Invoice Contact");
-            }
-
             var result = new List<SupplierContact>();
 
-            foreach (var supplierContact in enumerable)
+            foreach (var supplierContact in supplierContacts)
             {
                 var existingSupplierContact = this.supplierContactRepository.FindById(supplierContact.ContactId);
 

@@ -31,7 +31,7 @@
                            PostCode = entity.PostCode,
                            CountryCode = entity.Country?.CountryCode,
                            CountryName = entity.Country?.Name,
-                           FullAddress = entity.FullAddress?.AddressString 
+                           FullAddress = entity.FullAddress?.AddressString
                                          ?? this.fullAddressRepository.FindById(entity.AddressId)?.AddressString
                        };
         }
