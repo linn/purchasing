@@ -56,7 +56,7 @@ function ShortagesReportOptions() {
                     <>
                         <Grid item xs={5}>
                             <Dropdown
-                                label="Vendor Manager  (leave blank for all)"
+                                label="Vendor Manager  (Select A for all)"
                                 propertyName="vendorManager"
                                 value={options.vendorManager}
                                 onChange={handleOptionChange}
@@ -64,7 +64,7 @@ function ShortagesReportOptions() {
                                     id: v.vmId,
                                     displayText: `${v.vmId} ${v.name} (${v.userNumber})`
                                 }))}
-                                allowNoValue
+                                allowNoValue={false}
                             />
                         </Grid>
                         <Grid item xs={5}>

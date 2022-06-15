@@ -31,39 +31,102 @@
                             {
                                 new ShortagesEntry()
                                     {
-                                        VendorManagerName = "Test",
+                                        VendorManagerName = "Test VM L",
                                         PartNumber = "Test Part",
                                         PlannerName = "Test Planner",
-                                        VendorManagerCode = "R",
+                                        VendorManagerCode = "L",
                                         Planner = 1,
                                         PurchaseLevel = 1
                                     },
                                 new ShortagesEntry()
                                     {
-                                        VendorManagerName = "Test",
+                                        VendorManagerName = "Test VM L",
+                                        PartNumber = "Test Part",
+                                        PlannerName = "Test Planner",
+                                        VendorManagerCode = "L",
+                                        Planner = 1,
+                                        PurchaseLevel = 1
+                                    },
+                                new ShortagesEntry()
+                                    {
+                                        VendorManagerName = "Test VM M",
+                                        PartNumber = "Test Part",
+                                        PlannerName = "Test Planner",
+                                        VendorManagerCode = "M",
+                                        Planner = 1,
+                                        PurchaseLevel = 1
+                                    },
+                                new ShortagesEntry()
+                                    {
+                                        VendorManagerName = "Test VM M",
+                                        PartNumber = "Test Part",
+                                        PlannerName = "Test Planner",
+                                        VendorManagerCode = "M",
+                                        Planner = 1,
+                                        PurchaseLevel = 2
+                                    },
+                                new ShortagesEntry()
+                                    {
+                                        VendorManagerName = "Test VM M",
+                                        PartNumber = "Test Part",
+                                        PlannerName = "Test Planner",
+                                        VendorManagerCode = "M",
+                                        Planner = 1,
+                                        PurchaseLevel = 2
+                                    },
+                                new ShortagesEntry()
+                                    {
+                                        VendorManagerName = "Test VM L",
+                                        PartNumber = "Test Part",
+                                        PlannerName = "Test Planner",
+                                        VendorManagerCode = "L",
+                                        Planner = 1,
+                                        PurchaseLevel = 2
+                                    },
+                                new ShortagesEntry()
+                                    {
+                                        VendorManagerName = "Test VM L",
                                         PartNumber = "Second Test Part",
                                         PlannerName = "Second Test Planner",
-                                        VendorManagerCode = "S",
+                                        VendorManagerCode = "L",
                                         Planner = 1,
                                         PurchaseLevel = 1
                                     },
                                 new ShortagesEntry()
                                     {
-                                        VendorManagerName = "Test",
+                                        VendorManagerName = "Test VM L",
+                                        PartNumber = "Second Test Part",
+                                        PlannerName = "Second Test Planner",
+                                        VendorManagerCode = "L",
+                                        Planner = 1,
+                                        PurchaseLevel = 1
+                                    },
+                                new ShortagesEntry()
+                                    {
+                                        VendorManagerName = "Test VM T",
+                                        PartNumber = "Second Test Part",
+                                        PlannerName = "Second Test Planner",
+                                        VendorManagerCode = "T",
+                                        Planner = 1,
+                                        PurchaseLevel = 1
+                                    },
+                                new ShortagesEntry()
+                                    {
+                                        VendorManagerName = "Test VM T",
                                         PartNumber = "Third Test Part",
-                                        PlannerName = "Test Planner",
+                                        PlannerName = "Second Test Planner",
                                         VendorManagerCode = "T",
                                         Planner = 1,
-                                        PurchaseLevel = 1
+                                        PurchaseLevel = 3
                                     },
                                 new ShortagesEntry()
                                     {
-                                        VendorManagerName = "Test",
+                                        VendorManagerName = "Test VM T",
                                         PartNumber = "Fourth Test Part",
-                                        PlannerName = "Test Planner",
+                                        PlannerName = "Second Test Planner",
                                         VendorManagerCode = "T",
                                         Planner = 1,
-                                        PurchaseLevel = 5
+                                        PurchaseLevel = 3
                                     }
                             };
             this.ShortagesRepository = Substitute.For<IQueryRepository<ShortagesEntry>>();

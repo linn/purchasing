@@ -33,8 +33,7 @@
                 model.AddColumn("VendorManagerCode", "Vendor Manager Code");
                 model.AddColumn("VendorManagerName", "Vendor Manager Name");
 
-                model.ReportTitle = new NameModel(
-                    $"Purchasing shortages planner");
+                model.ReportTitle = new NameModel(shortagesForPlanner.Key.PlannerName);
                 model.RowHeader = "Planner";
 
                 var distinctVendorManagers = shortagesForPlanner.DistinctBy(x => x.VendorManagerCode);

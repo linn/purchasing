@@ -35,7 +35,10 @@
         public void ShouldReturnData()
         {
             this.results.Should().HaveCount(2);
-            this.results.FirstOrDefault().ReportTitle.DisplayValue.Should().Be("Purchasing shortages planner");
+            var firstPlanner = this.results.First();
+            firstPlanner.ReportTitle.DisplayValue.Should().Be("Test Planner");
+            var secondPlanner = this.results.ElementAtOrDefault(1);
+            secondPlanner.ReportTitle.DisplayValue.Should().Be("Second Test Planner");
         }
     }
 }
