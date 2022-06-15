@@ -108,7 +108,7 @@
                                                       OrderLine = 1, // hardcoded for now
                                                       DeliverySequence = delNo
                                                   },
-                                        NewDateAdvised =firstFormatSatisfied ? parsedDate1 : parsedDate2,
+                                        NewDateAdvised = firstFormatSatisfied ? parsedDate1 : parsedDate2,
                                         NewReason = row.Length < 4 ? null : row[3].Trim()
                                     });
                 }
