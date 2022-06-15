@@ -14,7 +14,7 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingReport : ContextBase
+    public class WhenGettingReportWithJobRef : ContextBase
     {
         private IEnumerable<MrUsedOnRecord> data;
 
@@ -24,10 +24,13 @@
 
         private string partDescription = "THE 426TH RESISTOR";
 
+        private string jobRef;
+
         [SetUp]
         public void SetUp()
         {
             this.partNumber = "RES 426";
+            this.jobRef = "ABCDEF";
 
             this.data = new List<MrUsedOnRecord>
                             {
@@ -35,7 +38,7 @@
                                     {
                                         PartNumber = this.partNumber,
                                         Description = this.partDescription,
-                                        JobRef = "AAAAA",
+                                        JobRef = "ABCDEF",
                                         AssemblyUsedOn = "BOARD 1",
                                         AssemblyUsedOnDescription = "SOME BOARD",
                                         QtyUsed = 1,
@@ -46,7 +49,7 @@
                                     {
                                         PartNumber = this.partNumber,
                                         Description = this.partDescription,
-                                        JobRef = "AAAAA",
+                                        JobRef = "ABCDEF",
                                         AssemblyUsedOn = "BOARD 4",
                                         AssemblyUsedOnDescription = "SOME BOARD",
                                         QtyUsed = 1,
@@ -57,7 +60,7 @@
                                     {
                                         PartNumber = this.partNumber,
                                         Description = this.partDescription,
-                                        JobRef = "AAAAA",
+                                        JobRef = "ABCDEF",
                                         AssemblyUsedOn = "BOARD 2",
                                         AssemblyUsedOnDescription = "SOME BOARD",
                                         QtyUsed = 2,
@@ -68,7 +71,7 @@
                                     {
                                         PartNumber = this.partNumber,
                                         Description = this.partDescription,
-                                        JobRef = "AAAAA",
+                                        JobRef = "ABCDEF",
                                         AssemblyUsedOn = "BOARD 3",
                                         AssemblyUsedOnDescription = "SOME BOARD",
                                         QtyUsed = 3,
@@ -77,28 +80,23 @@
                                     }
                             };
 
-            this.MockMrMasterRecordRepository.GetRecord().Returns(new MrMaster { JobRef = "AAAAA" });
             this.MockRepository.FilterBy(Arg.Any<Expression<Func<MrUsedOnRecord, bool>>>())
                 .Returns(this.data.AsQueryable());
-            this.result = this.Sut.GetUsedOn(this.partNumber, null);
+            this.result = this.Sut.GetUsedOn(this.partNumber, this.jobRef);
+        }
+
+        [Test]
+        public void ShouldNotLookUpJobRef()
+        {
+            this.MockMrMasterRecordRepository.DidNotReceive().GetRecord();
         }
 
         [Test]
         public void ShouldReturnReport()
         {
             this.result.Rows.Count().Should().Be(4);
-            this.result.ReportTitle.DisplayValue.Should().Be(
-                    $"Part: {this.partNumber} - {this.partDescription}");
-        }
-
-        [Test]
-        public void ShouldOrderByAnnualUsageDesc()
-        {
-            for (var i = 1; i < this.result.Rows.Count(); i++)
-            {
-                var prevAnnualUsage = this.result.GetGridValue(i - 1, 4);
-                Assert.IsTrue(this.result.GetGridValue(i, 4) < prevAnnualUsage);
-            }
+            this.result.ReportTitle.DisplayValue
+                .Should().Be($"Part: {this.partNumber} - {this.partDescription}");
         }
     }
 }

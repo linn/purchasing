@@ -383,7 +383,7 @@
             var part1Resource = this.result.Results.First(a => a.PartNumber == "P1");
             part1Resource.Links.Should().Contain(
                 a => a.Rel == "part-used-on" && a.Href
-                     == $"/purchasing/material-requirements/used-on-report?partNumber={this.MrHeader1.PartNumber}");
+                     == $"/purchasing/material-requirements/used-on-report?partNumber={this.MrHeader1.PartNumber}&jobRef={this.JobRef}");
             part1Resource.Links.Should().Contain(
                 a => a.Rel == "part" && a.Href == $"/parts/{this.MrHeader1.PartId}");
             part1Resource.Links.Should().Contain(

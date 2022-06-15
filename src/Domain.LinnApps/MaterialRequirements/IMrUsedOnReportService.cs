@@ -4,6 +4,6 @@
 
     public interface IMrUsedOnReportService
     {
-        ResultsModel GetUsedOn(string partNumber);
+        ResultsModel GetUsedOn(string partNumber, string jobRef);
     }
 }

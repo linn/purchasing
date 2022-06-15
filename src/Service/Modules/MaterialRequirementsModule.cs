@@ -90,9 +90,10 @@
             HttpRequest req,
             HttpResponse res,
             IMrUsedOnReportFacadeService service,
-            string partNumber)
+            string partNumber,
+            string jobRef)
         {
-            var result = service.GetReport(partNumber);
+            var result = service.GetReport(partNumber, jobRef);
             await res.Negotiate(result);
         }
         

@@ -5,6 +5,6 @@
 
     public interface IMrUsedOnReportFacadeService
     {
-        IResult<ReportReturnResource> GetReport(string partNumber);
+        IResult<ReportReturnResource> GetReport(string partNumber, string jobRef);
     }
 }

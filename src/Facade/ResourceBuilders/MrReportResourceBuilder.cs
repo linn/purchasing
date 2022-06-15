@@ -410,7 +410,7 @@
             yield return new LinkResource
                              {
                                  Rel = "part-used-on",
-                                 Href = $"/purchasing/material-requirements/used-on-report?partNumber={entity.PartNumber}"
+                                 Href = $"/purchasing/material-requirements/used-on-report?partNumber={entity.PartNumber}&jobRef={entity.JobRef}"
                              };
             yield return new LinkResource { Rel = "part", Href = $"/parts/{entity.PartId}" };
             yield return new LinkResource { Rel = "part-supplier", Href = $"/purchasing/part-suppliers/record?partId={entity.PartId}&supplierId={entity.PreferredSupplierId}" };
