@@ -86,10 +86,10 @@
 
                     var firstFormatSatisfied =
                         DateTime.TryParseExact(row[2]
-                            .Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate);
+                            .Trim(), "dd'/'M'/'yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate1);
                     var secondFormatSatisfied =
                         DateTime.TryParseExact(row[2]
-                            .Trim(), "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDate);
+                            .Trim(), "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate2);
 
                     // only supports two date formats for now, i.e.  31/01/2000 and 31-jan-2000
                     if (
@@ -108,8 +108,8 @@
                                                       OrderLine = 1, // hardcoded for now
                                                       DeliverySequence = delNo
                                                   },
-                                        NewDateAdvised = parsedDate,
-                                        NewReason = row[3].Trim()
+                                        NewDateAdvised = firstFormatSatisfied ? parsedDate1 : parsedDate2,
+                                        NewReason = row.Length < 4 ? null : row[3].Trim()
                                     });
                 }
 
