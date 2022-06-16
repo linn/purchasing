@@ -23,6 +23,8 @@
 
         private readonly IQueryRepository<MrPurchaseOrderDetail> purchaseOrdersRepository;
 
+        private readonly IQueryRepository<PartAndAssembly> partsAndAssembliesRepository;
+
         private Expression<Func<MrHeader, bool>> filterQuery;
 
         public MaterialRequirementsReportService(
@@ -31,7 +33,8 @@
             ISingleRecordRepository<MrMaster> masterRepository,
             IRepository<Planner, int> plannerRepository,
             IRepository<Employee, int> employeeRepository,
-            IQueryRepository<MrPurchaseOrderDetail> purchaseOrdersRepository)
+            IQueryRepository<MrPurchaseOrderDetail> purchaseOrdersRepository,
+            IQueryRepository<PartAndAssembly> partsAndAssembliesRepository)
         {
             this.repository = repository;
             this.runLogRepository = runLogRepository;
@@ -39,6 +42,7 @@
             this.plannerRepository = plannerRepository;
             this.employeeRepository = employeeRepository;
             this.purchaseOrdersRepository = purchaseOrdersRepository;
+            this.partsAndAssembliesRepository = partsAndAssembliesRepository;
         }
 
         public MrReport GetMaterialRequirements(
