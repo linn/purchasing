@@ -4,7 +4,6 @@
     using System.Collections.Generic;
 
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
-    using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     public class MrPurchaseOrderDetail
     {
