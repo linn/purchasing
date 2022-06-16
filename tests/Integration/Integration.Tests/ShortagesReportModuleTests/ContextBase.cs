@@ -29,7 +29,7 @@
         {
             this.MockDomainService = Substitute.For<IShortagesReportService>();
             this.ReportFacadeService = new ShortagesReportFacadeService(
-                this.MockDomainService, new ResultsModelResourceBuilder());
+                this.MockDomainService, new ReportReturnResourceBuilder());
 
             this.Client = TestClient.With<ShortagesReportModule>(
                 services =>

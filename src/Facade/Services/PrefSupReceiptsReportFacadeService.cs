@@ -13,9 +13,9 @@
     {
         private readonly IPrefSupReceiptsReportService domainService;
 
-        private readonly IBuilder<ResultsModel> resourceBuilder;
+        private readonly IBuilder<IEnumerable<ResultsModel>> resourceBuilder;
 
-        public PrefSupReceiptsReportFacadeService(IPrefSupReceiptsReportService domainService, IBuilder<ResultsModel> resourceBuilder)
+        public PrefSupReceiptsReportFacadeService(IPrefSupReceiptsReportService domainService, IBuilder<IEnumerable<ResultsModel>> resourceBuilder)
         {
             this.domainService = domainService;
             this.resourceBuilder = resourceBuilder;
@@ -33,7 +33,8 @@
             }
 
             var result = this.domainService.GetReport(from, to);
-            var resource = (ReportReturnResource)this.resourceBuilder.Build(result, null);
+            var resource = (ReportReturnResource)this.resourceBuilder.Build(
+                new List<ResultsModel> { result }, null);
 
             return new SuccessResult<ReportReturnResource>(resource);
         }

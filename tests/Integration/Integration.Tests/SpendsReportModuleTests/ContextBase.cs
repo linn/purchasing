@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.SpendsReportModuleTests
 {
+    using System.Collections.Generic;
     using System.Net.Http;
 
     using Linn.Common.Facade;
@@ -29,14 +30,14 @@
 
         protected ISpendsReportService DomainService { get; set; }
 
-        protected IBuilder<ResultsModel> ResourceBuilder { get; set; }
+        protected IBuilder<IEnumerable<ResultsModel>> ResourceBuilder { get; set; }
 
         [SetUp]
         public void EstablishContext()
         {
             this.DomainService = Substitute.For<ISpendsReportService>();
 
-            this.FacadeService = new SpendsReportFacadeService(this.DomainService, new ResultsModelResourceBuilder());
+            this.FacadeService = new SpendsReportFacadeService(this.DomainService, new ReportReturnResourceBuilder());
 
             this.Log = Substitute.For<ILog>();
 

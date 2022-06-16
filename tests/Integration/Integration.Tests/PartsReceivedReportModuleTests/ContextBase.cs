@@ -37,7 +37,7 @@
             this.JobrefFacadeService = new TqmsJobRefService(this.MockRepository);
             this.MockDomainService = Substitute.For<IPartsReceivedReportService>();
             this.ReportFacadeService = new PartsReceivedReportFacadeService(
-                this.MockDomainService, new ResultsModelResourceBuilder());
+                this.MockDomainService, new ReportReturnResourceBuilder());
 
             this.Client = TestClient.With<PartsReceivedReportModule>(
                 services =>

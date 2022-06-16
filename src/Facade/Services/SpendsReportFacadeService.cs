@@ -12,11 +12,11 @@
     {
         private readonly ISpendsReportService domainService;
 
-        private readonly IBuilder<ResultsModel> resultsModelResourceBuilder;
+        private readonly IBuilder<IEnumerable<ResultsModel>> resultsModelResourceBuilder;
 
         public SpendsReportFacadeService(
             ISpendsReportService domainService,
-            IBuilder<ResultsModel> resultsModelResourceBuilder)
+            IBuilder<IEnumerable<ResultsModel>> resultsModelResourceBuilder)
         {
             this.domainService = domainService;
             this.resultsModelResourceBuilder = resultsModelResourceBuilder;
@@ -52,7 +52,8 @@
 
         private ReportReturnResource BuildResource(ResultsModel resultsModel, IEnumerable<string> privileges)
         {
-            return (ReportReturnResource)this.resultsModelResourceBuilder.Build(resultsModel, privileges);
+            return (ReportReturnResource)this.resultsModelResourceBuilder.Build(
+                new List<ResultsModel> { resultsModel }, privileges);
         }
     }
 }

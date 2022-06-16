@@ -29,7 +29,7 @@
         {
             this.MockDomainService = Substitute.For<IWhatsDueInReportService>();
             this.ReportFacadeService = new WhatsDueInReportFacadeService(
-                this.MockDomainService, new ResultsModelResourceBuilder());
+                this.MockDomainService, new ReportReturnResourceBuilder());
 
             this.Client = TestClient.With<WhatsDueInReportModule>(
                 services =>

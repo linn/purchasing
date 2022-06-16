@@ -14,11 +14,11 @@
     {
         private readonly IPartsReceivedReportService domainService;
 
-        private readonly IBuilder<ResultsModel> resultsModelResourceBuilder;
+        private readonly IBuilder<IEnumerable<ResultsModel>> resultsModelResourceBuilder;
 
         public PartsReceivedReportFacadeService(
             IPartsReceivedReportService domainService,
-            IBuilder<ResultsModel> resultsModelResourceBuilder)
+            IBuilder<IEnumerable<ResultsModel>> resultsModelResourceBuilder)
         {
             this.domainService = domainService;
             this.resultsModelResourceBuilder = resultsModelResourceBuilder;
@@ -27,17 +27,20 @@
         public IResult<ReportReturnResource> GetReport(PartsReceivedReportRequestResource options)
         {
             var resource = (ReportReturnResource)this.resultsModelResourceBuilder.Build(
-                this.domainService.GetReport(
-                    options.Jobref,
-                    options.Supplier,
-                    options.FromDate,
-                    options.ToDate,
-                    options.OrderBy,
-                    options.IncludeNegativeValues),
+                new List<ResultsModel> 
+                    {
+                        this.domainService.GetReport(
+                            options.Jobref,
+                            options.Supplier,
+                            options.FromDate,
+                            options.ToDate,
+                            options.OrderBy,
+                            options.IncludeNegativeValues)
+                    },
                 null);
 
-            return new SuccessResult<ReportReturnResource>(resource);
-        }
+                                               return new SuccessResult<ReportReturnResource>(resource);
+                                           }
 
         public IEnumerable<IEnumerable<string>> GetReportCsv(PartsReceivedReportRequestResource options)
         {

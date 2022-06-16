@@ -14,11 +14,11 @@
     {
         private readonly IWhatsInInspectionReportService domainService;
 
-        private readonly IBuilder<ResultsModel> resultsModelResourceBuilder;
+        private readonly IBuilder<IEnumerable<ResultsModel>> resultsModelResourceBuilder;
 
         public WhatsInInspectionReportFacadeService(
             IWhatsInInspectionReportService domainService,
-            IBuilder<ResultsModel> resultsModelResourceBuilder)
+            IBuilder<IEnumerable<ResultsModel>> resultsModelResourceBuilder)
         {
             this.domainService = domainService;
             this.resultsModelResourceBuilder = resultsModelResourceBuilder;
@@ -54,16 +54,14 @@
                                                                     OurUnitOfMeasure = m.OurUnitOfMeasure,
                                                                     Batch = m.Batch,
                                                                     OrdersBreakdown = m.OrdersBreakdown != null
-                                                                        ? (ReportReturnResource)this
-                                                                            .resultsModelResourceBuilder.Build(m.OrdersBreakdown, null)
+                                                                        ? this.ToResource(m.OrdersBreakdown)
                                                                         : null,
                                                                     LocationsBreakdown = m.LocationsBreakdown != null 
-                                                                        ? (ReportReturnResource)this
-                                                                        .resultsModelResourceBuilder.Build(m.LocationsBreakdown, null) 
+                                                                        ? this.ToResource(m.LocationsBreakdown)
                                                                         : null
                                                                 }),
                         BackOrderData = result.BackOrderData != null 
-                                         ? (ReportReturnResource)this.resultsModelResourceBuilder.Build(result.BackOrderData, null)
+                                         ? this.ToResource(result.BackOrderData)
                                          : null
                 });
         }
@@ -79,6 +77,12 @@
                 includePartsWithNoOrderNumber,
                 includeFailedStock,
                 includeFinishedGoods).ConvertToCsvList();
+        }
+
+        private ReportReturnResource ToResource(ResultsModel model)
+        {
+            return (ReportReturnResource)this.resultsModelResourceBuilder
+                           .Build(new List<ResultsModel> { model }, null);
         }
     }
 }

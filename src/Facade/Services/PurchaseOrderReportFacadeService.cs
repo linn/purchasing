@@ -16,11 +16,11 @@
     {
         private readonly IPurchaseOrdersReportService domainService;
 
-        private readonly IBuilder<ResultsModel> resultsModelResourceBuilder;
+        private readonly IBuilder<IEnumerable<ResultsModel>> resultsModelResourceBuilder;
 
         public PurchaseOrderReportFacadeService(
             IPurchaseOrdersReportService domainService,
-            IBuilder<ResultsModel> resultsModelResourceBuilder)
+            IBuilder<IEnumerable<ResultsModel>> resultsModelResourceBuilder)
         {
             this.domainService = domainService;
             this.resultsModelResourceBuilder = resultsModelResourceBuilder;
@@ -172,7 +172,8 @@
             ResultsModel resultsModel, 
             IEnumerable<string> privileges)
         {
-            return (ReportReturnResource)this.resultsModelResourceBuilder.Build(resultsModel, privileges);
+            return (ReportReturnResource)this.resultsModelResourceBuilder.Build(
+                new List<ResultsModel> { resultsModel }, privileges);
         }
     }
 }

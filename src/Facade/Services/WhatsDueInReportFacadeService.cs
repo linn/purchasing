@@ -13,11 +13,11 @@
     {
         private readonly IWhatsDueInReportService domainService;
 
-        private readonly IBuilder<ResultsModel> resultsModelResourceBuilder;
+        private readonly IBuilder<IEnumerable<ResultsModel>> resultsModelResourceBuilder;
 
         public WhatsDueInReportFacadeService(
             IWhatsDueInReportService domainService,
-            IBuilder<ResultsModel> resultsModelResourceBuilder)
+            IBuilder<IEnumerable<ResultsModel>> resultsModelResourceBuilder)
         {
             this.domainService = domainService;
             this.resultsModelResourceBuilder = resultsModelResourceBuilder;
@@ -31,8 +31,11 @@
             int? supplier)
         {
             var resource = (ReportReturnResource)this.resultsModelResourceBuilder.Build(
-                this.domainService.GetReport(
-                    DateTime.Parse(fromDate), DateTime.Parse(toDate), orderBy, vendorManager, supplier),
+                new List<ResultsModel>
+                    {
+                        this.domainService.GetReport(
+                            DateTime.Parse(fromDate), DateTime.Parse(toDate), orderBy, vendorManager, supplier)
+                    },
                 null);
 
             return new SuccessResult<ReportReturnResource>(resource);

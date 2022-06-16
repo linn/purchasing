@@ -45,7 +45,7 @@
             this.MockUsedOnReportDomainService = Substitute.For<IMrUsedOnReportService>();
             this.UsedOnReportFacadeService = new MrUsedOnReportFacadeService(
                 this.MockUsedOnReportDomainService,
-                new ResultsModelResourceBuilder());
+                new ReportReturnResourceBuilder());
             this.MaterialRequirementsReportFacadeService = Substitute.For<IMaterialRequirementsReportFacadeService>();
 
             this.Client = TestClient.With<MaterialRequirementsModule>(

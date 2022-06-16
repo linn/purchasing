@@ -395,6 +395,7 @@
             entity.HasOne(a => a.Currency).WithMany().HasForeignKey("CURRENCY");
             entity.HasOne(a => a.PreferredSupplier).WithMany().HasForeignKey("PREFERRED_SUPPLIER");
             entity.Property(a => a.CurrencyUnitPrice).HasColumnName("CURRENCY_UNIT_PRICE");
+            entity.Property(a => a.OurUnitOfMeasure).HasColumnName("OUR_UNIT_OF_MEASURE");
         }
 
         private void BuildSuppliers(ModelBuilder builder)

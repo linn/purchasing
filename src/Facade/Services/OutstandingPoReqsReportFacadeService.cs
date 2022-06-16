@@ -1,5 +1,7 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
+    using System.Collections.Generic;
+
     using Linn.Common.Facade;
     using Linn.Common.Reporting.Models;
     using Linn.Common.Reporting.Resources.ReportResultResources;
@@ -9,11 +11,11 @@
     {
         private readonly IOutstandingPoReqsReportService domainService;
 
-        private readonly IBuilder<ResultsModel> resourceBuilder;
+        private readonly IBuilder<IEnumerable<ResultsModel>> resourceBuilder;
 
         public OutstandingPoReqsReportFacadeService(
             IOutstandingPoReqsReportService domainService,
-            IBuilder<ResultsModel> resourceBuilder)
+            IBuilder<IEnumerable<ResultsModel>> resourceBuilder)
         {
             this.domainService = domainService;
             this.resourceBuilder = resourceBuilder;
@@ -22,9 +24,10 @@
         public IResult<ReportReturnResource> GetReport(string state)
         {
             var result = this.domainService.GetReport(state);
-            var resource = (ReportReturnResource)this.resourceBuilder.Build(result, null);
+            var resource = (ReportReturnResource)this.resourceBuilder.Build(
+                new List<ResultsModel> { result }, null);
 
             return new SuccessResult<ReportReturnResource>(resource);
-        }
+                                           }
     }
 }

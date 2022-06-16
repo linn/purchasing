@@ -5,28 +5,27 @@
     using Linn.Common.Facade;
     using Linn.Common.Reporting.Models;
     using Linn.Common.Reporting.Resources.ReportResultResources;
-    using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
+    using Linn.Purchasing.Domain.LinnApps.Reports;
 
-    public class MrUsedOnReportFacadeService : IMrUsedOnReportFacadeService
+    public class MrOrderBookReportFacadeService : IMrOrderBookReportFacadeService
     {
-        private readonly IMrUsedOnReportService reportService;
+        private readonly IMrOrderBookReportService domainService;
 
         private readonly IBuilder<IEnumerable<ResultsModel>> resultsModelResourceBuilder;
 
-        public MrUsedOnReportFacadeService(
-            IMrUsedOnReportService reportService,
+        public MrOrderBookReportFacadeService(
+            IMrOrderBookReportService domainService,
             IBuilder<IEnumerable<ResultsModel>> resultsModelResourceBuilder)
         {
-            this.reportService = reportService;
+            this.domainService = domainService;
             this.resultsModelResourceBuilder = resultsModelResourceBuilder;
         }
 
-        public IResult<ReportReturnResource> GetReport(string partNumber, string jobRef)
+        public IResult<ReportReturnResource> GetReport(int supplierId)
         {
             var resource = (ReportReturnResource)this.resultsModelResourceBuilder.Build(
-                new List<ResultsModel> { this.reportService.GetUsedOn(partNumber, jobRef) },
-                null);
-
+                new List<ResultsModel> {this.domainService.GetOrderBookReport(supplierId) }, null);
+            
             return new SuccessResult<ReportReturnResource>(resource);
         }
     }

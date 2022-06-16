@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.IoC
 {
+    using System.Collections.Generic;
     using System.Net.Http;
 
     using Amazon.Extensions.NETCore.Setup;
@@ -48,7 +49,7 @@
                 .AddTransient<IBuilder<PackagingGroup>, PackagingGroupResourceBuilder>()
                 .AddTransient<IBuilder<Tariff>, TariffResourceBuilder>()
                 .AddTransient<IBuilder<Manufacturer>, ManufacturerResourceBuilder>()
-                .AddTransient<IBuilder<ResultsModel>, ResultsModelResourceBuilder>()
+                .AddTransient<IBuilder<IEnumerable<ResultsModel>>, ReportReturnResourceBuilder>()
                 .AddTransient<IBuilder<PreferredSupplierChange>, PreferredSupplierChangeResourceBuilder>()
                 .AddTransient<IBuilder<PriceChangeReason>, PriceChangeReasonResourceBuilder>()
                 .AddTransient<IBuilder<PartCategory>, PartCategoryResourceBuilder>()
@@ -119,7 +120,8 @@
                 .AddTransient<IMrUsedOnReportFacadeService, MrUsedOnReportFacadeService>()
                 .AddTransient<IPurchaseOrderDeliveryFacadeService, PurchaseOrderDeliveryFacadeService>()
                 .AddTransient<IMaterialRequirementsReportFacadeService, MaterialRequirementsReportFacadeService>()
-                .AddTransient<IShortagesReportFacadeService, ShortagesReportFacadeService>();
+                .AddTransient<IShortagesReportFacadeService, ShortagesReportFacadeService>()
+                .AddTransient<IMrOrderBookReportFacadeService, MrOrderBookReportFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
@@ -162,6 +164,7 @@
                 .AddTransient<IPurchaseOrderDeliveryService, PurchaseOrderDeliveryService>()
                 .AddTransient<IMaterialRequirementsReportService, MaterialRequirementsReportService>()
                 .AddTransient<IShortagesReportService, ShortagesReportService>()
+                .AddTransient<IMrOrderBookReportService, MrOrderBookReportService>()
 
                 // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
