@@ -729,11 +729,20 @@ function MaterialRequirementsReport() {
                                         </Typography>
                                     </Stack>
                                 </Grid>
-                                <Grid item xs={12}>
+                                <Grid item xs={3}>
                                     <Stack direction="row" spacing={2}>
                                         <Typography variant="body2">
                                             Annual Usage: {selectedItem.annualUsage}
                                         </Typography>
+                                    </Stack>
+                                </Grid>
+                                <Grid item xs={9}>
+                                    <Stack direction="row" spacing={2}>
+                                        {selectedItem.mrComments && (
+                                            <Typography variant="body2">
+                                                Comments: {selectedItem.mrComments}
+                                            </Typography>
+                                        )}
                                     </Stack>
                                 </Grid>
                                 <Grid

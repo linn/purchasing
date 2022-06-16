@@ -1285,6 +1285,7 @@
             entity.Property(e => e.Planner).HasColumnName("PLANNER");
             entity.Property(e => e.DangerLevel).HasColumnName("DANGER_LEVEL");
             entity.Property(e => e.WeeksUntilDangerous).HasColumnName("WEEKS_UNTIL_DANGEROUS");
+            entity.Property(e => e.MrComments).HasColumnName("ACTION_COMMENTS").HasColumnType("VARCHAR2").HasMaxLength(200);
             entity.HasMany(s => s.MrDetails).WithOne().HasForeignKey(c => new { c.JobRef, c.PartNumber });
         }
 

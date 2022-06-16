@@ -51,6 +51,8 @@
         public string VendorManagerInitials { get; set; }
 
         public int? Planner { get; set; }
+        
+        public string MrComments { get; set; }
 
         public IEnumerable<MrDetailResource> Details { get; set; }
     }
