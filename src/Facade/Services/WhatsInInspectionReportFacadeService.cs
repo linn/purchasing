@@ -8,17 +8,18 @@
     using Linn.Common.Reporting.Resources.Extensions;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Domain.LinnApps.Reports;
+    using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Resources;
 
     public class WhatsInInspectionReportFacadeService : IWhatsInInspectionReportFacadeService
     {
         private readonly IWhatsInInspectionReportService domainService;
 
-        private readonly IBuilder<IEnumerable<ResultsModel>> resultsModelResourceBuilder;
+        private readonly IReportReturnResourceBuilder resultsModelResourceBuilder;
 
         public WhatsInInspectionReportFacadeService(
             IWhatsInInspectionReportService domainService,
-            IBuilder<IEnumerable<ResultsModel>> resultsModelResourceBuilder)
+            IReportReturnResourceBuilder resultsModelResourceBuilder)
         {
             this.domainService = domainService;
             this.resultsModelResourceBuilder = resultsModelResourceBuilder;
@@ -82,7 +83,7 @@
         private ReportReturnResource ToResource(ResultsModel model)
         {
             return (ReportReturnResource)this.resultsModelResourceBuilder
-                           .Build(new List<ResultsModel> { model }, null);
+                           .Build(new List<ResultsModel> { model });
         }
     }
 }

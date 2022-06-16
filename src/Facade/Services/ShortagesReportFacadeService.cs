@@ -7,17 +7,18 @@
     using Linn.Common.Reporting.Models;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Domain.LinnApps.Reports;
+    using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Resources.RequestResources;
 
     public class ShortagesReportFacadeService : IShortagesReportFacadeService 
     {
         private readonly IShortagesReportService domainService;
 
-        private readonly IBuilder<IEnumerable<ResultsModel>> resultsModelResourceBuilder;
+        private readonly IReportReturnResourceBuilder resultsModelResourceBuilder;
 
         public ShortagesReportFacadeService(
             IShortagesReportService domainService,
-            IBuilder<IEnumerable<ResultsModel>> resultsModelResourceBuilder)
+            IReportReturnResourceBuilder resultsModelResourceBuilder)
         {
             this.domainService = domainService;
             this.resultsModelResourceBuilder = resultsModelResourceBuilder;
@@ -32,7 +33,7 @@
 
             var resultResources = result.Select(
                 d => (ReportReturnResource)this.resultsModelResourceBuilder.Build(
-                    new List<ResultsModel> { d }, null));
+                    new List<ResultsModel> { d }));
 
             return new SuccessResult<IEnumerable<ReportReturnResource>>(resultResources);
         }

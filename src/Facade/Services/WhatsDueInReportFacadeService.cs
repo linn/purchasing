@@ -8,16 +8,17 @@
     using Linn.Common.Reporting.Resources.Extensions;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Domain.LinnApps.Reports;
+    using Linn.Purchasing.Facade.ResourceBuilders;
 
     public class WhatsDueInReportFacadeService : IWhatsDueInReportFacadeService
     {
         private readonly IWhatsDueInReportService domainService;
 
-        private readonly IBuilder<IEnumerable<ResultsModel>> resultsModelResourceBuilder;
+        private readonly IReportReturnResourceBuilder resultsModelResourceBuilder;
 
         public WhatsDueInReportFacadeService(
             IWhatsDueInReportService domainService,
-            IBuilder<IEnumerable<ResultsModel>> resultsModelResourceBuilder)
+            IReportReturnResourceBuilder resultsModelResourceBuilder)
         {
             this.domainService = domainService;
             this.resultsModelResourceBuilder = resultsModelResourceBuilder;
@@ -35,8 +36,7 @@
                     {
                         this.domainService.GetReport(
                             DateTime.Parse(fromDate), DateTime.Parse(toDate), orderBy, vendorManager, supplier)
-                    },
-                null);
+                    });
 
             return new SuccessResult<ReportReturnResource>(resource);
         }

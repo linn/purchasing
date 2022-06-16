@@ -6,16 +6,17 @@
     using Linn.Common.Reporting.Models;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Domain.LinnApps.Reports;
+    using Linn.Purchasing.Facade.ResourceBuilders;
 
     public class OutstandingPoReqsReportFacadeService : IOutstandingPoReqsReportFacadeService
     {
         private readonly IOutstandingPoReqsReportService domainService;
 
-        private readonly IBuilder<IEnumerable<ResultsModel>> resourceBuilder;
+        private readonly IReportReturnResourceBuilder resourceBuilder;
 
         public OutstandingPoReqsReportFacadeService(
             IOutstandingPoReqsReportService domainService,
-            IBuilder<IEnumerable<ResultsModel>> resourceBuilder)
+            IReportReturnResourceBuilder resourceBuilder)
         {
             this.domainService = domainService;
             this.resourceBuilder = resourceBuilder;
@@ -24,10 +25,9 @@
         public IResult<ReportReturnResource> GetReport(string state)
         {
             var result = this.domainService.GetReport(state);
-            var resource = (ReportReturnResource)this.resourceBuilder.Build(
-                new List<ResultsModel> { result }, null);
+            var resource = this.resourceBuilder.Build(new List<ResultsModel> { result });
 
             return new SuccessResult<ReportReturnResource>(resource);
-                                           }
+        }
     }
 }

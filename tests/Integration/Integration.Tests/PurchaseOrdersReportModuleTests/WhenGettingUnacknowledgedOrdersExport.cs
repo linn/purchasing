@@ -19,8 +19,7 @@
         {
             this.FacadeService
                 .GetUnacknowledgedOrdersReportExport(
-                    Arg.Any<UnacknowledgedOrdersRequestResource>(),
-                    Arg.Any<IEnumerable<string>>())
+                    Arg.Any<UnacknowledgedOrdersRequestResource>())
                 .Returns(new List<IEnumerable<string>>());
 
             this.Response = this.Client.Get(
@@ -32,8 +31,7 @@
         public void ShouldCallFacadeService()
         {
             this.FacadeService.Received().GetUnacknowledgedOrdersReportExport(
-                Arg.Is<UnacknowledgedOrdersRequestResource>(a => a.SupplierId == 123 && a.SupplierGroupId == 456),
-                Arg.Any<IEnumerable<string>>());
+                Arg.Is<UnacknowledgedOrdersRequestResource>(a => a.SupplierId == 123 && a.SupplierGroupId == 456));
         }
 
         [Test]

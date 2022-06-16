@@ -49,7 +49,7 @@
                 .AddTransient<IBuilder<PackagingGroup>, PackagingGroupResourceBuilder>()
                 .AddTransient<IBuilder<Tariff>, TariffResourceBuilder>()
                 .AddTransient<IBuilder<Manufacturer>, ManufacturerResourceBuilder>()
-                .AddTransient<IBuilder<IEnumerable<ResultsModel>>, ReportReturnResourceBuilder>()
+                .AddTransient<IReportReturnResourceBuilder, ReportReturnResourceBuilder>()
                 .AddTransient<IBuilder<PreferredSupplierChange>, PreferredSupplierChangeResourceBuilder>()
                 .AddTransient<IBuilder<PriceChangeReason>, PriceChangeReasonResourceBuilder>()
                 .AddTransient<IBuilder<PartCategory>, PartCategoryResourceBuilder>()

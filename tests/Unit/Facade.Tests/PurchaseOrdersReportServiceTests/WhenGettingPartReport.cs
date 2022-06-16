@@ -34,7 +34,7 @@
                         ReportTitle = new NameModel("Purchase Orders By Part: RAW 123")
                     });
 
-            this.result = this.Sut.GetOrdersByPartReport(resource, new List<string>());
+            this.result = this.Sut.GetOrdersByPartReport(resource);
         }
 
         [Test]

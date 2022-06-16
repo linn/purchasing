@@ -7,6 +7,7 @@
     using Linn.Common.Reporting.Resources.Extensions;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Domain.LinnApps.Reports;
+    using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Resources.RequestResources;
 
 
@@ -14,11 +15,11 @@
     {
         private readonly IPartsReceivedReportService domainService;
 
-        private readonly IBuilder<IEnumerable<ResultsModel>> resultsModelResourceBuilder;
+        private readonly IReportReturnResourceBuilder resultsModelResourceBuilder;
 
         public PartsReceivedReportFacadeService(
             IPartsReceivedReportService domainService,
-            IBuilder<IEnumerable<ResultsModel>> resultsModelResourceBuilder)
+            IReportReturnResourceBuilder resultsModelResourceBuilder)
         {
             this.domainService = domainService;
             this.resultsModelResourceBuilder = resultsModelResourceBuilder;
@@ -36,11 +37,10 @@
                             options.ToDate,
                             options.OrderBy,
                             options.IncludeNegativeValues)
-                    },
-                null);
+                    });
 
-                                               return new SuccessResult<ReportReturnResource>(resource);
-                                           }
+            return new SuccessResult<ReportReturnResource>(resource);
+        }
 
         public IEnumerable<IEnumerable<string>> GetReportCsv(PartsReceivedReportRequestResource options)
         {

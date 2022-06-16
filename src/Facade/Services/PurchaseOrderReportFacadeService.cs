@@ -9,6 +9,7 @@
 
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Domain.LinnApps.Reports;
+    using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.RequestResources;
 
@@ -16,19 +17,18 @@
     {
         private readonly IPurchaseOrdersReportService domainService;
 
-        private readonly IBuilder<IEnumerable<ResultsModel>> resultsModelResourceBuilder;
+        private readonly IReportReturnResourceBuilder resultsModelResourceBuilder;
 
         public PurchaseOrderReportFacadeService(
             IPurchaseOrdersReportService domainService,
-            IBuilder<IEnumerable<ResultsModel>> resultsModelResourceBuilder)
+            IReportReturnResourceBuilder resultsModelResourceBuilder)
         {
             this.domainService = domainService;
             this.resultsModelResourceBuilder = resultsModelResourceBuilder;
         }
 
         public IResult<ReportReturnResource> GetOrdersByPartReport(
-        OrdersByPartSearchResource resource,
-        IEnumerable<string> privileges)
+        OrdersByPartSearchResource resource)
         {
             var fromValid = DateTime.TryParse(resource.From, out var from);
             var toValid = DateTime.TryParse(resource.To, out var to);
@@ -47,14 +47,13 @@
                 resource.PartNumber,
                 cancelled);
 
-            var returnResource = this.BuildResource(results, privileges);
+            var returnResource = this.BuildResource(results);
 
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
         public IEnumerable<IEnumerable<string>> GetOrdersByPartExport(
-            OrdersByPartSearchResource resource,
-            IEnumerable<string> privileges)
+            OrdersByPartSearchResource resource)
         {
             var fromValid = DateTime.TryParse(resource.From, out var from);
             var toValid = DateTime.TryParse(resource.To, out var to);
@@ -76,31 +75,29 @@
         }
 
         public IResult<ReportReturnResource> GetSuppliersWithUnacknowledgedOrdersReport(
-            SuppliersWithUnacknowledgedOrdersRequestResource resource,
-            IEnumerable<string> privileges)
+            SuppliersWithUnacknowledgedOrdersRequestResource resource)
         {
             var results = this.domainService.GetSuppliersWithUnacknowledgedOrders(
                 resource.Planner,
                 resource.VendorManager,
                 resource.UseSupplierGroup);
 
-            var returnResource = this.BuildResource(results, privileges);
+            var returnResource = this.BuildResource(results);
 
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
         public IResult<ReportReturnResource> GetUnacknowledgedOrdersReport(
-            UnacknowledgedOrdersRequestResource resource,
-            IEnumerable<string> privileges)
+            UnacknowledgedOrdersRequestResource resource)
         {
             var results = this.domainService.GetUnacknowledgedOrders(resource.SupplierId, resource.SupplierGroupId);
 
-            var returnResource = this.BuildResource(results, privileges);
+            var returnResource = this.BuildResource(results);
 
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
-        public IEnumerable<IEnumerable<string>> GetUnacknowledgedOrdersReportExport(UnacknowledgedOrdersRequestResource resource, IEnumerable<string> privileges)
+        public IEnumerable<IEnumerable<string>> GetUnacknowledgedOrdersReportExport(UnacknowledgedOrdersRequestResource resource)
         {
             var results = this.domainService.GetUnacknowledgedOrders(resource.SupplierId, resource.SupplierGroupId);
 
@@ -108,8 +105,7 @@
         }
 
         public IResult<ReportReturnResource> GetOrdersBySupplierReport(
-            OrdersBySupplierSearchResource resource,
-            IEnumerable<string> privileges)
+            OrdersBySupplierSearchResource resource)
         {
             var fromValid = DateTime.TryParse(resource.From, out var from);
             var toValid = DateTime.TryParse(resource.To, out var to);
@@ -134,14 +130,13 @@
                 resource.Credits,
                 resource.StockControlled);
 
-            var returnResource = this.BuildResource(results, privileges);
+            var returnResource = this.BuildResource(results);
 
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
         public IEnumerable<IEnumerable<string>> GetOrdersBySupplierExport(
-            OrdersBySupplierSearchResource resource,
-            IEnumerable<string> privileges)
+            OrdersBySupplierSearchResource resource)
         {
             var fromValid = DateTime.TryParse(resource.From, out var from);
             var toValid = DateTime.TryParse(resource.To, out var to);
@@ -169,11 +164,10 @@
         }
 
         private ReportReturnResource BuildResource(
-            ResultsModel resultsModel, 
-            IEnumerable<string> privileges)
+            ResultsModel resultsModel)
         {
             return (ReportReturnResource)this.resultsModelResourceBuilder.Build(
-                new List<ResultsModel> { resultsModel }, privileges);
+                new List<ResultsModel> { resultsModel });
         }
     }
 }

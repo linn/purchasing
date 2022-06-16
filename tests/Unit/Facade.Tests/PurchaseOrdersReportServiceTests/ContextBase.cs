@@ -14,7 +14,7 @@
 
     public class ContextBase
     {
-        protected IBuilder<IEnumerable<ResultsModel>> Builder { get; private set; }
+        protected IReportReturnResourceBuilder Builder { get; private set; }
 
         protected IPurchaseOrdersReportService DomainService { get; private set; }
 

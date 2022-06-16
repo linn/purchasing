@@ -7,53 +7,54 @@
     using Linn.Common.Reporting.Resources.Extensions;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Domain.LinnApps.Reports;
+    using Linn.Purchasing.Facade.ResourceBuilders;
 
     public class SpendsReportFacadeService : ISpendsReportFacadeService
     {
         private readonly ISpendsReportService domainService;
 
-        private readonly IBuilder<IEnumerable<ResultsModel>> resultsModelResourceBuilder;
+        private readonly IReportReturnResourceBuilder resultsModelResourceBuilder;
 
         public SpendsReportFacadeService(
             ISpendsReportService domainService,
-            IBuilder<IEnumerable<ResultsModel>> resultsModelResourceBuilder)
+            IReportReturnResourceBuilder resultsModelResourceBuilder)
         {
             this.domainService = domainService;
             this.resultsModelResourceBuilder = resultsModelResourceBuilder;
         }
 
-        public IEnumerable<IEnumerable<string>> GetSpendBySupplierExport(string vendorManagerId, IEnumerable<string> privileges)
+        public IEnumerable<IEnumerable<string>> GetSpendBySupplierExport(string vendorManagerId)
         {
             return this.domainService.GetSpendBySupplierReport(vendorManagerId).ConvertToCsvList();
         }
 
-        public IResult<ReportReturnResource> GetSpendBySupplierReport(string vendorManagerId, IEnumerable<string> privileges)
+        public IResult<ReportReturnResource> GetSpendBySupplierReport(string vendorManagerId)
         {
             var results = this.domainService.GetSpendBySupplierReport(vendorManagerId);
 
-            var returnResource = this.BuildResource(results, privileges);
+            var returnResource = this.BuildResource(results);
 
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
-        public IEnumerable<IEnumerable<string>> GetSpendByPartExport(int supplierId, IEnumerable<string> privileges)
+        public IEnumerable<IEnumerable<string>> GetSpendByPartExport(int supplierId)
         {
             return this.domainService.GetSpendByPartReport(supplierId).ConvertToCsvList();
         }
 
-        public IResult<ReportReturnResource> GetSpendByPartReport(int supplierId, IEnumerable<string> privileges)
+        public IResult<ReportReturnResource> GetSpendByPartReport(int supplierId)
         {
             var results = this.domainService.GetSpendByPartReport(supplierId);
 
-            var returnResource = this.BuildResource(results, privileges);
+            var returnResource = this.BuildResource(results);
 
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
-        private ReportReturnResource BuildResource(ResultsModel resultsModel, IEnumerable<string> privileges)
+        private ReportReturnResource BuildResource(ResultsModel resultsModel)
         {
             return (ReportReturnResource)this.resultsModelResourceBuilder.Build(
-                new List<ResultsModel> { resultsModel }, privileges);
+                new List<ResultsModel> { resultsModel });
         }
     }
 }

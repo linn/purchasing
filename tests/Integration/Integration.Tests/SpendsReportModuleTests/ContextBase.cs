@@ -30,7 +30,7 @@
 
         protected ISpendsReportService DomainService { get; set; }
 
-        protected IBuilder<IEnumerable<ResultsModel>> ResourceBuilder { get; set; }
+        protected IReportReturnResourceBuilder ResourceBuilder { get; set; }
 
         [SetUp]
         public void EstablishContext()
