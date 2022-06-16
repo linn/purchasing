@@ -1306,6 +1306,14 @@
             entity.Property(e => e.Remarks).HasColumnName("REMARKS").HasColumnType("VARCHAR2");
             entity.Property(e => e.AuthorisedBy).HasColumnName("AUTHORIZED_BY").HasColumnType("VARCHAR2");
             entity.HasMany(s => s.Deliveries).WithOne().HasForeignKey(c => new { c.JobRef, c.OrderNumber, c.OrderLine });
+            entity.Property(s => s.OrderType).HasColumnName("ORDER_TYPE");
+            entity.Property(s => s.SubType).HasColumnName("SUB_TYPE");
+            entity.Property(s => s.DateCancelled).HasColumnName("DATE_CANCELLED");
+            entity.Property(s => s.DeliveryDate).HasColumnName("DELIVERY_DATE");
+            entity.Property(s => s.AdvisedDeliveryDate).HasColumnName("ADVISED_DEL_DATE");
+            entity.Property(s => s.LinnDeliveryDate).HasColumnName("LINN_DEL_DATE");
+            entity.Property(s => s.BestDeliveryDate).HasColumnName("BEST_DELIVERY_DATE");
+            entity.HasOne(s => s.PartSupplierRecord).WithMany().HasForeignKey(s => new { s.PartNumber, s.SupplierId });
         }
 
         private void BuildMrCallOffs(ModelBuilder builder)
@@ -1321,6 +1329,9 @@
             entity.Property(e => e.RequestedDeliveryDate).HasColumnName("REQUESTED_DELIVERY_DATE");
             entity.Property(e => e.AdvisedDeliveryDate).HasColumnName("ADVISED_DELIVERY_DATE");
             entity.Property(e => e.Reference).HasColumnName("REFERENCE");
+            entity.Property(e => e.CallOffDate).HasColumnName("CALL_OFF_DATE");
+            entity.Property(e => e.DeliveryDate).HasColumnName("DELIVERY_DATE");
+            entity.Property(e => e.CallOffType).HasColumnName("CALL_OFF_TYPE");
         }
 
         private void BuildMrDetails(ModelBuilder builder)

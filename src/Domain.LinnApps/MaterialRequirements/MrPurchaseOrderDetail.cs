@@ -3,6 +3,9 @@
     using System;
     using System.Collections.Generic;
 
+    using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
+
     public class MrPurchaseOrderDetail
     {
         public string JobRef { get; set; }
@@ -32,5 +35,21 @@
         public string AuthorisedBy { get; set; }
 
         public IEnumerable<MrPurchaseOrderDelivery> Deliveries { get; set; }
+
+        public string OrderType { get; set; }
+
+        public string SubType { get; set; }
+
+        public DateTime? DateCancelled { get; set; }
+
+        public DateTime? DeliveryDate { get; set; }
+
+        public DateTime? AdvisedDeliveryDate { get; set; }
+
+        public DateTime? LinnDeliveryDate { get; set; }
+
+        public DateTime? BestDeliveryDate { get; set; }
+
+        public PartSupplier PartSupplierRecord { get; set; }
     }
 }

@@ -21,5 +21,11 @@
         public DateTime? AdvisedDeliveryDate { get; set; }
 
         public string Reference { get; set; }
+
+        public DateTime? CallOffDate { get; set; }
+
+        public DateTime? DeliveryDate { get; set; }
+
+        public string CallOffType { get; set; }
     }
 }
