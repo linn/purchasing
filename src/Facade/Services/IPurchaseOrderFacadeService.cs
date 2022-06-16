@@ -8,5 +8,7 @@
         PurchaseOrderResource, PurchaseOrderResource>
     {
         string GetOrderAsHtml(int orderNumber);
+
+        IResult<bool> EmailOrderPdf(int orderNumber, string emailAddress);
     }
 }

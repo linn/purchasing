@@ -5,6 +5,8 @@
     using System.Linq;
 
     using Linn.Common.Authorisation;
+    using Linn.Common.Email;
+    using Linn.Common.Pdf;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
@@ -17,14 +19,22 @@
 
         private readonly IPurchaseLedgerPack purchaseLedgerPack;
 
+        private readonly IPdfService pdfService;
+
+        private readonly IEmailService emailService;
+
         public PurchaseOrderService(
             IAuthorisationService authService,
             IPurchaseLedgerPack purchaseLedgerPack,
-            IDatabaseService databaseService)
+            IDatabaseService databaseService,
+            IPdfService pdfService,
+            IEmailService emailService)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;
             this.databaseService = databaseService;
+            this.pdfService = pdfService;
+            this.emailService = emailService;
         }
 
         public void AllowOverbook(
@@ -100,6 +110,26 @@
             this.UpdateDetails(current.Details, updated.Details);
             // Update pl_order_postings? Or just on create? todo investigate
             return current;
+        }
+
+        public void SendPdfEmail(string html, string emailAddress, int orderNumber)
+        {
+            var pdf = this.pdfService.ConvertHtmlToPdf(html, landscape: false);
+            var emailBody = $"Please accept the attached order no. {orderNumber}.\n"
+                            + $"You will need Acrobat Reader to open the file which is available from www.adobe.com/acrobat\n"
+                            + "Linn's standard Terms & Conditions apply at all times\n "
+                            + "and can be found at www.linn.co.uk/purchasing_conditions";
+            this.emailService.SendEmail(
+                    emailAddress,
+                    emailAddress, // todo add name in here?
+                    null,
+                    null, // todo add purchasingoutgoing@linn.co.uk as bcc
+                    "purchasingoutgoing@linn.co.uk", // todo add as ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"]
+                    "Linn Purchasing",
+                    $"Linn Purchase Order {orderNumber}",
+                    emailBody,
+                    pdf.Result,
+                    $"LinnPurchaseOrder{orderNumber}");
         }
 
         private void UpdateDetails(ICollection<PurchaseOrderDetail> currentDetails, ICollection<PurchaseOrderDetail> updatedDetails)

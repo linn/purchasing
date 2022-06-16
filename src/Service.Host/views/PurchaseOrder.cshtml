@@ -11,79 +11,156 @@
     // font-weight: bold;
     // margin: 40px;
     // }
+    // .whole-row-grid-container {
+    // display: grid;
+    // grid-template-columns: auto;
+    // padding: 10px;
+    // }
     <style>
-       
-        .grid-item {
-            padding: 20px;
-            text-align: center;
-        }
+        body { font-family: Arial, sans-serif; }
 
-        .whole-row-grid-container {
+        pre { font-family: Arial, sans-serif; }
+
+        .six-column-grid-container {
+            column-gap: 10px;
             display: grid;
-            grid-template-columns: auto;
-            padding: 10px;
+            grid-template-columns: auto auto auto auto auto auto;
+            row-gap: 10px;
         }
+        
+        .suppliers-designation {  grid-column: 4 / span 3; }
 
-        .logo { grid-area: logo; }
+        .grid-item { text-align: center; }
+
+        .text-align-right { text-align: right !important; }
+
+        .logo { grid-area: logo; text-align: center; }
 
         .auto { grid-area: auto; }
 
-        .item1 {
-            grid-area: item1;
-        }
+        .item1 { grid-area: item1; }
 
-        .item2 {
-            grid-area: item2;
-        }
+        .item2 { grid-area: item2; }
 
         .address { grid-area: address; }
 
         .regoff {
-            font-size: 0.5em;
+            font-size: 0.6em;
+            font-weight: bold;
             grid-area: regoff;
         }
 
-        .orderno { grid-area: orderno; font-weight: bold;  }
+        .orderno {
+            font-weight: bold;
+            grid-area: orderno;
+        }
 
-        .title { grid-area: title; font-weight: bold; }
+        .title {
+            font-weight: bold;
+            grid-area: title;
+        }
 
-        .date { grid-area: date; text-align: center }
+        .date {
+            grid-area: date;
+            text-align: center
+        }
+
         .supplierName { grid-area: supplierName; }
+
         .deliveryTo { grid-area: deliveryTo; }
-        .deliveryToText { grid-area: deliveryToText; text-align: right }
 
-        .requestedByText { grid-area: requestedByText; text-align: right }
-        .enteredByText { grid-area: enteredByText; text-align: right }
+        .deliveryToText {
+            grid-area: deliveryToText;
+            text-align: right
+        }
 
-        .contactText { grid-area: contactText; text-align: right }
-        .authByText { grid-area: authByText; text-align: right }
+        .requestedByText {
+            grid-area: requestedByText;
+            text-align: right
+        }
 
-        
+        .enteredByText {
+            grid-area: enteredByText;
+            text-align: right
+        }
+
+        .contactText {
+            grid-area: contactText;
+            text-align: right
+        }
+
+        .authByText {
+            grid-area: authByText;
+            text-align: right
+        }
+
         .requestedBy { grid-area: requestedBy; }
+
         .contact { grid-area: contact; }
+
         .enteredBy { grid-area: enteredBy; }
+
         .authBy { grid-area: authBy; }
 
-        
+        .quotationRefText { grid-area: quotationRefText; }
+
+        .quotationRef { grid-area: quotationRef; }
+
+        .remarksText { grid-area: remarksText; }
+
+        .remarks { grid-area: remarks; }
+
 
         .grid-container {
-            display: grid;
             column-gap: 10px;
-            row-gap: 5px;
+            display: grid;
             grid-template-areas:
                                'logo item1 blank1 item2 item2 blank2'
                                'logo address address address address address'
                                'blank3 regoff regoff regoff regoff regoff'
                                'orderno orderno title title date date'
                                'supplierName supplierName supplierName deliveryToText deliveryTo deliveryTo'
-                               ' requestedByText requestedBy blank5  contactText contact blank6'
-                               ' enteredByText enteredBy blank7  authByText authBy blank8';
+                               'requestedByText requestedBy blank5  contactText contact blank6'
+                               'enteredByText enteredBy blank7  authByText authBy blank8'
+                               'quotationRefText quotationRef blank9  blank9 blank9 blank9'
+                               'remarksText remarks blank10  blank10 blank10 blank10';
             padding: 10px;
+            padding-bottom: 50px;
+            row-gap: 5px;
+        }
+
+        .hr { margin: 30px; }
+
+        .page { height: 29.7cm; width: 21.0cm; margin: 10% 0; } 
+
+        .column1-page2 { font-size: 0.44em }
+
+        .column2-page2 { font-size: 0.44em }
+
+        .two-column-grid-container {
+            column-gap: 10px;
+            display: grid;
+            grid-template-areas: 'column1 column1 column1 column2 column2 column2';
+            row-gap: 10px;
+            padding: 5px;
+            border: 0.5px solid black;
+        }
+        .no-margin {
+            margin: 0;
+        }
+        .conditions-of-purch {
+            margin-top: -20px;
         }
     </style>
+
+    <div class="page">
     <div class="grid-container">
         <div class="logo">
-            <img src="../client/assets/linn-logo.png"/>
+            <img src="@("http://app.linn.co.uk/Content/images/linn-logo.png")"/>
+            @{//"../client/src/assets/linn-logo.png"
+                http://app.linn.co.uk/Content/images/linn-logo.png
+                //
+              }
         </div>
         <div class="item1">
             <p>
@@ -97,15 +174,12 @@
             </p>
         </div>
         <div class="address">
-            @{
-                // todo make sure this is right address
-            }
-            <p>
-                @Model.DeliveryAddress.FullAddress.AddressString
-            </p>
+            <pre>Linn Products Ltd, Glasgow Road, Waterfoot, Eaglesham, Glasgow, G76 0EQ, Scotland, UK
+Telephone (0)141 307 7777.
+            </pre>
         </div>
         <div class="regoff">
-            <span>Registered office small text todo</span>
+            <span>Registered office: Glasgow Road, Waterfoot, Eaglesham, Glasgow, G76 0EQ, Scotland, UK. Registered in Scotland Number: SC52366</span>
         </div>
         <div class="orderno">
             <p>Order number: @Model.OrderNumber</p>
@@ -116,7 +190,7 @@
         <div class="date">
             <p>Date: @Model.OrderDate.ToString("dd-MMM-yyyy")</p>
         </div>
-        
+
         <div class="supplierName">
             <pre>
             @Model.Supplier.Name @Model.Supplier.SupplierId
@@ -126,18 +200,15 @@
             @Model.Supplier.OrderAddress.Line4
             @Model.Supplier.OrderAddress.PostCode
             @Model.Supplier.OrderAddress.Country.Name
-</pre>
+            </pre>
         </div>
-        
-        
-        
+
         <div class="deliveryToText">
             <pre>Deliver To</pre>
         </div>
         <div class="deliveryTo">
-             <pre>@Model.DeliveryAddress.FullAddress.AddressString</pre>
+            <pre>@Model.DeliveryAddress.FullAddress.AddressString</pre>
         </div>
-        
         <div class="requestedByText">
             <span>Requested By</span>
         </div>
@@ -162,17 +233,505 @@
         <div class="authBy">
             <span>@Model.AuthorisedBy.FullName</span>
         </div>
+
+        <div class="quotationRefText text-align-right">
+            <span>Quotation Ref</span>
+        </div>
+        <div class="quotationRef">
+            <span>@Model.QuotationRef</span>
+        </div>
+
+        <div class="remarksText text-align-right">
+            <span>Remarks</span>
+        </div>
+        <div class="remarks">
+            <span>@Model.Remarks</span>
+        </div>
     </div>
 
-    @foreach (var purchaseOrderDetail in Model.Details)
-    {
-        <p>Line number: @purchaseOrderDetail.Line</p>
+    <div class="six-column-grid-container">
+        @foreach (var purchaseOrderDetail in Model.Details)
+        {
+            <div class="grid-item">
+                <span>
+                    <b>Order Line</b>
+                </span>
+            </div>
+            <div class="grid-item">
+                <span>
+                    <b>@purchaseOrderDetail.Line</b>
+                </span>
+            </div>
+            <div class="grid-item"></div>
+            <div class="grid-item"></div>
+            <div class="grid-item"></div>
+            <div class="grid-item"></div>
 
-        <p>Part Number: @purchaseOrderDetail.PartNumber - @purchaseOrderDetail.Part.Description</p>
+            <div class="grid-item">
+                <span>
+                    <b>Part Number </b>
+                </span>
+            </div>
+            <div class="grid-item">
+                <span>
+                    <b> @purchaseOrderDetail.PartNumber </b>
+                </span>
+            </div>
+            <div class="suppliers-designation">
+                <pre>@purchaseOrderDetail.SuppliersDesignation </pre>
+            </div>
 
-        // in future could look at making a reusable partial component but but awkward with this:
-        // add custom razorEngineTemplate as in https://github.com/adoconnection/RazorEngineCore/issues/77
-    }
+            <div class="grid-item text-align-right">
+                <span>
+                    <b>Qty </b>
+                </span>
+            </div>
+            <div class="grid-item">
+                <span>
+                    <b>@purchaseOrderDetail.OrderQty </b>
+                </span>
+            </div>
 
+            <div class="grid-item">
+                <span>
+                    <b>Unit price </b>
+                </span>
+            </div>
+            <div class="grid-item">
+                <span>
+                    <b>@purchaseOrderDetail.OrderUnitPriceCurrency</b>
+                </span>
+            </div>
 
+            <div class="grid-item">
+                <span>
+                    <b>Total </b>
+                </span>
+            </div>
+            <div class="grid-item">
+                <span>
+                    <b>@purchaseOrderDetail.NetTotalCurrency </b>
+                </span>
+            </div>
+
+            <div class="grid-item text-align-right">
+                <span>Unit Of Measure</span>
+            </div>
+            <div class="grid-item">
+                <span>
+                    @purchaseOrderDetail.OrderUnitOfMeasure
+                </span>
+            </div>
+
+            <div class="grid-item">
+                <span>Currency</span>
+            </div>
+            <div class="grid-item">
+                <span>
+                    <b>@Model.Currency.Name</b>
+                </span>
+            </div>
+            <div class="grid-item"></div>
+            <div class="grid-item"></div>
+
+            <div class="grid-item">
+                <span>Line Notes</span>
+            </div>
+            <div class="grid-item"></div>
+            <div class="grid-item"></div>
+            <div class="grid-item"></div>
+            <div class="grid-item"></div>
+            <div class="grid-item"></div>
+
+            <div class="grid-item text-align-right">
+                <span>
+                    <b>Deliveries </b>
+                </span>
+            </div>
+            <div class="grid-item">
+                <span>Delivery Qty</span>
+            </div>
+            <div class="grid-item">
+                <span>Unit Price</span>
+            </div>
+            <div class="grid-item">
+                <span>Line Total</span>
+            </div>
+            <div class="grid-item">
+                <span>Date Requested</span>
+            </div>
+            <div class="grid-item"></div>
+
+            foreach (var delivery in purchaseOrderDetail.PurchaseDeliveries)
+            {
+                <div class="grid-item text-align-right">
+                    <span>
+                        <b>@delivery.DeliverySeq </b>
+                    </span>
+                </div>
+                <div class="grid-item">
+                    <span>@delivery.OrderDeliveryQty</span>
+                </div>
+                <div class="grid-item">
+                    <span>@delivery.OrderUnitPriceCurrency</span>
+                </div>
+                <div class="grid-item">
+                    <span>@delivery.NetTotalCurrency</span>
+                </div>
+                <div class="grid-item">
+                    <span>@delivery.DateRequested.Value.ToString("dd-MMM-yyyy")</span>
+                </div>
+                <div class="grid-item">
+                    @{
+                            var oGHistory = delivery.DeliveryHistories.FirstOrDefault(x => x.HistoryNumber == 1);
+                            if (oGHistory != null && (oGHistory.DateRequested.GetValueOrDefault() != delivery.DateRequested.GetValueOrDefault() || oGHistory.OurDeliveryQty.GetValueOrDefault() != delivery.OurDeliveryQty.GetValueOrDefault()))
+                            {
+                                <span>#</span>
+                            }
+                            // need to look up deliveries history table for amended deliveries and add # if altered
+                        }
+                  
+                </div>
+            }
+
+            // in future could look at making a reusable partial components but awkward with razorenginecore,
+            // especially here where we'd be enumerating through multiple
+            // https://github.com/adoconnection/RazorEngineCore/issues/77
+        }
+    </div>
+
+    <hr class="hr"/>
+
+    <div>
+        <pre>
+            Deliveries marked '#' are amended deliveries.
+            Liquidated damages for late delivery will apply at the rate of @Model.DamagesPercent % of the order value per week.
+            All invoices and delivery notes must always quote the above order numbers.
+            All prices on orders are exclusive of value added tax.
+            For conditions of purchase see below.
+            Please confirm all deliveries on this purchase order within 48 hours to @Model.EnteredBy.FullName
+            <b>Please sign this copy and return to the Finance department on receipt of goods.</b>
+            </pre>
+    </div>
+    </div>
+
+    <div>
+    <span class="conditions-of-purch">Conditions Of Purchase</span>
+    <div class="two-column-grid-container">
+    <div class="column1-page2">
+        <pre class="no-margin">
+1. DEFINITIONS
+1.1 "The Order will mean a Linn Products Limited Purchase Order under which goods are to be
+supplied or work done.
+1.2 "The Buyer" will mean Linn Products Limited.
+1.3 "The Seller" will mean the person, firm or company stated on the face of the Order form.
+1.4 "The Goods" will mean all goods, whether raw materials or finished products, or services
+covered by the Order.
+1.5 "Delivery Date" will mean not later than, nor earlier than, the specified date in the Order.
+1.6 "Late Delivery" will mean more than 1 day after the Delivery Date.
+1.7 "Early Delivery" will mean more than 1 day before the Delivery Date.
+1.8 "Price" will mean the Order price, exclusive of value added tax, but inclusive of all other costs.
+2. ORDERS
+2.1 No Order is valid, nor will the Buyer be liable in respect of any purported order, unless it is
+issued or confirmed on the Buyer's Official Order and signed by an authorised signatory of the Buyer.
+2.2 People authorised to sign Orders on behalf of the Buyer are: The Directors, The Company
+Secretary, The Logistics Manager, The Operations Manager and, The Purchasing Manager. No other 
+persons are authorised to bind the Buyer unless the Buyer advises the Seller in writing of additional 
+persons and their terms of authority.
+2.3 The price quoted in the Order will be firm for the duration of the Order, except where Seller and
+Buyer agree otherwise in writing and such agreement is the subject of an amendment to the Order.
+2.4 The Order is liable to cancellation by the Buyer if not acknowledged by the Seller on its official
+order acknowledgement within 5 days of the date of the Order.
+2.5 The acceptance of our Order indicates acceptance of our Conditions of Purchase and the
+requirements of the Order.
+3. STANDARD OF THE WORKS/GOODS
+3.1 It is a condition of this Order that all Goods supplied or work done in the execution of the Order
+will comply in all respects, with the Order description/specification and with any statements or
+undertakings made by the Seller or his servants or agents, prior to the giving of the Order. The
+Seller undertakes that all Goods and services supplied by him shall be of first class quality and
+shall use the best materials and workmanship of their respective kinds and recognises that the
+Buyer has placed the Order relying upon the skill and expertise of the Seller and any
+statements and representations made by him. If samples or patterns are provided by the Seller
+and approved by the Buyer, then the Goods or work will not be inferior in any respect to the
+said samples or patterns.
+3.2 Any change made by the Seller to the Order specification must receive prior written agreement
+from the Buyer before the change to the specification can proceed.
+3.3 All information regarding possible quality problems (faulty components, production faults, etc)
+must immediately be sent to the Buyer.
+4. INSPECTION
+4.1 The Buyer will have the right to inspect the Goods or work during manufacture, processing, or
+testing and the Seller will furnish all reasonable assistance necessary therefor.
+4.2 Both during such inspection and upon delivery, the Buyer will have the right to reject all Goods
+or work which do not conform to the requirements of 3.1 above.
+4.3 In the interests of both parties, the Buyer shall inspect the Goods as quickly as reasonably
+possible and shall advise the Seller of any matter or any thing by reason whereof the Buyer
+alleges that the Goods are not in accordance with these Conditions of Purchase whether as to
+quantity, quality or otherwise. Such advice may initially be given by telephone and subsequently in writing. 
+The Buyer will use his best endeavours to advise the Seller as promptly as possible of any problems.
+4.4 Inspection, measuring and test equipment which is used by the Seller to demonstrate conformity to 
+required specification shall be calibrated at regular intervals. Records and certificates of calibration shall 
+be recorded and kept. All such equipment shall be identified with a suitable indicator. Handling and storage 
+of such equipment will be suitable to ensure accuracy and fitness for use is maintained. Any equipment 
+out with calibration date shall be promptly removed or suitably identified to prevent unintended use. 
+A certificate of conformance to specified requirements shall be mandatory for finished product.
+5. DELIVERY
+5.1 Early Delivery or Late Delivery will entitle the Buyer to cancel the Order.
+5.2 Unless written notice is given by the Buyer to the contrary, the Seller must deliver the quantity
+specified on the order in one delivery. Failure by the Seller to deliver in one delivery will give
+the Buyer the option to cancel the balance of the Order with no further liability whatsoever.
+5.3 The delivery point, if not otherwise specified in the order, will be Linn Products Limited, Glasgow 
+Road, Eaglesham, Glasgow G76 OEQ. This delivery point may change upon written notification.
+5.4 All prices agreed will be carriage paid to delivery address.
+5.5 Subject to prior agreement, the Buyer will accept for some commodities a small overage or
+underage to be not more than 2% of the order quantity.
+5.6 For deliveries to the Glasgow Road plant in Eaglesham, Glasgow, the Buyer will not accept
+deliveries before 8.30 a.m. or after 4.00 p.m. unless by prior arrangement
+6. QUALITY
+6.1 The Seller agrees that Goods delivered by the Seller may be checked by the Buyer using the
+following quality systems:
+Sampling procedure: according to BS 6001
+Sampling plan : Single or multiple
+Sampling table : will be shown on the Order or advised separately.
+Inspection Level : General Level II unless otherwise stated on the Order
+Critical, Major and Minor defects will be defined for each part by the fault classification list.
+This list may accompany the Order and will be updated by the Buyer from time to time as faults
+become apparent. The Fault Classification List may, on occasion, be sent separately from any
+Order.
+6.2 The Seller agrees that the Buyer may choose not to inspect the Goods upon delivery. This
+does not relieve the Seller of any responsibilities he has under these Conditions of Purchase.
+The Buyer will notify the Seller of any problems with the Goods as soon as they become
+apparent.
+7. DELAYS
+7.1 The Seller recognises that late delivery will cause the Buyer consequential loss and agrees to
+pay liquidated damages and compensation towards such loss at the rate stated on the face of the Order.
+In the event of Late Delivery, if no rate for liquidated damages is stated on the front of the
+Order, then liquidated damages will apply at the rate per week shown below:
+Week 1 - 2% Week 2 - 2%
+Week 3 - 2% Week 4 - 2%
+Week 5 - 2% Week 6 - 3%
+Week 7 - 3% Week 8 - 3%
+Week 9 - 3% Week 10 - 3%
+These percentages are cumulative, ie an Order 3 weeks late will incur liquidated damages of
+6% of the total Order value.
+Liquidated damages are to be computed as a percentage of the full value of the Order. If the
+order includes tooling costs, this is deemed to be included in the full value of the Order.
+The maximum consequential liability will not exceed 25% of the value of the Order.
+8. EXTENSION OF TIME
+8.1 In the event that the performance of the Buyer's obligations pursuant to an Order is hindered or
+prevented by reason of circumstances beyond the reasonable control of the Buyer (including,
+but not by way of limitation, industrial disputes) the Buyer will be under no liability whatsoever
+to the Seller for any loss or damage, howsoever resulting, and the time for performance of such
+obligations by the Buyer will be extended by a reasonable period.
+9. FORCE MAJEURE
+9.1 If delivery is delayed by some cause totally outside the control of the Seller (“force majeure”),
+than he shall give written notice of such cause within 7 days of the occurrence and the Buyer
+may then (but without prejudice to its other rights) allow such extra time for delivery as is
+reasonable in the circumstances. If the event of force majeure continues beyond a period of 7
+days, the Buyer may terminate the Order.
+10. WARRANTY
+10.1 If the Goods (or any of them) supplied shall be defective upon delivery or shall prove to be
+defective within 12 months of delivery then the Buyer may call upon the Seller (but without
+prejudice to the Buyer's other rights) to rectify the defects or replace the Goods (at the Buyer's
+option) at the Seller's own expense.
+11. PACKAGING
+11.1 The Seller is responsible for ensuring that all Goods will be properly packed and clearly
+labelled and will be delivered carriage paid in accordance with delivery instructions unless
+otherwise arranged. All documents and labels will clearly show the Linn Products Limited
+Order Number.
+11.2 The Seller is responsible for ensuring that all goods packed on pallets will not exceed the
+following dimensions which include the pallet itself:
+Overall width - 1200 mm
+Overall depth - 1000 mm
+Overall height - 1100 (inc. pallet)
+If the Seller wishes to palletise in dimensions other than the above, he requires the Buyer's
+written consent and agreement to the new pallet sizes.
+12. DOCUMENTATION
+12.1 The Seller will send to the Buyer, at his Accounts Department, the following:
+(1) invoices fully priced and quoting the Order number and stating the place of delivery.
+(2) statements quoting invoice number and our Order numbers.
+12.2 Advice notes quoting Order number are to be sent at the same time the Goods are
+despatched, addressed to the company at the place of destination of the Goods.
+12.3 All invoices and statements must show separately the VAT rate and the amount of VAT
+charged and the Seller's VAT registration number.
+</pre>
+    </div>
+
+    <div class="column2-page2">
+        <pre class="no-margin">
+
+13. OWNERSHIP
+13.1 The property and risk in the Goods will remain in the Seller until delivery to the point specified
+in the Order.
+13.2 Unless otherwise agreed, the Buyer will pay the Seller for the Goods 30 days after delivery,
+provided that the Goods meet all the other applicable conditions within these Conditions of Purchase.
+14. ASSIGNMENT
+14.1 The Seller shall not sub-contract, assign or otherwise dispose of the Order or any part thereof
+without the written consent of the Buyer. If the Buyer gives his written consent then the Seller
+will inform the Buyer of the name and address of the sub-contractor as well as a contact name
+to enable the Buyer to carry out inspection during manufacture and allow quality assurance of
+the sub-contractor.
+14.2 The Seller shall be responsible for the acts, defaults and omissions of its sub-contractors,
+whether approval has been given to their appointment under this Clause or not, as if they were
+his own and any consent given under this Clause shall not relieve the Seller of any of his
+obligations under these Conditions of Purchase.
+15. PATENT, DESIGN & COPYRIGHT
+15.1 The Seller will indemnify the Buyer against any claim for infringement of patent, registered
+design, trade mark or copyright by the use or sale of any article or material supplied by the
+Seller to the Buyer and against all costs and damages which the Buyer may incur in any action
+for such infringement or for which the Buyer may become liable in any such action.
+15.2 The terms in 15.1 above will not apply if the Seller is providing articles, materials or Goods
+where the design is solely provided by the Buyer.
+15.3 Any work carried out on behalf of the Buyer in fulfilment of the Order or any part thereof and 
+any intellectual property rights, including copyright and future copyright, created during the course 
+of carrying out the work will be deemed to be the property of the Buyer as the owner of the full right, 
+title and interest in any such work and any intellectual property rights therein.  You, as the author of 
+the work and/or provider of the product(s) and/or services, on request by the Buyer or its agent, will 
+execute a formal assignation (as provided to you by the Buyer) of the work and all of the intellectual 
+property rights therein, including copyright and future copyright, to the Buyer for no further consideration
+
+16. INDEMNITY
+16.1 The Seller will indemnify the Buyer against any loss of, or damage to the property of the Buyer
+and against any claims for injury to, or death of any person or for loss of or damage to the
+property of any other person by reason of any negligent act or omission of the Seller or his
+employees, sub-contractors or agents arising out of the execution of the Order.
+16.2 The Seller shall conform to all relevant environmental standards, guidelines and Codes of
+Practice issued by the EU, or any relevant governmental authority, agency or body or any
+relevant local authority and shall take all practical steps in the design of the work to be
+performed to minimise any risk to the environment.
+17. MISTAKES IN INFORMATION
+17.1 The Seller shall be responsible for and shall pay extra costs occasioned by any discrepancies,
+errors or omissions in drawings, documentation or other information supplied in writing by him,
+whether they have been approved by the Buyer or not, provided that such discrepancies, errors
+or omissions are not due to inaccurate drawings or information and decisions supplied in
+writing to the Seller by the Buyer.
+17.2 The Buyer shall be responsible for and shall pay any extra costs directly occasioned by any
+discrepancies, errors or omissions in the drawings, information and decisions supplied in
+writing to the Seller by the Buyer.
+18. TOOLING
+18.1 Material, plant, tools, jigs or other equipment supplied by the Buyer solely for use in connection
+with Orders placed by the Buyer will remain the property of the Buyer. Responsibility for their
+safe custody and maintenance in good condition, fair wear and tear excepted, will rest with the
+Seller.
+18.2 Where the Order price includes the cost of making or purchasing jigs, tools, etc., these become
+the property of the Buyer and on completion of the Order or its earlier termination must be held
+in safe custody and maintained in good condition until such time as disposal instructions are
+received from the Buyer.
+18.3 Any tooling ordered will be required to make a minimum number of good components. This
+quantity to be agreed between the Buyer and Seller will be stated on the Order for tooling.
+Should the tooling fail to make that minimum number of components then the Seller shall, at
+the Buyer's option, either repair or replace the tooling in order to make the required number of
+components, or make a pro rata payment to the Buyer. The pro rata payment shall be based
+on the full cost of the tooling and will be the same percentage of such full cost as the
+percentage shortfall of good components from the agreed minimum number.
+19. TOOLING DESIGN
+19.1 For any jigs, tooling etc., ordered or associated with any Order the responsibility for the design
+of such tooling lies solely with the Seller, regardless of whether or not the Buyer has supplied
+any drawings, sample parts or information of any kind. It is the Seller's express responsibility
+to ensure that any such tooling, jigs, etc., produces Goods that conform to the description in
+Clause 3 of these Conditions of Purchase.
+20. CONFIDENTIALITY
+20.1 Technical information, drawings, design and other data supplied by the Buyer are confidential
+and will not, without the prior written consent of the Buyer, be disclosed to any third party and
+will be used solely for the purpose of the Order and at all times remain the property of the
+Buyer.
+20.2 The Seller undertakes to ensure compliance by its employees, agents or sub-contractors with
+the obligations as to confidentiality of information obtained or received in relation thereto and
+will be responsible to the Buyer for any failure by any employee, agent or sub-contractor to
+comply with such obligations whether such employee, agent or sub-contractor was aware of
+them or not.
+21. WAIVER
+21.1 Any failure by the Buyer to insist at any time upon the performance of any of the terms,
+provisions or undertakings of the Seller contained in these Conditions of Purchase or to
+exercise any rights thereunder shall not constitute or be construed as a waiver thereof or a
+relinquishment of the Buyer's rights to require the future performance of any such term,
+provision or undertaking but the obligation of the Seller with regard to the same shall continue
+in full force and effect.
+22. PUBLICITY
+22.1 The Seller will not, without the prior written consent of the Buyer, advertise, publicly announce
+or provide to any other person information relating to the existence or details of the Order or
+use the Buyer's name in any format for any promotion, publicity, marketing or advertising
+purpose.
+23. CANCELLATION
+23.1 The Buyer shall be entitled to cancel this Order or part of this Order at any time by giving
+written notice to the Seller.
+23.2 If the Buyer, through no fault of the Seller, under these Conditions of Purchase contained
+herein, exercise his right or cancellation, then the Buyer shall be bound to pay a reasonable
+price for and gain possession of any work done up to the date of termination, including any jigs,
+tools, fixtures, drawings and components in any state of completion and such payment shall
+release the Buyer from all further obligations under the Conditions of Purchase.
+23.3 If the Buyer exercises his right of cancellation arising from non-performance or breach of these
+Conditions of Purchase by the Seller or his sub-contractors, then no financial or other liability
+whatsoever shall be incurred by the Buyer.
+23.4 In any circumstances where the Buyer's Order is cancelled for any reason whatsoever, all and
+any advanced payments for designs, tooling, fixtures, materials, etc. pertaining to the Order will
+be returned to the Buyer in full within 7 days of written notice of cancellation of the Order.
+23.5 Notwithstanding delivery of the Goods and/or payment of the price or cancellation of the Order,
+Conditions 3.1, 7.1, 10, 14.2, 15.1, 15.3,16.1, 16.2, 17.1, 18.1, 19, 20.1, 20.2, 21.1, 22.1, 26.1
+and 27.1 shall remain in full force and effect.
+24. TIME OF THE ESSENCE OF THE CONTRACT
+24.1 The time for delivery and/or completion of the work to be performed under this Order shall be of
+the essence of the Contract. Delivery dates cannot be changed without the Buyer's written
+permission.
+25. NOTICE
+25.1 Any notice or other communication which either party is required to serve on the other party
+shall be sufficiently served if sent to the other party at its address as specified in the Order
+either (a) by hand; (b) by registered or first class or recorded delivery post or (c) by facsimile or
+electronic mail transmission confirmed by registered, first class or recorded delivery post within
+24 hours of transmission.
+25.2 Notices are deemed to have been served as follows: delivered by hand; on the day when they
+are actually received, sent by post, registered post or recorded delivery post; two working days
+after posting, sent by facsimile or electronic mail; on the day of transmission, provided that the
+required confirmation is sent.
+26. SUBSISTENCE
+26.1 If any clause or sentence paragraph item or other part of these Terms or the application thereof
+to any party shall for any reason be adjudged by a court of competent jurisdiction to be invalid
+or unenforceable, such invalidity or unenforceability shall not affect the validity or enforceability
+of the remainder of the Agreement which shall continue in full force and effect.
+27. LAW
+27.1 The construction, validity or performance of this contract shall be governed by the Law of
+Scotland to the jurisdiction of whose courts the parties agree to submit.
+</pre>
+    </div>
+    </div>
+    </div>
 }
+
+
+@*for #s whether is edited or not
+    function CF_new_amendFormula return varchar2 is
+                                        cursor c is select history_number, our_delivery_qty, requested_date from
+pl_delivery_history where 
+    order_number = :order_number
+and order_line = :order_line
+and delivery_seq = :delivery_seq
+    order by date_changed desc ;
+cursor c1 is select our_delivery_qty, requested_date from
+pl_delivery_history where 
+    order_number = :order_number
+and order_line = :order_line
+and delivery_seq = :delivery_seq
+and history_number = 1;
+v_c c%rowtype;
+v_c1 c1%rowtype;
+begin
+open c;
+fetch c into v_c;
+close c;
+if v_c.history_number = 1 then
+
+return ' ';
+else
+open c1;
+fetch c1 into v_c1;
+close c1;
+if v_c.our_delivery_qty <> v_c1.our_delivery_qty
+
+    or v_c.requested_date<> v_c1.requested_date then
+return '#';
+else
+return ' ';
+end if;
+end if;
+
+end;
+*@

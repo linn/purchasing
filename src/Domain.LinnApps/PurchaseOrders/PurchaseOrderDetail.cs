@@ -52,6 +52,8 @@
 
         public int? OurQty { get; set; }
 
+        public decimal? OrderQty { get; set; }
+
         public string OurUnitOfMeasure { get; set; }
 
         public decimal? OurUnitPriceCurrency { get; set; }

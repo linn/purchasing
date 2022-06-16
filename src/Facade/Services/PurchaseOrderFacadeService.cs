@@ -58,6 +58,28 @@
             }
         }
 
+        public IResult<bool> EmailOrderPdf(int orderNumber, string emailAddress)
+        {
+            using (var file = new StreamReader("../Service.Host/views/" + @"\" + "PurchaseOrder.cshtml"))
+            {
+                var fileRead = file.ReadToEnd();
+                var razorEngine = new RazorEngine();
+
+                IRazorEngineCompiledTemplate<RazorEngineTemplateBase<PurchaseOrder>> template = razorEngine.Compile<RazorEngineTemplateBase<PurchaseOrder>>(fileRead);
+
+                var order = this.orderRepository.FindById(orderNumber);
+                string result = template.Run(instance =>
+                    {
+                        instance.Model = order;
+                    });
+
+
+                this.domainService.SendPdfEmail(result, emailAddress, orderNumber);
+            }
+
+            return new SuccessResult<bool>(true);
+        }
+
         protected override PurchaseOrder CreateFromResource(
             PurchaseOrderResource resource,
             IEnumerable<string> privileges = null)
