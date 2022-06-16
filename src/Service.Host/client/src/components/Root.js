@@ -53,6 +53,7 @@ import MaterialRequirementsReport from './materialRequirements/MaterialRequireme
 import PurchaseOrderPrintout from './PurchaseOrders/PurchaseOrderPrintout';
 import ShortagesReport from './reports/ShortagesReport';
 import ShortagesReportOptions from './reports/ShortagesReportOptions';
+import MrOrderBookReport from './reports/MrOrderBookReport';
 
 const Root = ({ store }) => (
     <div>
@@ -304,6 +305,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/reports/shortages/report"
                                     component={ShortagesReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/mr-order-book"
+                                    component={MrOrderBookReport}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>
