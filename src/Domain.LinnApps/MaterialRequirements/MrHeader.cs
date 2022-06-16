@@ -82,6 +82,8 @@
 
         public int? WeeksUntilDangerous { get; set; }
 
+        public string MrComments { get; set; }
+
         public IEnumerable<MrDetail> MrDetails { get; set; }
     }
 }
