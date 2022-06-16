@@ -118,7 +118,8 @@
                 .AddTransient<IEdiOrdersFacadeService, EdiOrdersFacadeService>()
                 .AddTransient<IMrUsedOnReportFacadeService, MrUsedOnReportFacadeService>()
                 .AddTransient<IPurchaseOrderDeliveryFacadeService, PurchaseOrderDeliveryFacadeService>()
-                .AddTransient<IMaterialRequirementsReportFacadeService, MaterialRequirementsReportFacadeService>();
+                .AddTransient<IMaterialRequirementsReportFacadeService, MaterialRequirementsReportFacadeService>()
+                .AddTransient<IShortagesReportFacadeService, ShortagesReportFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
@@ -160,6 +161,7 @@
                 .AddTransient<IMrUsedOnReportService, MrUsedOnReportService>()
                 .AddTransient<IPurchaseOrderDeliveryService, PurchaseOrderDeliveryService>()
                 .AddTransient<IMaterialRequirementsReportService, MaterialRequirementsReportService>()
+                .AddTransient<IShortagesReportService, ShortagesReportService>()
 
                 // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()

@@ -227,3 +227,8 @@ export const batchPurchaseOrderDeliveriesUploadActionTypes = makeProcessActionTy
     itemTypes.batchPurchaseOrderDeliveriesUpload.actionType,
     true
 );
+
+  export const shortagesReportActionTypes = makeActionTypes(
+    reportTypes.shortagesReport.actionType,
+    false
+);
