@@ -1,13 +1,10 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.SpendsReportModuleTests
 {
-    using System.Collections.Generic;
     using System.Net.Http;
 
-    using Linn.Common.Facade;
     using Linn.Common.Logging;
-    using Linn.Common.Reporting.Models;
+    using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps.Reports;
-    using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
     using Linn.Purchasing.Service.Modules.Reports;

@@ -7,8 +7,8 @@
     using Linn.Common.Reporting.Models;
     using Linn.Common.Reporting.Resources.Extensions;
     using Linn.Common.Reporting.Resources.ReportResultResources;
+    using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps.Reports;
-    using Linn.Purchasing.Facade.ResourceBuilders;
 
     public class PrefSupReceiptsReportFacadeService : IPrefSupReceiptsReportFacadeService
     {

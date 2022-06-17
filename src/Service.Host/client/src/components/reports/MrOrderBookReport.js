@@ -15,6 +15,7 @@ import config from '../../config';
 import suppliersActions from '../../actions/suppliersActions';
 import { suppliers } from '../../itemTypes';
 import { mrOrderBookReport } from '../../reportTypes';
+import mrOrderBookReportActions from '../../actions/mrOrderBookReportActions';
 
 function MrOrderBookReport() {
     const dispatch = useDispatch();
@@ -29,7 +30,7 @@ function MrOrderBookReport() {
         collectionSelectorHelpers.getSearchLoading(state.suppliers)
     );
     const [options, setOptions] = useState({
-        supplier: 5000
+        supplierId: 38577
     });
     const loading = useSelector(state => state[mrOrderBookReport.item]?.loading);
 
@@ -38,9 +39,9 @@ function MrOrderBookReport() {
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
                 <Grid item xs={12}>
-                    <Title text="Whats Due In Report" />
+                    <Title text="MR Order Book" />
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={12}>
                     <Typeahead
                         label="Supplier (leave blank for all)"
                         title="Search for a supplier"
@@ -49,18 +50,18 @@ function MrOrderBookReport() {
                         loading={suppliersSearchLoading}
                         fetchItems={searchTerm => dispatch(suppliersActions.search(searchTerm))}
                         clearSearch={() => dispatch(suppliersActions.clearSearch)}
-                        value={options.supplier}
+                        value={options.supplierId}
                         modal
                         links={false}
                         debounce={1000}
                         minimumSearchTermLength={2}
                     />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={3}>
                     <Button
                         variant="contained"
                         color="primary"
-                        onClick={() => dispatch(mrOrderBookReport.fetchReport(options))}
+                        onClick={() => dispatch(mrOrderBookReportActions.fetchReport(options))}
                     >
                         Run Report
                     </Button>

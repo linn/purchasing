@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.IoC
 {
-    using System.Collections.Generic;
     using System.Net.Http;
 
     using Amazon.Extensions.NETCore.Setup;
@@ -14,6 +13,7 @@
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Common.Reporting.Models;
+    using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;

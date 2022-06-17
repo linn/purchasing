@@ -5,8 +5,8 @@
     using Linn.Common.Facade;
     using Linn.Common.Reporting.Models;
     using Linn.Common.Reporting.Resources.ReportResultResources;
+    using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps.Reports;
-    using Linn.Purchasing.Facade.ResourceBuilders;
 
     public class MrOrderBookReportFacadeService : IMrOrderBookReportFacadeService
     {
@@ -25,7 +25,7 @@
         public IResult<ReportReturnResource> GetReport(int supplierId)
         {
             var resource = (ReportReturnResource)this.resultsModelResourceBuilder.Build(
-                new List<ResultsModel> {this.domainService.GetOrderBookReport(supplierId) });
+                new List<ResultsModel> { this.domainService.GetOrderBookReport(supplierId) });
             
             return new SuccessResult<ReportReturnResource>(resource);
         }

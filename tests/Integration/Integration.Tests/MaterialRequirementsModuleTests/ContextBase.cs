@@ -3,8 +3,8 @@
     using System.Net.Http;
 
     using Linn.Common.Facade;
+    using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
-    using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
     using Linn.Purchasing.Resources.MaterialRequirements;
