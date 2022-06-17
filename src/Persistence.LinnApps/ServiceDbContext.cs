@@ -141,9 +141,6 @@
 
         public DbSet<MiniOrderDelivery> MiniOrdersDeliveries { get; set; }
 
-        public DbSet<PurchaseOrderDeliveryHistory> PurchaseOrderDeliveryHistories { get; set; }
-
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
