@@ -111,13 +111,19 @@
         {
             var partSelectorOptions = new List<ReportOption>
                                           {
-                                              new ReportOption("Select Parts", "Select Parts", 0)
+                                              new ReportOption("Select Parts", "Select Parts", 0, "parts")
+                                                  {
+                                                      DefaultOption = true
+                                                  },
+                                              new ReportOption("Parts Used On", "Components Of...", 1, "parts") ,
+                                              new ReportOption("Assemblies Used On", "Assemblies Of...",2, "parts"),
+                                              new ReportOption("Parts Where Used", "Assemblies Containing...", 3, "parts")
                                           };
             var stockLevelOptions = new List<ReportOption>
                                         {
                                             new ReportOption("0-4", "Danger Levels 0 - 4", 0),
                                             new ReportOption("0-2", "Danger Levels 0 - 2", 1),
-                                            new ReportOption("All", "All Stock Levels", 2),
+                                            new ReportOption("All", "All Stock Levels", 2) { DefaultOption = true },
                                             new ReportOption("0", "Danger Level 0 Short for triggered builds", 3),
                                             new ReportOption("1", "Danger Level 1 Short now", 4),
                                             new ReportOption("2", "Danger Level 2 Zero at lead time", 5),
@@ -127,7 +133,10 @@
 
             var orderByOptions = new List<ReportOption>
                                         {
-                                            new ReportOption("supplier/part", "Supplier Id Then Part", 0),
+                                            new ReportOption("supplier/part", "Supplier Id Then Part", 0)
+                                                {
+                                                    DefaultOption = true
+                                                },
                                             new ReportOption("part", "Part Number", 1)
                                         };
 
@@ -136,10 +145,10 @@
             foreach (var planner in planners.Where(a => a.ShowAsMrOption == "Y"))
             {
                 var employee = this.employeeRepository.FindById(planner.Id);
-                partSelectorOptions.Add(new ReportOption($"Planner{planner.Id}", $"{employee.FullName}'s Suppliers"));
+                partSelectorOptions.Add(new ReportOption($"Planner{planner.Id}", $"{employee.FullName}'s Suppliers", null, "planner"));
             }
 
-            var displaySequence = 1;
+            var displaySequence = 4;
             foreach (var partSelectorOption in partSelectorOptions.Where(a => a.DisplaySequence is null).OrderBy(b => b.DisplayText))
             {
                 partSelectorOption.DisplaySequence = displaySequence++;
