@@ -123,7 +123,7 @@
                     emailAddress,
                     emailAddress, // todo add name in here?
                     null,
-                    null, // todo add purchasingoutgoing@linn.co.uk as bcc
+                    null, // todo add purchasingoutgoing@linn.co.uk as bcc before put live, left out for now so don't spam during testing
                     "purchasingoutgoing@linn.co.uk", // todo add as ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"]
                     "Linn Purchasing",
                     $"Linn Purchase Order {orderNumber}",
