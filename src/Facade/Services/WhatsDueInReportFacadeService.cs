@@ -31,12 +31,9 @@
             string vendorManager,
             int? supplier)
         {
-            var resource = (ReportReturnResource)this.resultsModelResourceBuilder.Build(
-                new List<ResultsModel>
-                    {
-                        this.domainService.GetReport(
-                            DateTime.Parse(fromDate), DateTime.Parse(toDate), orderBy, vendorManager, supplier)
-                    });
+            var resource = this.resultsModelResourceBuilder.Build(
+                this.domainService.GetReport(
+                    DateTime.Parse(fromDate), DateTime.Parse(toDate), orderBy, vendorManager, supplier));
 
             return new SuccessResult<ReportReturnResource>(resource);
         }

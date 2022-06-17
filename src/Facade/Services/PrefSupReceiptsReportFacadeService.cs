@@ -34,7 +34,7 @@
             }
 
             var result = this.domainService.GetReport(from, to);
-            var resource = (ReportReturnResource)this.resourceBuilder.Build(result);
+            var resource = this.resourceBuilder.Build(result);
 
             return new SuccessResult<ReportReturnResource>(resource);
         }
