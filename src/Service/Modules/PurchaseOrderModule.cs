@@ -35,7 +35,7 @@
             app.MapGet("/purchasing/purchase-orders", this.SearchPurchaseOrders);
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}", this.GetPurchaseOrder);
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}/html", this.GetPurchaseOrderHtml);
-            app.MapPost("/purchasing/purchase-orders/{orderNumber:int}/email-pdf", this.EmailOrderPdf);
+            app.MapPost("/purchasing/purchase-orders/email-pdf", this.EmailOrderPdf);
 
             app.MapPut("/purchasing/purchase-orders/{orderNumber:int}", this.UpdatePurchaseOrder);
         }

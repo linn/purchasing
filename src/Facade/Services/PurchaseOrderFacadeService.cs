@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Text;
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
@@ -60,7 +61,7 @@
 
         public IResult<bool> EmailOrderPdf(int orderNumber, string emailAddress)
         {
-            using (var file = new StreamReader("../Service.Host/views/" + @"\" + "PurchaseOrder.cshtml"))
+            using (var file = new StreamReader("../Service.Host/views/" + @"\" + "PurchaseOrder.cshtml", Encoding.UTF8))
             {
                 var fileRead = file.ReadToEnd();
                 var razorEngine = new RazorEngine();

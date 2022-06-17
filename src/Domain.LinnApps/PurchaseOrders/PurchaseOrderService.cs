@@ -117,7 +117,7 @@
             var pdf = this.pdfService.ConvertHtmlToPdf(html, landscape: false);
             var emailBody = $"Please accept the attached order no. {orderNumber}.\n"
                             + $"You will need Acrobat Reader to open the file which is available from www.adobe.com/acrobat\n"
-                            + "Linn's standard Terms & Conditions apply at all times\n "
+                            + "Linn's standard Terms & Conditions apply at all times\n"
                             + "and can be found at www.linn.co.uk/purchasing_conditions";
             this.emailService.SendEmail(
                     emailAddress,

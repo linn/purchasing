@@ -54,7 +54,8 @@ import config from '../../config';
 import {
     sendPurchaseOrderReqAuthEmail,
     sendPurchaseOrderReqFinanceEmail,
-    pOReqCheckIfCanAuthOrder
+    pOReqCheckIfCanAuthOrder,
+    sendPurchaseOrderPdfEmail
 } from '../../itemTypes';
 import checkIfCanAuthorisePurchaseOrderActions from '../../actions/checkIfCanAuthorisePurchaseOrderActions';
 

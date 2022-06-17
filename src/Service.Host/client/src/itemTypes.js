@@ -274,3 +274,9 @@ export const batchPurchaseOrderDeliveriesUpload = new ItemType(
     'BATCH_PURCHASE_ORDER_DELIVERIES_UPLOAD',
     '/purchasing/purchase-orders/deliveries'
 );
+
+export const sendPurchaseOrderPdfEmail = new ItemType(
+    'sendPurchaseOrderEmailToSupplier',
+    'SEND_PURCHASE_ORDER_PDF_EMAIL',
+    '/purchasing/purchase-orders/email-pdf'
+);

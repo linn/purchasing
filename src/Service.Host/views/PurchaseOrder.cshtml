@@ -1,21 +1,5 @@
 ﻿@inherits RazorEngineCore.RazorEngineTemplateBase<Linn.Purchasing.Domain.LinnApps.PurchaseOrders.PurchaseOrder>
 @{
-    // .grid-container {
-    // display: grid;
-    // grid-template-columns: auto auto auto;
-    // padding: 10px;
-    // }
-    // body {
-    // font-family: 'Courier New', Courier, monospace;
-    // font-size: 12px;
-    // font-weight: bold;
-    // margin: 40px;
-    // }
-    // .whole-row-grid-container {
-    // display: grid;
-    // grid-template-columns: auto;
-    // padding: 10px;
-    // }
     <style>
         body { font-family: Arial, sans-serif; }
 
@@ -131,8 +115,6 @@
 
         .hr { margin: 30px; }
 
-        .page { height: 29.7cm; width: 21.0cm; margin: 10% 0; } 
-
         .column1-page2 { font-size: 0.44em }
 
         .column2-page2 { font-size: 0.44em }
@@ -151,15 +133,16 @@
         .conditions-of-purch {
             margin-top: -20px;
         }
+
+        .page { page-break-after: always; }
+        } 
     </style>
 
     <div class="page">
     <div class="grid-container">
         <div class="logo">
             <img src="@("http://app.linn.co.uk/Content/images/linn-logo.png")"/>
-            @{//"../client/src/assets/linn-logo.png"
-                http://app.linn.co.uk/Content/images/linn-logo.png
-                //
+            @{// todo stop hardcoding app.linn and try get bigger linn logo
               }
         </div>
         <div class="item1">
@@ -278,7 +261,7 @@ Telephone (0)141 307 7777.
                 </span>
             </div>
             <div class="suppliers-designation">
-                <pre>@purchaseOrderDetail.SuppliersDesignation </pre>
+                <pre>@purchaseOrderDetail.SuppliersDesignation</pre>
             </div>
 
             <div class="grid-item text-align-right">
@@ -383,14 +366,12 @@ Telephone (0)141 307 7777.
                 </div>
                 <div class="grid-item">
                     @{
-                            var oGHistory = delivery.DeliveryHistories.FirstOrDefault(x => x.HistoryNumber == 1);
-                            if (oGHistory != null && (oGHistory.DateRequested.GetValueOrDefault() != delivery.DateRequested.GetValueOrDefault() || oGHistory.OurDeliveryQty.GetValueOrDefault() != delivery.OurDeliveryQty.GetValueOrDefault()))
+                            var originalHistory = delivery.DeliveryHistories.FirstOrDefault(x => x.HistoryNumber == 1);
+                            if (originalHistory != null && (originalHistory.DateRequested.GetValueOrDefault() != delivery.DateRequested.GetValueOrDefault() || originalHistory.OurDeliveryQty.GetValueOrDefault() != delivery.OurDeliveryQty.GetValueOrDefault()))
                             {
                                 <span>#</span>
                             }
-                            // need to look up deliveries history table for amended deliveries and add # if altered
                         }
-                  
                 </div>
             }
 
@@ -410,7 +391,9 @@ Telephone (0)141 307 7777.
             All prices on orders are exclusive of value added tax.
             For conditions of purchase see below.
             Please confirm all deliveries on this purchase order within 48 hours to @Model.EnteredBy.FullName
-            <b>Please sign this copy and return to the Finance department on receipt of goods.</b>
+           @{// <b>Please sign this copy and return to the Finance department on receipt of goods.</b>
+               //above line is in citrix form but not in real report. Todo check if needed or not
+           }
             </pre>
     </div>
     </div>
@@ -695,43 +678,3 @@ Scotland to the jurisdiction of whose courts the parties agree to submit.
     </div>
     </div>
 }
-
-
-@*for #s whether is edited or not
-    function CF_new_amendFormula return varchar2 is
-                                        cursor c is select history_number, our_delivery_qty, requested_date from
-pl_delivery_history where 
-    order_number = :order_number
-and order_line = :order_line
-and delivery_seq = :delivery_seq
-    order by date_changed desc ;
-cursor c1 is select our_delivery_qty, requested_date from
-pl_delivery_history where 
-    order_number = :order_number
-and order_line = :order_line
-and delivery_seq = :delivery_seq
-and history_number = 1;
-v_c c%rowtype;
-v_c1 c1%rowtype;
-begin
-open c;
-fetch c into v_c;
-close c;
-if v_c.history_number = 1 then
-
-return ' ';
-else
-open c1;
-fetch c1 into v_c1;
-close c1;
-if v_c.our_delivery_qty <> v_c1.our_delivery_qty
-
-    or v_c.requested_date<> v_c1.requested_date then
-return '#';
-else
-return ' ';
-end if;
-end if;
-
-end;
-*@

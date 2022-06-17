@@ -1,6 +1,8 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderServiceTests
 {
     using Linn.Common.Authorisation;
+    using Linn.Common.Email;
+    using Linn.Common.Pdf;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
@@ -19,7 +21,9 @@
 
         protected IPurchaseLedgerPack PurchaseLedgerPack { get; private set; }
 
+        protected IPdfService PdfService { get; private set; }
 
+        protected IEmailService EmailService { get; private set; }
 
         [SetUp]
         public void SetUpContext()
@@ -27,9 +31,10 @@
             this.MockAuthService = Substitute.For<IAuthorisationService>();
             this.MockDatabaseService = Substitute.For<IDatabaseService>();
             this.PurchaseLedgerPack = Substitute.For<IPurchaseLedgerPack>();
+            this.PdfService = Substitute.For<IPdfService>();
+            this.EmailService = Substitute.For<IEmailService>();
 
-            this.Sut = new PurchaseOrderService(
-                this.MockAuthService, this.PurchaseLedgerPack, this.MockDatabaseService);
+            this.Sut = new PurchaseOrderService(this.MockAuthService, this.PurchaseLedgerPack, this.MockDatabaseService, this.PdfService, this.EmailService);
         }
     }
 }

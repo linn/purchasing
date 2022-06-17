@@ -226,3 +226,7 @@ export const batchPurchaseOrderDeliveriesUploadActionTypes = makeProcessActionTy
     itemTypes.batchPurchaseOrderDeliveriesUpload.actionType,
     true
 );
+
+export const sendPurchaseOrderPdfEmailActionTypes = makeProcessActionTypes(
+    itemTypes.sendPurchaseOrderPdfEmail.actionType
+);
