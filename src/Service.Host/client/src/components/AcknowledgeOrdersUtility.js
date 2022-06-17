@@ -251,8 +251,8 @@ function AcknowledgeOrdersUtility() {
                 <Dialog open={splitDeliveriesDialogOpen} fullWidth maxWidth="lg">
                     <div className={classes.dialog}>
                         <SplitDeliveriesUtility
-                            orderNumber={123456}
-                            orderLine={1}
+                            orderNumber={deliveriesToSplit?.[0]?.orderNumber}
+                            orderLine={1} // todo
                             inDialogBox
                             cancelClick={() => setSplitDeliveriesDialogOpen(false)}
                             backClick={() => {
