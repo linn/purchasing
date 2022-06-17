@@ -67,7 +67,7 @@
                 {
                     foreach (var delivery 
                              in member.Deliveries
-                                 .Where(d => d.CallOffQty > d.QuantityReceived)
+                                 .Where(d => d.Quantity > d.QuantityReceived)
                                  .OrderBy(c => c.DeliverySequence))
                     {
                         var rowId = $"{delivery.OrderNumber}/{delivery.OrderLine}/{delivery.DeliverySequence}";
