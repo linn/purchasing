@@ -25,7 +25,7 @@
         public IResult<ReportReturnResource> GetReport(int supplierId)
         {
             var resource = (ReportReturnResource)this.resultsModelResourceBuilder.Build(
-                new List<ResultsModel> { this.domainService.GetOrderBookReport(supplierId) });
+                this.domainService.GetOrderBookReport(supplierId));
             
             return new SuccessResult<ReportReturnResource>(resource);
         }

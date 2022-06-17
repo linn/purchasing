@@ -27,5 +27,7 @@
         public DateTime? DeliveryDate { get; set; }
 
         public string CallOffType { get; set; }
+
+        public decimal? CallOffQty { get; set; }
     }
 }

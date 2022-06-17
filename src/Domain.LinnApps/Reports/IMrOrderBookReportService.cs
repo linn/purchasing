@@ -1,9 +1,11 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Reports
 {
+    using System.Collections.Generic;
+
     using Linn.Common.Reporting.Models;
 
     public interface IMrOrderBookReportService
     {
-        ResultsModel GetOrderBookReport(int supplierId);
+        IEnumerable<ResultsModel> GetOrderBookReport(int supplierId);
     }
 }

@@ -1333,6 +1333,7 @@
             entity.Property(e => e.CallOffDate).HasColumnName("CALL_OFF_DATE");
             entity.Property(e => e.DeliveryDate).HasColumnName("DELIVERY_DATE");
             entity.Property(e => e.CallOffType).HasColumnName("CALL_OFF_TYPE");
+            entity.Property(e => e.CallOffQty).HasColumnName("CALL_OFF_QTY");
         }
 
         private void BuildMrDetails(ModelBuilder builder)
