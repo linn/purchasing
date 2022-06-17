@@ -75,16 +75,59 @@
                             new CalculationValueModel
                                 {
                                     RowId = rowId,
-                                    ColumnId = "OrderNumber",
+                                    ColumnId = "Delivery",
                                     TextDisplay = $"{delivery.OrderNumber}/{delivery.DeliverySequence}"
+                                });
+                        values.Add(
+                            new CalculationValueModel
+                                {
+                                    RowId = rowId,
+                                    ColumnId = "Date",
+                                    TextDisplay = member.DeliveryDate?.ToShortDateString()
+                                });
+                        values.Add(
+                            new CalculationValueModel
+                                {
+                                    RowId = rowId,
+                                    ColumnId = "Qty",
+                                    Value = member.OurQuantity
+                                });
+                        values.Add(
+                            new CalculationValueModel
+                                {
+                                    RowId = rowId,
+                                    ColumnId = "QtyReceived",
+                                    Value = member.QuantityReceived ?? 0
+                                });
+                        values.Add(
+                            new CalculationValueModel
+                                {
+                                    RowId = rowId,
+                                    ColumnId = "QtyInvoiced",
+                                    Value = member.QuantityInvoiced ?? 0
+                                });
+                        values.Add(
+                            new CalculationValueModel
+                                {
+                                    RowId = rowId,
+                                    ColumnId = "DateRequested",
+                                    TextDisplay = member.LinnDeliveryDate?.ToShortDateString()
+                                });
+                        values.Add(
+                            new CalculationValueModel
+                                {
+                                    RowId = rowId,
+                                    ColumnId = "DateAdvised",
+                                    TextDisplay = member.AdvisedDeliveryDate?.ToShortDateString()
                                 });
                     }
                 }
+
                 reportLayout.SetGridData(values);
 
                 reportLayout.ReportTitle = $"{group.Key}";
 
-                resultsModels.Add(new ResultsModel());
+                resultsModels.Add(reportLayout.GetResultsModel());
             }
 
             return resultsModels;
