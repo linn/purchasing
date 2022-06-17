@@ -34,7 +34,7 @@
                         ReportTitle = new NameModel("Purchase Orders By Supplier - 71234: Dwight K Schrute")
                     });
 
-            this.result = this.Sut.GetOrdersBySupplierReport(resource, new List<string>());
+            this.result = this.Sut.GetOrdersBySupplierReport(resource);
         }
 
         [Test]

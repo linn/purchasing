@@ -7,6 +7,7 @@
     using Linn.Common.Reporting.Models;
     using Linn.Common.Reporting.Resources.Extensions;
     using Linn.Common.Reporting.Resources.ReportResultResources;
+    using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Resources;
 
@@ -14,11 +15,11 @@
     {
         private readonly IWhatsInInspectionReportService domainService;
 
-        private readonly IBuilder<ResultsModel> resultsModelResourceBuilder;
+        private readonly IReportReturnResourceBuilder resultsModelResourceBuilder;
 
         public WhatsInInspectionReportFacadeService(
             IWhatsInInspectionReportService domainService,
-            IBuilder<ResultsModel> resultsModelResourceBuilder)
+            IReportReturnResourceBuilder resultsModelResourceBuilder)
         {
             this.domainService = domainService;
             this.resultsModelResourceBuilder = resultsModelResourceBuilder;
@@ -54,16 +55,14 @@
                                                                     OurUnitOfMeasure = m.OurUnitOfMeasure,
                                                                     Batch = m.Batch,
                                                                     OrdersBreakdown = m.OrdersBreakdown != null
-                                                                        ? (ReportReturnResource)this
-                                                                            .resultsModelResourceBuilder.Build(m.OrdersBreakdown, null)
+                                                                        ? this.resultsModelResourceBuilder.Build(m.OrdersBreakdown)
                                                                         : null,
                                                                     LocationsBreakdown = m.LocationsBreakdown != null 
-                                                                        ? (ReportReturnResource)this
-                                                                        .resultsModelResourceBuilder.Build(m.LocationsBreakdown, null) 
+                                                                        ? this.resultsModelResourceBuilder.Build(m.LocationsBreakdown)
                                                                         : null
                                                                 }),
                         BackOrderData = result.BackOrderData != null 
-                                         ? (ReportReturnResource)this.resultsModelResourceBuilder.Build(result.BackOrderData, null)
+                                         ? this.resultsModelResourceBuilder.Build(result.BackOrderData)
                                          : null
                 });
         }

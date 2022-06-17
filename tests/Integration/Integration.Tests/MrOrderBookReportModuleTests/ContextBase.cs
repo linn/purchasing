@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Integration.Tests.WhatsDueInReportModuleTests
+﻿namespace Linn.Purchasing.Integration.Tests.MrOrderBookReportModuleTests
 {
     using System.Net.Http;
 
@@ -14,24 +14,24 @@
 
     using NUnit.Framework;
 
-    public abstract class ContextBase
+    public class ContextBase
     {
         protected HttpClient Client { get; set; }
 
         protected HttpResponseMessage Response { get; set; }
 
-        protected IWhatsDueInReportFacadeService ReportFacadeService { get; set; }
+        protected IMrOrderBookReportFacadeService ReportFacadeService { get; set; }
 
-        protected IWhatsDueInReportService MockDomainService { get; set; }
+        protected IMrOrderBookReportService MockDomainService { get; set; }
 
         [SetUp]
         public void EstablishContext()
         {
-            this.MockDomainService = Substitute.For<IWhatsDueInReportService>();
-            this.ReportFacadeService = new WhatsDueInReportFacadeService(
+            this.MockDomainService = Substitute.For<IMrOrderBookReportService>();
+            this.ReportFacadeService = new MrOrderBookReportFacadeService(
                 this.MockDomainService, new ReportReturnResourceBuilder());
 
-            this.Client = TestClient.With<WhatsDueInReportModule>(
+            this.Client = TestClient.With<MrOrderBookReportModule>(
                 services =>
                     {
                         services.AddSingleton(this.ReportFacadeService);

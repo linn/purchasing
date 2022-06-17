@@ -34,7 +34,7 @@
                     this.requestResource.VendorManager,
                     this.requestResource.UseSupplierGroup)
                 .Returns(new ResultsModel { ReportTitle = new NameModel("Title") });
-            this.result = this.Sut.GetSuppliersWithUnacknowledgedOrdersReport(this.requestResource, new List<string>());
+            this.result = this.Sut.GetSuppliersWithUnacknowledgedOrdersReport(this.requestResource);
         }
 
         [Test]
