@@ -25,7 +25,7 @@
         public IResult<ReportReturnResource> GetReport(string partNumber, string jobRef)
         {
             var resource = (ReportReturnResource)this.resultsModelResourceBuilder.Build(
-                new List<ResultsModel> { this.reportService.GetUsedOn(partNumber, jobRef) });
+                this.reportService.GetUsedOn(partNumber, jobRef));
 
             return new SuccessResult<ReportReturnResource>(resource);
         }

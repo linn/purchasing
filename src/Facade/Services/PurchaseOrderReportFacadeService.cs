@@ -47,7 +47,7 @@
                 resource.PartNumber,
                 cancelled);
 
-            var returnResource = this.BuildResource(results);
+            var returnResource = this.resultsModelResourceBuilder.Build(results);
 
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
@@ -82,7 +82,7 @@
                 resource.VendorManager,
                 resource.UseSupplierGroup);
 
-            var returnResource = this.BuildResource(results);
+            var returnResource = this.resultsModelResourceBuilder.Build(results);
 
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
@@ -92,7 +92,7 @@
         {
             var results = this.domainService.GetUnacknowledgedOrders(resource.SupplierId, resource.SupplierGroupId);
 
-            var returnResource = this.BuildResource(results);
+            var returnResource = this.resultsModelResourceBuilder.Build(results);
 
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
@@ -130,7 +130,7 @@
                 resource.Credits,
                 resource.StockControlled);
 
-            var returnResource = this.BuildResource(results);
+            var returnResource = this.resultsModelResourceBuilder.Build(results);
 
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
@@ -161,13 +161,6 @@
                 resource.StockControlled);
 
             return results.ConvertToCsvList();
-        }
-
-        private ReportReturnResource BuildResource(
-            ResultsModel resultsModel)
-        {
-            return (ReportReturnResource)this.resultsModelResourceBuilder.Build(
-                new List<ResultsModel> { resultsModel });
         }
     }
 }

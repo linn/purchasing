@@ -32,8 +32,7 @@
                 options.VendorManager);
 
             var resultResources = result.Select(
-                d => (ReportReturnResource)this.resultsModelResourceBuilder.Build(
-                    new List<ResultsModel> { d }));
+                d => (ReportReturnResource)this.resultsModelResourceBuilder.Build(d));
 
             return new SuccessResult<IEnumerable<ReportReturnResource>>(resultResources);
         }

@@ -25,7 +25,7 @@
         public IResult<ReportReturnResource> GetReport(string state)
         {
             var result = this.domainService.GetReport(state);
-            var resource = this.resourceBuilder.Build(new List<ResultsModel> { result });
+            var resource = this.resourceBuilder.Build(result);
 
             return new SuccessResult<ReportReturnResource>(resource);
         }

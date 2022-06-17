@@ -55,14 +55,14 @@
                                                                     OurUnitOfMeasure = m.OurUnitOfMeasure,
                                                                     Batch = m.Batch,
                                                                     OrdersBreakdown = m.OrdersBreakdown != null
-                                                                        ? this.ToResource(m.OrdersBreakdown)
+                                                                        ? this.resultsModelResourceBuilder.Build(m.OrdersBreakdown)
                                                                         : null,
                                                                     LocationsBreakdown = m.LocationsBreakdown != null 
-                                                                        ? this.ToResource(m.LocationsBreakdown)
+                                                                        ? this.resultsModelResourceBuilder.Build(m.LocationsBreakdown)
                                                                         : null
                                                                 }),
                         BackOrderData = result.BackOrderData != null 
-                                         ? this.ToResource(result.BackOrderData)
+                                         ? this.resultsModelResourceBuilder.Build(result.BackOrderData)
                                          : null
                 });
         }
@@ -78,12 +78,6 @@
                 includePartsWithNoOrderNumber,
                 includeFailedStock,
                 includeFinishedGoods).ConvertToCsvList();
-        }
-
-        private ReportReturnResource ToResource(ResultsModel model)
-        {
-            return (ReportReturnResource)this.resultsModelResourceBuilder
-                           .Build(new List<ResultsModel> { model });
         }
     }
 }

@@ -32,7 +32,7 @@
         {
             var results = this.domainService.GetSpendBySupplierReport(vendorManagerId);
 
-            var returnResource = this.BuildResource(results);
+            var returnResource = this.resultsModelResourceBuilder.Build(results);
 
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
@@ -46,15 +46,9 @@
         {
             var results = this.domainService.GetSpendByPartReport(supplierId);
 
-            var returnResource = this.BuildResource(results);
+            var returnResource = this.resultsModelResourceBuilder.Build(results);
 
             return new SuccessResult<ReportReturnResource>(returnResource);
-        }
-
-        private ReportReturnResource BuildResource(ResultsModel resultsModel)
-        {
-            return (ReportReturnResource)this.resultsModelResourceBuilder.Build(
-                new List<ResultsModel> { resultsModel });
         }
     }
 }
