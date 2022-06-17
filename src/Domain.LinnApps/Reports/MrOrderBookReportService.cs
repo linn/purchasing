@@ -34,7 +34,7 @@
                                                      && !x.DateCancelled.HasValue
                                                      && x.OurQuantity > x.QuantityReceived
                                                      && !string.IsNullOrEmpty(x.AuthorisedBy))
-                .OrderBy(x => x.OrderNumber);
+                .OrderBy(x => x.OrderNumber).ToList();
 
             var resultsModels = new List<ResultsModel>();
 
@@ -83,21 +83,21 @@
                                 {
                                     RowId = rowId,
                                     ColumnId = "Date",
-                                    TextDisplay = member.DeliveryDate?.ToShortDateString()
+                                    TextDisplay = member.DateOfOrder.ToShortDateString()
                                 });
                         values.Add(
                             new CalculationValueModel
                                 {
                                     RowId = rowId,
                                     ColumnId = "Qty",
-                                    Value = member.OurQuantity
+                                    Value = delivery.Quantity
                                 });
                         values.Add(
                             new CalculationValueModel
                                 {
                                     RowId = rowId,
                                     ColumnId = "QtyReceived",
-                                    Value = member.QuantityReceived ?? 0
+                                    Value = member.QuantityReceived.GetValueOrDefault()
                                 });
                         values.Add(
                             new CalculationValueModel
@@ -111,14 +111,14 @@
                                 {
                                     RowId = rowId,
                                     ColumnId = "DateRequested",
-                                    TextDisplay = member.LinnDeliveryDate?.ToShortDateString()
+                                    TextDisplay = delivery.RequestedDeliveryDate?.ToShortDateString()
                                 });
                         values.Add(
                             new CalculationValueModel
                                 {
                                     RowId = rowId,
                                     ColumnId = "DateAdvised",
-                                    TextDisplay = member.AdvisedDeliveryDate?.ToShortDateString()
+                                    TextDisplay = delivery.AdvisedDeliveryDate?.ToShortDateString()
                                 });
                     }
                 }

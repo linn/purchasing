@@ -35,14 +35,14 @@
                                                                 {
                                                                     OrderNumber = 1,
                                                                     DeliverySequence = 1,
-                                                                    CallOffQty = 1,
+                                                                    Quantity = 1,
                                                                     QuantityReceived = 0
                                                                 },
                                                             new MrPurchaseOrderDelivery
                                                                 {
                                                                     OrderNumber = 1,
                                                                     DeliverySequence = 2,
-                                                                    CallOffQty = 1,
+                                                                    Quantity = 1,
                                                                     QuantityReceived = 0
                                                                 }
                                                          }
@@ -57,14 +57,14 @@
                                                                  {
                                                                      OrderNumber = 2,
                                                                      DeliverySequence = 1,
-                                                                     CallOffQty = 1,
+                                                                     Quantity = 1,
                                                                      QuantityReceived = 0
                                                                  },
                                                              new MrPurchaseOrderDelivery
                                                                  {
                                                                      OrderNumber = 2,
                                                                      DeliverySequence = 2,
-                                                                     CallOffQty = 1,
+                                                                     Quantity = 1,
                                                                      QuantityReceived = 0
                                                                  }
                                                          }
@@ -79,7 +79,7 @@
                                                                  {
                                                                      OrderNumber = 3,
                                                                      DeliverySequence = 1,
-                                                                     CallOffQty = 1,
+                                                                     Quantity = 1,
                                                                      QuantityReceived = 0
                                                                  }
                                                          }
