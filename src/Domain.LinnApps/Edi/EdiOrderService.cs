@@ -12,10 +12,13 @@
 
         private readonly IRepository<EdiOrder, int> repository;
 
-        public EdiOrderService(IEdiEmailPack ediEmailPack, IRepository<EdiOrder, int> repository)
+        private readonly IRepository<EdiSupplier, int> supplierRepository;
+
+        public EdiOrderService(IEdiEmailPack ediEmailPack, IRepository<EdiOrder, int> repository, IRepository<EdiSupplier, int> supplierRepository)
         {
             this.ediEmailPack = ediEmailPack;
             this.repository = repository;
+            this.supplierRepository = supplierRepository;
         }
 
         public IEnumerable<EdiOrder> GetEdiOrders(int supplierId)
@@ -25,6 +28,13 @@
             var orders = this.repository.FilterBy(o => o.SupplierId == supplierId && o.SequenceNumber == null);
 
             return orders;
+        }
+
+        public IEnumerable<EdiSupplier> GetEdiSuppliers()
+        {
+            var suppliers = this.supplierRepository.FindAll();
+
+            return suppliers;
         }
 
         public ProcessResult SendEdiOrder(int supplierId, string altEmail, string additionalEmail, string additionalText, bool test)
