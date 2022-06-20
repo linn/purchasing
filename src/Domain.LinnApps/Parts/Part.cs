@@ -30,5 +30,7 @@
         public Supplier PreferredSupplier { get; set; }
 
         public IEnumerable<PurchaseOrderDetail> PurchaseOrderDetails { get; set; }
+
+        public string OurUnitOfMeasure { get; set; }
     }
 }

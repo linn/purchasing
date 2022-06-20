@@ -40,9 +40,7 @@
             ISpendsReportFacadeService spendsReportFacadeService,
             int id)
         {
-            var csv = spendsReportFacadeService.GetSpendByPartExport(
-                id,
-                req.HttpContext.GetPrivileges());
+            var csv = spendsReportFacadeService.GetSpendByPartExport(id);
             
             await res.FromCsv(csv, $"spendByPart_{id}_{DateTime.Now.ToString("dd-MM-yyyy")}.csv");
         }
@@ -53,9 +51,7 @@
             int id,
             ISpendsReportFacadeService spendsReportFacadeService)
         {
-            var results = spendsReportFacadeService.GetSpendByPartReport(
-                id,
-                req.HttpContext.GetPrivileges());
+            var results = spendsReportFacadeService.GetSpendByPartReport(id);
 
             await res.Negotiate(results);
         }
@@ -66,9 +62,7 @@
             ISpendsReportFacadeService spendsReportFacadeService,
             string vm)
         {
-            var csv = spendsReportFacadeService.GetSpendBySupplierExport(
-                vm ?? string.Empty,
-                req.HttpContext.GetPrivileges());
+            var csv = spendsReportFacadeService.GetSpendBySupplierExport(vm ?? string.Empty);
 
             var contentDisposition = new ContentDisposition
                                          {
@@ -84,9 +78,7 @@
             string vm,
             ISpendsReportFacadeService spendsReportFacadeService)
         {
-            var results = spendsReportFacadeService.GetSpendBySupplierReport(
-                vm ?? string.Empty,
-                req.HttpContext.GetPrivileges());
+            var results = spendsReportFacadeService.GetSpendBySupplierReport(vm ?? string.Empty);
 
             await res.Negotiate(results);
         }

@@ -130,6 +130,8 @@
         public DbSet<StockLocator> StockLocators { get; set; }
         
         public DbSet<MrUsedOnRecord> MrUsedOnView { get; set; }
+
+        public DbSet<PartAndAssembly> PartsAndAssemblies { get; set; }
        
         public DbSet<MrHeader> MrHeaders { get; set; }
 
@@ -223,6 +225,7 @@
             this.BuildMrPurchaseOrderDetails(builder);
             this.BuildMrCallOffs(builder);
             this.BuildShortagesView(builder);
+            this.BuildPartAndAssemblyView(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -395,6 +398,7 @@
             entity.HasOne(a => a.Currency).WithMany().HasForeignKey("CURRENCY");
             entity.HasOne(a => a.PreferredSupplier).WithMany().HasForeignKey("PREFERRED_SUPPLIER");
             entity.Property(a => a.CurrencyUnitPrice).HasColumnName("CURRENCY_UNIT_PRICE");
+            entity.Property(a => a.OurUnitOfMeasure).HasColumnName("OUR_UNIT_OF_MEASURE");
         }
 
         private void BuildSuppliers(ModelBuilder builder)
@@ -1235,6 +1239,14 @@
             entity.Property(e => e.TCoded).HasColumnName("UO_T_CODED");
         }
 
+        private void BuildPartAndAssemblyView(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PartAndAssembly>().ToTable("TQMS_BOMS_VIEW").HasNoKey();
+            entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
+            entity.Property(e => e.PartBomType).HasColumnName("BOM_TYPE").HasColumnType("VARCHAR2");
+            entity.Property(e => e.AssemblyNumber).HasColumnName("ASSEMBLY_NUMBER").HasColumnType("VARCHAR2");
+        }
+
         private void BuildPlRescheduleReasons(ModelBuilder builder)
         {
             var entity = builder.Entity<RescheduleReason>().ToTable("PL_RESCHEDULE_REASONS");
@@ -1307,6 +1319,14 @@
             entity.Property(e => e.Remarks).HasColumnName("REMARKS").HasColumnType("VARCHAR2");
             entity.Property(e => e.AuthorisedBy).HasColumnName("AUTHORIZED_BY").HasColumnType("VARCHAR2");
             entity.HasMany(s => s.Deliveries).WithOne().HasForeignKey(c => new { c.JobRef, c.OrderNumber, c.OrderLine });
+            entity.Property(s => s.OrderType).HasColumnName("ORDER_TYPE");
+            entity.Property(s => s.SubType).HasColumnName("SUB_TYPE");
+            entity.Property(s => s.DateCancelled).HasColumnName("DATE_CANCELLED");
+            entity.Property(s => s.DeliveryDate).HasColumnName("DELIVERY_DATE");
+            entity.Property(s => s.AdvisedDeliveryDate).HasColumnName("ADVISED_DEL_DATE");
+            entity.Property(s => s.LinnDeliveryDate).HasColumnName("LINN_DEL_DATE");
+            entity.Property(s => s.BestDeliveryDate).HasColumnName("BEST_DELIVERY_DATE");
+            entity.HasOne(s => s.PartSupplierRecord).WithMany().HasForeignKey(s => new { s.PartNumber, s.SupplierId });
         }
 
         private void BuildMrCallOffs(ModelBuilder builder)
@@ -1322,6 +1342,9 @@
             entity.Property(e => e.RequestedDeliveryDate).HasColumnName("REQUESTED_DELIVERY_DATE");
             entity.Property(e => e.AdvisedDeliveryDate).HasColumnName("ADVISED_DELIVERY_DATE");
             entity.Property(e => e.Reference).HasColumnName("REFERENCE");
+            entity.Property(e => e.CallOffDate).HasColumnName("CALL_OFF_DATE");
+            entity.Property(e => e.DeliveryDate).HasColumnName("DELIVERY_DATE");
+            entity.Property(e => e.CallOffType).HasColumnName("CALL_OFF_TYPE");
         }
 
         private void BuildMrDetails(ModelBuilder builder)

@@ -200,67 +200,67 @@ function MaterialRequirementsReport() {
                 }
                 return null;
             case 'week0':
-                if (params.row.week0Item.tag) {
+                if (params.row.week0Item?.tag) {
                     return classes[params.row.week0Item.tag];
                 }
                 return null;
             case 'week1':
-                if (params.row.week1Item.tag) {
+                if (params.row.week1Item?.tag) {
                     return classes[params.row.week1Item.tag];
                 }
                 return null;
             case 'week2':
-                if (params.row.week2Item.tag) {
+                if (params.row.week2Item?.tag) {
                     return classes[params.row.week2Item.tag];
                 }
                 return null;
             case 'week3':
-                if (params.row.week3Item.tag) {
+                if (params.row.week3Item?.tag) {
                     return classes[params.row.week3Item.tag];
                 }
                 return null;
             case 'week4':
-                if (params.row.week4Item.tag) {
+                if (params.row.week4Item?.tag) {
                     return classes[params.row.week4Item.tag];
                 }
                 return null;
             case 'week5':
-                if (params.row.week5Item.tag) {
+                if (params.row.week5Item?.tag) {
                     return classes[params.row.week5Item.tag];
                 }
                 return null;
             case 'week6':
-                if (params.row.week6Item.tag) {
+                if (params.row.week6Item?.tag) {
                     return classes[params.row.week6Item.tag];
                 }
                 return null;
             case 'week7':
-                if (params.row.week7Item.tag) {
+                if (params.row.week7Item?.tag) {
                     return classes[params.row.week7Item.tag];
                 }
                 return null;
             case 'week8':
-                if (params.row.week8Item.tag) {
+                if (params.row.week8Item?.tag) {
                     return classes[params.row.week8Item.tag];
                 }
                 return null;
             case 'week9':
-                if (params.row.week9Item.tag) {
+                if (params.row.week9Item?.tag) {
                     return classes[params.row.week9Item.tag];
                 }
                 return null;
             case 'week10':
-                if (params.row.week10Item.tag) {
+                if (params.row.week10Item?.tag) {
                     return classes[params.row.week10Item.tag];
                 }
                 return null;
             case 'week11':
-                if (params.row.week11Item.tag) {
+                if (params.row.week11Item?.tag) {
                     return classes[params.row.week11Item.tag];
                 }
                 return null;
             case 'week12':
-                if (params.row.week12Item.tag) {
+                if (params.row.week12Item?.tag) {
                     return classes[params.row.week12Item.tag];
                 }
                 return null;

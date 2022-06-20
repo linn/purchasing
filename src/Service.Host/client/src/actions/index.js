@@ -232,3 +232,8 @@ export const shortagesReportActionTypes = makeActionTypes(
     reportTypes.shortagesReport.actionType,
     false
 );
+
+export const mrOrderBookReportActionTypes = makeActionTypes(
+    reportTypes.mrOrderBookReport.actionType,
+    false
+);
