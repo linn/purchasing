@@ -63,7 +63,7 @@ function SplitDeliveriesUtility({ orderNumber, orderLine, inDialogBox, deliverie
         if (model && Object.keys(model)[0]) {
             const id = Object.keys(model)[0];
             const propertyName = Object.keys(model[id])[0];
-            if (model && model[id] && model[id][propertyName] && model[id][propertyName].value) {
+            if (model && model[id] && model[id][propertyName]) {
                 const newValue = model[id][propertyName].value;
                 setRows(r => r.map(x => (x.id === id ? { ...x, [propertyName]: newValue } : x)));
             }
@@ -182,7 +182,6 @@ function SplitDeliveriesUtility({ orderNumber, orderLine, inDialogBox, deliverie
                     backClick={backClick}
                     saveDisabled={!changesMade}
                     saveClick={() => {
-                        setChangesMade(false);
                         dispatch(purchaseOrderDeliveriesActions.clearErrorsForItem());
                         dispatch(
                             purchaseOrderDeliveriesActions.postByHref(
@@ -190,6 +189,7 @@ function SplitDeliveriesUtility({ orderNumber, orderLine, inDialogBox, deliverie
                                 rows
                             )
                         );
+                        setChangesMade(false);
                     }}
                 />
             </Grid>

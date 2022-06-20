@@ -146,7 +146,10 @@
                 var entities = resourceList.Select(
                     d =>
                         {
-                            if (!DateTime.TryParse(d.DateAdvised, out var dateAdvised) || !DateTime.TryParse(
+                            var dateAdvised = new DateTime();
+
+                            if (!string.IsNullOrEmpty(d.DateAdvised) && (!DateTime.TryParse(d.DateAdvised, out dateAdvised)) 
+                                || !DateTime.TryParse(
                                     d.DateRequested,
                                     out var dateRequested))
                             {
@@ -158,7 +161,7 @@
                                            DeliverySeq = d.DeliverySeq,
                                            OurDeliveryQty = d.OurDeliveryQty,
                                            Cancelled = d.Cancelled,
-                                           DateAdvised = dateAdvised,
+                                           DateAdvised = string.IsNullOrEmpty(d.DateAdvised) ? null : dateAdvised,
                                            DateRequested = dateRequested,
                                            NetTotalCurrency = d.NetTotalCurrency,
                                            BaseNetTotal = d.BaseNetTotal,
