@@ -51,7 +51,8 @@
             string partSelector,
             string stockLevelSelector,
             string orderBySelector,
-            IEnumerable<string> partNumbers)
+            IEnumerable<string> partNumbers,
+            int reportSegment = 0)
         {
             if (string.IsNullOrEmpty(jobRef))
             {
@@ -66,14 +67,25 @@
 
             var runLog = this.runLogRepository.FindBy(a => a.JobRef == jobRef);
 
-            if (partSelector == "Select Parts" || string.IsNullOrEmpty(partSelector))
+            switch (partSelector)
             {
-                this.filterQuery = a => a.JobRef == jobRef && partNumbers.Contains(a.PartNumber);
+                case "Parts Used On":
+                    partNumbers = this.GetComponents(partNumbers).Distinct();
+                    break;
+                case "Assemblies Used On":
+                    throw new InvalidOptionException("Assemblies option not yet supported");
+                case "Parts Where Used":
+                    throw new InvalidOptionException("Where used option not yet supported");
             }
-            else if (partSelector.StartsWith("Planner"))
+
+            if (partSelector.StartsWith("Planner"))
             {
                 var planner = int.Parse(partSelector.Substring(7));
                 this.filterQuery = a => a.JobRef == jobRef && a.Planner == planner;
+            }
+            else
+            {
+                this.filterQuery = a => a.JobRef == jobRef && partNumbers.Contains(a.PartNumber);
             }
 
             var results = this.repository.FilterBy(this.filterQuery);
@@ -98,6 +110,9 @@
                     _ => results
                 };
 
+            // deploying before working out where this needs to be set
+            // results = results.Skip(reportSegment * 100).Take(100);
+
             var report = new MrReport
                              {
                                  JobRef = jobRef,
@@ -105,6 +120,25 @@
                                  Headers = results
                              };
             return report;
+        }
+
+        private IEnumerable<string> GetComponents(IEnumerable<string> partNumbers)
+        {
+            var results = new List<string>();
+
+            foreach (var partNumber in partNumbers)
+            {
+                results.Add(partNumber);
+                var components = this.partsAndAssembliesRepository.FilterBy(a => a.AssemblyNumber == partNumber);
+                results.AddRange(components.Where(a => a.PartBomType != "P").Select(a => a.PartNumber));
+                var assemblies = components.Where(a => a.PartBomType != "C");
+                if (assemblies.Any())
+                {
+                    results.AddRange(this.GetComponents(assemblies.Select(a => a.PartNumber)));
+                }
+            }
+
+            return results;
         }
 
         public MrReportOptions GetOptions()
