@@ -77,6 +77,10 @@ function SplitDeliveriesUtility({ orderNumber, orderLine, inDialogBox, deliverie
         );
     };
 
+    const deleteSelected = () => {
+        setRows(r => r.filter(x => !x.selected));
+    };
+
     const purchaseOrderDeliveriesSnackbarVisible = useSelector(state =>
         itemSelectorHelpers.getSnackbarVisible(state[purchaseOrderDeliveries.item])
     );
@@ -96,8 +100,15 @@ function SplitDeliveriesUtility({ orderNumber, orderLine, inDialogBox, deliverie
         ]);
     };
     const orderQty = () => order?.details?.find(x => x.line === deliveries[0].orderLine)?.ourQty;
+    const add = (a, b) => {
+        const x = Number.isNaN(a) ? 0 : a;
+        const y = Number.isNaN(b) ? 0 : b;
+        return x + y;
+    };
     const total = () =>
-        rows.length > 0 ? rows.map(r => Number(r.ourDeliveryQty)).reduce((a, b) => a + b, 0) : 0;
+        rows.length > 0
+            ? rows.map(r => Number(r.ourDeliveryQty)).reduce((a, b) => add(a, b), 0)
+            : 0;
 
     const content = () => (
         <Grid container spacing={3}>
@@ -151,6 +162,15 @@ function SplitDeliveriesUtility({ orderNumber, orderLine, inDialogBox, deliverie
             <Grid item xs={1}>
                 <Button variant="outlined" onClick={addDelivery}>
                     +
+                </Button>
+            </Grid>
+            <Grid item xs={1}>
+                <Button
+                    variant="outlined"
+                    onClick={deleteSelected}
+                    disabled={!rows.some(r => r.selected)}
+                >
+                    -
                 </Button>
             </Grid>
             <Grid item xs={12}>
