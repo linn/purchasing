@@ -13,6 +13,7 @@
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Common.Reporting.Models;
+    using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
@@ -48,7 +49,7 @@
                 .AddTransient<IBuilder<PackagingGroup>, PackagingGroupResourceBuilder>()
                 .AddTransient<IBuilder<Tariff>, TariffResourceBuilder>()
                 .AddTransient<IBuilder<Manufacturer>, ManufacturerResourceBuilder>()
-                .AddTransient<IBuilder<ResultsModel>, ResultsModelResourceBuilder>()
+                .AddTransient<IReportReturnResourceBuilder, ReportReturnResourceBuilder>()
                 .AddTransient<IBuilder<PreferredSupplierChange>, PreferredSupplierChangeResourceBuilder>()
                 .AddTransient<IBuilder<PriceChangeReason>, PriceChangeReasonResourceBuilder>()
                 .AddTransient<IBuilder<PartCategory>, PartCategoryResourceBuilder>()
@@ -118,7 +119,9 @@
                 .AddTransient<IEdiOrdersFacadeService, EdiOrdersFacadeService>()
                 .AddTransient<IMrUsedOnReportFacadeService, MrUsedOnReportFacadeService>()
                 .AddTransient<IPurchaseOrderDeliveryFacadeService, PurchaseOrderDeliveryFacadeService>()
-                .AddTransient<IMaterialRequirementsReportFacadeService, MaterialRequirementsReportFacadeService>();
+                .AddTransient<IMaterialRequirementsReportFacadeService, MaterialRequirementsReportFacadeService>()
+                .AddTransient<IShortagesReportFacadeService, ShortagesReportFacadeService>()
+                .AddTransient<IMrOrderBookReportFacadeService, MrOrderBookReportFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
@@ -160,6 +163,8 @@
                 .AddTransient<IMrUsedOnReportService, MrUsedOnReportService>()
                 .AddTransient<IPurchaseOrderDeliveryService, PurchaseOrderDeliveryService>()
                 .AddTransient<IMaterialRequirementsReportService, MaterialRequirementsReportService>()
+                .AddTransient<IShortagesReportService, ShortagesReportService>()
+                .AddTransient<IMrOrderBookReportService, MrOrderBookReportService>()
 
                 // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()

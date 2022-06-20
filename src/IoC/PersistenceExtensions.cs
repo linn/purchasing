@@ -123,6 +123,8 @@
                 .AddTransient<IQueryRepository<MrUsedOnRecord>, EntityFrameworkQueryRepository<MrUsedOnRecord>>(
                     r => new EntityFrameworkQueryRepository<MrUsedOnRecord>(r.GetService<ServiceDbContext>()
                         ?.MrUsedOnView))
+                .AddTransient<IQueryRepository<PartAndAssembly>, EntityFrameworkQueryRepository<PartAndAssembly>>(
+                    r => new EntityFrameworkQueryRepository<PartAndAssembly>(r.GetService<ServiceDbContext>()?.PartsAndAssemblies))
                 .AddTransient<IRepository<RescheduleReason, string>, EntityFrameworkRepository<RescheduleReason, string>>(
                     r => new EntityFrameworkRepository<RescheduleReason, string>(r.GetService<ServiceDbContext>()?.PlRescheduleReasons))
                 .AddTransient<IQueryRepository<MrHeader>, MrHeaderRepository>()
@@ -130,7 +132,10 @@
                 .AddTransient<ISingleRecordRepository<PurchaseLedgerMaster>, EntityFrameworkSingleRecordRepository<PurchaseLedgerMaster>>(
                     r => new EntityFrameworkSingleRecordRepository<PurchaseLedgerMaster>(r.GetService<ServiceDbContext>()?.PurchaseLedgerMaster))
                 .AddTransient<IRepository<MiniOrderDelivery, MiniOrderDeliveryKey>, EntityFrameworkRepository<MiniOrderDelivery, MiniOrderDeliveryKey>>(
-                    r => new EntityFrameworkRepository<MiniOrderDelivery, MiniOrderDeliveryKey>(r.GetService<ServiceDbContext>()?.MiniOrdersDeliveries));
+                    r => new EntityFrameworkRepository<MiniOrderDelivery, MiniOrderDeliveryKey>(r.GetService<ServiceDbContext>()?.MiniOrdersDeliveries))
+                .AddTransient<IQueryRepository<ShortagesEntry>, EntityFrameworkQueryRepository<ShortagesEntry>>(
+                    r => new EntityFrameworkQueryRepository<ShortagesEntry>(r.GetService<ServiceDbContext>()
+                        ?.ShortagesEntries));
         }
     }
 }

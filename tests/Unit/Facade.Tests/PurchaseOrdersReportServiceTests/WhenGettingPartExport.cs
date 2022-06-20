@@ -36,7 +36,7 @@
                             ReportTitle = new NameModel($"Purchase Orders By Part:{this.partNumber}")
                         });
 
-            this.csvData = this.Sut.GetOrdersByPartExport(resource, new List<string>());
+            this.csvData = this.Sut.GetOrdersByPartExport(resource);
         }
 
         [Test]

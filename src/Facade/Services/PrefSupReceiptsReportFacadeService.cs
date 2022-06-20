@@ -7,15 +7,16 @@
     using Linn.Common.Reporting.Models;
     using Linn.Common.Reporting.Resources.Extensions;
     using Linn.Common.Reporting.Resources.ReportResultResources;
+    using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps.Reports;
 
     public class PrefSupReceiptsReportFacadeService : IPrefSupReceiptsReportFacadeService
     {
         private readonly IPrefSupReceiptsReportService domainService;
 
-        private readonly IBuilder<ResultsModel> resourceBuilder;
+        private readonly IReportReturnResourceBuilder resourceBuilder;
 
-        public PrefSupReceiptsReportFacadeService(IPrefSupReceiptsReportService domainService, IBuilder<ResultsModel> resourceBuilder)
+        public PrefSupReceiptsReportFacadeService(IPrefSupReceiptsReportService domainService, IReportReturnResourceBuilder resourceBuilder)
         {
             this.domainService = domainService;
             this.resourceBuilder = resourceBuilder;
@@ -33,7 +34,7 @@
             }
 
             var result = this.domainService.GetReport(from, to);
-            var resource = (ReportReturnResource)this.resourceBuilder.Build(result, null);
+            var resource = this.resourceBuilder.Build(result);
 
             return new SuccessResult<ReportReturnResource>(resource);
         }

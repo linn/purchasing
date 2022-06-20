@@ -22,6 +22,7 @@
         {
            return this.serviceDbContext.MrOutstandingPurchaseOrders
                .Include(s => s.Deliveries)
+               .Include(s => s.PartSupplierRecord).ThenInclude(ps => ps.Part)
                .AsNoTracking()
                .Where(expression);
         }

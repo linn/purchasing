@@ -1,9 +1,7 @@
 ﻿namespace Linn.Purchasing.Facade.Tests.PurchaseOrdersReportServiceTests
 {
-    using Linn.Common.Facade;
-    using Linn.Common.Reporting.Models;
+    using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps.Reports;
-    using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
 
     using NSubstitute;
@@ -12,7 +10,7 @@
 
     public class ContextBase
     {
-        protected IBuilder<ResultsModel> Builder { get; private set; }
+        protected IReportReturnResourceBuilder Builder { get; private set; }
 
         protected IPurchaseOrdersReportService DomainService { get; private set; }
 
@@ -22,7 +20,7 @@
         public void SetUpContext()
         {
             this.DomainService = Substitute.For<IPurchaseOrdersReportService>();
-            this.Builder = new ResultsModelResourceBuilder();
+            this.Builder = new ReportReturnResourceBuilder();
 
             this.Sut = new PurchaseOrderReportFacadeService(this.DomainService, this.Builder);
         }
