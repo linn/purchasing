@@ -130,6 +130,8 @@
         public DbSet<StockLocator> StockLocators { get; set; }
         
         public DbSet<MrUsedOnRecord> MrUsedOnView { get; set; }
+
+        public DbSet<PartAndAssembly> PartsAndAssemblies { get; set; }
        
         public DbSet<MrHeader> MrHeaders { get; set; }
 
@@ -223,6 +225,7 @@
             this.BuildMrPurchaseOrderDetails(builder);
             this.BuildMrCallOffs(builder);
             this.BuildShortagesView(builder);
+            this.BuildPartAndAssemblyView(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1234,6 +1237,14 @@
             entity.Property(e => e.AnnualUsage).HasColumnName("COMP_ANNUAL_USAGE");
             entity.Property(e => e.QtyUsed).HasColumnName("UO_QTY");
             entity.Property(e => e.TCoded).HasColumnName("UO_T_CODED");
+        }
+
+        private void BuildPartAndAssemblyView(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PartAndAssembly>().ToTable("TQMS_BOMS_VIEW").HasNoKey();
+            entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
+            entity.Property(e => e.PartBomType).HasColumnName("BOM_TYPE").HasColumnType("VARCHAR2");
+            entity.Property(e => e.AssemblyNumber).HasColumnName("ASSEMBLY_NUMBER").HasColumnType("VARCHAR2");
         }
 
         private void BuildPlRescheduleReasons(ModelBuilder builder)

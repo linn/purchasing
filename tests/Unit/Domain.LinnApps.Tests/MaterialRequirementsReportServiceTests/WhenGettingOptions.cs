@@ -34,10 +34,13 @@
         [Test]
         public void ShouldReturnPartSelectorOptions()
         {
-            this.result.PartSelectorOptions.Should().HaveCount(3);
+            this.result.PartSelectorOptions.Should().HaveCount(6);
             this.result.PartSelectorOptions.First(a => a.DisplaySequence == 0).Option.Should().Be("Select Parts");
-            this.result.PartSelectorOptions.First(a => a.DisplaySequence == 1).Option.Should().Be("Planner3");
-            this.result.PartSelectorOptions.First(a => a.DisplaySequence == 2).Option.Should().Be("Planner1");
+            this.result.PartSelectorOptions.First(a => a.DisplaySequence == 1).Option.Should().Be("Parts Used On");
+            this.result.PartSelectorOptions.First(a => a.DisplaySequence == 2).Option.Should().Be("Assemblies Used On");
+            this.result.PartSelectorOptions.First(a => a.DisplaySequence == 3).Option.Should().Be("Parts Where Used");
+            this.result.PartSelectorOptions.First(a => a.DisplaySequence == 4).Option.Should().Be("Planner3");
+            this.result.PartSelectorOptions.First(a => a.DisplaySequence == 5).Option.Should().Be("Planner1");
         }
 
         [Test]

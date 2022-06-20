@@ -35,7 +35,7 @@ function MaterialRequirementsOptions() {
     const [showMessage, setShowMessage] = useState(false);
     const [message, setMessage] = useState(null);
     const [partSelector, setPartSelector] = useState('Select Parts');
-    const [stockLevelSelector, setStockLevelSelector] = useState('0-4');
+    const [stockLevelSelector, setStockLevelSelector] = useState('All');
     const [orderBySelector, setOrderBySelector] = useState('supplier/part');
     const mrMaster = useSelector(state => itemSelectorHelpers.getItem(state.mrMaster));
     const mrMasterLoading = useSelector(state =>
@@ -132,6 +132,8 @@ function MaterialRequirementsOptions() {
         }
     };
 
+    const getOptionTag = (options, option) => options?.find(a => a.option === option)?.dataTag;
+
     const runReport = () => {
         dispatch(mrReportActions.clearItem());
         const body = {
@@ -169,11 +171,23 @@ function MaterialRequirementsOptions() {
     };
 
     const notReadyToRun = () => {
-        if (partSelector === 'Select Parts' && parts.length === 0) {
+        const tag = getOptionTag(mrReportOptions?.partSelectorOptions, partSelector);
+        if (!tag || (tag === 'parts' && parts.length === 0)) {
             return true;
         }
 
         return false;
+    };
+
+    const handlePartOptionChange = value => {
+        setPartSelector(value);
+
+        const tag = getOptionTag(mrReportOptions?.partSelectorOptions, value);
+        if (tag === 'parts') {
+            setStockLevelSelector('All');
+        } else if (tag === 'planner') {
+            setStockLevelSelector('0-4');
+        }
     };
 
     return (
@@ -201,10 +215,10 @@ function MaterialRequirementsOptions() {
                                 id: e.option
                             }))}
                         optionsLoading={mrReportOptionsLoading}
-                        onChange={(_, value) => setPartSelector(value)}
+                        onChange={(_, value) => handlePartOptionChange(value)}
                     />
                 </Grid>
-                {partSelector === 'Select Parts' && (
+                {getOptionTag(mrReportOptions?.partSelectorOptions, partSelector) === 'parts' && (
                     <>
                         <Grid item xs={6}>
                             <Typeahead
