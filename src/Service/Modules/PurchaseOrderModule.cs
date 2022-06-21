@@ -122,6 +122,7 @@
             HttpResponse res,
             int orderNumber,
             string emailAddress,
+            bool bcc,
             IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
             var result = purchaseOrderFacadeService.EmailOrderPdf(orderNumber, emailAddress);

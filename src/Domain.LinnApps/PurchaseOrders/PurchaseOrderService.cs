@@ -112,7 +112,7 @@
             return current;
         }
 
-        public void SendPdfEmail(string html, string emailAddress, int orderNumber)
+        public ProcessResult SendPdfEmail(string html, string emailAddress, int orderNumber)
         {
             var pdf = this.pdfService.ConvertHtmlToPdf(html, landscape: false);
             var emailBody = $"Please accept the attached order no. {orderNumber}.\n"
@@ -130,6 +130,8 @@
                     emailBody,
                     pdf.Result,
                     $"LinnPurchaseOrder{orderNumber}");
+
+            return new ProcessResult(true, "Email Sent");
         }
 
         private void UpdateDetails(ICollection<PurchaseOrderDetail> currentDetails, ICollection<PurchaseOrderDetail> updatedDetails)
