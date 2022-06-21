@@ -15,7 +15,7 @@
 
     using NUnit.Framework;
 
-    public class WhenBatchUpdatingAndErrors : ContextBase
+    public class WhenBatchUpdatingFromCsvAndErrors : ContextBase
     {
         [SetUp]
         public void SetUp()
@@ -37,7 +37,8 @@
                 with =>
                     {
                         with.Accept("application/json");
-                    }).Result;
+                    },
+                "text/csv").Result;
         }
 
         [Test]

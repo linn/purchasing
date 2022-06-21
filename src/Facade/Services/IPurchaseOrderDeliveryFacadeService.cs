@@ -19,7 +19,12 @@
             PatchRequestResource<PurchaseOrderDeliveryResource> requestResource, 
             IEnumerable<string> privileges);
 
-        IResult<BatchUpdateProcessResultResource> BatchUpdateDeliveriesFromCsv(string csvString, IEnumerable<string> privileges);
+        IResult<BatchUpdateProcessResultResource> BatchUpdateDeliveries(
+            string csvString, IEnumerable<string> privileges);
+
+        IResult<BatchUpdateProcessResultResource> BatchUpdateDeliveries(
+            IEnumerable<PurchaseOrderDeliveryUpdateResource> resource, 
+            IEnumerable<string> privileges);
 
         IResult<IEnumerable<PurchaseOrderDeliveryResource>> UpdateDeliveriesForDetail(
             int orderNumber,

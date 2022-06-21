@@ -60,7 +60,7 @@
                 (PurchaseOrderDeliveryResource)this.resourceBuilder.Build(entity, privilegesList));
         }
         
-        public IResult<BatchUpdateProcessResultResource> BatchUpdateDeliveriesFromCsv(
+        public IResult<BatchUpdateProcessResultResource> BatchUpdateDeliveries(
             string csvString, IEnumerable<string> privileges)
         {
             var reader = new StringReader(csvString);
@@ -138,6 +138,12 @@
             {
                 return new BadRequestResult<BatchUpdateProcessResultResource>(e.Message);
             }
+        }
+
+        public IResult<BatchUpdateProcessResultResource> BatchUpdateDeliveries(
+            IEnumerable<PurchaseOrderDeliveryUpdateResource> resource, IEnumerable<string> privileges)
+        {
+            return new SuccessResult<BatchUpdateProcessResultResource>(new BatchUpdateProcessResultResource());
         }
 
         public IResult<IEnumerable<PurchaseOrderDeliveryResource>> UpdateDeliveriesForDetail(

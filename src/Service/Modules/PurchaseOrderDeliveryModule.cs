@@ -1,11 +1,14 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
+    using System.Collections.Generic;
     using System.IO;
     using System.Threading.Tasks;
 
     using Carter;
     using Carter.Response;
 
+    using Linn.Common.Facade;
+    using Linn.Common.Serialization.Json;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
@@ -82,12 +85,29 @@
             HttpResponse res,
             IPurchaseOrderDeliveryFacadeService service)
         {
-            var reader = new StreamReader(req.Body).ReadToEndAsync();
+            IResult<BatchUpdateProcessResultResource> result;
 
-            var result = service.BatchUpdateDeliveriesFromCsv(
-                reader.Result,
-                req.HttpContext.GetPrivileges());
+            if (req.Headers.ContentType == "text/csv")
+            {
+                var reader = new StreamReader(req.Body).ReadToEndAsync();
 
+                result = service.BatchUpdateDeliveries(
+                    reader.Result,
+                    req.HttpContext.GetPrivileges());
+            }
+            else if (req.ContentType == "application/json")
+            {
+                var resource = await req.Bind<IEnumerable<PurchaseOrderDeliveryUpdateResource>>();
+                
+                result = service.BatchUpdateDeliveries(
+                    resource, 
+                    req.HttpContext.GetPrivileges());
+            }
+            else
+            {
+                result = new BadRequestResult<BatchUpdateProcessResultResource>("Unsupported content type.");
+            }
+            
             await res.Negotiate(result);
         }
 
