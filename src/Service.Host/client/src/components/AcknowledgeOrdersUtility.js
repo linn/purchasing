@@ -230,7 +230,9 @@ function AcknowledgeOrdersUtility() {
         <Page history={history} homeUrl={config.appRoot}>
             <SnackbarMessage
                 visible={uploadSnackbarVisible}
-                onClose={() => dispatch(purchaseOrderDeliveryActions.setSnackbarVisible(false))}
+                onClose={() =>
+                    dispatch(batchPurchaseOrderDeliveriesUpdateActions.setSnackbarVisible(false))
+                }
                 message="Save Successful"
             />
 
