@@ -15,14 +15,5 @@
         public DateTime DateRequested { get; set; }
 
         public DateTime? DateAdvised { get; set; }
-
-        public static bool TryParse(
-            string? value,
-            IFormatProvider? provider,
-            out PurchaseOrderDeliveryResource? resource)
-        { 
-            resource = null;
-            return false;
-        }
     }
 }
