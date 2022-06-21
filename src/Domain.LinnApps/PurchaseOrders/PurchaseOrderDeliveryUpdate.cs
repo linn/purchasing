@@ -13,5 +13,9 @@
         public string NewReason { get; set; }
 
         public decimal Qty { get; set; }
+
+        public string Comment { get; set; }
+
+        public string AvailableAtSupplier { get; set; }
     }
 }

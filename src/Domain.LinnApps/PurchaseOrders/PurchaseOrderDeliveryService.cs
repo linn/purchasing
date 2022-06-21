@@ -152,7 +152,8 @@
 
         public BatchUpdateProcessResult BatchUpdateDeliveries(
             IEnumerable<PurchaseOrderDeliveryUpdate> changes,
-            IEnumerable<string> privileges)
+            IEnumerable<string> privileges,
+            bool skipSplitDeliveries = false)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
             {
@@ -182,10 +183,10 @@
                             $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}",
                             "Could not find a delivery corresponding to the above ORDER / LINE / DELIVERY NO."));
                 }
-                else if (this.repository.FilterBy(
+                else if (skipSplitDeliveries && (this.repository.FilterBy(
                              x => x.OrderNumber == change.Key.OrderNumber).Count() > 1
                          || purchaseOrderDeliveryUpdates.Count(c => c.Key.OrderNumber == change.Key.OrderNumber) > 1
-                         || change.Key.DeliverySequence > 1)
+                         || change.Key.DeliverySequence > 1))
                 {
                     errors.Add(
                         new Error(
@@ -206,6 +207,16 @@
                 }
                 else
                 {
+                    if (!string.IsNullOrEmpty(change.Comment))
+                    {
+                        entity.SupplierConfirmationComment = change.Comment;
+                    }
+
+                    if (!string.IsNullOrEmpty(change.AvailableAtSupplier))
+                    {
+                        entity.AvailableAtSupplier = change.AvailableAtSupplier;
+                    }
+
                     entity.DateAdvised = change.NewDateAdvised;
                     entity.RescheduleReason = change.NewReason;
                     this.UpdateMiniOrder(
@@ -213,7 +224,7 @@
                         change.NewDateAdvised, 
                         null, 
                         null, 
-                        null);
+                        entity.SupplierConfirmationComment);
                     successCount++;
                 }
             }

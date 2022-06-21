@@ -6,7 +6,6 @@ import {
     InputField,
     Page,
     collectionSelectorHelpers,
-    itemSelectorHelpers,
     CheckboxWithLabel,
     DatePicker,
     Dropdown,
@@ -29,14 +28,12 @@ import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import purchaseOrderDeliveryActions from '../actions/purchaseOrderDeliveryActions';
 import purchaseOrderDeliveriesActions from '../actions/purchaseOrderDeliveriesActions';
-import {
-    purchaseOrderDelivery,
-    purchaseOrderDeliveries,
-    batchPurchaseOrderDeliveriesUpload
-} from '../itemTypes';
+import { purchaseOrderDeliveries, batchPurchaseOrderDeliveriesUpload } from '../itemTypes';
 import history from '../history';
 import config from '../config';
 import batchPurchaseOrderDeliveriesUploadActions from '../actions/batchPurchaseOrderDeliveriesUploadActions';
+import batchPurchaseOrderDeliveriesUpdateActions from '../actions/batchPurchaseOrderDeliveriesUpdateActions';
+
 import SplitDeliveriesUtility from './SplitDeliveriesUtility';
 
 function AcknowledgeOrdersUtility() {
@@ -92,18 +89,6 @@ function AcknowledgeOrdersUtility() {
 
     const itemsLoading = useSelector(state =>
         collectionSelectorHelpers.getLoading(state[purchaseOrderDeliveries.item])
-    );
-
-    const purchaseOrderDeliverySnackbarVisible = useSelector(state =>
-        itemSelectorHelpers.getSnackbarVisible(state[purchaseOrderDelivery.item])
-    );
-
-    const updateLoading = useSelector(state =>
-        itemSelectorHelpers.getItemLoading(state[purchaseOrderDelivery.item])
-    );
-
-    const updatedItem = useSelector(state =>
-        itemSelectorHelpers.getItem(state[purchaseOrderDelivery.item])
     );
 
     const columns = [
@@ -215,34 +200,36 @@ function AcknowledgeOrdersUtility() {
     }, [dispatch, searchOptions, orderNumberSearchTerm]);
 
     useEffect(() => {
-        if (updatedItem) {
+        if (uploadResult) {
             refreshResults();
         }
-    }, [updatedItem, dispatch, searchOptions, refreshResults]);
+    }, [uploadResult, refreshResults]);
 
     const handleSaveClick = () => {
         setApplyChangesDialogOpen(false);
         const selectedRows = rows.filter(r => r.selected);
-        selectedRows.forEach(s => {
-            const from = items.find(
-                i => `${i.orderNumber}/${i.orderLine}/${i.deliverySeq}` === s.id
-            );
-            const to = {
-                ...from,
-                supplierConfirmationComment: newValues.supplierConfirmationComment,
-                dateAdvised: newValues.dateAdvised,
-                rescheduleReason: newValues.rescheduleReason,
-                availableAtSupplier: newValues.availableAtSupplier
-            };
-            dispatch(purchaseOrderDeliveryActions.patch(s.id, { from, to }));
-            setRows([]);
-        });
+        setRows([]);
+        dispatch(
+            batchPurchaseOrderDeliveriesUpdateActions.requestProcessStart(
+                selectedRows.map(r => ({
+                    orderNumber: r.orderNumber,
+                    orderLine: r.orderLine,
+                    deliverySequence: r.deliverySeq,
+                    dateAdvised: newValues.dateAdvised,
+                    dateRequested: newValues.dateRequested,
+                    qty: r.ourDeliveryQty,
+                    reason: newValues.rescheduleReason,
+                    comment: newValues.supplierConfirmationComment,
+                    availableAtSupplier: newValues.availableAtSupplier
+                }))
+            )
+        );
     };
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <SnackbarMessage
-                visible={purchaseOrderDeliverySnackbarVisible}
+                visible={uploadSnackbarVisible}
                 onClose={() => dispatch(purchaseOrderDeliveryActions.setSnackbarVisible(false))}
                 message="Save Successful"
             />
@@ -427,7 +414,7 @@ function AcknowledgeOrdersUtility() {
                                         rowHeight={34}
                                         autoHeight
                                         disableSelectionOnClick
-                                        loading={itemsLoading || updateLoading}
+                                        loading={itemsLoading || uploadLoading}
                                         hideFooter
                                         checkboxSelection
                                         onSelectionModelChange={handleSelectRow}

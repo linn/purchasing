@@ -22,7 +22,8 @@
         {
             this.MockDomainService.BatchUpdateDeliveries(
                 Arg.Any<IEnumerable<PurchaseOrderDeliveryUpdate>>(),
-                Arg.Any<IEnumerable<string>>()).Returns(new BatchUpdateProcessResult
+                Arg.Any<IEnumerable<string>>(),
+                true).Returns(new BatchUpdateProcessResult
                                                             {
                                                                 Success = false,
                                                                 Message = "Something went wrong!",

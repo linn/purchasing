@@ -42,24 +42,6 @@
                 results.Select(x => (PurchaseOrderDeliveryResource)this.resourceBuilder.Build(x, null)));
         }
 
-        public IResult<PurchaseOrderDeliveryResource> PatchDelivery(
-            PurchaseOrderDeliveryKey key,
-            PatchRequestResource<PurchaseOrderDeliveryResource> requestResource, 
-            IEnumerable<string> privileges)
-        {
-            var privilegesList = privileges.ToList();
-            var entity = this.domainService.UpdateDelivery(
-                key,
-                BuildEntityFromResourceHelper(requestResource.From),
-                BuildEntityFromResourceHelper(requestResource.To),
-                privilegesList);
-
-            this.transactionManager.Commit();
-
-            return new SuccessResult<PurchaseOrderDeliveryResource>(
-                (PurchaseOrderDeliveryResource)this.resourceBuilder.Build(entity, privilegesList));
-        }
-        
         public IResult<BatchUpdateProcessResultResource> BatchUpdateDeliveries(
             string csvString, IEnumerable<string> privileges)
         {
@@ -119,7 +101,7 @@
                                     });
                 }
 
-                var result = this.domainService.BatchUpdateDeliveries(changes, privileges);
+                var result = this.domainService.BatchUpdateDeliveries(changes, privileges, true);
                 this.transactionManager.Commit();
 
                 return new SuccessResult<BatchUpdateProcessResultResource>(
@@ -143,7 +125,36 @@
         public IResult<BatchUpdateProcessResultResource> BatchUpdateDeliveries(
             IEnumerable<PurchaseOrderDeliveryUpdateResource> resource, IEnumerable<string> privileges)
         {
-            return new SuccessResult<BatchUpdateProcessResultResource>(new BatchUpdateProcessResultResource());
+            var result = this.domainService.BatchUpdateDeliveries(
+                resource.Select(
+                    u => new PurchaseOrderDeliveryUpdate
+                             {
+                                 Key = new PurchaseOrderDeliveryKey
+                                                 {
+                                                     OrderNumber = u.OrderNumber,
+                                                     OrderLine = u.OrderLine,
+                                                     DeliverySequence = u.DeliverySequence
+                                                 },
+                                 NewDateAdvised = u.DateAdvised,
+                                 NewReason = u.Reason,
+                                 Qty = u.Qty,
+                                 AvailableAtSupplier = u.AvailableAtSupplier,
+                                 Comment = u.Comment
+                    }),
+                privileges);
+
+            this.transactionManager.Commit();
+
+            return new SuccessResult<BatchUpdateProcessResultResource>(new BatchUpdateProcessResultResource
+                                                                           {
+                                                                               Message = result.Message,
+                                                                               Success = result.Success,
+                                                                               Errors = result.Errors?.Select(e => new ErrorResource
+                                                                                   {
+                                                                                       Descriptor = e.Descriptor,
+                                                                                       Message = e.Message
+                                                                                   })
+                                                                           });
         }
 
         public IResult<IEnumerable<PurchaseOrderDeliveryResource>> UpdateDeliveriesForDetail(

@@ -26,7 +26,6 @@
         {
             app.MapGet("/purchasing/purchase-orders/acknowledge", this.GetApp);
             app.MapGet("/purchasing/purchase-orders/deliveries", this.Search);
-            app.MapPatch("/purchasing/purchase-orders/deliveries/{orderNumber:int}/{orderLine:int}/{deliverySeq:int}", this.Patch);
             app.MapPost("/purchasing/purchase-orders/deliveries", this.BatchUpdate);
             app.MapPost("/purchasing/purchase-orders/deliveries/{orderNumber:int}/{orderLine:int}/", this.UpdateDeliveriesForOrderLine);
             app.MapGet("/purchasing/purchase-orders/deliveries/{orderNumber:int}/{orderLine:int}/", this.GetDeliveriesForOrderLine);
@@ -55,28 +54,6 @@
             IPurchaseOrderDeliveryFacadeService service)
         {
             var result = service.GetDeliveriesForDetail(orderNumber, orderLine);
-            await res.Negotiate(result);
-        }
-
-        private async Task Patch(
-            HttpRequest req,
-            HttpResponse res,
-            PatchRequestResource<PurchaseOrderDeliveryResource> resource,
-            int orderNumber,
-            int orderLine,
-            int deliverySeq,
-            IPurchaseOrderDeliveryFacadeService service)
-        {
-            var result = service.PatchDelivery(
-                new PurchaseOrderDeliveryKey
-                    {
-                        OrderNumber = orderNumber,
-                        OrderLine = orderLine,
-                        DeliverySequence = deliverySeq
-                    }, 
-                resource, 
-                req.HttpContext.GetPrivileges());
-
             await res.Negotiate(result);
         }
 
