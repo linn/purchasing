@@ -11,7 +11,6 @@
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
-    using Linn.Purchasing.Resources.RequestResources;
 
     public class PurchaseOrderDeliveryFacadeService : IPurchaseOrderDeliveryFacadeService
     {

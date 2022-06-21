@@ -8,11 +8,8 @@
     using Carter.Response;
 
     using Linn.Common.Facade;
-    using Linn.Common.Serialization.Json;
-    using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
-    using Linn.Purchasing.Resources.RequestResources;
     using Linn.Purchasing.Service.Extensions;
     using Linn.Purchasing.Service.Models;
 
