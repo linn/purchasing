@@ -69,7 +69,7 @@
             {
                 while (reader.ReadLine() is { } line)
                 {
-                    // assuming csv lines are in the form <orderNumber>,<delivery-no>,<newAdvisedDate>,<newReason>
+                    // assuming csv lines are in the form <orderNumber>,<delivery-no>,<newAdvisedDate>,<qty>, <newReason>
                     var row = line.Split(",");
 
                     if (!int.TryParse(
@@ -81,7 +81,12 @@
 
                     if (!int.TryParse(row[1].Trim(), out var delNo))
                     {
-                        throw new InvalidOperationException($"Invalid Delivery Number: {row[0]} = {row[1]}.");
+                        throw new InvalidOperationException($"Invalid Delivery Number: {row[0]} / {row[1]}.");
+                    }
+
+                    if (!int.TryParse(row[3].Trim(), out var qty))
+                    {
+                        throw new InvalidOperationException($"Invalid Qty for {row[0]} / {row[1]}.");
                     }
 
                     var firstFormatSatisfied =
@@ -109,7 +114,8 @@
                                                       DeliverySequence = delNo
                                                   },
                                         NewDateAdvised = firstFormatSatisfied ? parsedDate1 : parsedDate2,
-                                        NewReason = row.Length < 4 ? null : row[3].Trim()
+                                        NewReason = row.Length < 5 ? null : row[4].Trim(),
+                                        Qty = qty
                                     });
                 }
 
@@ -146,7 +152,10 @@
                 var entities = resourceList.Select(
                     d =>
                         {
-                            if (!DateTime.TryParse(d.DateAdvised, out var dateAdvised) || !DateTime.TryParse(
+                            var dateAdvised = new DateTime();
+
+                            if (!string.IsNullOrEmpty(d.DateAdvised) && (!DateTime.TryParse(d.DateAdvised, out dateAdvised)) 
+                                || !DateTime.TryParse(
                                     d.DateRequested,
                                     out var dateRequested))
                             {
@@ -158,7 +167,7 @@
                                            DeliverySeq = d.DeliverySeq,
                                            OurDeliveryQty = d.OurDeliveryQty,
                                            Cancelled = d.Cancelled,
-                                           DateAdvised = dateAdvised,
+                                           DateAdvised = string.IsNullOrEmpty(d.DateAdvised) ? null : dateAdvised,
                                            DateRequested = dateRequested,
                                            NetTotalCurrency = d.NetTotalCurrency,
                                            BaseNetTotal = d.BaseNetTotal,

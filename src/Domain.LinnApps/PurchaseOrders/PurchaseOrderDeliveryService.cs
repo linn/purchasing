@@ -198,6 +198,12 @@
                         $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}", 
                         $"{change.NewReason} is not a valid reason"));
                 }
+                else if (change.Qty != entity.OurDeliveryQty)
+                {
+                    errors.Add(new Error(
+                        $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}",
+                        $"{change.Qty} does not match the Qty on the Delivery ({entity.OurDeliveryQty})"));
+                }
                 else
                 {
                     entity.DateAdvised = change.NewDateAdvised;
@@ -280,7 +286,6 @@
                 del =>
                     {
                         var existing = list.FirstOrDefault(x => x.DeliverySeq == del.DeliverySeq);
-                       
                         var vatAmount = Math.Round(
                             this.purchaseOrdersPack.GetVatAmountSupplier(
                                 detail.OrderUnitPriceCurrency.GetValueOrDefault() * del.OurDeliveryQty.GetValueOrDefault(),
