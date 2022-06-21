@@ -124,23 +124,39 @@
         public IResult<BatchUpdateProcessResultResource> BatchUpdateDeliveries(
             IEnumerable<PurchaseOrderDeliveryUpdateResource> resource, IEnumerable<string> privileges)
         {
-            var result = this.domainService.BatchUpdateDeliveries(
-                resource.Select(
-                    u => new PurchaseOrderDeliveryUpdate
-                             {
-                                 Key = new PurchaseOrderDeliveryKey
-                                                 {
-                                                     OrderNumber = u.OrderNumber,
-                                                     OrderLine = u.OrderLine,
-                                                     DeliverySequence = u.DeliverySequence
-                                                 },
-                                 NewDateAdvised = u.DateAdvised,
-                                 NewReason = u.Reason,
-                                 Qty = u.Qty,
-                                 AvailableAtSupplier = u.AvailableAtSupplier,
-                                 Comment = u.Comment
-                    }),
-                privileges);
+            var updates = resource.Select(
+                u => new PurchaseOrderDeliveryUpdate
+                         {
+                             Key = new PurchaseOrderDeliveryKey
+                                       {
+                                           OrderNumber = u.OrderNumber,
+                                           OrderLine = u.OrderLine,
+                                           DeliverySequence = u.DeliverySequence
+                                       },
+                             NewDateAdvised = u.DateAdvised,
+                             NewReason = u.Reason,
+                             Qty = u.Qty,
+                             AvailableAtSupplier = u.AvailableAtSupplier,
+                             Comment = u.Comment
+                         }).ToList();
+            var result = this.domainService
+                .BatchUpdateDeliveries(updates, privileges);
+
+            this.transactionManager.Commit();
+
+            // update the mini order to keep its deliveries in sync
+            this.domainService.UpdateMiniOrderDeliveries(updates.Select(
+                u => new PurchaseOrderDelivery
+                         {
+                            OrderNumber = u.Key.OrderNumber,
+                            DeliverySeq = u.Key.DeliverySequence,
+                            OrderLine = u.Key.OrderLine,
+                            DateAdvised = u.NewDateAdvised,
+                            AvailableAtSupplier = u.AvailableAtSupplier,
+                            SupplierConfirmationComment = u.Comment,
+                            RescheduleReason = u.NewReason,
+                            OurDeliveryQty = u.Qty
+                         }));
 
             this.transactionManager.Commit();
 
@@ -238,18 +254,6 @@
 
             return new SuccessResult<IEnumerable<PurchaseOrderDeliveryResource>>(
                 res.Select(x => (PurchaseOrderDeliveryResource)this.resourceBuilder.Build(x, null)));
-        }
-
-        private static PurchaseOrderDelivery BuildEntityFromResourceHelper(PurchaseOrderDeliveryResource resource)
-        {
-            return new PurchaseOrderDelivery
-                       {
-                           DateAdvised = string.IsNullOrEmpty(resource.DateAdvised) 
-                                             ? null : DateTime.Parse(resource.DateAdvised),
-                           AvailableAtSupplier = resource.AvailableAtSupplier,
-                           RescheduleReason = resource.RescheduleReason,
-                           SupplierConfirmationComment = resource.SupplierConfirmationComment
-                       };
         }
     }
 }

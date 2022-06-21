@@ -426,7 +426,7 @@
                             existing = this.miniOrderDeliveryRepository.FindBy(
                                 d => d.OrderNumber == miniOrder.OrderNumber && d.DeliverySequence == del.DeliverySeq);
                             existing.AdvisedDate = del.DateAdvised;
-                            existing.RequestedDate = del.DateRequested;
+                            existing.RequestedDate = del.DateRequested ?? existing.RequestedDate;
                             existing.AvailableAtSupplier = del.AvailableAtSupplier;
                             existing.OurQty = del.OurDeliveryQty;
                             return existing;
