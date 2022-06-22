@@ -414,6 +414,7 @@ function AcknowledgeOrdersUtility() {
                                         rows={rows}
                                         columns={columns}
                                         rowHeight={34}
+                                        columnBuffer={12}
                                         autoHeight
                                         disableSelectionOnClick
                                         loading={itemsLoading || uploadLoading}
