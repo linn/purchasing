@@ -8,15 +8,21 @@
 
     public class RazorTemplateService : IRazorTemplateService
     {
+        private readonly IRazorEngine razorEngine;
+
+        public RazorTemplateService(IRazorEngine razorEngine)
+        {
+            this.razorEngine = razorEngine;
+        }
+
         public Task<string> Render<T>(T model, string fileUrl)
         {
             using (var file = new StreamReader(fileUrl, Encoding.UTF8))
             {
                 var fileRead = file.ReadToEnd();
-                var razorEngine = new RazorEngine();
 
                 IRazorEngineCompiledTemplate<RazorEngineTemplateBase<T>> template =
-                    razorEngine.Compile<RazorEngineTemplateBase<T>>(fileRead);
+                    this.razorEngine.Compile<RazorEngineTemplateBase<T>>(fileRead);
 
                 var result = template.RunAsync(instance => { instance.Model = model; });
 

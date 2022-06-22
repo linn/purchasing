@@ -20,9 +20,13 @@
         [SetUp]
         public void SetUp()
         {
-            this.MockDomainService
-                .SendPdfEmail(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<int>(), false, Arg.Any<int>())
-                .Returns(new ProcessResult(true, "email sent"));
+            this.MockDomainService.SendPdfEmail(
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                Arg.Any<int>(),
+                false,
+                Arg.Any<int>(),
+                Arg.Any<PurchaseOrder>()).Returns(new ProcessResult(true, "email sent"));
 
             this.MockPurchaseOrderRepository.FindById(158962).Returns(
                 new PurchaseOrder

@@ -5,6 +5,9 @@
 
     using FluentAssertions;
 
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
+
     using NSubstitute;
 
     using NUnit.Framework;
@@ -17,11 +20,15 @@
 
         private readonly string supplierEmail = "seller@wesellthings.com";
 
+        private MiniOrder miniOrder;
+
         private ProcessResult result;
 
         [SetUp]
         public void SetUp()
         {
+            this.miniOrder = new MiniOrder { OrderNumber = this.orderNumber };
+
             this.EmployeeRepository.FindById(this.employeeNumber).Returns(
                 new Employee
                     {
@@ -42,12 +49,15 @@
                 Arg.Any<Stream>(),
                 $"LinnPurchaseOrder{this.orderNumber}");
 
+            this.MiniOrderRepository.FindById(this.orderNumber).Returns(this.miniOrder);
+
             this.result = this.Sut.SendPdfEmail(
                 "<h1>hello world order number is @Model.OrderNumber</h1>",
                 "seller@wesellthings.com",
                 this.orderNumber,
                 true,
-                this.employeeNumber);
+                this.employeeNumber,
+                new PurchaseOrder { OrderNumber = this.orderNumber });
         }
 
         [Test]
@@ -71,6 +81,12 @@
         {
             this.result.Success.Should().BeTrue();
             this.result.Message.Should().Be("Email Sent");
+        }
+
+        [Test]
+        public void ShouldSetSentByMethod()
+        {
+            this.miniOrder.SentByMethod.Should().Be("EMAIL");
         }
     }
 }
