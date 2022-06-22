@@ -4,22 +4,20 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using Linn.Common.Persistence;
     using Linn.Common.Reporting.Layouts;
     using Linn.Common.Reporting.Models;
-    using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
 
     public class WhatsDueInReportService : IWhatsDueInReportService
     {
-        private readonly IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> deliveryRepository;
+        private readonly IPurchaseOrderDeliveryRepository deliveryRepository;
 
         private readonly IReportingHelper reportingHelper;
 
         public WhatsDueInReportService(
             IReportingHelper reportingHelper,
-            IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> deliveryRepository)
+            IPurchaseOrderDeliveryRepository deliveryRepository)
         {
             this.deliveryRepository = deliveryRepository;
             this.reportingHelper = reportingHelper;

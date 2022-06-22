@@ -32,13 +32,12 @@
         }
 
         public IResult<IEnumerable<PurchaseOrderDeliveryResource>> SearchDeliveries(
-            string supplierSearchTerm, string orderNumberSearchTerm, bool includeAcknowledged, bool? exactOrderNumber = false)
+            string supplierSearchTerm, string orderNumberSearchTerm, bool includeAcknowledged)
         {
             var results = this.domainService.SearchDeliveries(
                 supplierSearchTerm,
                 orderNumberSearchTerm,
-                includeAcknowledged,
-                exactOrderNumber);
+                includeAcknowledged);
             return new SuccessResult<IEnumerable<PurchaseOrderDeliveryResource>>(
                 results.Select(x => (PurchaseOrderDeliveryResource)this.resourceBuilder.Build(x, null)));
         }
@@ -70,7 +69,7 @@
             {
                 while (reader.ReadLine() is { } line)
                 {
-                    // assuming csv lines are in the form <orderNumber>,<delivery-no>,<newAdvisedDate>,<newReason>
+                    // assuming csv lines are in the form <orderNumber>,<delivery-no>,<newAdvisedDate>,<qty>, <newReason>
                     var row = line.Split(",");
 
                     if (!int.TryParse(
@@ -82,15 +81,20 @@
 
                     if (!int.TryParse(row[1].Trim(), out var delNo))
                     {
-                        throw new InvalidOperationException($"Invalid Delivery Number: {row[0]} = {row[1]}.");
+                        throw new InvalidOperationException($"Invalid Delivery Number: {row[0]} / {row[1]}.");
+                    }
+
+                    if (!int.TryParse(row[3].Trim(), out var qty))
+                    {
+                        throw new InvalidOperationException($"Invalid Qty for {row[0]} / {row[1]}.");
                     }
 
                     var firstFormatSatisfied =
                         DateTime.TryParseExact(row[2]
-                            .Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate);
+                            .Trim(), "dd'/'M'/'yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate1);
                     var secondFormatSatisfied =
                         DateTime.TryParseExact(row[2]
-                            .Trim(), "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDate);
+                            .Trim(), "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate2);
 
                     // only supports two date formats for now, i.e.  31/01/2000 and 31-jan-2000
                     if (
@@ -109,8 +113,9 @@
                                                       OrderLine = 1, // hardcoded for now
                                                       DeliverySequence = delNo
                                                   },
-                                        NewDateAdvised = parsedDate,
-                                        NewReason = row[3].Trim()
+                                        NewDateAdvised = firstFormatSatisfied ? parsedDate1 : parsedDate2,
+                                        NewReason = row.Length < 5 ? null : row[4].Trim(),
+                                        Qty = qty
                                     });
                 }
 
@@ -141,58 +146,79 @@
             IEnumerable<PurchaseOrderDeliveryResource> resource,
             IEnumerable<string> privileges)
         {
-            var purchaseOrderDeliveryResources = resource.ToList();
-            this.domainService.UpdateDeliveriesForOrderLine(
-                orderNumber,
-                orderLine,
-                purchaseOrderDeliveryResources.Select(d => new PurchaseOrderDelivery
-                                                               {
-                                                                   DeliverySeq = d.DeliverySeq,
-                                                                   OurDeliveryQty = d.OurDeliveryQty,
-                                                                   Cancelled = d.Cancelled,
-                                                                   DateAdvised =
-                                                                       string.IsNullOrEmpty(d.DateAdvised)
-                                                                           ? null
-                                                                           : DateTime.Parse(d.DateAdvised),
-                                                                   DateRequested =
-                                                                       string.IsNullOrEmpty(d.DateRequested)
-                                                                           ? null
-                                                                           : DateTime.Parse(d.DateRequested),
-                                                                   NetTotalCurrency = d.NetTotalCurrency,
-                                                                   BaseNetTotal = d.BaseNetTotal,
-                                                                   OrderDeliveryQty = d.OrderDeliveryQty,
-                                                                   OrderLine = d.OrderLine,
-                                                                   OrderNumber = d.OrderNumber,
-                                                                   QtyNetReceived = d.QtyNetReceived,
-                                                                   QuantityOutstanding = d.QuantityOutstanding,
-                                                                   CallOffDate =
-                                                                       string.IsNullOrEmpty(d.CallOffDate)
-                                                                           ? null
-                                                                           : DateTime.Parse(d.CallOffDate),
-                                                                   BaseOurUnitPrice = d.BaseOurUnitPrice,
-                                                                   SupplierConfirmationComment = d.SupplierConfirmationComment,
-                                                                   OurUnitPriceCurrency = d.OurUnitPriceCurrency,
-                                                                   OrderUnitPriceCurrency = d.OrderUnitPriceCurrency,
-                                                                   BaseOrderUnitPrice = d.BaseOrderUnitPrice,
-                                                                   VatTotalCurrency = d.VatTotalCurrency,
-                                                                   BaseVatTotal = d.BaseVatTotal,
-                                                                   DeliveryTotalCurrency = d.DeliveryTotalCurrency,
-                                                                   BaseDeliveryTotal = d.BaseDeliveryTotal,
-                                                                   RescheduleReason = d.RescheduleReason,
-                                                                   AvailableAtSupplier = d.AvailableAtSupplier,
-                                                                   CallOffRef = d.CallOffRef,
-                                                                   FilCancelled = d.FilCancelled,
-                                                                   QtyPassedForPayment = d.QtyPassedForPayment
-                                                               }),
-                privileges);
+            try
+            {
+                var resourceList = resource.ToList();
+                var entities = resourceList.Select(
+                    d =>
+                        {
+                            var dateAdvised = new DateTime();
 
-            this.transactionManager.Commit();
-            return new SuccessResult<IEnumerable<PurchaseOrderDeliveryResource>>(purchaseOrderDeliveryResources);
+                            if (!string.IsNullOrEmpty(d.DateAdvised) && (!DateTime.TryParse(d.DateAdvised, out dateAdvised)) 
+                                || !DateTime.TryParse(
+                                    d.DateRequested,
+                                    out var dateRequested))
+                            {
+                                throw new InvalidOperationException("Invalid Date supplied");
+                            }
+
+                            return new PurchaseOrderDelivery
+                                       {
+                                           DeliverySeq = d.DeliverySeq,
+                                           OurDeliveryQty = d.OurDeliveryQty,
+                                           Cancelled = d.Cancelled,
+                                           DateAdvised = string.IsNullOrEmpty(d.DateAdvised) ? null : dateAdvised,
+                                           DateRequested = dateRequested,
+                                           NetTotalCurrency = d.NetTotalCurrency,
+                                           BaseNetTotal = d.BaseNetTotal,
+                                           OrderDeliveryQty = d.OrderDeliveryQty,
+                                           OrderLine = d.OrderLine,
+                                           OrderNumber = d.OrderNumber,
+                                           QtyNetReceived = d.QtyNetReceived,
+                                           QuantityOutstanding = d.QuantityOutstanding,
+                                           CallOffDate =
+                                               string.IsNullOrEmpty(d.CallOffDate)
+                                                   ? null
+                                                   : DateTime.Parse(d.CallOffDate),
+                                           BaseOurUnitPrice = d.BaseOurUnitPrice,
+                                           SupplierConfirmationComment = d.SupplierConfirmationComment,
+                                           OurUnitPriceCurrency = d.OurUnitPriceCurrency,
+                                           OrderUnitPriceCurrency = d.OrderUnitPriceCurrency,
+                                           BaseOrderUnitPrice = d.BaseOrderUnitPrice,
+                                           VatTotalCurrency = d.VatTotalCurrency,
+                                           BaseVatTotal = d.BaseVatTotal,
+                                           DeliveryTotalCurrency = d.DeliveryTotalCurrency,
+                                           BaseDeliveryTotal = d.BaseDeliveryTotal,
+                                           RescheduleReason = d.RescheduleReason,
+                                           AvailableAtSupplier = d.AvailableAtSupplier,
+                                           CallOffRef = d.CallOffRef,
+                                           FilCancelled = d.FilCancelled,
+                                           QtyPassedForPayment = d.QtyPassedForPayment
+                                       };
+                        }).ToList();
+
+                this.domainService.UpdateDeliveriesForOrderLine(
+                    orderNumber,
+                    orderLine,
+                    entities,
+                    privileges);
+                this.transactionManager.Commit();
+
+                // update the mini order to keep its deliveries in sync
+                this.domainService.UpdateMiniOrderDeliveries(entities);
+                this.transactionManager.Commit();
+
+                return new SuccessResult<IEnumerable<PurchaseOrderDeliveryResource>>(resourceList);
+            }
+            catch (Exception e)
+            {
+                return new BadRequestResult<IEnumerable<PurchaseOrderDeliveryResource>>(e.Message);
+            }
         }
 
         public IResult<IEnumerable<PurchaseOrderDeliveryResource>> GetDeliveriesForDetail(int orderNumber, int orderLine)
         {
-            var res = this.domainService.SearchDeliveries(null, orderNumber.ToString(), true, true, orderLine);
+            var res = this.domainService.SearchDeliveries(null, orderNumber.ToString(), true, orderLine);
 
             return new SuccessResult<IEnumerable<PurchaseOrderDeliveryResource>>(
                 res.Select(x => (PurchaseOrderDeliveryResource)this.resourceBuilder.Build(x, null)));

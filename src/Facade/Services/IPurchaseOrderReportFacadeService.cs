@@ -11,31 +11,24 @@
     public interface IPurchaseOrderReportFacadeService
     {
         IResult<ReportReturnResource> GetOrdersBySupplierReport(
-            OrdersBySupplierSearchResource resource,
-            IEnumerable<string> privileges);
+            OrdersBySupplierSearchResource resource);
 
         IEnumerable<IEnumerable<string>> GetOrdersBySupplierExport(
-            OrdersBySupplierSearchResource resource,
-            IEnumerable<string> privileges);
+            OrdersBySupplierSearchResource resource);
 
         IResult<ReportReturnResource> GetOrdersByPartReport(
-            OrdersByPartSearchResource resource,
-            IEnumerable<string> privileges);
+            OrdersByPartSearchResource resource);
 
         IEnumerable<IEnumerable<string>> GetOrdersByPartExport(
-            OrdersByPartSearchResource resource,
-            IEnumerable<string> privileges);
+            OrdersByPartSearchResource resource);
 
         IResult<ReportReturnResource> GetSuppliersWithUnacknowledgedOrdersReport(
-            SuppliersWithUnacknowledgedOrdersRequestResource resource,
-            IEnumerable<string> getPrivileges);
+            SuppliersWithUnacknowledgedOrdersRequestResource resource);
 
         IResult<ReportReturnResource> GetUnacknowledgedOrdersReport(
-            UnacknowledgedOrdersRequestResource resource,
-            IEnumerable<string> getPrivileges);
+            UnacknowledgedOrdersRequestResource resource);
 
         IEnumerable<IEnumerable<string>> GetUnacknowledgedOrdersReportExport(
-            UnacknowledgedOrdersRequestResource resource,
-            IEnumerable<string> getPrivileges);
+            UnacknowledgedOrdersRequestResource resource);
     }
 }

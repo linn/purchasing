@@ -51,6 +51,8 @@
                         new AxisDetailsModel("RequestedBy", "Requested By", GridDisplayType.TextValue),
                         new AxisDetailsModel("PartNumber", "Part", GridDisplayType.TextValue),
                         new AxisDetailsModel("Description", "Description", GridDisplayType.TextValue),
+                        new AxisDetailsModel("Nominal", "Nominal", GridDisplayType.TextValue),
+                        new AxisDetailsModel("Department", "Department", GridDisplayType.TextValue),
                         new AxisDetailsModel("SupplierId", "SupplierId", GridDisplayType.TextValue),
                         new AxisDetailsModel("SupplierName", "SupplierName", GridDisplayType.TextValue),
                         new AxisDetailsModel("Qty", "Qty", GridDisplayType.Value) { DecimalPlaces = 0 },
@@ -98,6 +100,20 @@
                             ColumnId = "Description",
                             TextDisplay = datum.Description.Length > 199 
                                               ? datum.Description.Substring(0, 200) : datum.Description
+                        });
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = rowId,
+                            ColumnId = "Nominal",
+                            TextDisplay = datum.Nominal?.Description
+                        });
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = rowId,
+                            ColumnId = "Department",
+                            TextDisplay = datum.Department?.Description
                         });
                 values.Add(
                     new CalculationValueModel

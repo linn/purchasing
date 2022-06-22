@@ -41,11 +41,13 @@
                                {
                                    new PurchaseOrderDeliveryUpdate
                                        {
-                                           Key = this.key1
+                                           Key = this.key1,
+                                           Qty = 100
                                        },
                                    new PurchaseOrderDeliveryUpdate
                                        {
-                                           Key = this.key2
+                                           Key = this.key2,
+                                           Qty = 200
                                        }
                                };
 
@@ -58,7 +60,8 @@
                     {
                         OrderNumber = this.key1.OrderNumber,
                         OrderLine = this.key1.OrderLine,
-                        DeliverySeq = this.key1.DeliverySequence
+                        DeliverySeq = this.key1.DeliverySequence,
+                        OurDeliveryQty = 100
                     });
             this.Repository.FindById(
                     Arg.Is<PurchaseOrderDeliveryKey>(
@@ -68,7 +71,8 @@
                         {
                             OrderNumber = this.key2.OrderNumber,
                             OrderLine = this.key2.OrderLine,
-                            DeliverySeq = this.key2.DeliverySequence
+                            DeliverySeq = this.key2.DeliverySequence,
+                            OurDeliveryQty = 200
                         });
 
             this.Repository.FilterBy(

@@ -256,6 +256,11 @@ export const mrReportOptions = new ItemType(
     'MR_REPORT_OPTIONS',
     '/purchasing/material-requirements/options'
 );
+export const mrReportOrders = new ItemType(
+    'mrReportOrders',
+    'MR_REPORT_ORDERS',
+    '/purchasing/material-requirements/orders'
+);
 
 export const purchaseOrderDelivery = new ItemType(
     'purchaseOrderDelivery',

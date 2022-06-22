@@ -28,7 +28,7 @@
             this.MockMrMasterRecordRepository.GetRecord().Returns(new MrMaster { JobRef = "AAAAA" });
             this.MockRepository.FilterBy(Arg.Any<Expression<Func<MrUsedOnRecord, bool>>>())
                 .ReturnsNull();
-            this.result = this.Sut.GetUsedOn(this.partNumber);
+            this.result = this.Sut.GetUsedOn(this.partNumber, null);
         }
 
         [Test]

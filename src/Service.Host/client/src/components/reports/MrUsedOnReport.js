@@ -15,9 +15,10 @@ function MrUsedOnReport() {
 
     const location = useLocation();
     const partNumber = queryString.parse(location.search)?.partNumber;
+    const jobRef = queryString.parse(location.search)?.jobRef;
     useEffect(() => {
-        dispatch(mrUsedOnReportActions.fetchReport({ partNumber }));
-    }, [partNumber, dispatch]);
+        dispatch(mrUsedOnReportActions.fetchReport({ partNumber, jobRef }));
+    }, [partNumber, jobRef, dispatch]);
 
     const loading = useSelector(state => state[mrUsedOnReport.item]?.loading);
 

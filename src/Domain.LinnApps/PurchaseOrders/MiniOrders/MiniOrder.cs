@@ -15,7 +15,7 @@
 
         public int NumberOfSplitDeliveries { get; set; }
 
-        public IEnumerable<MiniOrderDelivery> Deliveries { get; set; }
+        public ICollection<MiniOrderDelivery> Deliveries { get; set; }
     }
 }
 

@@ -17,6 +17,7 @@
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Persistence.LinnApps;
     using Linn.Purchasing.Persistence.LinnApps.Repositories;
+    using Linn.Purchasing.Persistence.LinnApps.Repositories.MiniOrder;
 
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
@@ -49,6 +50,7 @@
                 .AddTransient<IRepository<FullAddress, int>, EntityFrameworkRepository<FullAddress, int>>(r
                     => new EntityFrameworkRepository<FullAddress, int>(r.GetService<ServiceDbContext>()?.FullAddresses))
                 .AddTransient<IRepository<PurchaseOrder, int>, PurchaseOrderRepository>()
+                .AddTransient<IRepository<MiniOrder, int>, MiniOrderRepository>()
                 .AddTransient<IRepository<PurchaseLedger, int>, PurchaseLedgerRepository>()
                 .AddTransient<IRepository<Employee, int>, EmployeeRepository>()
                 .AddTransient<IRepository<PreferredSupplierChange, PreferredSupplierChangeKey>, PreferredSupplierChangeRepository>()
@@ -86,7 +88,7 @@
                 .AddTransient<IQueryRepository<PartReceivedRecord>, EntityFrameworkQueryRepository<PartReceivedRecord>>(
                     r => new EntityFrameworkQueryRepository<PartReceivedRecord>(r.GetService<ServiceDbContext>()
                         ?.TqmsView))
-                .AddTransient<IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey>, PurchaseOrderDeliveryRepository>()
+                .AddTransient<IPurchaseOrderDeliveryRepository, PurchaseOrderDeliveryRepository>()
                 .AddTransient<IRepository<PurchaseOrderReqState, string>, EntityFrameworkRepository<PurchaseOrderReqState, string>>(
                     r => new EntityFrameworkRepository<PurchaseOrderReqState, string>(r.GetService<ServiceDbContext>()?.PurchaseOrderReqStates))
                 .AddTransient<IRepository<OverbookAllowedByLog, int>, OverbookAllowedByLogRespository>()
@@ -121,15 +123,19 @@
                 .AddTransient<IQueryRepository<MrUsedOnRecord>, EntityFrameworkQueryRepository<MrUsedOnRecord>>(
                     r => new EntityFrameworkQueryRepository<MrUsedOnRecord>(r.GetService<ServiceDbContext>()
                         ?.MrUsedOnView))
+                .AddTransient<IQueryRepository<PartAndAssembly>, EntityFrameworkQueryRepository<PartAndAssembly>>(
+                    r => new EntityFrameworkQueryRepository<PartAndAssembly>(r.GetService<ServiceDbContext>()?.PartsAndAssemblies))
                 .AddTransient<IRepository<RescheduleReason, string>, EntityFrameworkRepository<RescheduleReason, string>>(
                     r => new EntityFrameworkRepository<RescheduleReason, string>(r.GetService<ServiceDbContext>()?.PlRescheduleReasons))
                 .AddTransient<IQueryRepository<MrHeader>, MrHeaderRepository>()
+                .AddTransient<IQueryRepository<MrPurchaseOrderDetail>, MrPurchaseOrderRepository>()
                 .AddTransient<ISingleRecordRepository<PurchaseLedgerMaster>, EntityFrameworkSingleRecordRepository<PurchaseLedgerMaster>>(
                     r => new EntityFrameworkSingleRecordRepository<PurchaseLedgerMaster>(r.GetService<ServiceDbContext>()?.PurchaseLedgerMaster))
-                .AddTransient<IRepository<MiniOrder, int>, EntityFrameworkRepository<MiniOrder, int>>(
-                    r => new EntityFrameworkRepository<MiniOrder, int>(r.GetService<ServiceDbContext>()?.MiniOrders))
                 .AddTransient<IRepository<MiniOrderDelivery, MiniOrderDeliveryKey>, EntityFrameworkRepository<MiniOrderDelivery, MiniOrderDeliveryKey>>(
-                    r => new EntityFrameworkRepository<MiniOrderDelivery, MiniOrderDeliveryKey>(r.GetService<ServiceDbContext>()?.MiniOrdersDeliveries));
+                    r => new EntityFrameworkRepository<MiniOrderDelivery, MiniOrderDeliveryKey>(r.GetService<ServiceDbContext>()?.MiniOrdersDeliveries))
+                .AddTransient<IQueryRepository<ShortagesEntry>, EntityFrameworkQueryRepository<ShortagesEntry>>(
+                    r => new EntityFrameworkQueryRepository<ShortagesEntry>(r.GetService<ServiceDbContext>()
+                        ?.ShortagesEntries));
         }
     }
 }

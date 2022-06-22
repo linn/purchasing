@@ -62,7 +62,7 @@
 
         public string PartNumber { get; set; }
 
-        public IEnumerable<PurchaseOrderDelivery> PurchaseDeliveries { get; set; }
+        public ICollection<PurchaseOrderDelivery> PurchaseDeliveries { get; set; }
 
         public PurchaseOrder PurchaseOrder { get; set; }
 

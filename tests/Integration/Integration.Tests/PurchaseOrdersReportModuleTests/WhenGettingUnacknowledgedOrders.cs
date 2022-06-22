@@ -34,8 +34,7 @@
                                             };
             this.FacadeService
                 .GetUnacknowledgedOrdersReport(
-                    Arg.Any<UnacknowledgedOrdersRequestResource>(),
-                    Arg.Any<IEnumerable<string>>())
+                    Arg.Any<UnacknowledgedOrdersRequestResource>())
                 .Returns(new SuccessResult<ReportReturnResource>(this.reportReturnResource));
 
             this.Response = this.Client.Get(
@@ -47,8 +46,7 @@
         public void ShouldCallFacadeService()
         {
             this.FacadeService.Received().GetUnacknowledgedOrdersReport(
-                Arg.Is<UnacknowledgedOrdersRequestResource>(a => a.SupplierId == 123 && a.SupplierGroupId == 456),
-                Arg.Any<IEnumerable<string>>());
+                Arg.Is<UnacknowledgedOrdersRequestResource>(a => a.SupplierId == 123 && a.SupplierGroupId == 456));
         }
 
         [Test]

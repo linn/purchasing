@@ -19,16 +19,19 @@
 
         private string partNumber;
 
+        private string jobRef;
+
         [SetUp]
         public void SetUp()
         {
             this.partNumber = "RES 426";
+            this.jobRef = "ABC";
 
             this.results = new ResultsModel { ReportTitle = new NameModel("Used On Report") };
 
-            this.MockUsedOnReportDomainService.GetUsedOn(this.partNumber).Returns(this.results);
+            this.MockUsedOnReportDomainService.GetUsedOn(this.partNumber, this.jobRef).Returns(this.results);
             this.Response = this.Client.Get(
-                $"/purchasing/material-requirements/used-on-report?partNumber={this.partNumber}",
+                $"/purchasing/material-requirements/used-on-report?partNumber={this.partNumber}&jobRef={this.jobRef}",
                 with => { with.Accept("application/json"); }).Result;
         }
 
@@ -41,7 +44,7 @@
         [Test]
         public void ShouldPassCorrectOptionsToDomainService()
         {
-            this.MockUsedOnReportDomainService.Received().GetUsedOn(this.partNumber);
+            this.MockUsedOnReportDomainService.Received().GetUsedOn(this.partNumber, this.jobRef);
         }
 
         [Test]

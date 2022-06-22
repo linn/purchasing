@@ -57,25 +57,25 @@
                           {
                               CommandType = CommandType.StoredProcedure
                           };
-            var result = new OracleParameter("p_order", OracleDbType.Decimal) 
-                             {
-                                 Direction = ParameterDirection.ReturnValue
-                             };
-            var paramTotal = new OracleParameter("p_total", OracleDbType.Decimal) 
+           
+            var paramTotal = new OracleParameter("p_tot", OracleDbType.Decimal) 
                                  {
                                      Direction = ParameterDirection.Input,
-                                     Size = 50,
                                      Value = total
                                  };
             var paramSupplierId = new OracleParameter("p_supp", OracleDbType.Int32)
                                       {
                                           Direction = ParameterDirection.Input,
-                                          Size = 50, Value = supplierId
+                                          Value = supplierId
                                       };
-               
+            var result = new OracleParameter(null, OracleDbType.Decimal)
+                             {
+                                 Direction = ParameterDirection.ReturnValue
+                             };
+
             cmd.Parameters.Add(result);
-            cmd.Parameters.Add(paramSupplierId);
             cmd.Parameters.Add(paramTotal);
+            cmd.Parameters.Add(paramSupplierId);
 
             cmd.ExecuteNonQuery();
             connection.Close();

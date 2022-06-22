@@ -12,8 +12,7 @@
         IResult<IEnumerable<PurchaseOrderDeliveryResource>> SearchDeliveries(
             string supplierSearchTerm, 
             string orderNumberSearchTerm, 
-            bool includeAcknowledged, 
-            bool? exactOrderNumber = false);
+            bool includeAcknowledged);
 
         IResult<PurchaseOrderDeliveryResource> PatchDelivery(
             PurchaseOrderDeliveryKey key,

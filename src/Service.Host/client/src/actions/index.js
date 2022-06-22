@@ -212,6 +212,7 @@ export const mrUsedOnReportActionTypes = makeReportActionTypes(
 
 export const mrReportActionTypes = makeActionTypes(itemTypes.mrReport.actionType);
 export const mrReportOptionsActionTypes = makeActionTypes(itemTypes.mrReportOptions.actionType);
+export const mrReportOrdersActionTypes = makeActionTypes(itemTypes.mrReportOrders.actionType);
 
 export const purchaseOrderDeliveryActionTypes = makeActionTypes(
     itemTypes.purchaseOrderDelivery.actionType
@@ -225,6 +226,16 @@ export const purchaseOrderDeliveriesActionTypes = makeActionTypes(
 export const batchPurchaseOrderDeliveriesUploadActionTypes = makeProcessActionTypes(
     itemTypes.batchPurchaseOrderDeliveriesUpload.actionType,
     true
+);
+
+export const shortagesReportActionTypes = makeActionTypes(
+    reportTypes.shortagesReport.actionType,
+    false
+);
+
+export const mrOrderBookReportActionTypes = makeActionTypes(
+    reportTypes.mrOrderBookReport.actionType,
+    false
 );
 
 export const sendPurchaseOrderPdfEmailActionTypes = makeProcessActionTypes(

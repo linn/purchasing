@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderDeliveryServiceTests
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -19,7 +18,7 @@
 
     public class ContextBase
     {
-        protected IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey> Repository { get; private set; }
+        protected IPurchaseOrderDeliveryRepository Repository { get; private set; }
 
         protected IEnumerable<PurchaseOrderDelivery> Data { get; private set; }
 
@@ -42,7 +41,7 @@
         [SetUp]
         public void SetUpContext()
         {
-            this.Repository = Substitute.For<IRepository<PurchaseOrderDelivery, PurchaseOrderDeliveryKey>>();
+            this.Repository = Substitute.For<IPurchaseOrderDeliveryRepository>();
             this.AuthService = Substitute.For<IAuthorisationService>();
             this.RescheduleReasonRepository = Substitute.For<IRepository<RescheduleReason, string>>();
             this.PurchaseLedgerMaster = Substitute.For<ISingleRecordRepository<PurchaseLedgerMaster>>();

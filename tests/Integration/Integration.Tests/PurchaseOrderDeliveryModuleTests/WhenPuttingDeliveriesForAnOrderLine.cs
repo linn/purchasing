@@ -30,6 +30,7 @@
                                         {
                                             OrderNumber = 123456,
                                             OrderLine = 1,
+                                            DateRequested = 1.January(2000).ToString("o"),
                                             DateAdvised = 1.January(2000).ToString("o")
                                         }
                                 }.ToArray();

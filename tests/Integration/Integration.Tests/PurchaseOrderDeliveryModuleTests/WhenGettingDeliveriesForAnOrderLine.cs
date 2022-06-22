@@ -32,7 +32,7 @@
                                             PurchaseOrderDetail = new PurchaseOrderDetail()
                                         }
                                 }.ToArray();
-            this.MockDomainService.SearchDeliveries(null, "123456", true, true, 1).Returns(this.data);
+            this.MockDomainService.SearchDeliveries(null, "123456", true, 1).Returns(this.data);
             this.Response = this.Client.Get(
                 $"/purchasing/purchase-orders/deliveries/123456/1/",
                 with =>

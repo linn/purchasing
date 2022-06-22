@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -55,8 +55,7 @@ function AcknowledgeOrdersUtility() {
                 purchaseOrderDeliveriesActions.fetchByHref(
                     `${purchaseOrderDeliveries.uri}?${queryString.stringify({
                         orderNumberSearchTerm,
-                        includeAcknowledged: true,
-                        exactOrderNumber: true
+                        includeAcknowledged: true
                     })}`
                 )
             );
@@ -195,15 +194,31 @@ function AcknowledgeOrdersUtility() {
     const setUploadSnackbarVisible = () =>
         dispatch(batchPurchaseOrderDeliveriesUploadActions.setMessageVisible(false));
 
-    useEffect(() => {
-        if (updatedItem) {
+    const refreshResults = useCallback(() => {
+        setRows([]);
+        if (searchOptions.orderNumberSearchTerm || searchOptions.supplierSearchTerm) {
             dispatch(
                 purchaseOrderDeliveriesActions.fetchByHref(
                     `${purchaseOrderDeliveries.uri}?${queryString.stringify(searchOptions)}`
                 )
             );
+        } else if (orderNumberSearchTerm) {
+            dispatch(
+                purchaseOrderDeliveriesActions.fetchByHref(
+                    `${purchaseOrderDeliveries.uri}?${queryString.stringify({
+                        orderNumberSearchTerm,
+                        includeAcknowledged: true
+                    })}`
+                )
+            );
         }
-    }, [updatedItem, dispatch, searchOptions]);
+    }, [dispatch, searchOptions, orderNumberSearchTerm]);
+
+    useEffect(() => {
+        if (updatedItem) {
+            refreshResults();
+        }
+    }, [updatedItem, dispatch, searchOptions, refreshResults]);
 
     const handleSaveClick = () => {
         setApplyChangesDialogOpen(false);
@@ -224,27 +239,6 @@ function AcknowledgeOrdersUtility() {
         });
     };
 
-    const refreshResults = () => {
-        setRows([]);
-        if (searchOptions.orderNumberSearchTerm || searchOptions.supplierSearchTerm) {
-            dispatch(
-                purchaseOrderDeliveriesActions.fetchByHref(
-                    `${purchaseOrderDeliveries.uri}?${queryString.stringify(searchOptions)}`
-                )
-            );
-        } else if (orderNumberSearchTerm) {
-            dispatch(
-                purchaseOrderDeliveriesActions.fetchByHref(
-                    `${purchaseOrderDeliveries.uri}?${queryString.stringify({
-                        orderNumberSearchTerm,
-                        includeAcknowledged: true,
-                        exactOrderNumber: true
-                    })}`
-                )
-            );
-        }
-    };
-
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <SnackbarMessage
@@ -257,8 +251,8 @@ function AcknowledgeOrdersUtility() {
                 <Dialog open={splitDeliveriesDialogOpen} fullWidth maxWidth="lg">
                     <div className={classes.dialog}>
                         <SplitDeliveriesUtility
-                            orderNumber={123456}
-                            orderLine={1}
+                            orderNumber={deliveriesToSplit?.[0]?.orderNumber}
+                            orderLine={1} // todo
                             inDialogBox
                             cancelClick={() => setSplitDeliveriesDialogOpen(false)}
                             backClick={() => {
@@ -469,7 +463,7 @@ function AcknowledgeOrdersUtility() {
                         setSnackbarVisible={setUploadSnackbarVisible}
                         message={uploadMessage}
                         initiallyExpanded={false}
-                        helperText="Upload a csv file with 4 columns, Order Number, Delivery Number, New Advised Date and New Reason. Date must be in a format matching either 31/01/2022 or 31-jan-2022. Advised must be one of the following: ADVISED, AUTO FAIL, AUTO PASS, BROUGHT IN, DECOMMIT, IGNORE, REQUESTED, RESCHEDULE OUT and will default to ADVISED if no value is supplied."
+                        helperText="Upload a csv file with 4 columns, Order Number, Delivery Number, New Advised Date, Qty and New Reason. Date must be in a format matching either 31/01/2022 or 31-jan-2022. Advised must be one of the following: ADVISED, AUTO FAIL, AUTO PASS, BROUGHT IN, DECOMMIT, IGNORE, REQUESTED, RESCHEDULE OUT and will default to ADVISED if no value is supplied."
                     />
                 </Grid>
             </Grid>

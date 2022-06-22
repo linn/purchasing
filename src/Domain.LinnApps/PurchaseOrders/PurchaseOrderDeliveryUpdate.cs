@@ -11,5 +11,7 @@
         public DateTime? NewDateAdvised { get; set; }
 
         public string NewReason { get; set; }
+
+        public decimal Qty { get; set; }
     }
 }

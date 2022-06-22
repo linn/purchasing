@@ -35,7 +35,7 @@
                                        };
             this.DomainService.GetUnacknowledgedOrders(this.supplierId, this.supplierGroupId)
                 .Returns(new ResultsModel { ReportTitle = new NameModel("Title") });
-            this.result = this.Sut.GetUnacknowledgedOrdersReport(this.requestResource, new List<string>());
+            this.result = this.Sut.GetUnacknowledgedOrdersReport(this.requestResource);
         }
 
         [Test]
