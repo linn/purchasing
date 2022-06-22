@@ -11,6 +11,7 @@ import render from '../../test-utils';
 import purchaseOrderDeliveriesActions from '../../actions/purchaseOrderDeliveriesActions';
 import AcknowledgeOrdersUtility from '../AcknowledgeOrdersUtility';
 import { purchaseOrderDeliveries } from '../../itemTypes';
+import batchPurchaseOrderDeliveriesUpdateActions from '../../actions/batchPurchaseOrderDeliveriesUpdateActions';
 
 jest.mock('react-redux', () => ({
     ...jest.requireActual('react-redux'),
@@ -24,6 +25,7 @@ jest.mock('react-router', () => ({
 
 const fetchByHrefSpy = jest.spyOn(purchaseOrderDeliveriesActions, 'fetchByHref');
 const postByHrefSpy = jest.spyOn(purchaseOrderDeliveriesActions, 'postByHref');
+const batchUpdateSpy = jest.spyOn(batchPurchaseOrderDeliveriesUpdateActions, 'requestProcessStart');
 
 const searchResults = [
     {
@@ -211,7 +213,7 @@ describe('When Updating', () => {
         );
 
         // select the first row
-        const firstCheckbox = screen.getAllByRole('checkbox')[1];
+        const firstCheckbox = screen.getAllByRole('checkbox')[2];
         fireEvent.click(firstCheckbox);
         const applyChangesButton = screen.getByText('Apply Changes To Selected');
         fireEvent.click(applyChangesButton);
@@ -226,6 +228,20 @@ describe('When Updating', () => {
         expect(commentInput).toBeInTheDocument();
         fireEvent.change(commentInput, { target: { value: 'NEW COMMENT' } });
         expect(screen.getByDisplayValue('NEW COMMENT')).toBeInTheDocument();
+
+        const saveButton = screen.getByRole('button', { name: 'Save' });
+        fireEvent.click(saveButton);
+        expect(batchUpdateSpy).toHaveBeenCalledTimes(1);
+        expect(batchUpdateSpy).toHaveBeenCalledWith(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    comment: 'NEW COMMENT',
+                    deliverySequence: 1,
+                    orderLine: 1,
+                    orderNumber: 123463
+                })
+            ])
+        );
     });
 });
 
