@@ -281,7 +281,7 @@ export const batchPurchaseOrderDeliveriesUpload = new ItemType(
 );
 
 export const sendPurchaseOrderPdfEmail = new ItemType(
-    'sendPurchaseOrderEmailToSupplier',
+    'sendPurchaseOrderPdfEmail',
     'SEND_PURCHASE_ORDER_PDF_EMAIL',
     '/purchasing/purchase-orders/email-pdf'
 );
