@@ -131,7 +131,7 @@ function SplitDeliveriesUtility({ orderNumber, orderLine, inDialogBox, deliverie
             <Grid item xs={3}>
                 <InputField
                     propertyName="orderQty"
-                    label="Qty On Order"
+                    label="Total"
                     type="number"
                     error={!orderLoading && total() !== orderQty()}
                     value={total()}
@@ -150,6 +150,7 @@ function SplitDeliveriesUtility({ orderNumber, orderLine, inDialogBox, deliverie
                     columns={columns}
                     rowHeight={34}
                     autoHeight
+                    columnBuffer={6}
                     disableSelectionOnClick
                     loading={loading}
                     hideFooter
