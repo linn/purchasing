@@ -42,7 +42,6 @@
 
         protected IRazorTemplateService RazorTemplateService { get; private set; }
 
-
         [SetUp]
         public void SetUpContext()
         {

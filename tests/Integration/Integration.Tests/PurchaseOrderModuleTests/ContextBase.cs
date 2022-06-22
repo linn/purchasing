@@ -76,8 +76,7 @@
 
         protected IPurchaseOrderService MockDomainService { get; private set; }
 
-        protected IRazorTemplateService MockRazorTemplateService{ get; private set; }
-
+        protected IRazorTemplateService MockRazorTemplateService { get; private set; }
 
         [SetUp]
         public void EstablishContext()
@@ -129,8 +128,7 @@
                 purchaseOrderResourceBuilder,
                 this.MockDomainService,
                 this.OverbookAllowedByLogRepository,
-                MockRazorTemplateService);
-
+                this.MockRazorTemplateService);
 
             this.Log = Substitute.For<ILog>();
 
