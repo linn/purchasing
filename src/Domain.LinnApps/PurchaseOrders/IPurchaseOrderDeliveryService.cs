@@ -20,7 +20,8 @@
 
         BatchUpdateProcessResult BatchUpdateDeliveries(
             IEnumerable<PurchaseOrderDeliveryUpdate> changes,
-            IEnumerable<string> privileges);
+            IEnumerable<string> privileges,
+            bool skipSplitDeliveries = false);
 
         IEnumerable<PurchaseOrderDelivery> UpdateDeliveriesForOrderLine(
             int orderNumber,

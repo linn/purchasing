@@ -1,15 +1,15 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
+    using System.Collections.Generic;
     using System.IO;
     using System.Threading.Tasks;
 
     using Carter;
     using Carter.Response;
 
-    using Linn.Purchasing.Domain.LinnApps.Keys;
+    using Linn.Common.Facade;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
-    using Linn.Purchasing.Resources.RequestResources;
     using Linn.Purchasing.Service.Extensions;
     using Linn.Purchasing.Service.Models;
 
@@ -23,7 +23,6 @@
         {
             app.MapGet("/purchasing/purchase-orders/acknowledge", this.GetApp);
             app.MapGet("/purchasing/purchase-orders/deliveries", this.Search);
-            app.MapPatch("/purchasing/purchase-orders/deliveries/{orderNumber:int}/{orderLine:int}/{deliverySeq:int}", this.Patch);
             app.MapPost("/purchasing/purchase-orders/deliveries", this.BatchUpdate);
             app.MapPost("/purchasing/purchase-orders/deliveries/{orderNumber:int}/{orderLine:int}/", this.UpdateDeliveriesForOrderLine);
             app.MapGet("/purchasing/purchase-orders/deliveries/{orderNumber:int}/{orderLine:int}/", this.GetDeliveriesForOrderLine);
@@ -55,39 +54,34 @@
             await res.Negotiate(result);
         }
 
-        private async Task Patch(
-            HttpRequest req,
-            HttpResponse res,
-            PatchRequestResource<PurchaseOrderDeliveryResource> resource,
-            int orderNumber,
-            int orderLine,
-            int deliverySeq,
-            IPurchaseOrderDeliveryFacadeService service)
-        {
-            var result = service.PatchDelivery(
-                new PurchaseOrderDeliveryKey
-                    {
-                        OrderNumber = orderNumber,
-                        OrderLine = orderLine,
-                        DeliverySequence = deliverySeq
-                    }, 
-                resource, 
-                req.HttpContext.GetPrivileges());
-
-            await res.Negotiate(result);
-        }
-
         private async Task BatchUpdate(
             HttpRequest req,
             HttpResponse res,
             IPurchaseOrderDeliveryFacadeService service)
         {
-            var reader = new StreamReader(req.Body).ReadToEndAsync();
+            IResult<BatchUpdateProcessResultResource> result;
 
-            var result = service.BatchUpdateDeliveriesFromCsv(
-                reader.Result,
-                req.HttpContext.GetPrivileges());
+            if (req.Headers.ContentType == "text/csv")
+            {
+                var reader = new StreamReader(req.Body).ReadToEndAsync();
 
+                result = service.BatchUpdateDeliveries(
+                    reader.Result,
+                    req.HttpContext.GetPrivileges());
+            }
+            else if (req.ContentType == "application/json")
+            {
+                var resource = await req.Bind<IEnumerable<PurchaseOrderDeliveryUpdateResource>>();
+                
+                result = service.BatchUpdateDeliveries(
+                    resource, 
+                    req.HttpContext.GetPrivileges());
+            }
+            else
+            {
+                result = new BadRequestResult<BatchUpdateProcessResultResource>("Unsupported content type.");
+            }
+            
             await res.Negotiate(result);
         }
 
