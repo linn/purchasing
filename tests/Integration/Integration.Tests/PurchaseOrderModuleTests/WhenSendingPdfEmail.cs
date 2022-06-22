@@ -20,14 +20,14 @@
         [SetUp]
         public void SetUp()
         {
-            this.MockDomainService.SendPdfEmail(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<int>()).Returns(new ProcessResult(true, "email sent"));
+            this.MockDomainService
+                .SendPdfEmail(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<int>(), false, Arg.Any<int>())
+                .Returns(new ProcessResult(true, "email sent"));
 
             this.MockPurchaseOrderRepository.FindById(158962).Returns(
                 new PurchaseOrder
                     {
-                        OrderNumber = 158962,
-                        OverbookQty = 1,
-                        Supplier = new Supplier { SupplierId = 1224 }
+                        OrderNumber = 158962, OverbookQty = 1, Supplier = new Supplier { SupplierId = 1224 }
                     });
 
             var task = Task.FromResult("<h1>hello world</h1>");
@@ -36,16 +36,16 @@
 
             this.Response = this.Client.Post(
                 "/purchasing/purchase-orders/email-pdf?bcc=false&emailAddress=iain.crawford@linn.co.uk&orderNumber=158962",
-                with =>
-                    {
-                        with.Accept("application/json");
-                    }).Result;
+                with => { with.Accept("application/json"); }).Result;
         }
 
         [Test]
-        public void ShouldReturnOk()
+        public void ShouldReturnJsonBody()
         {
-            this.Response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var resource = this.Response.DeserializeBody<ProcessResultResource>();
+            resource.Should().NotBeNull();
+            resource.Success.Should().BeTrue();
+            resource.Message.Should().Be("email sent");
         }
 
         [Test]
@@ -56,12 +56,9 @@
         }
 
         [Test]
-        public void ShouldReturnJsonBody()
+        public void ShouldReturnOk()
         {
-            var resource = this.Response.DeserializeBody<ProcessResultResource>();
-            resource.Should().NotBeNull();
-            resource.Success.Should().BeTrue();
-            resource.Message.Should().Be("email sent");
+            this.Response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
     }
 }

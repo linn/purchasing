@@ -717,7 +717,7 @@ function POReqUtility({ creating }) {
                                                 label="Send PO Email To"
                                                 number
                                                 propertyName="emailTo"
-                                                onChange={newEmail => {
+                                                onChange={(name, newEmail) => {
                                                     setPurchaseOrderEmailState({
                                                         ...purchaseOrderEmailState,
                                                         email: newEmail

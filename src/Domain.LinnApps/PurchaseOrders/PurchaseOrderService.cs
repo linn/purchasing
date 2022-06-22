@@ -129,7 +129,7 @@
                               {
                                   new Dictionary<string, string>
                                       {
-                                          { "name", "purchasing outgoing" }, { "address", string.Empty }
+                                          { "name", "purchasing outgoing" }, { "address", "iainc@linn.co.uk" }
                                       }
                               };
             // todo add purchasingoutgoing@linn.co.uk as bcc before put live ^,
