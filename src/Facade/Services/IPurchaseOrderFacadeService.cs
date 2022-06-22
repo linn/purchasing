@@ -9,6 +9,6 @@
     {
         string GetOrderAsHtml(int orderNumber);
 
-        IResult<ProcessResultResource> EmailOrderPdf(int orderNumber, string emailAddress);
+        IResult<ProcessResultResource> EmailOrderPdf(int orderNumber, string emailAddress, bool bcc, int currentUserId);
     }
 }

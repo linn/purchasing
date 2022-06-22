@@ -1,13 +1,19 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrderModuleTests
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Net;
+
+    using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
     using Linn.Common.Facade;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -39,10 +45,19 @@
                                           }
                                   };
 
-            this.PurchaseOrderFacadeService.Search(
-                    this.orderNumberSearch,
-                    Arg.Any<IEnumerable<string>>())
-                .Returns(new SuccessResult<IEnumerable<PurchaseOrderResource>>(this.dataResult));
+            this.MockPurchaseOrderRepository.FilterBy(Arg.Any<Expression<Func<PurchaseOrder, bool>>>()).Returns(
+                new List<PurchaseOrder>
+                    {
+                        new PurchaseOrder
+                            {
+                                OrderNumber = 600179,
+                                Cancelled = string.Empty,
+                                OrderDate = 10.January(2021),
+                                Overbook = string.Empty,
+                                OverbookQty = 1,
+                                Supplier = new Supplier { SupplierId = 1224 }
+                            }
+                    }.AsQueryable());
 
             this.Response = this.Client.Get(
                 $"/purchasing/purchase-orders?searchTerm={this.orderNumberSearch}",

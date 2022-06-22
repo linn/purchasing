@@ -125,7 +125,11 @@
             bool bcc,
             IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
-            var result = purchaseOrderFacadeService.EmailOrderPdf(orderNumber, emailAddress);
+            var result = purchaseOrderFacadeService.EmailOrderPdf(
+                orderNumber,
+                emailAddress,
+                bcc,
+                req.HttpContext.User.GetEmployeeNumber());
 
             await res.Negotiate(result);
         }

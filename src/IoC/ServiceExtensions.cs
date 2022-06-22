@@ -176,7 +176,8 @@
                 .AddTransient<IForecastingPack, ForecastingPack>()
                 .AddTransient<IEdiEmailPack, EdiEmailPack>()
                 .AddTransient<ISupplierPack, SupplierPack>()
-                .AddTransient<IPurchaseOrderAutoOrderPack, PurchaseOrderAutoOrderPack>();
+                .AddTransient<IPurchaseOrderAutoOrderPack, PurchaseOrderAutoOrderPack>()
+                .AddTransient<IRazorTemplateService, RazorTemplateService>();
         }
     }
 }

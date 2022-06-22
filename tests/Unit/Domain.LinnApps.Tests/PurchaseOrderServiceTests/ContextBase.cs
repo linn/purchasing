@@ -3,6 +3,7 @@
     using Linn.Common.Authorisation;
     using Linn.Common.Email;
     using Linn.Common.Pdf;
+    using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
@@ -25,6 +26,9 @@
 
         protected IEmailService EmailService { get; private set; }
 
+        protected IRepository<Employee, int> EmployeeRepository { get; private set; }
+
+
         [SetUp]
         public void SetUpContext()
         {
@@ -33,8 +37,15 @@
             this.PurchaseLedgerPack = Substitute.For<IPurchaseLedgerPack>();
             this.PdfService = Substitute.For<IPdfService>();
             this.EmailService = Substitute.For<IEmailService>();
+            this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
 
-            this.Sut = new PurchaseOrderService(this.MockAuthService, this.PurchaseLedgerPack, this.MockDatabaseService, this.PdfService, this.EmailService);
+            this.Sut = new PurchaseOrderService(
+                this.MockAuthService,
+                this.PurchaseLedgerPack,
+                this.MockDatabaseService,
+                this.PdfService,
+                this.EmailService,
+                this.EmployeeRepository);
         }
     }
 }

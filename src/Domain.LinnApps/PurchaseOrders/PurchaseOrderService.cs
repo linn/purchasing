@@ -7,6 +7,7 @@
     using Linn.Common.Authorisation;
     using Linn.Common.Email;
     using Linn.Common.Pdf;
+    using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
@@ -23,18 +24,22 @@
 
         private readonly IEmailService emailService;
 
+        private readonly IRepository<Employee, int> employeeRepository;
+
         public PurchaseOrderService(
             IAuthorisationService authService,
             IPurchaseLedgerPack purchaseLedgerPack,
             IDatabaseService databaseService,
             IPdfService pdfService,
-            IEmailService emailService)
+            IEmailService emailService,
+            IRepository<Employee, int> employeeRepository)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;
             this.databaseService = databaseService;
             this.pdfService = pdfService;
             this.emailService = emailService;
+            this.employeeRepository = employeeRepository;
         }
 
         public void AllowOverbook(
@@ -112,18 +117,34 @@
             return current;
         }
 
-        public ProcessResult SendPdfEmail(string html, string emailAddress, int orderNumber)
+        public ProcessResult SendPdfEmail(string html, string emailAddress, int orderNumber, bool bcc, int currentUserId)
         {
             var pdf = this.pdfService.ConvertHtmlToPdf(html, landscape: false);
             var emailBody = $"Please accept the attached order no. {orderNumber}.\n"
                             + $"You will need Acrobat Reader to open the file which is available from www.adobe.com/acrobat\n"
                             + "Linn's standard Terms & Conditions apply at all times\n"
                             + "and can be found at www.linn.co.uk/purchasing_conditions";
+
+            var bccList = new List<Dictionary<string, string>>
+                              {
+                                  new Dictionary<string, string>
+                                      {
+                                          { "name", "purchasing outgoing" }, { "address", string.Empty }
+                                      }
+                              };
+            // todo add purchasingoutgoing@linn.co.uk as bcc before put live ^,
+            // left out for now so don't spam during testing
+            if (bcc)
+            {
+                var employee = this.employeeRepository.FindById(currentUserId);
+                bccList.Add(new Dictionary<string, string> { { "name", employee.FullName }, { "address", employee.PhoneListEntry?.EmailAddress } });
+            }
+
             this.emailService.SendEmail(
                     emailAddress,
                     emailAddress, // todo add name in here?
                     null,
-                    null, // todo add purchasingoutgoing@linn.co.uk as bcc before put live, left out for now so don't spam during testing
+                    bccList,
                     "purchasingoutgoing@linn.co.uk", // todo add as ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"]
                     "Linn Purchasing",
                     $"Linn Purchase Order {orderNumber}",

@@ -10,6 +10,6 @@
             decimal? overbookQty,
             IEnumerable<string> privileges);
 
-        public ProcessResult SendPdfEmail(string html, string emailAddress, int orderNumber);
+        public ProcessResult SendPdfEmail(string html, string emailAddress, int orderNumber, bool bcc, int currentUserId);
     }
 }
