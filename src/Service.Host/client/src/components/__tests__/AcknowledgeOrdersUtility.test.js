@@ -6,14 +6,11 @@ import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 import queryString from 'query-string';
 import '@testing-library/jest-dom/extend-expect';
-import { screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
+import { screen, fireEvent, cleanup } from '@testing-library/react';
 import render from '../../test-utils';
-import purchaseOrderDeliveryActions from '../../actions/purchaseOrderDeliveryActions';
 import purchaseOrderDeliveriesActions from '../../actions/purchaseOrderDeliveriesActions';
-import batchPurchaseOrderDeliveriesUploadActions from '../../actions/batchPurchaseOrderDeliveriesUploadActions';
-import batchPurchaseOrderDeliveriesUpdateActions from '../../actions/batchPurchaseOrderDeliveriesUpdateActions';
 import AcknowledgeOrdersUtility from '../AcknowledgeOrdersUtility';
-import { purchaseOrderDeliveries, batchPurchaseOrderDeliveriesUpload } from '../../itemTypes';
+import { purchaseOrderDeliveries } from '../../itemTypes';
 
 jest.mock('react-redux', () => ({
     ...jest.requireActual('react-redux'),
@@ -26,6 +23,7 @@ jest.mock('react-router', () => ({
 }));
 
 const fetchByHrefSpy = jest.spyOn(purchaseOrderDeliveriesActions, 'fetchByHref');
+const postByHrefSpy = jest.spyOn(purchaseOrderDeliveriesActions, 'postByHref');
 
 const searchResults = [
     {
@@ -74,7 +72,7 @@ const searchResults = [
         quantityOutstanding: 15000,
         callOffDate: '1993-09-03T00:00:00.0000000',
         baseOurUnitPrice: 0.025,
-        supplierConfirmationComment: 'a new comment',
+        supplierConfirmationComment: 'a different comment',
         ourUnitPriceCurrency: 0.025,
         orderUnitPriceCurrency: 0.025,
         baseOrderUnitPrice: 0.025,
@@ -167,11 +165,14 @@ describe('When looking up orders', () => {
 describe('When Search Results', () => {
     beforeAll(() => {
         cleanup();
-        jest.clearAllMocks();
-        render(<AcknowledgeOrdersUtility />);
+    });
 
-        const expansionPanelOpen = screen.getByText('Look Up Some Orders');
-        fireEvent.click(expansionPanelOpen);
+    test('Should render results', () => {
+        jest.clearAllMocks();
+        useLocation.mockImplementation(() => ({
+            search: null
+        }));
+
         useSelector.mockImplementation(callback =>
             callback({
                 purchaseOrderDeliveries: {
@@ -180,11 +181,12 @@ describe('When Search Results', () => {
                 }
             })
         );
-    });
+        render(<AcknowledgeOrdersUtility />);
+        const expansionPanelOpen = screen.getByText('Look Up Some Orders');
+        fireEvent.click(expansionPanelOpen);
 
-    test('Should render results', async () => {
-        waitFor(() => expect(screen.getByText('REQUESTED')).toBeInTheDocument());
-        waitFor(() => expect(screen.getByText('ADVISED')).toBeInTheDocument());
+        expect(screen.getByText('ADVISED')).toBeInTheDocument();
+        expect(screen.getByText('REQUESTED')).toBeInTheDocument();
     });
 });
 
@@ -215,8 +217,8 @@ describe('When Updating', () => {
         fireEvent.click(applyChangesButton);
     });
 
-    test('Should open change dialog', async () => {
-        waitFor(() => expect(screen.getByLabelText('Comment')).toBeInTheDocument());
+    test('Should open change dialog', () => {
+        expect(screen.getByLabelText('Comment')).toBeInTheDocument();
     });
 
     test('Should update selected rows', async () => {
@@ -224,5 +226,75 @@ describe('When Updating', () => {
         expect(commentInput).toBeInTheDocument();
         fireEvent.change(commentInput, { target: { value: 'NEW COMMENT' } });
         expect(screen.getByDisplayValue('NEW COMMENT')).toBeInTheDocument();
+    });
+});
+
+describe('When Splitting Deliveries', () => {
+    beforeEach(() => {
+        cleanup();
+        jest.clearAllMocks();
+        useLocation.mockImplementation(() => ({
+            search: null
+        }));
+
+        useSelector.mockImplementation(callback =>
+            callback({
+                purchaseOrderDeliveries: {
+                    loading: false,
+                    items: searchResults
+                }
+            })
+        );
+        render(<AcknowledgeOrdersUtility />);
+
+        const expansionPanelOpen = screen.getByText('Look Up Some Orders');
+        fireEvent.click(expansionPanelOpen);
+
+        // split the first row
+        const splitButton = screen.getAllByText('SPLIT')[0];
+        fireEvent.click(splitButton);
+    });
+
+    test('Should open deliveries dialog', () => {
+        expect(screen.getByLabelText('Qty On Order')).toBeInTheDocument();
+    });
+
+    test('Should add a delivery', () => {
+        const addButton = screen.getByRole('button', { name: '+' });
+        expect(addButton).toBeInTheDocument();
+        fireEvent.click(addButton);
+
+        // col headers + 2 existing rows + 1 new row = 4 rows
+        expect(screen.getAllByRole('row').length).toBe(4);
+    });
+
+    test('Should delete a delivery', () => {
+        // select a row for deletion
+        const firstCheckbox = screen.getAllByRole('checkbox')[1];
+        fireEvent.click(firstCheckbox);
+
+        const delButton = screen.getByRole('button', { name: '-' });
+        expect(delButton).toBeInTheDocument();
+        fireEvent.click(delButton);
+
+        // col headers + 2 existing rows - 1 deleted row = 2 rows
+        expect(screen.getAllByRole('row').length).toBe(2);
+    });
+
+    test('Should post when save clicked', () => {
+        // trigger a change to a cell to enable the Save button
+        const cells = screen.getAllByRole('cell');
+        fireEvent.doubleClick(cells[3]);
+
+        const saveButton = screen.getByRole('button', { name: 'Save' });
+        fireEvent.click(saveButton);
+
+        expect(postByHrefSpy).toHaveBeenCalledWith(
+            '/purchasing/purchase-orders/deliveries/123463/1',
+            expect.arrayContaining([
+                expect.objectContaining({ id: '123463/1/1' }),
+                expect.objectContaining({ id: '123463/1/2' })
+            ])
+        );
     });
 });
