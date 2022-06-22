@@ -11,6 +11,7 @@
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
 
     public class PurchaseOrderService : IPurchaseOrderService
     {
@@ -26,13 +27,17 @@
 
         private readonly IRepository<Employee, int> employeeRepository;
 
+        private readonly IRepository<MiniOrder, int> miniOrderRepository;
+
+
         public PurchaseOrderService(
             IAuthorisationService authService,
             IPurchaseLedgerPack purchaseLedgerPack,
             IDatabaseService databaseService,
             IPdfService pdfService,
             IEmailService emailService,
-            IRepository<Employee, int> employeeRepository)
+            IRepository<Employee, int> employeeRepository,
+            IRepository<MiniOrder, int> miniOrderRepository)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;
@@ -40,6 +45,7 @@
             this.pdfService = pdfService;
             this.emailService = emailService;
             this.employeeRepository = employeeRepository;
+            this.miniOrderRepository = miniOrderRepository;
         }
 
         public void AllowOverbook(
@@ -117,7 +123,7 @@
             return current;
         }
 
-        public ProcessResult SendPdfEmail(string html, string emailAddress, int orderNumber, bool bcc, int currentUserId)
+        public ProcessResult SendPdfEmail(string html, string emailAddress, int orderNumber, bool bcc, int currentUserId, PurchaseOrder order)
         {
             var pdf = this.pdfService.ConvertHtmlToPdf(html, landscape: false);
             var emailBody = $"Please accept the attached order no. {orderNumber}.\n"
@@ -142,15 +148,21 @@
 
             this.emailService.SendEmail(
                     emailAddress,
-                    emailAddress, // todo add name in here?
+                    emailAddress,
                     null,
                     bccList,
-                    "purchasingoutgoing@linn.co.uk", // todo add as ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"]
+                    "purchasingoutgoing@linn.co.uk",
                     "Linn Purchasing",
                     $"Linn Purchase Order {orderNumber}",
                     emailBody,
                     pdf.Result,
                     $"LinnPurchaseOrder{orderNumber}");
+
+            var miniOrder = this.miniOrderRepository.FindById(orderNumber);
+            miniOrder.SentByMethod = "EMAIL";
+            //// mini order trigger will update pl order. When remove mini orders:
+            //// todo stop setting sentbymethod mini order and switch to below
+            //// order.SentByMethod = "EMAIL";
 
             return new ProcessResult(true, "Email Sent");
         }

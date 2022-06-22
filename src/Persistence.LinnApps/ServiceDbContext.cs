@@ -1405,6 +1405,7 @@
             entity.Property(o => o.AcknowledgeComment).HasColumnName("ACKNOWLEDGE_COMMENT");
             entity.Property(o => o.RequestedDeliveryDate).HasColumnName("REQUESTED_DELIVERY_DATE");
             entity.Property(o => o.NumberOfSplitDeliveries).HasColumnName("NUMBER_OF_SPLIT_DELIVERIES");
+            entity.Property(o => o.SentByMethod).HasColumnName("SENT_BY_METHOD").HasMaxLength(20);
         }
 
         private void BuildMiniOrderDeliveries(ModelBuilder builder)

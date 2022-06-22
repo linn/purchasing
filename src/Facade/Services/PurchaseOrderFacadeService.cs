@@ -60,7 +60,9 @@
 
             var result = this.razorTemplateEngine.Render(order, "../Service.Host/views/" + @"\" + "PurchaseOrder.cshtml");
 
-            var emailResult = this.domainService.SendPdfEmail(result.Result, emailAddress, orderNumber, bcc, currentUserId);
+            var emailResult = this.domainService.SendPdfEmail(result.Result, emailAddress, orderNumber, bcc, currentUserId, order);
+
+            this.transactionManager.Commit();
             return new SuccessResult<ProcessResultResource>(new ProcessResultResource(emailResult.Success, emailResult.Message));
         }
 
