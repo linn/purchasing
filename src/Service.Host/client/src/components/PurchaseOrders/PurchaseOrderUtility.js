@@ -437,7 +437,7 @@ function PurchaseOrderUtility({ creating }) {
                         <Grid item xs={4}>
                             <InputField
                                 fullWidth
-                                value="" //think to be built from supplier -> supplier contacts
+                                value={order.supplierContactPhone}
                                 label="Phone Number"
                                 propertyName="phoneNumber"
                                 onChange={handleFieldChange}
@@ -447,7 +447,7 @@ function PurchaseOrderUtility({ creating }) {
                         <Grid item xs={4}>
                             <InputField
                                 fullWidth
-                                value=""
+                                value={order.supplierContactEmail}
                                 label="Email Address"
                                 propertyName="email"
                                 onChange={handleFieldChange}
@@ -501,7 +501,7 @@ function PurchaseOrderUtility({ creating }) {
                             />
                         </Grid>
 
-                        <Grid container item xs={4}>
+                        <Grid container item spacing={1} xs={4}>
                             <Grid item xs={12}>
                                 <InputField
                                     fullWidth
@@ -522,6 +522,17 @@ function PurchaseOrderUtility({ creating }) {
                                     disabled={!editingAllowed}
                                 />
                             </Grid>
+                            <Grid item xs={12}>
+                                <InputField
+                                    fullWidth
+                                    value={order.quotationRef}
+                                    label="Quote Ref"
+                                    propertyName="quotationRef"
+                                    onChange={handleFieldChange}
+                                    disabled={!editingAllowed}
+                                    rows={2}
+                                />
+                            </Grid>
                         </Grid>
 
                         <Grid item xs={8}>
@@ -535,69 +546,61 @@ function PurchaseOrderUtility({ creating }) {
                                 disabled={!editingAllowed}
                             />
                         </Grid>
-                        <Grid item xs={8}>
-                            <InputField
-                                fullWidth
-                                value={order.quotationRef}
-                                label="Quote Ref"
-                                propertyName="quotationRef"
-                                onChange={handleFieldChange}
-                                disabled={!editingAllowed}
-                            />
-                        </Grid>
                         <Grid item xs={12} />
-                        <Grid item xs={12}>
-                            <InputField
-                                fullWidth
-                                value={`${order.requestedBy?.fullName} (${order.requestedBy?.id})`}
-                                label="Requested By"
-                                disabled
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <InputField
-                                fullWidth
-                                value={`${order.enteredBy?.fullName} (${order.enteredBy?.id})`}
-                                label="Entered By"
-                                disabled
-                            />
-                        </Grid>
-                        <Grid item xs={3}>
-                            <Button
-                                className={classes.buttonMarginTop}
-                                color="primary"
-                                variant="contained"
-                                disabled={!allowedToAuthorise()}
-                                onClick={handleAuthorise}
-                            >
-                                Authorise
-                            </Button>
-                        </Grid>
-                        <Grid item xs={1}>
-                            <Tooltip title="Email to request authorisation">
-                                <IconButton
+                        <Grid container item spacing={1} xs={7}>
+                            <Grid item xs={6}>
+                                <InputField
+                                    fullWidth
+                                    value={`${order.requestedBy?.fullName} (${order.requestedBy?.id})`}
+                                    label="Requested By"
+                                    disabled
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <InputField
+                                    fullWidth
+                                    value={`${order.enteredBy?.fullName} (${order.enteredBy?.id})`}
+                                    label="Entered By"
+                                    disabled
+                                />
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Button
                                     className={classes.buttonMarginTop}
-                                    aria-label="Email"
-                                    onClick={() => setAuthEmailDialogOpen(true)}
-                                    disabled={creating}
+                                    color="primary"
+                                    variant="contained"
+                                    disabled={!allowedToAuthorise()}
+                                    onClick={handleAuthorise}
                                 >
-                                    <Email />
-                                </IconButton>
-                            </Tooltip>
+                                    Authorise
+                                </Button>
+                            </Grid>
+                            <Grid item xs={2}>
+                                <Tooltip title="Email to request authorisation">
+                                    <IconButton
+                                        className={classes.buttonMarginTop}
+                                        aria-label="Email"
+                                        onClick={() => setAuthEmailDialogOpen(true)}
+                                        disabled={creating}
+                                    >
+                                        <Email />
+                                    </IconButton>
+                                </Tooltip>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <InputField
+                                    fullWidth
+                                    value={
+                                        order.authorisedBy
+                                            ? `${order.authorisedBy?.fullName} (${order.authorisedBy?.id})`
+                                            : ''
+                                    }
+                                    label="Authorised by"
+                                    disabled
+                                />
+                            </Grid>
                         </Grid>
-                        <Grid item xs={8}>
-                            <InputField
-                                fullWidth
-                                value={
-                                    order.authorisedBy
-                                        ? `${order.authorisedBy?.fullName} (${order.authorisedBy?.id})`
-                                        : ''
-                                }
-                                label="Authorised by"
-                                disabled
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
+                        <Grid item xs={5}>
                             <InputField
                                 fullWidth
                                 value={order.remarks}
@@ -611,17 +614,16 @@ function PurchaseOrderUtility({ creating }) {
 
                         {order.details?.map(detail => (
                             <>
-                                <Grid item xs={12}>
-                                    <InputField
-                                        fullWidth
-                                        value={detail.line}
-                                        label="Order Line Number"
-                                        propertyName="line"
-                                    />
-                                </Grid>
-
                                 <Grid container item spacing={1} xs={4}>
-                                    <Grid item xs={12}>
+                                    <Grid item xs={4}>
+                                        <InputField
+                                            fullWidth
+                                            value={detail.line}
+                                            label="Order Line Number"
+                                            propertyName="line"
+                                        />
+                                    </Grid>
+                                    <Grid item xs={8}>
                                         <InputField
                                             fullWidth
                                             value={detail.partNumber}
@@ -871,7 +873,15 @@ function PurchaseOrderUtility({ creating }) {
 
                                 {detail.purchaseDeliveries?.map(delivery => (
                                     <>
-                                        <Grid item xs={4}>
+                                        <Grid item xs={2}>
+                                            <InputField
+                                                fullWidth
+                                                value={delivery.deliverySeq}
+                                                label="Delivery Seq"
+                                                propertyName="deliverySeq"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={2}>
                                             <InputField
                                                 fullWidth
                                                 value={delivery.dateRequested}
@@ -882,7 +892,7 @@ function PurchaseOrderUtility({ creating }) {
                                                 disabled
                                             />
                                         </Grid>
-                                        <Grid item xs={4}>
+                                        <Grid item xs={2}>
                                             <InputField
                                                 fullWidth
                                                 value={delivery.dateAdvised}
@@ -893,7 +903,7 @@ function PurchaseOrderUtility({ creating }) {
                                                 disabled
                                             />
                                         </Grid>
-                                        <Grid item xs={4}>
+                                        <Grid item xs={6}>
                                             <InputField
                                                 fullWidth
                                                 value={delivery.supplierConfirmationComment}

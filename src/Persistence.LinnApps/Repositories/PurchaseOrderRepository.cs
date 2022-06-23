@@ -42,7 +42,7 @@
         {
             return this.serviceDbContext
                 .PurchaseOrders
-                .Include(o => o.Supplier)
+                .Include(o => o.Supplier).ThenInclude(s => s.SupplierContacts)
                 .Include(o => o.RequestedBy)
                 .Include(o => o.EnteredBy)
                 .Include(o => o.AuthorisedBy)

@@ -56,5 +56,9 @@
         public bool CurrentlyUsingOverbookForm { get; set; }
 
         public AddressResource OrderAddress { get; set; }
+
+        public string SupplierContactEmail { get; set; }
+
+        public string SupplierContactPhone { get; set; }
     }
 }
