@@ -135,11 +135,9 @@
                               {
                                   new Dictionary<string, string>
                                       {
-                                          { "name", "purchasing outgoing" }, { "address", "iainc@linn.co.uk" }
+                                          { "name", "purchasing outgoing" }, { "address", "purchasingoutgoing@linn.co.uk" }
                                       }
                               };
-            // todo add purchasingoutgoing@linn.co.uk as bcc before put live ^,
-            // left out for now so don't spam during testing
             if (bcc)
             {
                 var employee = this.employeeRepository.FindById(currentUserId);
