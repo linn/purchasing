@@ -237,3 +237,7 @@ export const mrOrderBookReportActionTypes = makeActionTypes(
     reportTypes.mrOrderBookReport.actionType,
     false
 );
+
+export const sendPurchaseOrderPdfEmailActionTypes = makeProcessActionTypes(
+    itemTypes.sendPurchaseOrderPdfEmail.actionType
+);

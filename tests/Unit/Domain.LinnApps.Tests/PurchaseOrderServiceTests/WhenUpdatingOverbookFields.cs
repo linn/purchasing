@@ -11,7 +11,7 @@
 
     using NUnit.Framework;
 
-    public class WhenUpdating : ContextBase
+    public class WhenUpdatingOverbookFields : ContextBase
     {
         private PurchaseOrder current;
 

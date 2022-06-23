@@ -128,7 +128,7 @@
         public DbSet<EdiOrder> EdiOrders { get; set; }
 
         public DbSet<StockLocator> StockLocators { get; set; }
-        
+
         public DbSet<MrUsedOnRecord> MrUsedOnView { get; set; }
 
         public DbSet<PartAndAssembly> PartsAndAssemblies { get; set; }
@@ -226,6 +226,7 @@
             this.BuildMrCallOffs(builder);
             this.BuildShortagesView(builder);
             this.BuildPartAndAssemblyView(builder);
+            this.BuildPurchaseOrderDeliveryHistories(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -585,6 +586,7 @@
             entity.Property(o => o.PeriodFilCancelled).HasColumnName("PERIOD_FIL_CANCELLED");
             entity.Property(o => o.OrderAddressId).HasColumnName("ORDER_ADDRESS_ID");
             entity.HasOne(o => o.OrderAddress).WithMany().HasForeignKey(o => o.OrderAddressId);
+            entity.Property(e => e.DamagesPercent).HasColumnName("DAMAGES_PERCENT");
         }
 
         private void BuildPurchaseOrderDetails(ModelBuilder builder)
@@ -624,6 +626,7 @@
             entity.HasMany(d => d.MrOrders).WithOne().HasForeignKey(mr => new { mr.OrderNumber, mr.LineNumber });
             entity.HasOne(x => x.OrderPosting).WithOne().HasForeignKey<PurchaseOrderPosting>(p => new { p.OrderNumber, p.LineNumber });
             entity.Property(o => o.OrderConversionFactor).HasColumnName("ORDER_CONV_FACTOR");
+            entity.Property(o => o.OrderQty).HasColumnName("ORDER_QTY");
         }
 
         private void BuildPurchaseOrderDeliveries(ModelBuilder builder)
@@ -658,6 +661,19 @@
             entity.Property(o => o.RescheduleReason).HasColumnName("RESCHEDULE_REASON").HasMaxLength(20);
             entity.Property(o => o.AvailableAtSupplier).HasColumnName("AVAILABLE_AT_SUPPLIER").HasMaxLength(1);
             entity.HasOne(d => d.PurchaseOrderDetail).WithMany(o => o.PurchaseDeliveries);
+            entity.HasMany(d => d.DeliveryHistories).WithOne().HasForeignKey(p => new { p.DeliverySeq, p.OrderNumber, p.OrderLine });
+        }
+
+        private void BuildPurchaseOrderDeliveryHistories(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PurchaseOrderDeliveryHistory>().ToTable("PL_DELIVERY_HISTORY");
+            entity.HasKey(a => new { a.OrderNumber, a.OrderLine, a.DeliverySeq, a.HistoryNumber });
+            entity.Property(o => o.DeliverySeq).HasColumnName("DELIVERY_SEQ");
+            entity.Property(o => o.OurDeliveryQty).HasColumnName("OUR_DELIVERY_QTY").HasMaxLength(19);
+            entity.Property(o => o.DateRequested).HasColumnName("REQUESTED_DATE");
+            entity.Property(o => o.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(o => o.OrderLine).HasColumnName("ORDER_LINE");
+            entity.Property(o => o.HistoryNumber).HasColumnName("HISTORY_NUMBER");
         }
 
         private void BuildOverbookAllowedBy(ModelBuilder builder)
@@ -1389,6 +1405,7 @@
             entity.Property(o => o.AcknowledgeComment).HasColumnName("ACKNOWLEDGE_COMMENT");
             entity.Property(o => o.RequestedDeliveryDate).HasColumnName("REQUESTED_DELIVERY_DATE");
             entity.Property(o => o.NumberOfSplitDeliveries).HasColumnName("NUMBER_OF_SPLIT_DELIVERIES");
+            entity.Property(o => o.SentByMethod).HasColumnName("SENT_BY_METHOD").HasMaxLength(20);
         }
 
         private void BuildMiniOrderDeliveries(ModelBuilder builder)

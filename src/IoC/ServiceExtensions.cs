@@ -35,6 +35,8 @@
 
     using Microsoft.Extensions.DependencyInjection;
 
+    using RazorEngineCore;
+
     public static class ServiceExtensions
     {
         public static IServiceCollection AddBuilders(this IServiceCollection services)
@@ -176,7 +178,9 @@
                 .AddTransient<IForecastingPack, ForecastingPack>()
                 .AddTransient<IEdiEmailPack, EdiEmailPack>()
                 .AddTransient<ISupplierPack, SupplierPack>()
-                .AddTransient<IPurchaseOrderAutoOrderPack, PurchaseOrderAutoOrderPack>();
+                .AddTransient<IPurchaseOrderAutoOrderPack, PurchaseOrderAutoOrderPack>()
+                .AddTransient<IRazorEngine, RazorEngine>()
+                .AddTransient<IRazorTemplateService, RazorTemplateService>();
         }
     }
 }

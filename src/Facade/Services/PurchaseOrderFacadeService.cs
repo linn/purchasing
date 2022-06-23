@@ -5,9 +5,12 @@
     using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Text;
 
     using Linn.Common.Facade;
+    using Linn.Common.Pdf;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
@@ -25,37 +28,42 @@
 
         private readonly IRepository<PurchaseOrder, int> orderRepository;
 
+        private readonly IRazorTemplateService razorTemplateEngine;
+
         public PurchaseOrderFacadeService(
             IRepository<PurchaseOrder, int> repository,
             ITransactionManager transactionManager,
             IBuilder<PurchaseOrder> resourceBuilder,
             IPurchaseOrderService domainService,
-            IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository)
+            IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository,
+            IRazorTemplateService razorTemplateEngine)
             : base(repository, transactionManager, resourceBuilder)
         {
             this.domainService = domainService;
             this.overbookAllowedByLogRepository = overbookAllowedByLogRepository;
             this.transactionManager = transactionManager;
             this.orderRepository = repository;
+            this.razorTemplateEngine = razorTemplateEngine;
         }
 
         public string GetOrderAsHtml(int orderNumber)
         {
-            using (var file = new StreamReader("../Service.Host/views/" + @"\" + "PurchaseOrder.cshtml"))
-            {
-                var fileRead = file.ReadToEnd();
-                var razorEngine = new RazorEngine();
+            var order = this.orderRepository.FindById(orderNumber);
 
-                IRazorEngineCompiledTemplate<RazorEngineTemplateBase<PurchaseOrder>> template = razorEngine.Compile<RazorEngineTemplateBase<PurchaseOrder>>(fileRead);
+            var result = this.razorTemplateEngine.Render(order, "../Service.Host/views/" + @"\" + "PurchaseOrder.cshtml");
+            return result.Result;
+        }
 
-                var order = this.orderRepository.FindById(orderNumber);
-                string result = template.Run(instance =>
-                    {
-                        instance.Model = order;
-                    });
+        public IResult<ProcessResultResource> EmailOrderPdf(int orderNumber, string emailAddress, bool bcc, int currentUserId)
+        {
+            var order = this.orderRepository.FindById(orderNumber);
 
-                return result;
-            }
+            var result = this.razorTemplateEngine.Render(order, "../Service.Host/views/" + @"\" + "PurchaseOrder.cshtml");
+
+            var emailResult = this.domainService.SendPdfEmail(result.Result, emailAddress, orderNumber, bcc, currentUserId, order);
+
+            this.transactionManager.Commit();
+            return new SuccessResult<ProcessResultResource>(new ProcessResultResource(emailResult.Success, emailResult.Message));
         }
 
         protected override PurchaseOrder CreateFromResource(
