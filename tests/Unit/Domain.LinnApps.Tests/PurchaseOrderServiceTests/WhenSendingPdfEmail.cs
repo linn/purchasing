@@ -37,18 +37,6 @@
                         PhoneListEntry = new PhoneListEntry { EmailAddress = "mario@karting.com" }
                     });
 
-            this.EmailService.SendEmail(
-                this.supplierEmail,
-                this.supplierEmail,
-                Arg.Any<IEnumerable<Dictionary<string, string>>>(),
-                Arg.Any<IEnumerable<Dictionary<string, string>>>(),
-                "purchasingoutgoing@linn.co.uk",
-                "Linn Purchasing",
-                $"Linn Purchase Order {this.orderNumber}",
-                Arg.Any<string>(),
-                Arg.Any<Stream>(),
-                $"LinnPurchaseOrder{this.orderNumber}");
-
             this.MiniOrderRepository.FindById(this.orderNumber).Returns(this.miniOrder);
 
             this.result = this.Sut.SendPdfEmail(
@@ -68,7 +56,7 @@
                 this.supplierEmail,
                 Arg.Any<IEnumerable<Dictionary<string, string>>>(),
                 Arg.Any<IEnumerable<Dictionary<string, string>>>(),
-                "purchasingoutgoing@linn.co.uk",
+                Arg.Any<string>(),
                 "Linn Purchasing",
                 $"Linn Purchase Order {this.orderNumber}",
                 Arg.Any<string>(),

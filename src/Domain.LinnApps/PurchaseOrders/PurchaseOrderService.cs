@@ -5,6 +5,7 @@
     using System.Linq;
 
     using Linn.Common.Authorisation;
+    using Linn.Common.Configuration;
     using Linn.Common.Email;
     using Linn.Common.Pdf;
     using Linn.Common.Persistence;
@@ -28,7 +29,6 @@
         private readonly IRepository<Employee, int> employeeRepository;
 
         private readonly IRepository<MiniOrder, int> miniOrderRepository;
-
 
         public PurchaseOrderService(
             IAuthorisationService authService,
@@ -135,7 +135,7 @@
                               {
                                   new Dictionary<string, string>
                                       {
-                                          { "name", "purchasing outgoing" }, { "address", "purchasingoutgoing@linn.co.uk" }
+                                          { "name", "purchasing outgoing" }, { "address", ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"] }
                                       }
                               };
             if (bcc)
@@ -149,7 +149,7 @@
                     emailAddress,
                     null,
                     bccList,
-                    "purchasingoutgoing@linn.co.uk",
+                    ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
                     "Linn Purchasing",
                     $"Linn Purchase Order {orderNumber}",
                     emailBody,
