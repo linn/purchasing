@@ -78,6 +78,7 @@ import mrReportOptions from './mrReportOptions';
 import pOReqCheckIfCanAuthOrder from './pOReqCheckIfCanAuthOrder';
 import mrReportOrders from './mrReportOrders';
 import shortagesReport from './shortagesReport';
+import shortagesPlannerReport from './shortagesPlannerReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -141,6 +142,7 @@ const rootReducer = history =>
         sendPurchaseOrderReqAuthEmail,
         sendPurchaseOrderReqFinanceEmail,
         shortagesReport,
+        shortagesPlannerReport,
         signingLimit,
         signingLimits,
         spendBySupplierReport,

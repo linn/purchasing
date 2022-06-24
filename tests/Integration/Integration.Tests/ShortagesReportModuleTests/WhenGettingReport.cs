@@ -32,7 +32,7 @@
             this.reportTitle = "Test Shortages Report";
 
             this.results = new List<ResultsModel> { new ResultsModel() { ReportTitle = new NameModel(this.reportTitle) } };
-            this.MockDomainService.GetReport(
+            this.MockDomainService.GetShortagesReport(
                 this.purchaseLevel,
                 this.vendorManager).Returns(this.results);
 
@@ -51,7 +51,7 @@
         [Test]
         public void ShouldPassCorrectOptionsToDomainService()
         {
-            this.MockDomainService.Received().GetReport(
+            this.MockDomainService.Received().GetShortagesReport(
                 this.purchaseLevel,
                 this.vendorManager);
         }

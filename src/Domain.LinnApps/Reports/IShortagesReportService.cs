@@ -6,6 +6,8 @@
 
     public interface IShortagesReportService
     {
-        IEnumerable<ResultsModel> GetReport(int purchaseLevel, string vendorManager);
+        IEnumerable<ResultsModel> GetShortagesReport(int purchaseLevel, string vendorManager);
+
+        IEnumerable<ResultsModel> GetShortagesPlannerReport(int planner);
     }
 }

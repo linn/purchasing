@@ -145,6 +145,8 @@
 
         public DbSet<ShortagesEntry> ShortagesEntries { get; set; }
 
+        public DbSet<ShortagesPlannerEntry> ShortagesPlannerEntries { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -223,6 +225,7 @@
             this.BuildMrPurchaseOrderDetails(builder);
             this.BuildMrCallOffs(builder);
             this.BuildShortagesView(builder);
+            this.BuildShortagesPlannerView(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1399,6 +1402,32 @@
             entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
             entity.Property(a => a.VendorManagerName).HasColumnName("VM_NAME").HasColumnType("VARCHAR2");
             entity.Property(a => a.PurchaseLevel).HasColumnName("PURCH_LEVEL");
+        }
+
+        private void BuildShortagesPlannerView(ModelBuilder builder)
+        {
+            var entity = builder.Entity<ShortagesPlannerEntry>().ToTable("SHORTAGES_PLANNER_VIEW").HasNoKey();
+            entity.Property(a => a.Planner).HasColumnName("PLANNER");
+            entity.Property(a => a.VendorManagerCode).HasColumnName("VM_MANAGER");
+            entity.Property(a => a.PurchaseLevel).HasColumnName("PURCH_LEVEL");
+            entity.Property(a => a.VendorManagerInitials).HasColumnName("VM_INITIALS");
+            entity.Property(a => a.VendorManagerName).HasColumnName("VM_NAME");
+            entity.Property(a => a.PreferredSupplier).HasColumnName("PREFERRED_SUPPLIER");
+            entity.Property(a => a.SupplierName).HasColumnName("SUPPLIER_NAME");
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER");
+            entity.Property(a => a.Description).HasColumnName("DESCRIPTION");
+            entity.Property(a => a.QtyAvailable).HasColumnName("QTY_AVAILABLE");
+            entity.Property(a => a.TotalWoReqt).HasColumnName("TOTAL_WO_REQT");
+            entity.Property(a => a.TotalBiReqt).HasColumnName("TOTAL_BI_REQT");
+            entity.Property(a => a.TotalBeReqt).HasColumnName("TOTAL_BE_REQT");
+            entity.Property(a => a.TotalBtReqt).HasColumnName("TOTAL_BT_REQT");
+            entity.Property(a => a.EdPartNumber).HasColumnName("EDPART_NUMBER");
+            entity.Property(a => a.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(a => a.OrderLine).HasColumnName("ORDER_LINE");
+            entity.Property(a => a.DeliverySeq).HasColumnName("DELIVERY_SEQ");
+            entity.Property(a => a.RequestedDate).HasColumnName("REQUESTED_DATE");
+            entity.Property(a => a.AdvisedDate).HasColumnName("ADVISED_DATE");
+            entity.Property(a => a.QtyOutstanding).HasColumnName("QTY_OUTSTANDING");
         }
     }
 }
