@@ -462,9 +462,7 @@
             string supplierConfirmationComment)
         {
             var miniOrder = this.miniOrderRepository.FindById(orderNumber);
-            var miniOrderDelivery = this.miniOrderDeliveryRepository.FindBy(
-                x => x.OrderNumber == orderNumber && x.DeliverySequence == 1);
-
+           
             if (requestedDate.HasValue)
             {
                 miniOrder.RequestedDeliveryDate = requestedDate;
@@ -477,10 +475,7 @@
 
             if (advisedDeliveryDate.HasValue)
             {
-                if (miniOrderDelivery != null)
-                {
-                    miniOrder.AdvisedDeliveryDate = advisedDeliveryDate;
-                }
+                miniOrder.AdvisedDeliveryDate = advisedDeliveryDate;
             }
 
             if (supplierConfirmationComment != null)
