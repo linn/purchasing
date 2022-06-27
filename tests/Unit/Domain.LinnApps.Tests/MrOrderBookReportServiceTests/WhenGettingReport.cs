@@ -9,6 +9,8 @@
 
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
+    using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
 
     using NSubstitute;
 
@@ -28,6 +30,16 @@
                                 new MrPurchaseOrderDetail
                                     {
                                         PartNumber = "PART A",
+                                        PartSupplierRecord = new PartSupplier
+                                                                 {
+                                                                     LeadTimeWeeks = 1,
+                                                                     PartNumber = "PART A",
+                                                                     Part = new Part
+                                                                                {
+                                                                                    PartNumber = "PART A",
+                                                                                    OurUnitOfMeasure = "ONES"
+                                                                                }
+                                                                 },
                                         OrderNumber = 1,
                                         Deliveries = new List<MrPurchaseOrderDelivery>
                                                          {
@@ -51,6 +63,16 @@
                                     {
                                         PartNumber = "PART A",
                                         OrderNumber = 2,
+                                        PartSupplierRecord = new PartSupplier
+                                                                 {
+                                                                     PartNumber = "PART A",
+                                                                     LeadTimeWeeks = 1,
+                                                                     Part = new Part
+                                                                                {
+                                                                                    PartNumber = "PART A",
+                                                                                    OurUnitOfMeasure = "ONES"
+                                                                                }
+                                                                 },
                                         Deliveries = new List<MrPurchaseOrderDelivery>
                                                          {
                                                              new MrPurchaseOrderDelivery
@@ -72,6 +94,16 @@
                                 new MrPurchaseOrderDetail
                                     {
                                         PartNumber = "PART B",
+                                        PartSupplierRecord = new PartSupplier
+                                                                 {
+                                                                     LeadTimeWeeks = 2,
+                                                                     PartNumber = "PART B",
+                                                                     Part = new Part
+                                                                                {
+                                                                                    OurUnitOfMeasure = "TWOS",
+                                                                                    PartNumber = "PART B",
+                                                                                }
+                                                                 },
                                         OrderNumber = 3,
                                         Deliveries = new List<MrPurchaseOrderDelivery>
                                                          {
@@ -95,8 +127,8 @@
         public void ShouldReturnReportForEachPartGroup()
         {
             this.results.Count().Should().Be(2);
-            this.results.First().ReportTitle.DisplayValue.Should().Be("PART A");
-            this.results.Last().ReportTitle.DisplayValue.Should().Be("PART B");
+            this.results.First().ReportTitle.DisplayValue.Should().Be("PART A - UOM: ONES - LEAD TIME: 1 WEEKS");
+            this.results.Last().ReportTitle.DisplayValue.Should().Be("PART B - UOM: TWOS - LEAD TIME: 2 WEEKS");
         }
 
         [Test]
