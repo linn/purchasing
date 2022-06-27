@@ -2,11 +2,9 @@
 {
     using System.Net.Http;
 
-    using Linn.Common.Facade;
     using Linn.Common.Logging;
-    using Linn.Common.Reporting.Models;
+    using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps.Reports;
-    using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
     using Linn.Purchasing.Service.Modules.Reports;
@@ -29,14 +27,14 @@
 
         protected ISpendsReportService DomainService { get; set; }
 
-        protected IBuilder<ResultsModel> ResourceBuilder { get; set; }
+        protected IReportReturnResourceBuilder ResourceBuilder { get; set; }
 
         [SetUp]
         public void EstablishContext()
         {
             this.DomainService = Substitute.For<ISpendsReportService>();
 
-            this.FacadeService = new SpendsReportFacadeService(this.DomainService, new ResultsModelResourceBuilder());
+            this.FacadeService = new SpendsReportFacadeService(this.DomainService, new ReportReturnResourceBuilder());
 
             this.Log = Substitute.For<ILog>();
 

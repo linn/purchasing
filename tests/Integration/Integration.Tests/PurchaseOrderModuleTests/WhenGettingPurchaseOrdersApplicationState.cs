@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrderModuleTests
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Net;
 
@@ -26,8 +27,9 @@
                             Rel = "allow-over-book-search", Href = $"purchasing/purchase-orders/allow-over-book"
                         }
                 };
-            this.PurchaseOrderFacadeService.GetApplicationState().ReturnsForAnyArgs(
-                new SuccessResult<PurchaseOrderResource>(new PurchaseOrderResource { Links = linkArray }));
+
+            this.MockAuthService.HasPermissionFor("purchase-order.update", Arg.Any<IEnumerable<string>>()).Returns(true);
+
             this.Response = this.Client.Get(
                 $"/purchasing/purchase-orders/application-state",
                 with => { with.Accept("application/json"); }).Result;

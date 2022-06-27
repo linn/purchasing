@@ -13,6 +13,7 @@
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Common.Reporting.Models;
+    using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
@@ -34,6 +35,8 @@
 
     using Microsoft.Extensions.DependencyInjection;
 
+    using RazorEngineCore;
+
     public static class ServiceExtensions
     {
         public static IServiceCollection AddBuilders(this IServiceCollection services)
@@ -48,7 +51,7 @@
                 .AddTransient<IBuilder<PackagingGroup>, PackagingGroupResourceBuilder>()
                 .AddTransient<IBuilder<Tariff>, TariffResourceBuilder>()
                 .AddTransient<IBuilder<Manufacturer>, ManufacturerResourceBuilder>()
-                .AddTransient<IBuilder<ResultsModel>, ResultsModelResourceBuilder>()
+                .AddTransient<IReportReturnResourceBuilder, ReportReturnResourceBuilder>()
                 .AddTransient<IBuilder<PreferredSupplierChange>, PreferredSupplierChangeResourceBuilder>()
                 .AddTransient<IBuilder<PriceChangeReason>, PriceChangeReasonResourceBuilder>()
                 .AddTransient<IBuilder<PartCategory>, PartCategoryResourceBuilder>()
@@ -119,7 +122,8 @@
                 .AddTransient<IMrUsedOnReportFacadeService, MrUsedOnReportFacadeService>()
                 .AddTransient<IPurchaseOrderDeliveryFacadeService, PurchaseOrderDeliveryFacadeService>()
                 .AddTransient<IMaterialRequirementsReportFacadeService, MaterialRequirementsReportFacadeService>()
-                .AddTransient<IShortagesReportFacadeService, ShortagesReportFacadeService>();
+                .AddTransient<IShortagesReportFacadeService, ShortagesReportFacadeService>()
+                .AddTransient<IMrOrderBookReportFacadeService, MrOrderBookReportFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
@@ -162,6 +166,7 @@
                 .AddTransient<IPurchaseOrderDeliveryService, PurchaseOrderDeliveryService>()
                 .AddTransient<IMaterialRequirementsReportService, MaterialRequirementsReportService>()
                 .AddTransient<IShortagesReportService, ShortagesReportService>()
+                .AddTransient<IMrOrderBookReportService, MrOrderBookReportService>()
 
                 // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
@@ -173,7 +178,9 @@
                 .AddTransient<IForecastingPack, ForecastingPack>()
                 .AddTransient<IEdiEmailPack, EdiEmailPack>()
                 .AddTransient<ISupplierPack, SupplierPack>()
-                .AddTransient<IPurchaseOrderAutoOrderPack, PurchaseOrderAutoOrderPack>();
+                .AddTransient<IPurchaseOrderAutoOrderPack, PurchaseOrderAutoOrderPack>()
+                .AddTransient<IRazorEngine, RazorEngine>()
+                .AddTransient<IRazorTemplateService, RazorTemplateService>();
         }
     }
 }

@@ -37,7 +37,8 @@ import {
     ErrorCard,
     processSelectorHelpers,
     getPreviousPaths,
-    utilities
+    utilities,
+    OnOffSwitch
 } from '@linn-it/linn-form-components-library';
 import currenciesActions from '../../actions/currenciesActions';
 import employeesActions from '../../actions/employeesActions';
@@ -55,10 +56,12 @@ import config from '../../config';
 import {
     sendPurchaseOrderReqAuthEmail,
     sendPurchaseOrderReqFinanceEmail,
-    pOReqCheckIfCanAuthOrder
+    pOReqCheckIfCanAuthOrder,
+    sendPurchaseOrderPdfEmail
 } from '../../itemTypes';
 import checkIfCanAuthorisePurchaseOrderActions from '../../actions/checkIfCanAuthorisePurchaseOrderActions';
 import handleBackClick from '../../helpers/handleBackClick';
+import sendPurchaseOrderPdfEmailActionTypes from '../../actions/sendPurchaseOrderPdfEmailActions';
 
 function POReqUtility({ creating }) {
     const dispatch = useDispatch();
@@ -157,6 +160,14 @@ function POReqUtility({ creating }) {
         processSelectorHelpers.getMessageVisible(state[pOReqCheckIfCanAuthOrder.item])
     );
 
+    const orderPdfEmailMessageVisible = useSelector(state =>
+        processSelectorHelpers.getMessageVisible(state[sendPurchaseOrderPdfEmail.item])
+    );
+
+    const orderPdfEmailMessage = useSelector(state =>
+        processSelectorHelpers.getMessageText(state[sendPurchaseOrderPdfEmail.item])
+    );
+
     const loading = useSelector(state =>
         creating
             ? itemSelectorHelpers.getApplicationStateLoading(state.purchaseOrderReqApplicationState)
@@ -172,10 +183,16 @@ function POReqUtility({ creating }) {
     const [financeEmailDialogOpen, setFinanceEmailDialogOpen] = useState(false);
     const [employeeToEmail, setEmployeeToEmail] = useState();
     const [signingLimitDialogOpen, setSigningLimitDialogOpen] = useState(false);
+    const [orderPdfEmailDialogOpen, setOrderPdfEmailDialogOpen] = useState(false);
+    const [purchaseOrderEmailState, setPurchaseOrderEmailState] = useState({
+        email: '',
+        bcc: false
+    });
 
     useEffect(() => {
         if (!creating && item?.reqNumber) {
             setReq(item);
+            setPurchaseOrderEmailState({ bcc: false, email: item.email });
         } else {
             dispatch(poReqActions.clearErrorsForItem());
         }
@@ -312,6 +329,7 @@ function POReqUtility({ creating }) {
                 poReqActions.postByHref(utilities.getHref(req, 'turn-req-into-purchase-order'))
             );
             setSigningLimitDialogOpen(false);
+            setOrderPdfEmailDialogOpen(true);
         }
     };
 
@@ -345,6 +363,18 @@ function POReqUtility({ creating }) {
             sendReqFinanceEmailActions.requestProcessStart('', {
                 reqNumber: id,
                 toEmployeeId: employeeToEmail
+            })
+        );
+    };
+
+    const handleOrderPdfEmailClick = () => {
+        setOrderPdfEmailDialogOpen(false);
+        dispatch(sendPurchaseOrderPdfEmailActionTypes.clearProcessData);
+        dispatch(
+            sendPurchaseOrderPdfEmailActionTypes.requestProcessStart('', {
+                orderNumber: req.orderNumber,
+                emailAddress: purchaseOrderEmailState.email,
+                bcc: purchaseOrderEmailState.bcc
             })
         );
     };
@@ -436,6 +466,15 @@ function POReqUtility({ creating }) {
                                 dispatch(sendReqFinanceEmailActions.setMessageVisible(false))
                             }
                             message={financeEmailMessage}
+                        />
+                        <SnackbarMessage
+                            visible={orderPdfEmailMessageVisible}
+                            onClose={() =>
+                                dispatch(
+                                    sendPurchaseOrderPdfEmailActionTypes.setMessageVisible(false)
+                                )
+                            }
+                            message={orderPdfEmailMessage}
                         />
                         {itemError && (
                             <Grid item xs={12}>
@@ -649,6 +688,65 @@ function POReqUtility({ creating }) {
                                                 <Send
                                                     className={classes.buttonMarginTop}
                                                     onClick={() => handleSendFinanceEmailClick()}
+                                                />
+                                            </Tooltip>
+                                        </Grid>
+                                    </Grid>
+                                </Typography>
+                            </div>
+                        </Dialog>
+
+                        <Dialog open={orderPdfEmailDialogOpen} fullWidth maxWidth="md">
+                            <div className={classes.centerTextInDialog}>
+                                <IconButton
+                                    className={classes.pullRight}
+                                    aria-label="Close"
+                                    onClick={() => setOrderPdfEmailDialogOpen(false)}
+                                >
+                                    <Close />
+                                </IconButton>
+                                <Typography variant="h6">
+                                    Email purchase order pdf to supplier
+                                </Typography>
+                                <Typography variant="body1" gutterBottom>
+                                    <Grid container spacing={1}>
+                                        <Grid item xs={6}>
+                                            <InputField
+                                                fullWidth
+                                                value={purchaseOrderEmailState?.email}
+                                                label="Send PO Email To"
+                                                number
+                                                propertyName="emailTo"
+                                                onChange={(name, newEmail) => {
+                                                    setPurchaseOrderEmailState({
+                                                        ...purchaseOrderEmailState,
+                                                        email: newEmail
+                                                    });
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <OnOffSwitch
+                                                label="Also send to self? (bcc)"
+                                                value={purchaseOrderEmailState.bcc}
+                                                onChange={() => {
+                                                    setPurchaseOrderEmailState({
+                                                        ...purchaseOrderEmailState,
+                                                        bcc: !purchaseOrderEmailState.bcc
+                                                    });
+                                                }}
+                                                propertyName="bcc"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <Tooltip
+                                                title="Send"
+                                                placement="top"
+                                                className={classes.cursorPointer}
+                                            >
+                                                <Send
+                                                    className={classes.buttonMarginTop}
+                                                    onClick={() => handleOrderPdfEmailClick()}
                                                 />
                                             </Tooltip>
                                         </Grid>
@@ -1196,7 +1294,7 @@ function POReqUtility({ creating }) {
                                 disabled
                             />
                         </Grid>
-                        <Grid item xs={3}>
+                        <Grid item xs={2}>
                             <Button
                                 className={classes.buttonMarginTop}
                                 color="primary"
@@ -1206,6 +1304,18 @@ function POReqUtility({ creating }) {
                             >
                                 Create Order
                             </Button>
+                        </Grid>
+                        <Grid item xs={1}>
+                            <Tooltip title="Email pdf to supplier">
+                                <IconButton
+                                    className={classes.buttonMarginTop}
+                                    aria-label="Email"
+                                    onClick={() => setOrderPdfEmailDialogOpen(true)}
+                                    disabled={creating}
+                                >
+                                    <Email />
+                                </IconButton>
+                            </Tooltip>
                         </Grid>
                         <Grid item xs={1}>
                             <Tooltip title="View purchase order">

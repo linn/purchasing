@@ -23,6 +23,8 @@
 
         private readonly IQueryRepository<MrPurchaseOrderDetail> purchaseOrdersRepository;
 
+        private readonly IQueryRepository<PartAndAssembly> partsAndAssembliesRepository;
+
         private Expression<Func<MrHeader, bool>> filterQuery;
 
         public MaterialRequirementsReportService(
@@ -31,7 +33,8 @@
             ISingleRecordRepository<MrMaster> masterRepository,
             IRepository<Planner, int> plannerRepository,
             IRepository<Employee, int> employeeRepository,
-            IQueryRepository<MrPurchaseOrderDetail> purchaseOrdersRepository)
+            IQueryRepository<MrPurchaseOrderDetail> purchaseOrdersRepository,
+            IQueryRepository<PartAndAssembly> partsAndAssembliesRepository)
         {
             this.repository = repository;
             this.runLogRepository = runLogRepository;
@@ -39,6 +42,7 @@
             this.plannerRepository = plannerRepository;
             this.employeeRepository = employeeRepository;
             this.purchaseOrdersRepository = purchaseOrdersRepository;
+            this.partsAndAssembliesRepository = partsAndAssembliesRepository;
         }
 
         public MrReport GetMaterialRequirements(
@@ -47,7 +51,8 @@
             string partSelector,
             string stockLevelSelector,
             string orderBySelector,
-            IEnumerable<string> partNumbers)
+            IEnumerable<string> partNumbers,
+            int reportSegment = 0)
         {
             if (string.IsNullOrEmpty(jobRef))
             {
@@ -62,14 +67,25 @@
 
             var runLog = this.runLogRepository.FindBy(a => a.JobRef == jobRef);
 
-            if (partSelector == "Select Parts" || string.IsNullOrEmpty(partSelector))
+            switch (partSelector)
             {
-                this.filterQuery = a => a.JobRef == jobRef && partNumbers.Contains(a.PartNumber);
+                case "Parts Used On":
+                    partNumbers = this.GetComponents(partNumbers).Distinct();
+                    break;
+                case "Assemblies Used On":
+                    throw new InvalidOptionException("Assemblies option not yet supported");
+                case "Parts Where Used":
+                    throw new InvalidOptionException("Where used option not yet supported");
             }
-            else if (partSelector.StartsWith("Planner"))
+
+            if (partSelector.StartsWith("Planner"))
             {
                 var planner = int.Parse(partSelector.Substring(7));
                 this.filterQuery = a => a.JobRef == jobRef && a.Planner == planner;
+            }
+            else
+            {
+                this.filterQuery = a => a.JobRef == jobRef && partNumbers.Contains(a.PartNumber);
             }
 
             var results = this.repository.FilterBy(this.filterQuery);
@@ -94,6 +110,9 @@
                     _ => results
                 };
 
+            // deploying before working out where this needs to be set
+            // results = results.Skip(reportSegment * 100).Take(100);
+
             var report = new MrReport
                              {
                                  JobRef = jobRef,
@@ -103,17 +122,42 @@
             return report;
         }
 
+        private IEnumerable<string> GetComponents(IEnumerable<string> partNumbers)
+        {
+            var results = new List<string>();
+
+            foreach (var partNumber in partNumbers)
+            {
+                results.Add(partNumber);
+                var components = this.partsAndAssembliesRepository.FilterBy(a => a.AssemblyNumber == partNumber);
+                results.AddRange(components.Where(a => a.PartBomType != "P").Select(a => a.PartNumber));
+                var assemblies = components.Where(a => a.PartBomType != "C");
+                if (assemblies.Any())
+                {
+                    results.AddRange(this.GetComponents(assemblies.Select(a => a.PartNumber)));
+                }
+            }
+
+            return results;
+        }
+
         public MrReportOptions GetOptions()
         {
             var partSelectorOptions = new List<ReportOption>
                                           {
-                                              new ReportOption("Select Parts", "Select Parts", 0)
+                                              new ReportOption("Select Parts", "Select Parts", 0, "parts")
+                                                  {
+                                                      DefaultOption = true
+                                                  },
+                                              new ReportOption("Parts Used On", "Components Of...", 1, "parts") ,
+                                              new ReportOption("Assemblies Used On", "Assemblies Of...",2, "parts"),
+                                              new ReportOption("Parts Where Used", "Assemblies Containing...", 3, "parts")
                                           };
             var stockLevelOptions = new List<ReportOption>
                                         {
                                             new ReportOption("0-4", "Danger Levels 0 - 4", 0),
                                             new ReportOption("0-2", "Danger Levels 0 - 2", 1),
-                                            new ReportOption("All", "All Stock Levels", 2),
+                                            new ReportOption("All", "All Stock Levels", 2) { DefaultOption = true },
                                             new ReportOption("0", "Danger Level 0 Short for triggered builds", 3),
                                             new ReportOption("1", "Danger Level 1 Short now", 4),
                                             new ReportOption("2", "Danger Level 2 Zero at lead time", 5),
@@ -123,7 +167,10 @@
 
             var orderByOptions = new List<ReportOption>
                                         {
-                                            new ReportOption("supplier/part", "Supplier Id Then Part", 0),
+                                            new ReportOption("supplier/part", "Supplier Id Then Part", 0)
+                                                {
+                                                    DefaultOption = true
+                                                },
                                             new ReportOption("part", "Part Number", 1)
                                         };
 
@@ -132,10 +179,10 @@
             foreach (var planner in planners.Where(a => a.ShowAsMrOption == "Y"))
             {
                 var employee = this.employeeRepository.FindById(planner.Id);
-                partSelectorOptions.Add(new ReportOption($"Planner{planner.Id}", $"{employee.FullName}'s Suppliers"));
+                partSelectorOptions.Add(new ReportOption($"Planner{planner.Id}", $"{employee.FullName}'s Suppliers", null, "planner"));
             }
 
-            var displaySequence = 1;
+            var displaySequence = 4;
             foreach (var partSelectorOption in partSelectorOptions.Where(a => a.DisplaySequence is null).OrderBy(b => b.DisplayText))
             {
                 partSelectorOption.DisplaySequence = displaySequence++;

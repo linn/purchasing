@@ -16,6 +16,8 @@
         public int NumberOfSplitDeliveries { get; set; }
 
         public ICollection<MiniOrderDelivery> Deliveries { get; set; }
+
+        public string SentByMethod { get; set; }
     }
 }
 

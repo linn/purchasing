@@ -40,6 +40,8 @@
 
         protected ITransactionManager TransactionManager { get; private set; }
 
+        protected IRazorTemplateService RazorTemplateService { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -65,12 +67,15 @@
                 this.LinnDeliveryAddressResourceBuilder,
                 this.AddressResourceBuilder);
 
+            this.RazorTemplateService = Substitute.For<IRazorTemplateService>();
+
             this.Sut = new PurchaseOrderFacadeService(
                 this.PurchaseOrderRepository,
                 this.TransactionManager,
                 this.Builder,
                 this.DomainService,
-                this.OverbookAllowedByLogRepository);
+                this.OverbookAllowedByLogRepository,
+                this.RazorTemplateService);
         }
     }
 }

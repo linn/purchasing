@@ -14,25 +14,27 @@
 
     using NUnit.Framework;
 
-    public class WhenBatchUpdatingAndSuccess : ContextBase
+    public class WhenBatchUpdatingFromCsvAndSuccess : ContextBase
     {
         [SetUp]
         public void SetUp()
         {
             this.MockDomainService.BatchUpdateDeliveries(
                 Arg.Any<IEnumerable<PurchaseOrderDeliveryUpdate>>(),
-                Arg.Any<IEnumerable<string>>()).Returns(new BatchUpdateProcessResult
+                Arg.Any<IEnumerable<string>>(),
+                true).Returns(new BatchUpdateProcessResult
                                                             {
                                                                 Success = true,
                                                                 Message = "Success!"
                                                             });
             this.Response = this.Client.Post(
                 $"/purchasing/purchase-orders/deliveries",
-                $"PO1,1,28/03/1995,NEW REASON",
+                $"PO1,1,28/03/1995,100,NEW REASON",
                 with =>
                     {
                         with.Accept("application/json");
-                    }).Result;
+                    },
+                "text/csv").Result;
         }
 
         [Test]

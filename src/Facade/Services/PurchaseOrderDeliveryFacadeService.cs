@@ -11,7 +11,6 @@
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
-    using Linn.Purchasing.Resources.RequestResources;
 
     public class PurchaseOrderDeliveryFacadeService : IPurchaseOrderDeliveryFacadeService
     {
@@ -42,25 +41,7 @@
                 results.Select(x => (PurchaseOrderDeliveryResource)this.resourceBuilder.Build(x, null)));
         }
 
-        public IResult<PurchaseOrderDeliveryResource> PatchDelivery(
-            PurchaseOrderDeliveryKey key,
-            PatchRequestResource<PurchaseOrderDeliveryResource> requestResource, 
-            IEnumerable<string> privileges)
-        {
-            var privilegesList = privileges.ToList();
-            var entity = this.domainService.UpdateDelivery(
-                key,
-                BuildEntityFromResourceHelper(requestResource.From),
-                BuildEntityFromResourceHelper(requestResource.To),
-                privilegesList);
-
-            this.transactionManager.Commit();
-
-            return new SuccessResult<PurchaseOrderDeliveryResource>(
-                (PurchaseOrderDeliveryResource)this.resourceBuilder.Build(entity, privilegesList));
-        }
-        
-        public IResult<BatchUpdateProcessResultResource> BatchUpdateDeliveriesFromCsv(
+        public IResult<BatchUpdateProcessResultResource> BatchUpdateDeliveries(
             string csvString, IEnumerable<string> privileges)
         {
             var reader = new StringReader(csvString);
@@ -69,7 +50,7 @@
             {
                 while (reader.ReadLine() is { } line)
                 {
-                    // assuming csv lines are in the form <orderNumber>,<delivery-no>,<newAdvisedDate>,<newReason>
+                    // assuming csv lines are in the form <orderNumber>,<delivery-no>,<newAdvisedDate>,<qty>, <newReason>
                     var row = line.Split(",");
 
                     if (!int.TryParse(
@@ -81,7 +62,12 @@
 
                     if (!int.TryParse(row[1].Trim(), out var delNo))
                     {
-                        throw new InvalidOperationException($"Invalid Delivery Number: {row[0]} = {row[1]}.");
+                        throw new InvalidOperationException($"Invalid Delivery Number: {row[0]} / {row[1]}.");
+                    }
+
+                    if (!int.TryParse(row[3].Trim(), out var qty))
+                    {
+                        throw new InvalidOperationException($"Invalid Qty for {row[0]} / {row[1]}.");
                     }
 
                     var firstFormatSatisfied =
@@ -109,11 +95,12 @@
                                                       DeliverySequence = delNo
                                                   },
                                         NewDateAdvised = firstFormatSatisfied ? parsedDate1 : parsedDate2,
-                                        NewReason = row.Length < 4 ? null : row[3].Trim()
+                                        NewReason = row.Length < 5 ? null : row[4].Trim(),
+                                        Qty = qty
                                     });
                 }
 
-                var result = this.domainService.BatchUpdateDeliveries(changes, privileges);
+                var result = this.domainService.BatchUpdateDeliveries(changes, privileges, true);
                 this.transactionManager.Commit();
 
                 return new SuccessResult<BatchUpdateProcessResultResource>(
@@ -134,6 +121,57 @@
             }
         }
 
+        public IResult<BatchUpdateProcessResultResource> BatchUpdateDeliveries(
+            IEnumerable<PurchaseOrderDeliveryUpdateResource> resource, IEnumerable<string> privileges)
+        {
+            var updates = resource.Select(
+                u => new PurchaseOrderDeliveryUpdate
+                         {
+                             Key = new PurchaseOrderDeliveryKey
+                                       {
+                                           OrderNumber = u.OrderNumber,
+                                           OrderLine = u.OrderLine,
+                                           DeliverySequence = u.DeliverySequence
+                                       },
+                             NewDateAdvised = u.DateAdvised,
+                             NewReason = u.Reason,
+                             Qty = u.Qty,
+                             AvailableAtSupplier = u.AvailableAtSupplier,
+                             Comment = u.Comment
+                         }).ToList();
+            var result = this.domainService
+                .BatchUpdateDeliveries(updates, privileges);
+
+            this.transactionManager.Commit();
+
+            // update the mini order to keep its deliveries in sync
+            this.domainService.UpdateMiniOrderDeliveries(updates.Select(
+                u => new PurchaseOrderDelivery
+                         {
+                            OrderNumber = u.Key.OrderNumber,
+                            DeliverySeq = u.Key.DeliverySequence,
+                            OrderLine = u.Key.OrderLine,
+                            DateAdvised = u.NewDateAdvised,
+                            AvailableAtSupplier = u.AvailableAtSupplier,
+                            SupplierConfirmationComment = u.Comment,
+                            RescheduleReason = u.NewReason,
+                            OurDeliveryQty = u.Qty
+                         }));
+
+            this.transactionManager.Commit();
+
+            return new SuccessResult<BatchUpdateProcessResultResource>(new BatchUpdateProcessResultResource
+                                                                           {
+                                                                               Message = result.Message,
+                                                                               Success = result.Success,
+                                                                               Errors = result.Errors?.Select(e => new ErrorResource
+                                                                                   {
+                                                                                       Descriptor = e.Descriptor,
+                                                                                       Message = e.Message
+                                                                                   })
+                                                                           });
+        }
+
         public IResult<IEnumerable<PurchaseOrderDeliveryResource>> UpdateDeliveriesForDetail(
             int orderNumber, 
             int orderLine,
@@ -146,7 +184,10 @@
                 var entities = resourceList.Select(
                     d =>
                         {
-                            if (!DateTime.TryParse(d.DateAdvised, out var dateAdvised) || !DateTime.TryParse(
+                            var dateAdvised = new DateTime();
+
+                            if (!string.IsNullOrEmpty(d.DateAdvised) && (!DateTime.TryParse(d.DateAdvised, out dateAdvised)) 
+                                || !DateTime.TryParse(
                                     d.DateRequested,
                                     out var dateRequested))
                             {
@@ -158,7 +199,7 @@
                                            DeliverySeq = d.DeliverySeq,
                                            OurDeliveryQty = d.OurDeliveryQty,
                                            Cancelled = d.Cancelled,
-                                           DateAdvised = dateAdvised,
+                                           DateAdvised = string.IsNullOrEmpty(d.DateAdvised) ? null : dateAdvised,
                                            DateRequested = dateRequested,
                                            NetTotalCurrency = d.NetTotalCurrency,
                                            BaseNetTotal = d.BaseNetTotal,
@@ -213,18 +254,6 @@
 
             return new SuccessResult<IEnumerable<PurchaseOrderDeliveryResource>>(
                 res.Select(x => (PurchaseOrderDeliveryResource)this.resourceBuilder.Build(x, null)));
-        }
-
-        private static PurchaseOrderDelivery BuildEntityFromResourceHelper(PurchaseOrderDeliveryResource resource)
-        {
-            return new PurchaseOrderDelivery
-                       {
-                           DateAdvised = string.IsNullOrEmpty(resource.DateAdvised) 
-                                             ? null : DateTime.Parse(resource.DateAdvised),
-                           AvailableAtSupplier = resource.AvailableAtSupplier,
-                           RescheduleReason = resource.RescheduleReason,
-                           SupplierConfirmationComment = resource.SupplierConfirmationComment
-                       };
         }
     }
 }

@@ -54,6 +54,7 @@
                 VendorManager = entity.VendorManager,
                 VendorManagerInitials = entity.VendorManagerInitials,
                 Planner = entity.Planner,
+                MrComments = entity.MrComments,
                 Details = this.BuildDetails(entity, runWeekNumber),
                 Links = this.BuildHeaderLinks(entity).ToArray()
             };

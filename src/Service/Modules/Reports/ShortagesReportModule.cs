@@ -5,8 +5,6 @@
     using Carter;
     using Carter.Response;
 
-    using Linn.Common.Facade.Carter.Extensions;
-
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources.RequestResources;
     

@@ -237,3 +237,12 @@ export const shortagesPlannerReportActionTypes = makeActionTypes(
     reportTypes.shortagesPlannerReport.actionType,
     false
 );
+
+export const mrOrderBookReportActionTypes = makeActionTypes(
+    reportTypes.mrOrderBookReport.actionType,
+    false
+);
+
+export const sendPurchaseOrderPdfEmailActionTypes = makeProcessActionTypes(
+    itemTypes.sendPurchaseOrderPdfEmail.actionType
+);

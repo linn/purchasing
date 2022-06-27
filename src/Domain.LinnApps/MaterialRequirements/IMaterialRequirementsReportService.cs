@@ -10,7 +10,8 @@
             string requestPartSelector,
             string stockLevelSelector,
             string orderBySelector,
-            IEnumerable<string> parts);
+            IEnumerable<string> parts,
+            int reportSegment = 0);
 
         MrReportOptions GetOptions();
 

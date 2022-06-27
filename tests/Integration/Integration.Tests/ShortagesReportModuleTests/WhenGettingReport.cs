@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Integration.Tests.ShortagesReportModule
+﻿namespace Linn.Purchasing.Integration.Tests.ShortagesReportModuleTests
 {
     using System.Collections.Generic;
     using System.Linq;

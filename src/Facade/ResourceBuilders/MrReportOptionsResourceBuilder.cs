@@ -4,6 +4,7 @@
     using System.Linq;
 
     using Linn.Common.Facade;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Resources.MaterialRequirements;
 
@@ -31,7 +32,9 @@
                        {
                            DisplayText = option.DisplayText,
                            Option = option.Option,
-                           DisplaySequence = option.DisplaySequence
+                           DisplaySequence = option.DisplaySequence,
+                           DataTag = option.DataTag,
+                           DefaultOption = option.DefaultOption
                        };
         }
     }

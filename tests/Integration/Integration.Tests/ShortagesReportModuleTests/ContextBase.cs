@@ -1,9 +1,9 @@
-﻿namespace Linn.Purchasing.Integration.Tests.ShortagesReportModule
+﻿namespace Linn.Purchasing.Integration.Tests.ShortagesReportModuleTests
 {
     using System.Net.Http;
 
+    using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps.Reports;
-    using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
     using Linn.Purchasing.Service.Modules.Reports;
@@ -29,7 +29,7 @@
         {
             this.MockDomainService = Substitute.For<IShortagesReportService>();
             this.ReportFacadeService = new ShortagesReportFacadeService(
-                this.MockDomainService, new ResultsModelResourceBuilder());
+                this.MockDomainService, new ReportReturnResourceBuilder());
 
             this.Client = TestClient.With<ShortagesReportModule>(
                 services =>

@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
 {
     using System;
+    using System.Collections.Generic;
 
     public class PurchaseOrderDelivery
     {
@@ -59,5 +60,7 @@
         public string FilCancelled { get; set; }
 
         public decimal? QtyPassedForPayment { get; set; }
+
+        public IEnumerable<PurchaseOrderDeliveryHistory> DeliveryHistories { get; set; }
     }
 }

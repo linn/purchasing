@@ -83,3 +83,9 @@ export const shortagesPlannerReport = new ItemType(
     'SHORTAGES_PLANNER_REPORT',
     '/purchasing/reports/shortages-planner/report'
 );
+
+export const mrOrderBookReport = new ItemType(
+    'mrOrderBookReport',
+    'MR_ORDER_BOOK_REPORT',
+    '/purchasing/reports/mr-order-book'
+);

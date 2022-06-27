@@ -40,7 +40,7 @@
                             ReportTitle = new NameModel("Purchase Orders By Supplier - 71234: Dwight K Schrute")
                         });
 
-            this.csvData = this.Sut.GetOrdersBySupplierExport(resource, new List<string>());
+            this.csvData = this.Sut.GetOrdersBySupplierExport(resource);
         }
 
         [Test]
