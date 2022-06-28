@@ -91,6 +91,9 @@
 
         public string HighStockWithNoOrders { get; set; }
 
+        public string HasUnacknowledgedPurchaseOrders { get; set; }
+
+
         public IEnumerable<MrDetail> MrDetails { get; set; }
     }
 }

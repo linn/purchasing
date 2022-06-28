@@ -53,6 +53,7 @@
                 this.typeOfReport,
                 this.partSelector,
                 "High With No Orders",
+                null,
                 "supplier/part",
                 this.partNumbers);
         }

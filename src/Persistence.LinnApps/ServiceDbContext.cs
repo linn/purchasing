@@ -1317,6 +1317,7 @@
             entity.Property(e => e.LatePurchaseOrders).HasColumnName("LATE_PURCHASE_ORDERS");
             entity.Property(e => e.HighStockWithOrders).HasColumnName("HIGH_WITH_ORDERS").HasColumnType("VARCHAR2").HasMaxLength(1);
             entity.Property(e => e.HighStockWithNoOrders).HasColumnName("HIGH_NO_ORDERS").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasUnacknowledgedPurchaseOrders).HasColumnName("HAS_UNACK_PURCH_ORDERS").HasColumnType("VARCHAR2").HasMaxLength(1);
             entity.HasMany(s => s.MrDetails).WithOne().HasForeignKey(c => new { c.JobRef, c.PartNumber });
         }
 

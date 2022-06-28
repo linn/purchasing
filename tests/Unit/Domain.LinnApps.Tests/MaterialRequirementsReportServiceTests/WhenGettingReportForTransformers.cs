@@ -13,7 +13,7 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingReportForHighStockWithOrders : ContextBase
+    public class WhenGettingReportForTransformers : ContextBase
     {
         private string jobRef;
 
@@ -34,26 +34,24 @@
             this.jobRef = "ABC";
             this.typeOfReport = "MR";
             this.partSelector = "Select Parts";
-            this.partNumbers = new List<string> { "P1", "P2", "P3", "P4", "P5", "P6" };
+            this.partNumbers = new List<string> { "P1", "P2", "P3" };
             this.MrMasterRecordRepository.GetRecord().Returns(new MrMaster { JobRef = this.jobRef });
             this.RunLogRepository.FindBy(Arg.Any<Expression<Func<MrpRunLog, bool>>>())
                 .Returns(new MrpRunLog { RunWeekNumber = this.runWeekNumber });
             this.MrHeaderRepository.FilterBy(Arg.Any<Expression<Func<MrHeader, bool>>>()).Returns(
                 new List<MrHeader>
                     {
-                        new MrHeader { PartNumber = "P1", HighStockWithOrders = "N" },
-                        new MrHeader { PartNumber = "P2", HighStockWithOrders = string.Empty },
-                        new MrHeader { PartNumber = "P3", HighStockWithOrders = "Y" },
-                        new MrHeader { PartNumber = "P4", HighStockWithOrders = null },
-                        new MrHeader { PartNumber = "P5", HighStockWithOrders = "Y" },
-                        new MrHeader { PartNumber = "P6", HighStockWithOrders = "N" }
+                        new MrHeader { PartNumber = "P1" },
+                        new MrHeader { PartNumber = "TRAN2" },
+                        new MrHeader { PartNumber = "P3" },
+                        new MrHeader { PartNumber = "TRAN 343" }
                     }.AsQueryable());
             this.result = this.Sut.GetMaterialRequirements(
                 this.jobRef,
                 this.typeOfReport,
                 this.partSelector,
-                "High With Orders",
-                null,
+                "All",
+                "TRAN",
                 "supplier/part",
                 this.partNumbers);
         }
@@ -62,8 +60,8 @@
         public void ShouldReturnReport()
         {
             this.result.Headers.Should().HaveCount(2);
-            this.result.Headers.Should().Contain(a => a.PartNumber == "P3");
-            this.result.Headers.Should().Contain(a => a.PartNumber == "P5");
+            this.result.Headers.Should().Contain(a => a.PartNumber == "TRAN2");
+            this.result.Headers.Should().Contain(a => a.PartNumber == "TRAN 343");
         }
     }
 }

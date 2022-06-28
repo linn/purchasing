@@ -13,7 +13,7 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingReportForHighStockWithOrders : ContextBase
+    public class WhenGettingReportForLongLeadTime : ContextBase
     {
         private string jobRef;
 
@@ -34,26 +34,25 @@
             this.jobRef = "ABC";
             this.typeOfReport = "MR";
             this.partSelector = "Select Parts";
-            this.partNumbers = new List<string> { "P1", "P2", "P3", "P4", "P5", "P6" };
+            this.partNumbers = new List<string> { "P1", "P2", "P3" };
             this.MrMasterRecordRepository.GetRecord().Returns(new MrMaster { JobRef = this.jobRef });
             this.RunLogRepository.FindBy(Arg.Any<Expression<Func<MrpRunLog, bool>>>())
                 .Returns(new MrpRunLog { RunWeekNumber = this.runWeekNumber });
             this.MrHeaderRepository.FilterBy(Arg.Any<Expression<Func<MrHeader, bool>>>()).Returns(
                 new List<MrHeader>
                     {
-                        new MrHeader { PartNumber = "P1", HighStockWithOrders = "N" },
-                        new MrHeader { PartNumber = "P2", HighStockWithOrders = string.Empty },
-                        new MrHeader { PartNumber = "P3", HighStockWithOrders = "Y" },
-                        new MrHeader { PartNumber = "P4", HighStockWithOrders = null },
-                        new MrHeader { PartNumber = "P5", HighStockWithOrders = "Y" },
-                        new MrHeader { PartNumber = "P6", HighStockWithOrders = "N" }
+                        new MrHeader { PartNumber = "P1", LeadTimeWeeks = null },
+                        new MrHeader { PartNumber = "P2", LeadTimeWeeks = 1 },
+                        new MrHeader { PartNumber = "P3", LeadTimeWeeks = 25 },
+                        new MrHeader { PartNumber = "P4", LeadTimeWeeks = 0 },
+                        new MrHeader { PartNumber = "P5", LeadTimeWeeks = 26 }
                     }.AsQueryable());
             this.result = this.Sut.GetMaterialRequirements(
                 this.jobRef,
                 this.typeOfReport,
                 this.partSelector,
-                "High With Orders",
-                null,
+                "All",
+                "Long Lead Time",
                 "supplier/part",
                 this.partNumbers);
         }

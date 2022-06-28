@@ -12,6 +12,8 @@
 
         public string StockLevelSelector { get; set; }
 
+        public string PartOption { get; set; }
+
         public string OrderBySelector { get; set; }
 
         public IEnumerable<string> PartNumbers { get; set; }

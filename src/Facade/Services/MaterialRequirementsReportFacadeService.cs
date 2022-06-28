@@ -38,6 +38,7 @@
                 request.TypeOfReport,
                 request.PartSelector,
                 request.StockLevelSelector,
+                request.PartOption,
                 request.OrderBySelector,
                 parts);
 

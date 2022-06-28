@@ -46,6 +46,7 @@
                     this.requestResource.TypeOfReport,
                     this.requestResource.PartSelector,
                     this.requestResource.StockLevelSelector,
+                    this.requestResource.PartOption,
                     this.requestResource.OrderBySelector,
                     Arg.Is<IList<string>>(a => a.Contains("P1") && a.Count == 1))
                 .Returns(
@@ -68,6 +69,7 @@
                 this.requestResource.TypeOfReport,
                 this.requestResource.PartSelector,
                 this.requestResource.StockLevelSelector,
+                this.requestResource.PartOption,
                 this.requestResource.OrderBySelector,
                 Arg.Is<IList<string>>(a => a.Contains("P1") && a.Count == 1));
         }

@@ -34,19 +34,20 @@
         [Test]
         public void ShouldReturnPartSelectorOptions()
         {
-            this.result.PartSelectorOptions.Should().HaveCount(6);
+            this.result.PartSelectorOptions.Should().HaveCount(7);
             this.result.PartSelectorOptions.First(a => a.DisplaySequence == 0).Option.Should().Be("Select Parts");
             this.result.PartSelectorOptions.First(a => a.DisplaySequence == 1).Option.Should().Be("Parts Used On");
             this.result.PartSelectorOptions.First(a => a.DisplaySequence == 2).Option.Should().Be("Assemblies Used On");
             this.result.PartSelectorOptions.First(a => a.DisplaySequence == 3).Option.Should().Be("Parts Where Used");
-            this.result.PartSelectorOptions.First(a => a.DisplaySequence == 4).Option.Should().Be("Planner3");
-            this.result.PartSelectorOptions.First(a => a.DisplaySequence == 5).Option.Should().Be("Planner1");
+            this.result.PartSelectorOptions.First(a => a.DisplaySequence == 4).Option.Should().Be("Supplier");
+            this.result.PartSelectorOptions.First(a => a.DisplaySequence == 5).Option.Should().Be("Planner3");
+            this.result.PartSelectorOptions.First(a => a.DisplaySequence == 6).Option.Should().Be("Planner1");
         }
 
         [Test]
         public void ShouldReturnStockLevelOptions()
         {
-            this.result.StockLevelOptions.Should().HaveCount(10);
+            this.result.StockLevelOptions.Should().HaveCount(11);
             this.result.StockLevelOptions.First(a => a.DisplaySequence == 0).Option.Should().Be("0-4");
             this.result.StockLevelOptions.First(a => a.DisplaySequence == 0).DisplayText.Should().Be("Danger Levels 0 - 4");
             this.result.StockLevelOptions.First(a => a.DisplaySequence == 1).Option.Should().Be("0-2");
@@ -77,6 +78,17 @@
             this.result.OrderByOptions.Should().HaveCount(2);
             this.result.OrderByOptions.First(a => a.DisplaySequence == 0).Option.Should().Be("supplier/part");
             this.result.OrderByOptions.First(a => a.DisplaySequence == 1).Option.Should().Be("part");
+        }
+
+        [Test]
+        public void ShouldReturnPartOptions()
+        {
+            this.result.PartOptions.Should().HaveCount(5);
+            this.result.PartOptions.First(a => a.DisplaySequence == 0).Option.Should().Be("Long Lead Time");
+            this.result.PartOptions.First(a => a.DisplaySequence == 1).Option.Should().Be("CAP");
+            this.result.PartOptions.First(a => a.DisplaySequence == 2).Option.Should().Be("RES");
+            this.result.PartOptions.First(a => a.DisplaySequence == 3).Option.Should().Be("TRAN");
+            this.result.PartOptions.First(a => a.DisplaySequence == 4).Option.Should().Be("Unacknowledged");
         }
     }
 }
