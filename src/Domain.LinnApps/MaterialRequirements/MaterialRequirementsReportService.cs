@@ -78,7 +78,8 @@
                     partNumbers = this.GetComponents(partNumbers, true, true).Distinct();
                     break;
                 case "Parts Where Used":
-                    throw new InvalidOptionException("Where used option not yet supported");
+                    partNumbers = this.GetWhereUsed(partNumbers, true).Distinct();
+                    break;
             }
 
             if (partSelector.StartsWith("Planner"))
@@ -148,6 +149,25 @@
                 {
                     results.AddRange(this.GetComponents(assemblies.Select(a => a.PartNumber), assembliesOnly));
                 }
+            }
+
+            return results;
+        }
+
+        private IEnumerable<string> GetWhereUsed(IEnumerable<string> partNumbers, bool addChildrenParts = false)
+        {
+            var results = new List<string>();
+
+            foreach (var partNumber in partNumbers)
+            {
+                if (addChildrenParts)
+                {
+                    results.Add(partNumber);
+                }
+
+                var parents = this.partsAndAssembliesRepository.FilterBy(a => a.PartNumber == partNumber);
+
+                results.AddRange(parents.Select(a => a.AssemblyNumber));
             }
 
             return results;
