@@ -9,6 +9,8 @@
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+
     public class MaterialRequirementsReportService : IMaterialRequirementsReportService
     {
         private readonly IQueryRepository<MrHeader> repository;
@@ -70,10 +72,11 @@
             switch (partSelector)
             {
                 case "Parts Used On":
-                    partNumbers = this.GetComponents(partNumbers).Distinct();
+                    partNumbers = this.GetComponents(partNumbers, false, true).Distinct();
                     break;
                 case "Assemblies Used On":
-                    throw new InvalidOptionException("Assemblies option not yet supported");
+                    partNumbers = this.GetComponents(partNumbers, true, true).Distinct();
+                    break;
                 case "Parts Where Used":
                     throw new InvalidOptionException("Where used option not yet supported");
             }
@@ -122,19 +125,28 @@
             return report;
         }
 
-        private IEnumerable<string> GetComponents(IEnumerable<string> partNumbers)
+        private IEnumerable<string> GetComponents(IEnumerable<string> partNumbers, bool assembliesOnly, bool addParentParts = false)
         {
             var results = new List<string>();
 
             foreach (var partNumber in partNumbers)
             {
-                results.Add(partNumber);
+                if (addParentParts)
+                {
+                    results.Add(partNumber);
+                }
+
                 var components = this.partsAndAssembliesRepository.FilterBy(a => a.AssemblyNumber == partNumber);
-                results.AddRange(components.Where(a => a.PartBomType != "P").Select(a => a.PartNumber));
+
+                results.AddRange(
+                    assembliesOnly == false
+                        ? components.Where(a => a.PartBomType != "P").Select(a => a.PartNumber)
+                        : components.Where(a => a.PartBomType == "A").Select(a => a.PartNumber));
+
                 var assemblies = components.Where(a => a.PartBomType != "C");
                 if (assemblies.Any())
                 {
-                    results.AddRange(this.GetComponents(assemblies.Select(a => a.PartNumber)));
+                    results.AddRange(this.GetComponents(assemblies.Select(a => a.PartNumber), assembliesOnly));
                 }
             }
 
