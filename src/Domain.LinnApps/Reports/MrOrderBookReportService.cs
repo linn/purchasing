@@ -30,8 +30,10 @@
         {
             var jobRef = this.mrMaster.GetRecord().JobRef;
             var data = this.repository.FilterBy(x => x.SupplierId.Equals(supplierId) 
+                                                     && x.PartSupplierRecord != null
                                                      && x.JobRef.Equals(jobRef) 
                                                      && !x.DateCancelled.HasValue
+                                                     && !string.IsNullOrEmpty(x.AuthorisedBy)
                                                      && x.OurQuantity > x.QuantityReceived
                                                      && !string.IsNullOrEmpty(x.AuthorisedBy))
                 .OrderBy(x => x.OrderNumber).ToList();
@@ -52,6 +54,7 @@
                     {
                         new AxisDetailsModel("Delivery", "Delivery",  GridDisplayType.TextValue),
                         new AxisDetailsModel("Date", "Date",  GridDisplayType.TextValue),
+                        new AxisDetailsModel("QtyOnOrder", "Order Qty", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new AxisDetailsModel("Qty", "Qty", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new AxisDetailsModel("QtyReceived", "Qty Received", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new AxisDetailsModel("QtyInvoiced", "Qty Invoiced", GridDisplayType.Value) { DecimalPlaces = 2 },
@@ -83,7 +86,14 @@
                                 {
                                     RowId = rowId,
                                     ColumnId = "Date",
-                                    TextDisplay = member.DateOfOrder.ToShortDateString()
+                                    TextDisplay = delivery.CallOffDate?.ToShortDateString()
+                                });
+                        values.Add(
+                            new CalculationValueModel
+                                {
+                                    RowId = rowId,
+                                    ColumnId = "QtyOnOrder",
+                                    Value = member.OurQuantity
                                 });
                         values.Add(
                             new CalculationValueModel
@@ -97,7 +107,7 @@
                                 {
                                     RowId = rowId,
                                     ColumnId = "QtyReceived",
-                                    Value = member.QuantityReceived.GetValueOrDefault()
+                                    Value = delivery.QuantityReceived
                                 });
                         values.Add(
                             new CalculationValueModel
@@ -124,8 +134,10 @@
                 }
 
                 reportLayout.SetGridData(values);
-
-                reportLayout.ReportTitle = $"{group.Key}";
+                var partSupplier = group.First().PartSupplierRecord;
+                reportLayout.ReportTitle = $"{partSupplier.PartNumber} - " 
+                                           + $"UOM: {partSupplier.Part.OurUnitOfMeasure} - " 
+                                           + $"LEAD TIME: {partSupplier.LeadTimeWeeks} WEEKS";
 
                 resultsModels.Add(reportLayout.GetResultsModel());
             }
