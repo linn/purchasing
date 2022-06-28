@@ -102,6 +102,15 @@
                 case "0-2":
                     results = results.Where(a => a.DangerLevel >= 0 && a.DangerLevel <= 2);
                     break;
+                case "Late":
+                    results = results.Where(a => a.LatePurchaseOrders > 0);
+                    break;
+                case "High With Orders":
+                    results = results.Where(a => a.HighStockWithOrders == "Y");
+                    break;
+                case "High With No Orders":
+                    results = results.Where(a => a.HighStockWithNoOrders == "Y");
+                    break;
                 case "0" or "1" or "2" or "3" or "4":
                     results = results.Where(a => a.DangerLevel == int.Parse(stockLevelSelector));
                     break;
@@ -194,7 +203,10 @@
                                             new ReportOption("1", "Danger Level 1 Short now", 4),
                                             new ReportOption("2", "Danger Level 2 Zero at lead time", 5),
                                             new ReportOption("3", "Danger Level 3 Low at lead time", 6),
-                                            new ReportOption("4", "Danger Level 4 Very low before lead time", 7)
+                                            new ReportOption("4", "Danger Level 4 Very low before lead time", 7),
+                                            new ReportOption("Late", "Late Orders", 8),
+                                            new ReportOption("High With Orders", "High Stock With Orders", 9),
+                                            new ReportOption("High With No Orders", "High Stock With No Orders", 10)
                                         };
 
             var orderByOptions = new List<ReportOption>
