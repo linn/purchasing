@@ -6,24 +6,24 @@ namespace Linn.Purchasing.Service.Host
     using Carter;
 
     using Linn.Common.Authentication.Host.Extensions;
-    using Linn.Common.Configuration;
+    using Linn.Common.Configuration.Extensions;
     using Linn.Purchasing.IoC;
     using Linn.Purchasing.Service.Host.Negotiators;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Http.Json;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.FileProviders;
     using Microsoft.Extensions.Hosting;
+
+    using ConfigurationManager = Linn.Common.Configuration.ConfigurationManager;
 
     public class Startup
     {
         public void ConfigureServices(IServiceCollection services)
         {
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-
             services.AddCors();
             services.AddSingleton<IViewLoader, ViewLoader>();
             services.AddCredentialsExtensions();

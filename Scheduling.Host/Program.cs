@@ -1,6 +1,6 @@
 using Linn.Purchasing.Scheduling.Host.Services;
 
-IHost host = Host.CreateDefaultBuilder(args)
+var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
         services.AddHostedService<TestWorker>();

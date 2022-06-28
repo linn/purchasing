@@ -3,11 +3,10 @@
     using System;
     using System.Threading;
 
-    using Autofac;
-
     using Linn.Common.Logging;
     using Linn.Common.Messaging.RabbitMQ;
     using Linn.Common.Messaging.RabbitMQ.Unicast;
+    using Linn.Purchasing.Messaging.Handlers;
 
     public class Listener
     {
@@ -15,23 +14,19 @@
         private readonly DedupingMessageConsumer consumer;
         private readonly ILog logger;
 
-        public Listener(ILifetimeScope scope, ILog logger)
+        public Listener(IReceiver receiver, ILog logger)
         {
             this.logger = logger;
-            this.receiver = scope.Resolve<IReceiver>();
+            this.receiver = receiver;
             this.consumer = new DedupingMessageConsumer(new MessageConsumer(this.receiver), this.receiver);
 
             this.logger.Info("Started purchasing-listener");
 
-            this.consumer.For("purchasing.some-type")
+            this.consumer.For("purchasing.test")
                 .OnConsumed(m =>
                     {
-                        using (var handlerScope = scope.BeginLifetimeScope("messageHandler"))
-                        {
-                            // var handler = handlerScope.Resolve<DiscountCacheHandler>();
-                            // return handler.Execute(m);
-                            return true;
-                        }
+                        var handler = new TestHandler(logger);
+                        return handler.Execute(m);
                     })
                 .OnRejected(this.LogRejection);
         }

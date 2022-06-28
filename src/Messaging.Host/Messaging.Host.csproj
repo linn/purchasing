@@ -9,13 +9,12 @@
 
   <ItemGroup>
     <PackageReference Include="Linn.Common.Logging" Version="2.0.0" />
-    <PackageReference Include="Linn.Common.Messaging.RabbitMQ.Autofac" Version="2.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
+    <PackageReference Include="RabbitMQ.Client" Version="4.1.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\IoC\IoC.csproj" />
-    <ProjectReference Include="..\Messaging\Messaging.csproj" />
   </ItemGroup>
 
 </Project>
