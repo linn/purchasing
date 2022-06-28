@@ -116,10 +116,14 @@
                     break;
             }
 
-            if (partSelector.StartsWith("Planner"))
+            if (this.GetPartSelectorDataTag(partSelector) == "planner")
             {
                 var planner = int.Parse(partSelector.Substring(7));
                 this.filterQuery = a => a.JobRef == jobRef && a.Planner == planner;
+            }
+            else if (this.GetPartSelectorDataTag(partSelector) == "supplier")
+            {
+                this.filterQuery = a => a.JobRef == jobRef && a.PreferredSupplierId == supplierId;
             }
             else
             {
@@ -170,6 +174,11 @@
                         results = results.Where(a => a.HasUnacknowledgedPurchaseOrders == "Y"); 
                         break;
                 }
+            }
+
+            if (supplierId.HasValue && this.GetPartSelectorDataTag(partSelector) != "supplier")
+            {
+                results = results.Where(a => a.PreferredSupplierId == supplierId);
             }
 
             results = orderBy switch
@@ -231,7 +240,7 @@
             foreach (var planner in planners.Where(a => a.ShowAsMrOption == "Y"))
             {
                 var employee = this.employeeRepository.FindById(planner.Id);
-                partSelectorOptions.Add(new ReportOption($"Planner{planner.Id}", $"{employee.FullName}'s Suppliers", null, "planner"));
+                this.partSelectorOptions.Add(new ReportOption($"Planner{planner.Id}", $"{employee.FullName}'s Suppliers", null, "planner"));
             }
 
             var displaySequence = 5;
