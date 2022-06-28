@@ -52,6 +52,7 @@
                 "2",
                 null,
                 "supplier/part",
+                null,
                 this.partNumbers);
         }
 

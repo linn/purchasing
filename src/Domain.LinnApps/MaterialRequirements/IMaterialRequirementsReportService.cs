@@ -11,6 +11,7 @@
             string stockLevelOption,
             string partOption,
             string orderBy,
+            int? supplierId,
             IEnumerable<string> parts,
             int reportSegment = 0);
 

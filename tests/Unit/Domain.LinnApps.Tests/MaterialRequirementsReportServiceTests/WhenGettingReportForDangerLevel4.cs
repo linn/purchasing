@@ -52,6 +52,7 @@
                 "4",
                 null,
                 "part",
+                null,
                 this.partNumbers);
         }
 

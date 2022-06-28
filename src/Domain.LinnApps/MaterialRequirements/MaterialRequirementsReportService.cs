@@ -27,6 +27,35 @@
 
         private Expression<Func<MrHeader, bool>> filterQuery;
 
+        private readonly List<ReportOption> partSelectorOptions = new List<ReportOption>
+                                                                      {
+                                                                          new ReportOption(
+                                                                              "Select Parts",
+                                                                              "Select Parts",
+                                                                              0,
+                                                                              "parts") { DefaultOption = true },
+                                                                          new ReportOption(
+                                                                              "Parts Used On",
+                                                                              "Components Of...",
+                                                                              1,
+                                                                              "parts"),
+                                                                          new ReportOption(
+                                                                              "Assemblies Used On",
+                                                                              "Assemblies Of...",
+                                                                              2,
+                                                                              "parts"),
+                                                                          new ReportOption(
+                                                                              "Parts Where Used",
+                                                                              "Assemblies Containing...",
+                                                                              3,
+                                                                              "parts"),
+                                                                          new ReportOption(
+                                                                              "Supplier",
+                                                                              "Parts Of Selected Supplier",
+                                                                              4,
+                                                                              "supplier")
+                                                                      };
+
         public MaterialRequirementsReportService(
             IQueryRepository<MrHeader> repository,
             IRepository<MrpRunLog, int> runLogRepository,
@@ -52,6 +81,7 @@
             string stockLevelOption,
             string partOption,
             string orderBy,
+            int? supplierId,
             IEnumerable<string> partNumbers,
             int reportSegment = 0)
         {
@@ -64,6 +94,11 @@
             if (typeOfReport != "MR")
             {
                 throw new InvalidOptionException("Only standard MR layout is currently supported");
+            }
+
+            if (this.GetPartSelectorDataTag(partSelector) == "supplier" && !supplierId.HasValue)
+            {
+                throw new InvalidOptionException("A supplier must be selected for this option");
             }
 
             var runLog = this.runLogRepository.FindBy(a => a.JobRef == jobRef);
@@ -158,17 +193,6 @@
 
         public MrReportOptions GetOptions()
         {
-            var partSelectorOptions = new List<ReportOption>
-                                          {
-                                              new ReportOption("Select Parts", "Select Parts", 0, "parts")
-                                                  {
-                                                      DefaultOption = true
-                                                  },
-                                              new ReportOption("Parts Used On", "Components Of...", 1, "parts") ,
-                                              new ReportOption("Assemblies Used On", "Assemblies Of...",2, "parts"),
-                                              new ReportOption("Parts Where Used", "Assemblies Containing...", 3, "parts"),
-                                              new ReportOption("Supplier", "Parts Of Selected Supplier", 4, "supplier")
-                                          };
             var stockLevelOptions = new List<ReportOption>
                                         {
                                             new ReportOption("0-4", "Danger Levels 0 - 4", 0),
@@ -218,7 +242,7 @@
 
             return new MrReportOptions
                        {
-                           PartSelectorOptions = partSelectorOptions,
+                           PartSelectorOptions = this.partSelectorOptions,
                            StockLevelOptions = stockLevelOptions,
                            PartOptions = partOptions,
                            OrderByOptions = orderByOptions
@@ -280,6 +304,12 @@
             }
 
             return results;
+        }
+
+        private string GetPartSelectorDataTag(string partSelector)
+        {
+            var option = this.partSelectorOptions.FirstOrDefault(a => a.Option == partSelector);
+            return option?.DataTag;
         }
     }
 }

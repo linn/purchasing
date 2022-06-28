@@ -19,5 +19,7 @@
         public IEnumerable<string> PartNumbers { get; set; }
 
         public string PartNumber { get; set; }
+
+        public int? SupplierId { get; set; }
     }
 }
