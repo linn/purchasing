@@ -6,7 +6,8 @@ import {
     Loading,
     Typeahead,
     Dropdown,
-    collectionSelectorHelpers
+    collectionSelectorHelpers,
+    InputField
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import Snackbar from '@mui/material/Snackbar';
@@ -25,6 +26,7 @@ import partsActions from '../../actions/partsActions';
 import partActions from '../../actions/partActions';
 import mrReportOptionsActions from '../../actions/mrReportOptionsActions';
 import mrReportActions from '../../actions/mrReportActions';
+import suppliersActions from '../../actions/suppliersActions';
 
 import history from '../../history';
 
@@ -33,6 +35,7 @@ function MaterialRequirementsOptions() {
     const [typeaheadPart, setTypeaheadPart] = useState(null);
     const [parts, setParts] = useState([]);
     const [showMessage, setShowMessage] = useState(false);
+    const [supplier, setSupplier] = useState(null);
     const [message, setMessage] = useState(null);
     const [partSelector, setPartSelector] = useState('Select Parts');
     const [stockLevelSelector, setStockLevelSelector] = useState('All');
@@ -63,6 +66,17 @@ function MaterialRequirementsOptions() {
         itemSelectorHelpers.getItemLoading(state.part)
     );
     const selectedPartDetails = useSelector(state => itemSelectorHelpers.getItem(state.part));
+
+    const suppliersSearchResults = useSelector(state =>
+        collectionSelectorHelpers.getSearchItems(state.suppliers)
+    )?.map(c => ({
+        id: c.id,
+        name: c.id.toString(),
+        description: c.name
+    }));
+    const suppliersSearchLoading = useSelector(state =>
+        collectionSelectorHelpers.getSearchLoading(state.suppliers)
+    );
 
     const addToParts = useCallback(
         newPart => {
@@ -108,6 +122,12 @@ function MaterialRequirementsOptions() {
         dispatch(partActions.clearItem());
     }, [selectedPartDetails, addToParts, dispatch, displayMessage, lastPart]);
 
+    const handleSupplierChange = selectedsupplier => {
+        setSupplier(selectedsupplier);
+    };
+
+    const handleSupplierReturn = () => {};
+
     const handleTextFieldChange = selectedPart => {
         setLastPart(selectedPart.id);
         if (selectedPart) {
@@ -141,6 +161,7 @@ function MaterialRequirementsOptions() {
             partSelector,
             jobRef: mrMaster.jobRef,
             partNumbers: parts.map(p => p.id),
+            supplierId: supplier?.id,
             stockLevelSelector,
             orderBySelector
         };
@@ -170,9 +191,17 @@ function MaterialRequirementsOptions() {
         setTypeaheadPart(part);
     };
 
+    const handleSetSupplier = (_, supp) => {
+        setSupplier({ id: supp });
+    };
+
     const notReadyToRun = () => {
         const tag = getOptionTag(mrReportOptions?.partSelectorOptions, partSelector);
         if (!tag || (tag === 'parts' && parts.length === 0)) {
+            return true;
+        }
+
+        if (tag === 'supplier' && !supplier?.id) {
             return true;
         }
 
@@ -286,6 +315,34 @@ function MaterialRequirementsOptions() {
                         onChange={(_, value) => setOrderBySelector(value)}
                     />
                 </Grid>
+                <Grid item xs={4}>
+                    <Typeahead
+                        label="Supplier"
+                        title="Search for a supplier"
+                        onSelect={handleSupplierChange}
+                        items={suppliersSearchResults}
+                        loading={suppliersSearchLoading}
+                        fetchItems={searchTerm => dispatch(suppliersActions.search(searchTerm))}
+                        clearSearch={() => dispatch(suppliersActions.clearSearch)}
+                        value={supplier?.id}
+                        openModalOnClick={false}
+                        modal
+                        links={false}
+                        debounce={1000}
+                        handleFieldChange={handleSetSupplier}
+                        handleReturnPress={handleSupplierReturn}
+                        minimumSearchTermLength={2}
+                    />
+                </Grid>
+                <Grid item xs={6}>
+                    <InputField
+                        disabled
+                        value={supplier?.description}
+                        fullWidth
+                        label="Supplier Name"
+                    />
+                </Grid>
+                <Grid item xs={2} />
                 <Grid item xs={12}>
                     <Button
                         variant="outlined"

@@ -51,7 +51,7 @@
                                                                               "parts"),
                                                                           new ReportOption(
                                                                               "Supplier",
-                                                                              "Parts Of Selected Supplier",
+                                                                              "Selected Supplier",
                                                                               4,
                                                                               "supplier")
                                                                       };
@@ -176,7 +176,7 @@
                 }
             }
 
-            if (supplierId.HasValue && this.GetPartSelectorDataTag(partSelector) != "supplier")
+            if (supplierId > 0 && this.GetPartSelectorDataTag(partSelector) != "supplier")
             {
                 results = results.Where(a => a.PreferredSupplierId == supplierId);
             }
