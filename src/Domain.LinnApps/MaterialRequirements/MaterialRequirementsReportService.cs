@@ -83,6 +83,8 @@
             string orderBy,
             int? supplierId,
             IEnumerable<string> partNumbers,
+            string partNumberList,
+            string stockCategoryName,
             int reportSegment = 0)
         {
             if (string.IsNullOrEmpty(jobRef))

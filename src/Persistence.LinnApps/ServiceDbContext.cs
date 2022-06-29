@@ -147,6 +147,8 @@
 
         public DbSet<ShortagesEntry> ShortagesEntries { get; set; }
 
+        public DbSet<PartNumberList> PartNumberLists { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -227,6 +229,8 @@
             this.BuildShortagesView(builder);
             this.BuildPartAndAssemblyView(builder);
             this.BuildPurchaseOrderDeliveryHistories(builder);
+            this.BuildPartNumberLists(builder);
+            this.BuildPartNumberListElements(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1444,6 +1448,27 @@
             entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
             entity.Property(a => a.VendorManagerName).HasColumnName("VM_NAME").HasColumnType("VARCHAR2");
             entity.Property(a => a.PurchaseLevel).HasColumnName("PURCH_LEVEL");
+        }
+
+        private void BuildPartNumberLists(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PartNumberList>().ToTable("PART_NUMBER_LISTS");
+            entity.HasKey(a => a.Name);
+            entity.Property(a => a.Name).HasColumnName("PNL_NAME").HasColumnType("VARCHAR2").HasMaxLength(20);
+            entity.Property(a => a.Description).HasColumnName("DESCRIPTION").HasMaxLength(50);
+            entity.Property(a => a.DateCreated).HasColumnName("DATE_CREATED");
+            entity.Property(a => a.TypeOfList).HasColumnName("TYPE_OF_LIST").HasColumnType("VARCHAR2").HasMaxLength(10);
+            entity.Property(a => a.Temporary).HasColumnName("TEMPORARY").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.HasMany(o => o.Elements).WithOne().HasForeignKey(d => d.ListName); 
+        }
+
+        private void BuildPartNumberListElements(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PartNumberListElement>().ToTable("PART_NUMBER_LIST_ELEMENTS");
+            entity.HasKey(a => new { a.ListName, a.PartNumber });
+            entity.Property(a => a.ListName).HasColumnName("PNL_NAME").HasColumnType("VARCHAR2").HasMaxLength(20);
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2").HasMaxLength(14);
+            entity.Property(a => a.SortOrder).HasColumnName("SORT_ORDER");
         }
     }
 }

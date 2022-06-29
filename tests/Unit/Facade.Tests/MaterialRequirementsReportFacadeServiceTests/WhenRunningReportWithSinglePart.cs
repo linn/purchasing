@@ -50,7 +50,9 @@
                     this.requestResource.PartOption,
                     this.requestResource.OrderBySelector,
                     this.requestResource.SupplierId,
-                    Arg.Is<IList<string>>(a => a.Contains("P1") && a.Count == 1))
+                    Arg.Is<IList<string>>(a => a.Contains("P1") && a.Count == 1),
+                    this.requestResource.PartNumberList,
+                    this.requestResource.StockCategoryName)
                 .Returns(
                     new MrReport
                         {
@@ -74,7 +76,9 @@
                 this.requestResource.PartOption,
                 this.requestResource.OrderBySelector,
                 this.requestResource.SupplierId,
-                Arg.Is<IList<string>>(a => a.Contains("P1") && a.Count == 1));
+                Arg.Is<IList<string>>(a => a.Contains("P1") && a.Count == 1),
+                this.requestResource.PartNumberList,
+                this.requestResource.StockCategoryName);
         }
 
         [Test]
