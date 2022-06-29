@@ -619,7 +619,7 @@ function PurchaseOrderUtility({ creating }) {
                                         <InputField
                                             fullWidth
                                             value={detail.line}
-                                            label="Order Line Number"
+                                            label="Order Line No"
                                             propertyName="line"
                                         />
                                     </Grid>
