@@ -37,7 +37,8 @@
                                            PartSelector = null,
                                            PartNumber = this.partNumber,
                                            PartNumbers = null,
-                                           StockLevelSelector = "1"
+                                           StockLevelSelector = "1",
+                                           SupplierId = 123
                                        };
             this.privileges = new List<string>();
 
@@ -46,7 +47,9 @@
                     this.requestResource.TypeOfReport,
                     this.requestResource.PartSelector,
                     this.requestResource.StockLevelSelector,
+                    this.requestResource.PartOption,
                     this.requestResource.OrderBySelector,
+                    this.requestResource.SupplierId,
                     Arg.Is<IList<string>>(a => a.Contains("P1") && a.Count == 1))
                 .Returns(
                     new MrReport
@@ -68,7 +71,9 @@
                 this.requestResource.TypeOfReport,
                 this.requestResource.PartSelector,
                 this.requestResource.StockLevelSelector,
+                this.requestResource.PartOption,
                 this.requestResource.OrderBySelector,
+                this.requestResource.SupplierId,
                 Arg.Is<IList<string>>(a => a.Contains("P1") && a.Count == 1));
         }
 

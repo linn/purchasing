@@ -13,7 +13,7 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingReportForDangerLevel3 : ContextBase
+    public class WhenGettingReportForCapacitors : ContextBase
     {
         private string jobRef;
 
@@ -41,16 +41,17 @@
             this.MrHeaderRepository.FilterBy(Arg.Any<Expression<Func<MrHeader, bool>>>()).Returns(
                 new List<MrHeader>
                     {
-                        new MrHeader { PartNumber = "P1", DangerLevel = 3 },
-                        new MrHeader { PartNumber = "P2", DangerLevel = 0 },
-                        new MrHeader { PartNumber = "P3", DangerLevel = 2 }
+                        new MrHeader { PartNumber = "P1" },
+                        new MrHeader { PartNumber = "CAP2" },
+                        new MrHeader { PartNumber = "P3" },
+                        new MrHeader { PartNumber = "CAP 343" }
                     }.AsQueryable());
             this.result = this.Sut.GetMaterialRequirements(
                 this.jobRef,
                 this.typeOfReport,
                 this.partSelector,
-                "3",
-                null,
+                "All",
+                "CAP",
                 "supplier/part",
                 null,
                 this.partNumbers);
@@ -59,10 +60,9 @@
         [Test]
         public void ShouldReturnReport()
         {
-            this.result.Headers.Should().HaveCount(1);
-            this.result.Headers.Should().Contain(a => a.PartNumber == "P1");
-            this.result.JobRef.Should().Be(this.jobRef);
-            this.result.RunWeekNumber.Should().Be(this.runWeekNumber);
+            this.result.Headers.Should().HaveCount(2);
+            this.result.Headers.Should().Contain(a => a.PartNumber == "CAP2");
+            this.result.Headers.Should().Contain(a => a.PartNumber == "CAP 343");
         }
     }
 }

@@ -13,7 +13,7 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingReportForDangerLevel3 : ContextBase
+    public class WhenGettingReportForUnacknowledgedOrders : ContextBase
     {
         private string jobRef;
 
@@ -41,16 +41,16 @@
             this.MrHeaderRepository.FilterBy(Arg.Any<Expression<Func<MrHeader, bool>>>()).Returns(
                 new List<MrHeader>
                     {
-                        new MrHeader { PartNumber = "P1", DangerLevel = 3 },
-                        new MrHeader { PartNumber = "P2", DangerLevel = 0 },
-                        new MrHeader { PartNumber = "P3", DangerLevel = 2 }
+                        new MrHeader { PartNumber = "P1", HasUnacknowledgedPurchaseOrders = "N" },
+                        new MrHeader { PartNumber = "P2", HasUnacknowledgedPurchaseOrders = "Y" },
+                        new MrHeader { PartNumber = "P3", HasUnacknowledgedPurchaseOrders = null }
                     }.AsQueryable());
             this.result = this.Sut.GetMaterialRequirements(
                 this.jobRef,
                 this.typeOfReport,
                 this.partSelector,
-                "3",
-                null,
+                "All",
+                "Unacknowledged",
                 "supplier/part",
                 null,
                 this.partNumbers);
@@ -60,9 +60,7 @@
         public void ShouldReturnReport()
         {
             this.result.Headers.Should().HaveCount(1);
-            this.result.Headers.Should().Contain(a => a.PartNumber == "P1");
-            this.result.JobRef.Should().Be(this.jobRef);
-            this.result.RunWeekNumber.Should().Be(this.runWeekNumber);
+            this.result.Headers.Should().Contain(a => a.PartNumber == "P2");
         }
     }
 }

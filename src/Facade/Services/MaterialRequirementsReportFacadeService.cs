@@ -38,7 +38,9 @@
                 request.TypeOfReport,
                 request.PartSelector,
                 request.StockLevelSelector,
+                request.PartOption,
                 request.OrderBySelector,
+                request.SupplierId,
                 parts);
 
             return new SuccessResult<MrReportResource>((MrReportResource)this.builder.Build(report, privileges));

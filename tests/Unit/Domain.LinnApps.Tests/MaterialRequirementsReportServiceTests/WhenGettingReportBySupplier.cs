@@ -13,7 +13,7 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingReportForDangerLevel3 : ContextBase
+    public class WhenGettingReportBySupplier : ContextBase
     {
         private string jobRef;
 
@@ -27,42 +27,41 @@
 
         private int runWeekNumber;
 
+        private int supplierId;
+
         [SetUp]
         public void SetUp()
         {
             this.runWeekNumber = 1233;
             this.jobRef = "ABC";
             this.typeOfReport = "MR";
-            this.partSelector = "Select Parts";
-            this.partNumbers = new List<string> { "P1", "P2", "P3" };
+            this.partSelector = "Supplier";
+            this.supplierId = 123;
+            this.partNumbers = new List<string> { "P1", "P2" };
             this.MrMasterRecordRepository.GetRecord().Returns(new MrMaster { JobRef = this.jobRef });
             this.RunLogRepository.FindBy(Arg.Any<Expression<Func<MrpRunLog, bool>>>())
                 .Returns(new MrpRunLog { RunWeekNumber = this.runWeekNumber });
             this.MrHeaderRepository.FilterBy(Arg.Any<Expression<Func<MrHeader, bool>>>()).Returns(
                 new List<MrHeader>
                     {
-                        new MrHeader { PartNumber = "P1", DangerLevel = 3 },
-                        new MrHeader { PartNumber = "P2", DangerLevel = 0 },
-                        new MrHeader { PartNumber = "P3", DangerLevel = 2 }
+                        new MrHeader { PartNumber = "P1", PreferredSupplierId = this.supplierId },
+                        new MrHeader { PartNumber = "P2", PreferredSupplierId = this.supplierId }
                     }.AsQueryable());
             this.result = this.Sut.GetMaterialRequirements(
                 this.jobRef,
                 this.typeOfReport,
                 this.partSelector,
-                "3",
+                null,
                 null,
                 "supplier/part",
-                null,
+                this.supplierId,
                 this.partNumbers);
         }
 
         [Test]
         public void ShouldReturnReport()
         {
-            this.result.Headers.Should().HaveCount(1);
-            this.result.Headers.Should().Contain(a => a.PartNumber == "P1");
-            this.result.JobRef.Should().Be(this.jobRef);
-            this.result.RunWeekNumber.Should().Be(this.runWeekNumber);
+            this.result.Headers.Should().HaveCount(2);
         }
     }
 }

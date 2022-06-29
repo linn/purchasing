@@ -13,7 +13,7 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingReportForDangerLevel3 : ContextBase
+    public class WhenGettingReportForHighStockWithOrders : ContextBase
     {
         private string jobRef;
 
@@ -34,22 +34,25 @@
             this.jobRef = "ABC";
             this.typeOfReport = "MR";
             this.partSelector = "Select Parts";
-            this.partNumbers = new List<string> { "P1", "P2", "P3" };
+            this.partNumbers = new List<string> { "P1", "P2", "P3", "P4", "P5", "P6" };
             this.MrMasterRecordRepository.GetRecord().Returns(new MrMaster { JobRef = this.jobRef });
             this.RunLogRepository.FindBy(Arg.Any<Expression<Func<MrpRunLog, bool>>>())
                 .Returns(new MrpRunLog { RunWeekNumber = this.runWeekNumber });
             this.MrHeaderRepository.FilterBy(Arg.Any<Expression<Func<MrHeader, bool>>>()).Returns(
                 new List<MrHeader>
                     {
-                        new MrHeader { PartNumber = "P1", DangerLevel = 3 },
-                        new MrHeader { PartNumber = "P2", DangerLevel = 0 },
-                        new MrHeader { PartNumber = "P3", DangerLevel = 2 }
+                        new MrHeader { PartNumber = "P1", HighStockWithOrders = "N" },
+                        new MrHeader { PartNumber = "P2", HighStockWithOrders = string.Empty },
+                        new MrHeader { PartNumber = "P3", HighStockWithOrders = "Y" },
+                        new MrHeader { PartNumber = "P4", HighStockWithOrders = null },
+                        new MrHeader { PartNumber = "P5", HighStockWithOrders = "Y" },
+                        new MrHeader { PartNumber = "P6", HighStockWithOrders = "N" }
                     }.AsQueryable());
             this.result = this.Sut.GetMaterialRequirements(
                 this.jobRef,
                 this.typeOfReport,
                 this.partSelector,
-                "3",
+                "High With Orders",
                 null,
                 "supplier/part",
                 null,
@@ -59,10 +62,9 @@
         [Test]
         public void ShouldReturnReport()
         {
-            this.result.Headers.Should().HaveCount(1);
-            this.result.Headers.Should().Contain(a => a.PartNumber == "P1");
-            this.result.JobRef.Should().Be(this.jobRef);
-            this.result.RunWeekNumber.Should().Be(this.runWeekNumber);
+            this.result.Headers.Should().HaveCount(2);
+            this.result.Headers.Should().Contain(a => a.PartNumber == "P3");
+            this.result.Headers.Should().Contain(a => a.PartNumber == "P5");
         }
     }
 }

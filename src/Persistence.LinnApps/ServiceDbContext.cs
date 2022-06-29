@@ -1294,19 +1294,19 @@
             entity.Property(e => e.MinimumOrderQuantity).HasColumnName("MINIMUM_ORDER_QTY");
             entity.Property(e => e.MinimumDeliveryQuantity).HasColumnName("MINIMUM_DELIVERY_QTY");
             entity.Property(e => e.OrderIncrement).HasColumnName("ORDER_INCREMENT");
-            entity.Property(e => e.HasPurchaseOrders).HasColumnName("HAS_PURCH_ORDERS");
-            entity.Property(e => e.HasAssumedPurchaseOrders).HasColumnName("HAS_ASSUMED_PURCH_ORDERS");
-            entity.Property(e => e.HasUnauthPurchaseOrders).HasColumnName("HAS_UNAUTH_PURCH_ORDERS");
-            entity.Property(e => e.HasTriggerBuild).HasColumnName("HAS_TRIGGER_BUILD");
-            entity.Property(e => e.HasProductionRequirement).HasColumnName("HAS_PRODUCTION_REQT");
-            entity.Property(e => e.HasNonProductionRequirement).HasColumnName("HAS_NON_PRODUCTION_REQT");
-            entity.Property(e => e.HasDeliveryForecast).HasColumnName("HAS_DELIVERY_FORECAST");
-            entity.Property(e => e.HasAssumedBuild).HasColumnName("HAS_ASSUMED_BUILD");
-            entity.Property(e => e.HasFixedBuild).HasColumnName("HAS_FIXED_BUILD");
-            entity.Property(e => e.HasSparesRequirement).HasColumnName("HAS_SPARES_REQT");
-            entity.Property(e => e.HasProductionRequirementForSpares).HasColumnName("HAS_PROD_REQT_FOR_SPARES");
-            entity.Property(e => e.HasProductionRequirementForNonProduction).HasColumnName("HAS_PROD_REQT_FOR_NONPROD");
-            entity.Property(e => e.HasSalesOrders).HasColumnName("HAS_SALES_ORDERS");
+            entity.Property(e => e.HasPurchaseOrders).HasColumnName("HAS_PURCH_ORDERS").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasAssumedPurchaseOrders).HasColumnName("HAS_ASSUMED_PURCH_ORDERS").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasUnauthPurchaseOrders).HasColumnName("HAS_UNAUTH_PURCH_ORDERS").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasTriggerBuild).HasColumnName("HAS_TRIGGER_BUILD").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasProductionRequirement).HasColumnName("HAS_PRODUCTION_REQT").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasNonProductionRequirement).HasColumnName("HAS_NON_PRODUCTION_REQT").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasDeliveryForecast).HasColumnName("HAS_DELIVERY_FORECAST").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasAssumedBuild).HasColumnName("HAS_ASSUMED_BUILD").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasFixedBuild).HasColumnName("HAS_FIXED_BUILD").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasSparesRequirement).HasColumnName("HAS_SPARES_REQT").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasProductionRequirementForSpares).HasColumnName("HAS_PROD_REQT_FOR_SPARES").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasProductionRequirementForNonProduction).HasColumnName("HAS_PROD_REQT_FOR_NONPROD").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasSalesOrders).HasColumnName("HAS_SALES_ORDERS").HasColumnType("VARCHAR2").HasMaxLength(1);
             entity.Property(e => e.VendorManager).HasColumnName("VENDOR_MANAGER").HasColumnType("VARCHAR2");
             entity.Property(e => e.VendorManagerInitials).HasColumnName("VM_INITIALS");
             entity.Property(e => e.PartId).HasColumnName("PART_ID");
@@ -1314,6 +1314,10 @@
             entity.Property(e => e.DangerLevel).HasColumnName("DANGER_LEVEL");
             entity.Property(e => e.WeeksUntilDangerous).HasColumnName("WEEKS_UNTIL_DANGEROUS");
             entity.Property(e => e.MrComments).HasColumnName("ACTION_COMMENTS").HasColumnType("VARCHAR2").HasMaxLength(200);
+            entity.Property(e => e.LatePurchaseOrders).HasColumnName("LATE_PURCHASE_ORDERS");
+            entity.Property(e => e.HighStockWithOrders).HasColumnName("HIGH_WITH_ORDERS").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HighStockWithNoOrders).HasColumnName("HIGH_NO_ORDERS").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasUnacknowledgedPurchaseOrders).HasColumnName("HAS_UNACK_PURCH_ORDERS").HasColumnType("VARCHAR2").HasMaxLength(1);
             entity.HasMany(s => s.MrDetails).WithOne().HasForeignKey(c => new { c.JobRef, c.PartNumber });
         }
 

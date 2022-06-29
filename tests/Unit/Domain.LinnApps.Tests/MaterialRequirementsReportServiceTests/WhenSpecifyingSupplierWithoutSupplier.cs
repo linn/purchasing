@@ -7,17 +7,16 @@
 
     using FluentAssertions;
 
+    using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
 
     using NSubstitute;
 
     using NUnit.Framework;
 
-    public class WhenGettingReportForDangerLevel3 : ContextBase
+    public class WhenSpecifyingSupplierWithoutSupplier : ContextBase
     {
         private string jobRef;
-
-        private MrReport result;
 
         private string typeOfReport;
 
@@ -27,29 +26,26 @@
 
         private int runWeekNumber;
 
+        private Action action;
+
         [SetUp]
         public void SetUp()
         {
             this.runWeekNumber = 1233;
             this.jobRef = "ABC";
             this.typeOfReport = "MR";
-            this.partSelector = "Select Parts";
-            this.partNumbers = new List<string> { "P1", "P2", "P3" };
+            this.partSelector = "Supplier";
+            this.partNumbers = new List<string> { "P1", "P2" };
             this.MrMasterRecordRepository.GetRecord().Returns(new MrMaster { JobRef = this.jobRef });
             this.RunLogRepository.FindBy(Arg.Any<Expression<Func<MrpRunLog, bool>>>())
                 .Returns(new MrpRunLog { RunWeekNumber = this.runWeekNumber });
             this.MrHeaderRepository.FilterBy(Arg.Any<Expression<Func<MrHeader, bool>>>()).Returns(
-                new List<MrHeader>
-                    {
-                        new MrHeader { PartNumber = "P1", DangerLevel = 3 },
-                        new MrHeader { PartNumber = "P2", DangerLevel = 0 },
-                        new MrHeader { PartNumber = "P3", DangerLevel = 2 }
-                    }.AsQueryable());
-            this.result = this.Sut.GetMaterialRequirements(
+                new List<MrHeader> { new MrHeader { PartNumber = "P1" }, new MrHeader { PartNumber = "P2" } }.AsQueryable());
+            this.action = () => this.Sut.GetMaterialRequirements(
                 this.jobRef,
                 this.typeOfReport,
                 this.partSelector,
-                "3",
+                null,
                 null,
                 "supplier/part",
                 null,
@@ -57,12 +53,9 @@
         }
 
         [Test]
-        public void ShouldReturnReport()
+        public void ShouldThrowError()
         {
-            this.result.Headers.Should().HaveCount(1);
-            this.result.Headers.Should().Contain(a => a.PartNumber == "P1");
-            this.result.JobRef.Should().Be(this.jobRef);
-            this.result.RunWeekNumber.Should().Be(this.runWeekNumber);
+            this.action.Should().Throw<InvalidOptionException>();
         }
     }
 }
