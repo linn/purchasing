@@ -50,7 +50,7 @@
         {
             var order = this.orderRepository.FindById(orderNumber);
 
-            var result = this.razorTemplateEngine.Render(order, "..\\Service.Host\\views\\PurchaseOrder.cshtml");
+            var result = this.razorTemplateEngine.Render(order, "..\\app\\views\\PurchaseOrder.cshtml");
             return result.Result;
         }
 
@@ -58,7 +58,7 @@
         {
             var order = this.orderRepository.FindById(orderNumber);
 
-            var result = this.razorTemplateEngine.Render(order, "../Service.Host/views/" + @"\" + "PurchaseOrder.cshtml");
+            var result = this.razorTemplateEngine.Render(order, "..\\app\\views\\PurchaseOrder.cshtml");
 
             var emailResult = this.domainService.SendPdfEmail(result.Result, emailAddress, orderNumber, bcc, currentUserId, order);
 
