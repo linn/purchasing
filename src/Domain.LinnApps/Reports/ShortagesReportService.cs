@@ -94,10 +94,15 @@
 
                 foreach (var partEntryRow in distinctPartNumber)
                 {
-                    var model = new ResultsModel
-                    {
-                        ReportTitle = new NameModel(partEntryRow.PartNumber)
-                    };
+                    var model = new ResultsModel();
+                    var reportTitle = new NameModel(partEntryRow.PartNumber);
+                    reportTitle.DrillDownList = new List<DrillDownModel>
+                                                    {
+                                                        new DrillDownModel(
+                                                            "MR",
+                                                            $"/purchasing/material-requirements/report?partNumber={partEntryRow.PartNumber}")
+                                                    };
+                    model.ReportTitle = reportTitle;
                     model.AddColumn("Description", "Description");
                     model.AddColumn("QtyAvailable", "Qty Available");
                     model.AddColumn("TotalWOReqt", "Needed for Works Orders");

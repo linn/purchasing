@@ -40,6 +40,7 @@ function ShortagesPlannerReport() {
                             <MultiReportTable
                                 reportData={reportData}
                                 showTitle
+                                showRowTitles={false}
                                 showTotals={false}
                                 placeholderRows={10}
                                 placeholderColumns={4}
