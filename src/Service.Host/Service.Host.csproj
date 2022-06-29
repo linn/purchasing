@@ -44,4 +44,9 @@
     <Folder Include="client\src\reducers\__tests__\" />
     <Folder Include="client\src\selectors\__tests__\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Update="views\PurchaseOrder.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>
