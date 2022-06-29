@@ -132,6 +132,7 @@
                     expectedDeliveriesModel.AddColumn("OrderNumber", "Order Number");
                     expectedDeliveriesModel.AddColumn("OrderLine", "Line");
                     expectedDeliveriesModel.AddColumn("DeliverySeq", "Del");
+                    expectedDeliveriesModel.AddColumn("Outstanding", "Outstanding");
                     expectedDeliveriesModel.AddColumn("RequestedDate", "Requested");
                     expectedDeliveriesModel.AddColumn("AdvisedDate", "Advised");
 
@@ -142,7 +143,8 @@
 
                         expectedDeliveriesModel.SetGridTextValue(expectedDeliveryRow.RowIndex, expectedDeliveriesModel.ColumnIndex("OrderNumber"), deliveryRow.OrderNumber.ToString());
                         expectedDeliveriesModel.SetGridTextValue(expectedDeliveryRow.RowIndex, expectedDeliveriesModel.ColumnIndex("OrderLine"), deliveryRow.OrderLine.ToString());
-                        expectedDeliveriesModel.SetGridTextValue(expectedDeliveryRow.RowIndex, expectedDeliveriesModel.ColumnIndex("DeliverySeq"), deliveryRow.DeliverySeq.ToString()); 
+                        expectedDeliveriesModel.SetGridTextValue(expectedDeliveryRow.RowIndex, expectedDeliveriesModel.ColumnIndex("DeliverySeq"), deliveryRow.DeliverySeq.ToString());
+                        expectedDeliveriesModel.SetGridTextValue(expectedDeliveryRow.RowIndex, expectedDeliveriesModel.ColumnIndex("Outstanding"), deliveryRow.QtyOutstanding.ToString());
                         expectedDeliveriesModel.SetGridTextValue(expectedDeliveryRow.RowIndex, expectedDeliveriesModel.ColumnIndex("RequestedDate"), deliveryRow.RequestedDate.ToString());
                         expectedDeliveriesModel.SetGridTextValue(expectedDeliveryRow.RowIndex, expectedDeliveriesModel.ColumnIndex("AdvisedDate"), deliveryRow.AdvisedDate.ToString());
                     }
