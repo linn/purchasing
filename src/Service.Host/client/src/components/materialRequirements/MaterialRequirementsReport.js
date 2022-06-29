@@ -683,9 +683,15 @@ function MaterialRequirementsReport() {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Stack direction="row" spacing={2}>
-                                        <Typography variant="body2">
-                                            Stock: {selectedItem.quantityInStock}
-                                        </Typography>
+                                        <Typography variant="body2">Stock:</Typography>
+                                        <Link
+                                            href={utilities.getHref(selectedItem, 'view-stock')}
+                                            underline="hover"
+                                            color="inherit"
+                                            variant="body2"
+                                        >
+                                            {selectedItem.quantityInStock}
+                                        </Link>
                                         <Typography variant="body2">
                                             For Spares: {selectedItem.quantityForSpares}
                                         </Typography>
