@@ -83,18 +83,22 @@ function MaterialRequirementsReport() {
                 dispatch(
                     mrReportActions.postByHref(mrReportItem.uri, {
                         partNumber: query.partNumber,
-                        jobRef: query?.jobRef,
+                        jobRef: query.jobRef,
                         typeOfReport: 'MR',
-                        partSelector: 'Select Parts'
+                        partSelector: 'Select Parts',
+                        supplierId: query.supplierId,
+                        stockCategoryName: query.stockCategoryName
                     })
                 );
             } else if (query.partNumberList) {
                 dispatch(
                     mrReportActions.postByHref(mrReportItem.uri, {
                         partNumberList: query.partNumberList,
-                        jobRef: query?.jobRef,
+                        jobRef: query.jobRef,
                         typeOfReport: 'MR',
-                        partSelector: 'Part Number List'
+                        partSelector: 'Part Number List',
+                        supplierId: query.supplierId,
+                        stockCategoryName: query.stockCategoryName
                     })
                 );
             }

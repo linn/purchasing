@@ -112,6 +112,11 @@
                 throw new InvalidOptionException("You must supply a part number list name");
             }
 
+            if (partSelector == "Stock Category" && string.IsNullOrEmpty(stockCategoryName))
+            {
+                throw new InvalidOptionException("You must supply a stock category name");
+            }
+
             var runLog = this.runLogRepository.FindBy(a => a.JobRef == jobRef);
 
             switch (partSelector)
@@ -140,6 +145,10 @@
             else if (this.GetPartSelectorDataTag(partSelector) == "supplier")
             {
                 this.filterQuery = a => a.JobRef == jobRef && a.PreferredSupplierId == supplierId;
+            }
+            else if (partSelector == "Stock Category")
+            {
+                this.filterQuery = a => a.JobRef == jobRef && a.StockCategoryName == stockCategoryName;
             }
             else
             {
@@ -195,6 +204,11 @@
             if (supplierId > 0 && this.GetPartSelectorDataTag(partSelector) != "supplier")
             {
                 results = results.Where(a => a.PreferredSupplierId == supplierId);
+            }
+
+            if (!string.IsNullOrEmpty(stockCategoryName) && partSelector != "Stock Category")
+            {
+                results = results.Where(a => a.StockCategoryName == stockCategoryName);
             }
 
             results = orderBy switch
