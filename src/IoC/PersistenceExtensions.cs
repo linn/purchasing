@@ -136,8 +136,7 @@
                 .AddTransient<IQueryRepository<ShortagesEntry>, EntityFrameworkQueryRepository<ShortagesEntry>>(
                     r => new EntityFrameworkQueryRepository<ShortagesEntry>(r.GetService<ServiceDbContext>()
                         ?.ShortagesEntries))
-                .AddTransient<IRepository<PartNumberList, string>, EntityFrameworkRepository<PartNumberList, string>>(
-                    r => new EntityFrameworkRepository<PartNumberList, string>(r.GetService<ServiceDbContext>()?.PartNumberLists));
+                .AddTransient<IRepository<PartNumberList, string>, PartNumberListRepository>();
         }
     }
 }
