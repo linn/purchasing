@@ -59,8 +59,8 @@
         [Test]
         public void ShouldReturnReport()
         {
-            var resource = this.Response.DeserializeBody<IEnumerable<ReportReturnResource>>();
-            resource.First().ReportResults.First().title.displayString.Should().Be(this.reportTitle);
+            var resource = this.Response.DeserializeBody<ReportReturnResource>();
+            resource.ReportResults.First().title.displayString.Should().Be(this.reportTitle);
         }
     }
 }

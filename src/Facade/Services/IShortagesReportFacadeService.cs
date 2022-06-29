@@ -8,7 +8,7 @@
 
     public interface IShortagesReportFacadeService
     {
-        public IResult<IEnumerable<ReportReturnResource>> GetShortagesReport(ShortagesReportRequestResource options);
+        public IResult<ReportReturnResource> GetShortagesReport(ShortagesReportRequestResource options);
 
         public IResult<IEnumerable<ReportReturnResource>> GetShortagesPlannerReport(int planner);
     }
