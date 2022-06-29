@@ -50,7 +50,7 @@
         {
             var order = this.orderRepository.FindById(orderNumber);
 
-            var result = this.razorTemplateEngine.Render(order, "../Service.Host/views/" + @"\" + "PurchaseOrder.cshtml");
+            var result = this.razorTemplateEngine.Render(order, "..\\Service.Host\\views\\PurchaseOrder.cshtml");
             return result.Result;
         }
 
