@@ -43,7 +43,7 @@
                 .Include(r => r.Department)
                 .Include(r => r.Nominal)
                 .Include(r => r.Supplier)
-                .Include(r => r.ReqState).OrderByDescending(x => x.ReqNumber).Take(50);
+                .Include(r => r.ReqState).OrderByDescending(x => x.ReqNumber);
         }
     }
 }
