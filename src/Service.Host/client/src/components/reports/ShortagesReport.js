@@ -10,9 +10,9 @@ import shortagesReportActions from '../../actions/shortagesReportActions';
 function ShortagesReport() {
     const options = useMemo(() => queryString.parse(window.location.search) || {}, []);
 
-    const loading = useSelector(state => state[shortagesReport.item]?.loading);
+    const loading = useSelector(state => state[shortagesReport.item]?.results.loading);
 
-    const reportData = useSelector(state => state[shortagesReport.item]?.data);
+    const reportData = useSelector(state => state[shortagesReport.item]?.results.data);
 
     const dispatch = useDispatch();
 
