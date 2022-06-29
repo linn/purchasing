@@ -1,26 +1,18 @@
 import React, { useEffect, useMemo } from 'react';
-import {
-    Loading,
-    ReportTable,
-    BackButton,
-    reportSelectorHelpers
-} from '@linn-it/linn-form-components-library';
+import { Loading, MultiReportTable, BackButton } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import { useSelector, useDispatch } from 'react-redux';
 import queryString from 'query-string';
 import history from '../../history';
 import shortagesPlannerReportActions from '../../actions/shortagesPlannerReportActions';
+import { shortagesPlannerReport } from '../../reportTypes';
 
 function ShortagesPlannerReport() {
     const options = useMemo(() => queryString.parse(window.location.search) || {}, []);
 
-    const loading = useSelector(state =>
-        reportSelectorHelpers.getReportLoading(state.shortagesPlannerReport)
-    );
-    const reportData = useSelector(state =>
-        reportSelectorHelpers.getReportData(state.shortagesPlannerReport)
-    );
+    const loading = useSelector(state => state[shortagesPlannerReport.item]?.results.loading);
 
+    const reportData = useSelector(state => state[shortagesPlannerReport.item]?.results.data);
     const dispatch = useDispatch();
 
     const handleBackClick = () => {
@@ -44,21 +36,15 @@ function ShortagesPlannerReport() {
                     {loading || !reportData ? (
                         <Loading />
                     ) : (
-                        <>
-                            {reportData.map(report => (
-                                <>
-                                    <ReportTable
-                                        reportData={report.reportResults[0]}
-                                        title={report.reportResults[0].title}
-                                        key={report.reportResults[0].PlannerName}
-                                        showTotals
-                                        showTitle
-                                        placeholderRows={4}
-                                        placeholderColumns={4}
-                                    />
-                                </>
-                            ))}
-                        </>
+                        reportData && (
+                            <MultiReportTable
+                                reportData={reportData}
+                                showTitle
+                                showTotals={false}
+                                placeholderRows={10}
+                                placeholderColumns={4}
+                            />
+                        )
                     )}
                 </Grid>
             </Grid>

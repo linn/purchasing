@@ -10,6 +10,6 @@
     {
         public IResult<ReportReturnResource> GetShortagesReport(ShortagesReportRequestResource options);
 
-        public IResult<IEnumerable<ReportReturnResource>> GetShortagesPlannerReport(int planner);
+        public IResult<ReportReturnResource> GetShortagesPlannerReport(int planner);
     }
 }

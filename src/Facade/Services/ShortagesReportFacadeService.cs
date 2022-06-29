@@ -33,14 +33,12 @@
             return new SuccessResult<ReportReturnResource>(resource);
         }
 
-        public IResult<IEnumerable<ReportReturnResource>> GetShortagesPlannerReport(int planner)
+        public IResult<ReportReturnResource> GetShortagesPlannerReport(int planner)
         {
-            var result = this.domainService.GetShortagesPlannerReport(planner);
-            var resultResources = result.Select(
-                d => (ReportReturnResource)this.resultsModelResourceBuilder.Build(d));
+            var resource = this.resultsModelResourceBuilder.Build(
+                this.domainService.GetShortagesPlannerReport(planner));
 
-            return new SuccessResult<IEnumerable<ReportReturnResource>>(resultResources);
+            return new SuccessResult<ReportReturnResource>(resource);
         }
-
     }
 }

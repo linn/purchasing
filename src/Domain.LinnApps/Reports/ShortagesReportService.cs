@@ -84,28 +84,31 @@
 
             foreach (var shortagesForPlanner in results.GroupBy(a => new { a.PurchaseLevel }))
             {
-                var model = new ResultsModel();
-                model.AddColumn("PartNumber", "Part Number");
-                model.AddColumn("Description", "Description");
-                model.AddColumn("QtyAvailable", "Qty Available");
-                model.AddColumn("TotalWOReqt", "Needed for Works Orders");
-                model.AddColumn("TotalBEReqt", "To achieve Minimum Build");
-                model.AddColumn("TotalBIReqt", "To achieve Priority Build");
-                model.AddColumn("TotalBTReqt", "To achieve Ideal Build");
-                model.AddColumn("Supplier", "Supplier");
-                model.AddColumn("SupplierName", "Supplier Name");
-
-                model.ReportTitle = new NameModel($"Purchasing danger parts for planner {planner}. Purchase Danger Level {shortagesForPlanner.Key.PurchaseLevel}");
-                model.RowHeader = "Planner";
+                var titleModel = new ResultsModel
+                {
+                    ReportTitle = new NameModel($"Purchasing danger parts for planner {planner}. Purchase Danger Level {shortagesForPlanner.Key.PurchaseLevel}")
+                };
+                returnResults.Add(titleModel);
 
                 var distinctPartNumber = shortagesForPlanner.DistinctBy(x => x.PartNumber);
-                var distinctLevels = shortagesForPlanner.DistinctBy(x => x.PurchaseLevel).OrderBy(x => x.PurchaseLevel);
 
                 foreach (var partEntryRow in distinctPartNumber)
                 {
+                    var model = new ResultsModel
+                    {
+                        ReportTitle = new NameModel(partEntryRow.PartNumber)
+                    };
+                    model.AddColumn("Description", "Description");
+                    model.AddColumn("QtyAvailable", "Qty Available");
+                    model.AddColumn("TotalWOReqt", "Needed for Works Orders");
+                    model.AddColumn("TotalBEReqt", "To achieve Minimum Build");
+                    model.AddColumn("TotalBIReqt", "To achieve Priority Build");
+                    model.AddColumn("TotalBTReqt", "To achieve Ideal Build");
+                    model.AddColumn("Supplier", "Supplier");
+                    model.AddColumn("SupplierName", "Supplier Name");
+
                     var row = model.AddRow(partEntryRow.PartNumber);
 
-                    model.SetGridTextValue(row.RowIndex, model.ColumnIndex("PartNumber"), partEntryRow.PartNumber);
                     model.SetGridTextValue(row.RowIndex, model.ColumnIndex("Description"), partEntryRow.Description);
                     model.SetGridTextValue(row.RowIndex, model.ColumnIndex("QtyAvailable"), partEntryRow.QtyAvailable.ToString());
                     model.SetGridTextValue(row.RowIndex, model.ColumnIndex("TotalWOReqt"), partEntryRow.TotalWoReqt.ToString());
@@ -114,9 +117,33 @@
                     model.SetGridTextValue(row.RowIndex, model.ColumnIndex("TotalBTReqt"), partEntryRow.TotalBtReqt.ToString());
                     model.SetGridTextValue(row.RowIndex, model.ColumnIndex("Supplier"), partEntryRow.PreferredSupplier.ToString());
                     model.SetGridTextValue(row.RowIndex, model.ColumnIndex("SupplierName"), partEntryRow.SupplierName);
-                }
 
-                returnResults.Add(model);
+                    returnResults.Add(model);
+
+                    var expectedDeliveriesModel = new ResultsModel
+                    {
+                        ReportTitle = new NameModel("Expected Deliveries")
+                    };
+                    expectedDeliveriesModel.AddColumn("OrderNumber", "Order Number");
+                    expectedDeliveriesModel.AddColumn("OrderLine", "Line");
+                    expectedDeliveriesModel.AddColumn("DeliverySeq", "Del");
+                    expectedDeliveriesModel.AddColumn("RequestedDate", "Requested");
+                    expectedDeliveriesModel.AddColumn("AdvisedDate", "Advised");
+
+
+                    foreach (var deliveryRow in shortagesForPlanner.Where(x => x.PartNumber == partEntryRow.PartNumber))
+                    {
+                        var expectedDeliveryRow = expectedDeliveriesModel.AddRow($"{deliveryRow.OrderNumber}/{deliveryRow.OrderNumber}/{deliveryRow.OrderLine}/{deliveryRow.DeliverySeq}");
+
+                        expectedDeliveriesModel.SetGridTextValue(expectedDeliveryRow.RowIndex, expectedDeliveriesModel.ColumnIndex("OrderNumber"), deliveryRow.OrderNumber.ToString());
+                        expectedDeliveriesModel.SetGridTextValue(expectedDeliveryRow.RowIndex, expectedDeliveriesModel.ColumnIndex("OrderLine"), deliveryRow.OrderLine.ToString());
+                        expectedDeliveriesModel.SetGridTextValue(expectedDeliveryRow.RowIndex, expectedDeliveriesModel.ColumnIndex("DeliverySeq"), deliveryRow.DeliverySeq.ToString()); 
+                        expectedDeliveriesModel.SetGridTextValue(expectedDeliveryRow.RowIndex, expectedDeliveriesModel.ColumnIndex("RequestedDate"), deliveryRow.RequestedDate.ToString());
+                        expectedDeliveriesModel.SetGridTextValue(expectedDeliveryRow.RowIndex, expectedDeliveriesModel.ColumnIndex("AdvisedDate"), deliveryRow.AdvisedDate.ToString());
+                    }
+
+                    returnResults.Add(expectedDeliveriesModel);
+                }
             }
 
             return returnResults;
