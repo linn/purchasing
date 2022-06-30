@@ -16,7 +16,7 @@ function ShortagesPlannerReport() {
     const dispatch = useDispatch();
 
     const handleBackClick = () => {
-        const uri = `/purchasing/reports/shortages/`;
+        const uri = '/purchasing/reports/shortages/';
         history.push(uri);
     };
 

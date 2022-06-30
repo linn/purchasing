@@ -136,7 +136,6 @@
                     expectedDeliveriesModel.AddColumn("RequestedDate", "Requested");
                     expectedDeliveriesModel.AddColumn("AdvisedDate", "Advised");
 
-
                     foreach (var deliveryRow in shortagesForPlanner.Where(x => x.PartNumber == partEntryRow.PartNumber))
                     {
                         var expectedDeliveryRow = expectedDeliveriesModel.AddRow($"{deliveryRow.OrderNumber}/{deliveryRow.OrderNumber}/{deliveryRow.OrderLine}/{deliveryRow.DeliverySeq}");
