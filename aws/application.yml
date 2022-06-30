@@ -49,6 +49,12 @@ Parameters:
   pdfServiceRoot:
     Type: String
     Description: Pdf Service API root url  
+  htmlToPdfApiConversionEndpoint:
+    Type: String
+    Description: html to pdf service API url
+  viewsRoot:
+    Type: String
+    Description: path to the views folder 
   environmentSuffix:
     Type: String
     AllowedValues:
@@ -161,6 +167,10 @@ Resources:
           Value: !Ref smtpHostname
         - Name: PDF_SERVICE_ROOT
           Value: !Ref pdfServiceRoot
+        - Name: HTML_TO_PDF_API_CONVERSION_ENDPOINT
+          Value: !Ref htmlToPdfApiConversionEndpoint        
+        - Name: VIEWS_ROOT
+          Value: !Ref viewsRoot
         - Name: awsRegion
           Value: !Ref AWS::Region
         - Name: KEYS_BUCKET_NAME
