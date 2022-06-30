@@ -74,12 +74,6 @@
                     "Cannot authorise a req that is not in state 'AUTHORISE WAIT'. Please make sure the req is saved in this state and try again");
             }
 
-            if (stage == "AUTH2" && entity.State != "AUTHORISE 2ND WAIT")
-            {
-                throw new UnauthorisedActionException(
-                    "Cannot 2nd authorise a req that is not in state 'AUTHORISE 2ND WAIT'. Please make sure the req is saved in this state and try again");
-            }
-
             if (!entity.TotalReqPrice.HasValue)
             {
                 throw new ArgumentException("Cannot authorise a req that has no value");
