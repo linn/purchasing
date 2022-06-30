@@ -2,13 +2,11 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
-    using System.Text;
 
+    using Linn.Common.Configuration;
     using Linn.Common.Facade;
-    using Linn.Common.Pdf;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Parts;
@@ -50,7 +48,7 @@
         {
             var order = this.orderRepository.FindById(orderNumber);
 
-            var result = this.razorTemplateEngine.Render(order, "..\\app\\views\\PurchaseOrder.cshtml");
+            var result = this.razorTemplateEngine.Render(order, $"{ConfigurationManager.Configuration["VIEWS_ROOT"]}PurchaseOrder.cshtml");
             return result.Result;
         }
 
@@ -58,7 +56,7 @@
         {
             var order = this.orderRepository.FindById(orderNumber);
 
-            var result = this.razorTemplateEngine.Render(order, "..\\app\\views\\PurchaseOrder.cshtml");
+            var result = this.razorTemplateEngine.Render(order, $"{ConfigurationManager.Configuration["VIEWS_ROOT"]}PurchaseOrder.cshtml");
 
             var emailResult = this.domainService.SendPdfEmail(result.Result, emailAddress, orderNumber, bcc, currentUserId, order);
 
