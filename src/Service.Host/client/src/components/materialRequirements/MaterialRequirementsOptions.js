@@ -38,6 +38,8 @@ function MaterialRequirementsOptions() {
     const [supplier, setSupplier] = useState(null);
     const [message, setMessage] = useState(null);
     const [partSelector, setPartSelector] = useState('Select Parts');
+    const [stockCategoryName, setStockCategoryName] = useState(null);
+    const [partNumberList, setPartNumberList] = useState(null);
     const [stockLevelSelector, setStockLevelSelector] = useState('All');
     const [orderBySelector, setOrderBySelector] = useState('supplier/part');
     const mrMaster = useSelector(state => itemSelectorHelpers.getItem(state.mrMaster));
@@ -86,6 +88,9 @@ function MaterialRequirementsOptions() {
         },
         [parts]
     );
+
+    const handleStockCategoryChange = (_, newValue) => setStockCategoryName(newValue);
+    const handlePartNumberListChange = (_, newValue) => setPartNumberList(newValue);
 
     const removeFromParts = partToRemove => {
         setParts(parts.filter(p => p.id !== partToRemove));
@@ -163,7 +168,9 @@ function MaterialRequirementsOptions() {
             partNumbers: parts.map(p => p.id),
             supplierId: supplier?.id,
             stockLevelSelector,
-            orderBySelector
+            orderBySelector,
+            partNumberList,
+            stockCategoryName
         };
         history.push('/purchasing/material-requirements/report', body);
     };
@@ -202,6 +209,14 @@ function MaterialRequirementsOptions() {
         }
 
         if (tag === 'supplier' && !supplier?.id) {
+            return true;
+        }
+
+        if (tag === 'part number list' && !partNumberList) {
+            return true;
+        }
+
+        if (tag === 'stock category name' && !stockCategoryName) {
             return true;
         }
 
@@ -249,7 +264,7 @@ function MaterialRequirementsOptions() {
                 </Grid>
                 {getOptionTag(mrReportOptions?.partSelectorOptions, partSelector) === 'parts' && (
                     <>
-                        <Grid item xs={6}>
+                        <Grid item xs={5}>
                             <Typeahead
                                 label="Select Part (with <Return> or search using icon)"
                                 title="Search for a part"
@@ -268,7 +283,7 @@ function MaterialRequirementsOptions() {
                                 handleReturnPress={handleTextFieldChange}
                             />
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={7}>
                             <Typography variant="subtitle1">Selected Parts</Typography>
                             <DataGrid
                                 rows={parts}
@@ -285,7 +300,7 @@ function MaterialRequirementsOptions() {
                         </Grid>
                     </>
                 )}
-                <Grid item xs={12}>
+                <Grid item xs={5}>
                     <Dropdown
                         propertyName="Stock Level Options"
                         label="Stock Level Options"
@@ -299,6 +314,27 @@ function MaterialRequirementsOptions() {
                         optionsLoading={mrReportOptionsLoading}
                         onChange={(_, value) => setStockLevelSelector(value)}
                     />
+                </Grid>
+                <Grid item xs={3}>
+                    <InputField
+                        propertyName="stockCategory"
+                        value={stockCategoryName}
+                        label="Stock Category"
+                        type="text"
+                        onChange={handleStockCategoryChange}
+                    />
+                </Grid>
+                <Grid item xs={4}>
+                    {getOptionTag(mrReportOptions?.partSelectorOptions, partSelector) ===
+                        'part number list' && (
+                        <InputField
+                            propertyName="partNumberList"
+                            value={partNumberList}
+                            label="Part Number List"
+                            type="text"
+                            onChange={handlePartNumberListChange}
+                        />
+                    )}
                 </Grid>
                 <Grid item xs={12}>
                     <Dropdown

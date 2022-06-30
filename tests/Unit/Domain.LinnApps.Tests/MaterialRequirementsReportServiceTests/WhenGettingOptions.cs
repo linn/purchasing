@@ -34,14 +34,16 @@
         [Test]
         public void ShouldReturnPartSelectorOptions()
         {
-            this.result.PartSelectorOptions.Should().HaveCount(7);
+            this.result.PartSelectorOptions.Should().HaveCount(9);
             this.result.PartSelectorOptions.First(a => a.DisplaySequence == 0).Option.Should().Be("Select Parts");
             this.result.PartSelectorOptions.First(a => a.DisplaySequence == 1).Option.Should().Be("Parts Used On");
             this.result.PartSelectorOptions.First(a => a.DisplaySequence == 2).Option.Should().Be("Assemblies Used On");
             this.result.PartSelectorOptions.First(a => a.DisplaySequence == 3).Option.Should().Be("Parts Where Used");
             this.result.PartSelectorOptions.First(a => a.DisplaySequence == 4).Option.Should().Be("Supplier");
-            this.result.PartSelectorOptions.First(a => a.DisplaySequence == 5).Option.Should().Be("Planner3");
-            this.result.PartSelectorOptions.First(a => a.DisplaySequence == 6).Option.Should().Be("Planner1");
+            this.result.PartSelectorOptions.First(a => a.DisplaySequence == 5).Option.Should().Be("Part Number List");
+            this.result.PartSelectorOptions.First(a => a.DisplaySequence == 6).Option.Should().Be("Stock Category Name");
+            this.result.PartSelectorOptions.First(a => a.DisplaySequence == 7).Option.Should().Be("Planner3");
+            this.result.PartSelectorOptions.First(a => a.DisplaySequence == 8).Option.Should().Be("Planner1");
         }
 
         [Test]

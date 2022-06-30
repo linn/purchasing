@@ -55,7 +55,17 @@
                                                                               "Supplier",
                                                                               "Selected Supplier",
                                                                               4,
-                                                                              "supplier")
+                                                                              "supplier"),
+                                                                          new ReportOption(
+                                                                              "Part Number List",
+                                                                              "Part Number List",
+                                                                              5,
+                                                                              "part number list"),
+                                                                          new ReportOption(
+                                                                              "Stock Category Name",
+                                                                              "Stock Category",
+                                                                              6,
+                                                                              "stock category name")
                                                                       };
 
         public MaterialRequirementsReportService(
@@ -112,7 +122,7 @@
                 throw new InvalidOptionException("You must supply a part number list name");
             }
 
-            if (partSelector == "Stock Category" && string.IsNullOrEmpty(stockCategoryName))
+            if (partSelector == "Stock Category Name" && string.IsNullOrEmpty(stockCategoryName))
             {
                 throw new InvalidOptionException("You must supply a stock category name");
             }
@@ -146,9 +156,9 @@
             {
                 this.filterQuery = a => a.JobRef == jobRef && a.PreferredSupplierId == supplierId;
             }
-            else if (partSelector == "Stock Category")
+            else if (partSelector == "Stock Category Name")
             {
-                this.filterQuery = a => a.JobRef == jobRef && a.StockCategoryName == stockCategoryName;
+                this.filterQuery = a => a.JobRef == jobRef && a.StockCategoryName.ToUpper() == stockCategoryName.ToUpper();
             }
             else
             {
@@ -273,7 +283,7 @@
                 this.partSelectorOptions.Add(new ReportOption($"Planner{planner.Id}", $"{employee.FullName}'s Suppliers", null, "planner"));
             }
 
-            var displaySequence = 5;
+            var displaySequence = 7;
             foreach (var partSelectorOption in partSelectorOptions.Where(a => a.DisplaySequence is null).OrderBy(b => b.DisplayText))
             {
                 partSelectorOption.DisplaySequence = displaySequence++;
@@ -355,7 +365,12 @@
         {
             var list = this.partNumberListRepository.FindById(partNumberList.ToUpper());
 
-            return list.Elements.OrderBy(a => a.SortOrder).Select(a => a.PartNumber);
+            if (list != null && list.Elements.Any())
+            {
+                return list.Elements.OrderBy(a => a.SortOrder).Select(a => a.PartNumber);
+            }
+
+            return Enumerable.Empty<string>();
         }
     }
 }
