@@ -233,6 +233,11 @@ export const shortagesReportActionTypes = makeActionTypes(
     false
 );
 
+export const shortagesPlannerReportActionTypes = makeActionTypes(
+    reportTypes.shortagesPlannerReport.actionType,
+    false
+);
+
 export const mrOrderBookReportActionTypes = makeActionTypes(
     reportTypes.mrOrderBookReport.actionType,
     false

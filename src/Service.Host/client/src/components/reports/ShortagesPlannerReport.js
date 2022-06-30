@@ -4,26 +4,25 @@ import Grid from '@mui/material/Grid';
 import { useSelector, useDispatch } from 'react-redux';
 import queryString from 'query-string';
 import history from '../../history';
-import { shortagesReport } from '../../reportTypes';
-import shortagesReportActions from '../../actions/shortagesReportActions';
+import shortagesPlannerReportActions from '../../actions/shortagesPlannerReportActions';
+import { shortagesPlannerReport } from '../../reportTypes';
 
-function ShortagesReport() {
+function ShortagesPlannerReport() {
     const options = useMemo(() => queryString.parse(window.location.search) || {}, []);
 
-    const loading = useSelector(state => state[shortagesReport.item]?.results.loading);
+    const loading = useSelector(state => state[shortagesPlannerReport.item]?.results.loading);
 
-    const reportData = useSelector(state => state[shortagesReport.item]?.results.data);
-
+    const reportData = useSelector(state => state[shortagesPlannerReport.item]?.results.data);
     const dispatch = useDispatch();
 
     const handleBackClick = () => {
-        const uri = `/purchasing/reports/shortages/`;
+        const uri = '/purchasing/reports/shortages/';
         history.push(uri);
     };
 
     useEffect(() => {
         if (options) {
-            dispatch(shortagesReportActions.fetchReport(options));
+            dispatch(shortagesPlannerReportActions.fetchReport(options));
         }
     }, [options, dispatch]);
 
@@ -41,8 +40,9 @@ function ShortagesReport() {
                             <MultiReportTable
                                 reportData={reportData}
                                 showTitle
-                                showTotals
-                                placeholderRows={4}
+                                showRowTitles={false}
+                                showTotals={false}
+                                placeholderRows={10}
                                 placeholderColumns={4}
                             />
                         )
@@ -53,10 +53,10 @@ function ShortagesReport() {
     );
 }
 
-ShortagesReport.defaultProps = {
+ShortagesPlannerReport.defaultProps = {
     reportData: {},
     options: {},
     loading: false
 };
 
-export default ShortagesReport;
+export default ShortagesPlannerReport;

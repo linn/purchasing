@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Integration.Tests.ShortagesReportModuleTests
+﻿namespace Linn.Purchasing.Integration.Tests.ShortagesPlannerReportModuleTests
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -18,27 +18,22 @@
     {
         private IEnumerable<ResultsModel> results;
 
-        private int purchaseLevel;
-
-        private string vendorManager;
+        private int planner;
 
         private string reportTitle;
 
         [SetUp]
         public void SetUp()
         {
-            this.purchaseLevel = 3;
-            this.vendorManager = "ALL";
+            this.planner = 5003;
             this.reportTitle = "Test Shortages Report";
 
             this.results = new List<ResultsModel> { new ResultsModel() { ReportTitle = new NameModel(this.reportTitle) } };
-            this.MockDomainService.GetShortagesReport(
-                this.purchaseLevel,
-                this.vendorManager).Returns(this.results);
-
+            this.MockDomainService.GetShortagesPlannerReport(
+                this.planner).Returns(this.results);
             this.Response = this.Client.Get(
-                $"/purchasing/reports/shortages/report?" 
-                + $"purchaseLevel={this.purchaseLevel}&vendorManager={this.vendorManager}",
+                $"/purchasing/reports/shortages-planner/report?" 
+                + $"planner={this.planner}",
                 with => { with.Accept("application/json"); }).Result;
         }
 
@@ -51,9 +46,7 @@
         [Test]
         public void ShouldPassCorrectOptionsToDomainService()
         {
-            this.MockDomainService.Received().GetShortagesReport(
-                this.purchaseLevel,
-                this.vendorManager);
+            this.MockDomainService.Received().GetShortagesPlannerReport(this.planner);
         }
 
         [Test]

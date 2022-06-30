@@ -53,6 +53,7 @@ import MaterialRequirementsReport from './materialRequirements/MaterialRequireme
 import PurchaseOrderPrintout from './PurchaseOrders/PurchaseOrderPrintout';
 import ShortagesReport from './reports/ShortagesReport';
 import ShortagesReportOptions from './reports/ShortagesReportOptions';
+import ShortagesPlannerReport from './reports/ShortagesPlannerReport';
 import MrOrderBookReport from './reports/MrOrderBookReport';
 
 const Root = ({ store }) => (
@@ -305,6 +306,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/reports/shortages/report"
                                     component={ShortagesReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/shortages-planner/report"
+                                    component={ShortagesPlannerReport}
                                 />
                                 <Route
                                     exact

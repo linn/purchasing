@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.ShortagesReportTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.ShortagesPlannerReportTests
 {
     using System;
     using System.Collections.Generic;
@@ -22,117 +22,139 @@
 
         protected IQueryRepository<ShortagesPlannerEntry> ShortagesPlannerRepository { get; private set; }
 
-        protected IEnumerable<ShortagesEntry> Data { get; private set; }
+        protected IEnumerable<ShortagesPlannerEntry> Data { get; private set; }
 
         protected IReportingHelper ReportingHelper { get; private set; }
 
         [SetUp]
         public void SetUpContext()
         {
-            this.Data = new List<ShortagesEntry>
+            this.Data = new List<ShortagesPlannerEntry>
                             {
-                                new ShortagesEntry()
+                                new ShortagesPlannerEntry()
                                     {
                                         VendorManagerName = "Test VM L",
                                         PartNumber = "Test Part",
-                                        PlannerName = "Test Planner",
                                         VendorManagerCode = "L",
                                         Planner = 1,
-                                        PurchaseLevel = 1
-                                    },
-                                new ShortagesEntry()
+                                        PurchaseLevel = "1",
+                                        OrderNumber = 12345,
+                                        OrderLine = 1,
+                                        DeliverySeq = 1
+        },
+                                new ShortagesPlannerEntry()
                                     {
                                         VendorManagerName = "Test VM L",
                                         PartNumber = "Test Part",
-                                        PlannerName = "Test Planner",
                                         VendorManagerCode = "L",
                                         Planner = 1,
-                                        PurchaseLevel = 1
+                                        PurchaseLevel = "1",
+                                        OrderNumber = 4567,
+                                        OrderLine = 1,
+                                        DeliverySeq = 1
                                     },
-                                new ShortagesEntry()
+                                new ShortagesPlannerEntry()
                                     {
                                         VendorManagerName = "Test VM M",
                                         PartNumber = "Test Part",
-                                        PlannerName = "Test Planner",
                                         VendorManagerCode = "M",
                                         Planner = 1,
-                                        PurchaseLevel = 1
+                                        PurchaseLevel = "1",
+                                        OrderNumber = 89012,
+                                        OrderLine = 1,
+                                        DeliverySeq = 1
                                     },
-                                new ShortagesEntry()
+                                new ShortagesPlannerEntry()
                                     {
                                         VendorManagerName = "Test VM M",
                                         PartNumber = "Test Part",
-                                        PlannerName = "Test Planner",
                                         VendorManagerCode = "M",
                                         Planner = 1,
-                                        PurchaseLevel = 2
+                                        PurchaseLevel = "2",
+                                        OrderNumber = 21345,
+                                        OrderLine = 1,
+                                        DeliverySeq = 1
                                     },
-                                new ShortagesEntry()
+                                new ShortagesPlannerEntry()
                                     {
                                         VendorManagerName = "Test VM M",
                                         PartNumber = "Test Part",
-                                        PlannerName = "Test Planner",
                                         VendorManagerCode = "M",
                                         Planner = 1,
-                                        PurchaseLevel = 2
+                                        PurchaseLevel = "2",
+                                        OrderNumber = 87453,
+                                        OrderLine = 1,
+                                        DeliverySeq = 1
                                     },
-                                new ShortagesEntry()
+                                new ShortagesPlannerEntry()
                                     {
                                         VendorManagerName = "Test VM L",
                                         PartNumber = "Test Part",
-                                        PlannerName = "Test Planner",
                                         VendorManagerCode = "L",
                                         Planner = 1,
-                                        PurchaseLevel = 2
+                                        PurchaseLevel = "2",
+                                        OrderNumber = 45367,
+                                        OrderLine = 1,
+                                        DeliverySeq = 1
                                     },
-                                new ShortagesEntry()
+                                new ShortagesPlannerEntry()
                                     {
                                         VendorManagerName = "Test VM L",
                                         PartNumber = "Second Test Part",
-                                        PlannerName = "Second Test Planner",
                                         VendorManagerCode = "L",
                                         Planner = 1,
-                                        PurchaseLevel = 1
+                                        PurchaseLevel = "1",
+                                        OrderNumber = 3453412,
+                                        OrderLine = 1,
+                                        DeliverySeq = 1
                                     },
-                                new ShortagesEntry()
+                                new ShortagesPlannerEntry()
                                     {
                                         VendorManagerName = "Test VM L",
                                         PartNumber = "Second Test Part",
-                                        PlannerName = "Second Test Planner",
                                         VendorManagerCode = "L",
                                         Planner = 1,
-                                        PurchaseLevel = 1
+                                        PurchaseLevel = "1",
+                                        OrderNumber = 2135678,
+                                        OrderLine = 1,
+                                        DeliverySeq = 1
                                     },
-                                new ShortagesEntry()
+                                new ShortagesPlannerEntry()
                                     {
                                         VendorManagerName = "Test VM T",
                                         PartNumber = "Second Test Part",
-                                        PlannerName = "Second Test Planner",
                                         VendorManagerCode = "T",
                                         Planner = 1,
-                                        PurchaseLevel = 1
+                                        PurchaseLevel = "1",
+                                        OrderNumber = 786534,
+                                        OrderLine = 1,
+                                        DeliverySeq = 1
                                     },
-                                new ShortagesEntry()
+                                new ShortagesPlannerEntry()
                                     {
                                         VendorManagerName = "Test VM T",
                                         PartNumber = "Third Test Part",
-                                        PlannerName = "Second Test Planner",
                                         VendorManagerCode = "T",
                                         Planner = 1,
-                                        PurchaseLevel = 3
+                                        PurchaseLevel = "3",
+                                        OrderNumber = 89764,
+                                        OrderLine = 1,
+                                        DeliverySeq = 1
                                     },
-                                new ShortagesEntry()
+                                new ShortagesPlannerEntry()
                                     {
                                         VendorManagerName = "Test VM T",
                                         PartNumber = "Fourth Test Part",
-                                        PlannerName = "Second Test Planner",
                                         VendorManagerCode = "T",
                                         Planner = 1,
-                                        PurchaseLevel = 3
+                                        PurchaseLevel = "3",
+                                        OrderNumber = 456809,
+                                        OrderLine = 1,
+                                        DeliverySeq = 1
                                     }
                             };
-            this.ShortagesRepository = Substitute.For<IQueryRepository<ShortagesEntry>>();
-            this.ShortagesRepository.FilterBy(Arg.Any<Expression<Func<ShortagesEntry, bool>>>())
+            this.ShortagesPlannerRepository = Substitute.For<IQueryRepository<ShortagesPlannerEntry>>();
+            this.ShortagesPlannerRepository.FilterBy(Arg.Any<Expression<Func<ShortagesPlannerEntry, bool>>>())
                 .Returns(this.Data.AsQueryable());
 
             var reportingHelper = new ReportingHelper();

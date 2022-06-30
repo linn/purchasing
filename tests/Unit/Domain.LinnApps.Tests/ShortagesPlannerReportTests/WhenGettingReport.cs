@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.ShortagesReportTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.ShortagesPlannerReportTests
 {
     using System;
     using System.Collections.Generic;
@@ -21,24 +21,22 @@
         [SetUp]
         public void SetUp()
         {
-            this.results = this.Sut.GetShortagesReport(3, "ALL");
+            this.results = this.Sut.GetShortagesPlannerReport(1);
         }
 
 
         [Test]
         public void ShouldGetData()
         {
-            this.ShortagesRepository.Received().FilterBy(Arg.Any<Expression<Func<ShortagesEntry, bool>>>());
+            this.ShortagesPlannerRepository.Received().FilterBy(Arg.Any<Expression<Func<ShortagesPlannerEntry, bool>>>());
         }
 
         [Test]
         public void ShouldReturnData()
         {
-            this.results.Should().HaveCount(2);
+            this.results.Should().HaveCount(13);
             var firstPlanner = this.results.First();
-            firstPlanner.ReportTitle.DisplayValue.Should().Be("Test Planner");
-            var secondPlanner = this.results.ElementAtOrDefault(1);
-            secondPlanner.ReportTitle.DisplayValue.Should().Be("Second Test Planner");
+            firstPlanner.ReportTitle.DisplayValue.Should().Be("Purchasing danger parts for planner 1. Purchase Danger Level 1");
         }
     }
 }
