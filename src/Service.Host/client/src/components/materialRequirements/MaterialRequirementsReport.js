@@ -79,14 +79,29 @@ function MaterialRequirementsReport() {
             dispatch(mrReportActions.postByHref(mrReportItem.uri, options.state));
         } else if (options && options.search) {
             const query = queryString.parse(options.search);
-            dispatch(
-                mrReportActions.postByHref(mrReportItem.uri, {
-                    partNumber: query?.partNumber,
-                    jobRef: query?.jobRef,
-                    typeOfReport: 'MR',
-                    partSelector: 'Select Parts'
-                })
-            );
+            if (query.partNumber) {
+                dispatch(
+                    mrReportActions.postByHref(mrReportItem.uri, {
+                        partNumber: query.partNumber,
+                        jobRef: query.jobRef,
+                        typeOfReport: 'MR',
+                        partSelector: 'Select Parts',
+                        supplierId: query.supplierId,
+                        stockCategoryName: query.stockCategoryName
+                    })
+                );
+            } else if (query.partNumberList) {
+                dispatch(
+                    mrReportActions.postByHref(mrReportItem.uri, {
+                        partNumberList: query.partNumberList,
+                        jobRef: query.jobRef,
+                        typeOfReport: 'MR',
+                        partSelector: 'Part Number List',
+                        supplierId: query.supplierId,
+                        stockCategoryName: query.stockCategoryName
+                    })
+                );
+            }
         } else {
             history.push('/purchasing/material-requirements');
         }
@@ -683,9 +698,15 @@ function MaterialRequirementsReport() {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Stack direction="row" spacing={2}>
-                                        <Typography variant="body2">
-                                            Stock: {selectedItem.quantityInStock}
-                                        </Typography>
+                                        <Typography variant="body2">Stock:</Typography>
+                                        <Link
+                                            href={utilities.getHref(selectedItem, 'view-stock')}
+                                            underline="hover"
+                                            color="inherit"
+                                            variant="body2"
+                                        >
+                                            {selectedItem.quantityInStock}
+                                        </Link>
                                         <Typography variant="body2">
                                             For Spares: {selectedItem.quantityForSpares}
                                         </Typography>

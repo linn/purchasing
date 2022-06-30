@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Linn.Common.Facade" Version="9.1.1" />
+    <PackageReference Include="Linn.Common.Facade" Version="9.1.2" />
     <PackageReference Include="Linn.Common.Logging" Version="2.0.0" />
     <PackageReference Include="linn.common.persistence" Version="3.0.0" />
     <PackageReference Include="Linn.Common.Proxy.LinnApps" Version="3.0.0" />

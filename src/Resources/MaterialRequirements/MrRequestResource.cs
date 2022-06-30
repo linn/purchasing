@@ -12,10 +12,18 @@
 
         public string StockLevelSelector { get; set; }
 
+        public string PartOption { get; set; }
+
         public string OrderBySelector { get; set; }
 
         public IEnumerable<string> PartNumbers { get; set; }
 
         public string PartNumber { get; set; }
+
+        public int? SupplierId { get; set; }
+
+        public string PartNumberList { get; set; }
+
+        public string StockCategoryName { get; set; }
     }
 }

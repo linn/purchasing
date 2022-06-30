@@ -34,7 +34,12 @@
                                            PartSelector = "Select Parts",
                                            PartNumber = null,
                                            PartNumbers = new List<string> { "A", "B" },
-                                           StockLevelSelector = "0-4"
+                                           StockLevelSelector = "0-4",
+                                           PartOption = "CAP",
+                                           SupplierId = 213,
+                                           PartNumberList = "PNL",
+                                           StockCategoryName = "STC",
+                                           OrderBySelector = "Part"
                                        };
             this.privileges = new List<string>();
 
@@ -43,8 +48,12 @@
                     this.requestResource.TypeOfReport,
                     this.requestResource.PartSelector,
                     this.requestResource.StockLevelSelector,
+                    this.requestResource.PartOption,
                     this.requestResource.OrderBySelector,
-                    Arg.Is<IList<string>>(a => a.Contains("A") && a.Contains("B")))
+                    this.requestResource.SupplierId,
+                    Arg.Is<IList<string>>(a => a.Contains("A") && a.Contains("B")),
+                    this.requestResource.PartNumberList,
+                    this.requestResource.StockCategoryName)
                 .Returns(
                     new MrReport
                         {
@@ -65,8 +74,12 @@
                 this.requestResource.TypeOfReport,
                 this.requestResource.PartSelector,
                 this.requestResource.StockLevelSelector,
+                this.requestResource.PartOption,
                 this.requestResource.OrderBySelector,
-                Arg.Is<IList<string>>(a => a.Contains("A") && a.Contains("B")));
+                this.requestResource.SupplierId,
+                Arg.Is<IList<string>>(a => a.Contains("A") && a.Contains("B")),
+                this.requestResource.PartNumberList,
+                this.requestResource.StockCategoryName);
         }
 
         [Test]

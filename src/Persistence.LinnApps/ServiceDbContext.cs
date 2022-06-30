@@ -149,6 +149,8 @@
 
         public DbSet<ShortagesPlannerEntry> ShortagesPlannerEntries { get; set; }
 
+        public DbSet<PartNumberList> PartNumberLists { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -230,6 +232,8 @@
             this.BuildShortagesPlannerView(builder);
             this.BuildPartAndAssemblyView(builder);
             this.BuildPurchaseOrderDeliveryHistories(builder);
+            this.BuildPartNumberLists(builder);
+            this.BuildPartNumberListElements(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1297,19 +1301,19 @@
             entity.Property(e => e.MinimumOrderQuantity).HasColumnName("MINIMUM_ORDER_QTY");
             entity.Property(e => e.MinimumDeliveryQuantity).HasColumnName("MINIMUM_DELIVERY_QTY");
             entity.Property(e => e.OrderIncrement).HasColumnName("ORDER_INCREMENT");
-            entity.Property(e => e.HasPurchaseOrders).HasColumnName("HAS_PURCH_ORDERS");
-            entity.Property(e => e.HasAssumedPurchaseOrders).HasColumnName("HAS_ASSUMED_PURCH_ORDERS");
-            entity.Property(e => e.HasUnauthPurchaseOrders).HasColumnName("HAS_UNAUTH_PURCH_ORDERS");
-            entity.Property(e => e.HasTriggerBuild).HasColumnName("HAS_TRIGGER_BUILD");
-            entity.Property(e => e.HasProductionRequirement).HasColumnName("HAS_PRODUCTION_REQT");
-            entity.Property(e => e.HasNonProductionRequirement).HasColumnName("HAS_NON_PRODUCTION_REQT");
-            entity.Property(e => e.HasDeliveryForecast).HasColumnName("HAS_DELIVERY_FORECAST");
-            entity.Property(e => e.HasAssumedBuild).HasColumnName("HAS_ASSUMED_BUILD");
-            entity.Property(e => e.HasFixedBuild).HasColumnName("HAS_FIXED_BUILD");
-            entity.Property(e => e.HasSparesRequirement).HasColumnName("HAS_SPARES_REQT");
-            entity.Property(e => e.HasProductionRequirementForSpares).HasColumnName("HAS_PROD_REQT_FOR_SPARES");
-            entity.Property(e => e.HasProductionRequirementForNonProduction).HasColumnName("HAS_PROD_REQT_FOR_NONPROD");
-            entity.Property(e => e.HasSalesOrders).HasColumnName("HAS_SALES_ORDERS");
+            entity.Property(e => e.HasPurchaseOrders).HasColumnName("HAS_PURCH_ORDERS").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasAssumedPurchaseOrders).HasColumnName("HAS_ASSUMED_PURCH_ORDERS").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasUnauthPurchaseOrders).HasColumnName("HAS_UNAUTH_PURCH_ORDERS").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasTriggerBuild).HasColumnName("HAS_TRIGGER_BUILD").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasProductionRequirement).HasColumnName("HAS_PRODUCTION_REQT").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasNonProductionRequirement).HasColumnName("HAS_NON_PRODUCTION_REQT").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasDeliveryForecast).HasColumnName("HAS_DELIVERY_FORECAST").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasAssumedBuild).HasColumnName("HAS_ASSUMED_BUILD").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasFixedBuild).HasColumnName("HAS_FIXED_BUILD").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasSparesRequirement).HasColumnName("HAS_SPARES_REQT").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasProductionRequirementForSpares).HasColumnName("HAS_PROD_REQT_FOR_SPARES").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasProductionRequirementForNonProduction).HasColumnName("HAS_PROD_REQT_FOR_NONPROD").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasSalesOrders).HasColumnName("HAS_SALES_ORDERS").HasColumnType("VARCHAR2").HasMaxLength(1);
             entity.Property(e => e.VendorManager).HasColumnName("VENDOR_MANAGER").HasColumnType("VARCHAR2");
             entity.Property(e => e.VendorManagerInitials).HasColumnName("VM_INITIALS");
             entity.Property(e => e.PartId).HasColumnName("PART_ID");
@@ -1317,6 +1321,11 @@
             entity.Property(e => e.DangerLevel).HasColumnName("DANGER_LEVEL");
             entity.Property(e => e.WeeksUntilDangerous).HasColumnName("WEEKS_UNTIL_DANGEROUS");
             entity.Property(e => e.MrComments).HasColumnName("ACTION_COMMENTS").HasColumnType("VARCHAR2").HasMaxLength(200);
+            entity.Property(e => e.LatePurchaseOrders).HasColumnName("LATE_PURCHASE_ORDERS");
+            entity.Property(e => e.HighStockWithOrders).HasColumnName("HIGH_WITH_ORDERS").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HighStockWithNoOrders).HasColumnName("HIGH_NO_ORDERS").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.HasUnacknowledgedPurchaseOrders).HasColumnName("HAS_UNACK_PURCH_ORDERS").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(e => e.StockCategoryName).HasColumnName("STOCK_CATEGORY_NAME").HasColumnType("VARCHAR2").HasMaxLength(20);
             entity.HasMany(s => s.MrDetails).WithOne().HasForeignKey(c => new { c.JobRef, c.PartNumber });
         }
 
@@ -1469,6 +1478,26 @@
             entity.Property(a => a.RequestedDate).HasColumnName("REQUESTED_DATE");
             entity.Property(a => a.AdvisedDate).HasColumnName("ADVISED_DATE");
             entity.Property(a => a.QtyOutstanding).HasColumnName("QTY_OUTSTANDING");
+
+        private void BuildPartNumberLists(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PartNumberList>().ToTable("PART_NUMBER_LISTS");
+            entity.HasKey(a => a.Name);
+            entity.Property(a => a.Name).HasColumnName("PNL_NAME").HasColumnType("VARCHAR2").HasMaxLength(20);
+            entity.Property(a => a.Description).HasColumnName("DESCRIPTION").HasMaxLength(50);
+            entity.Property(a => a.DateCreated).HasColumnName("DATE_CREATED");
+            entity.Property(a => a.TypeOfList).HasColumnName("TYPE_OF_LIST").HasColumnType("VARCHAR2").HasMaxLength(10);
+            entity.Property(a => a.Temporary).HasColumnName("TEMPORARY").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.HasMany(o => o.Elements).WithOne().HasForeignKey(d => d.ListName); 
+        }
+
+        private void BuildPartNumberListElements(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PartNumberListElement>().ToTable("PART_NUMBER_LIST_ELEMENTS");
+            entity.HasKey(a => new { a.ListName, a.PartNumber });
+            entity.Property(a => a.ListName).HasColumnName("PNL_NAME").HasColumnType("VARCHAR2").HasMaxLength(20);
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2").HasMaxLength(14);
+            entity.Property(a => a.SortOrder).HasColumnName("SORT_ORDER");
         }
     }
 }
