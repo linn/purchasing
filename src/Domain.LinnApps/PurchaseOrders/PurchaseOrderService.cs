@@ -118,7 +118,9 @@
             }
 
             this.UpdateOrderProperties(current, updated);
-            this.UpdateDetails(current.Details, updated.Details);
+            this.UpdateMiniOrder(updated);
+
+            //this.UpdateDetails(current.Details, updated.Details);
             // Update pl_order_postings? Or just on create? todo investigate
             return current;
         }
@@ -232,6 +234,14 @@
             current.DeliveryConfirmedBy = updated.DeliveryConfirmedBy;
             current.DeliveryConfirmedById = updated.DeliveryConfirmedById;
             current.InternalComments = updated.InternalComments;
+        }
+
+        private void UpdateMiniOrder(PurchaseOrder updatedOrder)
+        {
+            var miniOrder = this.miniOrderRepository.FindById(updatedOrder.OrderNumber);
+            miniOrder.SupplierId = updatedOrder.SupplierId;
+            //map supplierId onto mini order in servicedbcontext and mini order domain object
+            //(maybe along with others we'll need)
         }
     }
 }
