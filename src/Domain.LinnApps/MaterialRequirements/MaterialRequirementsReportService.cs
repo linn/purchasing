@@ -25,6 +25,8 @@
 
         private readonly IQueryRepository<PartAndAssembly> partsAndAssembliesRepository;
 
+        private readonly IRepository<PartNumberList, string> partNumberListRepository;
+
         private Expression<Func<MrHeader, bool>> filterQuery;
 
         private readonly List<ReportOption> partSelectorOptions = new List<ReportOption>
@@ -63,7 +65,8 @@
             IRepository<Planner, int> plannerRepository,
             IRepository<Employee, int> employeeRepository,
             IQueryRepository<MrPurchaseOrderDetail> purchaseOrdersRepository,
-            IQueryRepository<PartAndAssembly> partsAndAssembliesRepository)
+            IQueryRepository<PartAndAssembly> partsAndAssembliesRepository,
+            IRepository<PartNumberList, string> partNumberListRepository)
         {
             this.repository = repository;
             this.runLogRepository = runLogRepository;
@@ -72,6 +75,7 @@
             this.employeeRepository = employeeRepository;
             this.purchaseOrdersRepository = purchaseOrdersRepository;
             this.partsAndAssembliesRepository = partsAndAssembliesRepository;
+            this.partNumberListRepository = partNumberListRepository;
         }
 
         public MrReport GetMaterialRequirements(
@@ -83,6 +87,8 @@
             string orderBy,
             int? supplierId,
             IEnumerable<string> partNumbers,
+            string partNumberList,
+            string stockCategoryName,
             int reportSegment = 0)
         {
             if (string.IsNullOrEmpty(jobRef))
@@ -101,6 +107,16 @@
                 throw new InvalidOptionException("A supplier must be selected for this option");
             }
 
+            if (partSelector == "Part Number List" && string.IsNullOrEmpty(partNumberList))
+            {
+                throw new InvalidOptionException("You must supply a part number list name");
+            }
+
+            if (partSelector == "Stock Category" && string.IsNullOrEmpty(stockCategoryName))
+            {
+                throw new InvalidOptionException("You must supply a stock category name");
+            }
+
             var runLog = this.runLogRepository.FindBy(a => a.JobRef == jobRef);
 
             switch (partSelector)
@@ -116,7 +132,12 @@
                     break;
             }
 
-            if (this.GetPartSelectorDataTag(partSelector) == "planner")
+            if (!string.IsNullOrEmpty(partNumberList))
+            {
+                partNumbers = this.GetPartNumberListContents(partNumberList);
+            }
+
+            if (partSelector.StartsWith("Planner"))
             {
                 var planner = int.Parse(partSelector.Substring(7));
                 this.filterQuery = a => a.JobRef == jobRef && a.Planner == planner;
@@ -124,6 +145,10 @@
             else if (this.GetPartSelectorDataTag(partSelector) == "supplier")
             {
                 this.filterQuery = a => a.JobRef == jobRef && a.PreferredSupplierId == supplierId;
+            }
+            else if (partSelector == "Stock Category")
+            {
+                this.filterQuery = a => a.JobRef == jobRef && a.StockCategoryName == stockCategoryName;
             }
             else
             {
@@ -179,6 +204,11 @@
             if (supplierId > 0 && this.GetPartSelectorDataTag(partSelector) != "supplier")
             {
                 results = results.Where(a => a.PreferredSupplierId == supplierId);
+            }
+
+            if (!string.IsNullOrEmpty(stockCategoryName) && partSelector != "Stock Category")
+            {
+                results = results.Where(a => a.StockCategoryName == stockCategoryName);
             }
 
             results = orderBy switch
@@ -319,6 +349,13 @@
         {
             var option = this.partSelectorOptions.FirstOrDefault(a => a.Option == partSelector);
             return option?.DataTag;
+        }
+
+        private IEnumerable<string> GetPartNumberListContents(string partNumberList)
+        {
+            var list = this.partNumberListRepository.FindById(partNumberList.ToUpper());
+
+            return list.Elements.OrderBy(a => a.SortOrder).Select(a => a.PartNumber);
         }
     }
 }

@@ -41,7 +41,9 @@
                 request.PartOption,
                 request.OrderBySelector,
                 request.SupplierId,
-                parts);
+                parts,
+                request.PartNumberList,
+                request.StockCategoryName);
 
             return new SuccessResult<MrReportResource>((MrReportResource)this.builder.Build(report, privileges));
         }

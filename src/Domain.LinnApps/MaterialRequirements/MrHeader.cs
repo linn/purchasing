@@ -93,6 +93,7 @@
 
         public string HasUnacknowledgedPurchaseOrders { get; set; }
 
+        public string StockCategoryName { get; set; }
 
         public IEnumerable<MrDetail> MrDetails { get; set; }
     }

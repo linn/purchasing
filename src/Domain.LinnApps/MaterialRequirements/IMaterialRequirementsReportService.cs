@@ -13,6 +13,8 @@
             string orderBy,
             int? supplierId,
             IEnumerable<string> parts,
+            string partNumberList,
+            string stockCategoryName,
             int reportSegment = 0);
 
         MrReportOptions GetOptions();

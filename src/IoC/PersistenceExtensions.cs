@@ -135,7 +135,8 @@
                     r => new EntityFrameworkRepository<MiniOrderDelivery, MiniOrderDeliveryKey>(r.GetService<ServiceDbContext>()?.MiniOrdersDeliveries))
                 .AddTransient<IQueryRepository<ShortagesEntry>, EntityFrameworkQueryRepository<ShortagesEntry>>(
                     r => new EntityFrameworkQueryRepository<ShortagesEntry>(r.GetService<ServiceDbContext>()
-                        ?.ShortagesEntries));
+                        ?.ShortagesEntries))
+                .AddTransient<IRepository<PartNumberList, string>, PartNumberListRepository>();
         }
     }
 }

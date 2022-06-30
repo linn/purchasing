@@ -54,7 +54,9 @@
                 "RES",
                 "supplier/part",
                 null,
-                this.partNumbers);
+                this.partNumbers,
+                null,
+                null);
         }
 
         [Test]

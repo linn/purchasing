@@ -55,7 +55,9 @@
                 null,
                 "supplier/part",
                 this.supplierId,
-                this.partNumbers);
+                this.partNumbers,
+                null,
+                null);
         }
 
         [Test]

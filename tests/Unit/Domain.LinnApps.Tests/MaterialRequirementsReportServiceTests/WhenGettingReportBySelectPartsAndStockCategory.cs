@@ -13,7 +13,7 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingReportForLongLeadTime : ContextBase
+    public class WhenGettingReportBySelectPartsAndStockCategory : ContextBase
     {
         private string jobRef;
 
@@ -27,6 +27,8 @@
 
         private int runWeekNumber;
 
+        private string stockCategoryName;
+
         [SetUp]
         public void SetUp()
         {
@@ -34,38 +36,36 @@
             this.jobRef = "ABC";
             this.typeOfReport = "MR";
             this.partSelector = "Select Parts";
-            this.partNumbers = new List<string> { "P1", "P2", "P3" };
+            this.partNumbers = new List<string> { "P1", "P2" };
+            this.stockCategoryName = "SC2";
             this.MrMasterRecordRepository.GetRecord().Returns(new MrMaster { JobRef = this.jobRef });
             this.RunLogRepository.FindBy(Arg.Any<Expression<Func<MrpRunLog, bool>>>())
                 .Returns(new MrpRunLog { RunWeekNumber = this.runWeekNumber });
             this.MrHeaderRepository.FilterBy(Arg.Any<Expression<Func<MrHeader, bool>>>()).Returns(
                 new List<MrHeader>
                     {
-                        new MrHeader { PartNumber = "P1", LeadTimeWeeks = null },
-                        new MrHeader { PartNumber = "P2", LeadTimeWeeks = 1 },
-                        new MrHeader { PartNumber = "P3", LeadTimeWeeks = 25 },
-                        new MrHeader { PartNumber = "P4", LeadTimeWeeks = 0 },
-                        new MrHeader { PartNumber = "P5", LeadTimeWeeks = 26 }
+                        new MrHeader { PartNumber = "P1", StockCategoryName = this.stockCategoryName },
+                        new MrHeader { PartNumber = "P2" },
+                        new MrHeader { PartNumber = "P3", StockCategoryName = "other" }
                     }.AsQueryable());
             this.result = this.Sut.GetMaterialRequirements(
                 this.jobRef,
                 this.typeOfReport,
                 this.partSelector,
-                "All",
-                "Long Lead Time",
+                null,
+                null,
                 "supplier/part",
                 null,
                 this.partNumbers,
                 null,
-                null);
+                this.stockCategoryName);
         }
 
         [Test]
         public void ShouldReturnReport()
         {
-            this.result.Headers.Should().HaveCount(2);
-            this.result.Headers.Should().Contain(a => a.PartNumber == "P3");
-            this.result.Headers.Should().Contain(a => a.PartNumber == "P5");
+            this.result.Headers.Should().HaveCount(1);
+            this.result.Headers.First().PartNumber.Should().Be("P1");
         }
     }
 }

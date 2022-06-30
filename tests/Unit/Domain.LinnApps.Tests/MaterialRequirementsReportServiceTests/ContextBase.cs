@@ -25,6 +25,8 @@
         protected IQueryRepository<MrPurchaseOrderDetail> MrPurchaseOrderDetailRepository { get; private set; }
         
         protected IQueryRepository<PartAndAssembly> PartsAndAssembliesRepository { get; private set; }
+        
+        protected IRepository<PartNumberList, string> PartNumberListRepository { get; private set; }
 
         [SetUp]
         public void SetUpContext()
@@ -36,6 +38,7 @@
             this.MrMasterRecordRepository = Substitute.For<ISingleRecordRepository<MrMaster>>();
             this.MrPurchaseOrderDetailRepository = Substitute.For<IQueryRepository<MrPurchaseOrderDetail>>();
             this.PartsAndAssembliesRepository = Substitute.For<IQueryRepository<PartAndAssembly>>();
+            this.PartNumberListRepository = Substitute.For<IRepository<PartNumberList, string>>();
             this.Sut = new MaterialRequirementsReportService(
                 this.MrHeaderRepository,
                 this.RunLogRepository,
@@ -43,7 +46,8 @@
                 this.PlannerRepository,
                 this.EmployeeRepository,
                 this.MrPurchaseOrderDetailRepository,
-                this.PartsAndAssembliesRepository);
+                this.PartsAndAssembliesRepository,
+                this.PartNumberListRepository);
         }
     }
 }

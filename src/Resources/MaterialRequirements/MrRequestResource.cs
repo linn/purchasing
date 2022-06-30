@@ -21,5 +21,9 @@
         public string PartNumber { get; set; }
 
         public int? SupplierId { get; set; }
+
+        public string PartNumberList { get; set; }
+
+        public string StockCategoryName { get; set; }
     }
 }
