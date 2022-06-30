@@ -28,6 +28,9 @@
     <None Remove="node_modules\**" />
   </ItemGroup>
   <ItemGroup>
+    <Content Remove="views\PurchaseOrder.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Carter" Version="6.0.0" />
     <PackageReference Include="handlebars.net" Version="2.1.2" />
     <PackageReference Include="Linn.Common.Authentication.Host" Version="3.1.0" />
@@ -43,5 +46,10 @@
     <Folder Include="client\src\components\__tests__\" />
     <Folder Include="client\src\reducers\__tests__\" />
     <Folder Include="client\src\selectors\__tests__\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="views\PurchaseOrder.cshtml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
