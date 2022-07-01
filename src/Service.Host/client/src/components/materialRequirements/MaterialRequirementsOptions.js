@@ -41,6 +41,7 @@ function MaterialRequirementsOptions() {
     const [stockCategoryName, setStockCategoryName] = useState(null);
     const [partNumberList, setPartNumberList] = useState(null);
     const [stockLevelSelector, setStockLevelSelector] = useState('All');
+    const [partOption, setPartOption] = useState(null);
     const [orderBySelector, setOrderBySelector] = useState('supplier/part');
     const mrMaster = useSelector(state => itemSelectorHelpers.getItem(state.mrMaster));
     const mrMasterLoading = useSelector(state =>
@@ -170,7 +171,8 @@ function MaterialRequirementsOptions() {
             stockLevelSelector,
             orderBySelector,
             partNumberList,
-            stockCategoryName
+            stockCategoryName,
+            partOption
         };
         history.push('/purchasing/material-requirements/report', body);
     };
@@ -336,9 +338,25 @@ function MaterialRequirementsOptions() {
                         />
                     )}
                 </Grid>
+                <Grid item xs={5}>
+                    <Dropdown
+                        propertyName="partOptions"
+                        label="Part Options"
+                        value={partOption}
+                        items={mrReportOptions?.partOptions
+                            ?.sort((a, b) => a.displaySequence - b.displaySequence)
+                            .map(e => ({
+                                displayText: e.displayText,
+                                id: e.option
+                            }))}
+                        optionsLoading={mrReportOptionsLoading}
+                        onChange={(_, value) => setPartOption(value)}
+                    />
+                </Grid>
+                <Grid item xs={7} />
                 <Grid item xs={12}>
                     <Dropdown
-                        propertyName="Order By"
+                        propertyName="orderBy"
                         label="Order By"
                         value={orderBySelector}
                         items={mrReportOptions?.orderByOptions

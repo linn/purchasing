@@ -527,9 +527,11 @@ function MaterialRequirementsReport() {
                         {mrReportLoading && <Loading />}
                         {!selectedItem && (
                             <>
-                                <Typography variant="body2" style={{ fontWeight: 'bold' }}>
-                                    No results found for selected options
-                                </Typography>
+                                {!mrReportLoading && (
+                                    <Typography variant="body2" style={{ fontWeight: 'bold' }}>
+                                        No results found for selected options
+                                    </Typography>
+                                )}
                                 <Tooltip title="Back To Options">
                                     <Button
                                         color="navBut"

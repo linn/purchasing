@@ -154,7 +154,8 @@ describe('When report is run...', () => {
             orderBySelector: 'supplier/part',
             supplierId: undefined,
             partNumberList: null,
-            stockCategoryName: null
+            stockCategoryName: null,
+            partOption: null
         });
     });
 });
