@@ -48,6 +48,7 @@ function MaterialRequirementsReport() {
     const [nextPart, setNextPart] = useState(null);
     const [previousPart, setPreviousPart] = useState(null);
     const [selectedPurchaseOrders, setSelectedPurchaseOrders] = useState([]);
+    const [previousChunk, setPreviousChunk] = useState(null);
 
     const options = useLocation();
 
@@ -109,20 +110,38 @@ function MaterialRequirementsReport() {
 
     useEffect(() => {
         if (mrReport && mrReport.results && mrReport.results.length > 0) {
-            setSelectedIndex(0);
-            setSelectedItem(mrReport.results[0]);
-            if (mrReport.results.length > 1) {
-                setNextPart(mrReport.results[1].partNumber);
-            } else if (mrReport.reportChunk < mrReport.totalChunks - 1) {
-                setNextPart('Next Chunk');
-            } else {
-                setNextPart(null);
-            }
+            if (mrReport.reportChunk < previousChunk) {
+                setSelectedIndex(mrReport.results.length - 1);
+                setSelectedItem(mrReport.results[mrReport.results.length - 1]);
 
-            if (mrReport.reportChunk > 0) {
-                setPreviousPart('Prev Chunk');
+                setNextPart('Next Chunk');
+
+                if (mrReport.results.length === 1) {
+                    if (mrReport.reportChunk > 0) {
+                        setPreviousPart('Prev Chunk');
+                    } else {
+                        setPreviousPart(null);
+                    }
+                } else {
+                    setPreviousPart(mrReport.results[mrReport.results.length - 2].partNumber);
+                }
             } else {
-                setPreviousPart(null);
+                setSelectedIndex(0);
+                setSelectedItem(mrReport.results[0]);
+
+                if (mrReport.results.length > 1) {
+                    setNextPart(mrReport.results[1].partNumber);
+                } else if (mrReport.reportChunk < mrReport.totalChunks - 1) {
+                    setNextPart('Next Chunk');
+                } else {
+                    setNextPart(null);
+                }
+
+                if (mrReport.reportChunk > 0) {
+                    setPreviousPart('Prev Chunk');
+                } else {
+                    setPreviousPart(null);
+                }
             }
 
             dispatch(
@@ -137,7 +156,7 @@ function MaterialRequirementsReport() {
             setPreviousPart(null);
             dispatch(mrReportOrdersActions.clearItem());
         }
-    }, [mrReport, dispatch]);
+    }, [mrReport, dispatch, previousChunk]);
 
     useEffect(() => {
         if (mrReportOrders?.orders && selectedItem) {
@@ -186,6 +205,8 @@ function MaterialRequirementsReport() {
         if (!mrReport) {
             return;
         }
+
+        setPreviousChunk(mrReport.reportChunk);
 
         dispatch(
             mrReportActions.postByHref(mrReportItem.uri, {
@@ -589,7 +610,7 @@ function MaterialRequirementsReport() {
                                 </Tooltip>
                             </>
                         )}
-                        {selectedItem && (
+                        {selectedItem && !mrReportLoading && (
                             <Grid container spacing={1}>
                                 <Grid
                                     item

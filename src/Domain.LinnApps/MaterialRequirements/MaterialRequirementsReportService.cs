@@ -29,7 +29,7 @@
 
         private Expression<Func<MrHeader, bool>> filterQuery;
 
-        private int chunkSize = 20;
+        private const int ChunkSize = 100;
 
         private readonly List<ReportOption> partSelectorOptions = new List<ReportOption>
                                                                       {
@@ -230,14 +230,12 @@
                     _ => results
                 };
 
-            // deploying before working out where this needs to be set
             var resultCount = results.Count();
-
-            var chunks = (int)Math.Ceiling((decimal) resultCount / this.chunkSize);
+            var chunks = (int)Math.Ceiling((decimal) resultCount / ChunkSize);
 
             if (chunks > 1 && reportChunk < chunks)
             {
-                results = results.Skip(reportChunk * this.chunkSize).Take(this.chunkSize);
+                results = results.Skip(reportChunk * ChunkSize).Take(ChunkSize);
             }
 
             var report = new MrReport
