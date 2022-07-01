@@ -34,7 +34,7 @@
             this.runWeekNumber = 1233;
             this.jobRef = "ABC";
             this.typeOfReport = "MR";
-            this.partSelector = "Stock Category";
+            this.partSelector = "Stock Category Name";
             this.partNumbers = new List<string> { "P1", "P2" };
             this.MrMasterRecordRepository.GetRecord().Returns(new MrMaster { JobRef = this.jobRef });
             this.RunLogRepository.FindBy(Arg.Any<Expression<Func<MrpRunLog, bool>>>())
