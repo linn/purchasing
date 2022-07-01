@@ -65,5 +65,12 @@
         {
             this.result.Headers.Should().HaveCount(2);
         }
+
+        [Test]
+        public void ShouldReturnSelectedOptions()
+        {
+            this.result.PartSelectorOption.Should().Be("Supplier");
+            this.result.SupplierIdOption.Should().Be(this.supplierId);
+        }
     }
 }

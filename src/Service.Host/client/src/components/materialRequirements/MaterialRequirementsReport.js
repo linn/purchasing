@@ -113,10 +113,17 @@ function MaterialRequirementsReport() {
             setSelectedItem(mrReport.results[0]);
             if (mrReport.results.length > 1) {
                 setNextPart(mrReport.results[1].partNumber);
+            } else if (mrReport.reportChunk < mrReport.totalChunks - 1) {
+                setNextPart('Next Chunk');
             } else {
                 setNextPart(null);
             }
-            setPreviousPart(null);
+
+            if (mrReport.reportChunk > 0) {
+                setPreviousPart('Prev Chunk');
+            } else {
+                setPreviousPart(null);
+            }
 
             dispatch(
                 mrReportOrdersActions.postByHref(mrReportOrdersItem.uri, {
@@ -175,14 +182,44 @@ function MaterialRequirementsReport() {
         history.push('/purchasing/material-requirements');
     };
 
+    const getChunk = chunk => {
+        if (!mrReport) {
+            return;
+        }
+
+        dispatch(
+            mrReportActions.postByHref(mrReportItem.uri, {
+                partNumbers: mrReport.partNumbersOption,
+                jobRef: mrReport.jobRef,
+                typeOfReport: 'MR',
+                stockLevelSelector: mrReport.stockLevelOption,
+                partOption: mrReport.partOption,
+                partSelector: mrReport.partSelectorOption,
+                supplierId: mrReport.supplierIdOption,
+                stockCategoryName: mrReport.stockCategoryNameOption,
+                orderBySelector: mrReport.orderByOption,
+                partNumberList: mrReport.partNumberListOption,
+                reportChunk: chunk
+            })
+        );
+    };
+
     const goToPreviousPart = () => {
         if (selectedIndex === 0) {
+            if (mrReport.reportChunk > 0) {
+                getChunk(mrReport.reportChunk - 1);
+            }
+
             return;
         }
 
         setNextPart(selectedItem.partNumber);
         if (selectedIndex === 1) {
-            setPreviousPart(null);
+            if (mrReport.reportChunk > 0) {
+                setPreviousPart('Prev Chunk');
+            } else {
+                setPreviousPart(null);
+            }
         } else {
             setPreviousPart(mrReport.results[selectedIndex - 2].partNumber);
         }
@@ -193,12 +230,20 @@ function MaterialRequirementsReport() {
 
     const goToNextPart = () => {
         if (selectedIndex === mrReport.results.length - 1) {
+            if (mrReport.reportChunk < mrReport.totalChunks - 1) {
+                getChunk(mrReport.reportChunk + 1);
+            }
+
             return;
         }
 
         setPreviousPart(selectedItem.partNumber);
         if (selectedIndex === mrReport.results.length - 2) {
-            setNextPart(null);
+            if (mrReport.reportChunk < mrReport.totalChunks - 1) {
+                setNextPart('Next Chunk');
+            } else {
+                setNextPart(null);
+            }
         } else {
             setNextPart(mrReport.results[selectedIndex + 2].partNumber);
         }

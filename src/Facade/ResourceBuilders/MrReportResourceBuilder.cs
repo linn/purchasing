@@ -16,6 +16,16 @@
         {
             return new MrReportResource
                        {
+                           ReportChunk = entity.ReportChunk,
+                           TotalChunks = entity.TotalChunks,
+                           SupplierIdOption = entity.SupplierIdOption,
+                           PartOption = entity.PartOption,
+                           OrderByOption = entity.OrderByOption,
+                           PartNumberListOption = entity.PartNumberListOption,
+                           PartNumbersOption = entity.PartNumbersOption,
+                           PartSelectorOption = entity.PartSelectorOption,
+                           StockCategoryNameOption = entity.StockCategoryNameOption,
+                           StockLevelOption = entity.StockLevelOption,
                            Results = entity.Headers.Select(h => this.BuildHeader(h, entity.RunWeekNumber))
                        };
         }
