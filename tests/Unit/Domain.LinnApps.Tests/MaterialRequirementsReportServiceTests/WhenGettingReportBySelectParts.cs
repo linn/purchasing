@@ -60,5 +60,13 @@
             this.result.JobRef.Should().Be(this.jobRef);
             this.result.RunWeekNumber.Should().Be(this.runWeekNumber);
         }
+
+        [Test]
+        public void ShouldReturnSelectedOptions()
+        {
+            this.result.PartSelectorOption.Should().Be("Select Parts");
+            this.result.PartNumbersOption.Should().HaveCount(2);
+            this.result.OrderByOption.Should().Be("supplier/part");
+        }
     }
 }

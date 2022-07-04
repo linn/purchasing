@@ -25,5 +25,7 @@
         public string PartNumberList { get; set; }
 
         public string StockCategoryName { get; set; }
+
+        public int ReportChunk { get; set; }
     }
 }

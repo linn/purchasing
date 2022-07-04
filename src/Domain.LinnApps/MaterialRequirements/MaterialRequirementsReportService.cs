@@ -29,6 +29,8 @@
 
         private Expression<Func<MrHeader, bool>> filterQuery;
 
+        private const int ChunkSize = 100;
+
         private readonly List<ReportOption> partSelectorOptions = new List<ReportOption>
                                                                       {
                                                                           new ReportOption(
@@ -99,7 +101,7 @@
             IEnumerable<string> partNumbers,
             string partNumberList,
             string stockCategoryName,
-            int reportSegment = 0)
+            int reportChunk = 0)
         {
             if (string.IsNullOrEmpty(jobRef))
             {
@@ -228,14 +230,29 @@
                     _ => results
                 };
 
-            // deploying before working out where this needs to be set
-            // results = results.Skip(reportSegment * 100).Take(100);
+            var resultCount = results.Count();
+            var chunks = (int)Math.Ceiling((decimal) resultCount / ChunkSize);
+
+            if (chunks > 1 && reportChunk < chunks)
+            {
+                results = results.Skip(reportChunk * ChunkSize).Take(ChunkSize);
+            }
 
             var report = new MrReport
                              {
                                  JobRef = jobRef,
                                  RunWeekNumber = runLog.RunWeekNumber,
-                                 Headers = results
+                                 Headers = results,
+                                 ReportChunk = reportChunk,
+                                 TotalChunks = chunks,
+                                 PartNumberListOption = partNumberList,
+                                 PartSelectorOption = partSelector,
+                                 StockLevelOption = stockLevelOption,
+                                 OrderByOption = orderBy,
+                                 PartNumbersOption = partNumbers,
+                                 PartOption = partOption,
+                                 StockCategoryNameOption = stockCategoryName,
+                                 SupplierIdOption = supplierId
                              };
             return report;
         }

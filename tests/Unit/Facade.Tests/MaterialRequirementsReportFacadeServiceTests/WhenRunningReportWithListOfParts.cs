@@ -39,7 +39,8 @@
                                            SupplierId = 213,
                                            PartNumberList = "PNL",
                                            StockCategoryName = "STC",
-                                           OrderBySelector = "Part"
+                                           OrderBySelector = "Part",
+                                           ReportChunk = 2
                                        };
             this.privileges = new List<string>();
 
@@ -53,7 +54,8 @@
                     this.requestResource.SupplierId,
                     Arg.Is<IList<string>>(a => a.Contains("A") && a.Contains("B")),
                     this.requestResource.PartNumberList,
-                    this.requestResource.StockCategoryName)
+                    this.requestResource.StockCategoryName,
+                    this.requestResource.ReportChunk)
                 .Returns(
                     new MrReport
                         {
@@ -79,7 +81,8 @@
                 this.requestResource.SupplierId,
                 Arg.Is<IList<string>>(a => a.Contains("A") && a.Contains("B")),
                 this.requestResource.PartNumberList,
-                this.requestResource.StockCategoryName);
+                this.requestResource.StockCategoryName,
+                this.requestResource.ReportChunk);
         }
 
         [Test]

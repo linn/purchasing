@@ -43,7 +43,8 @@
                 request.SupplierId,
                 parts,
                 request.PartNumberList,
-                request.StockCategoryName);
+                request.StockCategoryName,
+                request.ReportChunk);
 
             return new SuccessResult<MrReportResource>((MrReportResource)this.builder.Build(report, privileges));
         }

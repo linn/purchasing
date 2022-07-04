@@ -48,6 +48,7 @@ function MaterialRequirementsReport() {
     const [nextPart, setNextPart] = useState(null);
     const [previousPart, setPreviousPart] = useState(null);
     const [selectedPurchaseOrders, setSelectedPurchaseOrders] = useState([]);
+    const [previousChunk, setPreviousChunk] = useState(null);
 
     const options = useLocation();
 
@@ -109,14 +110,39 @@ function MaterialRequirementsReport() {
 
     useEffect(() => {
         if (mrReport && mrReport.results && mrReport.results.length > 0) {
-            setSelectedIndex(0);
-            setSelectedItem(mrReport.results[0]);
-            if (mrReport.results.length > 1) {
-                setNextPart(mrReport.results[1].partNumber);
+            if (mrReport.reportChunk < previousChunk) {
+                setSelectedIndex(mrReport.results.length - 1);
+                setSelectedItem(mrReport.results[mrReport.results.length - 1]);
+
+                setNextPart('Next Chunk');
+
+                if (mrReport.results.length === 1) {
+                    if (mrReport.reportChunk > 0) {
+                        setPreviousPart('Prev Chunk');
+                    } else {
+                        setPreviousPart(null);
+                    }
+                } else {
+                    setPreviousPart(mrReport.results[mrReport.results.length - 2].partNumber);
+                }
             } else {
-                setNextPart(null);
+                setSelectedIndex(0);
+                setSelectedItem(mrReport.results[0]);
+
+                if (mrReport.results.length > 1) {
+                    setNextPart(mrReport.results[1].partNumber);
+                } else if (mrReport.reportChunk < mrReport.totalChunks - 1) {
+                    setNextPart('Next Chunk');
+                } else {
+                    setNextPart(null);
+                }
+
+                if (mrReport.reportChunk > 0) {
+                    setPreviousPart('Prev Chunk');
+                } else {
+                    setPreviousPart(null);
+                }
             }
-            setPreviousPart(null);
 
             dispatch(
                 mrReportOrdersActions.postByHref(mrReportOrdersItem.uri, {
@@ -130,7 +156,7 @@ function MaterialRequirementsReport() {
             setPreviousPart(null);
             dispatch(mrReportOrdersActions.clearItem());
         }
-    }, [mrReport, dispatch]);
+    }, [mrReport, dispatch, previousChunk]);
 
     useEffect(() => {
         if (mrReportOrders?.orders && selectedItem) {
@@ -175,14 +201,46 @@ function MaterialRequirementsReport() {
         history.push('/purchasing/material-requirements');
     };
 
+    const getChunk = chunk => {
+        if (!mrReport) {
+            return;
+        }
+
+        setPreviousChunk(mrReport.reportChunk);
+
+        dispatch(
+            mrReportActions.postByHref(mrReportItem.uri, {
+                partNumbers: mrReport.partNumbersOption,
+                jobRef: mrReport.jobRef,
+                typeOfReport: 'MR',
+                stockLevelSelector: mrReport.stockLevelOption,
+                partOption: mrReport.partOption,
+                partSelector: mrReport.partSelectorOption,
+                supplierId: mrReport.supplierIdOption,
+                stockCategoryName: mrReport.stockCategoryNameOption,
+                orderBySelector: mrReport.orderByOption,
+                partNumberList: mrReport.partNumberListOption,
+                reportChunk: chunk
+            })
+        );
+    };
+
     const goToPreviousPart = () => {
         if (selectedIndex === 0) {
+            if (mrReport.reportChunk > 0) {
+                getChunk(mrReport.reportChunk - 1);
+            }
+
             return;
         }
 
         setNextPart(selectedItem.partNumber);
         if (selectedIndex === 1) {
-            setPreviousPart(null);
+            if (mrReport.reportChunk > 0) {
+                setPreviousPart('Prev Chunk');
+            } else {
+                setPreviousPart(null);
+            }
         } else {
             setPreviousPart(mrReport.results[selectedIndex - 2].partNumber);
         }
@@ -193,12 +251,20 @@ function MaterialRequirementsReport() {
 
     const goToNextPart = () => {
         if (selectedIndex === mrReport.results.length - 1) {
+            if (mrReport.reportChunk < mrReport.totalChunks - 1) {
+                getChunk(mrReport.reportChunk + 1);
+            }
+
             return;
         }
 
         setPreviousPart(selectedItem.partNumber);
         if (selectedIndex === mrReport.results.length - 2) {
-            setNextPart(null);
+            if (mrReport.reportChunk < mrReport.totalChunks - 1) {
+                setNextPart('Next Chunk');
+            } else {
+                setNextPart(null);
+            }
         } else {
             setNextPart(mrReport.results[selectedIndex + 2].partNumber);
         }
@@ -544,7 +610,7 @@ function MaterialRequirementsReport() {
                                 </Tooltip>
                             </>
                         )}
-                        {selectedItem && (
+                        {selectedItem && !mrReportLoading && (
                             <Grid container spacing={1}>
                                 <Grid
                                     item

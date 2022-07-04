@@ -13,7 +13,7 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingReportBySupplier : ContextBase
+    public class WhenGettingReportBySelectPartsNextChunk : ContextBase
     {
         private string jobRef;
 
@@ -27,50 +27,62 @@
 
         private int runWeekNumber;
 
-        private int supplierId;
+        private int reportChunk;
 
         [SetUp]
         public void SetUp()
         {
+            this.reportChunk = 1;
             this.runWeekNumber = 1233;
             this.jobRef = "ABC";
             this.typeOfReport = "MR";
-            this.partSelector = "Supplier";
-            this.supplierId = 123;
-            this.partNumbers = new List<string> { "P1", "P2" };
+            this.partSelector = "Select Parts";
+            this.partNumbers = new List<string>();
+            for (var i = 0; i < 101; i++)
+            {
+                this.partNumbers.Add(i.ToString("000"));
+            }
+
             this.MrMasterRecordRepository.GetRecord().Returns(new MrMaster { JobRef = this.jobRef });
             this.RunLogRepository.FindBy(Arg.Any<Expression<Func<MrpRunLog, bool>>>())
                 .Returns(new MrpRunLog { RunWeekNumber = this.runWeekNumber });
-            this.MrHeaderRepository.FilterBy(Arg.Any<Expression<Func<MrHeader, bool>>>()).Returns(
-                new List<MrHeader>
-                    {
-                        new MrHeader { PartNumber = "P1", PreferredSupplierId = this.supplierId },
-                        new MrHeader { PartNumber = "P2", PreferredSupplierId = this.supplierId }
-                    }.AsQueryable());
+            var headers = new List<MrHeader>();
+            foreach (var partNumber in this.partNumbers)
+            {
+                headers.Add(new MrHeader { PartNumber = partNumber });
+            }
+
+            this.MrHeaderRepository.FilterBy(Arg.Any<Expression<Func<MrHeader, bool>>>())
+                .Returns(headers.AsQueryable());
             this.result = this.Sut.GetMaterialRequirements(
                 this.jobRef,
                 this.typeOfReport,
                 this.partSelector,
                 null,
                 null,
-                "supplier/part",
-                this.supplierId,
+                "part",
+                null,
                 this.partNumbers,
                 null,
-                null);
+                null,
+                this.reportChunk);
         }
 
         [Test]
         public void ShouldReturnReport()
         {
-            this.result.Headers.Should().HaveCount(2);
+            this.result.Headers.Should().HaveCount(1);
+            this.result.Headers.First().PartNumber.Should().Be("100");
+            this.result.JobRef.Should().Be(this.jobRef);
+            this.result.RunWeekNumber.Should().Be(this.runWeekNumber);
+            this.result.ReportChunk.Should().Be(1);
+            this.result.TotalChunks.Should().Be(2);
         }
 
         [Test]
         public void ShouldReturnSelectedOptions()
         {
-            this.result.PartSelectorOption.Should().Be("Supplier");
-            this.result.SupplierIdOption.Should().Be(this.supplierId);
+            this.result.PartNumbersOption.Should().HaveCount(101);
         }
     }
 }

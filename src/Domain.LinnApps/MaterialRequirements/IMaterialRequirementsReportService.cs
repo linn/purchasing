@@ -15,7 +15,7 @@
             IEnumerable<string> parts,
             string partNumberList,
             string stockCategoryName,
-            int reportSegment = 0);
+            int reportChunk = 0);
 
         MrReportOptions GetOptions();
 
