@@ -175,6 +175,10 @@ function MaterialRequirementsReport() {
         boldText: {
             fontWeight: 550
         },
+        highlightText: {
+            fontWeight: 550,
+            color: 'red'
+        },
         newQuarter: {
             paddingTop: '50px',
             fontWeight: 500
@@ -579,8 +583,7 @@ function MaterialRequirementsReport() {
                         Ack/Update Deliveries
                     </Button>
                 </TableCell>
-                <TableCell colSpan={4}>Contact: {row.supplierContact}</TableCell>
-                <TableCell colSpan={5}>{row.remarks}</TableCell>
+                <TableCell colSpan={9}>{row.remarks}</TableCell>
             </TableRow>
         </>
     );
@@ -828,7 +831,10 @@ function MaterialRequirementsReport() {
                                 <Grid item xs={9}>
                                     <Stack direction="row" spacing={2}>
                                         {selectedItem.mrComments && (
-                                            <Typography variant="body2">
+                                            <Typography
+                                                variant="body2"
+                                                className={classes.highlightText}
+                                            >
                                                 Comments: {selectedItem.mrComments}
                                             </Typography>
                                         )}
