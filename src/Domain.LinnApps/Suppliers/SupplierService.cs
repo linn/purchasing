@@ -174,6 +174,7 @@
                 throw new UnauthorisedActionException("You are not authorised to create Suppliers");
             }
 
+            candidate.Name = candidate.Name.Trim();
             candidate.SupplierId = this.supplierPack.GetNextSupplierKey();
 
             candidate.InvoiceGoesTo = candidate.InvoiceGoesTo != null
