@@ -101,6 +101,8 @@
             IEnumerable<string> partNumbers,
             string partNumberList,
             string stockCategoryName,
+            int? minimumLeadTimeWeeks,
+            int? minimumAnnualUsage,
             int reportChunk = 0)
         {
             if (string.IsNullOrEmpty(jobRef))
@@ -213,6 +215,16 @@
                 }
             }
 
+            if (minimumLeadTimeWeeks.HasValue)
+            {
+                results = results.Where(a => a.LeadTimeWeeks >= minimumLeadTimeWeeks);
+            }
+
+            if (minimumAnnualUsage.HasValue)
+            {
+                results = results.Where(a => a.AnnualUsage >= minimumAnnualUsage);
+            }
+
             if (supplierId > 0 && this.GetPartSelectorDataTag(partSelector) != "supplier")
             {
                 results = results.Where(a => a.PreferredSupplierId == supplierId);
@@ -252,7 +264,9 @@
                                  PartNumbersOption = partNumbers,
                                  PartOption = partOption,
                                  StockCategoryNameOption = stockCategoryName,
-                                 SupplierIdOption = supplierId
+                                 SupplierIdOption = supplierId,
+                                 MinimumLeadTimeWeeks = minimumLeadTimeWeeks,
+                                 MinimumAnnualUsage = minimumAnnualUsage
                              };
             return report;
         }

@@ -52,7 +52,10 @@
                     this.requestResource.SupplierId,
                     Arg.Is<IList<string>>(a => a.Contains("P1") && a.Count == 1),
                     this.requestResource.PartNumberList,
-                    this.requestResource.StockCategoryName)
+                    this.requestResource.StockCategoryName,
+                    this.requestResource.MinimumLeadTimeWeeks,
+                    this.requestResource.MinimumAnnualUsage,
+                    this.requestResource.ReportChunk)
                 .Returns(
                     new MrReport
                         {
@@ -78,7 +81,10 @@
                 this.requestResource.SupplierId,
                 Arg.Is<IList<string>>(a => a.Contains("P1") && a.Count == 1),
                 this.requestResource.PartNumberList,
-                this.requestResource.StockCategoryName);
+                this.requestResource.StockCategoryName,
+                this.requestResource.MinimumLeadTimeWeeks,
+                this.requestResource.MinimumAnnualUsage,
+                this.requestResource.ReportChunk);
         }
 
         [Test]

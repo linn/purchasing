@@ -66,7 +66,10 @@
                 null,
                 null,
                 this.partNumberList,
-                null);
+                null,
+                null,
+                null,
+                0);
         }
 
         [Test]

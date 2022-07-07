@@ -44,6 +44,8 @@
                 parts,
                 request.PartNumberList,
                 request.StockCategoryName,
+                request.MinimumLeadTimeWeeks,
+                request.MinimumAnnualUsage,
                 request.ReportChunk);
 
             return new SuccessResult<MrReportResource>((MrReportResource)this.builder.Build(report, privileges));

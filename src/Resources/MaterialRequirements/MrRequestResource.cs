@@ -27,5 +27,9 @@
         public string StockCategoryName { get; set; }
 
         public int ReportChunk { get; set; }
+
+        public int? MinimumLeadTimeWeeks { get; set; }
+
+        public int? MinimumAnnualUsage { get; set; }
     }
 }
