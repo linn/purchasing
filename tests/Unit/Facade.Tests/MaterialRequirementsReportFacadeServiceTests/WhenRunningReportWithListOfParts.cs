@@ -40,7 +40,9 @@
                                            PartNumberList = "PNL",
                                            StockCategoryName = "STC",
                                            OrderBySelector = "Part",
-                                           ReportChunk = 2
+                                           ReportChunk = 2,
+                                           MinimumAnnualUsage = 66,
+                                           MinimumLeadTimeWeeks = 88
                                        };
             this.privileges = new List<string>();
 
@@ -55,6 +57,8 @@
                     Arg.Is<IList<string>>(a => a.Contains("A") && a.Contains("B")),
                     this.requestResource.PartNumberList,
                     this.requestResource.StockCategoryName,
+                    this.requestResource.MinimumLeadTimeWeeks,
+                    this.requestResource.MinimumAnnualUsage,
                     this.requestResource.ReportChunk)
                 .Returns(
                     new MrReport
@@ -82,6 +86,8 @@
                 Arg.Is<IList<string>>(a => a.Contains("A") && a.Contains("B")),
                 this.requestResource.PartNumberList,
                 this.requestResource.StockCategoryName,
+                this.requestResource.MinimumLeadTimeWeeks,
+                this.requestResource.MinimumAnnualUsage,
                 this.requestResource.ReportChunk);
         }
 

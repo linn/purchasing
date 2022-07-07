@@ -15,6 +15,8 @@
             IEnumerable<string> parts,
             string partNumberList,
             string stockCategoryName,
+            int? minimumLeadTimeWeeks,
+            int? minimumAnnualUsage,
             int reportChunk = 0);
 
         MrReportOptions GetOptions();

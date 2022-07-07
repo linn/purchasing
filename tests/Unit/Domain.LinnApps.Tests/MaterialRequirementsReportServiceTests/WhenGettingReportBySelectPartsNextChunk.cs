@@ -65,6 +65,8 @@
                 this.partNumbers,
                 null,
                 null,
+                null,
+                null,
                 this.reportChunk);
         }
 

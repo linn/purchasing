@@ -155,7 +155,9 @@ describe('When report is run...', () => {
             supplierId: undefined,
             partNumberList: null,
             stockCategoryName: null,
-            partOption: null
+            partOption: null,
+            minimumAnnualUsage: null,
+            minimumLeadTimeWeeks: null
         });
     });
 });

@@ -58,7 +58,10 @@
                 null,
                 this.partNumbers,
                 null,
-                this.stockCategoryName);
+                this.stockCategoryName,
+                null,
+                null,
+                0);
         }
 
         [Test]
