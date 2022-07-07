@@ -224,7 +224,9 @@ function MaterialRequirementsReport() {
                 stockCategoryName: mrReport.stockCategoryNameOption,
                 orderBySelector: mrReport.orderByOption,
                 partNumberList: mrReport.partNumberListOption,
-                reportChunk: chunk
+                reportChunk: chunk,
+                minimumAnnualUsage: mrReport.minimumAnnualUsage,
+                minimumLeadTimeWeeks: mrReport.minimumLeadTimeWeeks
             })
         );
     };

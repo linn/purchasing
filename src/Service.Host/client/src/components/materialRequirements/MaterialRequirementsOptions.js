@@ -42,6 +42,8 @@ function MaterialRequirementsOptions() {
     const [partNumberList, setPartNumberList] = useState(null);
     const [stockLevelSelector, setStockLevelSelector] = useState('All');
     const [partOption, setPartOption] = useState(null);
+    const [minimumLeadTimeWeeks, setMinimumLeadTimeWeeks] = useState(null);
+    const [minimumAnnualUsage, setMinimumAnnualUsage] = useState(null);
     const [orderBySelector, setOrderBySelector] = useState('supplier/part');
     const mrMaster = useSelector(state => itemSelectorHelpers.getItem(state.mrMaster));
     const mrMasterLoading = useSelector(state =>
@@ -92,6 +94,8 @@ function MaterialRequirementsOptions() {
 
     const handleStockCategoryChange = (_, newValue) => setStockCategoryName(newValue);
     const handlePartNumberListChange = (_, newValue) => setPartNumberList(newValue);
+    const handleMinimumLeadTimeWeeksChange = (_, newValue) => setMinimumLeadTimeWeeks(newValue);
+    const handleMinimumAnnualUsageChange = (_, newValue) => setMinimumAnnualUsage(newValue);
 
     const removeFromParts = partToRemove => {
         setParts(parts.filter(p => p.id !== partToRemove));
@@ -172,7 +176,9 @@ function MaterialRequirementsOptions() {
             orderBySelector,
             partNumberList,
             stockCategoryName,
-            partOption
+            partOption,
+            minimumAnnualUsage,
+            minimumLeadTimeWeeks
         };
         history.push('/purchasing/material-requirements/report', body);
     };
@@ -353,7 +359,24 @@ function MaterialRequirementsOptions() {
                         onChange={(_, value) => setPartOption(value)}
                     />
                 </Grid>
-                <Grid item xs={7} />
+                <Grid item xs={3}>
+                    <InputField
+                        propertyName="minimumLeadTimeWeeks"
+                        value={minimumLeadTimeWeeks}
+                        label="Min Lead Time"
+                        type="number"
+                        onChange={handleMinimumLeadTimeWeeksChange}
+                    />
+                </Grid>
+                <Grid item xs={4}>
+                    <InputField
+                        propertyName="minimumAnnualUsage"
+                        value={minimumAnnualUsage}
+                        label="Min Annual Usage"
+                        type="number"
+                        onChange={handleMinimumAnnualUsageChange}
+                    />
+                </Grid>
                 <Grid item xs={12}>
                     <Dropdown
                         propertyName="orderBy"
