@@ -28,26 +28,26 @@
         private async Task GetAutomaticPurchaseOrders(
             HttpRequest req,
             HttpResponse res,
-            IFacadeResourceService<AutomaticPurchaseOrder, int, AutomaticPurchaseOrderResource, AutomaticPurchaseOrderResource> signingLimitFacadeService)
+            IFacadeResourceService<AutomaticPurchaseOrder, int, AutomaticPurchaseOrderResource, AutomaticPurchaseOrderResource> automaticPurchaseOrderFacadeService)
         {
-            await res.Negotiate(signingLimitFacadeService.GetAll());
+            await res.Negotiate(automaticPurchaseOrderFacadeService.GetAll());
         }
 
         private async Task GetApplicationState(
             HttpRequest req,
             HttpResponse res,
-            IFacadeResourceService<AutomaticPurchaseOrder, int, AutomaticPurchaseOrderResource, AutomaticPurchaseOrderResource> signingLimitFacadeService)
+            IFacadeResourceService<AutomaticPurchaseOrder, int, AutomaticPurchaseOrderResource, AutomaticPurchaseOrderResource> automaticPurchaseOrderFacadeService)
         {
-            await res.Negotiate(signingLimitFacadeService.GetApplicationState(req.HttpContext.GetPrivileges()));
+            await res.Negotiate(automaticPurchaseOrderFacadeService.GetApplicationState(req.HttpContext.GetPrivileges()));
         }
 
         private async Task GetAutomaticPurchaseOrderById(
             HttpRequest req,
             HttpResponse res,
             int id,
-            IFacadeResourceService<AutomaticPurchaseOrder, int, AutomaticPurchaseOrderResource, AutomaticPurchaseOrderResource> signingLimitFacadeService)
+            IFacadeResourceService<AutomaticPurchaseOrder, int, AutomaticPurchaseOrderResource, AutomaticPurchaseOrderResource> automaticPurchaseOrderFacadeService)
         {
-            var result = signingLimitFacadeService.GetById(id, req.HttpContext.GetPrivileges());
+            var result = automaticPurchaseOrderFacadeService.GetById(id, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }
@@ -55,10 +55,10 @@
         private async Task CreateAutomaticPurchaseOrder(
             HttpRequest request,
             HttpResponse response,
-            IFacadeResourceService<AutomaticPurchaseOrder, int, AutomaticPurchaseOrderResource, AutomaticPurchaseOrderResource> signingLimitFacadeService,
+            IFacadeResourceService<AutomaticPurchaseOrder, int, AutomaticPurchaseOrderResource, AutomaticPurchaseOrderResource> automaticPurchaseOrderFacadeService,
             AutomaticPurchaseOrderResource resource)
         {
-            var result = signingLimitFacadeService.Add(
+            var result = automaticPurchaseOrderFacadeService.Add(
                 resource,
                 request.HttpContext.GetPrivileges(),
                 request.HttpContext.User.GetEmployeeNumber());
@@ -71,9 +71,9 @@
             HttpResponse response,
             int id,
             AutomaticPurchaseOrderResource resource,
-            IFacadeResourceService<AutomaticPurchaseOrder, int, AutomaticPurchaseOrderResource, AutomaticPurchaseOrderResource> signingLimitFacadeService)
+            IFacadeResourceService<AutomaticPurchaseOrder, int, AutomaticPurchaseOrderResource, AutomaticPurchaseOrderResource> automaticPurchaseOrderFacadeService)
         {
-            var result = signingLimitFacadeService.Update(
+            var result = automaticPurchaseOrderFacadeService.Update(
                 id,
                 resource,
                 request.HttpContext.GetPrivileges(),
@@ -86,9 +86,9 @@
             HttpRequest req,
             HttpResponse res,
             int id,
-            IFacadeResourceService<AutomaticPurchaseOrder, int, AutomaticPurchaseOrderResource, AutomaticPurchaseOrderResource> signingLimitFacadeService)
+            IFacadeResourceService<AutomaticPurchaseOrder, int, AutomaticPurchaseOrderResource, AutomaticPurchaseOrderResource> automaticPurchaseOrderFacadeService)
         {
-            var result = signingLimitFacadeService.DeleteOrObsolete(
+            var result = automaticPurchaseOrderFacadeService.DeleteOrObsolete(
                 id,
                 req.HttpContext.GetPrivileges(),
                 req.HttpContext.User.GetEmployeeNumber());

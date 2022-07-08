@@ -12,6 +12,11 @@
     {
         public AutomaticPurchaseOrderResource Build(AutomaticPurchaseOrder entity, IEnumerable<string> claims)
         {
+            if (entity == null)
+            {
+                return new AutomaticPurchaseOrderResource { Links = this.BuildLinks(null, claims).ToArray() };
+            }
+
             return new AutomaticPurchaseOrderResource
                        {
                            Id = entity.Id,
