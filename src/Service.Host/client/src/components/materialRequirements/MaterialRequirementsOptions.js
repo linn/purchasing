@@ -16,6 +16,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Button } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
+import config from '../../config';
 
 import mrMasterActions from '../../actions/mrMasterActions';
 import {
@@ -243,7 +244,7 @@ function MaterialRequirementsOptions() {
     };
 
     return (
-        <Page history={history}>
+        <Page history={history} homeUrl={config.appRoot}>
             <Grid container>
                 <Grid item xs={10}>
                     <Typography variant="h6">MR Options</Typography>
