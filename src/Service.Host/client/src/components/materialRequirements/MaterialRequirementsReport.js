@@ -592,7 +592,7 @@ function MaterialRequirementsReport() {
 
     return (
         <div className="print-landscape" onKeyDown={onKeyPressed} tabIndex={-1} role="textbox">
-            <Page history={history} width="xl">
+            <Page history={history} width="xl" homeUrl={config.appRoot}>
                 <ThemeProvider theme={theme}>
                     <div style={{ width: 1300, paddingLeft: '20px' }}>
                         {mrReportLoading && <Loading />}
