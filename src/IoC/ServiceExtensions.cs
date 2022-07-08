@@ -74,7 +74,8 @@
                 .AddTransient<IBuilder<PurchaseOrderDelivery>, PurchaseOrderDeliveryResourceBuilder>()
                 .AddTransient<IBuilder<MrReport>, MrReportResourceBuilder>()
                 .AddTransient<IBuilder<MrPurchaseOrderDetail>, MrPurchaseOrderResourceBuilder>()
-                .AddTransient<IBuilder<MrReportOptions>, MrReportOptionsResourceBuilder>();
+                .AddTransient<IBuilder<MrReportOptions>, MrReportOptionsResourceBuilder>()
+                .AddTransient<IBuilder<AutomaticPurchaseOrder>, AutomaticPurchaseOrderResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -123,7 +124,8 @@
                 .AddTransient<IPurchaseOrderDeliveryFacadeService, PurchaseOrderDeliveryFacadeService>()
                 .AddTransient<IMaterialRequirementsReportFacadeService, MaterialRequirementsReportFacadeService>()
                 .AddTransient<IShortagesReportFacadeService, ShortagesReportFacadeService>()
-                .AddTransient<IMrOrderBookReportFacadeService, MrOrderBookReportFacadeService>();
+                .AddTransient<IMrOrderBookReportFacadeService, MrOrderBookReportFacadeService>()
+                .AddTransient<IFacadeResourceService<AutomaticPurchaseOrder, int, AutomaticPurchaseOrderResource, AutomaticPurchaseOrderResource>, AutomaticPurchaseOrderFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
