@@ -8,6 +8,7 @@
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.RequestResources;
     using Linn.Purchasing.Service.Extensions;
 
     using Microsoft.AspNetCore.Builder;
@@ -23,6 +24,7 @@
             app.MapGet("/purchasing/automatic-purchase-orders/application-state", this.GetApplicationState);
             app.MapPost("/purchasing/automatic-purchase-orders", this.CreateAutomaticPurchaseOrder);
             app.MapPut("/purchasing/automatic-purchase-orders/{id:int}", this.UpdateAutomaticPurchaseOrder);
+            app.MapGet("/purchasing/automatic-purchase-order-suggestions", this.GetAutomaticPurchaseOrderSuggestions);
         }
 
         private async Task GetAutomaticPurchaseOrders(
@@ -82,18 +84,16 @@
             await response.Negotiate(result);
         }
 
-        private async Task DeleteAutomaticPurchaseOrderById(
+        private async Task GetAutomaticPurchaseOrderSuggestions(
             HttpRequest req,
             HttpResponse res,
-            int id,
-            IFacadeResourceService<AutomaticPurchaseOrder, int, AutomaticPurchaseOrderResource, AutomaticPurchaseOrderResource> automaticPurchaseOrderFacadeService)
+            int? supplierId,
+            int? planner,
+            IFacadeResourceFilterService<AutomaticPurchaseOrderSuggestion, int, AutomaticPurchaseOrderSuggestionResource, AutomaticPurchaseOrderSuggestionResource, PlannerSupplierRequestResource> automaticPurchaseOrderSuggestionFacadeService)
         {
-            var result = automaticPurchaseOrderFacadeService.DeleteOrObsolete(
-                id,
-                req.HttpContext.GetPrivileges(),
-                req.HttpContext.User.GetEmployeeNumber());
-
-            await res.Negotiate(result);
+            await res.Negotiate(
+                automaticPurchaseOrderSuggestionFacadeService.FilterBy(
+                    new PlannerSupplierRequestResource { Planner = planner, SupplierId = supplierId }));
         }
     }
 }

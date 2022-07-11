@@ -140,7 +140,9 @@
                 r => new EntityFrameworkQueryRepository<ShortagesPlannerEntry>(r.GetService<ServiceDbContext>()
                     ?.ShortagesPlannerEntries))
                 .AddTransient<IRepository<PartNumberList, string>, PartNumberListRepository>()
-                .AddTransient<IRepository<AutomaticPurchaseOrder, int>, AutomaticPurchaseOrderRepository>();
+                .AddTransient<IRepository<AutomaticPurchaseOrder, int>, AutomaticPurchaseOrderRepository>()
+                .AddTransient<IRepository<AutomaticPurchaseOrderSuggestion, int>, EntityFrameworkRepository<AutomaticPurchaseOrderSuggestion, int>>(
+                    r => new EntityFrameworkRepository<AutomaticPurchaseOrderSuggestion, int>(r.GetService<ServiceDbContext>()?.AutomaticPurchaseOrderSuggestions));
         }
     }
 }

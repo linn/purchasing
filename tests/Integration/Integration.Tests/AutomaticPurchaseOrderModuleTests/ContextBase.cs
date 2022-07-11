@@ -6,6 +6,7 @@
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.IoC;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.RequestResources;
     using Linn.Purchasing.Service.Modules;
 
     using Microsoft.Extensions.DependencyInjection;
@@ -21,16 +22,20 @@
         protected HttpResponseMessage Response { get; set; }
 
         protected IFacadeResourceService<AutomaticPurchaseOrder, int, AutomaticPurchaseOrderResource, AutomaticPurchaseOrderResource> FacadeService { get; private set; }
+        
+        protected IFacadeResourceFilterService<AutomaticPurchaseOrderSuggestion, int, AutomaticPurchaseOrderSuggestionResource, AutomaticPurchaseOrderSuggestionResource, PlannerSupplierRequestResource> SuggestionFacadeService { get; private set; }
 
         [SetUp]
         public void EstablishContext()
         {
             this.FacadeService = Substitute.For<IFacadeResourceService<AutomaticPurchaseOrder, int, AutomaticPurchaseOrderResource, AutomaticPurchaseOrderResource>>();
+            this.SuggestionFacadeService = Substitute.For<IFacadeResourceFilterService<AutomaticPurchaseOrderSuggestion, int, AutomaticPurchaseOrderSuggestionResource, AutomaticPurchaseOrderSuggestionResource, PlannerSupplierRequestResource>>();
 
             this.Client = TestClient.With<AutomaticPurchaseOrderModule>(
                 services =>
                     {
                         services.AddSingleton(this.FacadeService);
+                        services.AddSingleton(this.SuggestionFacadeService);
                         services.AddHandlers();
                     },
                 FakeAuthMiddleware.EmployeeMiddleware);
