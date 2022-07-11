@@ -81,6 +81,8 @@ import shortagesReport from './shortagesReport';
 import shortagesPlannerReport from './shortagesPlannerReport';
 import mrOrderBookReport from './mrOrderBookReport';
 import sendPurchaseOrderPdfEmail from './sendPurchaseOrderPdfEmail';
+import automaticPurchaseOrder from './automaticPurchaseOrder';
+import automaticPurchaseOrderSuggestions from './automaticPurchaseOrderSuggestions';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -92,6 +94,8 @@ const rootReducer = history =>
         address,
         addresses,
         applyForecastingPercentageChange,
+        automaticPurchaseOrder,
+        automaticPurchaseOrderSuggestions,
         batchPurchaseOrderDeliveriesUpload,
         bulkLeadTimesUpload,
         countries,

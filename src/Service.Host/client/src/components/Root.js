@@ -55,6 +55,7 @@ import ShortagesReport from './reports/ShortagesReport';
 import ShortagesReportOptions from './reports/ShortagesReportOptions';
 import ShortagesPlannerReport from './reports/ShortagesPlannerReport';
 import MrOrderBookReport from './reports/MrOrderBookReport';
+import AutomaticPurchaseOrders from './AutomaticPurchaseOrders';
 
 const Root = ({ store }) => (
     <div>
@@ -316,6 +317,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/reports/mr-order-book"
                                     component={MrOrderBookReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/automatic-purchase-orders"
+                                    component={AutomaticPurchaseOrders}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>

@@ -246,3 +246,13 @@ export const mrOrderBookReportActionTypes = makeActionTypes(
 export const sendPurchaseOrderPdfEmailActionTypes = makeProcessActionTypes(
     itemTypes.sendPurchaseOrderPdfEmail.actionType
 );
+
+export const automaticPurchaseOrderActionTypes = makeActionTypes(
+    itemTypes.automaticPurchaseOrder.actionType,
+    true
+);
+
+export const automaticPurchaseOrderSuggestionsActionTypes = makeActionTypes(
+    itemTypes.automaticPurchaseOrderSuggestions.actionType,
+    false
+);

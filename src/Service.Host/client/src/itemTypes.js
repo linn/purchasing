@@ -285,3 +285,15 @@ export const sendPurchaseOrderPdfEmail = new ItemType(
     'SEND_PURCHASE_ORDER_PDF_EMAIL',
     '/purchasing/purchase-orders/email-pdf'
 );
+
+export const automaticPurchaseOrderSuggestions = new ItemType(
+    'automaticPurchaseOrderSuggestions',
+    'AUTOMATIC_PL_ORDER_SUGGESTIONS',
+    '/purchasing/automatic-purchase-order-suggestions'
+);
+
+export const automaticPurchaseOrder = new ItemType(
+    'automaticPurchaseOrder',
+    'AUTOMATIC_PURCHASE_ORDER',
+    '/purchasing/automatic-purchase-orders'
+);
