@@ -41,7 +41,7 @@
                                         OrderNumber = 12345,
                                         OrderLine = 1,
                                         DeliverySeq = 1
-        },
+                                    },
                                 new ShortagesPlannerEntry()
                                     {
                                         VendorManagerName = "Test VM L",
@@ -157,7 +157,6 @@
             this.ShortagesPlannerRepository.FilterBy(Arg.Any<Expression<Func<ShortagesPlannerEntry, bool>>>())
                 .Returns(this.Data.AsQueryable());
 
-            var reportingHelper = new ReportingHelper();
             this.Sut = new ShortagesReportService(this.ShortagesRepository, this.ShortagesPlannerRepository);
         }
     }
