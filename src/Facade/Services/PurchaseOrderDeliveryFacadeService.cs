@@ -50,7 +50,7 @@
             {
                 while (reader.ReadLine() is { } line)
                 {
-                    // assuming csv lines are in the form <orderNumber>,<delivery-no>,<newAdvisedDate>,<qty>, <newReason>
+                    // assuming csv lines are in the form <orderNumber>,<deliveryNo>,<newAdvisedDate>,<qty>, <unitPrice>, <newReason>
                     var row = line.Split(",");
 
                     if (!int.TryParse(
@@ -68,6 +68,11 @@
                     if (!int.TryParse(row[3].Trim(), out var qty))
                     {
                         throw new InvalidOperationException($"Invalid Qty for {row[0]} / {row[1]}.");
+                    }
+
+                    if (!decimal.TryParse(row[4].Trim(), out var unitPrice))
+                    {
+                        throw new InvalidOperationException($"Invalid Unit Price for {row[0]} / {row[1]}.");
                     }
 
                     var firstFormatSatisfied =
@@ -95,8 +100,9 @@
                                                       DeliverySequence = delNo
                                                   },
                                         NewDateAdvised = firstFormatSatisfied ? parsedDate1 : parsedDate2,
-                                        NewReason = row.Length < 5 ? null : row[4].Trim(),
-                                        Qty = qty
+                                        NewReason = row.Length < 5 ? null : row[5].Trim(),
+                                        Qty = qty,
+                                        UnitPrice = unitPrice
                                     });
                 }
 

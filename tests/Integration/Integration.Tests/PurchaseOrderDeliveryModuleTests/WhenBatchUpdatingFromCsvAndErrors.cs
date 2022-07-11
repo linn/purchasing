@@ -34,7 +34,7 @@
                                                             });
             this.Response = this.Client.Post(
                 $"/purchasing/purchase-orders/deliveries",
-                "PO1,1,28/03/1995,100,NEW REASON",
+                "PO1,1,28/03/1995,100,0.01,NEW REASON,",
                 with =>
                     {
                         with.Accept("application/json");
@@ -47,7 +47,7 @@
         {
             this.Response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
-
+        
         [Test]
         public void ShouldCommitChanges()
         {

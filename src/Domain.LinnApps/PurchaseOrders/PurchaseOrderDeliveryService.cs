@@ -207,6 +207,12 @@
                         $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}",
                         $"{change.Qty} does not match the Qty on the Delivery ({entity.OurDeliveryQty})"));
                 }
+                else if (change.UnitPrice != entity.OrderUnitPriceCurrency)
+                {
+                    errors.Add(new Error(
+                        $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}",
+                        $"{change.UnitPrice} does not match our order price ({entity.OrderUnitPriceCurrency})"));
+                }
                 else
                 {
                     if (!string.IsNullOrEmpty(change.Comment))
