@@ -453,7 +453,7 @@ function AcknowledgeOrdersUtility() {
                         setSnackbarVisible={setUploadSnackbarVisible}
                         message={uploadMessage}
                         initiallyExpanded={false}
-                        helperText="Upload a csv file with the following columns, Order Number, Delivery Number, New Advised Date, Qty, Unit Price and (optionally) New Reason. Date must be in a format matching either 31/01/2022 or 31-jan-2022. New Reason must be one of the following: ADVISED, AUTO FAIL, AUTO PASS, BROUGHT IN, DECOMMIT, IGNORE, REQUESTED, RESCHEDULE OUT and will default to ADVISED if no value is supplied."
+                        helperText="Upload a csv file with the following columns: Order Number, Delivery Number, New Advised Date, Qty, Unit Price and (optionally) New Reason. Date must be in a format matching either 31/01/2022 or 31-jan-2022. New Reason must be one of the following: ADVISED, AUTO FAIL, AUTO PASS, BROUGHT IN, DECOMMIT, IGNORE, REQUESTED, RESCHEDULE OUT and will default to ADVISED if no value is supplied."
                     />
                 </Grid>
             </Grid>
