@@ -11,8 +11,7 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
 
-    public class
-        PurchaseOrderFacadeService : FacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource>, IPurchaseOrderFacadeService
+    public class PurchaseOrderFacadeService : FacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource>, IPurchaseOrderFacadeService
     {
         private readonly IPurchaseOrderService domainService;
 

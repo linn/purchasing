@@ -594,6 +594,7 @@
             entity.Property(o => o.OrderAddressId).HasColumnName("ORDER_ADDRESS_ID");
             entity.HasOne(o => o.OrderAddress).WithMany().HasForeignKey(o => o.OrderAddressId);
             entity.Property(e => e.DamagesPercent).HasColumnName("DAMAGES_PERCENT");
+            entity.Property(o => o.BaseCurrencyCode).HasColumnName("BASE_CURRENCY");
         }
 
         private void BuildPurchaseOrderDetails(ModelBuilder builder)

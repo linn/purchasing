@@ -10,7 +10,7 @@
         public string DocumentType { get; set; }
 
         public DateTime DateOfOrder { get; set; }
-        
+
         public DateTime? RequestedDeliveryDate { get; set; }
 
         public DateTime? AdvisedDeliveryDate { get; set; }
@@ -24,10 +24,6 @@
         public string Currency { get; set; }
 
         public string SuppliersDesignation { get; set; }
-
-        public string VaxCurrency { get; set; }
-
-        public decimal? VaxExchangeRate { get; set; }
 
         public decimal? VaxCurrencyUnitPrice { get; set; }
 
@@ -144,7 +140,6 @@
         public string InternalComments { get; set; }
 
         public ICollection<MiniOrderDelivery> Deliveries { get; set; }
-
     }
 }
 
