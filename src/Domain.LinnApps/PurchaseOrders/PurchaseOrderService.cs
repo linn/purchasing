@@ -119,9 +119,8 @@
 
             this.UpdateOrderProperties(current, updated);
             this.UpdateMiniOrder(updated);
-
             //this.UpdateDetails(current.Details, updated.Details);
-            // Update pl_order_postings? Or just on create? todo investigate
+            this.UpdateOrderPostings(current, updated);
             return current;
         }
 
@@ -239,9 +238,93 @@
         private void UpdateMiniOrder(PurchaseOrder updatedOrder)
         {
             var miniOrder = this.miniOrderRepository.FindById(updatedOrder.OrderNumber);
+            miniOrder.OrderNumber = updatedOrder.OrderNumber;
+            miniOrder.DocumentType = updatedOrder.DocumentType.Name;
+            miniOrder.DateOfOrder = updatedOrder.OrderDate;
+            miniOrder.RequestedDeliveryDate = updatedOrder.Details.First().PurchaseDeliveries.First().DateRequested;
+            miniOrder.AdvisedDeliveryDate = updatedOrder.Details.First().PurchaseDeliveries.First().DateAdvised;
+            miniOrder.Remarks = updatedOrder.Remarks;
             miniOrder.SupplierId = updatedOrder.SupplierId;
-            //map supplierId onto mini order in servicedbcontext and mini order domain object
-            //(maybe along with others we'll need)
+            miniOrder.PartNumber = updatedOrder.Details.First().PartNumber;
+            miniOrder.Currency = updatedOrder.Currency.Code;
+            miniOrder.SuppliersDesignation = updatedOrder.Details.First().SuppliersDesignation;
+            // miniOrder.VaxCurrency = updatedOrder.Currency.Code;
+            //miniOrder.VaxExchangeRate = updatedOrder.Details.First().
+            //miniOrder.VaxCurrencyUnitPrice = updatedOrder.Currency.Code; // check
+            miniOrder.Department = updatedOrder.Details.First().OrderPosting.NominalAccount.Department.DepartmentCode;
+            miniOrder.Nominal = updatedOrder.Details.First().OrderPosting.NominalAccount.Nominal.NominalCode;
+            miniOrder.AuthorisedBy = updatedOrder.AuthorisedBy.Id;
+            miniOrder.EnteredBy = updatedOrder.EnteredBy.Id;
+            miniOrder.OurUnitOfMeasure = updatedOrder.Details.First().OurUnitOfMeasure;
+            miniOrder.OrderUnitOfMeasure = updatedOrder.Details.First().OrderUnitOfMeasure;
+            miniOrder.RequestedBy = updatedOrder.RequestedById;
+            miniOrder.DeliveryInstructions = updatedOrder.Details.First().DeliveryInstructions;
+            miniOrder.OurQty = updatedOrder.Details.First().OurQty;
+            miniOrder.OrderQty = updatedOrder.Details.First().OrderQty;
+            miniOrder.OrderConvFactor = updatedOrder.Details.First().OrderConversionFactor;
+            //miniOrder.NetTotal = updatedOrder.Details.First().BaseNetTotal;
+            //miniOrder.VatTotal = updatedOrder.Details.First().Va;
+            //miniOrder.OrderTotal = updatedOrder.Ord
+            miniOrder.OrderMethod = updatedOrder.OrderMethod.Name;
+            miniOrder.CancelledBy = updatedOrder.Details.First().CancelledDetails.First().CancelledById;
+            miniOrder.ReasonCancelled = updatedOrder.Details.First().CancelledDetails.First().ReasonCancelled;
+            miniOrder.SentByMethod = updatedOrder.SentByMethod;
+            miniOrder.AcknowledgeComment = updatedOrder.Details.First().PurchaseDeliveries.First().SupplierConfirmationComment;
+            miniOrder.DeliveryAddressId = updatedOrder.DeliveryAddressId;
+            //miniOrder.NumberOfSplitDeliveries = updatedOrder.Details.First().PurchaseDel
+            miniOrder.QuotationRef = updatedOrder.QuotationRef;
+            miniOrder.IssuePartsToSupplier = updatedOrder.IssuePartsToSupplier;
+            miniOrder.Vehicle = updatedOrder.Details.First().OrderPosting.Vehicle;
+            miniOrder.Building = updatedOrder.Details.First().OrderPosting.Building;
+            miniOrder.Product = updatedOrder.Details.First().OrderPosting.Product;
+            //miniOrder.Person = updatedOrder.Details.First().OrderPosting.Person.; //check db is an int
+            //miniOrder.DrawingReference = updatedOrder.;
+            miniOrder.StockPoolCode = updatedOrder.Details.First().StockPoolCode;
+            //miniOrder.PrevOrderNumber = updatedOrder.;
+            //miniOrder.PrevOrderLine = updatedOrder.;
+            miniOrder.FilCancelledBy = updatedOrder.Details.First().CancelledDetails.First().FilCancelledById;
+            miniOrder.ReasonFilCancelled = updatedOrder.Details.First().CancelledDetails.First().ReasonCancelled;
+            //miniOrder.OurPrice = updatedOrder;
+            //miniOrder.OrderPrice = updatedOrder;
+            //miniOrder.BaseCurrency = updatedOrder.//purchase ledger?
+            miniOrder.BaseOurPrice = updatedOrder.Details.First().BaseOurUnitPrice;
+            miniOrder.BaseOrderPrice = updatedOrder.Details.First().BaseOrderUnitPrice;
+            miniOrder.BaseNetTotal = updatedOrder.Details.First().BaseNetTotal;
+            miniOrder.BaseVatTotal = updatedOrder.Details.First().BaseVatTotal;
+            miniOrder.BaseOrderTotal = updatedOrder.Details.First().BaseDetailTotal;//check
+            miniOrder.ExchangeRate = updatedOrder.ExchangeRate;
+            //miniOrder.ManufacturerPartNumber = updatedOrder.;
+            miniOrder.DateFilCancelled = updatedOrder.Details.First().CancelledDetails.First().DateFilCancelled;
+            miniOrder.DutyPercent = updatedOrder.Details.First().Duty;
+            miniOrder.RohsCompliant = updatedOrder.Details.First().RohsCompliant;
+            //miniOrder.ShouldHaveBeenBlueReq = updatedOrder.;
+            //miniOrder.SpecialOrderType = updatedOrder.;
+            //miniOrder.PpvAuthorisedBy = updatedOrder.;
+            //miniOrder.PpvReason = updatedOrder.;
+            //miniOrder.MpvAuthorisedBy = updatedOrder.
+            //miniOrder.MpvReason = updatedOrder.
+            miniOrder.DeliveryConfirmedBy = updatedOrder.Details.First().DeliveryConfirmedBy.Id;
+            //miniOrder.TotalQtyDelivered = updatedOrder.Details
+            miniOrder.InternalComments = updatedOrder.Details.First().InternalComments;
+        }
+
+        private void UpdateOrderPostings(PurchaseOrder current, PurchaseOrder updated)
+        {
+            if (current.Details.First().OrderPosting.NominalAccount.Nominal.NominalCode != 
+                updated.Details.First().OrderPosting.NominalAccount.Nominal.NominalCode)
+            {
+                current.Details.First().OrderPosting.NominalAccount.Nominal.NominalCode = 
+                    updated.Details.First().OrderPosting.NominalAccount.Nominal.NominalCode;
+            }
+
+            if (current.Details.First().OrderPosting.NominalAccount.Department.DepartmentCode != 
+                updated.Details.First().OrderPosting.NominalAccount.Department.DepartmentCode)
+            {
+                current.Details.First().OrderPosting.NominalAccount.Department.DepartmentCode =
+                    updated.Details.First().OrderPosting.NominalAccount.Department.DepartmentCode;
+                current.Details.First().OrderPosting.NominalAccount.Department.Description =
+                    updated.Details.First().OrderPosting.NominalAccount.Department.DepartmentCode;
+            }
         }
     }
 }
