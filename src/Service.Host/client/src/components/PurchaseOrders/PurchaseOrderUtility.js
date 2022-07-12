@@ -794,18 +794,6 @@ function PurchaseOrderUtility({ creating }) {
                                     />
                                 </Grid>
                                 <Grid item xs={4}>
-                                    <InputField
-                                        fullWidth
-                                        value={detail.duty}
-                                        label="Duty %"
-                                        propertyName="duty"
-                                        onChange={handleFieldChange}
-                                        disabled={!editingAllowed || !creating}
-                                        type="number"
-                                        required
-                                    />
-                                </Grid>
-                                <Grid item xs={4}>
                                     <TypeaheadTable
                                         table={nominalAccountsTable}
                                         columnNames={['Nominal', 'Description', 'Dept', 'Name']}

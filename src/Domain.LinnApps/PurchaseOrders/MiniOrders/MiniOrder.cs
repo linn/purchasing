@@ -115,8 +115,6 @@
 
         public DateTime? DateFilCancelled { get; set; }
 
-        public decimal? DutyPercent { get; set; }
-
         public string RohsCompliant { get; set; }
 
         public string ShouldHaveBeenBlueReq { get; set; }

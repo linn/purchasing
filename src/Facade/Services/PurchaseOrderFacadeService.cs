@@ -187,7 +187,6 @@
                            //                     OriginalOrderLine = x.OriginalOrderLine,
                            //                     OurUnitOfMeasure = x.OurUnitOfMeasure,
                            //                     OrderUnitOfMeasure = x.OrderUnitOfMeasure,
-                           //                     Duty = x.Duty,
                            //                     OurUnitPriceCurrency = x.OurUnitPriceCurrency,
                            //                     OrderUnitPriceCurrency = x.OrderUnitPriceCurrency,
                            //                     BaseOurUnitPrice = x.BaseOurUnitPrice,

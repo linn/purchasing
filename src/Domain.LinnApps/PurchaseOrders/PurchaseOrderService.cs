@@ -219,7 +219,6 @@
             current.OriginalOrderLine = updated.OriginalOrderLine;
             current.OurUnitOfMeasure = updated.OurUnitOfMeasure;
             current.OrderUnitOfMeasure = updated.OrderUnitOfMeasure;
-            current.Duty = updated.Duty;
             current.OurUnitPriceCurrency = updated.OurUnitPriceCurrency;
             current.OrderUnitPriceCurrency = updated.OrderUnitPriceCurrency;
             current.BaseOurUnitPrice = updated.BaseOurUnitPrice;
@@ -318,7 +317,6 @@
             miniOrder.ExchangeRate = order.ExchangeRate;
             //miniOrder.ManufacturerPartNumber = updatedOrder.;
             miniOrder.DateFilCancelled = detail.CancelledDetails.First().DateFilCancelled;
-            miniOrder.DutyPercent = detail.Duty;
             miniOrder.RohsCompliant = detail.RohsCompliant;
             //miniOrder.ShouldHaveBeenBlueReq = updatedOrder.;
             //miniOrder.SpecialOrderType = updatedOrder.;
