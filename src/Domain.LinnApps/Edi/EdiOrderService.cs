@@ -12,9 +12,9 @@
 
         private readonly IRepository<EdiOrder, int> repository;
 
-        private readonly IRepository<EdiSupplier, int> supplierRepository;
+        private readonly IQueryRepository<EdiSupplier> supplierRepository;
 
-        public EdiOrderService(IEdiEmailPack ediEmailPack, IRepository<EdiOrder, int> repository, IRepository<EdiSupplier, int> supplierRepository)
+        public EdiOrderService(IEdiEmailPack ediEmailPack, IRepository<EdiOrder, int> repository, IQueryRepository<EdiSupplier> supplierRepository)
         {
             this.ediEmailPack = ediEmailPack;
             this.repository = repository;

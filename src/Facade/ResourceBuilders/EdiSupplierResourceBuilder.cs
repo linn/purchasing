@@ -17,7 +17,8 @@
                 VendorManager = model.VendorManager, 
                 VendorManangerName = model.VendorManangerName, 
                 EdiEmailAddress = model.EdiEmailAddress, 
-                NumOrders=model.NumOrders};
+                NumOrders=model.NumOrders
+            };
         }
 
         object IBuilder<EdiSupplier>.Build(EdiSupplier model, IEnumerable<string> claims) => this.BuildResource(model, claims);

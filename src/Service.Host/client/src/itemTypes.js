@@ -279,3 +279,9 @@ export const batchPurchaseOrderDeliveriesUpload = new ItemType(
     'BATCH_PURCHASE_ORDER_DELIVERIES_UPLOAD',
     '/purchasing/purchase-orders/deliveries'
 );
+
+export const ediSuppliers = new ItemType(
+    'ediSuppliers',
+    'EDI_SUPPLIERS',
+    '/purchasing/edi/suppliers'
+);

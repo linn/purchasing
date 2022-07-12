@@ -77,6 +77,7 @@ import mrReport from './mrReport';
 import mrReportOptions from './mrReportOptions';
 import pOReqCheckIfCanAuthOrder from './pOReqCheckIfCanAuthOrder';
 import mrReportOrders from './mrReportOrders';
+import ediSuppliers from './ediSuppliers';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -95,6 +96,7 @@ const rootReducer = history =>
         deliveryAddresses,
         departments,
         ediOrders,
+        ediSuppliers,
         employees,
         manufacturers,
         mrMaster,

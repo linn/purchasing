@@ -18,6 +18,7 @@
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/purchasing/edi", this.GetApp);
+            app.MapGet("/purchasing/edi/suppliers", this.GetEdiSuppliers);
             app.MapGet("/purchasing/edi/orders", this.GetEdiOrders);
             app.MapPost("/purchasing/edi/orders", this.SendEdiOrder);
         }
@@ -34,6 +35,16 @@
             IEdiOrdersFacadeService ediOrdersFacadeService)
         {
             var result = ediOrdersFacadeService.GetEdiOrders(supplierId);
+
+            await res.Negotiate(result);
+        }
+
+        private async Task GetEdiSuppliers(
+            HttpRequest req,
+            HttpResponse res,
+            IEdiOrdersFacadeService ediOrdersFacadeService)
+        {
+            var result = ediOrdersFacadeService.GetEdiSuppliers();
 
             await res.Negotiate(result);
         }

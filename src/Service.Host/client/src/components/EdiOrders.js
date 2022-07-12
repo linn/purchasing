@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
@@ -8,9 +8,9 @@ import {
     Loading,
     Page,
     SnackbarMessage,
-    Typeahead,
     utilities
 } from '@linn-it/linn-form-components-library';
+import { DataGrid } from '@mui/x-data-grid';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
@@ -21,6 +21,7 @@ import EditOffIcon from '@mui/icons-material/EditOff';
 import Tooltip from '@mui/material/Tooltip';
 import suppliersActions from '../actions/suppliersActions';
 import ediOrdersActions from '../actions/ediOrdersActions';
+import ediSuppliersActions from '../actions/ediSuppliersActions';
 import sendEdiEmailActions from '../actions/sendEdiEmailActions';
 import history from '../history';
 import config from '../config';
@@ -32,21 +33,82 @@ function EdiOrder() {
         dispatch(suppliersActions.fetchState());
     }, [dispatch]);
 
+    useEffect(() => dispatch(ediSuppliersActions.fetch()), [dispatch]);
+
     const applicationState = useSelector(state =>
         collectionSelectorHelpers.getApplicationState(state.suppliers)
     );
-    const suppliersSearchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(state.suppliers)
-    )?.map(c => ({
-        id: c.id,
-        name: c.id.toString(),
-        description: c.name,
-        links: c.links
-    }));
 
-    const suppliersSearchLoading = useSelector(state =>
-        collectionSelectorHelpers.getSearchLoading(state.suppliers)
+    const [rows, setRows] = useState([]);
+    const suppliers = useSelector(state => collectionSelectorHelpers.getItems(state.ediSuppliers));
+    const [selectedSuppliers, setSelectedSuppliers] = useState(null);
+    const [editRowsModel, setEditRowsModel] = useState({});
+
+    const suppliersLoading = useSelector(state =>
+        collectionSelectorHelpers.getLoading(state.ediSuppliers)
     );
+
+    const columns = [
+        { field: 'supplierId', headerName: 'Supplier', width: 90 },
+        { field: 'supplierName', headerName: 'Name', width: 260 },
+        { field: 'vendorManangerName', headerName: 'Vendor Manager', width: 170 },
+        { field: 'ediEmailAddress', headerName: 'Email', width: 170, editable: true },
+        {
+            field: 'numOrders',
+            headerName: 'Orders',
+            width: 70
+        },
+        {
+            field: 'getOrders',
+            headerName: '',
+            width: 120,
+            renderCell: params => (
+                <>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() =>
+                            dispatch(
+                                ediOrdersActions.searchWithOptions(
+                                    null,
+                                    `&supplierId=${params.row.supplierId}`
+                                )
+                            )
+                        }
+                    >
+                        Get Orders
+                    </Button>
+                </>
+            )
+        }
+    ];
+
+    useEffect(() => {
+        setRows(!suppliers ? [] : suppliers.map(s => ({ ...s, id: s.supplierId })));
+    }, [suppliers]);
+
+    const handleEditRowsModelChange = useCallback(model => {
+        setEditRowsModel(model);
+
+        if (model && Object.keys(model)[0]) {
+            const id = parseInt(Object.keys(model)[0], 10);
+            if (
+                model &&
+                model[id] &&
+                model[id].ediEmailAddress &&
+                model[id].ediEmailAddress.value
+            ) {
+                const newValue = model[id].ediEmailAddress.value;
+                setRows(r =>
+                    r.map(row =>
+                        row.id === id
+                            ? { ...row, ediEmailAddress: newValue, alternativeEmail: true }
+                            : row
+                    )
+                );
+            }
+        }
+    }, []);
 
     const ordersLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.ediOrders)
@@ -62,23 +124,28 @@ function EdiOrder() {
 
     const emailSentResult = useSelector(state => itemSelectorHelpers.getItem(state.sendEdiEmail));
 
-    const [supplier, setSupplier] = useState({ id: '', name: 'click to set supplier', links: [] });
-    const [altEmail, setAltEmail] = useState('');
-    const [additionalEmail, setAdditionalEmail] = useState('');
     const [additionalText, setAdditionalText] = useState('');
 
     const sendEdiUrl = utilities.getHref(applicationState, 'edi');
 
-    const handleSupplierChange = selectedsupplier => {
-        setSupplier(selectedsupplier);
+    const handleSelectRow = selected => {
+        const newRows = rows.map(r =>
+            selected.includes(r.id)
+                ? {
+                      ...r,
+                      selected: true
+                  }
+                : {
+                      ...r,
+                      selected: false
+                  }
+        );
+        setRows(newRows);
+        setSelectedSuppliers(selected);
     };
 
     const handleFieldChange = (propertyName, newValue) => {
-        if (propertyName === 'altEmail') {
-            setAltEmail(newValue);
-        } else if (propertyName === 'additionalEmail') {
-            setAdditionalEmail(newValue);
-        } else if (propertyName === 'additionalText') {
+        if (propertyName === 'additionalText') {
             setAdditionalText(newValue);
         }
     };
@@ -104,13 +171,17 @@ function EdiOrder() {
     };
 
     const handleSendEdiEmail = () => {
-        const sendEmailOptions = {
-            supplierId: supplier.id,
-            altEmail,
-            additionalEmail,
-            additionalText
-        };
-        dispatch(sendEdiEmailActions.add(sendEmailOptions));
+        const sendEmails = rows
+            .filter(r => r.selected)
+            .map(s => ({
+                supplierId: s.id,
+                altEmail: s.alternativeEmail ? s.ediEmailAddress : null,
+                additionalText
+            }));
+
+        sendEmails.forEach(s => {
+            dispatch(sendEdiEmailActions.add(s));
+        });
     };
 
     const snackbarMessage = () => {
@@ -143,37 +214,18 @@ function EdiOrder() {
                     )}
                 </Grid>
                 <Grid item xs={12}>
-                    <Typeahead
-                        label="Supplier"
-                        title="Search for a supplier"
-                        onSelect={handleSupplierChange}
-                        items={suppliersSearchResults}
-                        loading={suppliersSearchLoading}
-                        fetchItems={searchTerm => dispatch(suppliersActions.search(searchTerm))}
-                        clearSearch={() => dispatch(suppliersActions.clearSearch)}
-                        value={`${supplier?.id} - ${supplier?.description}`}
-                        modal
-                        links={false}
-                        debounce={1000}
-                        minimumSearchTermLength={2}
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <InputField
-                        fullWidth
-                        value={altEmail}
-                        label="Alternative Email"
-                        propertyName="altEmail"
-                        onChange={handleFieldChange}
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <InputField
-                        fullWidth
-                        value={additionalEmail}
-                        label="Additional Email"
-                        propertyName="additionalEmail"
-                        onChange={handleFieldChange}
+                    <DataGrid
+                        rows={rows}
+                        columns={columns}
+                        checkboxSelection
+                        onSelectionModelChange={handleSelectRow}
+                        editRowsModel={editRowsModel}
+                        onEditRowsModelChange={handleEditRowsModelChange}
+                        density="compact"
+                        rowHeight={34}
+                        autoHeight
+                        loading={suppliersLoading}
+                        hideFooter
                     />
                 </Grid>
                 <Grid item xs={12}>
@@ -185,30 +237,13 @@ function EdiOrder() {
                         onChange={handleFieldChange}
                     />
                 </Grid>
-                <Grid item xs={3}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        disabled={!sendEdiUrl || !supplier.id}
-                        onClick={() =>
-                            dispatch(
-                                ediOrdersActions.searchWithOptions(
-                                    null,
-                                    `&supplierId=${supplier.id}`
-                                )
-                            )
-                        }
-                    >
-                        Get orders
-                    </Button>
-                </Grid>
                 <Grid item xs={9}>
                     {emailSending ? (
                         <Loading />
                     ) : (
                         <Button
                             variant="contained"
-                            disabled={!ediOrders || !ediOrders.length || emailSentResult}
+                            disabled={!sendEdiUrl || !selectedSuppliers || emailSentResult}
                             onClick={() => handleSendEdiEmail()}
                         >
                             Send Emails

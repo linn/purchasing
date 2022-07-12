@@ -227,3 +227,5 @@ export const batchPurchaseOrderDeliveriesUploadActionTypes = makeProcessActionTy
     itemTypes.batchPurchaseOrderDeliveriesUpload.actionType,
     true
 );
+
+export const ediSuppliersActionTypes = makeActionTypes(itemTypes.ediSuppliers.actionType, true);
