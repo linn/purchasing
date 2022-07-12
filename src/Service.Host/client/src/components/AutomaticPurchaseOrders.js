@@ -5,6 +5,7 @@ import {
     InputField,
     Typeahead,
     Title,
+    userSelectors,
     collectionSelectorHelpers,
     Dropdown
 } from '@linn-it/linn-form-components-library';
@@ -49,6 +50,7 @@ function AutomaticPurchaseOrders() {
         collectionSelectorHelpers.getLoading(state.planners)
     );
     const dispatch = useDispatch();
+    const userNumber = useSelector(state => userSelectors.getUserNumber(state));
 
     useEffect(() => {
         if (!planners || planners.length === 0) {
@@ -116,9 +118,29 @@ function AutomaticPurchaseOrders() {
     const handleDeleteRow = row => {
         setRows(rows.filter(a => a.id !== row.id));
     };
-    const createOrders = () => {};
+    const createOrders = () => {
+        if (rows.length > 0) {
+            const { jobRef } = rows[0];
+            const details = rows.map(r => ({
+                partNumber: r.partNumber,
+                supplierId: r.preferredSupplierId,
+                quantity: r.recommendedQuantity,
+                recommendationCode: r.recommendationCode,
+                currencyCode: r.currencyCode,
+                currencyPrice: r.recommendedQuantity * r.ourPrice,
+                requestedDate: r.recommendedDate,
+                orderMethod: r.orderMethod
+            }));
+            const proposedAutoOrder = {
+                startedBy: userNumber,
+                jobRef,
+                details
+            };
+
+            dispatch(automaticPurchaseOrderActions.add(proposedAutoOrder));
+        }
+    };
     const handleEditRowsModelChange = () => {};
-    const getBackgroundColourClass = () => {};
 
     const columns = [
         { field: 'partNumber', headerName: 'Part Number', minWidth: 140 },
@@ -211,7 +233,6 @@ function AutomaticPurchaseOrders() {
                             loading={suggestionsLoading}
                             hideFooter
                             onEditRowsModelChange={handleEditRowsModelChange}
-                            getRowClassName={getBackgroundColourClass}
                         />
                     </div>
                 </Grid>
