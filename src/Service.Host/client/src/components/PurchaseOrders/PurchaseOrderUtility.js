@@ -149,13 +149,13 @@ function PurchaseOrderUtility({ creating }) {
     // const allowedToCancel = () => !creating && order.links?.some(l => l.rel === 'cancel');
     const allowedToAuthorise = () => !creating && order.links?.some(l => l.rel === 'authorise');
 
-    const editingAllowed =
-        false && order.links?.some(l => l.rel === 'edit') && order.cancelled === 'N';
+    const allowedToUpdate = () =>
+        !creating && order.links?.some(l => l.rel === 'edit') && order.cancelled === 'N';
 
     // const inputIsInvalid = () => true;
 
     // const canSave = () =>
-    //     editStatus !== 'view' && editingAllowed && !inputIsInvalid() && order !== item;
+    //     editStatus !== 'view' && allowedToUpdate && !inputIsInvalid() && order !== item;
 
     const handleAuthorise = () => {
         // setEditStatus('edit');
@@ -322,7 +322,7 @@ function PurchaseOrderUtility({ creating }) {
                                 propertyName="orderDate"
                                 onChange={handleFieldChange}
                                 type="date"
-                                disabled={!editingAllowed}
+                                disabled
                             />
                         </Grid>
                         <Grid item xs={3}>
@@ -338,7 +338,7 @@ function PurchaseOrderUtility({ creating }) {
                                 label="State"
                                 value={`${order?.documentType?.name} - ${order?.documentType?.description}`}
                                 onChange={handleDocumentTypeChange}
-                                disabled={!editingAllowed}
+                                disabled={!allowedToUpdateed()}
                                 fullwidth
                                 allowNoValue={false}
                                 required
@@ -363,7 +363,7 @@ function PurchaseOrderUtility({ creating }) {
                         <Grid item xs={1} />
                         <Grid item xs={1}>
                             <div className={classes.centeredIcon}>
-                                {editingAllowed ? (
+                                {allowedToUpdate ? (
                                     <Tooltip
                                         title={`You can ${
                                             creating ? 'create' : 'edit'
@@ -372,7 +372,7 @@ function PurchaseOrderUtility({ creating }) {
                                         <ModeEditIcon color="primary" />
                                     </Tooltip>
                                 ) : (
-                                    <Tooltip title="cannot edit order (edit coming soon)">
+                                    <Tooltip title="cannot edit order">
                                         <EditOffIcon color="secondary" />
                                     </Tooltip>
                                 )}
@@ -397,7 +397,7 @@ function PurchaseOrderUtility({ creating }) {
                                 placeholder="Search Suppliers"
                                 minimumSearchTermLength={3}
                                 fullWidth
-                                disabled={!editingAllowed || !creating}
+                                disabled
                                 required
                             />
                         </Grid>
@@ -419,7 +419,7 @@ function PurchaseOrderUtility({ creating }) {
                                 number
                                 propertyName="issuePartsToSupplier"
                                 onChange={handleFieldChange}
-                                disabled={!editingAllowed}
+                                disabled
                             />
                         </Grid>
 
@@ -431,7 +431,7 @@ function PurchaseOrderUtility({ creating }) {
                                 number
                                 propertyName="orderContactName"
                                 onChange={handleFieldChange}
-                                disabled={!editingAllowed}
+                                disabled
                             />
                         </Grid>
                         <Grid item xs={4}>
@@ -441,7 +441,7 @@ function PurchaseOrderUtility({ creating }) {
                                 label="Phone Number"
                                 propertyName="phoneNumber"
                                 onChange={handleFieldChange}
-                                disabled={!editingAllowed}
+                                disabled
                             />
                         </Grid>
                         <Grid item xs={4}>
@@ -451,7 +451,7 @@ function PurchaseOrderUtility({ creating }) {
                                 label="Email Address"
                                 propertyName="email"
                                 onChange={handleFieldChange}
-                                disabled={!editingAllowed}
+                                disabled
                             />
                         </Grid>
 
@@ -475,7 +475,7 @@ function PurchaseOrderUtility({ creating }) {
                                         }
                                     }));
                                 }}
-                                disabled={!editingAllowed || !creating}
+                                disabled
                                 required
                             />
                         </Grid>
@@ -496,7 +496,7 @@ function PurchaseOrderUtility({ creating }) {
                                 number
                                 propertyName="exchangeRate"
                                 onChange={handleFieldChange}
-                                disabled={!editingAllowed}
+                                disabled
                                 type="number"
                             />
                         </Grid>
@@ -509,7 +509,7 @@ function PurchaseOrderUtility({ creating }) {
                                     label="Delivery Address Id"
                                     propertyName="deliveryAddressId"
                                     onChange={handleFieldChange}
-                                    disabled={!editingAllowed}
+                                    disabled
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -519,7 +519,7 @@ function PurchaseOrderUtility({ creating }) {
                                     label="Sent by method"
                                     propertyName="sentByMethod"
                                     onChange={handleFieldChange}
-                                    disabled={!editingAllowed}
+                                    disabled
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -529,7 +529,7 @@ function PurchaseOrderUtility({ creating }) {
                                     label="Quote Ref"
                                     propertyName="quotationRef"
                                     onChange={handleFieldChange}
-                                    disabled={!editingAllowed}
+                                    disabled
                                     rows={2}
                                 />
                             </Grid>
@@ -543,7 +543,7 @@ function PurchaseOrderUtility({ creating }) {
                                 propertyName="deliveryAddress"
                                 onChange={handleFieldChange}
                                 rows={8}
-                                disabled={!editingAllowed}
+                                disabled
                             />
                         </Grid>
                         <Grid item xs={12} />
@@ -581,7 +581,7 @@ function PurchaseOrderUtility({ creating }) {
                                         className={classes.buttonMarginTop}
                                         aria-label="Email"
                                         onClick={() => setAuthEmailDialogOpen(true)}
-                                        disabled={creating}
+                                        disabled
                                     >
                                         <Email />
                                     </IconButton>
@@ -608,7 +608,7 @@ function PurchaseOrderUtility({ creating }) {
                                 propertyName="remarksForOrder"
                                 onChange={handleFieldChange}
                                 rows={4}
-                                disabled={!editingAllowed}
+                                disabled={!allowedToUpdate()}
                             />
                         </Grid>
 
@@ -621,6 +621,7 @@ function PurchaseOrderUtility({ creating }) {
                                             value={detail.line}
                                             label="Order Line No"
                                             propertyName="line"
+                                            disabled
                                         />
                                     </Grid>
                                     <Grid item xs={8}>
@@ -630,7 +631,7 @@ function PurchaseOrderUtility({ creating }) {
                                             label="Part Number"
                                             propertyName="partNumber"
                                             onChange={handleFieldChange}
-                                            disabled={!editingAllowed}
+                                            disabled
                                         />
                                     </Grid>
                                     <Grid item xs={6}>
@@ -640,7 +641,7 @@ function PurchaseOrderUtility({ creating }) {
                                             label="Our quantity"
                                             propertyName="ourQty"
                                             onChange={handleFieldChange}
-                                            disabled={!editingAllowed || !creating}
+                                            disabled={!allowedToUpdate() || !creating}
                                             type="number"
                                             required
                                         />
@@ -652,7 +653,7 @@ function PurchaseOrderUtility({ creating }) {
                                             label="Order quantity"
                                             propertyName="Order qty"
                                             onChange={handleFieldChange}
-                                            disabled={!editingAllowed || !creating}
+                                            disabled={!allowedToUpdate() || !creating}
                                             type="number"
                                             required
                                         />
@@ -665,7 +666,7 @@ function PurchaseOrderUtility({ creating }) {
                                             label="Our price (unit, currency)"
                                             propertyName="ourUnitPriceCurrency"
                                             onChange={handleFieldChange}
-                                            disabled={!editingAllowed || !creating}
+                                            disabled
                                             type="number"
                                             required
                                         />
@@ -677,7 +678,7 @@ function PurchaseOrderUtility({ creating }) {
                                             label="Order price (currency)"
                                             propertyName="orderUnitPriceCurrency"
                                             onChange={handleFieldChange}
-                                            disabled={!editingAllowed || !creating}
+                                            disabled={!allowedToUpdate() || !creating}
                                             type="number"
                                             required
                                         />
@@ -691,7 +692,7 @@ function PurchaseOrderUtility({ creating }) {
                                         propertyName="partDescription"
                                         onChange={handleFieldChange}
                                         rows={8}
-                                        disabled={!editingAllowed}
+                                        disabled
                                     />
                                 </Grid>
 
@@ -702,7 +703,7 @@ function PurchaseOrderUtility({ creating }) {
                                         label="Net total (currency)"
                                         propertyName="netTotalCurrency"
                                         onChange={handleFieldChange}
-                                        disabled={!editingAllowed || !creating}
+                                        disabled
                                         type="number"
                                         required
                                     />
@@ -714,7 +715,7 @@ function PurchaseOrderUtility({ creating }) {
                                         label="Vat total (currency)"
                                         propertyName="vatTotalCurrency"
                                         onChange={handleFieldChange}
-                                        disabled={!editingAllowed || !creating}
+                                        disabled
                                         type="number"
                                         required
                                     />
@@ -726,7 +727,7 @@ function PurchaseOrderUtility({ creating }) {
                                         label="detail total (currency)"
                                         propertyName="detailTotalCurrency"
                                         onChange={handleFieldChange}
-                                        disabled={!editingAllowed || !creating}
+                                        disabled
                                         type="number"
                                         required
                                     />
@@ -739,7 +740,7 @@ function PurchaseOrderUtility({ creating }) {
                                         label="Base Net total"
                                         propertyName="baseNetTotal"
                                         onChange={handleFieldChange}
-                                        disabled={!editingAllowed || !creating}
+                                        disabled
                                         type="number"
                                         required
                                     />
@@ -751,7 +752,7 @@ function PurchaseOrderUtility({ creating }) {
                                         label="Base vat total"
                                         propertyName="baseVatTotal"
                                         onChange={handleFieldChange}
-                                        disabled={!editingAllowed || !creating}
+                                        disabled
                                         type="number"
                                         required
                                     />
@@ -763,7 +764,7 @@ function PurchaseOrderUtility({ creating }) {
                                         label="Base detail total"
                                         propertyName="baseDetailTotal"
                                         onChange={handleFieldChange}
-                                        disabled={!editingAllowed || !creating}
+                                        disabled
                                         type="number"
                                         required
                                     />
@@ -776,7 +777,7 @@ function PurchaseOrderUtility({ creating }) {
                                         label="Our Unit Of Measure"
                                         propertyName="ourUnitOfMeasure"
                                         onChange={handleFieldChange}
-                                        disabled={!editingAllowed || !creating}
+                                        disabled
                                         type="number"
                                         required
                                     />
@@ -788,7 +789,7 @@ function PurchaseOrderUtility({ creating }) {
                                         label="Order Unit Of Measure"
                                         propertyName="orderUnitOfMeasure"
                                         onChange={handleFieldChange}
-                                        disabled={!editingAllowed || !creating}
+                                        disabled
                                         type="number"
                                         required
                                     />
@@ -811,7 +812,7 @@ function PurchaseOrderUtility({ creating }) {
                                         onSelect={newValue => handleNominalUpdate(newValue)}
                                         debounce={1000}
                                         minimumSearchTermLength={2}
-                                        disabled={!editingAllowed}
+                                        disabled={!allowedToUpdate()}
                                         required
                                     />
                                 </Grid>
@@ -833,7 +834,7 @@ function PurchaseOrderUtility({ creating }) {
                                         onChange={() => {}}
                                         propertyName="departmentCode"
                                         required
-                                        disabled
+                                        disabled={!allowedToUpdate()}
                                     />
                                 </Grid>
                                 <Grid item xs={8}>
@@ -843,7 +844,7 @@ function PurchaseOrderUtility({ creating }) {
                                         label="Description"
                                         propertyName="departmentDescription"
                                         onChange={() => {}}
-                                        disabled
+                                        disabled={!allowedToUpdate()}
                                     />
                                 </Grid>
 
@@ -867,6 +868,7 @@ function PurchaseOrderUtility({ creating }) {
                                                 value={delivery.deliverySeq}
                                                 label="Delivery Seq"
                                                 propertyName="deliverySeq"
+                                                disabled
                                             />
                                         </Grid>
                                         <Grid item xs={2}>
@@ -877,7 +879,7 @@ function PurchaseOrderUtility({ creating }) {
                                                 onChange={() => {}}
                                                 propertyName="dateRequested"
                                                 required
-                                                disabled
+                                                disabled={!allowedToUpdate()}
                                             />
                                         </Grid>
                                         <Grid item xs={2}>
@@ -899,7 +901,7 @@ function PurchaseOrderUtility({ creating }) {
                                                 onChange={() => {}}
                                                 propertyName="supplierConfirmationComment"
                                                 required
-                                                disabled
+                                                disabled={!allowedToUpdate()}
                                             />
                                         </Grid>
                                     </>
@@ -913,7 +915,7 @@ function PurchaseOrderUtility({ creating }) {
                                         propertyName="internalComments"
                                         onChange={handleFieldChange}
                                         rows={4}
-                                        disabled={!editingAllowed}
+                                        disabled={!allowedToUpdate()}
                                     />
                                 </Grid>
                             </>
@@ -940,7 +942,7 @@ function PurchaseOrderUtility({ creating }) {
                                     links={false}
                                     debounce={1000}
                                     minimumSearchTermLength={2}
-                                    disabled={!editingAllowed}
+                                    disabled={!allowedToUpdate()}
                                     placeholder="click to set part"
                                 />
                             </Grid>
@@ -953,7 +955,7 @@ function PurchaseOrderUtility({ creating }) {
                                 propertyName="description"
                                 onChange={handleFieldChange}
                                 rows={8}
-                                disabled={!editingAllowed}
+                                disabled={!allowedToUpdate()}
                             />
                         </Grid> */}
                     </Grid>
