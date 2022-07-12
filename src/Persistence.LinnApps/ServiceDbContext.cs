@@ -616,7 +616,6 @@
             entity.Property(o => o.OriginalOrderLine).HasColumnName("ORIGINAL_ORDER_LINE").HasMaxLength(6);
             entity.Property(o => o.OurUnitOfMeasure).HasColumnName("OUR_UNIT_OF_MEASURE").HasMaxLength(14);
             entity.Property(o => o.OrderUnitOfMeasure).HasColumnName("ORDER_UNIT_OF_MEASURE").HasMaxLength(14);
-            entity.Property(o => o.Duty).HasColumnName("DUTY_PERCENT").HasMaxLength(8);
             entity.Property(o => o.OrderUnitPriceCurrency).HasColumnName("NEXT_ORDER_UNIT_PRICE").HasMaxLength(19);
             entity.Property(o => o.BaseOrderUnitPrice).HasColumnName("BASE_ORDER_UNIT_PRICE").HasMaxLength(19);
             entity.Property(o => o.BaseOurUnitPrice).HasColumnName("BASE_OUR_UNIT_PRICE").HasMaxLength(19);
@@ -1469,7 +1468,6 @@
             entity.Property(o => o.ExchangeRate).HasColumnName("EXCHANGE_RATE").HasMaxLength(19);
             entity.Property(o => o.ManufacturerPartNumber).HasColumnName("MANUFACTURER_PART_NUMBER").HasMaxLength(20);
             entity.Property(o => o.DateFilCancelled).HasColumnName("DATE_FIL_CANCELLED");
-            entity.Property(o => o.DutyPercent).HasColumnName("DUTY_PERCENT").HasMaxLength(8);
             entity.Property(o => o.RohsCompliant).HasColumnName("ROHS_COMPLIANT").HasMaxLength(1);
             entity.Property(o => o.ShouldHaveBeenBlueReq).HasColumnName("SHOULD_HAVE_BEEN_BLUE_REQ").HasMaxLength(1);
             entity.Property(o => o.SpecialOrderType).HasColumnName("SPECIAL_ORDER_TYPE").HasMaxLength(20);

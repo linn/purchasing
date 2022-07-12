@@ -44,7 +44,6 @@
                            OriginalOrderLine = entity.OriginalOrderLine,
                            OurUnitOfMeasure = entity.OurUnitOfMeasure,
                            OrderUnitOfMeasure = entity.OrderUnitOfMeasure,
-                           Duty = entity.Duty,
                            OurUnitPriceCurrency = entity.OurUnitPriceCurrency,
                            OrderUnitPriceCurrency = entity.OrderUnitPriceCurrency,
                            BaseOurUnitPrice = entity.BaseOurUnitPrice,
