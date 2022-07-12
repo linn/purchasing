@@ -57,5 +57,7 @@
         public string FilCancelled { get; set; }
 
         public decimal? QtyPassedForPayment { get; set; }
+
+        public EmployeeResource ConfirmedBy { get; set; }
     }
 }

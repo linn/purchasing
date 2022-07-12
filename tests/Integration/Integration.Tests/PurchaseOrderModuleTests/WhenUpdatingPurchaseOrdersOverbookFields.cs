@@ -15,7 +15,7 @@
 
     using NUnit.Framework;
 
-    public class WhenUpdatingPurchaseOrders : ContextBase
+    public class WhenUpdatingPurchaseOrdersOverbookFields : ContextBase
     {
         private PurchaseOrderResource resource;
 
@@ -23,17 +23,20 @@
         public void SetUp()
         {
             this.resource = new PurchaseOrderResource
-                                {
-                                    OrderNumber = 600179,
-                                    Supplier = new SupplierResource { Id = 1111, Name = "seller" }
-                                };
+            {
+                OrderNumber = 600179,
+                Overbook = "Y",
+                OverbookQty = 1,
+                CurrentlyUsingOverbookForm = true
+            };
 
             this.MockPurchaseOrderRepository.FindById(600179).Returns(
                 new PurchaseOrder
-                    {
-                        OrderNumber = 600179,
-                        Supplier = new Supplier { SupplierId = 1111 }
-                    });
+                {
+                    OrderNumber = 600179,
+                    OverbookQty = 1,
+                    Supplier = new Supplier { SupplierId = 1224 }
+                });
 
             this.Response = this.Client.PutAsJsonAsync(
                 $"/purchasing/purchase-orders/600179",
@@ -50,9 +53,10 @@
         public void ShouldCallUpdate()
         {
             this.MockDomainService.Received()
-                .UpdateOrder(
+                .AllowOverbook(
                     Arg.Any<PurchaseOrder>(),
-                    Arg.Any<PurchaseOrder>(),
+                    "Y",
+                    1m,
                     Arg.Any<IEnumerable<string>>());
         }
 

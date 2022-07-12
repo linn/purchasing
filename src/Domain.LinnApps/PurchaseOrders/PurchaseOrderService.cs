@@ -251,8 +251,8 @@
             miniOrder.BaseNetTotal = updatedDetail.BaseNetTotal;
 
             miniOrder.Remarks = updatedOrder.Remarks;
-            miniOrder.Department = updatedDetail.OrderPosting.NominalAccount.Department.DepartmentCode;
-            miniOrder.Nominal = updatedDetail.OrderPosting.NominalAccount.Nominal.NominalCode;
+            miniOrder.Department = updatedDetail.OrderPosting.NominalAccount.DepartmentCode;
+            miniOrder.Nominal = updatedDetail.OrderPosting.NominalAccount.NominalCode;
             miniOrder.RequestedDeliveryDate = updatedDetail.PurchaseDeliveries.First().DateRequested;
             miniOrder.InternalComments = updatedDetail.InternalComments;
             miniOrder.SuppliersDesignation = updatedDetail.SuppliersDesignation;
@@ -333,13 +333,9 @@
 
         private void UpdateOrderPostingsForDetail(PurchaseOrderDetail current, PurchaseOrderDetail updated)
         {
-            if (current.OrderPosting.NominalAccount.Nominal.NominalCode != updated.OrderPosting.NominalAccount.Nominal.NominalCode
-                || current.OrderPosting.NominalAccount.Department.DepartmentCode !=
-                updated.OrderPosting.NominalAccount.Department.DepartmentCode)
+            if (current.OrderPosting.NominalAccountId != updated.OrderPosting.NominalAccountId)
             {
-                current.OrderPosting.NominalAccount = updated.OrderPosting.NominalAccount;
-
-                //not sure if this will work or if we need to look it up from db
+                current.OrderPosting.NominalAccountId = updated.OrderPosting.NominalAccountId;
             }
         }
     }
