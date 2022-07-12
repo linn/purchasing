@@ -6,7 +6,7 @@ import {
     Typeahead,
     Title,
     collectionSelectorHelpers,
-    Loading
+    Dropdown
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import { DataGrid } from '@mui/x-data-grid';
@@ -15,8 +15,11 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import DeleteIcon from '@mui/icons-material/Delete';
+import moment from 'moment';
 import history from '../history';
 import config from '../config';
+
+import plannersActions from '../actions/plannersActions';
 import automaticPurchaseOrderSuggestionsActions from '../actions/automaticPurchaseOrderSuggestionsActions';
 import automaticPurchaseOrderActions from '../actions/automaticPurchaseOrderActions';
 import suppliersActions from '../actions/suppliersActions';
@@ -26,9 +29,7 @@ function AutomaticPurchaseOrders() {
     const [planner, setPlanner] = useState(null);
     const [rows, setRows] = useState([]);
 
-    const suggestions = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(state.automaticPurchaseOrderSuggestions)
-    );
+    const suggestions = useSelector(state => state.automaticPurchaseOrderSuggestions.searchItems);
     const suggestionsLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.automaticPurchaseOrderSuggestions)
     );
@@ -43,16 +44,25 @@ function AutomaticPurchaseOrders() {
     const suppliersSearchLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.suppliers)
     );
+    const planners = useSelector(state => collectionSelectorHelpers.getItems(state.planners));
+    const plannersLoading = useSelector(state =>
+        collectionSelectorHelpers.getLoading(state.planners)
+    );
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (!planners || planners.length === 0) {
+            dispatch(plannersActions.fetch());
+        }
+    }, [dispatch, planners]);
 
     useEffect(() => {
         if (suggestions && suggestions.length > 0) {
-            setRows(!suggestions ? [] : suggestions.map((s, i) => ({ ...s, id: i, s })));
+            setRows(suggestions.map((s, i) => ({ ...s, id: i, s })));
         } else {
             setRows([]);
         }
-    }, [suggestions]);
-
-    const dispatch = useDispatch();
+    }, [suggestions, setRows]);
 
     const useStyles = makeStyles(theme => ({
         formControl: {
@@ -103,18 +113,29 @@ function AutomaticPurchaseOrders() {
         dispatch(automaticPurchaseOrderSuggestionsActions.searchWithOptions(null, options));
     };
 
-    const handleDeleteRow = () => {};
+    const handleDeleteRow = row => {
+        setRows(rows.filter(a => a.id !== row.id));
+    };
     const createOrders = () => {};
     const handleEditRowsModelChange = () => {};
     const getBackgroundColourClass = () => {};
 
     const columns = [
-        { field: 'partNumber', headerName: 'Part Number', minWidth: 100 },
-        { field: 'preferredSupplierId', headerName: 'Supplier', width: 100 },
+        { field: 'partNumber', headerName: 'Part Number', minWidth: 140 },
+        { field: 'preferredSupplierId', headerName: 'Supplier', minWidth: 100 },
+        { field: 'supplierName', headerName: 'Name', minWidth: 300 },
+        { field: 'recommendedQuantity', headerName: 'Qty', minWidth: 100 },
+        {
+            field: 'recommendedDate',
+            headerName: 'Date',
+            minWidth: 160,
+            valueGetter: ({ value }) => value && moment(value).format('DD MMM YYYY')
+        },
+        { field: 'orderMethod', headerName: 'Method', minWidth: 100 },
         {
             field: 'delete',
             headerName: ' ',
-            width: 130,
+            width: 90,
             renderCell: params => (
                 <IconButton
                     aria-label="delete"
@@ -131,6 +152,18 @@ function AutomaticPurchaseOrders() {
         <Page history={history} homeUrl={config.appRoot}>
             <Title text="Automatic Orders" />
             <Grid container>
+                <Grid item xs={8}>
+                    <Dropdown
+                        items={planners.map(v => ({ id: v.id, displayText: v.employeeName }))}
+                        value={planner}
+                        allowNoValue
+                        propertyName="planner"
+                        label="Planner"
+                        onChange={(_, value) => setPlanner(value)}
+                        loading={plannersLoading}
+                    />
+                </Grid>
+                <Grid item xs={4} />
                 <Grid item xs={4}>
                     <Typeahead
                         label="Supplier"
@@ -183,7 +216,11 @@ function AutomaticPurchaseOrders() {
                     </div>
                 </Grid>
                 <Grid item xs={12}>
-                    <Button variant="outlined" onClick={createOrders}>
+                    <Button
+                        variant="outlined"
+                        onClick={createOrders}
+                        disabled={!rows || rows.length <= 0}
+                    >
                         Create Orders
                     </Button>
                 </Grid>
