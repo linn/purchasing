@@ -2,7 +2,7 @@
 {
     using Linn.Common.Resources;
 
-    public class EdiSupplierResource : HypermediaResource
+    public class EdiSupplierResource
     {
         public int SupplierId { get; set; }
 

@@ -17,7 +17,7 @@
                 VendorManager = model.VendorManager, 
                 VendorManangerName = model.VendorManangerName, 
                 EdiEmailAddress = model.EdiEmailAddress, 
-                NumOrders=model.NumOrders
+                NumOrders = model.NumOrders
             };
         }
 

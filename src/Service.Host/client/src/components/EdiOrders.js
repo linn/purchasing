@@ -129,17 +129,7 @@ function EdiOrder() {
     const sendEdiUrl = utilities.getHref(applicationState, 'edi');
 
     const handleSelectRow = selected => {
-        const newRows = rows.map(r =>
-            selected.includes(r.id)
-                ? {
-                      ...r,
-                      selected: true
-                  }
-                : {
-                      ...r,
-                      selected: false
-                  }
-        );
+        const newRows = rows.map(r => ({ ...r, selected: selected.includes(r.id) }));
         setRows(newRows);
         setSelectedSuppliers(selected);
     };

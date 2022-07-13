@@ -50,29 +50,3 @@ describe('On initial page load', () => {
         expect(sendEmailsButton).toBeDisabled();
     });
 });
-
-describe('When got edi orders and allowed to send email', () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
-        const initialState = {
-            ediOrders: {
-                loading: false,
-                searchItems: [
-                    { id: 1, orderNumber: 1 },
-                    { id: 2, orderNumber: 2 }
-                ]
-            },
-            suppliers: {
-                loading: false,
-                applicationState: [{ links: [{ rel: 'edi', href: '/edi' }] }]
-            }
-        };
-        useSelector.mockImplementation(callback => callback(initialState));
-        render(<EdiOrder />);
-    });
-
-    test('Send Emails button should be enabled...', () => {
-        const sendEmailsButton = screen.getByRole('button', { name: 'Send Emails' });
-        expect(sendEmailsButton).toBeEnabled();
-    });
-});
