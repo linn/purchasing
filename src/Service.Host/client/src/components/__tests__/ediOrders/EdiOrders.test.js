@@ -36,17 +36,4 @@ describe('On initial page load', () => {
         render(<EdiOrder />);
     });
 
-    test('Initialisation actions are dispatched...', () => {
-        expect(fetchAppStateActionsSpy).toBeCalledTimes(1);
-    });
-
-    test('Get orders button should be disabled...', () => {
-        const getOrdersButton = screen.getByRole('button', { name: 'Get orders' });
-        expect(getOrdersButton).toBeDisabled();
-    });
-
-    test('Send Emails button should be disabled...', () => {
-        const sendEmailsButton = screen.getByRole('button', { name: 'Send Emails' });
-        expect(sendEmailsButton).toBeDisabled();
-    });
 });
