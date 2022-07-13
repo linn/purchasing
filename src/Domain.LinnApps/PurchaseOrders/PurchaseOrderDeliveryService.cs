@@ -94,7 +94,9 @@
                 result = result.Where(x => !x.DateAdvised.HasValue);
             }
 
-            return result.OrderBy(x => x.OrderNumber).ThenBy(x => x.OrderLine).ThenBy(x => x.DeliverySeq);
+            return result
+                .Where(x => x.Cancelled != "Y")
+                .OrderBy(x => x.OrderNumber).ThenBy(x => x.OrderLine).ThenBy(x => x.DeliverySeq);
         }
 
         public PurchaseOrderDelivery UpdateDelivery(
@@ -152,7 +154,8 @@
 
         public BatchUpdateProcessResult BatchUpdateDeliveries(
             IEnumerable<PurchaseOrderDeliveryUpdate> changes,
-            IEnumerable<string> privileges)
+            IEnumerable<string> privileges,
+            bool skipSplitDeliveries = false)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
             {
@@ -182,10 +185,10 @@
                             $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}",
                             "Could not find a delivery corresponding to the above ORDER / LINE / DELIVERY NO."));
                 }
-                else if (this.repository.FilterBy(
+                else if (skipSplitDeliveries && (this.repository.FilterBy(
                              x => x.OrderNumber == change.Key.OrderNumber).Count() > 1
                          || purchaseOrderDeliveryUpdates.Count(c => c.Key.OrderNumber == change.Key.OrderNumber) > 1
-                         || change.Key.DeliverySequence > 1)
+                         || change.Key.DeliverySequence > 1))
                 {
                     errors.Add(
                         new Error(
@@ -198,8 +201,30 @@
                         $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}", 
                         $"{change.NewReason} is not a valid reason"));
                 }
+                else if (change.Qty != entity.OurDeliveryQty)
+                {
+                    errors.Add(new Error(
+                        $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}",
+                        $"{change.Qty} does not match the Qty on the Delivery ({entity.OurDeliveryQty})"));
+                }
+                else if (change.UnitPrice != entity.OrderUnitPriceCurrency)
+                {
+                    errors.Add(new Error(
+                        $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}",
+                        $"{change.UnitPrice} does not match our order price ({entity.OrderUnitPriceCurrency})"));
+                }
                 else
                 {
+                    if (!string.IsNullOrEmpty(change.Comment))
+                    {
+                        entity.SupplierConfirmationComment = change.Comment;
+                    }
+
+                    if (!string.IsNullOrEmpty(change.AvailableAtSupplier))
+                    {
+                        entity.AvailableAtSupplier = change.AvailableAtSupplier;
+                    }
+
                     entity.DateAdvised = change.NewDateAdvised;
                     entity.RescheduleReason = change.NewReason;
                     this.UpdateMiniOrder(
@@ -207,7 +232,7 @@
                         change.NewDateAdvised, 
                         null, 
                         null, 
-                        null);
+                        entity.SupplierConfirmationComment);
                     successCount++;
                 }
             }
@@ -280,7 +305,6 @@
                 del =>
                     {
                         var existing = list.FirstOrDefault(x => x.DeliverySeq == del.DeliverySeq);
-                       
                         var vatAmount = Math.Round(
                             this.purchaseOrdersPack.GetVatAmountSupplier(
                                 detail.OrderUnitPriceCurrency.GetValueOrDefault() * del.OurDeliveryQty.GetValueOrDefault(),
@@ -410,7 +434,7 @@
                             existing = this.miniOrderDeliveryRepository.FindBy(
                                 d => d.OrderNumber == miniOrder.OrderNumber && d.DeliverySequence == del.DeliverySeq);
                             existing.AdvisedDate = del.DateAdvised;
-                            existing.RequestedDate = del.DateRequested;
+                            existing.RequestedDate = del.DateRequested ?? existing.RequestedDate;
                             existing.AvailableAtSupplier = del.AvailableAtSupplier;
                             existing.OurQty = del.OurDeliveryQty;
                             return existing;
@@ -446,9 +470,7 @@
             string supplierConfirmationComment)
         {
             var miniOrder = this.miniOrderRepository.FindById(orderNumber);
-            var miniOrderDelivery = this.miniOrderDeliveryRepository.FindBy(
-                x => x.OrderNumber == orderNumber && x.DeliverySequence == 1);
-
+           
             if (requestedDate.HasValue)
             {
                 miniOrder.RequestedDeliveryDate = requestedDate;
@@ -461,10 +483,7 @@
 
             if (advisedDeliveryDate.HasValue)
             {
-                if (miniOrderDelivery != null)
-                {
-                    miniOrder.AdvisedDeliveryDate = advisedDeliveryDate;
-                }
+                miniOrder.AdvisedDeliveryDate = advisedDeliveryDate;
             }
 
             if (supplierConfirmationComment != null)

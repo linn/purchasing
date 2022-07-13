@@ -6,7 +6,8 @@ import {
     Loading,
     Typeahead,
     Dropdown,
-    collectionSelectorHelpers
+    collectionSelectorHelpers,
+    InputField
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import Snackbar from '@mui/material/Snackbar';
@@ -15,6 +16,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Button } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
+import config from '../../config';
 
 import mrMasterActions from '../../actions/mrMasterActions';
 import {
@@ -25,6 +27,7 @@ import partsActions from '../../actions/partsActions';
 import partActions from '../../actions/partActions';
 import mrReportOptionsActions from '../../actions/mrReportOptionsActions';
 import mrReportActions from '../../actions/mrReportActions';
+import suppliersActions from '../../actions/suppliersActions';
 
 import history from '../../history';
 
@@ -33,9 +36,15 @@ function MaterialRequirementsOptions() {
     const [typeaheadPart, setTypeaheadPart] = useState(null);
     const [parts, setParts] = useState([]);
     const [showMessage, setShowMessage] = useState(false);
+    const [supplier, setSupplier] = useState(null);
     const [message, setMessage] = useState(null);
     const [partSelector, setPartSelector] = useState('Select Parts');
+    const [stockCategoryName, setStockCategoryName] = useState(null);
+    const [partNumberList, setPartNumberList] = useState(null);
     const [stockLevelSelector, setStockLevelSelector] = useState('All');
+    const [partOption, setPartOption] = useState(null);
+    const [minimumLeadTimeWeeks, setMinimumLeadTimeWeeks] = useState(null);
+    const [minimumAnnualUsage, setMinimumAnnualUsage] = useState(null);
     const [orderBySelector, setOrderBySelector] = useState('supplier/part');
     const mrMaster = useSelector(state => itemSelectorHelpers.getItem(state.mrMaster));
     const mrMasterLoading = useSelector(state =>
@@ -64,6 +73,17 @@ function MaterialRequirementsOptions() {
     );
     const selectedPartDetails = useSelector(state => itemSelectorHelpers.getItem(state.part));
 
+    const suppliersSearchResults = useSelector(state =>
+        collectionSelectorHelpers.getSearchItems(state.suppliers)
+    )?.map(c => ({
+        id: c.id,
+        name: c.id.toString(),
+        description: c.name
+    }));
+    const suppliersSearchLoading = useSelector(state =>
+        collectionSelectorHelpers.getSearchLoading(state.suppliers)
+    );
+
     const addToParts = useCallback(
         newPart => {
             if (!parts.some(p => p.id === newPart.partNumber)) {
@@ -72,6 +92,11 @@ function MaterialRequirementsOptions() {
         },
         [parts]
     );
+
+    const handleStockCategoryChange = (_, newValue) => setStockCategoryName(newValue);
+    const handlePartNumberListChange = (_, newValue) => setPartNumberList(newValue);
+    const handleMinimumLeadTimeWeeksChange = (_, newValue) => setMinimumLeadTimeWeeks(newValue);
+    const handleMinimumAnnualUsageChange = (_, newValue) => setMinimumAnnualUsage(newValue);
 
     const removeFromParts = partToRemove => {
         setParts(parts.filter(p => p.id !== partToRemove));
@@ -108,6 +133,12 @@ function MaterialRequirementsOptions() {
         dispatch(partActions.clearItem());
     }, [selectedPartDetails, addToParts, dispatch, displayMessage, lastPart]);
 
+    const handleSupplierChange = selectedsupplier => {
+        setSupplier(selectedsupplier);
+    };
+
+    const handleSupplierReturn = () => {};
+
     const handleTextFieldChange = selectedPart => {
         setLastPart(selectedPart.id);
         if (selectedPart) {
@@ -141,8 +172,14 @@ function MaterialRequirementsOptions() {
             partSelector,
             jobRef: mrMaster.jobRef,
             partNumbers: parts.map(p => p.id),
+            supplierId: supplier?.id,
             stockLevelSelector,
-            orderBySelector
+            orderBySelector,
+            partNumberList,
+            stockCategoryName,
+            partOption,
+            minimumAnnualUsage,
+            minimumLeadTimeWeeks
         };
         history.push('/purchasing/material-requirements/report', body);
     };
@@ -170,9 +207,25 @@ function MaterialRequirementsOptions() {
         setTypeaheadPart(part);
     };
 
+    const handleSetSupplier = (_, supp) => {
+        setSupplier({ id: supp });
+    };
+
     const notReadyToRun = () => {
         const tag = getOptionTag(mrReportOptions?.partSelectorOptions, partSelector);
         if (!tag || (tag === 'parts' && parts.length === 0)) {
+            return true;
+        }
+
+        if (tag === 'supplier' && !supplier?.id) {
+            return true;
+        }
+
+        if (tag === 'part number list' && !partNumberList) {
+            return true;
+        }
+
+        if (tag === 'stock category name' && !stockCategoryName) {
             return true;
         }
 
@@ -191,7 +244,7 @@ function MaterialRequirementsOptions() {
     };
 
     return (
-        <Page history={history}>
+        <Page history={history} homeUrl={config.appRoot}>
             <Grid container>
                 <Grid item xs={10}>
                     <Typography variant="h6">MR Options</Typography>
@@ -220,7 +273,7 @@ function MaterialRequirementsOptions() {
                 </Grid>
                 {getOptionTag(mrReportOptions?.partSelectorOptions, partSelector) === 'parts' && (
                     <>
-                        <Grid item xs={6}>
+                        <Grid item xs={5}>
                             <Typeahead
                                 label="Select Part (with <Return> or search using icon)"
                                 title="Search for a part"
@@ -239,7 +292,7 @@ function MaterialRequirementsOptions() {
                                 handleReturnPress={handleTextFieldChange}
                             />
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={7}>
                             <Typography variant="subtitle1">Selected Parts</Typography>
                             <DataGrid
                                 rows={parts}
@@ -256,7 +309,7 @@ function MaterialRequirementsOptions() {
                         </Grid>
                     </>
                 )}
-                <Grid item xs={12}>
+                <Grid item xs={5}>
                     <Dropdown
                         propertyName="Stock Level Options"
                         label="Stock Level Options"
@@ -271,9 +324,63 @@ function MaterialRequirementsOptions() {
                         onChange={(_, value) => setStockLevelSelector(value)}
                     />
                 </Grid>
+                <Grid item xs={3}>
+                    <InputField
+                        propertyName="stockCategory"
+                        value={stockCategoryName}
+                        label="Stock Category"
+                        type="text"
+                        onChange={handleStockCategoryChange}
+                    />
+                </Grid>
+                <Grid item xs={4}>
+                    {getOptionTag(mrReportOptions?.partSelectorOptions, partSelector) ===
+                        'part number list' && (
+                        <InputField
+                            propertyName="partNumberList"
+                            value={partNumberList}
+                            label="Part Number List"
+                            type="text"
+                            onChange={handlePartNumberListChange}
+                        />
+                    )}
+                </Grid>
+                <Grid item xs={5}>
+                    <Dropdown
+                        propertyName="partOptions"
+                        label="Part Options"
+                        value={partOption}
+                        items={mrReportOptions?.partOptions
+                            ?.sort((a, b) => a.displaySequence - b.displaySequence)
+                            .map(e => ({
+                                displayText: e.displayText,
+                                id: e.option
+                            }))}
+                        optionsLoading={mrReportOptionsLoading}
+                        onChange={(_, value) => setPartOption(value)}
+                    />
+                </Grid>
+                <Grid item xs={3}>
+                    <InputField
+                        propertyName="minimumLeadTimeWeeks"
+                        value={minimumLeadTimeWeeks}
+                        label="Min Lead Time"
+                        type="number"
+                        onChange={handleMinimumLeadTimeWeeksChange}
+                    />
+                </Grid>
+                <Grid item xs={4}>
+                    <InputField
+                        propertyName="minimumAnnualUsage"
+                        value={minimumAnnualUsage}
+                        label="Min Annual Usage"
+                        type="number"
+                        onChange={handleMinimumAnnualUsageChange}
+                    />
+                </Grid>
                 <Grid item xs={12}>
                     <Dropdown
-                        propertyName="Order By"
+                        propertyName="orderBy"
                         label="Order By"
                         value={orderBySelector}
                         items={mrReportOptions?.orderByOptions
@@ -286,6 +393,34 @@ function MaterialRequirementsOptions() {
                         onChange={(_, value) => setOrderBySelector(value)}
                     />
                 </Grid>
+                <Grid item xs={4}>
+                    <Typeahead
+                        label="Supplier"
+                        title="Search for a supplier"
+                        onSelect={handleSupplierChange}
+                        items={suppliersSearchResults}
+                        loading={suppliersSearchLoading}
+                        fetchItems={searchTerm => dispatch(suppliersActions.search(searchTerm))}
+                        clearSearch={() => dispatch(suppliersActions.clearSearch)}
+                        value={supplier?.id}
+                        openModalOnClick={false}
+                        modal
+                        links={false}
+                        debounce={1000}
+                        handleFieldChange={handleSetSupplier}
+                        handleReturnPress={handleSupplierReturn}
+                        minimumSearchTermLength={2}
+                    />
+                </Grid>
+                <Grid item xs={6}>
+                    <InputField
+                        disabled
+                        value={supplier?.description}
+                        fullWidth
+                        label="Supplier Name"
+                    />
+                </Grid>
+                <Grid item xs={2} />
                 <Grid item xs={12}>
                     <Button
                         variant="outlined"

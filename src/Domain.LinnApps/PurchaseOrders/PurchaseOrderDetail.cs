@@ -50,7 +50,9 @@
 
         public int? OriginalOrderNumber { get; set; }
 
-        public int? OurQty { get; set; }
+        public decimal? OurQty { get; set; }
+
+        public decimal? OrderQty { get; set; }
 
         public string OurUnitOfMeasure { get; set; }
 

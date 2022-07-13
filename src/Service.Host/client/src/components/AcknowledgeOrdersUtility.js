@@ -6,7 +6,6 @@ import {
     InputField,
     Page,
     collectionSelectorHelpers,
-    itemSelectorHelpers,
     CheckboxWithLabel,
     DatePicker,
     Dropdown,
@@ -29,14 +28,12 @@ import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import purchaseOrderDeliveryActions from '../actions/purchaseOrderDeliveryActions';
 import purchaseOrderDeliveriesActions from '../actions/purchaseOrderDeliveriesActions';
-import {
-    purchaseOrderDelivery,
-    purchaseOrderDeliveries,
-    batchPurchaseOrderDeliveriesUpload
-} from '../itemTypes';
+import { purchaseOrderDeliveries, batchPurchaseOrderDeliveriesUpload } from '../itemTypes';
 import history from '../history';
 import config from '../config';
 import batchPurchaseOrderDeliveriesUploadActions from '../actions/batchPurchaseOrderDeliveriesUploadActions';
+import batchPurchaseOrderDeliveriesUpdateActions from '../actions/batchPurchaseOrderDeliveriesUpdateActions';
+
 import SplitDeliveriesUtility from './SplitDeliveriesUtility';
 
 function AcknowledgeOrdersUtility() {
@@ -92,18 +89,6 @@ function AcknowledgeOrdersUtility() {
 
     const itemsLoading = useSelector(state =>
         collectionSelectorHelpers.getLoading(state[purchaseOrderDeliveries.item])
-    );
-
-    const purchaseOrderDeliverySnackbarVisible = useSelector(state =>
-        itemSelectorHelpers.getSnackbarVisible(state[purchaseOrderDelivery.item])
-    );
-
-    const updateLoading = useSelector(state =>
-        itemSelectorHelpers.getItemLoading(state[purchaseOrderDelivery.item])
-    );
-
-    const updatedItem = useSelector(state =>
-        itemSelectorHelpers.getItem(state[purchaseOrderDelivery.item])
     );
 
     const columns = [
@@ -215,35 +200,39 @@ function AcknowledgeOrdersUtility() {
     }, [dispatch, searchOptions, orderNumberSearchTerm]);
 
     useEffect(() => {
-        if (updatedItem) {
+        if (uploadResult) {
             refreshResults();
         }
-    }, [updatedItem, dispatch, searchOptions, refreshResults]);
+    }, [uploadResult, refreshResults]);
 
     const handleSaveClick = () => {
         setApplyChangesDialogOpen(false);
         const selectedRows = rows.filter(r => r.selected);
-        selectedRows.forEach(s => {
-            const from = items.find(
-                i => `${i.orderNumber}/${i.orderLine}/${i.deliverySeq}` === s.id
-            );
-            const to = {
-                ...from,
-                supplierConfirmationComment: newValues.supplierConfirmationComment,
-                dateAdvised: newValues.dateAdvised,
-                rescheduleReason: newValues.rescheduleReason,
-                availableAtSupplier: newValues.availableAtSupplier
-            };
-            dispatch(purchaseOrderDeliveryActions.patch(s.id, { from, to }));
-            setRows([]);
-        });
+        setRows([]);
+        dispatch(
+            batchPurchaseOrderDeliveriesUpdateActions.requestProcessStart(
+                selectedRows.map(r => ({
+                    orderNumber: r.orderNumber,
+                    orderLine: r.orderLine,
+                    deliverySequence: r.deliverySeq,
+                    dateAdvised: newValues.dateAdvised,
+                    dateRequested: newValues.dateRequested,
+                    qty: r.ourDeliveryQty,
+                    reason: newValues.rescheduleReason,
+                    comment: newValues.supplierConfirmationComment,
+                    availableAtSupplier: newValues.availableAtSupplier
+                }))
+            )
+        );
     };
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <SnackbarMessage
-                visible={purchaseOrderDeliverySnackbarVisible}
-                onClose={() => dispatch(purchaseOrderDeliveryActions.setSnackbarVisible(false))}
+                visible={uploadSnackbarVisible}
+                onClose={() =>
+                    dispatch(batchPurchaseOrderDeliveriesUpdateActions.setSnackbarVisible(false))
+                }
                 message="Save Successful"
             />
 
@@ -251,8 +240,8 @@ function AcknowledgeOrdersUtility() {
                 <Dialog open={splitDeliveriesDialogOpen} fullWidth maxWidth="lg">
                     <div className={classes.dialog}>
                         <SplitDeliveriesUtility
-                            orderNumber={123456}
-                            orderLine={1}
+                            orderNumber={deliveriesToSplit?.[0]?.orderNumber}
+                            orderLine={1} // todo
                             inDialogBox
                             cancelClick={() => setSplitDeliveriesDialogOpen(false)}
                             backClick={() => {
@@ -425,9 +414,10 @@ function AcknowledgeOrdersUtility() {
                                         rows={rows}
                                         columns={columns}
                                         rowHeight={34}
+                                        columnBuffer={12}
                                         autoHeight
                                         disableSelectionOnClick
-                                        loading={itemsLoading || updateLoading}
+                                        loading={itemsLoading || uploadLoading}
                                         hideFooter
                                         checkboxSelection
                                         onSelectionModelChange={handleSelectRow}
@@ -463,7 +453,7 @@ function AcknowledgeOrdersUtility() {
                         setSnackbarVisible={setUploadSnackbarVisible}
                         message={uploadMessage}
                         initiallyExpanded={false}
-                        helperText="Upload a csv file with 4 columns, Order Number, Delivery Number, New Advised Date and New Reason. Date must be in a format matching either 31/01/2022 or 31-jan-2022. Advised must be one of the following: ADVISED, AUTO FAIL, AUTO PASS, BROUGHT IN, DECOMMIT, IGNORE, REQUESTED, RESCHEDULE OUT and will default to ADVISED if no value is supplied."
+                        helperText="Upload a csv file with the following columns: Order Number, Delivery Number, New Advised Date, Qty, Unit Price and (optionally) New Reason. Date must be in a format matching either 31/01/2022 or 31-jan-2022. New Reason must be one of the following: ADVISED, AUTO FAIL, AUTO PASS, BROUGHT IN, DECOMMIT, IGNORE, REQUESTED, RESCHEDULE OUT and will default to ADVISED if no value is supplied."
                     />
                 </Grid>
             </Grid>

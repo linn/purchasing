@@ -19,7 +19,8 @@
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/purchasing/reports/shortages", this.GetApp);
-            app.MapGet("/purchasing/reports/shortages/report", this.GetReport);
+            app.MapGet("/purchasing/reports/shortages/report", this.GetShortagesReport);
+            app.MapGet("/purchasing/reports/shortages-planner/report", this.GetShortagesPlannerReport);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -27,7 +28,7 @@
             await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
         }
 
-        private async Task GetReport(
+        private async Task GetShortagesReport(
             HttpRequest req,
             HttpResponse res,
             string purchaseLevel, 
@@ -40,7 +41,18 @@
                                   VendorManager = vendorManager
                               };
 
-            var results = reportFacadeService.GetReport(options);
+            var results = reportFacadeService.GetShortagesReport(options);
+
+            await res.Negotiate(results);
+        }
+
+        private async Task GetShortagesPlannerReport(
+            HttpRequest req,
+            HttpResponse res,
+            int planner,
+            IShortagesReportFacadeService reportFacadeService)
+        {
+            var results = reportFacadeService.GetShortagesPlannerReport(planner);
 
             await res.Negotiate(results);
         }

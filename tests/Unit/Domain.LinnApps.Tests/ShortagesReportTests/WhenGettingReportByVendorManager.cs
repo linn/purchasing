@@ -21,7 +21,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.results = this.Sut.GetReport(3, "L");
+            this.results = this.Sut.GetShortagesReport(3, "L");
         }
 
 

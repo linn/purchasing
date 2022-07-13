@@ -34,7 +34,15 @@
                                            PartSelector = "Select Parts",
                                            PartNumber = null,
                                            PartNumbers = new List<string> { "A", "B" },
-                                           StockLevelSelector = "0-4"
+                                           StockLevelSelector = "0-4",
+                                           PartOption = "CAP",
+                                           SupplierId = 213,
+                                           PartNumberList = "PNL",
+                                           StockCategoryName = "STC",
+                                           OrderBySelector = "Part",
+                                           ReportChunk = 2,
+                                           MinimumAnnualUsage = 66,
+                                           MinimumLeadTimeWeeks = 88
                                        };
             this.privileges = new List<string>();
 
@@ -43,8 +51,15 @@
                     this.requestResource.TypeOfReport,
                     this.requestResource.PartSelector,
                     this.requestResource.StockLevelSelector,
+                    this.requestResource.PartOption,
                     this.requestResource.OrderBySelector,
-                    Arg.Is<IList<string>>(a => a.Contains("A") && a.Contains("B")))
+                    this.requestResource.SupplierId,
+                    Arg.Is<IList<string>>(a => a.Contains("A") && a.Contains("B")),
+                    this.requestResource.PartNumberList,
+                    this.requestResource.StockCategoryName,
+                    this.requestResource.MinimumLeadTimeWeeks,
+                    this.requestResource.MinimumAnnualUsage,
+                    this.requestResource.ReportChunk)
                 .Returns(
                     new MrReport
                         {
@@ -65,8 +80,15 @@
                 this.requestResource.TypeOfReport,
                 this.requestResource.PartSelector,
                 this.requestResource.StockLevelSelector,
+                this.requestResource.PartOption,
                 this.requestResource.OrderBySelector,
-                Arg.Is<IList<string>>(a => a.Contains("A") && a.Contains("B")));
+                this.requestResource.SupplierId,
+                Arg.Is<IList<string>>(a => a.Contains("A") && a.Contains("B")),
+                this.requestResource.PartNumberList,
+                this.requestResource.StockCategoryName,
+                this.requestResource.MinimumLeadTimeWeeks,
+                this.requestResource.MinimumAnnualUsage,
+                this.requestResource.ReportChunk);
         }
 
         [Test]

@@ -20,6 +20,8 @@
 
         protected IQueryRepository<ShortagesEntry> ShortagesRepository { get; private set; }
 
+        protected IQueryRepository<ShortagesPlannerEntry> ShortagesPlannerRepository { get; private set; }
+
         protected IEnumerable<ShortagesEntry> Data { get; private set; }
 
         protected IReportingHelper ReportingHelper { get; private set; }
@@ -134,7 +136,7 @@
                 .Returns(this.Data.AsQueryable());
 
             var reportingHelper = new ReportingHelper();
-            this.Sut = new ShortagesReportService(this.ShortagesRepository);
+            this.Sut = new ShortagesReportService(this.ShortagesRepository, this.ShortagesPlannerRepository);
         }
     }
 }

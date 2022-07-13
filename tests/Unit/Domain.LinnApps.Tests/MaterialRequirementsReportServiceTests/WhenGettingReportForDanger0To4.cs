@@ -53,8 +53,15 @@
                 this.typeOfReport,
                 this.partSelector,
                 "0-4",
+                null,
                 "supplier/part",
-                this.partNumbers);
+                null,
+                this.partNumbers,
+                null,
+                null,
+                null,
+                null,
+                0);
         }
 
         [Test]

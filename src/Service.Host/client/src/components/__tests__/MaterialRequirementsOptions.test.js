@@ -151,7 +151,13 @@ describe('When report is run...', () => {
             partNumbers: [],
             partSelector: 'Planner123',
             stockLevelSelector: '0-4',
-            orderBySelector: 'supplier/part'
+            orderBySelector: 'supplier/part',
+            supplierId: undefined,
+            partNumberList: null,
+            stockCategoryName: null,
+            partOption: null,
+            minimumAnnualUsage: null,
+            minimumLeadTimeWeeks: null
         });
     });
 });

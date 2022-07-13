@@ -16,6 +16,16 @@
         {
             return new MrReportResource
                        {
+                           ReportChunk = entity.ReportChunk,
+                           TotalChunks = entity.TotalChunks,
+                           SupplierIdOption = entity.SupplierIdOption,
+                           PartOption = entity.PartOption,
+                           OrderByOption = entity.OrderByOption,
+                           PartNumberListOption = entity.PartNumberListOption,
+                           PartNumbersOption = entity.PartNumbersOption,
+                           PartSelectorOption = entity.PartSelectorOption,
+                           StockCategoryNameOption = entity.StockCategoryNameOption,
+                           StockLevelOption = entity.StockLevelOption,
                            Results = entity.Headers.Select(h => this.BuildHeader(h, entity.RunWeekNumber))
                        };
         }
@@ -412,6 +422,10 @@
                              {
                                  Rel = "part-used-on",
                                  Href = $"/purchasing/material-requirements/used-on-report?partNumber={entity.PartNumber}&jobRef={entity.JobRef}"
+                             };
+            yield return new LinkResource
+                             {
+                                 Rel = "view-stock", Href = $"/inventory/stock-locator/locators?partNumber={entity.PartNumber}"
                              };
             yield return new LinkResource { Rel = "part", Href = $"/parts/{entity.PartId}" };
             yield return new LinkResource { Rel = "part-supplier", Href = $"/purchasing/part-suppliers/record?partId={entity.PartId}&supplierId={entity.PreferredSupplierId}" };

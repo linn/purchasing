@@ -3,6 +3,7 @@
     using System;
     using System.Net.Http;
     using System.Net.Http.Headers;
+    using System.Text;
     using System.Threading.Tasks;
 
     using Newtonsoft.Json;
@@ -65,11 +66,17 @@
             return client.PutAsync(uri, content);
         }
 
-        public static Task<HttpResponseMessage> Post<T>(this HttpClient client, string uri, T payload, Action<HttpClient> configurationAction)
+        public static Task<HttpResponseMessage> Post<T>(
+            this HttpClient client, 
+            string uri, 
+            T payload, 
+            Action<HttpClient> configurationAction,
+            string contentType = "application/json")
         {
             configurationAction(client);
 
-            var content = new StringContent(JsonConvert.SerializeObject(payload));
+            var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, contentType);
+            content.Headers.ContentType.CharSet = string.Empty;
 
             return client.PostAsync(uri, content);
         }

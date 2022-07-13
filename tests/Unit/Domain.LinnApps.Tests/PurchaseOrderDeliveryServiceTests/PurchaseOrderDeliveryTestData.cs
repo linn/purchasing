@@ -80,6 +80,23 @@
                                },
                            new PurchaseOrderDelivery
                                {
+                                   OrderNumber = 123455,
+                                   DateAdvised = DateTime.Today,
+                                   Cancelled = "Y",
+                                   PurchaseOrderDetail = new PurchaseOrderDetail
+                                                             {
+                                                                 PurchaseOrder = new PurchaseOrder
+                                                                     {
+                                                                         SupplierId = 5,
+                                                                         Supplier = new Supplier
+                                                                             {
+                                                                                 Name = "SUPPLIER 5"
+                                                                             }
+                                                                     }
+                                                             }
+                               },
+                           new PurchaseOrderDelivery
+                               {
                                    OrderNumber = 123454,
                                    DateAdvised = null,
                                    PurchaseOrderDetail = new PurchaseOrderDetail

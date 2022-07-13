@@ -32,7 +32,7 @@
             this.reportTitle = "Test Shortages Report";
 
             this.results = new List<ResultsModel> { new ResultsModel() { ReportTitle = new NameModel(this.reportTitle) } };
-            this.MockDomainService.GetReport(
+            this.MockDomainService.GetShortagesReport(
                 this.purchaseLevel,
                 this.vendorManager).Returns(this.results);
 
@@ -51,7 +51,7 @@
         [Test]
         public void ShouldPassCorrectOptionsToDomainService()
         {
-            this.MockDomainService.Received().GetReport(
+            this.MockDomainService.Received().GetShortagesReport(
                 this.purchaseLevel,
                 this.vendorManager);
         }
@@ -59,8 +59,8 @@
         [Test]
         public void ShouldReturnReport()
         {
-            var resource = this.Response.DeserializeBody<IEnumerable<ReportReturnResource>>();
-            resource.First().ReportResults.First().title.displayString.Should().Be(this.reportTitle);
+            var resource = this.Response.DeserializeBody<ReportReturnResource>();
+            resource.ReportResults.First().title.displayString.Should().Be(this.reportTitle);
         }
     }
 }

@@ -50,8 +50,15 @@
                 this.typeOfReport,
                 this.partSelector,
                 "4",
+                null,
                 "part",
-                this.partNumbers);
+                null,
+                this.partNumbers,
+                null,
+                null,
+                null,
+                null,
+                0);
         }
 
         [Test]

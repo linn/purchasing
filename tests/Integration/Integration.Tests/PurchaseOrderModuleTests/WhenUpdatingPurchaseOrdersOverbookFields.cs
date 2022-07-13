@@ -5,8 +5,9 @@
     using System.Net.Http.Json;
 
     using FluentAssertions;
-
-    using Linn.Common.Facade;
+    
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -14,7 +15,7 @@
 
     using NUnit.Framework;
 
-    public class WhenUpdatingPurchaseOrders : ContextBase
+    public class WhenUpdatingPurchaseOrdersOverbookFields : ContextBase
     {
         private PurchaseOrderResource resource;
 
@@ -25,18 +26,17 @@
                                 {
                                     OrderNumber = 600179,
                                     Overbook = "Y",
-                                    OverbookQty = 1
+                                    OverbookQty = 1,
+                                    CurrentlyUsingOverbookForm = true
                                 };
 
-            this.PurchaseOrderFacadeService.Update(Arg.Any<int>(), Arg.Any<PurchaseOrderResource>())
-                .ReturnsForAnyArgs(
-                    new SuccessResult<PurchaseOrderResource>(
-                        new PurchaseOrderResource
-                        {
-                            OrderNumber = 600179,
-                            Overbook = "Y",
-                            OverbookQty = 1,
-                        }));
+            this.MockPurchaseOrderRepository.FindById(600179).Returns(
+                new PurchaseOrder
+                    {
+                        OrderNumber = 600179,
+                        OverbookQty = 1,
+                        Supplier = new Supplier { SupplierId = 1224 }
+                    });
 
             this.Response = this.Client.PutAsJsonAsync(
                 $"/purchasing/purchase-orders/600179",
@@ -52,8 +52,12 @@
         [Test]
         public void ShouldCallUpdate()
         {
-            this.PurchaseOrderFacadeService.Received()
-                .Update(Arg.Any<int>(), Arg.Any<PurchaseOrderResource>(), Arg.Any<IEnumerable<string>>(), Arg.Any<int>());
+            this.MockDomainService.Received()
+                .AllowOverbook(
+                    Arg.Any<PurchaseOrder>(),
+                    "Y",
+                    1m,
+                    Arg.Any<IEnumerable<string>>());
         }
 
         [Test]

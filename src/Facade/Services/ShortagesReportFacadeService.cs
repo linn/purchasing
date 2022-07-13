@@ -24,17 +24,21 @@
             this.resultsModelResourceBuilder = resultsModelResourceBuilder;
         }
 
-        public IResult<IEnumerable<ReportReturnResource>> GetReport(ShortagesReportRequestResource options)
+        public IResult<ReportReturnResource> GetShortagesReport(ShortagesReportRequestResource options)
         {
             var purchaseLevel = int.Parse(options.PurchaseLevel);
-            var result = this.domainService.GetReport(
-                purchaseLevel,
-                options.VendorManager);
+            var resource = this.resultsModelResourceBuilder.Build(
+                this.domainService.GetShortagesReport(purchaseLevel, options.VendorManager));
 
-            var resultResources = result.Select(
-                d => this.resultsModelResourceBuilder.Build(d));
+            return new SuccessResult<ReportReturnResource>(resource);
+        }
 
-            return new SuccessResult<IEnumerable<ReportReturnResource>>(resultResources);
+        public IResult<ReportReturnResource> GetShortagesPlannerReport(int planner)
+        {
+            var resource = this.resultsModelResourceBuilder.Build(
+                this.domainService.GetShortagesPlannerReport(planner));
+
+            return new SuccessResult<ReportReturnResource>(resource);
         }
     }
 }

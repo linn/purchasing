@@ -9,5 +9,7 @@
         public IEnumerable<ReportOptionResource> StockLevelOptions { get; set; }
 
         public IEnumerable<ReportOptionResource> OrderByOptions { get; set; }
+
+        public IEnumerable<ReportOptionResource> PartOptions { get; set; }
     }
 }

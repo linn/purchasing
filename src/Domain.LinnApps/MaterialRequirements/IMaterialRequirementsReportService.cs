@@ -5,13 +5,19 @@
     public interface IMaterialRequirementsReportService
     {
         MrReport GetMaterialRequirements(
-            string requestJobRef,
-            string requestTypeOfReport,
-            string requestPartSelector,
-            string stockLevelSelector,
-            string orderBySelector,
+            string jobRef,
+            string typeOfReport,
+            string partSelector,
+            string stockLevelOption,
+            string partOption,
+            string orderBy,
+            int? supplierId,
             IEnumerable<string> parts,
-            int reportSegment = 0);
+            string partNumberList,
+            string stockCategoryName,
+            int? minimumLeadTimeWeeks,
+            int? minimumAnnualUsage,
+            int reportChunk = 0);
 
         MrReportOptions GetOptions();
 
