@@ -64,6 +64,9 @@ function App() {
                 <ListItem component={Link} to="/purchasing/reports/outstanding-po-reqs" button>
                     <Typography color="primary">Outstanding PO Reqs</Typography>
                 </ListItem>
+                <ListItem component={Link} to="/purchasing/reports/shortages" button>
+                    <Typography color="primary">Shortages Report</Typography>
+                </ListItem>
             </List>
         </Page>
     );

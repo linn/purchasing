@@ -205,6 +205,7 @@
                     {
                         ReqNumber = reqNumber, Part = part, Supplier = supplier
                     },
+                numberToTake: 50,
                 req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);

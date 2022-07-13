@@ -46,8 +46,7 @@
                                };
 
             var results = purchaseOrderReportFacadeService.GetUnacknowledgedOrdersReport(
-                resource,
-                request.HttpContext.GetPrivileges());
+                resource);
 
             await response.Negotiate(results);
         }
@@ -68,8 +67,7 @@
                                };
 
             var csv = purchaseOrderReportFacadeService.GetUnacknowledgedOrdersReportExport(
-                resource,
-                request.HttpContext.GetPrivileges());
+                resource);
 
             var fileName = $"Unacknowledged purchase orders for {resource.Name}.csv";
             if (resource.SupplierId.HasValue)
@@ -96,8 +94,7 @@
                                };
 
             var results = purchaseOrderReportFacadeService.GetSuppliersWithUnacknowledgedOrdersReport(
-                resource,
-                request.HttpContext.GetPrivileges());
+                resource);
 
             await response.Negotiate(results);
         }
@@ -122,8 +119,7 @@
                                };
 
             var csv = purchaseOrderReportFacadeService.GetOrdersByPartExport(
-                resource,
-                req.HttpContext.GetPrivileges());
+                resource);
 
             await res.FromCsv(csv, $"ordersByPart{resource.From.Substring(0, 10)}_To_{resource.To.Substring(0, 10)}.csv");
         }
@@ -146,8 +142,7 @@
                                };
 
             var results = purchaseOrderReportFacadeService.GetOrdersByPartReport(
-                resource,
-                req.HttpContext.GetPrivileges());
+                resource);
 
             await res.Negotiate(results);
         }
@@ -178,8 +173,7 @@
                                };
 
             var csv = purchaseOrderReportFacadeService.GetOrdersBySupplierExport(
-                resource,
-                req.HttpContext.GetPrivileges());
+                resource);
 
             await res.FromCsv(csv, $"ordersBySupplier{resource.From.Substring(0, 10)}_To_{resource.To.Substring(0, 10)}.csv");
         }
@@ -210,8 +204,7 @@
                                };
 
             var results = purchaseOrderReportFacadeService.GetOrdersBySupplierReport(
-                resource,
-                req.HttpContext.GetPrivileges());
+                resource);
 
             await res.Negotiate(results);
         }

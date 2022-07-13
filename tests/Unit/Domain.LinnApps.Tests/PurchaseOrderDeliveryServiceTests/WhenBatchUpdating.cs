@@ -41,11 +41,15 @@
                                {
                                    new PurchaseOrderDeliveryUpdate
                                        {
-                                           Key = this.key1
+                                           Key = this.key1,
+                                           Qty = 100,
+                                           UnitPrice = 0.01m
                                        },
                                    new PurchaseOrderDeliveryUpdate
                                        {
-                                           Key = this.key2
+                                           Key = this.key2,
+                                           Qty = 200, 
+                                           UnitPrice = 0.01m
                                        }
                                };
 
@@ -58,7 +62,9 @@
                     {
                         OrderNumber = this.key1.OrderNumber,
                         OrderLine = this.key1.OrderLine,
-                        DeliverySeq = this.key1.DeliverySequence
+                        DeliverySeq = this.key1.DeliverySequence,
+                        OurDeliveryQty = 100,
+                        OrderUnitPriceCurrency = 0.01m
                     });
             this.Repository.FindById(
                     Arg.Is<PurchaseOrderDeliveryKey>(
@@ -68,8 +74,10 @@
                         {
                             OrderNumber = this.key2.OrderNumber,
                             OrderLine = this.key2.OrderLine,
-                            DeliverySeq = this.key2.DeliverySequence
-                        });
+                            DeliverySeq = this.key2.DeliverySequence,
+                            OurDeliveryQty = 200,
+                            OrderUnitPriceCurrency = 0.01m 
+                    });
 
             this.Repository.FilterBy(
                     Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())

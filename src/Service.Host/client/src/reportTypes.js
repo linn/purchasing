@@ -71,3 +71,21 @@ export const mrUsedOnReport = new ItemType(
     'MR_USED_ON_REPORT',
     '/purchasing/material-requirements/used-on-report'
 );
+
+export const shortagesReport = new ItemType(
+    'shortagesReport',
+    'SHORTAGES_REPORT',
+    '/purchasing/reports/shortages/report'
+);
+
+export const shortagesPlannerReport = new ItemType(
+    'shortagesPlannerReport',
+    'SHORTAGES_PLANNER_REPORT',
+    '/purchasing/reports/shortages-planner/report'
+);
+
+export const mrOrderBookReport = new ItemType(
+    'mrOrderBookReport',
+    'MR_ORDER_BOOK_REPORT',
+    '/purchasing/reports/mr-order-book'
+);

@@ -46,7 +46,7 @@
             reportReturnResource.ReportResults.Add(reportResult);
 
             this.FacadeService
-                .GetOrdersBySupplierReport(Arg.Any<OrdersBySupplierSearchResource>(), Arg.Any<IEnumerable<string>>())
+                .GetOrdersBySupplierReport(Arg.Any<OrdersBySupplierSearchResource>())
                 .Returns(new SuccessResult<ReportReturnResource>(reportReturnResource));
 
             this.Response = this.Client.Get(
@@ -58,8 +58,7 @@
         public void ShouldCallFacadeService()
         {
             this.FacadeService.Received().GetOrdersBySupplierReport(
-                Arg.Any<OrdersBySupplierSearchResource>(),
-                Arg.Any<IEnumerable<string>>());
+                Arg.Any<OrdersBySupplierSearchResource>());
         }
 
         [Test]

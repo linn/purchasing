@@ -7,6 +7,7 @@
     using Linn.Common.Logging;
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
@@ -35,8 +36,6 @@
 
         protected IFacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource, LinnDeliveryAddressResource> DeliveryAddressService { get; private set; }
 
-        protected IPurchaseOrderDeliveryFacadeService deliveryFacadeService { get; private set; }
-
         protected ILog Log { get; private set; }
 
         protected IAuthorisationService MockAuthService { get; private set; }
@@ -44,6 +43,12 @@
         protected IDatabaseService MockDatabaseService { get; private set; }
 
         protected IRepository<PurchaseOrderReq, int> MockPurchaseOrderReqRepository { get; private set; }
+
+        protected IRepository<PurchaseOrder, int> MockPurchaseOrderRepository { get; private set; }
+
+        protected IRepository<FullAddress, int> MockFullAddressRepository { get; private set; }
+
+        protected IRepository<OverbookAllowedByLog, int> OverbookAllowedByLogRepository { get; private set; }
 
         protected IPurchaseOrderReqService MockReqDomainService { get; private set; }
 
@@ -69,11 +74,14 @@
 
         protected IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource> UnitsOfMeasureService { get; private set; }
 
+        protected IPurchaseOrderService MockDomainService { get; private set; }
+
+        protected IRazorTemplateService MockRazorTemplateService { get; private set; }
+
         [SetUp]
         public void EstablishContext()
         {
             this.TransactionManager = Substitute.For<ITransactionManager>();
-            this.PurchaseOrderFacadeService = Substitute.For<IPurchaseOrderFacadeService>();
             this.CurrencyService =
                 Substitute.For<IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource>>();
             this.OrderMethodService = Substitute
@@ -88,10 +96,16 @@
             this.PurchaseOrderReqStateFacadeService = Substitute
                 .For<IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource>>();
             this.MockReqDomainService = Substitute.For<IPurchaseOrderReqService>();
+            this.MockDomainService = Substitute.For<IPurchaseOrderService>();
 
             this.MockPurchaseOrderReqRepository = Substitute.For<IRepository<PurchaseOrderReq, int>>();
+            this.MockPurchaseOrderRepository = Substitute.For<IRepository<PurchaseOrder, int>>();
+            this.MockFullAddressRepository = Substitute.For<IRepository<FullAddress, int>>();
+            this.OverbookAllowedByLogRepository = Substitute.For<IRepository<OverbookAllowedByLog, int>>();
+
             this.MockDatabaseService = Substitute.For<IDatabaseService>();
             this.MockAuthService = Substitute.For<IAuthorisationService>();
+            this.MockRazorTemplateService = Substitute.For<IRazorTemplateService>();
 
             this.PurchaseOrderReqFacadeService = new PurchaseOrderReqFacadeService(
                 this.MockPurchaseOrderReqRepository,
@@ -99,6 +113,22 @@
                 new PurchaseOrderReqResourceBuilder(this.MockAuthService),
                 this.MockReqDomainService,
                 this.MockDatabaseService);
+
+            var purchaseOrderResourceBuilder = new PurchaseOrderResourceBuilder(
+                this.MockAuthService,
+                new PurchaseOrderDetailResourceBuilder(
+                    new PurchaseOrderDeliveryResourceBuilder(),
+                    new PurchaseOrderPostingResourceBuilder()),
+                new LinnDeliveryAddressResourceBuilder(),
+                new AddressResourceBuilder(this.MockFullAddressRepository));
+
+            this.PurchaseOrderFacadeService = new PurchaseOrderFacadeService(
+                this.MockPurchaseOrderRepository,
+                this.TransactionManager,
+                purchaseOrderResourceBuilder,
+                this.MockDomainService,
+                this.OverbookAllowedByLogRepository,
+                this.MockRazorTemplateService);
 
             this.Log = Substitute.For<ILog>();
 

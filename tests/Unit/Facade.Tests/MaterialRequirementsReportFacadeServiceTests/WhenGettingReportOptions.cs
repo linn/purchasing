@@ -6,6 +6,7 @@
     using FluentAssertions;
 
     using Linn.Common.Facade;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Resources.MaterialRequirements;
 
@@ -35,7 +36,8 @@
                                                                  }
                                                          },
                                  StockLevelOptions = new List<ReportOption>(),
-                                 OrderByOptions = new List<ReportOption>()
+                                 OrderByOptions = new List<ReportOption>(),
+                                 PartOptions = new List<ReportOption>()
                              });
 
             this.result = this.Sut.GetOptions(this.privileges);

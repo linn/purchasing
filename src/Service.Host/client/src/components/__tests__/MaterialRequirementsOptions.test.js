@@ -38,12 +38,14 @@ const stateWithOptions = {
                 {
                     option: 'Select Parts',
                     displayText: 'Select Parts',
-                    displaySequence: 0
+                    displaySequence: 0,
+                    dataTag: 'parts'
                 },
                 {
                     option: 'Planner123',
                     displayText: 'Harrys Parts',
-                    displaySequence: 1
+                    displaySequence: 1,
+                    dataTag: 'planner'
                 }
             ],
             stockLevelOptions: [
@@ -149,7 +151,13 @@ describe('When report is run...', () => {
             partNumbers: [],
             partSelector: 'Planner123',
             stockLevelSelector: '0-4',
-            orderBySelector: 'supplier/part'
+            orderBySelector: 'supplier/part',
+            supplierId: undefined,
+            partNumberList: null,
+            stockCategoryName: null,
+            partOption: null,
+            minimumAnnualUsage: null,
+            minimumLeadTimeWeeks: null
         });
     });
 });

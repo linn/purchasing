@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.MaterialRequirements
 {
     using System.Collections.Generic;
+    using System.Security.Cryptography;
 
     public class MrHeader
     {
@@ -81,6 +82,18 @@
         public int? DangerLevel { get; set; }
 
         public int? WeeksUntilDangerous { get; set; }
+
+        public string MrComments { get; set; }
+
+        public decimal? LatePurchaseOrders { get; set; }
+        
+        public string HighStockWithOrders { get; set; }
+
+        public string HighStockWithNoOrders { get; set; }
+
+        public string HasUnacknowledgedPurchaseOrders { get; set; }
+
+        public string StockCategoryName { get; set; }
 
         public IEnumerable<MrDetail> MrDetails { get; set; }
     }

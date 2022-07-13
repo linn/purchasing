@@ -123,6 +123,8 @@
                 .AddTransient<IQueryRepository<MrUsedOnRecord>, EntityFrameworkQueryRepository<MrUsedOnRecord>>(
                     r => new EntityFrameworkQueryRepository<MrUsedOnRecord>(r.GetService<ServiceDbContext>()
                         ?.MrUsedOnView))
+                .AddTransient<IQueryRepository<PartAndAssembly>, EntityFrameworkQueryRepository<PartAndAssembly>>(
+                    r => new EntityFrameworkQueryRepository<PartAndAssembly>(r.GetService<ServiceDbContext>()?.PartsAndAssemblies))
                 .AddTransient<IRepository<RescheduleReason, string>, EntityFrameworkRepository<RescheduleReason, string>>(
                     r => new EntityFrameworkRepository<RescheduleReason, string>(r.GetService<ServiceDbContext>()?.PlRescheduleReasons))
                 .AddTransient<IQueryRepository<MrHeader>, MrHeaderRepository>()
@@ -133,7 +135,14 @@
                     r => new EntityFrameworkRepository<MiniOrderDelivery, MiniOrderDeliveryKey>(r.GetService<ServiceDbContext>()?.MiniOrdersDeliveries))
                 .AddTransient<IQueryRepository<EdiSupplier>, EntityFrameworkQueryRepository<EdiSupplier>>(
                     r => new EntityFrameworkQueryRepository<EdiSupplier>(r.GetService<ServiceDbContext>()
-                        ?.EdiSuppliers));
+                        ?.EdiSuppliers))
+                .AddTransient<IQueryRepository<ShortagesEntry>, EntityFrameworkQueryRepository<ShortagesEntry>>(
+                    r => new EntityFrameworkQueryRepository<ShortagesEntry>(r.GetService<ServiceDbContext>()
+                        ?.ShortagesEntries))
+                .AddTransient<IQueryRepository<ShortagesPlannerEntry>, EntityFrameworkQueryRepository<ShortagesPlannerEntry>>(
+                r => new EntityFrameworkQueryRepository<ShortagesPlannerEntry>(r.GetService<ServiceDbContext>()
+                    ?.ShortagesPlannerEntries))
+                .AddTransient<IRepository<PartNumberList, string>, PartNumberListRepository>();
         }
     }
 }

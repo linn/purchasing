@@ -3,9 +3,9 @@
     using System.Net.Http;
 
     using Linn.Common.Persistence;
+    using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
-    using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
     using Linn.Purchasing.Service.Modules.Reports;
@@ -37,7 +37,7 @@
             this.JobrefFacadeService = new TqmsJobRefService(this.MockRepository);
             this.MockDomainService = Substitute.For<IPartsReceivedReportService>();
             this.ReportFacadeService = new PartsReceivedReportFacadeService(
-                this.MockDomainService, new ResultsModelResourceBuilder());
+                this.MockDomainService, new ReportReturnResourceBuilder());
 
             this.Client = TestClient.With<PartsReceivedReportModule>(
                 services =>

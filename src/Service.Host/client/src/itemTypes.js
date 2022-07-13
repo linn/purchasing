@@ -285,3 +285,9 @@ export const ediSuppliers = new ItemType(
     'EDI_SUPPLIERS',
     '/purchasing/edi/suppliers'
 );
+
+export const sendPurchaseOrderPdfEmail = new ItemType(
+    'sendPurchaseOrderPdfEmail',
+    'SEND_PURCHASE_ORDER_PDF_EMAIL',
+    '/purchasing/purchase-orders/email-pdf'
+);

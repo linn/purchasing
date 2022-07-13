@@ -75,5 +75,7 @@
         public int OrderAddressId { get; set; }
 
         public Address OrderAddress { get; set; }
+
+        public decimal? DamagesPercent { get; set; }
     }
 }

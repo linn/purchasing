@@ -2570,7 +2570,8 @@ describe('When report is returned...', () => {
     });
 
     test('Should show stock info', () => {
-        expect(screen.getByText('Stock: 218')).toBeInTheDocument();
+        expect(screen.getByText('Stock:')).toBeInTheDocument();
+        expect(screen.getByText('218')).toBeInTheDocument();
         expect(screen.getByText('For Spares: 0')).toBeInTheDocument();
         expect(screen.getByText('Inspection: 6')).toBeInTheDocument();
         expect(screen.getByText('Faulty: 6')).toBeInTheDocument();

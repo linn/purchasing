@@ -1,9 +1,11 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrderDeliveryModuleTests
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
 
     using FluentAssertions;
+    using FluentAssertions.Extensions;
 
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
@@ -14,31 +16,47 @@
 
     using NUnit.Framework;
 
-    public class WhenBatchUpdatingAndSuccess : ContextBase
+    public class WhenBatchUpdatingFromCsvAndSuccess : ContextBase
     {
         [SetUp]
         public void SetUp()
         {
             this.MockDomainService.BatchUpdateDeliveries(
                 Arg.Any<IEnumerable<PurchaseOrderDeliveryUpdate>>(),
-                Arg.Any<IEnumerable<string>>()).Returns(new BatchUpdateProcessResult
+                Arg.Any<IEnumerable<string>>(),
+                true).Returns(new BatchUpdateProcessResult
                                                             {
                                                                 Success = true,
                                                                 Message = "Success!"
                                                             });
             this.Response = this.Client.Post(
                 $"/purchasing/purchase-orders/deliveries",
-                $"PO1,1,28/03/1995,NEW REASON",
+                $"PO1,1,28/03/1995,100,0.01,NEW REASON,",
                 with =>
                     {
                         with.Accept("application/json");
-                    }).Result;
+                    },
+                "text/csv").Result;
         }
 
         [Test]
         public void ShouldReturnSuccess()
         {
             this.Response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+
+        [Test]
+        public void ShouldPassCorrectDataToDomainService()
+        {
+            this.MockDomainService.Received().BatchUpdateDeliveries(
+                Arg.Is<IEnumerable<PurchaseOrderDeliveryUpdate>>(
+                    l => l.First().Key.OrderNumber.Equals(1)
+                    && l.First().Key.OrderLine.Equals(1)
+                    && l.First().NewDateAdvised.Equals(28.March(1995))
+                    && l.First().Qty.Equals(100)
+                    && l.First().NewReason.Equals("NEW REASON")),
+                Arg.Any<IEnumerable<string>>(),
+                true);
         }
 
         [Test]

@@ -4,6 +4,7 @@
     using System.Linq;
 
     using Linn.Common.Facade;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Resources.MaterialRequirements;
 
@@ -16,7 +17,8 @@
                            PartSelectorOptions =
                                model.PartSelectorOptions.Select(this.BuildOptionResource),
                            StockLevelOptions = model.StockLevelOptions.Select(this.BuildOptionResource),
-                           OrderByOptions = model.OrderByOptions.Select(this.BuildOptionResource)
+                           OrderByOptions = model.OrderByOptions.Select(this.BuildOptionResource),
+                           PartOptions = model.PartOptions.Select(this.BuildOptionResource)
                        };
         }
 
@@ -31,7 +33,9 @@
                        {
                            DisplayText = option.DisplayText,
                            Option = option.Option,
-                           DisplaySequence = option.DisplaySequence
+                           DisplaySequence = option.DisplaySequence,
+                           DataTag = option.DataTag,
+                           DefaultOption = option.DefaultOption
                        };
         }
     }

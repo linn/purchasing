@@ -51,6 +51,10 @@ import AcknowledgeOrdersUtility from './AcknowledgeOrdersUtility';
 import MaterialRequirements from './materialRequirements/MaterialRequirementsOptions';
 import MaterialRequirementsReport from './materialRequirements/MaterialRequirementsReport';
 import PurchaseOrderPrintout from './PurchaseOrders/PurchaseOrderPrintout';
+import ShortagesReport from './reports/ShortagesReport';
+import ShortagesReportOptions from './reports/ShortagesReportOptions';
+import ShortagesPlannerReport from './reports/ShortagesPlannerReport';
+import MrOrderBookReport from './reports/MrOrderBookReport';
 
 const Root = ({ store }) => (
     <div>
@@ -292,6 +296,26 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/material-requirements/report"
                                     component={MaterialRequirementsReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/shortages"
+                                    component={ShortagesReportOptions}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/shortages/report"
+                                    component={ShortagesReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/shortages-planner/report"
+                                    component={ShortagesPlannerReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/mr-order-book"
+                                    component={MrOrderBookReport}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>

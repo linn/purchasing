@@ -45,7 +45,7 @@
             reportReturnResource.ReportResults.Add(reportResult);
 
             this.FacadeService
-                .GetOrdersByPartExport(Arg.Any<OrdersByPartSearchResource>(), Arg.Any<IEnumerable<string>>())
+                .GetOrdersByPartExport(Arg.Any<OrdersByPartSearchResource>())
                 .Returns(new List<IEnumerable<string>>());
 
             this.Response = this.Client.Get(
@@ -57,8 +57,7 @@
         public void ShouldCallFacadeService()
         {
             this.FacadeService.Received().GetOrdersByPartExport(
-                Arg.Any<OrdersByPartSearchResource>(),
-                Arg.Any<IEnumerable<string>>());
+                Arg.Any<OrdersByPartSearchResource>());
         }
 
         [Test]

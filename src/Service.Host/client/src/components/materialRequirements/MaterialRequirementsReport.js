@@ -48,6 +48,7 @@ function MaterialRequirementsReport() {
     const [nextPart, setNextPart] = useState(null);
     const [previousPart, setPreviousPart] = useState(null);
     const [selectedPurchaseOrders, setSelectedPurchaseOrders] = useState([]);
+    const [previousChunk, setPreviousChunk] = useState(null);
 
     const options = useLocation();
 
@@ -79,14 +80,29 @@ function MaterialRequirementsReport() {
             dispatch(mrReportActions.postByHref(mrReportItem.uri, options.state));
         } else if (options && options.search) {
             const query = queryString.parse(options.search);
-            dispatch(
-                mrReportActions.postByHref(mrReportItem.uri, {
-                    partNumber: query?.partNumber,
-                    jobRef: query?.jobRef,
-                    typeOfReport: 'MR',
-                    partSelector: 'Select Parts'
-                })
-            );
+            if (query.partNumber) {
+                dispatch(
+                    mrReportActions.postByHref(mrReportItem.uri, {
+                        partNumber: query.partNumber,
+                        jobRef: query.jobRef,
+                        typeOfReport: 'MR',
+                        partSelector: 'Select Parts',
+                        supplierId: query.supplierId,
+                        stockCategoryName: query.stockCategoryName
+                    })
+                );
+            } else if (query.partNumberList) {
+                dispatch(
+                    mrReportActions.postByHref(mrReportItem.uri, {
+                        partNumberList: query.partNumberList,
+                        jobRef: query.jobRef,
+                        typeOfReport: 'MR',
+                        partSelector: 'Part Number List',
+                        supplierId: query.supplierId,
+                        stockCategoryName: query.stockCategoryName
+                    })
+                );
+            }
         } else {
             history.push('/purchasing/material-requirements');
         }
@@ -94,14 +110,39 @@ function MaterialRequirementsReport() {
 
     useEffect(() => {
         if (mrReport && mrReport.results && mrReport.results.length > 0) {
-            setSelectedIndex(0);
-            setSelectedItem(mrReport.results[0]);
-            if (mrReport.results.length > 1) {
-                setNextPart(mrReport.results[1].partNumber);
+            if (mrReport.reportChunk < previousChunk) {
+                setSelectedIndex(mrReport.results.length - 1);
+                setSelectedItem(mrReport.results[mrReport.results.length - 1]);
+
+                setNextPart('Next Chunk');
+
+                if (mrReport.results.length === 1) {
+                    if (mrReport.reportChunk > 0) {
+                        setPreviousPart('Prev Chunk');
+                    } else {
+                        setPreviousPart(null);
+                    }
+                } else {
+                    setPreviousPart(mrReport.results[mrReport.results.length - 2].partNumber);
+                }
             } else {
-                setNextPart(null);
+                setSelectedIndex(0);
+                setSelectedItem(mrReport.results[0]);
+
+                if (mrReport.results.length > 1) {
+                    setNextPart(mrReport.results[1].partNumber);
+                } else if (mrReport.reportChunk < mrReport.totalChunks - 1) {
+                    setNextPart('Next Chunk');
+                } else {
+                    setNextPart(null);
+                }
+
+                if (mrReport.reportChunk > 0) {
+                    setPreviousPart('Prev Chunk');
+                } else {
+                    setPreviousPart(null);
+                }
             }
-            setPreviousPart(null);
 
             dispatch(
                 mrReportOrdersActions.postByHref(mrReportOrdersItem.uri, {
@@ -115,7 +156,7 @@ function MaterialRequirementsReport() {
             setPreviousPart(null);
             dispatch(mrReportOrdersActions.clearItem());
         }
-    }, [mrReport, dispatch]);
+    }, [mrReport, dispatch, previousChunk]);
 
     useEffect(() => {
         if (mrReportOrders?.orders && selectedItem) {
@@ -133,6 +174,10 @@ function MaterialRequirementsReport() {
         },
         boldText: {
             fontWeight: 550
+        },
+        highlightText: {
+            fontWeight: 550,
+            color: 'red'
         },
         newQuarter: {
             paddingTop: '50px',
@@ -160,14 +205,48 @@ function MaterialRequirementsReport() {
         history.push('/purchasing/material-requirements');
     };
 
+    const getChunk = chunk => {
+        if (!mrReport) {
+            return;
+        }
+
+        setPreviousChunk(mrReport.reportChunk);
+
+        dispatch(
+            mrReportActions.postByHref(mrReportItem.uri, {
+                partNumbers: mrReport.partNumbersOption,
+                jobRef: mrReport.jobRef,
+                typeOfReport: 'MR',
+                stockLevelSelector: mrReport.stockLevelOption,
+                partOption: mrReport.partOption,
+                partSelector: mrReport.partSelectorOption,
+                supplierId: mrReport.supplierIdOption,
+                stockCategoryName: mrReport.stockCategoryNameOption,
+                orderBySelector: mrReport.orderByOption,
+                partNumberList: mrReport.partNumberListOption,
+                reportChunk: chunk,
+                minimumAnnualUsage: mrReport.minimumAnnualUsage,
+                minimumLeadTimeWeeks: mrReport.minimumLeadTimeWeeks
+            })
+        );
+    };
+
     const goToPreviousPart = () => {
         if (selectedIndex === 0) {
+            if (mrReport.reportChunk > 0) {
+                getChunk(mrReport.reportChunk - 1);
+            }
+
             return;
         }
 
         setNextPart(selectedItem.partNumber);
         if (selectedIndex === 1) {
-            setPreviousPart(null);
+            if (mrReport.reportChunk > 0) {
+                setPreviousPart('Prev Chunk');
+            } else {
+                setPreviousPart(null);
+            }
         } else {
             setPreviousPart(mrReport.results[selectedIndex - 2].partNumber);
         }
@@ -178,12 +257,20 @@ function MaterialRequirementsReport() {
 
     const goToNextPart = () => {
         if (selectedIndex === mrReport.results.length - 1) {
+            if (mrReport.reportChunk < mrReport.totalChunks - 1) {
+                getChunk(mrReport.reportChunk + 1);
+            }
+
             return;
         }
 
         setPreviousPart(selectedItem.partNumber);
         if (selectedIndex === mrReport.results.length - 2) {
-            setNextPart(null);
+            if (mrReport.reportChunk < mrReport.totalChunks - 1) {
+                setNextPart('Next Chunk');
+            } else {
+                setNextPart(null);
+            }
         } else {
             setNextPart(mrReport.results[selectedIndex + 2].partNumber);
         }
@@ -200,67 +287,67 @@ function MaterialRequirementsReport() {
                 }
                 return null;
             case 'week0':
-                if (params.row.week0Item.tag) {
+                if (params.row.week0Item?.tag) {
                     return classes[params.row.week0Item.tag];
                 }
                 return null;
             case 'week1':
-                if (params.row.week1Item.tag) {
+                if (params.row.week1Item?.tag) {
                     return classes[params.row.week1Item.tag];
                 }
                 return null;
             case 'week2':
-                if (params.row.week2Item.tag) {
+                if (params.row.week2Item?.tag) {
                     return classes[params.row.week2Item.tag];
                 }
                 return null;
             case 'week3':
-                if (params.row.week3Item.tag) {
+                if (params.row.week3Item?.tag) {
                     return classes[params.row.week3Item.tag];
                 }
                 return null;
             case 'week4':
-                if (params.row.week4Item.tag) {
+                if (params.row.week4Item?.tag) {
                     return classes[params.row.week4Item.tag];
                 }
                 return null;
             case 'week5':
-                if (params.row.week5Item.tag) {
+                if (params.row.week5Item?.tag) {
                     return classes[params.row.week5Item.tag];
                 }
                 return null;
             case 'week6':
-                if (params.row.week6Item.tag) {
+                if (params.row.week6Item?.tag) {
                     return classes[params.row.week6Item.tag];
                 }
                 return null;
             case 'week7':
-                if (params.row.week7Item.tag) {
+                if (params.row.week7Item?.tag) {
                     return classes[params.row.week7Item.tag];
                 }
                 return null;
             case 'week8':
-                if (params.row.week8Item.tag) {
+                if (params.row.week8Item?.tag) {
                     return classes[params.row.week8Item.tag];
                 }
                 return null;
             case 'week9':
-                if (params.row.week9Item.tag) {
+                if (params.row.week9Item?.tag) {
                     return classes[params.row.week9Item.tag];
                 }
                 return null;
             case 'week10':
-                if (params.row.week10Item.tag) {
+                if (params.row.week10Item?.tag) {
                     return classes[params.row.week10Item.tag];
                 }
                 return null;
             case 'week11':
-                if (params.row.week11Item.tag) {
+                if (params.row.week11Item?.tag) {
                     return classes[params.row.week11Item.tag];
                 }
                 return null;
             case 'week12':
-                if (params.row.week12Item.tag) {
+                if (params.row.week12Item?.tag) {
                     return classes[params.row.week12Item.tag];
                 }
                 return null;
@@ -498,23 +585,24 @@ function MaterialRequirementsReport() {
                         Ack/Update Deliveries
                     </Button>
                 </TableCell>
-                <TableCell colSpan={4}>Contact: {row.supplierContact}</TableCell>
-                <TableCell colSpan={5}>{row.remarks}</TableCell>
+                <TableCell colSpan={9}>{row.remarks}</TableCell>
             </TableRow>
         </>
     );
 
     return (
         <div className="print-landscape" onKeyDown={onKeyPressed} tabIndex={-1} role="textbox">
-            <Page history={history} width="xl">
+            <Page history={history} width="xl" homeUrl={config.appRoot}>
                 <ThemeProvider theme={theme}>
                     <div style={{ width: 1300, paddingLeft: '20px' }}>
                         {mrReportLoading && <Loading />}
                         {!selectedItem && (
                             <>
-                                <Typography variant="body2" style={{ fontWeight: 'bold' }}>
-                                    No results found for selected options
-                                </Typography>
+                                {!mrReportLoading && (
+                                    <Typography variant="body2" style={{ fontWeight: 'bold' }}>
+                                        No results found for selected options
+                                    </Typography>
+                                )}
                                 <Tooltip title="Back To Options">
                                     <Button
                                         color="navBut"
@@ -527,7 +615,7 @@ function MaterialRequirementsReport() {
                                 </Tooltip>
                             </>
                         )}
-                        {selectedItem && (
+                        {selectedItem && !mrReportLoading && (
                             <Grid container spacing={1}>
                                 <Grid
                                     item
@@ -683,9 +771,15 @@ function MaterialRequirementsReport() {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Stack direction="row" spacing={2}>
-                                        <Typography variant="body2">
-                                            Stock: {selectedItem.quantityInStock}
-                                        </Typography>
+                                        <Typography variant="body2">Stock:</Typography>
+                                        <Link
+                                            href={utilities.getHref(selectedItem, 'view-stock')}
+                                            underline="hover"
+                                            color="inherit"
+                                            variant="body2"
+                                        >
+                                            {selectedItem.quantityInStock}
+                                        </Link>
                                         <Typography variant="body2">
                                             For Spares: {selectedItem.quantityForSpares}
                                         </Typography>
@@ -729,11 +823,23 @@ function MaterialRequirementsReport() {
                                         </Typography>
                                     </Stack>
                                 </Grid>
-                                <Grid item xs={12}>
+                                <Grid item xs={3}>
                                     <Stack direction="row" spacing={2}>
                                         <Typography variant="body2">
                                             Annual Usage: {selectedItem.annualUsage}
                                         </Typography>
+                                    </Stack>
+                                </Grid>
+                                <Grid item xs={9}>
+                                    <Stack direction="row" spacing={2}>
+                                        {selectedItem.mrComments && (
+                                            <Typography
+                                                variant="body2"
+                                                className={classes.highlightText}
+                                            >
+                                                Comments: {selectedItem.mrComments}
+                                            </Typography>
+                                        )}
                                     </Stack>
                                 </Grid>
                                 <Grid

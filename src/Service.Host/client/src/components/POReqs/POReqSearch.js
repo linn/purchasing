@@ -46,6 +46,7 @@ function POReqSearch({ print }) {
 
     useEffect(() => {
         dispatch(purchaseOrderReqsActions.fetchState());
+        dispatch(purchaseOrderReqsActions.searchWithOptions('', `&reqNumber=&part=&supplier=`));
     }, [dispatch]);
 
     const [options, setOptions] = useState({ reqNumber: '', part: '', supplier: '' });

@@ -42,8 +42,15 @@
                 this.typeOfReport,
                 this.partSelector,
                 null,
+                null,
                 "supplier/part",
-                null);
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                0);
         }
 
         [Test]
@@ -52,6 +59,12 @@
             this.result.Headers.Should().HaveCount(2);
             this.result.JobRef.Should().Be(this.jobRef);
             this.result.RunWeekNumber.Should().Be(this.runWeekNumber);
+        }
+
+        [Test]
+        public void ShouldReturnSelectedOptions()
+        {
+            this.result.PartSelectorOption.Should().Be("Planner1234");
         }
     }
 }

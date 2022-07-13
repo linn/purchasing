@@ -8,6 +8,7 @@
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -35,15 +36,11 @@
                                SupplierId = 1224
             };
 
-            this.PurchaseOrderFacadeService.GetById(this.orderNumber, Arg.Any<IEnumerable<string>>())
-                .ReturnsForAnyArgs(
-                    new SuccessResult<PurchaseOrderResource>(
-                        new PurchaseOrderResource
-                        {
-                            OrderNumber = 600179,
-                            OverbookQty = 1,
-                            Supplier = new SupplierResource { Id = 1224 }
-                        }));
+            this.MockPurchaseOrderRepository.FindById(this.orderNumber).Returns(
+                new PurchaseOrder
+                    {
+                        OrderNumber = 600179, OverbookQty = 1, Supplier = new Supplier { SupplierId = 1224 }
+                    });
 
             this.Response = this.Client.Get(
                 $"/purchasing/purchase-orders/{this.orderNumber}",
@@ -52,6 +49,7 @@
                     with.Accept("application/json");
                 }).Result;
         }
+
         [Test]
         public void ShouldReturnOk()
         {

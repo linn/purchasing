@@ -58,7 +58,7 @@
                                  DeliverySeq = this.key1.DeliverySequence
                              });
 
-            this.result = this.Sut.BatchUpdateDeliveries(this.changes, new List<string>());
+            this.result = this.Sut.BatchUpdateDeliveries(this.changes, new List<string>(), true);
         }
 
         [Test]

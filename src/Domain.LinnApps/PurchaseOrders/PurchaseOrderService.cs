@@ -5,9 +5,14 @@
     using System.Linq;
 
     using Linn.Common.Authorisation;
+    using Linn.Common.Configuration;
+    using Linn.Common.Email;
+    using Linn.Common.Pdf;
+    using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
 
     public class PurchaseOrderService : IPurchaseOrderService
     {
@@ -17,14 +22,30 @@
 
         private readonly IPurchaseLedgerPack purchaseLedgerPack;
 
+        private readonly IPdfService pdfService;
+
+        private readonly IEmailService emailService;
+
+        private readonly IRepository<Employee, int> employeeRepository;
+
+        private readonly IRepository<MiniOrder, int> miniOrderRepository;
+
         public PurchaseOrderService(
             IAuthorisationService authService,
             IPurchaseLedgerPack purchaseLedgerPack,
-            IDatabaseService databaseService)
+            IDatabaseService databaseService,
+            IPdfService pdfService,
+            IEmailService emailService,
+            IRepository<Employee, int> employeeRepository,
+            IRepository<MiniOrder, int> miniOrderRepository)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;
             this.databaseService = databaseService;
+            this.pdfService = pdfService;
+            this.emailService = emailService;
+            this.employeeRepository = employeeRepository;
+            this.miniOrderRepository = miniOrderRepository;
         }
 
         public void AllowOverbook(
@@ -100,6 +121,48 @@
             this.UpdateDetails(current.Details, updated.Details);
             // Update pl_order_postings? Or just on create? todo investigate
             return current;
+        }
+
+        public ProcessResult SendPdfEmail(string html, string emailAddress, int orderNumber, bool bcc, int currentUserId, PurchaseOrder order)
+        {
+            var pdf = this.pdfService.ConvertHtmlToPdf(html, landscape: false);
+            var emailBody = $"Please accept the attached order no. {orderNumber}.\n"
+                            + $"You will need Acrobat Reader to open the file which is available from www.adobe.com/acrobat\n"
+                            + "Linn's standard Terms & Conditions apply at all times\n"
+                            + "and can be found at www.linn.co.uk/purchasing_conditions";
+
+            var bccList = new List<Dictionary<string, string>>
+                              {
+                                  new Dictionary<string, string>
+                                      {
+                                          { "name", "purchasing outgoing" }, { "address", ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"] }
+                                      }
+                              };
+            if (bcc)
+            {
+                var employee = this.employeeRepository.FindById(currentUserId);
+                bccList.Add(new Dictionary<string, string> { { "name", employee.FullName }, { "address", employee.PhoneListEntry?.EmailAddress } });
+            }
+
+            this.emailService.SendEmail(
+                    emailAddress,
+                    emailAddress,
+                    null,
+                    bccList,
+                    ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
+                    "Linn Purchasing",
+                    $"Linn Purchase Order {orderNumber}",
+                    emailBody,
+                    pdf.Result,
+                    $"LinnPurchaseOrder{orderNumber}");
+
+            var miniOrder = this.miniOrderRepository.FindById(orderNumber);
+            miniOrder.SentByMethod = "EMAIL";
+            //// mini order trigger will update pl order. When remove mini orders:
+            //// todo stop setting sentbymethod mini order and switch to below
+            //// order.SentByMethod = "EMAIL";
+
+            return new ProcessResult(true, "Email Sent");
         }
 
         private void UpdateDetails(ICollection<PurchaseOrderDetail> currentDetails, ICollection<PurchaseOrderDetail> updatedDetails)

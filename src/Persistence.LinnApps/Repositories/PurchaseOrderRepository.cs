@@ -42,7 +42,7 @@
         {
             return this.serviceDbContext
                 .PurchaseOrders
-                .Include(o => o.Supplier)
+                .Include(o => o.Supplier).ThenInclude(s => s.SupplierContacts)
                 .Include(o => o.RequestedBy)
                 .Include(o => o.EnteredBy)
                 .Include(o => o.AuthorisedBy)
@@ -51,14 +51,14 @@
                 .Include(o => o.OrderMethod)
                 .Include(o => o.Currency)
                 .Include(o => o.Details).ThenInclude(d => d.Part)
-                .Include(o => o.Details).ThenInclude(d => d.PurchaseDeliveries)
+                .Include(o => o.Details).ThenInclude(d => d.PurchaseDeliveries).ThenInclude(d => d.DeliveryHistories)
                 .Include(o => o.Details).ThenInclude(d => d.OrderPosting)
                 .ThenInclude(p => p.NominalAccount).ThenInclude(n => n.Nominal)
                 .Include(o => o.Details).ThenInclude(d => d.OrderPosting)
                 .ThenInclude(p => p.NominalAccount).ThenInclude(n => n.Department)
                 .Include(p => p.OrderAddress).ThenInclude(x => x.FullAddress)
                 .Include(p => p.OrderAddress).ThenInclude(x => x.Country)
-                //.Include(o => o.Details).ThenInclude(d => d.DeliveryConfirmedBy)
+                .Include(o => o.Details).ThenInclude(d => d.DeliveryConfirmedBy)
                 .First(o => o.OrderNumber == key);
         }
     }
