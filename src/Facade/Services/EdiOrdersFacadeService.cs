@@ -14,10 +14,13 @@
 
         private readonly IBuilder<EdiOrder> builder;
 
-        public EdiOrdersFacadeService(IEdiOrderService domainService, IBuilder<EdiOrder> builder)
+        private readonly IBuilder<EdiSupplier> supplierBuilder;
+
+        public EdiOrdersFacadeService(IEdiOrderService domainService, IBuilder<EdiOrder> builder, IBuilder<EdiSupplier> supplierBuilder)
         {
             this.domainService = domainService;
             this.builder = builder;
+            this.supplierBuilder = supplierBuilder;
         }
 
         public IResult<IEnumerable<EdiOrderResource>> GetEdiOrders(int supplierId)
@@ -25,6 +28,13 @@
             var orders = this.domainService.GetEdiOrders(supplierId);
             var resources = orders.Select(o => (EdiOrderResource)this.builder.Build(o, null));
             return new SuccessResult<IEnumerable<EdiOrderResource>>(resources);
+        }
+
+        public IResult<IEnumerable<EdiSupplierResource>> GetEdiSuppliers()
+        {
+            var suppliers = this.domainService.GetEdiSuppliers();
+            var resources = suppliers.Select(s => (EdiSupplierResource)this.supplierBuilder.Build(s, null));
+            return new SuccessResult<IEnumerable<EdiSupplierResource>>(resources);
         }
 
         public IResult<ProcessResultResource> SendEdiOrder(SendEdiEmailResource resource)

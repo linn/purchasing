@@ -18,14 +18,18 @@
 
         protected IRepository<EdiOrder, int> MockEdiOrderRepository { get; private set; }
 
+        protected IQueryRepository<EdiSupplier> MockEdiSupplierRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
             this.MockEdiEmailPack = Substitute.For<IEdiEmailPack>();
             this.MockEdiOrderRepository = Substitute.For<IRepository<EdiOrder, int>>();
+            this.MockEdiSupplierRepository = Substitute.For<IQueryRepository<EdiSupplier>>();
             this.Sut = new EdiOrderService(
                 this.MockEdiEmailPack,
-                this.MockEdiOrderRepository);
+                this.MockEdiOrderRepository,
+                this.MockEdiSupplierRepository);
         }
     }
 

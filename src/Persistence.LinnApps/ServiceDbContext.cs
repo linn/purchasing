@@ -145,6 +145,8 @@
 
         public DbSet<MrPurchaseOrderDetail> MrOutstandingPurchaseOrders { get; set; }
 
+        public DbSet<EdiSupplier> EdiSuppliers { get; set; }
+
         public DbSet<ShortagesEntry> ShortagesEntries { get; set; }
 
         public DbSet<ShortagesPlannerEntry> ShortagesPlannerEntries { get; set; }
@@ -228,6 +230,7 @@
             this.BuildMiniOrderDeliveries(builder);
             this.BuildMrPurchaseOrderDetails(builder);
             this.BuildMrCallOffs(builder);
+            this.BuildEdiSuppliers(builder);
             this.BuildShortagesView(builder);
             this.BuildShortagesPlannerView(builder);
             this.BuildPartAndAssemblyView(builder);
@@ -1442,6 +1445,18 @@
             entity.Property(d => d.SupplierId).HasColumnName("SUPPLIER_ID");
             entity.Property(d => d.SequenceNumber).HasColumnName("SEQUENCE_NUMBER");
         }
+
+        private void BuildEdiSuppliers(ModelBuilder builder)
+        {
+            var entity = builder.Entity<EdiSupplier>().ToTable("EDI_PENDING_VIEW");
+            entity.HasKey(e => e.SupplierId);
+            entity.Property(d => d.SupplierId).HasColumnName("SUPPLIER_ID");
+            entity.Property(d => d.SupplierName).HasColumnName("SUPPLIER_NAME").HasColumnType("VARCHAR2");
+            entity.Property(d => d.VendorManager).HasColumnName("VENDOR_MANAGER").HasColumnType("VARCHAR2");
+            entity.Property(d => d.VendorManangerName).HasColumnName("USER_NAME").HasColumnType("VARCHAR2");
+            entity.Property(d => d.EdiEmailAddress).HasColumnName("EDI_EMAIL_ADDRESS").HasColumnType("VARCHAR2");
+            entity.Property(d => d.NumOrders).HasColumnName("NUM_ORDERS");
+		}
 
         private void BuildShortagesView(ModelBuilder builder)
         {
