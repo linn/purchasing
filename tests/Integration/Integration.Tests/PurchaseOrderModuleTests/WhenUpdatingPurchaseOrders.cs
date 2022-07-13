@@ -32,9 +32,8 @@
                 Cancelled = "N",
                 DocumentType = new DocumentTypeResource { Description = "order", Name = "PO" },
                 OrderDate = 1.January(2022).ToString("O"),
-
-                // Overbook = resource.Overbook,
-                // OverbookQty = resource.OverbookQty,
+                Overbook = "N",
+                OverbookQty = null,
                 Details =
                                         new List<PurchaseOrderDetailResource>
                                             {
@@ -100,10 +99,7 @@
                                                         DeliveryConfirmedBy =
                                                             new EmployeeResource { Id = 33107, FullName = "me" },
                                                         CancelledDetails =
-                                                            new List<CancelledPurchaseOrderDetailResource>
-                                                                {
-                                                                    new CancelledPurchaseOrderDetailResource()
-                                                                },
+                                                            new List<CancelledPurchaseOrderDetailResource>(),
                                                         InternalComments = "comment for internal staff",
                                                         OrderPosting = new PurchaseOrderPostingResource
                                                                            {

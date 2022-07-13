@@ -224,7 +224,7 @@
                                                 DeliveryInstructions = x.DeliveryInstructions,
                                                 DeliveryConfirmedById = x.DeliveryConfirmedBy.Id,
                                                 CancelledDetails =
-                                                    x.CancelledDetails.Select(
+                                                    x.CancelledDetails?.Select(
                                                         c => new CancelledOrderDetail
                                                                  {
                                                                      OrderNumber = c.OrderNumber,
@@ -289,7 +289,7 @@
                            SentByMethod = resource.SentByMethod,
                            FilCancelled = resource.FilCancelled,
                            Remarks = resource.Remarks,
-                           DateFilCancelled = DateTime.Parse(resource.DateFilCancelled),
+                           DateFilCancelled = DateTime.TryParse(resource.DateFilCancelled, out var dateFilCancelled) ? dateFilCancelled : null,
                            PeriodFilCancelled = resource.PeriodFilCancelled
                        };
         }
