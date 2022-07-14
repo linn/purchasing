@@ -34,6 +34,7 @@
                            NetTotalCurrency = entity.NetTotalCurrency,
                            OrderNumber = entity.OrderNumber,
                            OurQty = entity.OurQty,
+                           OrderQty = entity.OrderQty,
                            PurchaseDeliveries =
                                entity.PurchaseDeliveries?.Select(
                                    d => (PurchaseOrderDeliveryResource)this.deliveryResourceBuilder.Build(d, claims)),

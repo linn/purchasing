@@ -118,8 +118,8 @@
             }
 
             this.UpdateOrderProperties(current, updated);
+            this.UpdateDetails(current.Details, updated.Details);
             this.UpdateMiniOrder(updated);
-            //this.UpdateDetails(current.Details, updated.Details);
             return current;
         }
 
@@ -183,53 +183,25 @@
 
         private void UpdateOrderProperties(PurchaseOrder current, PurchaseOrder updated)
         {
-            current.Cancelled = updated.Cancelled;
-            current.DocumentTypeName = updated.DocumentTypeName;
-            current.OrderDate = updated.OrderDate;
-            current.SupplierId = updated.SupplierId;
-            current.CurrencyCode = updated.CurrencyCode;
-            current.OrderContactName = updated.OrderContactName;
-            current.OrderMethodName = updated.OrderMethodName;
-            current.ExchangeRate = updated.ExchangeRate;
-            current.IssuePartsToSupplier = updated.IssuePartsToSupplier;
-            current.DeliveryAddressId = updated.DeliveryAddressId;
-            current.RequestedById = updated.RequestedById;
-            current.EnteredById = updated.EnteredById;
-            current.QuotationRef = updated.QuotationRef;
-            current.AuthorisedById = updated.AuthorisedById;
-            current.SentByMethod = updated.SentByMethod;
-            current.FilCancelled = updated.FilCancelled;
             current.Remarks = updated.Remarks;
-            current.DateFilCancelled = updated.DateFilCancelled;
-            current.PeriodFilCancelled = updated.PeriodFilCancelled;
         }
 
         private void UpdateDetailProperties(PurchaseOrderDetail current, PurchaseOrderDetail updated)
         {
-            current.PartNumber = updated.PartNumber;
-            current.Cancelled = updated.Cancelled;
             current.BaseNetTotal = updated.BaseNetTotal;
             current.NetTotalCurrency = updated.NetTotalCurrency;
             current.OurQty = updated.OurQty;
-            current.PartNumber = updated.PartNumber;
-            current.RohsCompliant = updated.RohsCompliant;
+
             current.SuppliersDesignation = updated.SuppliersDesignation;
-            current.StockPoolCode = updated.StockPoolCode;
-            current.OriginalOrderNumber = updated.OriginalOrderNumber;
-            current.OriginalOrderLine = updated.OriginalOrderLine;
+
             current.OurUnitOfMeasure = updated.OurUnitOfMeasure;
             current.OrderUnitOfMeasure = updated.OrderUnitOfMeasure;
-            current.OurUnitPriceCurrency = updated.OurUnitPriceCurrency;
             current.OrderUnitPriceCurrency = updated.OrderUnitPriceCurrency;
-            current.BaseOurUnitPrice = updated.BaseOurUnitPrice;
             current.BaseOrderUnitPrice = updated.BaseOrderUnitPrice;
             current.VatTotalCurrency = updated.VatTotalCurrency;
-            current.BaseVatTotal = updated.BaseVatTotal;
+            current.BaseVatTotal = updated.BaseVatTotal; //// vat totals might not change
             current.DetailTotalCurrency = updated.DetailTotalCurrency;
             current.BaseDetailTotal = updated.BaseDetailTotal;
-            current.DeliveryInstructions = updated.DeliveryInstructions;
-            current.DeliveryConfirmedBy = updated.DeliveryConfirmedBy;
-            current.DeliveryConfirmedById = updated.DeliveryConfirmedById;
             current.InternalComments = updated.InternalComments;
 
             this.UpdateOrderPostingsForDetail(current, updated);

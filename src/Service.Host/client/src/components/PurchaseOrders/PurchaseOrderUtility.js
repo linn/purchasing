@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useReducer } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
@@ -43,20 +43,21 @@ import history from '../../history';
 import config from '../../config';
 import purchaseOrderActions from '../../actions/purchaseOrderActions';
 import handleBackClick from '../../helpers/handleBackClick';
+import reducer from './purchaseOrderReducer';
 
 function PurchaseOrderUtility({ creating }) {
-    const dispatch = useDispatch();
-    const clearErrors = () => dispatch(purchaseOrderActions.clearErrorsForItem());
+    const reduxDispatch = useDispatch();
+    const clearErrors = () => reduxDispatch(purchaseOrderActions.clearErrorsForItem());
 
     const { orderNumber } = useParams();
 
     useEffect(() => {
         if (orderNumber) {
-            dispatch(purchaseOrderActions.fetch(orderNumber));
+            reduxDispatch(purchaseOrderActions.fetch(orderNumber));
         } else if (creating) {
-            dispatch(purchaseOrderActions.fetchState());
+            reduxDispatch(purchaseOrderActions.fetchState());
         }
-    }, [orderNumber, dispatch, creating]);
+    }, [orderNumber, reduxDispatch, creating]);
 
     const item = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.purchaseOrder));
     const loading = useSelector(state =>
@@ -66,15 +67,16 @@ function PurchaseOrderUtility({ creating }) {
     );
 
     const itemError = useSelector(state => getItemError(state, 'purchaseOrder'));
-    const [order, setOrder] = useState({});
+
+    const [order, dispatch] = useReducer(reducer, {});
 
     useEffect(() => {
         if (item?.orderNumber) {
-            setOrder(item);
+            dispatch({ type: 'initialise', payload: item });
         } else {
-            dispatch(purchaseOrderActions.clearErrorsForItem());
+            reduxDispatch(purchaseOrderActions.clearErrorsForItem());
         }
-    }, [item, dispatch]);
+    }, [item, reduxDispatch]);
 
     const suppliersSearchResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.suppliers, 100, 'id', 'id', 'name')
@@ -82,7 +84,7 @@ function PurchaseOrderUtility({ creating }) {
     const suppliersSearchLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.suppliers)
     );
-    const searchSuppliers = searchTerm => dispatch(suppliersActions.search(searchTerm));
+    const searchSuppliers = searchTerm => reduxDispatch(suppliersActions.search(searchTerm));
 
     // const partsSearchResults = useSelector(state =>
     //     collectionSelectorHelpers.getSearchItems(state.parts)
@@ -132,8 +134,8 @@ function PurchaseOrderUtility({ creating }) {
     const [authEmailDialogOpen, setAuthEmailDialogOpen] = useState(false);
     const [employeeToEmail, setEmployeeToEmail] = useState();
 
-    useEffect(() => dispatch(currenciesActions.fetch()), [dispatch]);
-    useEffect(() => dispatch(employeesActions.fetch()), [dispatch]);
+    useEffect(() => reduxDispatch(currenciesActions.fetch()), [reduxDispatch]);
+    useEffect(() => reduxDispatch(employeesActions.fetch()), [reduxDispatch]);
 
     const nominalAccountsTable = {
         totalItemCount: nominalsSearchItems.length,
@@ -166,13 +168,19 @@ function PurchaseOrderUtility({ creating }) {
         setEditStatus('edit');
         if (allowedToAuthorise) {
             clearErrors();
-            dispatch(purchaseOrderActions.postByHref(utilities.getHref(item, 'authorise')));
+            reduxDispatch(purchaseOrderActions.postByHref(utilities.getHref(item, 'authorise')));
         }
     };
 
     const handleFieldChange = (propertyName, newValue) => {
         setEditStatus('edit');
-        setOrder(a => ({ ...a, [propertyName]: newValue }));
+        dispatch({ payload: newValue, propertyName, type: 'orderFieldChange' });
+    };
+
+    const handleDetailFieldChange = (propertyName, newValue, detail) => {
+        setEditStatus('edit');
+
+        dispatch({ payload: { ...detail, [propertyName]: newValue }, type: 'detailFieldChange' });
     };
 
     // const handleCancelClick = () => {
@@ -193,11 +201,10 @@ function PurchaseOrderUtility({ creating }) {
         // );
     };
 
-    const handleNominalUpdate = newNominal => {
+    const handleNominalUpdate = (newNominal, lineNumber) => {
         setEditStatus('edit');
-
-        setOrder(r => ({
-            ...r,
+        console.info(newNominal);
+        const newNominalAccount = {
             nominal: {
                 nominalCode: newNominal.values.find(x => x.id === 'nominalCode')?.value,
                 description: newNominal.values.find(x => x.id === 'description')?.value
@@ -205,8 +212,15 @@ function PurchaseOrderUtility({ creating }) {
             department: {
                 departmentCode: newNominal.values.find(x => x.id === 'departmentCode')?.value,
                 description: newNominal.values.find(x => x.id === 'departmentDescription')?.value
-            }
-        }));
+            },
+            accountId: newNominal.id
+        };
+        console.info(newNominalAccount);
+        dispatch({
+            payload: newNominalAccount,
+            lineNumber,
+            type: 'nominalChange'
+        });
     };
 
     const useStyles = makeStyles(theme => ({
@@ -244,7 +258,9 @@ function PurchaseOrderUtility({ creating }) {
                     <Grid container spacing={1} justifyContent="center">
                         <SnackbarMessage
                             visible={snackbarVisible}
-                            onClose={() => dispatch(purchaseOrderActions.setSnackbarVisible(false))}
+                            onClose={() =>
+                                reduxDispatch(purchaseOrderActions.setSnackbarVisible(false))
+                            }
                             message="Save successful"
                         />
                         {/* <SnackbarMessage
@@ -299,7 +315,7 @@ function PurchaseOrderUtility({ creating }) {
                                                 <Send
                                                     className={classes.buttonMarginTop}
                                                     onClick={() => handleSendAuthoriseEmailClick()}
-                                                />handleFieldChange
+                                                />
                                             </Tooltip>
                                         </Grid>
                                     </Grid>
@@ -472,7 +488,7 @@ function PurchaseOrderUtility({ creating }) {
                                 }))}
                                 allowNoValue
                                 onChange={(propertyName, newValue) => {
-                                    setOrder(a => ({
+                                    dispatch(a => ({
                                         ...a,
                                         currency: {
                                             code: newValue,
@@ -808,17 +824,24 @@ function PurchaseOrderUtility({ creating }) {
                                         table={nominalAccountsTable}
                                         columnNames={['Nominal', 'Description', 'Dept', 'Name']}
                                         fetchItems={searchTerm =>
-                                            dispatch(nominalsActions.search(searchTerm))
+                                            reduxDispatch(nominalsActions.search(searchTerm))
                                         }
                                         modal
                                         placeholder="Search Dept/Nominal"
                                         links={false}
-                                        clearSearch={() => dispatch(nominalsActions.clearSearch)}
+                                        clearSearch={() =>
+                                            reduxDispatch(nominalsActions.clearSearch)
+                                        }
                                         loading={nominalsSearchLoading}
                                         label="Department"
                                         title="Search Department"
-                                        value={detail.department?.departmentCode}
-                                        onSelect={newValue => handleNominalUpdate(newValue)}
+                                        value={
+                                            detail.orderPosting?.nominalAccount?.department
+                                                ?.departmentCode
+                                        }
+                                        onSelect={newValue =>
+                                            handleNominalUpdate(newValue, detail.line)
+                                        }
                                         debounce={1000}
                                         minimumSearchTermLength={2}
                                         disabled={!allowedToUpdate}
@@ -828,7 +851,10 @@ function PurchaseOrderUtility({ creating }) {
                                 <Grid item xs={8}>
                                     <InputField
                                         fullWidth
-                                        value={detail.department?.description}
+                                        value={
+                                            detail.orderPosting?.nominalAccount?.department
+                                                ?.description
+                                        }
                                         label="Description"
                                         disabled
                                         propertyName="nominalDescription"
@@ -837,7 +863,10 @@ function PurchaseOrderUtility({ creating }) {
                                 <Grid item xs={4}>
                                     <InputField
                                         fullWidth
-                                        value={detail.nominal?.nominalCode}
+                                        value={
+                                            detail.orderPosting?.nominalAccount?.nominal
+                                                ?.nominalCode
+                                        }
                                         label="Nominal"
                                         onChange={() => {}}
                                         propertyName="nominalCode"
@@ -848,7 +877,10 @@ function PurchaseOrderUtility({ creating }) {
                                 <Grid item xs={8}>
                                     <InputField
                                         fullWidth
-                                        value={detail.nominal?.description}
+                                        value={
+                                            detail.orderPosting?.nominalAccount?.nominal
+                                                ?.description
+                                        }
                                         label="Description"
                                         propertyName="nominalDescription"
                                         onChange={() => {}}
@@ -974,14 +1006,16 @@ function PurchaseOrderUtility({ creating }) {
                                 saveClick={() => {
                                     setEditStatus('view');
                                     clearErrors();
-                                    dispatch(purchaseOrderActions.update(order.orderNumber, order));
+                                    reduxDispatch(
+                                        purchaseOrderActions.update(order.orderNumber, order)
+                                    );
                                 }}
                                 cancelClick={() => {
                                     setEditStatus('view');
                                     // if (creating) {
                                     //     setOrder(defaultCreatingOrder);
                                     // } else {
-                                    setOrder(item);
+                                    dispatch(item);
                                 }}
                             />
                         </Grid>
