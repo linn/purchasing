@@ -31,7 +31,7 @@
                                                             });
             this.Response = this.Client.Post(
                 $"/purchasing/purchase-orders/deliveries",
-                $"PO1,1,28/03/1995,100,0.01,NEW REASON,",
+                $"PO1,1,28/03/1995,100,$0.01,NEW REASON,",
                 with =>
                     {
                         with.Accept("application/json");
@@ -54,6 +54,7 @@
                     && l.First().Key.OrderLine.Equals(1)
                     && l.First().NewDateAdvised.Equals(28.March(1995))
                     && l.First().Qty.Equals(100)
+                    && l.First().UnitPrice.Equals(0.01m)
                     && l.First().NewReason.Equals("NEW REASON")),
                 Arg.Any<IEnumerable<string>>(),
                 true);
