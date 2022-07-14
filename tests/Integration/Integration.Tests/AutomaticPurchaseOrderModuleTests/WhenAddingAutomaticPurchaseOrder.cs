@@ -26,7 +26,7 @@
                                                 Id = 4
                                             };
 
-            this.FacadeService.Add(Arg.Any<AutomaticPurchaseOrderResource>(), Arg.Any<List<string>>(), Arg.Any<int>())
+            this.FacadeService.Add(Arg.Any<AutomaticPurchaseOrderResource>(), Arg.Any<List<string>>())
                 .Returns(new CreatedResult<AutomaticPurchaseOrderResource>(
                     new AutomaticPurchaseOrderResource
                         {
