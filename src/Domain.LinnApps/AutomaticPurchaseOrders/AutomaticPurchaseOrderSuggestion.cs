@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps
+﻿namespace Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders
 {
     using System;
 
@@ -25,9 +25,9 @@
         public int? JitReorderNumber { get; set; }
 
         public string VendorManager { get; set; }
-        
+
         public int? Planner { get; set; }
-        
+
         public string JobRef { get; set; }
     }
 }

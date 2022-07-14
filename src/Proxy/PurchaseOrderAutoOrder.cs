@@ -195,5 +195,110 @@
                 return new CreateOrderFromReqResult { Success = false, Message = returnMessage };
             }
         }
+
+        public CreateOrderFromReqResult CreateAutoOrder(
+            string partNumber,
+            int supplierId,
+            decimal qty,
+            DateTime dateRequired,
+            decimal? ourUnitPrice,
+            bool authAllowed)
+        {
+            using (var connection = this.databaseService.GetConnection())
+            {
+                connection.Open();
+
+                var createCmd = new OracleCommand("pl_auto_order.Create_Auto_Order_Wrapper", connection)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                var p_part = new OracleParameter("p_part", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Size = 50,
+                    Value = partNumber
+                };
+
+                var p_supplier = new OracleParameter("p_supplier", OracleDbType.Int32)
+                {
+                    Direction = ParameterDirection.Input,
+                    Size = 50,
+                    Value = supplierId
+                };
+                var p_qty = new OracleParameter("p_qty", OracleDbType.Decimal)
+                {
+                    Direction = ParameterDirection.Input,
+                    Size = 50,
+                    Value = qty
+                };
+                var p_date = new OracleParameter("p_date", OracleDbType.Date)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = dateRequired,
+                    IsNullable = true
+                };
+
+                var p_orderNumber = new OracleParameter("p_order_number", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.InputOutput,
+                    Size = 8,
+                    Value = 0
+                };
+
+                var p_our_price = new OracleParameter("p_our_price", OracleDbType.Decimal)
+                {
+                    Direction = ParameterDirection.Input,
+                    Size = 19,
+                    Value = ourUnitPrice
+                };
+                var p_auth = new OracleParameter("p_auth", OracleDbType.Int32)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = authAllowed ? 1 : 0
+                };
+
+                var result = new OracleParameter(null, OracleDbType.Int32)
+                {
+                    Direction = ParameterDirection.ReturnValue
+                };
+
+                createCmd.Parameters.Add(result);
+                createCmd.Parameters.Add(p_part);
+                createCmd.Parameters.Add(p_supplier);
+                createCmd.Parameters.Add(p_qty);
+                createCmd.Parameters.Add(p_date);
+                createCmd.Parameters.Add(p_orderNumber);
+                createCmd.Parameters.Add(p_our_price);
+                createCmd.Parameters.Add(p_auth);
+                createCmd.ExecuteNonQuery();
+
+                if (int.Parse(result.Value.ToString()) != 0)
+                {
+                    var newOrderNumber = int.Parse(p_orderNumber.Value.ToString());
+                    connection.Close();
+                    return new CreateOrderFromReqResult { Success = true, OrderNumber = newOrderNumber };
+                }
+
+                var packageMessageCmd = new OracleCommand("pl_auto_order.return_package_message", connection)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+                var messageResult = new OracleParameter(null, OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.ReturnValue,
+                    Size = 2000
+                };
+
+                packageMessageCmd.Parameters.Add(messageResult);
+                packageMessageCmd.ExecuteNonQuery();
+
+                var returnMessage = messageResult.Value.ToString();
+
+                connection.Close();
+
+                return new CreateOrderFromReqResult { Success = false, Message = returnMessage };
+            }
+        }
     }
 }

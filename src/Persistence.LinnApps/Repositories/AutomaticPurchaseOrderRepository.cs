@@ -3,8 +3,7 @@
     using System.Linq;
 
     using Linn.Common.Persistence.EntityFramework;
-    using Linn.Purchasing.Domain.LinnApps;
-
+    using Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders;
     using Microsoft.EntityFrameworkCore;
 
     public class AutomaticPurchaseOrderRepository : EntityFrameworkRepository<AutomaticPurchaseOrder, int>

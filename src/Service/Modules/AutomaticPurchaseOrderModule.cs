@@ -6,7 +6,7 @@
     using Carter.Response;
 
     using Linn.Common.Facade;
-    using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.RequestResources;
     using Linn.Purchasing.Service.Extensions;
@@ -62,8 +62,7 @@
         {
             var result = automaticPurchaseOrderFacadeService.Add(
                 resource,
-                request.HttpContext.GetPrivileges(),
-                request.HttpContext.User.GetEmployeeNumber());
+                request.HttpContext.GetPrivileges());
 
             await response.Negotiate(result);
         }

@@ -20,5 +20,13 @@
             DateTime? dateRequired,
             decimal ourUnitPrice,
             bool authAllowed);
+        
+        CreateOrderFromReqResult CreateAutoOrder(
+            string partNumber,
+            int supplierId,
+            decimal qty,
+            DateTime dateRequired,
+            decimal? ourUnitPrice,
+            bool authAllowed);
     }
 }

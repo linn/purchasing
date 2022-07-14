@@ -7,21 +7,27 @@
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders;
+    using Linn.Purchasing.Facade.Extensions;
     using Linn.Purchasing.Resources;
 
     public class AutomaticPurchaseOrderFacadeService : FacadeResourceService<AutomaticPurchaseOrder, int, AutomaticPurchaseOrderResource, AutomaticPurchaseOrderResource>
     {
+        private readonly IAutomaticPurchaseOrderService automaticPurchaseOrderService;
+
         public AutomaticPurchaseOrderFacadeService(
             IRepository<AutomaticPurchaseOrder, int> repository,
             ITransactionManager transactionManager,
-            IBuilder<AutomaticPurchaseOrder> resourceBuilder)
+            IBuilder<AutomaticPurchaseOrder> resourceBuilder,
+            IAutomaticPurchaseOrderService automaticPurchaseOrderService)
             : base(repository, transactionManager, resourceBuilder)
         {
+            this.automaticPurchaseOrderService = automaticPurchaseOrderService;
         }
 
         protected override AutomaticPurchaseOrder CreateFromResource(AutomaticPurchaseOrderResource resource, IEnumerable<string> privileges = null)
         {
-            throw new NotImplementedException();
+            return this.automaticPurchaseOrderService.CreateAutomaticPurchaseOrder(resource.ToDomain());
         }
 
         protected override void UpdateFromResource(

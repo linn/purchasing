@@ -15,6 +15,7 @@
     using Linn.Common.Reporting.Models;
     using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Forecasting;
@@ -172,6 +173,7 @@
                 .AddTransient<IMaterialRequirementsReportService, MaterialRequirementsReportService>()
                 .AddTransient<IShortagesReportService, ShortagesReportService>()
                 .AddTransient<IMrOrderBookReportService, MrOrderBookReportService>()
+                .AddTransient<IAutomaticPurchaseOrderService, AutomaticPurchaseOrderService>()
 
                 // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()

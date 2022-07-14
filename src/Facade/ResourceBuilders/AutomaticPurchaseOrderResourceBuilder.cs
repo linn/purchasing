@@ -5,7 +5,7 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Resources;
-    using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders;
     using Linn.Purchasing.Resources;
 
     public class AutomaticPurchaseOrderResourceBuilder : IBuilder<AutomaticPurchaseOrder>

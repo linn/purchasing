@@ -3,7 +3,7 @@
     using System.Net.Http;
 
     using Linn.Common.Facade;
-    using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders;
     using Linn.Purchasing.IoC;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.RequestResources;

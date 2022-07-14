@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps
+﻿namespace Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders
 {
     using System;
 
@@ -25,7 +25,7 @@
         public string CurrencyCode { get; set; }
 
         public decimal CurrencyPrice { get; set; }
-        
+
         public decimal BasePrice { get; set; }
 
         public DateTime? RequestedDate { get; set; }
