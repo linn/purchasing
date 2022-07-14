@@ -82,10 +82,10 @@
                             .Trim(), "dd'/'M'/'yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate1);
                     var secondFormatSatisfied =
                         DateTime.TryParseExact(row[2]
-                            .Trim(), "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate2);
+                            .Trim(), "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate2);
                     var thirdFormatSatisfied =
                         DateTime.TryParseExact(row[2]
-                            .Trim(), "yyyy-MMM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate3);
+                            .Trim(), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate3);
 
                     // only supports two date formats for now, i.e.  31/01/2000 and 31-jan-2000
                     DateTime parsedDate;
