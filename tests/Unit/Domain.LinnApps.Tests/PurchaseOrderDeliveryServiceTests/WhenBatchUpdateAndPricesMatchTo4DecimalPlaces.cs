@@ -1,40 +1,40 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderDeliveryServiceTests;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-
-using FluentAssertions;
-
-using Linn.Purchasing.Domain.LinnApps.Keys;
-using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
-using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
-using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
-
-using NSubstitute;
-
-using NUnit.Framework;
-
-public class WhenBatchUpdateAndPricesMatchTo4DecimalPlaces : ContextBase
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderDeliveryServiceTests
 {
-    private IEnumerable<PurchaseOrderDeliveryUpdate> changes;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Expressions;
 
-    private PurchaseOrderDeliveryKey key1;
+    using FluentAssertions;
 
-    private BatchUpdateProcessResult result;
+    using Linn.Purchasing.Domain.LinnApps.Keys;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
 
-    [SetUp]
-    public void SetUp()
+    using NSubstitute;
+
+    using NUnit.Framework;
+
+    public class WhenBatchUpdateAndPricesMatchTo4DecimalPlaces : ContextBase
     {
-        this.PurchaseLedgerMaster.GetRecord().Returns(new PurchaseLedgerMaster { OkToRaiseOrder = "Y" });
+        private IEnumerable<PurchaseOrderDeliveryUpdate> changes;
 
-        this.AuthService
-            .HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
-            .Returns(true);
-        this.key1 = new PurchaseOrderDeliveryKey { OrderNumber = 123456, OrderLine = 1, DeliverySequence = 1 };
+        private PurchaseOrderDeliveryKey key1;
 
-        this.changes = new List<PurchaseOrderDeliveryUpdate>
+        private BatchUpdateProcessResult result;
+
+        [SetUp]
+        public void SetUp()
+        {
+            this.PurchaseLedgerMaster.GetRecord().Returns(new PurchaseLedgerMaster { OkToRaiseOrder = "Y" });
+
+            this.AuthService
+                .HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
+                .Returns(true);
+            this.key1 = new PurchaseOrderDeliveryKey { OrderNumber = 123456, OrderLine = 1, DeliverySequence = 1 };
+
+            this.changes = new List<PurchaseOrderDeliveryUpdate>
                                {
                                    new PurchaseOrderDeliveryUpdate
                                        {
@@ -45,27 +45,27 @@ public class WhenBatchUpdateAndPricesMatchTo4DecimalPlaces : ContextBase
                                        },
                                };
 
-        this.Repository.FindById(
-                Arg.Is<PurchaseOrderDeliveryKey>(
-                    x => x.OrderLine == this.key1.OrderLine && x.OrderNumber == this.key1.OrderNumber
-                                                           && x.DeliverySequence == this.key1.DeliverySequence))
-            .Returns(
-                new PurchaseOrderDelivery
-                {
-                    OrderNumber = this.key1.OrderNumber,
-                    OrderLine = this.key1.OrderLine,
-                    DeliverySeq = this.key1.DeliverySequence,
-                    OurDeliveryQty = 100,
-                    OrderUnitPriceCurrency = 0.01112m
-                });
-        this.Repository.FilterBy(
-                Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
-            .Returns(
-                new List<PurchaseOrderDelivery>
+            this.Repository.FindById(
+                    Arg.Is<PurchaseOrderDeliveryKey>(
+                        x => x.OrderLine == this.key1.OrderLine && x.OrderNumber == this.key1.OrderNumber
+                                                               && x.DeliverySequence == this.key1.DeliverySequence))
+                .Returns(
+                    new PurchaseOrderDelivery
                     {
+                        OrderNumber = this.key1.OrderNumber,
+                        OrderLine = this.key1.OrderLine,
+                        DeliverySeq = this.key1.DeliverySequence,
+                        OurDeliveryQty = 100,
+                        OrderUnitPriceCurrency = 0.01112m
+                    });
+            this.Repository.FilterBy(
+                    Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
+                .Returns(
+                    new List<PurchaseOrderDelivery>
+                        {
                             new PurchaseOrderDelivery()
-                    }.AsQueryable());
-        this.RescheduleReasonRepository.FindAll().Returns(new List<RescheduleReason>
+                        }.AsQueryable());
+            this.RescheduleReasonRepository.FindAll().Returns(new List<RescheduleReason>
                                                                   {
                                                                       new RescheduleReason
                                                                           {
@@ -73,18 +73,19 @@ public class WhenBatchUpdateAndPricesMatchTo4DecimalPlaces : ContextBase
                                                                           }
                                                                   }.AsQueryable());
 
-        this.MiniOrderRepository.FindById(this.key1.OrderNumber)
-            .Returns(new MiniOrder { OrderNumber = this.key1.OrderNumber });
-        this.MiniOrderDeliveryRepository.FindBy(Arg.Any<Expression<Func<MiniOrderDelivery, bool>>>())
-            .Returns(new MiniOrderDelivery { OrderNumber = this.key1.OrderNumber });
-        this.result = this.Sut.BatchUpdateDeliveries(this.changes, new List<string>());
-    }
+            this.MiniOrderRepository.FindById(this.key1.OrderNumber)
+                .Returns(new MiniOrder { OrderNumber = this.key1.OrderNumber });
+            this.MiniOrderDeliveryRepository.FindBy(Arg.Any<Expression<Func<MiniOrderDelivery, bool>>>())
+                .Returns(new MiniOrderDelivery { OrderNumber = this.key1.OrderNumber });
+            this.result = this.Sut.BatchUpdateDeliveries(this.changes, new List<string>());
+        }
 
-    [Test]
-    public void ShouldReturnSuccessResult()
-    {
-        this.result.Success.Should().BeTrue();
-        this.result.Message.Should().Be("1 records updated successfully.");
-        this.result.Errors.Should().BeNullOrEmpty();
+        [Test]
+        public void ShouldReturnSuccessResult()
+        {
+            this.result.Success.Should().BeTrue();
+            this.result.Message.Should().Be("1 records updated successfully.");
+            this.result.Errors.Should().BeNullOrEmpty();
+        }
     }
 }
