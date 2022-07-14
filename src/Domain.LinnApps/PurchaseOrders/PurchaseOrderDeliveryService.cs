@@ -207,7 +207,8 @@
                         $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}",
                         $"{change.Qty} does not match the Qty on the Delivery ({entity.OurDeliveryQty})"));
                 }
-                else if (change.UnitPrice != entity.OrderUnitPriceCurrency)
+                else if (Math.Round(change.UnitPrice, 4) 
+                         != Math.Round(entity.OrderUnitPriceCurrency.GetValueOrDefault(), 4))
                 {
                     errors.Add(new Error(
                         $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}",
