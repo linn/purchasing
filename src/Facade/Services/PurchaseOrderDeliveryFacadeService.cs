@@ -83,16 +83,30 @@
                     var secondFormatSatisfied =
                         DateTime.TryParseExact(row[2]
                             .Trim(), "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate2);
+                    var thirdFormatSatisfied =
+                        DateTime.TryParseExact(row[2]
+                            .Trim(), "yyyy-MMM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate3);
 
                     // only supports two date formats for now, i.e.  31/01/2000 and 31-jan-2000
-                    if (
-                        !firstFormatSatisfied
-                        &&
-                        !secondFormatSatisfied)
+                    DateTime parsedDate;
+
+                    if (firstFormatSatisfied)
+                    {
+                        parsedDate = parsedDate1;
+                    }
+                    else if (secondFormatSatisfied)
+                    {
+                        parsedDate = parsedDate2;
+                    }
+                    else if (thirdFormatSatisfied)
+                    {
+                        parsedDate = parsedDate3;
+                    }
+                    else
                     {
                         throw new InvalidOperationException($"Date format not recognised for {row[2]}.");
                     }
-                    
+
                     changes.Add(new PurchaseOrderDeliveryUpdate
                                     {
                                         Key = new PurchaseOrderDeliveryKey
@@ -101,7 +115,7 @@
                                                       OrderLine = 1, // hardcoded for now
                                                       DeliverySequence = delNo
                                                   },
-                                        NewDateAdvised = firstFormatSatisfied ? parsedDate1 : parsedDate2,
+                                        NewDateAdvised = parsedDate,
                                         NewReason = row.Length < 5 ? null : row[5].Trim(),
                                         Qty = qty,
                                         UnitPrice = unitPrice
