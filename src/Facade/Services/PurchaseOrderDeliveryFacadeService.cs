@@ -5,6 +5,7 @@
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Text.RegularExpressions;
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
@@ -69,8 +70,9 @@
                     {
                         throw new InvalidOperationException($"Invalid Qty for {row[0]} / {row[1]}.");
                     }
-
-                    if (!decimal.TryParse(row[4].Trim(), out var unitPrice))
+                    if (!decimal.TryParse(
+                            Regex.Replace(row[4], "[^0-9.]", ""), // strip out non numeric chars 
+                            out var unitPrice))
                     {
                         throw new InvalidOperationException($"Invalid Unit Price for {row[0]} / {row[1]}.");
                     }
