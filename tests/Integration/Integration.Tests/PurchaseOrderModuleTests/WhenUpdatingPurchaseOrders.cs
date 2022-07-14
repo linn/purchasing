@@ -164,7 +164,7 @@
         {
             this.MockDomainService.Received().UpdateOrder(
                 Arg.Any<PurchaseOrder>(),
-                Arg.Any<PurchaseOrder>(),
+                Arg.Is<PurchaseOrder>(x => x.OrderNumber == this.orderNumber && x.Details.Count == 1),
                 Arg.Any<IEnumerable<string>>());
         }
 

@@ -1422,7 +1422,6 @@
             entity.Property(o => o.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
             entity.Property(o => o.Currency).HasColumnName("CURRENCY").HasMaxLength(4);
             entity.Property(o => o.SuppliersDesignation).HasColumnName("SUPPLIERS_DESIGNATION").HasMaxLength(2000);
-            entity.Property(o => o.VaxCurrencyUnitPrice).HasColumnName("VAX_CURRENCY_UNIT_PRICE").HasMaxLength(18);
             entity.Property(o => o.Department).HasColumnName("DEPARTMENT").HasMaxLength(10);
             entity.Property(o => o.Nominal).HasColumnName("NOMINAL").HasMaxLength(10);
             entity.Property(o => o.AuthorisedBy).HasColumnName("AUTHORISED_BY").HasMaxLength(6);
@@ -1461,6 +1460,8 @@
             entity.Property(o => o.BaseCurrency).HasColumnName("BASE_CURRENCY").HasMaxLength(4);
             entity.Property(o => o.BaseOurPrice).HasColumnName("BASE_OUR_PRICE").HasMaxLength(19);
             entity.Property(o => o.BaseOrderPrice).HasColumnName("BASE_ORDER_PRICE").HasMaxLength(19);
+            entity.Property(o => o.OurPrice).HasColumnName("OUR_PRICE").HasMaxLength(19);
+            entity.Property(o => o.OrderPrice).HasColumnName("ORDER_PRICE").HasMaxLength(19);
             entity.Property(o => o.BaseNetTotal).HasColumnName("BASE_NET_TOTAL").HasMaxLength(19);
             entity.Property(o => o.BaseVatTotal).HasColumnName("BASE_VAT_TOTAL").HasMaxLength(19);
             entity.Property(o => o.BaseOrderTotal).HasColumnName("BASE_ORDER_TOTAL").HasMaxLength(19);
@@ -1475,7 +1476,7 @@
             entity.Property(o => o.MpvAuthorisedBy).HasColumnName("MPV_AUTHORISED_BY").HasMaxLength(6);
             entity.Property(o => o.MpvReason).HasColumnName("MPV_REASON").HasMaxLength(20);
             entity.Property(o => o.MpvPpvComments).HasColumnName("MPV_PPV_COMMENTS").HasMaxLength(250);
-            entity.Property(o => o.DeliveryConfirmedBy).HasColumnName("DELIVERY_CONFIRMED)_BY").HasMaxLength(6);
+            entity.Property(o => o.DeliveryConfirmedBy).HasColumnName("DELIVERY_CONFIRMED_BY").HasMaxLength(6);
             entity.Property(o => o.TotalQtyDelivered).HasColumnName("TOTAL_QTY_DELIVERED").HasMaxLength(19);
             entity.Property(o => o.InternalComments).HasColumnName("INTERNAL_COMMENTS").HasMaxLength(300);
         }

@@ -29,7 +29,9 @@ import {
     //userSelectors,
     getItemError,
     ErrorCard,
-    utilities
+    utilities,
+    getPreviousPaths,
+    SaveBackCancelButtons
 } from '@linn-it/linn-form-components-library';
 import currenciesActions from '../../actions/currenciesActions';
 import employeesActions from '../../actions/employeesActions';
@@ -40,6 +42,7 @@ import suppliersActions from '../../actions/suppliersActions';
 import history from '../../history';
 import config from '../../config';
 import purchaseOrderActions from '../../actions/purchaseOrderActions';
+import handleBackClick from '../../helpers/handleBackClick';
 
 function PurchaseOrderUtility({ creating }) {
     const dispatch = useDispatch();
@@ -122,10 +125,10 @@ function PurchaseOrderUtility({ creating }) {
     // const currentUserName = useSelector(state => userSelectors.getName(state));
 
     const snackbarVisible = useSelector(state =>
-        itemSelectorHelpers.getSnackbarVisible(state.purchaseOrderReq)
+        itemSelectorHelpers.getSnackbarVisible(state.purchaseOrder)
     );
 
-    // const [editStatus, setEditStatus] = useState('view');
+    const [editStatus, setEditStatus] = useState('view');
     const [authEmailDialogOpen, setAuthEmailDialogOpen] = useState(false);
     const [employeeToEmail, setEmployeeToEmail] = useState();
 
@@ -146,19 +149,21 @@ function PurchaseOrderUtility({ creating }) {
         }))
     };
 
+    const previousPaths = useSelector(state => getPreviousPaths(state));
+
     // const allowedToCancel = () => !creating && order.links?.some(l => l.rel === 'cancel');
     const allowedToAuthorise = () => !creating && order.links?.some(l => l.rel === 'authorise');
 
     const allowedToUpdate = () =>
-        !creating && order.links?.some(l => l.rel === 'edit') && order.cancelled === 'N';
+        !creating && order.links?.some(l => l.rel === 'edit') && order.cancelled !== 'Y';
 
-    // const inputIsInvalid = () => true;
+    const inputIsInvalid = () => false;
 
-    // const canSave = () =>
-    //     editStatus !== 'view' && allowedToUpdate && !inputIsInvalid() && order !== item;
+    const canSave = () =>
+        editStatus !== 'view' && allowedToUpdate && !inputIsInvalid() && order !== item;
 
     const handleAuthorise = () => {
-        // setEditStatus('edit');
+        setEditStatus('edit');
         if (allowedToAuthorise) {
             clearErrors();
             dispatch(purchaseOrderActions.postByHref(utilities.getHref(item, 'authorise')));
@@ -166,7 +171,7 @@ function PurchaseOrderUtility({ creating }) {
     };
 
     const handleFieldChange = (propertyName, newValue) => {
-        //setEditStatus('edit');
+        setEditStatus('edit');
         setOrder(a => ({ ...a, [propertyName]: newValue }));
     };
 
@@ -189,7 +194,7 @@ function PurchaseOrderUtility({ creating }) {
     };
 
     const handleNominalUpdate = newNominal => {
-        //setEditStatus('edit');
+        setEditStatus('edit');
 
         setOrder(r => ({
             ...r,
@@ -240,7 +245,7 @@ function PurchaseOrderUtility({ creating }) {
                         <SnackbarMessage
                             visible={snackbarVisible}
                             onClose={() => dispatch(purchaseOrderActions.setSnackbarVisible(false))}
-                            message="Save Successful"
+                            message="Save successful"
                         />
                         {/* <SnackbarMessage
                             visible={authEmailMessageVisible}
@@ -294,7 +299,7 @@ function PurchaseOrderUtility({ creating }) {
                                                 <Send
                                                     className={classes.buttonMarginTop}
                                                     onClick={() => handleSendAuthoriseEmailClick()}
-                                                />
+                                                />handleFieldChange
                                             </Tooltip>
                                         </Grid>
                                     </Grid>
@@ -605,7 +610,7 @@ function PurchaseOrderUtility({ creating }) {
                                 fullWidth
                                 value={order.remarks}
                                 label="Remarks"
-                                propertyName="remarksForOrder"
+                                propertyName="remarks"
                                 onChange={handleFieldChange}
                                 rows={4}
                                 disabled={!allowedToUpdate()}
@@ -641,7 +646,7 @@ function PurchaseOrderUtility({ creating }) {
                                             label="Our quantity"
                                             propertyName="ourQty"
                                             onChange={handleFieldChange}
-                                            disabled={!allowedToUpdate() || !creating}
+                                            disabled={!allowedToUpdate()}
                                             type="number"
                                             required
                                         />
@@ -653,7 +658,7 @@ function PurchaseOrderUtility({ creating }) {
                                             label="Order quantity"
                                             propertyName="Order qty"
                                             onChange={handleFieldChange}
-                                            disabled={!allowedToUpdate() || !creating}
+                                            disabled={!allowedToUpdate()}
                                             type="number"
                                             required
                                         />
@@ -678,7 +683,7 @@ function PurchaseOrderUtility({ creating }) {
                                             label="Order price (currency)"
                                             propertyName="orderUnitPriceCurrency"
                                             onChange={handleFieldChange}
-                                            disabled={!allowedToUpdate() || !creating}
+                                            disabled={!allowedToUpdate()}
                                             type="number"
                                             required
                                         />
@@ -795,6 +800,10 @@ function PurchaseOrderUtility({ creating }) {
                                     />
                                 </Grid>
                                 <Grid item xs={4}>
+                                    <></>
+                                </Grid>
+
+                                <Grid item xs={4}>
                                     <TypeaheadTable
                                         table={nominalAccountsTable}
                                         columnNames={['Nominal', 'Description', 'Dept', 'Name']}
@@ -802,39 +811,18 @@ function PurchaseOrderUtility({ creating }) {
                                             dispatch(nominalsActions.search(searchTerm))
                                         }
                                         modal
-                                        placeholder="Search Nominal/Dept"
+                                        placeholder="Search Dept/Nominal"
                                         links={false}
                                         clearSearch={() => dispatch(nominalsActions.clearSearch)}
                                         loading={nominalsSearchLoading}
-                                        label="Nominal"
-                                        title="Search Nominals"
-                                        value={detail.nominal?.nominalCode}
+                                        label="Department"
+                                        title="Search Department"
+                                        value={detail.department?.departmentCode}
                                         onSelect={newValue => handleNominalUpdate(newValue)}
                                         debounce={1000}
                                         minimumSearchTermLength={2}
-                                        disabled={!allowedToUpdate()}
+                                        disabled={!allowedToUpdate}
                                         required
-                                    />
-                                </Grid>
-                                <Grid item xs={8}>
-                                    <InputField
-                                        fullWidth
-                                        value={detail.nominal?.description}
-                                        label="Description"
-                                        disabled
-                                        onChange={handleFieldChange}
-                                        propertyName="nominalDescription"
-                                    />
-                                </Grid>
-                                <Grid item xs={4}>
-                                    <InputField
-                                        fullWidth
-                                        value={detail.department?.departmentCode}
-                                        label="Dept"
-                                        onChange={() => {}}
-                                        propertyName="departmentCode"
-                                        required
-                                        disabled={!allowedToUpdate()}
                                     />
                                 </Grid>
                                 <Grid item xs={8}>
@@ -842,9 +830,29 @@ function PurchaseOrderUtility({ creating }) {
                                         fullWidth
                                         value={detail.department?.description}
                                         label="Description"
-                                        propertyName="departmentDescription"
+                                        disabled
+                                        propertyName="nominalDescription"
+                                    />
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <InputField
+                                        fullWidth
+                                        value={detail.nominal?.nominalCode}
+                                        label="Nominal"
                                         onChange={() => {}}
-                                        disabled={!allowedToUpdate()}
+                                        propertyName="nominalCode"
+                                        required
+                                        disabled
+                                    />
+                                </Grid>
+                                <Grid item xs={8}>
+                                    <InputField
+                                        fullWidth
+                                        value={detail.nominal?.description}
+                                        label="Description"
+                                        propertyName="nominalDescription"
+                                        onChange={() => {}}
+                                        disabled
                                     />
                                 </Grid>
 
@@ -879,6 +887,7 @@ function PurchaseOrderUtility({ creating }) {
                                                 onChange={() => {}}
                                                 propertyName="dateRequested"
                                                 required
+                                                type="date"
                                                 disabled={!allowedToUpdate()}
                                             />
                                         </Grid>
@@ -958,6 +967,24 @@ function PurchaseOrderUtility({ creating }) {
                                 disabled={!allowedToUpdate()}
                             />
                         </Grid> */}
+                        <Grid item xs={6}>
+                            <SaveBackCancelButtons
+                                saveDisabled={!canSave()}
+                                backClick={() => handleBackClick(previousPaths, history.goBack)}
+                                saveClick={() => {
+                                    setEditStatus('view');
+                                    clearErrors();
+                                    dispatch(purchaseOrderActions.update(order.orderNumber, order));
+                                }}
+                                cancelClick={() => {
+                                    setEditStatus('view');
+                                    // if (creating) {
+                                    //     setOrder(defaultCreatingOrder);
+                                    // } else {
+                                    setOrder(item);
+                                }}
+                            />
+                        </Grid>
                     </Grid>
                 )}
             </Page>

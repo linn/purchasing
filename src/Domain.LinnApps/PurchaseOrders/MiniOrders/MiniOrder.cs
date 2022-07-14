@@ -25,8 +25,6 @@
 
         public string SuppliersDesignation { get; set; }
 
-        public decimal? VaxCurrencyUnitPrice { get; set; }
-
         public string Department { get; set; }
 
         public string Nominal { get; set; }
