@@ -214,6 +214,13 @@
                         $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}",
                         $"{change.UnitPrice} does not match our order price ({entity.OrderUnitPriceCurrency})"));
                 }
+                else if (!change.NewDateAdvised.HasValue)
+                {
+                    errors.Add(
+                        new Error(
+                            $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}",
+                            "Invalid date string supplied"));
+                }
                 else
                 {
                     if (!string.IsNullOrEmpty(change.Comment))

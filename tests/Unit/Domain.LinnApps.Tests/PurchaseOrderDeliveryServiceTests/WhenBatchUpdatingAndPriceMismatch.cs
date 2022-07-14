@@ -40,7 +40,8 @@
                                        {
                                            Key = this.key1,
                                            Qty = 100,
-                                           UnitPrice = 0.05m
+                                           UnitPrice = 0.05m,
+                                           NewDateAdvised = DateTime.Now
                                        }
                                };
 

@@ -88,7 +88,7 @@
                             .Trim(), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate3);
 
                     // only supports two date formats for now, i.e.  31/01/2000 and 31-jan-2000
-                    DateTime parsedDate;
+                    DateTime? parsedDate;
 
                     if (firstFormatSatisfied)
                     {
@@ -104,7 +104,7 @@
                     }
                     else
                     {
-                        throw new InvalidOperationException($"Date format not recognised for {row[2]}.");
+                        parsedDate = null;
                     }
 
                     changes.Add(new PurchaseOrderDeliveryUpdate

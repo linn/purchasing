@@ -40,7 +40,8 @@ public class WhenBatchUpdateAndPricesMatchTo4DecimalPlaces : ContextBase
                                        {
                                            Key = this.key1,
                                            Qty = 100,
-                                           UnitPrice = 0.01111m
+                                           UnitPrice = 0.01111m,
+                                           NewDateAdvised = DateTime.Today
                                        },
                                };
 

@@ -43,13 +43,15 @@
                                        {
                                            Key = this.key1,
                                            Qty = 100,
-                                           UnitPrice = 0.01m
+                                           UnitPrice = 0.01m,
+                                           NewDateAdvised = DateTime.Today
                                        },
                                    new PurchaseOrderDeliveryUpdate
                                        {
                                            Key = this.key2,
                                            Qty = 200, 
-                                           UnitPrice = 0.01m
+                                           UnitPrice = 0.01m,
+                                           NewDateAdvised = DateTime.Today
                                        }
                                };
 
