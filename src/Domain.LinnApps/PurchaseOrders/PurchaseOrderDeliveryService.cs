@@ -212,7 +212,7 @@
                 {
                     errors.Add(new Error(
                         $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}",
-                        $"{change.UnitPrice} does not match our order price ({entity.OrderUnitPriceCurrency})"));
+                        $"Unit price: {change.UnitPrice} does not match our order unit price: {entity.OrderUnitPriceCurrency}"));
                 }
                 else if (!change.NewDateAdvised.HasValue)
                 {
@@ -227,7 +227,7 @@
                     {
                         entity.SupplierConfirmationComment = change.Comment;
                     }
-
+                    
                     if (!string.IsNullOrEmpty(change.AvailableAtSupplier))
                     {
                         entity.AvailableAtSupplier = change.AvailableAtSupplier;

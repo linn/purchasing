@@ -61,7 +61,7 @@
                         throw new InvalidOperationException($"Invalid Order Number: {row[0]}.");
                     }
 
-                    if (!int.TryParse(row[1].Trim(), out var delNo))
+                    if (!int.TryParse(row[1].Trim().First().ToString(), out var delNo))
                     {
                         throw new InvalidOperationException($"Invalid Delivery Number: {row[0]} / {row[1]}.");
                     }
@@ -116,7 +116,7 @@
                                                       DeliverySequence = delNo
                                                   },
                                         NewDateAdvised = parsedDate,
-                                        NewReason = row.Length < 5 ? null : row[5].Trim(),
+                                        NewReason = row.Length < 6 ? null : row[5].Trim(),
                                         Qty = qty,
                                         UnitPrice = unitPrice
                                     });

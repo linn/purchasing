@@ -90,7 +90,7 @@
             this.result.Errors.First().Descriptor.Should().Be(
                 $"{this.key1.OrderNumber} / {this.key1.OrderLine} / {this.key1.DeliverySequence}");
             this.result.Errors.First().Message.Should().Be(
-                "0.05 does not match our order price (0.04)");
+                "Unit price: 0.05 does not match our order unit price: 0.04");
         }
     }
 }
