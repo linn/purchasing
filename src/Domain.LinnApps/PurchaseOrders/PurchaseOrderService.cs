@@ -230,6 +230,12 @@
             miniOrder.SuppliersDesignation = updatedDetail.SuppliersDesignation;
         }
 
+        /// <summary>
+        /// /below method currently unreferenced, but leaving
+        /// as it has most of what we'll need to put into mini order when creating
+        /// so will save re-doing it when we build create
+        /// </summary>
+        /// <param name="order"></param>
         private void CreateMiniOrder(PurchaseOrder order)
         {
             var miniOrder = new MiniOrder();
@@ -308,6 +314,7 @@
             if (current.OrderPosting.NominalAccountId != updated.OrderPosting.NominalAccountId)
             {
                 current.OrderPosting.NominalAccountId = updated.OrderPosting.NominalAccountId;
+                current.OrderPosting.NominalAccount = updated.OrderPosting.NominalAccount;
             }
         }
     }

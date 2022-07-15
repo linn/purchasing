@@ -7,7 +7,7 @@ export default function purchaseOrderReducer(state = initialState, action) {
         case 'orderFieldChange':
             return {
                 ...state,
-                [action.fieldName]: action.payload
+                [action.propertyName]: action.payload
             };
         case 'detailFieldChange':
             return {
@@ -15,6 +15,26 @@ export default function purchaseOrderReducer(state = initialState, action) {
                 details: [
                     ...state.details.filter(x => x.lineNumber !== action.lineNumber),
                     action.payload
+                ]
+            };
+        case 'deliveryFieldChange':
+            return {
+                ...state,
+                details: [
+                    ...state.details.map(detail => {
+                        if (detail.line !== action.payload.orderLine) {
+                            return detail;
+                        }
+                        return {
+                            ...detail,
+                            purchaseDeliveries: [
+                                ...detail.purchaseDeliveries.filter(
+                                    x => x.deliverySeq !== action.payload.deliverySeq
+                                ),
+                                action.payload
+                            ]
+                        };
+                    })
                 ]
             };
         case 'nominalChange':
@@ -25,7 +45,6 @@ export default function purchaseOrderReducer(state = initialState, action) {
                         if (detail.line !== action.lineNumber) {
                             return detail;
                         }
-                        console.log({ ...detail.orderPosting, nominalAccount: action.payload });
                         return {
                             ...detail,
                             orderPosting: {

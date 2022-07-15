@@ -185,14 +185,8 @@
                                                         d => new PurchaseOrderDelivery
                                                         {
                                                             Cancelled = d.Cancelled,
-                                                            DateAdvised =
-                                                                         string.IsNullOrEmpty(d.DateAdvised)
-                                                                             ? null
-                                                                             : DateTime.Parse(d.DateAdvised),
-                                                            DateRequested =
-                                                                         string.IsNullOrEmpty(d.DateRequested)
-                                                                             ? null
-                                                                             : DateTime.Parse(d.DateRequested),
+                                                            DateAdvised = DateTime.TryParse(d.DateAdvised, out var dateAdvised) ? dateAdvised : null,
+                                                            DateRequested = DateTime.TryParse(d.DateRequested, out var dateRequested) ? dateRequested : null,
                                                             DeliverySeq = d.DeliverySeq,
                                                             NetTotalCurrency = d.NetTotalCurrency,
                                                             BaseNetTotal = d.BaseNetTotal,
@@ -202,10 +196,7 @@
                                                             OurDeliveryQty = d.OurDeliveryQty,
                                                             QtyNetReceived = d.QtyNetReceived,
                                                             QuantityOutstanding = d.QuantityOutstanding,
-                                                            CallOffDate =
-                                                                         string.IsNullOrEmpty(d.CallOffDate)
-                                                                             ? null
-                                                                             : DateTime.Parse(d.CallOffDate),
+                                                            CallOffDate = DateTime.TryParse(d.CallOffDate, out var callOffDate) ? callOffDate : null,
                                                             BaseOurUnitPrice = d.BaseOurUnitPrice,
                                                             SupplierConfirmationComment =
                                                                          d.SupplierConfirmationComment,
@@ -277,7 +268,21 @@
                                                                                            .Department.DepartmentCode,
                                                                                NominalCode =
                                                                                        x.OrderPosting.NominalAccount
+                                                                                           .Nominal.NominalCode,
+                                                                               Nominal = new Nominal
+                                                                                   {
+                                                                                       Description = x.OrderPosting.NominalAccount
+                                                                                           .Nominal.Description,
+                                                                                       NominalCode = x.OrderPosting.NominalAccount
                                                                                            .Nominal.NominalCode
+                                                                                   },
+                                                                               Department = new Department
+                                                                               {
+                                                                                       Description = x.OrderPosting.NominalAccount
+                                                                                           .Department.Description,
+                                                                                       DepartmentCode = x.OrderPosting.NominalAccount
+                                                                                           .Department.DepartmentCode
+                                                                               }
                                                                            },
                                            NominalAccountId =
                                                                            x.OrderPosting.NominalAccountId,

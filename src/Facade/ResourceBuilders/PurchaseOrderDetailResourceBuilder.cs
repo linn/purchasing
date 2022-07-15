@@ -63,18 +63,6 @@
                                          }
                                    : null,
                            InternalComments = entity.InternalComments,
-                           Nominal = new NominalResource
-                                         {
-                                             NominalCode = entity.OrderPosting?.NominalAccount?.Nominal?.NominalCode,
-                                             Description = entity.OrderPosting?.NominalAccount?.Nominal?.Description
-                                         },
-                           Department = new DepartmentResource
-                                            {
-                                                DepartmentCode =
-                                                    entity.OrderPosting?.NominalAccount?.Department?.DepartmentCode,
-                                                Description = entity.OrderPosting?.NominalAccount?.Department
-                                                    ?.Description
-                                            },
                            OrderPosting = entity.OrderPosting != null
                                               ? (PurchaseOrderPostingResource)this.postingResourceBuilder.Build(
                                                   entity.OrderPosting,
