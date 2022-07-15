@@ -293,8 +293,7 @@
                                            Qty = x.OrderPosting.Qty,
                                            Vehicle = x.OrderPosting.Vehicle
                                        }
-                                   }).ToList()
-                           ,
+                                   }).ToList(),
                            CurrencyCode = resource.Currency.Code,
                            OrderContactName = resource.OrderContactName,
                            OrderMethodName = resource.OrderMethod.Name,

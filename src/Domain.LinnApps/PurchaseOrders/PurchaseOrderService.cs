@@ -191,23 +191,46 @@
             current.BaseNetTotal = updated.BaseNetTotal;
             current.NetTotalCurrency = updated.NetTotalCurrency;
             current.OurQty = updated.OurQty;
+            current.OrderQty = updated.OrderQty;
 
             current.SuppliersDesignation = updated.SuppliersDesignation;
 
-            current.OurUnitOfMeasure = updated.OurUnitOfMeasure;
-            current.OrderUnitOfMeasure = updated.OrderUnitOfMeasure;
-            current.OrderUnitPriceCurrency = updated.OrderUnitPriceCurrency;
-            current.BaseOrderUnitPrice = updated.BaseOrderUnitPrice;
-            current.VatTotalCurrency = updated.VatTotalCurrency;
-            current.BaseVatTotal = updated.BaseVatTotal; //// vat totals might not change
-            current.DetailTotalCurrency = updated.DetailTotalCurrency;
-            current.BaseDetailTotal = updated.BaseDetailTotal;
+            //price updates to be done next
+            //current.OurUnitPriceCurrency = updated.OurUnitPriceCurrency;
+            //current.OrderUnitPriceCurrency = updated.OrderUnitPriceCurrency;
+            //current.BaseOrderUnitPrice = updated.BaseOrderUnitPrice;
+            //current.BaseOurUnitPrice = updated.BaseOurUnitPrice;
+            //current.VatTotalCurrency = updated.VatTotalCurrency;
+            //current.BaseVatTotal = updated.BaseVatTotal; //// vat totals might not change
+            //current.DetailTotalCurrency = updated.DetailTotalCurrency;
+            //current.BaseDetailTotal = updated.BaseDetailTotal;
+
             current.InternalComments = updated.InternalComments;
 
             this.UpdateOrderPostingsForDetail(current, updated);
+
+            this.UpdateDeliveries(current.PurchaseDeliveries, updated.PurchaseDeliveries);
         }
 
-        private void UpdateMiniOrder(PurchaseOrder updatedOrder)
+        private void UpdateDeliveries(ICollection<PurchaseOrderDelivery> deliveries, ICollection<PurchaseOrderDelivery> updatedDeliveries)
+        {
+            foreach (var delivery in deliveries)
+            {
+                var updatedDelivery = updatedDeliveries.First(x => x.DeliverySeq == delivery.DeliverySeq);
+                delivery.DateRequested = updatedDelivery.DateRequested;
+                //price updates to be done next
+                //delivery.OurUnitPriceCurrency = updatedDelivery.OurUnitPriceCurrency;
+                //delivery.OrderUnitPriceCurrency = updatedDelivery.OrderUnitPriceCurrency;
+                //delivery.BaseOrderUnitPrice = updatedDelivery.BaseOrderUnitPrice;
+                //delivery.BaseOurUnitPrice = updatedDelivery.BaseOurUnitPrice;
+                //delivery.VatTotalCurrency = updatedDelivery.VatTotalCurrency;
+                //delivery.BaseVatTotal = updatedDelivery.BaseVatTotal; //// vat totals might not change
+                //delivery.DeliveryTotalCurrency = updatedDelivery.DeliveryTotalCurrency;
+                //delivery.BaseDetailTotal = updatedDelivery.BaseDetailTotal;
+            }
+        }
+
+            private void UpdateMiniOrder(PurchaseOrder updatedOrder)
         {
             var miniOrder = this.miniOrderRepository.FindById(updatedOrder.OrderNumber);
             var updatedDetail = updatedOrder.Details.First();
@@ -223,8 +246,8 @@
             miniOrder.BaseNetTotal = updatedDetail.BaseNetTotal;
 
             miniOrder.Remarks = updatedOrder.Remarks;
-            miniOrder.Department = updatedDetail.OrderPosting.NominalAccount.DepartmentCode;
-            miniOrder.Nominal = updatedDetail.OrderPosting.NominalAccount.NominalCode;
+            miniOrder.Department = updatedDetail.OrderPosting.NominalAccount.Department.DepartmentCode;
+            miniOrder.Nominal = updatedDetail.OrderPosting.NominalAccount.Nominal.NominalCode;
             miniOrder.RequestedDeliveryDate = updatedDetail.PurchaseDeliveries.First().DateRequested;
             miniOrder.InternalComments = updatedDetail.InternalComments;
             miniOrder.SuppliersDesignation = updatedDetail.SuppliersDesignation;
