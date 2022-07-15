@@ -195,16 +195,15 @@
 
             current.SuppliersDesignation = updated.SuppliersDesignation;
 
-            //price updates to be done next
-            //current.OurUnitPriceCurrency = updated.OurUnitPriceCurrency;
-            //current.OrderUnitPriceCurrency = updated.OrderUnitPriceCurrency;
-            //current.BaseOrderUnitPrice = updated.BaseOrderUnitPrice;
-            //current.BaseOurUnitPrice = updated.BaseOurUnitPrice;
-            //current.VatTotalCurrency = updated.VatTotalCurrency;
-            //current.BaseVatTotal = updated.BaseVatTotal; //// vat totals might not change
-            //current.DetailTotalCurrency = updated.DetailTotalCurrency;
-            //current.BaseDetailTotal = updated.BaseDetailTotal;
-
+            // price updates to be done next
+            // current.OurUnitPriceCurrency = updated.OurUnitPriceCurrency;
+            // current.OrderUnitPriceCurrency = updated.OrderUnitPriceCurrency;
+            // current.BaseOrderUnitPrice = updated.BaseOrderUnitPrice;
+            // current.BaseOurUnitPrice = updated.BaseOurUnitPrice;
+            // current.VatTotalCurrency = updated.VatTotalCurrency;
+            // current.BaseVatTotal = updated.BaseVatTotal; //// vat totals might not change
+            // current.DetailTotalCurrency = updated.DetailTotalCurrency;
+            // current.BaseDetailTotal = updated.BaseDetailTotal;
             current.InternalComments = updated.InternalComments;
 
             this.UpdateOrderPostingsForDetail(current, updated);
@@ -218,15 +217,16 @@
             {
                 var updatedDelivery = updatedDeliveries.First(x => x.DeliverySeq == delivery.DeliverySeq);
                 delivery.DateRequested = updatedDelivery.DateRequested;
-                //price updates to be done next
-                //delivery.OurUnitPriceCurrency = updatedDelivery.OurUnitPriceCurrency;
-                //delivery.OrderUnitPriceCurrency = updatedDelivery.OrderUnitPriceCurrency;
-                //delivery.BaseOrderUnitPrice = updatedDelivery.BaseOrderUnitPrice;
-                //delivery.BaseOurUnitPrice = updatedDelivery.BaseOurUnitPrice;
-                //delivery.VatTotalCurrency = updatedDelivery.VatTotalCurrency;
-                //delivery.BaseVatTotal = updatedDelivery.BaseVatTotal; //// vat totals might not change
-                //delivery.DeliveryTotalCurrency = updatedDelivery.DeliveryTotalCurrency;
-                //delivery.BaseDetailTotal = updatedDelivery.BaseDetailTotal;
+
+                // price updates to be done next
+                // delivery.OurUnitPriceCurrency = updatedDelivery.OurUnitPriceCurrency;
+                // delivery.OrderUnitPriceCurrency = updatedDelivery.OrderUnitPriceCurrency;
+                // delivery.BaseOrderUnitPrice = updatedDelivery.BaseOrderUnitPrice;
+                // delivery.BaseOurUnitPrice = updatedDelivery.BaseOurUnitPrice;
+                // delivery.VatTotalCurrency = updatedDelivery.VatTotalCurrency;
+                // delivery.BaseVatTotal = updatedDelivery.BaseVatTotal; //// vat totals might not change
+                // delivery.DeliveryTotalCurrency = updatedDelivery.DeliveryTotalCurrency;
+                // delivery.BaseDetailTotal = updatedDelivery.BaseDetailTotal;
             }
         }
 
@@ -253,12 +253,7 @@
             miniOrder.SuppliersDesignation = updatedDetail.SuppliersDesignation;
         }
 
-        /// <summary>
-        /// /below method currently unreferenced, but leaving
-        /// as it has most of what we'll need to put into mini order when creating
-        /// so will save re-doing it when we build create
-        /// </summary>
-        /// <param name="order"></param>
+        // below method currently unreferenced, but to be finished and used soon for create
         private void CreateMiniOrder(PurchaseOrder order)
         {
             var miniOrder = new MiniOrder();
@@ -301,10 +296,12 @@
             miniOrder.Building = detail.OrderPosting.Building;
             miniOrder.Product = detail.OrderPosting.Product;
             miniOrder.Person = detail.OrderPosting.Person;
-            //miniOrder.DrawingReference = detail.dr; //dont think needed
+
+            // miniOrder.DrawingReference = detail.dr; //dont think needed
             miniOrder.StockPoolCode = detail.StockPoolCode;
-            //miniOrder.PrevOrderNumber = detail.;
-            //miniOrder.PrevOrderLine = updatedOrder.;
+
+            // miniOrder.PrevOrderNumber = detail.;
+            // miniOrder.PrevOrderLine = updatedOrder.;
             miniOrder.FilCancelledBy = detail.CancelledDetails.FirstOrDefault()?.FilCancelledById;
             miniOrder.ReasonFilCancelled = detail.CancelledDetails.FirstOrDefault()?.ReasonCancelled;
             miniOrder.OurPrice = detail.OurUnitPriceCurrency;
@@ -316,17 +313,20 @@
             miniOrder.BaseVatTotal = detail.BaseVatTotal;
             miniOrder.BaseOrderTotal = detail.BaseDetailTotal;
             miniOrder.ExchangeRate = order.ExchangeRate;
-            //miniOrder.ManufacturerPartNumber = updatedOrder.;
+
+            // miniOrder.ManufacturerPartNumber = updatedOrder.;
             miniOrder.DateFilCancelled = detail.CancelledDetails.First().DateFilCancelled;
             miniOrder.RohsCompliant = detail.RohsCompliant;
-            //miniOrder.ShouldHaveBeenBlueReq = updatedOrder.;
-            //miniOrder.SpecialOrderType = updatedOrder.;
-            //miniOrder.PpvAuthorisedBy = updatedOrder.;
-            //miniOrder.PpvReason = updatedOrder.;
-            //miniOrder.MpvAuthorisedBy = updatedOrder.
-            //miniOrder.MpvReason = updatedOrder.
+
+            // miniOrder.ShouldHaveBeenBlueReq = updatedOrder.;
+            // miniOrder.SpecialOrderType = updatedOrder.;
+            // miniOrder.PpvAuthorisedBy = updatedOrder.;
+            // miniOrder.PpvReason = updatedOrder.;
+            // miniOrder.MpvAuthorisedBy = updatedOrder.
+            // miniOrder.MpvReason = updatedOrder.
             miniOrder.DeliveryConfirmedBy = detail.DeliveryConfirmedBy.Id;
-            //miniOrder.TotalQtyDelivered = updatedOrder.Details
+
+            // miniOrder.TotalQtyDelivered = updatedOrder.Details
             miniOrder.InternalComments = detail.InternalComments;
 
             this.miniOrderRepository.Add(miniOrder);

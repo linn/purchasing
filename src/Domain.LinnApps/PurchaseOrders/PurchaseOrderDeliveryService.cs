@@ -398,7 +398,7 @@
 
             detail.PurchaseDeliveries = newDeliveries.ToList();
 
-            //// set mini order date requested to be first date requested of newly split deliveries
+            // set mini order date requested to be first date requested of newly split deliveries
             this.UpdateMiniOrder(
                 orderNumber,
                 null,
