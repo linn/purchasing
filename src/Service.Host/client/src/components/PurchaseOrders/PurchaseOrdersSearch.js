@@ -9,7 +9,6 @@ import config from '../../config';
 
 function PurchaseOrdersSearch() {
     const dispatch = useDispatch();
-    // useEffect(() => dispatch(purchaseOrdersActions.fetch()), [dispatch]);
 
     useEffect(() => {
         dispatch(purchaseOrdersActions.fetchState());

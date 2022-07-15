@@ -41,9 +41,9 @@
 
         public string DeliveryInstructions { get; set; }
 
-        public decimal? OurQty { get; set; } //Check
+        public decimal? OurQty { get; set; }
 
-        public decimal? OrderQty { get; set; } //check
+        public decimal? OrderQty { get; set; }
 
         public decimal? OrderConvFactor { get; set; }
 
