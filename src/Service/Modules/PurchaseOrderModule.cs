@@ -12,6 +12,7 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.SearchResources;
     using Linn.Purchasing.Service.Extensions;
     using Linn.Purchasing.Service.Models;
 
@@ -150,7 +151,8 @@
             string searchTerm,
             IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
-            var result = purchaseOrderFacadeService.Search(searchTerm, req.HttpContext.GetPrivileges());
+            var resource = new PurchaseOrderSearchResource { OrderNumber = searchTerm };
+            var result = purchaseOrderFacadeService.FilterBy(resource, numberToTake: 50, req.HttpContext.GetPrivileges());
             await res.Negotiate(result);
         }
 

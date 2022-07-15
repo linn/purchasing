@@ -22,11 +22,7 @@
 
         public string DeliveryInstructions { get; set; }
 
-        public DepartmentResource Department { get; set; }
-
         public decimal? DetailTotalCurrency { get; set; }
-
-        public decimal? Duty { get; set; }
 
         public string InternalComments { get; set; }
 
@@ -35,8 +31,6 @@
         public IEnumerable<MrOrderResource> MrOrders { get; set; }
 
         public decimal NetTotalCurrency { get; set; }
-
-        public NominalResource Nominal { get; set; }
 
         public int OrderNumber { get; set; }
 
@@ -51,6 +45,8 @@
         public int? OriginalOrderNumber { get; set; }
 
         public decimal? OurQty { get; set; }
+
+        public decimal? OrderQty { get; set; }
 
         public string OurUnitOfMeasure { get; set; }
 

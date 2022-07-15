@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useReducer } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
@@ -29,7 +29,9 @@ import {
     //userSelectors,
     getItemError,
     ErrorCard,
-    utilities
+    utilities,
+    getPreviousPaths,
+    SaveBackCancelButtons
 } from '@linn-it/linn-form-components-library';
 import currenciesActions from '../../actions/currenciesActions';
 import employeesActions from '../../actions/employeesActions';
@@ -40,20 +42,22 @@ import suppliersActions from '../../actions/suppliersActions';
 import history from '../../history';
 import config from '../../config';
 import purchaseOrderActions from '../../actions/purchaseOrderActions';
+import handleBackClick from '../../helpers/handleBackClick';
+import reducer from './purchaseOrderReducer';
 
 function PurchaseOrderUtility({ creating }) {
-    const dispatch = useDispatch();
-    const clearErrors = () => dispatch(purchaseOrderActions.clearErrorsForItem());
+    const reduxDispatch = useDispatch();
+    const clearErrors = () => reduxDispatch(purchaseOrderActions.clearErrorsForItem());
 
     const { orderNumber } = useParams();
 
     useEffect(() => {
         if (orderNumber) {
-            dispatch(purchaseOrderActions.fetch(orderNumber));
+            reduxDispatch(purchaseOrderActions.fetch(orderNumber));
         } else if (creating) {
-            dispatch(purchaseOrderActions.fetchState());
+            reduxDispatch(purchaseOrderActions.fetchState());
         }
-    }, [orderNumber, dispatch, creating]);
+    }, [orderNumber, reduxDispatch, creating]);
 
     const item = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.purchaseOrder));
     const loading = useSelector(state =>
@@ -63,15 +67,16 @@ function PurchaseOrderUtility({ creating }) {
     );
 
     const itemError = useSelector(state => getItemError(state, 'purchaseOrder'));
-    const [order, setOrder] = useState({});
+
+    const [order, dispatch] = useReducer(reducer, {});
 
     useEffect(() => {
         if (item?.orderNumber) {
-            setOrder(item);
+            dispatch({ type: 'initialise', payload: item });
         } else {
-            dispatch(purchaseOrderActions.clearErrorsForItem());
+            reduxDispatch(purchaseOrderActions.clearErrorsForItem());
         }
-    }, [item, dispatch]);
+    }, [item, reduxDispatch]);
 
     const suppliersSearchResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.suppliers, 100, 'id', 'id', 'name')
@@ -79,7 +84,7 @@ function PurchaseOrderUtility({ creating }) {
     const suppliersSearchLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.suppliers)
     );
-    const searchSuppliers = searchTerm => dispatch(suppliersActions.search(searchTerm));
+    const searchSuppliers = searchTerm => reduxDispatch(suppliersActions.search(searchTerm));
 
     // const partsSearchResults = useSelector(state =>
     //     collectionSelectorHelpers.getSearchItems(state.parts)
@@ -122,15 +127,15 @@ function PurchaseOrderUtility({ creating }) {
     // const currentUserName = useSelector(state => userSelectors.getName(state));
 
     const snackbarVisible = useSelector(state =>
-        itemSelectorHelpers.getSnackbarVisible(state.purchaseOrderReq)
+        itemSelectorHelpers.getSnackbarVisible(state.purchaseOrder)
     );
 
-    // const [editStatus, setEditStatus] = useState('view');
+    const [editStatus, setEditStatus] = useState('view');
     const [authEmailDialogOpen, setAuthEmailDialogOpen] = useState(false);
     const [employeeToEmail, setEmployeeToEmail] = useState();
 
-    useEffect(() => dispatch(currenciesActions.fetch()), [dispatch]);
-    useEffect(() => dispatch(employeesActions.fetch()), [dispatch]);
+    useEffect(() => reduxDispatch(currenciesActions.fetch()), [reduxDispatch]);
+    useEffect(() => reduxDispatch(employeesActions.fetch()), [reduxDispatch]);
 
     const nominalAccountsTable = {
         totalItemCount: nominalsSearchItems.length,
@@ -146,28 +151,45 @@ function PurchaseOrderUtility({ creating }) {
         }))
     };
 
+    const previousPaths = useSelector(state => getPreviousPaths(state));
+
     // const allowedToCancel = () => !creating && order.links?.some(l => l.rel === 'cancel');
     const allowedToAuthorise = () => !creating && order.links?.some(l => l.rel === 'authorise');
 
-    const editingAllowed =
-        false && order.links?.some(l => l.rel === 'edit') && order.cancelled === 'N';
+    const allowedToUpdate = () =>
+        !creating && order.links?.some(l => l.rel === 'edit') && order.cancelled !== 'Y';
 
-    // const inputIsInvalid = () => true;
+    const inputIsInvalid = () => false;
 
-    // const canSave = () =>
-    //     editStatus !== 'view' && editingAllowed && !inputIsInvalid() && order !== item;
+    const canSave = () =>
+        editStatus !== 'view' && allowedToUpdate && !inputIsInvalid() && order !== item;
 
     const handleAuthorise = () => {
-        // setEditStatus('edit');
+        setEditStatus('edit');
         if (allowedToAuthorise) {
             clearErrors();
-            dispatch(purchaseOrderActions.postByHref(utilities.getHref(item, 'authorise')));
+            reduxDispatch(purchaseOrderActions.postByHref(utilities.getHref(item, 'authorise')));
         }
     };
 
     const handleFieldChange = (propertyName, newValue) => {
-        //setEditStatus('edit');
-        setOrder(a => ({ ...a, [propertyName]: newValue }));
+        setEditStatus('edit');
+        dispatch({ payload: newValue, propertyName, type: 'orderFieldChange' });
+    };
+
+    const handleDetailFieldChange = (propertyName, newValue, detail) => {
+        setEditStatus('edit');
+
+        dispatch({ payload: { ...detail, [propertyName]: newValue }, type: 'detailFieldChange' });
+    };
+
+    const handleDeliveryFieldChange = (propertyName, newValue, delivery) => {
+        setEditStatus('edit');
+
+        dispatch({
+            payload: { ...delivery, [propertyName]: newValue },
+            type: 'deliveryFieldChange'
+        });
     };
 
     // const handleCancelClick = () => {
@@ -188,11 +210,9 @@ function PurchaseOrderUtility({ creating }) {
         // );
     };
 
-    const handleNominalUpdate = newNominal => {
-        //setEditStatus('edit');
-
-        setOrder(r => ({
-            ...r,
+    const handleNominalUpdate = (newNominal, lineNumber) => {
+        setEditStatus('edit');
+        const newNominalAccount = {
             nominal: {
                 nominalCode: newNominal.values.find(x => x.id === 'nominalCode')?.value,
                 description: newNominal.values.find(x => x.id === 'description')?.value
@@ -200,8 +220,14 @@ function PurchaseOrderUtility({ creating }) {
             department: {
                 departmentCode: newNominal.values.find(x => x.id === 'departmentCode')?.value,
                 description: newNominal.values.find(x => x.id === 'departmentDescription')?.value
-            }
-        }));
+            },
+            accountId: newNominal.id
+        };
+        dispatch({
+            payload: newNominalAccount,
+            lineNumber,
+            type: 'nominalChange'
+        });
     };
 
     const useStyles = makeStyles(theme => ({
@@ -239,8 +265,10 @@ function PurchaseOrderUtility({ creating }) {
                     <Grid container spacing={1} justifyContent="center">
                         <SnackbarMessage
                             visible={snackbarVisible}
-                            onClose={() => dispatch(purchaseOrderActions.setSnackbarVisible(false))}
-                            message="Save Successful"
+                            onClose={() =>
+                                reduxDispatch(purchaseOrderActions.setSnackbarVisible(false))
+                            }
+                            message="Save successful"
                         />
                         {/* <SnackbarMessage
                             visible={authEmailMessageVisible}
@@ -322,7 +350,7 @@ function PurchaseOrderUtility({ creating }) {
                                 propertyName="orderDate"
                                 onChange={handleFieldChange}
                                 type="date"
-                                disabled={!editingAllowed}
+                                disabled
                             />
                         </Grid>
                         <Grid item xs={3}>
@@ -338,7 +366,7 @@ function PurchaseOrderUtility({ creating }) {
                                 label="State"
                                 value={`${order?.documentType?.name} - ${order?.documentType?.description}`}
                                 onChange={handleDocumentTypeChange}
-                                disabled={!editingAllowed}
+                                disabled={!allowedToUpdateed()}
                                 fullwidth
                                 allowNoValue={false}
                                 required
@@ -363,7 +391,7 @@ function PurchaseOrderUtility({ creating }) {
                         <Grid item xs={1} />
                         <Grid item xs={1}>
                             <div className={classes.centeredIcon}>
-                                {editingAllowed ? (
+                                {allowedToUpdate ? (
                                     <Tooltip
                                         title={`You can ${
                                             creating ? 'create' : 'edit'
@@ -372,7 +400,7 @@ function PurchaseOrderUtility({ creating }) {
                                         <ModeEditIcon color="primary" />
                                     </Tooltip>
                                 ) : (
-                                    <Tooltip title="cannot edit order (edit coming soon)">
+                                    <Tooltip title="cannot edit order">
                                         <EditOffIcon color="secondary" />
                                     </Tooltip>
                                 )}
@@ -397,7 +425,7 @@ function PurchaseOrderUtility({ creating }) {
                                 placeholder="Search Suppliers"
                                 minimumSearchTermLength={3}
                                 fullWidth
-                                disabled={!editingAllowed || !creating}
+                                disabled
                                 required
                             />
                         </Grid>
@@ -419,7 +447,7 @@ function PurchaseOrderUtility({ creating }) {
                                 number
                                 propertyName="issuePartsToSupplier"
                                 onChange={handleFieldChange}
-                                disabled={!editingAllowed}
+                                disabled
                             />
                         </Grid>
 
@@ -431,7 +459,7 @@ function PurchaseOrderUtility({ creating }) {
                                 number
                                 propertyName="orderContactName"
                                 onChange={handleFieldChange}
-                                disabled={!editingAllowed}
+                                disabled
                             />
                         </Grid>
                         <Grid item xs={4}>
@@ -441,7 +469,7 @@ function PurchaseOrderUtility({ creating }) {
                                 label="Phone Number"
                                 propertyName="phoneNumber"
                                 onChange={handleFieldChange}
-                                disabled={!editingAllowed}
+                                disabled
                             />
                         </Grid>
                         <Grid item xs={4}>
@@ -451,7 +479,7 @@ function PurchaseOrderUtility({ creating }) {
                                 label="Email Address"
                                 propertyName="email"
                                 onChange={handleFieldChange}
-                                disabled={!editingAllowed}
+                                disabled
                             />
                         </Grid>
 
@@ -467,7 +495,7 @@ function PurchaseOrderUtility({ creating }) {
                                 }))}
                                 allowNoValue
                                 onChange={(propertyName, newValue) => {
-                                    setOrder(a => ({
+                                    dispatch(a => ({
                                         ...a,
                                         currency: {
                                             code: newValue,
@@ -475,7 +503,7 @@ function PurchaseOrderUtility({ creating }) {
                                         }
                                     }));
                                 }}
-                                disabled={!editingAllowed || !creating}
+                                disabled
                                 required
                             />
                         </Grid>
@@ -496,7 +524,7 @@ function PurchaseOrderUtility({ creating }) {
                                 number
                                 propertyName="exchangeRate"
                                 onChange={handleFieldChange}
-                                disabled={!editingAllowed}
+                                disabled
                                 type="number"
                             />
                         </Grid>
@@ -509,7 +537,7 @@ function PurchaseOrderUtility({ creating }) {
                                     label="Delivery Address Id"
                                     propertyName="deliveryAddressId"
                                     onChange={handleFieldChange}
-                                    disabled={!editingAllowed}
+                                    disabled
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -519,7 +547,7 @@ function PurchaseOrderUtility({ creating }) {
                                     label="Sent by method"
                                     propertyName="sentByMethod"
                                     onChange={handleFieldChange}
-                                    disabled={!editingAllowed}
+                                    disabled
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -529,7 +557,7 @@ function PurchaseOrderUtility({ creating }) {
                                     label="Quote Ref"
                                     propertyName="quotationRef"
                                     onChange={handleFieldChange}
-                                    disabled={!editingAllowed}
+                                    disabled
                                     rows={2}
                                 />
                             </Grid>
@@ -543,7 +571,7 @@ function PurchaseOrderUtility({ creating }) {
                                 propertyName="deliveryAddress"
                                 onChange={handleFieldChange}
                                 rows={8}
-                                disabled={!editingAllowed}
+                                disabled
                             />
                         </Grid>
                         <Grid item xs={12} />
@@ -581,7 +609,7 @@ function PurchaseOrderUtility({ creating }) {
                                         className={classes.buttonMarginTop}
                                         aria-label="Email"
                                         onClick={() => setAuthEmailDialogOpen(true)}
-                                        disabled={creating}
+                                        disabled
                                     >
                                         <Email />
                                     </IconButton>
@@ -605,331 +633,392 @@ function PurchaseOrderUtility({ creating }) {
                                 fullWidth
                                 value={order.remarks}
                                 label="Remarks"
-                                propertyName="remarksForOrder"
+                                propertyName="remarks"
                                 onChange={handleFieldChange}
                                 rows={4}
-                                disabled={!editingAllowed}
+                                disabled={!allowedToUpdate()}
                             />
                         </Grid>
 
-                        {order.details?.map(detail => (
-                            <>
-                                <Grid container item spacing={1} xs={4}>
-                                    <Grid item xs={4}>
-                                        <InputField
-                                            fullWidth
-                                            value={detail.line}
-                                            label="Order Line No"
-                                            propertyName="line"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={8}>
-                                        <InputField
-                                            fullWidth
-                                            value={detail.partNumber}
-                                            label="Part Number"
-                                            propertyName="partNumber"
-                                            onChange={handleFieldChange}
-                                            disabled={!editingAllowed}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <InputField
-                                            fullWidth
-                                            value={detail.ourQty}
-                                            label="Our quantity"
-                                            propertyName="ourQty"
-                                            onChange={handleFieldChange}
-                                            disabled={!editingAllowed || !creating}
-                                            type="number"
-                                            required
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <InputField
-                                            fullWidth
-                                            value={detail.orderQty}
-                                            label="Order quantity"
-                                            propertyName="Order qty"
-                                            onChange={handleFieldChange}
-                                            disabled={!editingAllowed || !creating}
-                                            type="number"
-                                            required
-                                        />
-                                    </Grid>
-
-                                    <Grid item xs={6}>
-                                        <InputField
-                                            fullWidth
-                                            value={detail.ourUnitPriceCurrency}
-                                            label="Our price (unit, currency)"
-                                            propertyName="ourUnitPriceCurrency"
-                                            onChange={handleFieldChange}
-                                            disabled={!editingAllowed || !creating}
-                                            type="number"
-                                            required
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <InputField
-                                            fullWidth
-                                            value={detail.orderUnitPriceCurrency}
-                                            label="Order price (currency)"
-                                            propertyName="orderUnitPriceCurrency"
-                                            onChange={handleFieldChange}
-                                            disabled={!editingAllowed || !creating}
-                                            type="number"
-                                            required
-                                        />
-                                    </Grid>
-                                </Grid>
-                                <Grid item xs={8}>
-                                    <InputField
-                                        fullWidth
-                                        value={detail.partDescription}
-                                        label="Description"
-                                        propertyName="partDescription"
-                                        onChange={handleFieldChange}
-                                        rows={8}
-                                        disabled={!editingAllowed}
-                                    />
-                                </Grid>
-
-                                <Grid item xs={4}>
-                                    <InputField
-                                        fullWidth
-                                        value={detail.netTotalCurrency}
-                                        label="Net total (currency)"
-                                        propertyName="netTotalCurrency"
-                                        onChange={handleFieldChange}
-                                        disabled={!editingAllowed || !creating}
-                                        type="number"
-                                        required
-                                    />
-                                </Grid>
-                                <Grid item xs={4}>
-                                    <InputField
-                                        fullWidth
-                                        value={detail.vatTotalCurrency}
-                                        label="Vat total (currency)"
-                                        propertyName="vatTotalCurrency"
-                                        onChange={handleFieldChange}
-                                        disabled={!editingAllowed || !creating}
-                                        type="number"
-                                        required
-                                    />
-                                </Grid>
-                                <Grid item xs={4}>
-                                    <InputField
-                                        fullWidth
-                                        value={detail.detailTotalCurrency}
-                                        label="detail total (currency)"
-                                        propertyName="detailTotalCurrency"
-                                        onChange={handleFieldChange}
-                                        disabled={!editingAllowed || !creating}
-                                        type="number"
-                                        required
-                                    />
-                                </Grid>
-
-                                <Grid item xs={4}>
-                                    <InputField
-                                        fullWidth
-                                        value={detail.baseNetTotal}
-                                        label="Base Net total"
-                                        propertyName="baseNetTotal"
-                                        onChange={handleFieldChange}
-                                        disabled={!editingAllowed || !creating}
-                                        type="number"
-                                        required
-                                    />
-                                </Grid>
-                                <Grid item xs={4}>
-                                    <InputField
-                                        fullWidth
-                                        value={detail.baseVatTotal}
-                                        label="Base vat total"
-                                        propertyName="baseVatTotal"
-                                        onChange={handleFieldChange}
-                                        disabled={!editingAllowed || !creating}
-                                        type="number"
-                                        required
-                                    />
-                                </Grid>
-                                <Grid item xs={4}>
-                                    <InputField
-                                        fullWidth
-                                        value={detail.baseDetailTotal}
-                                        label="Base detail total"
-                                        propertyName="baseDetailTotal"
-                                        onChange={handleFieldChange}
-                                        disabled={!editingAllowed || !creating}
-                                        type="number"
-                                        required
-                                    />
-                                </Grid>
-
-                                <Grid item xs={4}>
-                                    <InputField
-                                        fullWidth
-                                        value={detail.ourUnitOfMeasure}
-                                        label="Our Unit Of Measure"
-                                        propertyName="ourUnitOfMeasure"
-                                        onChange={handleFieldChange}
-                                        disabled={!editingAllowed || !creating}
-                                        type="number"
-                                        required
-                                    />
-                                </Grid>
-                                <Grid item xs={4}>
-                                    <InputField
-                                        fullWidth
-                                        value={detail.orderUnitOfMeasure}
-                                        label="Order Unit Of Measure"
-                                        propertyName="orderUnitOfMeasure"
-                                        onChange={handleFieldChange}
-                                        disabled={!editingAllowed || !creating}
-                                        type="number"
-                                        required
-                                    />
-                                </Grid>
-                                <Grid item xs={4}>
-                                    <InputField
-                                        fullWidth
-                                        value={detail.duty}
-                                        label="Duty %"
-                                        propertyName="duty"
-                                        onChange={handleFieldChange}
-                                        disabled={!editingAllowed || !creating}
-                                        type="number"
-                                        required
-                                    />
-                                </Grid>
-                                <Grid item xs={4}>
-                                    <TypeaheadTable
-                                        table={nominalAccountsTable}
-                                        columnNames={['Nominal', 'Description', 'Dept', 'Name']}
-                                        fetchItems={searchTerm =>
-                                            dispatch(nominalsActions.search(searchTerm))
-                                        }
-                                        modal
-                                        placeholder="Search Nominal/Dept"
-                                        links={false}
-                                        clearSearch={() => dispatch(nominalsActions.clearSearch)}
-                                        loading={nominalsSearchLoading}
-                                        label="Nominal"
-                                        title="Search Nominals"
-                                        value={detail.nominal?.nominalCode}
-                                        onSelect={newValue => handleNominalUpdate(newValue)}
-                                        debounce={1000}
-                                        minimumSearchTermLength={2}
-                                        disabled={!editingAllowed}
-                                        required
-                                    />
-                                </Grid>
-                                <Grid item xs={8}>
-                                    <InputField
-                                        fullWidth
-                                        value={detail.nominal?.description}
-                                        label="Description"
-                                        disabled
-                                        onChange={handleFieldChange}
-                                        propertyName="nominalDescription"
-                                    />
-                                </Grid>
-                                <Grid item xs={4}>
-                                    <InputField
-                                        fullWidth
-                                        value={detail.department?.departmentCode}
-                                        label="Dept"
-                                        onChange={() => {}}
-                                        propertyName="departmentCode"
-                                        required
-                                        disabled
-                                    />
-                                </Grid>
-                                <Grid item xs={8}>
-                                    <InputField
-                                        fullWidth
-                                        value={detail.department?.description}
-                                        label="Description"
-                                        propertyName="departmentDescription"
-                                        onChange={() => {}}
-                                        disabled
-                                    />
-                                </Grid>
-
-                                <Grid item xs={12}>
-                                    <InputField
-                                        fullWidth
-                                        value={detail.deliveryInstructions}
-                                        label="Delivery instructions"
-                                        propertyName="deliveryInstructions"
-                                        onChange={() => {}}
-                                        disabled
-                                        rows={2}
-                                    />
-                                </Grid>
-
-                                {detail.purchaseDeliveries?.map(delivery => (
-                                    <>
-                                        <Grid item xs={2}>
+                        {order.details
+                            ?.sort((a, b) => a.line - b.line)
+                            .map(detail => (
+                                <>
+                                    <Grid container item spacing={1} xs={4}>
+                                        <Grid item xs={4}>
                                             <InputField
                                                 fullWidth
-                                                value={delivery.deliverySeq}
-                                                label="Delivery Seq"
-                                                propertyName="deliverySeq"
-                                            />
-                                        </Grid>
-                                        <Grid item xs={2}>
-                                            <InputField
-                                                fullWidth
-                                                value={delivery.dateRequested}
-                                                label="Date requested"
-                                                onChange={() => {}}
-                                                propertyName="dateRequested"
-                                                required
+                                                value={detail.line}
+                                                label="Order Line No"
+                                                propertyName="line"
                                                 disabled
                                             />
                                         </Grid>
-                                        <Grid item xs={2}>
+                                        <Grid item xs={8}>
                                             <InputField
                                                 fullWidth
-                                                value={delivery.dateAdvised}
-                                                label="Date advised"
-                                                onChange={() => {}}
-                                                propertyName="dateAdvised"
-                                                required
+                                                value={detail.partNumber}
+                                                label="Part Number"
+                                                propertyName="partNumber"
+                                                onChange={handleDetailFieldChange}
                                                 disabled
                                             />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <InputField
                                                 fullWidth
-                                                value={delivery.supplierConfirmationComment}
-                                                label="Supplier confirmation comment"
-                                                onChange={() => {}}
-                                                propertyName="supplierConfirmationComment"
+                                                value={detail.ourQty}
+                                                label="Our quantity"
+                                                propertyName="ourQty"
+                                                onChange={(propertyName, newValue) =>
+                                                    handleDetailFieldChange(
+                                                        propertyName,
+                                                        newValue,
+                                                        detail
+                                                    )
+                                                }
+                                                disabled //until check what totals etc these influence and add currency conversion for base fields
+                                                // disabled={!allowedToUpdate()}
+                                                type="number"
                                                 required
-                                                disabled
                                             />
                                         </Grid>
-                                    </>
-                                ))}
+                                        <Grid item xs={6}>
+                                            <InputField
+                                                fullWidth
+                                                value={detail.orderQty}
+                                                label="Order quantity"
+                                                propertyName="orderQty"
+                                                onChange={(propertyName, newValue) =>
+                                                    handleDetailFieldChange(
+                                                        propertyName,
+                                                        newValue,
+                                                        detail
+                                                    )
+                                                }
+                                                disabled
+                                                // disabled={!allowedToUpdate()}
+                                                type="number"
+                                                required
+                                            />
+                                        </Grid>
 
-                                <Grid item xs={12}>
-                                    <InputField
-                                        fullWidth
-                                        value={detail.internalComments}
-                                        label="Internal comments"
-                                        propertyName="internalComments"
-                                        onChange={handleFieldChange}
-                                        rows={4}
-                                        disabled={!editingAllowed}
-                                    />
-                                </Grid>
-                            </>
-                        ))}
+                                        <Grid item xs={6}>
+                                            <InputField
+                                                fullWidth
+                                                value={detail.ourUnitPriceCurrency}
+                                                label="Our price (unit, currency)"
+                                                propertyName="ourUnitPriceCurrency"
+                                                onChange={(propertyName, newValue) =>
+                                                    handleDetailFieldChange(
+                                                        propertyName,
+                                                        newValue,
+                                                        detail
+                                                    )
+                                                }
+                                                disabled
+                                                // disabled={!allowedToUpdate()}
+                                                type="number"
+                                                required
+                                            />
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <InputField
+                                                fullWidth
+                                                value={detail.orderUnitPriceCurrency}
+                                                label="Order price (currency)"
+                                                propertyName="orderUnitPriceCurrency"
+                                                onChange={(propertyName, newValue) =>
+                                                    handleDetailFieldChange(
+                                                        propertyName,
+                                                        newValue,
+                                                        detail
+                                                    )
+                                                }
+                                                disabled
+                                                // disabled={!allowedToUpdate()}
+                                                type="number"
+                                                required
+                                            />
+                                        </Grid>
+                                    </Grid>
+                                    <Grid item xs={8}>
+                                        <InputField
+                                            fullWidth
+                                            value={detail.suppliersDesignation}
+                                            label="Supplier Designation"
+                                            propertyName="suppliersDesignation"
+                                            onChange={(propertyName, newValue) =>
+                                                handleDetailFieldChange(
+                                                    propertyName,
+                                                    newValue,
+                                                    detail
+                                                )
+                                            }
+                                            rows={8}
+                                            disabled={!allowedToUpdate()}
+                                        />
+                                    </Grid>
+
+                                    <Grid item xs={4}>
+                                        <InputField
+                                            fullWidth
+                                            value={detail.netTotalCurrency}
+                                            label="Net total (currency)"
+                                            propertyName="netTotalCurrency"
+                                            onChange={handleDetailFieldChange}
+                                            disabled
+                                            type="number"
+                                            required
+                                        />
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <InputField
+                                            fullWidth
+                                            value={detail.vatTotalCurrency}
+                                            label="Vat total (currency)"
+                                            propertyName="vatTotalCurrency"
+                                            onChange={handleDetailFieldChange}
+                                            disabled
+                                            type="number"
+                                            required
+                                        />
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <InputField
+                                            fullWidth
+                                            value={detail.detailTotalCurrency}
+                                            label="detail total (currency)"
+                                            propertyName="detailTotalCurrency"
+                                            onChange={handleDetailFieldChange}
+                                            disabled
+                                            type="number"
+                                            required
+                                        />
+                                    </Grid>
+
+                                    <Grid item xs={4}>
+                                        <InputField
+                                            fullWidth
+                                            value={detail.baseNetTotal}
+                                            label="Base Net total"
+                                            propertyName="baseNetTotal"
+                                            onChange={handleDetailFieldChange}
+                                            disabled
+                                            type="number"
+                                            required
+                                        />
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <InputField
+                                            fullWidth
+                                            value={detail.baseVatTotal}
+                                            label="Base vat total"
+                                            propertyName="baseVatTotal"
+                                            onChange={handleDetailFieldChange}
+                                            disabled
+                                            type="number"
+                                            required
+                                        />
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <InputField
+                                            fullWidth
+                                            value={detail.baseDetailTotal}
+                                            label="Base detail total"
+                                            propertyName="baseDetailTotal"
+                                            onChange={handleDetailFieldChange}
+                                            disabled
+                                            type="number"
+                                            required
+                                        />
+                                    </Grid>
+
+                                    <Grid item xs={4}>
+                                        <InputField
+                                            fullWidth
+                                            value={detail.ourUnitOfMeasure}
+                                            label="Our Unit Of Measure"
+                                            propertyName="ourUnitOfMeasure"
+                                            onChange={handleDetailFieldChange}
+                                            disabled
+                                            type="number"
+                                            required
+                                        />
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <InputField
+                                            fullWidth
+                                            value={detail.orderUnitOfMeasure}
+                                            label="Order Unit Of Measure"
+                                            propertyName="orderUnitOfMeasure"
+                                            onChange={handleDetailFieldChange}
+                                            disabled
+                                            type="number"
+                                            required
+                                        />
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <></>
+                                    </Grid>
+
+                                    <Grid item xs={4}>
+                                        <TypeaheadTable
+                                            table={nominalAccountsTable}
+                                            columnNames={['Nominal', 'Description', 'Dept', 'Name']}
+                                            fetchItems={searchTerm =>
+                                                reduxDispatch(nominalsActions.search(searchTerm))
+                                            }
+                                            modal
+                                            placeholder="Search Dept/Nominal"
+                                            links={false}
+                                            clearSearch={() =>
+                                                reduxDispatch(nominalsActions.clearSearch)
+                                            }
+                                            loading={nominalsSearchLoading}
+                                            label="Department"
+                                            title="Search Department"
+                                            value={
+                                                detail.orderPosting?.nominalAccount?.department
+                                                    ?.departmentCode
+                                            }
+                                            onSelect={newValue =>
+                                                handleNominalUpdate(newValue, detail.line)
+                                            }
+                                            debounce={1000}
+                                            minimumSearchTermLength={2}
+                                            disabled
+                                            // disabled={!allowedToUpdate}
+                                            required
+                                        />
+                                    </Grid>
+                                    <Grid item xs={8}>
+                                        <InputField
+                                            fullWidth
+                                            value={
+                                                detail.orderPosting?.nominalAccount?.department
+                                                    ?.description
+                                            }
+                                            label="Description"
+                                            disabled
+                                            propertyName="nominalDescription"
+                                        />
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <InputField
+                                            fullWidth
+                                            value={
+                                                detail.orderPosting?.nominalAccount?.nominal
+                                                    ?.nominalCode
+                                            }
+                                            label="Nominal"
+                                            onChange={() => {}}
+                                            propertyName="nominalCode"
+                                            required
+                                            disabled
+                                        />
+                                    </Grid>
+                                    <Grid item xs={8}>
+                                        <InputField
+                                            fullWidth
+                                            value={
+                                                detail.orderPosting?.nominalAccount?.nominal
+                                                    ?.description
+                                            }
+                                            label="Description"
+                                            propertyName="nominalDescription"
+                                            onChange={() => {}}
+                                            disabled
+                                        />
+                                    </Grid>
+
+                                    <Grid item xs={12}>
+                                        <InputField
+                                            fullWidth
+                                            value={detail.deliveryInstructions}
+                                            label="Delivery instructions"
+                                            propertyName="deliveryInstructions"
+                                            onChange={() => {}}
+                                            disabled
+                                            rows={2}
+                                        />
+                                    </Grid>
+
+                                    {detail.purchaseDeliveries
+                                        ?.sort((a, b) => a.line - b.line)
+                                        ?.map(delivery => (
+                                            <>
+                                                <Grid item xs={2}>
+                                                    <InputField
+                                                        fullWidth
+                                                        value={delivery.deliverySeq}
+                                                        label="Delivery Seq"
+                                                        propertyName="deliverySeq"
+                                                        disabled
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={2}>
+                                                    <InputField
+                                                        fullWidth
+                                                        value={delivery.dateRequested}
+                                                        label="Date requested"
+                                                        propertyName="dateRequested"
+                                                        required
+                                                        type="date"
+                                                        onChange={(propertyName, newValue) =>
+                                                            handleDeliveryFieldChange(
+                                                                propertyName,
+                                                                newValue,
+                                                                delivery
+                                                            )
+                                                        }
+                                                        disabled={!allowedToUpdate()}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={2}>
+                                                    <InputField
+                                                        fullWidth
+                                                        value={delivery.dateAdvised}
+                                                        label="Date advised"
+                                                        onChange={() => {}}
+                                                        propertyName="dateAdvised"
+                                                        required
+                                                        disabled
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={6}>
+                                                    <InputField
+                                                        fullWidth
+                                                        value={delivery.supplierConfirmationComment}
+                                                        label="Supplier confirmation comment"
+                                                        onChange={() => {}}
+                                                        propertyName="supplierConfirmationComment"
+                                                        required
+                                                        disabled
+                                                    />
+                                                </Grid>
+                                            </>
+                                        ))}
+
+                                    <Grid item xs={12}>
+                                        <InputField
+                                            fullWidth
+                                            value={detail.internalComments}
+                                            label="Internal comments"
+                                            propertyName="internalComments"
+                                            onChange={(propertyName, newValue) =>
+                                                handleDetailFieldChange(
+                                                    propertyName,
+                                                    newValue,
+                                                    detail
+                                                )
+                                            }
+                                            rows={4}
+                                            disabled={!allowedToUpdate()}
+                                        />
+                                    </Grid>
+                                </>
+                            ))}
 
                         {/* 
                         <Grid item xs={5} container spacing={1}>
@@ -952,7 +1041,7 @@ function PurchaseOrderUtility({ creating }) {
                                     links={false}
                                     debounce={1000}
                                     minimumSearchTermLength={2}
-                                    disabled={!editingAllowed}
+                                    disabled={!allowedToUpdate()}
                                     placeholder="click to set part"
                                 />
                             </Grid>
@@ -965,9 +1054,29 @@ function PurchaseOrderUtility({ creating }) {
                                 propertyName="description"
                                 onChange={handleFieldChange}
                                 rows={8}
-                                disabled={!editingAllowed}
+                                disabled={!allowedToUpdate()}
                             />
                         </Grid> */}
+                        <Grid item xs={6}>
+                            <SaveBackCancelButtons
+                                saveDisabled={!canSave()}
+                                backClick={() => handleBackClick(previousPaths, history.goBack)}
+                                saveClick={() => {
+                                    setEditStatus('view');
+                                    clearErrors();
+                                    reduxDispatch(
+                                        purchaseOrderActions.update(order.orderNumber, order)
+                                    );
+                                }}
+                                cancelClick={() => {
+                                    setEditStatus('view');
+                                    // if (creating) {
+                                    //     setOrder(defaultCreatingOrder);
+                                    // } else {
+                                    dispatch(item);
+                                }}
+                            />
+                        </Grid>
                     </Grid>
                 )}
             </Page>

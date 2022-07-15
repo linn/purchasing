@@ -1168,7 +1168,6 @@ function POReqUtility({ creating }) {
                                 value={req.department?.description}
                                 label="Description"
                                 disabled
-                                onChange={handleFieldChange}
                                 propertyName="nominalDescription"
                             />
                         </Grid>

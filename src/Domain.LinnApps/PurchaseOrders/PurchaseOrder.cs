@@ -32,6 +32,8 @@
 
         public string CurrencyCode { get; set; }
 
+        public string BaseCurrencyCode { get; set; }
+
         //todo make sure this is added in domain from supplier contact when creating
         //or could show as field on front end and pass back
         public string OrderContactName { get; set; }
