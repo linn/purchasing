@@ -3,7 +3,6 @@
     using System;
     using System.Linq;
 
-    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders;
     using Linn.Purchasing.Resources;
 
@@ -25,6 +24,7 @@
                                                                           Sequence = d.Sequence,
                                                                           PartNumber = d.PartNumber,
                                                                           SupplierId = d.SupplierId,
+                                                                          SupplierName = d.SupplierName,
                                                                           OrderNumber = d.OrderNumber,
                                                                           Quantity = d.Quantity,
                                                                           QuantityRecommended = d.QuantityRecommended,

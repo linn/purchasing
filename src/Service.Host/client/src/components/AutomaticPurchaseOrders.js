@@ -1,250 +1,102 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Grid from '@mui/material/Grid';
-import {
-    Page,
-    InputField,
-    Typeahead,
-    Title,
-    userSelectors,
-    collectionSelectorHelpers,
-    Dropdown
-} from '@linn-it/linn-form-components-library';
+import { Page, Title, itemSelectorHelpers, Loading } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import { DataGrid } from '@mui/x-data-grid';
-import { makeStyles } from '@mui/styles';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import DeleteIcon from '@mui/icons-material/Delete';
+import Link from '@mui/material/Link';
+import Stack from '@mui/material/Stack';
 import moment from 'moment';
+import { useParams } from 'react-router-dom';
 import history from '../history';
 import config from '../config';
-
-import plannersActions from '../actions/plannersActions';
-import automaticPurchaseOrderSuggestionsActions from '../actions/automaticPurchaseOrderSuggestionsActions';
 import automaticPurchaseOrderActions from '../actions/automaticPurchaseOrderActions';
-import suppliersActions from '../actions/suppliersActions';
 
 function AutomaticPurchaseOrders() {
-    const [supplier, setSupplier] = useState(null);
-    const [planner, setPlanner] = useState(null);
-    const [rows, setRows] = useState([]);
-
-    const suggestions = useSelector(state => state.automaticPurchaseOrderSuggestions.searchItems);
-    const suggestionsLoading = useSelector(state =>
-        collectionSelectorHelpers.getSearchLoading(state.automaticPurchaseOrderSuggestions)
-    );
-
-    const suppliersSearchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(state.suppliers)
-    )?.map(c => ({
-        id: c.id,
-        name: c.id.toString(),
-        description: c.name
-    }));
-    const suppliersSearchLoading = useSelector(state =>
-        collectionSelectorHelpers.getSearchLoading(state.suppliers)
-    );
-    const planners = useSelector(state => collectionSelectorHelpers.getItems(state.planners));
-    const plannersLoading = useSelector(state =>
-        collectionSelectorHelpers.getLoading(state.planners)
-    );
+    const { id } = useParams();
     const dispatch = useDispatch();
-    const userNumber = useSelector(state => userSelectors.getUserNumber(state));
 
     useEffect(() => {
-        if (!planners || planners.length === 0) {
-            dispatch(plannersActions.fetch());
+        if (id) {
+            dispatch(automaticPurchaseOrderActions.fetch(id));
         }
-    }, [dispatch, planners]);
+    }, [dispatch, id]);
 
-    useEffect(() => {
-        if (suggestions && suggestions.length > 0) {
-            setRows(suggestions.map((s, i) => ({ ...s, id: i, s })));
-        } else {
-            setRows([]);
-        }
-    }, [suggestions, setRows]);
-
-    const useStyles = makeStyles(theme => ({
-        formControl: {
-            margin: theme.spacing(1),
-            minWidth: 120
-        },
-        selectEmpty: {
-            marginTop: theme.spacing(2)
-        },
-        editing: {
-            backgroundColor: 'linen'
-        },
-        inserting: {
-            backgroundColor: 'whiteSmoke'
-        },
-        deleting: {
-            backgroundColor: 'indianred',
-            textDecorationLine: 'line-through'
-        },
-        gap: {
-            marginBottom: '20px'
-        }
-    }));
-    const classes = useStyles();
-
-    const handleSetSupplier = (_, supp) => {
-        setSupplier({ id: supp });
-    };
-
-    const handleSupplierReturn = selected => {
-        setSupplier(selected);
-    };
-
-    const handleSupplierChange = selectedsupplier => {
-        setSupplier(selectedsupplier);
-    };
-
-    const getSuggestedOrders = () => {
-        let options = '';
-        if (supplier) {
-            options += `&supplierId=${supplier.id}`;
-        }
-
-        if (planner) {
-            options += `&planner=${planner}`;
-        }
-
-        dispatch(automaticPurchaseOrderSuggestionsActions.searchWithOptions(null, options));
-    };
-
-    const handleDeleteRow = row => {
-        setRows(rows.filter(a => a.id !== row.id));
-    };
-    const createOrders = () => {
-        if (rows.length > 0) {
-            const { jobRef } = rows[0];
-            const details = rows.map(r => ({
-                partNumber: r.partNumber,
-                supplierId: r.preferredSupplierId,
-                quantity: r.recommendedQuantity,
-                recommendationCode: r.recommendationCode,
-                currencyCode: r.currencyCode,
-                currencyPrice: r.recommendedQuantity * r.ourPrice,
-                requestedDate: r.recommendedDate,
-                orderMethod: r.orderMethod
-            }));
-            const proposedAutoOrder = {
-                startedBy: userNumber,
-                jobRef,
-                details
-            };
-
-            dispatch(automaticPurchaseOrderActions.add(proposedAutoOrder));
-        }
-    };
-    const handleEditRowsModelChange = () => {};
+    const automaticPurchaseOrder = useSelector(state =>
+        itemSelectorHelpers.getItem(state.automaticPurchaseOrder)
+    );
+    const loading = useSelector(state =>
+        itemSelectorHelpers.getItemLoading(state.automaticPurchaseOrder)
+    );
 
     const columns = [
         { field: 'partNumber', headerName: 'Part Number', minWidth: 140 },
-        { field: 'preferredSupplierId', headerName: 'Supplier', minWidth: 100 },
+        { field: 'supplierId', headerName: 'Supplier', minWidth: 100 },
         { field: 'supplierName', headerName: 'Name', minWidth: 300 },
-        { field: 'recommendedQuantity', headerName: 'Qty', minWidth: 100 },
+        { field: 'quantity', headerName: 'Qty', minWidth: 100 },
         {
-            field: 'recommendedDate',
-            headerName: 'Date',
-            minWidth: 160,
+            field: 'requestedDate',
+            headerName: 'Date Requested',
+            minWidth: 190,
             valueGetter: ({ value }) => value && moment(value).format('DD MMM YYYY')
         },
-        { field: 'orderMethod', headerName: 'Method', minWidth: 100 },
-        {
-            field: 'delete',
-            headerName: ' ',
-            width: 90,
-            renderCell: params => (
-                <IconButton
-                    aria-label="delete"
-                    size="small"
-                    onClick={() => handleDeleteRow(params)}
-                >
-                    <DeleteIcon fontSize="inherit" />
-                </IconButton>
-            )
-        }
+        { field: 'orderNumber', headerName: 'Order Number', minWidth: 150 },
+        { field: 'issuePartsToSupplier', headerName: 'Issue Parts', minWidth: 150 },
+        { field: 'orderMethod', headerName: 'Method', minWidth: 100 }
     ];
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
-            <Title text="Automatic Orders" />
+            <Title text="Orders Raised Automatically" />
             <Grid container>
-                <Grid item xs={8}>
-                    <Dropdown
-                        items={planners.map(v => ({ id: v.id, displayText: v.employeeName }))}
-                        value={planner}
-                        allowNoValue
-                        propertyName="planner"
-                        label="Planner"
-                        onChange={(_, value) => setPlanner(value)}
-                        loading={plannersLoading}
-                    />
-                </Grid>
-                <Grid item xs={4} />
-                <Grid item xs={4}>
-                    <Typeahead
-                        label="Supplier"
-                        title="Search for a supplier"
-                        onSelect={handleSupplierChange}
-                        items={suppliersSearchResults}
-                        loading={suppliersSearchLoading}
-                        fetchItems={searchTerm => dispatch(suppliersActions.search(searchTerm))}
-                        clearSearch={() => dispatch(suppliersActions.clearSearch)}
-                        value={supplier?.id}
-                        openModalOnClick={false}
-                        modal
-                        links={false}
-                        debounce={1000}
-                        handleFieldChange={handleSetSupplier}
-                        handleReturnPress={handleSupplierReturn}
-                        minimumSearchTermLength={2}
-                    />
-                </Grid>
-                <Grid item xs={6}>
-                    <InputField
-                        disabled
-                        propertyName="supplierName"
-                        value={supplier?.description}
-                        fullWidth
-                        label="Supplier Name"
-                    />
-                </Grid>
-                <Grid item xs={2} />
                 <Grid item xs={12}>
-                    <Button variant="outlined" onClick={getSuggestedOrders}>
-                        Fetch Suggested Orders
-                    </Button>
+                    {loading && <Loading />}
                 </Grid>
-                <Grid item xs={12}>
-                    <Typography variant="h6">Automatic Order Suggestions</Typography>
-                    <div>
-                        <DataGrid
-                            className={classes.gap}
-                            rows={rows}
-                            columns={columns}
-                            density="compact"
-                            rowHeight={34}
-                            autoHeight
-                            loading={suggestionsLoading}
-                            hideFooter
-                            onEditRowsModelChange={handleEditRowsModelChange}
-                        />
-                    </div>
-                </Grid>
-                <Grid item xs={12}>
-                    <Button
-                        variant="outlined"
-                        onClick={createOrders}
-                        disabled={!rows || rows.length <= 0}
-                    >
-                        Create Orders
-                    </Button>
-                </Grid>
+                {!loading && automaticPurchaseOrder && (
+                    <>
+                        <Grid item xs={4}>
+                            <Stack direction="row" spacing={2}>
+                                <Typography variant="body2">Transaction Id:</Typography>
+                                <Typography variant="body2" style={{ fontWeight: 'bold' }}>
+                                    {automaticPurchaseOrder.id}
+                                </Typography>
+                            </Stack>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Stack direction="row" spacing={2}>
+                                <Typography variant="body2">JobRef:</Typography>
+                                <Typography variant="body2">
+                                    {automaticPurchaseOrder.jobRef}
+                                </Typography>
+                            </Stack>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Link
+                                href="/purchasing/automatic-purchase-order-suggestions"
+                                color="inherit"
+                                variant="body2"
+                            >
+                                Raise more automatic orders
+                            </Link>
+                        </Grid>
+                        <Grid item xs={12} style={{ paddingTop: '40px' }}>
+                            <div>
+                                <DataGrid
+                                    rows={automaticPurchaseOrder.details.map(d => ({
+                                        ...d,
+                                        id: d.sequence
+                                    }))}
+                                    columns={columns}
+                                    density="compact"
+                                    rowHeight={34}
+                                    autoHeight
+                                    loading={loading}
+                                    hideFooter
+                                />
+                            </div>
+                        </Grid>
+                    </>
+                )}
             </Grid>
         </Page>
     );

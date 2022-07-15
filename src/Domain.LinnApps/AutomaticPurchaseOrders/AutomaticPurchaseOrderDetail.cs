@@ -12,6 +12,8 @@
 
         public int SupplierId { get; set; }
 
+        public string SupplierName { get; set; }
+
         public int OrderNumber { get; set; }
 
         public decimal Quantity { get; set; }

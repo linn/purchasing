@@ -55,6 +55,7 @@ import ShortagesReport from './reports/ShortagesReport';
 import ShortagesReportOptions from './reports/ShortagesReportOptions';
 import ShortagesPlannerReport from './reports/ShortagesPlannerReport';
 import MrOrderBookReport from './reports/MrOrderBookReport';
+import AutomaticPurchaseOrderSuggestions from './AutomaticPurchaseOrderSuggestions';
 import AutomaticPurchaseOrders from './AutomaticPurchaseOrders';
 
 const Root = ({ store }) => (
@@ -320,7 +321,17 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
+                                    path="/purchasing/automatic-purchase-order-suggestions"
+                                    component={AutomaticPurchaseOrderSuggestions}
+                                />
+                                <Route
+                                    exact
                                     path="/purchasing/automatic-purchase-orders"
+                                    component={AutomaticPurchaseOrderSuggestions}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/automatic-purchase-orders/:id"
                                     component={AutomaticPurchaseOrders}
                                 />
                                 <Route component={NotFoundPage} />

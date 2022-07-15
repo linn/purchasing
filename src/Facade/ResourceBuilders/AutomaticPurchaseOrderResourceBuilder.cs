@@ -31,6 +31,7 @@
                                                                         Sequence = d.Sequence,
                                                                         PartNumber = d.PartNumber,
                                                                         SupplierId = d.SupplierId,
+                                                                        SupplierName = d.SupplierName,
                                                                         OrderNumber = d.OrderNumber,
                                                                         Quantity = d.Quantity,
                                                                         QuantityRecommended = d.QuantityRecommended,

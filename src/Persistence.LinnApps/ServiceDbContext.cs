@@ -1530,6 +1530,7 @@
             entity.Property(a => a.Sequence).HasColumnName("SEQ");
             entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2").HasMaxLength(14);
             entity.Property(a => a.SupplierId).HasColumnName("SUPPLIER_ID");
+            entity.Property(a => a.SupplierName).HasColumnName("SUPPLIER_NAME").HasColumnType("VARCHAR2").HasMaxLength(50);
             entity.Property(a => a.OrderNumber).HasColumnName("ORDER_NUMBER");
             entity.Property(a => a.Quantity).HasColumnName("QTY");
             entity.Property(a => a.QuantityRecommended).HasColumnName("QTY_RECOM");

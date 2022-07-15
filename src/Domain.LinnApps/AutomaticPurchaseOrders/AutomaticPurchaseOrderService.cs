@@ -63,6 +63,7 @@
                                             Sequence = seq++,
                                             PartNumber = detail.PartNumber,
                                             SupplierId = detail.SupplierId,
+                                            SupplierName = detail.SupplierName,
                                             OrderNumber = orderResult.OrderNumber,
                                             Quantity = detail.Quantity,
                                             QuantityRecommended = detail.Quantity,
