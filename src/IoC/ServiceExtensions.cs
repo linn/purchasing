@@ -15,6 +15,7 @@
     using Linn.Common.Reporting.Models;
     using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Forecasting;
@@ -31,6 +32,7 @@
     using Linn.Purchasing.Proxy;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.MaterialRequirements;
+    using Linn.Purchasing.Resources.RequestResources;
     using Linn.Purchasing.Resources.SearchResources;
 
     using Microsoft.Extensions.DependencyInjection;
@@ -75,7 +77,9 @@
                 .AddTransient<IBuilder<MrReport>, MrReportResourceBuilder>()
                 .AddTransient<IBuilder<MrPurchaseOrderDetail>, MrPurchaseOrderResourceBuilder>()
                 .AddTransient<IBuilder<MrReportOptions>, MrReportOptionsResourceBuilder>()
-                .AddTransient<IBuilder<EdiSupplier>, EdiSupplierResourceBuilder>();
+                .AddTransient<IBuilder<EdiSupplier>, EdiSupplierResourceBuilder>()
+                .AddTransient<IBuilder<AutomaticPurchaseOrder>, AutomaticPurchaseOrderResourceBuilder>()
+                .AddTransient<IBuilder<AutomaticPurchaseOrderSuggestion>, AutomaticPurchaseOrderSuggestionResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -124,7 +128,9 @@
                 .AddTransient<IPurchaseOrderDeliveryFacadeService, PurchaseOrderDeliveryFacadeService>()
                 .AddTransient<IMaterialRequirementsReportFacadeService, MaterialRequirementsReportFacadeService>()
                 .AddTransient<IShortagesReportFacadeService, ShortagesReportFacadeService>()
-                .AddTransient<IMrOrderBookReportFacadeService, MrOrderBookReportFacadeService>();
+                .AddTransient<IMrOrderBookReportFacadeService, MrOrderBookReportFacadeService>()
+                .AddTransient<IFacadeResourceService<AutomaticPurchaseOrder, int, AutomaticPurchaseOrderResource, AutomaticPurchaseOrderResource>, AutomaticPurchaseOrderFacadeService>()
+                .AddTransient<IFacadeResourceFilterService<AutomaticPurchaseOrderSuggestion, int, AutomaticPurchaseOrderSuggestionResource, AutomaticPurchaseOrderSuggestionResource, PlannerSupplierRequestResource>, AutomaticPurchaseOrderSuggestionFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
@@ -168,6 +174,7 @@
                 .AddTransient<IMaterialRequirementsReportService, MaterialRequirementsReportService>()
                 .AddTransient<IShortagesReportService, ShortagesReportService>()
                 .AddTransient<IMrOrderBookReportService, MrOrderBookReportService>()
+                .AddTransient<IAutomaticPurchaseOrderService, AutomaticPurchaseOrderService>()
 
                 // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()

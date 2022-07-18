@@ -2,6 +2,7 @@
 {
     using Linn.Common.Configuration;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
@@ -152,6 +153,10 @@
         public DbSet<ShortagesPlannerEntry> ShortagesPlannerEntries { get; set; }
 
         public DbSet<PartNumberList> PartNumberLists { get; set; }
+        
+        public DbSet<AutomaticPurchaseOrder> AutomaticPurchaseOrders { get; set; }
+
+        public DbSet<AutomaticPurchaseOrderSuggestion> AutomaticPurchaseOrderSuggestions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -237,6 +242,9 @@
             this.BuildPurchaseOrderDeliveryHistories(builder);
             this.BuildPartNumberLists(builder);
             this.BuildPartNumberListElements(builder);
+            this.BuildAutomaticPurchaseOrders(builder);
+            this.BuildAutomaticPurchaseOrderDetails(builder);
+            this.BuildAutomaticPurchaseOrderSuggestions(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1575,6 +1583,60 @@
             entity.Property(a => a.ListName).HasColumnName("PNL_NAME").HasColumnType("VARCHAR2").HasMaxLength(20);
             entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2").HasMaxLength(14);
             entity.Property(a => a.SortOrder).HasColumnName("SORT_ORDER");
+        }
+
+        private void BuildAutomaticPurchaseOrders(ModelBuilder builder)
+        {
+            var entity = builder.Entity<AutomaticPurchaseOrder>().ToTable("PL_AUTO_ORDERS");
+            entity.HasKey(a => a.Id);
+            entity.Property(a => a.Id).HasColumnName("AUTOORDER_ID");
+            entity.Property(a => a.StartedBy).HasColumnName("STARTED_BY");
+            entity.Property(a => a.JobRef).HasColumnName("JOBREF").HasColumnType("VARCHAR2").HasMaxLength(6);
+            entity.Property(a => a.DateRaised).HasColumnName("DATE_RAISED");
+            entity.Property(a => a.SupplierId).HasColumnName("SUPPLIER_ID");
+            entity.Property(a => a.Planner).HasColumnName("PLANNER");
+            entity.HasMany(o => o.Details).WithOne().HasForeignKey(d => d.Id);
+        }
+
+        private void BuildAutomaticPurchaseOrderDetails(ModelBuilder builder)
+        {
+            var entity = builder.Entity<AutomaticPurchaseOrderDetail>().ToTable("PL_AUTO_ORDER_DETAILS");
+            entity.HasKey(a => new { a.Id, a.Sequence });
+            entity.Property(a => a.Id).HasColumnName("AUTOORDER_ID");
+            entity.Property(a => a.Sequence).HasColumnName("SEQ");
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2").HasMaxLength(14);
+            entity.Property(a => a.SupplierId).HasColumnName("SUPPLIER_ID");
+            entity.Property(a => a.SupplierName).HasColumnName("SUPPLIER_NAME").HasColumnType("VARCHAR2").HasMaxLength(50);
+            entity.Property(a => a.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(a => a.Quantity).HasColumnName("QTY");
+            entity.Property(a => a.QuantityRecommended).HasColumnName("QTY_RECOM");
+            entity.Property(a => a.RecommendationCode).HasColumnName("RECOM_PURCH_ORDER_CODE").HasColumnType("VARCHAR2").HasMaxLength(10);
+            entity.Property(a => a.OrderLog).HasColumnName("ORDER_LOG").HasColumnType("VARCHAR2").HasMaxLength(300);
+            entity.Property(a => a.CurrencyCode).HasColumnName("CURR_CODE").HasColumnType("VARCHAR2").HasMaxLength(4);
+            entity.Property(a => a.CurrencyPrice).HasColumnName("CURR_PRICE");
+            entity.Property(a => a.BasePrice).HasColumnName("BASE_PRICE");
+            entity.Property(a => a.RequestedDate).HasColumnName("REQUESTED_DATE");
+            entity.Property(a => a.OrderMethod).HasColumnName("PL_ORDER_METHOD").HasColumnType("VARCHAR2").HasMaxLength(10);
+            entity.Property(a => a.IssuePartsToSupplier).HasColumnName("ISSUE_PARTS_TO_SUPPLIER").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(a => a.IssueSerialNumbers).HasColumnName("ISSUE_SERIAL_NUMBERS").HasColumnType("VARCHAR2").HasMaxLength(1);
+        }
+
+        private void BuildAutomaticPurchaseOrderSuggestions(ModelBuilder builder)
+        {
+            var entity = builder.Entity<AutomaticPurchaseOrderSuggestion>().ToTable("PL_AUTOMATIC_ORDERS_VIEW").HasNoKey();
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2").HasMaxLength(14);
+            entity.Property(a => a.PreferredSupplierId).HasColumnName("PREFERRED_SUPPLIER");
+            entity.Property(a => a.RecommendedQuantity).HasColumnName("RECOM_PURCH_ORDER_QTY");
+            entity.Property(a => a.RecommendedDate).HasColumnName("RECOM_PURCH_ORDER_DATE");
+            entity.Property(a => a.RecommendationCode).HasColumnName("RECOM_PURCH_ORDER_CODE").HasColumnType("VARCHAR2").HasMaxLength(10);
+            entity.Property(a => a.CurrencyCode).HasColumnName("CURR_CODE").HasColumnType("VARCHAR2").HasMaxLength(4);
+            entity.Property(a => a.OurPrice).HasColumnName("OUR_PRICE");
+            entity.Property(a => a.SupplierName).HasColumnName("SUPPLIER_NAME").HasColumnType("VARCHAR2").HasMaxLength(50);
+            entity.Property(a => a.OrderMethod).HasColumnName("PL_ORDER_METHOD").HasColumnType("VARCHAR2").HasMaxLength(10);
+            entity.Property(a => a.JitReorderNumber).HasColumnName("JIT_REORDER_ORDER_NUMBER");
+            entity.Property(a => a.VendorManager).HasColumnName("VENDOR_MANAGER").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(a => a.Planner).HasColumnName("PLANNER");
+            entity.Property(a => a.JobRef).HasColumnName("JOBREF").HasColumnType("VARCHAR2").HasMaxLength(6);
         }
     }
 }
