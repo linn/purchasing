@@ -68,7 +68,7 @@ describe('When component mounts...', () => {
         render(<AutomaticPurchaseOrders />);
     });
 
-    test('Should fetch master details', () => {
+    test('Should fetch order', () => {
         expect(fetchSpy).toBeCalledTimes(1);
         expect(fetchSpy).toBeCalledWith(1315946);
     });
