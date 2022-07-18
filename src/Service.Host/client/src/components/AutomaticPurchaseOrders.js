@@ -91,6 +91,7 @@ function AutomaticPurchaseOrders() {
                                     rowHeight={34}
                                     autoHeight
                                     loading={loading}
+                                    columnBuffer={8}
                                     hideFooter
                                 />
                             </div>
