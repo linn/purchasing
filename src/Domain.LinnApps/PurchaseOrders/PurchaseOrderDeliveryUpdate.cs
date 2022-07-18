@@ -17,5 +17,7 @@
         public string Comment { get; set; }
 
         public string AvailableAtSupplier { get; set; }
+
+        public decimal UnitPrice { get; set; }
     }
 }

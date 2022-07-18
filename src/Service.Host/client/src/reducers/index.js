@@ -77,6 +77,7 @@ import mrReport from './mrReport';
 import mrReportOptions from './mrReportOptions';
 import pOReqCheckIfCanAuthOrder from './pOReqCheckIfCanAuthOrder';
 import mrReportOrders from './mrReportOrders';
+import ediSuppliers from './ediSuppliers';
 import shortagesReport from './shortagesReport';
 import shortagesPlannerReport from './shortagesPlannerReport';
 import mrOrderBookReport from './mrOrderBookReport';
@@ -103,6 +104,7 @@ const rootReducer = history =>
         deliveryAddresses,
         departments,
         ediOrders,
+        ediSuppliers,
         employees,
         manufacturers,
         mrOrderBookReport,

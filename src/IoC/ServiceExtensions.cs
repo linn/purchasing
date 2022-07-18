@@ -77,6 +77,7 @@
                 .AddTransient<IBuilder<MrReport>, MrReportResourceBuilder>()
                 .AddTransient<IBuilder<MrPurchaseOrderDetail>, MrPurchaseOrderResourceBuilder>()
                 .AddTransient<IBuilder<MrReportOptions>, MrReportOptionsResourceBuilder>()
+                .AddTransient<IBuilder<EdiSupplier>, EdiSupplierResourceBuilder>()
                 .AddTransient<IBuilder<AutomaticPurchaseOrder>, AutomaticPurchaseOrderResourceBuilder>()
                 .AddTransient<IBuilder<AutomaticPurchaseOrderSuggestion>, AutomaticPurchaseOrderSuggestionResourceBuilder>();
         }

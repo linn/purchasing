@@ -24,7 +24,6 @@
             this.results = this.Sut.GetShortagesPlannerReport(1);
         }
 
-
         [Test]
         public void ShouldGetData()
         {

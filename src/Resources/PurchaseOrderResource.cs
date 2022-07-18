@@ -11,7 +11,7 @@
 
         public CurrencyResource Currency { get; set; }
 
-        public DateTime OrderDate { get; set; }
+        public string OrderDate { get; set; }
 
         public OrderMethodResource OrderMethod { get; set; }
 
@@ -49,7 +49,7 @@
 
         public string Remarks { get; set; }
 
-        public DateTime? DateFilCancelled { get; set; }
+        public string DateFilCancelled { get; set; }
 
         public int? PeriodFilCancelled { get; set; }
 

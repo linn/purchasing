@@ -56,6 +56,5 @@
 
             await res.Negotiate(results);
         }
-
     }
 }

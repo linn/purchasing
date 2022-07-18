@@ -116,15 +116,15 @@
             }
 
             var entity = this.repository.FindById(key);
-            
+
             if (from.DateAdvised != to.DateAdvised)
             {
                 entity.DateAdvised = to.DateAdvised;
                 this.UpdateMiniOrder(
-                    key.OrderNumber, 
-                    to.DateAdvised, 
+                    key.OrderNumber,
+                    to.DateAdvised,
                     null,
-                    null, 
+                    null,
                     null);
             }
 
@@ -137,10 +137,10 @@
             {
                 entity.SupplierConfirmationComment = to.SupplierConfirmationComment;
                 this.UpdateMiniOrder(
-                    key.OrderNumber, 
-                    null, 
-                    null, 
-                    null, 
+                    key.OrderNumber,
+                    null,
+                    null,
+                    null,
                     to.SupplierConfirmationComment);
             }
 
@@ -172,7 +172,7 @@
             foreach (var change in purchaseOrderDeliveryUpdates)
             {
                 var entity = this.repository.FindById(change.Key);
-                
+
                 if (string.IsNullOrEmpty(change.NewReason))
                 {
                     change.NewReason = "ADVISED";
@@ -198,7 +198,7 @@
                 else if (!this.rescheduleReasonRepository.FindAll().Select(r => r.Reason).Contains(change.NewReason))
                 {
                     errors.Add(new Error(
-                        $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}", 
+                        $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}",
                         $"{change.NewReason} is not a valid reason"));
                 }
                 else if (change.Qty != entity.OurDeliveryQty)
@@ -206,6 +206,12 @@
                     errors.Add(new Error(
                         $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}",
                         $"{change.Qty} does not match the Qty on the Delivery ({entity.OurDeliveryQty})"));
+                }
+                else if (change.UnitPrice != entity.OrderUnitPriceCurrency)
+                {
+                    errors.Add(new Error(
+                        $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}",
+                        $"{change.UnitPrice} does not match our order price ({entity.OrderUnitPriceCurrency})"));
                 }
                 else
                 {
@@ -222,10 +228,10 @@
                     entity.DateAdvised = change.NewDateAdvised;
                     entity.RescheduleReason = change.NewReason;
                     this.UpdateMiniOrder(
-                        change.Key.OrderNumber, 
-                        change.NewDateAdvised, 
-                        null, 
-                        null, 
+                        change.Key.OrderNumber,
+                        change.NewDateAdvised,
+                        null,
+                        null,
                         entity.SupplierConfirmationComment);
                     successCount++;
                 }
@@ -348,9 +354,9 @@
                                 del.OurDeliveryQty - existing.OurDeliveryQty + existing.QuantityOutstanding;
                             existing.RescheduleReason = reason;
                             existing.AvailableAtSupplier = del.AvailableAtSupplier;
-                            return existing;          
+                            return existing;
                         }
-                        
+
                         // or create a new record
                         return new PurchaseOrderDelivery
                                          {
@@ -384,10 +390,10 @@
                                                  2),
                                              BaseVatTotal = baseVatAmount,
                                              BaseDeliveryTotal = Math.Round(
-                                                     (del.OurDeliveryQty.GetValueOrDefault() 
-                                                      * detail.BaseOurUnitPrice.GetValueOrDefault()) 
-                                                     + baseVatAmount, 
-                                                     2), 
+                                                     (del.OurDeliveryQty.GetValueOrDefault()
+                                                      * detail.BaseOurUnitPrice.GetValueOrDefault())
+                                                     + baseVatAmount,
+                                                     2),
                                              QuantityOutstanding = del.OurDeliveryQty,
                                              QtyNetReceived = 0,
                                              QtyPassedForPayment = 0,
@@ -400,10 +406,10 @@
 
             // set mini order date requested to be first date requested of newly split deliveries
             this.UpdateMiniOrder(
-                orderNumber, 
+                orderNumber,
                 null,
-                updatedDeliveriesForOrderLine.MinBy(x => x.DateRequested)?.DateRequested, 
-                updatedDeliveriesForOrderLine.Count, 
+                updatedDeliveriesForOrderLine.MinBy(x => x.DateRequested)?.DateRequested,
+                updatedDeliveriesForOrderLine.Count,
                 null);
 
             return detail.PurchaseDeliveries;
@@ -411,7 +417,7 @@
 
         // syncs changes to the deliveries list back to the mini order
         // keeping this 'temporary' code in a dedicated method so it's clear and easy to remove
-        // separate public method so that it can be called from the facade (and subsequently Commit()'ted) in the correct order 
+        // separate public method so that it can be called from the facade (and subsequently Commit()'ted) in the correct order
         public void UpdateMiniOrderDeliveries(IEnumerable<PurchaseOrderDelivery> updated)
         {
             var purchaseOrderDeliveries = updated.ToList();
@@ -457,14 +463,14 @@
         // syncs changes back to the mini_order
         // keeping this 'temporary' code in a dedicated method so it's clear and easy to remove
         private void UpdateMiniOrder(
-            int orderNumber, 
-            DateTime? advisedDeliveryDate, 
-            DateTime? requestedDate, 
+            int orderNumber,
+            DateTime? advisedDeliveryDate,
+            DateTime? requestedDate,
             int? numberOfSplitDeliveries,
             string supplierConfirmationComment)
         {
             var miniOrder = this.miniOrderRepository.FindById(orderNumber);
-           
+
             if (requestedDate.HasValue)
             {
                 miniOrder.RequestedDeliveryDate = requestedDate;
@@ -487,4 +493,3 @@
         }
     }
 }
-
