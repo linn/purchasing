@@ -4,16 +4,14 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Threading.Tasks;
 
-    using Linn.Common.Configuration;
     using Linn.Common.Facade;
+    using Linn.Common.Pdf;
     using Linn.Common.Persistence;
-    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
-
-    using RazorEngineCore;
 
     public class
         PurchaseOrderFacadeService : FacadeResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource>, IPurchaseOrderFacadeService
@@ -26,7 +24,11 @@
 
         private readonly IRepository<PurchaseOrder, int> orderRepository;
 
-        private readonly IRazorTemplateService razorTemplateEngine;
+        private readonly ITemplateEngine templateEngine;
+
+        private readonly IFileReader fileReader;
+
+        private readonly string pathToTemplate;
 
         public PurchaseOrderFacadeService(
             IRepository<PurchaseOrder, int> repository,
@@ -34,31 +36,40 @@
             IBuilder<PurchaseOrder> resourceBuilder,
             IPurchaseOrderService domainService,
             IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository,
-            IRazorTemplateService razorTemplateEngine)
+            string pathToTemplate,
+            IFileReader filerReader,
+            ITemplateEngine templateEngine)
             : base(repository, transactionManager, resourceBuilder)
         {
             this.domainService = domainService;
             this.overbookAllowedByLogRepository = overbookAllowedByLogRepository;
             this.transactionManager = transactionManager;
             this.orderRepository = repository;
-            this.razorTemplateEngine = razorTemplateEngine;
+            this.templateEngine = templateEngine;
+            this.pathToTemplate = pathToTemplate;
+            this.fileReader = filerReader;
         }
 
-        public string GetOrderAsHtml(int orderNumber)
+        public async Task<string> GetOrderAsHtml(int orderNumber)
         {
             var order = this.orderRepository.FindById(orderNumber);
 
-            var result = this.razorTemplateEngine.Render(order, $"{ConfigurationManager.Configuration["VIEWS_ROOT"]}PurchaseOrder.cshtml");
-            return result.Result;
+            var template = await this.fileReader.ReadFile(this.pathToTemplate);
+
+            var result = await this.templateEngine.Render(order, template);
+
+            return result;
         }
 
-        public IResult<ProcessResultResource> EmailOrderPdf(int orderNumber, string emailAddress, bool bcc, int currentUserId)
+        public async Task<IResult<ProcessResultResource>> EmailOrderPdf(int orderNumber, string emailAddress, bool bcc, int currentUserId)
         {
             var order = this.orderRepository.FindById(orderNumber);
 
-            var result = this.razorTemplateEngine.Render(order, $"{ConfigurationManager.Configuration["VIEWS_ROOT"]}PurchaseOrder.cshtml");
+            var template = await this.fileReader.ReadFile(this.pathToTemplate);
 
-            var emailResult = this.domainService.SendPdfEmail(result.Result, emailAddress, orderNumber, bcc, currentUserId, order);
+            var result = await this.templateEngine.Render(order, template);
+
+            var emailResult = this.domainService.SendPdfEmail(result, emailAddress, orderNumber, bcc, currentUserId, order);
 
             this.transactionManager.Commit();
             return new SuccessResult<ProcessResultResource>(new ProcessResultResource(emailResult.Success, emailResult.Message));

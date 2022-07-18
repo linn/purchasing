@@ -33,10 +33,11 @@
                     {
                         OrderNumber = 158962, OverbookQty = 1, Supplier = new Supplier { SupplierId = 1224 }
                     });
-
             var task = Task.FromResult("<h1>hello world</h1>");
 
-            this.MockRazorTemplateService.Render(Arg.Any<PurchaseOrder>(), Arg.Any<string>()).Returns(task);
+            this.MockFileReader.ReadFile("path").Returns(task);
+
+            this.MockTemplateEngine.Render(Arg.Any<PurchaseOrder>(), Arg.Any<string>()).Returns(task);
 
             this.Response = this.Client.Post(
                 "/purchasing/purchase-orders/email-pdf?bcc=false&emailAddress=iain.crawford@linn.co.uk&orderNumber=158962",

@@ -2,6 +2,7 @@
 {
     using Linn.Common.Authorisation;
     using Linn.Common.Facade;
+    using Linn.Common.Pdf;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
@@ -40,7 +41,9 @@
 
         protected ITransactionManager TransactionManager { get; private set; }
 
-        protected IRazorTemplateService RazorTemplateService { get; private set; }
+        protected ITemplateEngine TemplateEngine { get; private set; }
+
+        protected IFileReader FileReader { get; private set; }
 
         [SetUp]
         public void SetUpContext()
@@ -67,7 +70,9 @@
                 this.LinnDeliveryAddressResourceBuilder,
                 this.AddressResourceBuilder);
 
-            this.RazorTemplateService = Substitute.For<IRazorTemplateService>();
+            this.TemplateEngine = Substitute.For<ITemplateEngine>();
+
+            this.FileReader = Substitute.For<IFileReader>();
 
             this.Sut = new PurchaseOrderFacadeService(
                 this.PurchaseOrderRepository,
@@ -75,7 +80,9 @@
                 this.Builder,
                 this.DomainService,
                 this.OverbookAllowedByLogRepository,
-                this.RazorTemplateService);
+                "path",
+                this.FileReader,
+                this.TemplateEngine);
         }
     }
 }
