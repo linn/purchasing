@@ -104,7 +104,7 @@
                     }
                     else
                     {
-                        parsedDate = null;
+                        parsedDate = new DateTime(2025, 1, 1);
                     }
 
                     changes.Add(new PurchaseOrderDeliveryUpdate

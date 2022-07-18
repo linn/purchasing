@@ -232,7 +232,7 @@
                     {
                         entity.AvailableAtSupplier = change.AvailableAtSupplier;
                     }
-
+                    
                     entity.DateAdvised = change.NewDateAdvised;
                     entity.RescheduleReason = change.NewReason;
                     this.UpdateMiniOrder(
