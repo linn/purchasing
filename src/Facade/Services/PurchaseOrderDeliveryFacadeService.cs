@@ -5,6 +5,7 @@
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Text.RegularExpressions;
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
@@ -60,7 +61,7 @@
                         throw new InvalidOperationException($"Invalid Order Number: {row[0]}.");
                     }
 
-                    if (!int.TryParse(row[1].Trim(), out var delNo))
+                    if (!int.TryParse(row[1].Trim().First().ToString(), out var delNo))
                     {
                         throw new InvalidOperationException($"Invalid Delivery Number: {row[0]} / {row[1]}.");
                     }
@@ -69,8 +70,9 @@
                     {
                         throw new InvalidOperationException($"Invalid Qty for {row[0]} / {row[1]}.");
                     }
-
-                    if (!decimal.TryParse(row[4].Trim(), out var unitPrice))
+                    if (!decimal.TryParse(
+                            Regex.Replace(row[4], "[^0-9.]", ""), // strip out non numeric chars 
+                            out var unitPrice))
                     {
                         throw new InvalidOperationException($"Invalid Unit Price for {row[0]} / {row[1]}.");
                     }
@@ -80,17 +82,31 @@
                             .Trim(), "dd'/'M'/'yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate1);
                     var secondFormatSatisfied =
                         DateTime.TryParseExact(row[2]
-                            .Trim(), "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate2);
+                            .Trim(), "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate2);
+                    var thirdFormatSatisfied =
+                        DateTime.TryParseExact(row[2]
+                            .Trim(), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate3);
 
                     // only supports two date formats for now, i.e.  31/01/2000 and 31-jan-2000
-                    if (
-                        !firstFormatSatisfied
-                        &&
-                        !secondFormatSatisfied)
+                    DateTime? parsedDate;
+
+                    if (firstFormatSatisfied)
                     {
-                        throw new InvalidOperationException($"Date format not recognised for {row[2]}.");
+                        parsedDate = parsedDate1;
                     }
-                    
+                    else if (secondFormatSatisfied)
+                    {
+                        parsedDate = parsedDate2;
+                    }
+                    else if (thirdFormatSatisfied)
+                    {
+                        parsedDate = parsedDate3;
+                    }
+                    else
+                    {
+                        parsedDate = new DateTime(2025, 1, 1);
+                    }
+
                     changes.Add(new PurchaseOrderDeliveryUpdate
                                     {
                                         Key = new PurchaseOrderDeliveryKey
@@ -99,8 +115,8 @@
                                                       OrderLine = 1, // hardcoded for now
                                                       DeliverySequence = delNo
                                                   },
-                                        NewDateAdvised = firstFormatSatisfied ? parsedDate1 : parsedDate2,
-                                        NewReason = row.Length < 5 ? null : row[5].Trim(),
+                                        NewDateAdvised = parsedDate,
+                                        NewReason = row.Length < 6 ? null : row[5].Trim(),
                                         Qty = qty,
                                         UnitPrice = unitPrice
                                     });

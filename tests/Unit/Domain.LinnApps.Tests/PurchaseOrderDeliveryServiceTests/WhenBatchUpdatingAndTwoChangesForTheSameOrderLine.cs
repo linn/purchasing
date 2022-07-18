@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderDeliveryServiceTests
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -38,11 +39,13 @@
                                {
                                    new PurchaseOrderDeliveryUpdate
                                        {
-                                           Key = this.key1
+                                           Key = this.key1,
+                                           NewDateAdvised = DateTime.Today
                                        },
                                    new PurchaseOrderDeliveryUpdate
                                        {
-                                           Key = this.key2
+                                           Key = this.key2,
+                                           NewDateAdvised = DateTime.Today
                                        }
                                };
 
