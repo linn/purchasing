@@ -41,7 +41,8 @@
                 // or log errors and return false if unsuccessful
                 bool success = ea.RoutingKey switch
                 {
-                    TypeA.RoutingKey => messageTypeAHandler.Handle(new TypeA(ea)),
+                    EmailMrOrderBookMessage.RoutingKey => emailOrderBookMessageHandler.Handle(
+                        new EmailMrOrderBookMessage(ea)),
                     _ => false
                 };
 

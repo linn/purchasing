@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Messaging
 {
     using System.Collections.Generic;
+    using System.IO;
 
     using Linn.Common.Configuration;
 
@@ -12,6 +13,7 @@
         public ChannelConfiguration(string queueName, string[] routingKeys)
         {
             this.Exchange = $"{queueName}.x";
+            var x = Directory.GetCurrentDirectory();
             this.Connection = new ConnectionFactory
             {
                 HostName = ConfigurationManager.Configuration["RABBIT_SERVER"],
