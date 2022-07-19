@@ -16,4 +16,9 @@
     <ProjectReference Include="..\Persistence\Persistence.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Handlers\" />
+    <Folder Include="Messages\" />
+  </ItemGroup>
+
 </Project>
