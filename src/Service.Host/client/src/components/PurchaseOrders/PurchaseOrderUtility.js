@@ -12,7 +12,6 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import EditOffIcon from '@mui/icons-material/EditOff';
 import Tooltip from '@mui/material/Tooltip';
 import Close from '@mui/icons-material/Close';
-//import PrintIcon from '@mui/icons-material/Print';
 import Email from '@mui/icons-material/Email';
 import Send from '@mui/icons-material/Send';
 import { makeStyles } from '@mui/styles';
@@ -31,7 +30,9 @@ import {
     ErrorCard,
     utilities,
     getPreviousPaths,
-    SaveBackCancelButtons
+    SaveBackCancelButtons,
+    OnOffSwitch,
+    processSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import currenciesActions from '../../actions/currenciesActions';
 import employeesActions from '../../actions/employeesActions';
@@ -44,6 +45,8 @@ import config from '../../config';
 import purchaseOrderActions from '../../actions/purchaseOrderActions';
 import handleBackClick from '../../helpers/handleBackClick';
 import reducer from './purchaseOrderReducer';
+import sendPurchaseOrderPdfEmailActionTypes from '../../actions/sendPurchaseOrderPdfEmailActions';
+import { sendPurchaseOrderPdfEmail } from '../../itemTypes';
 
 function PurchaseOrderUtility({ creating }) {
     const reduxDispatch = useDispatch();
@@ -69,10 +72,15 @@ function PurchaseOrderUtility({ creating }) {
     const itemError = useSelector(state => getItemError(state, 'purchaseOrder'));
 
     const [order, dispatch] = useReducer(reducer, {});
+    const [purchaseOrderEmailState, setPurchaseOrderEmailState] = useState({
+        email: '',
+        bcc: false
+    });
 
     useEffect(() => {
         if (item?.orderNumber) {
             dispatch({ type: 'initialise', payload: item });
+            setPurchaseOrderEmailState({ bcc: false, email: item.supplierContactEmail });
         } else {
             reduxDispatch(purchaseOrderActions.clearErrorsForItem());
         }
@@ -86,33 +94,6 @@ function PurchaseOrderUtility({ creating }) {
     );
     const searchSuppliers = searchTerm => reduxDispatch(suppliersActions.search(searchTerm));
 
-    // const partsSearchResults = useSelector(state =>
-    //     collectionSelectorHelpers.getSearchItems(state.parts)
-    // ).map(c => ({
-    //     id: c.partNumber,
-    //     name: c.partNumber,
-    //     partNumber: c.partNumber,
-    //     description: c.description
-    // }));
-
-    // const partsSearchLoading = useSelector(state =>
-    //     collectionSelectorHelpers.getSearchLoading(state.parts)
-    // );
-
-    // const countriesSearchResults = useSelector(state =>
-    //     collectionSelectorHelpers.getSearchItems(
-    //         state.countries,
-    //         100,
-    //         'countryCode',
-    //         'countryCode',
-    //         'countryName'
-    //     )
-    // );
-    // const countriesSearchLoading = useSelector(state =>
-    //     collectionSelectorHelpers.getSearchLoading(state.countries)
-    // );
-    // const searchCountries = searchTerm => dispatch(countriesActions.search(searchTerm));
-
     const currencies = useSelector(state => collectionSelectorHelpers.getItems(state.currencies));
     const employees = useSelector(state => collectionSelectorHelpers.getItems(state.employees));
 
@@ -122,9 +103,6 @@ function PurchaseOrderUtility({ creating }) {
     const nominalsSearchLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.nominals)
     );
-
-    // const currentUserId = useSelector(state => userSelectors.getUserNumber(state));
-    // const currentUserName = useSelector(state => userSelectors.getName(state));
 
     const snackbarVisible = useSelector(state =>
         itemSelectorHelpers.getSnackbarVisible(state.purchaseOrder)
@@ -153,7 +131,6 @@ function PurchaseOrderUtility({ creating }) {
 
     const previousPaths = useSelector(state => getPreviousPaths(state));
 
-    // const allowedToCancel = () => !creating && order.links?.some(l => l.rel === 'cancel');
     const allowedToAuthorise = () => !creating && order.links?.some(l => l.rel === 'authorise');
 
     const allowedToUpdate = () =>
@@ -192,13 +169,6 @@ function PurchaseOrderUtility({ creating }) {
         });
     };
 
-    // const handleCancelClick = () => {
-    //     if (allowedToCancel) {
-    //         clearErrors();
-    //         dispatch(purchaseOrderActions.postByHref(utilities.getHref(item, 'cancel')));
-    //     }
-    // };
-
     const handleSendAuthoriseEmailClick = () => {
         setAuthEmailDialogOpen(false);
         // dispatch(sendOrderAuthEmailActions.clearProcessData);
@@ -228,6 +198,28 @@ function PurchaseOrderUtility({ creating }) {
             lineNumber,
             type: 'nominalChange'
         });
+    };
+
+    const [orderPdfEmailDialogOpen, setOrderPdfEmailDialogOpen] = useState(false);
+
+    const orderPdfEmailMessageVisible = useSelector(state =>
+        processSelectorHelpers.getMessageVisible(state[sendPurchaseOrderPdfEmail.item])
+    );
+
+    const orderPdfEmailMessage = useSelector(state =>
+        processSelectorHelpers.getMessageText(state[sendPurchaseOrderPdfEmail.item])
+    );
+
+    const handleOrderPdfEmailClick = () => {
+        setOrderPdfEmailDialogOpen(false);
+        reduxDispatch(sendPurchaseOrderPdfEmailActionTypes.clearProcessData);
+        reduxDispatch(
+            sendPurchaseOrderPdfEmailActionTypes.requestProcessStart('', {
+                orderNumber: order.orderNumber,
+                emailAddress: purchaseOrderEmailState.email,
+                bcc: purchaseOrderEmailState.bcc
+            })
+        );
     };
 
     const useStyles = makeStyles(theme => ({
@@ -270,13 +262,15 @@ function PurchaseOrderUtility({ creating }) {
                             }
                             message="Save successful"
                         />
-                        {/* <SnackbarMessage
-                            visible={authEmailMessageVisible}
+                        <SnackbarMessage
+                            visible={orderPdfEmailMessageVisible}
                             onClose={() =>
-                                dispatch(sendReqAuthEmailActions.setMessageVisible(false))
+                                reduxDispatch(
+                                    sendPurchaseOrderPdfEmailActionTypes.setMessageVisible(false)
+                                )
                             }
-                            message={authEmailMessage}
-                        /> */}
+                            message={orderPdfEmailMessage}
+                        />
                         {itemError && (
                             <Grid item xs={12}>
                                 <ErrorCard
@@ -322,6 +316,64 @@ function PurchaseOrderUtility({ creating }) {
                                                 <Send
                                                     className={classes.buttonMarginTop}
                                                     onClick={() => handleSendAuthoriseEmailClick()}
+                                                />
+                                            </Tooltip>
+                                        </Grid>
+                                    </Grid>
+                                </Typography>
+                            </div>
+                        </Dialog>
+                        <Dialog open={orderPdfEmailDialogOpen} fullWidth maxWidth="md">
+                            <div className={classes.centerTextInDialog}>
+                                <IconButton
+                                    className={classes.pullRight}
+                                    aria-label="Close"
+                                    onClick={() => setOrderPdfEmailDialogOpen(false)}
+                                >
+                                    <Close />
+                                </IconButton>
+                                <Typography variant="h6">
+                                    Email purchase order pdf to supplier
+                                </Typography>
+                                <Typography variant="body1" gutterBottom>
+                                    <Grid container spacing={1}>
+                                        <Grid item xs={6}>
+                                            <InputField
+                                                fullWidth
+                                                value={purchaseOrderEmailState?.email}
+                                                label="Send PO Email To"
+                                                number
+                                                propertyName="emailTo"
+                                                onChange={(name, newEmail) => {
+                                                    setPurchaseOrderEmailState({
+                                                        ...purchaseOrderEmailState,
+                                                        email: newEmail
+                                                    });
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <OnOffSwitch
+                                                label="Also send to self? (bcc)"
+                                                value={purchaseOrderEmailState.bcc}
+                                                onChange={() => {
+                                                    setPurchaseOrderEmailState({
+                                                        ...purchaseOrderEmailState,
+                                                        bcc: !purchaseOrderEmailState.bcc
+                                                    });
+                                                }}
+                                                propertyName="bcc"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <Tooltip
+                                                title="Send"
+                                                placement="top"
+                                                className={classes.cursorPointer}
+                                            >
+                                                <Send
+                                                    className={classes.buttonMarginTop}
+                                                    onClick={() => handleOrderPdfEmailClick()}
                                                 />
                                             </Tooltip>
                                         </Grid>
@@ -388,7 +440,18 @@ function PurchaseOrderUtility({ creating }) {
                                 disabled
                             />
                         </Grid>
-                        <Grid item xs={1} />
+                        <Grid item xs={1}>
+                            <Tooltip title="Email pdf to supplier">
+                                <IconButton
+                                    className={classes.buttonMarginTop}
+                                    aria-label="Email"
+                                    onClick={() => setOrderPdfEmailDialogOpen(true)}
+                                    disabled={creating}
+                                >
+                                    <Email />
+                                </IconButton>
+                            </Tooltip>
+                        </Grid>
                         <Grid item xs={1}>
                             <div className={classes.centeredIcon}>
                                 {allowedToUpdate ? (
@@ -1019,44 +1082,6 @@ function PurchaseOrderUtility({ creating }) {
                                     </Grid>
                                 </>
                             ))}
-
-                        {/* 
-                        <Grid item xs={5} container spacing={1}>
-                            <Grid item xs={8}>
-                                <Typeahead
-                                    label="Part"
-                                    title="Search for a part"
-                                    onSelect={newPart => {
-                                        handleFieldChange('partNumber', newPart.id);
-                                        handleFieldChange('description', newPart.description);
-                                    }}
-                                    items={partsSearchResults}
-                                    loading={partsSearchLoading}
-                                    fetchItems={searchTerm =>
-                                        dispatch(partsActions.search(searchTerm))
-                                    }
-                                    clearSearch={() => dispatch(partsActions.clearSearch)}
-                                    value={order.partNumber ? `${order.partNumber}` : null}
-                                    modal
-                                    links={false}
-                                    debounce={1000}
-                                    minimumSearchTermLength={2}
-                                    disabled={!allowedToUpdate()}
-                                    placeholder="click to set part"
-                                />
-                            </Grid>
-                        </Grid>
-                        <Grid item xs={7}>
-                            <InputField
-                                fullWidth
-                                value={order.part?.description}
-                                label="Description"
-                                propertyName="description"
-                                onChange={handleFieldChange}
-                                rows={8}
-                                disabled={!allowedToUpdate()}
-                            />
-                        </Grid> */}
                         <Grid item xs={6}>
                             <SaveBackCancelButtons
                                 saveDisabled={!canSave()}
