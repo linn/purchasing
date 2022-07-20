@@ -37,5 +37,7 @@
         public string IssuePartsToSupplier { get; set; }
 
         public string IssueSerialNumbers { get; set; }
+
+        public string AuthorisedAtCreation { get; set; }
     }
 }

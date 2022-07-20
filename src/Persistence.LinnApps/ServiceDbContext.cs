@@ -1525,7 +1525,7 @@
             entity.Property(d => d.VendorManangerName).HasColumnName("USER_NAME").HasColumnType("VARCHAR2");
             entity.Property(d => d.EdiEmailAddress).HasColumnName("EDI_EMAIL_ADDRESS").HasColumnType("VARCHAR2");
             entity.Property(d => d.NumOrders).HasColumnName("NUM_ORDERS");
-		}
+        }
 
         private void BuildShortagesView(ModelBuilder builder)
         {
@@ -1619,6 +1619,7 @@
             entity.Property(a => a.OrderMethod).HasColumnName("PL_ORDER_METHOD").HasColumnType("VARCHAR2").HasMaxLength(10);
             entity.Property(a => a.IssuePartsToSupplier).HasColumnName("ISSUE_PARTS_TO_SUPPLIER").HasColumnType("VARCHAR2").HasMaxLength(1);
             entity.Property(a => a.IssueSerialNumbers).HasColumnName("ISSUE_SERIAL_NUMBERS").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(a => a.AuthorisedAtCreation).HasColumnName("AUTHORISED_AT_CREATION").HasColumnType("VARCHAR2").HasMaxLength(1);
         }
 
         private void BuildAutomaticPurchaseOrderSuggestions(ModelBuilder builder)
