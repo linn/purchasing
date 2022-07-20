@@ -34,6 +34,7 @@
                            NetTotalCurrency = entity.NetTotalCurrency,
                            OrderNumber = entity.OrderNumber,
                            OurQty = entity.OurQty,
+                           OrderQty = entity.OrderQty,
                            PurchaseDeliveries =
                                entity.PurchaseDeliveries?.Select(
                                    d => (PurchaseOrderDeliveryResource)this.deliveryResourceBuilder.Build(d, claims)),
@@ -44,7 +45,6 @@
                            OriginalOrderLine = entity.OriginalOrderLine,
                            OurUnitOfMeasure = entity.OurUnitOfMeasure,
                            OrderUnitOfMeasure = entity.OrderUnitOfMeasure,
-                           Duty = entity.Duty,
                            OurUnitPriceCurrency = entity.OurUnitPriceCurrency,
                            OrderUnitPriceCurrency = entity.OrderUnitPriceCurrency,
                            BaseOurUnitPrice = entity.BaseOurUnitPrice,
@@ -63,18 +63,6 @@
                                          }
                                    : null,
                            InternalComments = entity.InternalComments,
-                           Nominal = new NominalResource
-                                         {
-                                             NominalCode = entity.OrderPosting?.NominalAccount?.Nominal?.NominalCode,
-                                             Description = entity.OrderPosting?.NominalAccount?.Nominal?.Description
-                                         },
-                           Department = new DepartmentResource
-                                            {
-                                                DepartmentCode =
-                                                    entity.OrderPosting?.NominalAccount?.Department?.DepartmentCode,
-                                                Description = entity.OrderPosting?.NominalAccount?.Department
-                                                    ?.Description
-                                            },
                            OrderPosting = entity.OrderPosting != null
                                               ? (PurchaseOrderPostingResource)this.postingResourceBuilder.Build(
                                                   entity.OrderPosting,

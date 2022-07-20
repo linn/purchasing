@@ -16,7 +16,7 @@
 
         public int OrderNumber { get; set; }
 
-        public string Person { get; set; }
+        public int? Person { get; set; }
 
         public string Product { get; set; }
 

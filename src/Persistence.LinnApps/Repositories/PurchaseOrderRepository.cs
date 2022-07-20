@@ -26,6 +26,7 @@
                 .Include(o => o.Details).ThenInclude(d => d.Part)
                 .Include(o => o.Details).ThenInclude(d => d.PurchaseDeliveries).Include(x => x.Supplier)
                 .Include(x => x.Currency)
+                .OrderByDescending(x => x.OrderNumber)
                 .AsNoTracking();
         }
 

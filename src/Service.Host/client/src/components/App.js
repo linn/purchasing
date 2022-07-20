@@ -32,6 +32,13 @@ function App() {
                 <ListItem component={Link} to="/purchasing/edi" button>
                     <Typography color="primary">Send EDI Orders</Typography>
                 </ListItem>
+                <ListItem
+                    component={Link}
+                    to="purchasing/automatic-purchase-order-suggestions"
+                    button
+                >
+                    <Typography color="primary">Automatic Purchase Orders</Typography>
+                </ListItem>
                 <Typography variant="h6">Reports</Typography>
                 <ListItem component={Link} to="/purchasing/reports/orders-by-supplier" button>
                     <Typography color="primary">Orders by Supplier Report</Typography>
