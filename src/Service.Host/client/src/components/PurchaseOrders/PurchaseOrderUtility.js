@@ -271,13 +271,6 @@ function PurchaseOrderUtility({ creating }) {
                             }
                             message={orderPdfEmailMessage}
                         />
-                        {/* <SnackbarMessage
-                            visible={authEmailMessageVisible}
-                            onClose={() =>
-                                dispatch(sendReqAuthEmailActions.setMessageVisible(false))
-                            }
-                            message={authEmailMessage}
-                        /> */}
                         {itemError && (
                             <Grid item xs={12}>
                                 <ErrorCard
@@ -1089,44 +1082,6 @@ function PurchaseOrderUtility({ creating }) {
                                     </Grid>
                                 </>
                             ))}
-
-                        {/* 
-                        <Grid item xs={5} container spacing={1}>
-                            <Grid item xs={8}>
-                                <Typeahead
-                                    label="Part"
-                                    title="Search for a part"
-                                    onSelect={newPart => {
-                                        handleFieldChange('partNumber', newPart.id);
-                                        handleFieldChange('description', newPart.description);
-                                    }}
-                                    items={partsSearchResults}
-                                    loading={partsSearchLoading}
-                                    fetchItems={searchTerm =>
-                                        dispatch(partsActions.search(searchTerm))
-                                    }
-                                    clearSearch={() => dispatch(partsActions.clearSearch)}
-                                    value={order.partNumber ? `${order.partNumber}` : null}
-                                    modal
-                                    links={false}
-                                    debounce={1000}
-                                    minimumSearchTermLength={2}
-                                    disabled={!allowedToUpdate()}
-                                    placeholder="click to set part"
-                                />
-                            </Grid>
-                        </Grid>
-                        <Grid item xs={7}>
-                            <InputField
-                                fullWidth
-                                value={order.part?.description}
-                                label="Description"
-                                propertyName="description"
-                                onChange={handleFieldChange}
-                                rows={8}
-                                disabled={!allowedToUpdate()}
-                            />
-                        </Grid> */}
                         <Grid item xs={6}>
                             <SaveBackCancelButtons
                                 saveDisabled={!canSave()}
