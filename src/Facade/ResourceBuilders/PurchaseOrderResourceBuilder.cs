@@ -50,7 +50,7 @@
                                    {
                                        Name = entity.DocumentType?.Name, Description = entity.DocumentType?.Description
                                    },
-                           OrderDate = entity.OrderDate,
+                           OrderDate = entity.OrderDate.ToString("O"),
                            OrderMethod =
                                new OrderMethodResource
                                    {
@@ -88,7 +88,7 @@
                            SentByMethod = entity.SentByMethod,
                            FilCancelled = entity.FilCancelled,
                            Remarks = entity.Remarks,
-                           DateFilCancelled = entity.DateFilCancelled,
+                           DateFilCancelled = entity.DateFilCancelled?.ToString("O"),
                            PeriodFilCancelled = entity.PeriodFilCancelled,
                            Supplier =
                                new SupplierResource { Id = entity.Supplier.SupplierId, Name = entity.Supplier.Name },

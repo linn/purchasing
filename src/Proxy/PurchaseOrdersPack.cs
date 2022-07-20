@@ -83,6 +83,40 @@
             return decimal.Parse(result.Value.ToString());
         }
 
+        public bool IssuePartsToSupplier(string partNumber, int supplierId)
+        {
+            using (var connection = this.databaseService.GetConnection())
+            {
+                connection.Open();
+                var cmd = new OracleCommand("pl_orders_pack.issue_parts_to_supplier_sql", connection)
+                              {
+                                  CommandType = CommandType.StoredProcedure
+                              };
+
+                var result = new OracleParameter(null, OracleDbType.Int32)
+                                 {
+                                     Direction = ParameterDirection.ReturnValue
+                                 };
+                cmd.Parameters.Add(result);
+
+                cmd.Parameters.Add(
+                    new OracleParameter("p_part_number", OracleDbType.Varchar2)
+                        {
+                            Direction = ParameterDirection.Input, Size = 14, Value = partNumber
+                        });
+                cmd.Parameters.Add(
+                    new OracleParameter("p_supplier_id", OracleDbType.Int32)
+                        {
+                            Direction = ParameterDirection.Input, Value = supplierId
+                        });
+
+                cmd.ExecuteNonQuery();
+                connection.Close();
+
+                return int.Parse(result.Value.ToString() ?? string.Empty) == 1;
+            }
+        }
+
         public bool OrderCanBeAuthorisedBy(
             int? orderNumber,
             int? lineNumber,

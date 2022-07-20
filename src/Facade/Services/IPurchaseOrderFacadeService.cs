@@ -5,9 +5,10 @@
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.SearchResources;
 
-    public interface IPurchaseOrderFacadeService : IFacadeResourceService<PurchaseOrder, int,
-        PurchaseOrderResource, PurchaseOrderResource>
+    public interface IPurchaseOrderFacadeService : IFacadeResourceFilterService<PurchaseOrder, int,
+        PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource>
     {
         Task<string> GetOrderAsHtml(int orderNumber);
 

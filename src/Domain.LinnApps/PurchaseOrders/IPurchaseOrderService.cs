@@ -4,18 +4,20 @@
 
     public interface IPurchaseOrderService
     {
-        public void AllowOverbook(
+        void AllowOverbook(
             PurchaseOrder current,
             string allowOverBook,
             decimal? overbookQty,
             IEnumerable<string> privileges);
 
-        public ProcessResult SendPdfEmail(
+        ProcessResult SendPdfEmail(
             string html,
             string emailAddress,
             int orderNumber,
             bool bcc,
             int currentUserId,
             PurchaseOrder order);
+
+        PurchaseOrder UpdateOrder(PurchaseOrder current, PurchaseOrder updated, IEnumerable<string> privileges);
     }
 }

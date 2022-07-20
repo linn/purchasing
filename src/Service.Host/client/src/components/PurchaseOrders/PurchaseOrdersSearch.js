@@ -3,15 +3,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { collectionSelectorHelpers, Page, Typeahead } from '@linn-it/linn-form-components-library';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
+import moment from 'moment';
 import purchaseOrdersActions from '../../actions/purchaseOrdersActions';
 import history from '../../history';
 import config from '../../config';
 
 function PurchaseOrdersSearch() {
     const dispatch = useDispatch();
-    useEffect(() => dispatch(purchaseOrdersActions.fetch()), [dispatch]);
-    useEffect(() => dispatch(purchaseOrdersActions.fetchState()), [dispatch]);
 
+    useEffect(() => {
+        dispatch(purchaseOrdersActions.fetchState());
+        dispatch(purchaseOrdersActions.search(''));
+    }, [dispatch]);
     const searchPurchaseOrders = searchTerm => dispatch(purchaseOrdersActions.search(searchTerm));
     const searchResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(
@@ -36,6 +39,9 @@ function PurchaseOrdersSearch() {
                     <Typeahead
                         items={searchResults.map(x => ({
                             ...x,
+                            description: `${moment(x.orderDate).format('DD MMM YYYY')} - ${
+                                x.supplier.name
+                            } (${x.supplier.id})`,
                             href: x.links.find(l => l.rel === 'self')?.href
                         }))}
                         fetchItems={searchPurchaseOrders}

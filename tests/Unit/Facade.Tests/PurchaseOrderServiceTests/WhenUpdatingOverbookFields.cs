@@ -46,7 +46,7 @@
                                       {
                                           OrderNumber = 600179,
                                           Cancelled = string.Empty,
-                                          OrderDate = 10.January(2021),
+                                          OrderDate = 10.January(2021).ToString("O"),
                                           Overbook = "Y",
                                           OverbookQty = 1,
                                           Supplier = new SupplierResource { Id = 1224 },
@@ -94,7 +94,7 @@
             var dataResult = ((SuccessResult<PurchaseOrderResource>) this.result).Data;
             dataResult.OrderNumber.Should().Be(this.model.OrderNumber);
             dataResult.Cancelled.Should().Be(this.model.Cancelled);
-            dataResult.OrderDate.Should().Be(this.model.OrderDate);
+            dataResult.OrderDate.Should().Be(this.model.OrderDate.ToString("O"));
             dataResult.Overbook.Should().Be(this.model.Overbook);
             dataResult.OverbookQty.Should().Be(this.model.OverbookQty);
             dataResult.Supplier.Id.Should().Be(this.model.SupplierId);

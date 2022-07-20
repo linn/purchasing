@@ -98,15 +98,15 @@
             column-gap: 10px;
             display: grid;
             grid-template-areas:
-                               'logo item1 blank1 item2 item2 blank2'
+                               'logo item1 . item2 item2 .'
                                'logo address address address address address'
-                               'blank3 regoff regoff regoff regoff regoff'
+                               '. regoff regoff regoff regoff regoff'
                                'orderno orderno title title date date'
                                'supplierName supplierName supplierName deliveryToText deliveryTo deliveryTo'
-                               'requestedByText requestedBy blank5  contactText contact blank6'
-                               'enteredByText enteredBy blank7  authByText authBy blank8'
-                               'quotationRefText quotationRef blank9  blank9 blank9 blank9'
-                               'remarksText remarks blank10  blank10 blank10 blank10';
+                               'requestedByText requestedBy .  contactText contact .'
+                               'enteredByText enteredBy .  authByText authBy .'
+                               'quotationRefText quotationRef . . . .'
+                               'remarksText remarks . . . .';
             padding: 10px;
             padding-bottom: 50px;
             row-gap: 5px;
@@ -388,10 +388,7 @@ Telephone (0)141 307 7777.
             All invoices and delivery notes must always quote the above order numbers.
             All prices on orders are exclusive of value added tax.
             For conditions of purchase see below.
-            Please confirm all deliveries on this purchase order within 48 hours to @Model.EnteredBy.FullName
-           @{// <b>Please sign this copy and return to the Finance department on receipt of goods.</b>
-               //above line is in citrix form but not in real report. Todo check if needed or not
-           }
+            Please confirm all deliveries on this purchase order within 48 hours to acknowledgements@linn.co.uk
             </pre>
     </div>
     </div>
