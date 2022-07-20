@@ -73,6 +73,12 @@
                 returnResults.Add(model);
             }
 
+            if (returnResults.Count == 0)
+            {
+                var titleModel = new ResultsModel { ReportTitle = new NameModel("No Results") };
+                returnResults.Add(titleModel);
+            }
+
             return returnResults;
         }
 

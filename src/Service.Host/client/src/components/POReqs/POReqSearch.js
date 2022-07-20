@@ -17,6 +17,7 @@ import {
 } from '@linn-it/linn-form-components-library';
 import Divider from '@mui/material/Divider';
 import { Link as RouterLink } from 'react-router-dom';
+import moment from 'moment';
 import purchaseOrderReqsActions from '../../actions/purchaseOrderReqsActions';
 import history from '../../history';
 import config from '../../config';
@@ -125,19 +126,27 @@ function POReqSearch({ print }) {
                                             : utilities.getSelfHref(req)
                                     }
                                 >
-                                    <ListItem>
-                                        <Grid item xs={2}>
+                                    <ListItem spacing={15}>
+                                        <Grid item xs={1}>
                                             <Typography variant="subtitle1">
                                                 {req.reqNumber}
                                             </Typography>
                                         </Grid>
-                                        <Grid item xs={2}>
-                                            <Typography>{req.dateRaised}</Typography>
+                                        <Grid item xs={1} sx={{ mr: 2 }}>
+                                            <Typography>
+                                                {moment(req.reqDate).format('DD MMM YYYY')}
+                                            </Typography>
                                         </Grid>
-                                        <Grid item xs={4}>
+                                        <Grid item xs={2}>
+                                            <Typography>{req.state}</Typography>
+                                        </Grid>
+                                        <Grid item xs={2}>
                                             <Typography>{req.partNumber}</Typography>
                                         </Grid>
                                         <Grid item xs={4}>
+                                            <Typography>{req.description}</Typography>
+                                        </Grid>
+                                        <Grid item xs={2}>
                                             <Typography>
                                                 {req.supplier?.name} ({req.supplier?.id})
                                             </Typography>

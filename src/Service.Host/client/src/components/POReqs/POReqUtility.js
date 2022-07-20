@@ -1153,7 +1153,7 @@ function POReqUtility({ creating }) {
                                 clearSearch={() => dispatch(nominalsActions.clearSearch)}
                                 loading={nominalsSearchLoading}
                                 label="Department"
-                                title="Search Department"
+                                title="Search on Department or Nominal"
                                 value={req.department?.departmentCode}
                                 onSelect={newValue => handleNominalUpdate(newValue)}
                                 debounce={1000}
@@ -1360,6 +1360,7 @@ function POReqUtility({ creating }) {
                                 onChange={handleFieldChange}
                                 rows={4}
                                 disabled={!editingAllowed}
+                                maxLength={200}
                             />
                         </Grid>
                         <Grid item xs={6}>
@@ -1371,6 +1372,7 @@ function POReqUtility({ creating }) {
                                 onChange={handleFieldChange}
                                 rows={4}
                                 disabled={!editingAllowed}
+                                maxLength={300}
                             />
                         </Grid>
                         <Grid item xs={6}>
