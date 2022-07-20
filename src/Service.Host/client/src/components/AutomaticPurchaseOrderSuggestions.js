@@ -183,7 +183,7 @@ function AutomaticPurchaseOrderSuggestions() {
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
-            <Title text="Automatic Orders" />
+            <Title text="Raise Automatic Orders" />
             <Grid container>
                 <Grid item xs={8}>
                     <Dropdown
