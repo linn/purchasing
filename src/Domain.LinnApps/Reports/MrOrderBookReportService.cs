@@ -163,6 +163,34 @@
                         new CalculationValueModel
                             {
                                 RowId = rowId,
+                                ColumnId = "PartNumber",
+                                TextDisplay = datum.PartNumber
+                            });
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = rowId,
+                                ColumnId = "PartDescription",
+                                TextDisplay = datum.PartSupplierRecord.Part.Description
+                            });
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = rowId,
+                                ColumnId = "UoM",
+                                TextDisplay = datum.PartSupplierRecord.Part.OurUnitOfMeasure
+                            });
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = rowId,
+                                ColumnId = "LeadTimeWeeks",
+                                TextDisplay = datum.PartSupplierRecord.LeadTimeWeeks.ToString()
+                            });
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = rowId,
                                 ColumnId = "Delivery",
                                 TextDisplay = $"{delivery.OrderNumber}/{delivery.DeliverySequence}"
                             });
