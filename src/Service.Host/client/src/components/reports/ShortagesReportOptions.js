@@ -17,9 +17,10 @@ import vendorManagersActions from '../../actions/vendorManagersActions';
 
 function ShortagesReportOptions() {
     const dispatch = useDispatch();
-    const vendorManagersOptions = useSelector(state =>
-        collectionSelectorHelpers.getItems(state[vendorManagers.item])
-    );
+    const vendorManagersOptions = useSelector(state => [
+        { vmId: 'ALL', name: '', userNumber: '' },
+        ...collectionSelectorHelpers.getItems(state[vendorManagers.item])
+    ]);
     const vendorManagersLoading = useSelector(state =>
         collectionSelectorHelpers.getLoading(state[vendorManagers.item])
     );
@@ -56,7 +57,7 @@ function ShortagesReportOptions() {
                     <>
                         <Grid item xs={5}>
                             <Dropdown
-                                label="Vendor Manager  (Select A for all)"
+                                label="Vendor Manager"
                                 propertyName="vendorManager"
                                 value={options.vendorManager}
                                 onChange={handleOptionChange}
