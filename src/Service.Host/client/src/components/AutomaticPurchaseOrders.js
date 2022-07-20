@@ -42,7 +42,7 @@ function AutomaticPurchaseOrders() {
         },
         { field: 'orderNumber', headerName: 'Order Number', minWidth: 150 },
         { field: 'issuePartsToSupplier', headerName: 'Issue Parts', minWidth: 150 },
-        { field: 'orderMethod', headerName: 'Method', minWidth: 100 }
+        { field: 'authorisedAtCreation', headerName: 'Authorised', minWidth: 150 }
     ];
 
     return (
