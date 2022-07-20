@@ -91,6 +91,18 @@ function MaterialRequirementsReport() {
                         stockCategoryName: query.stockCategoryName
                     })
                 );
+            } else if (query.partNumbers) {
+                dispatch(
+                    mrReportActions.postByHref(mrReportItem.uri, {
+                        partNumbers: query.partNumbers,
+                        jobRef: query.jobRef,
+                        typeOfReport: 'MR',
+                        partSelector: 'Select Parts',
+                        supplierId: query.supplierId,
+                        stockCategoryName: query.stockCategoryName,
+                        orderBySelector: 'supplier/part'
+                    })
+                );
             } else if (query.partNumberList) {
                 dispatch(
                     mrReportActions.postByHref(mrReportItem.uri, {
@@ -99,7 +111,8 @@ function MaterialRequirementsReport() {
                         typeOfReport: 'MR',
                         partSelector: 'Part Number List',
                         supplierId: query.supplierId,
-                        stockCategoryName: query.stockCategoryName
+                        stockCategoryName: query.stockCategoryName,
+                        orderBySelector: 'supplier/part'
                     })
                 );
             }

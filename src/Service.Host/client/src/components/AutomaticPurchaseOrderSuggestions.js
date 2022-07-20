@@ -104,7 +104,7 @@ function AutomaticPurchaseOrderSuggestions() {
 
     const getSuggestedOrders = () => {
         let options = '';
-        if (supplier) {
+        if (supplier && supplier.id) {
             options += `&supplierId=${supplier.id}`;
         }
 
@@ -118,6 +118,16 @@ function AutomaticPurchaseOrderSuggestions() {
     const handleDeleteRow = row => {
         setRows(rows.filter(a => a.id !== row.id));
     };
+
+    const showMr = () => {
+        let href = '/purchasing/material-requirements/report?';
+        rows.forEach(a => {
+            href = `${href}partNumbers=${a.partNumber}&`;
+        });
+
+        window.open(href, '_blank');
+    };
+
     const createOrders = () => {
         if (rows.length > 0) {
             const { jobRef } = rows[0];
@@ -173,7 +183,7 @@ function AutomaticPurchaseOrderSuggestions() {
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
-            <Title text="Automatic Orders" />
+            <Title text="Raise Automatic Orders" />
             <Grid container>
                 <Grid item xs={8}>
                     <Dropdown
@@ -216,9 +226,14 @@ function AutomaticPurchaseOrderSuggestions() {
                     />
                 </Grid>
                 <Grid item xs={2} />
-                <Grid item xs={12}>
+                <Grid item xs={4}>
                     <Button variant="outlined" onClick={getSuggestedOrders}>
                         Fetch Suggested Orders
+                    </Button>
+                </Grid>
+                <Grid item xs={8}>
+                    <Button onClick={showMr} disabled={!rows || rows.length <= 0}>
+                        Show MR For Suggested Parts
                     </Button>
                 </Grid>
                 <Grid item xs={12}>
@@ -232,7 +247,6 @@ function AutomaticPurchaseOrderSuggestions() {
                             rowHeight={34}
                             autoHeight
                             loading={suggestionsLoading}
-                            hideFooter
                             onEditRowsModelChange={handleEditRowsModelChange}
                         />
                     </div>
