@@ -232,13 +232,6 @@ function AutomaticPurchaseOrderSuggestions() {
                     </Button>
                 </Grid>
                 <Grid item xs={8}>
-                    {/* <Button
-                        variant="outlined"
-                        onClick={showMr}
-                        disabled={!rows || rows.length <= 0}
-                    >
-                        Show MR For Suggested Parts
-                    </Button> */}
                     <Button onClick={showMr} disabled={!rows || rows.length <= 0}>
                         Show MR For Suggested Parts
                     </Button>
@@ -254,7 +247,6 @@ function AutomaticPurchaseOrderSuggestions() {
                             rowHeight={34}
                             autoHeight
                             loading={suggestionsLoading}
-                            hideFooter
                             onEditRowsModelChange={handleEditRowsModelChange}
                         />
                     </div>
