@@ -153,6 +153,7 @@
                     "Linn Purchasing",
                     $"Linn Purchase Order {orderNumber}",
                     emailBody,
+                    "pdf",
                     pdf.Result,
                     $"LinnPurchaseOrder{orderNumber}");
 

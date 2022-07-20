@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Messaging.Handlers
+﻿namespace Linn.Purchasing.Messaging.Handlers // will move to common
 {
     using Linn.Common.Logging;
 

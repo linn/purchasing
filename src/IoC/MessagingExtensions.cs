@@ -1,6 +1,6 @@
 ﻿namespace Linn.Purchasing.IoC
 {
-    
+    using Linn.Common.Logging;
     using Linn.Purchasing.Domain.LinnApps.Dispatchers;
     using Linn.Purchasing.Messaging;
     using Linn.Purchasing.Messaging.Dispatchers;
@@ -14,18 +14,28 @@
 
     public static class MessagingExtensions
     {
-        public static IServiceCollection AddMessagingServices(this IServiceCollection services)
+        public static IServiceCollection AddRabbitConfiguration(this IServiceCollection services)
+        {
+            // all the routing keys the Listener cares about need to be registered here:
+            var routingKeys = new[] { EmailMrOrderBookMessage.RoutingKey };
+
+            return services.AddSingleton<ChannelConfiguration>(d => new ChannelConfiguration("purchasing", routingKeys))
+                .AddScoped(d => new EventingBasicConsumer(d.GetService<ChannelConfiguration>()?.ConsumerChannel));
+        }
+
+        public static IServiceCollection AddMessageHandlers(this IServiceCollection services)
         {
             return services
-                .AddSingleton<ChannelConfiguration>(d => new ChannelConfiguration("play", new[] { "type-a" }))
-                .AddScoped(d => new EventingBasicConsumer(
-                    d.GetService<ChannelConfiguration>()?.ConsumerChannel))
+                .AddScoped<Handler<EmailMrOrderBookMessage>, EmailMrOrderBookMessageHandler>();
+        }
 
-                // add handlers for different message types
-                .AddScoped<Handler<EmailMrOrderBookMessage>, EmailMrOrderBookMessageHandler>()
-
-                // add dispatchers for different message types
-                .AddTransient<IMessageDispatcher<EmailOrderBookMessageResource>, EmailOrderBookMessageDispatcher>();
+        public static IServiceCollection AddMessageDispatchers(this IServiceCollection services)
+        {
+            // register dispatchers for different message types:
+            return services
+                .AddTransient<IMessageDispatcher<EmailOrderBookMessageResource>>(
+                    x => new RabbitMessageDispatcher<EmailOrderBookMessageResource>(
+                        x.GetService<ChannelConfiguration>(), x.GetService<ILog>(), EmailMrOrderBookMessage.RoutingKey));
         }
     }
 }

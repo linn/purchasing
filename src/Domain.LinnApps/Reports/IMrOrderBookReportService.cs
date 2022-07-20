@@ -7,5 +7,7 @@
     public interface IMrOrderBookReportService
     {
         IEnumerable<ResultsModel> GetOrderBookReport(int supplierId);
+
+        ResultsModel GetOrderBookExport(int supplierId);
     }
 }

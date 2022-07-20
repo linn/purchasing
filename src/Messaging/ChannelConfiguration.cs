@@ -1,19 +1,16 @@
-﻿namespace Linn.Purchasing.Messaging
+﻿namespace Linn.Purchasing.Messaging  // will move to common
 {
     using System.Collections.Generic;
-    using System.IO;
 
     using Linn.Common.Configuration;
 
     using RabbitMQ.Client;
 
-    // this could move to Common
     public class ChannelConfiguration
     {
         public ChannelConfiguration(string queueName, string[] routingKeys)
         {
             this.Exchange = $"{queueName}.x";
-            var x = Directory.GetCurrentDirectory();
             this.Connection = new ConnectionFactory
             {
                 HostName = ConfigurationManager.Configuration["RABBIT_SERVER"],

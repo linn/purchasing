@@ -30,7 +30,7 @@
             ChannelConfiguration channelConfiguration,
             ILog logger)
         {
-            this.queueName = "play";
+            this.queueName = "purchasing";
             this.consumer = consumer;
             this.logger = logger;
             this.channelConfiguration = channelConfiguration;

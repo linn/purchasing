@@ -2,44 +2,33 @@
 {
     using Linn.Purchasing.Domain.LinnApps.Dispatchers;
     using Linn.Purchasing.Resources.Messages;
+    using Linn.Purchasing.Scheduling.Host.Triggers;
 
-    public class EmailOrderBookScheduler : BackgroundService, IDisposable
+    public class EmailOrderBookScheduler : BackgroundService
     {
         private readonly IMessageDispatcher<EmailOrderBookMessageResource> dispatcher;
-
-        private Timer? timer;
 
         public EmailOrderBookScheduler(IMessageDispatcher<EmailOrderBookMessageResource> dispatcher)
         {
             this.dispatcher = dispatcher;
         }
 
-        public override Task StopAsync(CancellationToken stoppingToken)
-        {
-            this.timer?.Change(Timeout.Infinite, 0);
-
-            return Task.CompletedTask;
-        }
-
-        public override void Dispose()
-        {
-            this.timer?.Dispose();
-        }
-
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            this.timer = new Timer(
-                this.SendMessage,
-                null,
-                TimeSpan.Zero,
-                TimeSpan.FromSeconds(300)); // send a message every 5 minutes
+            var trigger = new DailyTrigger(17); // every day at 5:00pm
 
-            return Task.CompletedTask;
-        }
+            // do the following
+            trigger.OnTimeTriggered += () =>
+                {
+                    // check if its sunday
+                    if (DateTime.Now.DayOfWeek == DayOfWeek.Sunday)
+                    {
+                        // dispatch a message if it is
+                        this.dispatcher.Dispatch(new EmailOrderBookMessageResource { SupplierId = 38577 });
+                    }
+                };
 
-        private void SendMessage(object? state)
-        {
-            this.dispatcher.Dispatch(new EmailOrderBookMessageResource());
+            return Task.Delay(1, stoppingToken);
         }
     }
 }

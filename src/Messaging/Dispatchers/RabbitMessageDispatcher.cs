@@ -1,28 +1,29 @@
-﻿namespace Linn.Purchasing.Messaging.Dispatchers
+﻿namespace Linn.Purchasing.Messaging.Dispatchers // will move to common
 {
     using System.Text;
 
     using Linn.Common.Logging;
     using Linn.Purchasing.Domain.LinnApps.Dispatchers;
-    using Linn.Purchasing.Messaging.Messages;
-    using Linn.Purchasing.Resources.Messages;
 
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
 
-    public class EmailOrderBookMessageDispatcher : IMessageDispatcher<EmailOrderBookMessageResource>
+    public class RabbitMessageDispatcher<T> : IMessageDispatcher<T>
     {
         private readonly ChannelConfiguration channelConfiguration;
 
         private readonly ILog logger;
 
-        public EmailOrderBookMessageDispatcher(ChannelConfiguration channelConfiguration, ILog logger)
+        private readonly string routingKey;
+
+        public RabbitMessageDispatcher(ChannelConfiguration channelConfiguration, ILog logger, string routingKey)
         {
             this.channelConfiguration = channelConfiguration;
             this.logger = logger;
+            this.routingKey = routingKey;
         }
 
-        public void Dispatch(EmailOrderBookMessageResource message)
+        public void Dispatch(T message)
         {
             var json = JsonConvert.SerializeObject(
                 message,
@@ -36,12 +37,12 @@
             this.channelConfiguration.ProducerChannel
                 .BasicPublish(
                     this.channelConfiguration.Exchange,
-                    EmailMrOrderBookMessage.RoutingKey,
+                    this.routingKey,
                     false,
                     null,
                     body);
 
-            this.logger.Info($"Published a message with routing key: {EmailMrOrderBookMessage.RoutingKey}");
+            this.logger.Info($"Published a message with routing key: {this.routingKey}");
         }
     }
 }
