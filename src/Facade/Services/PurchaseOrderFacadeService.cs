@@ -59,16 +59,13 @@
 
             var template = await this.fileReader.ReadFile(this.pathToTemplate);
 
+
             var result = await this.templateEngine.Render(order, template);
 
             return result;
         }
 
-        public async Task<IResult<ProcessResultResource>> EmailOrderPdf(
-            int orderNumber,
-            string emailAddress,
-            bool bcc,
-            int currentUserId)
+        public async Task<IResult<ProcessResultResource>> EmailOrderPdf(int orderNumber, string emailAddress, bool bcc, int currentUserId)
         {
             var order = this.orderRepository.FindById(orderNumber);
 
@@ -76,17 +73,10 @@
 
             var result = await this.templateEngine.Render(order, template);
 
-            var emailResult = this.domainService.SendPdfEmail(
-                result,
-                emailAddress,
-                orderNumber,
-                bcc,
-                currentUserId,
-                order);
+            var emailResult = this.domainService.SendPdfEmail(result, emailAddress, orderNumber, bcc, currentUserId, order);
 
             this.transactionManager.Commit();
-            return new SuccessResult<ProcessResultResource>(
-                new ProcessResultResource(emailResult.Success, emailResult.Message));
+            return new SuccessResult<ProcessResultResource>(new ProcessResultResource(emailResult.Success, emailResult.Message));
         }
 
         protected override PurchaseOrder CreateFromResource(
