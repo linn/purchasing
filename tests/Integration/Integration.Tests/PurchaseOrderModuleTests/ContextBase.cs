@@ -5,6 +5,7 @@
     using Linn.Common.Authorisation;
     using Linn.Common.Facade;
     using Linn.Common.Logging;
+    using Linn.Common.Pdf;
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps;
@@ -12,6 +13,7 @@
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Facade;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
@@ -76,7 +78,9 @@
 
         protected IPurchaseOrderService MockDomainService { get; private set; }
 
-        protected IRazorTemplateService MockRazorTemplateService { get; private set; }
+        protected ITemplateEngine MockTemplateEngine { get; private set; }
+
+        protected IFileReader MockFileReader { get; private set; }
 
         [SetUp]
         public void EstablishContext()
@@ -105,7 +109,8 @@
 
             this.MockDatabaseService = Substitute.For<IDatabaseService>();
             this.MockAuthService = Substitute.For<IAuthorisationService>();
-            this.MockRazorTemplateService = Substitute.For<IRazorTemplateService>();
+            this.MockTemplateEngine = Substitute.For<ITemplateEngine>();
+            this.MockFileReader = Substitute.For<IFileReader>();
 
             this.PurchaseOrderReqFacadeService = new PurchaseOrderReqFacadeService(
                 this.MockPurchaseOrderReqRepository,
@@ -128,7 +133,9 @@
                 purchaseOrderResourceBuilder,
                 this.MockDomainService,
                 this.OverbookAllowedByLogRepository,
-                this.MockRazorTemplateService);
+                "path",
+                this.MockFileReader,
+                this.MockTemplateEngine);
 
             this.Log = Substitute.For<ILog>();
 

@@ -110,7 +110,7 @@
             int orderNumber,
             IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
-            var result = purchaseOrderFacadeService.GetOrderAsHtml(orderNumber);
+            var result = await purchaseOrderFacadeService.GetOrderAsHtml(orderNumber);
 
             res.ContentType = "text/html";
             res.StatusCode = (int)HttpStatusCode.OK;
@@ -126,7 +126,7 @@
             bool bcc,
             IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
-            var result = purchaseOrderFacadeService.EmailOrderPdf(
+            var result = await purchaseOrderFacadeService.EmailOrderPdf(
                 orderNumber,
                 emailAddress,
                 bcc,
