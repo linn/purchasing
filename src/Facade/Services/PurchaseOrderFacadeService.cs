@@ -59,7 +59,6 @@
 
             var template = await this.fileReader.ReadFile(this.pathToTemplate);
 
-
             var result = await this.templateEngine.Render(order, template);
 
             return result;
