@@ -7,6 +7,7 @@
     using System.Threading.Tasks;
 
     using Linn.Common.Facade;
+    using Linn.Common.Logging;
     using Linn.Common.Pdf;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps;
@@ -31,6 +32,8 @@
 
         private readonly ITransactionManager transactionManager;
 
+        private readonly ILog logger;
+
         public PurchaseOrderFacadeService(
             IRepository<PurchaseOrder, int> repository,
             ITransactionManager transactionManager,
@@ -39,7 +42,8 @@
             IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository,
             string pathToTemplate,
             IFileReader filerReader,
-            ITemplateEngine templateEngine)
+            ITemplateEngine templateEngine,
+            ILog logger)
             : base(repository, transactionManager, resourceBuilder)
         {
             this.domainService = domainService;
@@ -49,6 +53,7 @@
             this.templateEngine = templateEngine;
             this.pathToTemplate = pathToTemplate;
             this.fileReader = filerReader;
+            this.logger = logger;
         }
 
         public async Task<string> GetOrderAsHtml(int orderNumber)
@@ -64,16 +69,31 @@
 
         public async Task<IResult<ProcessResultResource>> EmailOrderPdf(int orderNumber, string emailAddress, bool bcc, int currentUserId)
         {
-            var order = this.orderRepository.FindById(orderNumber);
+            try
+            {
+                var order = this.orderRepository.FindById(orderNumber);
 
-            var template = await this.fileReader.ReadFile(this.pathToTemplate);
+                var template = await this.fileReader.ReadFile(this.pathToTemplate);
 
-            var result = await this.templateEngine.Render(order, template);
+                var result = await this.templateEngine.Render(order, template);
 
-            var emailResult = this.domainService.SendPdfEmail(result, emailAddress, orderNumber, bcc, currentUserId, order);
+                var emailResult = this.domainService.SendPdfEmail(
+                    result,
+                    emailAddress,
+                    orderNumber,
+                    bcc,
+                    currentUserId,
+                    order);
 
-            this.transactionManager.Commit();
-            return new SuccessResult<ProcessResultResource>(new ProcessResultResource(emailResult.Success, emailResult.Message));
+                this.logger.Write(LoggingLevel.Info, new List<LoggingProperty>(), emailResult.Message);
+                this.transactionManager.Commit();
+                return new SuccessResult<ProcessResultResource>(new ProcessResultResource(emailResult.Success, emailResult.Message));
+            }
+            catch (Exception ex)
+            {
+                this.logger.Write(LoggingLevel.Error, new List<LoggingProperty>(), ex.Message);
+                return new BadRequestResult<ProcessResultResource>(ex.Message);
+            }
         }
 
         protected override PurchaseOrder CreateFromResource(

@@ -2,6 +2,7 @@
 {
     using Linn.Common.Authorisation;
     using Linn.Common.Facade;
+    using Linn.Common.Logging;
     using Linn.Common.Pdf;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps;
@@ -45,6 +46,9 @@
 
         protected IFileReader FileReader { get; private set; }
 
+        protected ILog Logger { get; private set; }
+
+
         [SetUp]
         public void SetUpContext()
         {
@@ -73,6 +77,7 @@
             this.TemplateEngine = Substitute.For<ITemplateEngine>();
 
             this.FileReader = Substitute.For<IFileReader>();
+            this.Logger = Substitute.For<ILog>();
 
             this.Sut = new PurchaseOrderFacadeService(
                 this.PurchaseOrderRepository,
@@ -82,7 +87,8 @@
                 this.OverbookAllowedByLogRepository,
                 "path",
                 this.FileReader,
-                this.TemplateEngine);
+                this.TemplateEngine,
+                this.Logger);
         }
     }
 }

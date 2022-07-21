@@ -156,13 +156,13 @@
                     pdf.Result,
                     $"LinnPurchaseOrder{orderNumber}");
 
+            order.SentByMethod = "EMAIL";
+
+            //// todo When remove mini orders: stop setting sentbymethod mini order and switch to below
             var miniOrder = this.miniOrderRepository.FindById(orderNumber);
             miniOrder.SentByMethod = "EMAIL";
-            //// mini order trigger will update pl order. When remove mini orders:
-            //// todo stop setting sentbymethod mini order and switch to below
-            //// order.SentByMethod = "EMAIL";
 
-            return new ProcessResult(true, "Email Sent");
+            return new ProcessResult(true, $"Email sent for purchase order {orderNumber} to {emailAddress}");
         }
 
         private void UpdateDetails(ICollection<PurchaseOrderDetail> currentDetails, ICollection<PurchaseOrderDetail> updatedDetails)
