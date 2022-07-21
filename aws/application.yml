@@ -298,7 +298,7 @@ Resources:
         TargetGroupArn:
           Fn::ImportValue:
             !Sub "purchasing-target-group-arn${environmentSuffix}"
-purchasingMessagingService:
+  purchasingMessagingService:
     Type: AWS::ECS::Service
     Properties:
       # Have to use long form conditional
@@ -308,7 +308,7 @@ purchasingMessagingService:
         - !Sub ${ProductionClusterName}
       DesiredCount: !If [ isTesting, 1, 1]
       TaskDefinition: !Ref purchasingMessagingTaskDefinition
-purchasingSchedulingService:
+  purchasingSchedulingService:
     Type: AWS::ECS::Service
     Properties:
       # Have to use long form conditional
