@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
 	  <RootNamespace>Linn.Purchasing.Scheduling.Host</RootNamespace>
+    <AssemblyName>Linn.Purchasing.Scheduling.Host</AssemblyName>
 	  <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>dotnet-Scheduling.Host-D29ECBB1-918A-41B7-9ACF-9A7D961C65F7</UserSecretsId>
