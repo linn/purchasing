@@ -15,17 +15,17 @@
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var trigger = new DailyTrigger(17); // every day at 5:00pm
+            var trigger = new DailyTrigger(10); // every day at 5:00pm
 
             // do the following
             trigger.OnTimeTriggered += () =>
                 {
                     // check if its sunday
-                    if (DateTime.Now.DayOfWeek == DayOfWeek.Sunday)
-                    {
+                    // if (DateTime.Now.DayOfWeek == DayOfWeek.Sunday)
+                    // {
                         // dispatch a message if it is
-                        this.dispatcher.Dispatch(new EmailOrderBookMessageResource { SupplierId = 38577 });
-                    }
+                    this.dispatcher.Dispatch(new EmailOrderBookMessageResource { SupplierId = 38577 });
+                    //}
                 };
 
             return Task.Delay(1, stoppingToken);
