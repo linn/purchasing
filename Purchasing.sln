@@ -65,6 +65,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.LinnApps", "src\Doma
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.LinnApps.Tests", "tests\Unit\Domain.LinnApps.Tests\Domain.LinnApps.Tests.csproj", "{E5E5B5E0-3AB8-41D3-93FA-A0C6AF68796A}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scheduling.Host", "src\Scheduling.Host\Scheduling.Host.csproj", "{15C14AF1-0B06-44DC-89DE-FE503CE8B338}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -143,6 +145,10 @@ Global
 		{E5E5B5E0-3AB8-41D3-93FA-A0C6AF68796A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5E5B5E0-3AB8-41D3-93FA-A0C6AF68796A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5E5B5E0-3AB8-41D3-93FA-A0C6AF68796A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15C14AF1-0B06-44DC-89DE-FE503CE8B338}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15C14AF1-0B06-44DC-89DE-FE503CE8B338}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15C14AF1-0B06-44DC-89DE-FE503CE8B338}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15C14AF1-0B06-44DC-89DE-FE503CE8B338}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

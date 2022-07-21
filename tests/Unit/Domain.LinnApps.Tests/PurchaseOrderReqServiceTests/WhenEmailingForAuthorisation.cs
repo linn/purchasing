@@ -84,18 +84,6 @@
                         PhoneListEntry = new PhoneListEntry { EmailAddress = "bigstormz@gmail" }
                     });
 
-            this.EmailService.SendEmail(
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<IEnumerable<Dictionary<string, string>>>(),
-                Arg.Any<IEnumerable<Dictionary<string, string>>>(),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<Stream>(),
-                Arg.Any<string>());
-
             this.result = this.Sut.SendAuthorisationRequestEmail(this.currentUserNumber, 213, this.entity);
         }
 
@@ -111,6 +99,7 @@
                 "Big Jimbo",
                 $"Purchase Order Req {this.entity.ReqNumber} requires authorisation",
                 Arg.Any<string>(),
+                "pdf",
                 Arg.Any<Stream>(),
                 string.Empty);
         }

@@ -122,6 +122,7 @@
                     sender.FullName,
                     $"Linn Products {note.NoteType.PrintDescription} {note.NoteNumber}",
                     $"Attached is a copy of Linn Products {note.NoteType.PrintDescription} {note.NoteNumber}",
+                    "pdf",
                     pdfAttachment,
                     $"{note.NoteType.PrintDescription} {note.NoteNumber}");
 

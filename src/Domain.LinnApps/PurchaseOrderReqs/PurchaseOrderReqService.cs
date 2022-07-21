@@ -262,6 +262,7 @@
                     from.FullName,
                     $"Purchase Order Req {req.ReqNumber} requires authorisation",
                     body,
+                    "pdf",
                     null,
                     string.Empty);
 
@@ -296,6 +297,7 @@
                     from.FullName,
                     $"Purchase Order Req {reqNumber}",
                     $"Attached is a copy of Purchase Order Req {reqNumber}",
+                    "pdf",
                     pdfAttachment,
                     $"Purchase Order Req {reqNumber}");
 
@@ -334,9 +336,7 @@
                     from.PhoneListEntry.EmailAddress.Trim(),
                     from.FullName,
                     $"Purchase Order Req {req.ReqNumber} requires finance authorisation",
-                    body,
-                    null,
-                    string.Empty);
+                    body);
 
                 return new ProcessResult(true, "Email Sent");
             }

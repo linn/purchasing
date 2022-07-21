@@ -13,7 +13,6 @@ namespace Linn.Purchasing.Service.Host
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Http.Json;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.FileProviders;
     using Microsoft.Extensions.Hosting;
@@ -35,7 +34,9 @@ namespace Linn.Purchasing.Service.Host
             services.AddServices();
             services.AddPersistence();
             services.AddHandlers();
-            services.AddMessagingServices();
+
+            services.AddRabbitConfiguration();
+            services.AddMessageDispatchers();
 
             services.AddCarter();
             services.AddLinnAuthentication(

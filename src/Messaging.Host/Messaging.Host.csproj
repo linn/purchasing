@@ -1,21 +1,27 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-	<TargetFramework>net6.0</TargetFramework>
-    <AssemblyName>Linn.Purchasing.Messaging.Host</AssemblyName>
-    <RootNamespace>Linn.Purchasing.Messaging.Host</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<AssemblyName>Linn.Purchasing.Messaging.Host</AssemblyName>
+		<RootNamespace>Linn.Purchasing.Messaging.Host</RootNamespace>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Linn.Common.Logging" Version="2.0.0" />
-    <PackageReference Include="Linn.Common.Messaging.RabbitMQ.Autofac" Version="2.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Linn.Common.Configuration" Version="2.0.0" />
+		<PackageReference Include="Linn.Common.Logging" Version="2.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+		<PackageReference Include="RabbitMQ.Client" Version="6.4.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\IoC\IoC.csproj" />
-    <ProjectReference Include="..\Messaging\Messaging.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\IoC\IoC.csproj" />
+		<ProjectReference Include="..\Messaging\Messaging.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Jobs\" />
+	</ItemGroup>
 
 </Project>

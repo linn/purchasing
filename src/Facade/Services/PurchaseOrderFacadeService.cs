@@ -14,6 +14,7 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.SearchResources;
+
     public class PurchaseOrderFacadeService :
         FacadeFilterResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource, PurchaseOrderSearchResource>,
         IPurchaseOrderFacadeService
@@ -27,6 +28,7 @@
         private readonly IFileReader fileReader;
 
         private readonly string pathToTemplate;
+
         private readonly IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository;
 
         private readonly ITransactionManager transactionManager;

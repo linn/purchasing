@@ -60,6 +60,7 @@
                 "Linn Purchasing",
                 $"Linn Purchase Order {this.orderNumber}",
                 Arg.Any<string>(),
+                "pdf",
                 Arg.Any<Stream>(),
                 $"LinnPurchaseOrder{this.orderNumber}");
         }
