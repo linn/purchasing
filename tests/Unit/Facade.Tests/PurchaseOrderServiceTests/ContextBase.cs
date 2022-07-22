@@ -48,7 +48,6 @@
 
         protected ILog Logger { get; private set; }
 
-
         [SetUp]
         public void SetUpContext()
         {
