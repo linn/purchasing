@@ -47,7 +47,6 @@
 
         protected IRepository<NominalAccount, int> MockNominalAccountRepository { get; private set; }
 
-
         [SetUp]
         public void SetUpContext()
         {
