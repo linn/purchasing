@@ -130,6 +130,8 @@
                 new LinnDeliveryAddressResourceBuilder(),
                 new AddressResourceBuilder(this.MockFullAddressRepository));
 
+            this.Log = Substitute.For<ILog>();
+
             this.PurchaseOrderFacadeService = new PurchaseOrderFacadeService(
                 this.MockPurchaseOrderRepository,
                 this.TransactionManager,
@@ -138,9 +140,8 @@
                 this.OverbookAllowedByLogRepository,
                 "path",
                 this.MockFileReader,
-                this.MockTemplateEngine);
-
-            this.Log = Substitute.For<ILog>();
+                this.MockTemplateEngine,
+                this.Log);
 
             this.Client = TestClient.With<PurchaseOrderModule>(
                 services =>
