@@ -319,7 +319,6 @@
             firstDetail.SuppliersDesignation.Should().Be("updated suppliers designation");
 
             firstDetail.OrderPosting.NominalAccountId.Should().Be(911);
-            firstDetail.OrderPosting.NominalAccount.AccountId.Should().Be(911);
 
             var delivery = firstDetail.PurchaseDeliveries.First();
 
@@ -348,7 +347,7 @@
             this.miniOrder.Nominal.Should().Be("00009222");
             this.miniOrder.Department.Should().Be("0000911");
 
-            firstDetail.OrderPosting.NominalAccount.AccountId.Should().Be(911);
+            firstDetail.OrderPosting.NominalAccountId.Should().Be(911);
 
             var delivery = firstDetail.PurchaseDeliveries.First();
 

@@ -337,7 +337,6 @@
             if (current.OrderPosting.NominalAccountId != updated.OrderPosting.NominalAccountId)
             {
                 current.OrderPosting.NominalAccountId = updated.OrderPosting.NominalAccountId;
-                current.OrderPosting.NominalAccount = updated.OrderPosting.NominalAccount;
             }
         }
     }

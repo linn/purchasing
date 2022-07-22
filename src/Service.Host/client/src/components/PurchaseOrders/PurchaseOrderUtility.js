@@ -950,8 +950,7 @@ function PurchaseOrderUtility({ creating }) {
                                             }
                                             debounce={1000}
                                             minimumSearchTermLength={2}
-                                            disabled
-                                            // disabled={!allowedToUpdate}
+                                            disabled={!allowedToUpdate}
                                             required
                                         />
                                     </Grid>

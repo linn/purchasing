@@ -153,10 +153,12 @@
         public DbSet<ShortagesPlannerEntry> ShortagesPlannerEntries { get; set; }
 
         public DbSet<PartNumberList> PartNumberLists { get; set; }
-        
+
         public DbSet<AutomaticPurchaseOrder> AutomaticPurchaseOrders { get; set; }
 
         public DbSet<AutomaticPurchaseOrderSuggestion> AutomaticPurchaseOrderSuggestions { get; set; }
+
+        public DbSet<NominalAccount> NominalAccounts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -1259,7 +1261,7 @@
             entity.Property(d => d.State).HasColumnName("STATE").HasColumnType("VARCHAR2");
             entity.Property(d => d.Qty).HasColumnName("QTY");
         }
-        
+
         private void BuildMrUsedOnView(ModelBuilder builder)
         {
             var entity = builder.Entity<MrUsedOnRecord>().ToTable("MR_USED_ON_VIEW").HasNoKey();
