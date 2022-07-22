@@ -158,7 +158,7 @@
 
             order.SentByMethod = "EMAIL";
 
-            //// todo When remove mini orders: stop setting sentbymethod mini order and switch to below
+            //// todo When get rid of mini orders remove below
             var miniOrder = this.miniOrderRepository.FindById(orderNumber);
             miniOrder.SentByMethod = "EMAIL";
 
