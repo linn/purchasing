@@ -1259,7 +1259,7 @@
             entity.Property(d => d.State).HasColumnName("STATE").HasColumnType("VARCHAR2");
             entity.Property(d => d.Qty).HasColumnName("QTY");
         }
-        
+
         private void BuildMrUsedOnView(ModelBuilder builder)
         {
             var entity = builder.Entity<MrUsedOnRecord>().ToTable("MR_USED_ON_VIEW").HasNoKey();
