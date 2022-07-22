@@ -153,10 +153,12 @@
         public DbSet<ShortagesPlannerEntry> ShortagesPlannerEntries { get; set; }
 
         public DbSet<PartNumberList> PartNumberLists { get; set; }
-        
+
         public DbSet<AutomaticPurchaseOrder> AutomaticPurchaseOrders { get; set; }
 
         public DbSet<AutomaticPurchaseOrderSuggestion> AutomaticPurchaseOrderSuggestions { get; set; }
+
+        public DbSet<NominalAccount> NominalAccounts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

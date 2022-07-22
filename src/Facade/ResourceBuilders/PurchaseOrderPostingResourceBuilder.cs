@@ -4,13 +4,21 @@
     using System.Collections.Generic;
 
     using Linn.Common.Facade;
+    using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
 
     public class PurchaseOrderPostingResourceBuilder : IBuilder<PurchaseOrderPosting>
     {
+        private readonly IRepository<NominalAccount, int> nomaccRepository;
+        public PurchaseOrderPostingResourceBuilder(IRepository<NominalAccount, int> nomaccRepository)
+        {
+            this.nomaccRepository = nomaccRepository;
+        }
         public PurchaseOrderPostingResource Build(PurchaseOrderPosting entity, IEnumerable<string> claims)
         {
+            var nomacc = this.nomaccRepository.FindById(entity.NominalAccountId);
             return new PurchaseOrderPostingResource
                        {
                            Building = entity.Building,
@@ -22,15 +30,14 @@
                                        AccountId = entity.NominalAccountId,
                                        Department = new DepartmentResource
                                                         {
-                                                            Description =
-                                                                entity.NominalAccount?.Department?.Description,
-                                                            DepartmentCode = entity.NominalAccount?.Department
+                                                            Description = nomacc.Department?.Description,
+                                                            DepartmentCode = nomacc.Department
                                                                 ?.DepartmentCode
                                                         },
                                        Nominal = new NominalResource
                                                      {
-                                                         Description = entity.NominalAccount?.Nominal?.Description,
-                                                         NominalCode = entity.NominalAccount?.Nominal?.NominalCode
+                                                         Description = nomacc.Nominal?.Description,
+                                                         NominalCode = nomacc.Nominal?.NominalCode
                                                      }
                                    },
                            NominalAccountId = entity.NominalAccountId,

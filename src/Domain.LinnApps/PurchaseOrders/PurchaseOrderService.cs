@@ -30,9 +30,6 @@
 
         private readonly IRepository<MiniOrder, int> miniOrderRepository;
 
-        private readonly IRepository<NominalAccount, int> nominalAccountRepository;
-
-
         public PurchaseOrderService(
             IAuthorisationService authService,
             IPurchaseLedgerPack purchaseLedgerPack,
@@ -49,7 +46,6 @@
             this.emailService = emailService;
             this.employeeRepository = employeeRepository;
             this.miniOrderRepository = miniOrderRepository;
-            //this.nominalAccountRepository = nominalAccountRepository;
         }
 
         public void AllowOverbook(
@@ -341,20 +337,6 @@
             if (current.OrderPosting.NominalAccountId != updated.OrderPosting.NominalAccountId)
             {
                 current.OrderPosting.NominalAccountId = updated.OrderPosting.NominalAccountId;
-
-                //could maybe do something like below and set nominalAccount to be nomacc, not sure if we should
-                //use a proxy call for it
-                //var nomacc = this.nominalAccountRepository.FindById(updated.OrderPosting.NominalAccountId);
-
-                //below doesn't work, neither does setting the whole nominal account like I originally tried.
-                //I think they both make it try and insert a new record and we haven't given department number etc
-                //so it fails inserting a new department (which we don't want it to do anyway) because it doesn't have all the fields
-                //current.OrderPosting.NominalAccount.AccountId = updated.OrderPosting.NominalAccount.AccountId;
-                //current.OrderPosting.NominalAccount.Department.Description = updated.OrderPosting.NominalAccount.Department.Description;
-                //current.OrderPosting.NominalAccount.Department.DepartmentCode = updated.OrderPosting.NominalAccount.Department.DepartmentCode;
-                //current.OrderPosting.NominalAccount.Nominal.Description = updated.OrderPosting.NominalAccount.Nominal.Description;
-                //current.OrderPosting.NominalAccount.Nominal.NominalCode = updated.OrderPosting.NominalAccount.Nominal.NominalCode;
-
             }
         }
     }
