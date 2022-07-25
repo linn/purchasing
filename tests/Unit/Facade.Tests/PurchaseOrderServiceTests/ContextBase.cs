@@ -38,6 +38,8 @@
 
         protected IRepository<FullAddress, int> FullAddressRepository { get; private set; }
 
+        protected IRepository<NominalAccount, int> MockNominalAccountRepository { get; private set; }
+
         protected PurchaseOrderFacadeService Sut { get; private set; }
 
         protected ITransactionManager TransactionManager { get; private set; }
