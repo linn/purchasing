@@ -28,7 +28,7 @@
         public void SetUpContext()
         {
             this.MockDomainService = Substitute.For<IEdiOrderService>();
-            this.FacadeService = new EdiOrdersFacadeService(this.MockDomainService, new EdiOrderResourceBuilder());
+            this.FacadeService = new EdiOrdersFacadeService(this.MockDomainService, new EdiOrderResourceBuilder(), new EdiSupplierResourceBuilder());
 
             this.Client = TestClient.With<EdiModule>(
                 services =>

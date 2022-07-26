@@ -3,6 +3,7 @@
     using Linn.Common.Persistence;
     using Linn.Common.Persistence.EntityFramework;
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
@@ -133,13 +134,20 @@
                     r => new EntityFrameworkSingleRecordRepository<PurchaseLedgerMaster>(r.GetService<ServiceDbContext>()?.PurchaseLedgerMaster))
                 .AddTransient<IRepository<MiniOrderDelivery, MiniOrderDeliveryKey>, EntityFrameworkRepository<MiniOrderDelivery, MiniOrderDeliveryKey>>(
                     r => new EntityFrameworkRepository<MiniOrderDelivery, MiniOrderDeliveryKey>(r.GetService<ServiceDbContext>()?.MiniOrdersDeliveries))
+                .AddTransient<IQueryRepository<EdiSupplier>, EntityFrameworkQueryRepository<EdiSupplier>>(
+                    r => new EntityFrameworkQueryRepository<EdiSupplier>(r.GetService<ServiceDbContext>()
+                        ?.EdiSuppliers))
                 .AddTransient<IQueryRepository<ShortagesEntry>, EntityFrameworkQueryRepository<ShortagesEntry>>(
                     r => new EntityFrameworkQueryRepository<ShortagesEntry>(r.GetService<ServiceDbContext>()
                         ?.ShortagesEntries))
                 .AddTransient<IQueryRepository<ShortagesPlannerEntry>, EntityFrameworkQueryRepository<ShortagesPlannerEntry>>(
                 r => new EntityFrameworkQueryRepository<ShortagesPlannerEntry>(r.GetService<ServiceDbContext>()
                     ?.ShortagesPlannerEntries))
-                .AddTransient<IRepository<PartNumberList, string>, PartNumberListRepository>();
+                .AddTransient<IRepository<PartNumberList, string>, PartNumberListRepository>()
+                .AddTransient<IRepository<AutomaticPurchaseOrder, int>, AutomaticPurchaseOrderRepository>()
+                .AddTransient<IRepository<AutomaticPurchaseOrderSuggestion, int>, EntityFrameworkRepository<AutomaticPurchaseOrderSuggestion, int>>(
+                    r => new EntityFrameworkRepository<AutomaticPurchaseOrderSuggestion, int>(r.GetService<ServiceDbContext>()?.AutomaticPurchaseOrderSuggestions))
+                .AddTransient<IRepository<NominalAccount, int>, NominalAccountRepository>();
         }
     }
 }

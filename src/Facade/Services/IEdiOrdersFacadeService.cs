@@ -8,6 +8,8 @@
 
     public interface IEdiOrdersFacadeService
     {
+        IResult<IEnumerable<EdiSupplierResource>> GetEdiSuppliers();
+
         IResult<IEnumerable<EdiOrderResource>> GetEdiOrders(int supplierId);
 
         IResult<ProcessResultResource> SendEdiOrder(SendEdiEmailResource resource);

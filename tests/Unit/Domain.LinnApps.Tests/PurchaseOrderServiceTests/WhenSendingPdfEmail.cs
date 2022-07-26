@@ -68,7 +68,7 @@
         public void ShouldReturnSuccessProcessResult()
         {
             this.result.Success.Should().BeTrue();
-            this.result.Message.Should().Be("Email Sent");
+            this.result.Message.Should().Be("Email sent for purchase order 5678 to seller@wesellthings.com");
         }
 
         [Test]

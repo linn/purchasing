@@ -13,5 +13,7 @@
         bool OrderIsCompleteSql(int orderNumber, int lineNumber);
 
         decimal GetVatAmountSupplier(decimal total, int supplierId);
+
+        bool IssuePartsToSupplier(string partNumber, int supplierId);
     }
 }

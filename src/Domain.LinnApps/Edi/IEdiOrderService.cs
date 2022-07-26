@@ -6,6 +6,8 @@
     {
         IEnumerable<EdiOrder> GetEdiOrders(int supplierId);
 
+        IEnumerable<EdiSupplier> GetEdiSuppliers();
+
         ProcessResult SendEdiOrder(int supplierId, string altEmail, string additionalEmail, string additionalText, bool test);
     }
 }

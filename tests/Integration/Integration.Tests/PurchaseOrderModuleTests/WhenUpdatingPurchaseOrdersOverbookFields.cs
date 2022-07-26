@@ -5,7 +5,7 @@
     using System.Net.Http.Json;
 
     using FluentAssertions;
-    
+
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
@@ -23,20 +23,20 @@
         public void SetUp()
         {
             this.resource = new PurchaseOrderResource
-                                {
-                                    OrderNumber = 600179,
-                                    Overbook = "Y",
-                                    OverbookQty = 1,
-                                    CurrentlyUsingOverbookForm = true
-                                };
+            {
+                OrderNumber = 600179,
+                Overbook = "Y",
+                OverbookQty = 1,
+                CurrentlyUsingOverbookForm = true
+            };
 
             this.MockPurchaseOrderRepository.FindById(600179).Returns(
                 new PurchaseOrder
-                    {
-                        OrderNumber = 600179,
-                        OverbookQty = 1,
-                        Supplier = new Supplier { SupplierId = 1224 }
-                    });
+                {
+                    OrderNumber = 600179,
+                    OverbookQty = 1,
+                    Supplier = new Supplier { SupplierId = 1224 }
+                });
 
             this.Response = this.Client.PutAsJsonAsync(
                 $"/purchasing/purchase-orders/600179",

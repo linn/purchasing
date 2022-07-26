@@ -2,6 +2,8 @@
 {
     using Linn.Common.Authorisation;
     using Linn.Common.Facade;
+    using Linn.Common.Logging;
+    using Linn.Common.Pdf;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
@@ -36,24 +38,31 @@
 
         protected IRepository<FullAddress, int> FullAddressRepository { get; private set; }
 
+        protected IRepository<NominalAccount, int> MockNominalAccountRepository { get; private set; }
+
         protected PurchaseOrderFacadeService Sut { get; private set; }
 
         protected ITransactionManager TransactionManager { get; private set; }
 
-        protected IRazorTemplateService RazorTemplateService { get; private set; }
+        protected ITemplateEngine TemplateEngine { get; private set; }
+
+        protected IFileReader FileReader { get; private set; }
+
+        protected ILog Logger { get; private set; }
 
         [SetUp]
         public void SetUpContext()
         {
             this.PurchaseOrderRepository = Substitute.For<IRepository<PurchaseOrder, int>>();
             this.FullAddressRepository = Substitute.For<IRepository<FullAddress, int>>();
+            this.MockNominalAccountRepository = Substitute.For<IRepository<NominalAccount, int>>();
 
             this.OverbookAllowedByLogRepository = Substitute.For<IRepository<OverbookAllowedByLog, int>>();
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.DomainService = Substitute.For<IPurchaseOrderService>();
             this.AuthService = Substitute.For<IAuthorisationService>();
             this.PurchaseOrderDeliveryResourceBuilder = new PurchaseOrderDeliveryResourceBuilder();
-            this.PurchaseOrderPostingResourceBuilder = new PurchaseOrderPostingResourceBuilder();
+            this.PurchaseOrderPostingResourceBuilder = new PurchaseOrderPostingResourceBuilder(this.MockNominalAccountRepository);
             this.LinnDeliveryAddressResourceBuilder = new LinnDeliveryAddressResourceBuilder();
             this.AddressResourceBuilder = new AddressResourceBuilder(this.FullAddressRepository);
 
@@ -67,7 +76,10 @@
                 this.LinnDeliveryAddressResourceBuilder,
                 this.AddressResourceBuilder);
 
-            this.RazorTemplateService = Substitute.For<IRazorTemplateService>();
+            this.TemplateEngine = Substitute.For<ITemplateEngine>();
+
+            this.FileReader = Substitute.For<IFileReader>();
+            this.Logger = Substitute.For<ILog>();
 
             this.Sut = new PurchaseOrderFacadeService(
                 this.PurchaseOrderRepository,
@@ -75,7 +87,10 @@
                 this.Builder,
                 this.DomainService,
                 this.OverbookAllowedByLogRepository,
-                this.RazorTemplateService);
+                "path",
+                this.FileReader,
+                this.TemplateEngine,
+                this.Logger);
         }
     }
 }

@@ -12,6 +12,7 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.SearchResources;
     using Linn.Purchasing.Service.Extensions;
     using Linn.Purchasing.Service.Models;
 
@@ -109,7 +110,7 @@
             int orderNumber,
             IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
-            var result = purchaseOrderFacadeService.GetOrderAsHtml(orderNumber);
+            var result = await purchaseOrderFacadeService.GetOrderAsHtml(orderNumber);
 
             res.ContentType = "text/html";
             res.StatusCode = (int)HttpStatusCode.OK;
@@ -125,7 +126,7 @@
             bool bcc,
             IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
-            var result = purchaseOrderFacadeService.EmailOrderPdf(
+            var result = await purchaseOrderFacadeService.EmailOrderPdf(
                 orderNumber,
                 emailAddress,
                 bcc,
@@ -150,7 +151,8 @@
             string searchTerm,
             IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
-            var result = purchaseOrderFacadeService.Search(searchTerm, req.HttpContext.GetPrivileges());
+            var resource = new PurchaseOrderSearchResource { OrderNumber = searchTerm };
+            var result = purchaseOrderFacadeService.FilterBy(resource, numberToTake: 50, req.HttpContext.GetPrivileges());
             await res.Negotiate(result);
         }
 

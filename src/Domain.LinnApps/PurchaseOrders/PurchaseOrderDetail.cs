@@ -28,8 +28,6 @@
 
         public decimal? DetailTotalCurrency { get; set; }
 
-        public decimal? Duty { get; set; }
-
         public string InternalComments { get; set; }
 
         public int Line { get; set; }
