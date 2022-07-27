@@ -19,5 +19,7 @@
         public string AvailableAtSupplier { get; set; }
 
         public decimal UnitPrice { get; set; }
+
+        public DateTime DateRequested { get; set; }
     }
 }
