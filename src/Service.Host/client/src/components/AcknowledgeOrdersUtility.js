@@ -81,6 +81,12 @@ function AcknowledgeOrdersUtility() {
             setRows(
                 items.map(i => ({
                     ...i,
+                    dateRequested: i.dateRequested
+                        ? new Date(i.dateRequested).toLocaleDateString()
+                        : null,
+                    dateAdvised: i.dateAdvised
+                        ? new Date(i.dateAdvised).toLocaleDateString()
+                        : null,
                     id: `${i.orderNumber}/${i.orderLine}/${i.deliverySeq}`
                 }))
             );
@@ -216,11 +222,12 @@ function AcknowledgeOrdersUtility() {
                     orderLine: r.orderLine,
                     deliverySequence: r.deliverySeq,
                     dateAdvised: newValues.dateAdvised,
-                    dateRequested: newValues.dateRequested,
+                    dateRequested: r.dateRequested,
                     qty: r.ourDeliveryQty,
                     reason: newValues.rescheduleReason,
                     comment: newValues.supplierConfirmationComment,
-                    availableAtSupplier: newValues.availableAtSupplier
+                    availableAtSupplier: newValues.availableAtSupplier,
+                    unitPrice: r.orderUnitPriceCurrency
                 }))
             )
         );

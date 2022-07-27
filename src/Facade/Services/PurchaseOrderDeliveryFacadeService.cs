@@ -159,7 +159,8 @@
                              NewReason = u.Reason,
                              Qty = u.Qty,
                              AvailableAtSupplier = u.AvailableAtSupplier,
-                             Comment = u.Comment
+                             Comment = u.Comment, 
+                             UnitPrice = u.UnitPrice
                          }).ToList();
             var result = this.domainService
                 .BatchUpdateDeliveries(updates, privileges);
@@ -174,6 +175,7 @@
                             DeliverySeq = u.Key.DeliverySequence,
                             OrderLine = u.Key.OrderLine,
                             DateAdvised = u.NewDateAdvised,
+                            DateRequested = u.DateRequested,
                             AvailableAtSupplier = u.AvailableAtSupplier,
                             SupplierConfirmationComment = u.Comment,
                             RescheduleReason = u.NewReason,
