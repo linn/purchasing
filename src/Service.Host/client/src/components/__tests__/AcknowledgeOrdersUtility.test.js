@@ -30,8 +30,8 @@ const batchUpdateSpy = jest.spyOn(batchPurchaseOrderDeliveriesUpdateActions, 're
 const searchResults = [
     {
         cancelled: 'Y',
-        dateAdvised: null,
-        dateRequested: '03/01/1994',
+        dateAdvised: '2022-05-30T00:00:00.0000000',
+        dateRequested: '2022-04-30T00:00:00.0000000',
         deliverySeq: 1,
         netTotalCurrency: 375,
         baseNetTotal: 375,
@@ -228,7 +228,9 @@ describe('When Updating', () => {
         expect(commentInput).toBeInTheDocument();
         fireEvent.change(commentInput, { target: { value: 'NEW COMMENT' } });
         expect(screen.getByDisplayValue('NEW COMMENT')).toBeInTheDocument();
-
+        const availableAtSupplierInput = await screen.findByLabelText('Available at Supplier');
+        expect(availableAtSupplierInput).toBeInTheDocument();
+        fireEvent.change(availableAtSupplierInput, { target: { value: 'Y' } });
         const saveButton = screen.getByRole('button', { name: 'Save' });
         fireEvent.click(saveButton);
         expect(batchUpdateSpy).toHaveBeenCalledTimes(1);
@@ -238,7 +240,12 @@ describe('When Updating', () => {
                     comment: 'NEW COMMENT',
                     deliverySequence: 1,
                     orderLine: 1,
-                    orderNumber: 123463
+                    orderNumber: 123463,
+                    dateRequested: '2022-04-30T00:00:00.0000000',
+                    qty: 7500,
+                    reason: 'ADVISED',
+                    availableAtSupplier: 'Y',
+                    unitPrice: 0.025
                 })
             ])
         );

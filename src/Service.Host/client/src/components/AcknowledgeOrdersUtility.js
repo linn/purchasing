@@ -81,12 +81,8 @@ function AcknowledgeOrdersUtility() {
             setRows(
                 items.map(i => ({
                     ...i,
-                    dateRequested: i.dateRequested
-                        ? new Date(i.dateRequested).toLocaleDateString()
-                        : null,
-                    dateAdvised: i.dateAdvised
-                        ? new Date(i.dateAdvised).toLocaleDateString()
-                        : null,
+                    dateRequested: i.dateRequested,
+                    dateAdvised: i.dateAdvised,
                     id: `${i.orderNumber}/${i.orderLine}/${i.deliverySeq}`
                 }))
             );
@@ -96,6 +92,9 @@ function AcknowledgeOrdersUtility() {
     const itemsLoading = useSelector(state =>
         collectionSelectorHelpers.getLoading(state[purchaseOrderDeliveries.item])
     );
+
+    const getDateString = isoString =>
+        isoString ? new Date(isoString).toLocaleDateString() : null;
 
     const columns = [
         { field: 'id', headerName: 'Id', width: 100, hide: true },
@@ -110,11 +109,17 @@ function AcknowledgeOrdersUtility() {
                     <Button
                         onClick={() => {
                             setDeliveriesToSplit(
-                                rows.filter(
-                                    d =>
-                                        d.orderNumber === params.row.orderNumber &&
-                                        d.orderLine === params.row.orderLine
-                                )
+                                rows
+                                    .filter(
+                                        d =>
+                                            d.orderNumber === params.row.orderNumber &&
+                                            d.orderLine === params.row.orderLine
+                                    )
+                                    .map(d => ({
+                                        ...d,
+                                        dateRequested: getDateString(d.dateRequested),
+                                        dateAdvised: getDateString(d.dateAdvised)
+                                    }))
                             );
                             setSplitDeliveriesDialogOpen(true);
                         }}
@@ -129,8 +134,18 @@ function AcknowledgeOrdersUtility() {
         { field: 'baseOrderUnitPrice', headerName: 'Unit Price', width: 100 },
         { field: 'partNumber', headerName: 'Part', width: 100 },
         { field: 'ourDeliveryQty', headerName: 'Qty', width: 100 },
-        { field: 'dateRequested', headerName: 'Request Date', width: 100 },
-        { field: 'dateAdvised', headerName: 'Advised Date', width: 100 },
+        {
+            field: 'dateRequested',
+            headerName: 'Request Date',
+            width: 100,
+            renderCell: params => getDateString(params.row.dateRequested)
+        },
+        {
+            field: 'dateAdvised',
+            headerName: 'Advised Date',
+            width: 100,
+            renderCell: params => getDateString(params.row.dateAdvised)
+        },
         { field: 'rescheduleReason', headerName: 'Reason', width: 100 },
         { field: 'supplierConfirmationComment', headerName: 'Comment', width: 100 },
         { field: 'availableAtSupplier', headerName: 'Available at Supplier?', width: 100 }
