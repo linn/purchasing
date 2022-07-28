@@ -156,6 +156,7 @@
                                            DeliverySequence = u.DeliverySequence
                                        },
                              NewDateAdvised = u.DateAdvised,
+                             DateRequested = u.DateRequested,
                              NewReason = u.Reason,
                              Qty = u.Qty,
                              AvailableAtSupplier = u.AvailableAtSupplier,
