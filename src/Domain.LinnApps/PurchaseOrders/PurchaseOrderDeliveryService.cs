@@ -12,6 +12,8 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
 
+    using MoreLinq;
+
     public class PurchaseOrderDeliveryService : IPurchaseOrderDeliveryService
     {
         private readonly IPurchaseOrderDeliveryRepository repository;
@@ -169,79 +171,97 @@
             var errors = new List<Error>();
 
             var purchaseOrderDeliveryUpdates = changes as PurchaseOrderDeliveryUpdate[] ?? changes.ToArray();
-            foreach (var change in purchaseOrderDeliveryUpdates)
+
+            var orderLineGroups = purchaseOrderDeliveryUpdates
+                .GroupBy(x => new { x.Key.OrderNumber, x.Key.OrderLine })
+                .Select(group => new
+                                     {
+                                         group.Key.OrderNumber,
+                                         group.Key.OrderLine,
+                                         DeliveryUpdates = group
+                                     });
+
+            foreach (var group in orderLineGroups)
             {
-                var entity = this.repository.FindById(change.Key);
+                var entities = this.repository.FilterBy(
+                    x => x.OrderNumber == group.OrderNumber && x.OrderLine == group.OrderLine);
+                
+                var deliveriesMismatch = entities.Count() != group.DeliveryUpdates.Count()
+                                          || entities.Any(
+                                              e => group.DeliveryUpdates.All(u => u.Key.DeliverySequence != e.DeliverySeq));
 
-                if (string.IsNullOrEmpty(change.NewReason))
-                {
-                    change.NewReason = "ADVISED";
-                }
+                var quantitiesMismatch = entities.Any(e =>
+                    group.DeliveryUpdates.SingleOrDefault(u => u.Key.DeliverySequence == e.DeliverySeq) != null
+                    && e.OurDeliveryQty != group.DeliveryUpdates.Single(u => u.Key.DeliverySequence == e.DeliverySeq).Qty);
 
-                if (entity == null)
+                var priceMismatch = entities.Any(e =>
+                    group.DeliveryUpdates
+                        .SingleOrDefault(u => u.Key.DeliverySequence == e.DeliverySeq) != null
+                    && e.OrderUnitPriceCurrency 
+                    != group.DeliveryUpdates.Single(u => u.Key.DeliverySequence == e.DeliverySeq).UnitPrice);
+
+                if (deliveriesMismatch)
+                {
+                    var msg = "Sequence of deliveries in our system"
+                              + " does not match sequence of lines uploaded for the specified order.";
+                    errors.Add(
+                        new Error(
+                            $"Order: {group.OrderNumber}",
+                            msg));
+                }
+                else if (quantitiesMismatch)
+                {
+                    var msg = $"Qty on lines uploaded for the specified order does not match qties on the corresponding delivery on our system";
+                    errors.Add(
+                        new Error(
+                            $"Order: {group.OrderNumber}",
+                            msg));
+                }
+                else if (priceMismatch)
+                {
+                    var msg = $"Unit Price on lines uploaded for the specified order does not match unit price on our system";
+                    errors.Add(
+                        new Error(
+                            $"Order: {group.OrderNumber}",
+                            msg));
+                }
+                else if (group.DeliveryUpdates.Any(u => !u.NewDateAdvised.HasValue))
                 {
                     errors.Add(
                         new Error(
-                            $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}",
-                            "Could not find a delivery corresponding to the above ORDER / LINE / DELIVERY NO."));
-                }
-                else if (skipSplitDeliveries && (this.repository.FilterBy(
-                             x => x.OrderNumber == change.Key.OrderNumber).Count() > 1
-                         || purchaseOrderDeliveryUpdates.Count(c => c.Key.OrderNumber == change.Key.OrderNumber) > 1
-                         || change.Key.DeliverySequence > 1))
-                {
-                    errors.Add(
-                        new Error(
-                            $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}",
-                            $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence} has been split over multiple deliveries. Please acknowledge manually."));
-                }
-                else if (!this.rescheduleReasonRepository.FindAll().Select(r => r.Reason).Contains(change.NewReason))
-                {
-                    errors.Add(new Error(
-                        $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}",
-                        $"{change.NewReason} is not a valid reason"));
-                }
-                else if (change.Qty != entity.OurDeliveryQty)
-                {
-                    errors.Add(new Error(
-                        $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}",
-                        $"{change.Qty} does not match the Qty on the Delivery ({entity.OurDeliveryQty})"));
-                }
-                else if (Math.Round(change.UnitPrice, 4) 
-                         != Math.Round(entity.OrderUnitPriceCurrency.GetValueOrDefault(), 4))
-                {
-                    errors.Add(new Error(
-                        $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}",
-                        $"Unit price: {change.UnitPrice} does not match our order unit price: {entity.OrderUnitPriceCurrency}"));
-                }
-                else if (!change.NewDateAdvised.HasValue)
-                {
-                    errors.Add(
-                        new Error(
-                            $"{change.Key.OrderNumber} / {change.Key.OrderLine} / {change.Key.DeliverySequence}",
-                            "Invalid date string supplied"));
+                            $"Order: {group.OrderNumber}",
+                            "Invalid date string supplied for specified Order."));
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(change.Comment))
-                    {
-                        entity.SupplierConfirmationComment = change.Comment;
-                    }
-                    
-                    if (!string.IsNullOrEmpty(change.AvailableAtSupplier))
-                    {
-                        entity.AvailableAtSupplier = change.AvailableAtSupplier;
-                    }
-                    
-                    entity.DateAdvised = change.NewDateAdvised;
-                    entity.RescheduleReason = change.NewReason;
-                    this.UpdateMiniOrder(
-                        change.Key.OrderNumber,
-                        change.NewDateAdvised,
-                        null,
-                        null,
-                        entity.SupplierConfirmationComment);
-                    successCount++;
+                    group.DeliveryUpdates.ForEach(
+                        u =>
+                            {
+                                var deliveryToUpdate = entities.Single(x => 
+                                    x.OrderNumber == u.Key.OrderNumber
+                                    && x.OrderLine == u.Key.OrderLine
+                                    && x.DeliverySeq == u.Key.DeliverySequence);
+
+                                if (!string.IsNullOrEmpty(u.Comment))
+                                {
+                                    deliveryToUpdate.SupplierConfirmationComment = u.Comment;
+                                }
+
+                                if (!string.IsNullOrEmpty(u.AvailableAtSupplier))
+                                {
+                                    deliveryToUpdate.AvailableAtSupplier = u.AvailableAtSupplier;
+                                }
+
+                                deliveryToUpdate.DateAdvised = u.NewDateAdvised;
+                                deliveryToUpdate.RescheduleReason = u.NewReason;
+                                this.UpdateMiniOrder(
+                                    u.Key.OrderNumber,
+                                    u.NewDateAdvised,
+                                    null,
+                                    null,
+                                    u.Comment);
+                                successCount++;
+                            });
                 }
             }
 
@@ -416,7 +436,7 @@
             this.UpdateMiniOrder(
                 orderNumber,
                 null,
-                updatedDeliveriesForOrderLine.MinBy(x => x.DateRequested)?.DateRequested,
+                Enumerable.MinBy(updatedDeliveriesForOrderLine, x => x.DateRequested)?.DateRequested,
                 updatedDeliveriesForOrderLine.Count,
                 null);
 

@@ -54,40 +54,34 @@
                                            NewDateAdvised = DateTime.Today
                                        }
                                };
-
-            this.Repository.FindById(
-                    Arg.Is<PurchaseOrderDeliveryKey>(
-                        x => x.OrderLine == this.key1.OrderLine && x.OrderNumber == this.key1.OrderNumber
-                                                               && x.DeliverySequence == this.key1.DeliverySequence))
-                .Returns(
-                    new PurchaseOrderDelivery
-                    {
-                        OrderNumber = this.key1.OrderNumber,
-                        OrderLine = this.key1.OrderLine,
-                        DeliverySeq = this.key1.DeliverySequence,
-                        OurDeliveryQty = 100,
-                        OrderUnitPriceCurrency = 0.01m
-                    });
-            this.Repository.FindById(
-                    Arg.Is<PurchaseOrderDeliveryKey>(
-                        x => x.OrderLine == this.key2.OrderLine && x.OrderNumber == this.key2.OrderNumber && x.DeliverySequence == this.key2.DeliverySequence))
-                .Returns(
-                    new PurchaseOrderDelivery
-                        {
-                            OrderNumber = this.key2.OrderNumber,
-                            OrderLine = this.key2.OrderLine,
-                            DeliverySeq = this.key2.DeliverySequence,
-                            OurDeliveryQty = 200,
-                            OrderUnitPriceCurrency = 0.01m 
-                    });
-
+            var deliveriesForFirstOrder = new List<PurchaseOrderDelivery>
+                                              {
+                                                  new PurchaseOrderDelivery
+                                                      {
+                                                          OrderNumber = this.key1.OrderNumber,
+                                                          OrderLine = this.key1.OrderLine,
+                                                          DeliverySeq = this.key1.DeliverySequence,
+                                                          OurDeliveryQty = 100,
+                                                          OrderUnitPriceCurrency = 0.01m
+                                                      }
+                                              }.AsQueryable();
+            var deliveriesForSecondOrder = new List<PurchaseOrderDelivery>
+                                               {
+                                                   new PurchaseOrderDelivery
+                                                       {
+                                                           OrderNumber = this.key2.OrderNumber,
+                                                           OrderLine = this.key2.OrderLine,
+                                                           DeliverySeq = this.key2.DeliverySequence,
+                                                           OurDeliveryQty = 200,
+                                                           OrderUnitPriceCurrency = 0.01m
+                                                       }
+                                               }.AsQueryable();
             this.Repository.FilterBy(
                     Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
                 .Returns(
-                    new List<PurchaseOrderDelivery>
-                        {
-                            new PurchaseOrderDelivery()
-                        }.AsQueryable());
+                    deliveriesForFirstOrder,
+                   deliveriesForSecondOrder);
+           
             this.RescheduleReasonRepository.FindAll().Returns(new List<RescheduleReason>
                                                                   {
                                                                       new RescheduleReason
