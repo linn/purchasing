@@ -26,8 +26,6 @@
 
         protected IAuthorisationService AuthService { get; private set; }
 
-        protected IRepository<RescheduleReason, string> RescheduleReasonRepository { get; private set; }
-
         protected ISingleRecordRepository<PurchaseLedgerMaster> PurchaseLedgerMaster { get; private set; }
 
         protected IRepository<MiniOrder, int> MiniOrderRepository { get; private set; }
@@ -43,7 +41,6 @@
         {
             this.Repository = Substitute.For<IPurchaseOrderDeliveryRepository>();
             this.AuthService = Substitute.For<IAuthorisationService>();
-            this.RescheduleReasonRepository = Substitute.For<IRepository<RescheduleReason, string>>();
             this.PurchaseLedgerMaster = Substitute.For<ISingleRecordRepository<PurchaseLedgerMaster>>();
             this.MiniOrderRepository = Substitute.For<IRepository<MiniOrder, int>>();
             this.MiniOrderDeliveryRepository = Substitute.For<IRepository<MiniOrderDelivery, MiniOrderDeliveryKey>>();
@@ -55,7 +52,6 @@
             this.Sut = new PurchaseOrderDeliveryService(
                 this.Repository, 
                 this.AuthService, 
-                this.RescheduleReasonRepository,
                 this.PurchaseLedgerMaster,
                 this.MiniOrderRepository,
                 this.MiniOrderDeliveryRepository,

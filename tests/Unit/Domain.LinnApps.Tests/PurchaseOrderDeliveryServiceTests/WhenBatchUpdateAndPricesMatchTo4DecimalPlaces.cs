@@ -59,13 +59,6 @@
                                     OrderUnitPriceCurrency = 0.01112m
                                 }
                         }.AsQueryable());
-            this.RescheduleReasonRepository.FindAll().Returns(new List<RescheduleReason>
-                                                                  {
-                                                                      new RescheduleReason
-                                                                          {
-                                                                              Reason = "ADVISED"
-                                                                          }
-                                                                  }.AsQueryable());
 
             this.MiniOrderRepository.FindById(this.key1.OrderNumber)
                 .Returns(new MiniOrder { OrderNumber = this.key1.OrderNumber });

@@ -20,8 +20,6 @@
 
         private readonly IAuthorisationService authService;
 
-        private readonly IRepository<RescheduleReason, string> rescheduleReasonRepository;
-
         private readonly ISingleRecordRepository<PurchaseLedgerMaster> purchaseLedgerMaster;
 
         private readonly IRepository<MiniOrder, int> miniOrderRepository;
@@ -35,7 +33,6 @@
         public PurchaseOrderDeliveryService(
             IPurchaseOrderDeliveryRepository repository,
             IAuthorisationService authService,
-            IRepository<RescheduleReason, string> rescheduleReasonRepository,
             ISingleRecordRepository<PurchaseLedgerMaster> purchaseLedgerMaster,
             IRepository<MiniOrder, int> miniOrderRepository,
             IRepository<MiniOrderDelivery, MiniOrderDeliveryKey> miniOrderDeliveryRepository,
@@ -44,7 +41,6 @@
         {
             this.repository = repository;
             this.authService = authService;
-            this.rescheduleReasonRepository = rescheduleReasonRepository;
             this.purchaseLedgerMaster = purchaseLedgerMaster;
             this.miniOrderRepository = miniOrderRepository;
             this.miniOrderDeliveryRepository = miniOrderDeliveryRepository;
