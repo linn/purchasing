@@ -26,7 +26,6 @@
 
         private PurchaseOrderDeliveryKey key13;
 
-
         private PurchaseOrderDeliveryKey key2;
 
         private BatchUpdateProcessResult result;
