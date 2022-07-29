@@ -12,8 +12,6 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
 
-    using MoreLinq;
-
     public class PurchaseOrderDeliveryService : IPurchaseOrderDeliveryService
     {
         private readonly IPurchaseOrderDeliveryRepository repository;
@@ -182,21 +180,24 @@
                 var entities = this.repository.FilterBy(
                     x => x.OrderNumber == group.OrderNumber && x.OrderLine == group.OrderLine);
                 
-                var deliveriesMismatch = entities.Count() != group.DeliveryUpdates.Count()
-                                          || entities.Any(
+                var isDuplicateDeliveriesForOrder =
+                    group.DeliveryUpdates.GroupBy(x => x.Key.DeliverySequence).Select(g => g.First()).Count()
+                    != group.DeliveryUpdates.Count();
+
+                if (isDuplicateDeliveriesForOrder)
+                {
+                    var msg = "Duplicate delivery sequence entries for the specified order.";
+                    errors.Add(
+                        new Error(
+                            $"Order: {group.OrderNumber}",
+                            msg));
+                    continue;
+                }
+
+                var isDeliveriesMismatch = entities.Count() != group.DeliveryUpdates.Count()
+                                          || entities.ToList().Any(
                                               e => group.DeliveryUpdates.All(u => u.Key.DeliverySequence != e.DeliverySeq));
-
-                var quantitiesMismatch = entities.Any(e =>
-                    group.DeliveryUpdates.SingleOrDefault(u => u.Key.DeliverySequence == e.DeliverySeq) != null
-                    && e.OurDeliveryQty != group.DeliveryUpdates.Single(u => u.Key.DeliverySequence == e.DeliverySeq).Qty);
-
-                var priceMismatch = entities.Any(e =>
-                    group.DeliveryUpdates
-                        .SingleOrDefault(u => u.Key.DeliverySequence == e.DeliverySeq) != null
-                    && e.OrderUnitPriceCurrency 
-                    != group.DeliveryUpdates.Single(u => u.Key.DeliverySequence == e.DeliverySeq).UnitPrice);
-
-                if (deliveriesMismatch)
+                if (isDeliveriesMismatch)
                 {
                     var msg = "Sequence of deliveries in our system"
                               + " does not match sequence of lines uploaded for the specified order.";
@@ -204,63 +205,77 @@
                         new Error(
                             $"Order: {group.OrderNumber}",
                             msg));
+                    continue;
                 }
-                else if (quantitiesMismatch)
+
+                var isQuantitiesMismatch = entities.ToList().Any(e =>
+                    group.DeliveryUpdates.SingleOrDefault(u => u.Key.DeliverySequence == e.DeliverySeq) != null
+                    && e.OurDeliveryQty != group.DeliveryUpdates.Single(u => u.Key.DeliverySequence == e.DeliverySeq).Qty);
+                
+                if (isQuantitiesMismatch)
                 {
                     var msg = $"Qty on lines uploaded for the specified order does not match qties on the corresponding delivery on our system";
                     errors.Add(
                         new Error(
                             $"Order: {group.OrderNumber}",
                             msg));
+                    continue;
                 }
-                else if (priceMismatch)
+
+                var isPricesMismatch = entities.ToList().Any(e =>
+                    group.DeliveryUpdates
+                        .SingleOrDefault(u => u.Key.DeliverySequence == e.DeliverySeq) != null
+                    && e.OrderUnitPriceCurrency 
+                    != group.DeliveryUpdates.Single(u => u.Key.DeliverySequence == e.DeliverySeq).UnitPrice);
+
+                if (isPricesMismatch)
                 {
                     var msg = $"Unit Price on lines uploaded for the specified order does not match unit price on our system";
                     errors.Add(
                         new Error(
                             $"Order: {group.OrderNumber}",
                             msg));
+                    continue;
                 }
-                else if (group.DeliveryUpdates.Any(u => !u.NewDateAdvised.HasValue))
+
+                if (group.DeliveryUpdates.Any(u => !u.NewDateAdvised.HasValue))
                 {
                     errors.Add(
                         new Error(
                             $"Order: {group.OrderNumber}",
                             "Invalid date string supplied for specified Order."));
+                    continue;
                 }
-                else
+                
+                foreach (var u in group.DeliveryUpdates)
                 {
-                    group.DeliveryUpdates.ForEach(
-                        u =>
-                            {
-                                var deliveryToUpdate = entities.Single(x => 
-                                    x.OrderNumber == u.Key.OrderNumber
-                                    && x.OrderLine == u.Key.OrderLine
-                                    && x.DeliverySeq == u.Key.DeliverySequence);
+                    var deliveryToUpdate = entities.Single(x =>
+                        x.OrderNumber == u.Key.OrderNumber
+                        && x.OrderLine == u.Key.OrderLine
+                        && x.DeliverySeq == u.Key.DeliverySequence);
 
-                                if (!string.IsNullOrEmpty(u.Comment))
-                                {
-                                    deliveryToUpdate.SupplierConfirmationComment = u.Comment;
-                                }
+                    if (!string.IsNullOrEmpty(u.Comment))
+                    {
+                        deliveryToUpdate.SupplierConfirmationComment = u.Comment;
+                    }
 
-                                if (!string.IsNullOrEmpty(u.AvailableAtSupplier))
-                                {
-                                    deliveryToUpdate.AvailableAtSupplier = u.AvailableAtSupplier;
-                                }
+                    if (!string.IsNullOrEmpty(u.AvailableAtSupplier))
+                    {
+                        deliveryToUpdate.AvailableAtSupplier = u.AvailableAtSupplier;
+                    }
 
-                                deliveryToUpdate.DateAdvised = u.NewDateAdvised;
-                                deliveryToUpdate.RescheduleReason = u.NewReason;
-                                this.UpdateMiniOrder(
-                                    u.Key.OrderNumber,
-                                    u.NewDateAdvised,
-                                    null,
-                                    null,
-                                    u.Comment);
-                                successCount++;
-                            });
+                    deliveryToUpdate.DateAdvised = u.NewDateAdvised;
+                    deliveryToUpdate.RescheduleReason = u.NewReason;
+                    this.UpdateMiniOrder(
+                        u.Key.OrderNumber,
+                        u.NewDateAdvised,
+                        null,
+                        null,
+                        u.Comment);
+                    successCount++;
                 }
             }
-
+            
             if (errors.Any())
             {
                 return new BatchUpdateProcessResult
