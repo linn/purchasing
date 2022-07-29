@@ -35,6 +35,9 @@ function SuppliersSearch() {
 
     const createUrl = utilities.getHref(item, 'create');
 
+    const getClosedString = dateClosed =>
+        dateClosed ? ` --- CLOSED: ${new Date(dateClosed).toLocaleDateString('en-GB')}` : '';
+
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
@@ -46,7 +49,10 @@ function SuppliersSearch() {
                 </Grid>
                 <Grid item xs={12}>
                     <Typeahead
-                        items={searchResults}
+                        items={searchResults.map(s => ({
+                            ...s,
+                            description: `${s.description} ${getClosedString(s.dateClosed)}`
+                        }))}
                         fetchItems={searchSuppliers}
                         clearSearch={() => {}}
                         resultLimit={100}

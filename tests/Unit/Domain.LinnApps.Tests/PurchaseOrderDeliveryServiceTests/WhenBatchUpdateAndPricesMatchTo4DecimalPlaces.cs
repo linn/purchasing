@@ -40,38 +40,25 @@
                                        {
                                            Key = this.key1,
                                            Qty = 100,
-                                           UnitPrice = 0.01111m,
+                                           UnitPrice = 0.01112m,
                                            NewDateAdvised = DateTime.Today
                                        },
                                };
 
-            this.Repository.FindById(
-                    Arg.Is<PurchaseOrderDeliveryKey>(
-                        x => x.OrderLine == this.key1.OrderLine && x.OrderNumber == this.key1.OrderNumber
-                                                               && x.DeliverySequence == this.key1.DeliverySequence))
-                .Returns(
-                    new PurchaseOrderDelivery
-                    {
-                        OrderNumber = this.key1.OrderNumber,
-                        OrderLine = this.key1.OrderLine,
-                        DeliverySeq = this.key1.DeliverySequence,
-                        OurDeliveryQty = 100,
-                        OrderUnitPriceCurrency = 0.01112m
-                    });
             this.Repository.FilterBy(
                     Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
                 .Returns(
                     new List<PurchaseOrderDelivery>
                         {
-                            new PurchaseOrderDelivery()
+                            new PurchaseOrderDelivery
+                                {
+                                    OrderNumber = this.key1.OrderNumber,
+                                    OrderLine = this.key1.OrderLine,
+                                    DeliverySeq = this.key1.DeliverySequence,
+                                    OurDeliveryQty = 100,
+                                    OrderUnitPriceCurrency = 0.01112m
+                                }
                         }.AsQueryable());
-            this.RescheduleReasonRepository.FindAll().Returns(new List<RescheduleReason>
-                                                                  {
-                                                                      new RescheduleReason
-                                                                          {
-                                                                              Reason = "ADVISED"
-                                                                          }
-                                                                  }.AsQueryable());
 
             this.MiniOrderRepository.FindById(this.key1.OrderNumber)
                 .Returns(new MiniOrder { OrderNumber = this.key1.OrderNumber });

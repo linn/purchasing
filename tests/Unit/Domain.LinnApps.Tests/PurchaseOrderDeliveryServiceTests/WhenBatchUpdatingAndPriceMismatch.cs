@@ -45,35 +45,21 @@
                                        }
                                };
 
-            this.Repository.FindById(
-                    Arg.Is<PurchaseOrderDeliveryKey>(
-                        x => x.OrderLine == this.key1.OrderLine && x.OrderNumber == this.key1.OrderNumber
-                                                               && x.DeliverySequence == this.key1.DeliverySequence))
-                .Returns(
-                    new PurchaseOrderDelivery
-                    {
-                        OrderNumber = this.key1.OrderNumber,
-                        OrderLine = this.key1.OrderLine,
-                        DeliverySeq = this.key1.DeliverySequence,
-                        OurDeliveryQty = 100,
-                        OrderUnitPriceCurrency = 0.04m
-                    });
-
             this.Repository.FilterBy(
                     Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
                 .Returns(
                     new List<PurchaseOrderDelivery>
                         {
-                            new PurchaseOrderDelivery()
+                            new PurchaseOrderDelivery
+                                {
+                                    OrderNumber = this.key1.OrderNumber,
+                                    OrderLine = this.key1.OrderLine,
+                                    DeliverySeq = this.key1.DeliverySequence,
+                                    OurDeliveryQty = 100,
+                                    OrderUnitPriceCurrency = 0.04m
+                                }
                         }.AsQueryable());
-            this.RescheduleReasonRepository.FindAll().Returns(new List<RescheduleReason>
-                                                                  {
-                                                                      new RescheduleReason
-                                                                          {
-                                                                              Reason = "ADVISED"
-                                                                          }
-                                                                  }.AsQueryable());
-
+            
             this.MiniOrderRepository.FindById(this.key1.OrderNumber)
                 .Returns(new MiniOrder { OrderNumber = this.key1.OrderNumber });
             this.MiniOrderDeliveryRepository.FindBy(Arg.Any<Expression<Func<MiniOrderDelivery, bool>>>())
@@ -88,9 +74,9 @@
             this.result.Message.Should().Be("0 records updated successfully. The following errors occurred: ");
             this.result.Errors.Count().Should().Be(1);
             this.result.Errors.First().Descriptor.Should().Be(
-                $"{this.key1.OrderNumber} / {this.key1.OrderLine} / {this.key1.DeliverySequence}");
+                $"Order: {this.key1.OrderNumber}");
             this.result.Errors.First().Message.Should().Be(
-                "Unit price: 0.05 does not match our order unit price: 0.04");
+                "Unit Price on lines uploaded for the specified order does not match unit price on our system");
         }
     }
 }

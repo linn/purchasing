@@ -61,7 +61,13 @@
                         throw new InvalidOperationException($"Invalid Order Number: {row[0]}.");
                     }
 
-                    if (!int.TryParse(row[1].Trim().First().ToString(), out var delNo))
+                    int delNo;
+
+                    if (string.IsNullOrEmpty(row[1]))
+                    {
+                        delNo = 1;
+                    }
+                    else if (!int.TryParse(row[1].Trim().First().ToString(), out delNo))
                     {
                         throw new InvalidOperationException($"Invalid Delivery Number: {row[0]} / {row[1]}.");
                     }
@@ -107,6 +113,13 @@
                         parsedDate = new DateTime(2025, 1, 1);
                     }
 
+                    var reason = row.Length < 6 ? null : row[5].Trim();
+
+                    if (string.IsNullOrEmpty(reason))
+                    {
+                        reason = "ADVISED";
+                    }
+
                     changes.Add(new PurchaseOrderDeliveryUpdate
                                     {
                                         Key = new PurchaseOrderDeliveryKey
@@ -116,7 +129,7 @@
                                                       DeliverySequence = delNo
                                                   },
                                         NewDateAdvised = parsedDate,
-                                        NewReason = row.Length < 6 ? null : row[5].Trim(),
+                                        NewReason = reason,
                                         Qty = qty,
                                         UnitPrice = unitPrice
                                     });
