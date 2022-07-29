@@ -113,6 +113,13 @@
                         parsedDate = new DateTime(2025, 1, 1);
                     }
 
+                    var reason = row.Length < 6 ? null : row[5].Trim();
+
+                    if (string.IsNullOrEmpty(reason))
+                    {
+                        reason = "ADVISED";
+                    }
+
                     changes.Add(new PurchaseOrderDeliveryUpdate
                                     {
                                         Key = new PurchaseOrderDeliveryKey
@@ -122,7 +129,7 @@
                                                       DeliverySequence = delNo
                                                   },
                                         NewDateAdvised = parsedDate,
-                                        NewReason = row.Length < 6 ? null : row[5].Trim(),
+                                        NewReason = reason,
                                         Qty = qty,
                                         UnitPrice = unitPrice
                                     });
