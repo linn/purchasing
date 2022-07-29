@@ -94,7 +94,7 @@ function AcknowledgeOrdersUtility() {
     );
 
     const getDateString = isoString =>
-        isoString ? new Date(isoString).toLocaleDateString() : null;
+        isoString ? new Date(isoString).toLocaleDateString('en-GB') : null;
 
     const columns = [
         { field: 'id', headerName: 'Id', width: 100, hide: true },
