@@ -88,7 +88,7 @@
                             .Trim(), "dd'/'M'/'yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate1);
                     var secondFormatSatisfied =
                         DateTime.TryParseExact(row[2]
-                            .Trim(), "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate2);
+                            .Trim(), "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate2);
                     var thirdFormatSatisfied =
                         DateTime.TryParseExact(row[2]
                             .Trim(), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate3);
@@ -135,7 +135,13 @@
                                     });
                 }
 
-                var result = this.domainService.BatchUpdateDeliveries(changes, privileges, true);
+                var result = this.domainService.BatchUpdateDeliveries(changes, privileges);
+                this.transactionManager.Commit();
+
+                changes.ForEach(u => this.domainService
+                    .UpdateMiniOrderDeliveryAdvisedDate(
+                        u.Key.OrderNumber, u.Key.DeliverySequence, u.NewDateAdvised));
+
                 this.transactionManager.Commit();
 
                 return new SuccessResult<BatchUpdateProcessResultResource>(
