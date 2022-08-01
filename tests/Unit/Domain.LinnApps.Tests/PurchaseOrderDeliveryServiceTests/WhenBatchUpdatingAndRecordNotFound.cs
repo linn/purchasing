@@ -57,9 +57,10 @@
             this.result.Message.Should().Be("0 records updated successfully. The following errors occurred: ");
             this.result.Errors.Count().Should().Be(1);
             this.result.Errors.First().Descriptor.Should().Be(
-                $"{this.key.OrderNumber} / {this.key.OrderLine} / {this.key.DeliverySequence}");
+                $"Order: {this.key.OrderNumber}");
             this.result.Errors.First().Message.Should().Be(
-                "Could not find a delivery corresponding to the above ORDER / LINE / DELIVERY NO.");
+                "Sequence of deliveries in our system"
+                + " does not match sequence of lines uploaded for the specified order.");
         }
     }
 }
