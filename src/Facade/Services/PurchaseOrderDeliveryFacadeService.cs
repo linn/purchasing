@@ -181,21 +181,11 @@
 
             this.transactionManager.Commit();
 
-            // update the mini order to keep its deliveries in sync
-            this.domainService.UpdateMiniOrderDeliveries(updates.Select(
-                u => new PurchaseOrderDelivery
-                         {
-                            OrderNumber = u.Key.OrderNumber,
-                            DeliverySeq = u.Key.DeliverySequence,
-                            OrderLine = u.Key.OrderLine,
-                            DateAdvised = u.NewDateAdvised,
-                            DateRequested = u.DateRequested,
-                            AvailableAtSupplier = u.AvailableAtSupplier,
-                            SupplierConfirmationComment = u.Comment,
-                            RescheduleReason = u.NewReason,
-                            OurDeliveryQty = u.Qty
-                         }));
-
+            //update the mini order to keep its deliveries in sync
+            updates.ForEach(u => this.domainService
+                .UpdateMiniOrderDeliveryAdvisedDate(
+                    u.Key.OrderNumber, u.Key.DeliverySequence, u.NewDateAdvised));
+           
             this.transactionManager.Commit();
 
             return new SuccessResult<BatchUpdateProcessResultResource>(new BatchUpdateProcessResultResource

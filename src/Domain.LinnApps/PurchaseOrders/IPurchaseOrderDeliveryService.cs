@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
 {
+    using System;
     using System.Collections.Generic;
 
     using Linn.Purchasing.Domain.LinnApps.Keys;
@@ -30,5 +31,7 @@
             IEnumerable<string> privileges);
 
         void UpdateMiniOrderDeliveries(IEnumerable<PurchaseOrderDelivery> updated);
+
+        void UpdateMiniOrderDeliveryAdvisedDate(int orderNumber, int seq, DateTime? newDateAdvised);
     }
 }

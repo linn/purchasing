@@ -194,9 +194,9 @@
                     continue;
                 }
 
-                var isDeliveriesMismatch = entities.Count() != group.DeliveryUpdates.Count()
-                                          || entities.ToList().Any(
-                                              e => group.DeliveryUpdates.All(u => u.Key.DeliverySequence != e.DeliverySeq));
+                var isDeliveriesMismatch = group.DeliveryUpdates.Any(
+                    u => !entities.Select(e => e.DeliverySeq).Contains(u.Key.DeliverySequence));
+
                 if (isDeliveriesMismatch)
                 {
                     var msg = "Sequence of deliveries in our system"
@@ -489,6 +489,13 @@
                                        OurQty = del.OurDeliveryQty
                                    };
                     }).ToList();
+        }
+
+        public void UpdateMiniOrderDeliveryAdvisedDate(int orderNumber, int seq, DateTime? newDateAdvised)
+        {
+            var del = this.miniOrderDeliveryRepository.FindBy(
+                x => x.OrderNumber == orderNumber && x.DeliverySequence == seq);
+            del.AdvisedDate = newDateAdvised;
         }
 
         private void CheckOkToRaiseOrders()
