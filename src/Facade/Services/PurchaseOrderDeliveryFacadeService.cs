@@ -72,7 +72,7 @@
                         throw new InvalidOperationException($"Invalid Delivery Number: {row[0]} / {row[1]}.");
                     }
 
-                    if (!int.TryParse(row[3].Trim(), out var qty))
+                    if (!decimal.TryParse(row[3].Trim(), out var qty))
                     {
                         throw new InvalidOperationException($"Invalid Qty for {row[0]} / {row[1]}.");
                     }
