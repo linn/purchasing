@@ -31,6 +31,6 @@
 
         void UpdateMiniOrderDeliveries(IEnumerable<PurchaseOrderDelivery> updated);
 
-        void UpdateMiniOrderDeliveryAdvisedDate(int orderNumber, int seq, DateTime? newDateAdvised);
+        void UpdateMiniOrderDelivery(int orderNumber, int seq, DateTime? newDateAdvised, string availableAtSupplier);
     }
 }

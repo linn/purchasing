@@ -139,8 +139,8 @@
                 this.transactionManager.Commit();
 
                 changes.ForEach(u => this.domainService
-                    .UpdateMiniOrderDeliveryAdvisedDate(
-                        u.Key.OrderNumber, u.Key.DeliverySequence, u.NewDateAdvised));
+                    .UpdateMiniOrderDelivery(
+                        u.Key.OrderNumber, u.Key.DeliverySequence, u.NewDateAdvised, string.Empty));
 
                 this.transactionManager.Commit();
 
@@ -189,8 +189,8 @@
 
             //update the mini order to keep its deliveries in sync
             updates.ForEach(u => this.domainService
-                .UpdateMiniOrderDeliveryAdvisedDate(
-                    u.Key.OrderNumber, u.Key.DeliverySequence, u.NewDateAdvised));
+                .UpdateMiniOrderDelivery(
+                    u.Key.OrderNumber, u.Key.DeliverySequence, u.NewDateAdvised, u.AvailableAtSupplier));
            
             this.transactionManager.Commit();
 

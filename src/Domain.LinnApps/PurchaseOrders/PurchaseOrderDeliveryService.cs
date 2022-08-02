@@ -248,7 +248,7 @@
                 
                 foreach (var u in group.DeliveryUpdates)
                 {
-                    var deliveryToUpdate = entities.Single(x =>
+                    var deliveryToUpdate = this.repository.FindBy(x =>
                         x.OrderNumber == u.Key.OrderNumber
                         && x.OrderLine == u.Key.OrderLine
                         && x.DeliverySeq == u.Key.DeliverySequence);
@@ -490,11 +490,16 @@
                     }).ToList();
         }
 
-        public void UpdateMiniOrderDeliveryAdvisedDate(int orderNumber, int seq, DateTime? newDateAdvised)
+        // syncs changes to an individual delivery back to the corresponding mini order delivery
+        public void UpdateMiniOrderDelivery(int orderNumber, int seq, DateTime? newDateAdvised, string availableAtSupplier)
         {
             var del = this.miniOrderDeliveryRepository.FindBy(
                 x => x.OrderNumber == orderNumber && x.DeliverySequence == seq);
             del.AdvisedDate = newDateAdvised;
+            if (!string.IsNullOrEmpty(availableAtSupplier))
+            {
+                del.AvailableAtSupplier = availableAtSupplier;
+            }
         }
 
         private void CheckOkToRaiseOrders()
