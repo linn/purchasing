@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Messaging.Handlers
 {
+    using System;
     using System.IO;
     using System.Linq;
     using System.Text;
@@ -38,13 +39,15 @@
 
         public override bool Handle(EmailMrOrderBookMessage message)
         {
+            Console.WriteLine("WE A GO  ");
+
             try
             {
                 var body = message.Event.Body.ToArray();
                 var enc = Encoding.UTF8.GetString(body);
                 var resource = JsonConvert.DeserializeObject<EmailOrderBookMessageResource>(enc);
                 var supplier = this.supplierRepository.FindById(resource.SupplierId);
-
+                
                 var contact = supplier.SupplierContacts
                     .First(x => x.IsMainOrderContact.Equals("Y"));
                 
@@ -54,14 +57,14 @@
                         $"No main order contact with a valid email address for supplier: {resource.SupplierId}");
                     return false;
                 }
-
+                
                 var export = this.reportService.GetOrderBookExport(resource.SupplierId);
-
+                
                 var stream = new MemoryStream();
                 var csvStreamWriter = new CsvStreamWriter(stream);
                 csvStreamWriter.WriteModel(export.ConvertToCsvList());
                 stream.Position = 0;
-
+                
                 this.emailService.SendEmail(
                     contact.EmailAddress,
                     supplier.Name,
@@ -74,11 +77,17 @@
                     "csv",
                     stream,
                     "order-book");
+                Console.WriteLine("HELL YEAH  ");
                 return true;
             }
             catch (JsonReaderException e)
             {
                 this.Logger.Error(e.Message);
+                return false;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
                 return false;
             }
         }

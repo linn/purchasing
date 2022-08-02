@@ -13,9 +13,9 @@
             this.dispatcher = dispatcher;
         }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var trigger = new DailyTrigger(17); // every day at 5:00pm
+            var trigger = new DailyTrigger(17,5,50); // every day at 5:00pm
 
             // do the following
             trigger.OnTimeTriggered += () =>
@@ -28,7 +28,7 @@
                     //}
                 };
 
-            return Task.Delay(1, stoppingToken);
+            await Task.Delay(1, stoppingToken);
         }
     }
 }
