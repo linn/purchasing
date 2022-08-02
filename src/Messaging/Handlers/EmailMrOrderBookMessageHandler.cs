@@ -39,7 +39,7 @@
 
         public override bool Handle(EmailMrOrderBookMessage message)
         {
-            Console.WriteLine("WE A GO  ");
+           this.Logger.Info("Message received: " + message.Event.RoutingKey);
 
             try
             {
@@ -57,14 +57,16 @@
                         $"No main order contact with a valid email address for supplier: {resource.SupplierId}");
                     return false;
                 }
-                
+                this.Logger.Info("Building Report...");
+
                 var export = this.reportService.GetOrderBookExport(resource.SupplierId);
                 
                 var stream = new MemoryStream();
                 var csvStreamWriter = new CsvStreamWriter(stream);
                 csvStreamWriter.WriteModel(export.ConvertToCsvList());
                 stream.Position = 0;
-                
+                this.Logger.Info("sending email to " + contact.EmailAddress);
+
                 this.emailService.SendEmail(
                     contact.EmailAddress,
                     supplier.Name,
@@ -77,7 +79,6 @@
                     "csv",
                     stream,
                     "order-book");
-                Console.WriteLine("HELL YEAH  ");
                 return true;
             }
             catch (JsonReaderException e)
@@ -87,7 +88,7 @@
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                this.Logger.Error(e.Message);
                 return false;
             }
         }
