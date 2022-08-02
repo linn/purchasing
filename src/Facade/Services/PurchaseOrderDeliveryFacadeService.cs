@@ -72,7 +72,7 @@
                         throw new InvalidOperationException($"Invalid Delivery Number: {row[0]} / {row[1]}.");
                     }
 
-                    if (!int.TryParse(row[3].Trim(), out var qty))
+                    if (!decimal.TryParse(row[3].Trim(), out var qty))
                     {
                         throw new InvalidOperationException($"Invalid Qty for {row[0]} / {row[1]}.");
                     }
@@ -88,7 +88,7 @@
                             .Trim(), "dd'/'M'/'yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate1);
                     var secondFormatSatisfied =
                         DateTime.TryParseExact(row[2]
-                            .Trim(), "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate2);
+                            .Trim(), "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate2);
                     var thirdFormatSatisfied =
                         DateTime.TryParseExact(row[2]
                             .Trim(), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate3);
@@ -135,7 +135,13 @@
                                     });
                 }
 
-                var result = this.domainService.BatchUpdateDeliveries(changes, privileges, true);
+                var result = this.domainService.BatchUpdateDeliveries(changes, privileges);
+                this.transactionManager.Commit();
+
+                changes.ForEach(u => this.domainService
+                    .UpdateMiniOrderDelivery(
+                        u.Key.OrderNumber, u.Key.DeliverySequence, u.NewDateAdvised, string.Empty));
+
                 this.transactionManager.Commit();
 
                 return new SuccessResult<BatchUpdateProcessResultResource>(
@@ -181,21 +187,11 @@
 
             this.transactionManager.Commit();
 
-            // update the mini order to keep its deliveries in sync
-            this.domainService.UpdateMiniOrderDeliveries(updates.Select(
-                u => new PurchaseOrderDelivery
-                         {
-                            OrderNumber = u.Key.OrderNumber,
-                            DeliverySeq = u.Key.DeliverySequence,
-                            OrderLine = u.Key.OrderLine,
-                            DateAdvised = u.NewDateAdvised,
-                            DateRequested = u.DateRequested,
-                            AvailableAtSupplier = u.AvailableAtSupplier,
-                            SupplierConfirmationComment = u.Comment,
-                            RescheduleReason = u.NewReason,
-                            OurDeliveryQty = u.Qty
-                         }));
-
+            //update the mini order to keep its deliveries in sync
+            updates.ForEach(u => this.domainService
+                .UpdateMiniOrderDelivery(
+                    u.Key.OrderNumber, u.Key.DeliverySequence, u.NewDateAdvised, u.AvailableAtSupplier));
+           
             this.transactionManager.Commit();
 
             return new SuccessResult<BatchUpdateProcessResultResource>(new BatchUpdateProcessResultResource

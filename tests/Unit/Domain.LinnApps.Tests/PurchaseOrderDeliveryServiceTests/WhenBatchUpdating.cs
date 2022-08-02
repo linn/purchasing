@@ -118,6 +118,12 @@
                 .Returns(
                     deliveriesForFirstOrder,
                    deliveriesForSecondOrder);
+
+            this.Repository.FindBy(Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>()).Returns(
+                deliveriesForFirstOrder.ElementAt(0),
+                deliveriesForFirstOrder.ElementAt(1),
+                deliveriesForFirstOrder.ElementAt(2),
+                deliveriesForSecondOrder.ElementAt(0));
             
             this.MiniOrderRepository.FindById(this.key1.OrderNumber)
                 .Returns(new MiniOrder { OrderNumber = this.key1.OrderNumber });
