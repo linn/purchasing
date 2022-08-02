@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer } from 'react';
+import React, { useEffect, useState, useReducer, useMemo } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
@@ -34,6 +34,7 @@ import {
     OnOffSwitch,
     processSelectorHelpers
 } from '@linn-it/linn-form-components-library';
+import moment from 'moment';
 import currenciesActions from '../../actions/currenciesActions';
 import employeesActions from '../../actions/employeesActions';
 import nominalsActions from '../../actions/nominalsActions';
@@ -46,7 +47,8 @@ import purchaseOrderActions from '../../actions/purchaseOrderActions';
 import handleBackClick from '../../helpers/handleBackClick';
 import reducer from './purchaseOrderReducer';
 import sendPurchaseOrderPdfEmailActionTypes from '../../actions/sendPurchaseOrderPdfEmailActions';
-import { sendPurchaseOrderPdfEmail } from '../../itemTypes';
+import { sendPurchaseOrderPdfEmail, exchangeRates } from '../../itemTypes';
+import exchangeRatesActions from '../../actions/exchangeRatesActions';
 import currencyConvert from '../../helpers/currencyConvert';
 
 function PurchaseOrderUtility({ creating }) {
@@ -159,6 +161,67 @@ function PurchaseOrderUtility({ creating }) {
         setEditStatus('edit');
 
         dispatch({ payload: { ...detail, [propertyName]: newValue }, type: 'detailFieldChange' });
+    };
+
+    const dateToDdMmmYyyy = date => (date ? moment(date).format('DD-MMM-YYYY') : '-');
+
+    useEffect(() => {
+        if (order?.dateCreated) {
+            reduxDispatch(exchangeRatesActions.search(dateToDdMmmYyyy(order?.dateCreated)));
+        }
+    }, [order, reduxDispatch]);
+
+    const exchangeRatesItems = useSelector(state =>
+        collectionSelectorHelpers.getSearchItems(state[exchangeRates.item])
+    );
+
+    const currentExchangeRate = useMemo(() => {
+        if (exchangeRatesItems.length) {
+            if (order?.currency?.code) {
+                return exchangeRatesItems.find(
+                    x => x.exchangeCurrency === order.currency.code && x.baseCurrency === 'GBP'
+                )?.exchangeRate;
+            }
+        }
+        return '';
+    }, [order?.currency?.code, exchangeRatesItems]);
+
+    useEffect(() => {
+        if (currentExchangeRate && order?.exchangeRate !== currentExchangeRate) {
+            handleFieldChange('exchangeRate', currentExchangeRate);
+        }
+    }, [order.exchangeRate, currentExchangeRate]);
+
+    const handleDetailValueFieldChange = (propertyName, basePropertyName, newValue, detail) => {
+        const { exchangeRate } = order;
+
+        if (exchangeRate && newValue && newValue > 0 && newValue !== order[propertyName]) {
+            setEditStatus('edit');
+            const convertedValue = currencyConvert(newValue, exchangeRate);
+
+            dispatch({
+                payload: {
+                    ...detail,
+                    [propertyName]: newValue,
+                    [basePropertyName]: convertedValue
+                },
+                type: 'detailCalculationFieldChange'
+            });
+        }
+    };
+
+    const handleDetailQtyFieldChange = (propertyName, newValue, detail) => {
+        if (newValue && newValue > 0 && newValue !== order[propertyName]) {
+            setEditStatus('edit');
+
+            dispatch({
+                payload: {
+                    ...detail,
+                    [propertyName]: newValue
+                },
+                type: 'detailCalculationFieldChange'
+            });
+        }
     };
 
     const handleDeliveryFieldChange = (propertyName, newValue, delivery) => {
@@ -564,6 +627,7 @@ function PurchaseOrderUtility({ creating }) {
                                         currency: {
                                             code: newValue,
                                             name: currencies.find(x => x.code === newValue)?.name
+                                            //could include exchange rate here?
                                         }
                                     }));
                                 }}
@@ -735,14 +799,13 @@ function PurchaseOrderUtility({ creating }) {
                                                 label="Our quantity"
                                                 propertyName="ourQty"
                                                 onChange={(propertyName, newValue) =>
-                                                    handleDetailFieldChange(
+                                                    handleDetailQtyFieldChange(
                                                         propertyName,
                                                         newValue,
                                                         detail
                                                     )
                                                 }
-                                                disabled //until check what totals etc these influence and add currency conversion for base fields
-                                                // disabled={!allowedToUpdate()}
+                                                disabled={!allowedToUpdate()}
                                                 type="number"
                                                 required
                                             />
@@ -774,14 +837,14 @@ function PurchaseOrderUtility({ creating }) {
                                                 label="Our price (unit, currency)"
                                                 propertyName="ourUnitPriceCurrency"
                                                 onChange={(propertyName, newValue) =>
-                                                    handleDetailFieldChange(
+                                                    handleDetailValueFieldChange(
                                                         propertyName,
+                                                        'baseUnitPrice',
                                                         newValue,
                                                         detail
                                                     )
                                                 }
-                                                disabled
-                                                // disabled={!allowedToUpdate()}
+                                                disabled={!allowedToUpdate()}
                                                 type="number"
                                                 required
                                             />
@@ -792,15 +855,16 @@ function PurchaseOrderUtility({ creating }) {
                                                 value={detail.orderUnitPriceCurrency}
                                                 label="Order price (currency)"
                                                 propertyName="orderUnitPriceCurrency"
-                                                onChange={(propertyName, newValue) =>
-                                                    handleDetailFieldChange(
-                                                        propertyName,
-                                                        newValue,
-                                                        detail
-                                                    )
-                                                }
-                                                disabled
+                                                // onChange={(propertyName, newValue) =>
+                                                //     handleDetailValueFieldChange(
+                                                //         propertyName,
+                                                //         'baseOrderPrice',
+                                                //         newValue,
+                                                //         detail
+                                                //     )
+                                                // }
                                                 // disabled={!allowedToUpdate()}
+                                                disabled
                                                 type="number"
                                                 required
                                             />
@@ -1008,7 +1072,7 @@ function PurchaseOrderUtility({ creating }) {
                                     </Grid>
 
                                     {detail.purchaseDeliveries
-                                        ?.sort((a, b) => a.line - b.line)
+                                        ?.sort((a, b) => a.deliverySeq - b.deliverySeq)
                                         ?.map(delivery => (
                                             <>
                                                 <Grid item xs={2}>
@@ -1045,6 +1109,7 @@ function PurchaseOrderUtility({ creating }) {
                                                         label="Date advised"
                                                         onChange={() => {}}
                                                         propertyName="dateAdvised"
+                                                        type="date"
                                                         required
                                                         disabled
                                                     />

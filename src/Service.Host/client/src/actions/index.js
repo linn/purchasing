@@ -258,3 +258,5 @@ export const automaticPurchaseOrderSuggestionsActionTypes = makeActionTypes(
     itemTypes.automaticPurchaseOrderSuggestions.actionType,
     false
 );
+
+export const exchangeRatesActionTypes = makeActionTypes(itemTypes.exchangeRates.actionType);
