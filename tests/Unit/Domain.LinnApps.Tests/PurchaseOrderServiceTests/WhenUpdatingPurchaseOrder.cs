@@ -100,6 +100,7 @@
                                                            new Employee { Id = 33107, FullName = "me" },
                                                        CancelledDetails = new List<CancelledOrderDetail>(),
                                                        InternalComments = "comment for internal staff",
+                                                       OrderConversionFactor = 2m,
                                                        OrderPosting = new PurchaseOrderPosting
                                                                           {
                                                                               Building = "HQ",
@@ -212,8 +213,8 @@
                                                        OriginalOrderLine = null,
                                                        OurUnitOfMeasure = "cups?",
                                                        OrderUnitOfMeasure = "boxes",
-                                                       OurUnitPriceCurrency = 1200m,
-                                                       OrderUnitPriceCurrency = 1270m,
+                                                       OurUnitPriceCurrency = 200.22m,
+                                                       OrderUnitPriceCurrency = 200m,
                                                        BaseOurUnitPrice = 100m,
                                                        BaseOrderUnitPrice = 100m,
                                                        VatTotalCurrency = 0m,
@@ -263,7 +264,7 @@
                                    Currency = new Currency { Code = "EUR", Name = "Euros" },
                                    OrderContactName = "Jim",
                                    OrderMethod = new OrderMethod { Name = "online", Description = "website" },
-                                   ExchangeRate = 1.2m,
+                                   ExchangeRate = 0.8m,
                                    IssuePartsToSupplier = "N",
                                    DeliveryAddress = new LinnDeliveryAddress { AddressId = 1555 },
                                    RequestedBy = new Employee { FullName = "Jim Halpert", Id = 1111 },
@@ -293,13 +294,16 @@
                                      Nominal = "00009222",
                                      RequestedDeliveryDate = 23.January(2022),
                                      InternalComments = "comment for internal staff",
-                                     SuppliersDesignation = "macbooks"
-                                 };
+                                     SuppliersDesignation = "macbooks",
+                                     OrderConvFactor = 2m,
+            };
 
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
             this.MiniOrderRepository.FindById(this.orderNumber).Returns(this.miniOrder);
+
+            this.PurchaseOrdersPack.GetVatAmountSupplier(Arg.Any<decimal>(), Arg.Any<int>()).Returns(40.55m);
 
             this.Sut.UpdateOrder(this.current, this.updated, new List<string>());
         }
@@ -313,7 +317,24 @@
             var firstDetail = this.current.Details.First();
 
             firstDetail.OurQty.Should().Be(99m);
-            firstDetail.OrderQty.Should().Be(199m);
+            firstDetail.OrderQty.Should().Be(49.5m);
+
+            firstDetail.OurUnitPriceCurrency.Should().Be(200.22m);
+            firstDetail.BaseOurUnitPrice.Should().Be(250.28m);
+
+            // our qty * our unit price
+            firstDetail.NetTotalCurrency.Should().Be(19821.78m);
+            firstDetail.BaseNetTotal.Should().Be(24777.23m);
+
+            firstDetail.VatTotalCurrency.Should().Be(40.55m);
+            firstDetail.BaseVatTotal.Should().Be(50.69m);
+
+            // net total + vat total
+            firstDetail.DetailTotalCurrency.Should().Be(19862.33m);
+            firstDetail.BaseDetailTotal.Should().Be(24827.91m);
+
+            // not updated
+            firstDetail.OrderUnitPriceCurrency.Should().Be(120m);
 
             firstDetail.InternalComments.Should().Be("updated internal comment");
             firstDetail.SuppliersDesignation.Should().Be("updated suppliers designation");
@@ -323,11 +344,6 @@
             var delivery = firstDetail.PurchaseDeliveries.First();
 
             delivery.DateRequested.Should().Be(29.January(2022));
-
-            //firstDetail.OurUnitPriceCurrency.Should().Be(1200m);
-            //firstDetail.OrderUnitPriceCurrency.Should().Be(1270m);
-            //delivery.OurUnitPriceCurrency.Should().Be(1200m);
-            //delivery.OrderUnitPriceCurrency.Should().Be(1270m);
         }
 
         [Test]
@@ -336,27 +352,33 @@
             this.miniOrder.OrderNumber.Should().Be(600179);
             this.miniOrder.Remarks.Should().Be("updated remarks");
 
-            var firstDetail = this.current.Details.First();
-
-            this.miniOrder.OurQty.Should().Be(99m);
-            this.miniOrder.OrderQty.Should().Be(199m);
-
             this.miniOrder.InternalComments.Should().Be("updated internal comment");
             this.miniOrder.SuppliersDesignation.Should().Be("updated suppliers designation");
 
             this.miniOrder.Nominal.Should().Be("00009222");
             this.miniOrder.Department.Should().Be("0000911");
 
-            firstDetail.OrderPosting.NominalAccountId.Should().Be(911);
+            var firstDetail = this.current.Details.First();
 
-            var delivery = firstDetail.PurchaseDeliveries.First();
+            this.miniOrder.OurQty.Should().Be(99m);
+            this.miniOrder.OrderQty.Should().Be(49.5m);
 
-            delivery.DateRequested.Should().Be(29.January(2022));
+            this.miniOrder.OurPrice.Should().Be(200.22m);
+            this.miniOrder.BaseOurPrice.Should().Be(250.28m);
 
-            //firstDetail.OurUnitPriceCurrency.Should().Be(1200m);
-            //firstDetail.OrderUnitPriceCurrency.Should().Be(1270m);
-            //delivery.OurUnitPriceCurrency.Should().Be(1200m);
-            //delivery.OrderUnitPriceCurrency.Should().Be(1270m);
+            // our qty * our unit price
+            this.miniOrder.NetTotal.Should().Be(19821.78m);
+            this.miniOrder.BaseNetTotal.Should().Be(24777.23m);
+
+            this.miniOrder.VatTotal.Should().Be(40.55m);
+            this.miniOrder.BaseVatTotal.Should().Be(50.69m);
+
+            // net total + vat total
+            this.miniOrder.OrderTotal.Should().Be(19862.33m);
+            this.miniOrder.BaseOrderTotal.Should().Be(24827.91m);
+
+            // not updated
+            this.miniOrder.OrderPrice.Should().Be(120m);
         }
     }
 }

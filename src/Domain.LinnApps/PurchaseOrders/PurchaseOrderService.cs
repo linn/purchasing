@@ -22,6 +22,8 @@
 
         private readonly IPurchaseLedgerPack purchaseLedgerPack;
 
+        private readonly IPurchaseOrdersPack purchaseOrdersPack;
+
         private readonly IPdfService pdfService;
 
         private readonly IEmailService emailService;
@@ -37,7 +39,8 @@
             IPdfService pdfService,
             IEmailService emailService,
             IRepository<Employee, int> employeeRepository,
-            IRepository<MiniOrder, int> miniOrderRepository)
+            IRepository<MiniOrder, int> miniOrderRepository,
+            IPurchaseOrdersPack purchaseOrdersPack)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;
@@ -46,6 +49,7 @@
             this.emailService = emailService;
             this.employeeRepository = employeeRepository;
             this.miniOrderRepository = miniOrderRepository;
+            this.purchaseOrdersPack = purchaseOrdersPack;
         }
 
         public void AllowOverbook(
@@ -118,7 +122,7 @@
             }
 
             this.UpdateOrderProperties(current, updated);
-            this.UpdateDetails(current.Details, updated.Details);
+            this.UpdateDetails(current.Details, updated.Details, updated.SupplierId, updated.ExchangeRate.Value);
             this.UpdateMiniOrder(updated);
             return current;
         }
@@ -165,14 +169,14 @@
             return new ProcessResult(true, $"Email sent for purchase order {orderNumber} to {emailAddress}");
         }
 
-        private void UpdateDetails(ICollection<PurchaseOrderDetail> currentDetails, ICollection<PurchaseOrderDetail> updatedDetails)
+        private void UpdateDetails(ICollection<PurchaseOrderDetail> currentDetails, ICollection<PurchaseOrderDetail> updatedDetails, int supplierId, decimal exchangeRate)
         {
             foreach (var detail in updatedDetails)
             {
                 var currentDetail = currentDetails.FirstOrDefault(x => x.Line == detail.Line);
                 if (currentDetail != null)
                 {
-                    this.UpdateDetailProperties(currentDetail, detail);
+                    this.UpdateDetailProperties(currentDetail, detail, supplierId, exchangeRate);
                 }
                 else
                 {
@@ -186,25 +190,32 @@
             current.Remarks = updated.Remarks;
         }
 
-        private void UpdateDetailProperties(PurchaseOrderDetail current, PurchaseOrderDetail updated)
+        private void UpdateDetailProperties(PurchaseOrderDetail current, PurchaseOrderDetail updated, int supplierId, decimal exchangeRate)
         {
-            current.BaseNetTotal = updated.BaseNetTotal;
-            current.NetTotalCurrency = updated.NetTotalCurrency;
-            current.OurQty = updated.OurQty;
-            current.OrderQty = updated.OrderQty;
-
             current.SuppliersDesignation = updated.SuppliersDesignation;
-
-            // price updates to be done next
-            // current.OurUnitPriceCurrency = updated.OurUnitPriceCurrency;
-            // current.OrderUnitPriceCurrency = updated.OrderUnitPriceCurrency;
-            // current.BaseOrderUnitPrice = updated.BaseOrderUnitPrice;
-            // current.BaseOurUnitPrice = updated.BaseOurUnitPrice;
-            // current.VatTotalCurrency = updated.VatTotalCurrency;
-            // current.BaseVatTotal = updated.BaseVatTotal; //// vat totals might not change
-            // current.DetailTotalCurrency = updated.DetailTotalCurrency;
-            // current.BaseDetailTotal = updated.BaseDetailTotal;
             current.InternalComments = updated.InternalComments;
+
+            current.OurQty = updated.OurQty;
+            current.OurUnitPriceCurrency = updated.OurUnitPriceCurrency;
+
+            var netTotal = updated.OurUnitPriceCurrency.GetValueOrDefault() * updated.OurQty.GetValueOrDefault();
+            current.NetTotalCurrency = Math.Round(netTotal, 2, MidpointRounding.AwayFromZero);
+
+            current.VatTotalCurrency = this.purchaseOrdersPack.GetVatAmountSupplier(current.NetTotalCurrency, supplierId);
+
+            current.DetailTotalCurrency = Math.Round(netTotal + current.VatTotalCurrency.Value, 2);
+
+
+            //will conv factor just be set on create and never change?
+            current.OrderQty = current.OurQty / current.OrderConversionFactor;
+
+            current.BaseNetTotal = Math.Round(netTotal / exchangeRate, 2, MidpointRounding.ToPositiveInfinity);
+            current.BaseOrderUnitPrice = Math.Round(current.OrderUnitPriceCurrency.GetValueOrDefault() / exchangeRate, 2, MidpointRounding.AwayFromZero);
+            current.BaseOurUnitPrice = Math.Round(current.OurUnitPriceCurrency.GetValueOrDefault() / exchangeRate, 2, MidpointRounding.AwayFromZero);
+
+            current.BaseVatTotal = Math.Round(current.VatTotalCurrency.GetValueOrDefault() / exchangeRate, 2, MidpointRounding.AwayFromZero);
+
+            current.BaseDetailTotal = Math.Round(current.DetailTotalCurrency.GetValueOrDefault() / exchangeRate, 2, MidpointRounding.AwayFromZero);
 
             this.UpdateOrderPostingsForDetail(current, updated);
 
@@ -235,22 +246,35 @@
             var miniOrder = this.miniOrderRepository.FindById(updatedOrder.OrderNumber);
             var updatedDetail = updatedOrder.Details.First();
 
-            miniOrder.OurQty = updatedDetail.OurQty;
-            miniOrder.OrderQty = updatedDetail.OrderQty;
-
-            miniOrder.OurPrice = updatedDetail.OurUnitPriceCurrency;
-            miniOrder.OrderPrice = updatedDetail.OrderUnitPriceCurrency;
-            miniOrder.NetTotal = updatedDetail.NetTotalCurrency;
-            miniOrder.BaseOurPrice = updatedDetail.BaseOurUnitPrice;
-            miniOrder.BaseOrderPrice = updatedDetail.BaseOrderUnitPrice;
-            miniOrder.BaseNetTotal = updatedDetail.BaseNetTotal;
-
             miniOrder.Remarks = updatedOrder.Remarks;
             miniOrder.Department = updatedDetail.OrderPosting.NominalAccount.Department.DepartmentCode;
             miniOrder.Nominal = updatedDetail.OrderPosting.NominalAccount.Nominal.NominalCode;
             miniOrder.RequestedDeliveryDate = updatedDetail.PurchaseDeliveries.First().DateRequested;
             miniOrder.InternalComments = updatedDetail.InternalComments;
             miniOrder.SuppliersDesignation = updatedDetail.SuppliersDesignation;
+
+            miniOrder.OurQty = updatedDetail.OurQty;
+            miniOrder.OurPrice = updatedDetail.OurUnitPriceCurrency;
+
+            var netTotal = updatedDetail.OurUnitPriceCurrency.GetValueOrDefault() * updatedDetail.OurQty.GetValueOrDefault();
+            miniOrder.NetTotal = Math.Round(netTotal, 2, MidpointRounding.AwayFromZero);
+
+            miniOrder.VatTotal = this.purchaseOrdersPack.GetVatAmountSupplier(miniOrder.NetTotal, updatedOrder.SupplierId);
+
+            miniOrder.OrderTotal = Math.Round(netTotal + miniOrder.VatTotal, 2);
+
+            //will conv factor just be set on create and never change?
+            miniOrder.OrderQty = miniOrder.OurQty / miniOrder.OrderConvFactor;
+
+            var exchangeRate = updatedOrder.ExchangeRate.GetValueOrDefault();
+
+            miniOrder.BaseNetTotal = Math.Round(netTotal / exchangeRate, 2, MidpointRounding.ToPositiveInfinity);
+            miniOrder.BaseOrderPrice = Math.Round(miniOrder.OrderPrice.GetValueOrDefault() / exchangeRate, 2, MidpointRounding.AwayFromZero);
+            miniOrder.BaseOurPrice = Math.Round(miniOrder.OurPrice.GetValueOrDefault() / exchangeRate, 2, MidpointRounding.AwayFromZero);
+
+            miniOrder.BaseVatTotal = Math.Round(miniOrder.VatTotal / exchangeRate, 2, MidpointRounding.AwayFromZero);
+
+            miniOrder.BaseOrderTotal = Math.Round(miniOrder.OrderTotal / exchangeRate, 2, MidpointRounding.AwayFromZero);
         }
 
         // below method currently unreferenced, but to be finished and used soon for create
