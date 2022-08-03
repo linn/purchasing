@@ -224,8 +224,8 @@
                 var isPricesMismatch = entities.ToList().Any(e =>
                     group.DeliveryUpdates
                         .SingleOrDefault(u => u.Key.DeliverySequence == e.DeliverySeq) != null
-                    && e.OrderUnitPriceCurrency 
-                    != group.DeliveryUpdates.Single(u => u.Key.DeliverySequence == e.DeliverySeq).UnitPrice);
+                    && Math.Round(e.OrderUnitPriceCurrency.Value, 4) 
+                                  != Math.Round(group.DeliveryUpdates.Single(u => u.Key.DeliverySequence == e.DeliverySeq).UnitPrice, 4));
 
                 if (isPricesMismatch)
                 {
@@ -495,10 +495,13 @@
         {
             var del = this.miniOrderDeliveryRepository.FindBy(
                 x => x.OrderNumber == orderNumber && x.DeliverySequence == seq);
-            del.AdvisedDate = newDateAdvised;
-            if (!string.IsNullOrEmpty(availableAtSupplier))
+            if (del != null)
             {
-                del.AvailableAtSupplier = availableAtSupplier;
+                if (!string.IsNullOrEmpty(availableAtSupplier))
+                {
+                    del.AvailableAtSupplier = availableAtSupplier;
+                }
+                del.AdvisedDate = newDateAdvised;
             }
         }
 

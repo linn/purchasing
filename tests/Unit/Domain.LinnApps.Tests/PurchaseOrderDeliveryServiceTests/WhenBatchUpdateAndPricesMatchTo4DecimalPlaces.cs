@@ -69,7 +69,7 @@
                                     OrderLine = this.key1.OrderLine,
                                     DeliverySeq = this.key1.DeliverySequence,
                                     OurDeliveryQty = 100,
-                                    OrderUnitPriceCurrency = 0.01112m
+                                    OrderUnitPriceCurrency = 0.01111m
                                 });
 
             this.MiniOrderRepository.FindById(this.key1.OrderNumber)
