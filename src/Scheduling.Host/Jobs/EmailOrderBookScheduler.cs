@@ -39,8 +39,6 @@
                         IRepository<SupplierAutoEmails, int> repository =
                             scope.ServiceProvider.GetRequiredService<IRepository<SupplierAutoEmails, int>>();
 
-                        var deleteMe = repository.FilterBy(x => x.OrderBook.Equals("Y")).ToList();
-
                         // dispatch a message for all the suppliers to receive an order book
                         foreach (var s in repository.FilterBy(x => x.OrderBook.Equals("Y")))
                         {
