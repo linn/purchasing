@@ -60,7 +60,7 @@ Parameters:
     Description: address to send purchasing emails from
   orderBookTestAddress:
     Type: String
-    Description: address to send order book test emails too
+    Description: address to send order book test emails to
   environmentSuffix:
     Type: String
     AllowedValues:
