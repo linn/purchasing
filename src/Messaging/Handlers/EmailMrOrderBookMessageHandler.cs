@@ -72,7 +72,7 @@
                     supplier.Name,
                     null,
                     null,
-                    contact.EmailAddress,
+                    "lewisr3d@gmail.com", // hardcoded test email address
                     "Lewis",
                     "MR Order Book",
                     "Please find Order Book attached",

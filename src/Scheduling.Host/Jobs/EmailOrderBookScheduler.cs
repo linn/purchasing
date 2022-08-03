@@ -15,7 +15,7 @@
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var trigger = new DailyTrigger(14, 30);
+            var trigger = new DailyTrigger(10, 0, 0);
 
             // do the following
             trigger.OnTimeTriggered += () =>
