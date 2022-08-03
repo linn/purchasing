@@ -32,7 +32,7 @@
             trigger.OnTimeTriggered += () =>
                 {
                     // check if its monday
-                    if (DateTime.Now.DayOfWeek == DayOfWeek.Sunday)
+                    if (DateTime.Now.DayOfWeek == DayOfWeek.Monday)
                     {
                         using IServiceScope scope = this.serviceProvider.CreateScope();
 
