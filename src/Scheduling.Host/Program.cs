@@ -8,6 +8,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddPersistence();
         services.AddCredentialsExtensions();
         services.AddSqsExtensions();
+        services.AddServices();
         services.AddRabbitConfiguration();
         services.AddMessageDispatchers();
         services.AddHostedService<EmailOrderBookScheduler>();
