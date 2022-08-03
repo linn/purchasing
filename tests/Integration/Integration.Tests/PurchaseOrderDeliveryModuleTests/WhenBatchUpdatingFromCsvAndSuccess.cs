@@ -5,6 +5,7 @@
     using System.Net;
 
     using FluentAssertions;
+    using FluentAssertions.Extensions;
 
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
@@ -15,7 +16,7 @@
 
     using NUnit.Framework;
 
-    public class WhenBatchUpdatingFromCsvAndErrors : ContextBase
+    public class WhenBatchUpdatingFromCsvAndSuccess : ContextBase
     {
         [SetUp]
         public void SetUp()
@@ -24,16 +25,12 @@
                 Arg.Any<IEnumerable<PurchaseOrderDeliveryUpdate>>(),
                 Arg.Any<IEnumerable<string>>()).Returns(new BatchUpdateProcessResult
                                                              {
-                                                                 Success = false,
-                                                                 Message = "Something went wrong!",
-                                                                 Errors = new List<Error>
-                                                                              {
-                                                                                  new Error("Id", "Message")
-                                                                              }
+                                                                 Success = true,
+                                                                 Message = "Success!"
                                                              });
             this.Response = this.Client.Post(
                 $"/purchasing/purchase-orders/deliveries",
-                "PO1,1,28/03/1995,100,0.01,NEW REASON,",
+                $"PO1,1,28-mar-1995,100,$0.01,NEW REASON,",
                 with =>
                     {
                         with.Accept("application/json");
@@ -46,7 +43,21 @@
         {
             this.Response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
-        
+
+        [Test]
+        public void ShouldPassCorrectDataToDomainService()
+        {
+            this.MockDomainService.Received().BatchUpdateDeliveries(
+                Arg.Is<IEnumerable<PurchaseOrderDeliveryUpdate>>(
+                    l => l.First().Key.OrderNumber.Equals(1)
+                    && l.First().Key.OrderLine.Equals(1)
+                    && l.First().NewDateAdvised.Equals(28.March(1995))
+                    && l.First().Qty.Equals(100)
+                    && l.First().UnitPrice.Equals(0.01m)
+                    && l.First().NewReason.Equals("NEW REASON")),
+                Arg.Any<IEnumerable<string>>());
+        }
+
         [Test]
         public void ShouldCommitChanges()
         {
@@ -65,10 +76,8 @@
         public void ShouldReturnJsonBody()
         {
             var resultResource = this.Response.DeserializeBody<BatchUpdateProcessResultResource>();
-            resultResource.Success.Should().Be(false);
-            resultResource.Message.Should().Be("Something went wrong!");
-            resultResource.Errors.First().Descriptor.Should().Be("Id");
-            resultResource.Errors.First().Message.Should().Be("Message");
+            resultResource.Success.Should().Be(true);
+            resultResource.Message.Should().Be("Success!");
         }
     }
 }

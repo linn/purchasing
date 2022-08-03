@@ -16,7 +16,7 @@
 
     using NUnit.Framework;
 
-    public class WhenBatchUpdatingAndQtyMismatch : ContextBase
+    public class WhenBatchUpdateAndPricesMatchTo4DecimalPlaces : ContextBase
     {
         private IEnumerable<PurchaseOrderDeliveryUpdate> changes;
 
@@ -39,8 +39,10 @@
                                    new PurchaseOrderDeliveryUpdate
                                        {
                                            Key = this.key1,
-                                           Qty = 100
-                                       }
+                                           Qty = 100,
+                                           UnitPrice = 0.01112m,
+                                           NewDateAdvised = DateTime.Today
+                                       },
                                };
 
             this.Repository.FilterBy(
@@ -53,10 +55,23 @@
                                     OrderNumber = this.key1.OrderNumber,
                                     OrderLine = this.key1.OrderLine,
                                     DeliverySeq = this.key1.DeliverySequence,
-                                    OurDeliveryQty = 600
+                                    OurDeliveryQty = 100,
+                                    OrderUnitPriceCurrency = 0.01112m
                                 }
                         }.AsQueryable());
-           
+
+            this.Repository.FindBy(
+                    Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
+                .Returns(
+                    new PurchaseOrderDelivery
+                                {
+                                    OrderNumber = this.key1.OrderNumber,
+                                    OrderLine = this.key1.OrderLine,
+                                    DeliverySeq = this.key1.DeliverySequence,
+                                    OurDeliveryQty = 100,
+                                    OrderUnitPriceCurrency = 0.01112m
+                                });
+
             this.MiniOrderRepository.FindById(this.key1.OrderNumber)
                 .Returns(new MiniOrder { OrderNumber = this.key1.OrderNumber });
             this.MiniOrderDeliveryRepository.FindBy(Arg.Any<Expression<Func<MiniOrderDelivery, bool>>>())
@@ -65,15 +80,11 @@
         }
 
         [Test]
-        public void ShouldReturnErrorResult()
+        public void ShouldReturnSuccessResult()
         {
-            this.result.Success.Should().BeFalse();
-            this.result.Message.Should().Be("0 records updated successfully. The following errors occurred: ");
-            this.result.Errors.Count().Should().Be(1);
-            this.result.Errors.First().Descriptor.Should().Be(
-                $"Order: {this.key1.OrderNumber}");
-            this.result.Errors.First().Message.Should().Be(
-                "Qty on lines uploaded for the specified order does not match qties on the corresponding delivery on our system");
+            this.result.Success.Should().BeTrue();
+            this.result.Message.Should().Be("1 records updated successfully.");
+            this.result.Errors.Should().BeNullOrEmpty();
         }
     }
 }

@@ -75,7 +75,8 @@
                                             RequestedDate = detail.RequestedDate,
                                             OrderMethod = detail.OrderMethod,
                                             IssuePartsToSupplier = issueParts ? "Y" : "N",
-                                            IssueSerialNumbers = "N"
+                                            IssueSerialNumbers = "N",
+                                            AuthorisedAtCreation = canAuthorise ? "Y" : "N"
                                         });
                     }
                 }

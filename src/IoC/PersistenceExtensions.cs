@@ -148,7 +148,8 @@
                 .AddTransient<IRepository<AutomaticPurchaseOrderSuggestion, int>, EntityFrameworkRepository<AutomaticPurchaseOrderSuggestion, int>>(
                     r => new EntityFrameworkRepository<AutomaticPurchaseOrderSuggestion, int>(r.GetService<ServiceDbContext>()?.AutomaticPurchaseOrderSuggestions))
                 .AddTransient<IRepository<SupplierAutoEmails, int>, EntityFrameworkRepository<SupplierAutoEmails, int>>(
-                    r => new EntityFrameworkRepository<SupplierAutoEmails, int>(r.GetService<ServiceDbContext>()?.SupplierAutoEmails));
+                    r => new EntityFrameworkRepository<SupplierAutoEmails, int>(r.GetService<ServiceDbContext>()?.SupplierAutoEmails))
+                .AddTransient<IRepository<NominalAccount, int>, NominalAccountRepository>();
         }
     }
 }

@@ -2,6 +2,7 @@
 {
     using Linn.Common.Authorisation;
     using Linn.Common.Facade;
+    using Linn.Common.Logging;
     using Linn.Common.Pdf;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps;
@@ -37,6 +38,8 @@
 
         protected IRepository<FullAddress, int> FullAddressRepository { get; private set; }
 
+        protected IRepository<NominalAccount, int> MockNominalAccountRepository { get; private set; }
+
         protected PurchaseOrderFacadeService Sut { get; private set; }
 
         protected ITransactionManager TransactionManager { get; private set; }
@@ -45,18 +48,21 @@
 
         protected IFileReader FileReader { get; private set; }
 
+        protected ILog Logger { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
             this.PurchaseOrderRepository = Substitute.For<IRepository<PurchaseOrder, int>>();
             this.FullAddressRepository = Substitute.For<IRepository<FullAddress, int>>();
+            this.MockNominalAccountRepository = Substitute.For<IRepository<NominalAccount, int>>();
 
             this.OverbookAllowedByLogRepository = Substitute.For<IRepository<OverbookAllowedByLog, int>>();
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.DomainService = Substitute.For<IPurchaseOrderService>();
             this.AuthService = Substitute.For<IAuthorisationService>();
             this.PurchaseOrderDeliveryResourceBuilder = new PurchaseOrderDeliveryResourceBuilder();
-            this.PurchaseOrderPostingResourceBuilder = new PurchaseOrderPostingResourceBuilder();
+            this.PurchaseOrderPostingResourceBuilder = new PurchaseOrderPostingResourceBuilder(this.MockNominalAccountRepository);
             this.LinnDeliveryAddressResourceBuilder = new LinnDeliveryAddressResourceBuilder();
             this.AddressResourceBuilder = new AddressResourceBuilder(this.FullAddressRepository);
 
@@ -73,6 +79,7 @@
             this.TemplateEngine = Substitute.For<ITemplateEngine>();
 
             this.FileReader = Substitute.For<IFileReader>();
+            this.Logger = Substitute.For<ILog>();
 
             this.Sut = new PurchaseOrderFacadeService(
                 this.PurchaseOrderRepository,
@@ -82,7 +89,8 @@
                 this.OverbookAllowedByLogRepository,
                 "path",
                 this.FileReader,
-                this.TemplateEngine);
+                this.TemplateEngine,
+                this.Logger);
         }
     }
 }

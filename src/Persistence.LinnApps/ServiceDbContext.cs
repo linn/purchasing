@@ -153,12 +153,14 @@
         public DbSet<ShortagesPlannerEntry> ShortagesPlannerEntries { get; set; }
 
         public DbSet<PartNumberList> PartNumberLists { get; set; }
-        
+
         public DbSet<AutomaticPurchaseOrder> AutomaticPurchaseOrders { get; set; }
 
         public DbSet<AutomaticPurchaseOrderSuggestion> AutomaticPurchaseOrderSuggestions { get; set; }
 
         public DbSet<SupplierAutoEmails> SupplierAutoEmails { get; set; }
+        
+        public DbSet<NominalAccount> NominalAccounts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -1262,7 +1264,7 @@
             entity.Property(d => d.State).HasColumnName("STATE").HasColumnType("VARCHAR2");
             entity.Property(d => d.Qty).HasColumnName("QTY");
         }
-        
+
         private void BuildMrUsedOnView(ModelBuilder builder)
         {
             var entity = builder.Entity<MrUsedOnRecord>().ToTable("MR_USED_ON_VIEW").HasNoKey();
@@ -1528,7 +1530,7 @@
             entity.Property(d => d.VendorManangerName).HasColumnName("USER_NAME").HasColumnType("VARCHAR2");
             entity.Property(d => d.EdiEmailAddress).HasColumnName("EDI_EMAIL_ADDRESS").HasColumnType("VARCHAR2");
             entity.Property(d => d.NumOrders).HasColumnName("NUM_ORDERS");
-		}
+        }
 
         private void BuildShortagesView(ModelBuilder builder)
         {
@@ -1622,6 +1624,7 @@
             entity.Property(a => a.OrderMethod).HasColumnName("PL_ORDER_METHOD").HasColumnType("VARCHAR2").HasMaxLength(10);
             entity.Property(a => a.IssuePartsToSupplier).HasColumnName("ISSUE_PARTS_TO_SUPPLIER").HasColumnType("VARCHAR2").HasMaxLength(1);
             entity.Property(a => a.IssueSerialNumbers).HasColumnName("ISSUE_SERIAL_NUMBERS").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(a => a.AuthorisedAtCreation).HasColumnName("AUTHORISED_AT_CREATION").HasColumnType("VARCHAR2").HasMaxLength(1);
         }
 
         private void BuildAutomaticPurchaseOrderSuggestions(ModelBuilder builder)

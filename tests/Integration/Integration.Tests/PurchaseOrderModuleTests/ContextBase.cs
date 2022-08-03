@@ -82,6 +82,8 @@
 
         protected IFileReader MockFileReader { get; private set; }
 
+        protected IRepository<NominalAccount, int> MockNominalAccountRepository { get; private set; }
+
         [SetUp]
         public void EstablishContext()
         {
@@ -106,6 +108,7 @@
             this.MockPurchaseOrderRepository = Substitute.For<IRepository<PurchaseOrder, int>>();
             this.MockFullAddressRepository = Substitute.For<IRepository<FullAddress, int>>();
             this.OverbookAllowedByLogRepository = Substitute.For<IRepository<OverbookAllowedByLog, int>>();
+            this.MockNominalAccountRepository = Substitute.For<IRepository<NominalAccount, int>>();
 
             this.MockDatabaseService = Substitute.For<IDatabaseService>();
             this.MockAuthService = Substitute.For<IAuthorisationService>();
@@ -123,9 +126,11 @@
                 this.MockAuthService,
                 new PurchaseOrderDetailResourceBuilder(
                     new PurchaseOrderDeliveryResourceBuilder(),
-                    new PurchaseOrderPostingResourceBuilder()),
+                    new PurchaseOrderPostingResourceBuilder(this.MockNominalAccountRepository)),
                 new LinnDeliveryAddressResourceBuilder(),
                 new AddressResourceBuilder(this.MockFullAddressRepository));
+
+            this.Log = Substitute.For<ILog>();
 
             this.PurchaseOrderFacadeService = new PurchaseOrderFacadeService(
                 this.MockPurchaseOrderRepository,
@@ -135,9 +140,8 @@
                 this.OverbookAllowedByLogRepository,
                 "path",
                 this.MockFileReader,
-                this.MockTemplateEngine);
-
-            this.Log = Substitute.For<ILog>();
+                this.MockTemplateEngine,
+                this.Log);
 
             this.Client = TestClient.With<PurchaseOrderModule>(
                 services =>

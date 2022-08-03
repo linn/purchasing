@@ -43,7 +43,8 @@
                                                                         RequestedDate = d.RequestedDate?.ToString("o"),
                                                                         OrderMethod = d.OrderMethod,
                                                                         IssuePartsToSupplier = d.IssuePartsToSupplier,
-                                                                        IssueSerialNumbers = d.IssueSerialNumbers
+                                                                        IssueSerialNumbers = d.IssueSerialNumbers,
+                                                                        AuthorisedAtCreation = d.AuthorisedAtCreation
                                                                     }),
                            Links = this.BuildLinks(entity, claims).ToArray()
             };

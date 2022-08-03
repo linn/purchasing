@@ -16,11 +16,13 @@
 
     using NUnit.Framework;
 
-    public class WhenBatchUpdatingAndQtyMismatch : ContextBase
+    public class WhenBatchUpdatingAndNumberOfDeliveriesMismatch : ContextBase
     {
         private IEnumerable<PurchaseOrderDeliveryUpdate> changes;
 
-        private PurchaseOrderDeliveryKey key1;
+        private PurchaseOrderDeliveryKey key11;
+
+        private PurchaseOrderDeliveryKey key12;
 
         private BatchUpdateProcessResult result;
 
@@ -32,14 +34,25 @@
             this.AuthService
                 .HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
-            this.key1 = new PurchaseOrderDeliveryKey { OrderNumber = 123456, OrderLine = 1, DeliverySequence = 1 };
+            this.key11 = new PurchaseOrderDeliveryKey { OrderNumber = 123456, OrderLine = 1, DeliverySequence = 1 };
+
+            this.key12 = new PurchaseOrderDeliveryKey { OrderNumber = 123456, OrderLine = 1, DeliverySequence = 2 };
 
             this.changes = new List<PurchaseOrderDeliveryUpdate>
                                {
                                    new PurchaseOrderDeliveryUpdate
                                        {
-                                           Key = this.key1,
-                                           Qty = 100
+                                           Key = this.key11,
+                                           Qty = 100,
+                                           UnitPrice = 0.05m,
+                                           NewDateAdvised = DateTime.Now
+                                       },
+                                   new PurchaseOrderDeliveryUpdate
+                                       {
+                                           Key = this.key12,
+                                           Qty = 100,
+                                           UnitPrice = 0.05m,
+                                           NewDateAdvised = DateTime.Now
                                        }
                                };
 
@@ -50,17 +63,18 @@
                         {
                             new PurchaseOrderDelivery
                                 {
-                                    OrderNumber = this.key1.OrderNumber,
-                                    OrderLine = this.key1.OrderLine,
-                                    DeliverySeq = this.key1.DeliverySequence,
-                                    OurDeliveryQty = 600
+                                    OrderNumber = this.key11.OrderNumber,
+                                    OrderLine = this.key11.OrderLine,
+                                    DeliverySeq = this.key11.DeliverySequence,
+                                    OurDeliveryQty = 100,
+                                    OrderUnitPriceCurrency = 0.05m
                                 }
                         }.AsQueryable());
-           
-            this.MiniOrderRepository.FindById(this.key1.OrderNumber)
-                .Returns(new MiniOrder { OrderNumber = this.key1.OrderNumber });
+
+            this.MiniOrderRepository.FindById(this.key11.OrderNumber)
+                .Returns(new MiniOrder { OrderNumber = this.key11.OrderNumber });
             this.MiniOrderDeliveryRepository.FindBy(Arg.Any<Expression<Func<MiniOrderDelivery, bool>>>())
-                .Returns(new MiniOrderDelivery { OrderNumber = this.key1.OrderNumber });
+                .Returns(new MiniOrderDelivery { OrderNumber = this.key11.OrderNumber });
             this.result = this.Sut.BatchUpdateDeliveries(this.changes, new List<string>());
         }
 
@@ -71,9 +85,10 @@
             this.result.Message.Should().Be("0 records updated successfully. The following errors occurred: ");
             this.result.Errors.Count().Should().Be(1);
             this.result.Errors.First().Descriptor.Should().Be(
-                $"Order: {this.key1.OrderNumber}");
+                $"Order: {this.key11.OrderNumber}");
             this.result.Errors.First().Message.Should().Be(
-                "Qty on lines uploaded for the specified order does not match qties on the corresponding delivery on our system");
+                "Sequence of deliveries in our system"
+                + " does not match sequence of lines uploaded for the specified order.");
         }
     }
 }
