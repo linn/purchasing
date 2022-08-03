@@ -495,10 +495,13 @@
         {
             var del = this.miniOrderDeliveryRepository.FindBy(
                 x => x.OrderNumber == orderNumber && x.DeliverySequence == seq);
-            del.AdvisedDate = newDateAdvised;
-            if (!string.IsNullOrEmpty(availableAtSupplier))
+            if (del != null)
             {
-                del.AvailableAtSupplier = availableAtSupplier;
+                if (!string.IsNullOrEmpty(availableAtSupplier))
+                {
+                    del.AvailableAtSupplier = availableAtSupplier;
+                }
+                del.AdvisedDate = newDateAdvised;
             }
         }
 
