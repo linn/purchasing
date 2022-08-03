@@ -205,11 +205,10 @@
 
             current.DetailTotalCurrency = Math.Round(netTotal + current.VatTotalCurrency.Value, 2);
 
-
-            //will conv factor just be set on create and never change?
+            // will conv factor just be set on create and never change?
             current.OrderQty = current.OurQty / current.OrderConversionFactor;
 
-            current.BaseNetTotal = Math.Round(netTotal / exchangeRate, 2, MidpointRounding.ToPositiveInfinity);
+            current.BaseNetTotal = Math.Round(netTotal / exchangeRate, 2, MidpointRounding.AwayFromZero);
             current.BaseOrderUnitPrice = Math.Round(current.OrderUnitPriceCurrency.GetValueOrDefault() / exchangeRate, 2, MidpointRounding.AwayFromZero);
             current.BaseOurUnitPrice = Math.Round(current.OurUnitPriceCurrency.GetValueOrDefault() / exchangeRate, 2, MidpointRounding.AwayFromZero);
 
@@ -263,12 +262,12 @@
 
             miniOrder.OrderTotal = Math.Round(netTotal + miniOrder.VatTotal, 2);
 
-            //will conv factor just be set on create and never change?
+            // will conv factor just be set on create and never change?
             miniOrder.OrderQty = miniOrder.OurQty / miniOrder.OrderConvFactor;
 
             var exchangeRate = updatedOrder.ExchangeRate.GetValueOrDefault();
 
-            miniOrder.BaseNetTotal = Math.Round(netTotal / exchangeRate, 2, MidpointRounding.ToPositiveInfinity);
+            miniOrder.BaseNetTotal = Math.Round(netTotal / exchangeRate, 2, MidpointRounding.AwayFromZero);
             miniOrder.BaseOrderPrice = Math.Round(miniOrder.OrderPrice.GetValueOrDefault() / exchangeRate, 2, MidpointRounding.AwayFromZero);
             miniOrder.BaseOurPrice = Math.Round(miniOrder.OurPrice.GetValueOrDefault() / exchangeRate, 2, MidpointRounding.AwayFromZero);
 
