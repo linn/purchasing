@@ -58,6 +58,9 @@ Parameters:
   purchasingFromAddress:
     Type: String
     Description: address to send purchasing emails from
+  orderBookTestAddress:
+    Type: String
+    Description: address to send order book test emails to
   environmentSuffix:
     Type: String
     AllowedValues:
@@ -223,6 +226,10 @@ Resources:
           Value: !Ref appRoot
         - Name: PROXY_ROOT
           Value: !Ref proxyRoot
+        - Name: PURCHASING_FROM_ADDRESS
+          Value: !Ref purchasingFromAddress
+        - Name: ORDER_BOOK_TEST_ADDRESS
+          Value: !Ref orderBookTestAddress
         - Name: LOG_AMAZON_SQSQUEUEURI
           Value: !ImportValue logging-queue-url
         - Name: LOG_ENVIRONMENT
