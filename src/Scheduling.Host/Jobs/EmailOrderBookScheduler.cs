@@ -10,8 +10,6 @@
     {
         private readonly IMessageDispatcher<EmailOrderBookMessageResource> dispatcher;
 
-        // private readonly IRepository<SupplierAutoEmails, int> repository;
-
         private readonly IServiceProvider serviceProvider;
 
         public EmailOrderBookScheduler(
