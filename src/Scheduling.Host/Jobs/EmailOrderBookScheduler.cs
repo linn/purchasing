@@ -10,20 +10,23 @@
     {
         private readonly IMessageDispatcher<EmailOrderBookMessageResource> dispatcher;
 
-        private readonly IRepository<SupplierAutoEmails, int> repository;
+        // private readonly IRepository<SupplierAutoEmails, int> repository;
+
+        private readonly IServiceProvider serviceProvider;
 
         public EmailOrderBookScheduler(
             IMessageDispatcher<EmailOrderBookMessageResource> dispatcher,
-            IRepository<SupplierAutoEmails, int> repository)
+            IServiceProvider serviceProvider)
         {
             this.dispatcher = dispatcher;
-            this.repository = repository;
+            this.serviceProvider = serviceProvider;
         }
 
         // Dispatches a message to instruct Order Books to be emailed to suppliers on Monday mornings at 830
         // emails configured here https://app.linn.co.uk/purch/planning/plautoem.aspx
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            
             // every day at 830am
             var trigger = new DailyTrigger(8, 30);
 
@@ -31,10 +34,17 @@
             trigger.OnTimeTriggered += () =>
                 {
                     // check if its monday
-                    if (DateTime.Now.DayOfWeek == DayOfWeek.Monday)
+                    if (DateTime.Now.DayOfWeek == DayOfWeek.Sunday)
                     {
+                        using IServiceScope scope = this.serviceProvider.CreateScope();
+
+                        IRepository<SupplierAutoEmails, int> repository =
+                            scope.ServiceProvider.GetRequiredService<IRepository<SupplierAutoEmails, int>>();
+
+                        var deleteMe = repository.FilterBy(x => x.OrderBook.Equals("Y")).ToList();
+
                         // dispatch a message for all the suppliers to receive an order book
-                        foreach (var s in this.repository.FilterBy(x => x.OrderBook.Equals("Y")))
+                        foreach (var s in repository.FilterBy(x => x.OrderBook.Equals("Y")))
                         {
                             this.dispatcher.Dispatch(new EmailOrderBookMessageResource
                                                          {

@@ -5,10 +5,10 @@ IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
         services.AddLog();
-        services.AddPersistence();
         services.AddCredentialsExtensions();
         services.AddSqsExtensions();
         services.AddServices();
+        services.AddPersistence();
         services.AddRabbitConfiguration();
         services.AddMessageDispatchers();
         services.AddHostedService<EmailOrderBookScheduler>();
