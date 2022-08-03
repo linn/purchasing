@@ -158,6 +158,8 @@
 
         public DbSet<AutomaticPurchaseOrderSuggestion> AutomaticPurchaseOrderSuggestions { get; set; }
 
+        public DbSet<SupplierAutoEmails> SupplierAutoEmails { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -245,6 +247,7 @@
             this.BuildAutomaticPurchaseOrders(builder);
             this.BuildAutomaticPurchaseOrderDetails(builder);
             this.BuildAutomaticPurchaseOrderSuggestions(builder);
+            this.BuildSupplierAutoEmails(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1637,6 +1640,15 @@
             entity.Property(a => a.VendorManager).HasColumnName("VENDOR_MANAGER").HasColumnType("VARCHAR2").HasMaxLength(1);
             entity.Property(a => a.Planner).HasColumnName("PLANNER");
             entity.Property(a => a.JobRef).HasColumnName("JOBREF").HasColumnType("VARCHAR2").HasMaxLength(6);
+        }
+
+        private void BuildSupplierAutoEmails(ModelBuilder builder)
+        {
+            var entity = builder.Entity<SupplierAutoEmails>().ToTable("SUPPLIER_AUTO_EMAILS");
+            entity.HasKey(s => s.SupplierId);
+            entity.Property(s => s.SupplierId).HasColumnName("SUPPLIER_ID");
+            entity.Property(s => s.OrderBook).HasColumnName("ORDER_BOOK");
+            entity.Property(s => s.EmailAddress).HasColumnName("EMAIL_ADDRESS");
         }
     }
 }

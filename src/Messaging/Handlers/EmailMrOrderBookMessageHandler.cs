@@ -2,9 +2,9 @@
 {
     using System;
     using System.IO;
-    using System.Linq;
     using System.Text;
 
+    using Linn.Common.Configuration;
     using Linn.Common.Email;
     using Linn.Common.Logging;
     using Linn.Common.Persistence;
@@ -46,39 +46,41 @@
                 var body = message.Event.Body.ToArray();
                 var enc = Encoding.UTF8.GetString(body);
                 var resource = JsonConvert.DeserializeObject<EmailOrderBookMessageResource>(enc);
-                var supplier = this.supplierRepository.FindById(resource.SupplierId);
-                
-                var contact = supplier.SupplierContacts
-                    .First(x => x.IsMainOrderContact.Equals("Y"));
-                
-                if (contact?.EmailAddress == null)
+                var supplier = this.supplierRepository.FindById(resource.ForSupplier);
+                var test = resource.Test ? "TEST " : string.Empty;
+
+                this.Logger.Info($"{test}Order Book Email for Supplier {resource.ForSupplier} at {resource.Timestamp}");
+
+                if (string.IsNullOrEmpty(resource.ToAddress))
                 {
                     this.Logger.Error(
-                        $"No main order contact with a valid email address for supplier: {resource.SupplierId}");
+                        $"No recipient address set for: {resource.ForSupplier}");
                     return false;
                 }
+
                 this.Logger.Info("Building Report...");
 
-                var export = this.reportService.GetOrderBookExport(resource.SupplierId);
+                var export = this.reportService.GetOrderBookExport(resource.ForSupplier);
                 
                 var stream = new MemoryStream();
                 var csvStreamWriter = new CsvStreamWriter(stream);
                 csvStreamWriter.WriteModel(export.ConvertToCsvList());
                 stream.Position = 0;
-                this.Logger.Info("sending email to " + contact.EmailAddress);
+
+                this.Logger.Info("sending email to " + resource.ToAddress);
 
                 this.emailService.SendEmail(
-                    contact.EmailAddress,
+                    resource.Test ? ConfigurationManager.Configuration["ORDER_BOOK_TEST_ADDRESS"] : resource.ToAddress,
                     supplier.Name,
                     null,
                     null,
-                    contact.EmailAddress,
-                    "Lewis",
-                    "MR Order Book",
+                    ConfigurationManager.Configuration["PURCHASING_OUTGOING_ADDRESS"],
+                    "Linn",
+                    $"MR Order Book - {resource.Timestamp.ToShortDateString()}",
                     "Please find Order Book attached",
                     "csv",
                     stream,
-                    "order-book");
+                    $"linn_order_book_{resource.Timestamp.ToShortDateString()}");
                 return true;
             }
             catch (JsonReaderException e)
