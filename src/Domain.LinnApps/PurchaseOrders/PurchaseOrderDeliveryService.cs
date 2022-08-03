@@ -224,8 +224,8 @@
                 var isPricesMismatch = entities.ToList().Any(e =>
                     group.DeliveryUpdates
                         .SingleOrDefault(u => u.Key.DeliverySequence == e.DeliverySeq) != null
-                    && e.OrderUnitPriceCurrency 
-                    != group.DeliveryUpdates.Single(u => u.Key.DeliverySequence == e.DeliverySeq).UnitPrice);
+                    && Math.Round(e.OrderUnitPriceCurrency.Value, 4) 
+                                  != Math.Round(group.DeliveryUpdates.Single(u => u.Key.DeliverySequence == e.DeliverySeq).UnitPrice, 4));
 
                 if (isPricesMismatch)
                 {
