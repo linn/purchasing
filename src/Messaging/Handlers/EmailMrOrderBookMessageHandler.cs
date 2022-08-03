@@ -74,7 +74,7 @@
                     supplier.Name,
                     null,
                     null,
-                    ConfigurationManager.Configuration["PURCHASING_OUTGOING_ADDRESS"],
+                    ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
                     "Linn",
                     $"MR Order Book - {resource.Timestamp.ToShortDateString()}",
                     "Please find Order Book attached",
