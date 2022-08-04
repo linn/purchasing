@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
 {
+    using System;
     using System.Collections.Generic;
 
     using Linn.Purchasing.Domain.LinnApps.Keys;
@@ -20,8 +21,7 @@
 
         BatchUpdateProcessResult BatchUpdateDeliveries(
             IEnumerable<PurchaseOrderDeliveryUpdate> changes,
-            IEnumerable<string> privileges,
-            bool skipSplitDeliveries = false);
+            IEnumerable<string> privileges);
 
         IEnumerable<PurchaseOrderDelivery> UpdateDeliveriesForOrderLine(
             int orderNumber,
@@ -30,5 +30,7 @@
             IEnumerable<string> privileges);
 
         void UpdateMiniOrderDeliveries(IEnumerable<PurchaseOrderDelivery> updated);
+
+        void UpdateMiniOrderDelivery(int orderNumber, int seq, DateTime? newDateAdvised, string availableAtSupplier);
     }
 }

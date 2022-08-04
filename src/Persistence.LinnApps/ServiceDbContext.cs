@@ -158,6 +158,8 @@
 
         public DbSet<AutomaticPurchaseOrderSuggestion> AutomaticPurchaseOrderSuggestions { get; set; }
 
+        public DbSet<SupplierAutoEmails> SupplierAutoEmails { get; set; }
+        
         public DbSet<NominalAccount> NominalAccounts { get; set; }
 
         public DbSet<SuppliersLeadTimesEntry> SuppliersLeadTimesEntries { get; set; }
@@ -249,6 +251,7 @@
             this.BuildAutomaticPurchaseOrders(builder);
             this.BuildAutomaticPurchaseOrderDetails(builder);
             this.BuildAutomaticPurchaseOrderSuggestions(builder);
+            this.BuildSupplierAutoEmails(builder);
             this.BuildSuppliersLeadTime(builder);
         }
 
@@ -1644,7 +1647,16 @@
             entity.Property(a => a.Planner).HasColumnName("PLANNER");
             entity.Property(a => a.JobRef).HasColumnName("JOBREF").HasColumnType("VARCHAR2").HasMaxLength(6);
         }
-
+        
+        private void BuildSupplierAutoEmails(ModelBuilder builder)
+        {
+            var entity = builder.Entity<SupplierAutoEmails>().ToTable("SUPPLIER_AUTO_EMAILS");
+            entity.HasKey(s => s.SupplierId);
+            entity.Property(s => s.SupplierId).HasColumnName("SUPPLIER_ID");
+            entity.Property(s => s.OrderBook).HasColumnName("ORDER_BOOK");
+            entity.Property(s => s.EmailAddress).HasColumnName("EMAIL_ADDRESS");
+        }
+        
         private void BuildSuppliersLeadTime(ModelBuilder builder)
         {
             var entity = builder.Entity<SuppliersLeadTimesEntry>().ToTable("SUPPLIERS_LEADTIME").HasNoKey();

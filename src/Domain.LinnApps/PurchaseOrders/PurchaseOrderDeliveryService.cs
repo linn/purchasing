@@ -150,8 +150,7 @@
 
         public BatchUpdateProcessResult BatchUpdateDeliveries(
             IEnumerable<PurchaseOrderDeliveryUpdate> changes,
-            IEnumerable<string> privileges,
-            bool skipSplitDeliveries = false)
+            IEnumerable<string> privileges)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
             {
@@ -194,9 +193,9 @@
                     continue;
                 }
 
-                var isDeliveriesMismatch = entities.Count() != group.DeliveryUpdates.Count()
-                                          || entities.ToList().Any(
-                                              e => group.DeliveryUpdates.All(u => u.Key.DeliverySequence != e.DeliverySeq));
+                var isDeliveriesMismatch = group.DeliveryUpdates.Any(
+                    u => !entities.Select(e => e.DeliverySeq).Contains(u.Key.DeliverySequence));
+
                 if (isDeliveriesMismatch)
                 {
                     var msg = "Sequence of deliveries in our system"
@@ -225,8 +224,8 @@
                 var isPricesMismatch = entities.ToList().Any(e =>
                     group.DeliveryUpdates
                         .SingleOrDefault(u => u.Key.DeliverySequence == e.DeliverySeq) != null
-                    && e.OrderUnitPriceCurrency 
-                    != group.DeliveryUpdates.Single(u => u.Key.DeliverySequence == e.DeliverySeq).UnitPrice);
+                    && Math.Round(e.OrderUnitPriceCurrency.Value, 4) 
+                                  != Math.Round(group.DeliveryUpdates.Single(u => u.Key.DeliverySequence == e.DeliverySeq).UnitPrice, 4));
 
                 if (isPricesMismatch)
                 {
@@ -249,7 +248,7 @@
                 
                 foreach (var u in group.DeliveryUpdates)
                 {
-                    var deliveryToUpdate = entities.Single(x =>
+                    var deliveryToUpdate = this.repository.FindBy(x =>
                         x.OrderNumber == u.Key.OrderNumber
                         && x.OrderLine == u.Key.OrderLine
                         && x.DeliverySeq == u.Key.DeliverySequence);
@@ -489,6 +488,21 @@
                                        OurQty = del.OurDeliveryQty
                                    };
                     }).ToList();
+        }
+
+        // syncs changes to an individual delivery back to the corresponding mini order delivery
+        public void UpdateMiniOrderDelivery(int orderNumber, int seq, DateTime? newDateAdvised, string availableAtSupplier)
+        {
+            var del = this.miniOrderDeliveryRepository.FindBy(
+                x => x.OrderNumber == orderNumber && x.DeliverySequence == seq);
+            if (del != null)
+            {
+                if (!string.IsNullOrEmpty(availableAtSupplier))
+                {
+                    del.AvailableAtSupplier = availableAtSupplier;
+                }
+                del.AdvisedDate = newDateAdvised;
+            }
         }
 
         private void CheckOkToRaiseOrders()

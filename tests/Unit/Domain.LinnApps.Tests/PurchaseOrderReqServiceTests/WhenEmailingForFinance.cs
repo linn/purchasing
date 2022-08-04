@@ -84,18 +84,6 @@
                         PhoneListEntry = new PhoneListEntry { EmailAddress = "bigstormz@gmail" }
                     });
 
-            this.EmailService.SendEmail(
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<IEnumerable<Dictionary<string, string>>>(),
-                Arg.Any<IEnumerable<Dictionary<string, string>>>(),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<Stream>(),
-                Arg.Any<string>());
-
             this.result = this.Sut.SendFinanceCheckRequestEmail(this.authoriserUserNumber, 213, this.entity);
         }
 
@@ -110,9 +98,7 @@
                 "bigjim@gmail",
                 "Big Jimbo",
                 $"Purchase Order Req {this.entity.ReqNumber} requires finance authorisation",
-                Arg.Any<string>(),
-                Arg.Any<Stream>(),
-                string.Empty);
+                Arg.Any<string>());
         }
 
         [Test]
