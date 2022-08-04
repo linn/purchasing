@@ -50,7 +50,7 @@
                                 new SuppliersLeadTimesEntry
                                     {
                                         PartNumber = "RES 314",
-                                        LeadTimeWeeks = 69,
+                                        LeadTimeWeeks = 6,
                                         SupplierId = 999
                                     },
                             };
