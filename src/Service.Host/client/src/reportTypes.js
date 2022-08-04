@@ -89,3 +89,9 @@ export const mrOrderBookReport = new ItemType(
     'MR_ORDER_BOOK_REPORT',
     '/purchasing/reports/mr-order-book'
 );
+
+export const supplierLeadTimesReport = new ItemType(
+    'supplierLeadTimesReport',
+    'SUPPLIERS_BY_LEADTIME_REPORT',
+    '/purchasing/reports/leadtimes/report'
+);

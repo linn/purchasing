@@ -258,3 +258,8 @@ export const automaticPurchaseOrderSuggestionsActionTypes = makeActionTypes(
     itemTypes.automaticPurchaseOrderSuggestions.actionType,
     false
 );
+
+export const supplierLeadTimesReportActionTypes = makeActionTypes(
+    reportTypes.supplierLeadTimesReport.actionType,
+    false
+);

@@ -160,6 +160,8 @@
 
         public DbSet<NominalAccount> NominalAccounts { get; set; }
 
+        public DbSet<SuppliersLeadTimesEntry> SuppliersLeadTimesEntries { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -247,6 +249,7 @@
             this.BuildAutomaticPurchaseOrders(builder);
             this.BuildAutomaticPurchaseOrderDetails(builder);
             this.BuildAutomaticPurchaseOrderSuggestions(builder);
+            this.BuildSuppliersLeadTime(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1640,6 +1643,14 @@
             entity.Property(a => a.VendorManager).HasColumnName("VENDOR_MANAGER").HasColumnType("VARCHAR2").HasMaxLength(1);
             entity.Property(a => a.Planner).HasColumnName("PLANNER");
             entity.Property(a => a.JobRef).HasColumnName("JOBREF").HasColumnType("VARCHAR2").HasMaxLength(6);
+        }
+
+        private void BuildSuppliersLeadTime(ModelBuilder builder)
+        {
+            var entity = builder.Entity<SuppliersLeadTimesEntry>().ToTable("SUPPLIERS_LEADTIME").HasNoKey();
+            entity.Property(a => a.SupplierId).HasColumnName("SUPPLIER_ID");
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
+            entity.Property(a => a.LeadTimeWeeks).HasColumnName("LEAD_TIME_WEEKS");
         }
     }
 }
