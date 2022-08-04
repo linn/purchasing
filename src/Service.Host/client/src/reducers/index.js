@@ -84,6 +84,7 @@ import mrOrderBookReport from './mrOrderBookReport';
 import sendPurchaseOrderPdfEmail from './sendPurchaseOrderPdfEmail';
 import automaticPurchaseOrder from './automaticPurchaseOrder';
 import automaticPurchaseOrderSuggestions from './automaticPurchaseOrderSuggestions';
+import supplierLeadTimesReport from './supplierLeadTimesReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -160,6 +161,7 @@ const rootReducer = history =>
         supplier,
         supplierGroups,
         suppliers,
+        supplierLeadTimesReport,
         suppliersWithUnacknowledgedOrders,
         tariffs,
         tqmsJobrefs,
