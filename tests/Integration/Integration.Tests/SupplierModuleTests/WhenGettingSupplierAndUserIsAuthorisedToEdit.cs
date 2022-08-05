@@ -34,7 +34,8 @@
             this.MockSupplierRepository.FindById(1).Returns(this.supplier);
             this.MockAuthService.HasPermissionFor(AuthorisedAction.SupplierUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
-
+            this.MockAuthService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, Arg.Any<IEnumerable<string>>())
+                .Returns(true);
             this.Response = this.Client.Get(
                 $"/purchasing/suppliers/{this.id}",
                 with =>

@@ -149,16 +149,17 @@
             }
 
             this.emailService.SendEmail(
-                emailAddress,
-                emailAddress,
-                null,
-                bccList,
-                ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
-                "Linn Purchasing",
-                $"Linn Purchase Order {orderNumber}",
-                emailBody,
-                pdf.Result,
-                $"LinnPurchaseOrder{orderNumber}");
+                    emailAddress,
+                    emailAddress,
+                    null,
+                    bccList,
+                    ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
+                    "Linn Purchasing",
+                    $"Linn Purchase Order {orderNumber}",
+                    emailBody,
+                    "pdf",
+                    pdf.Result,
+                    $"LinnPurchaseOrder{orderNumber}");
 
             order.SentByMethod = "EMAIL";
 

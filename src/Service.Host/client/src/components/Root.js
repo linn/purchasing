@@ -57,6 +57,8 @@ import ShortagesPlannerReport from './reports/ShortagesPlannerReport';
 import MrOrderBookReport from './reports/MrOrderBookReport';
 import AutomaticPurchaseOrderSuggestions from './AutomaticPurchaseOrderSuggestions';
 import AutomaticPurchaseOrders from './AutomaticPurchaseOrders';
+import SupplierLeadTimesReport from './reports/SupplierLeadTimesReport';
+import SupplierLeadTimesReportOptions from './reports/SupplierLeadTimesReportOptions';
 
 const Root = ({ store }) => (
     <div>
@@ -333,6 +335,16 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/automatic-purchase-orders/:id"
                                     component={AutomaticPurchaseOrders}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/leadtimes"
+                                    component={SupplierLeadTimesReportOptions}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/leadtimes/report"
+                                    component={SupplierLeadTimesReport}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>

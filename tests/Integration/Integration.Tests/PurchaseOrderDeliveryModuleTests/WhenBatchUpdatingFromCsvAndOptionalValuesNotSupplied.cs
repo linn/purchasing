@@ -16,26 +16,25 @@
 
     using NUnit.Framework;
 
-    public class WhenBatchUpdatingFromCsvAndSuccess : ContextBase
+    public class WhenBatchUpdatingFromCsvAndOptionalValuesNotSupplied : ContextBase
     {
         [SetUp]
         public void SetUp()
         {
             this.MockDomainService.BatchUpdateDeliveries(
                 Arg.Any<IEnumerable<PurchaseOrderDeliveryUpdate>>(),
-                Arg.Any<IEnumerable<string>>(),
-                true).Returns(new BatchUpdateProcessResult
-                                                            {
-                                                                Success = true,
-                                                                Message = "Success!"
-                                                            });
+                Arg.Any<IEnumerable<string>>()).Returns(new BatchUpdateProcessResult
+                                                             {
+                                                                 Success = true,
+                                                                 Message = "Success!"
+                                                             });
             this.Response = this.Client.Post(
                 $"/purchasing/purchase-orders/deliveries",
-                $"PO1,1,28/03/1995,100,0.01,NEW REASON,",
+                $"PO1,,,100,$0.01,,",
                 with =>
-                    {
-                        with.Accept("application/json");
-                    },
+                {
+                    with.Accept("application/json");
+                },
                 "text/csv").Result;
         }
 
@@ -46,17 +45,17 @@
         }
 
         [Test]
-        public void ShouldPassCorrectDataToDomainService()
+        public void ShouldPassDefaults()
         {
             this.MockDomainService.Received().BatchUpdateDeliveries(
                 Arg.Is<IEnumerable<PurchaseOrderDeliveryUpdate>>(
                     l => l.First().Key.OrderNumber.Equals(1)
-                    && l.First().Key.OrderLine.Equals(1)
-                    && l.First().NewDateAdvised.Equals(28.March(1995))
+                    && l.First().Key.DeliverySequence.Equals(1) // seq defaults to 1
+                    && l.First().NewDateAdvised.Equals(1.January(2025)) // date defaults to this future date
                     && l.First().Qty.Equals(100)
-                    && l.First().NewReason.Equals("NEW REASON")),
-                Arg.Any<IEnumerable<string>>(),
-                true);
+                    && l.First().UnitPrice.Equals(0.01m)
+                    && l.First().NewReason.Equals("ADVISED")), // reason defaults to 'ADVISED'
+                Arg.Any<IEnumerable<string>>());
         }
 
         [Test]
@@ -82,3 +81,4 @@
         }
     }
 }
+

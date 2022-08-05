@@ -91,6 +91,7 @@
                this.sender.FullName,
                $"Linn Products {this.note.NoteType.PrintDescription} {this.note.NoteNumber}",
                $"Attached is a copy of Linn Products {this.note.NoteType.PrintDescription} {this.note.NoteNumber}",
+               "pdf",
                null,
                $"{this.note.NoteType.PrintDescription} {this.note.NoteNumber}");
         }
