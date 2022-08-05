@@ -164,6 +164,8 @@
 
         public DbSet<SuppliersLeadTimesEntry> SuppliersLeadTimesEntries { get; set; }
 
+        public DbSet<SupplierDeliveryPerformance> SupplierDeliveryPerformance { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -253,6 +255,7 @@
             this.BuildAutomaticPurchaseOrderSuggestions(builder);
             this.BuildSupplierAutoEmails(builder);
             this.BuildSuppliersLeadTime(builder);
+            this.BuildSupplierDeliveryPerformance(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1663,6 +1666,21 @@
             entity.Property(a => a.SupplierId).HasColumnName("SUPPLIER_ID");
             entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
             entity.Property(a => a.LeadTimeWeeks).HasColumnName("LEAD_TIME_WEEKS");
+        }
+
+        private void BuildSupplierDeliveryPerformance(ModelBuilder builder)
+        {
+            var entity = builder.Entity<SupplierDeliveryPerformance>().ToTable("PM_ON_TIME_VIEW").HasNoKey();
+            entity.Property(a => a.SupplierId).HasColumnName("SUPPLIER_ID");
+            entity.Property(a => a.SupplierName).HasColumnName("SUPPLIER_NAME").HasColumnType("VARCHAR2");
+            entity.Property(a => a.LedgerPeriod).HasColumnName("PERIOD_NUMBER");
+            entity.Property(a => a.MonthName).HasColumnName("MONTH_NAME");
+            entity.Property(a => a.VendorManager).HasColumnName("VENDOR_MANAGER");
+            entity.Property(a => a.NumberOfDeliveries).HasColumnName("NO_OF_DELIVERIES");
+            entity.Property(a => a.NumberOnTime).HasColumnName("NO_ON_TIME");
+            entity.Property(a => a.NumberOfEarlyDeliveries).HasColumnName("NO_EARLY_DELIVERIES");
+            entity.Property(a => a.NumberOfUnacknowledgedDeliveries).HasColumnName("NO_UNACK_DELIVERIES");
+            entity.Property(a => a.NumberOfLateDeliveries).HasColumnName("NO_OF_LATE_DELIVERIES");
         }
     }
 }
