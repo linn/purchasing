@@ -14,7 +14,7 @@
 
     using NUnit.Framework;
 
-    public class WhenUpdatingPurchaseOrder : ContextBase
+    public class WhenUpdatingPurchaseOrderConvValueQtyFields : ContextBase
     {
         private readonly int orderNumber = 600179;
 
@@ -173,7 +173,7 @@
                                                        NetTotalCurrency = 120m,
                                                        OrderNumber = this.orderNumber,
                                                        OurQty = 99m,
-                                                       OrderQty = 199m,
+                                                       OrderQty = 12m,
                                                        PartNumber = "macbookz",
                                                        PurchaseDeliveries =
                                                            new List<PurchaseOrderDelivery>
@@ -214,7 +214,7 @@
                                                        OurUnitOfMeasure = "cups?",
                                                        OrderUnitOfMeasure = "boxes",
                                                        OurUnitPriceCurrency = 200.22m,
-                                                       OrderUnitPriceCurrency = 200m,
+                                                       OrderUnitPriceCurrency = 120m,
                                                        BaseOurUnitPrice = 100m,
                                                        BaseOrderUnitPrice = 100m,
                                                        VatTotalCurrency = 0m,
@@ -317,9 +317,14 @@
             var firstDetail = this.current.Details.First();
 
             firstDetail.OurQty.Should().Be(99m);
-            firstDetail.OrderQty.Should().Be(49.5m);
+            //updated based on conv factor
+            firstDetail.OrderQty.Should().Be(198m);
 
             firstDetail.OurUnitPriceCurrency.Should().Be(200.22m);
+
+            //updated based on conv factor
+            firstDetail.OrderUnitPriceCurrency.Should().Be(400.44m);
+
             firstDetail.BaseOurUnitPrice.Should().Be(250.28m);
 
             // our qty * our unit price
@@ -332,9 +337,6 @@
             // net total + vat total
             firstDetail.DetailTotalCurrency.Should().Be(19862.33m);
             firstDetail.BaseDetailTotal.Should().Be(24827.91m);
-
-            // not updated
-            firstDetail.OrderUnitPriceCurrency.Should().Be(120m);
 
             firstDetail.InternalComments.Should().Be("updated internal comment");
             firstDetail.SuppliersDesignation.Should().Be("updated suppliers designation");
@@ -361,7 +363,11 @@
             var firstDetail = this.current.Details.First();
 
             this.miniOrder.OurQty.Should().Be(99m);
-            this.miniOrder.OrderQty.Should().Be(49.5m);
+
+            // updated based on conv factor
+            this.miniOrder.OrderQty.Should().Be(198m);
+            // updated based on conv factor
+            this.miniOrder.OrderPrice.Should().Be(400.44m);
 
             this.miniOrder.OurPrice.Should().Be(200.22m);
             this.miniOrder.BaseOurPrice.Should().Be(250.28m);
@@ -376,9 +382,6 @@
             // net total + vat total
             this.miniOrder.OrderTotal.Should().Be(19862.33m);
             this.miniOrder.BaseOrderTotal.Should().Be(24827.91m);
-
-            // not updated
-            this.miniOrder.OrderPrice.Should().Be(120m);
         }
     }
 }
