@@ -520,22 +520,21 @@ function PurchaseOrderUtility({ creating }) {
                         </Grid>
                         <Grid item xs={1}>
                             <div className={classes.centeredIcon}>
-                                {allowedToUpdate ? (
+                                {allowedToUpdate() ? (
                                     <Tooltip
                                         title={`You can ${
                                             creating ? 'create' : 'edit'
                                         } purchase orders`}
                                     >
-                                        <ModeEditIcon color="primary" />
+                                        <ModeEditIcon fontSize="large" color="primary" />
                                     </Tooltip>
                                 ) : (
-                                    <Tooltip title="cannot edit order">
+                                    <Tooltip title="You cannot edit order">
                                         <EditOffIcon color="secondary" />
                                     </Tooltip>
                                 )}
                             </div>
                         </Grid>
-
                         <Grid item xs={3}>
                             <Typeahead
                                 // onSelect={newValue => {
