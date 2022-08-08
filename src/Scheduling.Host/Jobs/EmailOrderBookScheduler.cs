@@ -20,13 +20,13 @@
             this.serviceProvider = serviceProvider;
         }
 
-        // Dispatches a message to instruct Order Books to be emailed to suppliers on Monday mornings at 830
+        // Dispatches a message to instruct Order Books to be emailed to suppliers on Monday mornings at 230
         // emails configured here https://app.linn.co.uk/purch/planning/plautoem.aspx
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             
-            // every day at 830am
-            var trigger = new DailyTrigger(8, 30);
+            // every day at 230am
+            var trigger = new DailyTrigger(2, 30);
 
             // do the following
             trigger.OnTimeTriggered += () =>

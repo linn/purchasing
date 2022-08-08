@@ -1,7 +1,6 @@
 ﻿namespace Linn.Purchasing.Messaging.Handlers
 {
     using System;
-    using System.IO;
     using System.Text;
 
     using Linn.Common.Logging;
@@ -34,7 +33,8 @@
                 var resource = JsonConvert.DeserializeObject<EmailOrderBookMessageResource>(enc);
                 this.Logger.Info("Sending MR order book email to: " + resource.ForSupplier);
 
-                this.mailer.SendOrderBookEmail(resource.ToAddress, resource.ForSupplier, resource.Timestamp.ToShortTimeString(), resource.Test);
+                this.mailer.SendOrderBookEmail(
+                    resource.ToAddress, resource.ForSupplier, resource.Timestamp.ToShortTimeString(), resource.Test);
                 return true;
             }
             catch (Exception e)

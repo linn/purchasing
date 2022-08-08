@@ -21,13 +21,13 @@
 
         private readonly IMrOrderBookReportService reportService;
          
-       private readonly ISingleRecordRepository<TqmsJobref> tqmsMaster;
+       private readonly ISingleRecordRepository<TqmsMaster> tqmsMaster;
 
         public MrOrderBookMailer(
             IRepository<Supplier, int> supplierRepository,
             IMrOrderBookReportService reportService,
             IEmailService emailService,
-            ISingleRecordRepository<TqmsJobref> tqmsMaster)
+            ISingleRecordRepository<TqmsMaster> tqmsMaster)
         {
             this.emailService = emailService;
             this.reportService = reportService;
@@ -41,15 +41,35 @@
 
             if (string.IsNullOrEmpty(toAddress))
             {
+                // todo - use suppliers main order contact email address
                 throw new MrOrderBookEmailException($"No recipient address set for: {toSupplier}");
             }
 
-            var lastTqmsDate = this.tqmsMaster.GetRecord().Date.Date;
+            var vendorManagerAddress = supplier.VendorManager.Employee.PhoneListEntry.EmailAddress;
+            var vendorManagerName = supplier.VendorManager.Employee.FullName;
+
+            var lastTqmsDate = this.tqmsMaster.GetRecord().DateLastDoTqmsSums;
+
+            // notify the vendor managers if tqms jobs failed
             if (lastTqmsDate != DateTime.Today.Date)
             {
-                throw new MrOrderBookEmailException($"TQMS not ran. Last run was at: {lastTqmsDate.ToShortDateString()}");
+                this.emailService.SendEmail(
+                    vendorManagerAddress, 
+                    vendorManagerName, 
+                    null, 
+                    null, 
+                    ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
+                    "Purchasing Outgoing",
+                    "MR ORDER BOOK EMAIL ERROR",
+                    "The MR Order book emails could not be sent because the TQMS jobs did not run over the weekend.",
+                    null,
+                    null,
+                    null);
+                return; // don't send the emails to suppliers since the figures won't be up to date
             }
+
             var export = this.reportService.GetOrderBookExport(toSupplier);
+            
 
             // todo ? - I don't feel great about doing this in the domain.
             // Serializing, converting to csv list etc. should probably be done in the email service
@@ -63,8 +83,8 @@
                 supplier.Name,
                 null,
                 null,
-                ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
-                "Linn",
+                vendorManagerAddress,
+                vendorManagerName,
                 $"MR Order Book - {timestamp}",
                 "Please find Order Book attached",
                 "csv",
