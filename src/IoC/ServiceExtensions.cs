@@ -21,6 +21,7 @@
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Forecasting;
     using Linn.Purchasing.Domain.LinnApps.Keys;
+    using Linn.Purchasing.Domain.LinnApps.Mailers;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
@@ -189,6 +190,7 @@
                 .AddTransient<IMrOrderBookReportService, MrOrderBookReportService>()
                 .AddTransient<IAutomaticPurchaseOrderService, AutomaticPurchaseOrderService>()
                 .AddTransient<ILeadTimesReportService, LeadTimesReportService>()
+                .AddTransient<IMrOrderBookMailer, MrOrderBookMailer>()
 
                 // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
