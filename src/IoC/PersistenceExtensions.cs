@@ -152,7 +152,9 @@
                 .AddTransient<IRepository<NominalAccount, int>, NominalAccountRepository>()
                 .AddTransient<IQueryRepository<SuppliersLeadTimesEntry>, EntityFrameworkQueryRepository<SuppliersLeadTimesEntry>>(
                     r => new EntityFrameworkQueryRepository<SuppliersLeadTimesEntry>(r.GetService<ServiceDbContext>()
-                        ?.SuppliersLeadTimesEntries));
+                        ?.SuppliersLeadTimesEntries))
+                .AddTransient<ISingleRecordRepository<TqmsMaster>, EntityFrameworkSingleRecordRepository<TqmsMaster>>(
+                    r => new EntityFrameworkSingleRecordRepository<TqmsMaster>(r.GetService<ServiceDbContext>()?.TqmsMaster));
         }
     }
 }
