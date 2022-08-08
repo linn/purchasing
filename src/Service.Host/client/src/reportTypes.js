@@ -95,3 +95,9 @@ export const supplierLeadTimesReport = new ItemType(
     'SUPPLIERS_BY_LEADTIME_REPORT',
     '/purchasing/reports/leadtimes/report'
 );
+
+export const deliveryPerformanceSummaryReport = new ItemType(
+    'deliveryPerformanceSummaryReport',
+    'DELIVERY_PERFORMANCE_REPORT',
+    '/purchasing/reports/delivery-performance-summary/report'
+);

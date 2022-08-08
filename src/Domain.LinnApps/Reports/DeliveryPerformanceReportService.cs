@@ -23,9 +23,6 @@
 
         public ResultsModel GetDeliveryPerformanceSummary(int startPeriod, int endPeriod, int? supplierId, string vendorManager)
         {
-            var data2 = this.deliveryPerformanceRepository.FilterBy(
-                a => a.LedgerPeriod >= startPeriod && a.LedgerPeriod <= endPeriod).ToList();
-
             var data = this.deliveryPerformanceRepository.FilterBy(
                 a => a.LedgerPeriod >= startPeriod && a.LedgerPeriod <= endPeriod);
 
@@ -105,6 +102,8 @@
             {
                 reportRow.SortOrder = int.Parse(reportRow.RowId);
             }
+
+            report.Columns.First(a => a.ColumnId == "Month Name").ColumnType = GridDisplayType.TextValue;
 
             return report;
         }
