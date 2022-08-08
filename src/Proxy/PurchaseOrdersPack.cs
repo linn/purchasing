@@ -53,25 +53,20 @@
         {
             using var connection = this.databaseService.GetConnection();
             connection.Open();
-            var cmd = new OracleCommand("pl_orders_pack.get_vat_amount_supplier", connection) 
+            var cmd = new OracleCommand("pl_orders_pack.get_vat_amount_supplier", connection)
                           {
                               CommandType = CommandType.StoredProcedure
                           };
-           
-            var paramTotal = new OracleParameter("p_tot", OracleDbType.Decimal) 
+
+            var paramTotal = new OracleParameter("p_tot", OracleDbType.Decimal)
                                  {
-                                     Direction = ParameterDirection.Input,
-                                     Value = total
+                                     Direction = ParameterDirection.Input, Value = total
                                  };
             var paramSupplierId = new OracleParameter("p_supp", OracleDbType.Int32)
                                       {
-                                          Direction = ParameterDirection.Input,
-                                          Value = supplierId
+                                          Direction = ParameterDirection.Input, Value = supplierId
                                       };
-            var result = new OracleParameter(null, OracleDbType.Decimal)
-                             {
-                                 Direction = ParameterDirection.ReturnValue
-                             };
+            var result = new OracleParameter(null, OracleDbType.Decimal) { Direction = ParameterDirection.ReturnValue };
 
             cmd.Parameters.Add(result);
             cmd.Parameters.Add(paramTotal);

@@ -304,6 +304,12 @@ export const automaticPurchaseOrder = new ItemType(
     '/purchasing/automatic-purchase-orders'
 );
 
+export const exchangeRates = new ItemType(
+    'exchangeRates',
+    'EXCHANGE_RATES',
+    '/logistics/import-books/exchange-rates'
+);
+
 export const ledgerPeriods = new ItemType(
     'ledgerPeriods',
     'LEDGER_PERIODS',
