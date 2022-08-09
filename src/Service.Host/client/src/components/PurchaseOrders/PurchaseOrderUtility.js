@@ -65,6 +65,9 @@ function PurchaseOrderUtility({ creating }) {
         }
     }, [orderNumber, reduxDispatch, creating]);
 
+    useEffect(() => reduxDispatch(currenciesActions.fetch()), [reduxDispatch]);
+    useEffect(() => reduxDispatch(employeesActions.fetch()), [reduxDispatch]);
+
     const item = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.purchaseOrder));
     const loading = useSelector(state =>
         creating
@@ -115,8 +118,7 @@ function PurchaseOrderUtility({ creating }) {
     const [authEmailDialogOpen, setAuthEmailDialogOpen] = useState(false);
     const [employeeToEmail, setEmployeeToEmail] = useState();
 
-    useEffect(() => reduxDispatch(currenciesActions.fetch()), [reduxDispatch]);
-    useEffect(() => reduxDispatch(employeesActions.fetch()), [reduxDispatch]);
+    
 
     const nominalAccountsTable = {
         totalItemCount: nominalsSearchItems.length,

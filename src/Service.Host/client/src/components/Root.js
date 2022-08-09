@@ -59,6 +59,7 @@ import AutomaticPurchaseOrderSuggestions from './AutomaticPurchaseOrderSuggestio
 import AutomaticPurchaseOrders from './AutomaticPurchaseOrders';
 import SupplierLeadTimesReport from './reports/SupplierLeadTimesReport';
 import SupplierLeadTimesReportOptions from './reports/SupplierLeadTimesReportOptions';
+import CreatePurchaseOrderUt from './PurchaseOrders/CreatePurchaseOrderUt';
 
 const Root = ({ store }) => (
     <div>
@@ -234,6 +235,17 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/purchase-orders/acknowledge"
                                     component={AcknowledgeOrdersUtility}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/purchase-orders/quick-create"
+                                    component={CreatePurchaseOrderUt}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/purchase-orders/create"
+                                    // eslint-disable-next-line react/jsx-props-no-spreading
+                                    render={props => <PurchaseOrderUtility creating {...props} />}
                                 />
                                 <Route
                                     exact
