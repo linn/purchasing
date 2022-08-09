@@ -36,6 +36,7 @@
             app.MapGet("/purchasing/purchase-orders/packaging-groups", this.GetPackagingGroups);
             app.MapGet("/purchasing/purchase-orders/tariffs", this.SearchTariffs);
             app.MapGet("/purchasing/purchase-orders", this.SearchPurchaseOrders);
+            app.MapPost("/purchasing/purchase-orders/get-order-from-supplier-id", this.FillOutPurchaseOrderFromSupplierId);
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}", this.GetPurchaseOrder);
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}/html", this.GetPurchaseOrderHtml);
             app.MapPost("/purchasing/purchase-orders/email-pdf", this.EmailOrderPdf);
@@ -102,6 +103,17 @@
             IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
             var result = purchaseOrderFacadeService.GetById(orderNumber, req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task FillOutPurchaseOrderFromSupplierId(
+            HttpRequest req,
+            HttpResponse res,
+            PurchaseOrderResource resource,
+            IPurchaseOrderFacadeService purchaseOrderFacadeService)
+        {
+            var result = purchaseOrderFacadeService.FillOutOrderFromSupplierId(resource, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }

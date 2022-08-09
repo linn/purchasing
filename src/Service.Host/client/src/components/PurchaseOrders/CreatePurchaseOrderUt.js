@@ -1,19 +1,13 @@
 import React, { useEffect, useState, useReducer, useMemo } from 'react';
 import { useMediaQuery } from 'react-responsive';
-import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import { useSelector, useDispatch } from 'react-redux';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import { useParams } from 'react-router-dom';
-import Dialog from '@mui/material/Dialog';
-import IconButton from '@mui/material/IconButton';
+import { useLocation } from 'react-router-dom';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import EditOffIcon from '@mui/icons-material/EditOff';
 import Tooltip from '@mui/material/Tooltip';
-import Close from '@mui/icons-material/Close';
-import Email from '@mui/icons-material/Email';
-import Send from '@mui/icons-material/Send';
 import { makeStyles } from '@mui/styles';
 import {
     Page,
@@ -23,28 +17,20 @@ import {
     SnackbarMessage,
     itemSelectorHelpers,
     Loading,
-    Dropdown,
     TypeaheadTable,
-    //userSelectors,
     getItemError,
     ErrorCard,
-    utilities,
-    getPreviousPaths,
-    SaveBackCancelButtons,
-    OnOffSwitch,
-    processSelectorHelpers
+    utilities
 } from '@linn-it/linn-form-components-library';
+import queryString from 'query-string';
 import moment from 'moment';
 import currenciesActions from '../../actions/currenciesActions';
-import employeesActions from '../../actions/employeesActions';
 import nominalsActions from '../../actions/nominalsActions';
-//import countriesActions from '../../actions/countriesActions';
 import suppliersActions from '../../actions/suppliersActions';
 import partsActions from '../../actions/partsActions';
 import history from '../../history';
 import config from '../../config';
 import purchaseOrderActions from '../../actions/purchaseOrderActions';
-import handleBackClick from '../../helpers/handleBackClick';
 import reducer from './purchaseOrderReducer';
 import { exchangeRates } from '../../itemTypes';
 import exchangeRatesActions from '../../actions/exchangeRatesActions';
@@ -52,13 +38,11 @@ import currencyConvert from '../../helpers/currencyConvert';
 
 function CreatePurchaseOrderUt() {
     const reduxDispatch = useDispatch();
-    const clearErrors = () => reduxDispatch(purchaseOrderActions.clearErrorsForItem());
 
     useEffect(() => {
         reduxDispatch(purchaseOrderActions.clearErrorsForItem());
         reduxDispatch(purchaseOrderActions.fetchState());
         reduxDispatch(currenciesActions.fetch());
-        reduxDispatch(employeesActions.fetch()); //maybe unused here
     }, [reduxDispatch]);
 
     const item = useSelector(reduxState =>
@@ -72,13 +56,13 @@ function CreatePurchaseOrderUt() {
 
     const [order, dispatch] = useReducer(reducer, { details: [{}] });
 
-    const { supplierId, supplierName, partNumber, qty } = useParams();
+    const { search } = useLocation();
+    const { supplierId, supplierName, partNumber, qty } = queryString.parse(search);
 
     useEffect(() => {
         if (item) {
             const initialOrder = {
                 ...item,
-                orderNumber: 'creating',
                 exchangeRate: 1,
                 dateRequired: new Date(),
                 supplier: { id: supplierId, name: supplierName },
@@ -99,8 +83,6 @@ function CreatePurchaseOrderUt() {
         }
     }, [item, partNumber, qty, reduxDispatch, supplierId, supplierName]);
 
-    useEffect(() => {}, [supplierId, supplierName, partNumber, qty]);
-
     const suppliersSearchResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.suppliers, 100, 'id', 'id', 'name')
     );
@@ -108,8 +90,6 @@ function CreatePurchaseOrderUt() {
         collectionSelectorHelpers.getSearchLoading(state.suppliers)
     );
     const searchSuppliers = searchTerm => reduxDispatch(suppliersActions.search(searchTerm));
-
-    const currencies = useSelector(state => collectionSelectorHelpers.getItems(state.currencies));
 
     const nominalsSearchItems = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.nominals)
@@ -138,14 +118,17 @@ function CreatePurchaseOrderUt() {
         }))
     };
 
-    const previousPaths = useSelector(state => getPreviousPaths(state));
-
     const allowedToCreate = () => item?.links?.some(l => l.rel === 'create');
 
     const inputIsInvalid = () =>
-        !order.supplier && !order.partNumber && order.department && order.nominal;
+        !order.supplier &&
+        !order.partNumber &&
+        order.department &&
+        order.nominal &&
+        order.details[0].ourQty &&
+        order.details[0].ourUnitPriceCurrency;
 
-    const canSave = () => editStatus !== 'view' && allowedToCreate && !inputIsInvalid();
+    const canSave = () => editStatus !== 'view' && allowedToCreate() && !inputIsInvalid();
 
     const handleFieldChange = (propertyName, newValue) => {
         setEditStatus('edit');
@@ -245,6 +228,14 @@ function CreatePurchaseOrderUt() {
         });
     };
 
+    const handleSupplierChange = newSupplier => {
+        setEditStatus('edit');
+        dispatch({
+            payload: { id: newSupplier.id, name: newSupplier.name },
+            type: 'supplierChange'
+        });
+    };
+
     const partsSearchResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.parts)
     ).map?.(c => ({
@@ -285,9 +276,17 @@ function CreatePurchaseOrderUt() {
     const screenIsSmall = useMediaQuery({ query: `(max-width: 1024px)` });
 
     const detail = order ? order.details[0] : {};
+
+    const progressToFullCreate = () => {
+        //post to get supplier info fill out address etc, then reduxDispatch the action
+        // reduxDispatch(purchaseOrderActions. thingy ());
+
+        history.push(utilities.getHref(order, 'create'));
+    };
+
     return (
         <>
-            <Page history={history} homeUrl={config.appRoot} width={screenIsSmall ? 'xl' : 'm'}>
+            <Page history={history} homeUrl={config.appRoot} width={screenIsSmall ? 'l' : 's'}>
                 {loading ? (
                     <Loading />
                 ) : (
@@ -357,7 +356,7 @@ function CreatePurchaseOrderUt() {
                             <InputField
                                 fullWidth
                                 value={detail.ourUnitPriceCurrency}
-                                label="Our price (unit, currency)"
+                                label="Our price (currency)"
                                 propertyName="ourUnitPriceCurrency"
                                 onChange={(propertyName, newValue) =>
                                     handleDetailValueFieldChange(
@@ -400,6 +399,9 @@ function CreatePurchaseOrderUt() {
                                 text
                                 clearSearch={() => {}}
                                 placeholder="Search Suppliers"
+                                onSelect={newValue => {
+                                    handleSupplierChange(newValue);
+                                }}
                                 minimumSearchTermLength={3}
                                 fullWidth
                                 disabled={!allowedToCreate()}
@@ -473,24 +475,15 @@ function CreatePurchaseOrderUt() {
                         </Grid>
 
                         <Grid item xs={6}>
-                            <SaveBackCancelButtons
-                                saveDisabled={!canSave()}
-                                backClick={() => handleBackClick(previousPaths, history.goBack)}
-                                saveClick={() => {
-                                    setEditStatus('view');
-                                    clearErrors();
-                                    reduxDispatch(
-                                        purchaseOrderActions.update(order.orderNumber, order)
-                                    );
-                                }}
-                                cancelClick={() => {
-                                    setEditStatus('view');
-                                    // if (creating) {
-                                    //     setOrder(defaultCreatingOrder);
-                                    // } else {
-                                    dispatch(item);
-                                }}
-                            />
+                            <Button
+                                className={classes.buttonMarginTop}
+                                color="primary"
+                                variant="contained"
+                                disabled={!canSave()}
+                                onClick={() => progressToFullCreate()}
+                            >
+                                Next
+                            </Button>
                         </Grid>
                     </Grid>
                 )}

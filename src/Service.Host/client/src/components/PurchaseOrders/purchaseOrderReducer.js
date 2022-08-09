@@ -26,8 +26,6 @@ const recalculateDetailFields = (detail, exchangeRate) => {
 export default function purchaseOrderReducer(state = initialState, action) {
     switch (action.type) {
         case 'initialise':
-            console.log('initialising to: ');
-            console.info(action.payload);
             return { ...action.payload };
         case 'orderFieldChange':
             return {
@@ -88,6 +86,11 @@ export default function purchaseOrderReducer(state = initialState, action) {
                         };
                     })
                 ]
+            };
+        case 'supplierChange':
+            return {
+                ...state,
+                supplier: action.payload
             };
         default:
             return state;

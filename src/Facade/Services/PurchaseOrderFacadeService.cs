@@ -36,6 +36,8 @@
 
         private readonly ILog logger;
 
+        private readonly IBuilder<PurchaseOrder> resourceBuilder;
+
         public PurchaseOrderFacadeService(
             IRepository<PurchaseOrder, int> repository,
             ITransactionManager transactionManager,
@@ -56,6 +58,7 @@
             this.pathToTemplate = pathToTemplate;
             this.fileReader = filerReader;
             this.logger = logger;
+            this.resourceBuilder = resourceBuilder;
         }
 
         public async Task<string> GetOrderAsHtml(int orderNumber)
@@ -96,6 +99,15 @@
                 this.logger.Write(LoggingLevel.Error, new List<LoggingProperty>(), ex.Message);
                 return new BadRequestResult<ProcessResultResource>(ex.Message);
             }
+        }
+
+        public IResult<PurchaseOrderResource> FillOutOrderFromSupplierId(PurchaseOrderResource resource, IEnumerable<string> privileges)
+        {
+            var updated = this.BuildEntityFromResourceHelper(resource);
+
+            this.domainService.FillOutUnsavedOrder(updated);
+
+            return new SuccessResult<PurchaseOrderResource>((PurchaseOrderResource)this.resourceBuilder.Build(updated, privileges));
         }
 
         protected override PurchaseOrder CreateFromResource(

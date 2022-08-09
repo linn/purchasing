@@ -12,7 +12,9 @@
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
+    using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     public class PurchaseOrderService : IPurchaseOrderService
     {
@@ -25,6 +27,12 @@
         private readonly IRepository<Employee, int> employeeRepository;
 
         private readonly IRepository<MiniOrder, int> miniOrderRepository;
+
+        private readonly IRepository<Supplier, int> supplierRepository;
+
+        private readonly IRepository<LinnDeliveryAddress, int> linnDeliveryAddressRepository;
+
+        private readonly ICurrencyPack currencyPack;
 
         private readonly IPdfService pdfService;
 
@@ -40,6 +48,8 @@
             IEmailService emailService,
             IRepository<Employee, int> employeeRepository,
             IRepository<MiniOrder, int> miniOrderRepository,
+            IRepository<Supplier, int> supplierRepository,
+            IRepository<LinnDeliveryAddress, int> linnDeliveryAddressRepository,
             IPurchaseOrdersPack purchaseOrdersPack)
         {
             this.authService = authService;
@@ -50,6 +60,8 @@
             this.employeeRepository = employeeRepository;
             this.miniOrderRepository = miniOrderRepository;
             this.purchaseOrdersPack = purchaseOrdersPack;
+            this.supplierRepository = supplierRepository;
+            this.linnDeliveryAddressRepository = linnDeliveryAddressRepository;
         }
 
         public void AllowOverbook(
@@ -108,12 +120,10 @@
                 throw new UnauthorisedActionException("You are not authorised to create purchase orders");
             }
 
-            // set conversion factor to 1
+            // set conversion factor to 1 for now
 
             // add id to pl_order_postings using next val plorp_seq
-            // select nomacc_id
-            // from nominal_accounts where
-            // nominal = p_nom and department = p_dept;
+            // add mini order for backwards compatibility for now?
         }
 
         public ProcessResult SendPdfEmail(
@@ -181,6 +191,37 @@
             this.UpdateDetails(current.Details, updated.Details, updated.SupplierId, updated.ExchangeRate.Value);
             this.UpdateMiniOrder(updated);
             return current;
+        }
+
+        public PurchaseOrder FillOutUnsavedOrder(PurchaseOrder order)
+        {
+            if (order.Supplier?.SupplierId == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            var supplier = this.supplierRepository.FindById(order.Supplier.SupplierId);
+
+            order.Supplier = supplier;
+            order.OrderAddress = supplier.OrderAddress;
+            order.OrderAddressId = supplier.OrderAddress.AddressId;
+            order.CurrencyCode = supplier.Currency.Code;
+            order.Currency = supplier.Currency;
+
+            if (order.DeliveryAddress == null)
+            {
+                var mainDeliveryAddress = this.linnDeliveryAddressRepository.FindAll().First(d => d.IsMainDeliveryAddress == "Y");
+                order.DeliveryAddressId = mainDeliveryAddress.AddressId;
+                order.DeliveryAddress = mainDeliveryAddress;
+            }
+
+            // var exchangeRate = repo or proxy pack call?
+            // todo set exchange rate based on dateRequired (likely today)
+            // and currency as above. Not sure if is exchange_rates or something else, impbooks had their own ones
+
+            order.ExchangeRate = 1m;
+
+            return order;
         }
 
         // below method currently unreferenced, but to be finished and used soon for create

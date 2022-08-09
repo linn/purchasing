@@ -118,8 +118,6 @@ function PurchaseOrderUtility({ creating }) {
     const [authEmailDialogOpen, setAuthEmailDialogOpen] = useState(false);
     const [employeeToEmail, setEmployeeToEmail] = useState();
 
-    
-
     const nominalAccountsTable = {
         totalItemCount: nominalsSearchItems.length,
         rows: nominalsSearchItems?.map(nom => ({
@@ -134,12 +132,12 @@ function PurchaseOrderUtility({ creating }) {
         }))
     };
 
-    const previousPaths = useSelector(state => getPreviousPaths(state));
+    // const previousPaths = useSelector(state => getPreviousPaths(state));
 
     const allowedToAuthorise = () => !creating && order.links?.some(l => l.rel === 'authorise');
 
     const allowedToUpdate = () =>
-        !creating && order.links?.some(l => l.rel === 'edit') && order.cancelled !== 'Y';
+        (!creating && order.links?.some(l => l.rel === 'edit') && order.cancelled !== 'Y') || (creating && order.links?.some(l => l.rel === 'create'));
 
     const inputIsInvalid = () => false;
 
@@ -1244,7 +1242,7 @@ function PurchaseOrderUtility({ creating }) {
                         <Grid item xs={6}>
                             <SaveBackCancelButtons
                                 saveDisabled={!canSave()}
-                                backClick={() => handleBackClick(previousPaths, history.goBack)}
+                                // backClick={() => handleBackClick(previousPaths, history.goBack)}
                                 saveClick={() => {
                                     setEditStatus('view');
                                     clearErrors();
