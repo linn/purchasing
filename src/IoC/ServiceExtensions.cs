@@ -144,7 +144,8 @@
                         x.GetService<ILog>()))
                 .AddTransient<IFacadeResourceService<AutomaticPurchaseOrder, int, AutomaticPurchaseOrderResource, AutomaticPurchaseOrderResource>, AutomaticPurchaseOrderFacadeService>()
                 .AddTransient<IFacadeResourceFilterService<AutomaticPurchaseOrderSuggestion, int, AutomaticPurchaseOrderSuggestionResource, AutomaticPurchaseOrderSuggestionResource, PlannerSupplierRequestResource>, AutomaticPurchaseOrderSuggestionFacadeService>()
-                .AddTransient<ILeadTimesReportFacadeService, LeadTimesReportFacadeService>();
+                .AddTransient<ILeadTimesReportFacadeService, LeadTimesReportFacadeService>()
+                .AddTransient<IForecastingReportsFacadeService, ForecastingReportsFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
@@ -191,6 +192,7 @@
                 .AddTransient<IAutomaticPurchaseOrderService, AutomaticPurchaseOrderService>()
                 .AddTransient<ILeadTimesReportService, LeadTimesReportService>()
                 .AddTransient<IMrOrderBookMailer, MrOrderBookMailer>()
+                .AddTransient<IForecastOrdersReportService, ForecastOrdersReportService>()
 
                 // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()

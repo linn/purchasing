@@ -59,6 +59,7 @@ import AutomaticPurchaseOrderSuggestions from './AutomaticPurchaseOrderSuggestio
 import AutomaticPurchaseOrders from './AutomaticPurchaseOrders';
 import SupplierLeadTimesReport from './reports/SupplierLeadTimesReport';
 import SupplierLeadTimesReportOptions from './reports/SupplierLeadTimesReportOptions';
+import ForecastOrdersReport from './reports/ForecastOrdersReports';
 
 const Root = ({ store }) => (
     <div>
@@ -345,6 +346,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/reports/leadtimes/report"
                                     component={SupplierLeadTimesReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/weekly-forecast-orders"
+                                    component={ForecastOrdersReport}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>

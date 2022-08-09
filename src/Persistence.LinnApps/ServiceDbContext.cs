@@ -166,6 +166,8 @@
 
         public DbSet<TqmsMaster> TqmsMaster { get; set; }
 
+        public DbSet<WeeklyForecastPart> WeeklyForecastParts { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -256,6 +258,7 @@
             this.BuildSupplierAutoEmails(builder);
             this.BuildSuppliersLeadTime(builder);
             this.BuildTqmsMaster(builder);
+            this.BuildWeeklyForecastParts(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1673,6 +1676,18 @@
             var entity = builder.Entity<TqmsMaster>().ToTable("TQMS_MASTER").HasNoKey();
             entity.Property(e => e.JobRef).HasColumnName("JOBREF");
             entity.Property(e => e.DateLastDoTqmsSums).HasColumnName("DATE_LAST_DO_TQMS_SUMS");
+        }
+
+        private void BuildWeeklyForecastParts(ModelBuilder builder)
+        {
+            var entity = builder.Entity<WeeklyForecastPart>().ToTable("WEEKLY_FORECAST_PARTS_VIEW").HasNoKey();
+            entity.Property(a => a.MrPartNumber).HasColumnName("MR_PART_NUMBER");
+            entity.Property(a => a.SupplierDesignation).HasColumnName("SUPPLIER_DESIGNATION");
+            entity.Property(a => a.StartingQty).HasColumnName("STARTING_QTY");
+            entity.Property(a => a.UnitPrice).HasColumnName("UNIT_PRICE");
+            entity.Property(a => a.MinimumOrderQty).HasColumnName("MINIMUM_ORDER_QTY");
+            entity.Property(a => a.PreferredSupplier).HasColumnName("PREFERRED_SUPPLIER");
+            entity.Property(a => a.TotalNettReqtValue).HasColumnName("T_NETT_REQT_VALUE");
         }
     }
 }

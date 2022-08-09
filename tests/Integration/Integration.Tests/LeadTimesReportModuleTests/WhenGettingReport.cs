@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.LeadTimesReportModuleTests
 {
-    using System;
     using System.Linq;
     using System.Net;
 

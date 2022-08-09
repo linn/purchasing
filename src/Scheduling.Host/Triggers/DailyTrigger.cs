@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Scheduling.Host.Triggers
+﻿namespace Linn.Purchasing.Scheduling.Host.Triggers // todo - move to common
 {
     public class DailyTrigger : IDisposable
     {
