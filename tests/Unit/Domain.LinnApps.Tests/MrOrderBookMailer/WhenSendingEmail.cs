@@ -48,7 +48,7 @@
         }
 
         [Test]
-        public void ShouldSendEmail()
+        public void ShouldSendEmailToSupplier()
         {
             this.EmailService.Received().SendEmail(
                 this.email,

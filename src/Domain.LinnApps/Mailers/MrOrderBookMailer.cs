@@ -2,6 +2,7 @@
 {
     using System;
     using System.IO;
+    using System.Linq;
 
     using Linn.Common.Configuration;
     using Linn.Common.Email;
@@ -10,7 +11,6 @@
     using Linn.Common.Serialization;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Reports;
-    using Linn.Purchasing.Domain.LinnApps.Reports.Models;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     public class MrOrderBookMailer : IMrOrderBookMailer
@@ -39,10 +39,16 @@
         {
             var supplier = this.supplierRepository.FindById(toSupplier);
 
+            var emailAddress = toAddress;
+
             if (string.IsNullOrEmpty(toAddress))
             {
-                // todo - use suppliers main order contact email address
-                throw new MrOrderBookEmailException($"No recipient address set for: {toSupplier}");
+                emailAddress = supplier.SupplierContacts
+                    ?.First(c => c.IsMainOrderContact.Equals("Y"))?.EmailAddress;
+                if (string.IsNullOrEmpty(emailAddress))
+                {
+                    throw new MrOrderBookEmailException($"No recipient address set for: {toSupplier}");
+                }
             }
 
             var vendorManagerAddress = supplier.VendorManager.Employee.PhoneListEntry.EmailAddress;
@@ -79,7 +85,7 @@
             stream.Position = 0;
 
             this.emailService.SendEmail(
-                test ? ConfigurationManager.Configuration["ORDER_BOOK_TEST_ADDRESS"] : toAddress,
+                test ? ConfigurationManager.Configuration["ORDER_BOOK_TEST_ADDRESS"] : emailAddress,
                 supplier.Name,
                 null,
                 null,
