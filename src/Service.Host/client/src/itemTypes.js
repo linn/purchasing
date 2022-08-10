@@ -309,3 +309,9 @@ export const exchangeRates = new ItemType(
     'EXCHANGE_RATES',
     '/logistics/import-books/exchange-rates'
 );
+
+export const ledgerPeriods = new ItemType(
+    'ledgerPeriods',
+    'LEDGER_PERIODS',
+    '/purchasing/ledger-periods'
+);

@@ -152,7 +152,10 @@
                 .AddTransient<IRepository<NominalAccount, int>, NominalAccountRepository>()
                 .AddTransient<IQueryRepository<SuppliersLeadTimesEntry>, EntityFrameworkQueryRepository<SuppliersLeadTimesEntry>>(
                     r => new EntityFrameworkQueryRepository<SuppliersLeadTimesEntry>(r.GetService<ServiceDbContext>()
-                        ?.SuppliersLeadTimesEntries));
+                        ?.SuppliersLeadTimesEntries))
+                .AddTransient<IQueryRepository<SupplierDeliveryPerformance>, EntityFrameworkQueryRepository<SupplierDeliveryPerformance>>(
+                    r => new EntityFrameworkQueryRepository<SupplierDeliveryPerformance>(r.GetService<ServiceDbContext>()
+                        ?.SupplierDeliveryPerformance));
         }
     }
 }

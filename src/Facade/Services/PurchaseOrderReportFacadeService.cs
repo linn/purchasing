@@ -4,7 +4,6 @@
     using System.Collections.Generic;
 
     using Linn.Common.Facade;
-    using Linn.Common.Reporting.Models;
     using Linn.Common.Reporting.Resources.Extensions;
 
     using Linn.Common.Reporting.Resources.ReportResultResources;
@@ -19,12 +18,16 @@
 
         private readonly IReportReturnResourceBuilder resultsModelResourceBuilder;
 
+        private readonly IDeliveryPerformanceReportService deliveryPerformanceReportService;
+
         public PurchaseOrderReportFacadeService(
             IPurchaseOrdersReportService domainService,
-            IReportReturnResourceBuilder resultsModelResourceBuilder)
+            IReportReturnResourceBuilder resultsModelResourceBuilder,
+            IDeliveryPerformanceReportService deliveryPerformanceReportService)
         {
             this.domainService = domainService;
             this.resultsModelResourceBuilder = resultsModelResourceBuilder;
+            this.deliveryPerformanceReportService = deliveryPerformanceReportService;
         }
 
         public IResult<ReportReturnResource> GetOrdersByPartReport(
@@ -102,6 +105,19 @@
             var results = this.domainService.GetUnacknowledgedOrders(resource.SupplierId, resource.SupplierGroupId);
 
             return results.ConvertToCsvList();
+        }
+
+        public IResult<ReportReturnResource> GetDeliveryPerformanceSummaryReport(DeliveryPerformanceRequestResource requestResource)
+        {
+            var results = this.deliveryPerformanceReportService.GetDeliveryPerformanceSummary(
+                requestResource.StartPeriod,
+                requestResource.EndPeriod,
+                requestResource.SupplierId,
+                requestResource.VendorManager);
+
+            var returnResource = this.resultsModelResourceBuilder.Build(results);
+
+            return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
         public IResult<ReportReturnResource> GetOrdersBySupplierReport(

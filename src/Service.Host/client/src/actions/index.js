@@ -265,3 +265,9 @@ export const supplierLeadTimesReportActionTypes = makeActionTypes(
 );
 
 export const exchangeRatesActionTypes = makeActionTypes(itemTypes.exchangeRates.actionType);
+
+export const ledgerPeriodsActionTypes = makeActionTypes(itemTypes.ledgerPeriods.actionType, false);
+
+export const deliveryPerformanceSummaryReportActionTypes = makeReportActionTypes(
+    reportTypes.deliveryPerformanceSummaryReport.actionType
+);

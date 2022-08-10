@@ -16,13 +16,19 @@
 
         protected IPurchaseOrderReportFacadeService Sut { get; private set; }
 
+        protected IDeliveryPerformanceReportService DeliveryPerformanceReportService { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
             this.DomainService = Substitute.For<IPurchaseOrdersReportService>();
+            this.DeliveryPerformanceReportService = Substitute.For<IDeliveryPerformanceReportService>();
             this.Builder = new ReportReturnResourceBuilder();
 
-            this.Sut = new PurchaseOrderReportFacadeService(this.DomainService, this.Builder);
+            this.Sut = new PurchaseOrderReportFacadeService(
+                this.DomainService,
+                this.Builder,
+                this.DeliveryPerformanceReportService);
         }
     }
 }
