@@ -4,7 +4,10 @@ import {
     Page,
     collectionSelectorHelpers,
     Dropdown,
-    Loading
+    InputField,
+    Typeahead,
+    Loading,
+    reportSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@mui/material/Button';
@@ -13,10 +16,14 @@ import moment from 'moment';
 import history from '../../history';
 import config from '../../config';
 import ledgerPeriodsActions from '../../actions/ledgerPeriodsActions';
+import vendorManagersActions from '../../actions/vendorManagersActions';
+import suppliersActions from '../../actions/suppliersActions';
 
 function DeliveryPerformanceSummary() {
     const [endPeriod, setEndPeriod] = useState(null);
     const [startPeriod, setStartPeriod] = useState(null);
+    const [vendorManager, setVendorManager] = useState('');
+    const [supplier, setSupplier] = useState(null);
 
     const dispatch = useDispatch();
     const ledgerPeriods = useSelector(state =>
@@ -25,13 +32,37 @@ function DeliveryPerformanceSummary() {
     const ledgerPeriodsLoading = useSelector(state =>
         collectionSelectorHelpers.getLoading(state.ledgerPeriods)
     );
+    const vendorManagers = useSelector(state =>
+        collectionSelectorHelpers.getItems(state.vendorManagers)
+    );
+    const vendorManagersLoading = useSelector(state =>
+        collectionSelectorHelpers.getLoading(state.vendorManagers)
+    );
+
+    const prevOptions = useSelector(
+        state =>
+            reportSelectorHelpers.getReportState(state.deliveryPerformanceSummaryReport)?.options
+    );
 
     useEffect(() => {
         dispatch(ledgerPeriodsActions.fetch());
     }, [dispatch]);
 
     useEffect(() => {
-        if (ledgerPeriods && ledgerPeriods.length > 0) {
+        dispatch(vendorManagersActions.fetch());
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (prevOptions) {
+            setStartPeriod(prevOptions.startPeriod);
+            setEndPeriod(prevOptions.endPeriod);
+            setVendorManager(prevOptions.vendorManager);
+            setSupplier({ id: prevOptions.supplierId });
+        }
+    }, [prevOptions]);
+
+    useEffect(() => {
+        if (!prevOptions?.startPeriod && ledgerPeriods && ledgerPeriods.length > 0) {
             const start = ledgerPeriods.find(
                 a =>
                     a.monthName ===
@@ -43,7 +74,18 @@ function DeliveryPerformanceSummary() {
             setStartPeriod(start.periodNumber);
             setEndPeriod(current.periodNumber);
         }
-    }, [ledgerPeriods]);
+    }, [ledgerPeriods, prevOptions]);
+
+    const suppliersSearchResults = useSelector(state =>
+        collectionSelectorHelpers.getSearchItems(state.suppliers)
+    )?.map(c => ({
+        id: c.id,
+        name: c.id.toString(),
+        description: c.name
+    }));
+    const suppliersSearchLoading = useSelector(state =>
+        collectionSelectorHelpers.getSearchLoading(state.suppliers)
+    );
 
     const handleStartChange = (_, period) => {
         setStartPeriod(period);
@@ -53,11 +95,26 @@ function DeliveryPerformanceSummary() {
         setEndPeriod(period);
     };
 
+    const handleSetSupplier = (_, supp) => {
+        setSupplier({ id: supp });
+    };
+
+    const handleSupplierReturn = () => {};
+
+    const handleSupplierChange = selectedsupplier => {
+        setSupplier(selectedsupplier);
+    };
+
     const runReport = () => {
-        const body = {
+        let body = {
             startPeriod,
-            endPeriod
+            endPeriod,
+            vendorManager
         };
+
+        if (supplier?.id) {
+            body = { ...body, supplierId: supplier.id }
+        }
         history.push('/purchasing/reports/delivery-performance-summary/report', body);
     };
     return (
@@ -93,6 +150,65 @@ function DeliveryPerformanceSummary() {
                                 type="number"
                             />
                         </Grid>
+                        <Grid item xs={4}>
+                            <Dropdown
+                                fullWidth
+                                value={vendorManager}
+                                label="Vendor Manager"
+                                propertyName="vendorManager"
+                                optionsLoading={vendorManagersLoading}
+                                items={[
+                                    ...[{ id: '', displayText: 'All' }],
+                                    ...vendorManagers
+                                        ?.sort((a, b) => {
+                                            if (a.vmId < b.vmId) {
+                                                return -1;
+                                            }
+                                            if (a.vmId > b.vmId) {
+                                                return 1;
+                                            }
+                                            return 0;
+                                        })
+                                        .map(v => ({
+                                            id: v.vmId,
+                                            displayText: `${v.vmId} ${v.name} (${v.userNumber})`
+                                        }))
+                                ]}
+                                allowNoValue={false}
+                                onChange={(_, newValue) => setVendorManager(newValue)}
+                            />
+                        </Grid>
+                        <Grid item xs={8} />
+                        <Grid item xs={4}>
+                            <Typeahead
+                                label="Supplier"
+                                title="Search for a supplier"
+                                onSelect={handleSupplierChange}
+                                items={suppliersSearchResults}
+                                loading={suppliersSearchLoading}
+                                fetchItems={searchTerm =>
+                                    dispatch(suppliersActions.search(searchTerm))
+                                }
+                                clearSearch={() => dispatch(suppliersActions.clearSearch)}
+                                value={supplier?.id}
+                                openModalOnClick={false}
+                                modal
+                                links={false}
+                                debounce={1000}
+                                handleFieldChange={handleSetSupplier}
+                                handleReturnPress={handleSupplierReturn}
+                                minimumSearchTermLength={2}
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <InputField
+                                disabled
+                                value={supplier?.description}
+                                fullWidth
+                                label="Supplier Name"
+                            />
+                        </Grid>
+                        <Grid item xs={2} />
                         <Grid item xs={12}>
                             <Button
                                 variant="outlined"

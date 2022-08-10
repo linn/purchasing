@@ -6,13 +6,13 @@ import {
     Page,
     ReportTable,
     BackButton,
-    Loading
+    Loading,
+    reportSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import history from '../../history';
 import config from '../../config';
 import deliveryPerformanceSummaryReportActions from '../../actions/deliveryPerformanceSummaryReportActions';
-import { deliveryPerformanceSummaryReport } from '../../reportTypes';
 
 function DeliveryPerformanceSummaryReport() {
     const dispatch = useDispatch();
@@ -24,9 +24,12 @@ function DeliveryPerformanceSummaryReport() {
         }
     }, [dispatch, options]);
 
-    const loading = useSelector(state => state[deliveryPerformanceSummaryReport.item]?.loading);
-
-    const data = useSelector(state => state[deliveryPerformanceSummaryReport.item]?.data);
+    const loading = useSelector(state =>
+        reportSelectorHelpers.getReportLoading(state.deliveryPerformanceSummaryReport)
+    );
+    const data = useSelector(state =>
+        reportSelectorHelpers.getReportData(state.deliveryPerformanceSummaryReport)
+    );
 
     const handleBackClick = () => {
         const uri = `/purchasing/reports/delivery-performance-summary`;
