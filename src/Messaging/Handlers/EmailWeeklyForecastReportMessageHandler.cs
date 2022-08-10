@@ -31,7 +31,7 @@
                 var body = message.Event.Body.ToArray();
                 var enc = Encoding.UTF8.GetString(body);
                 var resource = JsonConvert.DeserializeObject<EmailOrderBookMessageResource>(enc);
-                this.Logger.Info("Sending MR order book email to: " + resource.ForSupplier);
+                this.Logger.Info("Sending Weekly Forecast email to: " + resource.ForSupplier);
 
                 this.mailer.SendWeeklyForecastEmail(
                     resource.ToAddress, resource.ForSupplier, resource.Timestamp.ToShortTimeString(), resource.Test);
