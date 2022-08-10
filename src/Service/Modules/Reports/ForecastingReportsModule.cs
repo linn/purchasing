@@ -36,7 +36,6 @@
             var csvResults = facadeService.GetWeeklyForecastExport(
                supplierId);
             var now = DateTime.Today;
-            throw new Exception();
             await res.FromCsv(csvResults, $"{supplierId}-weekly-forecast-orders_{now.Day}-{now.Month}-{now.Year}.csv");
         }
     }

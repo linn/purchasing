@@ -2,10 +2,14 @@
 {
     using System;
 
+    using FluentAssertions;
+
     using Linn.Common.Reporting.Models;
+    using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NSubstitute;
+    using NSubstitute.ExceptionExtensions;
 
     using NUnit.Framework;
 
@@ -16,6 +20,8 @@
         private string email;
 
         private string timestamp;
+
+        private Action action;
 
         [SetUp]
         public void SetUp()
@@ -43,12 +49,14 @@
             this.TqmsMaster.GetRecord().Returns(new TqmsMaster { DateLastDoTqmsSums = DateTime.UnixEpoch });
             this.ReportService.GetOrderBookExport(this.supplier.SupplierId).Returns(new ResultsModel());
 
-            this.Sut.SendOrderBookEmail(this.email, this.supplier.SupplierId, this.timestamp);
+            this.action = () => this.Sut.SendOrderBookEmail(this.email, this.supplier.SupplierId, this.timestamp);
         }
 
         [Test]
-        public void ShouldSendEmailToVendorManager()
+        public void ShouldSendAlertToVendorManagerAndThrow()
         {
+            this.action.Should().Throw<MrOrderBookEmailException>()
+                .WithMessage("The MR Order book emails could not be sent because the TQMS jobs did not run over the weekend.");
             this.EmailService.Received().SendEmail(
                 this.supplier.VendorManager.Employee.PhoneListEntry.EmailAddress,
                 this.supplier.VendorManager.Employee.FullName,

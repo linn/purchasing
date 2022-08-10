@@ -13,7 +13,7 @@
 
     public class ContextBase
     {
-        protected IMrOrderBookMailer Sut { get; private set; }
+        protected ISupplierAutoEmailsMailer Sut { get; private set; }
 
         protected IRepository<Supplier, int> SupplierRepository { get; private set; }
 
@@ -23,15 +23,22 @@
 
         protected ISingleRecordRepository<TqmsMaster> TqmsMaster { get; private set; }
 
+        protected IForecastOrdersReportService ForecastOrdersReportService { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
             this.SupplierRepository = Substitute.For<IRepository<Supplier, int>>();
             this.ReportService = Substitute.For<IMrOrderBookReportService>();
+            this.ForecastOrdersReportService = Substitute.For<IForecastOrdersReportService>();
             this.EmailService = Substitute.For<IEmailService>();
             this.TqmsMaster = Substitute.For<ISingleRecordRepository<TqmsMaster>>();
-            this.Sut = new MrOrderBookMailer(
-                this.SupplierRepository, this.ReportService, this.EmailService, this.TqmsMaster);
+            this.Sut = new SupplierAutoEmailsMailer(
+                this.SupplierRepository, 
+                this.ReportService, 
+                this.EmailService, 
+                this.TqmsMaster, 
+                this.ForecastOrdersReportService);
         }
     }
 }

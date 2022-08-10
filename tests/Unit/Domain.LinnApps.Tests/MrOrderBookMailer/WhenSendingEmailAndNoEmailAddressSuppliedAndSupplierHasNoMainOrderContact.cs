@@ -54,7 +54,7 @@
         public void ShouldThrow()
         {
             this.action.Should().Throw<MrOrderBookEmailException>()
-                .WithMessage($"No recipient address set for: {this.supplier.SupplierId}");
+                .WithMessage($"No recipient address set for: {this.supplier.Name}");
         }
     }
 }
