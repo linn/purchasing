@@ -113,8 +113,9 @@ function DeliveryPerformanceSummary() {
         };
 
         if (supplier?.id) {
-            body = { ...body, supplierId: supplier.id }
+            body = { ...body, supplierId: supplier.id };
         }
+
         history.push('/purchasing/reports/delivery-performance-summary/report', body);
     };
     return (
