@@ -87,6 +87,7 @@ import automaticPurchaseOrderSuggestions from './automaticPurchaseOrderSuggestio
 import supplierLeadTimesReport from './supplierLeadTimesReport';
 import ledgerPeriods from './ledgerPeriods';
 import deliveryPerformanceSummaryReport from './deliveryPerformanceSummaryReport';
+import deliveryPerformanceSupplierReport from './deliveryPerformanceSupplierReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -106,6 +107,7 @@ const rootReducer = history =>
         currencies,
         deliveryAddresses,
         deliveryPerformanceSummaryReport,
+        deliveryPerformanceSupplierReport,
         departments,
         ediOrders,
         ediSuppliers,

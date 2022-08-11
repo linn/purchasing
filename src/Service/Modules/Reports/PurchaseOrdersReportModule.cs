@@ -31,6 +31,7 @@
             app.MapGet("/purchasing/reports/unacknowledged-orders/export", this.GetUnacknowledgedOrdersReportExport);
             app.MapGet("/purchasing/reports/delivery-performance-summary", this.GetApp);
             app.MapGet("/purchasing/reports/delivery-performance-summary/report", this.GetDeliveryPerformanceSummaryReport);
+            app.MapGet("/purchasing/reports/delivery-performance-supplier/report", this.GetDeliveryPerformanceBySupplierReport);
         }
 
         private async Task GetUnacknowledgedOrdersReport(
@@ -66,6 +67,27 @@
                                    StartPeriod = startPeriod, EndPeriod = endPeriod, SupplierId = supplierId, VendorManager = vendorManager
                                };
             var results = purchaseOrderReportFacadeService.GetDeliveryPerformanceSummaryReport(resource);
+
+            await response.Negotiate(results);
+        }
+
+        private async Task GetDeliveryPerformanceBySupplierReport(
+            HttpRequest request,
+            HttpResponse response,
+            IPurchaseOrderReportFacadeService purchaseOrderReportFacadeService,
+            int startPeriod,
+            int endPeriod,
+            int? supplierId,
+            string vendorManager)
+        {
+            var resource = new DeliveryPerformanceRequestResource
+                               {
+                                   StartPeriod = startPeriod,
+                                   EndPeriod = endPeriod,
+                                   SupplierId = supplierId,
+                                   VendorManager = vendorManager
+                               };
+            var results = purchaseOrderReportFacadeService.GetDeliveryPerformanceSupplierReport(resource);
 
             await response.Negotiate(results);
         }

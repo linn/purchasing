@@ -32,5 +32,8 @@
 
         IResult<ReportReturnResource> GetDeliveryPerformanceSummaryReport(
             DeliveryPerformanceRequestResource requestResource);
+
+        IResult<ReportReturnResource> GetDeliveryPerformanceSupplierReport(
+            DeliveryPerformanceRequestResource requestResource);
     }
 }

@@ -120,6 +120,19 @@
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
+        public IResult<ReportReturnResource> GetDeliveryPerformanceSupplierReport(DeliveryPerformanceRequestResource requestResource)
+        {
+            var results = this.deliveryPerformanceReportService.GetDeliveryPerformanceBySupplier(
+                requestResource.StartPeriod,
+                requestResource.EndPeriod,
+                requestResource.SupplierId,
+                requestResource.VendorManager);
+
+            var returnResource = this.resultsModelResourceBuilder.Build(results);
+
+            return new SuccessResult<ReportReturnResource>(returnResource);
+        }
+
         public IResult<ReportReturnResource> GetOrdersBySupplierReport(
             OrdersBySupplierSearchResource resource)
         {
