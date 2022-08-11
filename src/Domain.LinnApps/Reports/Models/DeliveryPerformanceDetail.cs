@@ -18,7 +18,7 @@
 
         public DateTime RequestedDate { get; set; }
         
-        public DateTime AdvisedDate { get; set; }
+        public DateTime? AdvisedDate { get; set; }
 
         public string RescheduleReason { get; set; }
 
