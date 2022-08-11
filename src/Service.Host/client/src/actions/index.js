@@ -271,3 +271,7 @@ export const ledgerPeriodsActionTypes = makeActionTypes(itemTypes.ledgerPeriods.
 export const deliveryPerformanceSummaryReportActionTypes = makeReportActionTypes(
     reportTypes.deliveryPerformanceSummaryReport.actionType
 );
+
+export const deliveryPerformanceSupplierReportActionTypes = makeReportActionTypes(
+    reportTypes.deliveryPerformanceSupplierReport.actionType
+);

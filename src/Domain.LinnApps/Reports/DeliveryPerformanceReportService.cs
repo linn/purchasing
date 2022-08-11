@@ -112,6 +112,8 @@
                 report.ColumnIndex("% On Time"),
                 1);
             this.reportingHelper.SortRowsByColumnValue(report, report.ColumnIndex("% On Time"), true);
+            report.Columns.First(a => a.ColumnId == "Supplier Id").ColumnType = GridDisplayType.TextValue;
+            report.Columns.First(a => a.ColumnId == "Supplier Name").ColumnType = GridDisplayType.TextValue;
 
             return report;
         }
