@@ -166,6 +166,8 @@
 
         public DbSet<SupplierDeliveryPerformance> SupplierDeliveryPerformance { get; set; }
 
+        public DbSet<DeliveryPerformanceDetail> DeliveryPerformanceDetails { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -256,6 +258,7 @@
             this.BuildSupplierAutoEmails(builder);
             this.BuildSuppliersLeadTime(builder);
             this.BuildSupplierDeliveryPerformance(builder);
+            this.BuildDeliveryPerformanceDetails(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1681,6 +1684,21 @@
             entity.Property(a => a.NumberOfEarlyDeliveries).HasColumnName("NO_EARLY_DELIVERIES");
             entity.Property(a => a.NumberOfUnacknowledgedDeliveries).HasColumnName("NO_UNACK_DELIVERIES");
             entity.Property(a => a.NumberOfLateDeliveries).HasColumnName("NO_OF_LATE_DELIVERIES");
+        }
+
+        private void BuildDeliveryPerformanceDetails(ModelBuilder builder)
+        {
+            var entity = builder.Entity<DeliveryPerformanceDetail>().ToTable("PM_DELPERF_VIEW").HasNoKey();
+            entity.Property(a => a.SupplierId).HasColumnName("SUPPLIER_ID");
+            entity.Property(a => a.DateArrived).HasColumnName("DATE_ARRIVED");
+            entity.Property(a => a.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(a => a.OrderLine).HasColumnName("ORDER_LINE");
+            entity.Property(a => a.DeliverySequence).HasColumnName("DELIVERY_SEQ");
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER");
+            entity.Property(a => a.RequestedDate).HasColumnName("REQUESTED_DATE");
+            entity.Property(a => a.AdvisedDate).HasColumnName("ADVISED_DATE");
+            entity.Property(a => a.RescheduleReason).HasColumnName("RESCHEDULE_REASON");
+            entity.Property(a => a.OnTime).HasColumnName("ON_TIME");
         }
     }
 }

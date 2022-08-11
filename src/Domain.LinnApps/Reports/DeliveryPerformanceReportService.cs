@@ -111,11 +111,16 @@
                 report.ColumnIndex("No Of Deliveries"),
                 report.ColumnIndex("% On Time"),
                 1);
-            this.reportingHelper.SortRowsByColumnValue(report, report.ColumnIndex("% On Time"), true);
+            this.reportingHelper.SortRowsByColumnValue(report, report.ColumnIndex("% On Time"));
             report.Columns.First(a => a.ColumnId == "Supplier Id").ColumnType = GridDisplayType.TextValue;
             report.Columns.First(a => a.ColumnId == "Supplier Name").ColumnType = GridDisplayType.TextValue;
 
             return report;
+        }
+
+        public ResultsModel GetDeliveryPerformanceDetails(int startPeriod, int endPeriod, int supplierId)
+        {
+            throw new System.NotImplementedException();
         }
 
         private void CalculateDeliveryValues(
@@ -164,7 +169,7 @@
             string vendorManager)
         {
             var data = this.deliveryPerformanceRepository.FilterBy(
-                a => a.LedgerPeriod >= startPeriod && a.LedgerPeriod <= endPeriod);
+                a => a.LedgerPeriod >= startPeriod && a.LedgerPeriod <= endPeriod && a.NumberOfDeliveries > 0);
 
             if (supplierId.HasValue)
             {

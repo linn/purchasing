@@ -7,5 +7,7 @@
         ResultsModel GetDeliveryPerformanceSummary(int startPeriod, int endPeriod, int? supplierId, string vendorManager);
 
         ResultsModel GetDeliveryPerformanceBySupplier(int startPeriod, int endPeriod, int? supplierId, string vendorManager);
+
+        ResultsModel GetDeliveryPerformanceDetails(int startPeriod, int endPeriod, int supplierId);
     }
 }

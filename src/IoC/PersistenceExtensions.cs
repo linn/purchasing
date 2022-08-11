@@ -155,7 +155,10 @@
                         ?.SuppliersLeadTimesEntries))
                 .AddTransient<IQueryRepository<SupplierDeliveryPerformance>, EntityFrameworkQueryRepository<SupplierDeliveryPerformance>>(
                     r => new EntityFrameworkQueryRepository<SupplierDeliveryPerformance>(r.GetService<ServiceDbContext>()
-                        ?.SupplierDeliveryPerformance));
+                        ?.SupplierDeliveryPerformance))
+                .AddTransient<IQueryRepository<DeliveryPerformanceDetail>, EntityFrameworkQueryRepository<DeliveryPerformanceDetail>>(
+                    r => new EntityFrameworkQueryRepository<DeliveryPerformanceDetail>(r.GetService<ServiceDbContext>()
+                        ?.DeliveryPerformanceDetails));
         }
     }
 }

@@ -133,6 +133,23 @@
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
 
+        public IResult<ReportReturnResource> GetDeliveryPerformanceDetailReport(DeliveryPerformanceRequestResource requestResource)
+        {
+            if (!requestResource.SupplierId.HasValue)
+            {
+                return new BadRequestResult<ReportReturnResource>("You must include a supplier id");
+            }
+
+            var results = this.deliveryPerformanceReportService.GetDeliveryPerformanceDetails(
+                requestResource.StartPeriod,
+                requestResource.EndPeriod,
+                requestResource.SupplierId.Value);
+
+            var returnResource = this.resultsModelResourceBuilder.Build(results);
+
+            return new SuccessResult<ReportReturnResource>(returnResource);
+        }
+
         public IResult<ReportReturnResource> GetOrdersBySupplierReport(
             OrdersBySupplierSearchResource resource)
         {
