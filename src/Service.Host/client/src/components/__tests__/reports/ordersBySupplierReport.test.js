@@ -301,6 +301,6 @@ describe('When component mounts...', () => {
         expect(screen.getByText('Order/Line')).toBeInTheDocument();
         expect(screen.getByText('869190/1')).toBeInTheDocument();
         expect(screen.getByText('RAW 231')).toBeInTheDocument();
-        expect(screen.getByText('Export')).toBeInTheDocument();
+        expect(screen.getByText('EXPORT')).toBeInTheDocument();
     });
 });
