@@ -122,6 +122,9 @@
                 report.ColumnIndex("% On Time"),
                 1);
             this.reportingHelper.SortRowsByColumnValue(report, report.ColumnIndex("% On Time"));
+            var drillDownUri = $"/purchasing/reports/delivery-performance-details/report?startPeriod={startPeriod}&endPeriod={endPeriod}&supplierId={{rowId}}";
+            report.ValueDrillDownTemplates.Add(new DrillDownModel("details", drillDownUri, null, report.ColumnIndex("Supplier Id")));
+
             report.Columns.First(a => a.ColumnId == "Supplier Id").ColumnType = GridDisplayType.TextValue;
             report.Columns.First(a => a.ColumnId == "Supplier Name").ColumnType = GridDisplayType.TextValue;
 
