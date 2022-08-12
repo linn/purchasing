@@ -1,23 +1,33 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Reports
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
     using Linn.Common.Persistence;
     using Linn.Common.Reporting.Models;
+    using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
 
     public class DeliveryPerformanceReportService : IDeliveryPerformanceReportService
     {
         private readonly IQueryRepository<SupplierDeliveryPerformance> deliveryPerformanceRepository;
 
+        private readonly IQueryRepository<DeliveryPerformanceDetail> deliveryPerformanceDetailRepository;
+
+        private readonly IRepository<LedgerPeriod, int> ledgerPeriodRepository;
+
         private readonly IReportingHelper reportingHelper;
 
         public DeliveryPerformanceReportService(
             IQueryRepository<SupplierDeliveryPerformance> deliveryPerformanceRepository,
+            IQueryRepository<DeliveryPerformanceDetail> deliveryPerformanceDetailRepository,
+            IRepository<LedgerPeriod, int> ledgerPeriodRepository,
             IReportingHelper reportingHelper)
         {
             this.deliveryPerformanceRepository = deliveryPerformanceRepository;
+            this.deliveryPerformanceDetailRepository = deliveryPerformanceDetailRepository;
+            this.ledgerPeriodRepository = ledgerPeriodRepository;
             this.reportingHelper = reportingHelper;
         }
 
@@ -31,7 +41,7 @@
                                  ReportTitle = new NameModel("Supplier Delivery Performance Summary")
                              };
 
-            IList<CalculationValueModel> calculations = new List<CalculationValueModel>();
+            var calculations = new List<CalculationValueModel>();
             foreach (var dataItem in data)
             {
                 var rowId = dataItem.LedgerPeriod.ToString();
@@ -80,19 +90,19 @@
                 ReportTitle = new NameModel("Delivery Performance By Supplier")
             };
 
-            IList<CalculationValueModel> calculations = new List<CalculationValueModel>();
+            var calculations = new List<CalculationValueModel>();
             foreach (var dataItem in data)
             {
                 var rowId = dataItem.SupplierId.ToString();
                 var rowTitle = dataItem.SupplierName;
 
                 calculations.Add(new CalculationValueModel
-                {
-                    RowId = rowId,
-                    RowTitle = rowTitle,
-                    ColumnId = "Supplier Id",
-                    TextDisplay = dataItem.SupplierId.ToString()
-                });
+                                     {
+                                         RowId = rowId,
+                                         RowTitle = rowTitle,
+                                         ColumnId = "Supplier Id",
+                                         TextDisplay = dataItem.SupplierId.ToString()
+                                     });
                 calculations.Add(new CalculationValueModel
                                      {
                                          RowId = rowId,
@@ -111,9 +121,117 @@
                 report.ColumnIndex("No Of Deliveries"),
                 report.ColumnIndex("% On Time"),
                 1);
-            this.reportingHelper.SortRowsByColumnValue(report, report.ColumnIndex("% On Time"), true);
+            this.reportingHelper.SortRowsByColumnValue(report, report.ColumnIndex("% On Time"));
+            var drillDownUri = $"/purchasing/reports/delivery-performance-details/report?startPeriod={startPeriod}&endPeriod={endPeriod}&supplierId={{rowId}}";
+            report.ValueDrillDownTemplates.Add(new DrillDownModel("details", drillDownUri, null, report.ColumnIndex("Supplier Id")));
+
             report.Columns.First(a => a.ColumnId == "Supplier Id").ColumnType = GridDisplayType.TextValue;
             report.Columns.First(a => a.ColumnId == "Supplier Name").ColumnType = GridDisplayType.TextValue;
+
+            return report;
+        }
+
+        public ResultsModel GetDeliveryPerformanceDetails(int startPeriod, int endPeriod, int supplierId)
+        {
+            var startLedgerPeriod = this.ledgerPeriodRepository.FindById(startPeriod);
+            if (startLedgerPeriod == null)
+            {
+                throw new InvalidOptionException($"Ledger Period {startPeriod} not found");
+            }
+
+            var endLedgerPeriod = this.ledgerPeriodRepository.FindById(endPeriod);
+            if (endLedgerPeriod == null)
+            {
+                throw new InvalidOptionException($"Ledger Period {endPeriod} not found");
+            }
+
+            var startDate = DateTime.Parse($"01-{startLedgerPeriod.MonthName.Substring(0, 3)}-{startLedgerPeriod.MonthName.Substring(3, 4)}");
+            var endDate = DateTime.Parse($"01-{endLedgerPeriod.MonthName.Substring(0, 3)}-{endLedgerPeriod.MonthName.Substring(3, 4)}").AddMonths(1);
+
+            var data = this.deliveryPerformanceDetailRepository.FilterBy(
+                a => a.SupplierId == supplierId && a.DateArrived >= startDate && a.DateArrived < endDate);
+
+            var report = new ResultsModel { ReportTitle = new NameModel("Delivery Performance Details") };
+            report.AddSortedColumns(
+                new List<AxisDetailsModel>
+                    {
+                        new AxisDetailsModel("Order", "Order", GridDisplayType.TextValue),
+                        new AxisDetailsModel("Line", "Line", GridDisplayType.TextValue),
+                        new AxisDetailsModel("Del", "Del", GridDisplayType.TextValue),
+                        new AxisDetailsModel("Part Number", "Part Number", GridDisplayType.TextValue),
+                        new AxisDetailsModel("Requested", "Requested", GridDisplayType.TextValue),
+                        new AxisDetailsModel("Advised", "Advised", GridDisplayType.TextValue),
+                        new AxisDetailsModel("Arrived", "Arrived", GridDisplayType.TextValue),
+                        new AxisDetailsModel("Reason", "Reason", GridDisplayType.TextValue),
+                        new AxisDetailsModel("On Time", "On Time", GridDisplayType.TextValue)
+                    });
+
+            var calculations = new List<CalculationValueModel>();
+            var rowIdCounter = 0;
+            foreach (var dataItem in data
+                         .OrderBy(a => a.OrderNumber)
+                         .ThenBy(b => b.OrderLine)
+                         .ThenBy(c => c.DeliverySequence))
+            {
+                var rowId = rowIdCounter ++.ToString();
+
+                calculations.Add(new CalculationValueModel
+                                     {
+                                         RowId = rowId,
+                                         ColumnId = "Order",
+                                         TextDisplay = dataItem.OrderNumber.ToString()
+                                     });
+                calculations.Add(new CalculationValueModel
+                                     {
+                                         RowId = rowId,
+                                         ColumnId = "Line",
+                                         TextDisplay = dataItem.OrderLine.ToString()
+                                     });
+                calculations.Add(new CalculationValueModel
+                                     {
+                                         RowId = rowId,
+                                         ColumnId = "Del",
+                                         TextDisplay = dataItem.DeliverySequence.ToString()
+                                     });
+                calculations.Add(new CalculationValueModel
+                                     {
+                                         RowId = rowId,
+                                         ColumnId = "Part Number",
+                                         TextDisplay = dataItem.PartNumber
+                                     });
+                calculations.Add(new CalculationValueModel
+                                     {
+                                         RowId = rowId,
+                                         ColumnId = "Requested",
+                                         TextDisplay = dataItem.RequestedDate.ToString("dd-MMM-yyyy")
+                                     });
+                calculations.Add(new CalculationValueModel
+                                     {
+                                         RowId = rowId,
+                                         ColumnId = "Advised",
+                                         TextDisplay = dataItem.RequestedDate.ToString("dd-MMM-yyyy")
+                                     });
+                calculations.Add(new CalculationValueModel
+                                     {
+                                         RowId = rowId,
+                                         ColumnId = "Arrived",
+                                         TextDisplay = dataItem.DateArrived.ToString("dd-MMM-yyyy")
+                                     });
+                calculations.Add(new CalculationValueModel
+                                     {
+                                         RowId = rowId,
+                                         ColumnId = "Reason",
+                                         TextDisplay = dataItem.RescheduleReason
+                                     });
+                calculations.Add(new CalculationValueModel
+                                     {
+                                         RowId = rowId,
+                                         ColumnId = "On Time",
+                                         TextDisplay = dataItem.OnTime == 1 ? "Yes" : "No"
+                                     });
+            }
+
+            this.reportingHelper.AddResultsToModel(report, calculations, CalculationValueModelType.Quantity, true);
 
             return report;
         }
@@ -164,7 +282,7 @@
             string vendorManager)
         {
             var data = this.deliveryPerformanceRepository.FilterBy(
-                a => a.LedgerPeriod >= startPeriod && a.LedgerPeriod <= endPeriod);
+                a => a.LedgerPeriod >= startPeriod && a.LedgerPeriod <= endPeriod && a.NumberOfDeliveries > 0);
 
             if (supplierId.HasValue)
             {

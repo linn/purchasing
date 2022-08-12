@@ -275,3 +275,7 @@ export const deliveryPerformanceSummaryReportActionTypes = makeReportActionTypes
 export const deliveryPerformanceSupplierReportActionTypes = makeReportActionTypes(
     reportTypes.deliveryPerformanceSupplierReport.actionType
 );
+
+export const deliveryPerformanceDetailReportActionTypes = makeReportActionTypes(
+    reportTypes.deliveryPerformanceDetailReport.actionType
+);

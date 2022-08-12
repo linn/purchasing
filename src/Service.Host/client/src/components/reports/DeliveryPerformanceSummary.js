@@ -39,9 +39,8 @@ function DeliveryPerformanceSummary() {
         collectionSelectorHelpers.getLoading(state.vendorManagers)
     );
 
-    const prevOptions = useSelector(
-        state =>
-            reportSelectorHelpers.getReportState(state.deliveryPerformanceSummaryReport)?.options
+    const prevOptions = useSelector(state =>
+        reportSelectorHelpers.getReportOptions(state.deliveryPerformanceSummaryReport)
     );
 
     useEffect(() => {

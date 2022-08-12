@@ -107,3 +107,9 @@ export const deliveryPerformanceSupplierReport = new ItemType(
     'DELIVERY_PERFORMANCE_SUPPLIER_REPORT',
     '/purchasing/reports/delivery-performance-supplier/report'
 );
+
+export const deliveryPerformanceDetailReport = new ItemType(
+    'deliveryPerformanceDetailReport',
+    'DELIVERY_PERFORMANCE_DETAIL_REPORT',
+    '/purchasing/reports/delivery-performance-details/report'
+);

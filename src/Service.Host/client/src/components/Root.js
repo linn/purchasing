@@ -62,6 +62,7 @@ import SupplierLeadTimesReportOptions from './reports/SupplierLeadTimesReportOpt
 import DeliveryPerformanceSummary from './reports/DeliveryPerformanceSummary';
 import DeliveryPerformanceSummaryReport from './reports/DeliveryPerformanceSummaryReport';
 import DeliveryPerformanceSupplierReport from './reports/DeliveryPerformanceSupplierReport';
+import DeliveryPerformanceDetailReport from './reports/DeliveryPerformanceDetailReport';
 
 const Root = ({ store }) => (
     <div>
@@ -363,6 +364,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/reports/delivery-performance-supplier/report"
                                     component={DeliveryPerformanceSupplierReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/delivery-performance-details/report"
+                                    component={DeliveryPerformanceDetailReport}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>
