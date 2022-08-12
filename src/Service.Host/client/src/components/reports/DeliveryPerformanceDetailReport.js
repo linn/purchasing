@@ -54,6 +54,7 @@ function DeliveryPerformanceDetailReport() {
                                 showRowTitles={false}
                                 placeholderRows={4}
                                 placeholderColumns={4}
+                                showRowCount
                             />
                         </>
                     )}
