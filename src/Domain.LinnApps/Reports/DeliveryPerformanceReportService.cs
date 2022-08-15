@@ -8,6 +8,7 @@
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     public class DeliveryPerformanceReportService : IDeliveryPerformanceReportService
     {
@@ -17,17 +18,21 @@
 
         private readonly IRepository<LedgerPeriod, int> ledgerPeriodRepository;
 
+        private readonly IRepository<Supplier, int> supplierRepository;
+
         private readonly IReportingHelper reportingHelper;
 
         public DeliveryPerformanceReportService(
             IQueryRepository<SupplierDeliveryPerformance> deliveryPerformanceRepository,
             IQueryRepository<DeliveryPerformanceDetail> deliveryPerformanceDetailRepository,
             IRepository<LedgerPeriod, int> ledgerPeriodRepository,
+            IRepository<Supplier, int> supplierRepository,
             IReportingHelper reportingHelper)
         {
             this.deliveryPerformanceRepository = deliveryPerformanceRepository;
             this.deliveryPerformanceDetailRepository = deliveryPerformanceDetailRepository;
             this.ledgerPeriodRepository = ledgerPeriodRepository;
+            this.supplierRepository = supplierRepository;
             this.reportingHelper = reportingHelper;
         }
 
@@ -40,6 +45,7 @@
                              {
                                  ReportTitle = new NameModel("Supplier Delivery Performance Summary")
                              };
+            report.Columns.First(a => a.ColumnId == "Month Name").ColumnType = GridDisplayType.TextValue;
 
             var calculations = new List<CalculationValueModel>();
             foreach (var dataItem in data)
@@ -68,7 +74,6 @@
                 reportRow.SortOrder = int.Parse(reportRow.RowId);
             }
 
-            report.Columns.First(a => a.ColumnId == "Month Name").ColumnType = GridDisplayType.TextValue;
             var drillDownUri = $"/purchasing/reports/delivery-performance-supplier/report?startPeriod={{rowId}}&endPeriod={{rowId}}&vendorManager={vendorManager}";
             if (supplierId.HasValue)
             {
@@ -82,13 +87,33 @@
 
         public ResultsModel GetDeliveryPerformanceBySupplier(int startPeriod, int endPeriod, int? supplierId, string vendorManager)
         {
-            var data = this.GetData(startPeriod, endPeriod, supplierId, vendorManager);
+            var startMonth = this.ledgerPeriodRepository.FindById(startPeriod);
+            if (startMonth == null)
+            {
+                throw new InvalidOptionException($"Ledger Period {startPeriod} not found");
+            }
+
+            var endMonth = this.ledgerPeriodRepository.FindById(endPeriod);
+            if (endMonth == null)
+            {
+                throw new InvalidOptionException($"Ledger Period {endPeriod} not found");
+            }
 
             var report = new ResultsModel(
-                new[] { "Supplier Id", "Supplier Name", "No Of Deliveries", "No On Time", "% On Time", "No Early", "No Late", "No Unack" })
-            {
-                ReportTitle = new NameModel("Delivery Performance By Supplier")
-            };
+                             new[]
+                                 {
+                                     "Supplier Id", "Supplier Name", "No Of Deliveries", "No On Time", "% On Time",
+                                     "No Early", "No Late", "No Unack"
+                                 })
+                             {
+                                 ReportTitle = new NameModel(
+                                     $"Delivery Performance By Supplier {startMonth.MonthName} to {endMonth.MonthName}")
+                             };
+
+            report.Columns.First(a => a.ColumnId == "Supplier Id").ColumnType = GridDisplayType.TextValue;
+            report.Columns.First(a => a.ColumnId == "Supplier Name").ColumnType = GridDisplayType.TextValue;
+
+            var data = this.GetData(startPeriod, endPeriod, supplierId, vendorManager);
 
             var calculations = new List<CalculationValueModel>();
             foreach (var dataItem in data)
@@ -125,9 +150,6 @@
             var drillDownUri = $"/purchasing/reports/delivery-performance-details/report?startPeriod={startPeriod}&endPeriod={endPeriod}&supplierId={{rowId}}";
             report.ValueDrillDownTemplates.Add(new DrillDownModel("details", drillDownUri, null, report.ColumnIndex("Supplier Id")));
 
-            report.Columns.First(a => a.ColumnId == "Supplier Id").ColumnType = GridDisplayType.TextValue;
-            report.Columns.First(a => a.ColumnId == "Supplier Name").ColumnType = GridDisplayType.TextValue;
-
             return report;
         }
 
@@ -145,13 +167,19 @@
                 throw new InvalidOptionException($"Ledger Period {endPeriod} not found");
             }
 
+            var supplier = this.supplierRepository.FindById(supplierId);
+            if (supplier == null)
+            {
+                throw new InvalidOptionException($"Supplier {supplierId} not found");
+            }
+
             var startDate = DateTime.Parse($"01-{startLedgerPeriod.MonthName.Substring(0, 3)}-{startLedgerPeriod.MonthName.Substring(3, 4)}");
             var endDate = DateTime.Parse($"01-{endLedgerPeriod.MonthName.Substring(0, 3)}-{endLedgerPeriod.MonthName.Substring(3, 4)}").AddMonths(1);
 
             var data = this.deliveryPerformanceDetailRepository.FilterBy(
                 a => a.SupplierId == supplierId && a.DateArrived >= startDate && a.DateArrived < endDate);
 
-            var report = new ResultsModel { ReportTitle = new NameModel("Delivery Performance Details") };
+            var report = new ResultsModel { ReportTitle = new NameModel($"Delivery Performance Details for {supplier.Name} {startLedgerPeriod.MonthName} to {endLedgerPeriod.MonthName}") };
             report.AddSortedColumns(
                 new List<AxisDetailsModel>
                     {

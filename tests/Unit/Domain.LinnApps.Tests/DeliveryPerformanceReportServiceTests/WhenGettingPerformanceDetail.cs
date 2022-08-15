@@ -10,6 +10,7 @@
 
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NSubstitute;
 
@@ -60,6 +61,8 @@
                                     }
                             };
             this.LedgerPeriodRepository.FindById(3).Returns(new LedgerPeriod { MonthName = "Apr2024" });
+            this.SupplierRepository.FindById(this.supplierId)
+                .Returns(new Supplier { Name = "Supplier 1" });
             this.DeliveryPerformanceDetailRepository
                 .FilterBy(Arg.Any<Expression<Func<DeliveryPerformanceDetail, bool>>>())
                 .Returns(this.data.AsQueryable());
@@ -75,7 +78,7 @@
         [Test]
         public void ShouldReturnReport()
         {
-            this.result.ReportTitle.DisplayValue.Should().Be("Delivery Performance Details");
+            this.result.ReportTitle.DisplayValue.Should().Be("Delivery Performance Details for Supplier 1 Apr2024 to Apr2024");
             this.result.RowCount().Should().Be(2);
             this.result.GetGridTextValue(0, 0).Should().Be("100000");
             this.result.GetGridTextValue(0, 1).Should().Be("10");
