@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation } from 'react-router';
 import {
-    Title,
     Page,
     ReportTable,
     BackButton,
