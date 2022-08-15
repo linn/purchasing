@@ -237,7 +237,7 @@
                                      {
                                          RowId = rowId,
                                          ColumnId = "Advised",
-                                         TextDisplay = dataItem.RequestedDate.ToString("dd-MMM-yyyy")
+                                         TextDisplay = dataItem.AdvisedDate?.ToString("dd-MMM-yyyy")
                                      });
                 calculations.Add(new CalculationValueModel
                                      {
