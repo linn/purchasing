@@ -31,6 +31,9 @@
         [SetUp]
         public void SetUp()
         {
+            this.LedgerPeriodRepository.FindById(this.startPeriod).Returns(new LedgerPeriod { MonthName = "Jan2028" });
+            this.LedgerPeriodRepository.FindById(this.endPeriod).Returns(new LedgerPeriod { MonthName = "Feb2028" });
+
             this.data = new List<SupplierDeliveryPerformance>
                             {
                                 new SupplierDeliveryPerformance
@@ -100,7 +103,7 @@
         [Test]
         public void ShouldReturnReport()
         {
-            this.result.ReportTitle.DisplayValue.Should().Be("Delivery Performance By Supplier");
+            this.result.ReportTitle.DisplayValue.Should().Be("Delivery Performance By Supplier Jan2028 to Feb2028");
             this.result.RowCount().Should().Be(2);
             this.result.GetGridTextValue(0, 0).Should().Be("123");
             this.result.GetGridTextValue(0, 1).Should().Be("S123");

@@ -39,7 +39,6 @@ function DeliveryPerformanceDetailReport() {
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
-            <Title text="Delivery Performance Details" />
             <Grid container>
                 <Grid item xs={12}>
                     {loading || !data ? (
@@ -49,7 +48,7 @@ function DeliveryPerformanceDetailReport() {
                             <ReportTable
                                 reportData={data}
                                 title={data.title}
-                                showTitle={false}
+                                showTitle
                                 showTotals={false}
                                 showRowTitles={false}
                                 placeholderRows={4}
