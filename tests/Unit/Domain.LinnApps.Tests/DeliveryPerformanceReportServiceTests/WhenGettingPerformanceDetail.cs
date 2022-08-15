@@ -36,13 +36,13 @@
                                 new DeliveryPerformanceDetail
                                     {
                                         SupplierId = this.supplierId,
-                                        DateArrived = 1.April(2024),
+                                        DateArrived = 2.April(2024),
                                         OrderNumber = 100000,
                                         OrderLine = 10,
                                         DeliverySequence = 5,
                                         PartNumber = "P1",
                                         RequestedDate = 1.April(2024),
-                                        AdvisedDate = 1.April(2024),
+                                        AdvisedDate = 2.April(2024),
                                         RescheduleReason = "OK",
                                         OnTime = 1
                                     },
@@ -55,7 +55,7 @@
                                         DeliverySequence = 3,
                                         PartNumber = "P2",
                                         RequestedDate = 1.April(2024),
-                                        AdvisedDate = 1.April(2024),
+                                        AdvisedDate = 2.April(2024),
                                         RescheduleReason = "Not OK",
                                         OnTime = 0
                                     }
@@ -88,15 +88,15 @@
             this.result.GetGridTextValue(1, 2).Should().Be("3");
 
             this.result.GetGridTextValue(0, 3).Should().Be("P1");
-            this.result.GetGridTextValue(0, 4).Should().Be("01-Apr-2024");
-            this.result.GetGridTextValue(0, 5).Should().Be("01-Apr-2024");
-            this.result.GetGridTextValue(0, 6).Should().Be("01-Apr-2024");
+            this.result.GetGridTextValue(0, 4).Should().Be("01-Apr-2024"); 
+            this.result.GetGridTextValue(0, 5).Should().Be("02-Apr-2024");
+            this.result.GetGridTextValue(0, 6).Should().Be("02-Apr-2024");
             this.result.GetGridTextValue(0, 7).Should().Be("OK");
             this.result.GetGridTextValue(0, 8).Should().Be("Yes");
 
             this.result.GetGridTextValue(1, 3).Should().Be("P2");
             this.result.GetGridTextValue(1, 4).Should().Be("01-Apr-2024");
-            this.result.GetGridTextValue(1, 5).Should().Be("01-Apr-2024");
+            this.result.GetGridTextValue(1, 5).Should().Be("02-Apr-2024");
             this.result.GetGridTextValue(1, 6).Should().Be("30-Apr-2024");
             this.result.GetGridTextValue(1, 7).Should().Be("Not OK");
             this.result.GetGridTextValue(1, 8).Should().Be("No");
