@@ -266,7 +266,6 @@ function PurchaseOrderUtility({ creating }) {
         setSelectedOrderLine(orderLine);
         setSelectedDeliveries(order.details.find(d => d.line === orderLine).purchaseDeliveries);
         setSplitDeliveriesDialogOpen(true);
-        console.log(selectedDeliveries);
     };
 
     const orderPdfEmailMessageVisible = useSelector(state =>
