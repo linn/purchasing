@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Messaging.Messages
+﻿namespace Linn.Purchasing.Messaging.Messages // todo - move to Common
 {
     using RabbitMQ.Client.Events;
 

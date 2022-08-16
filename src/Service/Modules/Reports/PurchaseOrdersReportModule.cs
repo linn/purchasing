@@ -10,7 +10,6 @@
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.RequestResources;
-    using Linn.Purchasing.Service.Extensions;
     using Linn.Purchasing.Service.Models;
 
     using Microsoft.AspNetCore.Builder;
@@ -30,6 +29,10 @@
             app.MapGet("/purchasing/reports/suppliers-with-unacknowledged-orders", this.GetSuppliersWithUnacknowledgedOrdersReport);
             app.MapGet("/purchasing/reports/unacknowledged-orders", this.GetUnacknowledgedOrdersReport);
             app.MapGet("/purchasing/reports/unacknowledged-orders/export", this.GetUnacknowledgedOrdersReportExport);
+            app.MapGet("/purchasing/reports/delivery-performance-summary", this.GetApp);
+            app.MapGet("/purchasing/reports/delivery-performance-summary/report", this.GetDeliveryPerformanceSummaryReport);
+            app.MapGet("/purchasing/reports/delivery-performance-supplier/report", this.GetDeliveryPerformanceBySupplierReport);
+            app.MapGet("/purchasing/reports/delivery-performance-details/report", this.GetDeliveryPerformanceDetailsReport);
         }
 
         private async Task GetUnacknowledgedOrdersReport(
@@ -47,6 +50,64 @@
 
             var results = purchaseOrderReportFacadeService.GetUnacknowledgedOrdersReport(
                 resource);
+
+            await response.Negotiate(results);
+        }
+
+        private async Task GetDeliveryPerformanceSummaryReport(
+            HttpRequest request,
+            HttpResponse response,
+            IPurchaseOrderReportFacadeService purchaseOrderReportFacadeService,
+            int startPeriod,
+            int endPeriod, 
+            int? supplierId,
+            string vendorManager)
+        {
+            var resource = new DeliveryPerformanceRequestResource
+                               {
+                                   StartPeriod = startPeriod, EndPeriod = endPeriod, SupplierId = supplierId, VendorManager = vendorManager
+                               };
+            var results = purchaseOrderReportFacadeService.GetDeliveryPerformanceSummaryReport(resource);
+
+            await response.Negotiate(results);
+        }
+
+        private async Task GetDeliveryPerformanceBySupplierReport(
+            HttpRequest request,
+            HttpResponse response,
+            IPurchaseOrderReportFacadeService purchaseOrderReportFacadeService,
+            int startPeriod,
+            int endPeriod,
+            int? supplierId,
+            string vendorManager)
+        {
+            var resource = new DeliveryPerformanceRequestResource
+                               {
+                                   StartPeriod = startPeriod,
+                                   EndPeriod = endPeriod,
+                                   SupplierId = supplierId,
+                                   VendorManager = vendorManager
+                               };
+            var results = purchaseOrderReportFacadeService.GetDeliveryPerformanceSupplierReport(resource);
+
+            await response.Negotiate(results);
+        }
+
+        private async Task GetDeliveryPerformanceDetailsReport(
+            HttpRequest request,
+            HttpResponse response,
+            IPurchaseOrderReportFacadeService purchaseOrderReportFacadeService,
+            int startPeriod,
+            int endPeriod,
+            int supplierId)
+        {
+            var resource = new DeliveryPerformanceRequestResource
+                               {
+                                   StartPeriod = startPeriod,
+                                   EndPeriod = endPeriod,
+                                   SupplierId = supplierId
+                               };
+            var results = purchaseOrderReportFacadeService.GetDeliveryPerformanceDetailReport(resource);
 
             await response.Negotiate(results);
         }

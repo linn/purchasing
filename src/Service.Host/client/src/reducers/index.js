@@ -85,6 +85,10 @@ import sendPurchaseOrderPdfEmail from './sendPurchaseOrderPdfEmail';
 import automaticPurchaseOrder from './automaticPurchaseOrder';
 import automaticPurchaseOrderSuggestions from './automaticPurchaseOrderSuggestions';
 import supplierLeadTimesReport from './supplierLeadTimesReport';
+import ledgerPeriods from './ledgerPeriods';
+import deliveryPerformanceSummaryReport from './deliveryPerformanceSummaryReport';
+import deliveryPerformanceSupplierReport from './deliveryPerformanceSupplierReport';
+import deliveryPerformanceDetailReport from './deliveryPerformanceDetailReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -103,10 +107,14 @@ const rootReducer = history =>
         countries,
         currencies,
         deliveryAddresses,
+        deliveryPerformanceDetailReport,
+        deliveryPerformanceSummaryReport,
+        deliveryPerformanceSupplierReport,
         departments,
         ediOrders,
         ediSuppliers,
         employees,
+        ledgerPeriods,
         manufacturers,
         mrOrderBookReport,
         mrMaster,

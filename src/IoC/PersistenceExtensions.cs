@@ -157,7 +157,13 @@
                     r => new EntityFrameworkSingleRecordRepository<TqmsMaster>(r.GetService<ServiceDbContext>()?.TqmsMaster))
                 .AddTransient<IQueryRepository<WeeklyForecastPart>, EntityFrameworkQueryRepository<WeeklyForecastPart>>(
                     r => new EntityFrameworkQueryRepository<WeeklyForecastPart>(r.GetService<ServiceDbContext>()
-                        ?.WeeklyForecastParts));
+                        ?.WeeklyForecastParts))
+                .AddTransient<IQueryRepository<SupplierDeliveryPerformance>, EntityFrameworkQueryRepository<SupplierDeliveryPerformance>>(
+                    r => new EntityFrameworkQueryRepository<SupplierDeliveryPerformance>(r.GetService<ServiceDbContext>()
+                        ?.SupplierDeliveryPerformance))
+                .AddTransient<IQueryRepository<DeliveryPerformanceDetail>, EntityFrameworkQueryRepository<DeliveryPerformanceDetail>>(
+                    r => new EntityFrameworkQueryRepository<DeliveryPerformanceDetail>(r.GetService<ServiceDbContext>()
+                        ?.DeliveryPerformanceDetails));
         }
     }
 }

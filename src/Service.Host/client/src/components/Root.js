@@ -60,6 +60,10 @@ import AutomaticPurchaseOrders from './AutomaticPurchaseOrders';
 import SupplierLeadTimesReport from './reports/SupplierLeadTimesReport';
 import SupplierLeadTimesReportOptions from './reports/SupplierLeadTimesReportOptions';
 import ForecastOrdersReport from './reports/ForecastOrdersReports';
+import DeliveryPerformanceSummary from './reports/DeliveryPerformanceSummary';
+import DeliveryPerformanceSummaryReport from './reports/DeliveryPerformanceSummaryReport';
+import DeliveryPerformanceSupplierReport from './reports/DeliveryPerformanceSupplierReport';
+import DeliveryPerformanceDetailReport from './reports/DeliveryPerformanceDetailReport';
 
 const Root = ({ store }) => (
     <div>
@@ -351,6 +355,25 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/reports/weekly-forecast-orders"
                                     component={ForecastOrdersReport}
+                                />
+                                <Route
+                                    path="/purchasing/reports/delivery-performance-summary"
+                                    component={DeliveryPerformanceSummary}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/delivery-performance-summary/report"
+                                    component={DeliveryPerformanceSummaryReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/delivery-performance-supplier/report"
+                                    component={DeliveryPerformanceSupplierReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/delivery-performance-details/report"
+                                    component={DeliveryPerformanceDetailReport}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>
