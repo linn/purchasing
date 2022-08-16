@@ -130,6 +130,11 @@
                                      Rel = "create",
                                      Href = "purchasing/purchase-orders/create"
                                  };
+                yield return new LinkResource
+                                 {
+                                     Rel = "generate-order-fields",
+                                     Href = "/purchasing/purchase-orders/generate-order-from-supplier-id"
+                };
             }
 
             if (model != null)

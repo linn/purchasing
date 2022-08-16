@@ -50,7 +50,8 @@
             IRepository<MiniOrder, int> miniOrderRepository,
             IRepository<Supplier, int> supplierRepository,
             IRepository<LinnDeliveryAddress, int> linnDeliveryAddressRepository,
-            IPurchaseOrdersPack purchaseOrdersPack)
+            IPurchaseOrdersPack purchaseOrdersPack,
+            ICurrencyPack currencyPack)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;
@@ -62,6 +63,7 @@
             this.purchaseOrdersPack = purchaseOrdersPack;
             this.supplierRepository = supplierRepository;
             this.linnDeliveryAddressRepository = linnDeliveryAddressRepository;
+            this.currencyPack = currencyPack;
         }
 
         public void AllowOverbook(
@@ -215,11 +217,11 @@
                 order.DeliveryAddress = mainDeliveryAddress;
             }
 
-            // var exchangeRate = repo or proxy pack call?
-            // todo set exchange rate based on dateRequired (likely today)
-            // and currency as above. Not sure if is exchange_rates or something else, impbooks had their own ones
+            order.ExchangeRate = this.currencyPack.GetExchangeRate("GBP", order.CurrencyCode);
 
-            order.ExchangeRate = 1m;
+            //todo pass in current user and set below to current user
+            //RequestedById = resource.RequestedBy.Id,
+            //EnteredById = resource.EnteredBy.Id,
 
             return order;
         }

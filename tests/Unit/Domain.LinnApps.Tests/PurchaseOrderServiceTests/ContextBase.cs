@@ -33,6 +33,8 @@
 
         protected IPurchaseOrdersPack PurchaseOrdersPack { get; private set; }
 
+        protected ICurrencyPack CurrencyPack { get; private set; }
+
         protected IPurchaseOrderService Sut { get; private set; }
 
         protected IRepository<Supplier, int> SupplierRepository { get; private set; }
@@ -51,7 +53,7 @@
             this.MiniOrderRepository = Substitute.For<IRepository<MiniOrder, int>>();
             this.SupplierRepository = Substitute.For<IRepository<Supplier, int>>();
             this.LinnDeliveryAddressRepository = Substitute.For<IRepository<LinnDeliveryAddress, int>>();
-
+            this.CurrencyPack = Substitute.For<ICurrencyPack>();
             this.PurchaseOrdersPack = Substitute.For<IPurchaseOrdersPack>();
 
             this.Sut = new PurchaseOrderService(
@@ -64,7 +66,8 @@
                 this.MiniOrderRepository,
                 this.SupplierRepository,
                 this.LinnDeliveryAddressRepository,
-                this.PurchaseOrdersPack);
+                this.PurchaseOrdersPack,
+                this.CurrencyPack);
         }
     }
 }

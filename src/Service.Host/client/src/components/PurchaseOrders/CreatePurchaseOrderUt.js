@@ -17,7 +17,6 @@ import {
     SnackbarMessage,
     itemSelectorHelpers,
     Loading,
-    TypeaheadTable,
     getItemError,
     ErrorCard,
     utilities
@@ -25,7 +24,6 @@ import {
 import queryString from 'query-string';
 import moment from 'moment';
 import currenciesActions from '../../actions/currenciesActions';
-import nominalsActions from '../../actions/nominalsActions';
 import suppliersActions from '../../actions/suppliersActions';
 import partsActions from '../../actions/partsActions';
 import history from '../../history';
@@ -91,40 +89,17 @@ function CreatePurchaseOrderUt() {
     );
     const searchSuppliers = searchTerm => reduxDispatch(suppliersActions.search(searchTerm));
 
-    const nominalsSearchItems = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(state.nominals)
-    );
-    const nominalsSearchLoading = useSelector(state =>
-        collectionSelectorHelpers.getSearchLoading(state.nominals)
-    );
-
     const snackbarVisible = useSelector(state =>
         itemSelectorHelpers.getSnackbarVisible(state.purchaseOrder)
     );
 
     const [editStatus, setEditStatus] = useState('view');
 
-    const nominalAccountsTable = {
-        totalItemCount: nominalsSearchItems.length,
-        rows: nominalsSearchItems?.map(nom => ({
-            id: nom.nominalAccountId,
-            values: [
-                { id: 'nominalCode', value: `${nom.nominalCode}` },
-                { id: 'description', value: `${nom.description || ''}` },
-                { id: 'departmentCode', value: `${nom.departmentCode || ''}` },
-                { id: 'departmentDescription', value: `${nom.departmentDescription || ''}` }
-            ],
-            links: nom.links
-        }))
-    };
-
     const allowedToCreate = () => item?.links?.some(l => l.rel === 'create');
 
     const inputIsInvalid = () =>
         !order.supplier &&
         !order.partNumber &&
-        order.department &&
-        order.nominal &&
         order.details[0].ourQty &&
         order.details[0].ourUnitPriceCurrency;
 
@@ -208,26 +183,6 @@ function CreatePurchaseOrderUt() {
         }
     };
 
-    const handleNominalUpdate = (newNominal, lineNumber) => {
-        setEditStatus('edit');
-        const newNominalAccount = {
-            nominal: {
-                nominalCode: newNominal.values.find(x => x.id === 'nominalCode')?.value,
-                description: newNominal.values.find(x => x.id === 'description')?.value
-            },
-            department: {
-                departmentCode: newNominal.values.find(x => x.id === 'departmentCode')?.value,
-                description: newNominal.values.find(x => x.id === 'departmentDescription')?.value
-            },
-            accountId: newNominal.id
-        };
-        dispatch({
-            payload: newNominalAccount,
-            lineNumber,
-            type: 'nominalChange'
-        });
-    };
-
     const handleSupplierChange = newSupplier => {
         setEditStatus('edit');
         dispatch({
@@ -281,7 +236,14 @@ function CreatePurchaseOrderUt() {
         //post to get supplier info fill out address etc, then reduxDispatch the action
         // reduxDispatch(purchaseOrderActions. thingy ());
 
-        history.push(utilities.getHref(order, 'create'));
+        reduxDispatch(
+            purchaseOrderActions.postByHref(
+                utilities.getHref(order, 'generate-order-fields'),
+                order
+            )
+        );
+
+        // history.push(utilities.getHref(order, 'create'));
     };
 
     return (
@@ -308,7 +270,7 @@ function CreatePurchaseOrderUt() {
                         <Grid item xs={12}>
                             <Typography variant="h6">Purchase Order Quick Create Ut </Typography>
                         </Grid>
-                        <Grid item xs={4}>
+                        <Grid item xs={11}>
                             <Typeahead
                                 label="Part"
                                 title="Search for a part"
@@ -334,44 +296,6 @@ function CreatePurchaseOrderUt() {
                                 placeholder="click to set part"
                             />
                         </Grid>
-                        <Grid item xs={3}>
-                            <InputField
-                                fullWidth
-                                value={detail.ourQty}
-                                label="Quantity"
-                                propertyName="ourQty"
-                                onChange={(propertyName, newValue) =>
-                                    handleDetailQtyFieldChange(
-                                        propertyName,
-                                        newValue,
-                                        order.details[0]
-                                    )
-                                }
-                                disabled={!allowedToCreate()}
-                                type="number"
-                                required
-                            />
-                        </Grid>
-                        <Grid item xs={4}>
-                            <InputField
-                                fullWidth
-                                value={detail.ourUnitPriceCurrency}
-                                label="Our price (currency)"
-                                propertyName="ourUnitPriceCurrency"
-                                onChange={(propertyName, newValue) =>
-                                    handleDetailValueFieldChange(
-                                        propertyName,
-                                        'baseUnitPrice',
-                                        newValue,
-                                        detail
-                                    )
-                                }
-                                disabled={!allowedToCreate()}
-                                type="number"
-                                required
-                            />
-                        </Grid>
-
                         <Grid item xs={1}>
                             <div className={classes.centeredIcon}>
                                 {allowedToCreate() ? (
@@ -385,7 +309,6 @@ function CreatePurchaseOrderUt() {
                                 )}
                             </div>
                         </Grid>
-
                         <Grid item xs={4}>
                             <Typeahead
                                 label="Supplier"
@@ -414,66 +337,53 @@ function CreatePurchaseOrderUt() {
                                 value={order.supplier?.name}
                                 label="Supplier Name"
                                 number
-                                propertyName="supplierContact"
+                                propertyName="supplierName"
                                 disabled
                             />
                         </Grid>
-
-                        <Grid item xs={4}>
-                            <TypeaheadTable
-                                table={nominalAccountsTable}
-                                columnNames={['Nominal', 'Description', 'Dept', 'Name']}
-                                fetchItems={searchTerm =>
-                                    reduxDispatch(nominalsActions.search(searchTerm))
+                        <Grid item xs={6}>
+                            <InputField
+                                fullWidth
+                                value={detail.ourQty}
+                                label="Quantity"
+                                propertyName="ourQty"
+                                onChange={(propertyName, newValue) =>
+                                    handleDetailQtyFieldChange(
+                                        propertyName,
+                                        newValue,
+                                        order.details[0]
+                                    )
                                 }
-                                modal
-                                placeholder="Search Dept/Nominal"
-                                links={false}
-                                clearSearch={() => reduxDispatch(nominalsActions.clearSearch)}
-                                loading={nominalsSearchLoading}
-                                label="Department"
-                                title="Search Department"
-                                value={
-                                    detail.orderPosting?.nominalAccount?.department?.departmentCode
-                                }
-                                onSelect={newValue => handleNominalUpdate(newValue, detail.line)}
-                                debounce={1000}
-                                minimumSearchTermLength={2}
                                 disabled={!allowedToCreate()}
+                                type="number"
                                 required
                             />
                         </Grid>
-                        <Grid item xs={8}>
-                            <InputField
-                                fullWidth
-                                value={detail.orderPosting?.nominalAccount?.department?.description}
-                                label="Dept Description"
-                                disabled
-                                propertyName="nominalDescription"
-                            />
+                        <Grid item xs={6}>
+                            <></>
                         </Grid>
-                        <Grid item xs={4}>
+                        <Grid item xs={6}>
                             <InputField
                                 fullWidth
-                                value={detail.orderPosting?.nominalAccount?.nominal?.nominalCode}
-                                label="Nominal"
-                                onChange={() => {}}
-                                propertyName="nominalCode"
+                                value={detail.ourUnitPriceCurrency}
+                                label="Our price (currency)"
+                                propertyName="ourUnitPriceCurrency"
+                                onChange={(propertyName, newValue) =>
+                                    handleDetailValueFieldChange(
+                                        propertyName,
+                                        'baseUnitPrice',
+                                        newValue,
+                                        detail
+                                    )
+                                }
+                                disabled={!allowedToCreate()}
+                                type="number"
                                 required
-                                disabled
                             />
                         </Grid>
-                        <Grid item xs={8}>
-                            <InputField
-                                fullWidth
-                                value={detail.orderPosting?.nominalAccount?.nominal?.description}
-                                label="Nominal Description"
-                                propertyName="nominalDescription"
-                                onChange={() => {}}
-                                disabled
-                            />
+                        <Grid item xs={6}>
+                            <></>
                         </Grid>
-
                         <Grid item xs={6}>
                             <Button
                                 className={classes.buttonMarginTop}

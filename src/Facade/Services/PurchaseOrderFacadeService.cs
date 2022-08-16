@@ -13,6 +13,7 @@
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.SearchResources;
 
@@ -103,7 +104,39 @@
 
         public IResult<PurchaseOrderResource> FillOutOrderFromSupplierId(PurchaseOrderResource resource, IEnumerable<string> privileges)
         {
-            var updated = this.BuildEntityFromResourceHelper(resource);
+            var updated = new PurchaseOrder
+            {
+                SupplierId = resource.Supplier.Id,
+                Supplier = new Supplier { SupplierId = resource.Supplier.Id, Name = resource.Supplier.Name },
+                //// DocumentTypeName = "PO",
+                OrderDate = DateTime.Now,
+                Details = resource.Details?.Select(
+                                   x => new PurchaseOrderDetail
+                                   {
+                                       Line = 1,
+                                       BaseNetTotal = x.BaseNetTotal,
+                                       NetTotalCurrency = x.NetTotalCurrency,
+                                       OurQty = x.OurQty,
+                                       OrderQty = x.OrderQty,
+                                       Part =
+                                                    new Part
+                                                    {
+                                                        PartNumber = x.PartNumber,
+                                                        Description = x.PartDescription
+                                                    },
+                                       PartNumber = x.PartNumber,
+                                       OurUnitOfMeasure = x.OurUnitOfMeasure,
+                                       OrderUnitOfMeasure = x.OrderUnitOfMeasure,
+                                       OurUnitPriceCurrency = x.OurUnitPriceCurrency,
+                                       OrderUnitPriceCurrency = x.OrderUnitPriceCurrency,
+                                       BaseOurUnitPrice = x.BaseOurUnitPrice,
+                                       BaseOrderUnitPrice = x.BaseOrderUnitPrice,
+                                       VatTotalCurrency = x.VatTotalCurrency,
+                                       BaseVatTotal = x.BaseVatTotal,
+                                       DetailTotalCurrency = x.DetailTotalCurrency,
+                                       BaseDetailTotal = x.BaseDetailTotal,
+                                   }).ToList(),
+            };
 
             this.domainService.FillOutUnsavedOrder(updated);
 
@@ -190,7 +223,7 @@
                            OrderNumber = resource.OrderNumber,
                            SupplierId = resource.Supplier.Id,
                            Cancelled = resource.Cancelled,
-                           DocumentTypeName = resource.DocumentType.Name,
+                           DocumentTypeName = resource.DocumentType?.Name,
                            OrderDate = DateTime.Parse(resource.OrderDate),
                            Overbook = resource.Overbook,
                            OverbookQty = resource.OverbookQty,
