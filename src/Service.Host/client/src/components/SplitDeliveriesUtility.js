@@ -52,10 +52,10 @@ function SplitDeliveriesUtility({ orderNumber, orderLine, inDialogBox, deliverie
     const [rows, setRows] = useState(deliveries);
 
     useEffect(() => {
-        if (deliveries) {
+        if (deliveries && order?.orderNumber !== orderNumber) {
             dispatch(purchaseOrderActions.fetch(deliveries[0].orderNumber));
         }
-    }, [deliveries, dispatch]);
+    }, [deliveries, dispatch, order, orderNumber]);
 
     const handleEditRowsModelChange = model => {
         setEditRowsModel(model);

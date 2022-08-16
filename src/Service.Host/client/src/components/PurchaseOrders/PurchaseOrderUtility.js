@@ -50,6 +50,7 @@ import sendPurchaseOrderPdfEmailActionTypes from '../../actions/sendPurchaseOrde
 import { sendPurchaseOrderPdfEmail, exchangeRates } from '../../itemTypes';
 import exchangeRatesActions from '../../actions/exchangeRatesActions';
 import currencyConvert from '../../helpers/currencyConvert';
+import SplitDeliveriesUtility from '../SplitDeliveriesUtility';
 
 function PurchaseOrderUtility({ creating }) {
     const reduxDispatch = useDispatch();
@@ -224,15 +225,6 @@ function PurchaseOrderUtility({ creating }) {
         }
     };
 
-    const handleDeliveryFieldChange = (propertyName, newValue, delivery) => {
-        setEditStatus('edit');
-
-        dispatch({
-            payload: { ...delivery, [propertyName]: newValue },
-            type: 'deliveryFieldChange'
-        });
-    };
-
     const handleSendAuthoriseEmailClick = () => {
         setAuthEmailDialogOpen(false);
         // dispatch(sendOrderAuthEmailActions.clearProcessData);
@@ -265,6 +257,17 @@ function PurchaseOrderUtility({ creating }) {
     };
 
     const [orderPdfEmailDialogOpen, setOrderPdfEmailDialogOpen] = useState(false);
+
+    const [selectedDeliveries, setSelectedDeliveries] = useState();
+
+    const [splitDeliveriesDialogOpen, setSplitDeliveriesDialogOpen] = useState(false);
+    const [selectedOrderLine, setSelectedOrderLine] = useState();
+    const splitDelivery = orderLine => {
+        setSelectedOrderLine(orderLine);
+        setSelectedDeliveries(order.details.find(d => d.line === orderLine).purchaseDeliveries);
+        setSplitDeliveriesDialogOpen(true);
+        console.log(selectedDeliveries);
+    };
 
     const orderPdfEmailMessageVisible = useSelector(state =>
         processSelectorHelpers.getMessageVisible(state[sendPurchaseOrderPdfEmail.item])
@@ -389,6 +392,29 @@ function PurchaseOrderUtility({ creating }) {
                                 </Typography>
                             </div>
                         </Dialog>
+                        {!creating && selectedDeliveries && (
+                            <Dialog open={splitDeliveriesDialogOpen} fullWidth maxWidth="md">
+                                <div className={classes.centerTextInDialog}>
+                                    <IconButton
+                                        className={classes.pullRight}
+                                        aria-label="Close"
+                                        onClick={() => setSplitDeliveriesDialogOpen(false)}
+                                    >
+                                        <Close />
+                                    </IconButton>
+                                    <SplitDeliveriesUtility
+                                        orderNumber={order.orderNumber}
+                                        orderLine={selectedOrderLine}
+                                        inDialogBox
+                                        deliveries={selectedDeliveries.map(d => ({
+                                            ...d,
+                                            id: `${d.orderNumber}/${d.line}/${d.deliverySeq}`
+                                        }))}
+                                        backClick={() => setSplitDeliveriesDialogOpen(false)}
+                                    />
+                                </div>
+                            </Dialog>
+                        )}
                         <Dialog open={orderPdfEmailDialogOpen} fullWidth maxWidth="md">
                             <div className={classes.centerTextInDialog}>
                                 <IconButton
@@ -1162,64 +1188,11 @@ function PurchaseOrderUtility({ creating }) {
                                             rows={2}
                                         />
                                     </Grid>
-
-                                    {detail.purchaseDeliveries
-                                        ?.sort((a, b) => a.deliverySeq - b.deliverySeq)
-                                        ?.map(delivery => (
-                                            <>
-                                                <Grid item xs={2}>
-                                                    <InputField
-                                                        fullWidth
-                                                        value={delivery.deliverySeq}
-                                                        label="Delivery Seq"
-                                                        propertyName="deliverySeq"
-                                                        disabled
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={2}>
-                                                    <InputField
-                                                        fullWidth
-                                                        value={delivery.dateRequested}
-                                                        label="Date requested"
-                                                        propertyName="dateRequested"
-                                                        required
-                                                        type="date"
-                                                        onChange={(propertyName, newValue) =>
-                                                            handleDeliveryFieldChange(
-                                                                propertyName,
-                                                                newValue,
-                                                                delivery
-                                                            )
-                                                        }
-                                                        disabled={!allowedToUpdate()}
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={2}>
-                                                    <InputField
-                                                        fullWidth
-                                                        value={delivery.dateAdvised}
-                                                        label="Date advised"
-                                                        onChange={() => {}}
-                                                        propertyName="dateAdvised"
-                                                        type="date"
-                                                        required
-                                                        disabled
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={6}>
-                                                    <InputField
-                                                        fullWidth
-                                                        value={delivery.supplierConfirmationComment}
-                                                        label="Supplier confirmation comment"
-                                                        onChange={() => {}}
-                                                        propertyName="supplierConfirmationComment"
-                                                        required
-                                                        disabled
-                                                    />
-                                                </Grid>
-                                            </>
-                                        ))}
-
+                                    <Grid item xs={12}>
+                                        <Button onClick={() => splitDelivery(detail.line)}>
+                                            SPLIT DELIVERIES
+                                        </Button>
+                                    </Grid>
                                     <Grid item xs={12}>
                                         <InputField
                                             fullWidth
