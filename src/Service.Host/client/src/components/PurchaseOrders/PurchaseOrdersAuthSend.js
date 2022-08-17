@@ -177,7 +177,7 @@ function PurchaseOrdersAuthSend() {
             enteredByName: r.enteredBy?.fullName,
             enteredBy: r.enteredBy.id,
             value: 123.23,
-            lines: r.details?.map(d => `${d.partNumber}x${d.ourQty}`).join(', '),
+            lines: r.details?.map(d => `${d.ourQty} x ${d.partNumber}`).join(', '),
             linesDetails: r.details
                 ?.map(d => `Line ${d.line} ${d.ourQty} of ${d.partNumber}`)
                 .join('\n')
