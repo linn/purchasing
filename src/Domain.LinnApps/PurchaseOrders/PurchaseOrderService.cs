@@ -209,6 +209,7 @@
             order.OrderAddressId = supplier.OrderAddress.AddressId;
             order.CurrencyCode = supplier.Currency.Code;
             order.Currency = supplier.Currency;
+            order.OrderDate = DateTime.Now;
 
             if (order.DeliveryAddress == null)
             {

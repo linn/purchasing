@@ -109,7 +109,6 @@
                                                  {
                                                      SupplierId = resource.Supplier.Id, Name = resource.Supplier.Name
                                                  },
-                                  OrderDate = DateTime.Now,
                                   Details = resource.Details?.Select(
                                       x => new PurchaseOrderDetail
                                                {
