@@ -105,12 +105,41 @@ function PurchaseOrdersAuthSend() {
             minWidth: 150,
             valueGetter: ({ value }) => value && moment(value).format('DD MMM YYYY')
         },
-        { field: 'supplierName', headerName: 'Supplier', width: 240 },
-        { field: 'enteredBy', headerName: 'Entered By', width: 100 },
+        {
+            field: 'supplierName',
+            headerName: 'Supplier',
+            width: 240,
+            renderCell: params => (
+                <Tooltip title={`Supplier id ${params.row.supplierId}`}>
+                    <div>{params.value}</div>
+                </Tooltip>
+            )
+        },
+        {
+            field: 'enteredBy',
+            headerName: 'Entered By',
+            width: 100,
+            renderCell: params => (
+                <Tooltip title={params.row.enteredByName}>
+                    <div>{params.value}</div>
+                </Tooltip>
+            )
+        },
         { field: 'authorisedBy', headerName: 'Auth By', width: 240 },
         { field: 'sentByMethod', headerName: 'Sent By', width: 100 },
         { field: 'value', headerName: 'GBP Val', width: 120 },
-        { field: 'lines', headerName: 'Parts Ordered', width: 300 }
+        {
+            field: 'lines',
+            headerName: 'Parts Ordered',
+            width: 300,
+            renderCell: params => (
+                <Tooltip
+                    title={<div style={{ whiteSpace: 'pre-line' }}>{params.row.linesDetails}</div>}
+                >
+                    <div>{params.value}</div>
+                </Tooltip>
+            )
+        }
     ];
 
     const getRows = () => {
@@ -141,12 +170,17 @@ function PurchaseOrdersAuthSend() {
             id: r.id,
             orderNumber: r.orderNumber,
             orderDate: r.orderDate,
+            supplierId: r.supplier.id,
             supplierName: r.supplier.name,
             sentByMethod: r.sentByMethod,
             authorisedBy: r.authorisedBy?.fullName,
+            enteredByName: r.enteredBy?.fullName,
             enteredBy: r.enteredBy.id,
             value: 123.23,
-            lines: r.details?.map(d => `${d.line}: ${d.partNumber}`).join(', ')
+            lines: r.details?.map(d => `${d.partNumber}x${d.ourQty}`).join(', '),
+            linesDetails: r.details
+                ?.map(d => `Line ${d.line} ${d.ourQty} of ${d.partNumber}`)
+                .join('\n')
         }));
     };
 
