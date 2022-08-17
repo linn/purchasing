@@ -113,7 +113,7 @@
             PurchaseOrderResource resource,
             IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
-            var result = purchaseOrderFacadeService.FillOutOrderFromSupplierId(resource, req.HttpContext.GetPrivileges());
+            var result = purchaseOrderFacadeService.FillOutOrderFromSupplierId(resource, req.HttpContext.GetPrivileges(), req.HttpContext.User.GetEmployeeNumber());
 
             await res.Negotiate(result);
         }

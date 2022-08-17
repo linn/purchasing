@@ -195,7 +195,7 @@
             return current;
         }
 
-        public PurchaseOrder FillOutUnsavedOrder(PurchaseOrder order)
+        public PurchaseOrder FillOutUnsavedOrder(PurchaseOrder order, int currentUserId)
         {
             if (order.Supplier?.SupplierId == null)
             {
@@ -217,11 +217,20 @@
                 order.DeliveryAddress = mainDeliveryAddress;
             }
 
-            order.ExchangeRate = this.currencyPack.GetExchangeRate("GBP", order.CurrencyCode);
+            order.DocumentTypeName = "PO";
+            order.DocumentType.Name = "PO";
+            order.DocumentType.Description = "PURCHASE ORDER";
+            order.OrderMethodName = "MANUAL";
+            order.OrderMethod.Name = "MANUAL";
+            order.OrderMethod.Description = "MANUAL ORDERING";
 
-            //todo pass in current user and set below to current user
-            //RequestedById = resource.RequestedBy.Id,
-            //EnteredById = resource.EnteredBy.Id,
+            var user = this.employeeRepository.FindById(currentUserId);
+            order.RequestedById = currentUserId;
+            order.RequestedBy = user;
+            order.EnteredById = currentUserId;
+            order.EnteredBy = user;
+
+            order.ExchangeRate = this.currencyPack.GetExchangeRate("GBP", order.CurrencyCode);
 
             return order;
         }
