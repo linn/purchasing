@@ -243,7 +243,7 @@ function CreatePurchaseOrderUt() {
             )
         );
 
-        // history.push(utilities.getHref(order, 'create'));
+        history.push(utilities.getHref(order, 'create'));
     };
 
     return (

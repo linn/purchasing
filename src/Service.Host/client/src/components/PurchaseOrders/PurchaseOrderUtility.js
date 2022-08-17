@@ -69,6 +69,10 @@ function PurchaseOrderUtility({ creating }) {
     useEffect(() => reduxDispatch(employeesActions.fetch()), [reduxDispatch]);
 
     const item = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.purchaseOrder));
+    const applicationState = useSelector(reduxState =>
+        itemSelectorHelpers.getApplicationState(reduxState.purchaseOrder)
+    );
+
     const loading = useSelector(state =>
         creating
             ? itemSelectorHelpers.getApplicationStateLoading(state.purchaseOrderApplicationState)
@@ -84,13 +88,15 @@ function PurchaseOrderUtility({ creating }) {
     });
 
     useEffect(() => {
-        if (item?.orderNumber) {
+        if (item?.supplier?.id) {
             dispatch({ type: 'initialise', payload: item });
             setPurchaseOrderEmailState({ bcc: false, email: item.supplierContactEmail });
+        } else if (creating && applicationState) {
+            dispatch({ type: 'initialise', payload: applicationState });
         } else {
             reduxDispatch(purchaseOrderActions.clearErrorsForItem());
         }
-    }, [item, reduxDispatch]);
+    }, [item, applicationState, creating, reduxDispatch]);
 
     const suppliersSearchResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.suppliers, 100, 'id', 'id', 'name')
@@ -137,12 +143,13 @@ function PurchaseOrderUtility({ creating }) {
     const allowedToAuthorise = () => !creating && order.links?.some(l => l.rel === 'authorise');
 
     const allowedToUpdate = () =>
-        (!creating && order.links?.some(l => l.rel === 'edit') && order.cancelled !== 'Y') || (creating && order.links?.some(l => l.rel === 'create'));
+        (!creating && order.links?.some(l => l.rel === 'edit') && order.cancelled !== 'Y') ||
+        (creating && order.links?.some(l => l.rel === 'create'));
 
     const inputIsInvalid = () => false;
 
     const canSave = () =>
-        editStatus !== 'view' && allowedToUpdate && !inputIsInvalid() && order !== item;
+        editStatus !== 'view' && allowedToUpdate() && !inputIsInvalid() && order !== item;
 
     const handleAuthorise = () => {
         setEditStatus('edit');
@@ -322,7 +329,7 @@ function PurchaseOrderUtility({ creating }) {
                 ) : (
                     <Grid container spacing={1} justifyContent="center">
                         <SnackbarMessage
-                            visible={snackbarVisible}
+                            visible={snackbarVisible && order?.orderNumber !== 0}
                             onClose={() =>
                                 reduxDispatch(purchaseOrderActions.setSnackbarVisible(false))
                             }
@@ -529,7 +536,11 @@ function PurchaseOrderUtility({ creating }) {
                                         <ModeEditIcon fontSize="large" color="primary" />
                                     </Tooltip>
                                 ) : (
-                                    <Tooltip title="You cannot edit order">
+                                    <Tooltip
+                                        title={`You cannot ${
+                                            creating ? 'create' : 'edit'
+                                        } purchase orders`}
+                                    >
                                         <EditOffIcon color="secondary" />
                                     </Tooltip>
                                 )}
