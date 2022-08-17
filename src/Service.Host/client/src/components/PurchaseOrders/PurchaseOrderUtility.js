@@ -29,7 +29,6 @@ import {
     getItemError,
     ErrorCard,
     utilities,
-    getPreviousPaths,
     SaveBackCancelButtons,
     OnOffSwitch,
     processSelectorHelpers
@@ -44,7 +43,6 @@ import suppliersActions from '../../actions/suppliersActions';
 import history from '../../history';
 import config from '../../config';
 import purchaseOrderActions from '../../actions/purchaseOrderActions';
-import handleBackClick from '../../helpers/handleBackClick';
 import reducer from './purchaseOrderReducer';
 import sendPurchaseOrderPdfEmailActionTypes from '../../actions/sendPurchaseOrderPdfEmailActions';
 import { sendPurchaseOrderPdfEmail, exchangeRates } from '../../itemTypes';
