@@ -349,6 +349,6 @@ describe('When component mounts...', () => {
         expect(screen.getByText('06-Jan-2022')).toBeInTheDocument();
         expect(screen.getByText('Supplier')).toBeInTheDocument();
         expect(screen.getAllByText('77442: RICHARD AUSTIN ALLOYS LTD')[1]).toBeInTheDocument();
-        expect(screen.getByText('Export')).toBeInTheDocument();
+        expect(screen.getByText('EXPORT')).toBeInTheDocument();
     });
 });

@@ -59,6 +59,10 @@ import AutomaticPurchaseOrderSuggestions from './AutomaticPurchaseOrderSuggestio
 import AutomaticPurchaseOrders from './AutomaticPurchaseOrders';
 import SupplierLeadTimesReport from './reports/SupplierLeadTimesReport';
 import SupplierLeadTimesReportOptions from './reports/SupplierLeadTimesReportOptions';
+import DeliveryPerformanceSummary from './reports/DeliveryPerformanceSummary';
+import DeliveryPerformanceSummaryReport from './reports/DeliveryPerformanceSummaryReport';
+import DeliveryPerformanceSupplierReport from './reports/DeliveryPerformanceSupplierReport';
+import DeliveryPerformanceDetailReport from './reports/DeliveryPerformanceDetailReport';
 import CreatePurchaseOrderUt from './PurchaseOrders/CreatePurchaseOrderUt';
 
 const Root = ({ store }) => (
@@ -357,6 +361,26 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/reports/leadtimes/report"
                                     component={SupplierLeadTimesReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/delivery-performance-summary"
+                                    component={DeliveryPerformanceSummary}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/delivery-performance-summary/report"
+                                    component={DeliveryPerformanceSummaryReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/delivery-performance-supplier/report"
+                                    component={DeliveryPerformanceSupplierReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/delivery-performance-details/report"
+                                    component={DeliveryPerformanceDetailReport}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>

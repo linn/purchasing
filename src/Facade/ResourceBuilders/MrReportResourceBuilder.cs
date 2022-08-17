@@ -26,6 +26,8 @@
                            PartSelectorOption = entity.PartSelectorOption,
                            StockCategoryNameOption = entity.StockCategoryNameOption,
                            StockLevelOption = entity.StockLevelOption,
+                           MinimumAnnualUsage = entity.MinimumAnnualUsage,
+                           MinimumLeadTimeWeeks = entity.MinimumLeadTimeWeeks,
                            Results = entity.Headers.Select(h => this.BuildHeader(h, entity.RunWeekNumber))
                        };
         }

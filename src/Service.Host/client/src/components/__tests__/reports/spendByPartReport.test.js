@@ -176,6 +176,6 @@ describe('When component mounts...', () => {
     test('Displays report title, column title, row data & export button...', () => {
         expect(screen.getByText('Part 007')).toBeInTheDocument();
         expect(screen.getByText('Jimmy Bond action figure')).toBeInTheDocument();
-        expect(screen.getByText('Export')).toBeInTheDocument();
+        expect(screen.getByText('EXPORT')).toBeInTheDocument();
     });
 });

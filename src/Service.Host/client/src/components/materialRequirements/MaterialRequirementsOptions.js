@@ -72,6 +72,7 @@ function MaterialRequirementsOptions() {
         itemSelectorHelpers.getItemLoading(state.part)
     );
     const selectedPartDetails = useSelector(state => itemSelectorHelpers.getItem(state.part));
+    const mrReport = useSelector(state => itemSelectorHelpers.getItem(state.mrReport));
 
     const suppliersSearchResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.suppliers)
@@ -132,6 +133,37 @@ function MaterialRequirementsOptions() {
         }
         dispatch(partActions.clearItem());
     }, [selectedPartDetails, addToParts, dispatch, displayMessage, lastPart]);
+
+    useEffect(() => {
+        if (mrReportOptions && mrReport) {
+            setParts(
+                mrReport.partNumbersOption.map(p => ({
+                    id: p,
+                    partNumber: p
+                }))
+            );
+            setPartSelector(mrReport.partSelectorOption);
+            setStockLevelSelector(mrReport.stockLevelOption);
+            setOrderBySelector(mrReport.orderByOption);
+            setMinimumAnnualUsage(mrReport.minimumAnnualUsage);
+            setMinimumLeadTimeWeeks(mrReport.minimumLeadTimeWeeks);
+            if (mrReport.partNumberListOption) {
+                setPartNumberList(mrReport.partNumberListOption);
+            }
+
+            if (mrReport.stockCategoryNameOption) {
+                setStockCategoryName(mrReport.stockCategoryNameOption);
+            }
+
+            if (mrReport.supplierIdOption) {
+                setSupplier({ id: mrReport.supplierIdOption });
+            }
+
+            if (mrReport.partOption) {
+                setPartOption(mrReport.partOption);
+            }
+        }
+    }, [mrReportOptions, mrReport]);
 
     const handleSupplierChange = selectedsupplier => {
         setSupplier(selectedsupplier);
@@ -304,7 +336,7 @@ function MaterialRequirementsOptions() {
                                 headerHeight={34}
                                 autoHeight
                                 loading={selectectPartLoading}
-                                hideFooter
+                                hideFooter={!parts || parts.length <= 5}
                             />
                         </Grid>
                     </>

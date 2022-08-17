@@ -77,6 +77,13 @@ function App() {
                 <ListItem component={Link} to="/purchasing/reports/leadtimes" button>
                     <Typography color="primary">Supplier Lead Times Report</Typography>
                 </ListItem>
+                <ListItem
+                    component={Link}
+                    to="/purchasing/reports/delivery-performance-summary"
+                    button
+                >
+                    <Typography color="primary">Delivery Performance Summary Report</Typography>
+                </ListItem>
             </List>
         </Page>
     );
