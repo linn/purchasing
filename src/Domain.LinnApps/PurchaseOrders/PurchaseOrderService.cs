@@ -165,6 +165,26 @@
             return new ProcessResult(true, $"Email sent for purchase order {orderNumber} to {emailAddress}");
         }
 
+        public ProcessResult SendSupplierAssemblyEmail(PurchaseOrder order, int orderNumber)
+        {
+            var emailBody = $"Purchasing have raised order {orderNumber} for {order.Supplier.Name}.\n"
+                            + $"The following parts will need supplier kits\n";
+
+            this.emailService.SendEmail(
+                ConfigurationManager.Configuration["LOGISTICS_TO_ADDRESS"],
+                "Logistics",
+                null,
+                null,
+                ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
+                "Linn Purchasing",
+                $"Purchase Order {orderNumber}",
+                emailBody,
+                null,
+                null);
+
+            return new ProcessResult(true, $"Email sent for purchase order {orderNumber} to Logistics");
+        }
+
         private void UpdateDetails(ICollection<PurchaseOrderDetail> currentDetails, ICollection<PurchaseOrderDetail> updatedDetails)
         {
             foreach (var detail in updatedDetails)

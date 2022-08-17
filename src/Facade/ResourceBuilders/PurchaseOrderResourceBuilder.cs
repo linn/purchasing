@@ -124,6 +124,15 @@
                                  };
             }
 
+            if (model?.Details != null && model.Details.Any(d => d.Part.SupplierAssembly()))
+            {
+                yield return new LinkResource
+                                 {
+                                     Rel = "send-supplier-ass-email",
+                                     Href = "purchasing/purchase-orders/allow-over-book"
+                                 };
+            }
+
             if (model != null)
             {
                 yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };

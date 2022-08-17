@@ -46,6 +46,7 @@ import purchaseOrderActions from '../../actions/purchaseOrderActions';
 import handleBackClick from '../../helpers/handleBackClick';
 import reducer from './purchaseOrderReducer';
 import sendPurchaseOrderPdfEmailActionTypes from '../../actions/sendPurchaseOrderPdfEmailActions';
+import sendPurchaseOrderSupplierAssActionTypes from '../../actions/sendPurchaseOrderSupplierAssEmailActions';
 import { sendPurchaseOrderPdfEmail } from '../../itemTypes';
 
 function PurchaseOrderUtility({ creating }) {
@@ -218,6 +219,15 @@ function PurchaseOrderUtility({ creating }) {
                 orderNumber: order.orderNumber,
                 emailAddress: purchaseOrderEmailState.email,
                 bcc: purchaseOrderEmailState.bcc
+            })
+        );
+    };
+
+    const handleSupplierAssEmailClick = () => {
+        reduxDispatch(sendPurchaseOrderSupplierAssActionTypes.clearProcessData);
+        reduxDispatch(
+            sendPurchaseOrderSupplierAssActionTypes.requestProcessStart('', {
+                orderNumber: order.orderNumber
             })
         );
     };
@@ -502,9 +512,8 @@ function PurchaseOrderUtility({ creating }) {
                                 disabled
                             />
                         </Grid>
-                        <Grid item xs={3}>
+                        <Grid item xs={2}>
                             <InputField
-                                fullWidth
                                 value={order.issuePartsToSupplier}
                                 label="Issue Parts to Supplier"
                                 number
@@ -512,6 +521,22 @@ function PurchaseOrderUtility({ creating }) {
                                 onChange={handleFieldChange}
                                 disabled
                             />
+                        </Grid>
+                        <Grid item xs={1}>
+                            {order.issuePartsToSupplier === 'Y' ? (
+                                <Tooltip title="Email kitting to logistics">
+                                    <IconButton
+                                        className={classes.buttonMarginTop}
+                                        aria-label="Email"
+                                        onClick={() => handleSupplierAssEmailClick(true)}
+                                        disabled={creating}
+                                    >
+                                        <Email />
+                                    </IconButton>
+                                </Tooltip>
+                            ) : (
+                                <></>
+                            )}
                         </Grid>
 
                         <Grid item xs={4}>

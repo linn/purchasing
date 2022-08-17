@@ -13,5 +13,7 @@
         Task<string> GetOrderAsHtml(int orderNumber);
 
         Task<IResult<ProcessResultResource>> EmailOrderPdf(int orderNumber, string emailAddress, bool bcc, int currentUserId);
+
+        Task<IResult<ProcessResultResource>> EmailSupplierAss(int orderNumber);
     }
 }

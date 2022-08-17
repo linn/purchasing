@@ -303,3 +303,9 @@ export const automaticPurchaseOrder = new ItemType(
     'AUTOMATIC_PURCHASE_ORDER',
     '/purchasing/automatic-purchase-orders'
 );
+
+export const sendPurchaseOrderSupplierAssEmail = new ItemType(
+    'sendPurchaseOrderSupplierAssEmail',
+    'SEND_PURCHASE_ORDER_SUPP_ASS_EMAIL',
+    '/purchasing/purchase-orders/email-supplier-ass'
+);
