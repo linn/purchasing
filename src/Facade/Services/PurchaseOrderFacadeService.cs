@@ -111,6 +111,11 @@
         protected override Expression<Func<PurchaseOrder, bool>> FilterExpression(
             PurchaseOrderSearchResource searchResource)
         {
+            if (!string.IsNullOrEmpty(searchResource.StartDate))
+            {
+                return a => a.OrderDate >= DateTime.Parse(searchResource.StartDate) && a.OrderDate <= DateTime.Parse(searchResource.EndDate);
+            }
+
             return x => x.OrderNumber.ToString().Contains(searchResource.OrderNumber);
         }
 

@@ -5,6 +5,7 @@ import {
 } from '@linn-it/linn-form-components-library';
 import * as itemTypes from '../itemTypes';
 import * as reportTypes from '../reportTypes';
+import * as processTypes from '../processTypes';
 
 export const signingLimitActionTypes = makeActionTypes(
     itemTypes.signingLimit.actionType,
@@ -278,4 +279,12 @@ export const deliveryPerformanceSupplierReportActionTypes = makeReportActionType
 
 export const deliveryPerformanceDetailReportActionTypes = makeReportActionTypes(
     reportTypes.deliveryPerformanceDetailReport.actionType
+);
+
+export const authoriseMultiplePurchaseOrdersActionTypes = makeProcessActionTypes(
+    processTypes.authoriseMultiplePurchaseOrders.actionType
+);
+
+export const emailMultiplePurchaseOrdersActionTypes = makeProcessActionTypes(
+    processTypes.emailMultiplePurchaseOrders.actionType
 );

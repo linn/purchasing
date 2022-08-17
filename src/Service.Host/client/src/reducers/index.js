@@ -89,6 +89,8 @@ import ledgerPeriods from './ledgerPeriods';
 import deliveryPerformanceSummaryReport from './deliveryPerformanceSummaryReport';
 import deliveryPerformanceSupplierReport from './deliveryPerformanceSupplierReport';
 import deliveryPerformanceDetailReport from './deliveryPerformanceDetailReport';
+import authoriseMultiplePurchaseOrders from './authoriseMultiplePurchaseOrders';
+import emailMultiplePurchaseOrders from './emailMultiplePurchaseOrders';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -100,6 +102,7 @@ const rootReducer = history =>
         address,
         addresses,
         applyForecastingPercentageChange,
+        authoriseMultiplePurchaseOrders,
         automaticPurchaseOrder,
         automaticPurchaseOrderSuggestions,
         batchPurchaseOrderDeliveriesUpload,
@@ -113,6 +116,7 @@ const rootReducer = history =>
         departments,
         ediOrders,
         ediSuppliers,
+        emailMultiplePurchaseOrders,
         employees,
         ledgerPeriods,
         manufacturers,

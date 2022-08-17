@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
+    using System.Collections.Generic;
     using System.Net;
     using System.Threading.Tasks;
 
@@ -12,6 +13,7 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.RequestResources;
     using Linn.Purchasing.Resources.SearchResources;
     using Linn.Purchasing.Service.Extensions;
     using Linn.Purchasing.Service.Models;
@@ -37,6 +39,9 @@
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}", this.GetPurchaseOrder);
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}/html", this.GetPurchaseOrderHtml);
             app.MapPost("/purchasing/purchase-orders/email-pdf", this.EmailOrderPdf);
+            app.MapGet("/purchasing/purchase-orders/auth-or-send", this.GetApp);
+            app.MapPost("/purchasing/purchase-orders/authorise-multiple", this.AuthorisePurchaseOrders);
+            app.MapPost("/purchasing/purchase-orders/email-multiple", this.EmailPurchaseOrders);
             app.MapPut("/purchasing/purchase-orders/{orderNumber:int}", this.UpdatePurchaseOrder);
         }
 
@@ -51,6 +56,26 @@
             IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
             await res.Negotiate(purchaseOrderFacadeService.GetApplicationState(req.HttpContext.GetPrivileges()));
+        }
+
+        private async Task AuthorisePurchaseOrders(
+            HttpRequest req,
+            HttpResponse res,
+            PurchaseOrdersProcessRequestResource requestResource)
+        {
+            var result = new SuccessResult<ProcessResultResource>(new ProcessResultResource(true, "ok"));
+
+            await res.Negotiate(result);
+        }
+
+        private async Task EmailPurchaseOrders(
+            HttpRequest req,
+            HttpResponse res,
+            PurchaseOrdersProcessRequestResource requestResource)
+        {
+            var result = new SuccessResult<ProcessResultResource>(new ProcessResultResource(true, "ok"));
+
+            await res.Negotiate(result);
         }
 
         private async Task GetCurrencies(
@@ -149,9 +174,11 @@
             HttpRequest req,
             HttpResponse res,
             string searchTerm,
+            string startDate,
+            string endDate,
             IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
-            var resource = new PurchaseOrderSearchResource { OrderNumber = searchTerm };
+            var resource = new PurchaseOrderSearchResource { OrderNumber = searchTerm, StartDate = startDate, EndDate = endDate };
             var result = purchaseOrderFacadeService.FilterBy(resource, numberToTake: 50, req.HttpContext.GetPrivileges());
             await res.Negotiate(result);
         }
