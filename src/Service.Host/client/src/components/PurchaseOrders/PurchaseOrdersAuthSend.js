@@ -18,6 +18,13 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import DialogContentText from '@mui/material/DialogContentText';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 import purchaseOrdersActions from '../../actions/purchaseOrdersActions';
@@ -40,6 +47,8 @@ function PurchaseOrdersAuthSend() {
         auth: 'all'
     });
     const [selectedRows, setSelectedRows] = useState([]);
+    const [showDialog, setShowDialog] = useState(false);
+    const [dialogText, setDialogText] = useState(null);
 
     useEffect(() => {
         dispatch(purchaseOrdersActions.fetchState());
@@ -68,9 +77,15 @@ function PurchaseOrdersAuthSend() {
     );
 
     useEffect(() => {
-        if (authoriseProcessResult) {}
+        if (authoriseProcessResult) {
+            setDialogText(authoriseProcessResult.message);
+            setShowDialog(true);
+        }
 
-        if (emailProcessResult) {}
+        if (emailProcessResult) {
+            setDialogText(emailProcessResult.message);
+            setShowDialog(true);
+        }
     }, [emailProcessResult, authoriseProcessResult]);
 
     const orderColumns = [
@@ -175,6 +190,11 @@ function PurchaseOrdersAuthSend() {
     };
     const handleSelectionModelChange = model => {
         setSelectedRows(model);
+    };
+
+    const handleClose = () => {
+        setShowDialog(false);
+        setDialogText(null);
     };
 
     return (
@@ -333,6 +353,33 @@ function PurchaseOrdersAuthSend() {
                     />
                 </Grid>
             </Grid>
+            <Dialog
+                id="alert-dialog"
+                open={showDialog}
+                onClose={handleClose}
+                maxWidth="md"
+                fullWidth
+            >
+                <DialogTitle id="alert-dialog-title">
+                    <IconButton
+                        aria-label="close"
+                        onClick={handleClose}
+                        sx={{
+                            position: 'absolute',
+                            right: 8,
+                            top: 8
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-content">{dialogText}</DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>Ok</Button>
+                </DialogActions>
+            </Dialog>
         </Page>
     );
 }
