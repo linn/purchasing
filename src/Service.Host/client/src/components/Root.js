@@ -63,6 +63,7 @@ import DeliveryPerformanceSummary from './reports/DeliveryPerformanceSummary';
 import DeliveryPerformanceSummaryReport from './reports/DeliveryPerformanceSummaryReport';
 import DeliveryPerformanceSupplierReport from './reports/DeliveryPerformanceSupplierReport';
 import DeliveryPerformanceDetailReport from './reports/DeliveryPerformanceDetailReport';
+import CreatePurchaseOrderUt from './PurchaseOrders/CreatePurchaseOrderUt';
 
 const Root = ({ store }) => (
     <div>
@@ -238,6 +239,17 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/purchase-orders/acknowledge"
                                     component={AcknowledgeOrdersUtility}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/purchase-orders/quick-create"
+                                    component={CreatePurchaseOrderUt}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/purchase-orders/create"
+                                    // eslint-disable-next-line react/jsx-props-no-spreading
+                                    render={props => <PurchaseOrderUtility creating {...props} />}
                                 />
                                 <Route
                                     exact

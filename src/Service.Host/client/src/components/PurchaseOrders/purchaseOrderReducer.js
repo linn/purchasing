@@ -87,6 +87,11 @@ export default function purchaseOrderReducer(state = initialState, action) {
                     })
                 ]
             };
+        case 'supplierChange':
+            return {
+                ...state,
+                supplier: action.payload
+            };
         default:
             return state;
     }

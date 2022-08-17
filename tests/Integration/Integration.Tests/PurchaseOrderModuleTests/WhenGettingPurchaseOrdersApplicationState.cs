@@ -40,7 +40,7 @@
         {
             var resource = this.Response.DeserializeBody<PurchaseOrderResource>();
             resource.Links.Single(x => x.Rel == "allow-over-book-search").Href.Should()
-                .Be("purchasing/purchase-orders/allow-over-book");
+                .Be("/purchasing/purchase-orders/allow-over-book");
         }
 
         [Test]
