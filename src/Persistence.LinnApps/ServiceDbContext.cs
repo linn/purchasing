@@ -620,6 +620,8 @@
             entity.HasOne(o => o.OrderAddress).WithMany().HasForeignKey(o => o.OrderAddressId);
             entity.Property(e => e.DamagesPercent).HasColumnName("DAMAGES_PERCENT");
             entity.Property(o => o.BaseCurrencyCode).HasColumnName("BASE_CURRENCY");
+            entity.Property(o => o.OrderNetTotal).HasColumnName("ORDER_NET_TOTAL");
+            entity.Property(o => o.BaseOrderNetTotal).HasColumnName("BASE_ORDER_NET_TOTAL");
         }
 
         private void BuildPurchaseOrderDetails(ModelBuilder builder)

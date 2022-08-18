@@ -139,7 +139,13 @@ function PurchaseOrdersAuthSend() {
         },
         { field: 'authorisedBy', headerName: 'Auth By', width: 240 },
         { field: 'sentByMethod', headerName: 'Sent By', width: 100 },
-        { field: 'value', headerName: 'GBP Val', width: 120 },
+        {
+            field: 'value',
+            headerName: 'GBP Val',
+            width: 120,
+            type: 'number',
+            valueFormatter: ({ value }) => value.toFixed(2)
+        },
         {
             field: 'lines',
             headerName: 'Parts Ordered',
@@ -188,7 +194,7 @@ function PurchaseOrdersAuthSend() {
             authorisedBy: r.authorisedBy?.fullName,
             enteredByName: r.enteredBy?.fullName,
             enteredBy: r.enteredBy.id,
-            value: 123.23,
+            value: r.baseOrderNetTotal,
             lines: r.details?.map(d => `${d.ourQty} x ${d.partNumber}`).join(', '),
             linesDetails: r.details
                 ?.map(d => `Line ${d.line} ${d.ourQty} of ${d.partNumber}`)
@@ -244,7 +250,7 @@ function PurchaseOrdersAuthSend() {
     };
 
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page history={history} homeUrl={config.appRoot} width="l">
             <Grid container spacing={3}>
                 <Grid item xs={11}>
                     <Typography variant="h6">Authorise Or Send Purchase Orders</Typography>
