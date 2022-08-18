@@ -22,8 +22,8 @@
 
         PurchaseOrder FillOutUnsavedOrder(PurchaseOrder order, int userId);
 
-        ProcessResult AuthoriseMultiplePurchaseOrders(IEnumerable<int> orderNumbers, int userNumber);
+        ProcessResult AuthoriseMultiplePurchaseOrders(IList<int> orderNumbers, int userNumber);
 
-        ProcessResult EmailMultiplePurchaseOrders(IEnumerable<int> orderNumbers, int userNumber, bool copyToSelf);
+        ProcessResult EmailMultiplePurchaseOrders(IList<int> orderNumbers, int userNumber, bool copyToSelf);
     }
 }

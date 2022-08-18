@@ -34,6 +34,8 @@
 
         private readonly ICurrencyPack currencyPack;
 
+        private readonly IRepository<PurchaseOrder, int> purchaseOrderRepository;
+
         private readonly IPdfService pdfService;
 
         private readonly IPurchaseLedgerPack purchaseLedgerPack;
@@ -51,7 +53,8 @@
             IRepository<Supplier, int> supplierRepository,
             IRepository<LinnDeliveryAddress, int> linnDeliveryAddressRepository,
             IPurchaseOrdersPack purchaseOrdersPack,
-            ICurrencyPack currencyPack)
+            ICurrencyPack currencyPack,
+            IRepository<PurchaseOrder, int> purchaseOrderRepository)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;
@@ -64,6 +67,7 @@
             this.supplierRepository = supplierRepository;
             this.linnDeliveryAddressRepository = linnDeliveryAddressRepository;
             this.currencyPack = currencyPack;
+            this.purchaseOrderRepository = purchaseOrderRepository;
         }
 
         public void AllowOverbook(
@@ -236,12 +240,46 @@
             return order;
         }
 
-        public ProcessResult AuthoriseMultiplePurchaseOrders(IEnumerable<int> orderNumbers, int userNumber)
+        public ProcessResult AuthoriseMultiplePurchaseOrders(IList<int> orderNumbers, int userNumber)
         {
-            return new ProcessResult(true, "ok \n Those authorised fine");
+            if (orderNumbers == null || orderNumbers.Count == 0)
+            {
+                return new ProcessResult(true, "No orders requested for authorisation");
+            }
+
+            var text = string.Empty;
+            var success = 0;
+            foreach (var orderNumber in orderNumbers)
+            {
+                var order = this.purchaseOrderRepository.FindById(orderNumber);
+                if (order.AuthorisedById.HasValue)
+                {
+                    text += $"Order {orderNumber} was already authorised\n";
+                }
+                else if (this.purchaseOrdersPack.OrderCanBeAuthorisedBy(
+                             orderNumber,
+                             null,
+                             userNumber,
+                             null,
+                             null,
+                             null))
+                {
+                    order.AuthorisedById = userNumber;
+                    text += $"Order {orderNumber} authorised successfully\n";
+                    success++;
+                }
+                else
+                {
+                    text += $"Order {orderNumber} YOU CANNOT AUTHORISE THIS ORDER\n";
+                }
+            }
+
+            text += $"\n{success} out of {orderNumbers.Count} authorised successfully";
+
+            return new ProcessResult(true, text);
         }
 
-        public ProcessResult EmailMultiplePurchaseOrders(IEnumerable<int> orderNumbers, int userNumber, bool copyToSelf)
+        public ProcessResult EmailMultiplePurchaseOrders(IList<int> orderNumbers, int userNumber, bool copyToSelf)
         {
             return new ProcessResult(true, "ok \n Those emailed fine");
         }

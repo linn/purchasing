@@ -149,12 +149,13 @@
             IEnumerable<string> privileges,
             int userId)
         {
-            var result = this.domainService.AuthoriseMultiplePurchaseOrders(resource.Orders, userId);
+            var result = this.domainService.AuthoriseMultiplePurchaseOrders(resource.Orders.ToList(), userId);
             if (!result.Success)
             {
                 return new BadRequestResult<ProcessResultResource>(result.Message);
             }
 
+            this.transactionManager.Commit();
             return new SuccessResult<ProcessResultResource>(new ProcessResultResource(result.Success, result.Message));
         }
 
@@ -163,12 +164,16 @@
             IEnumerable<string> privileges,
             int userId)
         {
-            var result = this.domainService.EmailMultiplePurchaseOrders(resource.Orders, userId, resource.CopySelf == "true");
+            var result = this.domainService.EmailMultiplePurchaseOrders(
+                resource.Orders.ToList(),
+                userId,
+                resource.CopySelf == "true");
             if (!result.Success)
             {
                 return new BadRequestResult<ProcessResultResource>(result.Message);
             }
 
+            this.transactionManager.Commit();
             return new SuccessResult<ProcessResultResource>(new ProcessResultResource(result.Success, result.Message));
         }
 

@@ -54,5 +54,11 @@
         {
             this.Response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
+
+        [Test]
+        public void ShouldCommit()
+        {
+            this.TransactionManager.Received().Commit();
+        }
     }
 }

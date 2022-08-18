@@ -197,7 +197,7 @@ function PurchaseOrdersAuthSend() {
             value: r.baseOrderNetTotal,
             lines: r.details?.map(d => `${d.ourQty} x ${d.partNumber}`).join(', '),
             linesDetails: r.details
-                ?.map(d => `Line ${d.line} ${d.ourQty} of ${d.partNumber}`)
+                ?.map(d => `Line ${d.line}: ${d.ourQty} of ${d.partNumber}`)
                 .join('\n')
         }));
     };

@@ -41,6 +41,8 @@
 
         protected IRepository<LinnDeliveryAddress, int> LinnDeliveryAddressRepository { get; private set; }
 
+        protected IRepository<PurchaseOrder, int> PurchaseOrderRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -55,6 +57,7 @@
             this.LinnDeliveryAddressRepository = Substitute.For<IRepository<LinnDeliveryAddress, int>>();
             this.CurrencyPack = Substitute.For<ICurrencyPack>();
             this.PurchaseOrdersPack = Substitute.For<IPurchaseOrdersPack>();
+            this.PurchaseOrderRepository = Substitute.For<IRepository<PurchaseOrder, int>>();
 
             this.Sut = new PurchaseOrderService(
                 this.MockAuthService,
@@ -67,7 +70,8 @@
                 this.SupplierRepository,
                 this.LinnDeliveryAddressRepository,
                 this.PurchaseOrdersPack,
-                this.CurrencyPack);
+                this.CurrencyPack,
+                this.PurchaseOrderRepository);
         }
     }
 }
