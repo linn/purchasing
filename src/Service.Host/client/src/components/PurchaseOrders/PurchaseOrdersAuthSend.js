@@ -80,13 +80,25 @@ function PurchaseOrdersAuthSend() {
         if (authoriseProcessResult) {
             setDialogText(authoriseProcessResult.message);
             setShowDialog(true);
+            dispatch(
+                purchaseOrdersActions.searchWithOptions(
+                    '',
+                    `&startDate=${options.startDate.toISOString()}&endDate=${options.endDate.toISOString()}`
+                )
+            );
         }
 
         if (emailProcessResult) {
             setDialogText(emailProcessResult.message);
             setShowDialog(true);
+            dispatch(
+                purchaseOrdersActions.searchWithOptions(
+                    '',
+                    `&startDate=${options.startDate.toISOString()}&endDate=${options.endDate.toISOString()}`
+                )
+            );
         }
-    }, [emailProcessResult, authoriseProcessResult]);
+    }, [emailProcessResult, authoriseProcessResult, dispatch, options.startDate, options.endDate]);
 
     const orderColumns = [
         {
