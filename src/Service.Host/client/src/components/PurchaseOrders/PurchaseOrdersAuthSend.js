@@ -245,6 +245,8 @@ function PurchaseOrdersAuthSend() {
     };
 
     const handleClose = () => {
+        dispatch(emailMultiplePurchaseOrdersActions.clearProcessData());
+        dispatch(authoriseMultiplePurchaseOrdersActions.clearProcessData());
         setShowDialog(false);
         setDialogText(null);
     };
