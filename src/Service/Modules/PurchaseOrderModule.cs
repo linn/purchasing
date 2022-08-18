@@ -75,7 +75,7 @@
             HttpResponse res,
             PurchaseOrdersProcessRequestResource requestResource)
         {
-            var result = new SuccessResult<ProcessResultResource>(new ProcessResultResource(true, "ok"));
+            var result = new SuccessResult<ProcessResultResource>(new ProcessResultResource(true, "ok \n That was fine"));
 
             await res.Negotiate(result);
         }

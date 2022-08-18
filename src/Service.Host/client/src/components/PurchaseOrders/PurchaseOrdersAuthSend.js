@@ -413,6 +413,7 @@ function PurchaseOrdersAuthSend() {
                 fullWidth
             >
                 <DialogTitle id="alert-dialog-title">
+                    Process Completed
                     <IconButton
                         aria-label="close"
                         onClick={handleClose}
@@ -426,7 +427,9 @@ function PurchaseOrdersAuthSend() {
                     </IconButton>
                 </DialogTitle>
                 <DialogContent>
-                    <DialogContentText id="alert-content">{dialogText}</DialogContentText>
+                    <DialogContentText id="alert-content">
+                        <div style={{ whiteSpace: 'pre-line' }}>{dialogText}</div>
+                    </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Ok</Button>
