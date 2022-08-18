@@ -21,5 +21,9 @@
         PurchaseOrder UpdateOrder(PurchaseOrder current, PurchaseOrder updated, IEnumerable<string> privileges);
 
         PurchaseOrder FillOutUnsavedOrder(PurchaseOrder order, int userId);
+
+        ProcessResult AuthoriseMultiplePurchaseOrders(IEnumerable<int> orderNumbers, int userNumber);
+
+        ProcessResult EmailMultiplePurchaseOrders(IEnumerable<int> orderNumbers, int userNumber, bool copyToSelf);
     }
 }

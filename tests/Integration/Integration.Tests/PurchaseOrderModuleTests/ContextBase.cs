@@ -30,11 +30,7 @@
     {
         protected HttpClient Client { get; set; }
 
-        protected IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource> CurrencyService
-        {
-            get;
-            private set;
-        }
+        protected IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource> CurrencyService { get; private set; }
 
         protected IFacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource, LinnDeliveryAddressResource> DeliveryAddressService { get; private set; }
 
@@ -60,17 +56,9 @@
 
         protected IPurchaseOrderFacadeService PurchaseOrderFacadeService { get; private set; }
 
-        protected IPurchaseOrderReqFacadeService PurchaseOrderReqFacadeService { get; private set; }
-
-        protected IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource> PurchaseOrderReqStateFacadeService { get; private set; }
-
         protected HttpResponseMessage Response { get; set; }
 
-        protected IFacadeResourceService<Tariff, int, TariffResource, TariffResource> TariffService
-        {
-            get;
-            private set;
-        }
+        protected IFacadeResourceService<Tariff, int, TariffResource, TariffResource> TariffService { get; private set; }
 
         protected ITransactionManager TransactionManager { get; private set; }
 

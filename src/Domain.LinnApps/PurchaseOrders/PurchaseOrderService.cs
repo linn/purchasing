@@ -236,6 +236,16 @@
             return order;
         }
 
+        public ProcessResult AuthoriseMultiplePurchaseOrders(IEnumerable<int> orderNumbers, int userNumber)
+        {
+            return new ProcessResult(true, "ok \n Those authorised fine");
+        }
+
+        public ProcessResult EmailMultiplePurchaseOrders(IEnumerable<int> orderNumbers, int userNumber, bool copyToSelf)
+        {
+            return new ProcessResult(true, "ok \n Those emailed fine");
+        }
+
         // below method currently unreferenced, but to be finished and used soon for create
         private void CreateMiniOrder(PurchaseOrder order)
         {

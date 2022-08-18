@@ -63,19 +63,26 @@
         private async Task AuthorisePurchaseOrders(
             HttpRequest req,
             HttpResponse res,
-            PurchaseOrdersProcessRequestResource requestResource)
+            PurchaseOrdersProcessRequestResource requestResource,
+            IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
-            var result = new SuccessResult<ProcessResultResource>(new ProcessResultResource(true, "ok"));
-
+            var result = purchaseOrderFacadeService.AuthorisePurchaseOrders(
+                requestResource,
+                req.HttpContext.GetPrivileges(),
+                req.HttpContext.User.GetEmployeeNumber());
             await res.Negotiate(result);
         }
 
         private async Task EmailPurchaseOrders(
             HttpRequest req,
             HttpResponse res,
-            PurchaseOrdersProcessRequestResource requestResource)
+            PurchaseOrdersProcessRequestResource requestResource,
+            IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
-            var result = new SuccessResult<ProcessResultResource>(new ProcessResultResource(true, "ok \n That was fine"));
+            var result = purchaseOrderFacadeService.EmailOrderPdfs(
+                requestResource,
+                req.HttpContext.GetPrivileges(),
+                req.HttpContext.User.GetEmployeeNumber());
 
             await res.Negotiate(result);
         }
