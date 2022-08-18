@@ -19,5 +19,7 @@
             PurchaseOrder order);
 
         PurchaseOrder UpdateOrder(PurchaseOrder current, PurchaseOrder updated, IEnumerable<string> privileges);
+
+        PurchaseOrder FillOutUnsavedOrder(PurchaseOrder order, int userId);
     }
 }

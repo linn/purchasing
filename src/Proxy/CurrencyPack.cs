@@ -70,5 +70,43 @@
 
             return decimal.Parse(result.Value.ToString() ?? string.Empty);
         }
+
+        public decimal GetExchangeRate(string fromCurrency, string toCurrency)
+        {
+            using var connection = this.databaseService.GetConnection();
+            connection.Open();
+
+            var cmd = new OracleCommand("cur_pack.Exchange_Rate", connection)
+                          {
+                              CommandType = CommandType.StoredProcedure
+                          };
+
+            var fromCurrencyParam = new OracleParameter("p_from_curr", OracleDbType.Varchar2)
+            {
+                Direction = ParameterDirection.Input,
+                Size = 50,
+                Value = fromCurrency
+            };
+            var toCurrencyParam = new OracleParameter("p_to_curr", OracleDbType.Varchar2)
+                                        {
+                                            Direction = ParameterDirection.Input,
+                                            Size = 50,
+                                            Value = toCurrency
+                                        };
+            var result = new OracleParameter(null, OracleDbType.Varchar2)
+                             {
+                                 Direction = ParameterDirection.ReturnValue,
+                                 Size = 2000
+                             };
+
+            cmd.Parameters.Add(result);
+            cmd.Parameters.Add(fromCurrencyParam);
+            cmd.Parameters.Add(toCurrencyParam);
+
+            cmd.ExecuteNonQuery();
+            connection.Close();
+
+            return decimal.Parse(result.Value.ToString() ?? string.Empty);
+        }
     }
 }
