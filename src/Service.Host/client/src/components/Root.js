@@ -21,6 +21,8 @@ import SuppliersSearch from './supplierUtility/SuppliersSearch';
 import OrdersByPartOptions from './reports/OrdersByPartOptions';
 import SpendBySupplierOptions from './reports/SpendBySupplierOptions';
 import SpendBySupplier from './reports/SpendBySupplier';
+import SpendBySupplierByDateRangeOptions from './reports/SpendBySupplierByDateRangeOptions';
+import SpendBySupplierByDateRange from './reports/SpendBySupplierByDateRange';
 import Supplier from './supplierUtility/Supplier';
 import AddressUtility from './AddressUtility';
 import SuppliersWithUnacknowledgedOrders from './reports/SuppliersWithUnacknowledgedOrders';
@@ -153,6 +155,16 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/reports/spend-by-supplier/report"
                                     component={SpendBySupplier}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/spend-by-supplier-by-date-range"
+                                    component={SpendBySupplierByDateRangeOptions}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/spend-by-supplier-by-date-range/report"
+                                    component={SpendBySupplierByDateRange}
                                 />
                                 <Route
                                     exact

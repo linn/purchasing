@@ -18,6 +18,12 @@ export const spendBySupplierReport = new ItemType(
     '/purchasing/reports/spend-by-supplier/report'
 );
 
+export const spendBySupplierByDateRangeReport = new ItemType(
+    'spendBySupplierByDateRangeReport',
+    'SPEND_BY_SUPPLIER_BY_DATE_RANGE',
+    '/purchasing/reports/spend-by-supplier-by-date-range/report'
+);
+
 export const suppliersWithUnacknowledgedOrders = new ItemType(
     'suppliersWithUnacknowledgedOrders',
     'SUPPLIERS_WITH_UNACKNOWLEDGED_ORDERS',

@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Reports
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -15,6 +16,8 @@
     public class SpendsReportService : ISpendsReportService
     {
         private readonly IPurchaseLedgerPack purchaseLedgerPack;
+
+        private readonly ILedgerPeriodPack ledgerPeriodPack;
 
         private readonly IReportingHelper reportingHelper;
 
@@ -32,6 +35,7 @@
             IQueryRepository<SupplierSpend> spendsRepository,
             IRepository<VendorManager, string> vendorManagerRepository,
             IPurchaseLedgerPack purchaseLedgerPack,
+            ILedgerPeriodPack ledgerPeriodPack,
             IRepository<PurchaseOrder, int> purchaseOrderRepository,
             IRepository<Supplier, int> supplierRepository,
             IQueryRepository<Part> partRepository,
@@ -40,6 +44,7 @@
             this.spendsRepository = spendsRepository;
             this.vendorManagerRepository = vendorManagerRepository;
             this.purchaseLedgerPack = purchaseLedgerPack;
+            this.ledgerPeriodPack = ledgerPeriodPack;
             this.reportingHelper = reportingHelper;
             this.purchaseOrderRepository = purchaseOrderRepository;
             this.supplierRepository = supplierRepository;
@@ -102,6 +107,65 @@
             foreach (var supplier in distinctSupplierSpends)
             {
                 ExtractDetailsForSupplierReport(values, supplier);
+            }
+
+            reportLayout.SetGridData(values);
+            var model = reportLayout.GetResultsModel();
+
+            model.RowDrillDownTemplates.Add(new DrillDownModel("Id", "/purchasing/reports/spend-by-part/report?id={textValue}"));
+            model.RowHeader = "Supplier (Drilldown)";
+
+            return model;
+        }
+
+        public ResultsModel GetSpendBySupplierByDateRangeReport(string fromDate, string toDate, string vendorManagerId)
+        {
+            var from = DateTime.Parse(fromDate).Date;
+            var to = DateTime.Parse(toDate).Date.AddDays(1).AddTicks(-1);
+            var fromLedgerPeriod = this.ledgerPeriodPack.GetPeriodNumber(from);
+            var toLedgerPeriod = this.ledgerPeriodPack.GetPeriodNumber(to);
+
+            var supplierSpends = this.spendsRepository.FilterBy(
+                    x =>
+                        x.Supplier.VendorManager != null &&
+                        x.LedgerPeriod >= fromLedgerPeriod && x.LedgerPeriod <= toLedgerPeriod
+                        && (string.IsNullOrWhiteSpace(vendorManagerId)
+                            || x.Supplier.VendorManager.Id == vendorManagerId))
+                .ToList();
+
+            var vendorManagerName = "ALL";
+            if (!string.IsNullOrWhiteSpace(vendorManagerId))
+            {
+                var vendorManager = this.vendorManagerRepository.FindById(vendorManagerId);
+                vendorManagerName = $"{vendorManagerId} - {vendorManager.Employee.FullName} ({vendorManager.UserNumber})";
+            }
+
+            var reportLayout = new SimpleGridLayout(
+                this.reportingHelper,
+                CalculationValueModelType.Value,
+                null,
+                $"Spend by supplier report for Vendor Manager: {vendorManagerName} between ledger period {fromLedgerPeriod} to {toLedgerPeriod}.");
+
+            AddSupplierByDateRangeReportColumns(reportLayout);
+
+            var values = new List<CalculationValueModel>();
+
+            var distinctSupplierSpends = supplierSpends.DistinctBy(x => x.SupplierId).Select(
+                x => new SupplierSpendWithTotals
+                         {
+                             BaseTotal = x.BaseTotal.HasValue ? x.BaseTotal.Value : 0,
+                             LedgerPeriod = x.LedgerPeriod,
+                             Supplier = x.Supplier,
+                             SupplierId = x.SupplierId,
+                             DateRangeTotal = supplierSpends.Where(
+                                 s => s.SupplierId == x.SupplierId && s.LedgerPeriod >= fromLedgerPeriod
+                                                                   && s.LedgerPeriod <= toLedgerPeriod).Sum(
+                                 z => z.BaseTotal.HasValue ? z.BaseTotal.Value : 0)
+                         }).OrderBy(x => x.Supplier.Name);
+
+            foreach (var supplier in distinctSupplierSpends)
+            {
+                ExtractDetailsForSupplierByDateRangeReport(values, supplier);
             }
 
             reportLayout.SetGridData(values);
@@ -194,6 +258,17 @@
                     });
         }
 
+        private static void AddSupplierByDateRangeReportColumns(SimpleGridLayout reportLayout)
+        {
+            reportLayout.AddColumnComponent(
+                null,
+                new List<AxisDetailsModel>
+                    {
+                        new AxisDetailsModel("Name", "Name", GridDisplayType.TextValue),
+                        new AxisDetailsModel("DateRangeTotal", "Date Range Total", GridDisplayType.Value) { DecimalPlaces = 2 },
+                    });
+        }
+
         private static void AddPartReportColumns(SimpleGridLayout reportLayout)
         {
             reportLayout.AddColumnComponent(
@@ -242,6 +317,27 @@
                         RowId = currentRowId,
                         ColumnId = "ThisMonth",
                         Value = supplier.MonthTotal
+                    });
+        }
+
+        private static void ExtractDetailsForSupplierByDateRangeReport(ICollection<CalculationValueModel> values, SupplierSpendWithTotals supplier)
+        {
+            var currentRowId = $"{supplier.SupplierId}";
+
+            values.Add(
+                new CalculationValueModel
+                    {
+                        RowId = currentRowId,
+                        ColumnId = "Name",
+                        TextDisplay = supplier.Supplier.Name
+                    });
+
+            values.Add(
+                new CalculationValueModel
+                    {
+                        RowId = currentRowId,
+                        ColumnId = "DateRangeTotal",
+                        Value = supplier.DateRangeTotal
                     });
         }
 

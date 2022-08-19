@@ -94,6 +94,12 @@ export const spendBySupplierReportActionTypes = makeActionTypes(
     reportTypes.spendBySupplierReport.actionType,
     false
 );
+
+export const spendBySupplierByDateRangeReportActionTypes = makeActionTypes(
+    reportTypes.spendBySupplierByDateRangeReport.actionType,
+    false
+);
+
 export const suppliersWithUnacknowledgedOrdersActionTypes = makeReportActionTypes(
     reportTypes.suppliersWithUnacknowledgedOrders.actionType
 );
