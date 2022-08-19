@@ -164,9 +164,8 @@
 
         public DbSet<SuppliersLeadTimesEntry> SuppliersLeadTimesEntries { get; set; }
 
-        public DbSet<TqmsMaster> TqmsMaster { get; set; }
-
         public DbSet<WeeklyForecastPart> WeeklyForecastParts { get; set; }
+
         public DbSet<SupplierDeliveryPerformance> SupplierDeliveryPerformance { get; set; }
 
         public DbSet<DeliveryPerformanceDetail> DeliveryPerformanceDetails { get; set; }
@@ -260,7 +259,6 @@
             this.BuildAutomaticPurchaseOrderSuggestions(builder);
             this.BuildSupplierAutoEmails(builder);
             this.BuildSuppliersLeadTime(builder);
-            this.BuildTqmsMaster(builder);
             this.BuildWeeklyForecastParts(builder);
             this.BuildSupplierDeliveryPerformance(builder);
             this.BuildDeliveryPerformanceDetails(builder);
@@ -1674,13 +1672,6 @@
             entity.Property(a => a.SupplierId).HasColumnName("SUPPLIER_ID");
             entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
             entity.Property(a => a.LeadTimeWeeks).HasColumnName("LEAD_TIME_WEEKS");
-        }
-
-        private void BuildTqmsMaster(ModelBuilder builder)
-        {
-            var entity = builder.Entity<TqmsMaster>().ToTable("TQMS_MASTER").HasNoKey();
-            entity.Property(e => e.JobRef).HasColumnName("JOBREF");
-            entity.Property(e => e.DateLastDoTqmsSums).HasColumnName("DATE_LAST_DO_TQMS_SUMS");
         }
 
         private void BuildWeeklyForecastParts(ModelBuilder builder)

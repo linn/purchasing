@@ -5,6 +5,7 @@
     using System.IO;
 
     using Linn.Common.Reporting.Models;
+    using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NSubstitute;
@@ -43,7 +44,7 @@
             };
 
             this.SupplierRepository.FindById(this.supplier.SupplierId).Returns(this.supplier);
-            this.TqmsMaster.GetRecord().Returns(new TqmsMaster { DateLastDoTqmsSums = DateTime.Today });
+            this.MrMaster.GetRecord().Returns(new MrMaster { RunDate = DateTime.Today });
             this.ReportService.GetOrderBookExport(this.supplier.SupplierId).Returns(new ResultsModel());
 
             this.Sut.SendOrderBookEmail(null, this.supplier.SupplierId, this.timestamp);

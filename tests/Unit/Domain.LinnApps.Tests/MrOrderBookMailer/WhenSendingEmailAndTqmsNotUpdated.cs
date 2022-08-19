@@ -6,6 +6,7 @@
 
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
+    using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NSubstitute;
@@ -46,7 +47,7 @@
             };
 
             this.SupplierRepository.FindById(this.supplier.SupplierId).Returns(this.supplier);
-            this.TqmsMaster.GetRecord().Returns(new TqmsMaster { DateLastDoTqmsSums = DateTime.UnixEpoch });
+            this.MrMaster.GetRecord().Returns(new MrMaster { RunDate = DateTime.UnixEpoch });
             this.ReportService.GetOrderBookExport(this.supplier.SupplierId).Returns(new ResultsModel());
 
             this.action = () => this.Sut.SendOrderBookEmail(this.email, this.supplier.SupplierId, this.timestamp);
@@ -56,7 +57,7 @@
         public void ShouldSendAlertToVendorManagerAndThrow()
         {
             this.action.Should().Throw<MrOrderBookEmailException>()
-                .WithMessage("The MR Order book emails could not be sent because the TQMS jobs did not run over the weekend.");
+                .WithMessage("The MR Order book emails could not be sent because the MRP did not run over the weekend.");
             this.EmailService.Received().SendEmail(
                 this.supplier.VendorManager.Employee.PhoneListEntry.EmailAddress,
                 this.supplier.VendorManager.Employee.FullName,
@@ -65,7 +66,7 @@
                 Arg.Any<string>(),
                 "Purchasing Outgoing",
                 "MR ORDER BOOK EMAIL ERROR",
-                "The MR Order book emails could not be sent because the TQMS jobs did not run over the weekend.",
+                "The MR Order book emails could not be sent because the MRP did not run over the weekend.",
                 null,
                 null,
                 null);

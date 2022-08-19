@@ -3,6 +3,7 @@
     using Linn.Common.Email;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Mailers;
+    using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -21,7 +22,7 @@
 
         protected IEmailService EmailService { get; private set; }
 
-        protected ISingleRecordRepository<TqmsMaster> TqmsMaster { get; private set; }
+        protected ISingleRecordRepository<MrMaster> MrMaster { get; private set; }
 
         protected IForecastOrdersReportService ForecastOrdersReportService { get; private set; }
 
@@ -32,12 +33,12 @@
             this.ReportService = Substitute.For<IMrOrderBookReportService>();
             this.ForecastOrdersReportService = Substitute.For<IForecastOrdersReportService>();
             this.EmailService = Substitute.For<IEmailService>();
-            this.TqmsMaster = Substitute.For<ISingleRecordRepository<TqmsMaster>>();
+            this.MrMaster = Substitute.For<ISingleRecordRepository<MrMaster>>();
             this.Sut = new SupplierAutoEmailsMailer(
                 this.SupplierRepository, 
                 this.ReportService, 
                 this.EmailService, 
-                this.TqmsMaster, 
+                this.MrMaster, 
                 this.ForecastOrdersReportService);
         }
     }

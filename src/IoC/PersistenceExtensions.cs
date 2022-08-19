@@ -153,8 +153,6 @@
                 .AddTransient<IQueryRepository<SuppliersLeadTimesEntry>, EntityFrameworkQueryRepository<SuppliersLeadTimesEntry>>(
                     r => new EntityFrameworkQueryRepository<SuppliersLeadTimesEntry>(r.GetService<ServiceDbContext>()
                         ?.SuppliersLeadTimesEntries))
-                .AddTransient<ISingleRecordRepository<TqmsMaster>, EntityFrameworkSingleRecordRepository<TqmsMaster>>(
-                    r => new EntityFrameworkSingleRecordRepository<TqmsMaster>(r.GetService<ServiceDbContext>()?.TqmsMaster))
                 .AddTransient<IQueryRepository<WeeklyForecastPart>, EntityFrameworkQueryRepository<WeeklyForecastPart>>(
                     r => new EntityFrameworkQueryRepository<WeeklyForecastPart>(r.GetService<ServiceDbContext>()
                         ?.WeeklyForecastParts))

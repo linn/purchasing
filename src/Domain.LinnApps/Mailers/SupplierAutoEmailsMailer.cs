@@ -10,6 +10,7 @@
     using Linn.Common.Reporting.Resources.Extensions;
     using Linn.Common.Serialization;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
+    using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
@@ -21,7 +22,7 @@
 
         private readonly IMrOrderBookReportService orderBookReportService;
          
-       private readonly ISingleRecordRepository<TqmsMaster> tqmsMaster;
+       private readonly ISingleRecordRepository<MrMaster> mrMaster;
 
        private readonly IForecastOrdersReportService forecastOrdersReportService;
 
@@ -29,13 +30,13 @@
             IRepository<Supplier, int> supplierRepository,
             IMrOrderBookReportService orderBookReportService,
             IEmailService emailService,
-            ISingleRecordRepository<TqmsMaster> tqmsMaster,
+            ISingleRecordRepository<MrMaster> mrMaster,
             IForecastOrdersReportService forecastOrdersReportService)
         {
             this.emailService = emailService;
             this.orderBookReportService = orderBookReportService;
             this.supplierRepository = supplierRepository;
-            this.tqmsMaster = tqmsMaster;
+            this.mrMaster = mrMaster;
             this.forecastOrdersReportService = forecastOrdersReportService;
         }
 
@@ -114,12 +115,12 @@
                 throw new MrOrderBookEmailException($"No recipient address set for: {supplier.Name}");
             }
 
-            var lastTqmsDate = this.tqmsMaster.GetRecord().DateLastDoTqmsSums;
+            var lastTqmsDate = this.mrMaster.GetRecord().RunDate;
 
             // notify the vendor managers if tqms jobs failed
             if (lastTqmsDate != DateTime.Today.Date)
             {
-                var msg = "The MR Order book emails could not be sent because the TQMS jobs did not run over the weekend.";
+                var msg = "The MR Order book emails could not be sent because the MRP did not run over the weekend.";
                 this.emailService.SendEmail(
                     supplier.VendorManager.Employee.PhoneListEntry.EmailAddress,
                     supplier.VendorManager.Employee.FullName,
