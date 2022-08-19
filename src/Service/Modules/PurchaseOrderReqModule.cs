@@ -198,12 +198,13 @@
             IPurchaseOrderReqFacadeService purchaseOrderReqFacadeService,
             string reqNumber,
             string part,
-            string supplier)
+            string supplier,
+            int? purchaseOrderNumber)
         {
             var result = purchaseOrderReqFacadeService.FilterBy(
                 new PurchaseOrderReqSearchResource
                     {
-                        ReqNumber = reqNumber, Part = part, Supplier = supplier
+                        ReqNumber = reqNumber, Part = part, Supplier = supplier, PurchaseOrderNumber = purchaseOrderNumber
                     },
                 numberToTake: 50,
                 req.HttpContext.GetPrivileges());
