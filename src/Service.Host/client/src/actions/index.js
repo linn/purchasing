@@ -262,3 +262,24 @@ export const automaticPurchaseOrderSuggestionsActionTypes = makeActionTypes(
 export const sendPurchaseOrderSupplierAssActionTypes = makeProcessActionTypes(
     itemTypes.sendPurchaseOrderSupplierAssEmail.actionType
 );
+
+export const supplierLeadTimesReportActionTypes = makeActionTypes(
+    reportTypes.supplierLeadTimesReport.actionType,
+    false
+);
+
+export const exchangeRatesActionTypes = makeActionTypes(itemTypes.exchangeRates.actionType);
+
+export const ledgerPeriodsActionTypes = makeActionTypes(itemTypes.ledgerPeriods.actionType, false);
+
+export const deliveryPerformanceSummaryReportActionTypes = makeReportActionTypes(
+    reportTypes.deliveryPerformanceSummaryReport.actionType
+);
+
+export const deliveryPerformanceSupplierReportActionTypes = makeReportActionTypes(
+    reportTypes.deliveryPerformanceSupplierReport.actionType
+);
+
+export const deliveryPerformanceDetailReportActionTypes = makeReportActionTypes(
+    reportTypes.deliveryPerformanceDetailReport.actionType
+);

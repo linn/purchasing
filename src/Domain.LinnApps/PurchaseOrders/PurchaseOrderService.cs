@@ -12,17 +12,15 @@
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
+    using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     public class PurchaseOrderService : IPurchaseOrderService
     {
         private readonly IAuthorisationService authService;
 
         private readonly IDatabaseService databaseService;
-
-        private readonly IPurchaseLedgerPack purchaseLedgerPack;
-
-        private readonly IPdfService pdfService;
 
         private readonly IEmailService emailService;
 
@@ -32,6 +30,18 @@
 
         private readonly IRepository<MiniOrder, int> miniOrderRepository;
 
+        private readonly IRepository<Supplier, int> supplierRepository;
+
+        private readonly IRepository<LinnDeliveryAddress, int> linnDeliveryAddressRepository;
+
+        private readonly ICurrencyPack currencyPack;
+
+        private readonly IPdfService pdfService;
+
+        private readonly IPurchaseLedgerPack purchaseLedgerPack;
+
+        private readonly IPurchaseOrdersPack purchaseOrdersPack;
+
         public PurchaseOrderService(
             IAuthorisationService authService,
             IPurchaseLedgerPack purchaseLedgerPack,
@@ -40,7 +50,11 @@
             IEmailService emailService,
             IRepository<Employee, int> employeeRepository,
             IRepository<MiniOrder, int> miniOrderRepository,
-            ISupplierKitService supplierKitService)
+            IRepository<Supplier, int> supplierRepository,
+            IRepository<LinnDeliveryAddress, int> linnDeliveryAddressRepository,
+            IPurchaseOrdersPack purchaseOrdersPack,
+            ICurrencyPack currencyPack,
+			ISupplierKitService supplierKitService)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;
@@ -49,6 +63,10 @@
             this.emailService = emailService;
             this.employeeRepository = employeeRepository;
             this.miniOrderRepository = miniOrderRepository;
+            this.purchaseOrdersPack = purchaseOrdersPack;
+            this.supplierRepository = supplierRepository;
+            this.linnDeliveryAddressRepository = linnDeliveryAddressRepository;
+            this.currencyPack = currencyPack;
             this.supplierKitService = supplierKitService;
         }
 
@@ -65,19 +83,6 @@
 
             current.Overbook = allowOverBook;
             current.OverbookQty = overbookQty;
-        }
-
-        public void CreateOrder(PurchaseOrder order, IEnumerable<string> privileges)
-        {
-            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, privileges))
-            {
-                throw new UnauthorisedActionException("You are not authorised to create purchase orders");
-            }
-
-            // add id to pl_order_postings using next val plorp_seq
-            // select nomacc_id
-            // from nominal_accounts where
-            //    nominal = p_nom and department = p_dept;
         }
 
         public PurchaseOrder CancelOrder(PurchaseOrder order, int currentUserId, IEnumerable<string> privileges)
@@ -114,24 +119,30 @@
             return order;
         }
 
-        public PurchaseOrder UpdateOrder(PurchaseOrder current, PurchaseOrder updated, IEnumerable<string> privileges)
+        public void CreateOrder(PurchaseOrder order, IEnumerable<string> privileges)
         {
-            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, privileges))
             {
-                throw new UnauthorisedActionException("You are not authorised to update purchase orders");
+                throw new UnauthorisedActionException("You are not authorised to create purchase orders");
             }
 
-            this.UpdateOrderProperties(current, updated);
-            this.UpdateDetails(current.Details, updated.Details);
-            this.UpdateMiniOrder(updated);
-            return current;
+            // set conversion factor to 1 for now
+
+            // add id to pl_order_postings using next val plorp_seq
+            // add mini order for backwards compatibility for now?
         }
 
-        public ProcessResult SendPdfEmail(string html, string emailAddress, int orderNumber, bool bcc, int currentUserId, PurchaseOrder order)
+        public ProcessResult SendPdfEmail(
+            string html,
+            string emailAddress,
+            int orderNumber,
+            bool bcc,
+            int currentUserId,
+            PurchaseOrder order)
         {
-            var pdf = this.pdfService.ConvertHtmlToPdf(html, landscape: false);
+            var pdf = this.pdfService.ConvertHtmlToPdf(html, false);
             var emailBody = $"Please accept the attached order no. {orderNumber}.\n"
-                            + $"You will need Acrobat Reader to open the file which is available from www.adobe.com/acrobat\n"
+                            + "You will need Acrobat Reader to open the file which is available from www.adobe.com/acrobat\n"
                             + "Linn's standard Terms & Conditions apply at all times\n"
                             + "and can be found at www.linn.co.uk/purchasing_conditions";
 
@@ -139,13 +150,18 @@
                               {
                                   new Dictionary<string, string>
                                       {
-                                          { "name", "purchasing outgoing" }, { "address", ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"] }
+                                          { "name", "purchasing outgoing" },
+                                          { "address", ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"] }
                                       }
                               };
             if (bcc)
             {
                 var employee = this.employeeRepository.FindById(currentUserId);
-                bccList.Add(new Dictionary<string, string> { { "name", employee.FullName }, { "address", employee.PhoneListEntry?.EmailAddress } });
+                bccList.Add(
+                    new Dictionary<string, string>
+                        {
+                            { "name", employee.FullName }, { "address", employee.PhoneListEntry?.EmailAddress }
+                        });
             }
 
             this.emailService.SendEmail(
@@ -157,6 +173,7 @@
                     "Linn Purchasing",
                     $"Linn Purchase Order {orderNumber}",
                     emailBody,
+                    "pdf",
                     pdf.Result,
                     $"LinnPurchaseOrder{orderNumber}");
 
@@ -203,92 +220,58 @@
             return new ProcessResult(true, $"Email sent for purchase order {orderNumber} to Logistics");
         }
 
-        private void UpdateDetails(ICollection<PurchaseOrderDetail> currentDetails, ICollection<PurchaseOrderDetail> updatedDetails)
+        public PurchaseOrder UpdateOrder(PurchaseOrder current, PurchaseOrder updated, IEnumerable<string> privileges)
         {
-            foreach (var detail in updatedDetails)
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
             {
-                var currentDetail = currentDetails.FirstOrDefault(x => x.Line == detail.Line);
-                if (currentDetail != null)
-                {
-                    this.UpdateDetailProperties(currentDetail, detail);
-                }
-                else
-                {
-                    currentDetails.Add(detail);
-                }
+                throw new UnauthorisedActionException("You are not authorised to update purchase orders");
             }
+
+            this.UpdateOrderProperties(current, updated);
+            this.UpdateDetails(current.Details, updated.Details, updated.SupplierId, updated.ExchangeRate.Value);
+            this.UpdateMiniOrder(updated);
+            return current;
         }
 
-        private void UpdateOrderProperties(PurchaseOrder current, PurchaseOrder updated)
+        public PurchaseOrder FillOutUnsavedOrder(PurchaseOrder order, int currentUserId)
         {
-            current.Remarks = updated.Remarks;
-        }
-
-        private void UpdateDetailProperties(PurchaseOrderDetail current, PurchaseOrderDetail updated)
-        {
-            current.BaseNetTotal = updated.BaseNetTotal;
-            current.NetTotalCurrency = updated.NetTotalCurrency;
-            current.OurQty = updated.OurQty;
-            current.OrderQty = updated.OrderQty;
-
-            current.SuppliersDesignation = updated.SuppliersDesignation;
-
-            // price updates to be done next
-            // current.OurUnitPriceCurrency = updated.OurUnitPriceCurrency;
-            // current.OrderUnitPriceCurrency = updated.OrderUnitPriceCurrency;
-            // current.BaseOrderUnitPrice = updated.BaseOrderUnitPrice;
-            // current.BaseOurUnitPrice = updated.BaseOurUnitPrice;
-            // current.VatTotalCurrency = updated.VatTotalCurrency;
-            // current.BaseVatTotal = updated.BaseVatTotal; //// vat totals might not change
-            // current.DetailTotalCurrency = updated.DetailTotalCurrency;
-            // current.BaseDetailTotal = updated.BaseDetailTotal;
-            current.InternalComments = updated.InternalComments;
-
-            this.UpdateOrderPostingsForDetail(current, updated);
-
-            this.UpdateDeliveries(current.PurchaseDeliveries, updated.PurchaseDeliveries);
-        }
-
-        private void UpdateDeliveries(ICollection<PurchaseOrderDelivery> deliveries, ICollection<PurchaseOrderDelivery> updatedDeliveries)
-        {
-            foreach (var delivery in deliveries)
+            if (order.Supplier?.SupplierId == null)
             {
-                var updatedDelivery = updatedDeliveries.First(x => x.DeliverySeq == delivery.DeliverySeq);
-                delivery.DateRequested = updatedDelivery.DateRequested;
-
-                // price updates to be done next
-                // delivery.OurUnitPriceCurrency = updatedDelivery.OurUnitPriceCurrency;
-                // delivery.OrderUnitPriceCurrency = updatedDelivery.OrderUnitPriceCurrency;
-                // delivery.BaseOrderUnitPrice = updatedDelivery.BaseOrderUnitPrice;
-                // delivery.BaseOurUnitPrice = updatedDelivery.BaseOurUnitPrice;
-                // delivery.VatTotalCurrency = updatedDelivery.VatTotalCurrency;
-                // delivery.BaseVatTotal = updatedDelivery.BaseVatTotal; //// vat totals might not change
-                // delivery.DeliveryTotalCurrency = updatedDelivery.DeliveryTotalCurrency;
-                // delivery.BaseDetailTotal = updatedDelivery.BaseDetailTotal;
+                throw new ArgumentNullException();
             }
-        }
 
-            private void UpdateMiniOrder(PurchaseOrder updatedOrder)
-        {
-            var miniOrder = this.miniOrderRepository.FindById(updatedOrder.OrderNumber);
-            var updatedDetail = updatedOrder.Details.First();
+            var supplier = this.supplierRepository.FindById(order.Supplier.SupplierId);
 
-            miniOrder.OurQty = updatedDetail.OurQty;
-            miniOrder.OrderQty = updatedDetail.OrderQty;
+            order.Supplier = supplier;
+            order.OrderAddress = supplier.OrderAddress;
+            order.OrderAddressId = supplier.OrderAddress.AddressId;
+            order.CurrencyCode = supplier.Currency.Code;
+            order.Currency = supplier.Currency;
+            order.OrderDate = DateTime.Now;
 
-            miniOrder.OurPrice = updatedDetail.OurUnitPriceCurrency;
-            miniOrder.OrderPrice = updatedDetail.OrderUnitPriceCurrency;
-            miniOrder.NetTotal = updatedDetail.NetTotalCurrency;
-            miniOrder.BaseOurPrice = updatedDetail.BaseOurUnitPrice;
-            miniOrder.BaseOrderPrice = updatedDetail.BaseOrderUnitPrice;
-            miniOrder.BaseNetTotal = updatedDetail.BaseNetTotal;
+            if (order.DeliveryAddress == null)
+            {
+                var mainDeliveryAddress = this.linnDeliveryAddressRepository.FindAll().First(d => d.IsMainDeliveryAddress == "Y");
+                order.DeliveryAddressId = mainDeliveryAddress.AddressId;
+                order.DeliveryAddress = mainDeliveryAddress;
+            }
 
-            miniOrder.Remarks = updatedOrder.Remarks;
-            miniOrder.Department = updatedDetail.OrderPosting.NominalAccount.Department.DepartmentCode;
-            miniOrder.Nominal = updatedDetail.OrderPosting.NominalAccount.Nominal.NominalCode;
-            miniOrder.RequestedDeliveryDate = updatedDetail.PurchaseDeliveries.First().DateRequested;
-            miniOrder.InternalComments = updatedDetail.InternalComments;
-            miniOrder.SuppliersDesignation = updatedDetail.SuppliersDesignation;
+            order.DocumentTypeName = "PO";
+            order.DocumentType.Name = "PO";
+            order.DocumentType.Description = "PURCHASE ORDER";
+            order.OrderMethodName = "MANUAL";
+            order.OrderMethod.Name = "MANUAL";
+            order.OrderMethod.Description = "MANUAL ORDERING";
+
+            var user = this.employeeRepository.FindById(currentUserId);
+            order.RequestedById = currentUserId;
+            order.RequestedBy = user;
+            order.EnteredById = currentUserId;
+            order.EnteredBy = user;
+
+            order.ExchangeRate = this.currencyPack.GetExchangeRate("GBP", order.CurrencyCode);
+
+            return order;
         }
 
         // below method currently unreferenced, but to be finished and used soon for create
@@ -370,12 +353,193 @@
             this.miniOrderRepository.Add(miniOrder);
         }
 
+        private void UpdateDeliveries(
+            ICollection<PurchaseOrderDelivery> deliveries,
+            ICollection<PurchaseOrderDelivery> updatedDeliveries)
+        {
+            foreach (var delivery in deliveries)
+            {
+                var updatedDelivery = updatedDeliveries.First(x => x.DeliverySeq == delivery.DeliverySeq);
+                delivery.DateRequested = updatedDelivery.DateRequested;
+
+                // price updates to be done next
+                // delivery.OurUnitPriceCurrency = updatedDelivery.OurUnitPriceCurrency;
+                // delivery.OrderUnitPriceCurrency = updatedDelivery.OrderUnitPriceCurrency;
+                // delivery.BaseOrderUnitPrice = updatedDelivery.BaseOrderUnitPrice;
+                // delivery.BaseOurUnitPrice = updatedDelivery.BaseOurUnitPrice;
+                // delivery.VatTotalCurrency = updatedDelivery.VatTotalCurrency;
+                // delivery.BaseVatTotal = updatedDelivery.BaseVatTotal; //// vat totals might not change
+                // delivery.DeliveryTotalCurrency = updatedDelivery.DeliveryTotalCurrency;
+                // delivery.BaseDetailTotal = updatedDelivery.BaseDetailTotal;
+            }
+        }
+
+        private void UpdateDetailProperties(
+            PurchaseOrderDetail current,
+            PurchaseOrderDetail updated,
+            int supplierId,
+            decimal exchangeRate)
+        {
+            current.SuppliersDesignation = updated.SuppliersDesignation;
+            current.InternalComments = updated.InternalComments;
+
+            var netTotal = updated.OurUnitPriceCurrency.GetValueOrDefault() * updated.OurQty.GetValueOrDefault();
+            current.NetTotalCurrency = Math.Round(netTotal, 2, MidpointRounding.AwayFromZero);
+
+            current.VatTotalCurrency =
+                this.purchaseOrdersPack.GetVatAmountSupplier(current.NetTotalCurrency, supplierId);
+
+            current.DetailTotalCurrency = Math.Round(netTotal + current.VatTotalCurrency.Value, 2);
+
+            if (updated.OrderUnitPriceCurrency == current.OrderUnitPriceCurrency
+                && updated.OurUnitPriceCurrency != current.OurUnitPriceCurrency)
+            {
+                // if order price hasn't been overridden but our price has changed, use conv factor
+                current.OrderUnitPriceCurrency = updated.OurUnitPriceCurrency * current.OrderConversionFactor;
+            }
+            else if (updated.OrderUnitPriceCurrency != current.OrderUnitPriceCurrency)
+            {
+                // if order price has been manually overridden
+                current.OrderUnitPriceCurrency = updated.OrderUnitPriceCurrency;
+            }
+
+            if (updated.OrderQty == current.OrderQty && updated.OurQty != current.OurQty)
+            {
+                // if order qty hasn't been overridden but our qty has changed, use conv factor
+                current.OrderQty = updated.OurQty * current.OrderConversionFactor;
+            }
+            else if (updated.OrderQty != current.OrderQty)
+            {
+                // if our qty has been manually overridden
+                current.OrderQty = updated.OrderQty;
+            }
+
+            current.OurQty = updated.OurQty;
+            current.OurUnitPriceCurrency = updated.OurUnitPriceCurrency;
+
+            current.BaseNetTotal = Math.Round(netTotal / exchangeRate, 2, MidpointRounding.AwayFromZero);
+            current.BaseOrderUnitPrice = Math.Round(
+                current.OrderUnitPriceCurrency.GetValueOrDefault() / exchangeRate,
+                2,
+                MidpointRounding.AwayFromZero);
+            current.BaseOurUnitPrice = Math.Round(
+                current.OurUnitPriceCurrency.GetValueOrDefault() / exchangeRate,
+                2,
+                MidpointRounding.AwayFromZero);
+
+            current.BaseVatTotal = Math.Round(
+                current.VatTotalCurrency.GetValueOrDefault() / exchangeRate,
+                2,
+                MidpointRounding.AwayFromZero);
+
+            current.BaseDetailTotal = Math.Round(
+                current.DetailTotalCurrency.GetValueOrDefault() / exchangeRate,
+                2,
+                MidpointRounding.AwayFromZero);
+
+            this.UpdateOrderPostingsForDetail(current, updated);
+
+            this.UpdateDeliveries(current.PurchaseDeliveries, updated.PurchaseDeliveries);
+        }
+
+        private void UpdateDetails(
+            ICollection<PurchaseOrderDetail> currentDetails,
+            ICollection<PurchaseOrderDetail> updatedDetails,
+            int supplierId,
+            decimal exchangeRate)
+        {
+            foreach (var detail in updatedDetails)
+            {
+                var currentDetail = currentDetails.FirstOrDefault(x => x.Line == detail.Line);
+                if (currentDetail != null)
+                {
+                    this.UpdateDetailProperties(currentDetail, detail, supplierId, exchangeRate);
+                }
+                else
+                {
+                    currentDetails.Add(detail);
+                }
+            }
+        }
+
+        private void UpdateMiniOrder(PurchaseOrder updatedOrder)
+        {
+            var miniOrder = this.miniOrderRepository.FindById(updatedOrder.OrderNumber);
+            var updatedDetail = updatedOrder.Details.First();
+
+            miniOrder.Remarks = updatedOrder.Remarks;
+            miniOrder.Department = updatedDetail.OrderPosting.NominalAccount.Department.DepartmentCode;
+            miniOrder.Nominal = updatedDetail.OrderPosting.NominalAccount.Nominal.NominalCode;
+            miniOrder.RequestedDeliveryDate = updatedDetail.PurchaseDeliveries.First().DateRequested;
+            miniOrder.InternalComments = updatedDetail.InternalComments;
+            miniOrder.SuppliersDesignation = updatedDetail.SuppliersDesignation;
+
+            var netTotal = updatedDetail.OurUnitPriceCurrency.GetValueOrDefault()
+                           * updatedDetail.OurQty.GetValueOrDefault();
+            miniOrder.NetTotal = Math.Round(netTotal, 2, MidpointRounding.AwayFromZero);
+
+            miniOrder.VatTotal =
+                this.purchaseOrdersPack.GetVatAmountSupplier(miniOrder.NetTotal, updatedOrder.SupplierId);
+
+            miniOrder.OrderTotal = Math.Round(netTotal + miniOrder.VatTotal, 2);
+
+            if (updatedDetail.OrderUnitPriceCurrency == miniOrder.OrderPrice
+                && updatedDetail.OurUnitPriceCurrency != miniOrder.OurPrice)
+            {
+                // if order price hasn't been overridden but our price has changed, use conv factor
+                miniOrder.OrderPrice = updatedDetail.OurUnitPriceCurrency * miniOrder.OrderConvFactor;
+            }
+            else if (updatedDetail.OrderUnitPriceCurrency != miniOrder.OrderPrice)
+            {
+                // if order price has been manually overridden
+                miniOrder.OrderPrice = updatedDetail.OrderUnitPriceCurrency;
+            }
+
+            if (updatedDetail.OrderQty == miniOrder.OrderQty && updatedDetail.OurQty != miniOrder.OurQty)
+            {
+                // if order qty hasn't been overridden but our qty has changed, use conv factor
+                miniOrder.OrderQty = updatedDetail.OurQty * miniOrder.OrderConvFactor;
+            }
+            else if (updatedDetail.OrderQty != miniOrder.OrderQty)
+            {
+                // if our qty has been manually overridden
+                miniOrder.OrderQty = updatedDetail.OrderQty;
+            }
+
+            miniOrder.OurQty = updatedDetail.OurQty;
+            miniOrder.OurPrice = updatedDetail.OurUnitPriceCurrency;
+
+            var exchangeRate = updatedOrder.ExchangeRate.GetValueOrDefault();
+
+            miniOrder.BaseNetTotal = Math.Round(netTotal / exchangeRate, 2, MidpointRounding.AwayFromZero);
+            miniOrder.BaseOrderPrice = Math.Round(
+                miniOrder.OrderPrice.GetValueOrDefault() / exchangeRate,
+                2,
+                MidpointRounding.AwayFromZero);
+            miniOrder.BaseOurPrice = Math.Round(
+                miniOrder.OurPrice.GetValueOrDefault() / exchangeRate,
+                2,
+                MidpointRounding.AwayFromZero);
+
+            miniOrder.BaseVatTotal = Math.Round(miniOrder.VatTotal / exchangeRate, 2, MidpointRounding.AwayFromZero);
+
+            miniOrder.BaseOrderTotal = Math.Round(
+                miniOrder.OrderTotal / exchangeRate,
+                2,
+                MidpointRounding.AwayFromZero);
+        }
+
         private void UpdateOrderPostingsForDetail(PurchaseOrderDetail current, PurchaseOrderDetail updated)
         {
             if (current.OrderPosting.NominalAccountId != updated.OrderPosting.NominalAccountId)
             {
                 current.OrderPosting.NominalAccountId = updated.OrderPosting.NominalAccountId;
             }
+        }
+
+        private void UpdateOrderProperties(PurchaseOrder current, PurchaseOrder updated)
+        {
+            current.Remarks = updated.Remarks;
         }
     }
 }

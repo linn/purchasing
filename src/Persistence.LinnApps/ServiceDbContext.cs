@@ -159,9 +159,17 @@
 
         public DbSet<AutomaticPurchaseOrderSuggestion> AutomaticPurchaseOrderSuggestions { get; set; }
 
+        public DbSet<SupplierAutoEmails> SupplierAutoEmails { get; set; }
+        
         public DbSet<NominalAccount> NominalAccounts { get; set; }
 
         public DbSet<BomDetail> BomDetails { get; set; }
+
+        public DbSet<SuppliersLeadTimesEntry> SuppliersLeadTimesEntries { get; set; }
+
+        public DbSet<SupplierDeliveryPerformance> SupplierDeliveryPerformance { get; set; }
+
+        public DbSet<DeliveryPerformanceDetail> DeliveryPerformanceDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -251,6 +259,10 @@
             this.BuildAutomaticPurchaseOrderDetails(builder);
             this.BuildAutomaticPurchaseOrderSuggestions(builder);
             this.BuildBomDetails(builder);
+            this.BuildSupplierAutoEmails(builder);
+            this.BuildSuppliersLeadTime(builder);
+            this.BuildSupplierDeliveryPerformance(builder);
+            this.BuildDeliveryPerformanceDetails(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1664,6 +1676,53 @@
             entity.Property(a => a.DeleteChangeId).HasColumnName("DELETE_CHANGE_ID");
             entity.Property(a => a.DeleteReplaceSeq).HasColumnName("DELETE_REPLACE_SEQ");
             entity.HasOne(a => a.Part).WithMany().HasForeignKey(a => a.PartNumber);
+		}
+        
+        private void BuildSupplierAutoEmails(ModelBuilder builder)
+        {
+            var entity = builder.Entity<SupplierAutoEmails>().ToTable("SUPPLIER_AUTO_EMAILS");
+            entity.HasKey(s => s.SupplierId);
+            entity.Property(s => s.SupplierId).HasColumnName("SUPPLIER_ID");
+            entity.Property(s => s.OrderBook).HasColumnName("ORDER_BOOK");
+            entity.Property(s => s.EmailAddress).HasColumnName("EMAIL_ADDRESS");
+        }
+        
+        private void BuildSuppliersLeadTime(ModelBuilder builder)
+        {
+            var entity = builder.Entity<SuppliersLeadTimesEntry>().ToTable("SUPPLIERS_LEADTIME").HasNoKey();
+            entity.Property(a => a.SupplierId).HasColumnName("SUPPLIER_ID");
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
+            entity.Property(a => a.LeadTimeWeeks).HasColumnName("LEAD_TIME_WEEKS");
+        }
+
+        private void BuildSupplierDeliveryPerformance(ModelBuilder builder)
+        {
+            var entity = builder.Entity<SupplierDeliveryPerformance>().ToTable("PM_ON_TIME_VIEW").HasNoKey();
+            entity.Property(a => a.SupplierId).HasColumnName("SUPPLIER_ID");
+            entity.Property(a => a.SupplierName).HasColumnName("SUPPLIER_NAME").HasColumnType("VARCHAR2");
+            entity.Property(a => a.LedgerPeriod).HasColumnName("PERIOD_NUMBER");
+            entity.Property(a => a.MonthName).HasColumnName("MONTH_NAME");
+            entity.Property(a => a.VendorManager).HasColumnName("VENDOR_MANAGER");
+            entity.Property(a => a.NumberOfDeliveries).HasColumnName("NO_OF_DELIVERIES");
+            entity.Property(a => a.NumberOnTime).HasColumnName("NO_ON_TIME");
+            entity.Property(a => a.NumberOfEarlyDeliveries).HasColumnName("NO_EARLY_DELIVERIES");
+            entity.Property(a => a.NumberOfUnacknowledgedDeliveries).HasColumnName("NO_UNACK_DELIVERIES");
+            entity.Property(a => a.NumberOfLateDeliveries).HasColumnName("NO_OF_LATE_DELIVERIES");
+        }
+
+        private void BuildDeliveryPerformanceDetails(ModelBuilder builder)
+        {
+            var entity = builder.Entity<DeliveryPerformanceDetail>().ToTable("PM_DELPERF_VIEW").HasNoKey();
+            entity.Property(a => a.SupplierId).HasColumnName("SUPPLIER_ID");
+            entity.Property(a => a.DateArrived).HasColumnName("DATE_ARRIVED");
+            entity.Property(a => a.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(a => a.OrderLine).HasColumnName("ORDER_LINE");
+            entity.Property(a => a.DeliverySequence).HasColumnName("DELIVERY_SEQ");
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER");
+            entity.Property(a => a.RequestedDate).HasColumnName("REQUESTED_DATE");
+            entity.Property(a => a.AdvisedDate).HasColumnName("ADVISED_DATE");
+            entity.Property(a => a.RescheduleReason).HasColumnName("RESCHEDULE_REASON");
+            entity.Property(a => a.OnTime).HasColumnName("ON_TIME");
         }
     }
 }

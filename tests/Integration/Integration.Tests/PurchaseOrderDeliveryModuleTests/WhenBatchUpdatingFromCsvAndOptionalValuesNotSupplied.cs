@@ -23,12 +23,11 @@
         {
             this.MockDomainService.BatchUpdateDeliveries(
                 Arg.Any<IEnumerable<PurchaseOrderDeliveryUpdate>>(),
-                Arg.Any<IEnumerable<string>>(),
-                true).Returns(new BatchUpdateProcessResult
-                {
-                    Success = true,
-                    Message = "Success!"
-                });
+                Arg.Any<IEnumerable<string>>()).Returns(new BatchUpdateProcessResult
+                                                             {
+                                                                 Success = true,
+                                                                 Message = "Success!"
+                                                             });
             this.Response = this.Client.Post(
                 $"/purchasing/purchase-orders/deliveries",
                 $"PO1,,,100,$0.01,,",
@@ -56,8 +55,7 @@
                     && l.First().Qty.Equals(100)
                     && l.First().UnitPrice.Equals(0.01m)
                     && l.First().NewReason.Equals("ADVISED")), // reason defaults to 'ADVISED'
-                Arg.Any<IEnumerable<string>>(),
-                true);
+                Arg.Any<IEnumerable<string>>());
         }
 
         [Test]

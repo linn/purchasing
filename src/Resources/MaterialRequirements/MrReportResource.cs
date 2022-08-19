@@ -23,6 +23,10 @@
         public string PartNumberListOption { get; set; }
 
         public string StockCategoryNameOption { get; set; }
+        
+        public int? MinimumLeadTimeWeeks { get; set; }
+
+        public int? MinimumAnnualUsage { get; set; }
 
         public IEnumerable<MrHeaderResource> Results { get; set; }
     }

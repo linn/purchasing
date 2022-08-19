@@ -60,6 +60,18 @@
                                 }
                         }.AsQueryable());
 
+            this.Repository.FindBy(
+                    Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
+                .Returns(
+                    new PurchaseOrderDelivery
+                                {
+                                    OrderNumber = this.key1.OrderNumber,
+                                    OrderLine = this.key1.OrderLine,
+                                    DeliverySeq = this.key1.DeliverySequence,
+                                    OurDeliveryQty = 100,
+                                    OrderUnitPriceCurrency = 0.01111m
+                                });
+
             this.MiniOrderRepository.FindById(this.key1.OrderNumber)
                 .Returns(new MiniOrder { OrderNumber = this.key1.OrderNumber });
             this.MiniOrderDeliveryRepository.FindBy(Arg.Any<Expression<Func<MiniOrderDelivery, bool>>>())

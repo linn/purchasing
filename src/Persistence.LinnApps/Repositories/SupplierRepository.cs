@@ -36,6 +36,7 @@
                     .ThenInclude(c => c.Person)
                     .Include(s => s.Group)
                     .Include(s => s.OrderAddress).ThenInclude(a => a.FullAddress)
+                    .Include(s => s.Currency)
                     .FirstOrDefault(x => x.SupplierId == key);
         }
 

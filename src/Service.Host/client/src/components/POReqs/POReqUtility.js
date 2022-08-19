@@ -128,6 +128,8 @@ function POReqUtility({ creating }) {
         state: 'AUTHORISE WAIT',
         reqDate: new Date().toDateString(),
         partNumber: 'SUNDRY',
+        qty: 1,
+        unitPrice: 1,
         currency: { code: 'GBP', name: 'UK Sterling' }
     };
 
@@ -267,13 +269,17 @@ function POReqUtility({ creating }) {
 
     const editingAllowed = req?.state !== 'CANCELLED';
 
+    const editingValueFieldsAllowed = req?.state === 'DRAFT' || req?.state === 'AUTHORISE WAIT';
+
     const inputIsInvalid = () =>
         !`${req.supplier?.id}`?.length ||
         !req.supplier?.name?.length ||
         !req.state.length ||
         !req.reqDate.length ||
         !`${req.qty}`.length ||
+        !req.qty > 0 ||
         !`${req.unitPrice}`.length ||
+        !req.unitPrice > 0 ||
         !req.currency?.code?.length ||
         !req.country?.countryCode?.length ||
         !req.nominal?.nominalCode.length ||
@@ -863,10 +869,12 @@ function POReqUtility({ creating }) {
                                     value={req.qty}
                                     label="Quantity"
                                     propertyName="qty"
-                                    onChange={handleFieldChange}
-                                    disabled={
-                                        (!editingAllowed || !creating) && !userHasFinancePower()
+                                    onChange={(propertyName, newValue) =>
+                                        newValue < 1
+                                            ? handleFieldChange(propertyName, 1)
+                                            : handleFieldChange(propertyName, newValue)
                                     }
+                                    disabled={!editingValueFieldsAllowed && !userHasFinancePower()}
                                     type="number"
                                     required
                                 />
@@ -913,10 +921,12 @@ function POReqUtility({ creating }) {
                                     label="Unit Price"
                                     number
                                     propertyName="unitPrice"
-                                    onChange={handleFieldChange}
-                                    disabled={
-                                        (!editingAllowed || !creating) && !userHasFinancePower()
+                                    onChange={(propertyName, newValue) =>
+                                        newValue < 1
+                                            ? handleFieldChange(propertyName, 1)
+                                            : handleFieldChange(propertyName, newValue)
                                     }
+                                    disabled={!editingValueFieldsAllowed && !userHasFinancePower()}
                                     decimalPlaces={2}
                                     type="number"
                                     required
