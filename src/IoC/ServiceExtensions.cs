@@ -21,6 +21,7 @@
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Forecasting;
     using Linn.Purchasing.Domain.LinnApps.Keys;
+    using Linn.Purchasing.Domain.LinnApps.Mailers;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
@@ -146,6 +147,7 @@
                 .AddTransient<IFacadeResourceService<AutomaticPurchaseOrder, int, AutomaticPurchaseOrderResource, AutomaticPurchaseOrderResource>, AutomaticPurchaseOrderFacadeService>()
                 .AddTransient<IFacadeResourceFilterService<AutomaticPurchaseOrderSuggestion, int, AutomaticPurchaseOrderSuggestionResource, AutomaticPurchaseOrderSuggestionResource, PlannerSupplierRequestResource>, AutomaticPurchaseOrderSuggestionFacadeService>()
                 .AddTransient<ILeadTimesReportFacadeService, LeadTimesReportFacadeService>()
+                .AddTransient<IForecastingReportsFacadeService, ForecastingReportsFacadeService>()
                 .AddTransient<IFacadeResourceService<LedgerPeriod, int, LedgerPeriodResource, LedgerPeriodResource>, LedgerPeriodFacadeService>();
         }
 
@@ -192,6 +194,8 @@
                 .AddTransient<IMrOrderBookReportService, MrOrderBookReportService>()
                 .AddTransient<IAutomaticPurchaseOrderService, AutomaticPurchaseOrderService>()
                 .AddTransient<ILeadTimesReportService, LeadTimesReportService>()
+                .AddTransient<ISupplierAutoEmailsMailer, SupplierAutoEmailsMailer>()
+                .AddTransient<IForecastOrdersReportService, ForecastOrdersReportService>()
                 .AddTransient<IDeliveryPerformanceReportService, DeliveryPerformanceReportService>()
 
                 // external services

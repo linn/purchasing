@@ -164,6 +164,7 @@
                             new AxisDetailsModel("QtyInStock", "Qty In Stock", GridDisplayType.Value) { DecimalPlaces = 2 },
                         });
             }
+
             reportLayout.AddColumnComponent(
                 null,
                 new List<AxisDetailsModel>

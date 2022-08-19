@@ -1,6 +1,6 @@
 ﻿namespace Linn.Purchasing.Messaging.Tests
 {
-    using Linn.Common.Messaging.RabbitMQ;
+    using Linn.Common.Messaging.RabbitMQ.Dispatchers;
 
     using NSubstitute;
 
@@ -8,12 +8,9 @@
 
     public abstract class MessagingContextBase
     {
-        protected IMessageDispatcher MessageDispatcher { get; private set; }
-
         [SetUp]
         public void EstablishBaseContext()
         {
-            this.MessageDispatcher = Substitute.For<IMessageDispatcher>();
         }
     }
 }

@@ -19,7 +19,7 @@
 
         protected HttpResponseMessage Response { get; set; }
 
-        protected IForecastingFacadeService FacadeService { get; set; }
+        protected IForecastingFacadeService ReportsFacadeService { get; set; }
 
         protected IForecastingService MockDomainService { get; set; }
 
@@ -27,12 +27,12 @@
         public void SetUpContext()
         {
             this.MockDomainService = Substitute.For<IForecastingService>();
-            this.FacadeService = new ForecastingFacadeService(this.MockDomainService);
+            this.ReportsFacadeService = new ForecastingFacadeService(this.MockDomainService);
 
             this.Client = TestClient.With<ForecastingModule>(
                 services =>
                     {
-                        services.AddSingleton(this.FacadeService);
+                        services.AddSingleton(this.ReportsFacadeService);
                         services.AddHandlers();
                     },
                 FakeAuthMiddleware.EmployeeMiddleware);

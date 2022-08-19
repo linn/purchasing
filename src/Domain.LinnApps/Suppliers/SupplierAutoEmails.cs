@@ -7,5 +7,9 @@
         public string EmailAddress { get; set; }
 
         public string OrderBook { get; set; }
+
+        public string Forecast { get; set; }
+
+        public string ForecastInterval { get; set; }
     }
 }

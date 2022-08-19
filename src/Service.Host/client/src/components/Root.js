@@ -59,6 +59,7 @@ import AutomaticPurchaseOrderSuggestions from './AutomaticPurchaseOrderSuggestio
 import AutomaticPurchaseOrders from './AutomaticPurchaseOrders';
 import SupplierLeadTimesReport from './reports/SupplierLeadTimesReport';
 import SupplierLeadTimesReportOptions from './reports/SupplierLeadTimesReportOptions';
+import ForecastOrdersReport from './reports/ForecastOrdersReports';
 import DeliveryPerformanceSummary from './reports/DeliveryPerformanceSummary';
 import DeliveryPerformanceSummaryReport from './reports/DeliveryPerformanceSummaryReport';
 import DeliveryPerformanceSupplierReport from './reports/DeliveryPerformanceSupplierReport';
@@ -370,6 +371,10 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
+                                    path="/purchasing/reports/weekly-forecast-orders"
+                                    component={ForecastOrdersReport}
+                                />
+                                <Route
                                     path="/purchasing/reports/delivery-performance-summary"
                                     component={DeliveryPerformanceSummary}
                                 />
