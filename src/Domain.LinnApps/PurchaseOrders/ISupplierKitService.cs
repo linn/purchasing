@@ -4,6 +4,6 @@
 
     public interface ISupplierKitService
     {
-        public IEnumerable<SupplierKit> GetSupplierKits(PurchaseOrder order, bool getComponents = false);
+        IEnumerable<SupplierKit> GetSupplierKits(PurchaseOrder order, bool getComponents = false);
     }
 }
