@@ -28,7 +28,7 @@
                     .Include(s => s.InvoiceFullAddress)
                     .Include(s => s.AccountController)
                     .Include(s => s.Planner)
-                    .Include(s => s.VendorManager)
+                    .Include(s => s.VendorManager).ThenInclude(v => v.Employee).ThenInclude(e => e.PhoneListEntry)
                     .Include(s => s.OrderAddress)
                     .Include(s => s.OpenedBy)
                     .Include(s => s.ClosedBy)

@@ -11,7 +11,7 @@
     <PackageReference Include="Linn.Common.Configuration" Version="2.0.0" />
     <PackageReference Include="Linn.Common.Domain" Version="1.1.0" />
     <PackageReference Include="Linn.Common.Domain.LinnApps" Version="1.0.0" />
-    <PackageReference Include="Linn.Common.Email" Version="2.0.0" />
+    <PackageReference Include="Linn.Common.Email" Version="3.0.0" />
     <PackageReference Include="Linn.Common.Pdf" Version="2.0.0" />
     <PackageReference Include="Linn.Common.Persistence" Version="3.0.0" />
     <PackageReference Include="Linn.Common.Proxy.LinnApps" Version="3.0.0" />
@@ -20,7 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Dispatchers\" />
     <Folder Include="Forecasting\" />
     <Folder Include="Suppliers\Exceptions\" />
   </ItemGroup>

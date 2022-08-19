@@ -164,6 +164,8 @@
 
         public DbSet<SuppliersLeadTimesEntry> SuppliersLeadTimesEntries { get; set; }
 
+        public DbSet<WeeklyForecastPart> WeeklyForecastParts { get; set; }
+
         public DbSet<SupplierDeliveryPerformance> SupplierDeliveryPerformance { get; set; }
 
         public DbSet<DeliveryPerformanceDetail> DeliveryPerformanceDetails { get; set; }
@@ -257,6 +259,7 @@
             this.BuildAutomaticPurchaseOrderSuggestions(builder);
             this.BuildSupplierAutoEmails(builder);
             this.BuildSuppliersLeadTime(builder);
+            this.BuildWeeklyForecastParts(builder);
             this.BuildSupplierDeliveryPerformance(builder);
             this.BuildDeliveryPerformanceDetails(builder);
         }
@@ -1669,6 +1672,18 @@
             entity.Property(a => a.SupplierId).HasColumnName("SUPPLIER_ID");
             entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
             entity.Property(a => a.LeadTimeWeeks).HasColumnName("LEAD_TIME_WEEKS");
+        }
+
+        private void BuildWeeklyForecastParts(ModelBuilder builder)
+        {
+            var entity = builder.Entity<WeeklyForecastPart>().ToTable("WEEKLY_FORECAST_PARTS_VIEW").HasNoKey();
+            entity.Property(a => a.MrPartNumber).HasColumnName("MR_PART_NUMBER");
+            entity.Property(a => a.SupplierDesignation).HasColumnName("SUPPLIER_DESIGNATION");
+            entity.Property(a => a.StartingQty).HasColumnName("STARTING_QTY");
+            entity.Property(a => a.UnitPrice).HasColumnName("UNIT_PRICE");
+            entity.Property(a => a.MinimumOrderQty).HasColumnName("MINIMUM_ORDER_QTY");
+            entity.Property(a => a.PreferredSupplier).HasColumnName("PREFERRED_SUPPLIER");
+            entity.Property(a => a.TotalNettReqtValue).HasColumnName("T_NETT_REQT_VALUE");
         }
 
         private void BuildSupplierDeliveryPerformance(ModelBuilder builder)

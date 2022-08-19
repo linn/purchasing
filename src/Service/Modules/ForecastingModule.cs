@@ -30,10 +30,10 @@
         private async Task ApplyPercentageChange(
             HttpRequest request,
             HttpResponse response,
-            IForecastingFacadeService facadeService,
+            IForecastingFacadeService reportsFacadeService,
             ApplyForecastingPercentageChangeResource resource)
         {
-            await response.Negotiate(facadeService.ApplyPercentageChange(
+            await response.Negotiate(reportsFacadeService.ApplyPercentageChange(
                 resource, request.HttpContext.GetPrivileges()));
         }
     }

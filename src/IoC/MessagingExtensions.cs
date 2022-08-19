@@ -1,9 +1,9 @@
 ﻿namespace Linn.Purchasing.IoC
 {
     using Linn.Common.Logging;
-    using Linn.Purchasing.Domain.LinnApps.Dispatchers;
-    using Linn.Purchasing.Messaging;
-    using Linn.Purchasing.Messaging.Dispatchers;
+    using Linn.Common.Messaging.RabbitMQ.Configuration;
+    using Linn.Common.Messaging.RabbitMQ.Dispatchers;
+    using Linn.Common.Messaging.RabbitMQ.Handlers;
     using Linn.Purchasing.Messaging.Handlers;
     using Linn.Purchasing.Messaging.Messages;
     using Linn.Purchasing.Resources.Messages;
@@ -17,7 +17,7 @@
         public static IServiceCollection AddRabbitConfiguration(this IServiceCollection services)
         {
             // all the routing keys the Listener cares about need to be registered here:
-            var routingKeys = new[] { EmailMrOrderBookMessage.RoutingKey };
+            var routingKeys = new[] { EmailMrOrderBookMessage.RoutingKey, EmailWeeklyForecastReportMessage.RoutingKey };
 
             return services.AddSingleton<ChannelConfiguration>(d => new ChannelConfiguration("purchasing", routingKeys))
                 .AddScoped(d => new EventingBasicConsumer(d.GetService<ChannelConfiguration>()?.ConsumerChannel));
@@ -26,7 +26,8 @@
         public static IServiceCollection AddMessageHandlers(this IServiceCollection services)
         {
             return services
-                .AddScoped<Handler<EmailMrOrderBookMessage>, EmailMrOrderBookMessageHandler>();
+                .AddScoped<Handler<EmailMrOrderBookMessage>, EmailMrOrderBookMessageHandler>()
+                .AddScoped<Handler<EmailWeeklyForecastReportMessage>, EmailWeeklyForecastReportMessageHandler>();
         }
 
         public static IServiceCollection AddMessageDispatchers(this IServiceCollection services)
@@ -35,7 +36,10 @@
             return services
                 .AddTransient<IMessageDispatcher<EmailOrderBookMessageResource>>(
                     x => new RabbitMessageDispatcher<EmailOrderBookMessageResource>(
-                        x.GetService<ChannelConfiguration>(), x.GetService<ILog>(), EmailMrOrderBookMessage.RoutingKey));
+                        x.GetService<ChannelConfiguration>(), x.GetService<ILog>(), EmailMrOrderBookMessage.RoutingKey))
+                .AddTransient<IMessageDispatcher<EmailWeeklyForecastReportMessageResource>>(
+                    x => new RabbitMessageDispatcher<EmailWeeklyForecastReportMessageResource>(
+                        x.GetService<ChannelConfiguration>(), x.GetService<ILog>(), EmailWeeklyForecastReportMessage.RoutingKey));
         }
     }
 }
