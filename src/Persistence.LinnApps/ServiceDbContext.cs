@@ -1652,15 +1652,18 @@
         {
             var entity = builder.Entity<BomDetail>().ToTable("BOM_DETAIL_VIEW").HasNoKey();
             entity.HasKey(a => a.DetailId);
+            entity.Property(a => a.DetailId).HasColumnName("DETAIL_ID");
             entity.Property(a => a.BomName).HasColumnName("BOM_NAME").HasColumnType("VARCHAR2").HasMaxLength(14);
             entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2").HasMaxLength(14);
             entity.Property(a => a.BomId).HasColumnName("BOM_ID");
             entity.Property(a => a.Qty).HasColumnName("QTY");
+            entity.Property(a => a.GenerateRequirement).HasColumnName("GENERATE_REQUIREMENT").HasColumnType("VARCHAR2").HasMaxLength(1);
             entity.Property(a => a.ChangeState).HasColumnName("CHANGE_STATE").HasColumnType("VARCHAR2").HasMaxLength(6);
             entity.Property(a => a.AddChangeId).HasColumnName("ADD_CHANGE_ID");
             entity.Property(a => a.AddReplaceSeq).HasColumnName("ADD_REPLACE_SEQ");
             entity.Property(a => a.DeleteChangeId).HasColumnName("DELETE_CHANGE_ID");
             entity.Property(a => a.DeleteReplaceSeq).HasColumnName("DELETE_REPLACE_SEQ");
+            entity.HasOne(a => a.Part).WithMany().HasForeignKey(a => a.PartNumber);
         }
     }
 }

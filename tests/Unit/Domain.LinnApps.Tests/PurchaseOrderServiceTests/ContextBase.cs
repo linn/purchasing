@@ -27,6 +27,8 @@
 
         protected IPdfService PdfService { get; private set; }
 
+        protected ISupplierKitService SupplierKitService { get; private set; }
+
         protected IPurchaseLedgerPack PurchaseLedgerPack { get; private set; }
 
         protected IPurchaseOrderService Sut { get; private set; }
@@ -41,6 +43,7 @@
             this.EmailService = Substitute.For<IEmailService>();
             this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
             this.MiniOrderRepository = Substitute.For<IRepository<MiniOrder, int>>();
+            this.SupplierKitService = Substitute.For<ISupplierKitService>();
 
             this.Sut = new PurchaseOrderService(
                 this.MockAuthService,
@@ -49,7 +52,8 @@
                 this.PdfService,
                 this.EmailService,
                 this.EmployeeRepository,
-                this.MiniOrderRepository);
+                this.MiniOrderRepository,
+                this.SupplierKitService);
         }
     }
 }

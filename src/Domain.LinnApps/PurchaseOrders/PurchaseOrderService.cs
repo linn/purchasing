@@ -26,6 +26,8 @@
 
         private readonly IEmailService emailService;
 
+        private readonly ISupplierKitService supplierKitService;
+
         private readonly IRepository<Employee, int> employeeRepository;
 
         private readonly IRepository<MiniOrder, int> miniOrderRepository;
@@ -37,7 +39,8 @@
             IPdfService pdfService,
             IEmailService emailService,
             IRepository<Employee, int> employeeRepository,
-            IRepository<MiniOrder, int> miniOrderRepository)
+            IRepository<MiniOrder, int> miniOrderRepository,
+            ISupplierKitService supplierKitService)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;
@@ -46,6 +49,7 @@
             this.emailService = emailService;
             this.employeeRepository = employeeRepository;
             this.miniOrderRepository = miniOrderRepository;
+            this.supplierKitService = supplierKitService;
         }
 
         public void AllowOverbook(
@@ -169,6 +173,20 @@
         {
             var emailBody = $"Purchasing have raised order {orderNumber} for {order.Supplier.Name}.\n"
                             + $"The following parts will need supplier kits\n";
+
+            var kits = this.supplierKitService.GetSupplierKits(order, true);
+
+            foreach (var kit in kits)
+            {
+                emailBody += "\n" + $"{kit.Qty} x {kit.Part.PartNumber} {kit.Part.Description}"
+                             + "\n requires";
+                foreach (var detail in kit.Details)
+                {
+                    emailBody += "\n    " + $"{detail.Qty} x {detail.Part.PartNumber} {detail.Part.Description}";
+                }
+
+                emailBody += "\n";
+            }
 
             this.emailService.SendEmail(
                 ConfigurationManager.Configuration["LOGISTICS_TO_ADDRESS"],

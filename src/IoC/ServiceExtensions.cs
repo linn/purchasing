@@ -187,6 +187,7 @@
                 .AddTransient<IShortagesReportService, ShortagesReportService>()
                 .AddTransient<IMrOrderBookReportService, MrOrderBookReportService>()
                 .AddTransient<IAutomaticPurchaseOrderService, AutomaticPurchaseOrderService>()
+                .AddTransient<ISupplierKitService, SupplierKitService>()
 
                 // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
