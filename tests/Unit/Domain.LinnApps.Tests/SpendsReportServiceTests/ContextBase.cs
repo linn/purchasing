@@ -18,6 +18,8 @@
     {
         protected IPurchaseLedgerPack PurchaseLedgerPack { get; private set; }
 
+        protected ILedgerPeriodPack LedgerPeriodPack { get; private set; }
+
         protected IRepository<PurchaseLedger, int> PurchaseLedgerRepository { get; private set; }
 
         protected IRepository<PurchaseOrder, int> PurchaseOrderRepository { get; private set; }
@@ -44,6 +46,7 @@
             this.PurchaseLedgerPack = Substitute.For<IPurchaseLedgerPack>();
             this.VendorManagerRepository = Substitute.For<IRepository<VendorManager, string>>();
             this.PartRepository = Substitute.For<IQueryRepository<Part>>();
+            this.LedgerPeriodPack = Substitute.For<ILedgerPeriodPack>();
 
             this.ReportingHelper = new ReportingHelper();
 
@@ -51,6 +54,7 @@
                 this.SpendsRepository,
                 this.VendorManagerRepository,
                 this.PurchaseLedgerPack,
+                this.LedgerPeriodPack,
                 this.PurchaseOrderRepository,
                 this.SupplierRepository,
                 this.PartRepository,

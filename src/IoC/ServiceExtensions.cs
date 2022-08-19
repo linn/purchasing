@@ -202,6 +202,7 @@
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
                 .AddTransient<IAutocostPack, AutocostPack>()
                 .AddTransient<ICurrencyPack, CurrencyPack>()
+                .AddTransient<ILedgerPeriodPack, LedgerPeriodPack>()
                 .AddTransient<IPurchaseLedgerPack, PurchaseLedgerPack>()
                 .AddTransient<IPurchaseOrderReqsPack, PurchaseOrderReqsPack>()
                 .AddTransient<IMrpLoadPack, MrpLoadPack>()

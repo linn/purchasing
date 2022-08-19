@@ -30,6 +30,7 @@ import partPriceConversions from './partPriceConversions';
 import ordersByPart from './ordersByPartReport';
 import vendorManagers from './vendorManagers';
 import spendBySupplierReport from './spendBySupplierReport';
+import spendBySupplierByDateRangeReport from './spendBySupplierByDateRangeReport';
 import supplier from './supplier';
 import partCategories from './partCategories';
 import accountingCompanies from './accountingCompanies';
@@ -165,6 +166,7 @@ const rootReducer = history =>
         signingLimit,
         signingLimits,
         spendBySupplierReport,
+        spendBySupplierByDateRangeReport,
         spendByPartReport,
         supplier,
         supplierGroups,
