@@ -2,9 +2,9 @@
 {
     using Linn.Common.Messaging.RabbitMQ.Dispatchers;
     using Linn.Common.Persistence;
+    using Linn.Common.Scheduling.Triggers;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources.Messages;
-    using Linn.Purchasing.Scheduling.Host.Triggers;
 
     public class SupplierAutoEmailsScheduler : BackgroundService
     {
