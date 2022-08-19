@@ -55,7 +55,7 @@
         [Test]
         public void ShouldSendAlertToVendorManagerAndThrow()
         {
-            this.action.Should().Throw<MrOrderBookEmailException>()
+            this.action.Should().Throw<SupplierAutoEmailsException>()
                 .WithMessage("The MR Order book emails could not be sent because the MRP did not run over the weekend.");
             this.EmailService.Received().SendEmail(
                 this.supplier.VendorManager.Employee.PhoneListEntry.EmailAddress,

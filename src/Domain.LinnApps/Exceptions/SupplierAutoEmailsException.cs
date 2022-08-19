@@ -4,14 +4,14 @@
 
     using Linn.Common.Domain.Exceptions;
 
-    public class MrOrderBookEmailException : DomainException
+    public class SupplierAutoEmailsException : DomainException
     {
-        public MrOrderBookEmailException(string message)
+        public SupplierAutoEmailsException(string message)
             : base(message)
         {
         }
 
-        public MrOrderBookEmailException(string message, Exception innerException)
+        public SupplierAutoEmailsException(string message, Exception innerException)
             : base(message, innerException)
         {
         }

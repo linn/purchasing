@@ -101,7 +101,7 @@
         {
             if (string.IsNullOrEmpty(toAddress))
             {
-                throw new MrOrderBookEmailException($"No recipient address set for: {supplier.Name}");
+                throw new SupplierAutoEmailsException($"No recipient address set for: {supplier.Name}");
             }
 
             var lastTqmsDate = this.mrMaster.GetRecord().RunDate;
@@ -123,7 +123,7 @@
                     null,
                     null);
 
-                throw new MrOrderBookEmailException(msg);
+                throw new SupplierAutoEmailsException(msg);
             }
         }
     }
