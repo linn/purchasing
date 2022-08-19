@@ -4,7 +4,8 @@
     using System.Threading.Tasks;
 
     using Linn.Common.Logging;
-    using Linn.Purchasing.Messaging.Handlers;
+    using Linn.Common.Messaging.RabbitMQ.Configuration;
+    using Linn.Common.Messaging.RabbitMQ.Handlers;
     using Linn.Purchasing.Messaging.Messages;
 
     using Microsoft.Extensions.Hosting;

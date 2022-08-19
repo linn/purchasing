@@ -1,9 +1,9 @@
 ﻿namespace Linn.Purchasing.IoC
 {
     using Linn.Common.Logging;
-    using Linn.Purchasing.Domain.LinnApps.Dispatchers;
-    using Linn.Purchasing.Messaging;
-    using Linn.Purchasing.Messaging.Dispatchers;
+    using Linn.Common.Messaging.RabbitMQ.Configuration;
+    using Linn.Common.Messaging.RabbitMQ.Dispatchers;
+    using Linn.Common.Messaging.RabbitMQ.Handlers;
     using Linn.Purchasing.Messaging.Handlers;
     using Linn.Purchasing.Messaging.Messages;
     using Linn.Purchasing.Resources.Messages;

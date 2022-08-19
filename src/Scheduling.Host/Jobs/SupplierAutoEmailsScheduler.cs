@@ -1,7 +1,7 @@
 ﻿namespace Linn.Purchasing.Scheduling.Host.Jobs
 {
+    using Linn.Common.Messaging.RabbitMQ.Dispatchers;
     using Linn.Common.Persistence;
-    using Linn.Purchasing.Domain.LinnApps.Dispatchers;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources.Messages;
     using Linn.Purchasing.Scheduling.Host.Triggers;

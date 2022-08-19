@@ -7,8 +7,7 @@
     using Linn.Common.Configuration;
     using Linn.Common.Email;
     using Linn.Common.Persistence;
-    using Linn.Common.Reporting.Resources.Extensions;
-    using Linn.Common.Serialization;
+
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Reports;
@@ -54,13 +53,6 @@
 
             var export = this.orderBookReportService.GetOrderBookExport(toSupplier);
 
-            // todo ? - I don't feel great about doing this in the domain.
-            // Serializing, converting to csv list etc. should probably be done in the email service
-            var stream = new MemoryStream();
-            var csvStreamWriter = new CsvStreamWriter(stream);
-            csvStreamWriter.WriteModel(export.ConvertToCsvList());
-            stream.Position = 0;
-
             this.emailService.SendEmail(
                 test ? ConfigurationManager.Configuration["ORDER_BOOK_TEST_ADDRESS"] : emailAddress,
                 supplier.Name,
@@ -71,8 +63,9 @@
                 $"MR Order Book - {timestamp}",
                 "Please find Order Book attached",
                 "csv",
-                stream,
-                $"{toSupplier}_linn_order_book_{timestamp}");
+                null,
+                $"{toSupplier}_linn_order_book_{timestamp}",
+                export);
         }
 
         public void SendWeeklyForecastEmail(string toAddress, int toSupplier, string timestamp, bool test = false)
@@ -89,11 +82,6 @@
 
             var export = this.forecastOrdersReportService.GetWeeklyExport(toSupplier);
 
-            var stream = new MemoryStream();
-            var csvStreamWriter = new CsvStreamWriter(stream);
-            csvStreamWriter.WriteModel(export.ConvertToCsvList());
-            stream.Position = 0;
-
             this.emailService.SendEmail(
                 test ? ConfigurationManager.Configuration["ORDER_BOOK_TEST_ADDRESS"] : emailAddress,
                 supplier.Name,
@@ -104,8 +92,9 @@
                 $"Weekly Forecast - {timestamp}",
                 "Please find weekly order forecast attached",
                 "csv",
-                stream,
-                $"{toSupplier}_weekly_forecast_{timestamp}");
+                null,
+                $"{toSupplier}_weekly_forecast_{timestamp}",
+                export);
         }
 
         private void CheckEmailDetailsOk(string toAddress, Supplier supplier)

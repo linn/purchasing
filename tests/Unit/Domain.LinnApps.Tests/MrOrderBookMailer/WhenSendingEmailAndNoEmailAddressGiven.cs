@@ -63,8 +63,9 @@
                 $"MR Order Book - {timestamp}",
                 "Please find Order Book attached",
                 "csv",
-                Arg.Any<Stream>(),
-                $"{this.supplier.SupplierId}_linn_order_book_{this.timestamp}");
+                null,
+                $"{this.supplier.SupplierId}_linn_order_book_{this.timestamp}",
+                Arg.Any<ResultsModel>());
         }
     }
 }

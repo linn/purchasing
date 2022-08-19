@@ -4,6 +4,7 @@
     using System.Text;
 
     using Linn.Common.Logging;
+    using Linn.Common.Messaging.RabbitMQ.Handlers;
     using Linn.Purchasing.Domain.LinnApps.Mailers;
     using Linn.Purchasing.Messaging.Messages;
     using Linn.Purchasing.Resources.Messages;
