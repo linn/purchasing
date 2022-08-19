@@ -50,7 +50,12 @@ function POReqSearch({ print }) {
         dispatch(purchaseOrderReqsActions.searchWithOptions('', `&reqNumber=&part=&supplier=`));
     }, [dispatch]);
 
-    const [options, setOptions] = useState({ reqNumber: '', part: '', supplier: '' });
+    const [options, setOptions] = useState({
+        reqNumber: '',
+        part: '',
+        supplier: '',
+        purchaseOrderNumber: null
+    });
 
     const handleOptionsChange = (propertyName, newValue) =>
         setOptions({ ...options, [propertyName]: newValue });
@@ -59,16 +64,17 @@ function POReqSearch({ print }) {
         if (
             options.reqNumber.length > 2 ||
             options.part.length > 2 ||
-            options.supplier.length > 2
+            options.supplier.length > 2 ||
+            options.purchaseOrderNumber?.length > 2
         ) {
-            dispatch(
-                purchaseOrderReqsActions.searchWithOptions(
-                    '',
-                    `&reqNumber=${options.reqNumber}&part=${options.part}&supplier=${options.supplier}`
-                )
-            );
+            let queryString = `&reqNumber=${options.reqNumber}&part=${options.part}&supplier=${options.supplier}`;
+            if (options.purchaseOrderNumber) {
+                queryString += `&purchaseOrderNumber=${options.purchaseOrderNumber}`;
+            }
+
+            dispatch(purchaseOrderReqsActions.searchWithOptions('', queryString));
         }
-    }, [dispatch, options.reqNumber, options.part, options.supplier]);
+    }, [dispatch, options.reqNumber, options.part, options.supplier, options.purchaseOrderNumber]);
 
     return (
         <Page history={history} homeUrl={config.appRoot} width="m">
@@ -81,7 +87,7 @@ function POReqSearch({ print }) {
                 <Grid item xs={2}>
                     <CreateButton createUrl="/purchasing/purchase-orders/reqs/create" />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={3}>
                     <InputField
                         fullWidth
                         value={options.reqNumber}
@@ -90,7 +96,7 @@ function POReqSearch({ print }) {
                         onChange={handleOptionsChange}
                     />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={3}>
                     <InputField
                         fullWidth
                         value={options.part}
@@ -99,12 +105,21 @@ function POReqSearch({ print }) {
                         onChange={handleOptionsChange}
                     />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={3}>
                     <InputField
                         fullWidth
                         value={options.supplier}
                         label="Supplier name or Id"
                         propertyName="supplier"
+                        onChange={handleOptionsChange}
+                    />
+                </Grid>
+                <Grid item xs={3}>
+                    <InputField
+                        fullWidth
+                        value={options.purchaseOrderNumber}
+                        label="PO Number"
+                        propertyName="purchaseOrderNumber"
                         onChange={handleOptionsChange}
                     />
                 </Grid>
