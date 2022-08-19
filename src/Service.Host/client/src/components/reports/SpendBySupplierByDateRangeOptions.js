@@ -88,7 +88,7 @@ function SpendBySupplierByDateRangeReportOptions() {
                                         }))
                                 ]}
                                 allowNoValue={false}
-                                onChange={(propertyName, newValue) => setVm(newValue)}
+                                onChange={(_, newValue) => setVm(newValue)}
                             />
                         </Grid>
                         <Grid item xs={6}>

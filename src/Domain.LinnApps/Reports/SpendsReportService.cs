@@ -153,15 +153,15 @@
             var distinctSupplierSpends = supplierSpends.DistinctBy(x => x.SupplierId).Select(
                 x => new SupplierSpendWithTotals
                          {
-                             BaseTotal = x.BaseTotal.HasValue ? x.BaseTotal.Value : 0,
+                             BaseTotal = x.BaseTotal.GetValueOrDefault(),
                              LedgerPeriod = x.LedgerPeriod,
                              Supplier = x.Supplier,
                              SupplierId = x.SupplierId,
                              DateRangeTotal = supplierSpends.Where(
                                  s => s.SupplierId == x.SupplierId && s.LedgerPeriod >= fromLedgerPeriod
                                                                    && s.LedgerPeriod <= toLedgerPeriod).Sum(
-                                 z => z.BaseTotal.HasValue ? z.BaseTotal.Value : 0)
-                         }).OrderBy(x => x.Supplier.Name);
+                                 z => z.BaseTotal.GetValueOrDefault())
+                }).OrderBy(x => x.Supplier.Name);
 
             foreach (var supplier in distinctSupplierSpends)
             {

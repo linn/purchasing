@@ -103,11 +103,6 @@
 
             var csv = spendsReportFacadeService.GetSpendBySupplierByDateRangeReportExport(options);
 
-            var contentDisposition = new ContentDisposition
-                                         {
-                                             FileName = $"spendBySuppliersByDateRange{DateTime.Now.ToString("dd-MM-yyyy")}.csv"
-                                         };
-
             await res.FromCsv(csv, $"spendBySuppliersByDateRange{DateTime.Now.ToString("dd-MM-yyyy")}.csv");
         }
 
