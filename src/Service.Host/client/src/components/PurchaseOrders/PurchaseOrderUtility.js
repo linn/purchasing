@@ -293,7 +293,6 @@ function PurchaseOrderUtility({ creating }) {
     };
 
     const handleSupplierAssEmailClick = () => {
-        reduxDispatch(sendPurchaseOrderSupplierAssActionTypes.clearProcessData);
         reduxDispatch(
             sendPurchaseOrderSupplierAssActionTypes.requestProcessStart('', {
                 orderNumber: order.orderNumber
@@ -597,7 +596,7 @@ function PurchaseOrderUtility({ creating }) {
                             />
                         </Grid>
                         <Grid item xs={1}>
-                            {order.issuePartsToSupplier === 'Y' ? (
+                            {order.issuePartsToSupplier === 'Y' && (
                                 <Tooltip title="Email kitting to logistics">
                                     <IconButton
                                         className={classes.buttonMarginTop}
@@ -608,8 +607,6 @@ function PurchaseOrderUtility({ creating }) {
                                         <Email />
                                     </IconButton>
                                 </Tooltip>
-                            ) : (
-                                <></>
                             )}
                         </Grid>
 

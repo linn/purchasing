@@ -156,7 +156,7 @@
             int orderNumber,
             IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
-            var result = await purchaseOrderFacadeService.EmailSupplierAss(
+            var result = purchaseOrderFacadeService.EmailSupplierAss(
                              orderNumber);
 
             await res.Negotiate(result);

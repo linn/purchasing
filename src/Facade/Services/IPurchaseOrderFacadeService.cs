@@ -15,7 +15,7 @@
 
         Task<IResult<ProcessResultResource>> EmailOrderPdf(int orderNumber, string emailAddress, bool bcc, int currentUserId);
 
-        Task<IResult<ProcessResultResource>> EmailSupplierAss(int orderNumber);
+        IResult<ProcessResultResource> EmailSupplierAss(int orderNumber);
 
         IResult<PurchaseOrderResource> FillOutOrderFromSupplierId(PurchaseOrderResource resource, IEnumerable<string> privileges, int userId);
     }

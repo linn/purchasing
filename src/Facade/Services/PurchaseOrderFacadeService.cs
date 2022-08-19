@@ -97,12 +97,11 @@
             }
         }
 
-        public async Task<IResult<ProcessResultResource>> EmailSupplierAss(int orderNumber)
+        public IResult<ProcessResultResource> EmailSupplierAss(int orderNumber)
         {
             try
             {
                 var order = this.orderRepository.FindById(orderNumber);
-
 
                 var emailResult = this.domainService.SendSupplierAssemblyEmail(order, orderNumber);
 
