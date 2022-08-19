@@ -1,33 +1,28 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.MrOrderBookMailer
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.SupplierAutoEmailsMailerTests
 {
     using System;
-
-    using FluentAssertions;
+    using System.Collections.Generic;
 
     using Linn.Common.Reporting.Models;
-    using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NSubstitute;
-    using NSubstitute.ExceptionExtensions;
 
     using NUnit.Framework;
 
-    public class WhenSendingEmailAndTqmsNotUpdated : ContextBase
+    public class WhenSendingEmailAndNoEmailAddressGiven : ContextBase
     {
         private Supplier supplier;
 
-        private string email;
+        private SupplierContact contact;
 
         private string timestamp;
-
-        private Action action;
 
         [SetUp]
         public void SetUp()
         {
-            this.email = "supplier@email.com";
+            this.contact = new SupplierContact { EmailAddress = "mainordercontact@supplier.com", IsMainOrderContact = "Y" };
             this.timestamp = DateTime.Today.ToShortTimeString();
             this.supplier = new Supplier
             {
@@ -43,33 +38,33 @@
                             EmailAddress = "test@mcperson.com"
                         }
                     }
-                }
+                },
+                SupplierContacts = new List<SupplierContact> { this.contact }
             };
 
             this.SupplierRepository.FindById(this.supplier.SupplierId).Returns(this.supplier);
-            this.MrMaster.GetRecord().Returns(new MrMaster { RunDate = DateTime.UnixEpoch });
+            this.MrMaster.GetRecord().Returns(new MrMaster { RunDate = DateTime.Today });
             this.ReportService.GetOrderBookExport(this.supplier.SupplierId).Returns(new ResultsModel());
 
-            this.action = () => this.Sut.SendOrderBookEmail(this.email, this.supplier.SupplierId, this.timestamp);
+            this.Sut.SendOrderBookEmail(null, this.supplier.SupplierId, this.timestamp);
         }
 
         [Test]
-        public void ShouldSendAlertToVendorManagerAndThrow()
+        public void ShouldUseMainOrderContactEmail()
         {
-            this.action.Should().Throw<MrOrderBookEmailException>()
-                .WithMessage("The MR Order book emails could not be sent because the MRP did not run over the weekend.");
             this.EmailService.Received().SendEmail(
+                this.contact.EmailAddress,
+                this.supplier.Name,
+                null,
+                null,
                 this.supplier.VendorManager.Employee.PhoneListEntry.EmailAddress,
                 this.supplier.VendorManager.Employee.FullName,
+                $"MR Order Book - {timestamp}",
+                "Please find Order Book attached",
+                "csv",
                 null,
-                null,
-                Arg.Any<string>(),
-                "Purchasing Outgoing",
-                "MR ORDER BOOK EMAIL ERROR",
-                "The MR Order book emails could not be sent because the MRP did not run over the weekend.",
-                null,
-                null,
-                null);
+                $"{this.supplier.SupplierId}_linn_order_book_{this.timestamp}",
+                Arg.Any<ResultsModel>());
         }
     }
 }

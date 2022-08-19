@@ -1,11 +1,10 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.MrOrderBookMailer
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.SupplierAutoEmailsMailerTests
 {
     using Linn.Common.Email;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Mailers;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Reports;
-    using Linn.Purchasing.Domain.LinnApps.Reports.Models;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NSubstitute;

@@ -1,11 +1,8 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.MrOrderBookMailer
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.SupplierAutoEmailsMailerTests
 {
     using System;
 
-    using FluentAssertions;
-
     using Linn.Common.Reporting.Models;
-    using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
@@ -13,18 +10,18 @@
 
     using NUnit.Framework;
 
-    public class WhenSendingEmailAndNoEmailAddressSuppliedAndSupplierHasNoMainOrderContact 
-        : ContextBase
+    public class WhenSendingWeeklyForecastEmail : ContextBase
     {
         private Supplier supplier;
 
-        private Action action;
+        private string email;
 
         private string timestamp;
 
         [SetUp]
         public void SetUp()
         {
+            this.email = "supplier@email.com";
             this.timestamp = DateTime.Today.ToShortTimeString();
             this.supplier = new Supplier
             {
@@ -47,15 +44,25 @@
             this.MrMaster.GetRecord().Returns(new MrMaster { RunDate = DateTime.Today });
             this.ReportService.GetOrderBookExport(this.supplier.SupplierId).Returns(new ResultsModel());
 
-            this.action  = () =>
-                this.Sut.SendOrderBookEmail(null, this.supplier.SupplierId, this.timestamp);
+            this.Sut.SendWeeklyForecastEmail(this.email, this.supplier.SupplierId, this.timestamp);
         }
 
         [Test]
-        public void ShouldThrow()
+        public void ShouldSendEmailToSupplier()
         {
-            this.action.Should().Throw<MrOrderBookEmailException>()
-                .WithMessage($"No recipient address set for: {this.supplier.Name}");
+            this.EmailService.Received().SendEmail(
+                this.email,
+                this.supplier.Name,
+                null,
+                null,
+                this.supplier.VendorManager.Employee.PhoneListEntry.EmailAddress,
+                this.supplier.VendorManager.Employee.FullName,
+                $"Weekly Forecast - {timestamp}",
+                "Please find weekly order forecast attached",
+                "csv",
+                null,
+                $"{this.supplier.SupplierId}_weekly_forecast_{this.timestamp}",
+                Arg.Any<ResultsModel>());
         }
     }
 }

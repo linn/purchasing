@@ -1,7 +1,6 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.MrOrderBookMailer
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.SupplierAutoEmailsMailerTests
 {
     using System;
-    using System.IO;
 
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
@@ -11,7 +10,7 @@
 
     using NUnit.Framework;
 
-    public class WhenSendingEmail : ContextBase
+    public class WhenSendingMrOrderBookEmail : ContextBase
     {
         private Supplier supplier;
 
