@@ -205,7 +205,8 @@
                     || x.PartNumber.ToUpper().Contains(searchResource.Part.ToUpper()))
                 && (string.IsNullOrWhiteSpace(searchResource.Supplier)
                     || x.SupplierId.ToString().Contains(searchResource.Supplier) || x.SupplierName.ToUpper().ToString()
-                        .Contains(searchResource.Supplier.ToUpper()));
+                        .Contains(searchResource.Supplier.ToUpper()))
+                && (!searchResource.PurchaseOrderNumber.HasValue || x.OrderNumber == searchResource.PurchaseOrderNumber);
         }
 
         protected override Expression<Func<PurchaseOrderReq, bool>> FindExpression(

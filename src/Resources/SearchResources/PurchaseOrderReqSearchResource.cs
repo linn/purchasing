@@ -7,5 +7,7 @@
         public string Part { get; set; }
 
         public string Supplier { get; set; }
+
+        public int? PurchaseOrderNumber { get; set; }
     }
 }
