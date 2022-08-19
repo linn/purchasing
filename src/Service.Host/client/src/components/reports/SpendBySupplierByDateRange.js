@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import {
     Loading,
     ReportTable,
@@ -8,14 +8,13 @@ import {
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import { useSelector, useDispatch } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import history from '../../history';
 import config from '../../config';
 import spendBySupplierByDateRangeActions from '../../actions/spendBySupplierByDateRangeActions';
 
 function SpendBySupplierByDateRangeReport() {
-    const options = useMemo(() => queryString.parse(window.location.search) || {}, []);
-
     const loading = useSelector(state =>
         reportSelectorHelpers.getReportLoading(state.spendBySupplierByDateRangeReport)
     );
@@ -30,26 +29,30 @@ function SpendBySupplierByDateRangeReport() {
         history.push(uri);
     };
 
+    const location = useLocation();
+    const fromDate = queryString.parse(location.search)?.fromDate;
+    const toDate = queryString.parse(location.search)?.toDate;
+    const vendorManager = queryString.parse(location.search)?.vendorManager;
     useEffect(() => {
-        if (options) {
-            dispatch(spendBySupplierByDateRangeActions.fetchReport(options));
-        }
-    }, [options, dispatch]);
+        dispatch(
+            spendBySupplierByDateRangeActions.fetchReport({ vendorManager, fromDate, toDate })
+        );
+    }, [fromDate, toDate, vendorManager, dispatch]);
 
     return (
         <>
             <Grid style={{ marginTop: 40 }} container spacing={3} justifyContent="center">
                 <Grid item xs={12}>
-                    <BackButton backClick={() => handleBackClick(history, options)} />
+                    <BackButton backClick={() => handleBackClick(history, history.goBack)} />
                 </Grid>
                 <Grid item xs={12}>
                     {!loading && reportData ? (
                         <ExportButton
                             href={
                                 `${config.appRoot}/purchasing/reports/spend-by-supplier-by-date-range/export` +
-                                `?&vm=${options.vm}` +
-                                `&fromDate=${options.fromDate}` +
-                                `&toDate=${options.toDate}`
+                                `?&vm=${vendorManager}` +
+                                `&fromDate=${fromDate}` +
+                                `&toDate=${toDate}`
                             }
                         />
                     ) : (
@@ -75,7 +78,7 @@ function SpendBySupplierByDateRangeReport() {
                     )}
                 </Grid>
                 <Grid item xs={12}>
-                    <BackButton backClick={() => handleBackClick(history, options)} />
+                    <BackButton backClick={() => handleBackClick(history, history.goBack)} />
                 </Grid>
             </Grid>
         </>
