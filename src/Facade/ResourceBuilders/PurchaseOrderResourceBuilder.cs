@@ -120,8 +120,21 @@
             {
                 yield return new LinkResource
                                  {
-                                     Rel = "allow-over-book-search", Href = "purchasing/purchase-orders/allow-over-book"
+                                     Rel = "allow-over-book-search", Href = "/purchasing/purchase-orders/allow-over-book"
                                  };
+            }
+            if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, privileges))
+            {
+                yield return new LinkResource
+                                 {
+                                     Rel = "create",
+                                     Href = "/purchasing/purchase-orders/create"
+                                 };
+                yield return new LinkResource
+                                 {
+                                     Rel = "generate-order-fields",
+                                     Href = "/purchasing/purchase-orders/generate-order-from-supplier-id"
+                };
             }
 
             if (model != null)

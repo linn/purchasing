@@ -68,7 +68,7 @@
             var dataResult = ((SuccessResult<PurchaseOrderResource>) this.result).Data;
             dataResult.Links.Length.Should().Be(4);
             dataResult.Links.First().Rel.Should().Be("allow-over-book-search");
-            dataResult.Links.First().Href.Should().Be("purchasing/purchase-orders/allow-over-book");
+            dataResult.Links.First().Href.Should().Be("/purchasing/purchase-orders/allow-over-book");
         }
 
         [Test]

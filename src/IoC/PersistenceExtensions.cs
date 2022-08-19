@@ -147,7 +147,18 @@
                 .AddTransient<IRepository<AutomaticPurchaseOrder, int>, AutomaticPurchaseOrderRepository>()
                 .AddTransient<IRepository<AutomaticPurchaseOrderSuggestion, int>, EntityFrameworkRepository<AutomaticPurchaseOrderSuggestion, int>>(
                     r => new EntityFrameworkRepository<AutomaticPurchaseOrderSuggestion, int>(r.GetService<ServiceDbContext>()?.AutomaticPurchaseOrderSuggestions))
-                .AddTransient<IRepository<NominalAccount, int>, NominalAccountRepository>();
+                .AddTransient<IRepository<SupplierAutoEmails, int>, EntityFrameworkRepository<SupplierAutoEmails, int>>(
+                    r => new EntityFrameworkRepository<SupplierAutoEmails, int>(r.GetService<ServiceDbContext>()?.SupplierAutoEmails))
+                .AddTransient<IRepository<NominalAccount, int>, NominalAccountRepository>()
+                .AddTransient<IQueryRepository<SuppliersLeadTimesEntry>, EntityFrameworkQueryRepository<SuppliersLeadTimesEntry>>(
+                    r => new EntityFrameworkQueryRepository<SuppliersLeadTimesEntry>(r.GetService<ServiceDbContext>()
+                        ?.SuppliersLeadTimesEntries))
+                .AddTransient<IQueryRepository<SupplierDeliveryPerformance>, EntityFrameworkQueryRepository<SupplierDeliveryPerformance>>(
+                    r => new EntityFrameworkQueryRepository<SupplierDeliveryPerformance>(r.GetService<ServiceDbContext>()
+                        ?.SupplierDeliveryPerformance))
+                .AddTransient<IQueryRepository<DeliveryPerformanceDetail>, EntityFrameworkQueryRepository<DeliveryPerformanceDetail>>(
+                    r => new EntityFrameworkQueryRepository<DeliveryPerformanceDetail>(r.GetService<ServiceDbContext>()
+                        ?.DeliveryPerformanceDetails));
         }
     }
 }

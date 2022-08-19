@@ -27,6 +27,8 @@
             app.MapGet("/purchasing/purchase-orders/application-state", this.GetApplicationState);
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}/allow-over-book/", this.GetApp);
             app.MapGet("/purchasing/purchase-orders/allow-over-book", this.GetApp);
+            app.MapGet("/purchasing/purchase-orders/create", this.GetApp);
+            app.MapGet("/purchasing/purchase-orders/quick-create", this.GetApp);
             app.MapGet("/purchasing/purchase-orders/currencies", this.GetCurrencies);
             app.MapGet("/purchasing/purchase-orders/methods", this.GetOrderMethods);
             app.MapGet("/purchasing/purchase-orders/delivery-addresses", this.GetDeliveryAddresses);
@@ -34,6 +36,7 @@
             app.MapGet("/purchasing/purchase-orders/packaging-groups", this.GetPackagingGroups);
             app.MapGet("/purchasing/purchase-orders/tariffs", this.SearchTariffs);
             app.MapGet("/purchasing/purchase-orders", this.SearchPurchaseOrders);
+            app.MapPost("/purchasing/purchase-orders/generate-order-from-supplier-id", this.FillOutPurchaseOrderFromSupplierId);
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}", this.GetPurchaseOrder);
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}/html", this.GetPurchaseOrderHtml);
             app.MapPost("/purchasing/purchase-orders/email-pdf", this.EmailOrderPdf);
@@ -100,6 +103,17 @@
             IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
             var result = purchaseOrderFacadeService.GetById(orderNumber, req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task FillOutPurchaseOrderFromSupplierId(
+            HttpRequest req,
+            HttpResponse res,
+            PurchaseOrderResource resource,
+            IPurchaseOrderFacadeService purchaseOrderFacadeService)
+        {
+            var result = purchaseOrderFacadeService.FillOutOrderFromSupplierId(resource, req.HttpContext.GetPrivileges(), req.HttpContext.User.GetEmployeeNumber());
 
             await res.Negotiate(result);
         }

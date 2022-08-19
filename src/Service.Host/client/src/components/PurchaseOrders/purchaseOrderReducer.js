@@ -1,4 +1,27 @@
+import { Decimal } from 'decimal.js';
+import currencyConvert from '../../helpers/currencyConvert';
+
 const initialState = {};
+
+const recalculateDetailFields = (detail, exchangeRate) => {
+    const netTotalCurrency = new Decimal(detail.ourQty).mul(detail.ourUnitPriceCurrency);
+    const detailTotalCurrency = new Decimal(netTotalCurrency).plus(detail.vatTotalCurrency);
+    const baseNetTotal = currencyConvert(netTotalCurrency, exchangeRate);
+    const baseDetailTotal = currencyConvert(detailTotalCurrency, exchangeRate);
+
+    //vat amount not yet calculated, can do it if include the supplier vat % in what's sent to front end
+
+    return {
+        ...detail,
+        netTotalCurrency: new Decimal(netTotalCurrency).toDecimalPlaces(2, Decimal.ROUND_HALF_UP),
+        detailTotalCurrency: new Decimal(detailTotalCurrency).toDecimalPlaces(
+            2,
+            Decimal.ROUND_HALF_UP
+        ),
+        baseNetTotal,
+        baseDetailTotal
+    };
+};
 
 export default function purchaseOrderReducer(state = initialState, action) {
     switch (action.type) {
@@ -15,6 +38,14 @@ export default function purchaseOrderReducer(state = initialState, action) {
                 details: [
                     ...state.details.filter(x => x.lineNumber !== action.lineNumber),
                     action.payload
+                ]
+            };
+        case 'detailCalculationFieldChange':
+            return {
+                ...state,
+                details: [
+                    ...state.details.filter(x => x.lineNumber !== action.lineNumber),
+                    recalculateDetailFields(action.payload, state.exchangeRate)
                 ]
             };
         case 'deliveryFieldChange':
@@ -55,6 +86,11 @@ export default function purchaseOrderReducer(state = initialState, action) {
                         };
                     })
                 ]
+            };
+        case 'supplierChange':
+            return {
+                ...state,
+                supplier: action.payload
             };
         default:
             return state;

@@ -178,6 +178,6 @@ describe('When component mounts...', () => {
         expect(screen.getByText('£324,249.50')).toBeInTheDocument();
         expect(screen.getByText('£61,484.98')).toBeInTheDocument();
         expect(screen.getByText('£62.10')).toBeInTheDocument();
-        expect(screen.getByText('Export')).toBeInTheDocument();
+        expect(screen.getByText('EXPORT')).toBeInTheDocument();
     });
 });

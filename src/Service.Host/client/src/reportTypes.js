@@ -89,3 +89,27 @@ export const mrOrderBookReport = new ItemType(
     'MR_ORDER_BOOK_REPORT',
     '/purchasing/reports/mr-order-book'
 );
+
+export const supplierLeadTimesReport = new ItemType(
+    'supplierLeadTimesReport',
+    'SUPPLIERS_BY_LEADTIME_REPORT',
+    '/purchasing/reports/leadtimes/report'
+);
+
+export const deliveryPerformanceSummaryReport = new ItemType(
+    'deliveryPerformanceSummaryReport',
+    'DELIVERY_PERFORMANCE_REPORT',
+    '/purchasing/reports/delivery-performance-summary/report'
+);
+
+export const deliveryPerformanceSupplierReport = new ItemType(
+    'deliveryPerformanceSupplierReport',
+    'DELIVERY_PERFORMANCE_SUPPLIER_REPORT',
+    '/purchasing/reports/delivery-performance-supplier/report'
+);
+
+export const deliveryPerformanceDetailReport = new ItemType(
+    'deliveryPerformanceDetailReport',
+    'DELIVERY_PERFORMANCE_DETAIL_REPORT',
+    '/purchasing/reports/delivery-performance-details/report'
+);

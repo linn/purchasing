@@ -132,6 +132,8 @@
             }
 
             var runLog = this.runLogRepository.FindBy(a => a.JobRef == jobRef);
+            partNumbers = partNumbers?.ToList();
+            var partsSelected = partNumbers;
 
             switch (partSelector)
             {
@@ -261,7 +263,7 @@
                                  PartSelectorOption = partSelector,
                                  StockLevelOption = stockLevelOption,
                                  OrderByOption = orderBy,
-                                 PartNumbersOption = partNumbers,
+                                 PartNumbersOption = partsSelected,
                                  PartOption = partOption,
                                  StockCategoryNameOption = stockCategoryName,
                                  SupplierIdOption = supplierId,
