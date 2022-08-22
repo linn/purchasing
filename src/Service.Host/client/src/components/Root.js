@@ -381,6 +381,7 @@ const Root = ({ store }) => (
                                     component={ForecastOrdersReport}
                                 />
                                 <Route
+                                    exact
                                     path="/purchasing/reports/delivery-performance-summary"
                                     component={DeliveryPerformanceSummary}
                                 />
