@@ -21,6 +21,8 @@ import SuppliersSearch from './supplierUtility/SuppliersSearch';
 import OrdersByPartOptions from './reports/OrdersByPartOptions';
 import SpendBySupplierOptions from './reports/SpendBySupplierOptions';
 import SpendBySupplier from './reports/SpendBySupplier';
+import SpendBySupplierByDateRangeOptions from './reports/SpendBySupplierByDateRangeOptions';
+import SpendBySupplierByDateRange from './reports/SpendBySupplierByDateRange';
 import Supplier from './supplierUtility/Supplier';
 import AddressUtility from './AddressUtility';
 import SuppliersWithUnacknowledgedOrders from './reports/SuppliersWithUnacknowledgedOrders';
@@ -59,6 +61,7 @@ import AutomaticPurchaseOrderSuggestions from './AutomaticPurchaseOrderSuggestio
 import AutomaticPurchaseOrders from './AutomaticPurchaseOrders';
 import SupplierLeadTimesReport from './reports/SupplierLeadTimesReport';
 import SupplierLeadTimesReportOptions from './reports/SupplierLeadTimesReportOptions';
+import ForecastOrdersReport from './reports/ForecastOrdersReports';
 import DeliveryPerformanceSummary from './reports/DeliveryPerformanceSummary';
 import DeliveryPerformanceSummaryReport from './reports/DeliveryPerformanceSummaryReport';
 import DeliveryPerformanceSupplierReport from './reports/DeliveryPerformanceSupplierReport';
@@ -158,6 +161,16 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/reports/spend-by-supplier/report"
                                     component={SpendBySupplier}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/spend-by-supplier-by-date-range"
+                                    component={SpendBySupplierByDateRangeOptions}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/spend-by-supplier-by-date-range/report"
+                                    component={SpendBySupplierByDateRange}
                                 />
                                 <Route
                                     exact
@@ -364,6 +377,10 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
+                                    path="/purchasing/reports/weekly-forecast-orders"
+                                    component={ForecastOrdersReport}
+                                />
+                                <Route
                                     path="/purchasing/reports/delivery-performance-summary"
                                     component={DeliveryPerformanceSummary}
                                 />

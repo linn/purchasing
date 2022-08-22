@@ -304,6 +304,12 @@ export const automaticPurchaseOrder = new ItemType(
     '/purchasing/automatic-purchase-orders'
 );
 
+export const sendPurchaseOrderSupplierAssEmail = new ItemType(
+    'sendPurchaseOrderSupplierAssEmail',
+    'SEND_PURCHASE_ORDER_SUPP_ASS_EMAIL',
+    '/purchasing/purchase-orders/email-supplier-ass'
+);
+
 export const exchangeRates = new ItemType(
     'exchangeRates',
     'EXCHANGE_RATES',

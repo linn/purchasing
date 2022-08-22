@@ -39,7 +39,7 @@
             this.MockPurchaseOrderRepository.FindById(this.orderNumber).Returns(
                 new PurchaseOrder
                     {
-                        OrderNumber = 600179, OverbookQty = 1, Supplier = new Supplier { SupplierId = 1224 }
+                        OrderNumber = 600179, OverbookQty = 1, Supplier = new Supplier { SupplierId = 1224 }, Details = new List<PurchaseOrderDetail>()
                     });
 
             this.Response = this.Client.Get(

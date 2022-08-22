@@ -20,12 +20,10 @@
             this.reportingHelper = reportingHelper;
         }
 
-
         public ResultsModel GetLeadTimesBySupplier(int supplier)
         {
             var results = this.leadTimesEntryView.FilterBy(
-                    x => (x.SupplierId == supplier)).OrderBy(s => s.PartNumber)
-                .ToList();
+                    x => (x.SupplierId == supplier)).OrderBy(s => s.PartNumber);
 
             var reportLayout = new SimpleGridLayout(
                 this.reportingHelper,
@@ -37,13 +35,13 @@
 
             foreach (var result in results)
             {
-                var rowId = $"{result.PartNumber}/{result.SupplierId}/{result.LeadTimeWeeks}";
+                var rowId = $"{result.PartNumber}";
                         values.Add(
                             new CalculationValueModel
                             {
                                 RowId = rowId,
                                 ColumnId = "PartNumber",
-                                TextDisplay = $"{result.PartNumber}"
+                                TextDisplay = result.PartNumber
                             });
                         values.Add(
                             new CalculationValueModel
@@ -52,8 +50,9 @@
                                 ColumnId = "LeadTime",
                                 Value = result.LeadTimeWeeks
                             });
-                reportLayout.SetGridData(values);
             }
+
+            reportLayout.SetGridData(values);
 
             reportLayout.ReportTitle = $"Lead Times for Supplier : {supplier}";
             var model = reportLayout.GetResultsModel();

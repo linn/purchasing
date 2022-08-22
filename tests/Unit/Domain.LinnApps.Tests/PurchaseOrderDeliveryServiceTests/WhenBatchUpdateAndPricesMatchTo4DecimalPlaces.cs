@@ -42,7 +42,7 @@
                                            Qty = 100,
                                            UnitPrice = 0.01112m,
                                            NewDateAdvised = DateTime.Today
-                                       },
+                                       }
                                };
 
             this.Repository.FilterBy(

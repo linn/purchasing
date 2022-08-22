@@ -7,6 +7,7 @@
     using FluentAssertions.Extensions;
 
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -42,6 +43,7 @@
                                                            OurQty = 12m,
                                                            OrderQty = 12m,
                                                            PartNumber = "macbookz",
+                                                           Part = new Part {PartNumber = "macbookz", BomType = "C"},
                                                            OurUnitPriceCurrency = 120m,
                                                            OrderUnitPriceCurrency = 120m,
                                                            BaseOurUnitPrice = 100m,

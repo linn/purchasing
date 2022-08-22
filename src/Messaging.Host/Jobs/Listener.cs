@@ -4,7 +4,8 @@
     using System.Threading.Tasks;
 
     using Linn.Common.Logging;
-    using Linn.Purchasing.Messaging.Handlers;
+    using Linn.Common.Messaging.RabbitMQ.Configuration;
+    using Linn.Common.Messaging.RabbitMQ.Handlers;
     using Linn.Purchasing.Messaging.Messages;
 
     using Microsoft.Extensions.Hosting;
@@ -26,6 +27,8 @@
 
         public Listener(
             Handler<EmailMrOrderBookMessage> emailOrderBookMessageHandler,
+            Handler<EmailWeeklyForecastReportMessage> emailWeeklyForecastReportMessageHandler,
+
             EventingBasicConsumer consumer,
             ChannelConfiguration channelConfiguration,
             ILog logger)
@@ -43,6 +46,8 @@
                 {
                     EmailMrOrderBookMessage.RoutingKey => emailOrderBookMessageHandler.Handle(
                         new EmailMrOrderBookMessage(ea)),
+                    EmailWeeklyForecastReportMessage.RoutingKey => emailWeeklyForecastReportMessageHandler.Handle(
+                        new EmailWeeklyForecastReportMessage(ea)),
                     _ => false
                 };
 

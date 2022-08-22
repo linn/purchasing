@@ -11,7 +11,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddPersistence();
         services.AddRabbitConfiguration();
         services.AddMessageDispatchers();
-        services.AddHostedService<EmailOrderBookScheduler>();
+        services.AddHostedService<SupplierAutoEmailsScheduler>();
     })
     .Build();
 

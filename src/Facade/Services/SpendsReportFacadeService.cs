@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
+    using System;
     using System.Collections.Generic;
 
     using Linn.Common.Facade;
@@ -8,6 +9,7 @@
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps.Reports;
+    using Linn.Purchasing.Resources.RequestResources;
 
     public class SpendsReportFacadeService : ISpendsReportFacadeService
     {
@@ -33,6 +35,25 @@
             var results = this.domainService.GetSpendBySupplierReport(vendorManagerId);
 
             var returnResource = this.resultsModelResourceBuilder.Build(results);
+
+            return new SuccessResult<ReportReturnResource>(returnResource);
+        }
+
+        public IEnumerable<IEnumerable<string>> GetSpendBySupplierByDateRangeReportExport(SpendBySupplierByDateRangeReportRequestResource options)
+        {
+            return this.domainService.GetSpendBySupplierByDateRangeReport(
+                options.FromDate,
+                options.ToDate,
+                options.VendorManager).ConvertToCsvList();
+        }
+
+        public IResult<ReportReturnResource> GetSpendBySupplierByDateRangeReport(SpendBySupplierByDateRangeReportRequestResource options)
+        {
+            var returnResource = this.resultsModelResourceBuilder.Build(
+                this.domainService.GetSpendBySupplierByDateRangeReport(
+                    options.FromDate,
+                    options.ToDate,
+                    options.VendorManager));
 
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
