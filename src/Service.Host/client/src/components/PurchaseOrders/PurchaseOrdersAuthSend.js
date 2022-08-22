@@ -400,6 +400,7 @@ function PurchaseOrdersAuthSend() {
                         columns={orderColumns}
                         density="compact"
                         rowHeight={34}
+                        columnBuffer={9}
                         autoHeight
                         checkboxSelection
                         onSelectionModelChange={handleSelectionModelChange}
