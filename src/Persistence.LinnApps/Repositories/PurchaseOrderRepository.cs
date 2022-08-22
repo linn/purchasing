@@ -24,8 +24,11 @@
             return this.serviceDbContext.PurchaseOrders.Where(expression)
                 .Include(o => o.Supplier)
                 .Include(o => o.Details).ThenInclude(d => d.Part)
-                .Include(o => o.Details).ThenInclude(d => d.PurchaseDeliveries).Include(x => x.Supplier)
+                .Include(o => o.Details).ThenInclude(d => d.PurchaseDeliveries)
+                .Include(x => x.Supplier)
                 .Include(x => x.Currency)
+                .Include(x => x.AuthorisedBy)
+                .Include(x => x.EnteredBy)
                 .OrderByDescending(x => x.OrderNumber)
                 .AsNoTracking();
         }

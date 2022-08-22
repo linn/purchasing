@@ -116,7 +116,7 @@
             int? orderNumber,
             int? lineNumber,
             int userNumber,
-            decimal totalValueBase,
+            decimal? totalValueBase,
             string part,
             string documentType)
         {

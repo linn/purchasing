@@ -15,6 +15,7 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.RequestResources;
     using Linn.Purchasing.Resources.SearchResources;
 
     public class PurchaseOrderFacadeService :
@@ -163,6 +164,39 @@
                 (PurchaseOrderResource)this.resourceBuilder.Build(generatedOrder, privileges));
         }
 
+        public IResult<ProcessResultResource> AuthorisePurchaseOrders(
+            PurchaseOrdersProcessRequestResource resource,
+            IEnumerable<string> privileges,
+            int userId)
+        {
+            var result = this.domainService.AuthoriseMultiplePurchaseOrders(resource.Orders.ToList(), userId);
+            if (!result.Success)
+            {
+                return new BadRequestResult<ProcessResultResource>(result.Message);
+            }
+
+            this.transactionManager.Commit();
+            return new SuccessResult<ProcessResultResource>(new ProcessResultResource(result.Success, result.Message));
+        }
+
+        public IResult<ProcessResultResource> EmailOrderPdfs(
+            PurchaseOrdersProcessRequestResource resource,
+            IEnumerable<string> privileges,
+            int userId)
+        {
+            var result = this.domainService.EmailMultiplePurchaseOrders(
+                resource.Orders.ToList(),
+                userId,
+                resource.CopySelf == "true");
+            if (!result.Success)
+            {
+                return new BadRequestResult<ProcessResultResource>(result.Message);
+            }
+
+            this.transactionManager.Commit();
+            return new SuccessResult<ProcessResultResource>(new ProcessResultResource(result.Success, result.Message));
+        }
+
         public async Task<string> GetOrderAsHtml(int orderNumber)
         {
             var order = this.orderRepository.FindById(orderNumber);
@@ -193,6 +227,11 @@
         protected override Expression<Func<PurchaseOrder, bool>> FilterExpression(
             PurchaseOrderSearchResource searchResource)
         {
+            if (!string.IsNullOrEmpty(searchResource.StartDate))
+            {
+                return a => a.OrderDate >= DateTime.Parse(searchResource.StartDate) && a.OrderDate <= DateTime.Parse(searchResource.EndDate);
+            }
+
             return x => x.OrderNumber.ToString().Contains(searchResource.OrderNumber);
         }
 

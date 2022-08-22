@@ -98,6 +98,8 @@
                                    : null,
                            SupplierContactEmail = entity.Supplier.SupplierContacts?.FirstOrDefault(c => c.IsMainOrderContact == "Y")?.EmailAddress,
                            SupplierContactPhone = entity.Supplier.SupplierContacts?.FirstOrDefault(c => c.IsMainOrderContact == "Y")?.PhoneNumber,
+                           BaseOrderNetTotal = entity.BaseOrderNetTotal,
+                           OrderNetTotal = entity.OrderNetTotal,
                            Links = this.BuildLinks(entity, claims).ToArray()
                        };
         }

@@ -30,11 +30,7 @@
     {
         protected HttpClient Client { get; set; }
 
-        protected IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource> CurrencyService
-        {
-            get;
-            private set;
-        }
+        protected IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource> CurrencyService { get; private set; }
 
         protected IFacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource, LinnDeliveryAddressResource> DeliveryAddressService { get; private set; }
 
@@ -60,17 +56,9 @@
 
         protected IPurchaseOrderFacadeService PurchaseOrderFacadeService { get; private set; }
 
-        protected IPurchaseOrderReqFacadeService PurchaseOrderReqFacadeService { get; private set; }
-
-        protected IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource> PurchaseOrderReqStateFacadeService { get; private set; }
-
         protected HttpResponseMessage Response { get; set; }
 
-        protected IFacadeResourceService<Tariff, int, TariffResource, TariffResource> TariffService
-        {
-            get;
-            private set;
-        }
+        protected IFacadeResourceService<Tariff, int, TariffResource, TariffResource> TariffService { get; private set; }
 
         protected ITransactionManager TransactionManager { get; private set; }
 
@@ -99,8 +87,6 @@
             this.PackagingGroupService = Substitute
                 .For<IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource>>();
             this.TariffService = Substitute.For<IFacadeResourceService<Tariff, int, TariffResource, TariffResource>>();
-            this.PurchaseOrderReqStateFacadeService = Substitute
-                .For<IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource>>();
             this.MockReqDomainService = Substitute.For<IPurchaseOrderReqService>();
             this.MockDomainService = Substitute.For<IPurchaseOrderService>();
 
@@ -114,13 +100,6 @@
             this.MockAuthService = Substitute.For<IAuthorisationService>();
             this.MockTemplateEngine = Substitute.For<ITemplateEngine>();
             this.MockFileReader = Substitute.For<IFileReader>();
-
-            this.PurchaseOrderReqFacadeService = new PurchaseOrderReqFacadeService(
-                this.MockPurchaseOrderReqRepository,
-                this.TransactionManager,
-                new PurchaseOrderReqResourceBuilder(this.MockAuthService),
-                this.MockReqDomainService,
-                this.MockDatabaseService);
 
             var purchaseOrderResourceBuilder = new PurchaseOrderResourceBuilder(
                 this.MockAuthService,
@@ -148,14 +127,12 @@
                     {
                         services.AddSingleton(this.TransactionManager);
                         services.AddSingleton(this.PurchaseOrderFacadeService);
-                        services.AddSingleton(this.PurchaseOrderReqFacadeService);
                         services.AddSingleton(this.CurrencyService);
                         services.AddSingleton(this.OrderMethodService);
                         services.AddSingleton(this.DeliveryAddressService);
                         services.AddSingleton(this.UnitsOfMeasureService);
                         services.AddSingleton(this.PackagingGroupService);
                         services.AddSingleton(this.TariffService);
-                        services.AddSingleton(this.PurchaseOrderReqStateFacadeService);
                         services.AddSingleton(this.Log);
                         services.AddHandlers();
                     },

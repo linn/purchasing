@@ -79,5 +79,9 @@
         public Address OrderAddress { get; set; }
 
         public decimal? DamagesPercent { get; set; }
+
+        public decimal OrderNetTotal { get; set; }
+        
+        public decimal BaseOrderNetTotal { get; set; }
     }
 }

@@ -67,6 +67,7 @@ import DeliveryPerformanceSummaryReport from './reports/DeliveryPerformanceSumma
 import DeliveryPerformanceSupplierReport from './reports/DeliveryPerformanceSupplierReport';
 import DeliveryPerformanceDetailReport from './reports/DeliveryPerformanceDetailReport';
 import CreatePurchaseOrderUt from './PurchaseOrders/CreatePurchaseOrderUt';
+import PurchaseOrdersAuthSend from './PurchaseOrders/PurchaseOrdersAuthSend';
 
 const Root = ({ store }) => (
     <div>
@@ -211,6 +212,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/purchase-orders/"
                                     component={PurchaseOrdersSearch}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/purchase-orders/auth-or-send"
+                                    component={PurchaseOrdersAuthSend}
                                 />
                                 <Route
                                     path="/purchasing/purchase-orders/reqs/create"
