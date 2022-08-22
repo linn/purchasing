@@ -5,7 +5,6 @@
     using FluentAssertions;
 
     using Linn.Purchasing.Domain.LinnApps;
-    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -15,15 +14,17 @@
 
     public class WhenSendingSupplierAssEmail : ContextBase
     {
+        private int orderNumber;
+
         [SetUp]
         public void SetUp()
         {
-            this.MockDomainService.SendSupplierAssemblyEmail(
-                Arg.Any<PurchaseOrder>(),
-                Arg.Any<int>()).Returns(new ProcessResult(true, "email sent"));
+            this.orderNumber = 158962;
+            this.MockDomainService.SendSupplierAssemblyEmail(this.orderNumber)
+                .Returns(new ProcessResult(true, "email sent"));
 
             this.Response = this.Client.Post(
-                "/purchasing/purchase-orders/email-supplier-ass?orderNumber=158962",
+                $"/purchasing/purchase-orders/email-supplier-ass?orderNumber={this.orderNumber}",
                 with => { with.Accept("application/json"); }).Result;
         }
 

@@ -194,8 +194,14 @@
             return new ProcessResult(true, $"Email sent for purchase order {orderNumber} to {emailAddress}");
         }
 
-        public ProcessResult SendSupplierAssemblyEmail(PurchaseOrder order, int orderNumber)
+        public ProcessResult SendSupplierAssemblyEmail(int orderNumber)
         {
+            var order = this.purchaseOrderRepository.FindById(orderNumber);
+            if (order is null)
+            {
+                throw new ItemNotFoundException($"Could not find order {orderNumber}");
+            }
+
             var emailBody = $"Purchasing have raised order {orderNumber} for {order.Supplier.Name}.\n"
                             + $"The following parts will need supplier kits\n";
 

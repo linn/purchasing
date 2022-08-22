@@ -11,4 +11,3 @@
         ProcessResult SendEdiOrder(int supplierId, string altEmail, string additionalEmail, string additionalText, bool test);
     }
 }
-
