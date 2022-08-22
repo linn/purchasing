@@ -71,7 +71,7 @@
                 .Returns(new MiniOrder { OrderNumber = this.key.OrderNumber });
             this.MiniOrderDeliveryRepository.FindBy(Arg.Any<Expression<Func<MiniOrderDelivery, bool>>>())
                 .Returns(new MiniOrderDelivery { OrderNumber = this.key.OrderNumber });
-            this.result = this.Sut.BatchUpdateDeliveries(this.changes, new List<string>());
+            this.result = this.Sut.BatchUploadDeliveries(this.changes, new List<string>());
         }
 
         [Test]

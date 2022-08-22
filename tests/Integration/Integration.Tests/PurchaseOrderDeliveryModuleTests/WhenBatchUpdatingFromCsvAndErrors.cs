@@ -20,7 +20,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.MockDomainService.BatchUpdateDeliveries(
+            this.MockDomainService.BatchUploadDeliveries(
                 Arg.Any<IEnumerable<PurchaseOrderDeliveryUpdate>>(),
                 Arg.Any<IEnumerable<string>>()).Returns(new BatchUpdateProcessResult
                                                              {

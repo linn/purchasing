@@ -21,7 +21,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.MockDomainService.BatchUpdateDeliveries(
+            this.MockDomainService.BatchUploadDeliveries(
                 Arg.Any<IEnumerable<PurchaseOrderDeliveryUpdate>>(),
                 Arg.Any<IEnumerable<string>>()).Returns(new BatchUpdateProcessResult
                                                              {
@@ -47,7 +47,7 @@
         [Test]
         public void ShouldPassDefaults()
         {
-            this.MockDomainService.Received().BatchUpdateDeliveries(
+            this.MockDomainService.Received().BatchUploadDeliveries(
                 Arg.Is<IEnumerable<PurchaseOrderDeliveryUpdate>>(
                     l => l.First().Key.OrderNumber.Equals(1)
                     && l.First().Key.DeliverySequence.Equals(1) // seq defaults to 1

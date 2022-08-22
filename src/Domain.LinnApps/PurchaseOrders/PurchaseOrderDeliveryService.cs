@@ -148,7 +148,7 @@
             return entity;
         }
 
-        public BatchUpdateProcessResult BatchUpdateDeliveries(
+        public BatchUpdateProcessResult BatchUploadDeliveries(
             IEnumerable<PurchaseOrderDeliveryUpdate> changes,
             IEnumerable<string> privileges)
         {
@@ -277,6 +277,70 @@
                        {
                            Success = true, Message = $"{successCount} orders updated successfully."
                        };
+        }
+
+        public BatchUpdateProcessResult BatchUpdateDeliveries(
+           IEnumerable<PurchaseOrderDeliveryUpdate> changes,
+           IEnumerable<string> privileges)
+        {
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
+            {
+                throw new UnauthorisedActionException("You are not authorised to acknowledge orders.");
+            }
+
+            this.CheckOkToRaiseOrders();
+
+            var successCount = 0;
+
+            var errors = new List<Error>();
+
+            var purchaseOrderDeliveryUpdates = changes as PurchaseOrderDeliveryUpdate[] ?? changes.ToArray();
+
+            var orderLineGroups = purchaseOrderDeliveryUpdates
+                .GroupBy(x => new { x.Key.OrderNumber, x.Key.OrderLine })
+                .Select(group => new
+                {
+                    group.Key.OrderNumber,
+                    group.Key.OrderLine,
+                    DeliveryUpdates = group
+                });
+
+            foreach (var group in orderLineGroups)
+            {
+                foreach (var u in group.DeliveryUpdates)
+                {
+                    var deliveryToUpdate = this.repository.FindBy(x =>
+                        x.OrderNumber == u.Key.OrderNumber
+                        && x.OrderLine == u.Key.OrderLine
+                        && x.DeliverySeq == u.Key.DeliverySequence);
+
+                    if (!string.IsNullOrEmpty(u.Comment))
+                    {
+                        deliveryToUpdate.SupplierConfirmationComment = u.Comment;
+                    }
+
+                    if (!string.IsNullOrEmpty(u.AvailableAtSupplier))
+                    {
+                        deliveryToUpdate.AvailableAtSupplier = u.AvailableAtSupplier;
+                    }
+
+                    deliveryToUpdate.DateAdvised = u.NewDateAdvised;
+                    deliveryToUpdate.RescheduleReason = u.NewReason;
+                    this.UpdateMiniOrder(
+                        u.Key.OrderNumber,
+                        u.NewDateAdvised,
+                        null,
+                        null,
+                        u.Comment);
+                    successCount++;
+                }
+            }
+
+            return new BatchUpdateProcessResult
+            {
+                Success = true,
+                Message = $"{successCount} records updated successfully."
+            };
         }
 
         public IEnumerable<PurchaseOrderDelivery> UpdateDeliveriesForOrderLine(

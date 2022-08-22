@@ -142,7 +142,7 @@
                                     });
                 }
 
-                var result = this.domainService.BatchUpdateDeliveries(changes, privileges);
+                var result = this.domainService.BatchUploadDeliveries(changes, privileges);
                 this.transactionManager.Commit();
 
                 changes.ForEach(u => this.domainService
