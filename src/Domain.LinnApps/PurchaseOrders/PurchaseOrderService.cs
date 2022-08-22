@@ -53,8 +53,8 @@
             IRepository<Supplier, int> supplierRepository,
             IRepository<LinnDeliveryAddress, int> linnDeliveryAddressRepository,
             IPurchaseOrdersPack purchaseOrdersPack,
-            ICurrencyPack currencyPack,
-			ISupplierKitService supplierKitService)
+            ICurrencyPack currencyPack, 
+            ISupplierKitService supplierKitService)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;

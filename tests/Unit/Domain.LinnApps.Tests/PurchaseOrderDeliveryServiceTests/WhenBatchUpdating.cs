@@ -50,14 +50,14 @@
                                        {
                                            Key = this.key1,
                                            Qty = 100,
-                                           UnitPrice = 0.01m,
+                                           UnitPrice = 0.03m,
                                            NewDateAdvised = DateTime.Today
                                        },
                                    new PurchaseOrderDeliveryUpdate
                                        {
                                            Key = this.key12,
                                            Qty = 200,
-                                           UnitPrice = 0.02m,
+                                           UnitPrice = 0.03m,
                                            NewDateAdvised = DateTime.Today
                                        },
                                    new PurchaseOrderDeliveryUpdate
@@ -83,7 +83,7 @@
                                                           OrderLine = this.key1.OrderLine,
                                                           DeliverySeq = this.key1.DeliverySequence,
                                                           OurDeliveryQty = 100,
-                                                          OrderUnitPriceCurrency = 0.01m
+                                                          OrderUnitPriceCurrency = 0.03m
                                                       },
                                                   new PurchaseOrderDelivery
                                                       {
@@ -91,7 +91,7 @@
                                                           OrderLine = this.key1.OrderLine,
                                                           DeliverySeq = this.key12.DeliverySequence,
                                                           OurDeliveryQty = 200,
-                                                          OrderUnitPriceCurrency = 0.02m
+                                                          OrderUnitPriceCurrency = 0.03m
                                                       },
                                                   new PurchaseOrderDelivery
                                                       {
@@ -113,6 +113,30 @@
                                                            OrderUnitPriceCurrency = 0.01m
                                                        }
                                                }.AsQueryable();
+
+            this.PurchaseOrderRepository.FindById(this.key1.OrderNumber)
+                .Returns(new PurchaseOrder
+                             {
+                                 Details = new List<PurchaseOrderDetail>
+                                               {
+                                                   new PurchaseOrderDetail
+                                                       {
+                                                           OrderQty = 600, Line = 1, OrderUnitPriceCurrency = 0.03m
+                                                       }
+                                               }
+                             });
+            this.PurchaseOrderRepository.FindById(this.key2.OrderNumber)
+                .Returns(new PurchaseOrder
+                             {
+                                 Details = new List<PurchaseOrderDetail>
+                                               {
+                                                   new PurchaseOrderDetail
+                                                       {
+                                                           OrderQty = 200, Line = 1, OrderUnitPriceCurrency = 0.01m
+                                                       }
+                                               }
+                             });
+
             this.Repository.FilterBy(
                     Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
                 .Returns(
@@ -138,7 +162,7 @@
         public void ShouldReturnSuccessResult()
         {
             this.result.Success.Should().BeTrue();
-            this.result.Message.Should().Be("4 records updated successfully.");
+            this.result.Message.Should().Be("2 orders updated successfully.");
             this.result.Errors.Should().BeNullOrEmpty();
         }
     }

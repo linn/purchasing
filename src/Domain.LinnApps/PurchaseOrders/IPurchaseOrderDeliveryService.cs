@@ -31,6 +31,11 @@
 
         void UpdateMiniOrderDeliveries(IEnumerable<PurchaseOrderDelivery> updated);
 
-        void UpdateMiniOrderDelivery(int orderNumber, int seq, DateTime? newDateAdvised, string availableAtSupplier);
+        void UpdateMiniOrderDelivery(
+            int orderNumber, 
+            int seq, 
+            DateTime? newDateAdvised, 
+            string availableAtSupplier, 
+            decimal qty);
     }
 }
