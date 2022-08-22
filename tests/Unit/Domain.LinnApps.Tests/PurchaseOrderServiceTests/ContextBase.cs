@@ -29,6 +29,8 @@
 
         protected IPdfService PdfService { get; private set; }
 
+        protected ISupplierKitService SupplierKitService { get; private set; }
+
         protected IPurchaseLedgerPack PurchaseLedgerPack { get; private set; }
 
         protected IPurchaseOrdersPack PurchaseOrdersPack { get; private set; }
@@ -53,6 +55,7 @@
             this.EmailService = Substitute.For<IEmailService>();
             this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
             this.MiniOrderRepository = Substitute.For<IRepository<MiniOrder, int>>();
+            this.SupplierKitService = Substitute.For<ISupplierKitService>();
             this.SupplierRepository = Substitute.For<IRepository<Supplier, int>>();
             this.LinnDeliveryAddressRepository = Substitute.For<IRepository<LinnDeliveryAddress, int>>();
             this.CurrencyPack = Substitute.For<ICurrencyPack>();
@@ -70,7 +73,8 @@
                 this.SupplierRepository,
                 this.LinnDeliveryAddressRepository,
                 this.PurchaseOrdersPack,
-                this.CurrencyPack,
+                this.CurrencyPack, 
+                this.SupplierKitService,
                 this.PurchaseOrderRepository);
         }
     }

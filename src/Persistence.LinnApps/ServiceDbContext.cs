@@ -3,6 +3,7 @@
     using Linn.Common.Configuration;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
@@ -162,6 +163,8 @@
         
         public DbSet<NominalAccount> NominalAccounts { get; set; }
 
+        public DbSet<BomDetail> BomDetails { get; set; }
+
         public DbSet<SuppliersLeadTimesEntry> SuppliersLeadTimesEntries { get; set; }
 
         public DbSet<WeeklyForecastPart> WeeklyForecastParts { get; set; }
@@ -257,6 +260,7 @@
             this.BuildAutomaticPurchaseOrders(builder);
             this.BuildAutomaticPurchaseOrderDetails(builder);
             this.BuildAutomaticPurchaseOrderSuggestions(builder);
+            this.BuildBomDetails(builder);
             this.BuildSupplierAutoEmails(builder);
             this.BuildSuppliersLeadTime(builder);
             this.BuildWeeklyForecastParts(builder);
@@ -427,7 +431,8 @@
             entity.Property(a => a.Description).HasColumnName("DESCRIPTION").HasMaxLength(50);
             entity.Property(a => a.StockControlled).HasColumnName("STOCK_CONTROLLED").HasMaxLength(1);
             entity.Property(a => a.Id).HasColumnName("BRIDGE_ID");
-            entity.Property(a => a.BomType).HasColumnName("BOM_TYPE");
+            entity.Property(a => a.BomType).HasColumnName("BOM_TYPE").HasMaxLength(1);
+            entity.Property(a => a.LinnProduced).HasColumnName("LINN_PRODUCED").HasMaxLength(1);
             entity.Property(a => a.BaseUnitPrice).HasColumnName("BASE_UNIT_PRICE");
             entity.Property(a => a.MaterialPrice).HasColumnName("MATERIAL_PRICE");
             entity.Property(a => a.LabourPrice).HasColumnName("LABOUR_PRICE");
@@ -664,6 +669,7 @@
             entity.HasOne(x => x.OrderPosting).WithOne().HasForeignKey<PurchaseOrderPosting>(p => new { p.OrderNumber, p.LineNumber });
             entity.Property(o => o.OrderConversionFactor).HasColumnName("ORDER_CONV_FACTOR");
             entity.Property(o => o.OrderQty).HasColumnName("ORDER_QTY");
+            entity.Property(o => o.IssuePartsToSupplier).HasColumnName("ISSUE_PARTS_TO_SUPPLIER").HasMaxLength(1);
         }
 
         private void BuildPurchaseOrderDeliveries(ModelBuilder builder)
@@ -1658,6 +1664,24 @@
             entity.Property(a => a.Planner).HasColumnName("PLANNER");
             entity.Property(a => a.JobRef).HasColumnName("JOBREF").HasColumnType("VARCHAR2").HasMaxLength(6);
         }
+
+        private void BuildBomDetails(ModelBuilder builder)
+        {
+            var entity = builder.Entity<BomDetail>().ToTable("BOM_DETAIL_VIEW").HasNoKey();
+            entity.HasKey(a => a.DetailId);
+            entity.Property(a => a.DetailId).HasColumnName("DETAIL_ID");
+            entity.Property(a => a.BomName).HasColumnName("BOM_NAME").HasColumnType("VARCHAR2").HasMaxLength(14);
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2").HasMaxLength(14);
+            entity.Property(a => a.BomId).HasColumnName("BOM_ID");
+            entity.Property(a => a.Qty).HasColumnName("QTY");
+            entity.Property(a => a.GenerateRequirement).HasColumnName("GENERATE_REQUIREMENT").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(a => a.ChangeState).HasColumnName("CHANGE_STATE").HasColumnType("VARCHAR2").HasMaxLength(6);
+            entity.Property(a => a.AddChangeId).HasColumnName("ADD_CHANGE_ID");
+            entity.Property(a => a.AddReplaceSeq).HasColumnName("ADD_REPLACE_SEQ");
+            entity.Property(a => a.DeleteChangeId).HasColumnName("DELETE_CHANGE_ID");
+            entity.Property(a => a.DeleteReplaceSeq).HasColumnName("DELETE_REPLACE_SEQ");
+            entity.HasOne(a => a.Part).WithMany().HasForeignKey(a => a.PartNumber);
+		}
         
         private void BuildSupplierAutoEmails(ModelBuilder builder)
         {

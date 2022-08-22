@@ -41,6 +41,7 @@
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}", this.GetPurchaseOrder);
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}/html", this.GetPurchaseOrderHtml);
             app.MapPost("/purchasing/purchase-orders/email-pdf", this.EmailOrderPdf);
+            app.MapPost("/purchasing/purchase-orders/email-supplier-ass", this.EmailSupplierAss);
             app.MapGet("/purchasing/purchase-orders/auth-or-send", this.GetApp);
             app.MapPost("/purchasing/purchase-orders/authorise-multiple", this.AuthorisePurchaseOrders);
             app.MapPost("/purchasing/purchase-orders/email-multiple", this.EmailPurchaseOrders);
@@ -176,6 +177,18 @@
                 emailAddress,
                 bcc,
                 req.HttpContext.User.GetEmployeeNumber());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task EmailSupplierAss(
+            HttpRequest req,
+            HttpResponse res,
+            int orderNumber,
+            IPurchaseOrderFacadeService purchaseOrderFacadeService)
+        {
+            var result = purchaseOrderFacadeService.EmailSupplierAss(
+                             orderNumber);
 
             await res.Negotiate(result);
         }
