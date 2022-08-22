@@ -193,6 +193,7 @@
                 .AddTransient<IShortagesReportService, ShortagesReportService>()
                 .AddTransient<IMrOrderBookReportService, MrOrderBookReportService>()
                 .AddTransient<IAutomaticPurchaseOrderService, AutomaticPurchaseOrderService>()
+                .AddTransient<ISupplierKitService, SupplierKitService>()
                 .AddTransient<ILeadTimesReportService, LeadTimesReportService>()
                 .AddTransient<ISupplierAutoEmailsMailer, SupplierAutoEmailsMailer>()
                 .AddTransient<IForecastOrdersReportService, ForecastOrdersReportService>()

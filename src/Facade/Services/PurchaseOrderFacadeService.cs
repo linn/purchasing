@@ -97,6 +97,26 @@
             }
         }
 
+        public IResult<ProcessResultResource> EmailSupplierAss(int orderNumber)
+        {
+            try
+            {
+                var order = this.orderRepository.FindById(orderNumber);
+
+                var emailResult = this.domainService.SendSupplierAssemblyEmail(order, orderNumber);
+
+                this.logger.Write(LoggingLevel.Info, new List<LoggingProperty>(), emailResult.Message);
+
+                return new SuccessResult<ProcessResultResource>(
+                    new ProcessResultResource(emailResult.Success, emailResult.Message));
+            }
+            catch (Exception ex)
+            {
+                this.logger.Write(LoggingLevel.Error, new List<LoggingProperty>(), ex.Message);
+                return new BadRequestResult<ProcessResultResource>(ex.Message);
+            }
+        }
+
         public IResult<PurchaseOrderResource> FillOutOrderFromSupplierId(
             PurchaseOrderResource resource,
             IEnumerable<string> privileges,

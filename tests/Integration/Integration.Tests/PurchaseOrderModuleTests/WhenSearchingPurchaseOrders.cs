@@ -37,7 +37,8 @@
                                 OrderDate = 10.January(2021),
                                 Overbook = string.Empty,
                                 OverbookQty = 1,
-                                Supplier = new Supplier { SupplierId = 1224 }
+                                Supplier = new Supplier { SupplierId = 1224 },
+                                Details = new List<PurchaseOrderDetail>()
                             }
                     }.AsQueryable());
 

@@ -265,6 +265,10 @@ export const automaticPurchaseOrderSuggestionsActionTypes = makeActionTypes(
     false
 );
 
+export const sendPurchaseOrderSupplierAssActionTypes = makeProcessActionTypes(
+    itemTypes.sendPurchaseOrderSupplierAssEmail.actionType
+);
+
 export const supplierLeadTimesReportActionTypes = makeActionTypes(
     reportTypes.supplierLeadTimesReport.actionType,
     false

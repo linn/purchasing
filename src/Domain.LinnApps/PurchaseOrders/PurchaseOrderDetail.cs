@@ -73,5 +73,7 @@
         public decimal? VatTotalCurrency { get; set; }
 
         public decimal? OrderConversionFactor { get; set; }
+
+        public string IssuePartsToSupplier { get; set; }
     }
 }

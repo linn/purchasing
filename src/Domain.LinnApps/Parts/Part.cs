@@ -17,6 +17,8 @@
 
         public string BomType { get; set; }
 
+        public string LinnProduced { get; set; }
+
         public decimal? LabourPrice { get; set; }
 
         public decimal? MaterialPrice { get; set; }
@@ -32,5 +34,24 @@
         public IEnumerable<PurchaseOrderDetail> PurchaseOrderDetails { get; set; }
 
         public string OurUnitOfMeasure { get; set; }
+
+        public bool SupplierAssembly()
+        {
+            if (this.BomType == "A")
+            {
+                if (this.LinnProduced == "Y")
+                {
+                    return true;
+                }
+
+                if (this.PreferredSupplier?.SupplierId != 4415)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }
+

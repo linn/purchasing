@@ -24,6 +24,8 @@
 
         private readonly IEmailService emailService;
 
+        private readonly ISupplierKitService supplierKitService;
+
         private readonly IRepository<Employee, int> employeeRepository;
 
         private readonly IRepository<MiniOrder, int> miniOrderRepository;
@@ -51,7 +53,8 @@
             IRepository<Supplier, int> supplierRepository,
             IRepository<LinnDeliveryAddress, int> linnDeliveryAddressRepository,
             IPurchaseOrdersPack purchaseOrdersPack,
-            ICurrencyPack currencyPack)
+            ICurrencyPack currencyPack,
+			ISupplierKitService supplierKitService)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;
@@ -64,6 +67,7 @@
             this.supplierRepository = supplierRepository;
             this.linnDeliveryAddressRepository = linnDeliveryAddressRepository;
             this.currencyPack = currencyPack;
+            this.supplierKitService = supplierKitService;
         }
 
         public void AllowOverbook(
@@ -180,6 +184,40 @@
             miniOrder.SentByMethod = "EMAIL";
 
             return new ProcessResult(true, $"Email sent for purchase order {orderNumber} to {emailAddress}");
+        }
+
+        public ProcessResult SendSupplierAssemblyEmail(PurchaseOrder order, int orderNumber)
+        {
+            var emailBody = $"Purchasing have raised order {orderNumber} for {order.Supplier.Name}.\n"
+                            + $"The following parts will need supplier kits\n";
+
+            var kits = this.supplierKitService.GetSupplierKits(order, true);
+
+            foreach (var kit in kits)
+            {
+                emailBody += "\n" + $"{kit.Qty} x {kit.Part.PartNumber} {kit.Part.Description}"
+                             + "\n requires";
+                foreach (var detail in kit.Details)
+                {
+                    emailBody += "\n    " + $"{detail.Qty} x {detail.Part.PartNumber} {detail.Part.Description}";
+                }
+
+                emailBody += "\n";
+            }
+
+            this.emailService.SendEmail(
+                ConfigurationManager.Configuration["LOGISTICS_TO_ADDRESS"],
+                "Logistics",
+                null,
+                null,
+                ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
+                "Linn Purchasing",
+                $"Purchase Order {orderNumber}",
+                emailBody,
+                null,
+                null);
+
+            return new ProcessResult(true, $"Email sent for purchase order {orderNumber} to Logistics");
         }
 
         public PurchaseOrder UpdateOrder(PurchaseOrder current, PurchaseOrder updated, IEnumerable<string> privileges)
