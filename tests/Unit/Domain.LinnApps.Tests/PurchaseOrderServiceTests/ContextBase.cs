@@ -45,6 +45,8 @@
 
         protected IRepository<PurchaseOrder, int> PurchaseOrderRepository { get; private set; }
 
+        protected IHtmlTemplateService<PurchaseOrder> HtmlTemplateService { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -61,6 +63,7 @@
             this.CurrencyPack = Substitute.For<ICurrencyPack>();
             this.PurchaseOrdersPack = Substitute.For<IPurchaseOrdersPack>();
             this.PurchaseOrderRepository = Substitute.For<IRepository<PurchaseOrder, int>>();
+            this.HtmlTemplateService = Substitute.For<IHtmlTemplateService<PurchaseOrder>>();
 
             this.Sut = new PurchaseOrderService(
                 this.MockAuthService,
@@ -75,7 +78,8 @@
                 this.PurchaseOrdersPack,
                 this.CurrencyPack, 
                 this.SupplierKitService,
-                this.PurchaseOrderRepository);
+                this.PurchaseOrderRepository,
+                this.HtmlTemplateService);
         }
     }
 }

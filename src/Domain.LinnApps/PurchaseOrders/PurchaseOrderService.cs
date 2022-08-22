@@ -38,6 +38,8 @@
 
         private readonly IRepository<PurchaseOrder, int> purchaseOrderRepository;
 
+        private readonly IHtmlTemplateService<PurchaseOrder> purchaseOrderTemplateService;
+
         private readonly IPdfService pdfService;
 
         private readonly IPurchaseLedgerPack purchaseLedgerPack;
@@ -57,7 +59,8 @@
             IPurchaseOrdersPack purchaseOrdersPack,
             ICurrencyPack currencyPack,
             ISupplierKitService supplierKitService,
-            IRepository<PurchaseOrder, int> purchaseOrderRepository)
+            IRepository<PurchaseOrder, int> purchaseOrderRepository,
+            IHtmlTemplateService<PurchaseOrder> purchaseOrderTemplateService)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;
@@ -72,6 +75,7 @@
             this.currencyPack = currencyPack;
             this.supplierKitService = supplierKitService;
             this.purchaseOrderRepository = purchaseOrderRepository;
+            this.purchaseOrderTemplateService = purchaseOrderTemplateService;
         }
 
         public void AllowOverbook(
@@ -113,7 +117,7 @@
                                               ReasonCancelled = detail.Cancelled,
                                               ValueCancelled = detail.BaseDetailTotal
 
-                                              // todo check for valuecancelled that:
+                                              // todo check for valueCancelled that:
                                               // baseDetailTotal == round(nvl(v_qty_outstanding, 0) * :new.base_our_price, 2)
                                           };
                 detail.Cancelled = "Y";
@@ -319,7 +323,47 @@
 
         public ProcessResult EmailMultiplePurchaseOrders(IList<int> orderNumbers, int userNumber, bool copyToSelf)
         {
-            return new ProcessResult(true, "ok \n Those emailed fine");
+            if (orderNumbers == null || orderNumbers.Count == 0)
+            {
+                return new ProcessResult(true, "No order numbers supplied");
+            }
+
+            var text = string.Empty;
+            var success = 0;
+            foreach (var orderNumber in orderNumbers)
+            {
+                var order = this.purchaseOrderRepository.FindById(orderNumber);
+                var supplierContactEmail = order?.Supplier?.SupplierContacts
+                    ?.FirstOrDefault(a => a.IsMainOrderContact == "Y")?.EmailAddress;
+
+                if (order is null)
+                {
+                    text += $"Order {orderNumber} could not be found\n";
+                }
+                else if (order.Cancelled == "Y")
+                {
+                    text += $"Order {orderNumber} is cancelled\n";
+                }
+                else if (!order.AuthorisedById.HasValue)
+                {
+                    text += $"Order {orderNumber} is not authorised\n";
+                }
+                else if (string.IsNullOrEmpty(supplierContactEmail))
+                {
+                    text += $"Order {orderNumber} could not find order contact email\n";
+                }
+                else
+                {
+                    var html = this.purchaseOrderTemplateService.GetHtml(order).Result;
+                    this.SendPdfEmail(html, supplierContactEmail, orderNumber, copyToSelf, userNumber, order);
+                    text += $"Order {orderNumber} emailed successfully to {supplierContactEmail}\n";
+                    success++;
+                }
+            }
+
+            text += $"\n{success} out of {orderNumbers.Count} emailed successfully";
+
+            return new ProcessResult(true, text);
         }
 
         // below method currently unreferenced, but to be finished and used soon for create
