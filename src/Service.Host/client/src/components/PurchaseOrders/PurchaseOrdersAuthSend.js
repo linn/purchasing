@@ -6,7 +6,8 @@ import {
     DatePicker,
     utilities,
     userSelectors,
-    processSelectorHelpers
+    processSelectorHelpers,
+    Dropdown
 } from '@linn-it/linn-form-components-library';
 import Typography from '@mui/material/Typography';
 import { DataGrid } from '@mui/x-data-grid';
@@ -32,6 +33,7 @@ import emailMultiplePurchaseOrdersActions from '../../actions/emailMultiplePurch
 import authoriseMultiplePurchaseOrdersActions from '../../actions/authoriseMultiplePurchaseOrdersActions';
 import history from '../../history';
 import config from '../../config';
+import vendorManagersActions from '../../actions/vendorManagersActions';
 
 function PurchaseOrdersAuthSend() {
     const dispatch = useDispatch();
@@ -44,7 +46,8 @@ function PurchaseOrdersAuthSend() {
         endDate: new Date(),
         enteredBy: 'all',
         sent: 'all',
-        auth: 'all'
+        auth: 'all',
+        vendorManager: 'all'
     });
     const [selectedRows, setSelectedRows] = useState([]);
     const [showDialog, setShowDialog] = useState(false);
@@ -75,6 +78,16 @@ function PurchaseOrdersAuthSend() {
     const authoriseProcessResult = useSelector(state =>
         processSelectorHelpers.getData(state.authoriseMultiplePurchaseOrders)
     );
+    const vendorManagers = useSelector(state =>
+        collectionSelectorHelpers.getItems(state.vendorManagers)
+    );
+    const vendorManagersLoading = useSelector(state =>
+        collectionSelectorHelpers.getLoading(state.vendorManagers)
+    );
+
+    useEffect(() => {
+        dispatch(vendorManagersActions.fetch());
+    }, [dispatch]);
 
     useEffect(() => {
         if (authoriseProcessResult) {
@@ -184,6 +197,12 @@ function PurchaseOrdersAuthSend() {
             results = searchResults.filter(a => !a.sentByMethod);
         }
 
+        if (options.vendorManager !== 'all') {
+            results = searchResults.filter(
+                a => a.supplier.vendorManagerId === options.vendorManager
+            );
+        }
+
         return results.map(r => ({
             id: r.id,
             orderNumber: r.orderNumber,
@@ -212,6 +231,10 @@ function PurchaseOrdersAuthSend() {
 
     const handleSentChange = event => {
         setOptions({ ...options, sent: event.target.value });
+    };
+
+    const handleVendorManagerChange = vm => {
+        setOptions({ ...options, vendorManager: vm });
     };
 
     const emailOrders = () => {
@@ -277,7 +300,35 @@ function PurchaseOrdersAuthSend() {
                         onChange={newVal => setOptions(o => ({ ...o, endDate: newVal }))}
                     />
                 </Grid>
-                <Grid item xs={6} />
+                <Grid item xs={4}>
+                    <Dropdown
+                        fullWidth
+                        value={options.vendorManager}
+                        label="Vendor Manager"
+                        propertyName="vendorManager"
+                        optionsLoading={vendorManagersLoading}
+                        items={[
+                            ...[{ id: 'all', displayText: 'All' }],
+                            ...vendorManagers
+                                ?.sort((a, b) => {
+                                    if (a.vmId < b.vmId) {
+                                        return -1;
+                                    }
+                                    if (a.vmId > b.vmId) {
+                                        return 1;
+                                    }
+                                    return 0;
+                                })
+                                .map(v => ({
+                                    id: v.vmId,
+                                    displayText: `${v.vmId} ${v.name} (${v.userNumber})`
+                                }))
+                        ]}
+                        allowNoValue={false}
+                        onChange={(_, newValue) => handleVendorManagerChange(newValue)}
+                    />
+                </Grid>
+                <Grid item xs={2} />
                 <Grid item xs={4}>
                     <FormControl>
                         <FormLabel id="enteredByOptionLabel">Orders Entered By</FormLabel>
