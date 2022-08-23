@@ -671,7 +671,10 @@
 
             //// todo When get rid of mini orders remove below
             var miniOrder = this.miniOrderRepository.FindById(order.OrderNumber);
-            miniOrder.SentByMethod = "EMAIL";
+            if (miniOrder != null)
+            {
+                miniOrder.SentByMethod = "EMAIL";
+            }
 
             this.log.Write(
                 LoggingLevel.Info,
