@@ -60,8 +60,8 @@
         {
             var row = this.results.Rows.FirstOrDefault();
             row.Should().NotBeNull();
-            this.results.GetGridTextValue(row.RowIndex, 5).Should().Be("5"); // Receipt GBP value
-            this.results.GetGridTextValue(row.RowIndex, 6).Should().Be("4"); // Prefsup GBP value
+            this.results.GetGridTextValue(row.RowIndex, 6).Should().Be("5"); // Receipt GBP value
+            this.results.GetGridTextValue(row.RowIndex, 7).Should().Be("4"); // Prefsup GBP value
         }
     }
 }

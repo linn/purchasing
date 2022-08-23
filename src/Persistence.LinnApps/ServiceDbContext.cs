@@ -1175,6 +1175,7 @@
             entity.Property(e => e.CurrencyUnitPrice).HasColumnName("CURRENCY_UNIT_PRICE");
             entity.Property(e => e.Qty).HasColumnName("QTY");
             entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
+            entity.Property(e => e.PartDescription).HasColumnName("PART_DESCRIPTION").HasMaxLength(200);
             entity.Property(e => e.Difference).HasColumnName("DIFF");
             entity.Property(e => e.PrefsupCurrencyUnitPrice).HasColumnName("PREF_SUP_CURRENCY_UNIT_PRICE");
             entity.Property(e => e.PrefsupBaseUnitPrice).HasColumnName("PS_BASE_UNIT_PRICE");
