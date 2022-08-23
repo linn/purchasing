@@ -3,7 +3,6 @@
     using Linn.Common.Authorisation;
     using Linn.Common.Facade;
     using Linn.Common.Logging;
-    using Linn.Common.Pdf;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
@@ -44,10 +43,6 @@
 
         protected ITransactionManager TransactionManager { get; private set; }
 
-        protected ITemplateEngine TemplateEngine { get; private set; }
-
-        protected IFileReader FileReader { get; private set; }
-
         protected ILog Logger { get; private set; }
 
         [SetUp]
@@ -76,9 +71,6 @@
                 this.LinnDeliveryAddressResourceBuilder,
                 this.AddressResourceBuilder);
 
-            this.TemplateEngine = Substitute.For<ITemplateEngine>();
-
-            this.FileReader = Substitute.For<IFileReader>();
             this.Logger = Substitute.For<ILog>();
 
             this.Sut = new PurchaseOrderFacadeService(
@@ -87,9 +79,6 @@
                 this.Builder,
                 this.DomainService,
                 this.OverbookAllowedByLogRepository,
-                "path",
-                this.FileReader,
-                this.TemplateEngine,
                 this.Logger);
         }
     }

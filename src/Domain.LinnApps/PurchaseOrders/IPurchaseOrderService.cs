@@ -10,13 +10,7 @@
             decimal? overbookQty,
             IEnumerable<string> privileges);
 
-        ProcessResult SendPdfEmail(
-            string html,
-            string emailAddress,
-            int orderNumber,
-            bool bcc,
-            int currentUserId,
-            PurchaseOrder order);
+        ProcessResult SendPdfEmail(string emailAddress, int orderNumber, bool bcc, int currentUserId);
 
         ProcessResult SendSupplierAssemblyEmail(int orderNumber);
 
@@ -27,5 +21,7 @@
         ProcessResult AuthoriseMultiplePurchaseOrders(IList<int> orderNumbers, int userNumber);
 
         ProcessResult EmailMultiplePurchaseOrders(IList<int> orderNumbers, int userNumber, bool copyToSelf);
+
+        string GetPurchaseOrderAsHtml(int orderNumber);
     }
 }

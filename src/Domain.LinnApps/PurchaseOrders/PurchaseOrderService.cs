@@ -7,6 +7,7 @@
     using Linn.Common.Authorisation;
     using Linn.Common.Configuration;
     using Linn.Common.Email;
+    using Linn.Common.Logging;
     using Linn.Common.Pdf;
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
@@ -40,6 +41,8 @@
 
         private readonly IHtmlTemplateService<PurchaseOrder> purchaseOrderTemplateService;
 
+        private readonly ILog log;
+
         private readonly IPdfService pdfService;
 
         private readonly IPurchaseLedgerPack purchaseLedgerPack;
@@ -60,7 +63,8 @@
             ICurrencyPack currencyPack,
             ISupplierKitService supplierKitService,
             IRepository<PurchaseOrder, int> purchaseOrderRepository,
-            IHtmlTemplateService<PurchaseOrder> purchaseOrderTemplateService)
+            IHtmlTemplateService<PurchaseOrder> purchaseOrderTemplateService,
+            ILog log)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;
@@ -76,6 +80,7 @@
             this.supplierKitService = supplierKitService;
             this.purchaseOrderRepository = purchaseOrderRepository;
             this.purchaseOrderTemplateService = purchaseOrderTemplateService;
+            this.log = log;
         }
 
         public void AllowOverbook(
@@ -140,67 +145,19 @@
             // add mini order for backwards compatibility for now?
         }
 
-        public ProcessResult SendPdfEmail(
-            string html,
-            string emailAddress,
-            int orderNumber,
-            bool bcc,
-            int currentUserId,
-            PurchaseOrder order)
+        public ProcessResult SendPdfEmail(string emailAddress, int orderNumber, bool bcc, int currentUserId)
         {
-            var pdf = this.pdfService.ConvertHtmlToPdf(html, false);
-            var emailBody = $"Please accept the attached order no. {orderNumber}.\n"
-                            + "You will need Acrobat Reader to open the file which is available from www.adobe.com/acrobat\n"
-                            + "Linn's standard Terms & Conditions apply at all times\n"
-                            + "and can be found at www.linn.co.uk/purchasing_conditions";
+            var order = this.GetOrder(orderNumber);
 
-            var bccList = new List<Dictionary<string, string>>
-                              {
-                                  new Dictionary<string, string>
-                                      {
-                                          { "name", "purchasing outgoing" },
-                                          { "address", ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"] }
-                                      }
-                              };
-            if (bcc)
-            {
-                var employee = this.employeeRepository.FindById(currentUserId);
-                bccList.Add(
-                    new Dictionary<string, string>
-                        {
-                            { "name", employee.FullName }, { "address", employee.PhoneListEntry?.EmailAddress }
-                        });
-            }
-
-            this.emailService.SendEmail(
-                    emailAddress,
-                    emailAddress,
-                    null,
-                    bccList,
-                    ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
-                    "Linn Purchasing",
-                    $"Linn Purchase Order {orderNumber}",
-                    emailBody,
-                    "pdf",
-                    pdf.Result,
-                    $"LinnPurchaseOrder{orderNumber}");
-
-            order.SentByMethod = "EMAIL";
-
-            //// todo When get rid of mini orders remove below
-            var miniOrder = this.miniOrderRepository.FindById(orderNumber);
-            miniOrder.SentByMethod = "EMAIL";
+            var html = this.purchaseOrderTemplateService.GetHtml(order).Result;
+            this.SendOrderPdfEmail(html, emailAddress, bcc, currentUserId, order);
 
             return new ProcessResult(true, $"Email sent for purchase order {orderNumber} to {emailAddress}");
         }
 
         public ProcessResult SendSupplierAssemblyEmail(int orderNumber)
         {
-            var order = this.purchaseOrderRepository.FindById(orderNumber);
-            if (order is null)
-            {
-                throw new ItemNotFoundException($"Could not find order {orderNumber}");
-            }
+            var order = this.GetOrder(orderNumber);
 
             var emailBody = $"Purchasing have raised order {orderNumber} for {order.Supplier.Name}.\n"
                             + $"The following parts will need supplier kits\n";
@@ -230,6 +187,11 @@
                 emailBody,
                 null,
                 null);
+            
+            this.log.Write(
+                LoggingLevel.Info,
+                new List<LoggingProperty>(),
+                $"Email sent for purchase order {orderNumber} to Logistics");
 
             return new ProcessResult(true, $"Email sent for purchase order {orderNumber} to Logistics");
         }
@@ -300,7 +262,11 @@
             foreach (var orderNumber in orderNumbers)
             {
                 var order = this.purchaseOrderRepository.FindById(orderNumber);
-                if (order.AuthorisedById.HasValue)
+                if (order is null)
+                {
+                    text += $"Order {orderNumber} could not be found\n";
+                }
+                else if (order.AuthorisedById.HasValue)
                 {
                     text += $"Order {orderNumber} was already authorised\n";
                 }
@@ -361,7 +327,7 @@
                 else
                 {
                     var html = this.purchaseOrderTemplateService.GetHtml(order).Result;
-                    this.SendPdfEmail(html, supplierContactEmail, orderNumber, copyToSelf, userNumber, order);
+                    this.SendOrderPdfEmail(html, supplierContactEmail, copyToSelf, userNumber, order);
                     text += $"Order {orderNumber} emailed successfully to {supplierContactEmail}\n";
                     success++;
                 }
@@ -370,6 +336,23 @@
             text += $"\n{success} out of {orderNumbers.Count} emailed successfully";
 
             return new ProcessResult(true, text);
+        }
+
+        public string GetPurchaseOrderAsHtml(int orderNumber)
+        {
+            var order = this.GetOrder(orderNumber);
+            return this.purchaseOrderTemplateService.GetHtml(order).Result;
+        }
+
+        private PurchaseOrder GetOrder(int orderNumber)
+        {
+            var order = this.purchaseOrderRepository.FindById(orderNumber);
+            if (order is null)
+            {
+                throw new ItemNotFoundException($"Could not find order {orderNumber}");
+            }
+
+            return order;
         }
 
         // below method currently unreferenced, but to be finished and used soon for create
@@ -638,6 +621,62 @@
         private void UpdateOrderProperties(PurchaseOrder current, PurchaseOrder updated)
         {
             current.Remarks = updated.Remarks;
+        }
+
+        private void SendOrderPdfEmail(
+            string html,
+            string emailAddress,
+            bool bcc,
+            int currentUserId,
+            PurchaseOrder order)
+        {
+            var pdf = this.pdfService.ConvertHtmlToPdf(html, false);
+            var emailBody = $"Please accept the attached order no. {order.OrderNumber}.\n"
+                            + "You will need Acrobat Reader to open the file which is available from www.adobe.com/acrobat\n"
+                            + "Linn's standard Terms & Conditions apply at all times\n"
+                            + "and can be found at www.linn.co.uk/purchasing_conditions";
+
+            var bccList = new List<Dictionary<string, string>>
+                              {
+                                  new Dictionary<string, string>
+                                      {
+                                          { "name", "purchasing outgoing" },
+                                          { "address", ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"] }
+                                      }
+                              };
+            if (bcc)
+            {
+                var employee = this.employeeRepository.FindById(currentUserId);
+                bccList.Add(
+                    new Dictionary<string, string>
+                        {
+                            { "name", employee.FullName }, { "address", employee.PhoneListEntry?.EmailAddress }
+                        });
+            }
+
+            this.emailService.SendEmail(
+                    emailAddress,
+                    emailAddress,
+                    null,
+                    bccList,
+                    ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
+                    "Linn Purchasing",
+                    $"Linn Purchase Order {order.OrderNumber}",
+                    emailBody,
+                    "pdf",
+                    pdf.Result,
+                    $"LinnPurchaseOrder{order.OrderNumber}");
+
+            order.SentByMethod = "EMAIL";
+
+            //// todo When get rid of mini orders remove below
+            var miniOrder = this.miniOrderRepository.FindById(order.OrderNumber);
+            miniOrder.SentByMethod = "EMAIL";
+
+            this.log.Write(
+                LoggingLevel.Info,
+                new List<LoggingProperty>(),
+                $"Email sent for purchase order {order.OrderNumber} to {emailAddress}");
         }
     }
 }
