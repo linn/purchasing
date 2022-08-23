@@ -174,7 +174,7 @@ function PurchaseOrdersAuthSend() {
 
         if (options.auth === 'auth') {
             results = searchResults.filter(a => a.authorisedBy);
-        } else if (options.enteredBy === 'unauth') {
+        } else if (options.auth === 'unauth') {
             results = searchResults.filter(a => !a.authorisedBy);
         }
 
