@@ -471,7 +471,8 @@
             entity.Property(a => a.PmDeliveryDaysGrace).HasColumnName("PM_DELIVERY_DAYS_GRACE");
             entity.HasOne(a => a.OrderAddress).WithMany().HasForeignKey("ORD_ADDRESS_ID");
             entity.HasOne(a => a.InvoiceFullAddress).WithMany().HasForeignKey("INV_ADDRESS_ID");
-            entity.HasOne(a => a.VendorManager).WithMany().HasForeignKey("VENDOR_MANAGER");
+            entity.Property(a => a.VendorManagerId).HasColumnName("VENDOR_MANAGER").HasMaxLength(1);
+            entity.HasOne(a => a.VendorManager).WithMany().HasForeignKey(v => v.VendorManagerId);
             entity.HasOne(a => a.Planner).WithMany().HasForeignKey("PLANNER");
             entity.HasOne(a => a.AccountController).WithMany().HasForeignKey("ACCOUNT_CONTROLLER");
             entity.Property(a => a.DateOpened).HasColumnName("DATE_OPENED");
@@ -1682,7 +1683,7 @@
             entity.Property(a => a.DeleteChangeId).HasColumnName("DELETE_CHANGE_ID");
             entity.Property(a => a.DeleteReplaceSeq).HasColumnName("DELETE_REPLACE_SEQ");
             entity.HasOne(a => a.Part).WithMany().HasForeignKey(a => a.PartNumber);
-		}
+        }
         
         private void BuildSupplierAutoEmails(ModelBuilder builder)
         {
