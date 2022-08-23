@@ -38,6 +38,10 @@
                             "PartNumber",
                             "Part Number",
                             GridDisplayType.TextValue) {AllowWrap = false},
+                        new AxisDetailsModel(
+                            "PartDescription",
+                            "Description",
+                            GridDisplayType.TextValue),
                         new AxisDetailsModel("Qty", "Qty", GridDisplayType.TextValue),
                         new AxisDetailsModel("Order", "Order", GridDisplayType.TextValue),
                         new AxisDetailsModel("Supplier", "Supplier", GridDisplayType.TextValue),
@@ -95,6 +99,15 @@
                         {
                             RowId = rowId, ColumnId = "PartNumber", TextDisplay = result.PartNumber
                         });
+
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = rowId,
+                            ColumnId = "PartDescription",
+                            TextDisplay = result.PartDescription
+                        });
+
                 values.Add(
                     new CalculationValueModel {RowId = rowId, ColumnId = "Qty", TextDisplay = result.Qty.ToString()});
 

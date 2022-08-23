@@ -6,7 +6,6 @@
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
-    using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
@@ -25,8 +24,8 @@
         public void SetUp()
         {
             this.orderNumber = 600179;
-            this.order = new PurchaseOrder()
-                           {
+            this.order = new PurchaseOrder
+                             {
                                OrderNumber = 600179,
                                Cancelled = string.Empty,
                                DocumentTypeName = string.Empty,

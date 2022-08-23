@@ -41,8 +41,13 @@
         {
             try
             {
-                var result = this.ediEmailPack.SendEdiOrder(supplierId, altEmail, additionalEmail, additionalEmail, test);
-                return new ProcessResult(result.StartsWith("SUCCESS"), result );
+                var result = this.ediEmailPack.SendEdiOrder(
+                    supplierId,
+                    altEmail,
+                    additionalEmail,
+                    additionalEmail,
+                    test);
+                return new ProcessResult(result.StartsWith("SUCCESS"), result);
             }
             catch (Exception e)
             {

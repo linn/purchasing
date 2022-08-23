@@ -18,10 +18,14 @@
             int currentUserId,
             PurchaseOrder order);
 
-        ProcessResult SendSupplierAssemblyEmail(PurchaseOrder order, int orderNumber);
+        ProcessResult SendSupplierAssemblyEmail(int orderNumber);
 
         PurchaseOrder UpdateOrder(PurchaseOrder current, PurchaseOrder updated, IEnumerable<string> privileges);
 
         PurchaseOrder FillOutUnsavedOrder(PurchaseOrder order, int userId);
+
+        ProcessResult AuthoriseMultiplePurchaseOrders(IList<int> orderNumbers, int userNumber);
+
+        ProcessResult EmailMultiplePurchaseOrders(IList<int> orderNumbers, int userNumber, bool copyToSelf);
     }
 }

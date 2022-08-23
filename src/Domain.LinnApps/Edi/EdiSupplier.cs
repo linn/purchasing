@@ -8,7 +8,7 @@
 
         public string VendorManager { get; set; }
 
-        public string VendorManangerName { get; set; }
+        public string VendorManagerName { get; set; }
 
         public string EdiEmailAddress { get; set; }
 

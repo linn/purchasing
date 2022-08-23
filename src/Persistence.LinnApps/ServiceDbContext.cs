@@ -628,6 +628,8 @@
             entity.HasOne(o => o.OrderAddress).WithMany().HasForeignKey(o => o.OrderAddressId);
             entity.Property(e => e.DamagesPercent).HasColumnName("DAMAGES_PERCENT");
             entity.Property(o => o.BaseCurrencyCode).HasColumnName("BASE_CURRENCY");
+            entity.Property(o => o.OrderNetTotal).HasColumnName("ORDER_NET_TOTAL");
+            entity.Property(o => o.BaseOrderNetTotal).HasColumnName("BASE_ORDER_NET_TOTAL");
         }
 
         private void BuildPurchaseOrderDetails(ModelBuilder builder)
@@ -1173,6 +1175,7 @@
             entity.Property(e => e.CurrencyUnitPrice).HasColumnName("CURRENCY_UNIT_PRICE");
             entity.Property(e => e.Qty).HasColumnName("QTY");
             entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
+            entity.Property(e => e.PartDescription).HasColumnName("PART_DESCRIPTION").HasMaxLength(200);
             entity.Property(e => e.Difference).HasColumnName("DIFF");
             entity.Property(e => e.PrefsupCurrencyUnitPrice).HasColumnName("PREF_SUP_CURRENCY_UNIT_PRICE");
             entity.Property(e => e.PrefsupBaseUnitPrice).HasColumnName("PS_BASE_UNIT_PRICE");
@@ -1545,7 +1548,7 @@
             entity.Property(d => d.SupplierId).HasColumnName("SUPPLIER_ID");
             entity.Property(d => d.SupplierName).HasColumnName("SUPPLIER_NAME").HasColumnType("VARCHAR2");
             entity.Property(d => d.VendorManager).HasColumnName("VENDOR_MANAGER").HasColumnType("VARCHAR2");
-            entity.Property(d => d.VendorManangerName).HasColumnName("USER_NAME").HasColumnType("VARCHAR2");
+            entity.Property(d => d.VendorManagerName).HasColumnName("USER_NAME").HasColumnType("VARCHAR2");
             entity.Property(d => d.EdiEmailAddress).HasColumnName("EDI_EMAIL_ADDRESS").HasColumnType("VARCHAR2");
             entity.Property(d => d.NumOrders).HasColumnName("NUM_ORDERS");
         }

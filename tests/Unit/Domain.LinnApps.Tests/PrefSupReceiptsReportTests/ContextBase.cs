@@ -6,7 +6,6 @@
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
 
     using NSubstitute;
-    using NSubstitute.Core;
 
     using NUnit.Framework;
 

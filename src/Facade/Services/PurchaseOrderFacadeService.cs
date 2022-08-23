@@ -6,6 +6,7 @@
     using System.Linq.Expressions;
     using System.Threading.Tasks;
 
+    using Linn.Common.Domain.Exceptions;
     using Linn.Common.Facade;
     using Linn.Common.Logging;
     using Linn.Common.Pdf;
@@ -15,6 +16,7 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.RequestResources;
     using Linn.Purchasing.Resources.SearchResources;
 
     public class PurchaseOrderFacadeService :
@@ -101,16 +103,14 @@
         {
             try
             {
-                var order = this.orderRepository.FindById(orderNumber);
-
-                var emailResult = this.domainService.SendSupplierAssemblyEmail(order, orderNumber);
+                var emailResult = this.domainService.SendSupplierAssemblyEmail(orderNumber);
 
                 this.logger.Write(LoggingLevel.Info, new List<LoggingProperty>(), emailResult.Message);
 
                 return new SuccessResult<ProcessResultResource>(
                     new ProcessResultResource(emailResult.Success, emailResult.Message));
             }
-            catch (Exception ex)
+            catch (DomainException ex)
             {
                 this.logger.Write(LoggingLevel.Error, new List<LoggingProperty>(), ex.Message);
                 return new BadRequestResult<ProcessResultResource>(ex.Message);
@@ -163,6 +163,39 @@
                 (PurchaseOrderResource)this.resourceBuilder.Build(generatedOrder, privileges));
         }
 
+        public IResult<ProcessResultResource> AuthorisePurchaseOrders(
+            PurchaseOrdersProcessRequestResource resource,
+            IEnumerable<string> privileges,
+            int userId)
+        {
+            var result = this.domainService.AuthoriseMultiplePurchaseOrders(resource.Orders.ToList(), userId);
+            if (!result.Success)
+            {
+                return new BadRequestResult<ProcessResultResource>(result.Message);
+            }
+
+            this.transactionManager.Commit();
+            return new SuccessResult<ProcessResultResource>(new ProcessResultResource(result.Success, result.Message));
+        }
+
+        public IResult<ProcessResultResource> EmailOrderPdfs(
+            PurchaseOrdersProcessRequestResource resource,
+            IEnumerable<string> privileges,
+            int userId)
+        {
+            var result = this.domainService.EmailMultiplePurchaseOrders(
+                resource.Orders.ToList(),
+                userId,
+                resource.CopySelf == "true");
+            if (!result.Success)
+            {
+                return new BadRequestResult<ProcessResultResource>(result.Message);
+            }
+
+            this.transactionManager.Commit();
+            return new SuccessResult<ProcessResultResource>(new ProcessResultResource(result.Success, result.Message));
+        }
+
         public async Task<string> GetOrderAsHtml(int orderNumber)
         {
             var order = this.orderRepository.FindById(orderNumber);
@@ -193,6 +226,11 @@
         protected override Expression<Func<PurchaseOrder, bool>> FilterExpression(
             PurchaseOrderSearchResource searchResource)
         {
+            if (!string.IsNullOrEmpty(searchResource.StartDate))
+            {
+                return a => a.OrderDate >= DateTime.Parse(searchResource.StartDate) && a.OrderDate <= DateTime.Parse(searchResource.EndDate);
+            }
+
             return x => x.OrderNumber.ToString().Contains(searchResource.OrderNumber);
         }
 

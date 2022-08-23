@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Resources
 {
-    using System;
     using System.Collections.Generic;
 
     using Linn.Common.Resources;
@@ -60,5 +59,9 @@
         public string SupplierContactEmail { get; set; }
 
         public string SupplierContactPhone { get; set; }
+
+        public decimal OrderNetTotal { get; set; }
+
+        public decimal BaseOrderNetTotal { get; set; }
     }
 }

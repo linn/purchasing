@@ -9,4 +9,3 @@
         public int SupplierId { get; set; }
     }
 }
-
