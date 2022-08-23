@@ -15,7 +15,7 @@
                 SupplierId = model.SupplierId, 
                 SupplierName = model.SupplierName, 
                 VendorManager = model.VendorManager, 
-                VendorManangerName = model.VendorManagerName, 
+                VendorManagerName = model.VendorManagerName, 
                 EdiEmailAddress = model.EdiEmailAddress, 
                 NumOrders = model.NumOrders
             };
