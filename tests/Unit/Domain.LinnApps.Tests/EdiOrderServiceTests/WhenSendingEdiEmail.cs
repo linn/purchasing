@@ -1,13 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.EdiOrderServiceTests
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Linq.Expressions;
-
     using FluentAssertions;
-
-    using Linn.Purchasing.Domain.LinnApps.Edi;
 
     using NSubstitute;
 

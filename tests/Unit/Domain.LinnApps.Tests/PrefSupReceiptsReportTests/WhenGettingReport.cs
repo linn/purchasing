@@ -25,7 +25,7 @@
         {
             this.data = new List<ReceiptPrefSupDiff>
                             {
-                                new ReceiptPrefSupDiff()
+                                new ReceiptPrefSupDiff
                                     {
                                         PlReceiptId = 1,
                                         OrderNumber = 1000,
@@ -41,7 +41,7 @@
                                         PrefsupBaseUnitPrice = 4,
                                         Difference = 1
                                     },
-                                new ReceiptPrefSupDiff()
+                                new ReceiptPrefSupDiff
                                     {
                                         PlReceiptId = 1,
                                         OrderNumber = 1001,

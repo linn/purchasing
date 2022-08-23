@@ -18,7 +18,7 @@
             int currentUserId,
             PurchaseOrder order);
 
-        ProcessResult SendSupplierAssemblyEmail(PurchaseOrder order, int orderNumber);
+        ProcessResult SendSupplierAssemblyEmail(int orderNumber);
 
         PurchaseOrder UpdateOrder(PurchaseOrder current, PurchaseOrder updated, IEnumerable<string> privileges);
 

@@ -8,7 +8,6 @@
     using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
-    using Linn.Purchasing.Resources.RequestResources;
 
     using NSubstitute;
 

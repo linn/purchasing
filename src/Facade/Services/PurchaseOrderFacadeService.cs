@@ -6,6 +6,7 @@
     using System.Linq.Expressions;
     using System.Threading.Tasks;
 
+    using Linn.Common.Domain.Exceptions;
     using Linn.Common.Facade;
     using Linn.Common.Logging;
     using Linn.Common.Pdf;
@@ -102,16 +103,14 @@
         {
             try
             {
-                var order = this.orderRepository.FindById(orderNumber);
-
-                var emailResult = this.domainService.SendSupplierAssemblyEmail(order, orderNumber);
+                var emailResult = this.domainService.SendSupplierAssemblyEmail(orderNumber);
 
                 this.logger.Write(LoggingLevel.Info, new List<LoggingProperty>(), emailResult.Message);
 
                 return new SuccessResult<ProcessResultResource>(
                     new ProcessResultResource(emailResult.Success, emailResult.Message));
             }
-            catch (Exception ex)
+            catch (DomainException ex)
             {
                 this.logger.Write(LoggingLevel.Error, new List<LoggingProperty>(), ex.Message);
                 return new BadRequestResult<ProcessResultResource>(ex.Message);

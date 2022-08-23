@@ -366,6 +366,7 @@
 
             // updated based on conv factor
             this.miniOrder.OrderQty.Should().Be(198m);
+
             // updated based on conv factor
             this.miniOrder.OrderPrice.Should().Be(400.44m);
 

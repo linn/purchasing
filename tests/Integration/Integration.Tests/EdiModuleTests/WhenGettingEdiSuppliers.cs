@@ -19,10 +19,10 @@
         public void SetUp()
         {
             var suppliers = new List<EdiSupplier>
-                             {
-                                 new EdiSupplier {SupplierId = 1, SupplierName = "Sunak Audio"},
-                                 new EdiSupplier {SupplierId = 2, SupplierName = "Penny Audio"}
-                             };
+                                {
+                                    new EdiSupplier { SupplierId = 1, SupplierName = "Sunak Audio" },
+                                    new EdiSupplier { SupplierId = 2, SupplierName = "Penny Audio" }
+                                };
             this.MockDomainService.GetEdiSuppliers().Returns(suppliers);
 
             this.Response = this.Client.Get(

@@ -1547,7 +1547,7 @@
             entity.Property(d => d.SupplierId).HasColumnName("SUPPLIER_ID");
             entity.Property(d => d.SupplierName).HasColumnName("SUPPLIER_NAME").HasColumnType("VARCHAR2");
             entity.Property(d => d.VendorManager).HasColumnName("VENDOR_MANAGER").HasColumnType("VARCHAR2");
-            entity.Property(d => d.VendorManangerName).HasColumnName("USER_NAME").HasColumnType("VARCHAR2");
+            entity.Property(d => d.VendorManagerName).HasColumnName("USER_NAME").HasColumnType("VARCHAR2");
             entity.Property(d => d.EdiEmailAddress).HasColumnName("EDI_EMAIL_ADDRESS").HasColumnType("VARCHAR2");
             entity.Property(d => d.NumOrders).HasColumnName("NUM_ORDERS");
         }

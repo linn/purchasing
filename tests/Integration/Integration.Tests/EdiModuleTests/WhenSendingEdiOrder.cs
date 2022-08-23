@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.EdiModuleTests
 {
-    using System.Collections.Generic;
     using System.Net;
     using System.Net.Http.Json;
 
@@ -29,8 +28,13 @@
                                   test = false
                               };
 
-            var result = new ProcessResult {Success = true, Message = "Test"};
-            this.MockDomainService.SendEdiOrder(41193, "boris@example.com", "carrie@example.com", "Put out the cat", false)
+            var result = new ProcessResult { Success = true, Message = "Test" };
+            this.MockDomainService.SendEdiOrder(
+                41193,
+                "boris@example.com",
+                "carrie@example.com",
+                "Put out the cat",
+                false)
                 .Returns(result);
 
             this.Response = this.Client.PostAsJsonAsync(
@@ -54,7 +58,12 @@
         [Test]
         public void ShouldCallDomainService()
         {
-            this.MockDomainService.SendEdiOrder(41193, "boris@example.com", "carrie@example.com", "Put out the cat", false);
+            this.MockDomainService.SendEdiOrder(
+                41193,
+                "boris@example.com",
+                "carrie@example.com",
+                "Put out the cat",
+                false);
         }
         
         [Test]

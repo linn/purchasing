@@ -51,7 +51,7 @@
 
         protected IEnumerable<WhatsInInspectionBackOrderData> BackOrderData { get; private set; }
 
-        protected IQueryRepository<StockLocator> StockLocatorRepository;
+        protected IQueryRepository<StockLocator> StockLocatorRepository { get; private set; }
 
         [SetUp]
         public void SetUpContext()

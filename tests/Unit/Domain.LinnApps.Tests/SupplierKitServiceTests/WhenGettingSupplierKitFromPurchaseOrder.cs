@@ -31,7 +31,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.supplier = new Supplier {SupplierId = 123, Name = "Acme Corp"};
+            this.supplier = new Supplier { SupplierId = 123, Name = "Acme Corp" };
             this.supplierPart = new Part
                                     {
                                         PartNumber = "COMP 001",
@@ -46,15 +46,16 @@
                                        BomType = "C",
                                        PreferredSupplier = this.supplier
                                    };
-            var compPart1 = new Part() {PartNumber = "FLAN 001"};
-            var compPart2 = new Part() {PartNumber = "EGG-AXT BOX"};
+            var compPart1 = new Part { PartNumber = "FLAN 001" };
+            var compPart2 = new Part { PartNumber = "EGG-AXT BOX" };
             this.bom = new List<BomDetail>
                            {
-                               new BomDetail() {Part = compPart1, PartNumber = compPart1.PartNumber, Qty = 1},
-                               new BomDetail() {Part = compPart2, PartNumber = compPart2.PartNumber, Qty = 10}
+                               new BomDetail { Part = compPart1, PartNumber = compPart1.PartNumber, Qty = 1 },
+                               new BomDetail { Part = compPart2, PartNumber = compPart2.PartNumber, Qty = 10 }
                            };
-            this.order = new PurchaseOrder {Supplier = this.supplier, SupplierId = this.supplier.SupplierId};
-            this.order.Details = new List<PurchaseOrderDetail>()
+            this.order = new PurchaseOrder
+                             {
+                                 Supplier = this.supplier, SupplierId = this.supplier.SupplierId, Details = new List<PurchaseOrderDetail>
                                      {
                                          new PurchaseOrderDetail
                                              {
@@ -70,8 +71,9 @@
                                                  OrderQty = 10,
                                                  OurQty = 10
                                              }
-                                     };
-            this.bomDetailRepository.GetLiveBomDetails(Arg.Any<string>()).Returns(this.bom.AsQueryable());
+                                     }
+                             };
+            this.BomDetailRepository.GetLiveBomDetails(Arg.Any<string>()).Returns(this.bom.AsQueryable());
 
             this.results = this.Sut.GetSupplierKits(this.order, true);
         }
@@ -85,7 +87,7 @@
         [Test]
         public void ShouldReturnSupplierAssemblyPart()
         {
-            var kit = this.results.FirstOrDefault();
+            var kit = this.results.First();
             kit.Should().NotBeNull();
             kit.Part.PartNumber.Should().Be(this.supplierPart.PartNumber);
         }
@@ -93,7 +95,7 @@
         [Test]
         public void ShouldIncludeDetailsOfComponents()
         {
-            var kit = this.results.FirstOrDefault();
+            var kit = this.results.First();
             kit.Should().NotBeNull();
             kit.Details.Should().NotBeNull();
             kit.Details.Count().Should().Be(2);
@@ -102,7 +104,7 @@
         [Test]
         public void ShouldHaveRightQtyOfComponents()
         {
-            var kit = this.results.FirstOrDefault();
+            var kit = this.results.First();
             var comp1 = kit.Details.ToList()[0];
             var comp2 = kit.Details.ToList()[1];
             comp1.Part.PartNumber.Should().Be("FLAN 001");

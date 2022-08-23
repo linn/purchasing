@@ -16,4 +16,3 @@ namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
         public Part Part { get; set; }
     }
 }
-

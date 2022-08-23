@@ -1,10 +1,8 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.EdiOrderServiceTests
 {
-    using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
-    using Linn.Purchasing.Domain.LinnApps.Forecasting;
 
     using NSubstitute;
 
@@ -32,5 +30,4 @@
                 this.MockEdiSupplierRepository);
         }
     }
-
 }
