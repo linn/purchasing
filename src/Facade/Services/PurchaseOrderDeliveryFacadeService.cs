@@ -190,7 +190,7 @@
                              UnitPrice = u.UnitPrice
                          }).ToList();
             var result = this.domainService
-                .BatchUpdateDeliveries(updates, privileges);
+                .UpdateDeliveries(updates, privileges);
 
             this.transactionManager.Commit();
 

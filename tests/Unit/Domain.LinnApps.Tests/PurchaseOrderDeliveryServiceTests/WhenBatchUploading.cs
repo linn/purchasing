@@ -16,7 +16,7 @@
 
     using NUnit.Framework;
 
-    public class WhenBatchUpdating : ContextBase
+    public class WhenBatchUploading : ContextBase
     {
         private IEnumerable<PurchaseOrderDeliveryUpdate> changes;
 

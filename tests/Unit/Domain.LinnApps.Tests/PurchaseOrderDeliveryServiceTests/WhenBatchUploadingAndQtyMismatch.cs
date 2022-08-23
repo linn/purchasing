@@ -16,7 +16,7 @@
 
     using NUnit.Framework;
 
-    public class WhenBatchUpdatingAndQtyMismatch : ContextBase
+    public class WhenBatchUploadingAndQtyMismatch : ContextBase
     {
         private IEnumerable<PurchaseOrderDeliveryUpdate> changes;
 

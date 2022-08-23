@@ -12,7 +12,7 @@
 
     using NUnit.Framework;
 
-    public class WhenBatchUpdatingAndNotAuthorised : ContextBase
+    public class WhenBatchUploadingAndNotAuthorised : ContextBase
     {
         private Action action;
 

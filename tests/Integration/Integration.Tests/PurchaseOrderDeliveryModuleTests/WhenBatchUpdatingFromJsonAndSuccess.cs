@@ -34,7 +34,7 @@
                                             DateRequested = DateTime.Now
                                         }
                                 };
-            this.MockDomainService.BatchUpdateDeliveries(
+            this.MockDomainService.UpdateDeliveries(
                 Arg.Any<IEnumerable<PurchaseOrderDeliveryUpdate>>(),
                 Arg.Any<IEnumerable<string>>()).Returns(new BatchUpdateProcessResult { Success = true });
             this.Response = this.Client.Post(

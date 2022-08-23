@@ -279,7 +279,7 @@
                        };
         }
 
-        public BatchUpdateProcessResult BatchUpdateDeliveries(
+        public BatchUpdateProcessResult UpdateDeliveries(
            IEnumerable<PurchaseOrderDeliveryUpdate> changes,
            IEnumerable<string> privileges)
         {
@@ -291,8 +291,6 @@
             this.CheckOkToRaiseOrders();
 
             var successCount = 0;
-
-            var errors = new List<Error>();
 
             var purchaseOrderDeliveryUpdates = changes as PurchaseOrderDeliveryUpdate[] ?? changes.ToArray();
 

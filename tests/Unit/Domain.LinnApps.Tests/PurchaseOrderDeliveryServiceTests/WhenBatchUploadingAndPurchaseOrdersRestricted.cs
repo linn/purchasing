@@ -13,7 +13,7 @@
 
     using NUnit.Framework;
 
-    public class WhenBatchUpdatingAndPurchaseOrdersRestricted : ContextBase
+    public class WhenBatchUploadingAndPurchaseOrdersRestricted : ContextBase
     {
         private Action action;
 

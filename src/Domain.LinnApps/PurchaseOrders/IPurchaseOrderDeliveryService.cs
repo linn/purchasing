@@ -23,7 +23,7 @@
             IEnumerable<PurchaseOrderDeliveryUpdate> changes,
             IEnumerable<string> privileges);
 
-        BatchUpdateProcessResult BatchUpdateDeliveries(
+        BatchUpdateProcessResult UpdateDeliveries(
             IEnumerable<PurchaseOrderDeliveryUpdate> changes,
             IEnumerable<string> privileges);
 
