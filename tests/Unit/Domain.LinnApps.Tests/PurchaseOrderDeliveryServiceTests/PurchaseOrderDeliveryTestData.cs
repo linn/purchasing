@@ -6,8 +6,6 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
-    using NUnit.Framework;
-
     public class PurchaseOrderDeliveryTestData
     {
         public static List<PurchaseOrderDelivery> BuildData()

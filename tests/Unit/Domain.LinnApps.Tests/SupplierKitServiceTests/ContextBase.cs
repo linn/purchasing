@@ -4,21 +4,20 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
     using NSubstitute;
-    using NSubstitute.Exceptions;
 
     using NUnit.Framework;
 
     public class ContextBase
     {
-        protected IBomDetailRepository bomDetailRepository { get; private set; }
+        protected IBomDetailRepository BomDetailRepository { get; private set; }
 
         protected ISupplierKitService Sut { get; private set; }
 
         [SetUp]
-        public void SetUp()
+        public void SetUpContext()
         {
-            this.bomDetailRepository = Substitute.For<IBomDetailRepository>();
-            this.Sut = new SupplierKitService(this.bomDetailRepository);
+            this.BomDetailRepository = Substitute.For<IBomDetailRepository>();
+            this.Sut = new SupplierKitService(this.BomDetailRepository);
         }
     }
 }
