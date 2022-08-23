@@ -209,10 +209,11 @@
             string searchTerm,
             string startDate,
             string endDate,
-            IPurchaseOrderFacadeService purchaseOrderFacadeService)
+            IPurchaseOrderFacadeService purchaseOrderFacadeService,
+            int numberToTake = 50)
         {
             var resource = new PurchaseOrderSearchResource { OrderNumber = searchTerm, StartDate = startDate, EndDate = endDate };
-            var result = purchaseOrderFacadeService.FilterBy(resource, numberToTake: 50, req.HttpContext.GetPrivileges());
+            var result = purchaseOrderFacadeService.FilterBy(resource, numberToTake, req.HttpContext.GetPrivileges());
             await res.Negotiate(result);
         }
 

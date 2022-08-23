@@ -39,7 +39,7 @@ function PurchaseOrdersAuthSend() {
     const dispatch = useDispatch();
 
     const defaultStartDate = new Date();
-    defaultStartDate.setMonth(defaultStartDate.getMonth() - 1);
+    defaultStartDate.setDate(defaultStartDate.getDate() - 3);
 
     const [options, setOptions] = useState({
         startDate: defaultStartDate,
@@ -58,7 +58,7 @@ function PurchaseOrdersAuthSend() {
         dispatch(
             purchaseOrdersActions.searchWithOptions(
                 '',
-                `&startDate=${options.startDate.toISOString()}&endDate=${options.endDate.toISOString()}`
+                `&numberToTake=100&startDate=${options.startDate.toISOString()}&endDate=${options.endDate.toISOString()}`
             )
         );
     }, [dispatch, options.endDate, options.startDate]);
