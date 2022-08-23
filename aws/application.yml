@@ -58,6 +58,9 @@ Parameters:
   purchasingFromAddress:
     Type: String
     Description: address to send purchasing emails from
+  logisticsToAddress:
+    Type: String
+    Description: address to send emails to for logistics
   orderBookTestAddress:
     Type: String
     Description: address to send order book test emails to
@@ -178,7 +181,9 @@ Resources:
         - Name: VIEWS_ROOT
           Value: !Ref viewsRoot
         - Name: PURCHASING_FROM_ADDRESS
-          Value: !Ref purchasingFromAddress          
+          Value: !Ref purchasingFromAddress
+        - Name: LOGISTICS_TO_ADDRESS
+          Value: !Ref logisticsToAddress             
         - Name: awsRegion
           Value: !Ref AWS::Region
         - Name: KEYS_BUCKET_NAME
