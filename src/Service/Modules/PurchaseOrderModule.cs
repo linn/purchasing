@@ -156,7 +156,7 @@
             int orderNumber,
             IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
-            var result = await purchaseOrderFacadeService.GetOrderAsHtml(orderNumber);
+            var result = purchaseOrderFacadeService.GetOrderAsHtml(orderNumber);
 
             res.ContentType = "text/html";
             res.StatusCode = (int)HttpStatusCode.OK;
@@ -172,7 +172,7 @@
             bool bcc,
             IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
-            var result = await purchaseOrderFacadeService.EmailOrderPdf(
+            var result = purchaseOrderFacadeService.EmailOrderPdf(
                 orderNumber,
                 emailAddress,
                 bcc,
@@ -209,10 +209,11 @@
             string searchTerm,
             string startDate,
             string endDate,
-            IPurchaseOrderFacadeService purchaseOrderFacadeService)
+            IPurchaseOrderFacadeService purchaseOrderFacadeService,
+            int numberToTake = 50)
         {
             var resource = new PurchaseOrderSearchResource { OrderNumber = searchTerm, StartDate = startDate, EndDate = endDate };
-            var result = purchaseOrderFacadeService.FilterBy(resource, numberToTake: 50, req.HttpContext.GetPrivileges());
+            var result = purchaseOrderFacadeService.FilterBy(resource, numberToTake, req.HttpContext.GetPrivileges());
             await res.Negotiate(result);
         }
 

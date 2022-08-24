@@ -8,6 +8,7 @@ import { cleanup, screen } from '@testing-library/react';
 import render from '../../../test-utils';
 import PurchaseOrdersAuthSend from '../../PurchaseOrders/PurchaseOrdersAuthSend';
 import purchaseOrdersActions from '../../../actions/purchaseOrdersActions';
+import vendorManagersActions from '../../../actions/vendorManagersActions';
 
 jest.mock('react-redux', () => ({
     ...jest.requireActual('react-redux'),
@@ -16,6 +17,7 @@ jest.mock('react-redux', () => ({
 
 const fetchSpy = jest.spyOn(purchaseOrdersActions, 'searchWithOptions');
 const stateSpy = jest.spyOn(purchaseOrdersActions, 'fetchState');
+const vmSpy = jest.spyOn(vendorManagersActions, 'fetch');
 
 const initialState = {};
 const stateWithOrders = {
@@ -226,6 +228,7 @@ describe('When component mounts...', () => {
     test('Should fetch orders', () => {
         expect(fetchSpy).toBeCalledTimes(1);
         expect(stateSpy).toBeCalledTimes(1);
+        expect(vmSpy).toBeCalledTimes(1);
     });
 });
 

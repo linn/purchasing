@@ -91,7 +91,12 @@
                            DateFilCancelled = entity.DateFilCancelled?.ToString("O"),
                            PeriodFilCancelled = entity.PeriodFilCancelled,
                            Supplier =
-                               new SupplierResource { Id = entity.Supplier.SupplierId, Name = entity.Supplier.Name },
+                               new SupplierResource
+                                   {
+                                       Id = entity.Supplier.SupplierId,
+                                       Name = entity.Supplier.Name,
+                                       VendorManagerId = entity.Supplier.VendorManagerId
+                                   },
                            OrderAddress =
                                entity.OrderAddress != null
                                    ? (AddressResource)this.addressResourceBuilder.Build(entity.OrderAddress, claims)

@@ -140,9 +140,6 @@
                         x.GetService<IBuilder<PurchaseOrder>>(),
                         x.GetService<IPurchaseOrderService>(),
                         x.GetService<IRepository<OverbookAllowedByLog, int>>(),
-                        $"{ConfigurationManager.Configuration["VIEWS_ROOT"]}PurchaseOrder.cshtml",
-                        new FileReader(),
-                        x.GetService<ITemplateEngine>(),
                         x.GetService<ILog>()))
                 .AddTransient<IFacadeResourceService<AutomaticPurchaseOrder, int, AutomaticPurchaseOrderResource, AutomaticPurchaseOrderResource>, AutomaticPurchaseOrderFacadeService>()
                 .AddTransient<IFacadeResourceFilterService<AutomaticPurchaseOrderSuggestion, int, AutomaticPurchaseOrderSuggestionResource, AutomaticPurchaseOrderSuggestionResource, PlannerSupplierRequestResource>, AutomaticPurchaseOrderSuggestionFacadeService>()
