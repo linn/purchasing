@@ -38,12 +38,11 @@ import vendorManagersActions from '../../actions/vendorManagersActions';
 function PurchaseOrdersAuthSend() {
     const dispatch = useDispatch();
 
-    const defaultStartDate = new Date();
-    defaultStartDate.setDate(defaultStartDate.getDate() - 3);
+    const defaultStartDate = moment().startOf('day').subtract(3, 'days');
 
     const [options, setOptions] = useState({
         startDate: defaultStartDate,
-        endDate: new Date(),
+        endDate: moment().endOf('day'),
         enteredBy: 'all',
         sent: 'all',
         auth: 'all',
