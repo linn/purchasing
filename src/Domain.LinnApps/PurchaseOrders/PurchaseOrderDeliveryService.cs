@@ -171,7 +171,7 @@
                                      {
                                          group.Key.OrderNumber,
                                          group.Key.OrderLine,
-                                         DeliveryUpdates = group
+                                         DeliveryUpdates = group.OrderBy(x => x.NewDateAdvised)
                                      });
 
             foreach (var group in orderLineGroups)
@@ -197,7 +197,7 @@
 
                 var isPricesMismatch = group.DeliveryUpdates.Any(
                     u => Math.Round(u.UnitPrice, 4) != Math.Round(
-                             existingDelivery.OrderUnitPriceCurrency.GetValueOrDefault(),
+                             existingDelivery.OurUnitPriceCurrency.GetValueOrDefault(),
                              4));
 
                 if (isPricesMismatch)
@@ -225,7 +225,7 @@
                                           {
                                               OrderNumber = group.OrderNumber,
                                               OrderLine = group.OrderLine,
-                                              DeliverySeq = index,
+                                              DeliverySeq = index + 1,
                                               OurDeliveryQty = update.Qty,
                                               QtyNetReceived = 0,
                                               QuantityOutstanding = update.Qty,
