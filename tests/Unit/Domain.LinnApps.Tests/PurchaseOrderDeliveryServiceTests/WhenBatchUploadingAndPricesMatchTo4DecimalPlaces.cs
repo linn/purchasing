@@ -56,21 +56,11 @@
                                     OrderLine = this.key.OrderLine,
                                     DeliverySeq = this.key.DeliverySequence,
                                     OurDeliveryQty = 100,
-                                    OrderUnitPriceCurrency = 0.01112m
+                                    OrderUnitPriceCurrency = 0.0111m,
+                                    QtyNetReceived = 0
                                 }
                         }.AsQueryable());
 
-            this.Repository.FindBy(
-                    Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
-                .Returns(
-                    new PurchaseOrderDelivery
-                                {
-                                    OrderNumber = this.key.OrderNumber,
-                                    OrderLine = this.key.OrderLine,
-                                    DeliverySeq = this.key.DeliverySequence,
-                                    OurDeliveryQty = 100,
-                                    OrderUnitPriceCurrency = 0.01111m
-                                });
             this.PurchaseOrderRepository.FindById(this.key.OrderNumber)
                 .Returns(new PurchaseOrder
                              {
@@ -84,7 +74,7 @@
                 .Returns(new MiniOrder { OrderNumber = this.key.OrderNumber });
             this.MiniOrderDeliveryRepository.FindBy(Arg.Any<Expression<Func<MiniOrderDelivery, bool>>>())
                 .Returns(new MiniOrderDelivery { OrderNumber = this.key.OrderNumber });
-            this.result = this.Sut.BatchUploadDeliveries(this.changes, new List<string>());
+            this.result = this.Sut.UploadDeliveries(this.changes, new List<string>());
         }
 
         [Test]

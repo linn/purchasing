@@ -148,10 +148,12 @@
             return entity;
         }
 
-        public BatchUpdateProcessResult BatchUploadDeliveries(
+        public UploadPurchaseOrderDeliveriesResult UploadDeliveries(
             IEnumerable<PurchaseOrderDeliveryUpdate> changes,
             IEnumerable<string> privileges)
         {
+            var updated = new List<PurchaseOrderDelivery>();
+
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
             {
                 throw new UnauthorisedActionException("You are not authorised to acknowledge orders.");
@@ -176,18 +178,23 @@
 
             foreach (var group in orderLineGroups)
             {
-                var existingDelivery = this.repository.FilterBy(
-                    x => x.OrderNumber == group.OrderNumber && x.OrderLine == group.OrderLine).First();
+                var existingDeliveries = this.repository.FilterBy(
+                    x => x.OrderNumber == group.OrderNumber && x.OrderLine == group.OrderLine);
 
                 var detail = this.purchaseOrderRepository.FindById(group.OrderNumber).Details
                     .Single(d => d.Line == group.OrderLine);
 
-                var isQuantityMismatch = group.DeliveryUpdates.Sum(x => x.Qty) 
-                                         != detail.OrderQty; // todo - should compare to qty outstanding
+                var qtyOutstanding = detail.OrderQty - existingDeliveries.Sum(x => x.QtyNetReceived);
+
+                var totalQty = group.DeliveryUpdates.Sum(x => x.Qty);
+
+                var isQuantityMismatch = totalQty
+                                         != qtyOutstanding;
+
 
                 if (isQuantityMismatch)
                 {
-                    var msg = "Qty on lines uploaded for the specified order does not match qty on our order";
+                    var msg = $"Total Qty of lines uploaded ({totalQty}) does not match order qty outstanding ({qtyOutstanding})";
                     errors.Add(
                         new Error(
                             $"Order: {group.OrderNumber}",
@@ -195,9 +202,11 @@
                     continue;
                 }
 
+                var existingDelivery = existingDeliveries.First();
+
                 var isPricesMismatch = group.DeliveryUpdates.Any(
                     u => Math.Round(u.UnitPrice, 4) != Math.Round(
-                             existingDelivery.OurUnitPriceCurrency.GetValueOrDefault(),
+                             existingDelivery.OrderUnitPriceCurrency.GetValueOrDefault(),
                              4));
 
                 if (isPricesMismatch)
@@ -251,31 +260,34 @@
                                               QtyPassedForPayment = existingDelivery.QtyPassedForPayment,
                                               NetTotalCurrency = existingDelivery.NetTotalCurrency,
                                           }).ToList();
-
+                
                 this.UpdateMiniOrder(
                         existingDelivery.OrderNumber,
                         updates.Last().NewDateAdvised,
                         null,
                         null,
                         updates.Last().Comment);
-                    
+                updated?.AddRange(detail?.PurchaseDeliveries);
                 successCount++;
             }
 
             if (errors.Any())
             {
-                return new BatchUpdateProcessResult
+                return new UploadPurchaseOrderDeliveriesResult
                            {
                                Success = false,
                                Message =
                                    $"{successCount} orders updated successfully. The following errors occurred: ",
-                               Errors = errors
+                               Errors = errors,
+                               Updated = updated
                            };
             }
 
-            return new BatchUpdateProcessResult
+            return new UploadPurchaseOrderDeliveriesResult
                        {
-                           Success = true, Message = $"{successCount} orders updated successfully."
+                           Success = true, 
+                           Message = $"{successCount} orders updated successfully.",
+                           Updated = updated
                        };
         }
 
@@ -507,10 +519,10 @@
         // separate public method so that it can be called from the facade (and subsequently Commit()'ted) in the correct order
         public void UpdateMiniOrderDeliveries(IEnumerable<PurchaseOrderDelivery> updated)
         {
-            var purchaseOrderDeliveries = updated.ToList();
-            var miniOrder = this.miniOrderRepository.FindById(purchaseOrderDeliveries.First().OrderNumber);
+            var updatedPurchaseOrderDeliveries = updated.ToList();
+            var miniOrder = this.miniOrderRepository.FindById(updatedPurchaseOrderDeliveries.First().OrderNumber);
 
-            miniOrder.Deliveries = purchaseOrderDeliveries
+            miniOrder.Deliveries = updatedPurchaseOrderDeliveries
                 .Select(del =>
                     {
                         var existing =

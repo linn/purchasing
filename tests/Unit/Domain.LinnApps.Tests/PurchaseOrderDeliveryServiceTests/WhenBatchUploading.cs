@@ -38,11 +38,11 @@
             this.AuthService
                 .HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
-            this.key1 = new PurchaseOrderDeliveryKey { OrderNumber = 123456, OrderLine = 1, DeliverySequence = 1 };
-            this.key12 = new PurchaseOrderDeliveryKey { OrderNumber = 123456, OrderLine = 1, DeliverySequence = 2 };
-            this.key13 = new PurchaseOrderDeliveryKey { OrderNumber = 123456, OrderLine = 1, DeliverySequence = 3 };
+            this.key1 = new PurchaseOrderDeliveryKey { OrderNumber = 123456, OrderLine = 1 };
+            this.key12 = new PurchaseOrderDeliveryKey { OrderNumber = 123456, OrderLine = 1 };
+            this.key13 = new PurchaseOrderDeliveryKey { OrderNumber = 123456, OrderLine = 1 };
 
-            this.key2 = new PurchaseOrderDeliveryKey { OrderNumber = 123457, OrderLine = 1, DeliverySequence = 1 };
+            this.key2 = new PurchaseOrderDeliveryKey { OrderNumber = 123457, OrderLine = 1 };
 
             this.changes = new List<PurchaseOrderDeliveryUpdate>
                                {
@@ -81,7 +81,6 @@
                                                       {
                                                           OrderNumber = this.key1.OrderNumber,
                                                           OrderLine = this.key1.OrderLine,
-                                                          DeliverySeq = this.key1.DeliverySequence,
                                                           OurDeliveryQty = 100,
                                                           OrderUnitPriceCurrency = 0.03m
                                                       },
@@ -89,7 +88,6 @@
                                                       {
                                                           OrderNumber = this.key1.OrderNumber,
                                                           OrderLine = this.key1.OrderLine,
-                                                          DeliverySeq = this.key12.DeliverySequence,
                                                           OurDeliveryQty = 200,
                                                           OrderUnitPriceCurrency = 0.03m
                                                       },
@@ -97,7 +95,6 @@
                                                       {
                                                           OrderNumber = this.key1.OrderNumber,
                                                           OrderLine = this.key1.OrderLine,
-                                                          DeliverySeq = this.key13.DeliverySequence,
                                                           OurDeliveryQty = 300,
                                                           OrderUnitPriceCurrency = 0.03m
                                                       }
@@ -108,7 +105,6 @@
                                                        {
                                                            OrderNumber = this.key2.OrderNumber,
                                                            OrderLine = this.key2.OrderLine,
-                                                           DeliverySeq = this.key2.DeliverySequence,
                                                            OurDeliveryQty = 200,
                                                            OrderUnitPriceCurrency = 0.01m
                                                        }
@@ -155,7 +151,7 @@
                 .Returns(new MiniOrder { OrderNumber = this.key2.OrderNumber });
             this.MiniOrderDeliveryRepository.FindBy(Arg.Any<Expression<Func<MiniOrderDelivery, bool>>>())
                 .Returns(new MiniOrderDelivery { OrderNumber = this.key1.OrderNumber });
-            this.result = this.Sut.BatchUploadDeliveries(this.changes, new List<string>());
+            this.result = this.Sut.UploadDeliveries(this.changes, new List<string>());
         }
 
         [Test]

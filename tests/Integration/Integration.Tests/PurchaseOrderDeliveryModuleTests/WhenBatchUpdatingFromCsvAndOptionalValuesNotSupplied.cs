@@ -21,10 +21,10 @@
         [SetUp]
         public void SetUp()
         {
-            this.MockDomainService.BatchUploadDeliveries(
+            this.MockDomainService.UploadDeliveries(
                 Arg.Any<IEnumerable<PurchaseOrderDeliveryUpdate>>(),
-                Arg.Any<IEnumerable<string>>()).Returns(new BatchUpdateProcessResult
-                                                             {
+                Arg.Any<IEnumerable<string>>()).Returns(new UploadPurchaseOrderDeliveriesResult
+                {
                                                                  Success = true,
                                                                  Message = "Success!"
                                                              });
@@ -47,7 +47,7 @@
         [Test]
         public void ShouldPassDefaults()
         {
-            this.MockDomainService.Received().BatchUploadDeliveries(
+            this.MockDomainService.Received().UploadDeliveries(
                 Arg.Is<IEnumerable<PurchaseOrderDeliveryUpdate>>(
                     l => l.First().Key.OrderNumber.Equals(1)
                     && l.First().NewDateAdvised.Equals(1.January(2025)) // date defaults to this future date

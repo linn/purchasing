@@ -19,7 +19,7 @@
             PurchaseOrderDelivery to,
             IEnumerable<string> privileges);
 
-        BatchUpdateProcessResult BatchUploadDeliveries(
+        UploadPurchaseOrderDeliveriesResult UploadDeliveries(
             IEnumerable<PurchaseOrderDeliveryUpdate> changes,
             IEnumerable<string> privileges);
 

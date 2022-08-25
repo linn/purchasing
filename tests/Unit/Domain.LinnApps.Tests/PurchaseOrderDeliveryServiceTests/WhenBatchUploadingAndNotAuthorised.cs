@@ -22,7 +22,7 @@
             this.AuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(false);
 
-            this.action = () => this.Sut.BatchUploadDeliveries(
+            this.action = () => this.Sut.UploadDeliveries(
                new List<PurchaseOrderDeliveryUpdate>(),
                new List<string>());
         }

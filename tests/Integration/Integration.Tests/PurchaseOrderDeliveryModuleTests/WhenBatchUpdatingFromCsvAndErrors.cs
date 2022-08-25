@@ -20,10 +20,10 @@
         [SetUp]
         public void SetUp()
         {
-            this.MockDomainService.BatchUploadDeliveries(
+            this.MockDomainService.UploadDeliveries(
                 Arg.Any<IEnumerable<PurchaseOrderDeliveryUpdate>>(),
-                Arg.Any<IEnumerable<string>>()).Returns(new BatchUpdateProcessResult
-                                                             {
+                Arg.Any<IEnumerable<string>>()).Returns(new UploadPurchaseOrderDeliveriesResult
+                {
                                                                  Success = false,
                                                                  Message = "Something went wrong!",
                                                                  Errors = new List<Error>

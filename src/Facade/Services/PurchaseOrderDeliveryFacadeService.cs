@@ -130,15 +130,17 @@
                                     });
                 }
 
-                var result = this.domainService.BatchUploadDeliveries(changes, privileges);
+                var result = this.domainService.UploadDeliveries(changes, privileges);
                 this.transactionManager.Commit();
 
-                changes.ForEach(u => this.domainService
-                    .UpdateMiniOrderDelivery(
-                        u.Key.OrderNumber, u.Key.DeliverySequence, u.NewDateAdvised, string.Empty, u.Qty));
+                if (result.Updated.Any())
+                {
+                    this.domainService
+                        .UpdateMiniOrderDeliveries(result.Updated);
 
-                this.transactionManager.Commit();
-
+                    this.transactionManager.Commit();
+                }
+                
                 return new SuccessResult<BatchUpdateProcessResultResource>(
                     new BatchUpdateProcessResultResource
                         {

@@ -39,7 +39,7 @@
                                    new PurchaseOrderDeliveryUpdate
                                        {
                                            Key = this.key,
-                                           Qty = 100,
+                                           Qty = 200,
                                            NewDateAdvised = DateTime.Today
                                        }
                                };
@@ -54,7 +54,8 @@
                                     OrderNumber = this.key.OrderNumber,
                                     OrderLine = this.key.OrderLine,
                                     DeliverySeq = this.key.DeliverySequence,
-                                    OurDeliveryQty = 600
+                                    OurDeliveryQty = 600,
+                                    QtyNetReceived = 300
                                 }
                         }.AsQueryable());
 
@@ -63,7 +64,7 @@
                              { 
                                  Details = new List<PurchaseOrderDetail>
                                                {
-                                                   new PurchaseOrderDetail { OrderQty = 200, Line = 1 }
+                                                   new PurchaseOrderDetail { OrderQty = 600, Line = 1 }
                                                }
                              }); 
 
@@ -71,7 +72,7 @@
                 .Returns(new MiniOrder { OrderNumber = this.key.OrderNumber });
             this.MiniOrderDeliveryRepository.FindBy(Arg.Any<Expression<Func<MiniOrderDelivery, bool>>>())
                 .Returns(new MiniOrderDelivery { OrderNumber = this.key.OrderNumber });
-            this.result = this.Sut.BatchUploadDeliveries(this.changes, new List<string>());
+            this.result = this.Sut.UploadDeliveries(this.changes, new List<string>());
         }
 
         [Test]
