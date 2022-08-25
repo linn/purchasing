@@ -4,7 +4,6 @@
 
     using Linn.Common.Logging;
     using Linn.Common.Persistence;
-    using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;

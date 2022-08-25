@@ -7,7 +7,6 @@
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
-    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
@@ -26,7 +25,8 @@
                 Arg.Any<IEnumerable<string>>()).Returns(new UploadPurchaseOrderDeliveriesResult
                                                              {
                                                                  Success = true,
-                                                                 Message = "Success!"
+                                                                 Message = "Success!",
+                                                                 Updated = new List<PurchaseOrderDelivery>()
                                                              });
             this.Response = this.Client.Post(
                 $"/purchasing/purchase-orders/deliveries",

@@ -3,11 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Net;
-    using System.Net.Http.Json;
 
     using FluentAssertions;
 
-    using Linn.Common.Facade.Carter.Serialisers;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Integration.Tests.Extensions;

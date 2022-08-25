@@ -84,7 +84,7 @@
             this.result.Errors.First().Descriptor.Should().Be(
                 $"Order: {this.key.OrderNumber}");
             this.result.Errors.First().Message.Should().Be(
-                "Qty on lines uploaded for the specified order does not match qty on our order");
+                "Total Qty of lines uploaded (200) does not match order qty outstanding (300)");
         }
     }
 }
