@@ -252,7 +252,7 @@ describe('When Updating', () => {
     });
 });
 
-describe('When Splitting Deliveries', () => {
+describe('When Updating Deliveries', () => {
     beforeEach(() => {
         cleanup();
         jest.clearAllMocks();
@@ -273,9 +273,9 @@ describe('When Splitting Deliveries', () => {
         const expansionPanelOpen = screen.getByText('Look Up Some Orders');
         fireEvent.click(expansionPanelOpen);
 
-        // split the first row
-        const splitButton = screen.getAllByText('SPLIT')[0];
-        fireEvent.click(splitButton);
+        // update deliveries for the first row
+        const button = screen.getAllByText('DELIVS')[0];
+        fireEvent.click(button);
     });
 
     test('Should open deliveries dialog', () => {

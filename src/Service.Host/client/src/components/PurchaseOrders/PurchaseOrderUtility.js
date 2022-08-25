@@ -50,7 +50,7 @@ import sendPurchaseOrderPdfEmailActionTypes from '../../actions/sendPurchaseOrde
 import { sendPurchaseOrderPdfEmail, exchangeRates } from '../../itemTypes';
 import exchangeRatesActions from '../../actions/exchangeRatesActions';
 import currencyConvert from '../../helpers/currencyConvert';
-import SplitDeliveriesUtility from '../SplitDeliveriesUtility';
+import PurchaseOrderDeliveriesUtility from '../PurchaseOrderDeliveriesUtility';
 
 function PurchaseOrderUtility({ creating }) {
     const reduxDispatch = useDispatch();
@@ -260,12 +260,12 @@ function PurchaseOrderUtility({ creating }) {
 
     const [selectedDeliveries, setSelectedDeliveries] = useState();
 
-    const [splitDeliveriesDialogOpen, setSplitDeliveriesDialogOpen] = useState(false);
+    const [deliveriesDialogOpen, setDeliveriesDialogOpen] = useState(false);
     const [selectedOrderLine, setSelectedOrderLine] = useState();
-    const splitDelivery = orderLine => {
+    const updateDeliveries = orderLine => {
         setSelectedOrderLine(orderLine);
         setSelectedDeliveries(order.details.find(d => d.line === orderLine).purchaseDeliveries);
-        setSplitDeliveriesDialogOpen(true);
+        setDeliveriesDialogOpen(true);
     };
 
     const orderPdfEmailMessageVisible = useSelector(state =>
@@ -315,6 +315,9 @@ function PurchaseOrderUtility({ creating }) {
     const screenIsSmall = useMediaQuery({ query: `(max-width: 1024px)` });
     const [overridingOrderPrice, setOverridingOrderPrice] = useState(false);
     const [overridingOrderQty, setOverridingOrderQty] = useState(false);
+
+    const getDateString = isoString =>
+        isoString ? new Date(isoString).toLocaleDateString('en-GB') : null;
 
     return (
         <>
@@ -392,24 +395,26 @@ function PurchaseOrderUtility({ creating }) {
                             </div>
                         </Dialog>
                         {!creating && selectedDeliveries && (
-                            <Dialog open={splitDeliveriesDialogOpen} fullWidth maxWidth="md">
+                            <Dialog open={deliveriesDialogOpen} fullWidth maxWidth="md">
                                 <div className={classes.centerTextInDialog}>
                                     <IconButton
                                         className={classes.pullRight}
                                         aria-label="Close"
-                                        onClick={() => setSplitDeliveriesDialogOpen(false)}
+                                        onClick={() => setDeliveriesDialogOpen(false)}
                                     >
                                         <Close />
                                     </IconButton>
-                                    <SplitDeliveriesUtility
+                                    <PurchaseOrderDeliveriesUtility
                                         orderNumber={order.orderNumber}
                                         orderLine={selectedOrderLine}
                                         inDialogBox
                                         deliveries={selectedDeliveries.map(d => ({
                                             ...d,
-                                            id: `${d.orderNumber}/${d.line}/${d.deliverySeq}`
+                                            id: `${d.orderNumber}/${d.line}/${d.deliverySeq}`,
+                                            dateRequested: getDateString(d.dateRequested),
+                                            dateAdvised: getDateString(d.dateAdvised)
                                         }))}
-                                        backClick={() => setSplitDeliveriesDialogOpen(false)}
+                                        backClick={() => setDeliveriesDialogOpen(false)}
                                     />
                                 </div>
                             </Dialog>
@@ -1188,8 +1193,8 @@ function PurchaseOrderUtility({ creating }) {
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <Button onClick={() => splitDelivery(detail.line)}>
-                                            SPLIT DELIVERIES
+                                        <Button onClick={() => updateDeliveries(detail.line)}>
+                                            EDIT DELIVERIES
                                         </Button>
                                     </Grid>
                                     <Grid item xs={12}>

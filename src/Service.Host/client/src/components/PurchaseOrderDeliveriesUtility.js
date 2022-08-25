@@ -20,7 +20,13 @@ import purchaseOrderDeliveriesActions from '../actions/purchaseOrderDeliveriesAc
 import purchaseOrderActions from '../actions/purchaseOrderActions';
 import { purchaseOrderDeliveries, purchaseOrder } from '../itemTypes';
 
-function SplitDeliveriesUtility({ orderNumber, orderLine, inDialogBox, deliveries, backClick }) {
+function PurchaseOrderDeliveriesUtility({
+    orderNumber,
+    orderLine,
+    inDialogBox,
+    deliveries,
+    backClick
+}) {
     const dispatch = useDispatch();
     const error = useSelector(state => getItemError(state, purchaseOrderDeliveries.item));
     const loading = useSelector(state =>
@@ -36,8 +42,20 @@ function SplitDeliveriesUtility({ orderNumber, orderLine, inDialogBox, deliverie
         { field: 'id', headerName: 'Id', width: 100, hide: true },
         { field: 'deliverySeq', headerName: 'Delivery', width: 100 },
         { field: 'ourDeliveryQty', headerName: 'Qty', width: 100, editable: true },
-        { field: 'dateRequested', headerName: 'Request Date', width: 100, editable: true },
-        { field: 'dateAdvised', headerName: 'Advised Date', width: 100, editable: true },
+        {
+            field: 'dateRequested',
+            headerName: 'Request Date',
+            width: 100,
+            type: 'date',
+            editable: true
+        },
+        {
+            field: 'dateAdvised',
+            headerName: 'Advised Date',
+            width: 100,
+            editable: true,
+            type: 'date'
+        },
         {
             field: 'availableAtSupplier',
             headerName: 'Available at Supplier?',
@@ -115,10 +133,10 @@ function SplitDeliveriesUtility({ orderNumber, orderLine, inDialogBox, deliverie
             <SnackbarMessage
                 visible={purchaseOrderDeliveriesSnackbarVisible}
                 onClose={() => dispatch(purchaseOrderDeliveriesActions.setSnackbarVisible(false))}
-                message="Split Successful"
+                message="Update Successful"
             />
             <Grid item xs={12}>
-                <Typography variant="h5">Split Deliveries</Typography>
+                <Typography variant="h5">Deliveries</Typography>
             </Grid>
             <Grid item xs={3}>
                 <InputField
@@ -169,7 +187,11 @@ function SplitDeliveriesUtility({ orderNumber, orderLine, inDialogBox, deliverie
                 <Button
                     variant="outlined"
                     onClick={deleteSelected}
-                    disabled={!rows.some(r => r.selected)}
+                    disabled={
+                        !rows.some(r => r.selected) ||
+                        rows.length - rows.filter(r => r.selected).length === 0 ||
+                        rows.length < 2
+                    }
                 >
                     -
                 </Button>
@@ -210,7 +232,7 @@ function SplitDeliveriesUtility({ orderNumber, orderLine, inDialogBox, deliverie
     );
 }
 
-SplitDeliveriesUtility.propTypes = {
+PurchaseOrderDeliveriesUtility.propTypes = {
     orderNumber: PropTypes.number.isRequired,
     orderLine: PropTypes.number.isRequired,
     inDialogBox: PropTypes.bool,
@@ -220,9 +242,9 @@ SplitDeliveriesUtility.propTypes = {
     backClick: PropTypes.func.isRequired
 };
 
-SplitDeliveriesUtility.defaultProps = {
+PurchaseOrderDeliveriesUtility.defaultProps = {
     inDialogBox: false,
     deliveries: null
 };
 
-export default SplitDeliveriesUtility;
+export default PurchaseOrderDeliveriesUtility;
