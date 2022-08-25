@@ -43,7 +43,7 @@
         public void ShouldThrownException()
         {
             this.action.Should().Throw<PurchaseOrderDeliveryException>()
-                .WithMessage("Cannot split deliveries - Order is cancelled.");
+                .WithMessage("Cannot update deliveries - Order is cancelled.");
         }
     }
 }

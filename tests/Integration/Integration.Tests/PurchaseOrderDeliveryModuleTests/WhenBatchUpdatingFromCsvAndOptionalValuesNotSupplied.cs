@@ -30,7 +30,7 @@
                                                              });
             this.Response = this.Client.Post(
                 $"/purchasing/purchase-orders/deliveries",
-                $"PO1,,,100,$0.01,,",
+                $"PO1,,100,$0.01,,",
                 with =>
                 {
                     with.Accept("application/json");
@@ -50,7 +50,6 @@
             this.MockDomainService.Received().BatchUploadDeliveries(
                 Arg.Is<IEnumerable<PurchaseOrderDeliveryUpdate>>(
                     l => l.First().Key.OrderNumber.Equals(1)
-                    && l.First().Key.DeliverySequence.Equals(1) // seq defaults to 1
                     && l.First().NewDateAdvised.Equals(1.January(2025)) // date defaults to this future date
                     && l.First().Qty.Equals(100)
                     && l.First().UnitPrice.Equals(0.01m)

@@ -349,7 +349,7 @@
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
             {
-                throw new UnauthorisedActionException("You are not authorised to split deliveries");
+                throw new UnauthorisedActionException("You are not authorised to update deliveries");
             }
 
             var order = this.purchaseOrderRepository
@@ -364,12 +364,12 @@
             if (order.OrderMethod?.Name == "CALL OFF")
             {
                 throw new PurchaseOrderDeliveryException(
-                    "You cannot raise a split delivery for a CALL OFF. It is raised automatically on delivery.");
+                    "You cannot update deliveries for a CALL OFF.");
             }
 
             if (order.Cancelled == "Y")
             {
-                throw new PurchaseOrderDeliveryException("Cannot split deliveries - Order is cancelled.");
+                throw new PurchaseOrderDeliveryException("Cannot update deliveries - Order is cancelled.");
             }
 
             if (order.DocumentTypeName != "PO")
@@ -383,7 +383,7 @@
                     .Sum(x => x.OurDeliveryQty.GetValueOrDefault()))
             {
                 throw new PurchaseOrderDeliveryException(
-                    "You must match the order qty when splitting deliveries.");
+                    "You must match the order qty when updating deliveries.");
             }
 
             var list = detail.PurchaseDeliveries.ToArray();

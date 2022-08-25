@@ -51,7 +51,7 @@
             {
                 while (reader.ReadLine() is { } line)
                 {
-                    // assuming csv lines are in the form <orderNumber>,<deliveryNo>,<newAdvisedDate>,<qty>, <unitPrice>, <newReason>
+                    // assuming csv lines are in the form <orderNumber>,<newAdvisedDate>,<qty>, <unitPrice>, <newReason>
                     var row = line.Split(",");
 
                     if (!int.TryParse(
@@ -61,39 +61,28 @@
                         throw new InvalidOperationException($"Invalid Order Number: {row[0]}.");
                     }
 
-                    int delNo;
-
-                    if (string.IsNullOrEmpty(row[1]))
+                    if (!decimal.TryParse(row[2].Trim(), out var qty))
                     {
-                        delNo = 1;
-                    }
-                    else if (!int.TryParse(row[1].Trim().First().ToString(), out delNo))
-                    {
-                        throw new InvalidOperationException($"Invalid Delivery Number: {row[0]} / {row[1]}.");
-                    }
-
-                    if (!decimal.TryParse(row[3].Trim(), out var qty))
-                    {
-                        throw new InvalidOperationException($"Invalid Qty for {row[0]} / {row[1]}.");
+                        throw new InvalidOperationException($"Invalid Qty for {row[0]}");
                     }
                     if (!decimal.TryParse(
-                            Regex.Replace(row[4], "[^0-9.]", ""), // strip out non numeric chars 
+                            Regex.Replace(row[3], "[^0-9.]", ""), // strip out non numeric chars 
                             out var unitPrice))
                     {
-                        throw new InvalidOperationException($"Invalid Unit Price for {row[0]} / {row[1]}.");
+                        throw new InvalidOperationException($"Invalid Unit Price for {row[0]}.");
                     }
 
                     var firstFormatSatisfied =
-                        DateTime.TryParseExact(row[2]
+                        DateTime.TryParseExact(row[1]
                             .Trim(), "dd'/'M'/'yy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate1);
                     var secondFormatSatisfied =
-                        DateTime.TryParseExact(row[2]
+                        DateTime.TryParseExact(row[1]
                             .Trim(), "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate2);
                     var thirdFormatSatisfied =
-                        DateTime.TryParseExact(row[2]
+                        DateTime.TryParseExact(row[1]
                             .Trim(), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate3);
                     var fourthFormatSatisfied =
-                        DateTime.TryParseExact(row[2]
+                        DateTime.TryParseExact(row[1]
                             .Trim(), "dd'/'M'/'yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate4);
 
                     // only supports two date formats for now, i.e.  31/01/2000 and 31-jan-2000
@@ -120,7 +109,7 @@
                         parsedDate = new DateTime(2025, 1, 1);
                     }
 
-                    var reason = row.Length < 6 ? null : row[5].Trim();
+                    var reason = row.Length < 5 ? null : row[4].Trim();
 
                     if (string.IsNullOrEmpty(reason))
                     {
@@ -132,8 +121,7 @@
                                         Key = new PurchaseOrderDeliveryKey
                                                   {
                                                       OrderNumber = orderNumber,
-                                                      OrderLine = 1, // hardcoded for now
-                                                      DeliverySequence = delNo
+                                                      OrderLine = 1 // hardcoded for now
                                                   },
                                         NewDateAdvised = parsedDate,
                                         NewReason = reason,
@@ -204,12 +192,7 @@
             return new SuccessResult<BatchUpdateProcessResultResource>(new BatchUpdateProcessResultResource
                                                                            {
                                                                                Message = result.Message,
-                                                                               Success = result.Success,
-                                                                               Errors = result.Errors?.Select(e => new ErrorResource
-                                                                                   {
-                                                                                       Descriptor = e.Descriptor,
-                                                                                       Message = e.Message
-                                                                                   })
+                                                                               Success = result.Success
                                                                            });
         }
 
