@@ -21,7 +21,10 @@
         {
             this.UnitsOfMeasureService.GetAll().Returns(
                 new SuccessResult<IEnumerable<UnitOfMeasureResource>>(
-                    new[] { new UnitOfMeasureResource { Unit = "ONES" }, new UnitOfMeasureResource { Unit = "TWOS" } }));
+                    new[]
+                        {
+                            new UnitOfMeasureResource { Unit = "ONES" }, new UnitOfMeasureResource { Unit = "TWOS" }
+                        }));
 
             this.Response = this.Client.Get(
                 "/purchasing/purchase-orders/units-of-measure",
@@ -47,12 +50,12 @@
         [Test]
         public void ShouldReturnJsonBody()
         {
-            var resources = this.Response.DeserializeBody<IEnumerable<UnitOfMeasureResource>>()?.ToArray();
+            var resources = this.Response.DeserializeBody<IEnumerable<UnitOfMeasureResource>>().ToArray();
             resources.Should().NotBeNull();
             resources.Should().HaveCount(2);
 
-            resources?.First().Unit.Should().Be("ONES");
-            resources.Second().Unit.Should().Be("TWOS");
+            resources.First().Unit.Should().Be("ONES");
+            resources.ElementAt(1).Unit.Should().Be("TWOS");
         }
     }
 }

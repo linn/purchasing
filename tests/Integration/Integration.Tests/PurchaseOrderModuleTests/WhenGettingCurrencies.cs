@@ -47,12 +47,12 @@
         [Test]
         public void ShouldReturnJsonBody()
         {
-            var resources = this.Response.DeserializeBody<IEnumerable<CurrencyResource>>()?.ToArray();
+            var resources = this.Response.DeserializeBody<IEnumerable<CurrencyResource>>().ToArray();
             resources.Should().NotBeNull();
             resources.Should().HaveCount(2);
 
-            resources?.First().Code.Should().Be("GBP");
-            resources.Second().Code.Should().Be("USD");
+            resources.First().Code.Should().Be("GBP");
+            resources.ElementAt(1).Code.Should().Be("USD");
         }
     }
 }
