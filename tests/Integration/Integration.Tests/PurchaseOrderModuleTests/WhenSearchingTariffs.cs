@@ -60,11 +60,11 @@
         [Test]
         public void ShouldReturnJsonBody()
         {
-            var resources = this.Response.DeserializeBody<IEnumerable<TariffResource>>()?.ToArray();
+            var resources = this.Response.DeserializeBody<IEnumerable<TariffResource>>().ToArray();
             resources.Should().NotBeNull();
             resources.Should().HaveCount(1);
 
-            resources?.First().Code.Should().Be("T1");
+            resources.First().Code.Should().Be("T1");
         }
     }
 }

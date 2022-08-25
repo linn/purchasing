@@ -61,10 +61,10 @@
         [Test]
         public void ShouldReturnJsonBody()
         {
-            var resources = this.Response.DeserializeBody<IEnumerable<SupplierGroupResource>>()?.ToArray();
+            var resources = this.Response.DeserializeBody<IEnumerable<SupplierGroupResource>>().ToArray();
             resources.Should().HaveCount(2);
-            resources?.First(a => a.Id == 1).Name.Should().Be("sg1");
-            resources?.First(a => a.Id == 2).Name.Should().Be("sg2");
+            resources.First(a => a.Id == 1).Name.Should().Be("sg1");
+            resources.First(a => a.Id == 2).Name.Should().Be("sg2");
         }
     }
 }

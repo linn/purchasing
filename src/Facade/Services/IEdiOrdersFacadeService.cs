@@ -15,4 +15,3 @@
         IResult<ProcessResultResource> SendEdiOrder(SendEdiEmailResource resource);
     }
 }
-
