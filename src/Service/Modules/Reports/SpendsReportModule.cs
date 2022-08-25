@@ -11,7 +11,6 @@
 
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources.RequestResources;
-    using Linn.Purchasing.Service.Extensions;
     using Linn.Purchasing.Service.Models;
 
     using Microsoft.AspNetCore.Builder;

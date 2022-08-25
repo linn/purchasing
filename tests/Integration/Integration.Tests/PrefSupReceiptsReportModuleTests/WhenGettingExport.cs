@@ -1,13 +1,10 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.PrefSupReceiptsReportModuleTests
 {
     using System.Collections.Generic;
-    using System.Linq;
     using System.Net;
 
     using FluentAssertions;
 
-    using Linn.Common.Facade;
-    using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Integration.Tests.Extensions;
 
     using NSubstitute;

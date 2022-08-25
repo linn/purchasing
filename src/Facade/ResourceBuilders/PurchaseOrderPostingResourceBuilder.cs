@@ -16,6 +16,7 @@
         {
             this.nomaccRepository = nomaccRepository;
         }
+
         public PurchaseOrderPostingResource Build(PurchaseOrderPosting entity, IEnumerable<string> claims)
         {
             var nomacc = this.nomaccRepository.FindById(entity.NominalAccountId);
