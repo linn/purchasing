@@ -31,10 +31,8 @@
             return services.AddScoped<ServiceDbContext>().AddTransient<DbContext>(a => a.GetService<ServiceDbContext>())
                 .AddTransient<ITransactionManager, TransactionManager>()
                 .AddTransient<IRepository<SigningLimit, int>, SigningLimitRepository>()
-                .AddTransient<IRepository<SigningLimitLog, int>,
-                    EntityFrameworkRepository<SigningLimitLog, int>>(
-                    r => new EntityFrameworkRepository<SigningLimitLog, int>(
-                        r.GetService<ServiceDbContext>()?.SigningLimitLogs))
+                .AddTransient<IRepository<SigningLimitLog, int>, EntityFrameworkRepository<SigningLimitLog, int>>(
+                    r => new EntityFrameworkRepository<SigningLimitLog, int>(r.GetService<ServiceDbContext>()?.SigningLimitLogs))
                 .AddTransient<IRepository<PartSupplier, PartSupplierKey>, PartSupplierRepository>()
                 .AddTransient<IQueryRepository<Part>, PartRepository>()
                 .AddTransient<IRepository<Supplier, int>, SupplierRepository>()
@@ -231,7 +229,10 @@
                         ?.SupplierDeliveryPerformance))
                 .AddTransient<IQueryRepository<DeliveryPerformanceDetail>, EntityFrameworkQueryRepository<DeliveryPerformanceDetail>>(
                     r => new EntityFrameworkQueryRepository<DeliveryPerformanceDetail>(r.GetService<ServiceDbContext>()
-                        ?.DeliveryPerformanceDetails));
+                        ?.DeliveryPerformanceDetails))
+                .AddTransient<IRepository<PlReceipt, int>, EntityFrameworkRepository<PlReceipt, int>>(
+                    r => new EntityFrameworkRepository<PlReceipt, int>(
+                        r.GetService<ServiceDbContext>()?.PlReceipts));
         }
     }
 }

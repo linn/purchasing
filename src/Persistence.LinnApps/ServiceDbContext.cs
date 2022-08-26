@@ -173,6 +173,8 @@
 
         public DbSet<DeliveryPerformanceDetail> DeliveryPerformanceDetails { get; set; }
 
+        public DbSet<PlReceipt> PlReceipts { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -266,6 +268,7 @@
             this.BuildWeeklyForecastParts(builder);
             this.BuildSupplierDeliveryPerformance(builder);
             this.BuildDeliveryPerformanceDetails(builder);
+            this.BuildPlReceipts(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1738,6 +1741,17 @@
             entity.Property(a => a.AdvisedDate).HasColumnName("ADVISED_DATE");
             entity.Property(a => a.RescheduleReason).HasColumnName("RESCHEDULE_REASON");
             entity.Property(a => a.OnTime).HasColumnName("ON_TIME");
+        }
+
+        private void BuildPlReceipts(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PlReceipt>().ToTable("PL_RECEIPTS");
+            entity.HasKey(r => r.Id);
+            entity.Property(r => r.Id).HasColumnName("PLREC_ID");
+            entity.Property(r => r.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(r => r.OrderLine).HasColumnName("ORDER_LINE");
+            entity.Property(r => r.DeliverySeq).HasColumnName("DELIVERY_SEQ");
+            entity.Property(r => r.Qty).HasColumnName("QTY");
         }
     }
 }
