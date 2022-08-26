@@ -235,15 +235,6 @@
                     continue;
                 }
 
-                if (group.DeliveryUpdates.Any(u => !u.NewDateAdvised.HasValue))
-                {
-                    errors.Add(
-                        new Error(
-                            $"Order: {group.OrderNumber}",
-                            "Invalid date string supplied for specified Order."));
-                    continue;
-                }
-
                 var updates = group.DeliveryUpdates.OrderBy(u => u.NewDateAdvised).ToList();
                 var index = 1;
                 var updatedDeliveries = new List<PurchaseOrderDelivery>();
