@@ -12,6 +12,7 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.RequestResources;
     using Linn.Purchasing.Resources.SearchResources;
     using Linn.Purchasing.Service.Extensions;
     using Linn.Purchasing.Service.Models;
@@ -41,6 +42,9 @@
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}/html", this.GetPurchaseOrderHtml);
             app.MapPost("/purchasing/purchase-orders/email-pdf", this.EmailOrderPdf);
             app.MapPost("/purchasing/purchase-orders/email-supplier-ass", this.EmailSupplierAss);
+            app.MapGet("/purchasing/purchase-orders/auth-or-send", this.GetApp);
+            app.MapPost("/purchasing/purchase-orders/authorise-multiple", this.AuthorisePurchaseOrders);
+            app.MapPost("/purchasing/purchase-orders/email-multiple", this.EmailPurchaseOrders);
             app.MapPut("/purchasing/purchase-orders/{orderNumber:int}", this.UpdatePurchaseOrder);
         }
 
@@ -55,6 +59,33 @@
             IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
             await res.Negotiate(purchaseOrderFacadeService.GetApplicationState(req.HttpContext.GetPrivileges()));
+        }
+
+        private async Task AuthorisePurchaseOrders(
+            HttpRequest req,
+            HttpResponse res,
+            PurchaseOrdersProcessRequestResource requestResource,
+            IPurchaseOrderFacadeService purchaseOrderFacadeService)
+        {
+            var result = purchaseOrderFacadeService.AuthorisePurchaseOrders(
+                requestResource,
+                req.HttpContext.GetPrivileges(),
+                req.HttpContext.User.GetEmployeeNumber());
+            await res.Negotiate(result);
+        }
+
+        private async Task EmailPurchaseOrders(
+            HttpRequest req,
+            HttpResponse res,
+            PurchaseOrdersProcessRequestResource requestResource,
+            IPurchaseOrderFacadeService purchaseOrderFacadeService)
+        {
+            var result = purchaseOrderFacadeService.EmailOrderPdfs(
+                requestResource,
+                req.HttpContext.GetPrivileges(),
+                req.HttpContext.User.GetEmployeeNumber());
+
+            await res.Negotiate(result);
         }
 
         private async Task GetCurrencies(
@@ -125,7 +156,7 @@
             int orderNumber,
             IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
-            var result = await purchaseOrderFacadeService.GetOrderAsHtml(orderNumber);
+            var result = purchaseOrderFacadeService.GetOrderAsHtml(orderNumber);
 
             res.ContentType = "text/html";
             res.StatusCode = (int)HttpStatusCode.OK;
@@ -141,7 +172,7 @@
             bool bcc,
             IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
-            var result = await purchaseOrderFacadeService.EmailOrderPdf(
+            var result = purchaseOrderFacadeService.EmailOrderPdf(
                 orderNumber,
                 emailAddress,
                 bcc,
@@ -176,10 +207,13 @@
             HttpRequest req,
             HttpResponse res,
             string searchTerm,
-            IPurchaseOrderFacadeService purchaseOrderFacadeService)
+            string startDate,
+            string endDate,
+            IPurchaseOrderFacadeService purchaseOrderFacadeService,
+            int numberToTake = 50)
         {
-            var resource = new PurchaseOrderSearchResource { OrderNumber = searchTerm };
-            var result = purchaseOrderFacadeService.FilterBy(resource, numberToTake: 50, req.HttpContext.GetPrivileges());
+            var resource = new PurchaseOrderSearchResource { OrderNumber = searchTerm, StartDate = startDate, EndDate = endDate };
+            var result = purchaseOrderFacadeService.FilterBy(resource, numberToTake, req.HttpContext.GetPrivileges());
             await res.Negotiate(result);
         }
 

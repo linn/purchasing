@@ -11,14 +11,15 @@
     {
         public EdiSupplierResource BuildResource(EdiSupplier model, IEnumerable<string> claims)
         {
-            return new EdiSupplierResource { 
-                SupplierId = model.SupplierId, 
-                SupplierName = model.SupplierName, 
-                VendorManager = model.VendorManager, 
-                VendorManangerName = model.VendorManangerName, 
-                EdiEmailAddress = model.EdiEmailAddress, 
-                NumOrders = model.NumOrders
-            };
+            return new EdiSupplierResource
+                       {
+                           SupplierId = model.SupplierId,
+                           SupplierName = model.SupplierName,
+                           VendorManager = model.VendorManager,
+                           VendorManagerName = model.VendorManagerName,
+                           EdiEmailAddress = model.EdiEmailAddress,
+                           NumOrders = model.NumOrders
+                       };
         }
 
         object IBuilder<EdiSupplier>.Build(EdiSupplier model, IEnumerable<string> claims) => this.BuildResource(model, claims);

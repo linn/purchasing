@@ -267,7 +267,7 @@
                                                   BaseNetTotal = Math.Round(
                                                       update.Qty * detail.BaseOurUnitPrice.GetValueOrDefault(),
                                                       2),
-                                                  OrderDeliveryQty = update.Qty,
+                                                  OrderDeliveryQty = update.Qty / detail.OrderConversionFactor,
                                                   BaseOrderUnitPrice = existingDelivery.BaseOrderUnitPrice,
                                                   VatTotalCurrency = vatAmount,
                                                   BaseVatTotal = baseVatAmount,

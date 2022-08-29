@@ -6,7 +6,6 @@
 
     using FluentAssertions;
 
-    using Linn.Common.Facade;
     using Linn.Common.Resources;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;

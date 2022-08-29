@@ -6,7 +6,6 @@
     using System.Linq.Expressions;
 
     using FluentAssertions;
-    using FluentAssertions.Extensions;
 
     using Linn.Purchasing.Domain.LinnApps.Edi;
 
@@ -22,13 +21,14 @@
         public void SetUp()
         {
             var orders = new List<EdiOrder>
-                                               {
-                                                   new EdiOrder { Id = 1, OrderNumber = 1, SupplierId = 1 },
-                                                   new EdiOrder { Id = 2, OrderNumber = 2, SupplierId = 1 },
-                                                   new EdiOrder { Id = 3, OrderNumber = 3, SupplierId = 1 }
-                                               };
+                             {
+                                 new EdiOrder { Id = 1, OrderNumber = 1, SupplierId = 1 },
+                                 new EdiOrder { Id = 2, OrderNumber = 2, SupplierId = 1 },
+                                 new EdiOrder { Id = 3, OrderNumber = 3, SupplierId = 1 }
+                             };
 
-            this.MockEdiOrderRepository.FilterBy(Arg.Any<Expression<Func<EdiOrder, bool>>>()).Returns(orders.AsQueryable());
+            this.MockEdiOrderRepository.FilterBy(Arg.Any<Expression<Func<EdiOrder, bool>>>())
+                .Returns(orders.AsQueryable());
 
             this.result = this.Sut.GetEdiOrders(1);
         }

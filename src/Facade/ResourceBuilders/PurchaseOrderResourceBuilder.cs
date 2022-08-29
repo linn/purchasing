@@ -91,13 +91,20 @@
                            DateFilCancelled = entity.DateFilCancelled?.ToString("O"),
                            PeriodFilCancelled = entity.PeriodFilCancelled,
                            Supplier =
-                               new SupplierResource { Id = entity.Supplier.SupplierId, Name = entity.Supplier.Name },
+                               new SupplierResource
+                                   {
+                                       Id = entity.Supplier.SupplierId,
+                                       Name = entity.Supplier.Name,
+                                       VendorManagerId = entity.Supplier.VendorManagerId
+                                   },
                            OrderAddress =
                                entity.OrderAddress != null
                                    ? (AddressResource)this.addressResourceBuilder.Build(entity.OrderAddress, claims)
                                    : null,
                            SupplierContactEmail = entity.Supplier.SupplierContacts?.FirstOrDefault(c => c.IsMainOrderContact == "Y")?.EmailAddress,
                            SupplierContactPhone = entity.Supplier.SupplierContacts?.FirstOrDefault(c => c.IsMainOrderContact == "Y")?.PhoneNumber,
+                           BaseOrderNetTotal = entity.BaseOrderNetTotal,
+                           OrderNetTotal = entity.OrderNetTotal,
                            Links = this.BuildLinks(entity, claims).ToArray()
                        };
         }

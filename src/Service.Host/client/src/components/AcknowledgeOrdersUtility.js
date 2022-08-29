@@ -34,16 +34,16 @@ import config from '../config';
 import batchPurchaseOrderDeliveriesUploadActions from '../actions/batchPurchaseOrderDeliveriesUploadActions';
 import batchPurchaseOrderDeliveriesUpdateActions from '../actions/batchPurchaseOrderDeliveriesUpdateActions';
 
-import SplitDeliveriesUtility from './SplitDeliveriesUtility';
+import PurchaseOrderDeliveriesUtility from './PurchaseOrderDeliveriesUtility';
 
 function AcknowledgeOrdersUtility() {
     const dispatch = useDispatch();
     const { search } = useLocation();
     const [lookUpExpanded, setLookUpExpanded] = useState(false);
-    const [splitDeliveriesDialogOpen, setSplitDeliveriesDialogOpen] = useState(false);
+    const [deliveriesDialogOpen, setDeliveriesDialogOpen] = useState(false);
     const [applyChangesDialogOpen, setApplyChangesDialogOpen] = useState(false);
 
-    const [deliveriesToSplit, setDeliveriesToSplit] = useState();
+    const [deliveriesToUpdate, setDeliveriesToUpdate] = useState();
     const orderNumberSearchTerm = queryString.parse(search)?.orderNumber;
 
     useEffect(() => {
@@ -108,7 +108,7 @@ function AcknowledgeOrdersUtility() {
                     {params.row.orderLine}{' '}
                     <Button
                         onClick={() => {
-                            setDeliveriesToSplit(
+                            setDeliveriesToUpdate(
                                 rows
                                     .filter(
                                         d =>
@@ -121,10 +121,10 @@ function AcknowledgeOrdersUtility() {
                                         dateAdvised: getDateString(d.dateAdvised)
                                     }))
                             );
-                            setSplitDeliveriesDialogOpen(true);
+                            setDeliveriesDialogOpen(true);
                         }}
                     >
-                        SPLIT
+                        DELIVS
                     </Button>
                 </>
             )
@@ -259,18 +259,18 @@ function AcknowledgeOrdersUtility() {
             />
 
             <Grid container spacing={3}>
-                <Dialog open={splitDeliveriesDialogOpen} fullWidth maxWidth="lg">
+                <Dialog open={deliveriesDialogOpen} fullWidth maxWidth="lg">
                     <div className={classes.dialog}>
-                        <SplitDeliveriesUtility
-                            orderNumber={deliveriesToSplit?.[0]?.orderNumber}
+                        <PurchaseOrderDeliveriesUtility
+                            orderNumber={deliveriesToUpdate?.[0]?.orderNumber}
                             orderLine={1} // todo
                             inDialogBox
-                            cancelClick={() => setSplitDeliveriesDialogOpen(false)}
+                            cancelClick={() => setDeliveriesDialogOpen(false)}
                             backClick={() => {
-                                setSplitDeliveriesDialogOpen(false);
+                                setDeliveriesDialogOpen(false);
                                 refreshResults();
                             }}
-                            deliveries={deliveriesToSplit}
+                            deliveries={deliveriesToUpdate}
                         />
                     </div>
                 </Dialog>

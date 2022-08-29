@@ -41,12 +41,12 @@
         [Test]
         public void ShouldReturnJsonBody()
         {
-            var resources = this.Response.DeserializeBody<IEnumerable<PurchaseOrderReqStateResource>>()?.ToArray();
+            var resources = this.Response.DeserializeBody<IEnumerable<PurchaseOrderReqStateResource>>().ToArray();
             resources.Should().NotBeNull();
             resources.Should().HaveCount(2);
 
-            resources?.First().State.Should().Be("authorised");
-            resources.Second().State.Should().Be("created");
+            resources.First().State.Should().Be("authorised");
+            resources.ElementAt(1).State.Should().Be("created");
         }
 
         [Test]

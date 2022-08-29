@@ -5,7 +5,6 @@
     using Linn.Common.Authorisation;
     using Linn.Common.Facade;
     using Linn.Common.Logging;
-    using Linn.Common.Pdf;
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps;
@@ -13,7 +12,6 @@
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
-    using Linn.Purchasing.Facade;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
@@ -30,11 +28,7 @@
     {
         protected HttpClient Client { get; set; }
 
-        protected IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource> CurrencyService
-        {
-            get;
-            private set;
-        }
+        protected IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource> CurrencyService { get; private set; }
 
         protected IFacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource, LinnDeliveryAddressResource> DeliveryAddressService { get; private set; }
 
@@ -60,27 +54,15 @@
 
         protected IPurchaseOrderFacadeService PurchaseOrderFacadeService { get; private set; }
 
-        protected IPurchaseOrderReqFacadeService PurchaseOrderReqFacadeService { get; private set; }
-
-        protected IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource> PurchaseOrderReqStateFacadeService { get; private set; }
-
         protected HttpResponseMessage Response { get; set; }
 
-        protected IFacadeResourceService<Tariff, int, TariffResource, TariffResource> TariffService
-        {
-            get;
-            private set;
-        }
+        protected IFacadeResourceService<Tariff, int, TariffResource, TariffResource> TariffService { get; private set; }
 
         protected ITransactionManager TransactionManager { get; private set; }
 
         protected IFacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource> UnitsOfMeasureService { get; private set; }
 
         protected IPurchaseOrderService MockDomainService { get; private set; }
-
-        protected ITemplateEngine MockTemplateEngine { get; private set; }
-
-        protected IFileReader MockFileReader { get; private set; }
 
         protected IRepository<NominalAccount, int> MockNominalAccountRepository { get; private set; }
 
@@ -99,8 +81,6 @@
             this.PackagingGroupService = Substitute
                 .For<IFacadeResourceService<PackagingGroup, int, PackagingGroupResource, PackagingGroupResource>>();
             this.TariffService = Substitute.For<IFacadeResourceService<Tariff, int, TariffResource, TariffResource>>();
-            this.PurchaseOrderReqStateFacadeService = Substitute
-                .For<IFacadeResourceService<PurchaseOrderReqState, string, PurchaseOrderReqStateResource, PurchaseOrderReqStateResource>>();
             this.MockReqDomainService = Substitute.For<IPurchaseOrderReqService>();
             this.MockDomainService = Substitute.For<IPurchaseOrderService>();
 
@@ -112,15 +92,6 @@
 
             this.MockDatabaseService = Substitute.For<IDatabaseService>();
             this.MockAuthService = Substitute.For<IAuthorisationService>();
-            this.MockTemplateEngine = Substitute.For<ITemplateEngine>();
-            this.MockFileReader = Substitute.For<IFileReader>();
-
-            this.PurchaseOrderReqFacadeService = new PurchaseOrderReqFacadeService(
-                this.MockPurchaseOrderReqRepository,
-                this.TransactionManager,
-                new PurchaseOrderReqResourceBuilder(this.MockAuthService),
-                this.MockReqDomainService,
-                this.MockDatabaseService);
 
             var purchaseOrderResourceBuilder = new PurchaseOrderResourceBuilder(
                 this.MockAuthService,
@@ -138,9 +109,6 @@
                 purchaseOrderResourceBuilder,
                 this.MockDomainService,
                 this.OverbookAllowedByLogRepository,
-                "path",
-                this.MockFileReader,
-                this.MockTemplateEngine,
                 this.Log);
 
             this.Client = TestClient.With<PurchaseOrderModule>(
@@ -148,14 +116,12 @@
                     {
                         services.AddSingleton(this.TransactionManager);
                         services.AddSingleton(this.PurchaseOrderFacadeService);
-                        services.AddSingleton(this.PurchaseOrderReqFacadeService);
                         services.AddSingleton(this.CurrencyService);
                         services.AddSingleton(this.OrderMethodService);
                         services.AddSingleton(this.DeliveryAddressService);
                         services.AddSingleton(this.UnitsOfMeasureService);
                         services.AddSingleton(this.PackagingGroupService);
                         services.AddSingleton(this.TariffService);
-                        services.AddSingleton(this.PurchaseOrderReqStateFacadeService);
                         services.AddSingleton(this.Log);
                         services.AddHandlers();
                     },

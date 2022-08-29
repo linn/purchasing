@@ -38,14 +38,9 @@
                     });
 
             this.MiniOrderRepository.FindById(this.orderNumber).Returns(this.miniOrder);
-
-            this.result = this.Sut.SendPdfEmail(
-                "<h1>hello world order number is @Model.OrderNumber</h1>",
-                "seller@wesellthings.com",
-                this.orderNumber,
-                true,
-                this.employeeNumber,
-                new PurchaseOrder { OrderNumber = this.orderNumber });
+            this.PurchaseOrderRepository.FindById(this.orderNumber)
+                .Returns(new PurchaseOrder { OrderNumber = this.orderNumber });
+            this.result = this.Sut.SendPdfEmail("seller@wesellthings.com", this.orderNumber, true, this.employeeNumber);
         }
 
         [Test]

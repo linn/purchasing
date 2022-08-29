@@ -2,6 +2,7 @@
 {
     using Linn.Common.Authorisation;
     using Linn.Common.Email;
+    using Linn.Common.Logging;
     using Linn.Common.Pdf;
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
@@ -43,6 +44,12 @@
 
         protected IRepository<LinnDeliveryAddress, int> LinnDeliveryAddressRepository { get; private set; }
 
+        protected IRepository<PurchaseOrder, int> PurchaseOrderRepository { get; private set; }
+
+        protected IHtmlTemplateService<PurchaseOrder> HtmlTemplateService { get; private set; }
+
+        protected ILog Log { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -58,6 +65,9 @@
             this.LinnDeliveryAddressRepository = Substitute.For<IRepository<LinnDeliveryAddress, int>>();
             this.CurrencyPack = Substitute.For<ICurrencyPack>();
             this.PurchaseOrdersPack = Substitute.For<IPurchaseOrdersPack>();
+            this.PurchaseOrderRepository = Substitute.For<IRepository<PurchaseOrder, int>>();
+            this.HtmlTemplateService = Substitute.For<IHtmlTemplateService<PurchaseOrder>>();
+            this.Log = Substitute.For<ILog>();
 
             this.Sut = new PurchaseOrderService(
                 this.MockAuthService,
@@ -71,7 +81,10 @@
                 this.LinnDeliveryAddressRepository,
                 this.PurchaseOrdersPack,
                 this.CurrencyPack, 
-                this.SupplierKitService);
+                this.SupplierKitService,
+                this.PurchaseOrderRepository,
+                this.HtmlTemplateService,
+                this.Log);
         }
     }
 }

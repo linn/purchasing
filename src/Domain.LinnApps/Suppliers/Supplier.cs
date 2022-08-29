@@ -60,6 +60,8 @@
 
         public Planner Planner { get; set; }
 
+        public string VendorManagerId { get; set; }
+
         public VendorManager VendorManager { get; set; }
 
         public Employee AccountController { get; set; }

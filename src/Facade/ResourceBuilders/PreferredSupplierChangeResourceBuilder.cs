@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
 
     using Linn.Common.Authorisation;
     using Linn.Common.Facade;
@@ -37,7 +36,6 @@
                            OldSupplierName = entity.OldSupplier?.Name,
                            PartNumber = entity.PartNumber,
                            Remarks = entity.Remarks
-                           //Links = this.BuildLinks()
                        };
         }
 

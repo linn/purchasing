@@ -39,6 +39,9 @@ function App() {
                 >
                     <Typography color="primary">Automatic Purchase Orders</Typography>
                 </ListItem>
+                <ListItem component={Link} to="/purchasing/purchase-orders/auth-or-send" button>
+                    <Typography color="primary">Auth or Send Purchase Orders</Typography>
+                </ListItem>
                 <Typography variant="h6">Reports</Typography>
                 <ListItem component={Link} to="/purchasing/reports/orders-by-supplier" button>
                     <Typography color="primary">Orders by Supplier Report</Typography>

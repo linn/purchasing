@@ -140,9 +140,6 @@
                         x.GetService<IBuilder<PurchaseOrder>>(),
                         x.GetService<IPurchaseOrderService>(),
                         x.GetService<IRepository<OverbookAllowedByLog, int>>(),
-                        $"{ConfigurationManager.Configuration["VIEWS_ROOT"]}PurchaseOrder.cshtml",
-                        new FileReader(),
-                        x.GetService<ITemplateEngine>(),
                         x.GetService<ILog>()))
                 .AddTransient<IFacadeResourceService<AutomaticPurchaseOrder, int, AutomaticPurchaseOrderResource, AutomaticPurchaseOrderResource>, AutomaticPurchaseOrderFacadeService>()
                 .AddTransient<IFacadeResourceFilterService<AutomaticPurchaseOrderSuggestion, int, AutomaticPurchaseOrderSuggestionResource, AutomaticPurchaseOrderSuggestionResource, PlannerSupplierRequestResource>, AutomaticPurchaseOrderSuggestionFacadeService>()
@@ -157,7 +154,6 @@
                 .AddTransient<ISupplierService, SupplierService>()
                 .AddTransient<IAmazonSimpleEmailService>(x => new AmazonSimpleEmailServiceClient(x.GetService<AWSOptions>()?.Region))
                 .AddTransient<IEmailService>(x => new EmailService(x.GetService<IAmazonSimpleEmailService>()))
-                .AddTransient<ITemplateEngine, RazorTemplateEngine>()
                 .AddTransient<IPdfService>(x => new PdfService(ConfigurationManager.Configuration["PDF_SERVICE_ROOT"], new HttpClient()))
                 .AddTransient<IReportingHelper, ReportingHelper>()
                 .AddTransient<IPurchaseOrdersReportService, PurchaseOrdersReportService>()
@@ -212,7 +208,13 @@
                 .AddTransient<ISupplierPack, SupplierPack>()
                 .AddTransient<IPurchaseOrderAutoOrderPack, PurchaseOrderAutoOrderPack>()
                 .AddTransient<IRazorEngine, RazorEngine>()
-                .AddTransient<ITemplateEngine, RazorTemplateEngine>();
+                .AddTransient<ITemplateEngine, RazorTemplateEngine>()
+
+                // proxy
+                .AddTransient<IHtmlTemplateService<PurchaseOrder>>(x =>
+                    new HtmlTemplateService<PurchaseOrder>(
+                        $"{ConfigurationManager.Configuration["VIEWS_ROOT"]}PurchaseOrder.cshtml",
+                        x.GetService<ITemplateEngine>()));
         }
     }
 }

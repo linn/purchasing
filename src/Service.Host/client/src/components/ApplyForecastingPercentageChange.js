@@ -24,7 +24,8 @@ function ApplyForecastingPercentageChange() {
         startMonth: today.getMonth().toString(),
         startYear: today.getFullYear(),
         endMonth: today.getMonth() === 11 ? '1' : (today.getMonth() + 1).toString(),
-        endYear: today.getMonth() === 11 ? today.getFullYear() + 1 : today.getFullYear()
+        endYear: today.getMonth() === 11 ? today.getFullYear() + 1 : today.getFullYear(),
+        change: -10
     });
     const dispatch = useDispatch();
 
@@ -93,6 +94,12 @@ function ApplyForecastingPercentageChange() {
                                 type="number"
                                 propertyName="change"
                                 label="% Change"
+                                error={options.change > 0}
+                                helperText={
+                                    options.change > 0
+                                        ? 'Are you sure you want to apply a positive change?'
+                                        : ''
+                                }
                                 fullWidth
                                 value={options.change}
                                 onChange={handleFieldChange}

@@ -1,7 +1,5 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.LeadTimesReportServiceTests
 {
-    using System;
-
     using FluentAssertions;
 
     using Linn.Common.Reporting.Models;

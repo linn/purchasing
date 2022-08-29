@@ -3,7 +3,6 @@
     using FluentAssertions;
 
     using Linn.Purchasing.Domain.LinnApps.Parts;
-    using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NUnit.Framework;
 

@@ -21,7 +21,11 @@
         {
             this.OrderMethodService.GetAll().Returns(
                 new SuccessResult<IEnumerable<OrderMethodResource>>(
-                    new[] { new OrderMethodResource { Description = "D1" }, new OrderMethodResource { Description = "D2" } }));
+                    new[]
+                        {
+                            new OrderMethodResource { Description = "D1" },
+                            new OrderMethodResource { Description = "D2" }
+                        }));
 
             this.Response = this.Client.Get(
                 "/purchasing/purchase-orders/methods",
@@ -47,12 +51,12 @@
         [Test]
         public void ShouldReturnJsonBody()
         {
-            var resources = this.Response.DeserializeBody<IEnumerable<OrderMethodResource>>()?.ToArray();
+            var resources = this.Response.DeserializeBody<IEnumerable<OrderMethodResource>>().ToArray();
             resources.Should().NotBeNull();
             resources.Should().HaveCount(2);
 
-            resources?.First().Description.Should().Be("D1");
-            resources.Second().Description.Should().Be("D2");
+            resources.First().Description.Should().Be("D1");
+            resources.ElementAt(1).Description.Should().Be("D2");
         }
     }
 }
