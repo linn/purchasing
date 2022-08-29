@@ -594,12 +594,12 @@
             else
             {
                 var miniOrder = this.miniOrderRepository.FindById(orderNumber);
-                var maxSeq = this.miniOrderDeliveryRepository.FilterBy(d => d.OrderNumber == orderNumber)
-                    .Max(d => d.DeliverySequence);
+                var existing = this.miniOrderDeliveryRepository.FilterBy(d => d.OrderNumber == orderNumber);
                 this.miniOrderDeliveryRepository.Add(new MiniOrderDelivery
                                                          {
                                                              OrderNumber = orderNumber,
-                                                             DeliverySequence = maxSeq + 1,
+                                                             DeliverySequence = existing.Any() 
+                                                                 ? existing.Max(d => d.DeliverySequence) + 1 : 1,
                                                              AdvisedDate = newDateAdvised,
                                                              OurQty = qty,
                                                              AvailableAtSupplier = availableAtSupplier,
