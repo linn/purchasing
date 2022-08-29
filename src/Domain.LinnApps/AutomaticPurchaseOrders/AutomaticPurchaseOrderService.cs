@@ -36,7 +36,6 @@
                                                  JobRef = proposedAutomaticPurchaseOrder.JobRef,
                                                  DateRaised = proposedAutomaticPurchaseOrder.DateRaised
                                              };
-
             var details = new List<AutomaticPurchaseOrderDetail>();
             var signingLimit = this.signingLimitRepository.FindById(proposedAutomaticPurchaseOrder.StartedBy);
             var seq = 1;
@@ -66,7 +65,7 @@
                                             SupplierName = detail.SupplierName,
                                             OrderNumber = orderResult.OrderNumber,
                                             Quantity = detail.Quantity,
-                                            QuantityRecommended = detail.Quantity,
+                                            QuantityRecommended = detail.QuantityRecommended,
                                             RecommendationCode = detail.RecommendationCode,
                                             OrderLog = "Created by auto order",
                                             CurrencyCode = detail.CurrencyCode,
