@@ -53,9 +53,7 @@
                                 {
                                     OrderNumber = this.key.OrderNumber,
                                     OrderLine = this.key.OrderLine,
-                                    DeliverySeq = this.key.DeliverySequence,
-                                    OurDeliveryQty = 600,
-                                    QtyNetReceived = 300
+                                    DeliverySeq = this.key.DeliverySequence
                                 }
                         }.AsQueryable());
 
@@ -64,7 +62,7 @@
                              { 
                                  Details = new List<PurchaseOrderDetail>
                                                {
-                                                   new PurchaseOrderDetail { OrderQty = 600, Line = 1 }
+                                                   new PurchaseOrderDetail { OrderQty = 300, Line = 1 }
                                                }
                              }); 
 

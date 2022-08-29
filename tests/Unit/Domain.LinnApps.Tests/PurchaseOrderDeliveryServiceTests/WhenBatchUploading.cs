@@ -30,10 +30,28 @@
 
         private BatchUpdateProcessResult result;
 
+        private PurchaseOrder order1;
+
+        private PurchaseOrder order2;
+
         [SetUp]
         public void SetUp()
         {
             this.PurchaseLedgerMaster.GetRecord().Returns(new PurchaseLedgerMaster { OkToRaiseOrder = "Y" });
+            this.order1 = new PurchaseOrder
+                             {
+                                 OrderNumber = 123456,
+                                 SupplierId = 123,
+                                 Details = new List<PurchaseOrderDetail>()
+                             };
+            this.order2 = new PurchaseOrder
+                              {
+                                  OrderNumber = 123457,
+                                  SupplierId = 1234,
+                                  Details = new List<PurchaseOrderDetail>()
+                              };
+            this.order1.Details.Add(new PurchaseOrderDetail { PurchaseOrder = this.order1 });
+            this.order2.Details.Add(new PurchaseOrderDetail { PurchaseOrder = this.order2 });
 
             this.AuthService
                 .HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
@@ -82,21 +100,24 @@
                                                           OrderNumber = this.key1.OrderNumber,
                                                           OrderLine = this.key1.OrderLine,
                                                           OurDeliveryQty = 100,
-                                                          OrderUnitPriceCurrency = 0.03m
+                                                          OrderUnitPriceCurrency = 0.03m,
+                                                          PurchaseOrderDetail = this.order1.Details.First()
                                                       },
                                                   new PurchaseOrderDelivery
                                                       {
                                                           OrderNumber = this.key1.OrderNumber,
                                                           OrderLine = this.key1.OrderLine,
                                                           OurDeliveryQty = 200,
-                                                          OrderUnitPriceCurrency = 0.03m
+                                                          OrderUnitPriceCurrency = 0.03m,
+                                                          PurchaseOrderDetail = this.order1.Details.First()
                                                       },
                                                   new PurchaseOrderDelivery
                                                       {
                                                           OrderNumber = this.key1.OrderNumber,
                                                           OrderLine = this.key1.OrderLine,
                                                           OurDeliveryQty = 300,
-                                                          OrderUnitPriceCurrency = 0.03m
+                                                          OrderUnitPriceCurrency = 0.03m,
+                                                          PurchaseOrderDetail = this.order1.Details.First()
                                                       }
                                               }.AsQueryable();
             var deliveriesForSecondOrder = new List<PurchaseOrderDelivery>
@@ -106,7 +127,8 @@
                                                            OrderNumber = this.key2.OrderNumber,
                                                            OrderLine = this.key2.OrderLine,
                                                            OurDeliveryQty = 200,
-                                                           OrderUnitPriceCurrency = 0.01m
+                                                           OrderUnitPriceCurrency = 0.01m,
+                                                           PurchaseOrderDetail = this.order2.Details.First()
                                                        }
                                                }.AsQueryable();
 

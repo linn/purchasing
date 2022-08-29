@@ -24,9 +24,19 @@
 
         private BatchUpdateProcessResult result;
 
-        [SetUp]
+        private PurchaseOrder order;
+
+       [SetUp]
         public void SetUp()
         {
+            this.order = new PurchaseOrder
+                              {
+                                  OrderNumber = 123456,
+                                  SupplierId = 123,
+                                  Details = new List<PurchaseOrderDetail>()
+                              };
+            this.order.Details.Add(new PurchaseOrderDetail { PurchaseOrder = this.order });
+
             this.PurchaseLedgerMaster.GetRecord().Returns(new PurchaseLedgerMaster { OkToRaiseOrder = "Y" });
 
             this.AuthService
@@ -57,7 +67,8 @@
                                     DeliverySeq = this.key.DeliverySequence,
                                     OurDeliveryQty = 100,
                                     OrderUnitPriceCurrency = 0.0111m,
-                                    QtyNetReceived = 0
+                                    QtyNetReceived = 0,
+                                    PurchaseOrderDetail = this.order.Details.First()
                                 }
                         }.AsQueryable());
 

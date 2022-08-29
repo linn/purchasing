@@ -26,8 +26,6 @@
 
         private readonly IRepository<PurchaseOrder, int> purchaseOrderRepository;
 
-        private readonly IRepository<PlReceipt, int> receiptRepository;
-
         private readonly IPurchaseOrdersPack purchaseOrdersPack;
 
         public PurchaseOrderDeliveryService(
@@ -37,8 +35,7 @@
             IRepository<MiniOrder, int> miniOrderRepository,
             IRepository<MiniOrderDelivery, MiniOrderDeliveryKey> miniOrderDeliveryRepository,
             IRepository<PurchaseOrder, int> purchaseOrderRepository,
-            IPurchaseOrdersPack purchaseOrdersPack,
-            IRepository<PlReceipt, int> receiptRepository)
+            IPurchaseOrdersPack purchaseOrdersPack)
         {
             this.repository = repository;
             this.authService = authService;
@@ -47,7 +44,6 @@
             this.miniOrderDeliveryRepository = miniOrderDeliveryRepository;
             this.purchaseOrderRepository = purchaseOrderRepository;
             this.purchaseOrdersPack = purchaseOrdersPack;
-            this.receiptRepository = receiptRepository;
         }
 
         public IEnumerable<PurchaseOrderDelivery> SearchDeliveries(
@@ -182,11 +178,10 @@
 
             foreach (var group in orderLineGroups)
             {
-                var receipts = this.receiptRepository.FilterBy(
-                    x => x.OrderNumber == group.OrderNumber
-                         && x.OrderLine == group.OrderLine);
+                var existingDeliveries = this.repository.FilterBy(
+                    x => x.OrderNumber == group.OrderNumber && x.OrderLine == group.OrderLine);
 
-                if (receipts.Any())
+                if (existingDeliveries.Any(x => x.QtyNetReceived.GetValueOrDefault() > 0))
                 {
                     errors.Add(
                         new Error(
@@ -194,9 +189,6 @@
                             "Order has been partially received. Cannot update deliveries automatically."));
                     continue;
                 }
-
-                var existingDeliveries = this.repository.FilterBy(
-                    x => x.OrderNumber == group.OrderNumber && x.OrderLine == group.OrderLine);
 
                 var detail = this.purchaseOrderRepository.FindById(group.OrderNumber).Details
                     .Single(d => d.Line == group.OrderLine);
@@ -268,7 +260,6 @@
                                                   OurUnitPriceCurrency = existingDelivery.OurUnitPriceCurrency,
                                                   OrderUnitPriceCurrency = existingDelivery.OrderUnitPriceCurrency,
                                                   BaseOurUnitPrice = existingDelivery.BaseOurUnitPrice,
-                                                  // todo - these all need to be right! Currently the mini order deliveries triggers is making them right
                                                   BaseDeliveryTotal = Math.Round(
                                                       (update.Qty * detail.BaseOurUnitPrice.GetValueOrDefault())
                                                     + baseVatAmount, 

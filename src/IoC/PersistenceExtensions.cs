@@ -229,10 +229,7 @@
                         ?.SupplierDeliveryPerformance))
                 .AddTransient<IQueryRepository<DeliveryPerformanceDetail>, EntityFrameworkQueryRepository<DeliveryPerformanceDetail>>(
                     r => new EntityFrameworkQueryRepository<DeliveryPerformanceDetail>(r.GetService<ServiceDbContext>()
-                        ?.DeliveryPerformanceDetails))
-                .AddTransient<IRepository<PlReceipt, int>, EntityFrameworkRepository<PlReceipt, int>>(
-                    r => new EntityFrameworkRepository<PlReceipt, int>(
-                        r.GetService<ServiceDbContext>()?.PlReceipts));
+                        ?.DeliveryPerformanceDetails));
         }
     }
 }
