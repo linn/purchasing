@@ -7,7 +7,6 @@
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
-    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
@@ -21,16 +20,17 @@
         [SetUp]
         public void SetUp()
         {
-            this.MockDomainService.BatchUpdateDeliveries(
+            this.MockDomainService.UploadDeliveries(
                 Arg.Any<IEnumerable<PurchaseOrderDeliveryUpdate>>(),
-                Arg.Any<IEnumerable<string>>()).Returns(new BatchUpdateProcessResult
+                Arg.Any<IEnumerable<string>>()).Returns(new UploadPurchaseOrderDeliveriesResult
                                                              {
                                                                  Success = true,
-                                                                 Message = "Success!"
+                                                                 Message = "Success!",
+                                                                 Updated = new List<PurchaseOrderDelivery>()
                                                              });
             this.Response = this.Client.Post(
                 $"/purchasing/purchase-orders/deliveries",
-                $"PO1,1,28-mar-1995,100,$0.01,NEW REASON,",
+                $"PO1,28-mar-1995,100,$0.01,NEW REASON,",
                 with =>
                     {
                         with.Accept("application/json");
@@ -47,7 +47,7 @@
         [Test]
         public void ShouldPassCorrectDataToDomainService()
         {
-            this.MockDomainService.Received().BatchUpdateDeliveries(
+            this.MockDomainService.Received().UploadDeliveries(
                 Arg.Is<IEnumerable<PurchaseOrderDeliveryUpdate>>(
                     l => l.First().Key.OrderNumber.Equals(1)
                     && l.First().Key.OrderLine.Equals(1)

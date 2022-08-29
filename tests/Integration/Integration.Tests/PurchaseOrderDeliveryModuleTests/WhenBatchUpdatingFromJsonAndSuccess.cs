@@ -3,11 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Net;
-    using System.Net.Http.Json;
 
     using FluentAssertions;
 
-    using Linn.Common.Facade.Carter.Serialisers;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Integration.Tests.Extensions;
@@ -34,7 +32,7 @@
                                             DateRequested = DateTime.Now
                                         }
                                 };
-            this.MockDomainService.BatchUpdateDeliveries(
+            this.MockDomainService.UpdateDeliveries(
                 Arg.Any<IEnumerable<PurchaseOrderDeliveryUpdate>>(),
                 Arg.Any<IEnumerable<string>>()).Returns(new BatchUpdateProcessResult { Success = true });
             this.Response = this.Client.Post(

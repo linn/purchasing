@@ -6,8 +6,7 @@
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
-
-    using Linn.Purchasing.Domain.LinnApps;
+    
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
@@ -21,16 +20,17 @@
         [SetUp]
         public void SetUp()
         {
-            this.MockDomainService.BatchUpdateDeliveries(
+            this.MockDomainService.UploadDeliveries(
                 Arg.Any<IEnumerable<PurchaseOrderDeliveryUpdate>>(),
-                Arg.Any<IEnumerable<string>>()).Returns(new BatchUpdateProcessResult
-                                                             {
-                                                                 Success = true,
-                                                                 Message = "Success!"
-                                                             });
+                Arg.Any<IEnumerable<string>>()).Returns(new UploadPurchaseOrderDeliveriesResult
+                {
+                    Success = true,
+                    Message = "Success!",
+                    Updated = new List<PurchaseOrderDelivery>()
+                });
             this.Response = this.Client.Post(
                 $"/purchasing/purchase-orders/deliveries",
-                $"PO1,,,100,$0.01,,",
+                $"PO1,,100,$0.01,,",
                 with =>
                 {
                     with.Accept("application/json");
@@ -47,10 +47,9 @@
         [Test]
         public void ShouldPassDefaults()
         {
-            this.MockDomainService.Received().BatchUpdateDeliveries(
+            this.MockDomainService.Received().UploadDeliveries(
                 Arg.Is<IEnumerable<PurchaseOrderDeliveryUpdate>>(
                     l => l.First().Key.OrderNumber.Equals(1)
-                    && l.First().Key.DeliverySequence.Equals(1) // seq defaults to 1
                     && l.First().NewDateAdvised.Equals(1.January(2025)) // date defaults to this future date
                     && l.First().Qty.Equals(100)
                     && l.First().UnitPrice.Equals(0.01m)

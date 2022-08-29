@@ -60,7 +60,7 @@
             IRepository<Supplier, int> supplierRepository,
             IRepository<LinnDeliveryAddress, int> linnDeliveryAddressRepository,
             IPurchaseOrdersPack purchaseOrdersPack,
-            ICurrencyPack currencyPack,
+            ICurrencyPack currencyPack, 
             ISupplierKitService supplierKitService,
             IRepository<PurchaseOrder, int> purchaseOrderRepository,
             IHtmlTemplateService<PurchaseOrder> purchaseOrderTemplateService,
