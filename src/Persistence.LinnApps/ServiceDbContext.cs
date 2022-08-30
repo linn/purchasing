@@ -671,6 +671,7 @@
             entity.Property(o => o.OrderConversionFactor).HasColumnName("ORDER_CONV_FACTOR");
             entity.Property(o => o.OrderQty).HasColumnName("ORDER_QTY");
             entity.Property(o => o.IssuePartsToSupplier).HasColumnName("ISSUE_PARTS_TO_SUPPLIER").HasMaxLength(1);
+            entity.Property(o => o.DrawingRef).HasColumnName("DRAWING_REF").HasMaxLength(100);
         }
 
         private void BuildPurchaseOrderDeliveries(ModelBuilder builder)
