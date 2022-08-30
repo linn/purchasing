@@ -1,97 +1,116 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Reports
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     using Linn.Common.Persistence;
-    using Linn.Common.Reporting.Layouts;
-    using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
 
     public class ForecastOrdersReportService : IForecastOrdersReportService
     {
-        private readonly IQueryRepository<WeeklyForecastPart> weeklyForecastPartRepository;
+        private readonly IQueryRepository<MonthlyForecastPart> monthlyForecastPartRepository;
 
-        public ForecastOrdersReportService(IQueryRepository<WeeklyForecastPart> weeklyForecastPartRepository)
+        private readonly IQueryRepository<MonthlyForecastPartRequirement> monthlyForecastPartRequirementRepository;
+
+        private readonly IQueryRepository<ForecastReportMonth> forecastReportMonthsRepository;
+
+        public ForecastOrdersReportService(
+            IQueryRepository<MonthlyForecastPart> monthlyForecastPartRepository,
+            IQueryRepository<MonthlyForecastPartRequirement> monthlyForecastPartRequirementRepository,
+            IQueryRepository<ForecastReportMonth> forecastReportMonthsRepository)
         {
-            this.weeklyForecastPartRepository = weeklyForecastPartRepository;
+            this.monthlyForecastPartRepository = monthlyForecastPartRepository;
+            this.monthlyForecastPartRequirementRepository = monthlyForecastPartRequirementRepository;
+            this.forecastReportMonthsRepository = forecastReportMonthsRepository;
         }
 
-        public ResultsModel GetWeeklyExport(int supplierId)
+        public IEnumerable<IEnumerable<string>> GetMonthlyExport(int supplierId)
         {
-            var parts = this.weeklyForecastPartRepository.FilterBy(x => x.PreferredSupplier == supplierId);
+            var parts = this.monthlyForecastPartRepository.FilterBy(x => x.PreferredSupplier == supplierId).ToList();
+            var months = this.forecastReportMonthsRepository.FindAll();
+            var monthlyRequirements = this.monthlyForecastPartRequirementRepository.FilterBy(
+                x => parts.Select(p => p.MrPartNumber).Contains(x.PartNumber)).ToList()
+                .GroupBy(r => r.PartNumber);
 
-            var reportLayout = new SimpleGridLayout(
-                new ReportingHelper(),
-                CalculationValueModelType.Value,
-                null,
-                null);
+            var result = new List<List<string>>();
+            var firstRow = new List<string>();
+            firstRow.Add("Linn Part Number");
+            firstRow.Add("Current Stock");
 
-            var values = new List<CalculationValueModel>();
+            firstRow.Add("Base Unit Price");
+            firstRow.Add("MOQ");
+            firstRow.Add("Stock @ Month End");
 
-            reportLayout.AddColumnComponent(
-                null,
-                new List<AxisDetailsModel>
+            firstRow.AddRange(months.Select(m => m.MmmYy));
+
+            firstRow.Add("Total YEAR");
+            result.Add(firstRow);
+
+            monthlyRequirements.ToList().ForEach(
+                partGroup =>
                     {
-                        new AxisDetailsModel("PartNumber", "Part Number",  GridDisplayType.TextValue),
-                        new AxisDetailsModel("Designation", "Designation",  GridDisplayType.TextValue),
-                        new AxisDetailsModel("StartingQty", "Starting Qty", GridDisplayType.Value) { DecimalPlaces = 2 },
-                        new AxisDetailsModel("UnitPrice", "Unit Price", GridDisplayType.Value) { DecimalPlaces = 2 },
-                        new AxisDetailsModel("MinimumOrderQty", "MOQ",  GridDisplayType.Value) { DecimalPlaces = 2 },
-                        new AxisDetailsModel("TotalNettReqtValue", "Qty In Inspection", GridDisplayType.Value) { DecimalPlaces = 2 },
+                        var usageRow = new List<string>();
+                        usageRow.Add(partGroup.Key);
+                        usageRow.Add("61");
+                        usageRow.Add("131.2100");
+                        usageRow.Add("40");
+                        usageRow.Add("Usage");
+                        foreach (var m in partGroup)
+                        {
+                            usageRow.Add("1"); // usages value
+                        }
+                        usageRow.Add("<total>");
+
+                        result.Add(usageRow);
+
+                        var stockRow = new List<string>();
+                        stockRow.Add("DESC");
+                        stockRow.Add(string.Empty);
+                        stockRow.Add(string.Empty);
+                        stockRow.Add(string.Empty);
+                        stockRow.Add("Stock");
+
+                        foreach (var m in partGroup)
+                        {
+                            stockRow.Add("1"); //stock value
+                        }
+
+                        stockRow.Add(string.Empty);
+
+                        result.Add(stockRow);
+
+                        var ordersRow = new List<string>();
+                        ordersRow.Add(string.Empty);
+                        ordersRow.Add(string.Empty);
+                        ordersRow.Add(string.Empty);
+                        ordersRow.Add(string.Empty);
+                        ordersRow.Add("Orders");
+
+                        foreach (var m in partGroup)
+                        {
+                            ordersRow.Add(string.Empty); // orders value
+                        }
+
+                        ordersRow.Add(string.Empty);
+                        result.Add(ordersRow);
+
+                        var forecastRow = new List<string>();
+                        forecastRow.Add(string.Empty);
+                        forecastRow.Add(string.Empty);
+                        forecastRow.Add(string.Empty);
+                        forecastRow.Add(string.Empty);
+                        forecastRow.Add("Forecast");
+
+                        foreach (var m in partGroup)
+                        {
+                            forecastRow.Add(m.NettRequirementK); // reqt value
+                        }
+
+                        forecastRow.Add(string.Empty);
+                        result.Add(forecastRow);
                     });
-
-            foreach (var part in parts)
-            {
-                var rowId = $"{part.MrPartNumber}";
-                values.Add(
-                    new CalculationValueModel
-                        {
-                            RowId = rowId,
-                            ColumnId = "PartNumber",
-                            TextDisplay = part.MrPartNumber
-                        });
-                values.Add(
-                    new CalculationValueModel
-                        {
-                            RowId = rowId,
-                            ColumnId = "Designation",
-                            TextDisplay = part.SupplierDesignation
-                        });
-                values.Add(
-                    new CalculationValueModel
-                        {
-                            RowId = rowId,
-                            ColumnId = "StartingQty",
-                            Value = part.StartingQty
-                        });
-                values.Add(
-                    new CalculationValueModel
-                        {
-                            RowId = rowId,
-                            Value = part.UnitPrice
-                        });
-                values.Add(
-                    new CalculationValueModel 
-                        {
-                            RowId = rowId,
-                            ColumnId = "MinimumOrderQty",
-                            Value = part.MinimumOrderQty
-                        });
-                values.Add(
-                    new CalculationValueModel
-                        {
-                            RowId = rowId,
-                            ColumnId = "TotalNettReqtValue",
-                            Value = part.TotalNettReqtValue
-                        });
-            }
-
-            reportLayout.SetGridData(values);
-
-            reportLayout.ReportTitle = $"MR Parts for : {supplierId}";
-            var model = reportLayout.GetResultsModel();
-
-            return model;
+            
+            return result;
         }
     }
 }

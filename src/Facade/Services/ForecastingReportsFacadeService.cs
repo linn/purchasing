@@ -14,9 +14,9 @@
             this.domainService = domainService;
         }
 
-        public IEnumerable<IEnumerable<string>> GetWeeklyForecastExport(int supplierId)
+        public IEnumerable<IEnumerable<string>> GetMonthlyForecastExport(int supplierId)
         {
-            return this.domainService.GetWeeklyExport(supplierId).ConvertToCsvList();
+            return this.domainService.GetMonthlyExport(supplierId);
         }
     }
 }

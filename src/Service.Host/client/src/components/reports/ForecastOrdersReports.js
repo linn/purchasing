@@ -5,7 +5,7 @@ import history from '../../history';
 import config from '../../config';
 
 const ForecastOrdersReport = () => {
-    const [supplierId, setSupplierId] = useState(null);
+    const [supplierId, setSupplierId] = useState(140726);
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
@@ -21,8 +21,8 @@ const ForecastOrdersReport = () => {
                         label="Supplier Id"
                     />
                     <ExportButton
-                        href={`${config.appRoot}/purchasing/reports/weekly-forecast-orders/export?supplierId=${supplierId}`}
-                        buttonText="WEEKLY"
+                        href={`${config.appRoot}/purchasing/reports/Monthly-forecast-orders/export?supplierId=${supplierId}`}
+                        buttonText="Monthly"
                     />
                 </Grid>
             </Grid>

@@ -10,7 +10,7 @@
 
     using NUnit.Framework;
 
-    public class WhenSendingWeeklyForecastEmail : ContextBase
+    public class WhenSendingMonthlyForecastEmail : ContextBase
     {
         private Supplier supplier;
 
@@ -44,7 +44,7 @@
             this.MrMaster.GetRecord().Returns(new MrMaster { RunDate = DateTime.Today });
             this.ReportService.GetOrderBookExport(this.supplier.SupplierId).Returns(new ResultsModel());
 
-            this.Sut.SendWeeklyForecastEmail(this.email, this.supplier.SupplierId, this.timestamp);
+            this.Sut.SendMonthlyForecastEmail(this.email, this.supplier.SupplierId, this.timestamp);
         }
 
         [Test]
@@ -57,11 +57,11 @@
                 null,
                 this.supplier.VendorManager.Employee.PhoneListEntry.EmailAddress,
                 this.supplier.VendorManager.Employee.FullName,
-                $"Weekly Forecast - {timestamp}",
-                "Please find weekly order forecast attached",
+                $"Monthly Forecast - {timestamp}",
+                "Please find Monthly order forecast attached",
                 "csv",
                 null,
-                $"{this.supplier.SupplierId}_weekly_forecast_{this.timestamp}",
+                $"{this.supplier.SupplierId}_Monthly_forecast_{this.timestamp}",
                 Arg.Any<ResultsModel>());
         }
     }

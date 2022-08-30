@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Messaging.Tests.EmailWeeklyForecastReportMessageHandlerTests
+﻿namespace Linn.Purchasing.Messaging.Tests.EmailMonthlyForecastReportMessageHandlerTests
 {
     using FluentAssertions;
 
@@ -15,7 +15,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.Mailer.When(s => s.SendWeeklyForecastEmail(
+            this.Mailer.When(s => s.SendMonthlyForecastEmail(
                 this.Resource.ToAddress, this.Resource.ForSupplier, Arg.Any<string>())).Do(
                 _ => throw new SupplierAutoEmailsException("An error occurred!"));
             this.result = this.Sut.Handle(this.Message);

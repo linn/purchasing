@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <Folder Include="EmailMrOrderBookMessageHandlerTests\" />
-    <Folder Include="EmailWeeklyForecastReportMessageHandlerTests\" />
+    <Folder Include="EmailMonthlyForecastReportMessageHandlerTests\" />
   </ItemGroup>
 
 </Project>

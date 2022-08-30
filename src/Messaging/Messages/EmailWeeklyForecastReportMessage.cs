@@ -4,11 +4,11 @@
 
     using RabbitMQ.Client.Events;
 
-    public class EmailWeeklyForecastReportMessage : RabbitMessage
+    public class EmailMonthlyForecastReportMessage : RabbitMessage
     {
-        public const string RoutingKey = "email-weekly-forecast-report";
+        public const string RoutingKey = "email-monthly-forecast-report";
 
-        public EmailWeeklyForecastReportMessage(BasicDeliverEventArgs e)
+        public EmailMonthlyForecastReportMessage(BasicDeliverEventArgs e)
             : base(e)
         {
         }

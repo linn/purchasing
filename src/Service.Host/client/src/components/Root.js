@@ -383,7 +383,7 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
-                                    path="/purchasing/reports/weekly-forecast-orders"
+                                    path="/purchasing/reports/Monthly-forecast-orders"
                                     component={ForecastOrdersReport}
                                 />
                                 <Route
