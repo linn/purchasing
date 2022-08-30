@@ -139,10 +139,18 @@
                 throw new UnauthorisedActionException("You are not authorised to create purchase orders");
             }
 
-            // set conversion factor to 1 for now
+            foreach (var detail in order.Details)
+            {
+                detail.OrderPosting.Id = this.databaseService.GetNextVal("PLORP_SEQ");
+                detail.OrderConversionFactor = 1m;
 
-            // add id to pl_order_postings using next val plorp_seq
-            // add mini order for backwards compatibility for now?
+                this.PerformDetailCalculations(detail, detail, order.ExchangeRate.GetValueOrDefault(1), order.Supplier.SupplierId);
+            }
+
+            // work out base prices currency conversion stuff etc -
+            // put into shared method??
+
+            this.CreateMiniOrder(order);
         }
 
         public ProcessResult SendPdfEmail(string emailAddress, int orderNumber, bool bcc, int currentUserId)
@@ -187,7 +195,7 @@
                 emailBody,
                 null,
                 null);
-            
+
             this.log.Write(
                 LoggingLevel.Info,
                 new List<LoggingProperty>(),
@@ -355,7 +363,6 @@
             return order;
         }
 
-        // below method currently unreferenced, but to be finished and used soon for create
         private void CreateMiniOrder(PurchaseOrder order)
         {
             var miniOrder = new MiniOrder();
@@ -364,8 +371,8 @@
             miniOrder.OrderNumber = order.OrderNumber;
             miniOrder.DocumentType = order.DocumentType.Name;
             miniOrder.DateOfOrder = order.OrderDate;
-            miniOrder.RequestedDeliveryDate = detail.PurchaseDeliveries.First().DateRequested;
-            miniOrder.AdvisedDeliveryDate = detail.PurchaseDeliveries.First().DateAdvised;
+            miniOrder.RequestedDeliveryDate = detail.PurchaseDeliveries?.First().DateRequested;
+            miniOrder.AdvisedDeliveryDate = detail.PurchaseDeliveries?.First().DateAdvised;
             miniOrder.Remarks = order.Remarks;
             miniOrder.SupplierId = order.SupplierId;
             miniOrder.PartNumber = detail.PartNumber;
@@ -386,26 +393,19 @@
             miniOrder.VatTotal = detail.VatTotalCurrency.GetValueOrDefault(0);
             miniOrder.OrderTotal = detail.DetailTotalCurrency.GetValueOrDefault(0);
             miniOrder.OrderMethod = order.OrderMethod.Name;
-            miniOrder.CancelledBy = detail.CancelledDetails.First().CancelledById;
-            miniOrder.ReasonCancelled = detail.CancelledDetails.First().ReasonCancelled;
+            miniOrder.CancelledBy = null;
             miniOrder.SentByMethod = order.SentByMethod;
-            miniOrder.AcknowledgeComment = detail.PurchaseDeliveries.First().SupplierConfirmationComment;
+            miniOrder.AcknowledgeComment = detail.PurchaseDeliveries?.First().SupplierConfirmationComment;
             miniOrder.DeliveryAddressId = order.DeliveryAddressId;
-            miniOrder.NumberOfSplitDeliveries = detail.PurchaseDeliveries.Count;
+            miniOrder.NumberOfSplitDeliveries = detail.PurchaseDeliveries != null ? detail.PurchaseDeliveries.Count : 0;
             miniOrder.QuotationRef = order.QuotationRef;
             miniOrder.IssuePartsToSupplier = order.IssuePartsToSupplier;
             miniOrder.Vehicle = detail.OrderPosting.Vehicle;
             miniOrder.Building = detail.OrderPosting.Building;
             miniOrder.Product = detail.OrderPosting.Product;
             miniOrder.Person = detail.OrderPosting.Person;
-
-            // miniOrder.DrawingReference = detail.dr; //dont think needed
             miniOrder.StockPoolCode = detail.StockPoolCode;
-
-            // miniOrder.PrevOrderNumber = detail.;
-            // miniOrder.PrevOrderLine = updatedOrder.;
-            miniOrder.FilCancelledBy = detail.CancelledDetails.FirstOrDefault()?.FilCancelledById;
-            miniOrder.ReasonFilCancelled = detail.CancelledDetails.FirstOrDefault()?.ReasonCancelled;
+            miniOrder.FilCancelledBy = null;
             miniOrder.OurPrice = detail.OurUnitPriceCurrency;
             miniOrder.OrderPrice = detail.OrderUnitPriceCurrency;
             miniOrder.BaseCurrency = order.BaseCurrencyCode;
@@ -415,22 +415,22 @@
             miniOrder.BaseVatTotal = detail.BaseVatTotal;
             miniOrder.BaseOrderTotal = detail.BaseDetailTotal;
             miniOrder.ExchangeRate = order.ExchangeRate;
-
-            // miniOrder.ManufacturerPartNumber = updatedOrder.;
-            miniOrder.DateFilCancelled = detail.CancelledDetails.First().DateFilCancelled;
             miniOrder.RohsCompliant = detail.RohsCompliant;
+            miniOrder.DeliveryConfirmedBy = detail.DeliveryConfirmedBy.Id;
+            miniOrder.InternalComments = detail.InternalComments;
 
+            // are all of the below fields superfluous? If so will remove
+            // miniOrder.ManufacturerPartNumber = updatedOrder.;
+            // miniOrder.DrawingReference = detail.dr; //dont think needed
+            // miniOrder.TotalQtyDelivered = updatedOrder.Details
+            // miniOrder.PrevOrderNumber = detail.;
+            // miniOrder.PrevOrderLine = updatedOrder.;
             // miniOrder.ShouldHaveBeenBlueReq = updatedOrder.;
             // miniOrder.SpecialOrderType = updatedOrder.;
             // miniOrder.PpvAuthorisedBy = updatedOrder.;
             // miniOrder.PpvReason = updatedOrder.;
             // miniOrder.MpvAuthorisedBy = updatedOrder.
             // miniOrder.MpvReason = updatedOrder.
-            miniOrder.DeliveryConfirmedBy = detail.DeliveryConfirmedBy.Id;
-
-            // miniOrder.TotalQtyDelivered = updatedOrder.Details
-            miniOrder.InternalComments = detail.InternalComments;
-
             this.miniOrderRepository.Add(miniOrder);
         }
 
@@ -464,6 +464,15 @@
             current.SuppliersDesignation = updated.SuppliersDesignation;
             current.InternalComments = updated.InternalComments;
 
+            this.PerformDetailCalculations(current, updated, exchangeRate, supplierId);
+
+            this.UpdateOrderPostingsForDetail(current, updated);
+
+            this.UpdateDeliveries(current.PurchaseDeliveries, updated.PurchaseDeliveries);
+        }
+
+        private void PerformDetailCalculations(PurchaseOrderDetail current, PurchaseOrderDetail updated, decimal exchangeRate, int supplierId)
+        {
             var netTotal = updated.OurUnitPriceCurrency.GetValueOrDefault() * updated.OurQty.GetValueOrDefault();
             current.NetTotalCurrency = Math.Round(netTotal, 2, MidpointRounding.AwayFromZero);
 
@@ -517,10 +526,6 @@
                 current.DetailTotalCurrency.GetValueOrDefault() / exchangeRate,
                 2,
                 MidpointRounding.AwayFromZero);
-
-            this.UpdateOrderPostingsForDetail(current, updated);
-
-            this.UpdateDeliveries(current.PurchaseDeliveries, updated.PurchaseDeliveries);
         }
 
         private void UpdateDetails(
