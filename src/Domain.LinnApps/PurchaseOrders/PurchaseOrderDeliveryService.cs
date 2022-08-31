@@ -214,14 +214,14 @@
 
                 var isPricesMismatch = group.DeliveryUpdates.Any(
                     u => Math.Round(u.UnitPrice, 4) != Math.Round(
-                             existingDelivery.OrderUnitPriceCurrency.GetValueOrDefault(),
+                             detail.OrderUnitPriceCurrency.GetValueOrDefault(),
                              4));
 
                 if (isPricesMismatch)
                 {
                     var msg = $"Unit Price on lines uploaded ({group.DeliveryUpdates.First().UnitPrice}) "
                               + $"for the specified order does not match unit price on our system " 
-                              + $"({existingDelivery.OrderUnitPriceCurrency.GetValueOrDefault()})";
+                              + $"({detail.OrderUnitPriceCurrency})";
                     errors.Add(
                         new Error(
                             $"Order: {group.OrderNumber}",
