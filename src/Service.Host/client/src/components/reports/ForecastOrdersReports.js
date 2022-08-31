@@ -5,7 +5,7 @@ import history from '../../history';
 import config from '../../config';
 
 const ForecastOrdersReport = () => {
-    const [supplierId, setSupplierId] = useState(140726);
+    const [supplierId, setSupplierId] = useState(23348);
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>

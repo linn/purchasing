@@ -191,9 +191,9 @@
                 .AddTransient<IQueryRepository<DeliveryPerformanceDetail>, EntityFrameworkQueryRepository<DeliveryPerformanceDetail>>(
                     r => new EntityFrameworkQueryRepository<DeliveryPerformanceDetail>(r.GetService<ServiceDbContext>()
                         ?.DeliveryPerformanceDetails))
-                .AddTransient<IQueryRepository<MonthlyForecastPartRequirement>, EntityFrameworkQueryRepository<MonthlyForecastPartRequirement>>(
-                    r => new EntityFrameworkQueryRepository<MonthlyForecastPartRequirement>(r.GetService<ServiceDbContext>()
-                        ?.MonthlyForecastPartRequirements))
+                .AddTransient<IQueryRepository<MonthlyForecastPartValues>, EntityFrameworkQueryRepository<MonthlyForecastPartValues>>(
+                    r => new EntityFrameworkQueryRepository<MonthlyForecastPartValues>(r.GetService<ServiceDbContext>()
+                        ?.MonthlyForecastView))
                 .AddTransient<IQueryRepository<ForecastReportMonth>, EntityFrameworkQueryRepository<ForecastReportMonth>>(
                     r => new EntityFrameworkQueryRepository<ForecastReportMonth>(r.GetService<ServiceDbContext>()
                         ?.ForecastReportMonths));

@@ -173,7 +173,7 @@
 
         public DbSet<DeliveryPerformanceDetail> DeliveryPerformanceDetails { get; set; }
 
-        public DbSet<MonthlyForecastPartRequirement> MonthlyForecastPartRequirements { get; set; }
+        public DbSet<MonthlyForecastPartValues> MonthlyForecastView { get; set; }
 
         public DbSet<ForecastReportMonth> ForecastReportMonths { get; set; }
 
@@ -1753,11 +1753,13 @@
 
         private void BuildMonthlyForecastPartRequirements(ModelBuilder builder)
         {
-            var entity = builder.Entity<MonthlyForecastPartRequirement>().ToTable("MONTHLY_FORECAST_REQT_VIEW").HasNoKey();
-            entity.Property(a => a.PartNumber).HasColumnName("NR_PART_NUMBER").HasColumnType("VARCHAR2");
-            entity.Property(a => a.MonthEndWeek).HasColumnName("NR_MONTH_END_WEEK");
-            entity.Property(a => a.NettRequirement).HasColumnName("NR_NETT_REQT");
-            entity.Property(a => a.NettRequirementK).HasColumnName("NR_NETT_REQT_K");
+            var entity = builder.Entity<MonthlyForecastPartValues>().ToTable("MONTHLY_FORECAST_VIEW").HasNoKey();
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
+            entity.Property(a => a.MonthEndWeek).HasColumnName("MONTH_END_WEEK");
+            entity.Property(a => a.ForecastOrders).HasColumnName("FORECAST_ORDERS");
+            entity.Property(a => a.Orders).HasColumnName("ORDERS");
+            entity.Property(a => a.Stock).HasColumnName("STOCK");
+            entity.Property(a => a.Usages).HasColumnName("USAGES");
         }
 
         private void BuildForecastReportMonths(ModelBuilder builder)
