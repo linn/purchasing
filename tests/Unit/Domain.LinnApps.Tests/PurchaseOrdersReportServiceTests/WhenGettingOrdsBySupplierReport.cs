@@ -132,44 +132,43 @@
             this.results.Rows.Count().Should().Be(2);
             var row = this.results.Rows.First();
             row.RowId.Should().Be($"{this.orderNumber}/1/1");
-            this.results.GetGridTextValue(0, 0).Should().Be($"{this.orderNumber}/Line1/Delivery1");
-            this.results.GetGridTextValue(0, 1).Should().Be(this.partNumber);
-            this.results.GetGridTextValue(0, 2).Should().Be(this.suppliersDesignation);
-            this.results.GetGridTextValue(0, 3).Should().Be("3");
-            this.results.GetGridTextValue(0, 4).Should().Be("11");
-            this.results.GetGridTextValue(0, 5).Should().Be("77");
-            this.results.GetGridValue(0, 6).Should().Be(14.88m);
-            this.results.GetGridTextValue(0, 7).Should().Be("USD");
-            this.results.GetGridValue(0, 8).Should().Be(17.34m);
-            this.results.GetGridTextValue(0, 9).Should().Be("1");
-            this.results.GetGridTextValue(0, 10).Should().Be("13");
-            this.results.GetGridTextValue(0, 11).Should().Be("01-Nov-2021");
-            this.results.GetGridTextValue(0, 12).Should().Be("01-Dec-2021");
-            this.results.GetGridTextValue(1, 0).Should().Be($"{this.orderNumber}/Line1/Delivery2");
-            this.results.GetGridTextValue(1, 9).Should().Be("2");
+            this.results.GetGridTextValue(0, 0).Should().Be($"{this.orderNumber}");
+            this.results.GetGridTextValue(0, 1).Should().Be("1");
+            this.results.GetGridTextValue(0, 2).Should().Be(this.partNumber);
+            this.results.GetGridTextValue(0, 3).Should().Be(this.suppliersDesignation);
+            this.results.GetGridTextValue(0, 4).Should().Be("3");
+            this.results.GetGridTextValue(0, 5).Should().Be("22");
+            this.results.GetGridTextValue(0, 6).Should().Be("77");
+            this.results.GetGridValue(0, 7).Should().Be(14.88m);
+            this.results.GetGridTextValue(0, 8).Should().Be("USD");
+            this.results.GetGridValue(0, 9).Should().Be(17.34m);
+            this.results.GetGridTextValue(0, 10).Should().Be("1");
+            this.results.GetGridTextValue(0, 11).Should().Be("13");
+            this.results.GetGridTextValue(0, 12).Should().Be("01-Nov-2021");
+            this.results.GetGridTextValue(0, 13).Should().Be("01-Dec-2021");
+            this.results.GetGridTextValue(1, 10).Should().Be("2");
         }
 
         [Test]
         public void ShouldOnlyPopulateTotalsColumnsForFirstDelivery()
         {
-            this.results.GetGridTextValue(0, 3).Should().Be("3");
-            this.results.GetGridTextValue(1, 3).Should().BeNull();
+            this.results.GetGridTextValue(0, 4).Should().Be("3");
+            this.results.GetGridTextValue(1, 5).Should().BeNull();
 
-            this.results.GetGridTextValue(0, 4).Should().Be("11");
-            this.results.GetGridTextValue(1, 4).Should().Be("11");
+            this.results.GetGridTextValue(0, 5).Should().Be("22");
 
-            this.results.GetGridTextValue(0, 5).Should().Be("77");
-            this.results.GetGridTextValue(1, 5).Should().Be("77");
+            this.results.GetGridTextValue(0, 6).Should().Be("77");
+            this.results.GetGridTextValue(1, 6).Should().BeNullOrEmpty();
 
-            this.results.GetGridValue(0, 6).Should().Be(14.88m);
-            this.results.GetGridValue(1, 6).Should().BeNull();
+            this.results.GetGridValue(0, 7).Should().Be(14.88m);
+            this.results.GetGridValue(1, 7).Should().BeNull();
 
-            this.results.GetGridTextValue(0, 7).Should().Be("USD");
-            this.results.GetGridTextValue(1, 7).Should().Be("USD");
+            this.results.GetGridTextValue(0, 8).Should().Be("USD");
+            this.results.GetGridTextValue(1, 8).Should().BeNullOrEmpty();
 
 
-            this.results.GetGridValue(0, 8).Should().Be(17.34m);
-            this.results.GetGridValue(1, 8).Should().BeNull();
+            this.results.GetGridValue(0, 9).Should().Be(17.34m);
+            this.results.GetGridValue(1, 9).Should().BeNull();
         }
     }
 }
