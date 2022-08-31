@@ -219,7 +219,9 @@
 
                 if (isPricesMismatch)
                 {
-                    var msg = "Unit Price on lines uploaded for the specified order does not match unit price on our system";
+                    var msg = $"Unit Price on lines uploaded ({group.DeliveryUpdates.First().UnitPrice}) "
+                              + $"for the specified order does not match unit price on our system " 
+                              + $"({existingDelivery.OrderUnitPriceCurrency.GetValueOrDefault()})";
                     errors.Add(
                         new Error(
                             $"Order: {group.OrderNumber}",
@@ -580,8 +582,9 @@
         public void UpdateMiniOrderDelivery(
             int orderNumber, int seq, DateTime? newDateAdvised, string availableAtSupplier, decimal qty)
         {
-            var del = this.miniOrderDeliveryRepository.FindBy(
-                x => x.OrderNumber == orderNumber && x.DeliverySequence == seq);
+            var miniOrder = this.miniOrderRepository.FindById(orderNumber);
+            var del = miniOrder.Deliveries.FirstOrDefault(x => x.DeliverySequence == seq);
+            
             if (del != null)
             {
                 if (!string.IsNullOrEmpty(availableAtSupplier))
@@ -593,8 +596,7 @@
             }
             else
             {
-                var miniOrder = this.miniOrderRepository.FindById(orderNumber);
-                var existing = this.miniOrderDeliveryRepository.FilterBy(d => d.OrderNumber == orderNumber);
+                var existing = miniOrder.Deliveries;
                 this.miniOrderDeliveryRepository.Add(new MiniOrderDelivery
                                                          {
                                                              OrderNumber = orderNumber,
