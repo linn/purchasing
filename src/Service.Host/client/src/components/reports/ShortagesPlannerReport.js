@@ -1,11 +1,18 @@
 import React, { useEffect, useMemo } from 'react';
-import { Loading, MultiReportTable, BackButton } from '@linn-it/linn-form-components-library';
+import {
+    Loading,
+    MultiReportTable,
+    BackButton,
+    Page,
+    Title
+} from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import { useSelector, useDispatch } from 'react-redux';
 import queryString from 'query-string';
 import history from '../../history';
 import shortagesPlannerReportActions from '../../actions/shortagesPlannerReportActions';
 import { shortagesPlannerReport } from '../../reportTypes';
+import config from '../../config';
 
 function ShortagesPlannerReport() {
     const options = useMemo(() => queryString.parse(window.location.search) || {}, []);
@@ -27,8 +34,9 @@ function ShortagesPlannerReport() {
     }, [options, dispatch]);
 
     return (
-        <>
-            <Grid style={{ marginTop: 40 }} container spacing={3} justifyContent="center">
+        <Page history={history} homeUrl={config.appRoot}>
+            <Title text="Part Shortages" />
+            <Grid container spacing={3} justifyContent="center">
                 <Grid item xs={12}>
                     <BackButton backClick={() => handleBackClick(history, options)} />
                 </Grid>
@@ -49,7 +57,7 @@ function ShortagesPlannerReport() {
                     )}
                 </Grid>
             </Grid>
-        </>
+        </Page>
     );
 }
 
