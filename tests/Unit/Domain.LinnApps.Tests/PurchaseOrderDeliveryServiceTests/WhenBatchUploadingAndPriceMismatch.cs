@@ -50,7 +50,10 @@
                              {
                                  Details = new List<PurchaseOrderDetail>
                                                {
-                                                   new PurchaseOrderDetail { OrderQty = 100, Line = 1 }
+                                                   new PurchaseOrderDetail
+                                                       {
+                                                           OrderQty = 100, Line = 1, OrderUnitPriceCurrency = 0.04m
+                                                       }
                                                }
                              });
 
