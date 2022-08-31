@@ -85,7 +85,7 @@
             this.result.Errors.First().Descriptor.Should().Be(
                 $"Order: {this.key.OrderNumber}");
             this.result.Errors.First().Message.Should().Be(
-                "Unit Price on lines uploaded for the specified order does not match unit price on our system");
+                "Unit Price on lines uploaded (0.05) for the specified order does not match unit price on our system (0.04)");
         }
     }
 }
