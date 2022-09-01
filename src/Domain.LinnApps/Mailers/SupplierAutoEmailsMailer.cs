@@ -108,9 +108,9 @@
             var lastTqmsDate = this.mrMaster.GetRecord().RunDate;
 
             // notify the vendor managers if tqms jobs failed
-            if (lastTqmsDate != DateTime.Today.Date)
+            if (lastTqmsDate.Date != DateTime.Today.Date)
             {
-                var msg = "The MR Order book emails could not be sent because the MRP did not run over the weekend.";
+                var msg = "The Supplier Auto emails could not be sent because the MRP did not run over the weekend.";
                 this.emailService.SendEmail(
                     supplier.VendorManager.Employee.PhoneListEntry.EmailAddress,
                     supplier.VendorManager.Employee.FullName,
