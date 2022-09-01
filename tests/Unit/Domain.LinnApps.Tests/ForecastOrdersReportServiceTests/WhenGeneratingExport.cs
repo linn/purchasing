@@ -69,7 +69,7 @@
             }
 
             usagesRow.ElementAt(index).Should().Be("140"); // total of all usages
-            forecastRow.ElementAt(index).Should().Be("80"); // total of all usages
+            forecastRow.ElementAt(index).Should().Be("80"); // total of all forecasts
         }
     }
 }
