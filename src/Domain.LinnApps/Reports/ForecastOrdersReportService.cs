@@ -98,7 +98,6 @@
                         forecastRow.Add(partGroup.Sum(x => decimal.Parse(x.ForecastOrders))
                             .ToString(CultureInfo.InvariantCulture));
 
-
                         result.Add(usageRow);
                         result.Add(stockRow);
                         result.Add(ordersRow);
