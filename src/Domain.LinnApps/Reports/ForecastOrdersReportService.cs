@@ -31,7 +31,7 @@
             var months = this.forecastReportMonthsRepository.FindAll();
             var monthlyForecasts = this.monthlyForecastRepository.FilterBy(
                 x => parts.Select(p => p.MrPartNumber).Contains(x.PartNumber)).ToList()
-                .GroupBy(r => r.PartNumber);
+                .GroupBy(r => r.PartNumber).OrderBy(g => g.Key);
 
             var result = new List<List<string>>();
             var firstRow = new List<string>();
@@ -53,13 +53,17 @@
                     {
                         var usageRow = new List<string>();
                         usageRow.Add(partGroup.Key);
-                        usageRow.Add("61");
-                        usageRow.Add("131.2100");
-                        usageRow.Add("40");
+                        usageRow.Add(parts.First(p => p.MrPartNumber == partGroup.Key)
+                            .StartingQty.ToString(CultureInfo.InvariantCulture));
+                        usageRow.Add(parts.First(p => p.MrPartNumber == partGroup.Key)
+                            .UnitPrice.ToString(CultureInfo.InvariantCulture));
+                        usageRow.Add(parts.First(p => p.MrPartNumber == partGroup.Key)
+                            .MinimumOrderQty.ToString(CultureInfo.InvariantCulture));
                         usageRow.Add("Usage");
 
                         var stockRow = new List<string>();
-                        stockRow.Add("DESC");
+                        stockRow.Add(parts.First(p => p.MrPartNumber == partGroup.Key)
+                            .SupplierDesignation);
                         stockRow.Add(string.Empty);
                         stockRow.Add(string.Empty);
                         stockRow.Add(string.Empty);
@@ -87,10 +91,13 @@
                             forecastRow.Add(m.ForecastOrders);
                         }
 
-                        usageRow.Add("<usages-total>");
+                        usageRow.Add(partGroup.Sum(x => decimal.Parse(x.Usages))
+                            .ToString(CultureInfo.InvariantCulture));
                         stockRow.Add(string.Empty);
                         ordersRow.Add(string.Empty);
-                        forecastRow.Add("<forecast-total>");
+                        forecastRow.Add(partGroup.Sum(x => decimal.Parse(x.ForecastOrders))
+                            .ToString(CultureInfo.InvariantCulture));
+
 
                         result.Add(usageRow);
                         result.Add(stockRow);

@@ -21,7 +21,7 @@ const ForecastOrdersReport = () => {
                         label="Supplier Id"
                     />
                     <ExportButton
-                        href={`${config.appRoot}/purchasing/reports/Monthly-forecast-orders/export?supplierId=${supplierId}`}
+                        href={`${config.appRoot}/purchasing/reports/monthly-forecast-orders/export?supplierId=${supplierId}`}
                         buttonText="Monthly"
                     />
                 </Grid>
