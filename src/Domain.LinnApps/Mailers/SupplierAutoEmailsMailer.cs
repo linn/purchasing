@@ -93,8 +93,9 @@
                 "Please find Monthly order forecast attached",
                 "csv",
                 null,
-                $"{toSupplier}_Monthly_forecast_{timestamp}",
-                new ResultsModel());
+                $"{toSupplier}_monthly_forecast_{timestamp}",
+                null,
+                export);
         }
 
         private void CheckEmailDetailsOk(string toAddress, Supplier supplier)

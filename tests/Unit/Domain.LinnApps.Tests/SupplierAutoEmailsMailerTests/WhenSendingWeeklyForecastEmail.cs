@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.SupplierAutoEmailsMailerTests
 {
     using System;
+    using System.Collections.Generic;
 
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
@@ -61,8 +62,9 @@
                 "Please find Monthly order forecast attached",
                 "csv",
                 null,
-                $"{this.supplier.SupplierId}_Monthly_forecast_{this.timestamp}",
-                Arg.Any<ResultsModel>());
+                $"{this.supplier.SupplierId}_monthly_forecast_{this.timestamp}",
+                null,
+                Arg.Any<IEnumerable<IEnumerable<string>>>());
         }
     }
 }
