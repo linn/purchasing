@@ -259,9 +259,9 @@
                                                   RescheduleReason = update.NewReason,
                                                   DateRequested = update.DateRequested ?? existingDelivery.DateRequested,
                                                   SupplierConfirmationComment = update.Comment,
-                                                  OurUnitPriceCurrency = existingDelivery.OurUnitPriceCurrency,
-                                                  OrderUnitPriceCurrency = existingDelivery.OrderUnitPriceCurrency,
-                                                  BaseOurUnitPrice = existingDelivery.BaseOurUnitPrice,
+                                                  OurUnitPriceCurrency = detail.OurUnitPriceCurrency,
+                                                  OrderUnitPriceCurrency = detail.OrderUnitPriceCurrency,
+                                                  BaseOurUnitPrice = detail.BaseOurUnitPrice,
                                                   BaseDeliveryTotal = Math.Round(
                                                       (update.Qty * detail.BaseOurUnitPrice.GetValueOrDefault())
                                                     + baseVatAmount, 
