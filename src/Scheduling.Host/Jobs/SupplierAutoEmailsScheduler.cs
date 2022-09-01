@@ -57,7 +57,7 @@
 
                         // dispatch a message for all the suppliers to receive a Monthly forecast
                         foreach (var s in repository.FilterBy(x => x.Forecast.Equals("REPORT")
-                                 && x.ForecastInterval.Equals("Weekly")))
+                                 && x.ForecastInterval.Equals("WEEKLY")))
                         {
                             this.emailMonthlyForecastMessageDispatcher
                                 .Dispatch(new EmailMonthlyForecastReportMessageResource
