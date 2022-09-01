@@ -84,22 +84,31 @@
 
         public IEnumerable<ResultsModel> GetShortagesPlannerReport(int planner)
         {
-            var results = this.shortagesPlannerEntryView.FilterBy(x => x.Planner.HasValue && x.Planner.Value == planner).ToList();
+            var results = this.shortagesPlannerEntryView
+                .FilterBy(x => x.Planner.HasValue && x.Planner.Value == planner)
+                .ToList();
             var returnResults = new List<ResultsModel>();
 
-            foreach (var shortagesForPlanner in results.GroupBy(a => new { a.PurchaseLevel }))
+            var displaySequence = 0;
+
+            foreach (var shortagesForPlanner in results
+                         .GroupBy(a => new { a.PurchaseLevel })
+                         .OrderBy(b => b.Key.PurchaseLevel))
             {
                 var titleModel = new ResultsModel
                 {
-                    ReportTitle = new NameModel($"Purchasing danger parts for planner {planner}. Purchase Danger Level {shortagesForPlanner.Key.PurchaseLevel}")
+                    ReportTitle = new NameModel($"Purchasing danger parts for planner {planner}. Purchase Danger Level {shortagesForPlanner.Key.PurchaseLevel}"),
+                    DisplaySequence = displaySequence++
                 };
                 returnResults.Add(titleModel);
 
-                var distinctPartNumber = shortagesForPlanner.DistinctBy(x => x.PartNumber);
+                var distinctPartNumber = shortagesForPlanner
+                    .DistinctBy(x => x.PartNumber)
+                    .OrderBy(a => a.PartNumber);
 
                 foreach (var partEntryRow in distinctPartNumber)
                 {
-                    var model = new ResultsModel();
+                    var model = new ResultsModel { DisplaySequence = displaySequence++ };
                     var reportTitle = new NameModel(partEntryRow.PartNumber) 
                                           { 
                                               DrillDownList = new List<DrillDownModel>
@@ -134,7 +143,7 @@
 
                     var expectedDeliveriesModel = new ResultsModel
                     {
-                        ReportTitle = new NameModel("Expected Deliveries")
+                        ReportTitle = new NameModel("Expected Deliveries"), DisplaySequence = displaySequence++
                     };
                     expectedDeliveriesModel.AddColumn("OrderNumber", "Order Number");
                     expectedDeliveriesModel.AddColumn("OrderLine", "Line");
@@ -151,8 +160,8 @@
                         expectedDeliveriesModel.SetGridTextValue(expectedDeliveryRow.RowIndex, expectedDeliveriesModel.ColumnIndex("OrderLine"), deliveryRow.OrderLine.ToString());
                         expectedDeliveriesModel.SetGridTextValue(expectedDeliveryRow.RowIndex, expectedDeliveriesModel.ColumnIndex("DeliverySeq"), deliveryRow.DeliverySeq.ToString());
                         expectedDeliveriesModel.SetGridTextValue(expectedDeliveryRow.RowIndex, expectedDeliveriesModel.ColumnIndex("Outstanding"), deliveryRow.QtyOutstanding.ToString());
-                        expectedDeliveriesModel.SetGridTextValue(expectedDeliveryRow.RowIndex, expectedDeliveriesModel.ColumnIndex("RequestedDate"), deliveryRow.RequestedDate.ToString());
-                        expectedDeliveriesModel.SetGridTextValue(expectedDeliveryRow.RowIndex, expectedDeliveriesModel.ColumnIndex("AdvisedDate"), deliveryRow.AdvisedDate.ToString());
+                        expectedDeliveriesModel.SetGridTextValue(expectedDeliveryRow.RowIndex, expectedDeliveriesModel.ColumnIndex("RequestedDate"), deliveryRow.RequestedDate?.ToString("dd-MMM-yyyy"));
+                        expectedDeliveriesModel.SetGridTextValue(expectedDeliveryRow.RowIndex, expectedDeliveriesModel.ColumnIndex("AdvisedDate"), deliveryRow.AdvisedDate?.ToString("dd-MMM-yyyy"));
                     }
 
                     returnResults.Add(expectedDeliveriesModel);

@@ -132,8 +132,7 @@
 
                 var result = this.domainService.UploadDeliveries(changes, privileges);
                 this.transactionManager.Commit();
-
-               
+                
                 foreach (var u in result.Updated) 
                 {
                     this.domainService.UpdateMiniOrderDelivery(
@@ -145,7 +144,6 @@
                 }
 
                 this.transactionManager.Commit();
-                
                 
                 return new SuccessResult<BatchUpdateProcessResultResource>(
                     new BatchUpdateProcessResultResource

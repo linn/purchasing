@@ -75,5 +75,7 @@
         public decimal? OrderConversionFactor { get; set; }
 
         public string IssuePartsToSupplier { get; set; }
+
+        public string DrawingRef { get; set; }
     }
 }

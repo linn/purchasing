@@ -134,14 +134,14 @@
 
             var values = new List<CalculationValueModel>();
 
-            foreach (var order in purchaseOrders)
+            foreach (var order in purchaseOrders.OrderBy(a => a.OrderNumber))
             {
                 if (!includeCancelled && order.Cancelled == "Y")
                 {
                     continue;
                 }
 
-                foreach (var orderDetail in order.Details)
+                foreach (var orderDetail in order.Details.OrderBy(d => d.Line))
                 {
                     if (outstandingOnly && this.purchaseOrdersPack.OrderIsCompleteSql(
                             orderDetail.OrderNumber,
@@ -151,12 +151,15 @@
                     }
 
                     var isFirstDelivery = true;
-                    foreach (var delivery in orderDetail.PurchaseDeliveries)
+                    foreach (var delivery in orderDetail.PurchaseDeliveries.OrderBy(d => d.DeliverySeq))
                     {
                         if (!includeCancelled && (orderDetail.Cancelled == "Y" || delivery.Cancelled == "Y"))
                         {
                             continue;
                         }
+
+                        var rowIndex = $"{orderDetail.OrderNumber}/{orderDetail.Line}/{delivery.DeliverySeq}";
+                        reportLayout.AddValueDrillDownDetails("order", "/purchasing/purchase-orders/{textValue}", null, 0);
 
                         var part = this.partRepository.FindBy(x => x.PartNumber == orderDetail.Part.PartNumber);
                         if (stockControlled != "A" && ((stockControlled == "N" && part.StockControlled != "N")
@@ -175,7 +178,26 @@
 
                         var totalLedgerQty = ledgerQtys.Sum(x => x.TransType == "C" ? x.Qty : -x.Qty);
 
-                        ExtractSupplierReportDetails(values, orderDetail, delivery, totalLedgerQty, order.Currency.Code, isFirstDelivery);
+                        ExtractSupplierReportDetails(values, orderDetail, delivery, order.Currency.Code, isFirstDelivery);
+                        if (isFirstDelivery)
+                        {
+                            values.Add(
+                                new CalculationValueModel
+                                    {
+                                        RowId = rowIndex,
+                                        ColumnId = "QtyRec",
+                                        TextDisplay = orderDetail.PurchaseDeliveries.Sum(d => d.QtyNetReceived).ToString()
+                                    });
+
+                            values.Add(
+                                new CalculationValueModel
+                                    {
+                                        RowId = rowIndex,
+                                        ColumnId = "QtyInv",
+                                        TextDisplay = totalLedgerQty.ToString(CultureInfo.InvariantCulture)
+                                    });
+                        }
+
                         isFirstDelivery = false;
                     }
                 }
@@ -340,15 +362,19 @@
                 new List<AxisDetailsModel>
                     {
                         new AxisDetailsModel(
-                            "OrderLine",
-                            "Order/Line",
+                            "Order",
+                            "Order",
+                            GridDisplayType.TextValue),
+                        new AxisDetailsModel(
+                            "Line",
+                            "Line",
                             GridDisplayType.TextValue),
                         new AxisDetailsModel("PartNo", "Part Number", GridDisplayType.TextValue),
                         new AxisDetailsModel(
                             "SuppliersDesignation",
                             "Suppliers Designation",
                             GridDisplayType.TextValue),
-                        new AxisDetailsModel("QtyOrd", "Qty Ordered", GridDisplayType.TextValue),
+                        new AxisDetailsModel("QtyOrd", "Qty", GridDisplayType.TextValue),
                         new AxisDetailsModel("QtyRec", "Qty Rec", GridDisplayType.TextValue),
                         new AxisDetailsModel("QtyInv", "Qty Inv", GridDisplayType.TextValue),
                         new AxisDetailsModel("BaseNetTotal", "Net Total (GBP)", GridDisplayType.Value) { DecimalPlaces = 2 },
@@ -390,52 +416,10 @@
             ICollection<CalculationValueModel> values,
             PurchaseOrderDetail orderDetail,
             PurchaseOrderDelivery delivery,
-            decimal ledgerQty,
             string currencyCode,
             bool isFirstDelivery)
         {
             var currentRowId = $"{orderDetail.OrderNumber}/{orderDetail.Line}/{delivery.DeliverySeq}";
-            values.Add(
-                new CalculationValueModel
-                    {
-                        RowId = currentRowId,
-                        ColumnId = "OrderLine",
-                        TextDisplay = $"{orderDetail.OrderNumber}/Line{orderDetail.Line}/Delivery{delivery.DeliverySeq}"
-                    });
-
-            values.Add(
-                new CalculationValueModel
-                    {
-                        RowId = currentRowId, ColumnId = "PartNo", TextDisplay = $"{orderDetail.Part.PartNumber}"
-                    });
-
-            values.Add(
-                new CalculationValueModel
-                    {
-                        RowId = currentRowId,
-                        ColumnId = "SuppliersDesignation",
-                        TextDisplay = $"{orderDetail.SuppliersDesignation}"
-                    });
-
-            values.Add(
-                new CalculationValueModel
-                    {
-                        RowId = currentRowId, ColumnId = "QtyRec", TextDisplay = delivery.QtyNetReceived.ToString()
-                    });
-
-            values.Add(
-                new CalculationValueModel
-                    {
-                        RowId = currentRowId, ColumnId = "QtyInv", TextDisplay = ledgerQty.ToString(CultureInfo.InvariantCulture)
-                    });
-
-            values.Add(
-                new CalculationValueModel
-                    {
-                        RowId = currentRowId,
-                        ColumnId = "Currency",
-                        TextDisplay = currencyCode
-                    });
 
             if (isFirstDelivery)
             {
@@ -443,8 +427,44 @@
                     new CalculationValueModel
                         {
                             RowId = currentRowId,
+                            ColumnId = "Order",
+                            TextDisplay = $"{orderDetail.OrderNumber}"
+                        });
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
+                            ColumnId = "Line",
+                            TextDisplay = $"{orderDetail.Line}"
+                        });
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
+                            ColumnId = "PartNo",
+                            TextDisplay = $"{orderDetail.Part.PartNumber}"
+                        });
+
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
+                            ColumnId = "SuppliersDesignation",
+                            TextDisplay = $"{orderDetail.SuppliersDesignation}"
+                        });
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
+                            ColumnId = "Currency",
+                            TextDisplay = currencyCode
+                        });
+                values.Add(
+                    new CalculationValueModel
+                        {
+                            RowId = currentRowId,
                             ColumnId = "QtyOrd",
-                            TextDisplay = orderDetail.OurQty.HasValue ? orderDetail.OurQty.Value.ToString() : "0"
+                            TextDisplay = orderDetail.OurQty.HasValue ? orderDetail.OurQty.Value.ToString(CultureInfo.InvariantCulture) : "0"
                         });
 
                 values.Add(

@@ -23,6 +23,7 @@
         {
             app.MapGet("/purchasing/reports/spend-by-supplier", this.GetApp);
             app.MapGet("/purchasing/reports/spend-by-part", this.GetApp);
+            app.MapGet("/purchasing/reports/spend-by-supplier-by-date-range", this.GetApp);
             app.MapGet("/purchasing/reports/spend-by-supplier/report", this.GetSpendBySupplierReport);
             app.MapGet("/purchasing/reports/spend-by-supplier/export", this.GetSpendBySupplierExport);
             app.MapGet("/purchasing/reports/spend-by-supplier-by-date-range/report", this.GetSpendBySupplierByDateRangeReport);

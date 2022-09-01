@@ -64,7 +64,7 @@ function PurchaseOrdersAuthSend() {
 
     const userNumber = useSelector(state => userSelectors.getUserNumber(state));
     const searchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(state.purchaseOrders, 50, 'orderNumber')
+        collectionSelectorHelpers.getSearchItems(state.purchaseOrders, 100, 'orderNumber')
     );
     const searchLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.purchaseOrders)
