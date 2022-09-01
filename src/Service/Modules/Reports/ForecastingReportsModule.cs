@@ -18,8 +18,8 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/purchasing/reports/Monthly-forecast-orders/export", this.GetMonthlyExport);
-            app.MapGet("/purchasing/reports/Monthly-forecast-orders", this.GetApp);
+            app.MapGet("/purchasing/reports/monthly-forecast-orders/export", this.GetMonthlyExport);
+            app.MapGet("/purchasing/reports/forecast-order-reports", this.GetApp);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -36,7 +36,7 @@
             var csvResults = facadeService.GetMonthlyForecastExport(
                supplierId);
             var now = DateTime.Today;
-            await res.FromCsv(csvResults, $"{supplierId}-Monthly-forecast-orders_{now.Day}-{now.Month}-{now.Year}.csv");
+            await res.FromCsv(csvResults, $"{supplierId}-monthly-forecast-orders_{now.Day}-{now.Month}-{now.Year}.csv");
         }
     }
 }
