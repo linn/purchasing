@@ -27,7 +27,7 @@
         public async Task ShouldNotSendMonthlyForecasts()
         {
             await Sut.StartAsync(CancellationToken.None);
-            await Task.Delay(TimeSpan.FromSeconds(1));
+            await Task.Delay(TimeSpan.FromMilliseconds(100));
             this.EmailMonthlyForecastMessageDispatcher
                 .DidNotReceive().Dispatch(Arg.Any<EmailMonthlyForecastReportMessageResource>());
         }
