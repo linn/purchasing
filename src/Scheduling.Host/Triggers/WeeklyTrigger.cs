@@ -11,7 +11,7 @@
                     {
                         while (true)
                         {
-                            var startOfWeek = currentTime().AddDays(-(int)currentTime().DayOfWeek).Date; // Sunday, 00:00
+                            var startOfWeek = currentTime().AddDays(-(int)currentTime().DayOfWeek).Date;
 
                             var triggerTime = startOfWeek + this.TriggerHour - currentTime();
 

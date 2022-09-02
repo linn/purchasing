@@ -4,7 +4,6 @@
     {
         public MonthlyTrigger(CurrentTime currentTime, DayOfWeek day, int hour, int minute = 0, int second = 0)
         {
-            // work out what day of the month the first specified day is
             int dayOfMonth = 0;
 
             foreach (DateTime date in AllDatesInMonth(currentTime().Year, currentTime().Month))
@@ -45,7 +44,6 @@
         ~MonthlyTrigger() => this.Dispose();
 
         public event Action? OnTimeTriggered;
-
 
         public TimeSpan TriggerHour { get; }
 
