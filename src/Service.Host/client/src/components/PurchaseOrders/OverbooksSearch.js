@@ -36,13 +36,10 @@ function OverbooksSearch() {
         collectionSelectorHelpers.getApplicationState(state.purchaseOrders)
     );
     const canSearch = utilities.getHref(item, 'allow-over-book-search');
-
-    const [options, setOptions] = useState({ orderNumber: '' });
-    const handleOptionsChange = (propertyName, newValue) =>
-        setOptions({ ...options, [propertyName]: newValue });
+    const [orderNumber, setOrderNumber] = useState('');
 
     const search = () =>
-        history.push(`/purchasing/purchase-orders/${options.orderNumber}/allow-over-book/`);
+        history.push(`/purchasing/purchase-orders/${orderNumber}/allow-over-book/`);
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
@@ -64,12 +61,11 @@ function OverbooksSearch() {
                 <Grid item xs={5}>
                     <InputField
                         fullWidth
-                        disabled={!canSearch}
                         placeholder="Search by Order Number"
-                        value={options.orderNumber}
+                        value={orderNumber}
                         label="Order Number"
                         propertyName="orderNumber"
-                        onChange={handleOptionsChange}
+                        onChange={(_, newValue) => setOrderNumber(newValue)}
                         textFieldProps={{
                             onKeyDown: data => {
                                 if (data.keyCode === 13 || data.keyCode === 9) {
@@ -84,7 +80,7 @@ function OverbooksSearch() {
                         variant="outlined"
                         color="primary"
                         className={classes.button}
-                        onClick={() => search()}
+                        onClick={search}
                     >
                         Go
                     </Button>
