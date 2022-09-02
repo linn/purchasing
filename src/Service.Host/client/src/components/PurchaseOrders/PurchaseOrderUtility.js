@@ -1252,11 +1252,15 @@ function PurchaseOrderUtility({ creating }) {
                                 saveDisabled={!canSave()}
                                 // backClick={() => handleBackClick(previousPaths, history.goBack)}
                                 saveClick={() => {
-                                    setEditStatus('view');
                                     clearErrors();
-                                    reduxDispatch(
-                                        purchaseOrderActions.update(order.orderNumber, order)
-                                    );
+                                    setEditStatus('view');
+                                    if (creating) {
+                                        reduxDispatch(purchaseOrderActions.add(order));
+                                    } else {
+                                        reduxDispatch(
+                                            purchaseOrderActions.update(order.orderNumber, order)
+                                        );
+                                    }
                                 }}
                                 cancelClick={() => {
                                     setEditStatus('view');

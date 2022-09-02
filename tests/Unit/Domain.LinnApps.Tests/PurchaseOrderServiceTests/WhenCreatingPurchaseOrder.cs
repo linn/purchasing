@@ -118,32 +118,12 @@
                                  DocumentType = new DocumentType { Description = "Purchase order", Name = "PO" }
                              };
 
-            //this.miniOrder = new MiniOrder
-            //                     {
-            //                         OrderNumber = this.orderNumber,
-            //                         OurQty = 12m,
-            //                         OrderQty = 12m,
-            //                         OurPrice = 120m,
-            //                         OrderPrice = 120m,
-            //                         NetTotal = 120m,
-            //                         BaseOurPrice = 100m,
-            //                         BaseOrderPrice = 100m,
-            //                         BaseNetTotal = 100m,
-            //                         Remarks = "applebooks",
-            //                         Department = "0000911",
-            //                         Nominal = "00009222",
-            //                         RequestedDeliveryDate = 23.January(2022),
-            //                         InternalComments = "comment for internal staff",
-            //                         SuppliersDesignation = "macbooks",
-            //                         OrderConvFactor = 2m,
-            //};
-
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
             this.PurchaseOrdersPack.GetVatAmountSupplier(Arg.Any<decimal>(), Arg.Any<int>()).Returns(40.55m);
 
-            this.MockDatabaseService.GetNextVal("PLORP_SEQ").Returns(123);
+            this.MockDatabaseService.GetIdSequence("PLORP_SEQ").Returns(123);
 
             this.Sut.CreateOrder(this.order, new List<string>());
         }
@@ -158,12 +138,12 @@
 
             firstDetail.OurQty.Should().Be(99m);
             //updated based on conv factor
-            firstDetail.OrderQty.Should().Be(198m);
+            firstDetail.OrderQty.Should().Be(99m);
 
             firstDetail.OurUnitPriceCurrency.Should().Be(200.22m);
 
             //updated based on conv factor
-            firstDetail.OrderUnitPriceCurrency.Should().Be(400.44m);
+            firstDetail.OrderUnitPriceCurrency.Should().Be(200.22m);
 
             firstDetail.BaseOurUnitPrice.Should().Be(250.28m);
 
@@ -179,48 +159,7 @@
             firstDetail.BaseDetailTotal.Should().Be(24827.91m);
 
             firstDetail.OrderPosting.NominalAccountId.Should().Be(911);
-
-            var delivery = firstDetail.PurchaseDeliveries.First();
-
-            delivery.DateRequested.Should().Be(29.January(2022));
         }
-
-        //[Test]
-        //public void ShouldUpdateMiniOrderFields()
-        //{
-        //    this.miniOrder.OrderNumber.Should().Be(600179);
-        //    this.miniOrder.Remarks.Should().Be("updated remarks");
-
-        //    this.miniOrder.InternalComments.Should().Be("updated internal comment");
-        //    this.miniOrder.SuppliersDesignation.Should().Be("updated suppliers designation");
-
-        //    this.miniOrder.Nominal.Should().Be("00009222");
-        //    this.miniOrder.Department.Should().Be("0000911");
-
-        //    var firstDetail = this.current.Details.First();
-
-        //    this.miniOrder.OurQty.Should().Be(99m);
-
-        //    // updated based on conv factor
-        //    this.miniOrder.OrderQty.Should().Be(198m);
-
-        //    // updated based on conv factor
-        //    this.miniOrder.OrderPrice.Should().Be(400.44m);
-
-        //    this.miniOrder.OurPrice.Should().Be(200.22m);
-        //    this.miniOrder.BaseOurPrice.Should().Be(250.28m);
-
-        //    // our qty * our unit price
-        //    this.miniOrder.NetTotal.Should().Be(19821.78m);
-        //    this.miniOrder.BaseNetTotal.Should().Be(24777.23m);
-
-        //    this.miniOrder.VatTotal.Should().Be(40.55m);
-        //    this.miniOrder.BaseVatTotal.Should().Be(50.69m);
-
-        //    // net total + vat total
-        //    this.miniOrder.OrderTotal.Should().Be(19862.33m);
-        //    this.miniOrder.BaseOrderTotal.Should().Be(24827.91m);
-        //}
 
         [Test]
         public void ShouldReceiveAddMiniOrderRepoCall()

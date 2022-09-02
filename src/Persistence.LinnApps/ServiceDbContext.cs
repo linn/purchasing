@@ -631,6 +631,8 @@
             entity.Property(o => o.BaseCurrencyCode).HasColumnName("BASE_CURRENCY");
             entity.Property(o => o.OrderNetTotal).HasColumnName("ORDER_NET_TOTAL");
             entity.Property(o => o.BaseOrderNetTotal).HasColumnName("BASE_ORDER_NET_TOTAL");
+            entity.Property(o => o.InvoiceAddressId).HasColumnName("INVOICE_ADDRESS_ID");
+            entity.HasOne(o => o.InvoiceAddress).WithMany().HasForeignKey(o => o.InvoiceAddressId);
         }
 
         private void BuildPurchaseOrderDetails(ModelBuilder builder)
@@ -1493,8 +1495,7 @@
             entity.Property(o => o.PrevOrderLine).HasColumnName("PREV_ORDER_LINE").HasMaxLength(6);
             entity.Property(o => o.FilCancelledBy).HasColumnName("FIL_CANCELLED_BY").HasMaxLength(6);
             entity.Property(o => o.ReasonFilCancelled).HasColumnName("REASON_FIL_CANCELLED").HasMaxLength(300);
-            entity.Property(o => o.OurPrice).HasColumnName("OUR_PRICE").HasMaxLength(19);
-            entity.Property(o => o.OrderConvFactor).HasColumnName("ORDER_PRICE").HasMaxLength(19);
+            entity.Property(o => o.OrderConvFactor).HasColumnName("ORDER_CONV_FACTOR").HasMaxLength(19);
             entity.Property(o => o.BaseCurrency).HasColumnName("BASE_CURRENCY").HasMaxLength(4);
             entity.Property(o => o.BaseOurPrice).HasColumnName("BASE_OUR_PRICE").HasMaxLength(19);
             entity.Property(o => o.BaseOrderPrice).HasColumnName("BASE_ORDER_PRICE").HasMaxLength(19);

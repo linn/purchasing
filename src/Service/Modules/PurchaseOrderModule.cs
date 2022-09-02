@@ -46,6 +46,18 @@
             app.MapPost("/purchasing/purchase-orders/authorise-multiple", this.AuthorisePurchaseOrders);
             app.MapPost("/purchasing/purchase-orders/email-multiple", this.EmailPurchaseOrders);
             app.MapPut("/purchasing/purchase-orders/{orderNumber:int}", this.UpdatePurchaseOrder);
+            app.MapPost("/purchasing/purchase-orders", this.CreateOrder);
+        }
+
+        private async Task CreateOrder(
+            HttpRequest req,
+            HttpResponse res,
+            PurchaseOrderResource resource,
+            IPurchaseOrderFacadeService purchaseOrderFacadeService)
+        {
+            var result = purchaseOrderFacadeService.Add(resource, req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)

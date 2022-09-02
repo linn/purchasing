@@ -56,6 +56,8 @@
 
         public AddressResource OrderAddress { get; set; }
 
+        //public int? InvoiceAddressId { get; set; }
+
         public string SupplierContactEmail { get; set; }
 
         public string SupplierContactPhone { get; set; }

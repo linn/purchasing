@@ -78,10 +78,14 @@
 
         public Address OrderAddress { get; set; }
 
+        public FullAddress InvoiceAddress { get; set; }
+
         public decimal? DamagesPercent { get; set; }
 
         public decimal OrderNetTotal { get; set; }
-        
+
         public decimal BaseOrderNetTotal { get; set; }
+
+        public int InvoiceAddressId { get; set; }
     }
 }

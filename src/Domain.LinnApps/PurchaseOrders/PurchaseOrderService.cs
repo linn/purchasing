@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.Linq;
 
     using Linn.Common.Authorisation;
@@ -141,14 +142,30 @@
 
             foreach (var detail in order.Details)
             {
-                detail.OrderPosting.Id = this.databaseService.GetNextVal("PLORP_SEQ");
+                detail.OrderPosting.Id = this.databaseService.GetIdSequence("PLORP_SEQ");
                 detail.OrderConversionFactor = 1m;
 
-                this.PerformDetailCalculations(detail, detail, order.ExchangeRate.GetValueOrDefault(1), order.Supplier.SupplierId);
+                // todo make below UOM fields typeahead on front end, only editable on create
+                detail.OurUnitOfMeasure = "ONES";
+                detail.OrderUnitOfMeasure = "ONES";
+
+                // todo check if always LINN or get from table
+                detail.StockPoolCode = "LINN";
+
+                detail.RohsCompliant = "Y";
+
+                this.PerformDetailCalculations(detail, detail, order.ExchangeRate.GetValueOrDefault(1), order.SupplierId, creating: true);
             }
 
-            // work out base prices currency conversion stuff etc -
-            // put into shared method??
+            order.OrderNumber = this.databaseService.GetNextVal("PL_ORDER_SEQ");
+            order.Cancelled = "N";
+            order.FilCancelled = "N";
+
+            // todo make required yes/no dropdown forced to answer on create, check if any logic around this on citrix
+            // also check if should be copied down to the details or if ok on top level order?
+            order.IssuePartsToSupplier = "N";
+
+            order.BaseCurrencyCode = "GBP";
 
             this.CreateMiniOrder(order);
         }
@@ -229,6 +246,9 @@
             order.Supplier = supplier;
             order.OrderAddress = supplier.OrderAddress;
             order.OrderAddressId = supplier.OrderAddress.AddressId;
+            order.InvoiceAddress = supplier.InvoiceFullAddress;
+            order.InvoiceAddressId = supplier.InvoiceFullAddress.Id;
+
             order.CurrencyCode = supplier.Currency.Code;
             order.Currency = supplier.Currency;
             order.OrderDate = DateTime.Now;
@@ -241,12 +261,9 @@
             }
 
             order.DocumentTypeName = "PO";
-            order.DocumentType.Name = "PO";
-            order.DocumentType.Description = "PURCHASE ORDER";
+            order.DocumentType = new DocumentType { Name = "PO", Description = "PURCHASE ORDER" };
             order.OrderMethodName = "MANUAL";
-            order.OrderMethod.Name = "MANUAL";
-            order.OrderMethod.Description = "MANUAL ORDERING";
-
+            order.OrderMethod = new OrderMethod { Name = "MANUAL", Description = "MANUAL ORDERING" };
             var user = this.employeeRepository.FindById(currentUserId);
             order.RequestedById = currentUserId;
             order.RequestedBy = user;
@@ -369,19 +386,19 @@
             var detail = order.Details.First();
 
             miniOrder.OrderNumber = order.OrderNumber;
-            miniOrder.DocumentType = order.DocumentType.Name;
+            miniOrder.DocumentType = order.DocumentTypeName;
             miniOrder.DateOfOrder = order.OrderDate;
             miniOrder.RequestedDeliveryDate = detail.PurchaseDeliveries?.First().DateRequested;
             miniOrder.AdvisedDeliveryDate = detail.PurchaseDeliveries?.First().DateAdvised;
             miniOrder.Remarks = order.Remarks;
             miniOrder.SupplierId = order.SupplierId;
             miniOrder.PartNumber = detail.PartNumber;
-            miniOrder.Currency = order.Currency.Code;
+            miniOrder.Currency = order.CurrencyCode;
             miniOrder.SuppliersDesignation = detail.SuppliersDesignation;
-            miniOrder.Department = detail.OrderPosting.NominalAccount.Department.DepartmentCode;
-            miniOrder.Nominal = detail.OrderPosting.NominalAccount.Nominal.NominalCode;
-            miniOrder.AuthorisedBy = order.AuthorisedBy.Id;
-            miniOrder.EnteredBy = order.EnteredBy.Id;
+            miniOrder.Department = detail.OrderPosting.NominalAccount.DepartmentCode;
+            miniOrder.Nominal = detail.OrderPosting.NominalAccount.NominalCode;
+            miniOrder.AuthorisedBy = order.AuthorisedById;
+            miniOrder.EnteredBy = order.EnteredById;
             miniOrder.OurUnitOfMeasure = detail.OurUnitOfMeasure;
             miniOrder.OrderUnitOfMeasure = detail.OrderUnitOfMeasure;
             miniOrder.RequestedBy = order.RequestedById;
@@ -392,7 +409,7 @@
             miniOrder.NetTotal = detail.NetTotalCurrency;
             miniOrder.VatTotal = detail.VatTotalCurrency.GetValueOrDefault(0);
             miniOrder.OrderTotal = detail.DetailTotalCurrency.GetValueOrDefault(0);
-            miniOrder.OrderMethod = order.OrderMethod.Name;
+            miniOrder.OrderMethod = order.OrderMethodName;
             miniOrder.CancelledBy = null;
             miniOrder.SentByMethod = order.SentByMethod;
             miniOrder.AcknowledgeComment = detail.PurchaseDeliveries?.First().SupplierConfirmationComment;
@@ -405,7 +422,7 @@
             miniOrder.Product = detail.OrderPosting.Product;
             miniOrder.Person = detail.OrderPosting.Person;
             miniOrder.StockPoolCode = detail.StockPoolCode;
-            miniOrder.FilCancelledBy = null;
+            miniOrder.FilCancelledBy = null; //todo probably remove this from mapping
             miniOrder.OurPrice = detail.OurUnitPriceCurrency;
             miniOrder.OrderPrice = detail.OrderUnitPriceCurrency;
             miniOrder.BaseCurrency = order.BaseCurrencyCode;
@@ -416,7 +433,7 @@
             miniOrder.BaseOrderTotal = detail.BaseDetailTotal;
             miniOrder.ExchangeRate = order.ExchangeRate;
             miniOrder.RohsCompliant = detail.RohsCompliant;
-            miniOrder.DeliveryConfirmedBy = detail.DeliveryConfirmedBy.Id;
+            miniOrder.DeliveryConfirmedBy = detail.DeliveryConfirmedById;
             miniOrder.InternalComments = detail.InternalComments;
 
             // are all of the below fields superfluous? If so will remove
@@ -432,6 +449,8 @@
             // miniOrder.MpvAuthorisedBy = updatedOrder.
             // miniOrder.MpvReason = updatedOrder.
             this.miniOrderRepository.Add(miniOrder);
+
+            detail.OrderPosting.NominalAccount = null;
         }
 
         private void UpdateDeliveries(
@@ -471,7 +490,7 @@
             this.UpdateDeliveries(current.PurchaseDeliveries, updated.PurchaseDeliveries);
         }
 
-        private void PerformDetailCalculations(PurchaseOrderDetail current, PurchaseOrderDetail updated, decimal exchangeRate, int supplierId)
+        private void PerformDetailCalculations(PurchaseOrderDetail current, PurchaseOrderDetail updated, decimal exchangeRate, int supplierId, bool creating = false)
         {
             var netTotal = updated.OurUnitPriceCurrency.GetValueOrDefault() * updated.OurQty.GetValueOrDefault();
             current.NetTotalCurrency = Math.Round(netTotal, 2, MidpointRounding.AwayFromZero);
@@ -481,8 +500,8 @@
 
             current.DetailTotalCurrency = Math.Round(netTotal + current.VatTotalCurrency.Value, 2);
 
-            if (updated.OrderUnitPriceCurrency == current.OrderUnitPriceCurrency
-                && updated.OurUnitPriceCurrency != current.OurUnitPriceCurrency)
+            if (creating || (updated.OrderUnitPriceCurrency == current.OrderUnitPriceCurrency
+                && updated.OurUnitPriceCurrency != current.OurUnitPriceCurrency))
             {
                 // if order price hasn't been overridden but our price has changed, use conv factor
                 current.OrderUnitPriceCurrency = updated.OurUnitPriceCurrency * current.OrderConversionFactor;
@@ -493,7 +512,7 @@
                 current.OrderUnitPriceCurrency = updated.OrderUnitPriceCurrency;
             }
 
-            if (updated.OrderQty == current.OrderQty && updated.OurQty != current.OurQty)
+            if (creating || (updated.OrderQty == current.OrderQty && updated.OurQty != current.OurQty))
             {
                 // if order qty hasn't been overridden but our qty has changed, use conv factor
                 current.OrderQty = updated.OurQty * current.OrderConversionFactor;
