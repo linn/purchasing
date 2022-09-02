@@ -105,10 +105,8 @@
                 throw new SupplierAutoEmailsException($"No recipient address set for: {supplier.Name}");
             }
 
-            var lastTqmsDate = this.mrMaster.GetRecord().RunDate;
-
-            // notify the vendor managers if tqms jobs failed
-            if (lastTqmsDate.Date != DateTime.Today.Date)
+            // notify the vendor managers if mrp jobs failed
+            if (this.mrMaster.GetRecord().RunDate.Date != DateTime.Today.Date)
             {
                 var msg = "The Supplier Auto emails could not be sent because the MRP did not run over the weekend.";
                 this.emailService.SendEmail(
