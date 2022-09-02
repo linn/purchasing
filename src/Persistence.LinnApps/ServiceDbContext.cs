@@ -167,11 +167,15 @@
 
         public DbSet<SuppliersLeadTimesEntry> SuppliersLeadTimesEntries { get; set; }
 
-        public DbSet<WeeklyForecastPart> WeeklyForecastParts { get; set; }
+        public DbSet<MonthlyForecastPart> MonthlyForecastParts { get; set; }
 
         public DbSet<SupplierDeliveryPerformance> SupplierDeliveryPerformance { get; set; }
 
         public DbSet<DeliveryPerformanceDetail> DeliveryPerformanceDetails { get; set; }
+
+        public DbSet<MonthlyForecastPartValues> MonthlyForecastView { get; set; }
+
+        public DbSet<ForecastReportMonth> ForecastReportMonths { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -263,9 +267,11 @@
             this.BuildBomDetails(builder);
             this.BuildSupplierAutoEmails(builder);
             this.BuildSuppliersLeadTime(builder);
-            this.BuildWeeklyForecastParts(builder);
+            this.BuildMonthlyForecastParts(builder);
             this.BuildSupplierDeliveryPerformance(builder);
             this.BuildDeliveryPerformanceDetails(builder);
+            this.BuildMonthlyForecastPartRequirements(builder);
+            this.BuildForecastReportMonths(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1703,16 +1709,17 @@
             entity.Property(a => a.LeadTimeWeeks).HasColumnName("LEAD_TIME_WEEKS");
         }
 
-        private void BuildWeeklyForecastParts(ModelBuilder builder)
+        private void BuildMonthlyForecastParts(ModelBuilder builder)
         {
-            var entity = builder.Entity<WeeklyForecastPart>().ToTable("WEEKLY_FORECAST_PARTS_VIEW").HasNoKey();
-            entity.Property(a => a.MrPartNumber).HasColumnName("MR_PART_NUMBER");
+            var entity = builder.Entity<MonthlyForecastPart>().ToTable("MONTHLY_FORECAST_PARTS_VIEW").HasNoKey();
+            entity.Property(a => a.MrPartNumber).HasColumnName("MR_PART_NUMBER").HasColumnType("VARCHAR2");
             entity.Property(a => a.SupplierDesignation).HasColumnName("SUPPLIER_DESIGNATION");
             entity.Property(a => a.StartingQty).HasColumnName("STARTING_QTY");
             entity.Property(a => a.UnitPrice).HasColumnName("UNIT_PRICE");
             entity.Property(a => a.MinimumOrderQty).HasColumnName("MINIMUM_ORDER_QTY");
             entity.Property(a => a.PreferredSupplier).HasColumnName("PREFERRED_SUPPLIER");
             entity.Property(a => a.TotalNettReqtValue).HasColumnName("T_NETT_REQT_VALUE");
+            entity.Property(a => a.LeadTimeWeek).HasColumnName("LEAD_TIME_WEEK");
         }
 
         private void BuildSupplierDeliveryPerformance(ModelBuilder builder)
@@ -1743,6 +1750,23 @@
             entity.Property(a => a.AdvisedDate).HasColumnName("ADVISED_DATE");
             entity.Property(a => a.RescheduleReason).HasColumnName("RESCHEDULE_REASON");
             entity.Property(a => a.OnTime).HasColumnName("ON_TIME");
+        }
+
+        private void BuildMonthlyForecastPartRequirements(ModelBuilder builder)
+        {
+            var entity = builder.Entity<MonthlyForecastPartValues>().ToTable("MONTHLY_FORECAST_VIEW").HasNoKey();
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
+            entity.Property(a => a.MonthEndWeek).HasColumnName("MONTH_END_WEEK");
+            entity.Property(a => a.ForecastOrders).HasColumnName("FORECAST_ORDERS");
+            entity.Property(a => a.Orders).HasColumnName("ORDERS");
+            entity.Property(a => a.Stock).HasColumnName("STOCK");
+            entity.Property(a => a.Usages).HasColumnName("USAGES");
+        }
+
+        private void BuildForecastReportMonths(ModelBuilder builder)
+        {
+            var entity = builder.Entity<ForecastReportMonth>().ToTable("FORECAST_REPORT_MONTH_STRINGS").HasNoKey();
+            entity.Property(a => a.MmmYy).HasColumnName("MMMYY").HasColumnType("VARCHAR2");
         }
     }
 }

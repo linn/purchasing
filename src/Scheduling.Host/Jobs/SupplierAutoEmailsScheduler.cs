@@ -10,17 +10,17 @@
     {
         private readonly IMessageDispatcher<EmailOrderBookMessageResource> emailOrderBookMessageDispatcher;
 
-        private readonly IMessageDispatcher<EmailWeeklyForecastReportMessageResource> emailWeeklyForecastMessageDispatcher;
+        private readonly IMessageDispatcher<EmailMonthlyForecastReportMessageResource> emailMonthlyForecastMessageDispatcher;
 
         private readonly IServiceProvider serviceProvider;
 
         public SupplierAutoEmailsScheduler(
             IMessageDispatcher<EmailOrderBookMessageResource> emailOrderBookMessageDispatcher,
-            IMessageDispatcher<EmailWeeklyForecastReportMessageResource> emailWeeklyForecastMessageDispatcher,
+            IMessageDispatcher<EmailMonthlyForecastReportMessageResource> emailMonthlyForecastMessageDispatcher,
             IServiceProvider serviceProvider)
         {
             this.emailOrderBookMessageDispatcher = emailOrderBookMessageDispatcher;
-            this.emailWeeklyForecastMessageDispatcher = emailWeeklyForecastMessageDispatcher;
+            this.emailMonthlyForecastMessageDispatcher = emailMonthlyForecastMessageDispatcher;
             this.serviceProvider = serviceProvider;
         }
 
@@ -55,12 +55,12 @@
                                                                               });
                         }
 
-                        // dispatch a message for all the suppliers to receive a weekly forecast
-                        foreach (var s in repository.FilterBy(x => x.Forecast.Equals("REPORT")
+                        // dispatch a message for all the suppliers to receive a Monthly forecast
+                        foreach (var s in repository.FilterBy(x => (x.Forecast.Equals("REPORT") || x.Forecast.Equals("CSV"))
                                  && x.ForecastInterval.Equals("WEEKLY")))
                         {
-                            this.emailWeeklyForecastMessageDispatcher
-                                .Dispatch(new EmailWeeklyForecastReportMessageResource
+                            this.emailMonthlyForecastMessageDispatcher
+                                .Dispatch(new EmailMonthlyForecastReportMessageResource
                                                          {
                                                              ForSupplier = s.SupplierId,
                                                              Timestamp = DateTime.Now,

@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Messaging.Tests.EmailWeeklyForecastReportMessageHandlerTests
+﻿namespace Linn.Purchasing.Messaging.Tests.EmailMonthlyForecastReportMessageHandlerTests
 {
     using FluentAssertions;
 
@@ -26,7 +26,7 @@
         public void ShouldCallMailer()
         {
             this.Mailer.Received()
-                .SendWeeklyForecastEmail(this.Resource.ToAddress, this.Resource.ForSupplier, Arg.Any<string>());
+                .SendMonthlyForecastEmail(this.Resource.ToAddress, this.Resource.ForSupplier, Arg.Any<string>());
         }
     }
 }

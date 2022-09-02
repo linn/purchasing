@@ -8,7 +8,7 @@
             string timestamp, 
             bool test = false);
 
-        void SendWeeklyForecastEmail(
+        void SendMonthlyForecastEmail(
             string toAddress,
             int toSupplier,
             string timestamp,

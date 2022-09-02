@@ -27,7 +27,7 @@
 
         public Listener(
             Handler<EmailMrOrderBookMessage> emailOrderBookMessageHandler,
-            Handler<EmailWeeklyForecastReportMessage> emailWeeklyForecastReportMessageHandler,
+            Handler<EmailMonthlyForecastReportMessage> emailMonthlyForecastReportMessageHandler,
 
             EventingBasicConsumer consumer,
             ChannelConfiguration channelConfiguration,
@@ -46,8 +46,8 @@
                 {
                     EmailMrOrderBookMessage.RoutingKey => emailOrderBookMessageHandler.Handle(
                         new EmailMrOrderBookMessage(ea)),
-                    EmailWeeklyForecastReportMessage.RoutingKey => emailWeeklyForecastReportMessageHandler.Handle(
-                        new EmailWeeklyForecastReportMessage(ea)),
+                    EmailMonthlyForecastReportMessage.RoutingKey => emailMonthlyForecastReportMessageHandler.Handle(
+                        new EmailMonthlyForecastReportMessage(ea)),
                     _ => false
                 };
 
