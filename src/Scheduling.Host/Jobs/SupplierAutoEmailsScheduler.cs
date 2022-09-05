@@ -1,8 +1,8 @@
 ﻿namespace Linn.Purchasing.Scheduling.Host.Jobs
 {
+    using Linn.Common.Logging;
     using Linn.Common.Messaging.RabbitMQ.Dispatchers;
     using Linn.Common.Persistence;
-    using Linn.Common.Scheduling.Triggers;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources.Messages;
     using Linn.Purchasing.Scheduling.Host.Triggers;
@@ -15,17 +15,21 @@
 
         private readonly IServiceProvider serviceProvider;
 
-        private CurrentTime currentTime;
+        private readonly CurrentTime currentTime;
+
+        private readonly ILog Log;
 
         public SupplierAutoEmailsScheduler(
             IMessageDispatcher<EmailOrderBookMessageResource> emailOrderBookMessageDispatcher,
             IMessageDispatcher<EmailMonthlyForecastReportMessageResource> emailMonthlyForecastMessageDispatcher,
             CurrentTime currentTime,
+            ILog log,
             IServiceProvider serviceProvider)
         {
             this.emailOrderBookMessageDispatcher = emailOrderBookMessageDispatcher;
             this.emailMonthlyForecastMessageDispatcher = emailMonthlyForecastMessageDispatcher;
             this.serviceProvider = serviceProvider;
+            this.Log = log;
             this.currentTime = currentTime;
         }
 
@@ -33,12 +37,14 @@
         // emails configured here https://app.linn.co.uk/purch/planning/plautoem.aspx
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            
+            this.Log.Info("Supplier Auto Emails Scheduler Running...");
             // every Monday at 6am
-            var weeklyTrigger = new WeeklyTrigger(this.currentTime, DayOfWeek.Monday, 6);
+            var weeklyTrigger = new WeeklyTrigger(this.currentTime, DayOfWeek.Monday, 6, 0);
 
             weeklyTrigger.OnTimeTriggered += () => 
                 {
+                    this.Log.Info("Weekly trigger fired.");
+
                     using IServiceScope scope = this.serviceProvider.CreateScope();
 
                     IRepository<SupplierAutoEmails, int> repository =
@@ -78,6 +84,8 @@
             var monthlyTrigger = new MonthlyTrigger(this.currentTime, DayOfWeek.Monday, 6);
             monthlyTrigger.OnTimeTriggered += () =>
             {
+                this.Log.Info("Monthly trigger fired.");
+
                 using IServiceScope scope = this.serviceProvider.CreateScope();
 
                 IRepository<SupplierAutoEmails, int> repository =

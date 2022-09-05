@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Linq.Expressions;
 
+    using Linn.Common.Logging;
     using Linn.Common.Messaging.RabbitMQ.Dispatchers;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -37,6 +38,8 @@
         
         protected IRepository<SupplierAutoEmails, int> Repository { get; set; }
 
+        protected ILog Log { get; set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -44,6 +47,7 @@
                 Substitute.For<IMessageDispatcher<EmailOrderBookMessageResource>>();
             this.EmailMonthlyForecastMessageDispatcher = Substitute.For<IMessageDispatcher<EmailMonthlyForecastReportMessageResource>>();
             this.Repository = Substitute.For<IRepository<SupplierAutoEmails, int>>();
+            this.Log = Substitute.For<ILog>();
             this.Repository.FindAll().Returns(
                 new List<SupplierAutoEmails>
                     {

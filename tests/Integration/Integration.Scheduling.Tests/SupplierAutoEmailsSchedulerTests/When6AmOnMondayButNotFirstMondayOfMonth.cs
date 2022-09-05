@@ -20,6 +20,7 @@
                 this.EmailOrderBookMessageDispatcher,
                 this.EmailMonthlyForecastMessageDispatcher,
                 () => new DateTime(2022, 9, 12, 6, 0, 0),
+                this.Log,
                 this.ServiceProvider);
         }
 
