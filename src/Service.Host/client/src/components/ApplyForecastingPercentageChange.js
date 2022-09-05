@@ -183,12 +183,11 @@ function ApplyForecastingPercentageChange() {
                         <Grid item xs={12}>
                             {reportData && (
                                 <ReportTable
-                                    reportData={reportData}
-                                    showTotals
-                                    placeholderRows={10}
-                                    placeholderColumns={3}
-                                    showRowTitles={false}
+                                    reportData={reportData[0]}
                                     showTitle
+                                    showTotals={false}
+                                    placeholderRows={4}
+                                    placeholderColumns={4}
                                 />
                             )}
                         </Grid>

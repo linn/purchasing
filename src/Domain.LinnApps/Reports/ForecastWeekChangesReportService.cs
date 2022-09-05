@@ -61,7 +61,7 @@
                     new CalculationValueModel
                         {
                             RowId = rowId,
-                            ColumnId = "OrderLine",
+                            ColumnId = "PercentageChange",
                             Value = datum.PercentageChange
                         });
             }
