@@ -27,7 +27,7 @@
 
                             var triggerTime = startOfMonth + this.TriggerHour - currentTime();
 
-                            if (triggerTime != TimeSpan.Zero)
+                            if (triggerTime < TimeSpan.Zero)
                             {
                                 triggerTime = triggerTime
                                     .Add(new TimeSpan(24 * DateTime.DaysInMonth(currentTime().Year, currentTime().Month), 0, 0));
