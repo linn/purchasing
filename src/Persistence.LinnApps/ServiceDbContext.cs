@@ -1775,10 +1775,12 @@
 
         private void BuildForecastWeekChanges(ModelBuilder builder)
         {
-            var entity = builder.Entity<ForecastWeekChange>().ToTable("SA_FORECAST_CHANGE_ALL_WEEK").HasNoKey();
+            var entity = builder.Entity<ForecastWeekChange>().ToTable("SA_FORECAST_CHANGE_ALL_WEEK");
+            entity.HasKey(s => s.LinnWeekNumber);
             entity.Property(s => s.LinnWeekNumber).HasColumnName("LINN_WEEK_NUMBER");
             entity.Property(s => s.PercentageChange).HasColumnName("PERCENTAGE_CHANGE");
-            entity.HasOne(s => s.LinnWeek).WithOne().HasForeignKey("LINN_WEEK_NUMBER");
+            entity.HasOne(s => s.LinnWeek).WithOne(w => w.ForecastChange)
+                .HasForeignKey<ForecastWeekChange>(c => c.LinnWeekNumber);
         }
     }
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     Page,
@@ -7,15 +7,16 @@ import {
     InputField,
     Loading,
     Dropdown,
-    ErrorCard
+    ErrorCard,
+    ReportTable
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import { Button } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import { applyForecastingPercentageChange } from '../itemTypes';
-
+import { forecastWeekChangesReport } from '../reportTypes';
 import history from '../history';
-
+import forecastWeekChangesReportActions from '../actions/forecastWeekChangesReportActions';
 import applyForecastingPercentageChangeActions from '../actions/applyForecastingPercentageChangeActions';
 
 function ApplyForecastingPercentageChange() {
@@ -32,6 +33,9 @@ function ApplyForecastingPercentageChange() {
     const loading = useSelector(state =>
         processSelectorHelpers.getWorking(state[applyForecastingPercentageChange.item])
     );
+
+    const reportLoading = useSelector(state => state[forecastWeekChangesReport.item]?.loading);
+    const reportData = useSelector(state => state[forecastWeekChangesReport.item]?.data);
 
     const result = useSelector(state =>
         processSelectorHelpers.getData(state[applyForecastingPercentageChange.item])
@@ -67,6 +71,16 @@ function ApplyForecastingPercentageChange() {
         { id: '11', displayText: 'DEC' }
     ];
 
+    useEffect(() => {
+        dispatch(forecastWeekChangesReportActions.fetchReport());
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (result?.success) {
+            dispatch(forecastWeekChangesReportActions.fetchReport());
+        }
+    }, [result, dispatch]);
+
     return (
         <Page history={history}>
             <SnackbarMessage
@@ -83,7 +97,7 @@ function ApplyForecastingPercentageChange() {
                 <Grid item xs={12}>
                     <Typography variant="h6">Apply Forecasting Percentage Change</Typography>
                 </Grid>
-                {loading ? (
+                {loading || reportLoading ? (
                     <Grid item xs={12}>
                         <Loading />
                     </Grid>
@@ -165,6 +179,18 @@ function ApplyForecastingPercentageChange() {
                             >
                                 Apply
                             </Button>
+                        </Grid>
+                        <Grid item xs={12}>
+                            {reportData && (
+                                <ReportTable
+                                    reportData={reportData}
+                                    showTotals
+                                    placeholderRows={10}
+                                    placeholderColumns={3}
+                                    showRowTitles={false}
+                                    showTitle
+                                />
+                            )}
                         </Grid>
                     </>
                 )}

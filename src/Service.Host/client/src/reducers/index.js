@@ -92,6 +92,7 @@ import deliveryPerformanceSupplierReport from './deliveryPerformanceSupplierRepo
 import deliveryPerformanceDetailReport from './deliveryPerformanceDetailReport';
 import authoriseMultiplePurchaseOrders from './authoriseMultiplePurchaseOrders';
 import emailMultiplePurchaseOrders from './emailMultiplePurchaseOrders';
+import forecastWeekChangesReport from './forecastWeekChangesReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -119,6 +120,7 @@ const rootReducer = history =>
         ediSuppliers,
         emailMultiplePurchaseOrders,
         employees,
+        forecastWeekChangesReport,
         ledgerPeriods,
         manufacturers,
         mrOrderBookReport,
