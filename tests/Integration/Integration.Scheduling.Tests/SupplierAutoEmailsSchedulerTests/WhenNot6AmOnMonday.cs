@@ -19,13 +19,13 @@
             this.Sut = new SupplierAutoEmailsScheduler(
                 this.EmailOrderBookMessageDispatcher,
                 this.EmailMonthlyForecastMessageDispatcher,
-                () => new DateTime(2022, 9, 5, 10, 0, 0),
+                () => new DateTime(2022, 9, 5, 7, 0, 0),
                 this.Log,
                 this.ServiceProvider);
         }
 
         [Test]
-        public async Task ShouldSendOrderBooks()
+        public async Task ShouldNotSendOrderBooks()
         {
             await Sut.StartAsync(CancellationToken.None);
             await Task.Delay(TimeSpan.FromSeconds(1));
@@ -35,7 +35,7 @@
         }
 
         [Test]
-        public async Task ShouldSendweeklyForecasts()
+        public async Task ShouldNotSendWeeklyForecasts()
         {
             await Sut.StartAsync(CancellationToken.None);
             await Task.Delay(TimeSpan.FromSeconds(1));
