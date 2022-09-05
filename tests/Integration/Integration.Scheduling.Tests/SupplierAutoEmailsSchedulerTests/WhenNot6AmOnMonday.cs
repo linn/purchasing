@@ -31,7 +31,6 @@
             await Task.Delay(TimeSpan.FromSeconds(1));
             this.EmailOrderBookMessageDispatcher
                 .DidNotReceive().Dispatch(Arg.Any<EmailOrderBookMessageResource>());
-
         }
 
         [Test]
