@@ -15,7 +15,6 @@
 
         private readonly IReportingHelper reportingHelper;
 
-
         public ForecastWeekChangesReportService(
             IQueryRepository<ForecastWeekChange> repository,
             IReportingHelper reportingHelper)
