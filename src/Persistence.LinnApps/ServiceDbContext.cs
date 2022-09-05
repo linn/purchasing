@@ -1699,8 +1699,10 @@
             entity.Property(s => s.SupplierId).HasColumnName("SUPPLIER_ID");
             entity.Property(s => s.OrderBook).HasColumnName("ORDER_BOOK");
             entity.Property(s => s.EmailAddress).HasColumnName("EMAIL_ADDRESS");
+            entity.Property(s => s.Forecast).HasColumnName("FORECAST");
+            entity.Property(s => s.ForecastInterval).HasColumnName("FORECAST_INTERVAL");
         }
-        
+
         private void BuildSuppliersLeadTime(ModelBuilder builder)
         {
             var entity = builder.Entity<SuppliersLeadTimesEntry>().ToTable("SUPPLIERS_LEADTIME").HasNoKey();
