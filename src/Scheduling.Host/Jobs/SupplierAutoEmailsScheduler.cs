@@ -17,7 +17,7 @@
 
         private readonly CurrentTime currentTime;
 
-        private readonly ILog Log;
+        private readonly ILog log;
 
         public SupplierAutoEmailsScheduler(
             IMessageDispatcher<EmailOrderBookMessageResource> emailOrderBookMessageDispatcher,
@@ -29,7 +29,7 @@
             this.emailOrderBookMessageDispatcher = emailOrderBookMessageDispatcher;
             this.emailMonthlyForecastMessageDispatcher = emailMonthlyForecastMessageDispatcher;
             this.serviceProvider = serviceProvider;
-            this.Log = log;
+            this.log = log;
             this.currentTime = currentTime;
         }
 
@@ -37,13 +37,13 @@
         // emails configured here https://app.linn.co.uk/purch/planning/plautoem.aspx
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            this.Log.Info("Supplier Auto Emails Scheduler Running...");
+            this.log.Info("Supplier Auto Emails Scheduler Running...");
             // every Monday at 6am
             var weeklyTrigger = new WeeklyTrigger(this.currentTime, DayOfWeek.Monday, 6, 0);
 
             weeklyTrigger.OnTimeTriggered += () => 
                 {
-                    this.Log.Info("Weekly trigger fired.");
+                    this.log.Info("Weekly trigger fired.");
 
                     using IServiceScope scope = this.serviceProvider.CreateScope();
 
@@ -84,7 +84,7 @@
             var monthlyTrigger = new MonthlyTrigger(this.currentTime, DayOfWeek.Monday, 6);
             monthlyTrigger.OnTimeTriggered += () =>
             {
-                this.Log.Info("Monthly trigger fired.");
+                this.log.Info("Monthly trigger fired.");
 
                 using IServiceScope scope = this.serviceProvider.CreateScope();
 
