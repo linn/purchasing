@@ -13,33 +13,30 @@
 
     public class When6AmOnFirstMondayOfMonth : ContextBase
     {
-        [SetUp]
-        public void SetUp()
+        [OneTimeSetUp]
+        public async Task SetUp()
         {
+            this.EmailMonthlyForecastMessageDispatcher.ClearReceivedCalls();
+            this.EmailOrderBookMessageDispatcher.ClearReceivedCalls();
+        
             this.Sut = new SupplierAutoEmailsScheduler(
                 this.EmailOrderBookMessageDispatcher,
                 this.EmailMonthlyForecastMessageDispatcher,
                 () => new DateTime(2022, 9, 5, 6, 0, 0),
                 this.Log,
                 this.ServiceProvider);
-        }
-
-        [Test]
-        public async Task ShouldSendMonthlyForecasts()
-        {
-            await Sut.StartAsync(CancellationToken.None);
+            await this.Sut.StartAsync(CancellationToken.None);
             await Task.Delay(TimeSpan.FromSeconds(1));
+            await this.Sut.StopAsync(CancellationToken.None);
+        }
+        
+        [Test]
+        public void ShouldSendMonthlyForecasts()
+        {
             this.EmailMonthlyForecastMessageDispatcher
                 .Received().Dispatch(Arg.Is<EmailMonthlyForecastReportMessageResource>(x =>
                     x.ForSupplier == 3
                     && x.ToAddress == "monthlyforecastperson@gmail.com"));
-        }
-
-        [TearDown]
-        public void Stop()
-        {
-            this.Sut.Dispose();
-            this.Repository.ClearReceivedCalls();
         }
     }
 }

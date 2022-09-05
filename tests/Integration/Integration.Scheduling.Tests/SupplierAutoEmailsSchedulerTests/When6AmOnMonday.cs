@@ -13,43 +13,38 @@
 
     public class When6AmOnMonday : ContextBase
     {
-        [SetUp]
-        public void SetUp()
+        [OneTimeSetUp]
+        public async Task SetUp()
         {
+            this.EmailMonthlyForecastMessageDispatcher.ClearReceivedCalls();
+            this.EmailOrderBookMessageDispatcher.ClearReceivedCalls();
+            
             this.Sut = new SupplierAutoEmailsScheduler(
                 this.EmailOrderBookMessageDispatcher,
                 this.EmailMonthlyForecastMessageDispatcher,
                 () => new DateTime(2022, 9, 5, 6, 0, 0),
                 this.Log,
                 this.ServiceProvider);
+            await this.Sut.StartAsync(CancellationToken.None);
+            await Task.Delay(TimeSpan.FromMilliseconds(100));
+            await this.Sut.StopAsync(CancellationToken.None);
         }
-
+        
         [Test]
-        public async Task ShouldSendOrderBooks()
+        public void ShouldSendOrderBooks()
         {
-            await Sut.StartAsync(CancellationToken.None);
-            await Task.Delay(TimeSpan.FromSeconds(1));
             this.EmailOrderBookMessageDispatcher.Received().Dispatch(Arg.Is<EmailOrderBookMessageResource>(x => 
                 x.ForSupplier == 1
                 && x.ToAddress == "orderbookperson@gmail.com"));
         }
-
+        
         [Test]
-        public async Task ShouldSendweeklyForecasts()
+        public void ShouldSendWeeklyForecasts()
         {
-            await Sut.StartAsync(CancellationToken.None);
-            await Task.Delay(TimeSpan.FromSeconds(1));
             this.EmailMonthlyForecastMessageDispatcher
                 .Received().Dispatch(Arg.Is<EmailMonthlyForecastReportMessageResource>(x =>
                 x.ForSupplier == 2
                 && x.ToAddress == "weeklyforecastperson@gmail.com"));
-        }
-
-        [TearDown]
-        public void Stop()
-        {
-            this.Sut.Dispose();
-            this.Repository.ClearReceivedCalls();
         }
     }
 }

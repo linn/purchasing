@@ -13,40 +13,35 @@
 
     public class WhenNot6AmOnMonday : ContextBase
     {
-        [SetUp]
-        public void SetUp()
+        [OneTimeSetUp]
+        public async Task SetUp()
         {
+            this.EmailMonthlyForecastMessageDispatcher.ClearReceivedCalls();
+            this.EmailOrderBookMessageDispatcher.ClearReceivedCalls();
+        
             this.Sut = new SupplierAutoEmailsScheduler(
                 this.EmailOrderBookMessageDispatcher,
                 this.EmailMonthlyForecastMessageDispatcher,
                 () => new DateTime(2022, 9, 5, 7, 0, 0),
                 this.Log,
                 this.ServiceProvider);
-        }
-
-        [Test]
-        public async Task ShouldNotSendOrderBooks()
-        {
-            await Sut.StartAsync(CancellationToken.None);
+            await this.Sut.StartAsync(CancellationToken.None);
             await Task.Delay(TimeSpan.FromSeconds(1));
+            await this.Sut.StopAsync(CancellationToken.None);
+        }
+        
+        [Test]
+        public void ShouldNotSendOrderBooks()
+        {
             this.EmailOrderBookMessageDispatcher
                 .DidNotReceive().Dispatch(Arg.Any<EmailOrderBookMessageResource>());
         }
-
+        
         [Test]
-        public async Task ShouldNotSendWeeklyForecasts()
+        public void ShouldNotSendForecastReports()
         {
-            await Sut.StartAsync(CancellationToken.None);
-            await Task.Delay(TimeSpan.FromSeconds(1));
             this.EmailMonthlyForecastMessageDispatcher
                 .DidNotReceive().Dispatch(Arg.Any<EmailMonthlyForecastReportMessageResource>());
-        }
-
-        [TearDown]
-        public void Stop()
-        {
-            this.Sut.Dispose();
-            this.Repository.ClearReceivedCalls();
         }
     }
 }

@@ -40,7 +40,7 @@
 
         protected ILog Log { get; set; }
 
-        [SetUp]
+        [OneTimeSetUp]
         public void SetUpContext()
         {
             this.EmailOrderBookMessageDispatcher =
