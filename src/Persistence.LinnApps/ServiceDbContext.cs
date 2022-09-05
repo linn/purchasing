@@ -5,6 +5,7 @@
     using Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Edi;
+    using Linn.Purchasing.Domain.LinnApps.Forecasting;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
@@ -177,6 +178,8 @@
 
         public DbSet<ForecastReportMonth> ForecastReportMonths { get; set; }
 
+        public DbSet<ForecastWeekChange> ForecastWeekChanges { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -272,6 +275,7 @@
             this.BuildDeliveryPerformanceDetails(builder);
             this.BuildMonthlyForecastPartRequirements(builder);
             this.BuildForecastReportMonths(builder);
+            this.BuildForecastWeekChanges(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1769,6 +1773,16 @@
         {
             var entity = builder.Entity<ForecastReportMonth>().ToTable("FORECAST_REPORT_MONTH_STRINGS").HasNoKey();
             entity.Property(a => a.MmmYy).HasColumnName("MMMYY").HasColumnType("VARCHAR2");
+        }
+
+        private void BuildForecastWeekChanges(ModelBuilder builder)
+        {
+            var entity = builder.Entity<ForecastWeekChange>().ToTable("SA_FORECAST_CHANGE_ALL_WEEK");
+            entity.HasKey(s => s.LinnWeekNumber);
+            entity.Property(s => s.LinnWeekNumber).HasColumnName("LINN_WEEK_NUMBER");
+            entity.Property(s => s.PercentageChange).HasColumnName("PERCENTAGE_CHANGE");
+            entity.HasOne(s => s.LinnWeek).WithOne(w => w.ForecastChange)
+                .HasForeignKey<ForecastWeekChange>(c => c.LinnWeekNumber);
         }
     }
 }

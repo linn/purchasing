@@ -6,6 +6,7 @@
     using Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Edi;
+    using Linn.Purchasing.Domain.LinnApps.Forecasting;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
@@ -196,7 +197,8 @@
                         ?.MonthlyForecastView))
                 .AddTransient<IQueryRepository<ForecastReportMonth>, EntityFrameworkQueryRepository<ForecastReportMonth>>(
                     r => new EntityFrameworkQueryRepository<ForecastReportMonth>(r.GetService<ServiceDbContext>()
-                        ?.ForecastReportMonths));
+                        ?.ForecastReportMonths))
+                .AddTransient<IQueryRepository<ForecastWeekChange>, ForecastWeekChangesRepository>();
         }
     }
 }

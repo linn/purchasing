@@ -19,6 +19,7 @@
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPost("/purchasing/forecasting/apply-percentage-change", this.ApplyPercentageChange);
+            app.MapGet("/purchasing/forecasting/apply-percentage-change/report", this.GetReport);
             app.MapGet("/purchasing/forecasting/apply-percentage-change", this.GetApp);
         }
 
@@ -35,6 +36,15 @@
         {
             await response.Negotiate(reportsFacadeService.ApplyPercentageChange(
                 resource, request.HttpContext.GetPrivileges()));
+        }
+
+        private async Task GetReport(
+            HttpRequest req,
+            HttpResponse res,
+            IForecastWeekChangesFacadeService service)
+        {
+            var results = service.GetReport();
+            await res.Negotiate(results);
         }
     }
 }
