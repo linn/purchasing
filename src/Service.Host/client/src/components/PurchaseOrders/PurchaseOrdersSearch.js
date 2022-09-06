@@ -58,7 +58,7 @@ function PurchaseOrdersSearch() {
                 <Grid item xs={5}>
                     <InputField
                         fullWidth
-                        placeholder="Search by Order Number"
+                        placeholder="Go to Order Number"
                         value={orderNumber}
                         label="Order Number"
                         propertyName="orderNumber"
