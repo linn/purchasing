@@ -37,7 +37,7 @@ function PurchaseOrdersSearch() {
         dispatch(purchaseOrdersActions.fetchState());
         dispatch(purchaseOrdersActions.search(''));
     }, [dispatch]);
-    const searchResults = useSelector(state =>
+    const recentOrders = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(
             state.purchaseOrders,
             100,
@@ -84,7 +84,7 @@ function PurchaseOrdersSearch() {
                 </Grid>
                 <Grid item xs={12}>
                     <List dense>
-                        {searchResults.map(x => (
+                        {recentOrders.map(x => (
                             <Fragment key={x.orderNumber}>
                                 <Link
                                     className={classes.a}
