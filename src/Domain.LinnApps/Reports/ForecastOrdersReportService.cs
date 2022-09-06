@@ -115,7 +115,6 @@
         {
             decimal rounded;
 
-
             if (d < 10000)
             {
                 rounded = Math.Round(d, 0);
