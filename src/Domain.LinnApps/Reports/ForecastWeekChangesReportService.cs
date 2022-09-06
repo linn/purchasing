@@ -47,13 +47,13 @@
             foreach (var datum in data)
             {
                 var rowId = datum.LinnWeekNumber.ToString();
-
+                var endsOn = datum.LinnWeek.EndsOn;
                 values.Add(
                     new CalculationValueModel
                         {
                             RowId = rowId,
                             ColumnId = "EndsOn",
-                            TextDisplay = datum.LinnWeek.EndsOn.ToShortDateString()
+                            TextDisplay = $"{endsOn.Day}/{endsOn.Month}/{endsOn.Year}"
                         });
 
                 values.Add(
