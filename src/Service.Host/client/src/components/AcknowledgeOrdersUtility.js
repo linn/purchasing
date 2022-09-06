@@ -237,7 +237,9 @@ function AcknowledgeOrdersUtility() {
                     orderNumber: r.orderNumber,
                     orderLine: r.orderLine,
                     deliverySequence: r.deliverySeq,
-                    dateAdvised: moment(newValues.dateAdvised).format('YYYY-MM-DDTHH:mm:ss'),
+                    dateAdvised: newValues.dateAdvised
+                        ? moment(newValues.dateAdvised).format('YYYY-MM-DDTHH:mm:ss')
+                        : null,
                     dateRequested: r.dateRequested,
                     qty: r.ourDeliveryQty,
                     reason: newValues.rescheduleReason,
@@ -450,7 +452,12 @@ function AcknowledgeOrdersUtility() {
                                     <Button
                                         variant="outlined"
                                         disabled={!rows.some(r => r.selected)}
-                                        onClick={() => setApplyChangesDialogOpen(true)}
+                                        onClick={() => {
+                                            setNewValues({
+                                                rescheduleReason: 'ADVISED'
+                                            });
+                                            setApplyChangesDialogOpen(true);
+                                        }}
                                     >
                                         Apply Changes To Selected
                                     </Button>
