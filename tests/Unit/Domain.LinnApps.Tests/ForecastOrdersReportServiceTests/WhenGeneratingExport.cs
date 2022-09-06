@@ -61,10 +61,10 @@
             index = 5;
             foreach (var v in this.Values)
             {
-                usagesRow.ElementAt(index).Should().Be(v.Usages);
-                ordersRow.ElementAt(index).Should().Be(v.Orders);
-                stockRow.ElementAt(index).Should().Be(v.Stock);
-                forecastRow.ElementAt(index).Should().Be(v.ForecastOrders);
+                usagesRow.ElementAt(index).Should().Be(v.Usages.ToString());
+                ordersRow.ElementAt(index).Should().Be(v.Orders.GetValueOrDefault().ToString(CultureInfo.InvariantCulture));
+                stockRow.ElementAt(index).Should().Be(v.Stock.ToString());
+                forecastRow.ElementAt(index).Should().Be(v.ForecastOrders.ToString());
                 index++;
             }
 

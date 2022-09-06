@@ -1,8 +1,10 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Reports
 {
+    using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using System.Text.RegularExpressions;
 
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
@@ -85,17 +87,17 @@
 
                         foreach (var m in partGroup)
                         {
-                            usageRow.Add(m.Usages);
-                            stockRow.Add(m.Stock);
-                            ordersRow.Add(m.Orders);
-                            forecastRow.Add(m.ForecastOrders);
+                            usageRow.Add(Format(m.Usages.GetValueOrDefault()));
+                            stockRow.Add(Format(m.Stock.GetValueOrDefault()));
+                            ordersRow.Add(Format(m.Orders.GetValueOrDefault()));
+                            forecastRow.Add(Format(m.ForecastOrders.GetValueOrDefault()));
                         }
 
-                        usageRow.Add(partGroup.Sum(x => decimal.Parse(x.Usages))
+                        usageRow.Add(Math.Round(partGroup.Sum(x => x.Usages.GetValueOrDefault()), 0)
                             .ToString(CultureInfo.InvariantCulture));
                         stockRow.Add(string.Empty);
                         ordersRow.Add(string.Empty);
-                        forecastRow.Add(partGroup.Sum(x => decimal.Parse(x.ForecastOrders))
+                        forecastRow.Add(Math.Round(partGroup.Sum(x => x.ForecastOrders.GetValueOrDefault()), 0)
                             .ToString(CultureInfo.InvariantCulture));
 
                         result.Add(usageRow);
@@ -107,6 +109,26 @@
                     });
             
             return result;
+        }
+
+        private static string Format(decimal d)
+        {
+            decimal rounded;
+
+
+            if (d < 10000)
+            {
+                rounded = Math.Round(d, 0);
+                return rounded.ToString(CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                rounded = Math.Round(d / 1000) * 1000;
+                return Regex.Replace(
+                    rounded.ToString(CultureInfo.InvariantCulture), 
+                    $@"^(.*){Regex.Escape("000")}(.*?)$", 
+                    $"$1{Regex.Escape("k")}$2");
+            }
         }
     }
 }
