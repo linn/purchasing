@@ -55,7 +55,7 @@
                     var row = line.Split(",");
 
                     if (!int.TryParse(
-                            new string(row[0].Trim().Where(char.IsDigit).ToArray()), // strip out non numeric chars 
+                            new string(row[0].Trim().Where(char.IsDigit).ToArray()), // strip out non numeric chars
                             out var orderNumber))
                     {
                         throw new InvalidOperationException($"Invalid Order Number: {row[0]}.");
@@ -77,7 +77,7 @@
                         throw new InvalidOperationException($"Invalid Qty for {row[0]} / {row[1]}.");
                     }
                     if (!decimal.TryParse(
-                            Regex.Replace(row[4], "[^0-9.]", ""), // strip out non numeric chars 
+                            Regex.Replace(row[4], "[^0-9.]", ""), // strip out non numeric chars
                             out var unitPrice))
                     {
                         throw new InvalidOperationException($"Invalid Unit Price for {row[0]} / {row[1]}.");
@@ -186,7 +186,7 @@
                              NewReason = u.Reason,
                              Qty = u.Qty,
                              AvailableAtSupplier = u.AvailableAtSupplier,
-                             Comment = u.Comment, 
+                             Comment = u.Comment,
                              UnitPrice = u.UnitPrice
                          }).ToList();
             var result = this.domainService
@@ -198,7 +198,7 @@
             updates.ForEach(u => this.domainService
                 .UpdateMiniOrderDelivery(
                     u.Key.OrderNumber, u.Key.DeliverySequence, u.NewDateAdvised, u.AvailableAtSupplier));
-           
+
             this.transactionManager.Commit();
 
             return new SuccessResult<BatchUpdateProcessResultResource>(new BatchUpdateProcessResultResource
@@ -214,7 +214,7 @@
         }
 
         public IResult<IEnumerable<PurchaseOrderDeliveryResource>> UpdateDeliveriesForDetail(
-            int orderNumber, 
+            int orderNumber,
             int orderLine,
             IEnumerable<PurchaseOrderDeliveryResource> resource,
             IEnumerable<string> privileges)
@@ -227,7 +227,7 @@
                         {
                             var dateAdvised = new DateTime();
 
-                            if (!string.IsNullOrEmpty(d.DateAdvised) && (!DateTime.TryParse(d.DateAdvised, out dateAdvised)) 
+                            if (!string.IsNullOrEmpty(d.DateAdvised) && (!DateTime.TryParse(d.DateAdvised, out dateAdvised))
                                 || !DateTime.TryParse(
                                     d.DateRequested,
                                     out var dateRequested))

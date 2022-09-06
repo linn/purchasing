@@ -28,6 +28,8 @@
 
         private readonly IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository;
 
+        private readonly IRepository<PurchaseOrder, int> purchaseOrderRepository;
+
         private readonly IBuilder<PurchaseOrder> resourceBuilder;
 
         private readonly ITransactionManager transactionManager;
@@ -46,6 +48,7 @@
             this.transactionManager = transactionManager;
             this.logger = logger;
             this.resourceBuilder = resourceBuilder;
+            this.purchaseOrderRepository = repository;
         }
 
         public IResult<ProcessResultResource> EmailOrderPdf(
@@ -169,13 +172,28 @@
             return this.domainService.GetPurchaseOrderAsHtml(orderNumber);
         }
 
+        public new IResult<PurchaseOrderResource> Add(PurchaseOrderResource resource, IEnumerable<string> privileges = null, int? userNumber = null)
+        {
+            var order = this.BuildEntityFromResourceHelper(resource);
+
+            this.domainService.CreateOrder(order, privileges);
+            this.purchaseOrderRepository.Add(order);
+
+
+            this.domainService.CreateMiniOrder(order);
+
+            this.transactionManager.Commit();
+
+            //this.MaybeSaveLog("Create", userNumber, order, resource, default);
+
+            return new CreatedResult<PurchaseOrderResource>((PurchaseOrderResource)this.resourceBuilder.Build(order, privileges.ToList()));
+        }
+
         protected override PurchaseOrder CreateFromResource(
             PurchaseOrderResource resource,
             IEnumerable<string> privileges = null)
         {
-            var order = this.BuildEntityFromResourceHelper(resource);
-            this.domainService.CreateOrder(order, privileges);
-            return order;
+            throw new NotImplementedException();
         }
 
         protected override void DeleteOrObsoleteResource(PurchaseOrder entity, IEnumerable<string> privileges = null)
@@ -367,45 +385,6 @@
                                                                        Building = x.OrderPosting.Building,
                                                                        Id = x.OrderPosting.Id,
                                                                        LineNumber = x.OrderPosting.LineNumber,
-                                                                       // todo when remove mini order, remove below and only set nominalAccountId
-                                                                       NominalAccount =
-                                                                           new NominalAccount
-                                                                               {
-                                                                                   AccountId =
-                                                                                       x.OrderPosting.NominalAccountId,
-                                                                                   DepartmentCode =
-                                                                                       x.OrderPosting.NominalAccount
-                                                                                           .Department.DepartmentCode,
-                                                                                   NominalCode =
-                                                                                       x.OrderPosting.NominalAccount
-                                                                                           .Nominal.NominalCode,
-                                                                                   //Nominal = new Nominal
-                                                                                   //    {
-                                                                                   //        Description =
-                                                                                   //            x.OrderPosting
-                                                                                   //                .NominalAccount
-                                                                                   //                .Nominal
-                                                                                   //                .Description,
-                                                                                   //        NominalCode =
-                                                                                   //            x.OrderPosting
-                                                                                   //                .NominalAccount
-                                                                                   //                .Nominal
-                                                                                   //                .NominalCode
-                                                                                   //    },
-                                                                                   //Department = new Department
-                                                                                   //    {
-                                                                                   //        Description =
-                                                                                   //            x.OrderPosting
-                                                                                   //                .NominalAccount
-                                                                                   //                .Department
-                                                                                   //                .Description,
-                                                                                   //        DepartmentCode =
-                                                                                   //            x.OrderPosting
-                                                                                   //                .NominalAccount
-                                                                                   //                .Department
-                                                                                   //                .DepartmentCode
-                                                                                   //    }
-                                                                               },
                                                                        NominalAccountId =
                                                                            x.OrderPosting.NominalAccountId,
                                                                        Notes = x.OrderPosting.Notes,
@@ -423,7 +402,7 @@
                            IssuePartsToSupplier = resource.IssuePartsToSupplier,
                            DeliveryAddressId = resource.DeliveryAddress.AddressId,
                            OrderAddressId = resource.OrderAddress.AddressId,
-                           //InvoiceAddressId = resource.InvoiceAddressId,
+                           InvoiceAddressId = resource.InvoiceAddressId,
                            RequestedById = resource.RequestedBy.Id,
                            EnteredById = resource.EnteredBy.Id,
                            QuotationRef = resource.QuotationRef,

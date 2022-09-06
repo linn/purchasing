@@ -5,6 +5,7 @@
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
+    using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
 
     using NSubstitute;
@@ -42,6 +43,9 @@
             };
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
+
+            this.PurchaseLedgerMaster.GetRecord().Returns(new PurchaseLedgerMaster { OkToRaiseOrder = "Y" });
+
             this.Sut.AllowOverbook(this.current, this.updated.Overbook, this.updated.OverbookQty, new List<string>());
         }
 

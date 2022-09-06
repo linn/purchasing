@@ -29,7 +29,6 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
-    using Linn.Purchasing.Facade;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Proxy;
@@ -133,7 +132,7 @@
                 .AddTransient<IMaterialRequirementsReportFacadeService, MaterialRequirementsReportFacadeService>()
                 .AddTransient<IShortagesReportFacadeService, ShortagesReportFacadeService>()
                 .AddTransient<IMrOrderBookReportFacadeService, MrOrderBookReportFacadeService>()
-                .AddTransient<IPurchaseOrderFacadeService>(x => 
+                .AddTransient<IPurchaseOrderFacadeService>(x =>
                     new PurchaseOrderFacadeService(
                         x.GetService<IRepository<PurchaseOrder, int>>(),
                         x.GetService<ITransactionManager>(),

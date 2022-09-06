@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Data;
     using System.Linq;
 
     using Linn.Common.Authorisation;
@@ -15,6 +14,7 @@
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
@@ -50,6 +50,11 @@
 
         private readonly IPurchaseOrdersPack purchaseOrdersPack;
 
+        private readonly ISingleRecordRepository<PurchaseLedgerMaster> purchaseLedgerMaster;
+
+        private readonly IRepository<NominalAccount, int> nominalAccountRepository;
+
+
         public PurchaseOrderService(
             IAuthorisationService authService,
             IPurchaseLedgerPack purchaseLedgerPack,
@@ -65,6 +70,8 @@
             ISupplierKitService supplierKitService,
             IRepository<PurchaseOrder, int> purchaseOrderRepository,
             IHtmlTemplateService<PurchaseOrder> purchaseOrderTemplateService,
+            ISingleRecordRepository<PurchaseLedgerMaster> purchaseLedgerMaster,
+            IRepository<NominalAccount, int> nominalAccountRepository,
             ILog log)
         {
             this.authService = authService;
@@ -81,6 +88,8 @@
             this.supplierKitService = supplierKitService;
             this.purchaseOrderRepository = purchaseOrderRepository;
             this.purchaseOrderTemplateService = purchaseOrderTemplateService;
+            this.purchaseLedgerMaster = purchaseLedgerMaster;
+            this.nominalAccountRepository = nominalAccountRepository;
             this.log = log;
         }
 
@@ -94,6 +103,8 @@
             {
                 throw new UnauthorisedActionException("You are not authorised to allow overbooks on a purchase order");
             }
+
+            this.CheckOkToRaiseOrders();
 
             current.Overbook = allowOverBook;
             current.OverbookQty = overbookQty;
@@ -140,10 +151,28 @@
                 throw new UnauthorisedActionException("You are not authorised to create purchase orders");
             }
 
+            this.CheckOkToRaiseOrders();
+
+            var newOrderNumber = this.databaseService.GetNextVal("PL_ORDER_SEQ");
+            order.OrderNumber = newOrderNumber;
+
             foreach (var detail in order.Details)
             {
                 detail.OrderPosting.Id = this.databaseService.GetIdSequence("PLORP_SEQ");
+                detail.OrderPosting.OrderNumber = newOrderNumber;
+                detail.OrderNumber = newOrderNumber;
                 detail.OrderConversionFactor = 1m;
+
+                // below values are all set as follows in mini order trigger so hardcoding them here for now
+                detail.PriceType = "STANDARD";
+                detail.Cancelled = "N";
+                detail.FilCancelled = "N";
+                detail.UpdatePartsupPrice = "N";
+                detail.WasPreferredSupplier = "Y";
+                detail.IssuePartsToSupplier = "N";
+
+                // required but ignored now that ob ut just uses order fields
+                detail.OverbookQtyAllowed = 0;
 
                 // todo make below UOM fields typeahead on front end, only editable on create
                 detail.OurUnitOfMeasure = "ONES";
@@ -157,7 +186,6 @@
                 this.PerformDetailCalculations(detail, detail, order.ExchangeRate.GetValueOrDefault(1), order.SupplierId, creating: true);
             }
 
-            order.OrderNumber = this.databaseService.GetNextVal("PL_ORDER_SEQ");
             order.Cancelled = "N";
             order.FilCancelled = "N";
 
@@ -167,7 +195,7 @@
 
             order.BaseCurrencyCode = "GBP";
 
-            this.CreateMiniOrder(order);
+            // todo add deliveries
         }
 
         public ProcessResult SendPdfEmail(string emailAddress, int orderNumber, bool bcc, int currentUserId)
@@ -228,6 +256,8 @@
                 throw new UnauthorisedActionException("You are not authorised to update purchase orders");
             }
 
+            this.CheckOkToRaiseOrders();
+
             this.UpdateOrderProperties(current, updated);
             this.UpdateDetails(current.Details, updated.Details, updated.SupplierId, updated.ExchangeRate.Value);
             this.UpdateMiniOrder(updated);
@@ -246,7 +276,6 @@
             order.Supplier = supplier;
             order.OrderAddress = supplier.OrderAddress;
             order.OrderAddressId = supplier.OrderAddress.AddressId;
-            order.InvoiceAddress = supplier.InvoiceFullAddress;
             order.InvoiceAddressId = supplier.InvoiceFullAddress.Id;
 
             order.CurrencyCode = supplier.Currency.Code;
@@ -369,21 +398,12 @@
             return this.purchaseOrderTemplateService.GetHtml(order).Result;
         }
 
-        private PurchaseOrder GetOrder(int orderNumber)
-        {
-            var order = this.purchaseOrderRepository.FindById(orderNumber);
-            if (order is null)
-            {
-                throw new ItemNotFoundException($"Could not find order {orderNumber}");
-            }
-
-            return order;
-        }
-
-        private void CreateMiniOrder(PurchaseOrder order)
+        public void CreateMiniOrder(PurchaseOrder order)
         {
             var miniOrder = new MiniOrder();
             var detail = order.Details.First();
+
+            var nomAcc = this.nominalAccountRepository.FindById(detail.OrderPosting.NominalAccountId);
 
             miniOrder.OrderNumber = order.OrderNumber;
             miniOrder.DocumentType = order.DocumentTypeName;
@@ -395,8 +415,8 @@
             miniOrder.PartNumber = detail.PartNumber;
             miniOrder.Currency = order.CurrencyCode;
             miniOrder.SuppliersDesignation = detail.SuppliersDesignation;
-            miniOrder.Department = detail.OrderPosting.NominalAccount.DepartmentCode;
-            miniOrder.Nominal = detail.OrderPosting.NominalAccount.NominalCode;
+            miniOrder.Department = nomAcc.DepartmentCode;
+            miniOrder.Nominal = nomAcc.NominalCode;
             miniOrder.AuthorisedBy = order.AuthorisedById;
             miniOrder.EnteredBy = order.EnteredById;
             miniOrder.OurUnitOfMeasure = detail.OurUnitOfMeasure;
@@ -449,8 +469,17 @@
             // miniOrder.MpvAuthorisedBy = updatedOrder.
             // miniOrder.MpvReason = updatedOrder.
             this.miniOrderRepository.Add(miniOrder);
+        }
 
-            detail.OrderPosting.NominalAccount = null;
+        private PurchaseOrder GetOrder(int orderNumber)
+        {
+            var order = this.purchaseOrderRepository.FindById(orderNumber);
+            if (order is null)
+            {
+                throw new ItemNotFoundException($"Could not find order {orderNumber}");
+            }
+
+            return order;
         }
 
         private void UpdateDeliveries(
@@ -704,6 +733,14 @@
                 LoggingLevel.Info,
                 new List<LoggingProperty>(),
                 $"Email sent for purchase order {order.OrderNumber} to {emailAddress}");
+        }
+
+        private void CheckOkToRaiseOrders()
+        {
+            if (!this.purchaseLedgerMaster.GetRecord().OkToRaiseOrder.Equals("Y"))
+            {
+                throw new UnauthorisedActionException("Orders are currently restricted.");
+            }
         }
     }
 }

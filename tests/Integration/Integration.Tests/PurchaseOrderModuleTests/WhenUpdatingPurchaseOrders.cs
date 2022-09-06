@@ -150,7 +150,9 @@
                 FilCancelled = string.Empty,
                 Remarks = "applebooks",
                 DateFilCancelled = null,
-                PeriodFilCancelled = null
+                PeriodFilCancelled = null,
+                InvoiceAddressId = 1066,
+                OrderAddress = new AddressResource { AddressId = 1914 }
             };
 
             this.MockPurchaseOrderRepository.FindById(600179).Returns(

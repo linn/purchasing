@@ -673,6 +673,11 @@
             entity.Property(o => o.OrderConversionFactor).HasColumnName("ORDER_CONV_FACTOR");
             entity.Property(o => o.OrderQty).HasColumnName("ORDER_QTY");
             entity.Property(o => o.IssuePartsToSupplier).HasColumnName("ISSUE_PARTS_TO_SUPPLIER").HasMaxLength(1);
+            entity.Property(o => o.PriceType).HasColumnName("PRICE_TYPE").HasMaxLength(10);
+            entity.Property(o => o.FilCancelled).HasColumnName("FIL_CANCELLED").HasMaxLength(1);
+            entity.Property(o => o.UpdatePartsupPrice).HasColumnName("UPDATE_PARTSUP_PRICE").HasMaxLength(1);
+            entity.Property(o => o.WasPreferredSupplier).HasColumnName("WAS_PREFERRED_SUPPLIER").HasMaxLength(1);
+            entity.Property(o => o.OverbookQtyAllowed).HasColumnName("OVERBOOK_QTY_ALLOWED").HasMaxLength(19);
         }
 
         private void BuildPurchaseOrderDeliveries(ModelBuilder builder)
@@ -1316,7 +1321,7 @@
             entity.HasKey(e => e.Reason);
             entity.Property(e => e.Reason).HasColumnName("RESCHEDULE_REASON");
         }
-        
+
         private void BuildMrHeaders(ModelBuilder builder)
         {
             var entity = builder.Entity<MrHeader>().ToView("V_MRH");

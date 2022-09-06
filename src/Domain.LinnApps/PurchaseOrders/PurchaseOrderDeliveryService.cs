@@ -178,7 +178,7 @@
             {
                 var entities = this.repository.FilterBy(
                     x => x.OrderNumber == group.OrderNumber && x.OrderLine == group.OrderLine);
-                
+
                 var isDuplicateDeliveriesForOrder =
                     group.DeliveryUpdates.GroupBy(x => x.Key.DeliverySequence).Select(g => g.First()).Count()
                     != group.DeliveryUpdates.Count();
@@ -210,7 +210,7 @@
                 var isQuantitiesMismatch = entities.ToList().Any(e =>
                     group.DeliveryUpdates.SingleOrDefault(u => u.Key.DeliverySequence == e.DeliverySeq) != null
                     && e.OurDeliveryQty != group.DeliveryUpdates.Single(u => u.Key.DeliverySequence == e.DeliverySeq).Qty);
-                
+
                 if (isQuantitiesMismatch)
                 {
                     var msg = $"Qty on lines uploaded for the specified order does not match qties on the corresponding delivery on our system";
@@ -224,7 +224,7 @@
                 var isPricesMismatch = entities.ToList().Any(e =>
                     group.DeliveryUpdates
                         .SingleOrDefault(u => u.Key.DeliverySequence == e.DeliverySeq) != null
-                    && Math.Round(e.OrderUnitPriceCurrency.Value, 4) 
+                    && Math.Round(e.OrderUnitPriceCurrency.Value, 4)
                                   != Math.Round(group.DeliveryUpdates.Single(u => u.Key.DeliverySequence == e.DeliverySeq).UnitPrice, 4));
 
                 if (isPricesMismatch)
@@ -245,7 +245,7 @@
                             "Invalid date string supplied for specified Order."));
                     continue;
                 }
-                
+
                 foreach (var u in group.DeliveryUpdates)
                 {
                     var deliveryToUpdate = this.repository.FindBy(x =>
@@ -274,7 +274,7 @@
                     successCount++;
                 }
             }
-            
+
             if (errors.Any())
             {
                 return new BatchUpdateProcessResult

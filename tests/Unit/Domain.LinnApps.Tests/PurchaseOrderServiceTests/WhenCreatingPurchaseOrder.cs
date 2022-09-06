@@ -7,6 +7,7 @@
     using FluentAssertions.Extensions;
 
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -125,6 +126,8 @@
 
             this.MockDatabaseService.GetIdSequence("PLORP_SEQ").Returns(123);
 
+            this.PurchaseLedgerMaster.GetRecord().Returns(new PurchaseLedgerMaster { OkToRaiseOrder = "Y" });
+
             this.Sut.CreateOrder(this.order, new List<string>());
         }
 
@@ -159,12 +162,6 @@
             firstDetail.BaseDetailTotal.Should().Be(24827.91m);
 
             firstDetail.OrderPosting.NominalAccountId.Should().Be(911);
-        }
-
-        [Test]
-        public void ShouldReceiveAddMiniOrderRepoCall()
-        {
-            this.MiniOrderRepository.Received().Add(Arg.Any<MiniOrder>());
         }
     }
 }

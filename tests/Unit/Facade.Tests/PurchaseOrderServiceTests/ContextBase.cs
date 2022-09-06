@@ -51,7 +51,6 @@
             this.PurchaseOrderRepository = Substitute.For<IRepository<PurchaseOrder, int>>();
             this.FullAddressRepository = Substitute.For<IRepository<FullAddress, int>>();
             this.MockNominalAccountRepository = Substitute.For<IRepository<NominalAccount, int>>();
-
             this.OverbookAllowedByLogRepository = Substitute.For<IRepository<OverbookAllowedByLog, int>>();
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.DomainService = Substitute.For<IPurchaseOrderService>();
