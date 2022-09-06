@@ -16,6 +16,7 @@ import {
     SaveBackCancelButtons
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
+import moment from 'moment';
 import Dialog from '@mui/material/Dialog';
 import { makeStyles } from '@mui/styles';
 import Accordion from '@mui/material/Accordion';
@@ -39,7 +40,7 @@ import PurchaseOrderDeliveriesUtility from './PurchaseOrderDeliveriesUtility';
 function AcknowledgeOrdersUtility() {
     const dispatch = useDispatch();
     const { search } = useLocation();
-    const [lookUpExpanded, setLookUpExpanded] = useState(false);
+    const [lookUpExpanded, setLookUpExpanded] = useState(true);
     const [deliveriesDialogOpen, setDeliveriesDialogOpen] = useState(false);
     const [applyChangesDialogOpen, setApplyChangesDialogOpen] = useState(false);
 
@@ -236,7 +237,7 @@ function AcknowledgeOrdersUtility() {
                     orderNumber: r.orderNumber,
                     orderLine: r.orderLine,
                     deliverySequence: r.deliverySeq,
-                    dateAdvised: newValues.dateAdvised,
+                    dateAdvised: moment(newValues.dateAdvised).format('YYYY-MM-DDTHH:mm:ss'),
                     dateRequested: r.dateRequested,
                     qty: r.ourDeliveryQty,
                     reason: newValues.rescheduleReason,
