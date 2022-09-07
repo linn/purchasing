@@ -42,7 +42,7 @@
         public void ShouldThrownException()
         {
             this.action.Should().Throw<PurchaseOrderDeliveryException>()
-                .WithMessage("You cannot raise a split delivery for a CALL OFF. It is raised automatically on delivery.");
+                .WithMessage("You cannot update deliveries for a CALL OFF.");
         }
     }
 }

@@ -6,7 +6,6 @@
     using System.Linq.Expressions;
 
     using Linn.Common.Persistence;
-    using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
 
@@ -24,14 +23,25 @@
 
         protected IEnumerable<ShortagesPlannerEntry> Data { get; private set; }
 
-        protected IReportingHelper ReportingHelper { get; private set; }
-
         [SetUp]
         public void SetUpContext()
         {
+            this.ShortagesRepository = Substitute.For<IQueryRepository<ShortagesEntry>>();
+
             this.Data = new List<ShortagesPlannerEntry>
                             {
-                                new ShortagesPlannerEntry()
+                                new ShortagesPlannerEntry
+                                    {
+                                        VendorManagerName = "Test VM T",
+                                        PartNumber = "Fourth Test Part",
+                                        VendorManagerCode = "T",
+                                        Planner = 1,
+                                        PurchaseLevel = "3",
+                                        OrderNumber = 456809,
+                                        OrderLine = 1,
+                                        DeliverySeq = 1
+                                    },
+                                new ShortagesPlannerEntry
                                     {
                                         VendorManagerName = "Test VM L",
                                         PartNumber = "Test Part",
@@ -42,7 +52,7 @@
                                         OrderLine = 1,
                                         DeliverySeq = 1
                                     },
-                                new ShortagesPlannerEntry()
+                                new ShortagesPlannerEntry
                                     {
                                         VendorManagerName = "Test VM L",
                                         PartNumber = "Test Part",
@@ -53,7 +63,7 @@
                                         OrderLine = 1,
                                         DeliverySeq = 1
                                     },
-                                new ShortagesPlannerEntry()
+                                new ShortagesPlannerEntry
                                     {
                                         VendorManagerName = "Test VM M",
                                         PartNumber = "Test Part",
@@ -64,7 +74,7 @@
                                         OrderLine = 1,
                                         DeliverySeq = 1
                                     },
-                                new ShortagesPlannerEntry()
+                                new ShortagesPlannerEntry
                                     {
                                         VendorManagerName = "Test VM M",
                                         PartNumber = "Test Part",
@@ -75,7 +85,7 @@
                                         OrderLine = 1,
                                         DeliverySeq = 1
                                     },
-                                new ShortagesPlannerEntry()
+                                new ShortagesPlannerEntry
                                     {
                                         VendorManagerName = "Test VM M",
                                         PartNumber = "Test Part",
@@ -86,7 +96,7 @@
                                         OrderLine = 1,
                                         DeliverySeq = 1
                                     },
-                                new ShortagesPlannerEntry()
+                                new ShortagesPlannerEntry
                                     {
                                         VendorManagerName = "Test VM L",
                                         PartNumber = "Test Part",
@@ -97,7 +107,7 @@
                                         OrderLine = 1,
                                         DeliverySeq = 1
                                     },
-                                new ShortagesPlannerEntry()
+                                new ShortagesPlannerEntry
                                     {
                                         VendorManagerName = "Test VM L",
                                         PartNumber = "Second Test Part",
@@ -108,7 +118,7 @@
                                         OrderLine = 1,
                                         DeliverySeq = 1
                                     },
-                                new ShortagesPlannerEntry()
+                                new ShortagesPlannerEntry
                                     {
                                         VendorManagerName = "Test VM L",
                                         PartNumber = "Second Test Part",
@@ -119,7 +129,7 @@
                                         OrderLine = 1,
                                         DeliverySeq = 1
                                     },
-                                new ShortagesPlannerEntry()
+                                new ShortagesPlannerEntry
                                     {
                                         VendorManagerName = "Test VM T",
                                         PartNumber = "Second Test Part",
@@ -130,7 +140,7 @@
                                         OrderLine = 1,
                                         DeliverySeq = 1
                                     },
-                                new ShortagesPlannerEntry()
+                                new ShortagesPlannerEntry
                                     {
                                         VendorManagerName = "Test VM T",
                                         PartNumber = "Third Test Part",
@@ -138,17 +148,6 @@
                                         Planner = 1,
                                         PurchaseLevel = "3",
                                         OrderNumber = 89764,
-                                        OrderLine = 1,
-                                        DeliverySeq = 1
-                                    },
-                                new ShortagesPlannerEntry()
-                                    {
-                                        VendorManagerName = "Test VM T",
-                                        PartNumber = "Fourth Test Part",
-                                        VendorManagerCode = "T",
-                                        Planner = 1,
-                                        PurchaseLevel = "3",
-                                        OrderNumber = 456809,
                                         OrderLine = 1,
                                         DeliverySeq = 1
                                     }

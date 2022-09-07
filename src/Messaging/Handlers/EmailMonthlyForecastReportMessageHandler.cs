@@ -11,11 +11,11 @@
 
     using Newtonsoft.Json;
 
-    public class EmailWeeklyForecastReportMessageHandler : Handler<EmailWeeklyForecastReportMessage>
+    public class EmailMonthlyForecastReportMessageHandler : Handler<EmailMonthlyForecastReportMessage>
     {
         private readonly ISupplierAutoEmailsMailer mailer;
 
-        public EmailWeeklyForecastReportMessageHandler(
+        public EmailMonthlyForecastReportMessageHandler(
             ILog logger,
             ISupplierAutoEmailsMailer mailer)
             : base(logger)
@@ -23,7 +23,7 @@
             this.mailer = mailer;
         }
 
-        public override bool Handle(EmailWeeklyForecastReportMessage message)
+        public override bool Handle(EmailMonthlyForecastReportMessage message)
         {
             this.Logger.Info("Message received: " + message.Event.RoutingKey);
 
@@ -32,9 +32,9 @@
                 var body = message.Event.Body.ToArray();
                 var enc = Encoding.UTF8.GetString(body);
                 var resource = JsonConvert.DeserializeObject<EmailOrderBookMessageResource>(enc);
-                this.Logger.Info("Sending Weekly Forecast email to: " + resource.ForSupplier);
+                this.Logger.Info("Sending Monthly Forecast email to: " + resource.ForSupplier);
 
-                this.mailer.SendWeeklyForecastEmail(
+                this.mailer.SendMonthlyForecastEmail(
                     resource.ToAddress, resource.ForSupplier, resource.Timestamp.ToShortTimeString(), resource.Test);
                 return true;
             }

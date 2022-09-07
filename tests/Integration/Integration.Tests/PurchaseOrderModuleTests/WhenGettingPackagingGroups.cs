@@ -47,12 +47,12 @@
         [Test]
         public void ShouldReturnJsonBody()
         {
-            var resources = this.Response.DeserializeBody<IEnumerable<PackagingGroupResource>>()?.ToArray();
+            var resources = this.Response.DeserializeBody<IEnumerable<PackagingGroupResource>>().ToArray();
             resources.Should().NotBeNull();
             resources.Should().HaveCount(2);
 
-            resources?.First().Description.Should().Be("D1");
-            resources.Second().Description.Should().Be("D2");
+            resources.First().Description.Should().Be("D1");
+            resources.ElementAt(1).Description.Should().Be("D2");
         }
     }
 }

@@ -6,7 +6,8 @@ import {
     DatePicker,
     utilities,
     userSelectors,
-    processSelectorHelpers
+    processSelectorHelpers,
+    Dropdown
 } from '@linn-it/linn-form-components-library';
 import Typography from '@mui/material/Typography';
 import { DataGrid } from '@mui/x-data-grid';
@@ -32,19 +33,20 @@ import emailMultiplePurchaseOrdersActions from '../../actions/emailMultiplePurch
 import authoriseMultiplePurchaseOrdersActions from '../../actions/authoriseMultiplePurchaseOrdersActions';
 import history from '../../history';
 import config from '../../config';
+import vendorManagersActions from '../../actions/vendorManagersActions';
 
 function PurchaseOrdersAuthSend() {
     const dispatch = useDispatch();
 
-    const defaultStartDate = new Date();
-    defaultStartDate.setMonth(defaultStartDate.getMonth() - 1);
+    const defaultStartDate = moment().startOf('day').subtract(3, 'days');
 
     const [options, setOptions] = useState({
         startDate: defaultStartDate,
-        endDate: new Date(),
+        endDate: moment().endOf('day'),
         enteredBy: 'all',
         sent: 'all',
-        auth: 'all'
+        auth: 'all',
+        vendorManager: 'all'
     });
     const [selectedRows, setSelectedRows] = useState([]);
     const [showDialog, setShowDialog] = useState(false);
@@ -55,14 +57,14 @@ function PurchaseOrdersAuthSend() {
         dispatch(
             purchaseOrdersActions.searchWithOptions(
                 '',
-                `&startDate=${options.startDate.toISOString()}&endDate=${options.endDate.toISOString()}`
+                `&numberToTake=100&startDate=${options.startDate.toISOString()}&endDate=${options.endDate.toISOString()}`
             )
         );
     }, [dispatch, options.endDate, options.startDate]);
 
     const userNumber = useSelector(state => userSelectors.getUserNumber(state));
     const searchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(state.purchaseOrders, 50, 'orderNumber')
+        collectionSelectorHelpers.getSearchItems(state.purchaseOrders, 100, 'orderNumber')
     );
     const searchLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.purchaseOrders)
@@ -75,6 +77,16 @@ function PurchaseOrdersAuthSend() {
     const authoriseProcessResult = useSelector(state =>
         processSelectorHelpers.getData(state.authoriseMultiplePurchaseOrders)
     );
+    const vendorManagers = useSelector(state =>
+        collectionSelectorHelpers.getItems(state.vendorManagers)
+    );
+    const vendorManagersLoading = useSelector(state =>
+        collectionSelectorHelpers.getLoading(state.vendorManagers)
+    );
+
+    useEffect(() => {
+        dispatch(vendorManagersActions.fetch());
+    }, [dispatch]);
 
     useEffect(() => {
         if (authoriseProcessResult) {
@@ -174,7 +186,7 @@ function PurchaseOrdersAuthSend() {
 
         if (options.auth === 'auth') {
             results = searchResults.filter(a => a.authorisedBy);
-        } else if (options.enteredBy === 'unauth') {
+        } else if (options.auth === 'unauth') {
             results = searchResults.filter(a => !a.authorisedBy);
         }
 
@@ -182,6 +194,12 @@ function PurchaseOrdersAuthSend() {
             results = searchResults.filter(a => a.sentByMethod);
         } else if (options.sent === 'unsent') {
             results = searchResults.filter(a => !a.sentByMethod);
+        }
+
+        if (options.vendorManager !== 'all') {
+            results = searchResults.filter(
+                a => a.supplier.vendorManagerId === options.vendorManager
+            );
         }
 
         return results.map(r => ({
@@ -212,6 +230,10 @@ function PurchaseOrdersAuthSend() {
 
     const handleSentChange = event => {
         setOptions({ ...options, sent: event.target.value });
+    };
+
+    const handleVendorManagerChange = vm => {
+        setOptions({ ...options, vendorManager: vm });
     };
 
     const emailOrders = () => {
@@ -277,7 +299,35 @@ function PurchaseOrdersAuthSend() {
                         onChange={newVal => setOptions(o => ({ ...o, endDate: newVal }))}
                     />
                 </Grid>
-                <Grid item xs={6} />
+                <Grid item xs={4}>
+                    <Dropdown
+                        fullWidth
+                        value={options.vendorManager}
+                        label="Vendor Manager"
+                        propertyName="vendorManager"
+                        optionsLoading={vendorManagersLoading}
+                        items={[
+                            ...[{ id: 'all', displayText: 'All' }],
+                            ...vendorManagers
+                                ?.sort((a, b) => {
+                                    if (a.vmId < b.vmId) {
+                                        return -1;
+                                    }
+                                    if (a.vmId > b.vmId) {
+                                        return 1;
+                                    }
+                                    return 0;
+                                })
+                                .map(v => ({
+                                    id: v.vmId,
+                                    displayText: `${v.vmId} ${v.name} (${v.userNumber})`
+                                }))
+                        ]}
+                        allowNoValue={false}
+                        onChange={(_, newValue) => handleVendorManagerChange(newValue)}
+                    />
+                </Grid>
+                <Grid item xs={2} />
                 <Grid item xs={4}>
                     <FormControl>
                         <FormLabel id="enteredByOptionLabel">Orders Entered By</FormLabel>

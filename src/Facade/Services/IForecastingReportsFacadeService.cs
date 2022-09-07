@@ -4,6 +4,6 @@
 
     public interface IForecastingReportsFacadeService
     {
-        IEnumerable<IEnumerable<string>> GetWeeklyForecastExport(int supplierId);
+        IEnumerable<IEnumerable<string>> GetMonthlyForecastExport(int supplierId);
     }
 }

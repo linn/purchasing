@@ -34,7 +34,7 @@
         public void ShouldThrowUnauthorisedActionException()
         {
             this.action.Should().Throw<UnauthorisedActionException>()
-                .WithMessage("You are not authorised to split deliveries");
+                .WithMessage("You are not authorised to update deliveries");
         }
     }
 }

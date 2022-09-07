@@ -14,6 +14,8 @@
         
         .suppliers-designation {  grid-column: 4 / span 3; }
 
+        .drawref {  grid-column: 2 / span 5; }
+
         .grid-item { text-align: center; }
 
         .text-align-right { text-align: right !important; }
@@ -261,6 +263,20 @@ Telephone (0)141 307 7777.
             <div class="suppliers-designation">
                 <pre>@purchaseOrderDetail.SuppliersDesignation</pre>
             </div>
+
+            @if (!string.IsNullOrWhiteSpace(@purchaseOrderDetail.DrawingRef))
+            {
+                <div class="grid-item">
+                    <span>
+                        <b>Drawing Ref </b>
+                    </span>
+                </div>
+                <div class="drawref">
+                    <span>
+                        <b>@purchaseOrderDetail.DrawingRef</b>
+                    </span>
+                </div>
+            }
 
             <div class="grid-item text-align-right">
                 <span>

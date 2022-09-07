@@ -5,6 +5,7 @@
     using Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Edi;
+    using Linn.Purchasing.Domain.LinnApps.Forecasting;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
@@ -167,11 +168,17 @@
 
         public DbSet<SuppliersLeadTimesEntry> SuppliersLeadTimesEntries { get; set; }
 
-        public DbSet<WeeklyForecastPart> WeeklyForecastParts { get; set; }
+        public DbSet<MonthlyForecastPart> MonthlyForecastParts { get; set; }
 
         public DbSet<SupplierDeliveryPerformance> SupplierDeliveryPerformance { get; set; }
 
         public DbSet<DeliveryPerformanceDetail> DeliveryPerformanceDetails { get; set; }
+
+        public DbSet<MonthlyForecastPartValues> MonthlyForecastView { get; set; }
+
+        public DbSet<ForecastReportMonth> ForecastReportMonths { get; set; }
+
+        public DbSet<ForecastWeekChange> ForecastWeekChanges { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -263,9 +270,12 @@
             this.BuildBomDetails(builder);
             this.BuildSupplierAutoEmails(builder);
             this.BuildSuppliersLeadTime(builder);
-            this.BuildWeeklyForecastParts(builder);
+            this.BuildMonthlyForecastParts(builder);
             this.BuildSupplierDeliveryPerformance(builder);
             this.BuildDeliveryPerformanceDetails(builder);
+            this.BuildMonthlyForecastPartRequirements(builder);
+            this.BuildForecastReportMonths(builder);
+            this.BuildForecastWeekChanges(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -471,7 +481,8 @@
             entity.Property(a => a.PmDeliveryDaysGrace).HasColumnName("PM_DELIVERY_DAYS_GRACE");
             entity.HasOne(a => a.OrderAddress).WithMany().HasForeignKey("ORD_ADDRESS_ID");
             entity.HasOne(a => a.InvoiceFullAddress).WithMany().HasForeignKey("INV_ADDRESS_ID");
-            entity.HasOne(a => a.VendorManager).WithMany().HasForeignKey("VENDOR_MANAGER");
+            entity.Property(a => a.VendorManagerId).HasColumnName("VENDOR_MANAGER").HasMaxLength(1);
+            entity.HasOne(a => a.VendorManager).WithMany().HasForeignKey(v => v.VendorManagerId);
             entity.HasOne(a => a.Planner).WithMany().HasForeignKey("PLANNER");
             entity.HasOne(a => a.AccountController).WithMany().HasForeignKey("ACCOUNT_CONTROLLER");
             entity.Property(a => a.DateOpened).HasColumnName("DATE_OPENED");
@@ -670,6 +681,7 @@
             entity.Property(o => o.OrderConversionFactor).HasColumnName("ORDER_CONV_FACTOR");
             entity.Property(o => o.OrderQty).HasColumnName("ORDER_QTY");
             entity.Property(o => o.IssuePartsToSupplier).HasColumnName("ISSUE_PARTS_TO_SUPPLIER").HasMaxLength(1);
+            entity.Property(o => o.DrawingRef).HasColumnName("DRAWING_REF").HasMaxLength(100);
         }
 
         private void BuildPurchaseOrderDeliveries(ModelBuilder builder)
@@ -1682,7 +1694,7 @@
             entity.Property(a => a.DeleteChangeId).HasColumnName("DELETE_CHANGE_ID");
             entity.Property(a => a.DeleteReplaceSeq).HasColumnName("DELETE_REPLACE_SEQ");
             entity.HasOne(a => a.Part).WithMany().HasForeignKey(a => a.PartNumber);
-		}
+        }
         
         private void BuildSupplierAutoEmails(ModelBuilder builder)
         {
@@ -1691,8 +1703,10 @@
             entity.Property(s => s.SupplierId).HasColumnName("SUPPLIER_ID");
             entity.Property(s => s.OrderBook).HasColumnName("ORDER_BOOK");
             entity.Property(s => s.EmailAddress).HasColumnName("EMAIL_ADDRESS");
+            entity.Property(s => s.Forecast).HasColumnName("FORECAST");
+            entity.Property(s => s.ForecastInterval).HasColumnName("FORECAST_INTERVAL");
         }
-        
+
         private void BuildSuppliersLeadTime(ModelBuilder builder)
         {
             var entity = builder.Entity<SuppliersLeadTimesEntry>().ToTable("SUPPLIERS_LEADTIME").HasNoKey();
@@ -1701,16 +1715,17 @@
             entity.Property(a => a.LeadTimeWeeks).HasColumnName("LEAD_TIME_WEEKS");
         }
 
-        private void BuildWeeklyForecastParts(ModelBuilder builder)
+        private void BuildMonthlyForecastParts(ModelBuilder builder)
         {
-            var entity = builder.Entity<WeeklyForecastPart>().ToTable("WEEKLY_FORECAST_PARTS_VIEW").HasNoKey();
-            entity.Property(a => a.MrPartNumber).HasColumnName("MR_PART_NUMBER");
+            var entity = builder.Entity<MonthlyForecastPart>().ToTable("MONTHLY_FORECAST_PARTS_VIEW").HasNoKey();
+            entity.Property(a => a.MrPartNumber).HasColumnName("MR_PART_NUMBER").HasColumnType("VARCHAR2");
             entity.Property(a => a.SupplierDesignation).HasColumnName("SUPPLIER_DESIGNATION");
             entity.Property(a => a.StartingQty).HasColumnName("STARTING_QTY");
             entity.Property(a => a.UnitPrice).HasColumnName("UNIT_PRICE");
             entity.Property(a => a.MinimumOrderQty).HasColumnName("MINIMUM_ORDER_QTY");
             entity.Property(a => a.PreferredSupplier).HasColumnName("PREFERRED_SUPPLIER");
             entity.Property(a => a.TotalNettReqtValue).HasColumnName("T_NETT_REQT_VALUE");
+            entity.Property(a => a.LeadTimeWeek).HasColumnName("LEAD_TIME_WEEK");
         }
 
         private void BuildSupplierDeliveryPerformance(ModelBuilder builder)
@@ -1741,6 +1756,33 @@
             entity.Property(a => a.AdvisedDate).HasColumnName("ADVISED_DATE");
             entity.Property(a => a.RescheduleReason).HasColumnName("RESCHEDULE_REASON");
             entity.Property(a => a.OnTime).HasColumnName("ON_TIME");
+        }
+
+        private void BuildMonthlyForecastPartRequirements(ModelBuilder builder)
+        {
+            var entity = builder.Entity<MonthlyForecastPartValues>().ToTable("MONTHLY_FORECAST_VIEW").HasNoKey();
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2");
+            entity.Property(a => a.MonthEndWeek).HasColumnName("MONTH_END_WEEK");
+            entity.Property(a => a.ForecastOrders).HasColumnName("FORECAST_ORDERS");
+            entity.Property(a => a.Orders).HasColumnName("ORDERS");
+            entity.Property(a => a.Stock).HasColumnName("STOCK");
+            entity.Property(a => a.Usages).HasColumnName("USAGES");
+        }
+
+        private void BuildForecastReportMonths(ModelBuilder builder)
+        {
+            var entity = builder.Entity<ForecastReportMonth>().ToTable("FORECAST_REPORT_MONTH_STRINGS").HasNoKey();
+            entity.Property(a => a.MmmYy).HasColumnName("MMMYY").HasColumnType("VARCHAR2");
+        }
+
+        private void BuildForecastWeekChanges(ModelBuilder builder)
+        {
+            var entity = builder.Entity<ForecastWeekChange>().ToTable("SA_FORECAST_CHANGE_ALL_WEEK");
+            entity.HasKey(s => s.LinnWeekNumber);
+            entity.Property(s => s.LinnWeekNumber).HasColumnName("LINN_WEEK_NUMBER");
+            entity.Property(s => s.PercentageChange).HasColumnName("PERCENTAGE_CHANGE");
+            entity.HasOne(s => s.LinnWeek).WithOne(w => w.ForecastChange)
+                .HasForeignKey<ForecastWeekChange>(c => c.LinnWeekNumber);
         }
     }
 }

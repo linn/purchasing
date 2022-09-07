@@ -19,7 +19,11 @@
             PurchaseOrderDelivery to,
             IEnumerable<string> privileges);
 
-        BatchUpdateProcessResult BatchUpdateDeliveries(
+        UploadPurchaseOrderDeliveriesResult UploadDeliveries(
+            IEnumerable<PurchaseOrderDeliveryUpdate> changes,
+            IEnumerable<string> privileges);
+
+        BatchUpdateProcessResult UpdateDeliveries(
             IEnumerable<PurchaseOrderDeliveryUpdate> changes,
             IEnumerable<string> privileges);
 
@@ -31,6 +35,11 @@
 
         void UpdateMiniOrderDeliveries(IEnumerable<PurchaseOrderDelivery> updated);
 
-        void UpdateMiniOrderDelivery(int orderNumber, int seq, DateTime? newDateAdvised, string availableAtSupplier);
+        void UpdateMiniOrderDelivery(
+            int orderNumber, 
+            int seq, 
+            DateTime? newDateAdvised, 
+            string availableAtSupplier, 
+            decimal qty);
     }
 }

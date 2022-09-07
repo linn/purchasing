@@ -75,7 +75,7 @@
                                              },
                                          new PurchaseOrder
                                              {
-                                                 OrderNumber = 1111,
+                                                 OrderNumber = 11111,
                                                  SupplierId = this.supplierId,
                                                  Details = new List<PurchaseOrderDetail>
                                                                {
@@ -84,7 +84,7 @@
                                                                            Line = 1,
                                                                            NetTotalCurrency = 2m,
                                                                            BaseNetTotal = 2.5m,
-                                                                           OrderNumber = 1111,
+                                                                           OrderNumber = 11111,
                                                                            OurQty = 3,
                                                                            Part = new Part { PartNumber = "part2" },
 
@@ -173,21 +173,22 @@
             // doesn't have 2 rows because second part is stock controlled but filter set to non stock controlled
             var row = this.results.Rows.First();
             row.RowId.Should().Be($"{this.orderNumber}/1/12");
-            this.results.GetGridTextValue(0, 0).Should().Be($"{this.orderNumber}/Line1/Delivery12");
-            this.results.GetGridTextValue(0, 1).Should().Be(this.partNumber);
-            this.results.GetGridTextValue(0, 2).Should().Be(this.suppliersDesignation);
-            this.results.GetGridTextValue(0, 3).Should().Be("3");
-            this.results.GetGridTextValue(0, 4).Should().Be("11");
-            this.results.GetGridTextValue(0, 5).Should().Be("77");
-            this.results.GetGridValue(0, 6).Should().Be(4m);
-            this.results.GetGridTextValue(0, 7).Should().Be("EUR");
-            this.results.GetGridValue(0, 8).Should().Be(5);
-            this.results.GetGridTextValue(0, 9).Should().Be("12");
-            this.results.GetGridTextValue(0, 10).Should().Be("13");
-            this.results.GetGridTextValue(0, 11).Should().Be("01-Nov-2021");
+            this.results.GetGridTextValue(0, 0).Should().Be($"{this.orderNumber}");
+            this.results.GetGridTextValue(0, 1).Should().Be("1");
+            this.results.GetGridTextValue(0, 2).Should().Be(this.partNumber);
+            this.results.GetGridTextValue(0, 3).Should().Be(this.suppliersDesignation);
+            this.results.GetGridTextValue(0, 4).Should().Be("3");
+            this.results.GetGridTextValue(0, 5).Should().Be("11");
+            this.results.GetGridTextValue(0, 6).Should().Be("77");
+            this.results.GetGridValue(0, 7).Should().Be(4m);
+            this.results.GetGridTextValue(0, 8).Should().Be("EUR");
+            this.results.GetGridValue(0, 9).Should().Be(5);
+            this.results.GetGridTextValue(0, 10).Should().Be("12");
+            this.results.GetGridTextValue(0, 11).Should().Be("13");
+            this.results.GetGridTextValue(0, 12).Should().Be("01-Nov-2021");
 
             // null advised date shouldn't have a value
-            this.results.GetGridTextValue(0, 12).Should().BeNullOrWhiteSpace();
+            this.results.GetGridTextValue(0, 13).Should().BeNullOrWhiteSpace();
         }
     }
 }

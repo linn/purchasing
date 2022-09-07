@@ -11,7 +11,6 @@
 
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources.RequestResources;
-    using Linn.Purchasing.Service.Extensions;
     using Linn.Purchasing.Service.Models;
 
     using Microsoft.AspNetCore.Builder;
@@ -24,6 +23,7 @@
         {
             app.MapGet("/purchasing/reports/spend-by-supplier", this.GetApp);
             app.MapGet("/purchasing/reports/spend-by-part", this.GetApp);
+            app.MapGet("/purchasing/reports/spend-by-supplier-by-date-range", this.GetApp);
             app.MapGet("/purchasing/reports/spend-by-supplier/report", this.GetSpendBySupplierReport);
             app.MapGet("/purchasing/reports/spend-by-supplier/export", this.GetSpendBySupplierExport);
             app.MapGet("/purchasing/reports/spend-by-supplier-by-date-range/report", this.GetSpendBySupplierByDateRangeReport);

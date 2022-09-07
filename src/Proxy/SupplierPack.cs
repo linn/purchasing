@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Proxy
 {
-    using System;
     using System.Data;
 
     using Linn.Common.Proxy.LinnApps;

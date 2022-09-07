@@ -4,12 +4,10 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
-    using System.Threading.Tasks;
 
     using Linn.Common.Domain.Exceptions;
     using Linn.Common.Facade;
     using Linn.Common.Logging;
-    using Linn.Common.Pdf;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Parts;
@@ -26,19 +24,11 @@
     {
         private readonly IPurchaseOrderService domainService;
 
-        private readonly IFileReader fileReader;
-
         private readonly ILog logger;
-
-        private readonly IRepository<PurchaseOrder, int> orderRepository;
 
         private readonly IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository;
 
-        private readonly string pathToTemplate;
-
         private readonly IBuilder<PurchaseOrder> resourceBuilder;
-
-        private readonly ITemplateEngine templateEngine;
 
         private readonly ITransactionManager transactionManager;
 
@@ -48,24 +38,17 @@
             IBuilder<PurchaseOrder> resourceBuilder,
             IPurchaseOrderService domainService,
             IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository,
-            string pathToTemplate,
-            IFileReader filerReader,
-            ITemplateEngine templateEngine,
             ILog logger)
             : base(repository, transactionManager, resourceBuilder)
         {
             this.domainService = domainService;
             this.overbookAllowedByLogRepository = overbookAllowedByLogRepository;
             this.transactionManager = transactionManager;
-            this.orderRepository = repository;
-            this.templateEngine = templateEngine;
-            this.pathToTemplate = pathToTemplate;
-            this.fileReader = filerReader;
             this.logger = logger;
             this.resourceBuilder = resourceBuilder;
         }
 
-        public async Task<IResult<ProcessResultResource>> EmailOrderPdf(
+        public IResult<ProcessResultResource> EmailOrderPdf(
             int orderNumber,
             string emailAddress,
             bool bcc,
@@ -73,26 +56,13 @@
         {
             try
             {
-                var order = this.orderRepository.FindById(orderNumber);
+                var emailResult = this.domainService.SendPdfEmail(emailAddress, orderNumber, bcc, currentUserId);
 
-                var template = await this.fileReader.ReadFile(this.pathToTemplate);
-
-                var result = await this.templateEngine.Render(order, template);
-
-                var emailResult = this.domainService.SendPdfEmail(
-                    result,
-                    emailAddress,
-                    orderNumber,
-                    bcc,
-                    currentUserId,
-                    order);
-
-                this.logger.Write(LoggingLevel.Info, new List<LoggingProperty>(), emailResult.Message);
                 this.transactionManager.Commit();
                 return new SuccessResult<ProcessResultResource>(
                     new ProcessResultResource(emailResult.Success, emailResult.Message));
             }
-            catch (Exception ex)
+            catch (DomainException ex)
             {
                 this.logger.Write(LoggingLevel.Error, new List<LoggingProperty>(), ex.Message);
                 return new BadRequestResult<ProcessResultResource>(ex.Message);
@@ -104,8 +74,6 @@
             try
             {
                 var emailResult = this.domainService.SendSupplierAssemblyEmail(orderNumber);
-
-                this.logger.Write(LoggingLevel.Info, new List<LoggingProperty>(), emailResult.Message);
 
                 return new SuccessResult<ProcessResultResource>(
                     new ProcessResultResource(emailResult.Success, emailResult.Message));
@@ -196,15 +164,9 @@
             return new SuccessResult<ProcessResultResource>(new ProcessResultResource(result.Success, result.Message));
         }
 
-        public async Task<string> GetOrderAsHtml(int orderNumber)
+        public string GetOrderAsHtml(int orderNumber)
         {
-            var order = this.orderRepository.FindById(orderNumber);
-
-            var template = await this.fileReader.ReadFile(this.pathToTemplate);
-
-            var result = await this.templateEngine.Render(order, template);
-
-            return result;
+            return this.domainService.GetPurchaseOrderAsHtml(orderNumber);
         }
 
         protected override PurchaseOrder CreateFromResource(

@@ -1,9 +1,6 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
-    using System.Collections.Generic;
-
     using Linn.Common.Facade;
-    using Linn.Common.Reporting.Models;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;

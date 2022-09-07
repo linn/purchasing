@@ -23,7 +23,8 @@
                                  { 
                                      new PurchaseOrderDelivery
                                          {
-                                            OurDeliveryQty = 200
+                                            OurDeliveryQty = 200,
+                                            QtyNetReceived = 100
                                          }
                                  };
             this.AuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
@@ -41,7 +42,7 @@
                                   new PurchaseOrderDetail
                                       {
                                           Line = 1,
-                                          OurQty = 100,
+                                          OurQty = 50,
                                           PurchaseDeliveries = deliveries
                                       }
                               }
@@ -57,7 +58,7 @@
         public void ShouldThrowException()
         {
             this.action.Should().Throw<PurchaseOrderDeliveryException>()
-                .WithMessage("You must match the order qty when splitting deliveries.");
+                .WithMessage("You must match the order qty when updating deliveries.");
         }
     }
 }

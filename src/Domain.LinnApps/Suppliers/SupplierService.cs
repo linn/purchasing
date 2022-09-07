@@ -81,6 +81,7 @@
         public void UpdateSupplier(Supplier current, Supplier updated, IEnumerable<string> privileges)
         {
             var privilegesList = privileges.ToList();
+
             if (!string.IsNullOrEmpty(updated.ReasonClosed))
             {
                 if (!this.authService.HasPermissionFor(AuthorisedAction.SupplierClose, privilegesList))
@@ -90,7 +91,7 @@
 
                 current.DateClosed = DateTime.Today;
                 current.ReasonClosed = updated.ReasonClosed;
-                current.ClosedBy = updated.ClosedBy;
+                current.ClosedBy = this.employeeRepository.FindById(updated.ClosedBy.Id);
             }
 
 
