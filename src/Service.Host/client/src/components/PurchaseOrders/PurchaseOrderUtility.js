@@ -147,6 +147,9 @@ function PurchaseOrderUtility({ creating }) {
         (creating && order.links?.some(l => l.rel === 'create'));
 
     const inputIsInvalid = () => false;
+    // !order.details[0]?.orderPosting?.nominalAccount?.department?.departmentCode ||
+    // !order.details[0]?.orderPosting?.nominalAccount?.department?.nominalCode;
+    // todo add all other required fields above and make nom/dept ones work ^
 
     const canSave = () =>
         editStatus !== 'view' && allowedToUpdate() && !inputIsInvalid() && order !== item;

@@ -6,6 +6,7 @@
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
 
@@ -45,6 +46,8 @@
 
         protected ILog Logger { get; private set; }
 
+        protected IRepository<Supplier, int> SupplierRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -52,6 +55,7 @@
             this.FullAddressRepository = Substitute.For<IRepository<FullAddress, int>>();
             this.MockNominalAccountRepository = Substitute.For<IRepository<NominalAccount, int>>();
             this.OverbookAllowedByLogRepository = Substitute.For<IRepository<OverbookAllowedByLog, int>>();
+            this.SupplierRepository = Substitute.For<IRepository<Supplier, int>>();
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.DomainService = Substitute.For<IPurchaseOrderService>();
             this.AuthService = Substitute.For<IAuthorisationService>();
@@ -78,6 +82,7 @@
                 this.Builder,
                 this.DomainService,
                 this.OverbookAllowedByLogRepository,
+                this.SupplierRepository,
                 this.Logger);
         }
     }

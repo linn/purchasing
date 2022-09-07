@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Linq;
 
     using Linn.Common.Authorisation;
@@ -158,32 +159,11 @@
 
             foreach (var detail in order.Details)
             {
-                detail.OrderPosting.Id = this.databaseService.GetIdSequence("PLORP_SEQ");
-                detail.OrderPosting.OrderNumber = newOrderNumber;
-                detail.OrderNumber = newOrderNumber;
-                detail.OrderConversionFactor = 1m;
-
-                // below values are all set as follows in mini order trigger so hardcoding them here for now
-                detail.PriceType = "STANDARD";
-                detail.Cancelled = "N";
-                detail.FilCancelled = "N";
-                detail.UpdatePartsupPrice = "N";
-                detail.WasPreferredSupplier = "Y";
-                detail.IssuePartsToSupplier = "N";
-
-                // required but ignored now that ob ut just uses order fields
-                detail.OverbookQtyAllowed = 0;
-
-                // todo make below UOM fields typeahead on front end, only editable on create
-                detail.OurUnitOfMeasure = "ONES";
-                detail.OrderUnitOfMeasure = "ONES";
-
-                // todo check if always LINN or get from table
-                detail.StockPoolCode = "LINN";
-
-                detail.RohsCompliant = "Y";
+                this.SetDetailFieldsForCreation(detail, newOrderNumber);
 
                 this.PerformDetailCalculations(detail, detail, order.ExchangeRate.GetValueOrDefault(1), order.SupplierId, creating: true);
+
+                this.AddDeliveryToDetail(order, detail);
             }
 
             order.Cancelled = "N";
@@ -480,6 +460,70 @@
             }
 
             return order;
+        }
+
+        private void AddDeliveryToDetail(PurchaseOrder order, PurchaseOrderDetail detail)
+        {
+            detail.PurchaseDeliveries = new List<PurchaseOrderDelivery>
+                                            {
+                                                new PurchaseOrderDelivery
+                                                    {
+                                                        DeliverySeq = 1,
+                                                        OurDeliveryQty = detail.OurQty,
+                                                        OrderDeliveryQty = detail.OrderQty,
+                                                        OurUnitPriceCurrency = detail.OurUnitPriceCurrency,
+                                                        OrderUnitPriceCurrency = detail.OrderUnitPriceCurrency,
+                                                        DateRequested = null,
+                                                        DateAdvised = null,
+                                                        CallOffDate = DateTime.Now,
+                                                        Cancelled = "N",
+                                                        CallOffRef = null,
+                                                        OrderNumber = order.OrderNumber,
+                                                        OrderLine = 1,
+                                                        FilCancelled = "N",
+                                                        NetTotalCurrency = detail.NetTotalCurrency,
+                                                        VatTotalCurrency = detail.VatTotalCurrency,
+                                                        DeliveryTotalCurrency = detail.NetTotalCurrency,
+                                                        SupplierConfirmationComment = string.Empty,
+                                                        BaseOurUnitPrice = detail.BaseOurUnitPrice,
+                                                        BaseOrderUnitPrice = detail.BaseOrderUnitPrice,
+                                                        BaseNetTotal = detail.BaseNetTotal,
+                                                        BaseVatTotal = detail.BaseVatTotal,
+                                                        BaseDeliveryTotal = detail.BaseNetTotal,
+                                                        QuantityOutstanding = detail.OurQty,
+                                                        QtyNetReceived = 0,
+                                                        QtyPassedForPayment = 0,
+                                                        RescheduleReason = string.Empty
+                                                    }
+                                            };
+        }
+
+        private void SetDetailFieldsForCreation(PurchaseOrderDetail detail, int newOrderNumber)
+        {
+            detail.OrderPosting.Id = this.databaseService.GetIdSequence("PLORP_SEQ");
+            detail.OrderPosting.OrderNumber = newOrderNumber;
+            detail.OrderNumber = newOrderNumber;
+            detail.OrderConversionFactor = 1m;
+
+            // below values are all set as follows in mini order trigger so hardcoding them here for now
+            detail.PriceType = "STANDARD";
+            detail.Cancelled = "N";
+            detail.FilCancelled = "N";
+            detail.UpdatePartsupPrice = "N";
+            detail.WasPreferredSupplier = "Y";
+            detail.IssuePartsToSupplier = "N";
+
+            // required but ignored now that ob ut just uses order fields
+            detail.OverbookQtyAllowed = 0;
+
+            // todo make below UOM fields typeahead on front end, only editable on create
+            detail.OurUnitOfMeasure = "ONES";
+            detail.OrderUnitOfMeasure = "ONES";
+
+            // todo check if always LINN or get from table
+            detail.StockPoolCode = "LINN";
+
+            detail.RohsCompliant = "Y";
         }
 
         private void UpdateDeliveries(

@@ -9,7 +9,6 @@
     using Linn.Common.Facade;
     using Linn.Common.Logging;
     using Linn.Common.Persistence;
-    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -30,6 +29,8 @@
 
         private readonly IRepository<PurchaseOrder, int> purchaseOrderRepository;
 
+        private readonly IRepository<Supplier, int> supplierRepository;
+
         private readonly IBuilder<PurchaseOrder> resourceBuilder;
 
         private readonly ITransactionManager transactionManager;
@@ -40,6 +41,7 @@
             IBuilder<PurchaseOrder> resourceBuilder,
             IPurchaseOrderService domainService,
             IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository,
+            IRepository<Supplier, int> supplierRepository,
             ILog logger)
             : base(repository, transactionManager, resourceBuilder)
         {
@@ -48,6 +50,7 @@
             this.transactionManager = transactionManager;
             this.logger = logger;
             this.resourceBuilder = resourceBuilder;
+            this.supplierRepository = supplierRepository;
             this.purchaseOrderRepository = repository;
         }
 
@@ -177,14 +180,16 @@
             var order = this.BuildEntityFromResourceHelper(resource);
 
             this.domainService.CreateOrder(order, privileges);
+
             this.purchaseOrderRepository.Add(order);
 
+            this.transactionManager.Commit();
 
             this.domainService.CreateMiniOrder(order);
 
             this.transactionManager.Commit();
 
-            //this.MaybeSaveLog("Create", userNumber, order, resource, default);
+            order.Supplier = this.supplierRepository.FindById(order.SupplierId);
 
             return new CreatedResult<PurchaseOrderResource>((PurchaseOrderResource)this.resourceBuilder.Build(order, privileges.ToList()));
         }

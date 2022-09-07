@@ -139,6 +139,7 @@
                         x.GetService<IBuilder<PurchaseOrder>>(),
                         x.GetService<IPurchaseOrderService>(),
                         x.GetService<IRepository<OverbookAllowedByLog, int>>(),
+                        x.GetService<IRepository<Supplier, int>>(),
                         x.GetService<ILog>()))
                 .AddTransient<IFacadeResourceService<AutomaticPurchaseOrder, int, AutomaticPurchaseOrderResource, AutomaticPurchaseOrderResource>, AutomaticPurchaseOrderFacadeService>()
                 .AddTransient<IFacadeResourceFilterService<AutomaticPurchaseOrderSuggestion, int, AutomaticPurchaseOrderSuggestionResource, AutomaticPurchaseOrderSuggestionResource, PlannerSupplierRequestResource>, AutomaticPurchaseOrderSuggestionFacadeService>()
