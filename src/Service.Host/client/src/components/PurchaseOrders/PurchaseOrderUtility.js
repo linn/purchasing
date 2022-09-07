@@ -173,13 +173,23 @@ function PurchaseOrderUtility({ creating }) {
         dispatch({ payload: { ...detail, [propertyName]: newValue }, type: 'detailFieldChange' });
     };
 
+    const handleCurrencyChange = (propertyName, newValue) => {
+        setEditStatus('edit');
+        const name = currencies.find(x => x.code === newValue)?.name;
+        dispatch({
+            payload: { code: newValue, name },
+            propertyName: 'currency',
+            type: 'orderFieldChange'
+        });
+    };
+
     const dateToDdMmmYyyy = date => (date ? moment(date).format('DD-MMM-YYYY') : '-');
 
     useEffect(() => {
-        if (order?.dateCreated) {
-            reduxDispatch(exchangeRatesActions.search(dateToDdMmmYyyy(order?.dateCreated)));
+        if (order?.orderDate) {
+            reduxDispatch(exchangeRatesActions.search(dateToDdMmmYyyy(order?.orderDate)));
         }
-    }, [order, reduxDispatch]);
+    }, [order?.orderDate, reduxDispatch]);
 
     const exchangeRatesItems = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state[exchangeRates.item])
@@ -648,10 +658,9 @@ function PurchaseOrderUtility({ creating }) {
                                 fullWidth
                                 value={order.orderContactName}
                                 label="Order Contact"
-                                number
                                 propertyName="orderContactName"
                                 onChange={handleFieldChange}
-                                disabled
+                                disabled={!creating}
                             />
                         </Grid>
                         <Grid item xs={4}>
@@ -659,9 +668,10 @@ function PurchaseOrderUtility({ creating }) {
                                 fullWidth
                                 value={order.supplierContactPhone}
                                 label="Phone Number"
-                                propertyName="phoneNumber"
+                                number
+                                propertyName="supplierContactPhone"
                                 onChange={handleFieldChange}
-                                disabled
+                                disabled={!creating}
                             />
                         </Grid>
                         <Grid item xs={4}>
@@ -669,9 +679,9 @@ function PurchaseOrderUtility({ creating }) {
                                 fullWidth
                                 value={order.supplierContactEmail}
                                 label="Email Address"
-                                propertyName="email"
+                                propertyName="supplierContactEmail"
                                 onChange={handleFieldChange}
-                                disabled
+                                disabled={!creating}
                             />
                         </Grid>
 
@@ -686,17 +696,8 @@ function PurchaseOrderUtility({ creating }) {
                                     id: c.code
                                 }))}
                                 allowNoValue
-                                onChange={(propertyName, newValue) => {
-                                    dispatch(a => ({
-                                        ...a,
-                                        currency: {
-                                            code: newValue,
-                                            name: currencies.find(x => x.code === newValue)?.name
-                                            //could include exchange rate here?
-                                        }
-                                    }));
-                                }}
-                                disabled
+                                onChange={handleCurrencyChange}
+                                disabled={!creating}
                                 required
                             />
                         </Grid>
@@ -750,7 +751,7 @@ function PurchaseOrderUtility({ creating }) {
                                     label="Quote Ref"
                                     propertyName="quotationRef"
                                     onChange={handleFieldChange}
-                                    disabled
+                                    disabled={!creating}
                                     rows={2}
                                 />
                             </Grid>
@@ -1125,7 +1126,7 @@ function PurchaseOrderUtility({ creating }) {
                                             label="Our Unit Of Measure"
                                             propertyName="ourUnitOfMeasure"
                                             onChange={handleDetailFieldChange}
-                                            disabled
+                                            disabled={!creating}
                                             type="number"
                                             required
                                         />
@@ -1137,7 +1138,7 @@ function PurchaseOrderUtility({ creating }) {
                                             label="Order Unit Of Measure"
                                             propertyName="orderUnitOfMeasure"
                                             onChange={handleDetailFieldChange}
-                                            disabled
+                                            disabled={!creating}
                                             type="number"
                                             required
                                         />
@@ -1221,8 +1222,8 @@ function PurchaseOrderUtility({ creating }) {
                                             value={detail.deliveryInstructions}
                                             label="Delivery instructions"
                                             propertyName="deliveryInstructions"
-                                            onChange={() => {}}
-                                            disabled
+                                            onChange={handleDetailFieldChange}
+                                            disabled={!creating}
                                             rows={2}
                                         />
                                     </Grid>
