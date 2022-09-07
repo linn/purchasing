@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class EmailWeeklyForecastReportMessageResource
+    public class EmailMonthlyForecastReportMessageResource
     {
         public int ForSupplier { get; set; }
 

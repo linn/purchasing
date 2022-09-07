@@ -16,7 +16,7 @@
 
     using NUnit.Framework;
 
-    public class WhenBatchUpdating : ContextBase
+    public class WhenUpdatingMultiple : ContextBase
     {
         private IEnumerable<PurchaseOrderDeliveryUpdate> changes;
 
@@ -50,14 +50,14 @@
                                        {
                                            Key = this.key1,
                                            Qty = 100,
-                                           UnitPrice = 0.01m,
+                                           UnitPrice = 0.03m,
                                            NewDateAdvised = DateTime.Today
                                        },
                                    new PurchaseOrderDeliveryUpdate
                                        {
                                            Key = this.key12,
                                            Qty = 200,
-                                           UnitPrice = 0.02m,
+                                           UnitPrice = 0.03m,
                                            NewDateAdvised = DateTime.Today
                                        },
                                    new PurchaseOrderDeliveryUpdate
@@ -70,7 +70,7 @@
                                    new PurchaseOrderDeliveryUpdate
                                        {
                                            Key = this.key2,
-                                           Qty = 200, 
+                                           Qty = 200,
                                            UnitPrice = 0.01m,
                                            NewDateAdvised = DateTime.Today
                                        }
@@ -83,7 +83,7 @@
                                                           OrderLine = this.key1.OrderLine,
                                                           DeliverySeq = this.key1.DeliverySequence,
                                                           OurDeliveryQty = 100,
-                                                          OrderUnitPriceCurrency = 0.01m
+                                                          OrderUnitPriceCurrency = 0.03m
                                                       },
                                                   new PurchaseOrderDelivery
                                                       {
@@ -91,7 +91,7 @@
                                                           OrderLine = this.key1.OrderLine,
                                                           DeliverySeq = this.key12.DeliverySequence,
                                                           OurDeliveryQty = 200,
-                                                          OrderUnitPriceCurrency = 0.02m
+                                                          OrderUnitPriceCurrency = 0.03m
                                                       },
                                                   new PurchaseOrderDelivery
                                                       {
@@ -113,25 +113,20 @@
                                                            OrderUnitPriceCurrency = 0.01m
                                                        }
                                                }.AsQueryable();
-            this.Repository.FilterBy(
-                    Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>())
-                .Returns(
-                    deliveriesForFirstOrder,
-                   deliveriesForSecondOrder);
 
             this.Repository.FindBy(Arg.Any<Expression<Func<PurchaseOrderDelivery, bool>>>()).Returns(
                 deliveriesForFirstOrder.ElementAt(0),
                 deliveriesForFirstOrder.ElementAt(1),
                 deliveriesForFirstOrder.ElementAt(2),
                 deliveriesForSecondOrder.ElementAt(0));
-            
+
             this.MiniOrderRepository.FindById(this.key1.OrderNumber)
                 .Returns(new MiniOrder { OrderNumber = this.key1.OrderNumber });
             this.MiniOrderRepository.FindById(this.key2.OrderNumber)
                 .Returns(new MiniOrder { OrderNumber = this.key2.OrderNumber });
             this.MiniOrderDeliveryRepository.FindBy(Arg.Any<Expression<Func<MiniOrderDelivery, bool>>>())
                 .Returns(new MiniOrderDelivery { OrderNumber = this.key1.OrderNumber });
-            this.result = this.Sut.BatchUpdateDeliveries(this.changes, new List<string>());
+            this.result = this.Sut.UpdateDeliveries(this.changes, new List<string>());
         }
 
         [Test]
@@ -139,7 +134,6 @@
         {
             this.result.Success.Should().BeTrue();
             this.result.Message.Should().Be("4 records updated successfully.");
-            this.result.Errors.Should().BeNullOrEmpty();
         }
     }
 }

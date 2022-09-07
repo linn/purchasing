@@ -39,10 +39,10 @@ function OrderBySupplierReport() {
     return (
         <>
             <Grid style={{ marginTop: 40 }} container spacing={3} justifyContent="center">
-                <Grid item xs={12}>
+                <Grid item xs={6}>
                     <BackButton backClick={() => handleBackClick(history, options)} />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={6}>
                     {!loading && reportData ? (
                         <ExportButton
                             href={
@@ -73,9 +73,8 @@ function OrderBySupplierReport() {
                                 showTotals
                                 placeholderRows={4}
                                 placeholderColumns={4}
+                                showRowCount
                             />
-
-                            <p>Total number of orders: {reportData?.results?.length}</p>
                         </>
                     )}
                 </Grid>

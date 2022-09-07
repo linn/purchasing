@@ -119,3 +119,9 @@ export const deliveryPerformanceDetailReport = new ItemType(
     'DELIVERY_PERFORMANCE_DETAIL_REPORT',
     '/purchasing/reports/delivery-performance-details/report'
 );
+
+export const forecastWeekChangesReport = new ItemType(
+    'forecastWeekChangesReport',
+    'FORECAST_WEEK_CHANGES_REPORT',
+    '/purchasing/forecasting/apply-percentage-change/report'
+);

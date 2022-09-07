@@ -1,4 +1,5 @@
 using Linn.Purchasing.IoC;
+using Linn.Purchasing.Scheduling.Host;
 using Linn.Purchasing.Scheduling.Host.Jobs;
 
 IHost host = Host.CreateDefaultBuilder(args)
@@ -11,6 +12,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddPersistence();
         services.AddRabbitConfiguration();
         services.AddMessageDispatchers();
+        services.AddSingleton<CurrentTime>(() => DateTime.Now);
         services.AddHostedService<SupplierAutoEmailsScheduler>();
     })
     .Build();

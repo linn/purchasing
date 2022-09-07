@@ -1,6 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Reports.Models
 {
-    public class WeeklyForecastPart
+    public class MonthlyForecastPart
     {
         public string MrPartNumber { get; set; }
 
@@ -15,5 +15,7 @@
         public int PreferredSupplier { get; set; }
 
         public decimal TotalNettReqtValue { get; set; }
+
+        public int LeadTimeWeek { get; set; }
     }
 }

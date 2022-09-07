@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Handlers\" />
-    <Folder Include="Messages\" />
+	  <Folder Include="Handlers\" />
+	  <Folder Include="Messages\" />
   </ItemGroup>
 
   <ItemGroup>

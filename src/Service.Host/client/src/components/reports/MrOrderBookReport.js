@@ -6,6 +6,7 @@ import {
     Title,
     Typeahead,
     collectionSelectorHelpers,
+    ExportButton,
     Loading,
     MultiReportTable
 } from '@linn-it/linn-form-components-library';
@@ -30,7 +31,7 @@ function MrOrderBookReport() {
         collectionSelectorHelpers.getSearchLoading(state.suppliers)
     );
     const [options, setOptions] = useState({
-        supplierId: 38577
+        supplierId: ''
     });
     const loading = useSelector(state => state[mrOrderBookReport.item]?.loading);
 
@@ -43,28 +44,39 @@ function MrOrderBookReport() {
                 </Grid>
                 <Grid item xs={12}>
                     <Typeahead
-                        label="Supplier (leave blank for all)"
-                        title="Search for a supplier"
                         onSelect={newValue => setOptions({ ...options, supplierId: newValue.id })}
+                        label="Enter a Supplier Id or Click the Magnifying glass to search"
+                        modal
+                        openModalOnClick={false}
+                        handleFieldChange={(_, newValue) =>
+                            setOptions({ ...options, supplierId: newValue })
+                        }
+                        propertyName="supplierId"
                         items={suppliersSearchResults}
+                        value={options.supplierId}
                         loading={suppliersSearchLoading}
                         fetchItems={searchTerm => dispatch(suppliersActions.search(searchTerm))}
-                        clearSearch={() => dispatch(suppliersActions.clearSearch)}
-                        value={options.supplierId}
-                        modal
                         links={false}
-                        debounce={1000}
-                        minimumSearchTermLength={2}
+                        title="Search Suppliers"
+                        clearSearch={() => {}}
+                        placeholder="Type supplierId or click search icon"
+                        minimumSearchTermLength={3}
                     />
                 </Grid>
                 <Grid item xs={3}>
                     <Button
                         variant="contained"
+                        disabled={!options.supplierId}
                         color="primary"
                         onClick={() => dispatch(mrOrderBookReportActions.fetchReport(options))}
                     >
                         Run Report
                     </Button>
+                    <ExportButton
+                        disabled={!options.supplierId}
+                        href={`${config.appRoot}/purchasing/reports/mr-order-book/export?supplierId=${options.supplierId}`}
+                        buttonText="Order Book"
+                    />
                 </Grid>
                 <Grid item xs={12}>
                     {loading ? (

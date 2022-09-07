@@ -16,6 +16,7 @@ dotnet test ./tests/Unit/Facade.Tests/Facade.Tests.csproj
 dotnet test ./tests/Unit/Messaging.Tests/Messaging.Tests.csproj
 dotnet test ./tests/Unit/Proxy.Tests/Proxy.Tests.csproj
 dotnet test ./tests/Integration/Integration.Tests/Integration.Tests.csproj
+dotnet test ./tests/Integration/Integration.Scheduling.Tests/Integration.Scheduling.Tests.csproj
 
 echo $?
 if [ $? -eq 1 ]; then

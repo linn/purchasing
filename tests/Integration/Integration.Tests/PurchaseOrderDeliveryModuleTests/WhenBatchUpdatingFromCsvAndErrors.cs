@@ -20,20 +20,22 @@
         [SetUp]
         public void SetUp()
         {
-            this.MockDomainService.BatchUpdateDeliveries(
+            this.MockDomainService.UploadDeliveries(
                 Arg.Any<IEnumerable<PurchaseOrderDeliveryUpdate>>(),
-                Arg.Any<IEnumerable<string>>()).Returns(new BatchUpdateProcessResult
-                                                             {
-                                                                 Success = false,
-                                                                 Message = "Something went wrong!",
-                                                                 Errors = new List<Error>
-                                                                              {
-                                                                                  new Error("Id", "Message")
-                                                                              }
-                                                             });
+                Arg.Any<IEnumerable<string>>()).Returns(
+                    new UploadPurchaseOrderDeliveriesResult
+                    {
+                        Success = false,
+                        Message = "Something went wrong!",
+                        Errors = new List<Error>
+                                     {
+                                         new Error("Id", "Message")
+                                     },
+                        Updated = new List<PurchaseOrderDelivery>()
+                    });
             this.Response = this.Client.Post(
                 $"/purchasing/purchase-orders/deliveries",
-                "PO1,1,28/03/1995,100,0.01,NEW REASON,",
+                "PO1,28/03/1995,100,0.01,NEW REASON,",
                 with =>
                     {
                         with.Accept("application/json");

@@ -134,6 +134,9 @@ function AllowPurchaseOrderOverbook() {
                             backClick={() =>
                                 history.push('/purchasing/purchase-orders/allow-over-book/')
                             }
+                            cancelClick={() =>
+                                history.push('/purchasing/purchase-orders/allow-over-book/')
+                            }
                         />
                     </Grid>
                 </Grid>

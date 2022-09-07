@@ -59,6 +59,7 @@ function POReqSearch({ print }) {
 
     const handleOptionsChange = (propertyName, newValue) =>
         setOptions({ ...options, [propertyName]: newValue });
+    const search = () => history.push(`/purchasing/purchase-orders/reqs/${options.reqNumber}/`);
 
     useEffect(() => {
         if (
@@ -94,6 +95,14 @@ function POReqSearch({ print }) {
                         label="Req Number"
                         propertyName="reqNumber"
                         onChange={handleOptionsChange}
+                        helperText="Go straight to a Req by pressing Enter"
+                        textFieldProps={{
+                            onKeyDown: data => {
+                                if (data.keyCode === 13 || data.keyCode === 9) {
+                                    search();
+                                }
+                            }
+                        }}
                     />
                 </Grid>
                 <Grid item xs={3}>

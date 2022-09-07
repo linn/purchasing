@@ -7,7 +7,10 @@ import {
     Title,
     userSelectors,
     collectionSelectorHelpers,
-    Dropdown
+    Dropdown,
+    getRequestErrors,
+    getItemError,
+    ErrorCard
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import { DataGrid } from '@mui/x-data-grid';
@@ -19,6 +22,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import moment from 'moment';
 import history from '../history';
 import config from '../config';
+import { automaticPurchaseOrder } from '../itemTypes';
 
 import plannersActions from '../actions/plannersActions';
 import automaticPurchaseOrderSuggestionsActions from '../actions/automaticPurchaseOrderSuggestionsActions';
@@ -52,6 +56,11 @@ function AutomaticPurchaseOrderSuggestions() {
     const dispatch = useDispatch();
     const userNumber = useSelector(state => userSelectors.getUserNumber(state));
 
+    const requestErrors = useSelector(state =>
+        getRequestErrors(state)?.filter(error => error.type !== 'FETCH_ERROR')
+    );
+    const createError = useSelector(state => getItemError(state, automaticPurchaseOrder.item));
+
     useEffect(() => {
         if (!planners || planners.length === 0) {
             dispatch(plannersActions.fetch());
@@ -60,7 +69,9 @@ function AutomaticPurchaseOrderSuggestions() {
 
     useEffect(() => {
         if (suggestions && suggestions.length > 0) {
-            setRows(suggestions.map((s, i) => ({ ...s, id: i, s })));
+            setRows(
+                suggestions.map((s, i) => ({ ...s, id: i, s, quantity: s.recommendedQuantity }))
+            );
         } else {
             setRows([]);
         }
@@ -88,6 +99,7 @@ function AutomaticPurchaseOrderSuggestions() {
             marginBottom: '20px'
         }
     }));
+
     const classes = useStyles();
 
     const handleSetSupplier = (_, supp) => {
@@ -103,6 +115,8 @@ function AutomaticPurchaseOrderSuggestions() {
     };
 
     const getSuggestedOrders = () => {
+        dispatch(automaticPurchaseOrderActions.clearErrorsForItem());
+
         let options = '';
         if (supplier && supplier.id) {
             options += `&supplierId=${supplier.id}`;
@@ -129,16 +143,18 @@ function AutomaticPurchaseOrderSuggestions() {
     };
 
     const createOrders = () => {
+        dispatch(automaticPurchaseOrderActions.clearErrorsForItem());
         if (rows.length > 0) {
             const { jobRef } = rows[0];
             const details = rows.map(r => ({
                 partNumber: r.partNumber,
                 supplierId: r.preferredSupplierId,
                 supplierName: r.supplierName,
-                quantity: r.recommendedQuantity,
+                quantity: r.quantity,
+                quantityRecommended: r.recommendedQuantity,
                 recommendationCode: r.recommendationCode,
                 currencyCode: r.currencyCode,
-                currencyPrice: r.recommendedQuantity * r.ourPrice,
+                currencyPrice: r.quantity * r.ourPrice,
                 requestedDate: r.recommendedDate,
                 orderMethod: r.orderMethod
             }));
@@ -151,17 +167,40 @@ function AutomaticPurchaseOrderSuggestions() {
             dispatch(automaticPurchaseOrderActions.add(proposedAutoOrder));
         }
     };
-    const handleEditRowsModelChange = () => {};
+    const updateRow = (rowId, fieldName, newValue) => {
+        const newRows = rows.map(r =>
+            r.id === rowId
+                ? {
+                      ...r,
+                      [fieldName]: newValue,
+                      updating: true
+                  }
+                : r
+        );
+        setRows(newRows);
+    };
+
+    const handleEditRowsModelChange = model => {
+        if (model && Object.keys(model)[0]) {
+            const key = parseInt(Object.keys(model)[0], 10);
+            const key2 = Object.keys(model[key])[0];
+            if (model && model[key] && model[key][key2] && model[key][key2].value) {
+                updateRow(key, key2, model[key][key2].value);
+            }
+        }
+    };
 
     const columns = [
         { field: 'partNumber', headerName: 'Part Number', minWidth: 140 },
         { field: 'preferredSupplierId', headerName: 'Supplier', minWidth: 100 },
         { field: 'supplierName', headerName: 'Name', minWidth: 300 },
-        { field: 'recommendedQuantity', headerName: 'Qty', minWidth: 100 },
+        { field: 'quantity', headerName: 'Qty', minWidth: 100, editable: true, type: 'number' },
         {
             field: 'recommendedDate',
             headerName: 'Date',
             minWidth: 160,
+            editable: true,
+            type: 'date',
             valueGetter: ({ value }) => value && moment(value).format('DD MMM YYYY')
         },
         { field: 'orderMethod', headerName: 'Method', minWidth: 100 },
@@ -182,7 +221,12 @@ function AutomaticPurchaseOrderSuggestions() {
     ];
 
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page
+            history={history}
+            homeUrl={config.appRoot}
+            requestErrors={requestErrors}
+            showRequestErrors
+        >
             <Title text="Raise Automatic Orders" />
             <Grid container>
                 <Grid item xs={8}>
@@ -231,6 +275,11 @@ function AutomaticPurchaseOrderSuggestions() {
                         Fetch Suggested Orders
                     </Button>
                 </Grid>
+                {createError && (
+                    <Grid item xs={12}>
+                        <ErrorCard errorMessage={createError.details} />
+                    </Grid>
+                )}
                 <Grid item xs={8}>
                     <Button onClick={showMr} disabled={!rows || rows.length <= 0}>
                         Show MR For Suggested Parts
@@ -240,6 +289,13 @@ function AutomaticPurchaseOrderSuggestions() {
                     <Typography variant="h6">Automatic Order Suggestions</Typography>
                     <div>
                         <DataGrid
+                            sx={{
+                                '& .MuiDataGrid-cell--editable': {
+                                    '&:hover': {
+                                        cursor: 'pointer'
+                                    }
+                                }
+                            }}
                             className={classes.gap}
                             rows={rows}
                             columns={columns}

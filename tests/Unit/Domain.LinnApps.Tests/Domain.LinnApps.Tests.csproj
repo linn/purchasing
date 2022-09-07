@@ -23,7 +23,7 @@
   <ItemGroup>
     <Folder Include="ForecastingServiceTests\" />
     <Folder Include="MrOrderBookReportServiceTests\" />
-    <Folder Include="PurchaseOrderDeliveryServiceTests\" />
+    <Folder Include="ForecastOrdersReportServiceTests\" />
     <Folder Include="WhatsInInspectionReportServiceTests\" />
     <Folder Include="OutstandingPoReqsReportServiceTests\" />
   </ItemGroup>

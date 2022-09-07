@@ -148,10 +148,12 @@
             return entity;
         }
 
-        public BatchUpdateProcessResult BatchUpdateDeliveries(
+        public UploadPurchaseOrderDeliveriesResult UploadDeliveries(
             IEnumerable<PurchaseOrderDeliveryUpdate> changes,
             IEnumerable<string> privileges)
         {
+            var updated = new List<PurchaseOrderDelivery>();
+
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
             {
                 throw new UnauthorisedActionException("You are not authorised to acknowledge orders.");
@@ -171,21 +173,36 @@
                                      {
                                          group.Key.OrderNumber,
                                          group.Key.OrderLine,
-                                         DeliveryUpdates = group
+                                         DeliveryUpdates = group.OrderBy(x => x.NewDateAdvised)
                                      });
 
             foreach (var group in orderLineGroups)
             {
-                var entities = this.repository.FilterBy(
+                var existingDeliveries = this.repository.FilterBy(
                     x => x.OrderNumber == group.OrderNumber && x.OrderLine == group.OrderLine);
 
-                var isDuplicateDeliveriesForOrder =
-                    group.DeliveryUpdates.GroupBy(x => x.Key.DeliverySequence).Select(g => g.First()).Count()
-                    != group.DeliveryUpdates.Count();
-
-                if (isDuplicateDeliveriesForOrder)
+                if (existingDeliveries.Any(x => x.QtyNetReceived.GetValueOrDefault() > 0))
                 {
-                    var msg = "Duplicate delivery sequence entries for the specified order.";
+                    errors.Add(
+                        new Error(
+                            $"Order: {group.OrderNumber}",
+                            "Order has been partially received. Cannot update deliveries automatically."));
+                    continue;
+                }
+
+                var detail = this.purchaseOrderRepository.FindById(group.OrderNumber).Details
+                    .Single(d => d.Line == group.OrderLine);
+
+                var qtyOutstanding = detail.OrderQty - existingDeliveries.Sum(x => x.QtyNetReceived);
+
+                var totalQty = group.DeliveryUpdates.Sum(x => x.Qty);
+
+                var isQuantityMismatch = totalQty
+                                         != qtyOutstanding;
+
+                if (isQuantityMismatch)
+                {
+                    var msg = $"Total Qty of lines uploaded ({totalQty}) does not match order qty outstanding ({qtyOutstanding})";
                     errors.Add(
                         new Error(
                             $"Order: {group.OrderNumber}",
@@ -193,43 +210,18 @@
                     continue;
                 }
 
-                var isDeliveriesMismatch = group.DeliveryUpdates.Any(
-                    u => !entities.Select(e => e.DeliverySeq).Contains(u.Key.DeliverySequence));
+                var existingDelivery = existingDeliveries.First();
 
-                if (isDeliveriesMismatch)
-                {
-                    var msg = "Sequence of deliveries in our system"
-                              + " does not match sequence of lines uploaded for the specified order.";
-                    errors.Add(
-                        new Error(
-                            $"Order: {group.OrderNumber}",
-                            msg));
-                    continue;
-                }
-
-                var isQuantitiesMismatch = entities.ToList().Any(e =>
-                    group.DeliveryUpdates.SingleOrDefault(u => u.Key.DeliverySequence == e.DeliverySeq) != null
-                    && e.OurDeliveryQty != group.DeliveryUpdates.Single(u => u.Key.DeliverySequence == e.DeliverySeq).Qty);
-
-                if (isQuantitiesMismatch)
-                {
-                    var msg = $"Qty on lines uploaded for the specified order does not match qties on the corresponding delivery on our system";
-                    errors.Add(
-                        new Error(
-                            $"Order: {group.OrderNumber}",
-                            msg));
-                    continue;
-                }
-
-                var isPricesMismatch = entities.ToList().Any(e =>
-                    group.DeliveryUpdates
-                        .SingleOrDefault(u => u.Key.DeliverySequence == e.DeliverySeq) != null
-                    && Math.Round(e.OrderUnitPriceCurrency.Value, 4)
-                                  != Math.Round(group.DeliveryUpdates.Single(u => u.Key.DeliverySequence == e.DeliverySeq).UnitPrice, 4));
+                var isPricesMismatch = group.DeliveryUpdates.Any(
+                    u => Math.Round(u.UnitPrice, 4) != Math.Round(
+                             detail.OrderUnitPriceCurrency.GetValueOrDefault(),
+                             4));
 
                 if (isPricesMismatch)
                 {
-                    var msg = $"Unit Price on lines uploaded for the specified order does not match unit price on our system";
+                    var msg = $"Unit Price on lines uploaded ({group.DeliveryUpdates.First().UnitPrice}) "
+                              + $"for the specified order does not match unit price on our system " 
+                              + $"({detail.OrderUnitPriceCurrency})";
                     errors.Add(
                         new Error(
                             $"Order: {group.OrderNumber}",
@@ -237,15 +229,121 @@
                     continue;
                 }
 
-                if (group.DeliveryUpdates.Any(u => !u.NewDateAdvised.HasValue))
+                var updates = group.DeliveryUpdates.OrderBy(u => u.NewDateAdvised).ToList();
+                var index = 1;
+                var updatedDeliveries = new List<PurchaseOrderDelivery>();
+                
+                foreach (var update in updates)
                 {
-                    errors.Add(
-                        new Error(
-                            $"Order: {group.OrderNumber}",
-                            "Invalid date string supplied for specified Order."));
-                    continue;
+                    var vatAmount = Math.Round(
+                        this.purchaseOrdersPack.GetVatAmountSupplier(
+                            detail.OrderUnitPriceCurrency.GetValueOrDefault() * update.Qty,
+                            existingDelivery.PurchaseOrderDetail.PurchaseOrder.SupplierId),
+                        2);
+
+                    var baseVatAmount = Math.Round(
+                        this.purchaseOrdersPack.GetVatAmountSupplier(
+                            detail.BaseOurUnitPrice.GetValueOrDefault() * update.Qty,
+                            existingDelivery.PurchaseOrderDetail.PurchaseOrder.SupplierId),
+                        2);
+                    updatedDeliveries.Add(new PurchaseOrderDelivery
+                                              {
+                                                  OrderNumber = group.OrderNumber,
+                                                  OrderLine = group.OrderLine,
+                                                  DeliverySeq = index,
+                                                  OurDeliveryQty = update.Qty,
+                                                  QtyNetReceived = 0,
+                                                  QuantityOutstanding = update.Qty,
+                                                  DateAdvised = update.NewDateAdvised,
+                                                  AvailableAtSupplier = update.AvailableAtSupplier,
+                                                  RescheduleReason = update.NewReason,
+                                                  DateRequested = update.DateRequested ?? existingDelivery.DateRequested,
+                                                  SupplierConfirmationComment = update.Comment,
+                                                  OurUnitPriceCurrency = detail.OurUnitPriceCurrency,
+                                                  OrderUnitPriceCurrency = detail.OrderUnitPriceCurrency,
+                                                  BaseOurUnitPrice = detail.BaseOurUnitPrice,
+                                                  BaseDeliveryTotal = Math.Round(
+                                                      (update.Qty * detail.BaseOurUnitPrice.GetValueOrDefault())
+                                                    + baseVatAmount, 
+                                                      2),
+                                                  BaseNetTotal = Math.Round(
+                                                      update.Qty * detail.BaseOurUnitPrice.GetValueOrDefault(),
+                                                      2),
+                                                  OrderDeliveryQty = update.Qty / detail.OrderConversionFactor,
+                                                  BaseOrderUnitPrice = existingDelivery.BaseOrderUnitPrice,
+                                                  VatTotalCurrency = vatAmount,
+                                                  BaseVatTotal = baseVatAmount,
+                                                  CallOffDate = existingDelivery.CallOffDate,
+                                                  CallOffRef = existingDelivery.CallOffRef,
+                                                  Cancelled = "N",
+                                                  DeliveryTotalCurrency = Math.Round(
+                                                                              detail.OrderUnitPriceCurrency.GetValueOrDefault() * update.Qty,
+                                                                              2) + vatAmount,
+                                                  FilCancelled = "N",
+                                                  QtyPassedForPayment = 0,
+                                                  NetTotalCurrency = update.Qty * update.UnitPrice
+                                              });
+                        index++;
                 }
 
+                detail.PurchaseDeliveries = updatedDeliveries;
+
+                    this.UpdateMiniOrder(
+                        existingDelivery.OrderNumber,
+                        updates.Last().NewDateAdvised,
+                        null,
+                        null,
+                        updates.Last().Comment);
+                updated?.AddRange(detail?.PurchaseDeliveries);
+                successCount++;
+            }
+
+            if (errors.Any())
+            {
+                return new UploadPurchaseOrderDeliveriesResult
+                           {
+                               Success = false,
+                               Message =
+                                   $"{successCount} orders updated successfully. The following errors occurred: ",
+                               Errors = errors,
+                               Updated = updated
+                           };
+            }
+
+            return new UploadPurchaseOrderDeliveriesResult
+                       {
+                           Success = true, 
+                           Message = $"{successCount} orders updated successfully.",
+                           Updated = updated
+                       };
+        }
+
+        public BatchUpdateProcessResult UpdateDeliveries(
+           IEnumerable<PurchaseOrderDeliveryUpdate> changes,
+           IEnumerable<string> privileges)
+        {
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
+            {
+                throw new UnauthorisedActionException("You are not authorised to acknowledge orders.");
+            }
+
+            this.CheckOkToRaiseOrders();
+
+            var successCount = 0;
+
+            var purchaseOrderDeliveryUpdates = changes as PurchaseOrderDeliveryUpdate[] ?? changes.ToArray();
+
+            var orderLineGroups = purchaseOrderDeliveryUpdates
+                .GroupBy(x => new { x.Key.OrderNumber, x.Key.OrderLine })
+                .Select(group => new
+                {
+                    group.Key.OrderNumber,
+                    group.Key.OrderLine,
+                    DeliveryUpdates = group
+                });
+
+            foreach (var group in orderLineGroups)
+            {
                 foreach (var u in group.DeliveryUpdates)
                 {
                     var deliveryToUpdate = this.repository.FindBy(x =>
@@ -275,21 +373,11 @@
                 }
             }
 
-            if (errors.Any())
-            {
-                return new BatchUpdateProcessResult
-                           {
-                               Success = false,
-                               Message =
-                                   $"{successCount} records updated successfully. The following errors occurred: ",
-                               Errors = errors
-                           };
-            }
-
             return new BatchUpdateProcessResult
-                       {
-                           Success = true, Message = $"{successCount} records updated successfully."
-                       };
+            {
+                Success = true,
+                Message = $"{successCount} records updated successfully."
+            };
         }
 
         public IEnumerable<PurchaseOrderDelivery> UpdateDeliveriesForOrderLine(
@@ -300,7 +388,7 @@
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
             {
-                throw new UnauthorisedActionException("You are not authorised to split deliveries");
+                throw new UnauthorisedActionException("You are not authorised to update deliveries");
             }
 
             var order = this.purchaseOrderRepository
@@ -315,12 +403,12 @@
             if (order.OrderMethod?.Name == "CALL OFF")
             {
                 throw new PurchaseOrderDeliveryException(
-                    "You cannot raise a split delivery for a CALL OFF. It is raised automatically on delivery.");
+                    "You cannot update deliveries for a CALL OFF.");
             }
 
             if (order.Cancelled == "Y")
             {
-                throw new PurchaseOrderDeliveryException("Cannot split deliveries - Order is cancelled.");
+                throw new PurchaseOrderDeliveryException("Cannot update deliveries - Order is cancelled.");
             }
 
             if (order.DocumentTypeName != "PO")
@@ -334,7 +422,7 @@
                     .Sum(x => x.OurDeliveryQty.GetValueOrDefault()))
             {
                 throw new PurchaseOrderDeliveryException(
-                    "You must match the order qty when splitting deliveries.");
+                    "You must match the order qty when updating deliveries.");
             }
 
             var list = detail.PurchaseDeliveries.ToArray();
@@ -458,10 +546,10 @@
         // separate public method so that it can be called from the facade (and subsequently Commit()'ted) in the correct order
         public void UpdateMiniOrderDeliveries(IEnumerable<PurchaseOrderDelivery> updated)
         {
-            var purchaseOrderDeliveries = updated.ToList();
-            var miniOrder = this.miniOrderRepository.FindById(purchaseOrderDeliveries.First().OrderNumber);
+            var updatedPurchaseOrderDeliveries = updated.ToList();
+            var miniOrder = this.miniOrderRepository.FindById(updatedPurchaseOrderDeliveries.First().OrderNumber);
 
-            miniOrder.Deliveries = purchaseOrderDeliveries
+            miniOrder.Deliveries = updatedPurchaseOrderDeliveries
                 .Select(del =>
                     {
                         var existing =
@@ -491,17 +579,34 @@
         }
 
         // syncs changes to an individual delivery back to the corresponding mini order delivery
-        public void UpdateMiniOrderDelivery(int orderNumber, int seq, DateTime? newDateAdvised, string availableAtSupplier)
+        public void UpdateMiniOrderDelivery(
+            int orderNumber, int seq, DateTime? newDateAdvised, string availableAtSupplier, decimal qty)
         {
-            var del = this.miniOrderDeliveryRepository.FindBy(
-                x => x.OrderNumber == orderNumber && x.DeliverySequence == seq);
+            var miniOrder = this.miniOrderRepository.FindById(orderNumber);
+            var del = miniOrder.Deliveries.FirstOrDefault(x => x.DeliverySequence == seq);
+            
             if (del != null)
             {
                 if (!string.IsNullOrEmpty(availableAtSupplier))
                 {
                     del.AvailableAtSupplier = availableAtSupplier;
                 }
+
                 del.AdvisedDate = newDateAdvised;
+            }
+            else
+            {
+                var existing = miniOrder.Deliveries;
+                this.miniOrderDeliveryRepository.Add(new MiniOrderDelivery
+                                                         {
+                                                             OrderNumber = orderNumber,
+                                                             DeliverySequence = existing.Any() 
+                                                                 ? existing.Max(d => d.DeliverySequence) + 1 : 1,
+                                                             AdvisedDate = newDateAdvised,
+                                                             OurQty = qty,
+                                                             AvailableAtSupplier = availableAtSupplier,
+                                                             RequestedDate = miniOrder.RequestedDeliveryDate
+                                                         });
             }
         }
 

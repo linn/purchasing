@@ -145,7 +145,8 @@
                 .AddTransient<IFacadeResourceFilterService<AutomaticPurchaseOrderSuggestion, int, AutomaticPurchaseOrderSuggestionResource, AutomaticPurchaseOrderSuggestionResource, PlannerSupplierRequestResource>, AutomaticPurchaseOrderSuggestionFacadeService>()
                 .AddTransient<ILeadTimesReportFacadeService, LeadTimesReportFacadeService>()
                 .AddTransient<IForecastingReportsFacadeService, ForecastingReportsFacadeService>()
-                .AddTransient<IFacadeResourceService<LedgerPeriod, int, LedgerPeriodResource, LedgerPeriodResource>, LedgerPeriodFacadeService>();
+                .AddTransient<IFacadeResourceService<LedgerPeriod, int, LedgerPeriodResource, LedgerPeriodResource>, LedgerPeriodFacadeService>()
+                .AddTransient<IForecastWeekChangesFacadeService, ForecastWeekChangesFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
@@ -194,6 +195,7 @@
                 .AddTransient<ISupplierAutoEmailsMailer, SupplierAutoEmailsMailer>()
                 .AddTransient<IForecastOrdersReportService, ForecastOrdersReportService>()
                 .AddTransient<IDeliveryPerformanceReportService, DeliveryPerformanceReportService>()
+                .AddTransient<IForecastWeekChangesReportService, ForecastWeekChangesReportService>()
 
                 // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()

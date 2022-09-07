@@ -17,7 +17,7 @@
         public static IServiceCollection AddRabbitConfiguration(this IServiceCollection services)
         {
             // all the routing keys the Listener cares about need to be registered here:
-            var routingKeys = new[] { EmailMrOrderBookMessage.RoutingKey, EmailWeeklyForecastReportMessage.RoutingKey };
+            var routingKeys = new[] { EmailMrOrderBookMessage.RoutingKey, EmailMonthlyForecastReportMessage.RoutingKey };
 
             return services.AddSingleton<ChannelConfiguration>(d => new ChannelConfiguration("purchasing", routingKeys))
                 .AddScoped(d => new EventingBasicConsumer(d.GetService<ChannelConfiguration>()?.ConsumerChannel));
@@ -27,7 +27,7 @@
         {
             return services
                 .AddScoped<Handler<EmailMrOrderBookMessage>, EmailMrOrderBookMessageHandler>()
-                .AddScoped<Handler<EmailWeeklyForecastReportMessage>, EmailWeeklyForecastReportMessageHandler>();
+                .AddScoped<Handler<EmailMonthlyForecastReportMessage>, EmailMonthlyForecastReportMessageHandler>();
         }
 
         public static IServiceCollection AddMessageDispatchers(this IServiceCollection services)
@@ -37,9 +37,9 @@
                 .AddTransient<IMessageDispatcher<EmailOrderBookMessageResource>>(
                     x => new RabbitMessageDispatcher<EmailOrderBookMessageResource>(
                         x.GetService<ChannelConfiguration>(), x.GetService<ILog>(), EmailMrOrderBookMessage.RoutingKey))
-                .AddTransient<IMessageDispatcher<EmailWeeklyForecastReportMessageResource>>(
-                    x => new RabbitMessageDispatcher<EmailWeeklyForecastReportMessageResource>(
-                        x.GetService<ChannelConfiguration>(), x.GetService<ILog>(), EmailWeeklyForecastReportMessage.RoutingKey));
+                .AddTransient<IMessageDispatcher<EmailMonthlyForecastReportMessageResource>>(
+                    x => new RabbitMessageDispatcher<EmailMonthlyForecastReportMessageResource>(
+                        x.GetService<ChannelConfiguration>(), x.GetService<ILog>(), EmailMonthlyForecastReportMessage.RoutingKey));
         }
     }
 }

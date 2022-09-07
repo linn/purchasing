@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Messaging.Tests.EmailWeeklyForecastReportMessageHandlerTests
+﻿namespace Linn.Purchasing.Messaging.Tests.EmailMonthlyForecastReportMessageHandlerTests
 {
     using System;
     using System.Text;
@@ -24,16 +24,16 @@
 
         protected ILog Log { get; private set; }
 
-        protected Handler<EmailWeeklyForecastReportMessage> Sut { get; private set; }
+        protected Handler<EmailMonthlyForecastReportMessage> Sut { get; private set; }
 
-        protected EmailWeeklyForecastReportMessageResource Resource { get; private set; }
+        protected EmailMonthlyForecastReportMessageResource Resource { get; private set; }
 
-        protected EmailWeeklyForecastReportMessage Message { get; private set; }
+        protected EmailMonthlyForecastReportMessage Message { get; private set; }
 
         [SetUp]
         public void SetUpContext()
         {
-            this.Resource = new EmailWeeklyForecastReportMessageResource
+            this.Resource = new EmailMonthlyForecastReportMessageResource
             {
                                     ForSupplier = 123,
                                     ToAddress = "test@address.com"
@@ -47,11 +47,11 @@
                             RoutingKey = EmailMrOrderBookMessage.RoutingKey,
                             Body = memory
                         };
-            this.Message = new EmailWeeklyForecastReportMessage(e);
+            this.Message = new EmailMonthlyForecastReportMessage(e);
 
             this.Mailer = Substitute.For<ISupplierAutoEmailsMailer>();
             this.Log = Substitute.For<ILog>();
-            this.Sut = new EmailWeeklyForecastReportMessageHandler(this.Log, this.Mailer);
+            this.Sut = new EmailMonthlyForecastReportMessageHandler(this.Log, this.Mailer);
         }
     }
 }

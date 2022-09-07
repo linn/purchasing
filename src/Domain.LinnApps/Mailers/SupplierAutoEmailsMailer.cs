@@ -7,7 +7,7 @@
     using Linn.Common.Configuration;
     using Linn.Common.Email;
     using Linn.Common.Persistence;
-
+    using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Reports;
@@ -68,7 +68,7 @@
                 export);
         }
 
-        public void SendWeeklyForecastEmail(string toAddress, int toSupplier, string timestamp, bool test = false)
+        public void SendMonthlyForecastEmail(string toAddress, int toSupplier, string timestamp, bool test = false)
         {
             var supplier = this.supplierRepository.FindById(toSupplier);
 
@@ -80,7 +80,7 @@
             var vendorManagerAddress = supplier.VendorManager.Employee.PhoneListEntry.EmailAddress;
             var vendorManagerName = supplier.VendorManager.Employee.FullName;
 
-            var export = this.forecastOrdersReportService.GetWeeklyExport(toSupplier);
+            var export = this.forecastOrdersReportService.GetMonthlyExport(toSupplier);
 
             this.emailService.SendEmail(
                 test ? ConfigurationManager.Configuration["ORDER_BOOK_TEST_ADDRESS"] : emailAddress,
@@ -89,11 +89,12 @@
                 null,
                 vendorManagerAddress,
                 vendorManagerName,
-                $"Weekly Forecast - {timestamp}",
-                "Please find weekly order forecast attached",
+                $"Monthly Forecast - {timestamp}",
+                "Please find Monthly order forecast attached",
                 "csv",
                 null,
-                $"{toSupplier}_weekly_forecast_{timestamp}",
+                $"{toSupplier}_monthly_forecast_{timestamp}",
+                null,
                 export);
         }
 
@@ -104,12 +105,10 @@
                 throw new SupplierAutoEmailsException($"No recipient address set for: {supplier.Name}");
             }
 
-            var lastTqmsDate = this.mrMaster.GetRecord().RunDate;
-
-            // notify the vendor managers if tqms jobs failed
-            if (lastTqmsDate != DateTime.Today.Date)
+            // notify the vendor managers if mrp jobs failed
+            if (this.mrMaster.GetRecord().RunDate.Date != DateTime.Today.Date)
             {
-                var msg = "The MR Order book emails could not be sent because the MRP did not run over the weekend.";
+                var msg = "The Supplier Auto emails could not be sent because the MRP did not run over the weekend.";
                 this.emailService.SendEmail(
                     supplier.VendorManager.Employee.PhoneListEntry.EmailAddress,
                     supplier.VendorManager.Employee.FullName,

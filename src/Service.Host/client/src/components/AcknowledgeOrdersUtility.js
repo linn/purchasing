@@ -16,10 +16,13 @@ import {
     SaveBackCancelButtons
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
+import moment from 'moment';
 import Dialog from '@mui/material/Dialog';
 import { makeStyles } from '@mui/styles';
 import Accordion from '@mui/material/Accordion';
 import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import queryString from 'query-string';
 import { useLocation } from 'react-router';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -39,7 +42,7 @@ import PurchaseOrderDeliveriesUtility from './PurchaseOrderDeliveriesUtility';
 function AcknowledgeOrdersUtility() {
     const dispatch = useDispatch();
     const { search } = useLocation();
-    const [lookUpExpanded, setLookUpExpanded] = useState(false);
+    const [lookUpExpanded, setLookUpExpanded] = useState(true);
     const [deliveriesDialogOpen, setDeliveriesDialogOpen] = useState(false);
     const [applyChangesDialogOpen, setApplyChangesDialogOpen] = useState(false);
 
@@ -105,7 +108,7 @@ function AcknowledgeOrdersUtility() {
             width: 100,
             renderCell: params => (
                 <>
-                    {params.row.orderLine}{' '}
+                    {params.row.orderLine}
                     <Button
                         onClick={() => {
                             setDeliveriesToUpdate(
@@ -129,7 +132,6 @@ function AcknowledgeOrdersUtility() {
                 </>
             )
         },
-
         { field: 'deliverySeq', headerName: 'Delivery', width: 100 },
         { field: 'ourUnitPriceCurrency', headerName: 'Unit Price', width: 100 },
         { field: 'partNumber', headerName: 'Part', width: 100 },
@@ -137,8 +139,44 @@ function AcknowledgeOrdersUtility() {
         {
             field: 'dateRequested',
             headerName: 'Request Date',
-            width: 100,
-            renderCell: params => getDateString(params.row.dateRequested)
+            width: 150,
+            renderCell: params => (
+                <>
+                    {getDateString(params.row.dateRequested)}
+                    <IconButton
+                        onClick={() => {
+                            const delivery = rows.find(
+                                d =>
+                                    d.orderNumber === params.row.orderNumber &&
+                                    d.orderLine === params.row.orderLine &&
+                                    d.deliverySeq === params.row.deliverySeq
+                            );
+                            dispatch(
+                                batchPurchaseOrderDeliveriesUpdateActions.requestProcessStart([
+                                    {
+                                        orderNumber: params.row.orderNumber,
+                                        orderLine: params.row.orderLine,
+                                        deliverySequence: delivery.deliverySeq,
+                                        dateAdvised: delivery.dateRequested
+                                            ? moment(delivery.dateRequested).format(
+                                                  'YYYY-MM-DDTHH:mm:ss'
+                                              )
+                                            : null,
+                                        dateRequested: delivery.dateRequested,
+                                        qty: delivery.ourDeliveryQty,
+                                        reason: 'ADVISED',
+                                        comment: delivery.supplierConfirmationComment,
+                                        availableAtSupplier: delivery.availableAtSupplier,
+                                        unitPrice: delivery.orderUnitPriceCurrency
+                                    }
+                                ])
+                            );
+                        }}
+                    >
+                        <ArrowForwardIcon />
+                    </IconButton>
+                </>
+            )
         },
         {
             field: 'dateAdvised',
@@ -236,7 +274,9 @@ function AcknowledgeOrdersUtility() {
                     orderNumber: r.orderNumber,
                     orderLine: r.orderLine,
                     deliverySequence: r.deliverySeq,
-                    dateAdvised: newValues.dateAdvised,
+                    dateAdvised: newValues.dateAdvised
+                        ? moment(newValues.dateAdvised).format('YYYY-MM-DDTHH:mm:ss')
+                        : null,
                     dateRequested: r.dateRequested,
                     qty: r.ourDeliveryQty,
                     reason: newValues.rescheduleReason,
@@ -449,7 +489,12 @@ function AcknowledgeOrdersUtility() {
                                     <Button
                                         variant="outlined"
                                         disabled={!rows.some(r => r.selected)}
-                                        onClick={() => setApplyChangesDialogOpen(true)}
+                                        onClick={() => {
+                                            setNewValues({
+                                                rescheduleReason: 'ADVISED'
+                                            });
+                                            setApplyChangesDialogOpen(true);
+                                        }}
                                     >
                                         Apply Changes To Selected
                                     </Button>
@@ -475,7 +520,7 @@ function AcknowledgeOrdersUtility() {
                         setSnackbarVisible={setUploadSnackbarVisible}
                         message={uploadMessage}
                         initiallyExpanded={false}
-                        helperText="Upload a csv file with the following columns: Order Number, Delivery Number, New Advised Date, Qty, Unit Price and (optionally) New Reason. Date must be in a format matching either 31/01/2022, 31-jan-2022 or 2022-01-31. New Reason must be one of the following: ADVISED, AUTO FAIL, AUTO PASS, BROUGHT IN, DECOMMIT, IGNORE, REQUESTED, RESCHEDULE OUT and will default to ADVISED if no value is supplied."
+                        helperText="Upload a csv file with the following columns: Order Number, New Advised Date, Qty, Unit Price and (optionally) New Reason. Date must be in a format matching either 31/01/2022, 31-jan-2022 or 2022-01-31. New Reason must be one of the following: ADVISED, AUTO FAIL, AUTO PASS, BROUGHT IN, DECOMMIT, IGNORE, REQUESTED, RESCHEDULE OUT and will default to ADVISED if no value is supplied."
                     />
                 </Grid>
             </Grid>

@@ -85,5 +85,7 @@
         public string WasPreferredSupplier { get; set; }
 
         public decimal OverbookQtyAllowed { get; set; }
+
+        public string DrawingRef { get; set; }
     }
 }
