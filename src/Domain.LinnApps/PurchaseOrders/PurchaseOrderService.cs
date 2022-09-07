@@ -173,7 +173,7 @@
 
             order.BaseCurrencyCode = "GBP";
 
-            // todo add deliveries
+            this.purchaseOrderRepository.Add(order);
         }
 
         public ProcessResult SendPdfEmail(string emailAddress, int orderNumber, bool bcc, int currentUserId)

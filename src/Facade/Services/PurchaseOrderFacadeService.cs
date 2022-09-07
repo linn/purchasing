@@ -180,7 +180,6 @@
             var order = this.BuildEntityFromResourceHelper(resource);
 
             this.domainService.CreateOrder(order, privileges);
-            this.purchaseOrderRepository.Add(order);
             this.transactionManager.Commit();
 
             this.domainService.CreateMiniOrder(order);

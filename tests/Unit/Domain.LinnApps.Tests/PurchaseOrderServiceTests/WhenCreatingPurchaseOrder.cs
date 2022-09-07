@@ -9,7 +9,6 @@
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
-    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NSubstitute;
@@ -63,8 +62,7 @@
                                                      DetailTotalCurrency = 120m,
                                                      BaseDetailTotal = 100m,
                                                      DeliveryInstructions = "deliver it",
-                                                     DeliveryConfirmedBy =
-                                                         new Employee { Id = 33107, FullName = "me" },
+                                                     DeliveryConfirmedBy = new Employee { Id = 33107, FullName = "me" },
                                                      InternalComments = "updated internal comment",
                                                      OrderPosting = new PurchaseOrderPosting
                                                                         {
@@ -140,12 +138,13 @@
             firstDetail.OrderConversionFactor.Should().Be(1, "conversion factor set to 1 for everything for now");
 
             firstDetail.OurQty.Should().Be(99m);
-            //updated based on conv factor
+
+            // updated based on conv factor
             firstDetail.OrderQty.Should().Be(99m);
 
             firstDetail.OurUnitPriceCurrency.Should().Be(200.22m);
 
-            //updated based on conv factor
+            // updated based on conv factor
             firstDetail.OrderUnitPriceCurrency.Should().Be(200.22m);
 
             firstDetail.BaseOurUnitPrice.Should().Be(250.28m);
@@ -162,6 +161,12 @@
             firstDetail.BaseDetailTotal.Should().Be(24827.91m);
 
             firstDetail.OrderPosting.NominalAccountId.Should().Be(911);
+        }
+
+        [Test]
+        public void ShouldCallRepositoryAdd()
+        {
+            this.PurchaseOrderRepository.Received().Add(Arg.Any<PurchaseOrder>());
         }
     }
 }
