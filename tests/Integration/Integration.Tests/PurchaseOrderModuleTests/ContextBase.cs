@@ -69,7 +69,6 @@
 
         protected IRepository<Supplier, int> MockSupplierRepository { get; private set; }
 
-
         [SetUp]
         public void EstablishContext()
         {

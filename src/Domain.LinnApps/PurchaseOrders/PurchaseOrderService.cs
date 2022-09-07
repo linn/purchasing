@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
     using System.Linq;
 
     using Linn.Common.Authorisation;
@@ -54,7 +53,6 @@
         private readonly ISingleRecordRepository<PurchaseLedgerMaster> purchaseLedgerMaster;
 
         private readonly IRepository<NominalAccount, int> nominalAccountRepository;
-
 
         public PurchaseOrderService(
             IAuthorisationService authService,
@@ -422,7 +420,6 @@
             miniOrder.Product = detail.OrderPosting.Product;
             miniOrder.Person = detail.OrderPosting.Person;
             miniOrder.StockPoolCode = detail.StockPoolCode;
-            miniOrder.FilCancelledBy = null; //todo probably remove this from mapping
             miniOrder.OurPrice = detail.OurUnitPriceCurrency;
             miniOrder.OrderPrice = detail.OrderUnitPriceCurrency;
             miniOrder.BaseCurrency = order.BaseCurrencyCode;
@@ -436,7 +433,8 @@
             miniOrder.DeliveryConfirmedBy = detail.DeliveryConfirmedById;
             miniOrder.InternalComments = detail.InternalComments;
 
-            // are all of the below fields superfluous? If so will remove
+            // I think drawing ref I think should be added, and maybe manuf part no
+            // but not sure of rest. Todo
             // miniOrder.ManufacturerPartNumber = updatedOrder.;
             // miniOrder.DrawingReference = detail.dr; //dont think needed
             // miniOrder.TotalQtyDelivered = updatedOrder.Details
@@ -448,6 +446,7 @@
             // miniOrder.PpvReason = updatedOrder.;
             // miniOrder.MpvAuthorisedBy = updatedOrder.
             // miniOrder.MpvReason = updatedOrder.
+            // miniOrder.FilCancelledBy = null
             this.miniOrderRepository.Add(miniOrder);
         }
 

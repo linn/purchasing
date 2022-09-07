@@ -180,13 +180,10 @@
             var order = this.BuildEntityFromResourceHelper(resource);
 
             this.domainService.CreateOrder(order, privileges);
-
             this.purchaseOrderRepository.Add(order);
-
             this.transactionManager.Commit();
 
             this.domainService.CreateMiniOrder(order);
-
             this.transactionManager.Commit();
 
             order.Supplier = this.supplierRepository.FindById(order.SupplierId);
@@ -291,11 +288,6 @@
                                                 OrderNumber = x.OrderNumber,
                                                 OurQty = x.OurQty,
                                                 OrderQty = x.OrderQty,
-                                                //Part =
-                                                //    new Part
-                                                //        {
-                                                //            PartNumber = x.PartNumber, Description = x.PartDescription
-                                                //        },
                                                 PartNumber = x.PartNumber,
                                                 PurchaseDeliveries =
                                                     x.PurchaseDeliveries?.Select(
@@ -340,7 +332,8 @@
                                                                      DeliveryTotalCurrency = d.DeliveryTotalCurrency,
                                                                      BaseDeliveryTotal = d.BaseDeliveryTotal,
                                                                      RescheduleReason = d.RescheduleReason,
-                                                                     AvailableAtSupplier = d.AvailableAtSupplier
+                                                                     AvailableAtSupplier = d.AvailableAtSupplier,
+                                                                     PurchaseOrderDetail = new PurchaseOrderDetail { PartNumber = x.PartNumber }
                                                                  }).ToList(),
                                                 RohsCompliant = x.RohsCompliant,
                                                 SuppliersDesignation = x.SuppliersDesignation,
