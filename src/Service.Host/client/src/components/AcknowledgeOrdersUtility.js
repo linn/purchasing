@@ -21,6 +21,8 @@ import Dialog from '@mui/material/Dialog';
 import { makeStyles } from '@mui/styles';
 import Accordion from '@mui/material/Accordion';
 import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import queryString from 'query-string';
 import { useLocation } from 'react-router';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -106,7 +108,7 @@ function AcknowledgeOrdersUtility() {
             width: 100,
             renderCell: params => (
                 <>
-                    {params.row.orderLine}{' '}
+                    {params.row.orderLine}
                     <Button
                         onClick={() => {
                             setDeliveriesToUpdate(
@@ -130,7 +132,6 @@ function AcknowledgeOrdersUtility() {
                 </>
             )
         },
-
         { field: 'deliverySeq', headerName: 'Delivery', width: 100 },
         { field: 'ourUnitPriceCurrency', headerName: 'Unit Price', width: 100 },
         { field: 'partNumber', headerName: 'Part', width: 100 },
@@ -138,8 +139,44 @@ function AcknowledgeOrdersUtility() {
         {
             field: 'dateRequested',
             headerName: 'Request Date',
-            width: 100,
-            renderCell: params => getDateString(params.row.dateRequested)
+            width: 150,
+            renderCell: params => (
+                <>
+                    {getDateString(params.row.dateRequested)}
+                    <IconButton
+                        onClick={() => {
+                            const delivery = rows.find(
+                                d =>
+                                    d.orderNumber === params.row.orderNumber &&
+                                    d.orderLine === params.row.orderLine &&
+                                    d.deliverySeq === params.row.deliverySeq
+                            );
+                            dispatch(
+                                batchPurchaseOrderDeliveriesUpdateActions.requestProcessStart([
+                                    {
+                                        orderNumber: params.row.orderNumber,
+                                        orderLine: params.row.orderLine,
+                                        deliverySequence: delivery.deliverySeq,
+                                        dateAdvised: delivery.dateRequested
+                                            ? moment(delivery.dateRequested).format(
+                                                  'YYYY-MM-DDTHH:mm:ss'
+                                              )
+                                            : null,
+                                        dateRequested: delivery.dateRequested,
+                                        qty: delivery.ourDeliveryQty,
+                                        reason: 'ADVISED',
+                                        comment: delivery.supplierConfirmationComment,
+                                        availableAtSupplier: delivery.availableAtSupplier,
+                                        unitPrice: delivery.orderUnitPriceCurrency
+                                    }
+                                ])
+                            );
+                        }}
+                    >
+                        <ArrowForwardIcon />
+                    </IconButton>
+                </>
+            )
         },
         {
             field: 'dateAdvised',
