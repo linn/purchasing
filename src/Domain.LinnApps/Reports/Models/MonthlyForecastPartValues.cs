@@ -6,12 +6,12 @@
 
         public int MonthEndWeek { get; set; }
 
-        public string Usages { get; set; }
+        public decimal? Usages { get; set; }
 
-        public string ForecastOrders { get; set; }
+        public decimal? ForecastOrders { get; set; }
 
-        public string Stock { get; set; }
+        public decimal? Stock { get; set; }
 
-        public string Orders { get; set; }
+        public decimal? Orders { get; set; }
     }
 }

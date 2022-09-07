@@ -68,97 +68,97 @@
                                   new MonthlyForecastPartValues
                                       {
                                           PartNumber = "BPLINTH/2",
-                                          Usages = "2",
-                                          Stock = "48",
-                                          ForecastOrders = "0",
+                                          Usages = 2,
+                                          Stock = 48,
+                                          ForecastOrders = 0,
                                           Orders = null
                                       },
                                   new MonthlyForecastPartValues
                                       {
                                           PartNumber = "BPLINTH/2",
-                                          Usages = "7",
-                                          Stock = "41",
-                                          ForecastOrders = "0",
+                                          Usages = 7,
+                                          Stock = 41,
+                                          ForecastOrders = 0,
                                           Orders = null
                                       },
                                   new MonthlyForecastPartValues
                                       {
                                           PartNumber = "BPLINTH/2",
-                                          Usages = "13",
-                                          Stock = "68",
-                                          ForecastOrders = "0",
-                                          Orders = "40"
+                                          Usages = 13,
+                                          Stock = 68,
+                                          ForecastOrders = 0,
+                                          Orders = 40
                                       },
                                   new MonthlyForecastPartValues
                                       {
                                           PartNumber = "BPLINTH/2",
-                                          Usages = "16",
-                                          Stock = "52",
-                                          ForecastOrders = "0",
+                                          Usages = 16,
+                                          Stock = 52,
+                                          ForecastOrders = 0,
                                           Orders = null
                                       },
                                   new MonthlyForecastPartValues
                                       {
                                           PartNumber = "BPLINTH/2",
-                                          Usages = "13",
-                                          Stock = "39",
-                                          ForecastOrders = "0",
+                                          Usages = 13,
+                                          Stock = 39,
+                                          ForecastOrders = 0,
                                           Orders = null
                                       },
                                   new MonthlyForecastPartValues
                                       {
                                           PartNumber = "BPLINTH/2",
-                                          Usages = "12",
-                                          Stock = "27",
-                                          ForecastOrders = "0",
+                                          Usages = 12,
+                                          Stock = 27,
+                                          ForecastOrders = 0,
                                           Orders = null
                                       },
                                   new MonthlyForecastPartValues
                                       {
                                           PartNumber = "BPLINTH/2",
-                                          Usages = "14",
-                                          Stock = "13",
-                                          ForecastOrders = "0",
+                                          Usages = 14,
+                                          Stock = 13,
+                                          ForecastOrders = 0,
                                           Orders = null
                                       },
                                   new MonthlyForecastPartValues
                                       {
                                           PartNumber = "BPLINTH/2",
-                                          Usages = "16",
-                                          Stock = "-3",
-                                          ForecastOrders = "40",
+                                          Usages = 16,
+                                          Stock = -3,
+                                          ForecastOrders = 40,
                                           Orders = null
                                       },
                                   new MonthlyForecastPartValues
                                       {
                                           PartNumber = "BPLINTH/2",
-                                          Usages = "13",
-                                          Stock = "-16",
-                                          ForecastOrders = "0",
+                                          Usages = 13,
+                                          Stock = -16,
+                                          ForecastOrders = 0,
                                           Orders = null
                                       },
                                   new MonthlyForecastPartValues
                                       {
                                           PartNumber = "BPLINTH/2",
-                                          Usages = "14",
-                                          Stock = "-30",
-                                          ForecastOrders = "40",
+                                          Usages = 14,
+                                          Stock = -30,
+                                          ForecastOrders = 40,
                                           Orders = null
                                       },
                                   new MonthlyForecastPartValues
                                       {
                                           PartNumber = "BPLINTH/2",
-                                          Usages = "11",
-                                          Stock = "-41",
-                                          ForecastOrders = "0",
+                                          Usages = 11,
+                                          Stock = -41,
+                                          ForecastOrders = 0,
                                           Orders = null
                                       },
                                   new MonthlyForecastPartValues
                                       {
                                           PartNumber = "BPLINTH/2",
-                                          Usages = "9",
-                                          Stock = "-50",
-                                          ForecastOrders = "0",
+                                          Usages = 9,
+                                          Stock = -50,
+                                          ForecastOrders = 0,
                                           Orders = null
                                       },
                               };
