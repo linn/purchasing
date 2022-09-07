@@ -34,8 +34,6 @@
 
         public string BaseCurrencyCode { get; set; }
 
-        //todo make sure this is added in domain from supplier contact when creating
-        //or could show as field on front end and pass back
         public string OrderContactName { get; set; }
 
         public string OrderMethodName { get; set; }
@@ -78,10 +76,14 @@
 
         public Address OrderAddress { get; set; }
 
+        public FullAddress InvoiceAddress { get; set; }
+
         public decimal? DamagesPercent { get; set; }
 
         public decimal OrderNetTotal { get; set; }
-        
+
         public decimal BaseOrderNetTotal { get; set; }
+
+        public int InvoiceAddressId { get; set; }
     }
 }

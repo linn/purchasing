@@ -8,6 +8,7 @@
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -48,6 +49,10 @@
 
         protected IHtmlTemplateService<PurchaseOrder> HtmlTemplateService { get; private set; }
 
+        protected ISingleRecordRepository<PurchaseLedgerMaster> PurchaseLedgerMaster { get; private set; }
+
+        protected IRepository<NominalAccount, int> NominalAccountRepository { get; private set; }
+
         protected ILog Log { get; private set; }
 
         [SetUp]
@@ -67,6 +72,9 @@
             this.PurchaseOrdersPack = Substitute.For<IPurchaseOrdersPack>();
             this.PurchaseOrderRepository = Substitute.For<IRepository<PurchaseOrder, int>>();
             this.HtmlTemplateService = Substitute.For<IHtmlTemplateService<PurchaseOrder>>();
+            this.PurchaseLedgerMaster = Substitute.For<ISingleRecordRepository<PurchaseLedgerMaster>>();
+            this.NominalAccountRepository = Substitute.For<IRepository<NominalAccount, int>>();
+
             this.Log = Substitute.For<ILog>();
 
             this.Sut = new PurchaseOrderService(
@@ -80,10 +88,12 @@
                 this.SupplierRepository,
                 this.LinnDeliveryAddressRepository,
                 this.PurchaseOrdersPack,
-                this.CurrencyPack, 
+                this.CurrencyPack,
                 this.SupplierKitService,
                 this.PurchaseOrderRepository,
                 this.HtmlTemplateService,
+                this.PurchaseLedgerMaster,
+                this.NominalAccountRepository,
                 this.Log);
         }
     }

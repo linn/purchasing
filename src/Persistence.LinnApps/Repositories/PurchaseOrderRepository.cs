@@ -62,5 +62,10 @@
                 .Include(o => o.Details).ThenInclude(d => d.DeliveryConfirmedBy)
                 .First(o => o.OrderNumber == key);
         }
+
+        public override void Add(PurchaseOrder order)
+        {
+            this.serviceDbContext.PurchaseOrders.Add(order);
+        }
     }
 }

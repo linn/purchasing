@@ -55,7 +55,7 @@
                     var row = line.Split(",");
 
                     if (!int.TryParse(
-                            new string(row[0].Trim().Where(char.IsDigit).ToArray()), // strip out non numeric chars 
+                            new string(row[0].Trim().Where(char.IsDigit).ToArray()), // strip out non numeric chars
                             out var orderNumber))
                     {
                         throw new InvalidOperationException($"Invalid Order Number: {row[0]}.");
@@ -180,7 +180,7 @@
                              NewReason = u.Reason,
                              Qty = u.Qty,
                              AvailableAtSupplier = u.AvailableAtSupplier,
-                             Comment = u.Comment, 
+                             Comment = u.Comment,
                              UnitPrice = u.UnitPrice
                          }).ToList();
             var result = this.domainService
@@ -203,7 +203,7 @@
         }
 
         public IResult<IEnumerable<PurchaseOrderDeliveryResource>> UpdateDeliveriesForDetail(
-            int orderNumber, 
+            int orderNumber,
             int orderLine,
             IEnumerable<PurchaseOrderDeliveryResource> resource,
             IEnumerable<string> privileges)
@@ -216,7 +216,7 @@
                         {
                             var dateAdvised = new DateTime();
 
-                            if (!string.IsNullOrEmpty(d.DateAdvised) && (!DateTime.TryParse(d.DateAdvised, out dateAdvised)) 
+                            if (!string.IsNullOrEmpty(d.DateAdvised) && (!DateTime.TryParse(d.DateAdvised, out dateAdvised))
                                 || !DateTime.TryParse(
                                     d.DateRequested,
                                     out var dateRequested))

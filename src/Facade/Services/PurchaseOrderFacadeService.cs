@@ -9,7 +9,6 @@
     using Linn.Common.Facade;
     using Linn.Common.Logging;
     using Linn.Common.Persistence;
-    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -28,6 +27,10 @@
 
         private readonly IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository;
 
+        private readonly IRepository<PurchaseOrder, int> purchaseOrderRepository;
+
+        private readonly IRepository<Supplier, int> supplierRepository;
+
         private readonly IBuilder<PurchaseOrder> resourceBuilder;
 
         private readonly ITransactionManager transactionManager;
@@ -38,6 +41,7 @@
             IBuilder<PurchaseOrder> resourceBuilder,
             IPurchaseOrderService domainService,
             IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository,
+            IRepository<Supplier, int> supplierRepository,
             ILog logger)
             : base(repository, transactionManager, resourceBuilder)
         {
@@ -46,6 +50,8 @@
             this.transactionManager = transactionManager;
             this.logger = logger;
             this.resourceBuilder = resourceBuilder;
+            this.supplierRepository = supplierRepository;
+            this.purchaseOrderRepository = repository;
         }
 
         public IResult<ProcessResultResource> EmailOrderPdf(
@@ -169,14 +175,26 @@
             return this.domainService.GetPurchaseOrderAsHtml(orderNumber);
         }
 
+        public new IResult<PurchaseOrderResource> Add(PurchaseOrderResource resource, IEnumerable<string> privileges = null, int? userNumber = null)
+        {
+            var order = this.BuildEntityFromResourceHelper(resource);
+
+            this.domainService.CreateOrder(order, privileges);
+            this.transactionManager.Commit();
+
+            this.domainService.CreateMiniOrder(order);
+            this.transactionManager.Commit();
+
+            order.Supplier = this.supplierRepository.FindById(order.SupplierId);
+
+            return new CreatedResult<PurchaseOrderResource>((PurchaseOrderResource)this.resourceBuilder.Build(order, privileges.ToList()));
+        }
+
         protected override PurchaseOrder CreateFromResource(
             PurchaseOrderResource resource,
             IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
-
-            // var order = this.BuildEntityFromResourceHelper(resource);
-            // this.domainService.CreateOrder(order, privileges);
         }
 
         protected override void DeleteOrObsoleteResource(PurchaseOrder entity, IEnumerable<string> privileges = null)
@@ -269,11 +287,6 @@
                                                 OrderNumber = x.OrderNumber,
                                                 OurQty = x.OurQty,
                                                 OrderQty = x.OrderQty,
-                                                Part =
-                                                    new Part
-                                                        {
-                                                            PartNumber = x.PartNumber, Description = x.PartDescription
-                                                        },
                                                 PartNumber = x.PartNumber,
                                                 PurchaseDeliveries =
                                                     x.PurchaseDeliveries?.Select(
@@ -318,7 +331,8 @@
                                                                      DeliveryTotalCurrency = d.DeliveryTotalCurrency,
                                                                      BaseDeliveryTotal = d.BaseDeliveryTotal,
                                                                      RescheduleReason = d.RescheduleReason,
-                                                                     AvailableAtSupplier = d.AvailableAtSupplier
+                                                                     AvailableAtSupplier = d.AvailableAtSupplier,
+                                                                     PurchaseOrderDetail = new PurchaseOrderDetail { PartNumber = x.PartNumber }
                                                                  }).ToList(),
                                                 RohsCompliant = x.RohsCompliant,
                                                 SuppliersDesignation = x.SuppliersDesignation,
@@ -368,44 +382,6 @@
                                                                        Building = x.OrderPosting.Building,
                                                                        Id = x.OrderPosting.Id,
                                                                        LineNumber = x.OrderPosting.LineNumber,
-                                                                       NominalAccount =
-                                                                           new NominalAccount
-                                                                               {
-                                                                                   AccountId =
-                                                                                       x.OrderPosting.NominalAccountId,
-                                                                                   DepartmentCode =
-                                                                                       x.OrderPosting.NominalAccount
-                                                                                           .Department.DepartmentCode,
-                                                                                   NominalCode =
-                                                                                       x.OrderPosting.NominalAccount
-                                                                                           .Nominal.NominalCode,
-                                                                                   Nominal = new Nominal
-                                                                                       {
-                                                                                           Description =
-                                                                                               x.OrderPosting
-                                                                                                   .NominalAccount
-                                                                                                   .Nominal
-                                                                                                   .Description,
-                                                                                           NominalCode =
-                                                                                               x.OrderPosting
-                                                                                                   .NominalAccount
-                                                                                                   .Nominal
-                                                                                                   .NominalCode
-                                                                                       },
-                                                                                   Department = new Department
-                                                                                       {
-                                                                                           Description =
-                                                                                               x.OrderPosting
-                                                                                                   .NominalAccount
-                                                                                                   .Department
-                                                                                                   .Description,
-                                                                                           DepartmentCode =
-                                                                                               x.OrderPosting
-                                                                                                   .NominalAccount
-                                                                                                   .Department
-                                                                                                   .DepartmentCode
-                                                                                       }
-                                                                               },
                                                                        NominalAccountId =
                                                                            x.OrderPosting.NominalAccountId,
                                                                        Notes = x.OrderPosting.Notes,
@@ -422,6 +398,8 @@
                            ExchangeRate = resource.ExchangeRate,
                            IssuePartsToSupplier = resource.IssuePartsToSupplier,
                            DeliveryAddressId = resource.DeliveryAddress.AddressId,
+                           OrderAddressId = resource.OrderAddress.AddressId,
+                           InvoiceAddressId = resource.InvoiceAddressId,
                            RequestedById = resource.RequestedBy.Id,
                            EnteredById = resource.EnteredBy.Id,
                            QuotationRef = resource.QuotationRef,

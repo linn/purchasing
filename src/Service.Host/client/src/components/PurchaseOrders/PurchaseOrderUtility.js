@@ -147,6 +147,9 @@ function PurchaseOrderUtility({ creating }) {
         (creating && order.links?.some(l => l.rel === 'create'));
 
     const inputIsInvalid = () => false;
+    // !order.details[0]?.orderPosting?.nominalAccount?.department?.departmentCode ||
+    // !order.details[0]?.orderPosting?.nominalAccount?.department?.nominalCode;
+    // todo add all other required fields above and make nom/dept ones work ^
 
     const canSave = () =>
         editStatus !== 'view' && allowedToUpdate() && !inputIsInvalid() && order !== item;
@@ -1252,11 +1255,15 @@ function PurchaseOrderUtility({ creating }) {
                                 saveDisabled={!canSave()}
                                 // backClick={() => handleBackClick(previousPaths, history.goBack)}
                                 saveClick={() => {
-                                    setEditStatus('view');
                                     clearErrors();
-                                    reduxDispatch(
-                                        purchaseOrderActions.update(order.orderNumber, order)
-                                    );
+                                    setEditStatus('view');
+                                    if (creating) {
+                                        reduxDispatch(purchaseOrderActions.add(order));
+                                    } else {
+                                        reduxDispatch(
+                                            purchaseOrderActions.update(order.orderNumber, order)
+                                        );
+                                    }
                                 }}
                                 cancelClick={() => {
                                     setEditStatus('view');
