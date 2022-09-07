@@ -135,7 +135,7 @@
         public DbSet<MrUsedOnRecord> MrUsedOnView { get; set; }
 
         public DbSet<PartAndAssembly> PartsAndAssemblies { get; set; }
-       
+
         public DbSet<MrHeader> MrHeaders { get; set; }
 
         public DbSet<RescheduleReason> PlRescheduleReasons { get; set; }
@@ -161,7 +161,7 @@
         public DbSet<AutomaticPurchaseOrderSuggestion> AutomaticPurchaseOrderSuggestions { get; set; }
 
         public DbSet<SupplierAutoEmails> SupplierAutoEmails { get; set; }
-        
+
         public DbSet<NominalAccount> NominalAccounts { get; set; }
 
         public DbSet<BomDetail> BomDetails { get; set; }
