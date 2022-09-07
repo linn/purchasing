@@ -39,7 +39,7 @@ const ForecastOrdersReport = () => {
                             label="Enter a Supplier Id or Click the Magnifying glass to search"
                             modal
                             openModalOnClick={false}
-                            handleFieldChange={(_, newValue) => setSupplierId(newValue.id)}
+                            handleFieldChange={(_, newValue) => setSupplierId(newValue)}
                             propertyName="supplierId"
                             items={searchResults}
                             value={supplierId}

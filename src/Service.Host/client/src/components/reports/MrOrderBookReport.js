@@ -49,7 +49,7 @@ function MrOrderBookReport() {
                         modal
                         openModalOnClick={false}
                         handleFieldChange={(_, newValue) =>
-                            setOptions({ ...options, supplierId: newValue.id })
+                            setOptions({ ...options, supplierId: newValue })
                         }
                         propertyName="supplierId"
                         items={suppliersSearchResults}
