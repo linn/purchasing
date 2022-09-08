@@ -57,16 +57,10 @@ function PurchaseOrderUtility({ creating }) {
     const clearErrors = () => reduxDispatch(purchaseOrderActions.clearErrorsForItem());
 
     const { orderNumber } = useParams();
-    const [printHtml, setPrintHtml] = useState(<span>loading</span>);
 
     useEffect(() => {
         if (orderNumber) {
             reduxDispatch(purchaseOrderActions.fetch(orderNumber));
-            fetch(`http://localhost:51699/purchasing/purchase-orders/${orderNumber}/html`)
-                .then(response => response.text())
-                .then(html => {
-                    setPrintHtml(html);
-                });
         } else if (creating) {
             reduxDispatch(purchaseOrderActions.fetchState());
         }
@@ -104,6 +98,19 @@ function PurchaseOrderUtility({ creating }) {
             reduxDispatch(purchaseOrderActions.clearErrorsForItem());
         }
     }, [item, applicationState, creating, reduxDispatch]);
+
+    const [printHtml, setPrintHtml] = useState(<span>loading</span>);
+
+    useEffect(() => {
+        if (item?.orderNumber) {
+            fetch(config.appRoot + utilities.getHref(item, 'html'))
+                .then(response => response.text())
+                .then(html => {
+                    console.log('setting');
+                    setPrintHtml(html);
+                });
+        }
+    }, [item?.orderNumber, item]);
 
     const suppliersSearchResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.suppliers, 100, 'id', 'id', 'name')
@@ -354,16 +361,7 @@ function PurchaseOrderUtility({ creating }) {
         isoString ? new Date(isoString).toLocaleDateString('en-GB') : null;
 
     const print = () => {
-        // fetch(`http://localhost:51699/purchasing/purchase-orders/${orderNumber}/html`)
-        //     .then(response => response.text())
-        //     .then(html => {
-        //         setPrintHtml(html);
-        //         // const printWindow = window.open('', 'printwindow');
-        //         // printWindow.document.write(json);
         window.print();
-        // printWindow.document.close();
-        // printWindow.document.write(oldHtml);
-        // });
     };
 
     return (
@@ -589,16 +587,14 @@ function PurchaseOrderUtility({ creating }) {
                                 />
                             </Grid>
                             <Grid item xs={1}>
-                                <Tooltip title="Print order">
-                                    <IconButton
-                                        className={classes.pullRight}
-                                        aria-label="Print"
-                                        onClick={print}
-                                        disabled={creating}
-                                    >
-                                        <PrintIcon />
-                                    </IconButton>
-                                </Tooltip>
+                                <IconButton
+                                    className={classes.pullRight}
+                                    aria-label="Print"
+                                    onClick={print}
+                                    disabled={creating}
+                                >
+                                    <PrintIcon />
+                                </IconButton>
                             </Grid>
                             <Grid item xs={1}>
                                 {/* <Tooltip title="Email pdf to supplier"> */}

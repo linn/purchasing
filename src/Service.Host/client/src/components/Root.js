@@ -52,7 +52,6 @@ import MrUsedOnReport from './reports/MrUsedOnReport';
 import AcknowledgeOrdersUtility from './AcknowledgeOrdersUtility';
 import MaterialRequirements from './materialRequirements/MaterialRequirementsOptions';
 import MaterialRequirementsReport from './materialRequirements/MaterialRequirementsReport';
-import PurchaseOrderPrintout from './PurchaseOrders/PurchaseOrderPrintout';
 import ShortagesReport from './reports/ShortagesReport';
 import ShortagesReportOptions from './reports/ShortagesReportOptions';
 import ShortagesPlannerReport from './reports/ShortagesPlannerReport';
@@ -261,11 +260,6 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
-                                    path="/purchasing/purchase-orders/:orderNumber/print"
-                                    component={PurchaseOrderPrintout}
-                                />
-                                <Route
-                                    exact
                                     path="/purchasing/purchase-orders/quick-create"
                                     component={CreatePurchaseOrderUt}
                                 />
@@ -279,11 +273,6 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/purchase-orders/:orderNumber"
                                     component={PurchaseOrderUtility}
-                                />
-                                <Route
-                                    exact
-                                    path="/purchasing/purchase-orders/:orderNumber/print"
-                                    component={PurchaseOrderPrintout}
                                 />
                                 <Route
                                     exact
