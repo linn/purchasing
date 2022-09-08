@@ -76,7 +76,7 @@
                         DateTime.TryParseExact(row[1]
                             .Trim(), "dd'/'M'/'yy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate1);
                     var secondFormatSatisfied =
-                        DateTime.TryParseExact(row[1].ToUpper()
+                        DateTime.TryParseExact(row[1]
                             .Trim(), "dd-MMM-yy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate2);
                     var thirdFormatSatisfied =
                         DateTime.TryParseExact(row[1]
