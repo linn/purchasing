@@ -261,6 +261,11 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
+                                    path="/purchasing/purchase-orders/:orderNumber/print"
+                                    component={PurchaseOrderPrintout}
+                                />
+                                <Route
+                                    exact
                                     path="/purchasing/purchase-orders/quick-create"
                                     component={CreatePurchaseOrderUt}
                                 />
