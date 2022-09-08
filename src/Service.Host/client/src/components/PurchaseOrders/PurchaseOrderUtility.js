@@ -106,7 +106,6 @@ function PurchaseOrderUtility({ creating }) {
             fetch(config.appRoot + utilities.getHref(item, 'html'))
                 .then(response => response.text())
                 .then(html => {
-                    console.log('setting');
                     setPrintHtml(html);
                 });
         }
