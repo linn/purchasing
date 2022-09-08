@@ -76,14 +76,17 @@
                         DateTime.TryParseExact(row[1]
                             .Trim(), "dd'/'M'/'yy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate1);
                     var secondFormatSatisfied =
-                        DateTime.TryParseExact(row[1]
-                            .Trim(), "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate2);
+                        DateTime.TryParseExact(row[1].ToUpper()
+                            .Trim(), "dd-MMM-yy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate2);
                     var thirdFormatSatisfied =
                         DateTime.TryParseExact(row[1]
                             .Trim(), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate3);
                     var fourthFormatSatisfied =
                         DateTime.TryParseExact(row[1]
                             .Trim(), "dd'/'M'/'yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate4);
+                    var fifthFormatSatisfied =
+                        DateTime.TryParseExact(row[1].ToUpper()
+                            .Trim(), "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate5);
 
                     // only supports two date formats for now, i.e.  31/01/2000 and 31-jan-2000
                     DateTime? parsedDate;
@@ -103,6 +106,10 @@
                     else if (fourthFormatSatisfied)
                     {
                         parsedDate = parsedDate4;
+                    }
+                    else if (fifthFormatSatisfied)
+                    {
+                        parsedDate = parsedDate5;
                     }
                     else
                     {
