@@ -35,6 +35,8 @@
 
         void UpdateMiniOrderDeliveries(IEnumerable<PurchaseOrderDelivery> updated);
 
+        void ReplaceMiniOrderDeliveries(IEnumerable<PurchaseOrderDelivery> updated);
+
         void UpdateMiniOrderDelivery(
             int orderNumber, 
             int seq, 
