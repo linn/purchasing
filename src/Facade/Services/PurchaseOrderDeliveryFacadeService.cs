@@ -277,7 +277,6 @@
                 var orderGroups = entities.GroupBy(e => e.OrderNumber).ToList();
 
                 orderGroups.ForEach(g => this.domainService.ReplaceMiniOrderDeliveries(g));
-                //this.domainService.UpdateMiniOrderDeliveries(entities);
                 this.transactionManager.Commit();
 
                 return new SuccessResult<IEnumerable<PurchaseOrderDeliveryResource>>(resourceList);
