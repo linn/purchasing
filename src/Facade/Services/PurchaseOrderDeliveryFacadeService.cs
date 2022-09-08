@@ -35,8 +35,8 @@
             string supplierSearchTerm, string orderNumberSearchTerm, bool includeAcknowledged)
         {
             var results = this.domainService.SearchDeliveries(
-                supplierSearchTerm,
-                orderNumberSearchTerm,
+                supplierSearchTerm?.Trim(),
+                orderNumberSearchTerm?.Trim(),
                 includeAcknowledged);
             return new SuccessResult<IEnumerable<PurchaseOrderDeliveryResource>>(
                 results.Select(x => (PurchaseOrderDeliveryResource)this.resourceBuilder.Build(x, null)));
@@ -140,14 +140,10 @@
                 var result = this.domainService.UploadDeliveries(changes, privileges);
                 this.transactionManager.Commit();
                 
-                foreach (var u in result.Updated) 
+                foreach (var updatesForOrder in result.Updated.GroupBy(x => x.OrderNumber).ToList()) 
                 {
-                    this.domainService.UpdateMiniOrderDelivery(
-                            u.OrderNumber, 
-                            u.DeliverySeq, 
-                            u.DateAdvised, 
-                            u.AvailableAtSupplier, 
-                            u.OurDeliveryQty.GetValueOrDefault());
+                    this.domainService.ReplaceMiniOrderDeliveries(
+                         updatesForOrder);
                 }
 
                 this.transactionManager.Commit();
