@@ -359,10 +359,6 @@ function PurchaseOrderUtility({ creating }) {
     const getDateString = isoString =>
         isoString ? new Date(isoString).toLocaleDateString('en-GB') : null;
 
-    const print = () => {
-        window.print();
-    };
-
     return (
         <>
             <div className="hide-when-printing">
@@ -587,9 +583,9 @@ function PurchaseOrderUtility({ creating }) {
                             </Grid>
                             <Grid item xs={1}>
                                 <IconButton
-                                    className={classes.pullRight}
+                                    className={classes.buttonMarginTop}
                                     aria-label="Print"
-                                    onClick={print}
+                                    onClick={() => window.print()}
                                     disabled={creating}
                                 >
                                     <PrintIcon />
