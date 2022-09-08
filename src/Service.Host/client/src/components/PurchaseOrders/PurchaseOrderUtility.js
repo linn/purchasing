@@ -74,11 +74,7 @@ function PurchaseOrderUtility({ creating }) {
         itemSelectorHelpers.getApplicationState(reduxState.purchaseOrder)
     );
 
-    const loading = useSelector(state =>
-        creating
-            ? itemSelectorHelpers.getApplicationStateLoading(state.purchaseOrderApplicationState)
-            : itemSelectorHelpers.getItemLoading(state.purchaseOrder)
-    );
+    const loading = useSelector(state => itemSelectorHelpers.getItemLoading(state.purchaseOrder));
 
     const itemError = useSelector(state => getItemError(state, 'purchaseOrder'));
 
@@ -97,6 +93,7 @@ function PurchaseOrderUtility({ creating }) {
         } else {
             reduxDispatch(purchaseOrderActions.clearErrorsForItem());
         }
+        suppliersSearchLoading;
     }, [item, applicationState, creating, reduxDispatch]);
 
     const [printHtml, setPrintHtml] = useState(<span>loading</span>);

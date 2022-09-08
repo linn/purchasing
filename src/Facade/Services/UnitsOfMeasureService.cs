@@ -9,20 +9,25 @@
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Resources;
 
-    public class UnitsOfMeasureService 
-        : FacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource, UnitOfMeasureResource>
+    public class UnitsOfMeasureService : FacadeResourceService<UnitOfMeasure, string, UnitOfMeasureResource,
+        UnitOfMeasureResource>
     {
         public UnitsOfMeasureService(
-            IRepository<UnitOfMeasure, string> repository, 
-            ITransactionManager transactionManager, 
+            IRepository<UnitOfMeasure, string> repository,
+            ITransactionManager transactionManager,
             IBuilder<UnitOfMeasure> resourceBuilder)
             : base(repository, transactionManager, resourceBuilder)
         {
         }
 
         protected override UnitOfMeasure CreateFromResource(
-            UnitOfMeasureResource resource, 
-            IEnumerable<string> privileges = null)        
+            UnitOfMeasureResource resource,
+            IEnumerable<string> privileges = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void DeleteOrObsoleteResource(UnitOfMeasure entity, IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }
@@ -37,22 +42,15 @@
             throw new NotImplementedException();
         }
 
-        protected override void DeleteOrObsoleteResource(
-            UnitOfMeasure entity, 
-            IEnumerable<string> privileges = null)        
+        protected override Expression<Func<UnitOfMeasure, bool>> SearchExpression(string searchTerm)
         {
             throw new NotImplementedException();
         }
 
         protected override void UpdateFromResource(
-            UnitOfMeasure entity, 
-            UnitOfMeasureResource updateResource, 
-            IEnumerable<string> privileges = null)        
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override Expression<Func<UnitOfMeasure, bool>> SearchExpression(string searchTerm)
+            UnitOfMeasure entity,
+            UnitOfMeasureResource updateResource,
+            IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
         }
