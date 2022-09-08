@@ -148,6 +148,7 @@
             if (model != null)
             {
                 yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
+                yield return new LinkResource { Rel = "html", Href = $"{this.GetLocation(model)}/html" };
 
                 if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
                 {
