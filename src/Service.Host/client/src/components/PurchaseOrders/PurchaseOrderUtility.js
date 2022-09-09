@@ -1218,9 +1218,7 @@ function PurchaseOrderUtility({ creating }) {
                                                 required
                                             />
                                         </Grid>
-                                        <Grid item xs={4}>
-                                            <></>
-                                        </Grid>
+                                        <Grid item xs={4} />
 
                                         <Grid item xs={4}>
                                             <TypeaheadTable
