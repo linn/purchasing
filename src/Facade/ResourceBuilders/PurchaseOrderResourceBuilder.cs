@@ -140,6 +140,11 @@
                                  };
                 yield return new LinkResource
                                  {
+                                     Rel = "quick-create",
+                                     Href = "/purchasing/purchase-orders/quick-create"
+                                 };
+                yield return new LinkResource
+                                 {
                                      Rel = "generate-order-fields",
                                      Href = "/purchasing/purchase-orders/generate-order-from-supplier-id"
                 };
