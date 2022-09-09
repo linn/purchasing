@@ -160,13 +160,27 @@ function PurchaseOrderUtility({ creating }) {
         (!creating && order.links?.some(l => l.rel === 'edit') && order.cancelled !== 'Y') ||
         (creating && order.links?.some(l => l.rel === 'create'));
 
-    const inputIsInvalid = () => false;
-    // !order.details[0]?.orderPosting?.nominalAccount?.department?.departmentCode ||
-    // !order.details[0]?.orderPosting?.nominalAccount?.department?.nominalCode;
-    // todo add all other required fields above and make nom/dept ones work ^
+    const inputIsValid = () =>
+        order.supplier?.id &&
+        order.details.every(d => d.partNumber) &&
+        order.details.every(d => d.ourQty) &&
+        order.details.every(d => d.orderQty) &&
+        order.details.every(d => d.ourUnitPriceCurrency) &&
+        order.details.every(d => d.orderUnitPriceCurrency) &&
+        order.details.every(d => d.ourUnitOfMeasure) &&
+        order.details.every(d => d.orderUnitOfMeasure) &&
+        order.details.every(d => d?.orderPosting?.nominalAccount?.department?.departmentCode) &&
+        order.details.every(d => d?.orderPosting?.nominalAccount?.nominal?.nominalCode) &&
+        order.details.every(d => d.netTotalCurrency) &&
+        order.details.every(d => d.detailTotalCurrency) &&
+        order.details.every(d => d.baseNetTotal) &&
+        order.details.every(d => d.baseDetailTotal) &&
+        order.supplierContactEmail &&
+        order.currency.code &&
+        order.deliveryAddress?.addressId;
 
     const canSave = () =>
-        editStatus !== 'view' && allowedToUpdate() && !inputIsInvalid() && order !== item;
+        editStatus !== 'view' && allowedToUpdate() && inputIsValid() && order !== item;
 
     const handleAuthorise = () => {
         setEditStatus('edit');
@@ -715,6 +729,7 @@ function PurchaseOrderUtility({ creating }) {
                                     propertyName="supplierContactEmail"
                                     onChange={handleFieldChange}
                                     disabled={!creating}
+                                    required
                                 />
                             </Grid>
 
@@ -1203,9 +1218,7 @@ function PurchaseOrderUtility({ creating }) {
                                                 required
                                             />
                                         </Grid>
-                                        <Grid item xs={4}>
-                                            <></>
-                                        </Grid>
+                                        <Grid item xs={4} />
 
                                         <Grid item xs={4}>
                                             <TypeaheadTable
