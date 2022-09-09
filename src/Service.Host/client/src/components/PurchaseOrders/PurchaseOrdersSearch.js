@@ -5,7 +5,9 @@ import {
     collectionSelectorHelpers,
     InputField,
     Page,
-    utilities
+    utilities,
+    CreateButton,
+    itemSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import { makeStyles } from '@mui/styles';
 import Button from '@mui/material/Button';
@@ -48,12 +50,18 @@ function PurchaseOrdersSearch() {
     );
     const [orderNumber, setOrderNumber] = useState('');
     const search = () => history.push(`/purchasing/purchase-orders/${orderNumber}/`);
+    const applicationState = useSelector(reduxState =>
+        itemSelectorHelpers.getApplicationState(reduxState.purchaseOrders)
+    );
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
-                <Grid item xs={11}>
+                <Grid item xs={10}>
                     <Typography variant="h3">Search Purchase Orders</Typography>
+                </Grid>
+                <Grid item xs={2}>
+                    <CreateButton createUrl={utilities.getHref(applicationState, 'quick-create')} />
                 </Grid>
                 <Grid item xs={5}>
                     <InputField

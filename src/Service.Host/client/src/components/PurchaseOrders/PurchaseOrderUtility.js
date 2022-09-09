@@ -93,7 +93,6 @@ function PurchaseOrderUtility({ creating }) {
         } else {
             reduxDispatch(purchaseOrderActions.clearErrorsForItem());
         }
-        suppliersSearchLoading;
     }, [item, applicationState, creating, reduxDispatch]);
 
     const [printHtml, setPrintHtml] = useState(<span>loading</span>);

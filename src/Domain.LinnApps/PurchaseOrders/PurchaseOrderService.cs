@@ -172,6 +172,7 @@
             order.IssuePartsToSupplier = "N";
 
             order.BaseCurrencyCode = "GBP";
+            order.DamagesPercent = 2m;
 
             this.purchaseOrderRepository.Add(order);
         }
