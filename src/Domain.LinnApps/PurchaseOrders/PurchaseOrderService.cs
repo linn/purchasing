@@ -297,6 +297,8 @@
             detail.OrderUnitPriceCurrency = detail.OurUnitPriceCurrency;
             detail.OrderQty = detail.OurQty;
 
+            //detail.OrderPosting.NominalAccountId
+
             return order;
         }
 
