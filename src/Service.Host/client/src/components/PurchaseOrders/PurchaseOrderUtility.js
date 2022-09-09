@@ -658,13 +658,17 @@ function PurchaseOrderUtility({ creating }) {
                                 />
                             </Grid>
                             <Grid item xs={2}>
-                                <InputField
+                                <Dropdown
+                                    fullWidth
                                     value={order.issuePartsToSupplier}
                                     label="Issue Parts to Supplier"
                                     number
                                     propertyName="issuePartsToSupplier"
                                     onChange={handleFieldChange}
-                                    disabled
+                                    disabled={!creating}
+                                    allowNoValue={false}
+                                    items={['Y', 'N']}
+                                    required
                                 />
                             </Grid>
                             <Grid item xs={1}>
@@ -1162,46 +1166,46 @@ function PurchaseOrderUtility({ creating }) {
                                             />
                                         </Grid>
 
-                                    <Grid item xs={4}>
-                                        <Dropdown
-                                            fullWidth
-                                            value={detail.ourUnitOfMeasure}
-                                            label="Our Unit Of Measure"
-                                            propertyName="ourUnitOfMeasure"
-                                            items={unitsOfMeasure.map(x => x.unit)}
-                                            onChange={(propertyName, newValue) =>
-                                                handleDetailFieldChange(
-                                                    propertyName,
-                                                    newValue,
-                                                    detail
-                                                )
-                                            }
-                                            disabled={!creating}
-                                            required
-                                        />
-                                    </Grid>
+                                        <Grid item xs={4}>
+                                            <Dropdown
+                                                fullWidth
+                                                value={detail.ourUnitOfMeasure}
+                                                label="Our Unit Of Measure"
+                                                propertyName="ourUnitOfMeasure"
+                                                items={unitsOfMeasure.map(x => x.unit)}
+                                                onChange={(propertyName, newValue) =>
+                                                    handleDetailFieldChange(
+                                                        propertyName,
+                                                        newValue,
+                                                        detail
+                                                    )
+                                                }
+                                                disabled={!creating}
+                                                required
+                                            />
+                                        </Grid>
 
-                                    <Grid item xs={4}>
-                                        <Dropdown
-                                            fullWidth
-                                            value={detail.orderUnitOfMeasure}
-                                            label="Order Unit Of Measure"
-                                            propertyName="orderUnitOfMeasure"
-                                            items={unitsOfMeasure.map(x => x.unit)}
-                                            onChange={(propertyName, newValue) =>
-                                                handleDetailFieldChange(
-                                                    propertyName,
-                                                    newValue,
-                                                    detail
-                                                )
-                                            }
-                                            disabled={!creating}
-                                            required
-                                        />
-                                    </Grid>
-                                    <Grid item xs={4}>
-                                        <></>
-                                    </Grid>
+                                        <Grid item xs={4}>
+                                            <Dropdown
+                                                fullWidth
+                                                value={detail.orderUnitOfMeasure}
+                                                label="Order Unit Of Measure"
+                                                propertyName="orderUnitOfMeasure"
+                                                items={unitsOfMeasure.map(x => x.unit)}
+                                                onChange={(propertyName, newValue) =>
+                                                    handleDetailFieldChange(
+                                                        propertyName,
+                                                        newValue,
+                                                        detail
+                                                    )
+                                                }
+                                                disabled={!creating}
+                                                required
+                                            />
+                                        </Grid>
+                                        <Grid item xs={4}>
+                                            <></>
+                                        </Grid>
 
                                         <Grid item xs={4}>
                                             <TypeaheadTable
