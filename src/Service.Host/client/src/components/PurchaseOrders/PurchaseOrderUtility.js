@@ -181,7 +181,7 @@ function PurchaseOrderUtility({ creating }) {
         order.details[0].baseDetailTotal &&
         order.supplierContactEmail &&
         order.currency.code &&
-        order.details[0].deliveries.addressId;
+        order.details[0].deliveryAddress?.addressId;
 
     const canSave = () =>
         editStatus !== 'view' && allowedToUpdate() && inputIsValid() && order !== item;
