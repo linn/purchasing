@@ -486,7 +486,7 @@
                                                         OrderDeliveryQty = detail.OrderQty,
                                                         OurUnitPriceCurrency = detail.OurUnitPriceCurrency,
                                                         OrderUnitPriceCurrency = detail.OrderUnitPriceCurrency,
-                                                        DateRequested = null,
+                                                        DateRequested = DateTime.Now,
                                                         DateAdvised = null,
                                                         CallOffDate = DateTime.Now,
                                                         Cancelled = "N",
