@@ -84,6 +84,16 @@
 
         public decimal BaseOrderNetTotal { get; set; }
 
+        public decimal OrderVatTotal { get; set; }
+
         public int InvoiceAddressId { get; set; }
+
+        public string ArchiveOrder { get; set; }
+
+        public decimal OrderTotal { get; set; }
+
+        public decimal BaseOrderVatTotal { get; set; }
+
+        public decimal BaseOrderTotal { get; set; }
     }
 }
