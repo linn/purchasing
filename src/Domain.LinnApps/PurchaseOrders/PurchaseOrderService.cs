@@ -13,6 +13,8 @@
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
+    using Linn.Purchasing.Domain.LinnApps.Keys;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
@@ -54,6 +56,11 @@
 
         private readonly IRepository<NominalAccount, int> nominalAccountRepository;
 
+        private readonly IRepository<Part, string> partRepository;
+
+        private readonly IRepository<PartSupplier, PartSupplierKey> partSupplierRepository;
+
+
         public PurchaseOrderService(
             IAuthorisationService authService,
             IPurchaseLedgerPack purchaseLedgerPack,
@@ -71,7 +78,9 @@
             IHtmlTemplateService<PurchaseOrder> purchaseOrderTemplateService,
             ISingleRecordRepository<PurchaseLedgerMaster> purchaseLedgerMaster,
             IRepository<NominalAccount, int> nominalAccountRepository,
-            ILog log)
+            IRepository<Part, string> partRepository,
+            IRepository<PartSupplier, PartSupplierKey> partSupplierRepository,
+        ILog log)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;
@@ -89,6 +98,8 @@
             this.purchaseOrderTemplateService = purchaseOrderTemplateService;
             this.purchaseLedgerMaster = purchaseLedgerMaster;
             this.nominalAccountRepository = nominalAccountRepository;
+            this.partRepository = partRepository;
+            this.partSupplierRepository = partSupplierRepository;
             this.log = log;
         }
 
@@ -297,8 +308,16 @@
             detail.OrderUnitPriceCurrency = detail.OurUnitPriceCurrency;
             detail.OrderQty = detail.OurQty;
 
-            //detail.OrderPosting.NominalAccountId
+            var part = this.partRepository.FindById(detail.PartNumber);
+            detail.OurUnitOfMeasure = part.OurUnitOfMeasure;
 
+            var partSupplier = this.partSupplierRepository.FindById(new PartSupplierKey { PartNumber = detail.PartNumber, SupplierId = order.SupplierId });
+            detail.OrderUnitOfMeasure = partSupplier.UnitOfMeasure;
+
+            // from MR is always nom Raw Materials 0000007617 Assets 0000002508
+            var nomAcc = this.nominalAccountRepository.FindById(884);
+            detail.OrderPosting.NominalAccount = nomAcc;
+            detail.OrderPosting.NominalAccountId = 884;
             return order;
         }
 
