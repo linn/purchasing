@@ -641,8 +641,13 @@
             entity.Property(o => o.BaseCurrencyCode).HasColumnName("BASE_CURRENCY");
             entity.Property(o => o.OrderNetTotal).HasColumnName("ORDER_NET_TOTAL");
             entity.Property(o => o.BaseOrderNetTotal).HasColumnName("BASE_ORDER_NET_TOTAL");
+            entity.Property(o => o.OrderVatTotal).HasColumnName("ORDER_VAT_TOTAL");
             entity.Property(o => o.InvoiceAddressId).HasColumnName("INVOICE_ADDRESS_ID");
             entity.HasOne(o => o.InvoiceAddress).WithMany().HasForeignKey(o => o.InvoiceAddressId);
+            entity.Property(o => o.ArchiveOrder).HasColumnName("ARCHIVE_ORDER").HasMaxLength(1);
+            entity.Property(o => o.OrderTotal).HasColumnName("ORDER_TOTAL");
+            entity.Property(o => o.BaseOrderTotal).HasColumnName("BASE_ORDER_TOTAL");
+            entity.Property(o => o.BaseOrderVatTotal).HasColumnName("BASE_ORDER_VAT_TOTAL");
         }
 
         private void BuildPurchaseOrderDetails(ModelBuilder builder)

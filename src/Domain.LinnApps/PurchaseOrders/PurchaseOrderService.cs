@@ -154,6 +154,12 @@
 
             var newOrderNumber = this.databaseService.GetNextVal("PL_ORDER_SEQ");
             order.OrderNumber = newOrderNumber;
+            order.OrderNetTotal = 0;
+            order.BaseOrderNetTotal = 0;
+            order.OrderVatTotal = 0;
+            order.BaseOrderVatTotal = 0;
+            order.OrderTotal = 0;
+            order.BaseOrderTotal = 0;
 
             foreach (var detail in order.Details)
             {
@@ -162,17 +168,24 @@
                 this.PerformDetailCalculations(detail, detail, order.ExchangeRate.GetValueOrDefault(1), order.SupplierId, creating: true);
 
                 this.AddDeliveryToDetail(order, detail);
+
+                order.OrderNetTotal += detail.NetTotalCurrency;
+                order.BaseOrderNetTotal += detail.BaseNetTotal;
+                order.OrderVatTotal += detail.VatTotalCurrency.GetValueOrDefault(0m);
+                order.BaseOrderVatTotal += detail.BaseVatTotal.GetValueOrDefault(0m);
+                order.OrderTotal += detail.DetailTotalCurrency.GetValueOrDefault(0m);
+                order.BaseOrderTotal += detail.BaseDetailTotal.GetValueOrDefault(0m);
             }
 
             order.Cancelled = "N";
             order.FilCancelled = "N";
+            order.ArchiveOrder = "N";
+            order.BaseCurrencyCode = "GBP";
+            order.DamagesPercent = 2m;
 
             // todo make required yes/no dropdown forced to answer on create, check if any logic around this on citrix
             // also check if should be copied down to the details or if ok on top level order?
             order.IssuePartsToSupplier = "N";
-
-            order.BaseCurrencyCode = "GBP";
-            order.DamagesPercent = 2m;
 
             this.purchaseOrderRepository.Add(order);
         }
