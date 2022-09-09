@@ -164,13 +164,27 @@ function PurchaseOrderUtility({ creating }) {
         (!creating && order.links?.some(l => l.rel === 'edit') && order.cancelled !== 'Y') ||
         (creating && order.links?.some(l => l.rel === 'create'));
 
-    const inputIsInvalid = () => false;
-    // !order.details[0]?.orderPosting?.nominalAccount?.department?.departmentCode ||
-    // !order.details[0]?.orderPosting?.nominalAccount?.department?.nominalCode;
-    // todo add all other required fields above and make nom/dept ones work ^
+    const inputIsValid = () =>
+        order.supplier?.id &&
+        order.details[0].partNumber &&
+        order.details[0].ourQty &&
+        order.details[0].orderQty &&
+        order.details[0].ourUnitPriceCurrency &&
+        order.details[0].orderUnitPriceCurrency &&
+        order.details[0].ourUnitOfMeasure &&
+        order.details[0].orderUnitOfMeasure &&
+        order.details[0]?.orderPosting?.nominalAccount?.department?.departmentCode &&
+        order.details[0]?.orderPosting?.nominalAccount?.nominal?.nominalCode &&
+        order.details[0].netTotalCurrency &&
+        order.details[0].detailTotalCurrency &&
+        order.details[0].baseNetTotal &&
+        order.details[0].baseDetailTotal &&
+        order.supplierContactEmail &&
+        order.currency.code &&
+        order.details[0].deliveries.addressId;
 
     const canSave = () =>
-        editStatus !== 'view' && allowedToUpdate() && !inputIsInvalid() && order !== item;
+        editStatus !== 'view' && allowedToUpdate() && inputIsValid() && order !== item;
 
     const handleAuthorise = () => {
         setEditStatus('edit');
@@ -715,6 +729,7 @@ function PurchaseOrderUtility({ creating }) {
                                     propertyName="supplierContactEmail"
                                     onChange={handleFieldChange}
                                     disabled={!creating}
+                                    required
                                 />
                             </Grid>
 
@@ -1166,46 +1181,46 @@ function PurchaseOrderUtility({ creating }) {
                                             />
                                         </Grid>
 
-                                    <Grid item xs={4}>
-                                        <Dropdown
-                                            fullWidth
-                                            value={detail.ourUnitOfMeasure}
-                                            label="Our Unit Of Measure"
-                                            propertyName="ourUnitOfMeasure"
-                                            items={unitsOfMeasure.map(x => x.unit)}
-                                            onChange={(propertyName, newValue) =>
-                                                handleDetailFieldChange(
-                                                    propertyName,
-                                                    newValue,
-                                                    detail
-                                                )
-                                            }
-                                            disabled={!creating}
-                                            required
-                                        />
-                                    </Grid>
+                                        <Grid item xs={4}>
+                                            <Dropdown
+                                                fullWidth
+                                                value={detail.ourUnitOfMeasure}
+                                                label="Our Unit Of Measure"
+                                                propertyName="ourUnitOfMeasure"
+                                                items={unitsOfMeasure.map(x => x.unit)}
+                                                onChange={(propertyName, newValue) =>
+                                                    handleDetailFieldChange(
+                                                        propertyName,
+                                                        newValue,
+                                                        detail
+                                                    )
+                                                }
+                                                disabled={!creating}
+                                                required
+                                            />
+                                        </Grid>
 
-                                    <Grid item xs={4}>
-                                        <Dropdown
-                                            fullWidth
-                                            value={detail.orderUnitOfMeasure}
-                                            label="Order Unit Of Measure"
-                                            propertyName="orderUnitOfMeasure"
-                                            items={unitsOfMeasure.map(x => x.unit)}
-                                            onChange={(propertyName, newValue) =>
-                                                handleDetailFieldChange(
-                                                    propertyName,
-                                                    newValue,
-                                                    detail
-                                                )
-                                            }
-                                            disabled={!creating}
-                                            required
-                                        />
-                                    </Grid>
-                                    <Grid item xs={4}>
-                                        <></>
-                                    </Grid>
+                                        <Grid item xs={4}>
+                                            <Dropdown
+                                                fullWidth
+                                                value={detail.orderUnitOfMeasure}
+                                                label="Order Unit Of Measure"
+                                                propertyName="orderUnitOfMeasure"
+                                                items={unitsOfMeasure.map(x => x.unit)}
+                                                onChange={(propertyName, newValue) =>
+                                                    handleDetailFieldChange(
+                                                        propertyName,
+                                                        newValue,
+                                                        detail
+                                                    )
+                                                }
+                                                disabled={!creating}
+                                                required
+                                            />
+                                        </Grid>
+                                        <Grid item xs={4}>
+                                            <></>
+                                        </Grid>
 
                                         <Grid item xs={4}>
                                             <TypeaheadTable
