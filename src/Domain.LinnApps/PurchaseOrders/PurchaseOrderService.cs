@@ -56,7 +56,7 @@
 
         private readonly IRepository<NominalAccount, int> nominalAccountRepository;
 
-        private readonly IRepository<Part, string> partRepository;
+        private readonly IRepository<Part, int> partRepository;
 
         private readonly IRepository<PartSupplier, PartSupplierKey> partSupplierRepository;
 
@@ -78,7 +78,7 @@
             IHtmlTemplateService<PurchaseOrder> purchaseOrderTemplateService,
             ISingleRecordRepository<PurchaseLedgerMaster> purchaseLedgerMaster,
             IRepository<NominalAccount, int> nominalAccountRepository,
-            IRepository<Part, string> partRepository,
+            IRepository<Part, int> partRepository,
             IRepository<PartSupplier, PartSupplierKey> partSupplierRepository,
         ILog log)
         {
@@ -308,7 +308,7 @@
             detail.OrderUnitPriceCurrency = detail.OurUnitPriceCurrency;
             detail.OrderQty = detail.OurQty;
 
-            var part = this.partRepository.FindById(detail.PartNumber);
+            var part = this.partRepository.FindBy(p => p.PartNumber == detail.PartNumber);
             detail.OurUnitOfMeasure = part.OurUnitOfMeasure;
 
             var partSupplier = this.partSupplierRepository.FindById(new PartSupplierKey { PartNumber = detail.PartNumber, SupplierId = order.SupplierId });
