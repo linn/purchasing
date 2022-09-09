@@ -224,9 +224,6 @@ function CreatePurchaseOrderUt() {
     const detail = order ? order.details[0] : {};
 
     const progressToFullCreate = () => {
-        //post to get supplier info fill out address etc, then reduxDispatch the action
-        // reduxDispatch(purchaseOrderActions. thingy ());
-
         reduxDispatch(
             purchaseOrderActions.postByHref(
                 utilities.getHref(order, 'generate-order-fields'),
@@ -259,7 +256,7 @@ function CreatePurchaseOrderUt() {
                             </Grid>
                         )}
                         <Grid item xs={12}>
-                            <Typography variant="h6">Purchase Order Quick Create Ut </Typography>
+                            <Typography variant="h6">Create Purchase Order Wizard</Typography>
                         </Grid>
                         <Grid item xs={11}>
                             <Typeahead
