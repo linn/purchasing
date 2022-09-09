@@ -56,7 +56,7 @@
 
         private readonly IRepository<NominalAccount, int> nominalAccountRepository;
 
-        private readonly IRepository<Part, int> partRepository;
+        private readonly IQueryRepository<Part> partQueryRepository;
 
         private readonly IRepository<PartSupplier, PartSupplierKey> partSupplierRepository;
 
@@ -78,7 +78,7 @@
             IHtmlTemplateService<PurchaseOrder> purchaseOrderTemplateService,
             ISingleRecordRepository<PurchaseLedgerMaster> purchaseLedgerMaster,
             IRepository<NominalAccount, int> nominalAccountRepository,
-            IRepository<Part, int> partRepository,
+            IQueryRepository<Part> partQueryRepository,
             IRepository<PartSupplier, PartSupplierKey> partSupplierRepository,
         ILog log)
         {
@@ -98,7 +98,7 @@
             this.purchaseOrderTemplateService = purchaseOrderTemplateService;
             this.purchaseLedgerMaster = purchaseLedgerMaster;
             this.nominalAccountRepository = nominalAccountRepository;
-            this.partRepository = partRepository;
+            this.partQueryRepository = partQueryRepository;
             this.partSupplierRepository = partSupplierRepository;
             this.log = log;
         }
@@ -308,14 +308,16 @@
             detail.OrderUnitPriceCurrency = detail.OurUnitPriceCurrency;
             detail.OrderQty = detail.OurQty;
 
-            var part = this.partRepository.FindBy(p => p.PartNumber == detail.PartNumber);
+            var part = this.partQueryRepository.FindBy(p => p.PartNumber == detail.PartNumber);
             detail.OurUnitOfMeasure = part.OurUnitOfMeasure;
 
             var partSupplier = this.partSupplierRepository.FindById(new PartSupplierKey { PartNumber = detail.PartNumber, SupplierId = order.SupplierId });
-            detail.OrderUnitOfMeasure = partSupplier.UnitOfMeasure;
+            detail.OrderUnitOfMeasure = partSupplier != null ? partSupplier.UnitOfMeasure : string.Empty;
 
             // from MR is always nom Raw Materials 0000007617 Assets 0000002508
             var nomAcc = this.nominalAccountRepository.FindById(884);
+
+            detail.OrderPosting = new PurchaseOrderPosting();
             detail.OrderPosting.NominalAccount = nomAcc;
             detail.OrderPosting.NominalAccountId = 884;
             return order;
