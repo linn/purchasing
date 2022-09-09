@@ -37,7 +37,7 @@ import moment from 'moment';
 import { mrReport as mrReportItem, mrReportOrders as mrReportOrdersItem } from '../../itemTypes';
 import mrReportActions from '../../actions/mrReportActions';
 import mrReportOrdersActions from '../../actions/mrReportOrdersActions';
-
+import purchaseOrderActions from '../../actions/purchaseOrderActions';
 import history from '../../history';
 import config from '../../config';
 
@@ -603,6 +603,36 @@ function MaterialRequirementsReport() {
         </>
     );
 
+    const progressToOrderScreen = () => {
+        //needs the links to come back with something into state
+        //don't understand this enough at half 4 on a friday to figure out
+        //which resource builder they should be in apologies
+
+        //I think it needs an object along these lines if you can build it from state?
+        const orderToPostBack = {
+            dateRequired: new Date(),
+            supplier: { id: supplierId },
+            details: [
+                {
+                    line: 1,
+                    partNumber,
+                    ourQty: qty,
+                    ourUnitPriceCurrency: price,
+                }
+            ]
+        };
+
+        dispatch(
+            purchaseOrderActions.postByHref(
+                utilities.getHref(order, 'generate-order-fields'), // /purchasing/purchase-orders/generate-order-from-supplier-id
+                orderToPostBack
+            )
+        );
+
+        history.push(utilities.getHref(order, 'create'));
+        // 'purchasing/purchase-orders/create'
+    };
+
     return (
         <div className="print-landscape" onKeyDown={onKeyPressed} tabIndex={-1} role="textbox">
             <Page history={history} width="xl" homeUrl={config.appRoot}>
@@ -677,6 +707,7 @@ function MaterialRequirementsReport() {
                                                     size="small"
                                                     endIcon={<ShopIcon />}
                                                     disabled
+                                                    onClick={progressToOrderScreen}
                                                 >
                                                     Order
                                                 </Button>
