@@ -27,8 +27,6 @@
 
         private readonly IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository;
 
-        private readonly IRepository<PurchaseOrder, int> purchaseOrderRepository;
-
         private readonly IRepository<Supplier, int> supplierRepository;
 
         private readonly IBuilder<PurchaseOrder> resourceBuilder;
@@ -51,7 +49,6 @@
             this.logger = logger;
             this.resourceBuilder = resourceBuilder;
             this.supplierRepository = supplierRepository;
-            this.purchaseOrderRepository = repository;
         }
 
         public IResult<ProcessResultResource> EmailOrderPdf(
