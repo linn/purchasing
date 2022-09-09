@@ -45,6 +45,7 @@ import history from '../../history';
 import config from '../../config';
 import purchaseOrderActions from '../../actions/purchaseOrderActions';
 import reducer from './purchaseOrderReducer';
+import unitsOfMeasureActions from '../../actions/unitsOfMeasureActions';
 import sendPurchaseOrderPdfEmailActionTypes from '../../actions/sendPurchaseOrderPdfEmailActions';
 import sendPurchaseOrderSupplierAssActionTypes from '../../actions/sendPurchaseOrderSupplierAssEmailActions';
 import { sendPurchaseOrderPdfEmail, exchangeRates } from '../../itemTypes';
@@ -68,6 +69,7 @@ function PurchaseOrderUtility({ creating }) {
 
     useEffect(() => reduxDispatch(currenciesActions.fetch()), [reduxDispatch]);
     useEffect(() => reduxDispatch(employeesActions.fetch()), [reduxDispatch]);
+    useEffect(() => reduxDispatch(unitsOfMeasureActions.fetch()), [reduxDispatch]);
 
     const item = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.purchaseOrder));
     const applicationState = useSelector(reduxState =>
@@ -117,6 +119,9 @@ function PurchaseOrderUtility({ creating }) {
 
     const currencies = useSelector(state => collectionSelectorHelpers.getItems(state.currencies));
     const employees = useSelector(state => collectionSelectorHelpers.getItems(state.employees));
+    const unitsOfMeasure = useSelector(reduxState =>
+        collectionSelectorHelpers.getItems(reduxState.unitsOfMeasure)
+    );
 
     const nominalsSearchItems = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.nominals)
@@ -1157,33 +1162,46 @@ function PurchaseOrderUtility({ creating }) {
                                             />
                                         </Grid>
 
-                                        <Grid item xs={4}>
-                                            <InputField
-                                                fullWidth
-                                                value={detail.ourUnitOfMeasure}
-                                                label="Our Unit Of Measure"
-                                                propertyName="ourUnitOfMeasure"
-                                                onChange={handleDetailFieldChange}
-                                                disabled={!creating}
-                                                type="number"
-                                                required
-                                            />
-                                        </Grid>
-                                        <Grid item xs={4}>
-                                            <InputField
-                                                fullWidth
-                                                value={detail.orderUnitOfMeasure}
-                                                label="Order Unit Of Measure"
-                                                propertyName="orderUnitOfMeasure"
-                                                onChange={handleDetailFieldChange}
-                                                disabled={!creating}
-                                                type="number"
-                                                required
-                                            />
-                                        </Grid>
-                                        <Grid item xs={4}>
-                                            <></>
-                                        </Grid>
+                                    <Grid item xs={4}>
+                                        <Dropdown
+                                            fullWidth
+                                            value={detail.ourUnitOfMeasure}
+                                            label="Our Unit Of Measure"
+                                            propertyName="ourUnitOfMeasure"
+                                            items={unitsOfMeasure.map(x => x.unit)}
+                                            onChange={(propertyName, newValue) =>
+                                                handleDetailFieldChange(
+                                                    propertyName,
+                                                    newValue,
+                                                    detail
+                                                )
+                                            }
+                                            disabled={!creating}
+                                            required
+                                        />
+                                    </Grid>
+
+                                    <Grid item xs={4}>
+                                        <Dropdown
+                                            fullWidth
+                                            value={detail.orderUnitOfMeasure}
+                                            label="Order Unit Of Measure"
+                                            propertyName="orderUnitOfMeasure"
+                                            items={unitsOfMeasure.map(x => x.unit)}
+                                            onChange={(propertyName, newValue) =>
+                                                handleDetailFieldChange(
+                                                    propertyName,
+                                                    newValue,
+                                                    detail
+                                                )
+                                            }
+                                            disabled={!creating}
+                                            required
+                                        />
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <></>
+                                    </Grid>
 
                                         <Grid item xs={4}>
                                             <TypeaheadTable
