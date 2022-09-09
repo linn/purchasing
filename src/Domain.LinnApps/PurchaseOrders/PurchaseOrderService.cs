@@ -279,6 +279,10 @@
 
             order.ExchangeRate = this.currencyPack.GetExchangeRate("GBP", order.CurrencyCode);
 
+            var detail = order.Details.First();
+            detail.OrderUnitPriceCurrency = detail.OurUnitPriceCurrency;
+            detail.OrderQty = detail.OurQty;
+
             return order;
         }
 

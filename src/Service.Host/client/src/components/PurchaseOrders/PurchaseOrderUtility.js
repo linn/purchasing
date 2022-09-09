@@ -166,19 +166,19 @@ function PurchaseOrderUtility({ creating }) {
 
     const inputIsValid = () =>
         order.supplier?.id &&
-        order.details[0].partNumber &&
-        order.details[0].ourQty &&
-        order.details[0].orderQty &&
-        order.details[0].ourUnitPriceCurrency &&
-        order.details[0].orderUnitPriceCurrency &&
-        order.details[0].ourUnitOfMeasure &&
-        order.details[0].orderUnitOfMeasure &&
-        order.details[0]?.orderPosting?.nominalAccount?.department?.departmentCode &&
-        order.details[0]?.orderPosting?.nominalAccount?.nominal?.nominalCode &&
-        order.details[0].netTotalCurrency &&
-        order.details[0].detailTotalCurrency &&
-        order.details[0].baseNetTotal &&
-        order.details[0].baseDetailTotal &&
+        order.details.every(d => d.partNumber) &&
+        order.details.every(d => d.ourQty) &&
+        order.details.every(d => d.orderQty) &&
+        order.details.every(d => d.ourUnitPriceCurrency) &&
+        order.details.every(d => d.orderUnitPriceCurrency) &&
+        order.details.every(d => d.ourUnitOfMeasure) &&
+        order.details.every(d => d.orderUnitOfMeasure) &&
+        order.details.every(d => d?.orderPosting?.nominalAccount?.department?.departmentCode) &&
+        order.details.every(d => d?.orderPosting?.nominalAccount?.nominal?.nominalCode) &&
+        order.details.every(d => d.netTotalCurrency) &&
+        order.details.every(d => d.detailTotalCurrency) &&
+        order.details.every(d => d.baseNetTotal) &&
+        order.details.every(d => d.baseDetailTotal) &&
         order.supplierContactEmail &&
         order.currency.code &&
         order.deliveryAddress?.addressId;
