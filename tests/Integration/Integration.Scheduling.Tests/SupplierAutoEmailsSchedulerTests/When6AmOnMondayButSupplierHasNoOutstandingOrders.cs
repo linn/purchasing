@@ -11,37 +11,26 @@
 
     using NUnit.Framework;
 
-    public class WhenNot6AmOnMonday : ContextBase
+    public class When6AmOnMondayButSupplierHasNoOutstandingOrders : ContextBase
     {
         [OneTimeSetUp]
         public async Task SetUp()
         {
-            this.EmailMonthlyForecastMessageDispatcher.ClearReceivedCalls();
-            this.EmailOrderBookMessageDispatcher.ClearReceivedCalls();
-        
             this.Sut = new SupplierAutoEmailsScheduler(
                 this.EmailOrderBookMessageDispatcher,
                 this.EmailMonthlyForecastMessageDispatcher,
-                () => new DateTime(2022, 9, 5, 7, 0, 0),
+                () => new DateTime(2022, 9, 5, 6, 0, 0),
                 this.Log,
                 this.ServiceProvider);
             await this.Sut.StartAsync(CancellationToken.None);
-            await Task.Delay(TimeSpan.FromSeconds(1));
+            await Task.Delay(TimeSpan.FromMilliseconds(100));
             await this.Sut.StopAsync(CancellationToken.None);
         }
-        
+
         [Test]
-        public void ShouldNotDispatchOrderBookMessages()
+        public void ShouldNotDispatchMessages()
         {
-            this.EmailOrderBookMessageDispatcher
-                .DidNotReceive().Dispatch(Arg.Any<EmailOrderBookMessageResource>());
-        }
-        
-        [Test]
-        public void ShouldNotDispatchForecastMessages()
-        {
-            this.EmailMonthlyForecastMessageDispatcher
-                .DidNotReceive().Dispatch(Arg.Any<EmailMonthlyForecastReportMessageResource>());
+            this.EmailOrderBookMessageDispatcher.DidNotReceive().Dispatch(Arg.Any<EmailOrderBookMessageResource>());
         }
     }
 }
