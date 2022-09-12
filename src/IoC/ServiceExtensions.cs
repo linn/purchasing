@@ -17,6 +17,7 @@
     using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Forecasting;
@@ -83,7 +84,8 @@
                 .AddTransient<IBuilder<EdiSupplier>, EdiSupplierResourceBuilder>()
                 .AddTransient<IBuilder<AutomaticPurchaseOrder>, AutomaticPurchaseOrderResourceBuilder>()
                 .AddTransient<IBuilder<AutomaticPurchaseOrderSuggestion>, AutomaticPurchaseOrderSuggestionResourceBuilder>()
-                .AddTransient<IBuilder<LedgerPeriod>, LedgerPeriodResourceBuilder>();
+                .AddTransient<IBuilder<LedgerPeriod>, LedgerPeriodResourceBuilder>()
+                .AddTransient<IBuilder<ChangeRequest>, ChangeRequestResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -146,7 +148,8 @@
                 .AddTransient<ILeadTimesReportFacadeService, LeadTimesReportFacadeService>()
                 .AddTransient<IForecastingReportsFacadeService, ForecastingReportsFacadeService>()
                 .AddTransient<IFacadeResourceService<LedgerPeriod, int, LedgerPeriodResource, LedgerPeriodResource>, LedgerPeriodFacadeService>()
-                .AddTransient<IForecastWeekChangesFacadeService, ForecastWeekChangesFacadeService>();
+                .AddTransient<IForecastWeekChangesFacadeService, ForecastWeekChangesFacadeService>()
+                .AddTransient<IFacadeResourceService<ChangeRequest, int, ChangeRequestResource, ChangeRequestResource>, ChangeRequestFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)

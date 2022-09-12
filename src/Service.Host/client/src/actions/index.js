@@ -302,3 +302,8 @@ export const emailMultiplePurchaseOrdersActionTypes = makeProcessActionTypes(
 export const forecastWeekChangesReportActionTypes = makeReportActionTypes(
     reportTypes.forecastWeekChangesReport.actionType
 );
+
+export const changeRequestsActionTypes = makeActionTypes(
+    itemTypes.changeRequests.actionType,
+    false
+);

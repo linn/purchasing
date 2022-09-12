@@ -68,6 +68,8 @@ import DeliveryPerformanceSupplierReport from './reports/DeliveryPerformanceSupp
 import DeliveryPerformanceDetailReport from './reports/DeliveryPerformanceDetailReport';
 import CreatePurchaseOrderUt from './PurchaseOrders/CreatePurchaseOrderUt';
 import PurchaseOrdersAuthSend from './PurchaseOrders/PurchaseOrdersAuthSend';
+import ChangeRequestSearch from './ChangeRequests/ChangeRequestsSearch';
+import ChangeRequest from './ChangeRequests/ChangeRequest';
 
 const Root = ({ store }) => (
     <div>
@@ -405,6 +407,16 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/reports/delivery-performance-details/report"
                                     component={DeliveryPerformanceDetailReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/change-requests"
+                                    component={ChangeRequestSearch}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/automatic-purchase-orders/:id"
+                                    component={ChangeRequest}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>
