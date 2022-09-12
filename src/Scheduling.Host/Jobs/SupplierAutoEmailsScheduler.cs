@@ -89,7 +89,7 @@
                                               ForSupplier = s.SupplierId,
                                               Timestamp = this.currentTime().Date,
                                               ToAddress = s.EmailAddress, 
-                                              Test = false
+                                              Test = true
                                           });
                     }
                 };
@@ -117,7 +117,7 @@
                             ForSupplier = s.SupplierId,
                             Timestamp = this.currentTime().Date,
                             ToAddress = s.EmailAddress,
-                            Test = false
+                            Test = true
                             });
                 }
             };
