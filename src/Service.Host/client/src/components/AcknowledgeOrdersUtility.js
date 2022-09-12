@@ -7,7 +7,7 @@ import {
     Page,
     collectionSelectorHelpers,
     CheckboxWithLabel,
-    //DatePicker,
+    DatePicker,
     Dropdown,
     processSelectorHelpers,
     FileUploader,
@@ -37,7 +37,6 @@ import config from '../config';
 import batchPurchaseOrderDeliveriesUploadActions from '../actions/batchPurchaseOrderDeliveriesUploadActions';
 import batchPurchaseOrderDeliveriesUpdateActions from '../actions/batchPurchaseOrderDeliveriesUpdateActions';
 import PurchaseOrderDeliveriesUtility from './PurchaseOrderDeliveriesUtility';
-import DatePicker from './DatePicker';
 
 function AcknowledgeOrdersUtility() {
     const dispatch = useDispatch();
