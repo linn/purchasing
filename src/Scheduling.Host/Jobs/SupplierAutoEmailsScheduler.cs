@@ -3,9 +3,11 @@
     using Linn.Common.Logging;
     using Linn.Common.Messaging.RabbitMQ.Dispatchers;
     using Linn.Common.Persistence;
+    using Linn.Common.Scheduling;
+    using Linn.Common.Scheduling.Triggers;
+    using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources.Messages;
-    using Linn.Purchasing.Scheduling.Host.Triggers;
 
     public class SupplierAutoEmailsScheduler : BackgroundService
     {
@@ -49,18 +51,30 @@
 
                     IRepository<SupplierAutoEmails, int> repository =
                         scope.ServiceProvider.GetRequiredService<IRepository<SupplierAutoEmails, int>>();
+                    IQueryRepository<MrPurchaseOrderDetail> outstandingPosRepository =
+                        scope.ServiceProvider.GetRequiredService<IQueryRepository<MrPurchaseOrderDetail>>();
+                    ISingleRecordRepository<MrMaster> mrMaster =
+                        scope.ServiceProvider.GetRequiredService<ISingleRecordRepository<MrMaster>>();
 
                     // dispatch a message for all the suppliers to receive an order book
                     foreach (var s in repository.FindAll().Where(x => x.OrderBook.Equals("Y")))
                     {
-                        this.emailOrderBookMessageDispatcher.Dispatch(
-                            new EmailOrderBookMessageResource
-                                {
-                                    ForSupplier = s.SupplierId,
-                                    Timestamp = this.currentTime(),
-                                    ToAddress = s.EmailAddress,
-                                    Test = true // todo - set false to send for real!
-                                });
+                        if (outstandingPosRepository.FilterBy(o => 
+                                o.JobRef == mrMaster.GetRecord().JobRef
+                                && o.SupplierId == s.SupplierId
+                                && o.PartSupplierRecord != null
+                                && !o.DateCancelled.HasValue
+                                && o.OurQuantity > o.QuantityReceived
+                                && !string.IsNullOrEmpty(o.AuthorisedBy)).Any())
+                        {
+                            this.emailOrderBookMessageDispatcher.Dispatch(
+                                new EmailOrderBookMessageResource
+                                    {
+                                        ForSupplier = s.SupplierId,
+                                        Timestamp = this.currentTime(),
+                                        ToAddress = s.EmailAddress
+                                    });
+                        }
                     }
 
                     // dispatch a message for all the suppliers to receive a Monthly forecast
@@ -73,9 +87,9 @@
                             .Dispatch(new EmailMonthlyForecastReportMessageResource
                                           {
                                               ForSupplier = s.SupplierId,
-                                              Timestamp = this.currentTime(),
+                                              Timestamp = this.currentTime().Date,
                                               ToAddress = s.EmailAddress, 
-                                              Test = true // todo - set false to send for real!
+                                              Test = true
                                           });
                     }
                 };
@@ -101,9 +115,9 @@
                         .Dispatch(new EmailMonthlyForecastReportMessageResource
                         {
                             ForSupplier = s.SupplierId,
-                            Timestamp = this.currentTime(),
+                            Timestamp = this.currentTime().Date,
                             ToAddress = s.EmailAddress,
-                            Test = true // todo - set false to send for real!
+                            Test = true
                             });
                 }
             };
