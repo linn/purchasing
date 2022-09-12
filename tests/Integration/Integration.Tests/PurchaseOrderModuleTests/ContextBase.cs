@@ -12,6 +12,7 @@
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
@@ -66,6 +67,8 @@
 
         protected IRepository<NominalAccount, int> MockNominalAccountRepository { get; private set; }
 
+        protected IRepository<Supplier, int> MockSupplierRepository { get; private set; }
+
         [SetUp]
         public void EstablishContext()
         {
@@ -89,6 +92,7 @@
             this.MockFullAddressRepository = Substitute.For<IRepository<FullAddress, int>>();
             this.OverbookAllowedByLogRepository = Substitute.For<IRepository<OverbookAllowedByLog, int>>();
             this.MockNominalAccountRepository = Substitute.For<IRepository<NominalAccount, int>>();
+            this.MockSupplierRepository = Substitute.For<IRepository<Supplier, int>>();
 
             this.MockDatabaseService = Substitute.For<IDatabaseService>();
             this.MockAuthService = Substitute.For<IAuthorisationService>();
@@ -109,6 +113,7 @@
                 purchaseOrderResourceBuilder,
                 this.MockDomainService,
                 this.OverbookAllowedByLogRepository,
+                this.MockSupplierRepository,
                 this.Log);
 
             this.Client = TestClient.With<PurchaseOrderModule>(

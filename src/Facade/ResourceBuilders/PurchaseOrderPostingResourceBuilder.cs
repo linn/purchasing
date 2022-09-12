@@ -12,6 +12,7 @@
     public class PurchaseOrderPostingResourceBuilder : IBuilder<PurchaseOrderPosting>
     {
         private readonly IRepository<NominalAccount, int> nomaccRepository;
+
         public PurchaseOrderPostingResourceBuilder(IRepository<NominalAccount, int> nomaccRepository)
         {
             this.nomaccRepository = nomaccRepository;

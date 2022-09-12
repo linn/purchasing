@@ -63,8 +63,6 @@
         [Test]
         public void ShouldReturnJsonContentType()
         {
-            var response = this.Response;
-
             this.Response.Content.Headers.ContentType.Should().NotBeNull();
             this.Response.Content.Headers.ContentType?.ToString().Should().Be("application/json");
         }

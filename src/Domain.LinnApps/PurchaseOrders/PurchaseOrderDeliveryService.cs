@@ -578,6 +578,21 @@
                     }).ToList();
         }
 
+        public void ReplaceMiniOrderDeliveries(IEnumerable<PurchaseOrderDelivery> updated)
+        {
+            var miniOrder = this.miniOrderRepository.FindById(updated.First().OrderNumber);
+            miniOrder.Deliveries = updated.Select(
+                del => new MiniOrderDelivery
+                           {
+                               AdvisedDate = del.DateAdvised,
+                               RequestedDate = del.DateRequested,
+                               DeliverySequence = del.DeliverySeq,
+                               OrderNumber = del.OrderNumber,
+                               AvailableAtSupplier = del.AvailableAtSupplier,
+                               OurQty = del.OurDeliveryQty
+                           }).ToList();
+        }
+
         // syncs changes to an individual delivery back to the corresponding mini order delivery
         public void UpdateMiniOrderDelivery(
             int orderNumber, int seq, DateTime? newDateAdvised, string availableAtSupplier, decimal qty)
