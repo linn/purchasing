@@ -68,7 +68,7 @@ function AllowPurchaseOrderOverbook() {
     };
 
     const partDetails = () => {
-        if (state.details && state?.details[0]) {
+        if (state.details?.[0]) {
             return `${state.details[0].partNumber} ${state.details[0].partDescription}`;
         }
         return null;
