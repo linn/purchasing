@@ -12,6 +12,6 @@ then
 fi
 
 cd ./src/Service.Host
-npm ci
+npm install
 npm run build
 cd ../..
