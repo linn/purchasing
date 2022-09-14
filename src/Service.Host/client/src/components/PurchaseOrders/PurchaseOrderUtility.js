@@ -67,9 +67,15 @@ function PurchaseOrderUtility({ creating }) {
         }
     }, [orderNumber, reduxDispatch, creating]);
 
-    useEffect(() => reduxDispatch(currenciesActions.fetch()), [reduxDispatch]);
-    useEffect(() => reduxDispatch(employeesActions.fetch()), [reduxDispatch]);
-    useEffect(() => reduxDispatch(unitsOfMeasureActions.fetch()), [reduxDispatch]);
+    useEffect(() => {
+        reduxDispatch(currenciesActions.fetch());
+    }, [reduxDispatch]);
+    useEffect(() => {
+        reduxDispatch(employeesActions.fetch());
+    }, [reduxDispatch]);
+    useEffect(() => {
+        reduxDispatch(unitsOfMeasureActions.fetch());
+    }, [reduxDispatch]);
 
     const item = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.purchaseOrder));
     const applicationState = useSelector(reduxState =>
