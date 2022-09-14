@@ -12,6 +12,6 @@ then
 fi
 
 cd ./src/Service.Host
-npm install
+npm ci --legacy-peer-deps
 npm run build
 cd ../..
