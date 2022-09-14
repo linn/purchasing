@@ -78,6 +78,10 @@ function PurchaseOrderUtility({ creating }) {
 
     const loading = useSelector(state => itemSelectorHelpers.getItemLoading(state.purchaseOrder));
 
+    const deliveriesLoading = useSelector(state =>
+        itemSelectorHelpers.getItemLoading(state.purchaseOrderDeliveries)
+    );
+
     const itemError = useSelector(state => getItemError(state, 'purchaseOrder'));
 
     const [order, dispatch] = useReducer(reducer, {});
@@ -130,8 +134,10 @@ function PurchaseOrderUtility({ creating }) {
         collectionSelectorHelpers.getSearchLoading(state.nominals)
     );
 
-    const snackbarVisible = useSelector(state =>
-        itemSelectorHelpers.getSnackbarVisible(state.purchaseOrder)
+    const snackbarVisible = useSelector(
+        state =>
+            itemSelectorHelpers.getSnackbarVisible(state.purchaseOrder) ||
+            itemSelectorHelpers.getSnackbarVisible(state.purchaseDeliveries)
     );
 
     const [editStatus, setEditStatus] = useState('view');
@@ -379,7 +385,7 @@ function PurchaseOrderUtility({ creating }) {
         <>
             <div className="hide-when-printing">
                 <Page history={history} homeUrl={config.appRoot} width={screenIsSmall ? 'xl' : 'm'}>
-                    {loading ? (
+                    {loading || deliveriesLoading ? (
                         <Loading />
                     ) : (
                         <Grid container spacing={1} justifyContent="center">
@@ -476,6 +482,7 @@ function PurchaseOrderUtility({ creating }) {
                                                 dateAdvised: getDateString(d.dateAdvised)
                                             }))}
                                             backClick={() => setDeliveriesDialogOpen(false)}
+                                            closeOnSave
                                         />
                                     </div>
                                 </Dialog>
