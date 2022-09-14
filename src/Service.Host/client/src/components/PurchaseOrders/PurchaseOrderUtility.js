@@ -162,19 +162,20 @@ function PurchaseOrderUtility({ creating }) {
 
     const inputIsValid = () =>
         order.supplier?.id &&
-        order.details.every(d => d.partNumber) &&
-        order.details.every(d => d.ourQty) &&
-        order.details.every(d => d.orderQty) &&
-        order.details.every(d => d.ourUnitPriceCurrency) &&
-        order.details.every(d => d.orderUnitPriceCurrency) &&
-        order.details.every(d => d.ourUnitOfMeasure) &&
-        order.details.every(d => d.orderUnitOfMeasure) &&
-        order.details.every(d => d?.orderPosting?.nominalAccount?.department?.departmentCode) &&
-        order.details.every(d => d?.orderPosting?.nominalAccount?.nominal?.nominalCode) &&
-        order.details.every(d => d.netTotalCurrency) &&
-        order.details.every(d => d.detailTotalCurrency) &&
-        order.details.every(d => d.baseNetTotal) &&
-        order.details.every(d => d.baseDetailTotal) &&
+        order.details.every(
+            d =>
+                d.partNumber &&
+                d.ourQty &&
+                d.ourUnitPriceCurrency &&
+                d.orderUnitPriceCurrency &&
+                d.ourUnitOfMeasure &&
+                d.orderPosting?.nominalAccount?.department?.departmentCode &&
+                d.orderPosting?.nominalAccount?.nominal?.nominalCode &&
+                d.netTotalCurrency &&
+                d.detailTotalCurrency &&
+                d.baseNetTotal &&
+                d.baseDetailTotal
+        ) &&
         order.supplierContactEmail &&
         order.currency.code &&
         order.deliveryAddress?.addressId;
