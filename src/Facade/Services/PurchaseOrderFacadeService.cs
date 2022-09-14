@@ -33,6 +33,9 @@
 
         private readonly ITransactionManager transactionManager;
 
+        private readonly IRepository<PurchaseOrder, int> repository;
+
+
         public PurchaseOrderFacadeService(
             IRepository<PurchaseOrder, int> repository,
             ITransactionManager transactionManager,
@@ -49,6 +52,7 @@
             this.logger = logger;
             this.resourceBuilder = resourceBuilder;
             this.supplierRepository = supplierRepository;
+            this.repository = repository;
         }
 
         public IResult<ProcessResultResource> EmailOrderPdf(
@@ -76,7 +80,7 @@
         {
             try
             {
-                var emailResult = this.domainService.SendSupplierAssemblyEmail(orderNumber);
+                 var emailResult = this.domainService.SendSupplierAssemblyEmail(orderNumber);
 
                 return new SuccessResult<ProcessResultResource>(
                     new ProcessResultResource(emailResult.Success, emailResult.Message));
@@ -86,6 +90,15 @@
                 this.logger.Write(LoggingLevel.Error, new List<LoggingProperty>(), ex.Message);
                 return new BadRequestResult<ProcessResultResource>(ex.Message);
             }
+        }
+
+        public IResult<ProcessResultResource> EmailFinanceAuthRequest(
+            int currentUserNumber,
+            int orderNumber)
+        {
+            var result = this.domainService.SendFinanceAuthRequestEmail(currentUserNumber, orderNumber);
+
+            return new SuccessResult<ProcessResultResource>(new ProcessResultResource(result.Success, result.Message));
         }
 
         public IResult<PurchaseOrderResource> FillOutOrderFromSupplierId(
@@ -147,6 +160,37 @@
 
             this.transactionManager.Commit();
             return new SuccessResult<ProcessResultResource>(new ProcessResultResource(result.Success, result.Message));
+        }
+
+        public IResult<PurchaseOrderResource> AuthorisePurchaseOrder(
+            int orderNumber,
+            IEnumerable<string> privileges,
+            int userId)
+        {
+            var order = this.repository.FindById(orderNumber);
+            if (order == null)
+            {
+                return new NotFoundResult<PurchaseOrderResource>();
+            }
+
+            try
+            {
+                var result = this.domainService.AuthorisePurchaseOrder(order, userId, privileges);
+
+                if (!result.Success)
+                {
+                    return new BadRequestResult<PurchaseOrderResource>(result.Message);
+                }
+
+                this.transactionManager.Commit();
+
+                return new SuccessResult<PurchaseOrderResource>((PurchaseOrderResource)this.resourceBuilder.Build(order, privileges));
+            }
+            catch (DomainException exception)
+            {
+                return new BadRequestResult<PurchaseOrderResource>(
+                    $"Unable to Authorise order {order.OrderNumber} - {exception.Message}");
+            }
         }
 
         public IResult<ProcessResultResource> EmailOrderPdfs(

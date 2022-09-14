@@ -47,6 +47,19 @@
             app.MapPost("/purchasing/purchase-orders/email-multiple", this.EmailPurchaseOrders);
             app.MapPut("/purchasing/purchase-orders/{orderNumber:int}", this.UpdatePurchaseOrder);
             app.MapPost("/purchasing/purchase-orders", this.CreateOrder);
+            app.MapPost("/purchasing/purchase-orders/email-for-authorisation", this.EmailFinanceForAuthorisation);
+            app.MapPost("/purchasing/purchase-orders/{id:int}/authorise", this.AuthoriseOrder);
+        }
+
+        private async Task AuthoriseOrder(
+            HttpRequest req,
+            HttpResponse res,
+            int id,
+            IPurchaseOrderFacadeService purchaseOrderFacadeService)
+        {
+            var result = purchaseOrderFacadeService.AuthorisePurchaseOrder(id, req.HttpContext.GetPrivileges(), req.HttpContext.User.GetEmployeeNumber());
+
+            await res.Negotiate(result);
         }
 
         private async Task CreateOrder(
@@ -96,6 +109,19 @@
                 requestResource,
                 req.HttpContext.GetPrivileges(),
                 req.HttpContext.User.GetEmployeeNumber());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task EmailFinanceForAuthorisation(
+            HttpRequest req,
+            HttpResponse res,
+            IPurchaseOrderFacadeService purchaseOrderFacadeService,
+            int orderNumber,
+            int toEmployeeId)
+        {
+            var result = purchaseOrderFacadeService.EmailFinanceAuthRequest(
+                req.HttpContext.User.GetEmployeeNumber(), orderNumber);
 
             await res.Negotiate(result);
         }

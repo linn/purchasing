@@ -241,6 +241,36 @@
             return new ProcessResult(true, $"Email sent for purchase order {orderNumber} to Logistics");
         }
 
+        public ProcessResult SendFinanceAuthRequestEmail(int currentUserId, int orderNumber)
+        {
+            var order = this.GetOrder(orderNumber);
+
+            var user = this.employeeRepository.FindById(currentUserId);
+
+            var emailBody = $"Purchasing have raised order {orderNumber} for {order.Supplier.Name}.\n"
+                            + $"{user.FullName} would like you to Authorise it which you can do here:\n"
+                            + $"www. url orders/{order.OrderNumber} \n"
+                             + $"Thanks";
+            this.emailService.SendEmail(
+                "email@email.co.uk", //tony, steph
+                "Finance",
+                null,
+                null,
+                ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
+                "Linn Purchasing",
+                $"Purchase Order {orderNumber} requires Authorisation",
+                emailBody,
+                null,
+                null);
+
+            this.log.Write(
+                LoggingLevel.Info,
+                new List<LoggingProperty>(),
+                $"Email sent for purchase order {orderNumber} auth request to Finance");
+
+            return new ProcessResult(true, $"Email sent for purchase order {orderNumber} auth request to Finance");
+        }
+
         public PurchaseOrder UpdateOrder(PurchaseOrder current, PurchaseOrder updated, IEnumerable<string> privileges)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
@@ -298,6 +328,36 @@
             detail.OrderQty = detail.OurQty;
 
             return order;
+        }
+
+        public ProcessResult AuthorisePurchaseOrder(PurchaseOrder order, int userNumber, IEnumerable<string> privileges)
+        {
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderAuthorise, privileges))
+            {
+                throw new UnauthorisedActionException("You do not have permission to authorise Purchase Orders");
+            }
+
+            if (order.AuthorisedById.HasValue)
+            {
+                return new ProcessResult(false, $"Order {order.OrderNumber} was already authorised");
+            }
+            else if (this.purchaseOrdersPack.OrderCanBeAuthorisedBy(
+                         order.OrderNumber,
+                         null,
+                         userNumber,
+                         null,
+                         null,
+                         null))
+            {
+                order.AuthorisedById = userNumber;
+
+                return new ProcessResult(true, $"Order {order.OrderNumber} successfully authorised");
+
+            }
+            else
+            {
+                return new ProcessResult(false, $"Order {order.OrderNumber} YOU CANNOT AUTHORISE THIS ORDER");
+            }
         }
 
         public ProcessResult AuthoriseMultiplePurchaseOrders(IList<int> orderNumbers, int userNumber)

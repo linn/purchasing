@@ -321,3 +321,9 @@ export const ledgerPeriods = new ItemType(
     'LEDGER_PERIODS',
     '/purchasing/ledger-periods'
 );
+
+export const sendPurchaseOrderAuthEmail = new ItemType(
+    'sendPurchaseOrderAuthEmail',
+    'SEND_PURCHASE_ORDER_AUTH_EMAIL',
+    '/purchasing/purchase-orders/email-for-authorisation'
+);

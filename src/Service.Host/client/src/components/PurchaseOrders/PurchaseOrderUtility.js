@@ -52,6 +52,7 @@ import { sendPurchaseOrderPdfEmail, exchangeRates } from '../../itemTypes';
 import exchangeRatesActions from '../../actions/exchangeRatesActions';
 import currencyConvert from '../../helpers/currencyConvert';
 import PurchaseOrderDeliveriesUtility from '../PurchaseOrderDeliveriesUtility';
+import sendOrderAuthEmailActions from '../../actions/sendPurchaseOrderAuthEmailActions';
 
 function PurchaseOrderUtility({ creating }) {
     const reduxDispatch = useDispatch();
@@ -272,15 +273,14 @@ function PurchaseOrderUtility({ creating }) {
         }
     };
 
-    const handleSendAuthoriseEmailClick = () => {
+    const handleSendAuthoriseEmail = () => {
         setAuthEmailDialogOpen(false);
-        // dispatch(sendOrderAuthEmailActions.clearProcessData);
-        // dispatch(
-        //     sendOrderAuthEmailActions.requestProcessStart('', {
-        //         orderNumber,
-        //         toEmployeeId: employeeToEmail
-        //     })
-        // );
+        dispatch(sendOrderAuthEmailActions.clearProcessData);
+        dispatch(
+            sendOrderAuthEmailActions.requestProcessStart('', {
+                orderNumber: order?.orderNumber
+            })
+        );
     };
 
     const handleNominalUpdate = (newNominal, lineNumber) => {
@@ -407,7 +407,7 @@ function PurchaseOrderUtility({ creating }) {
                                     />
                                 </Grid>
                             )}
-                            <Dialog open={false && authEmailDialogOpen} fullWidth maxWidth="md">
+                            <Dialog open={authEmailDialogOpen} fullWidth maxWidth="md">
                                 <div className={classes.centerTextInDialog}>
                                     <IconButton
                                         className={classes.pullRight}
@@ -416,25 +416,11 @@ function PurchaseOrderUtility({ creating }) {
                                     >
                                         <Close />
                                     </IconButton>
-                                    <Typography variant="h6">
-                                        Send authorisation request email
-                                    </Typography>
+                                    <Typography variant="h6">Finance Auth Request</Typography>
                                     <Typography variant="body1" gutterBottom>
                                         <Grid container spacing={1}>
                                             <Grid item xs={8}>
-                                                <Dropdown
-                                                    fullWidth
-                                                    value={employeeToEmail}
-                                                    label="Send Authorisation Email To"
-                                                    items={employees.map(e => ({
-                                                        displayText: `${e.fullName} (${e.id})`,
-                                                        id: parseInt(e.id, 10)
-                                                    }))}
-                                                    propertyName="sendTo"
-                                                    onChange={(propertyName, selected) => {
-                                                        setEmployeeToEmail(selected);
-                                                    }}
-                                                />
+                                                <i>Sends email with a link to Finance</i>
                                             </Grid>
                                             <Grid item xs={4}>
                                                 <Tooltip
@@ -444,9 +430,7 @@ function PurchaseOrderUtility({ creating }) {
                                                 >
                                                     <Send
                                                         className={classes.buttonMarginTop}
-                                                        onClick={() =>
-                                                            handleSendAuthoriseEmailClick()
-                                                        }
+                                                        onClick={() => handleSendAuthoriseEmail()}
                                                     />
                                                 </Tooltip>
                                             </Grid>
@@ -607,7 +591,6 @@ function PurchaseOrderUtility({ creating }) {
                                 </IconButton>
                             </Grid>
                             <Grid item xs={1}>
-                                {/* <Tooltip title="Email pdf to supplier"> */}
                                 <IconButton
                                     className={classes.buttonMarginTop}
                                     aria-label="Email"
@@ -616,7 +599,6 @@ function PurchaseOrderUtility({ creating }) {
                                 >
                                     <Email />
                                 </IconButton>
-                                {/* </Tooltip> */}
                             </Grid>
                             <Grid item xs={1}>
                                 <div className={classes.centeredIcon}>
@@ -851,7 +833,7 @@ function PurchaseOrderUtility({ creating }) {
                                             className={classes.buttonMarginTop}
                                             aria-label="Email"
                                             onClick={() => setAuthEmailDialogOpen(true)}
-                                            disabled
+                                            disabled={order.authorisedBy?.id}
                                         >
                                             <Email />
                                         </IconButton>
@@ -1242,7 +1224,7 @@ function PurchaseOrderUtility({ creating }) {
                                                 }
                                                 loading={nominalsSearchLoading}
                                                 label="Department"
-                                                title="Search Department"
+                                                title="Search on Department or Nominal"
                                                 value={
                                                     detail.orderPosting?.nominalAccount?.department
                                                         ?.departmentCode
@@ -1302,7 +1284,13 @@ function PurchaseOrderUtility({ creating }) {
                                                 value={detail.deliveryInstructions}
                                                 label="Delivery instructions"
                                                 propertyName="deliveryInstructions"
-                                                onChange={handleDetailFieldChange}
+                                                onChange={(propertyName, newValue) =>
+                                                    handleDetailFieldChange(
+                                                        propertyName,
+                                                        newValue,
+                                                        detail
+                                                    )
+                                                }
                                                 disabled={!creating}
                                                 rows={2}
                                             />
