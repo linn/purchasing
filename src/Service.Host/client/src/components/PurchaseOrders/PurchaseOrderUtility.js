@@ -88,7 +88,6 @@ function PurchaseOrderUtility({ creating }) {
             field: 'availableAtSupplier',
             headerName: 'Available at Supplier?',
             width: 100,
-            type: 'singleSelect',
             valueOptions: ['Y', 'N']
         }
     ];
@@ -1338,7 +1337,7 @@ function PurchaseOrderUtility({ creating }) {
                                                 <DataGrid
                                                     rows={detail.purchaseDeliveries.map(x => ({
                                                         ...x,
-                                                        id: `${x.orderNumber}/${x.orderLine}/${x.deliverySeq}`
+                                                        id: `${x.deliverySeq}`
                                                     }))}
                                                     columns={columns}
                                                     density="compact"
