@@ -313,6 +313,8 @@
 
             var partSupplier = this.partSupplierRepository.FindById(new PartSupplierKey { PartNumber = detail.PartNumber, SupplierId = order.SupplierId });
             detail.OrderUnitOfMeasure = partSupplier != null ? partSupplier.UnitOfMeasure : string.Empty;
+            detail.OurUnitOfMeasure = partSupplier != null ? partSupplier.UnitOfMeasure : string.Empty;
+            detail.SuppliersDesignation = partSupplier != null ? partSupplier.SupplierDesignation : string.Empty;
 
             // from MR is always nom Raw Materials 0000007617 Assets 0000002508
             var nomAcc = this.nominalAccountRepository.FindById(884);
@@ -320,11 +322,6 @@
             detail.OrderPosting = new PurchaseOrderPosting();
             detail.OrderPosting.NominalAccount = nomAcc;
             detail.OrderPosting.NominalAccountId = 884;
-
-            var unitOfMeasure = this.partSupplierRepository.FindById(new PartSupplierKey { PartNumber = detail.PartNumber, SupplierId = order.SupplierId }).UnitOfMeasure;
-
-            detail.OrderUnitOfMeasure = unitOfMeasure;
-            detail.OurUnitOfMeasure = unitOfMeasure;
 
             return order;
         }
