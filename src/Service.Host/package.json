@@ -81,6 +81,7 @@
         "@emotion/styled": "^11.10.4",
         "@linn-it/linn-form-components-library": "15.0.0",
         "@mui/icons-material": "^5.10.3",
+        "@mui/lab": "*",
         "@mui/material": "^5.10.5",
         "@mui/styles": "^5.10.3",
         "@mui/x-data-grid": "^5.17.2",

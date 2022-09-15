@@ -67,6 +67,7 @@ import DeliveryPerformanceSupplierReport from './reports/DeliveryPerformanceSupp
 import DeliveryPerformanceDetailReport from './reports/DeliveryPerformanceDetailReport';
 import CreatePurchaseOrderUt from './PurchaseOrders/CreatePurchaseOrderUt';
 import PurchaseOrdersAuthSend from './PurchaseOrders/PurchaseOrdersAuthSend';
+import BomTree from './BomTree';
 
 const Root = ({ store }) => (
     <div>
@@ -400,6 +401,7 @@ const Root = ({ store }) => (
                                     path="/purchasing/reports/delivery-performance-details/report"
                                     component={DeliveryPerformanceDetailReport}
                                 />
+                                <Route exact path="/purchasing/boms/tree" component={BomTree} />
                                 <Route component={NotFoundPage} />
                             </Switch>
                         </div>
