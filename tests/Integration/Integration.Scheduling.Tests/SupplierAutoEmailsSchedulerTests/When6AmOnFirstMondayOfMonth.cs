@@ -1,9 +1,13 @@
 ﻿namespace Linn.Purchasing.Integration.Scheduling.Tests.SupplierAutoEmailsSchedulerTests
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Expressions;
     using System.Threading;
     using System.Threading.Tasks;
 
+    using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Resources.Messages;
     using Linn.Purchasing.Scheduling.Host.Jobs;
 
@@ -16,9 +20,12 @@
         [OneTimeSetUp]
         public async Task SetUp()
         {
-            this.EmailMonthlyForecastMessageDispatcher.ClearReceivedCalls();
-            this.EmailOrderBookMessageDispatcher.ClearReceivedCalls();
-        
+            this.OutstandingPosRepository.FilterBy(Arg.Any<Expression<Func<MrPurchaseOrderDetail, bool>>>())
+                .Returns(new List<MrPurchaseOrderDetail>
+                             {
+                                 new MrPurchaseOrderDetail()
+                             }.AsQueryable());
+
             this.Sut = new SupplierAutoEmailsScheduler(
                 this.EmailOrderBookMessageDispatcher,
                 this.EmailMonthlyForecastMessageDispatcher,
@@ -31,7 +38,7 @@
         }
         
         [Test]
-        public void ShouldSendMonthlyForecasts()
+        public void ShouldDispatchMonthlyForecastMessages()
         {
             this.EmailMonthlyForecastMessageDispatcher
                 .Received().Dispatch(Arg.Is<EmailMonthlyForecastReportMessageResource>(x =>

@@ -36,7 +36,6 @@ import history from '../history';
 import config from '../config';
 import batchPurchaseOrderDeliveriesUploadActions from '../actions/batchPurchaseOrderDeliveriesUploadActions';
 import batchPurchaseOrderDeliveriesUpdateActions from '../actions/batchPurchaseOrderDeliveriesUpdateActions';
-
 import PurchaseOrderDeliveriesUtility from './PurchaseOrderDeliveriesUtility';
 
 function AcknowledgeOrdersUtility() {
@@ -192,7 +191,7 @@ function AcknowledgeOrdersUtility() {
     const [searchOptions, setSearchOptions] = useState({ includeAcknowledged: true });
     const [newValues, setNewValues] = useState({
         rescheduleReason: 'ADVISED',
-        dateAdvised: new Date()
+        dateAdvised: moment()
     });
 
     const onKeyDown = data => {
@@ -491,7 +490,8 @@ function AcknowledgeOrdersUtility() {
                                         disabled={!rows.some(r => r.selected)}
                                         onClick={() => {
                                             setNewValues({
-                                                rescheduleReason: 'ADVISED'
+                                                rescheduleReason: 'ADVISED',
+                                                dateAdvised: moment()
                                             });
                                             setApplyChangesDialogOpen(true);
                                         }}

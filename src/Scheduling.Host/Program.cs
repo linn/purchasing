@@ -1,5 +1,5 @@
+using Linn.Common.Scheduling;
 using Linn.Purchasing.IoC;
-using Linn.Purchasing.Scheduling.Host;
 using Linn.Purchasing.Scheduling.Host.Jobs;
 
 IHost host = Host.CreateDefaultBuilder(args)

@@ -48,7 +48,7 @@
 
             this.CheckEmailDetailsOk(emailAddress, supplier);
             
-            var vendorManagerAddress = supplier.VendorManager.Employee.PhoneListEntry.EmailAddress;
+            var vendorManagerAddress = supplier.VendorManager.Employee.PhoneListEntry?.EmailAddress;
             var vendorManagerName = supplier.VendorManager.Employee.FullName;
 
             var export = this.orderBookReportService.GetOrderBookExport(toSupplier);
@@ -58,8 +58,8 @@
                 supplier.Name,
                 null,
                 null,
-                vendorManagerAddress,
-                vendorManagerName,
+                vendorManagerAddress ?? ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
+                vendorManagerName != "No person assigned" ? vendorManagerName : "Linn",
                 $"MR Order Book - {timestamp}",
                 "Please find Order Book attached",
                 "csv",

@@ -67,6 +67,13 @@ function AllowPurchaseOrderOverbook() {
         setSaveDisabled(false);
     };
 
+    const partDetails = () => {
+        if (state.details?.[0]) {
+            return `${state.details[0].partNumber} ${state.details[0].partDescription}`;
+        }
+        return null;
+    };
+
     return (
         <Page history={history} homeUrl={config.appRoot}>
             {overbookLoading ? (
@@ -104,7 +111,7 @@ function AllowPurchaseOrderOverbook() {
                             propertyName="overbook"
                         />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={6}>
                         <InputField
                             value={state?.orderNumber}
                             label="Order Number"
@@ -112,6 +119,11 @@ function AllowPurchaseOrderOverbook() {
                             onChange={() => {}}
                             disabled
                         />
+                    </Grid>
+                    <Grid item xs={6}>
+                        Part:
+                        <br />
+                        {partDetails()}
                     </Grid>
                     <Grid item xs={12}>
                         <InputField
