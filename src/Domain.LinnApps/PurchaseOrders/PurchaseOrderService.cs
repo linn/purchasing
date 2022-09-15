@@ -183,10 +183,6 @@
             order.BaseCurrencyCode = "GBP";
             order.DamagesPercent = 2m;
 
-            // todo make required yes/no dropdown forced to answer on create, check if any logic around this on citrix
-            // also check if should be copied down to the details or if ok on top level order?
-            order.IssuePartsToSupplier = "N";
-
             this.purchaseOrderRepository.Add(order);
         }
 
@@ -251,10 +247,23 @@
                             + $"{user.FullName} would like you to Authorise it which you can do here:\n"
                             + $"www. url orders/{order.OrderNumber} \n"
                              + $"Thanks";
+
+
+            var email1 = this.employeeRepository.FindById(33107).PhoneListEntry.EmailAddress; //32864
+            var email2 = this.employeeRepository.FindById(33107).PhoneListEntry.EmailAddress; //32835
+            var email2Name = this.employeeRepository.FindById(32835).FullName;
+            var cc = new List<Dictionary<string, string>>
+                              {
+                                  new Dictionary<string, string>
+                                      {
+                                          { "name", email2Name },
+                                          { "address", email2 }
+                                      }
+                              };
             this.emailService.SendEmail(
-                "email@email.co.uk", //tony, steph
+                email1,
                 "Finance",
-                null,
+                cc,
                 null,
                 ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
                 "Linn Purchasing",
@@ -327,6 +336,10 @@
             detail.OrderUnitPriceCurrency = detail.OurUnitPriceCurrency;
             detail.OrderQty = detail.OurQty;
 
+            // todo - logic surrounding this - Y only if supplier assembly
+            order.IssuePartsToSupplier = "N";
+
+
             return order;
         }
 
@@ -357,6 +370,7 @@
             else
             {
                 return new ProcessResult(false, $"Order {order.OrderNumber} YOU CANNOT AUTHORISE THIS ORDER");
+
             }
         }
 
@@ -570,7 +584,7 @@
                                                         QuantityOutstanding = detail.OurQty,
                                                         QtyNetReceived = 0,
                                                         QtyPassedForPayment = 0,
-                                                        RescheduleReason = string.Empty
+                                                        RescheduleReason = string.Empty // todo make this Requested? Check old form
                                                     }
                                             };
         }

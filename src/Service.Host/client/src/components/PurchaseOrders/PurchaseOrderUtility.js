@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer, useMemo } from 'react';
+import React, { useEffect, useState, useReducer } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
@@ -26,7 +26,6 @@ import {
     Loading,
     Dropdown,
     TypeaheadTable,
-    //userSelectors,
     getItemError,
     ErrorCard,
     utilities,
@@ -36,11 +35,8 @@ import {
 } from '@linn-it/linn-form-components-library';
 import moment from 'moment';
 import currenciesActions from '../../actions/currenciesActions';
-import employeesActions from '../../actions/employeesActions';
 import nominalsActions from '../../actions/nominalsActions';
-//import countriesActions from '../../actions/countriesActions';
 import suppliersActions from '../../actions/suppliersActions';
-// import partsActions from '../../actions/partsActions';
 import history from '../../history';
 import config from '../../config';
 import purchaseOrderActions from '../../actions/purchaseOrderActions';
@@ -48,7 +44,11 @@ import reducer from './purchaseOrderReducer';
 import unitsOfMeasureActions from '../../actions/unitsOfMeasureActions';
 import sendPurchaseOrderPdfEmailActionTypes from '../../actions/sendPurchaseOrderPdfEmailActions';
 import sendPurchaseOrderSupplierAssActionTypes from '../../actions/sendPurchaseOrderSupplierAssEmailActions';
-import { sendPurchaseOrderPdfEmail, exchangeRates } from '../../itemTypes';
+import {
+    sendPurchaseOrderPdfEmail,
+    exchangeRates,
+    sendPurchaseOrderAuthEmail
+} from '../../itemTypes';
 import exchangeRatesActions from '../../actions/exchangeRatesActions';
 import currencyConvert from '../../helpers/currencyConvert';
 import PurchaseOrderDeliveriesUtility from '../PurchaseOrderDeliveriesUtility';
@@ -69,7 +69,6 @@ function PurchaseOrderUtility({ creating }) {
     }, [orderNumber, reduxDispatch, creating]);
 
     useEffect(() => reduxDispatch(currenciesActions.fetch()), [reduxDispatch]);
-    useEffect(() => reduxDispatch(employeesActions.fetch()), [reduxDispatch]);
     useEffect(() => reduxDispatch(unitsOfMeasureActions.fetch()), [reduxDispatch]);
 
     const item = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.purchaseOrder));
@@ -119,7 +118,6 @@ function PurchaseOrderUtility({ creating }) {
     const searchSuppliers = searchTerm => reduxDispatch(suppliersActions.search(searchTerm));
 
     const currencies = useSelector(state => collectionSelectorHelpers.getItems(state.currencies));
-    const employees = useSelector(state => collectionSelectorHelpers.getItems(state.employees));
     const unitsOfMeasure = useSelector(reduxState =>
         collectionSelectorHelpers.getItems(reduxState.unitsOfMeasure)
     );
@@ -137,7 +135,6 @@ function PurchaseOrderUtility({ creating }) {
 
     const [editStatus, setEditStatus] = useState('view');
     const [authEmailDialogOpen, setAuthEmailDialogOpen] = useState(false);
-    const [employeeToEmail, setEmployeeToEmail] = useState();
 
     const nominalAccountsTable = {
         totalItemCount: nominalsSearchItems.length,
@@ -202,13 +199,23 @@ function PurchaseOrderUtility({ creating }) {
         dispatch({ payload: { ...detail, [propertyName]: newValue }, type: 'detailFieldChange' });
     };
 
-    const handleCurrencyChange = (propertyName, newValue) => {
+    const exchangeRatesItems = useSelector(state =>
+        collectionSelectorHelpers.getSearchItems(state[exchangeRates.item])
+    );
+
+    const handleCurrencyChange = (propertyName, newCurrencyCode) => {
         setEditStatus('edit');
-        const name = currencies.find(x => x.code === newValue)?.name;
+        const name = currencies.find(x => x.code === newCurrencyCode)?.name;
+        const exchangeRate =
+            exchangeRatesItems.find(
+                x => x.exchangeCurrency === newCurrencyCode && x.baseCurrency === 'GBP'
+            )?.exchangeRate ?? 1;
+
         dispatch({
-            payload: { code: newValue, name },
+            newCurrency: { code: newCurrencyCode, name },
+            newExchangeRate: exchangeRate,
             propertyName: 'currency',
-            type: 'orderFieldChange'
+            type: 'currencyChange'
         });
     };
 
@@ -219,27 +226,6 @@ function PurchaseOrderUtility({ creating }) {
             reduxDispatch(exchangeRatesActions.search(dateToDdMmmYyyy(order?.orderDate)));
         }
     }, [order?.orderDate, reduxDispatch]);
-
-    const exchangeRatesItems = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(state[exchangeRates.item])
-    );
-
-    const currentExchangeRate = useMemo(() => {
-        if (exchangeRatesItems.length) {
-            if (order?.currency?.code) {
-                return exchangeRatesItems.find(
-                    x => x.exchangeCurrency === order.currency.code && x.baseCurrency === 'GBP'
-                )?.exchangeRate;
-            }
-        }
-        return '';
-    }, [order?.currency?.code, exchangeRatesItems]);
-
-    useEffect(() => {
-        if (currentExchangeRate && order?.exchangeRate !== currentExchangeRate) {
-            handleFieldChange('exchangeRate', currentExchangeRate);
-        }
-    }, [order.exchangeRate, currentExchangeRate]);
 
     const handleDetailValueFieldChange = (propertyName, basePropertyName, newValue, detail) => {
         const { exchangeRate } = order;
@@ -275,6 +261,8 @@ function PurchaseOrderUtility({ creating }) {
 
     const handleSendAuthoriseEmail = () => {
         setAuthEmailDialogOpen(false);
+        console.log('should be sending email');
+        console.info(sendOrderAuthEmailActions);
         dispatch(sendOrderAuthEmailActions.clearProcessData);
         dispatch(
             sendOrderAuthEmailActions.requestProcessStart('', {
@@ -321,6 +309,14 @@ function PurchaseOrderUtility({ creating }) {
 
     const orderPdfEmailMessage = useSelector(state =>
         processSelectorHelpers.getMessageText(state[sendPurchaseOrderPdfEmail.item])
+    );
+
+    const authEmailMessageVisible = useSelector(state =>
+        processSelectorHelpers.getMessageVisible(state[sendPurchaseOrderAuthEmail.item])
+    );
+
+    const authEmailMessage = useSelector(state =>
+        processSelectorHelpers.getMessageText(state[sendPurchaseOrderAuthEmail.item])
     );
 
     const handleOrderPdfEmailClick = () => {
@@ -399,6 +395,17 @@ function PurchaseOrderUtility({ creating }) {
                                     )
                                 }
                                 message={orderPdfEmailMessage}
+                            />
+                            <SnackbarMessage
+                                visible={authEmailMessageVisible}
+                                onClose={() =>
+                                    reduxDispatch(
+                                        sendPurchaseOrderPdfEmailActionTypes.setMessageVisible(
+                                            false
+                                        )
+                                    )
+                                }
+                                message={authEmailMessage}
                             />
                             {itemError && (
                                 <Grid item xs={12}>
@@ -734,7 +741,7 @@ function PurchaseOrderUtility({ creating }) {
                             <Grid item xs={5}>
                                 <InputField
                                     fullWidth
-                                    value={order?.currency?.name}
+                                    value={order.currency?.name}
                                     label="Name"
                                     propertyName="currencyName"
                                     disabled
@@ -833,7 +840,7 @@ function PurchaseOrderUtility({ creating }) {
                                             className={classes.buttonMarginTop}
                                             aria-label="Email"
                                             onClick={() => setAuthEmailDialogOpen(true)}
-                                            disabled={order.authorisedBy?.id}
+                                            disabled={creating || order.authorisedBy?.id}
                                         >
                                             <Email />
                                         </IconButton>

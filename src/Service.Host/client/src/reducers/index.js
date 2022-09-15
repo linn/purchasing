@@ -93,6 +93,7 @@ import deliveryPerformanceDetailReport from './deliveryPerformanceDetailReport';
 import authoriseMultiplePurchaseOrders from './authoriseMultiplePurchaseOrders';
 import emailMultiplePurchaseOrders from './emailMultiplePurchaseOrders';
 import forecastWeekChangesReport from './forecastWeekChangesReport';
+import sendPurchaseOrderAuthEmail from './sendPurchaseOrderAuthEmail';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -163,6 +164,7 @@ const rootReducer = history =>
         runMrp,
         sendEdiEmail,
         sendPlNoteEmail,
+        sendPurchaseOrderAuthEmail,
         sendPurchaseOrderPdfEmail,
         sendPurchaseOrderReqEmail,
         sendPurchaseOrderReqAuthEmail,

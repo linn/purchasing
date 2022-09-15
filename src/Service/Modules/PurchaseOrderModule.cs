@@ -117,8 +117,7 @@
             HttpRequest req,
             HttpResponse res,
             IPurchaseOrderFacadeService purchaseOrderFacadeService,
-            int orderNumber,
-            int toEmployeeId)
+            int orderNumber)
         {
             var result = purchaseOrderFacadeService.EmailFinanceAuthRequest(
                 req.HttpContext.User.GetEmployeeNumber(), orderNumber);

@@ -1,6 +1,6 @@
 import { ProcessActions } from '@linn-it/linn-form-components-library';
 import { sendPurchaseOrderAuthEmail } from '../itemTypes';
-import { sendPurchaseOrderReqAuthEmailActionTypes as actionTypes } from './index';
+import { sendPurchaseOrderAuthEmailActionTypes as actionTypes } from './index';
 
 import config from '../config';
 
