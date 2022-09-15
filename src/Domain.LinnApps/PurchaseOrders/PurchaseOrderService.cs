@@ -320,6 +320,12 @@
             detail.OrderPosting = new PurchaseOrderPosting();
             detail.OrderPosting.NominalAccount = nomAcc;
             detail.OrderPosting.NominalAccountId = 884;
+
+            var unitOfMeasure = this.partSupplierRepository.FindById(new PartSupplierKey { PartNumber = detail.PartNumber, SupplierId = order.SupplierId }).UnitOfMeasure;
+
+            detail.OrderUnitOfMeasure = unitOfMeasure;
+            detail.OurUnitOfMeasure = unitOfMeasure;
+
             return order;
         }
 
@@ -559,10 +565,6 @@
 
             // required but ignored now that ob ut just uses order fields
             detail.OverbookQtyAllowed = 0;
-
-            // todo make below UOM fields typeahead on front end, only editable on create
-            detail.OurUnitOfMeasure = "ONES";
-            detail.OrderUnitOfMeasure = "ONES";
 
             // todo check if always LINN or get from table
             detail.StockPoolCode = "LINN";
