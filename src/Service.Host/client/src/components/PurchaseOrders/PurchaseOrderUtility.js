@@ -261,10 +261,8 @@ function PurchaseOrderUtility({ creating }) {
 
     const handleSendAuthoriseEmail = () => {
         setAuthEmailDialogOpen(false);
-        console.log('should be sending email');
-        console.info(sendOrderAuthEmailActions);
-        dispatch(sendOrderAuthEmailActions.clearProcessData);
-        dispatch(
+        reduxDispatch(sendOrderAuthEmailActions.clearProcessData);
+        reduxDispatch(
             sendOrderAuthEmailActions.requestProcessStart('', {
                 orderNumber: order?.orderNumber
             })
