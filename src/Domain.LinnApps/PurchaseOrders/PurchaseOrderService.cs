@@ -194,10 +194,6 @@
             order.BaseCurrencyCode = "GBP";
             order.DamagesPercent = 2m;
 
-            // todo make required yes/no dropdown forced to answer on create, check if any logic around this on citrix
-            // also check if should be copied down to the details or if ok on top level order?
-            order.IssuePartsToSupplier = "N";
-
             this.purchaseOrderRepository.Add(order);
         }
 
@@ -310,6 +306,7 @@
 
             var part = this.partQueryRepository.FindBy(p => p.PartNumber == detail.PartNumber);
             detail.OurUnitOfMeasure = part.OurUnitOfMeasure;
+            order.IssuePartsToSupplier = part.SupplierAssembly() ? "Y" : "N";
 
             var partSupplier = this.partSupplierRepository.FindById(new PartSupplierKey { PartNumber = detail.PartNumber, SupplierId = order.SupplierId });
             detail.OrderUnitOfMeasure = partSupplier != null ? partSupplier.UnitOfMeasure : string.Empty;
