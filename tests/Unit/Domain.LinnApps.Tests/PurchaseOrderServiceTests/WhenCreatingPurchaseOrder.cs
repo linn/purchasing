@@ -6,6 +6,7 @@
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
+    using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
@@ -125,6 +126,9 @@
             this.MockDatabaseService.GetIdSequence("PLORP_SEQ").Returns(123);
 
             this.PurchaseLedgerMaster.GetRecord().Returns(new PurchaseLedgerMaster { OkToRaiseOrder = "Y" });
+
+            this.PartSupplierRepository.FindById(Arg.Any<PartSupplierKey>()).Returns(
+                new PartSupplier { UnitOfMeasure = "Potatoes", LeadTimeWeeks = 2 });
 
             this.Sut.CreateOrder(this.order, new List<string>());
         }
