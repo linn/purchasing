@@ -53,6 +53,7 @@ import { sendPurchaseOrderPdfEmail, exchangeRates } from '../../itemTypes';
 import exchangeRatesActions from '../../actions/exchangeRatesActions';
 import currencyConvert from '../../helpers/currencyConvert';
 import PurchaseOrderDeliveriesUtility from '../PurchaseOrderDeliveriesUtility';
+import purchaseOrderDeliveriesActions from '../../actions/purchaseOrderDeliveriesActions';
 
 function PurchaseOrderUtility({ creating }) {
     const reduxDispatch = useDispatch();
@@ -167,10 +168,12 @@ function PurchaseOrderUtility({ creating }) {
         collectionSelectorHelpers.getSearchLoading(state.nominals)
     );
 
-    const snackbarVisible = useSelector(
-        state =>
-            itemSelectorHelpers.getSnackbarVisible(state.purchaseOrder) ||
-            itemSelectorHelpers.getSnackbarVisible(state.purchaseDeliveries)
+    const snackbarVisible = useSelector(state =>
+        itemSelectorHelpers.getSnackbarVisible(state.purchaseOrder)
+    );
+
+    const deliveriesSnackbarVisible = useSelector(state =>
+        itemSelectorHelpers.getSnackbarVisible(state.purchaseOrderDeliveries)
     );
 
     const [editStatus, setEditStatus] = useState('view');
@@ -423,10 +426,13 @@ function PurchaseOrderUtility({ creating }) {
                     ) : (
                         <Grid container spacing={1} justifyContent="center">
                             <SnackbarMessage
-                                visible={snackbarVisible && order?.orderNumber !== 0}
-                                onClose={() =>
-                                    reduxDispatch(purchaseOrderActions.setSnackbarVisible(false))
-                                }
+                                visible={snackbarVisible || deliveriesSnackbarVisible}
+                                onClose={() => {
+                                    reduxDispatch(purchaseOrderActions.setSnackbarVisible(false));
+                                    reduxDispatch(
+                                        purchaseOrderDeliveriesActions.setSnackbarVisible(false)
+                                    );
+                                }}
                                 message="Save successful"
                             />
                             <SnackbarMessage
