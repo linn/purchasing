@@ -20,6 +20,8 @@
 
     public class PurchaseOrderService : IPurchaseOrderService
     {
+        private readonly string appRoot;
+
         private readonly IAuthorisationService authService;
 
         private readonly IDatabaseService databaseService;
@@ -55,6 +57,7 @@
         private readonly IRepository<NominalAccount, int> nominalAccountRepository;
 
         public PurchaseOrderService(
+            string appRoot,
             IAuthorisationService authService,
             IPurchaseLedgerPack purchaseLedgerPack,
             IDatabaseService databaseService,
@@ -65,7 +68,7 @@
             IRepository<Supplier, int> supplierRepository,
             IRepository<LinnDeliveryAddress, int> linnDeliveryAddressRepository,
             IPurchaseOrdersPack purchaseOrdersPack,
-            ICurrencyPack currencyPack, 
+            ICurrencyPack currencyPack,
             ISupplierKitService supplierKitService,
             IRepository<PurchaseOrder, int> purchaseOrderRepository,
             IHtmlTemplateService<PurchaseOrder> purchaseOrderTemplateService,
@@ -90,6 +93,7 @@
             this.purchaseLedgerMaster = purchaseLedgerMaster;
             this.nominalAccountRepository = nominalAccountRepository;
             this.log = log;
+            this.appRoot = appRoot;
         }
 
         public void AllowOverbook(
@@ -242,10 +246,10 @@
             var order = this.GetOrder(orderNumber);
 
             var user = this.employeeRepository.FindById(currentUserId);
-
+            var orderUrl = $"{this.appRoot}/purchasing/purchase-orders/{orderNumber}";
             var emailBody = $"Purchasing have raised order {orderNumber} for {order.Supplier.Name}.\n"
                             + $"{user.FullName} would like you to Authorise it which you can do here:\n"
-                            + $"www. url orders/{order.OrderNumber} \n"
+                            + $"{orderUrl} \n"
                              + $"Thanks";
 
 
