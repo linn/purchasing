@@ -41,6 +41,12 @@
 
         private MrHeaderResource BuildHeader(MrHeader entity, int runWeekNumber)
         {
+            var recommendedOrderDate = entity.RecommendedOrderDate?.ToString("o");
+            if (entity.RecommendedOrderDate != null && entity.RecommendedOrderDate < DateTime.Now)
+            {
+                recommendedOrderDate = DateTime.Now.AddDays(1).ToString("o");
+            }
+
             return new MrHeaderResource
             {
                 JobRef = entity.JobRef,
@@ -67,8 +73,10 @@
                 VendorManagerInitials = entity.VendorManagerInitials,
                 Planner = entity.Planner,
                 MrComments = entity.MrComments,
+                RecommendedOrderDate = recommendedOrderDate,
+                RecommendedOrderQuantity = entity.RecommendedOrderQuantity,
                 Details = this.BuildDetails(entity, runWeekNumber),
-                Links = this.BuildHeaderLinks(entity).ToArray()
+                Links = this.BuildHeaderLinks(entity, recommendedOrderDate).ToArray()
             };
         }
 
@@ -413,7 +421,7 @@
             }
         }
 
-        private IEnumerable<LinkResource> BuildHeaderLinks(MrHeader entity)
+        private IEnumerable<LinkResource> BuildHeaderLinks(MrHeader entity, string recommendedOrderDate)
         {
             if (entity == null)
             {
@@ -431,6 +439,21 @@
                              };
             yield return new LinkResource { Rel = "part", Href = $"/parts/{entity.PartId}" };
             yield return new LinkResource { Rel = "part-supplier", Href = $"/purchasing/part-suppliers/record?partId={entity.PartId}&supplierId={entity.PreferredSupplierId}" };
+
+            yield return new LinkResource
+                             {
+                                 Rel = "place-order",
+                                 Href = $"/purchasing/purchase-orders/quick-create?supplierId={entity.PreferredSupplierId}&supplierName={entity.PreferredSupplierName}&partNumber={entity.PartNumber}&currencyUnitPrice={entity.CurrencyUnitPrice}"
+                             };
+
+            if (entity.RecommendedOrderQuantity > 0)
+            {
+                yield return new LinkResource
+                                 {
+                                     Rel = "place-recommended-order",
+                                     Href = $"/purchasing/purchase-orders/quick-create?supplierId={entity.PreferredSupplierId}&supplierName={entity.PreferredSupplierName}&partNumber={entity.PartNumber}&currencyUnitPrice={entity.CurrencyUnitPrice}&qty={entity.RecommendedOrderQuantity}&dateRequired={recommendedOrderDate}"
+                                 };
+            }
         }
 
         private void SetRelativeWeekValue(
@@ -440,7 +463,6 @@
             string textValue,
             string tag)
         {
-            var stringValue = string.IsNullOrEmpty(textValue) ? value.ToString() : textValue;
             switch (relativeWeek)
             {
                 case -1:

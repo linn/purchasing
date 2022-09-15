@@ -256,6 +256,7 @@
                              {
                                  JobRef = jobRef,
                                  RunWeekNumber = runLog.RunWeekNumber,
+                                 RunDate = runLog.RunDate,
                                  Headers = results,
                                  ReportChunk = reportChunk,
                                  TotalChunks = chunks,
