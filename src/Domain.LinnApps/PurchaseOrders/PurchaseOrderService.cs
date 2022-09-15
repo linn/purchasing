@@ -504,6 +504,10 @@
 
         private void AddDeliveryToDetail(PurchaseOrder order, PurchaseOrderDetail detail)
         {
+            var partSupplier = this.partSupplierRepository.FindById(new PartSupplierKey { PartNumber = detail.PartNumber, SupplierId = order.SupplierId });
+
+            var leadTimeWeeks = partSupplier.LeadTimeWeeks;
+
             detail.PurchaseDeliveries = new List<PurchaseOrderDelivery>
                                             {
                                                 new PurchaseOrderDelivery
@@ -514,7 +518,7 @@
                                                         OurUnitPriceCurrency = detail.OurUnitPriceCurrency,
                                                         OrderUnitPriceCurrency = detail.OrderUnitPriceCurrency,
                                                         DateRequested = DateTime.Now,
-                                                        DateAdvised = null,
+                                                        DateAdvised = DateTime.Now.AddDays(leadTimeWeeks * 7),
                                                         CallOffDate = DateTime.Now,
                                                         Cancelled = "N",
                                                         CallOffRef = null,

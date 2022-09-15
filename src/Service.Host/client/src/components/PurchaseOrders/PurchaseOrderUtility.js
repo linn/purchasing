@@ -1327,33 +1327,49 @@ function PurchaseOrderUtility({ creating }) {
                                                 value={detail.deliveryInstructions}
                                                 label="Delivery instructions"
                                                 propertyName="deliveryInstructions"
-                                                onChange={handleDetailFieldChange}
+                                                onChange={(propertyName, newValue) =>
+                                                    handleDetailFieldChange(
+                                                        propertyName,
+                                                        newValue,
+                                                        detail
+                                                    )
+                                                }
                                                 disabled={!creating}
                                                 rows={2}
                                             />
                                         </Grid>
-                                        <Grid item xs={12} style={{ paddingTop: '40px' }}>
-                                            <div>
-                                                <DataGrid
-                                                    rows={detail.purchaseDeliveries.map(x => ({
-                                                        ...x,
-                                                        id: `${x.deliverySeq}`
-                                                    }))}
-                                                    columns={columns}
-                                                    density="compact"
-                                                    rowHeight={34}
-                                                    autoHeight
-                                                    loading={loading}
-                                                    columnBuffer={8}
-                                                    hideFooter
-                                                />
-                                            </div>
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <Button onClick={() => updateDeliveries(detail.line)}>
-                                                EDIT DELIVERIES
-                                            </Button>
-                                        </Grid>
+                                        {!creating && detail.purchaseDeliveries && (
+                                            <>
+                                                <Grid item xs={12} style={{ paddingTop: '40px' }}>
+                                                    <div>
+                                                        <DataGrid
+                                                            rows={detail.purchaseDeliveries.map(
+                                                                x => ({
+                                                                    ...x,
+                                                                    id: `${x.deliverySeq}`
+                                                                })
+                                                            )}
+                                                            columns={columns}
+                                                            density="compact"
+                                                            rowHeight={34}
+                                                            autoHeight
+                                                            loading={loading}
+                                                            columnBuffer={8}
+                                                            hideFooter
+                                                        />
+                                                    </div>
+                                                </Grid>
+                                                <Grid item xs={12}>
+                                                    <Button
+                                                        onClick={() =>
+                                                            updateDeliveries(detail.line)
+                                                        }
+                                                    >
+                                                        EDIT DELIVERIES
+                                                    </Button>
+                                                </Grid>
+                                            </>
+                                        )}
                                         <Grid item xs={12}>
                                             <InputField
                                                 fullWidth
