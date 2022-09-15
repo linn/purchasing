@@ -117,11 +117,12 @@ function MaterialRequirementsOptions() {
     };
 
     const dispatch = useDispatch();
-    useEffect(() => dispatch(mrMasterActions.fetchByHref(mrMasterItemType.uri)), [dispatch]);
-    useEffect(
-        () => dispatch(mrReportOptionsActions.fetchByHref(mrReportOptionsItemType.uri)),
-        [dispatch]
-    );
+    useEffect(() => {
+        dispatch(mrMasterActions.fetchByHref(mrMasterItemType.uri));
+    }, [dispatch]);
+    useEffect(() => {
+        dispatch(mrReportOptionsActions.fetchByHref(mrReportOptionsItemType.uri));
+    }, [dispatch]);
 
     useEffect(() => {
         if (selectedPartDetails) {

@@ -29,8 +29,12 @@ function OverbooksSearch() {
     }));
     const classes = useStyles();
     const dispatch = useDispatch();
-    useEffect(() => dispatch(purchaseOrdersActions.fetch()), [dispatch]);
-    useEffect(() => dispatch(purchaseOrdersActions.fetchState()), [dispatch]);
+    useEffect(() => {
+        dispatch(purchaseOrdersActions.fetch());
+    }, [dispatch]);
+    useEffect(() => {
+        dispatch(purchaseOrdersActions.fetchState());
+    }, [dispatch]);
 
     const item = useSelector(state =>
         collectionSelectorHelpers.getApplicationState(state.purchaseOrders)

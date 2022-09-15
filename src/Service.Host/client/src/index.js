@@ -1,5 +1,5 @@
 ﻿import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { AppContainer } from 'react-hot-loader';
 import { SnackbarProvider } from 'notistack';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
@@ -17,8 +17,11 @@ const initialState = {};
 const store = configureStore(initialState);
 const { user } = store.getState().oidc;
 
+const container = document.getElementById('root');
+const root = createRoot(container);
+
 const render = Component => {
-    ReactDOM.render(
+    root.render(
         <StyledEngineProvider injectFirst>
             <ThemeProvider theme={linnTheme}>
                 <SnackbarProvider dense maxSnack={5}>
@@ -29,8 +32,7 @@ const render = Component => {
                     </AppContainer>
                 </SnackbarProvider>
             </ThemeProvider>
-        </StyledEngineProvider>,
-        document.getElementById('root')
+        </StyledEngineProvider>
     );
 };
 
