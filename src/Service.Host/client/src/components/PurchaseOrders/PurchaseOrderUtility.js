@@ -53,6 +53,7 @@ import { sendPurchaseOrderPdfEmail, exchangeRates } from '../../itemTypes';
 import exchangeRatesActions from '../../actions/exchangeRatesActions';
 import currencyConvert from '../../helpers/currencyConvert';
 import PurchaseOrderDeliveriesUtility from '../PurchaseOrderDeliveriesUtility';
+import purchaseOrderDeliveriesActions from '../../actions/purchaseOrderDeliveriesActions';
 
 function PurchaseOrderUtility({ creating }) {
     const reduxDispatch = useDispatch();
@@ -68,6 +69,15 @@ function PurchaseOrderUtility({ creating }) {
         }
     }, [orderNumber, reduxDispatch, creating]);
 
+    useEffect(() => {
+        reduxDispatch(currenciesActions.fetch());
+    }, [reduxDispatch]);
+    useEffect(() => {
+        reduxDispatch(employeesActions.fetch());
+    }, [reduxDispatch]);
+    useEffect(() => {
+        reduxDispatch(unitsOfMeasureActions.fetch());
+    }, [reduxDispatch]);
     const columns = [
         { field: 'id', headerName: 'Id', width: 100, hide: true },
         { field: 'deliverySeq', headerName: 'Delivery', width: 100 },
@@ -75,26 +85,31 @@ function PurchaseOrderUtility({ creating }) {
         {
             field: 'dateRequested',
             headerName: 'Request Date',
-            width: 100,
+            width: 200,
             type: 'date'
         },
         {
             field: 'dateAdvised',
             headerName: 'Advised Date',
-            width: 100,
-            type: 'date'
+            width: 200
         },
         {
             field: 'availableAtSupplier',
             headerName: 'Available at Supplier?',
-            width: 100,
+            width: 200,
             valueOptions: ['Y', 'N']
         }
     ];
 
-    useEffect(() => reduxDispatch(currenciesActions.fetch()), [reduxDispatch]);
-    useEffect(() => reduxDispatch(employeesActions.fetch()), [reduxDispatch]);
-    useEffect(() => reduxDispatch(unitsOfMeasureActions.fetch()), [reduxDispatch]);
+    useEffect(() => {
+        reduxDispatch(currenciesActions.fetch());
+    }, [reduxDispatch]);
+    useEffect(() => {
+        reduxDispatch(employeesActions.fetch());
+    }, [reduxDispatch]);
+    useEffect(() => {
+        reduxDispatch(unitsOfMeasureActions.fetch());
+    }, [reduxDispatch]);
 
     const item = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.purchaseOrder));
     const applicationState = useSelector(reduxState =>
@@ -102,6 +117,10 @@ function PurchaseOrderUtility({ creating }) {
     );
 
     const loading = useSelector(state => itemSelectorHelpers.getItemLoading(state.purchaseOrder));
+
+    const deliveriesLoading = useSelector(state =>
+        itemSelectorHelpers.getItemLoading(state.purchaseOrderDeliveries)
+    );
 
     const itemError = useSelector(state => getItemError(state, 'purchaseOrder'));
 
@@ -159,6 +178,10 @@ function PurchaseOrderUtility({ creating }) {
         itemSelectorHelpers.getSnackbarVisible(state.purchaseOrder)
     );
 
+    const deliveriesSnackbarVisible = useSelector(state =>
+        itemSelectorHelpers.getSnackbarVisible(state.purchaseOrderDeliveries)
+    );
+
     const [editStatus, setEditStatus] = useState('view');
     const [authEmailDialogOpen, setAuthEmailDialogOpen] = useState(false);
     const [employeeToEmail, setEmployeeToEmail] = useState();
@@ -187,19 +210,20 @@ function PurchaseOrderUtility({ creating }) {
 
     const inputIsValid = () =>
         order.supplier?.id &&
-        order.details.every(d => d.partNumber) &&
-        order.details.every(d => d.ourQty) &&
-        order.details.every(d => d.orderQty) &&
-        order.details.every(d => d.ourUnitPriceCurrency) &&
-        order.details.every(d => d.orderUnitPriceCurrency) &&
-        order.details.every(d => d.ourUnitOfMeasure) &&
-        order.details.every(d => d.orderUnitOfMeasure) &&
-        order.details.every(d => d?.orderPosting?.nominalAccount?.department?.departmentCode) &&
-        order.details.every(d => d?.orderPosting?.nominalAccount?.nominal?.nominalCode) &&
-        order.details.every(d => d.netTotalCurrency) &&
-        order.details.every(d => d.detailTotalCurrency) &&
-        order.details.every(d => d.baseNetTotal) &&
-        order.details.every(d => d.baseDetailTotal) &&
+        order.details.every(
+            d =>
+                d.partNumber &&
+                d.ourQty &&
+                d.ourUnitPriceCurrency &&
+                d.orderUnitPriceCurrency &&
+                d.ourUnitOfMeasure &&
+                d.orderPosting?.nominalAccount?.department?.departmentCode &&
+                d.orderPosting?.nominalAccount?.nominal?.nominalCode &&
+                d.netTotalCurrency &&
+                d.detailTotalCurrency &&
+                d.baseNetTotal &&
+                d.baseDetailTotal
+        ) &&
         order.supplierContactEmail &&
         order.currency.code &&
         order.deliveryAddress?.addressId;
@@ -403,15 +427,18 @@ function PurchaseOrderUtility({ creating }) {
         <>
             <div className="hide-when-printing">
                 <Page history={history} homeUrl={config.appRoot} width={screenIsSmall ? 'xl' : 'm'}>
-                    {loading ? (
+                    {loading || deliveriesLoading ? (
                         <Loading />
                     ) : (
                         <Grid container spacing={1} justifyContent="center">
                             <SnackbarMessage
-                                visible={snackbarVisible && order?.orderNumber !== 0}
-                                onClose={() =>
-                                    reduxDispatch(purchaseOrderActions.setSnackbarVisible(false))
-                                }
+                                visible={snackbarVisible || deliveriesSnackbarVisible}
+                                onClose={() => {
+                                    reduxDispatch(purchaseOrderActions.setSnackbarVisible(false));
+                                    reduxDispatch(
+                                        purchaseOrderDeliveriesActions.setSnackbarVisible(false)
+                                    );
+                                }}
                                 message="Save successful"
                             />
                             <SnackbarMessage
@@ -500,6 +527,7 @@ function PurchaseOrderUtility({ creating }) {
                                                 dateAdvised: getDateString(d.dateAdvised)
                                             }))}
                                             backClick={() => setDeliveriesDialogOpen(false)}
+                                            closeOnSave
                                         />
                                     </div>
                                 </Dialog>
@@ -911,7 +939,7 @@ function PurchaseOrderUtility({ creating }) {
                                 ?.sort((a, b) => a.line - b.line)
                                 .map(detail => (
                                     <>
-                                        <Grid container item spacing={1} xs={4}>
+                                        <Grid container item spacing={1} xs={6}>
                                             <Grid item xs={4}>
                                                 <InputField
                                                     fullWidth
@@ -987,7 +1015,7 @@ function PurchaseOrderUtility({ creating }) {
                                                         className={classes.cursorPointer}
                                                     >
                                                         <Grid container item>
-                                                            <Grid item xs={6}>
+                                                            <Grid item xs={4}>
                                                                 <InputField
                                                                     fullWidth
                                                                     value={detail.orderQty}
@@ -998,7 +1026,7 @@ function PurchaseOrderUtility({ creating }) {
                                                                     required
                                                                 />
                                                             </Grid>
-                                                            <Grid item xs={6}>
+                                                            <Grid item xs={8}>
                                                                 <Button
                                                                     className={
                                                                         classes.buttonMarginTop
@@ -1077,7 +1105,7 @@ function PurchaseOrderUtility({ creating }) {
                                                         className={classes.cursorPointer}
                                                     >
                                                         <Grid container xs={12}>
-                                                            <Grid item xs={6}>
+                                                            <Grid item xs={4}>
                                                                 <InputField
                                                                     fullWidth
                                                                     value={
@@ -1090,7 +1118,7 @@ function PurchaseOrderUtility({ creating }) {
                                                                     required
                                                                 />
                                                             </Grid>
-                                                            <Grid item xs={6}>
+                                                            <Grid item xs={8}>
                                                                 <Button
                                                                     className={
                                                                         classes.buttonMarginTop
@@ -1112,7 +1140,7 @@ function PurchaseOrderUtility({ creating }) {
                                                 )}
                                             </Grid>
                                         </Grid>
-                                        <Grid item xs={8} spacing={1}>
+                                        <Grid item xs={6} spacing={1}>
                                             <InputField
                                                 fullWidth
                                                 value={detail.suppliersDesignation}
@@ -1346,8 +1374,12 @@ function PurchaseOrderUtility({ creating }) {
                                                             rows={detail.purchaseDeliveries.map(
                                                                 x => ({
                                                                     ...x,
-                                                                    id: `${x.deliverySeq}`
-                                                                })
+                                                                    id: `${x.deliverySeq}`,
+                                                                    dateRequested: getDateString(
+                                                                        x.dateRequested
+                                                                    ),
+                                                                    dateAdvised: getDateString(x.dateAdvised)
+                                                                    })
                                                             )}
                                                             columns={columns}
                                                             density="compact"

@@ -25,7 +25,8 @@ function PurchaseOrderDeliveriesUtility({
     orderLine,
     inDialogBox,
     deliveries,
-    backClick
+    backClick,
+    closeOnSave
 }) {
     const dispatch = useDispatch();
     const error = useSelector(state => getItemError(state, purchaseOrderDeliveries.item));
@@ -213,6 +214,9 @@ function PurchaseOrderDeliveriesUtility({
                             )
                         );
                         setChangesMade(false);
+                        if (closeOnSave) {
+                            backClick();
+                        }
                     }}
                 />
             </Grid>
@@ -239,12 +243,14 @@ PurchaseOrderDeliveriesUtility.propTypes = {
     deliveries: PropTypes.arrayOf(
         PropTypes.shape({ orderNumber: PropTypes.number, orderLine: PropTypes.number })
     ),
-    backClick: PropTypes.func.isRequired
+    backClick: PropTypes.func.isRequired,
+    closeOnSave: PropTypes.bool
 };
 
 PurchaseOrderDeliveriesUtility.defaultProps = {
     inDialogBox: false,
-    deliveries: null
+    deliveries: null,
+    closeOnSave: false
 };
 
 export default PurchaseOrderDeliveriesUtility;

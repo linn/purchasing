@@ -148,25 +148,26 @@ describe('When updating comment...', () => {
         jest.clearAllMocks();
         useSelector.mockImplementation(callback => callback(state));
         render(<OpenDebitNotes />);
+    });
+
+    test('should call update', () => {
+        // double click the cell to put it in edit mode
+        let comment = screen.getByRole('cell', { name: 'A COMMENT WE WILL CHANGE' });
+        fireEvent.doubleClick(comment);
+
+        // change the value
+        comment = screen
+            .getByRole('cell', { name: 'A COMMENT WE WILL CHANGE' })
+            .querySelector('input');
+        fireEvent.change(comment, { target: { value: 'NEW COMMENT' } });
 
         // select the row
         const firstCheckbox = screen.getAllByRole('checkbox')[1];
         fireEvent.click(firstCheckbox);
 
-        // double click the cell to put it in edit mode
-        let comment = screen.getByText('A COMMENT WE WILL CHANGE');
-        fireEvent.doubleClick(comment);
-
-        // change the value
-        comment = screen.getByDisplayValue('A COMMENT WE WILL CHANGE');
-        fireEvent.change(comment, { target: { value: 'NEW COMMENT' } });
-
         // save
         const saveButton = screen.getByRole('button', { name: 'Save Comments' });
         fireEvent.click(saveButton);
-    });
-
-    test('should call update', () => {
         expect(updateDebitNoteSpy).toHaveBeenCalledTimes(1);
         expect(updateDebitNoteSpy).toBeCalledWith(
             1,
