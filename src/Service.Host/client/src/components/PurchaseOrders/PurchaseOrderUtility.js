@@ -84,18 +84,18 @@ function PurchaseOrderUtility({ creating }) {
         {
             field: 'dateRequested',
             headerName: 'Request Date',
-            width: 100,
+            width: 200,
             type: 'date'
         },
         {
             field: 'dateAdvised',
             headerName: 'Advised Date',
-            width: 100
+            width: 200
         },
         {
             field: 'availableAtSupplier',
             headerName: 'Available at Supplier?',
-            width: 100,
+            width: 200,
             valueOptions: ['Y', 'N']
         }
     ];
@@ -927,7 +927,7 @@ function PurchaseOrderUtility({ creating }) {
                                 ?.sort((a, b) => a.line - b.line)
                                 .map(detail => (
                                     <>
-                                        <Grid container item spacing={1} xs={4}>
+                                        <Grid container item spacing={1} xs={6}>
                                             <Grid item xs={4}>
                                                 <InputField
                                                     fullWidth
@@ -1003,7 +1003,7 @@ function PurchaseOrderUtility({ creating }) {
                                                         className={classes.cursorPointer}
                                                     >
                                                         <Grid container item>
-                                                            <Grid item xs={6}>
+                                                            <Grid item xs={4}>
                                                                 <InputField
                                                                     fullWidth
                                                                     value={detail.orderQty}
@@ -1014,7 +1014,7 @@ function PurchaseOrderUtility({ creating }) {
                                                                     required
                                                                 />
                                                             </Grid>
-                                                            <Grid item xs={6}>
+                                                            <Grid item xs={8}>
                                                                 <Button
                                                                     className={
                                                                         classes.buttonMarginTop
@@ -1093,7 +1093,7 @@ function PurchaseOrderUtility({ creating }) {
                                                         className={classes.cursorPointer}
                                                     >
                                                         <Grid container xs={12}>
-                                                            <Grid item xs={6}>
+                                                            <Grid item xs={4}>
                                                                 <InputField
                                                                     fullWidth
                                                                     value={
@@ -1106,7 +1106,7 @@ function PurchaseOrderUtility({ creating }) {
                                                                     required
                                                                 />
                                                             </Grid>
-                                                            <Grid item xs={6}>
+                                                            <Grid item xs={8}>
                                                                 <Button
                                                                     className={
                                                                         classes.buttonMarginTop
@@ -1128,7 +1128,7 @@ function PurchaseOrderUtility({ creating }) {
                                                 )}
                                             </Grid>
                                         </Grid>
-                                        <Grid item xs={8} spacing={1}>
+                                        <Grid item xs={6} spacing={1}>
                                             <InputField
                                                 fullWidth
                                                 value={detail.suppliersDesignation}
