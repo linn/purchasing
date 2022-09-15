@@ -3,6 +3,7 @@ import { useMediaQuery } from 'react-responsive';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import { useSelector, useDispatch } from 'react-redux';
+import { DataGrid } from '@mui/x-data-grid';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { useParams } from 'react-router-dom';
@@ -76,6 +77,32 @@ function PurchaseOrderUtility({ creating }) {
     useEffect(() => {
         reduxDispatch(unitsOfMeasureActions.fetch());
     }, [reduxDispatch]);
+    const columns = [
+        { field: 'id', headerName: 'Id', width: 100, hide: true },
+        { field: 'deliverySeq', headerName: 'Delivery', width: 100 },
+        { field: 'ourDeliveryQty', headerName: 'Qty', width: 100 },
+        {
+            field: 'dateRequested',
+            headerName: 'Request Date',
+            width: 100,
+            type: 'date'
+        },
+        {
+            field: 'dateAdvised',
+            headerName: 'Advised Date',
+            width: 100
+        },
+        {
+            field: 'availableAtSupplier',
+            headerName: 'Available at Supplier?',
+            width: 100,
+            valueOptions: ['Y', 'N']
+        }
+    ];
+
+    useEffect(() => reduxDispatch(currenciesActions.fetch()), [reduxDispatch]);
+    useEffect(() => reduxDispatch(employeesActions.fetch()), [reduxDispatch]);
+    useEffect(() => reduxDispatch(unitsOfMeasureActions.fetch()), [reduxDispatch]);
 
     const item = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.purchaseOrder));
     const applicationState = useSelector(reduxState =>
@@ -1320,6 +1347,27 @@ function PurchaseOrderUtility({ creating }) {
                                                 disabled={!creating}
                                                 rows={2}
                                             />
+                                        </Grid>
+                                        <Grid item xs={12} style={{ paddingTop: '40px' }}>
+                                            <div>
+                                                <DataGrid
+                                                    rows={detail.purchaseDeliveries.map(x => ({
+                                                        ...x,
+                                                        id: `${x.deliverySeq}`,
+                                                        dateRequested: getDateString(
+                                                            x.dateRequested
+                                                        ),
+                                                        dateAdvised: getDateString(x.dateAdvised)
+                                                    }))}
+                                                    columns={columns}
+                                                    density="compact"
+                                                    rowHeight={34}
+                                                    autoHeight
+                                                    loading={loading}
+                                                    columnBuffer={8}
+                                                    hideFooter
+                                                />
+                                            </div>
                                         </Grid>
                                         <Grid item xs={12}>
                                             <Button onClick={() => updateDeliveries(detail.line)}>
