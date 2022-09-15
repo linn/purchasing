@@ -132,6 +132,7 @@
                                      Rel = "allow-over-book-search", Href = "/purchasing/purchase-orders/allow-over-book"
                                  };
             }
+
             if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, privileges))
             {
                 yield return new LinkResource
