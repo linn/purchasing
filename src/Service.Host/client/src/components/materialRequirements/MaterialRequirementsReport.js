@@ -37,7 +37,6 @@ import moment from 'moment';
 import { mrReport as mrReportItem, mrReportOrders as mrReportOrdersItem } from '../../itemTypes';
 import mrReportActions from '../../actions/mrReportActions';
 import mrReportOrdersActions from '../../actions/mrReportOrdersActions';
-import purchaseOrderActions from '../../actions/purchaseOrderActions';
 import history from '../../history';
 import config from '../../config';
 
@@ -604,33 +603,17 @@ function MaterialRequirementsReport() {
     );
 
     const progressToOrderScreen = () => {
-        //needs the links to come back with something into state
-        //don't understand this enough at half 4 on a friday to figure out
-        //which resource builder they should be in apologies
-
-        //I think it needs an object along these lines if you can build it from state?
-        const orderToPostBack = {
-            dateRequired: new Date(),
-            supplier: { id: supplierId },
-            details: [
-                {
-                    line: 1,
-                    partNumber,
-                    ourQty: qty,
-                    ourUnitPriceCurrency: price,
-                }
-            ]
-        };
-
-        dispatch(
-            purchaseOrderActions.postByHref(
-                utilities.getHref(order, 'generate-order-fields'), // /purchasing/purchase-orders/generate-order-from-supplier-id
-                orderToPostBack
-            )
+        window.open(
+            `${config.proxyRoot}${utilities.getHref(selectedItem, 'place-order')}`,
+            '_blank'
         );
+    };
 
-        history.push(utilities.getHref(order, 'create'));
-        // 'purchasing/purchase-orders/create'
+    const placeRecommendedOrder = () => {
+        window.open(
+            `${config.proxyRoot}${utilities.getHref(selectedItem, 'place-recommended-order')}`,
+            '_blank'
+        );
     };
 
     return (
@@ -700,19 +683,32 @@ function MaterialRequirementsReport() {
                                     className="hide-when-printing"
                                 >
                                     <Stack direction="row" spacing={4}>
-                                        <Tooltip title="Order (not yet implemented)">
+                                        <Tooltip title="Order">
                                             <div>
                                                 <Button
                                                     color="navBut"
                                                     size="small"
                                                     endIcon={<ShopIcon />}
-                                                    disabled
                                                     onClick={progressToOrderScreen}
                                                 >
                                                     Order
                                                 </Button>
                                             </div>
                                         </Tooltip>
+                                        {selectedItem.recommendedOrderQuantity && (
+                                            <Tooltip title="Place Recommended Order">
+                                                <div>
+                                                    <Button
+                                                        color="navBut"
+                                                        size="small"
+                                                        endIcon={<ShopIcon />}
+                                                        onClick={placeRecommendedOrder}
+                                                    >
+                                                        Recommended Order
+                                                    </Button>
+                                                </div>
+                                            </Tooltip>
+                                        )}
                                         <Tooltip title="Used On" className="hide-when-printing">
                                             <Button
                                                 style={{ float: 'right' }}

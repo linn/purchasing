@@ -54,6 +54,10 @@
         
         public string MrComments { get; set; }
 
+        public decimal? RecommendedOrderQuantity { get; set; }
+
+        public string RecommendedOrderDate { get; set; }
+
         public IEnumerable<MrDetailResource> Details { get; set; }
     }
 }

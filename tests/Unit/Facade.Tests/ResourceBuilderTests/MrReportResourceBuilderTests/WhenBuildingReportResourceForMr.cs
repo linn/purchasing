@@ -4,6 +4,7 @@
     using System.Linq;
 
     using FluentAssertions;
+    using FluentAssertions.Extensions;
 
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Resources.MaterialRequirements;
@@ -57,6 +58,8 @@
                                      PartId = 745654,
                                      Planner = 87,
                                      WeeksUntilDangerous = 3,
+                                     RecommendedOrderDate = 1.December(3000),
+                                     RecommendedOrderQuantity = 12,
                                      MrDetails = new List<MrDetail>
                                                      {
                                                          new MrDetail
@@ -370,6 +373,10 @@
                 a => a.Rel == "part-supplier" && a.Href == $"/purchasing/part-suppliers/record?partId={this.MrHeader1.PartId}&supplierId={this.MrHeader1.PreferredSupplierId}");
             part1Resource.Links.Should().Contain(
                 a => a.Rel == "view-stock" && a.Href == $"/inventory/stock-locator/locators?partNumber={this.MrHeader1.PartNumber}");
+            part1Resource.Links.Should().Contain(
+                a => a.Rel == "place-order" && a.Href == $"/purchasing/purchase-orders/quick-create?supplierId={this.MrHeader1.PreferredSupplierId}&supplierName={this.MrHeader1.PreferredSupplierName}&partNumber={this.MrHeader1.PartNumber}&currencyUnitPrice={this.MrHeader1.CurrencyUnitPrice}");
+            part1Resource.Links.Should().Contain(
+                a => a.Rel == "place-recommended-order" && a.Href == $"/purchasing/purchase-orders/quick-create?supplierId={this.MrHeader1.PreferredSupplierId}&supplierName={this.MrHeader1.PreferredSupplierName}&partNumber={this.MrHeader1.PartNumber}&currencyUnitPrice={this.MrHeader1.CurrencyUnitPrice}&qty={this.MrHeader1.RecommendedOrderQuantity}&dateRequired={this.MrHeader1.RecommendedOrderDate.Value.ToString("o")}");
         }
 
         [Test]

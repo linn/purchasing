@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.MaterialRequirements
 {
+    using System;
     using System.Collections.Generic;
     using System.Security.Cryptography;
 
@@ -94,6 +95,10 @@
         public string HasUnacknowledgedPurchaseOrders { get; set; }
 
         public string StockCategoryName { get; set; }
+
+        public decimal? RecommendedOrderQuantity { get; set; }
+
+        public DateTime? RecommendedOrderDate { get; set; }
 
         public IEnumerable<MrDetail> MrDetails { get; set; }
     }
