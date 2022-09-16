@@ -263,8 +263,8 @@
                             + $"{orderUrl} \n"
                              + $"Thanks";
 
-            var email1 = this.employeeRepository.FindById(33107).PhoneListEntry.EmailAddress; //32864
-            var email2 = this.employeeRepository.FindById(33107).PhoneListEntry.EmailAddress; //32835
+            var email1 = this.employeeRepository.FindById(32864).PhoneListEntry.EmailAddress;
+            var email2 = this.employeeRepository.FindById(32835).PhoneListEntry.EmailAddress;
             var email2Name = this.employeeRepository.FindById(32835).FullName;
             var cc = new List<Dictionary<string, string>>
                               {
@@ -274,11 +274,20 @@
                                           { "address", email2 }
                                       }
                               };
+            var bcc = new List<Dictionary<string, string>>
+                         {
+                             new Dictionary<string, string>
+                                 {
+                                     { "name", user.FullName },
+                                     { "address", user.PhoneListEntry.EmailAddress }
+                                 }
+                         };
+
             this.emailService.SendEmail(
                 email1,
                 "Finance",
                 cc,
-                null,
+                bcc,
                 ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
                 "Linn Purchasing",
                 $"Purchase Order {orderNumber} requires Authorisation",
