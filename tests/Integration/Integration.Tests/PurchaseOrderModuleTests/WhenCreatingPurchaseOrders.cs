@@ -7,6 +7,7 @@
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
@@ -16,7 +17,7 @@
 
     using NUnit.Framework;
 
-    public class WhenUpdatingPurchaseOrders : ContextBase
+    public class WhenCreatingPurchaseOrders : ContextBase
     {
         private readonly int orderNumber = 600179;
 
@@ -155,18 +156,20 @@
                 OrderAddress = new AddressResource { AddressId = 1914 }
             };
 
-            this.MockPurchaseOrderRepository.FindById(600179).Returns(
-                new PurchaseOrder { OrderNumber = 600179, Supplier = new Supplier { SupplierId = 1111 } });
+            this.MockSupplierRepository.FindById(Arg.Any<int>())
+                .Returns(new Supplier { SupplierId = 1111, Name = "seller", VendorManagerId = "007 🔫" });
 
-            this.Response = this.Client.PutAsJsonAsync("/purchasing/purchase-orders/600179", this.resource).Result;
+            this.MockNominalAccountRepository.FindById(Arg.Any<int>())
+                .Returns(new NominalAccount { NominalCode = "00030405", DepartmentCode = "00001892", AccountId = 918 });
+
+            this.Response = this.Client.PostAsJsonAsync("/purchasing/purchase-orders", this.resource).Result;
         }
 
         [Test]
         public void ShouldCallUpdate()
         {
-            this.MockDomainService.Received().UpdateOrder(
+            this.MockDomainService.Received().CreateOrder(
                 Arg.Any<PurchaseOrder>(),
-                Arg.Is<PurchaseOrder>(x => x.OrderNumber == this.orderNumber && x.Details.Count == 1),
                 Arg.Any<IEnumerable<string>>());
         }
 
@@ -187,7 +190,7 @@
         [Test]
         public void ShouldReturnSuccess()
         {
-            this.Response.StatusCode.Should().Be(HttpStatusCode.OK);
+            this.Response.StatusCode.Should().Be(HttpStatusCode.Created);
         }
     }
 }

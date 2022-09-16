@@ -76,6 +76,16 @@
 
         public string IssuePartsToSupplier { get; set; }
 
+        public string PriceType { get; set; }
+
+        public string FilCancelled { get; set; }
+
+        public string UpdatePartsupPrice { get; set; }
+
+        public string WasPreferredSupplier { get; set; }
+
+        public decimal OverbookQtyAllowed { get; set; }
+
         public string DrawingRef { get; set; }
     }
 }

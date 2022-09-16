@@ -101,7 +101,8 @@
                                entity.OrderAddress != null
                                    ? (AddressResource)this.addressResourceBuilder.Build(entity.OrderAddress, claims)
                                    : null,
-                           SupplierContactEmail = entity.Supplier.SupplierContacts?.FirstOrDefault(c => c.IsMainOrderContact == "Y")?.EmailAddress,
+                InvoiceAddressId = entity.InvoiceAddressId,
+                SupplierContactEmail = entity.Supplier.SupplierContacts?.FirstOrDefault(c => c.IsMainOrderContact == "Y")?.EmailAddress,
                            SupplierContactPhone = entity.Supplier.SupplierContacts?.FirstOrDefault(c => c.IsMainOrderContact == "Y")?.PhoneNumber,
                            BaseOrderNetTotal = entity.BaseOrderNetTotal,
                            OrderNetTotal = entity.OrderNetTotal,
@@ -139,6 +140,11 @@
                                  };
                 yield return new LinkResource
                                  {
+                                     Rel = "quick-create",
+                                     Href = "/purchasing/purchase-orders/quick-create"
+                                 };
+                yield return new LinkResource
+                                 {
                                      Rel = "generate-order-fields",
                                      Href = "/purchasing/purchase-orders/generate-order-from-supplier-id"
                 };
@@ -147,6 +153,7 @@
             if (model != null)
             {
                 yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
+                yield return new LinkResource { Rel = "html", Href = $"{this.GetLocation(model)}/html" };
 
                 if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
                 {

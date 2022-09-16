@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer, useMemo } from 'react';
+import React, { useEffect, useReducer, useMemo } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import Grid from '@mui/material/Grid';
 import { useSelector, useDispatch } from 'react-redux';
@@ -68,8 +68,8 @@ function CreatePurchaseOrderUt() {
                     {
                         line: 1,
                         partNumber,
-                        ourQty: qty,
-                        orderQty: qty,
+                        ourQty: qty ?? 0,
+                        orderQty: qty ?? 0,
                         ourUnitPriceCurrency: 0,
                         orderUnitPriceCurrency: 0,
                         vatTotalCurrency: 0,
@@ -93,26 +93,21 @@ function CreatePurchaseOrderUt() {
         itemSelectorHelpers.getSnackbarVisible(state.purchaseOrder)
     );
 
-    const [editStatus, setEditStatus] = useState('view');
-
     const allowedToCreate = () => item?.links?.some(l => l.rel === 'create');
 
-    const inputIsInvalid = () =>
-        !order.supplier &&
-        !order.partNumber &&
+    const inputIsValid = () =>
+        order.supplier?.id &&
+        order.details[0].partNumber &&
         order.details[0].ourQty &&
         order.details[0].ourUnitPriceCurrency;
 
-    const canSave = () => editStatus !== 'view' && allowedToCreate() && !inputIsInvalid();
+    const canSave = () => allowedToCreate() && inputIsValid();
 
     const handleFieldChange = (propertyName, newValue) => {
-        setEditStatus('edit');
         dispatch({ payload: newValue, propertyName, type: 'orderFieldChange' });
     };
 
     const handleDetailFieldChange = (propertyName, newValue, detail) => {
-        setEditStatus('edit');
-
         dispatch({ payload: { ...detail, [propertyName]: newValue }, type: 'detailFieldChange' });
     };
 
@@ -149,7 +144,6 @@ function CreatePurchaseOrderUt() {
         const { exchangeRate } = order;
 
         if (exchangeRate && newValue && newValue > 0 && newValue !== order[propertyName]) {
-            setEditStatus('edit');
             const convertedValue = currencyConvert(newValue, exchangeRate);
 
             dispatch({
@@ -171,8 +165,6 @@ function CreatePurchaseOrderUt() {
 
     const handleDetailQtyFieldChange = (propertyName, newValue, detail) => {
         if (newValue && newValue > 0 && newValue !== order[propertyName]) {
-            setEditStatus('edit');
-
             dispatch({
                 payload: {
                     ...detail,
@@ -184,9 +176,8 @@ function CreatePurchaseOrderUt() {
     };
 
     const handleSupplierChange = newSupplier => {
-        setEditStatus('edit');
         dispatch({
-            payload: { id: newSupplier.id, name: newSupplier.name },
+            payload: { id: newSupplier.id, name: newSupplier.description },
             type: 'supplierChange'
         });
     };
@@ -233,9 +224,6 @@ function CreatePurchaseOrderUt() {
     const detail = order ? order.details[0] : {};
 
     const progressToFullCreate = () => {
-        //post to get supplier info fill out address etc, then reduxDispatch the action
-        // reduxDispatch(purchaseOrderActions. thingy ());
-
         reduxDispatch(
             purchaseOrderActions.postByHref(
                 utilities.getHref(order, 'generate-order-fields'),
@@ -268,7 +256,7 @@ function CreatePurchaseOrderUt() {
                             </Grid>
                         )}
                         <Grid item xs={12}>
-                            <Typography variant="h6">Purchase Order Quick Create Ut </Typography>
+                            <Typography variant="h6">Create Purchase Order Wizard</Typography>
                         </Grid>
                         <Grid item xs={11}>
                             <Typeahead
@@ -348,11 +336,7 @@ function CreatePurchaseOrderUt() {
                                 label="Quantity"
                                 propertyName="ourQty"
                                 onChange={(propertyName, newValue) =>
-                                    handleDetailQtyFieldChange(
-                                        propertyName,
-                                        newValue,
-                                        order.details[0]
-                                    )
+                                    handleDetailQtyFieldChange(propertyName, newValue, detail)
                                 }
                                 disabled={!allowedToCreate()}
                                 type="number"

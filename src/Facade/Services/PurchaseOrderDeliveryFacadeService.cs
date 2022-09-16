@@ -35,8 +35,8 @@
             string supplierSearchTerm, string orderNumberSearchTerm, bool includeAcknowledged)
         {
             var results = this.domainService.SearchDeliveries(
-                supplierSearchTerm,
-                orderNumberSearchTerm,
+                supplierSearchTerm?.Trim(),
+                orderNumberSearchTerm?.Trim(),
                 includeAcknowledged);
             return new SuccessResult<IEnumerable<PurchaseOrderDeliveryResource>>(
                 results.Select(x => (PurchaseOrderDeliveryResource)this.resourceBuilder.Build(x, null)));
@@ -55,7 +55,7 @@
                     var row = line.Split(",");
 
                     if (!int.TryParse(
-                            new string(row[0].Trim().Where(char.IsDigit).ToArray()), // strip out non numeric chars 
+                            new string(row[0].Trim().Where(char.IsDigit).ToArray()), // strip out non numeric chars
                             out var orderNumber))
                     {
                         throw new InvalidOperationException($"Invalid Order Number: {row[0]}.");
@@ -77,13 +77,16 @@
                             .Trim(), "dd'/'M'/'yy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate1);
                     var secondFormatSatisfied =
                         DateTime.TryParseExact(row[1]
-                            .Trim(), "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate2);
+                            .Trim(), "dd-MMM-yy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate2);
                     var thirdFormatSatisfied =
                         DateTime.TryParseExact(row[1]
                             .Trim(), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate3);
                     var fourthFormatSatisfied =
                         DateTime.TryParseExact(row[1]
                             .Trim(), "dd'/'M'/'yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate4);
+                    var fifthFormatSatisfied =
+                        DateTime.TryParseExact(row[1].ToUpper()
+                            .Trim(), "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate5);
 
                     // only supports two date formats for now, i.e.  31/01/2000 and 31-jan-2000
                     DateTime? parsedDate;
@@ -103,6 +106,10 @@
                     else if (fourthFormatSatisfied)
                     {
                         parsedDate = parsedDate4;
+                    }
+                    else if (fifthFormatSatisfied)
+                    {
+                        parsedDate = parsedDate5;
                     }
                     else
                     {
@@ -133,14 +140,10 @@
                 var result = this.domainService.UploadDeliveries(changes, privileges);
                 this.transactionManager.Commit();
                 
-                foreach (var u in result.Updated) 
+                foreach (var updatesForOrder in result.Updated.GroupBy(x => x.OrderNumber).ToList()) 
                 {
-                    this.domainService.UpdateMiniOrderDelivery(
-                            u.OrderNumber, 
-                            u.DeliverySeq, 
-                            u.DateAdvised, 
-                            u.AvailableAtSupplier, 
-                            u.OurDeliveryQty.GetValueOrDefault());
+                    this.domainService.ReplaceMiniOrderDeliveries(
+                         updatesForOrder);
                 }
 
                 this.transactionManager.Commit();
@@ -180,7 +183,7 @@
                              NewReason = u.Reason,
                              Qty = u.Qty,
                              AvailableAtSupplier = u.AvailableAtSupplier,
-                             Comment = u.Comment, 
+                             Comment = u.Comment,
                              UnitPrice = u.UnitPrice
                          }).ToList();
             var result = this.domainService
@@ -203,7 +206,7 @@
         }
 
         public IResult<IEnumerable<PurchaseOrderDeliveryResource>> UpdateDeliveriesForDetail(
-            int orderNumber, 
+            int orderNumber,
             int orderLine,
             IEnumerable<PurchaseOrderDeliveryResource> resource,
             IEnumerable<string> privileges)
@@ -216,7 +219,7 @@
                         {
                             var dateAdvised = new DateTime();
 
-                            if (!string.IsNullOrEmpty(d.DateAdvised) && (!DateTime.TryParse(d.DateAdvised, out dateAdvised)) 
+                            if (!string.IsNullOrEmpty(d.DateAdvised) && (!DateTime.TryParse(d.DateAdvised, out dateAdvised))
                                 || !DateTime.TryParse(
                                     d.DateRequested,
                                     out var dateRequested))
@@ -268,7 +271,6 @@
 
                 // update the mini order to keep its deliveries in sync
                 this.domainService.UpdateMiniOrderDeliveries(entities);
-                this.transactionManager.Commit();
 
                 return new SuccessResult<IEnumerable<PurchaseOrderDeliveryResource>>(resourceList);
             }

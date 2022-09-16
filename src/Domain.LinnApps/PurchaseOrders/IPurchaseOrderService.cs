@@ -23,5 +23,9 @@
         ProcessResult EmailMultiplePurchaseOrders(IList<int> orderNumbers, int userNumber, bool copyToSelf);
 
         string GetPurchaseOrderAsHtml(int orderNumber);
+
+        void CreateOrder(PurchaseOrder order, IEnumerable<string> privileges);
+
+        void CreateMiniOrder(PurchaseOrder order);
     }
 }

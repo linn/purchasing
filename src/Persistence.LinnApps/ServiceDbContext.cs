@@ -135,7 +135,7 @@
         public DbSet<MrUsedOnRecord> MrUsedOnView { get; set; }
 
         public DbSet<PartAndAssembly> PartsAndAssemblies { get; set; }
-       
+
         public DbSet<MrHeader> MrHeaders { get; set; }
 
         public DbSet<RescheduleReason> PlRescheduleReasons { get; set; }
@@ -161,7 +161,7 @@
         public DbSet<AutomaticPurchaseOrderSuggestion> AutomaticPurchaseOrderSuggestions { get; set; }
 
         public DbSet<SupplierAutoEmails> SupplierAutoEmails { get; set; }
-        
+
         public DbSet<NominalAccount> NominalAccounts { get; set; }
 
         public DbSet<BomDetail> BomDetails { get; set; }
@@ -644,6 +644,13 @@
             entity.Property(o => o.BaseCurrencyCode).HasColumnName("BASE_CURRENCY");
             entity.Property(o => o.OrderNetTotal).HasColumnName("ORDER_NET_TOTAL");
             entity.Property(o => o.BaseOrderNetTotal).HasColumnName("BASE_ORDER_NET_TOTAL");
+            entity.Property(o => o.OrderVatTotal).HasColumnName("ORDER_VAT_TOTAL");
+            entity.Property(o => o.InvoiceAddressId).HasColumnName("INVOICE_ADDRESS_ID");
+            entity.HasOne(o => o.InvoiceAddress).WithMany().HasForeignKey(o => o.InvoiceAddressId);
+            entity.Property(o => o.ArchiveOrder).HasColumnName("ARCHIVE_ORDER").HasMaxLength(1);
+            entity.Property(o => o.OrderTotal).HasColumnName("ORDER_TOTAL");
+            entity.Property(o => o.BaseOrderTotal).HasColumnName("BASE_ORDER_TOTAL");
+            entity.Property(o => o.BaseOrderVatTotal).HasColumnName("BASE_ORDER_VAT_TOTAL");
         }
 
         private void BuildPurchaseOrderDetails(ModelBuilder builder)
@@ -684,6 +691,11 @@
             entity.Property(o => o.OrderConversionFactor).HasColumnName("ORDER_CONV_FACTOR");
             entity.Property(o => o.OrderQty).HasColumnName("ORDER_QTY");
             entity.Property(o => o.IssuePartsToSupplier).HasColumnName("ISSUE_PARTS_TO_SUPPLIER").HasMaxLength(1);
+            entity.Property(o => o.PriceType).HasColumnName("PRICE_TYPE").HasMaxLength(10);
+            entity.Property(o => o.FilCancelled).HasColumnName("FIL_CANCELLED").HasMaxLength(1);
+            entity.Property(o => o.UpdatePartsupPrice).HasColumnName("UPDATE_PARTSUP_PRICE").HasMaxLength(1);
+            entity.Property(o => o.WasPreferredSupplier).HasColumnName("WAS_PREFERRED_SUPPLIER").HasMaxLength(1);
+            entity.Property(o => o.OverbookQtyAllowed).HasColumnName("OVERBOOK_QTY_ALLOWED").HasMaxLength(19);
             entity.Property(o => o.DrawingRef).HasColumnName("DRAWING_REF").HasMaxLength(100);
         }
 
@@ -1328,7 +1340,7 @@
             entity.HasKey(e => e.Reason);
             entity.Property(e => e.Reason).HasColumnName("RESCHEDULE_REASON");
         }
-        
+
         private void BuildMrHeaders(ModelBuilder builder)
         {
             var entity = builder.Entity<MrHeader>().ToView("V_MRH");
@@ -1507,8 +1519,7 @@
             entity.Property(o => o.PrevOrderLine).HasColumnName("PREV_ORDER_LINE").HasMaxLength(6);
             entity.Property(o => o.FilCancelledBy).HasColumnName("FIL_CANCELLED_BY").HasMaxLength(6);
             entity.Property(o => o.ReasonFilCancelled).HasColumnName("REASON_FIL_CANCELLED").HasMaxLength(300);
-            entity.Property(o => o.OurPrice).HasColumnName("OUR_PRICE").HasMaxLength(19);
-            entity.Property(o => o.OrderConvFactor).HasColumnName("ORDER_PRICE").HasMaxLength(19);
+            entity.Property(o => o.OrderConvFactor).HasColumnName("ORDER_CONV_FACTOR").HasMaxLength(19);
             entity.Property(o => o.BaseCurrency).HasColumnName("BASE_CURRENCY").HasMaxLength(4);
             entity.Property(o => o.BaseOurPrice).HasColumnName("BASE_OUR_PRICE").HasMaxLength(19);
             entity.Property(o => o.BaseOrderPrice).HasColumnName("BASE_ORDER_PRICE").HasMaxLength(19);
