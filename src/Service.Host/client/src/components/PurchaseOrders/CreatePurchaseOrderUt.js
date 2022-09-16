@@ -63,7 +63,7 @@ function CreatePurchaseOrderUt() {
             const initialOrder = {
                 ...item,
                 exchangeRate: 1,
-                dateRequired: dateRequired ?? new Date(),
+                dateRequired: dateRequired ? new Date(dateRequired) : new Date(),
                 supplier: { id: supplierId, name: supplierName },
                 details: [
                     {
