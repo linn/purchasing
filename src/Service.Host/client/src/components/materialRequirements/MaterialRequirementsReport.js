@@ -37,7 +37,6 @@ import moment from 'moment';
 import { mrReport as mrReportItem, mrReportOrders as mrReportOrdersItem } from '../../itemTypes';
 import mrReportActions from '../../actions/mrReportActions';
 import mrReportOrdersActions from '../../actions/mrReportOrdersActions';
-
 import history from '../../history';
 import config from '../../config';
 
@@ -603,6 +602,20 @@ function MaterialRequirementsReport() {
         </>
     );
 
+    const progressToOrderScreen = () => {
+        window.open(
+            `${config.proxyRoot}${utilities.getHref(selectedItem, 'place-order')}`,
+            '_blank'
+        );
+    };
+
+    const placeRecommendedOrder = () => {
+        window.open(
+            `${config.proxyRoot}${utilities.getHref(selectedItem, 'place-recommended-order')}`,
+            '_blank'
+        );
+    };
+
     return (
         <div className="print-landscape" onKeyDown={onKeyPressed} tabIndex={-1} role="textbox">
             <Page history={history} width="xl" homeUrl={config.appRoot}>
@@ -670,18 +683,32 @@ function MaterialRequirementsReport() {
                                     className="hide-when-printing"
                                 >
                                     <Stack direction="row" spacing={4}>
-                                        <Tooltip title="Order (not yet implemented)">
+                                        <Tooltip title="Order">
                                             <div>
                                                 <Button
                                                     color="navBut"
                                                     size="small"
                                                     endIcon={<ShopIcon />}
-                                                    disabled
+                                                    onClick={progressToOrderScreen}
                                                 >
                                                     Order
                                                 </Button>
                                             </div>
                                         </Tooltip>
+                                        {selectedItem.recommendedOrderQuantity && (
+                                            <Tooltip title="Place Recommended Order">
+                                                <div>
+                                                    <Button
+                                                        color="navBut"
+                                                        size="small"
+                                                        endIcon={<ShopIcon />}
+                                                        onClick={placeRecommendedOrder}
+                                                    >
+                                                        Recommended Order
+                                                    </Button>
+                                                </div>
+                                            </Tooltip>
+                                        )}
                                         <Tooltip title="Used On" className="hide-when-printing">
                                             <Button
                                                 style={{ float: 'right' }}

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Page } from '@linn-it/linn-form-components-library';
+import { useDispatch, useSelector } from 'react-redux';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -9,46 +10,45 @@ import TreeView from '@mui/lab/TreeView';
 import TreeItem from '@mui/lab/TreeItem';
 import history from '../history';
 import config from '../config';
+import bomTreeNodeActions from '../actions/bomTreeNodeActions';
 
 const set = new Set();
 
 export default function BomTree() {
-    const root = {
-        bomName: 'SK HUB',
-        children: [{ bomName: 'SOME SWEET BOM' }, { bomName: 'B' }, { bomName: 'C' }]
-    };
-    const fakeState = [
-        { root },
-        {
-            bomName: 'SOME SWEET BOM',
-            children: [{ bomName: 'x' }, { bomName: 'y' }, { bomName: 'z' }]
-        },
-        {
-            bomName: 'x',
-            children: [{ bomName: 'xx' }, { bomName: 'yx' }, { bomName: 'zx' }]
-        }
-    ];
-    const [expanded, setExpanded] = React.useState([root.bomName]);
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(bomTreeNodeActions.fetch(40149));
+    }, [dispatch]);
 
-    const handleToggle = (event, nodeIds) => {
+    const boms = useSelector(state => state.bomTreeNodes.items);
+
+    const root = boms.find(x => x.bomId === 40149);
+
+    const [expanded, setExpanded] = useState(['SK HUB']);
+
+    const handleToggle = (_, nodeIds) => {
+        console.log(nodeIds);
         const previousLength = set.size;
         nodeIds.forEach(id => {
-            set.add(id);
+            if (id) {
+                set.add(id);
+            }
         });
         if (set.size !== previousLength) {
             console.log(`fetching  ${Array.from(set).pop()}`);
+            dispatch(bomTreeNodeActions.fetch(Array.from(set).pop()));
         }
 
-        set.add(event.target.children);
+        //set.add(event.target.children);
         setExpanded(nodeIds);
     };
 
-    const renderNode = nodeName => {
-        const nodes = fakeState.find(x => x.bomName === nodeName)?.children;
+    const renderNode = bomName => {
+        const nodes = boms.find(x => x.bomName === bomName)?.children;
         if (nodes) {
             return nodes.map(c => (
-                <TreeItem nodeId={c.bomName} label={c.bomName}>
-                    {renderNode(c.bomName)}
+                <TreeItem nodeId={c.bomId ?? c.partNumber} label={c.partNumber}>
+                    {c.partNumber}
                 </TreeItem>
             ));
         }
@@ -66,13 +66,19 @@ export default function BomTree() {
                 onNodeToggle={handleToggle}
                 multiSelect
             >
-                <TreeItem nodeId={root.bomName} label={root.bomName}>
-                    {root.children.map(c => (
-                        <TreeItem id={c.bomName} nodeId={c.bomName} label={c.bomName}>
-                            {renderNode(c.bomName)}
-                        </TreeItem>
-                    ))}
-                </TreeItem>
+                {root && (
+                    <TreeItem nodeId={root.bomName} label={root.bomName}>
+                        {root?.children?.map(c => (
+                            <TreeItem
+                                id={c.bomId ?? c.partNumber}
+                                nodeId={c.bomId ?? c.partNumber}
+                                label={c.partNumber}
+                            >
+                                {renderNode(c.partNumber)}
+                            </TreeItem>
+                        ))}
+                    </TreeItem>
+                )}
             </TreeView>
         </Page>
     );
