@@ -84,7 +84,8 @@
                 .AddTransient<IBuilder<AutomaticPurchaseOrder>, AutomaticPurchaseOrderResourceBuilder>()
                 .AddTransient<IBuilder<AutomaticPurchaseOrderSuggestion>, AutomaticPurchaseOrderSuggestionResourceBuilder>()
                 .AddTransient<IBuilder<LedgerPeriod>, LedgerPeriodResourceBuilder>()
-                .AddTransient<IBuilder<ChangeRequest>, ChangeRequestResourceBuilder>();
+                .AddTransient<IBuilder<ChangeRequest>, ChangeRequestResourceBuilder>()
+                .AddTransient<IBuilder<BomChange>, BomChangeResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)

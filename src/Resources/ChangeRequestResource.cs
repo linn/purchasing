@@ -1,6 +1,6 @@
 ﻿namespace Linn.Purchasing.Resources
 {
-    using System;
+    using System.Collections.Generic;
 
     public class ChangeRequestResource
     {
@@ -15,5 +15,7 @@
         public string ReasonForChange { get; set; }
 
         public string DescriptionOfChange { get; set; }
+
+        public IEnumerable<BomChangeResource> BomChanges { get; set; }
     }
 }
