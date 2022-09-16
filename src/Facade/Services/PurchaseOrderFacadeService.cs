@@ -35,7 +35,6 @@
 
         private readonly IRepository<PurchaseOrder, int> repository;
 
-
         public PurchaseOrderFacadeService(
             IRepository<PurchaseOrder, int> repository,
             ITransactionManager transactionManager,
