@@ -1794,6 +1794,7 @@
             entity.HasKey(c => c.DocumentNumber);
             entity.Property(c => c.DocumentType).HasColumnName("DOCUMENT_TYPE").HasMaxLength(6);
             entity.Property(c => c.DocumentNumber).HasColumnName("DOCUMENT_NUMBER");
+            entity.Property(c => c.DateEntered).HasColumnName("DATE_ENTERED");
             entity.Property(c => c.ChangeState).HasColumnName("CHANGE_STATE").HasMaxLength(6);
             entity.Property(c => c.ReasonForChange).HasColumnName("REASON_FOR_CHANGE").HasMaxLength(2000);
             entity.Property(c => c.DescriptionOfChange).HasColumnName("DESCRIPTION_OF_CHANGE").HasMaxLength(2000);

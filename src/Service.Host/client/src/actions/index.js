@@ -303,7 +303,4 @@ export const forecastWeekChangesReportActionTypes = makeReportActionTypes(
     reportTypes.forecastWeekChangesReport.actionType
 );
 
-export const changeRequestsActionTypes = makeActionTypes(
-    itemTypes.changeRequests.actionType,
-    false
-);
+export const changeRequestActionTypes = makeActionTypes(itemTypes.changeRequest.actionType, false);

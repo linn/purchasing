@@ -415,7 +415,7 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
-                                    path="/purchasing/automatic-purchase-orders/:id"
+                                    path="/purchasing/change-requests/:id"
                                     component={ChangeRequest}
                                 />
                                 <Route component={NotFoundPage} />
