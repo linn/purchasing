@@ -14,9 +14,13 @@
 
         ProcessResult SendSupplierAssemblyEmail(int orderNumber);
 
+        ProcessResult SendFinanceAuthRequestEmail(int currentUserId, int orderNumber);
+
         PurchaseOrder UpdateOrder(PurchaseOrder current, PurchaseOrder updated, IEnumerable<string> privileges);
 
         PurchaseOrder FillOutUnsavedOrder(PurchaseOrder order, int userId);
+
+        ProcessResult AuthorisePurchaseOrder(PurchaseOrder order, int userNumber, IEnumerable<string> privileges);
 
         ProcessResult AuthoriseMultiplePurchaseOrders(IList<int> orderNumbers, int userNumber);
 

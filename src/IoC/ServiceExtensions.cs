@@ -26,8 +26,10 @@
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
     using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Facade.ResourceBuilders;
@@ -161,7 +163,28 @@
                 .AddTransient<IPdfService>(x => new PdfService(ConfigurationManager.Configuration["PDF_SERVICE_ROOT"], new HttpClient()))
                 .AddTransient<IReportingHelper, ReportingHelper>()
                 .AddTransient<IPurchaseOrdersReportService, PurchaseOrdersReportService>()
-                .AddTransient<IPurchaseOrderService, PurchaseOrderService>()
+                .AddTransient<IPurchaseOrderService>(
+                    x => new PurchaseOrderService(
+                    ConfigurationManager.Configuration["APP_ROOT"],
+                    x.GetService<IAuthorisationService>(),
+                    x.GetService<IPurchaseLedgerPack>(),
+                    x.GetService<IDatabaseService>(),
+                    x.GetService<IPdfService>(),
+                    x.GetService<IEmailService>(),
+                    x.GetService<IRepository<Employee, int>>(),
+                    x.GetService<IRepository<MiniOrder, int>>(),
+                    x.GetService<IRepository<Supplier, int>>(),
+                    x.GetService<IRepository<LinnDeliveryAddress, int>>(),
+                    x.GetService<IPurchaseOrdersPack>(),
+                    x.GetService<ICurrencyPack>(),
+                    x.GetService<ISupplierKitService>(),
+                    x.GetService<IRepository<PurchaseOrder, int>>(),
+                    x.GetService<IHtmlTemplateService<PurchaseOrder>>(),
+                    x.GetService<ISingleRecordRepository<PurchaseLedgerMaster>>(),
+                    x.GetService<IRepository<NominalAccount, int>>(),
+                    x.GetService<IQueryRepository<Part>>(),
+                    x.GetService<IRepository<PartSupplier, PartSupplierKey>>(),
+                    x.GetService<ILog>()))
                 .AddTransient<IAuthorisationService, AuthorisationService>()
                 .AddTransient<IDatabaseService, DatabaseService>()
                 .AddTransient<ISpendsReportService, SpendsReportService>()

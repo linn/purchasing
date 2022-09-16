@@ -22,6 +22,8 @@
 
     public class PurchaseOrderService : IPurchaseOrderService
     {
+        private readonly string appRoot;
+
         private readonly IAuthorisationService authService;
 
         private readonly IDatabaseService databaseService;
@@ -62,6 +64,7 @@
 
 
         public PurchaseOrderService(
+            string appRoot,
             IAuthorisationService authService,
             IPurchaseLedgerPack purchaseLedgerPack,
             IDatabaseService databaseService,
@@ -72,7 +75,7 @@
             IRepository<Supplier, int> supplierRepository,
             IRepository<LinnDeliveryAddress, int> linnDeliveryAddressRepository,
             IPurchaseOrdersPack purchaseOrdersPack,
-            ICurrencyPack currencyPack, 
+            ICurrencyPack currencyPack,
             ISupplierKitService supplierKitService,
             IRepository<PurchaseOrder, int> purchaseOrderRepository,
             IHtmlTemplateService<PurchaseOrder> purchaseOrderTemplateService,
@@ -101,6 +104,7 @@
             this.partQueryRepository = partQueryRepository;
             this.partSupplierRepository = partSupplierRepository;
             this.log = log;
+            this.appRoot = appRoot;
         }
 
         public void AllowOverbook(
@@ -248,6 +252,57 @@
             return new ProcessResult(true, $"Email sent for purchase order {orderNumber} to Logistics");
         }
 
+        public ProcessResult SendFinanceAuthRequestEmail(int currentUserId, int orderNumber)
+        {
+            var order = this.GetOrder(orderNumber);
+
+            var user = this.employeeRepository.FindById(currentUserId);
+            var orderUrl = $"{this.appRoot}/purchasing/purchase-orders/{orderNumber}";
+            var emailBody = $"Purchasing have raised order {orderNumber} for {order.Supplier.Name}.\n"
+                            + $"{user.FullName} would like you to Authorise it which you can do here:\n"
+                            + $"{orderUrl} \n"
+                             + $"Thanks";
+
+            var email1 = this.employeeRepository.FindById(32864).PhoneListEntry.EmailAddress;
+            var email2 = this.employeeRepository.FindById(32835).PhoneListEntry.EmailAddress;
+            var email2Name = this.employeeRepository.FindById(32835).FullName;
+            var cc = new List<Dictionary<string, string>>
+                              {
+                                  new Dictionary<string, string>
+                                      {
+                                          { "name", email2Name },
+                                          { "address", email2 }
+                                      }
+                              };
+            var bcc = new List<Dictionary<string, string>>
+                         {
+                             new Dictionary<string, string>
+                                 {
+                                     { "name", user.FullName },
+                                     { "address", user.PhoneListEntry.EmailAddress }
+                                 }
+                         };
+
+            this.emailService.SendEmail(
+                email1,
+                "Finance",
+                cc,
+                bcc,
+                ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
+                "Linn Purchasing",
+                $"Purchase Order {orderNumber} requires Authorisation",
+                emailBody,
+                null,
+                null);
+
+            this.log.Write(
+                LoggingLevel.Info,
+                new List<LoggingProperty>(),
+                $"Email sent for purchase order {orderNumber} auth request to Finance");
+
+            return new ProcessResult(true, $"Email sent for purchase order {orderNumber} auth request to Finance");
+        }
+
         public PurchaseOrder UpdateOrder(PurchaseOrder current, PurchaseOrder updated, IEnumerable<string> privileges)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
@@ -321,6 +376,36 @@
             detail.OrderPosting.NominalAccountId = 884;
 
             return order;
+        }
+
+        public ProcessResult AuthorisePurchaseOrder(PurchaseOrder order, int userNumber, IEnumerable<string> privileges)
+        {
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderAuthorise, privileges))
+            {
+                throw new UnauthorisedActionException("You do not have permission to authorise Purchase Orders");
+            }
+
+            if (order.AuthorisedById.HasValue)
+            {
+                return new ProcessResult(false, $"Order {order.OrderNumber} was already authorised");
+            }
+            else if (this.purchaseOrdersPack.OrderCanBeAuthorisedBy(
+                         order.OrderNumber,
+                         null,
+                         userNumber,
+                         null,
+                         null,
+                         null))
+            {
+                order.AuthorisedById = userNumber;
+
+                return new ProcessResult(true, $"Order {order.OrderNumber} successfully authorised");
+
+            }
+            else
+            {
+                return new ProcessResult(false, $"Order {order.OrderNumber} YOU CANNOT AUTHORISE THIS ORDER");
+            }
         }
 
         public ProcessResult AuthoriseMultiplePurchaseOrders(IList<int> orderNumbers, int userNumber)
@@ -517,8 +602,8 @@
                                                         OrderDeliveryQty = detail.OrderQty,
                                                         OurUnitPriceCurrency = detail.OurUnitPriceCurrency,
                                                         OrderUnitPriceCurrency = detail.OrderUnitPriceCurrency,
-                                                        DateRequested = DateTime.Now,
-                                                        DateAdvised = DateTime.Now.AddDays(leadTimeWeeks * 7),
+                                                        DateRequested = DateTime.Now.AddDays(leadTimeWeeks * 7),
+                                                        DateAdvised = null,
                                                         CallOffDate = DateTime.Now,
                                                         Cancelled = "N",
                                                         CallOffRef = null,
@@ -537,7 +622,7 @@
                                                         QuantityOutstanding = detail.OurQty,
                                                         QtyNetReceived = 0,
                                                         QtyPassedForPayment = 0,
-                                                        RescheduleReason = string.Empty
+                                                        RescheduleReason = "REQUESTED"
                                                     }
                                             };
         }

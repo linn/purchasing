@@ -86,6 +86,7 @@
             this.Log = Substitute.For<ILog>();
 
             this.Sut = new PurchaseOrderService(
+                "localhost",
                 this.MockAuthService,
                 this.PurchaseLedgerPack,
                 this.MockDatabaseService,

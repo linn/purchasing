@@ -327,3 +327,9 @@ export const changeRequest = new ItemType(
     'CHANGE_REQUEST',
     '/purchasing/change-requests'
 );
+
+export const sendPurchaseOrderAuthEmail = new ItemType(
+    'sendPurchaseOrderAuthEmail',
+    'SEND_PURCHASE_ORDER_AUTH_EMAIL',
+    '/purchasing/purchase-orders/email-for-authorisation'
+);

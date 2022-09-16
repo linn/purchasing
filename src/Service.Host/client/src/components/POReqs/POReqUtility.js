@@ -232,8 +232,8 @@ function POReqUtility({ creating }) {
             email: supplierContact?.emailAddress,
             phoneNumber: supplierContact?.phoneNumber,
             currency: {
-                code: newSupplier.currency?.code ?? req.currency?.code,
-                name: newSupplier.currency?.name ?? req.currency?.name
+                code: newSupplier.currencyCode ?? req.currency?.code,
+                name: newSupplier.currencyName ?? req.currency?.name
             },
             country: {
                 countryCode: newSupplier.country ?? req.country.countryCode
