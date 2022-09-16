@@ -8,7 +8,7 @@
 
         public int DocumentNumber { get; set; }
 
-        public DateTime DateEntered { get; set; }
+        public string DateEntered { get; set; }
 
         public string ChangeState { get; set; }
 

@@ -18,8 +18,8 @@
                            ChangeState = model.ChangeState, 
                            ReasonForChange = model.ReasonForChange, 
                            DescriptionOfChange = model.DescriptionOfChange,
-                           DateEntered = model.DateEntered
-                       };
+                           DateEntered = model.DateEntered.ToString("o")
+            };
         }
 
         public string GetLocation(ChangeRequest model)

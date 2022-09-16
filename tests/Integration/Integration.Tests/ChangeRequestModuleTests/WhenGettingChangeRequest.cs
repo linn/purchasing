@@ -26,7 +26,8 @@
                                  DocumentNumber = 1,
                                  DateEntered = new DateTime(2020,1,1),
                                  ReasonForChange = "Everything changes",
-                                 DescriptionOfChange = "Ch ch changes"
+                                 DescriptionOfChange = "Ch ch changes",
+                                 ChangeState = "ACCEPT"
                              };
             this.Repository.FindById(1).Returns(changeRequest);
 
@@ -57,7 +58,10 @@
         [Test]
         public void ShouldReturnJsonBody()
         {
-            var result = this.Response.DeserializeBody<ChangeRequestResource>;
+            var result = this.Response.DeserializeBody<ChangeRequestResource>();
+            result.Should().NotBeNull();
+            result.DocumentNumber.Should().Be(1);
+            result.ChangeState.Should().Be("ACCEPT");
         }
     }
 }
