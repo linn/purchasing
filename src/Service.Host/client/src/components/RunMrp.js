@@ -38,7 +38,9 @@ function RunMrp() {
     const lastRunLogHref = utilities.getHref(mrMaster, 'last-run-log');
 
     const dispatch = useDispatch();
-    useEffect(() => dispatch(mrMasterActions.fetchByHref(mrMasterItemType.uri)), [dispatch]);
+    useEffect(() => {
+        dispatch(mrMasterActions.fetchByHref(mrMasterItemType.uri));
+    }, [dispatch]);
 
     useEffect(() => {
         if (mrMaster && !mrMasterLoading) {

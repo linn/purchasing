@@ -13,6 +13,8 @@
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
+    using Linn.Purchasing.Domain.LinnApps.Keys;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
@@ -56,6 +58,11 @@
 
         private readonly IRepository<NominalAccount, int> nominalAccountRepository;
 
+        private readonly IQueryRepository<Part> partQueryRepository;
+
+        private readonly IRepository<PartSupplier, PartSupplierKey> partSupplierRepository;
+
+
         public PurchaseOrderService(
             string appRoot,
             IAuthorisationService authService,
@@ -74,7 +81,9 @@
             IHtmlTemplateService<PurchaseOrder> purchaseOrderTemplateService,
             ISingleRecordRepository<PurchaseLedgerMaster> purchaseLedgerMaster,
             IRepository<NominalAccount, int> nominalAccountRepository,
-            ILog log)
+            IQueryRepository<Part> partQueryRepository,
+            IRepository<PartSupplier, PartSupplierKey> partSupplierRepository,
+        ILog log)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;
@@ -92,6 +101,8 @@
             this.purchaseOrderTemplateService = purchaseOrderTemplateService;
             this.purchaseLedgerMaster = purchaseLedgerMaster;
             this.nominalAccountRepository = nominalAccountRepository;
+            this.partQueryRepository = partQueryRepository;
+            this.partSupplierRepository = partSupplierRepository;
             this.log = log;
             this.appRoot = appRoot;
         }
@@ -339,9 +350,21 @@
             detail.OrderUnitPriceCurrency = detail.OurUnitPriceCurrency;
             detail.OrderQty = detail.OurQty;
 
-            // todo - logic surrounding this - Y only if supplier assembly
-            order.IssuePartsToSupplier = "N";
+            var part = this.partQueryRepository.FindBy(p => p.PartNumber == detail.PartNumber);
+            detail.OurUnitOfMeasure = part.OurUnitOfMeasure;
+            order.IssuePartsToSupplier = part.SupplierAssembly() ? "Y" : "N";
 
+            var partSupplier = this.partSupplierRepository.FindById(new PartSupplierKey { PartNumber = detail.PartNumber, SupplierId = order.SupplierId });
+            detail.OrderUnitOfMeasure = partSupplier != null ? partSupplier.UnitOfMeasure : string.Empty;
+            detail.OurUnitOfMeasure = partSupplier != null ? partSupplier.UnitOfMeasure : string.Empty;
+            detail.SuppliersDesignation = partSupplier != null ? partSupplier.SupplierDesignation : string.Empty;
+
+            // from MR is always nom Raw Materials 0000007617 Assets 0000002508
+            var nomAcc = this.nominalAccountRepository.FindById(884);
+
+            detail.OrderPosting = new PurchaseOrderPosting();
+            detail.OrderPosting.NominalAccount = nomAcc;
+            detail.OrderPosting.NominalAccountId = 884;
 
             return order;
         }
@@ -557,6 +580,10 @@
 
         private void AddDeliveryToDetail(PurchaseOrder order, PurchaseOrderDetail detail)
         {
+            var partSupplier = this.partSupplierRepository.FindById(new PartSupplierKey { PartNumber = detail.PartNumber, SupplierId = order.SupplierId });
+
+            var leadTimeWeeks = partSupplier.LeadTimeWeeks;
+
             detail.PurchaseDeliveries = new List<PurchaseOrderDelivery>
                                             {
                                                 new PurchaseOrderDelivery
@@ -567,7 +594,7 @@
                                                         OurUnitPriceCurrency = detail.OurUnitPriceCurrency,
                                                         OrderUnitPriceCurrency = detail.OrderUnitPriceCurrency,
                                                         DateRequested = DateTime.Now,
-                                                        DateAdvised = null,
+                                                        DateAdvised = DateTime.Now.AddDays(leadTimeWeeks * 7),
                                                         CallOffDate = DateTime.Now,
                                                         Cancelled = "N",
                                                         CallOffRef = null,
@@ -608,10 +635,6 @@
 
             // required but ignored now that ob ut just uses order fields
             detail.OverbookQtyAllowed = 0;
-
-            // todo make below UOM fields typeahead on front end, only editable on create
-            detail.OurUnitOfMeasure = "ONES";
-            detail.OrderUnitOfMeasure = "ONES";
 
             // todo check if always LINN or get from table
             detail.StockPoolCode = "LINN";

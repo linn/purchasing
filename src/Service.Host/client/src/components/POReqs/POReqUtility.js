@@ -200,9 +200,15 @@ function POReqUtility({ creating }) {
         }
     }, [item, creating, dispatch]);
 
-    useEffect(() => dispatch(currenciesActions.fetch()), [dispatch]);
-    useEffect(() => dispatch(employeesActions.fetch()), [dispatch]);
-    useEffect(() => dispatch(purchaseOrderReqStatesActions.fetch()), [dispatch]);
+    useEffect(() => {
+        dispatch(currenciesActions.fetch());
+    }, [dispatch]);
+    useEffect(() => {
+        dispatch(employeesActions.fetch());
+    }, [dispatch]);
+    useEffect(() => {
+        dispatch(purchaseOrderReqStatesActions.fetch());
+    }, [dispatch]);
 
     const { id } = useParams();
     useEffect(() => {

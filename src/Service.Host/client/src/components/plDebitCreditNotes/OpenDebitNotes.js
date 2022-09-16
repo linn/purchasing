@@ -63,7 +63,9 @@ function OpenDebitNotes() {
         }
     }));
 
-    useEffect(() => dispatch(openDebitNotesActions.fetch()), [dispatch]);
+    useEffect(() => {
+        dispatch(openDebitNotesActions.fetch());
+    }, [dispatch]);
 
     const classes = useStyles();
 

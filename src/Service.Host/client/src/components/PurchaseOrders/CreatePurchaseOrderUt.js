@@ -55,14 +55,15 @@ function CreatePurchaseOrderUt() {
     const [order, dispatch] = useReducer(reducer, { details: [{}] });
 
     const { search } = useLocation();
-    const { supplierId, supplierName, partNumber, qty } = queryString.parse(search);
+    const { supplierId, supplierName, partNumber, qty, currencyUnitPrice, dateRequired } =
+        queryString.parse(search);
 
     useEffect(() => {
         if (item) {
             const initialOrder = {
                 ...item,
                 exchangeRate: 1,
-                dateRequired: new Date(),
+                dateRequired: dateRequired ?? new Date(),
                 supplier: { id: supplierId, name: supplierName },
                 details: [
                     {
@@ -70,8 +71,8 @@ function CreatePurchaseOrderUt() {
                         partNumber,
                         ourQty: qty ?? 0,
                         orderQty: qty ?? 0,
-                        ourUnitPriceCurrency: 0,
-                        orderUnitPriceCurrency: 0,
+                        ourUnitPriceCurrency: currencyUnitPrice ?? 0,
+                        orderUnitPriceCurrency: currencyUnitPrice ?? 0,
                         vatTotalCurrency: 0,
                         baseNetTotal: 0
                     }
@@ -79,7 +80,16 @@ function CreatePurchaseOrderUt() {
             };
             dispatch({ type: 'initialise', payload: initialOrder });
         }
-    }, [item, partNumber, qty, reduxDispatch, supplierId, supplierName]);
+    }, [
+        item,
+        partNumber,
+        qty,
+        dispatch,
+        supplierId,
+        supplierName,
+        currencyUnitPrice,
+        dateRequired
+    ]);
 
     const suppliersSearchResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.suppliers, 100, 'id', 'id', 'name')

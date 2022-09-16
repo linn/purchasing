@@ -33,7 +33,9 @@ function EdiOrder() {
         dispatch(suppliersActions.fetchState());
     }, [dispatch]);
 
-    useEffect(() => dispatch(ediSuppliersActions.fetch()), [dispatch]);
+    useEffect(() => {
+        dispatch(ediSuppliersActions.fetch());
+    }, [dispatch]);
 
     const applicationState = useSelector(state =>
         collectionSelectorHelpers.getApplicationState(state.suppliers)
