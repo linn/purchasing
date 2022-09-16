@@ -179,6 +179,8 @@
                     x.GetService<IHtmlTemplateService<PurchaseOrder>>(),
                     x.GetService<ISingleRecordRepository<PurchaseLedgerMaster>>(),
                     x.GetService<IRepository<NominalAccount, int>>(),
+                    x.GetService<IQueryRepository<Part>>(),
+                    x.GetService<IRepository<PartSupplier, PartSupplierKey>>(),
                     x.GetService<ILog>()))
                 .AddTransient<IAuthorisationService, AuthorisationService>()
                 .AddTransient<IDatabaseService, DatabaseService>()

@@ -54,6 +54,7 @@ import exchangeRatesActions from '../../actions/exchangeRatesActions';
 import currencyConvert from '../../helpers/currencyConvert';
 import PurchaseOrderDeliveriesUtility from '../PurchaseOrderDeliveriesUtility';
 import sendOrderAuthEmailActions from '../../actions/sendPurchaseOrderAuthEmailActions';
+import purchaseOrderDeliveriesActions from '../../actions/purchaseOrderDeliveriesActions';
 
 function PurchaseOrderUtility({ creating }) {
     const reduxDispatch = useDispatch();
@@ -71,9 +72,6 @@ function PurchaseOrderUtility({ creating }) {
 
     useEffect(() => {
         reduxDispatch(currenciesActions.fetch());
-    }, [reduxDispatch]);
-    useEffect(() => {
-        reduxDispatch(employeesActions.fetch());
     }, [reduxDispatch]);
     useEffect(() => {
         reduxDispatch(unitsOfMeasureActions.fetch());
@@ -103,9 +101,6 @@ function PurchaseOrderUtility({ creating }) {
 
     useEffect(() => {
         reduxDispatch(currenciesActions.fetch());
-    }, [reduxDispatch]);
-    useEffect(() => {
-        reduxDispatch(employeesActions.fetch());
     }, [reduxDispatch]);
     useEffect(() => {
         reduxDispatch(unitsOfMeasureActions.fetch());
@@ -1365,8 +1360,10 @@ function PurchaseOrderUtility({ creating }) {
                                                                     dateRequested: getDateString(
                                                                         x.dateRequested
                                                                     ),
-                                                                    dateAdvised: getDateString(x.dateAdvised)
-                                                                    })
+                                                                    dateAdvised: getDateString(
+                                                                        x.dateAdvised
+                                                                    )
+                                                                })
                                                             )}
                                                             columns={columns}
                                                             density="compact"
