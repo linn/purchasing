@@ -220,14 +220,13 @@ describe('When Updating', () => {
     });
 
     test('Should open change dialog', () => {
-        expect(screen.getByLabelText('Comment')).toBeInTheDocument();
+        expect(screen.getByRole('combobox', { name: 'Reason' })).toBeInTheDocument();
     });
 
     test('Should update selected rows', async () => {
-        const commentInput = await screen.findByLabelText('Comment');
-        expect(commentInput).toBeInTheDocument();
-        fireEvent.change(commentInput, { target: { value: 'NEW COMMENT' } });
-        expect(screen.getByDisplayValue('NEW COMMENT')).toBeInTheDocument();
+        const reasonInput = await screen.getByRole('combobox', { name: 'Reason' });
+        expect(reasonInput).toBeInTheDocument();
+        fireEvent.change(reasonInput, { target: { value: 'DECOMMIT' } });
         const availableAtSupplierInput = await screen.findByLabelText('Available at Supplier');
         expect(availableAtSupplierInput).toBeInTheDocument();
         fireEvent.change(availableAtSupplierInput, { target: { value: 'Y' } });
@@ -237,13 +236,12 @@ describe('When Updating', () => {
         expect(batchUpdateSpy).toHaveBeenCalledWith(
             expect.arrayContaining([
                 expect.objectContaining({
-                    comment: 'NEW COMMENT',
                     deliverySequence: 1,
                     orderLine: 1,
                     orderNumber: 123463,
                     dateRequested: '2022-04-30T00:00:00.0000000',
                     qty: 7500,
-                    reason: 'ADVISED',
+                    reason: 'DECOMMIT',
                     availableAtSupplier: 'Y',
                     unitPrice: 0.025
                 })

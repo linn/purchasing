@@ -7,6 +7,8 @@
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
+    using Linn.Purchasing.Domain.LinnApps.Keys;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
@@ -53,6 +55,10 @@
 
         protected IRepository<NominalAccount, int> NominalAccountRepository { get; private set; }
 
+        protected IRepository<PartSupplier, PartSupplierKey> PartSupplierRepository { get; private set; }
+
+        protected IQueryRepository<Part> PartQueryRepository { get; private set; }
+
         protected ILog Log { get; private set; }
 
         [SetUp]
@@ -74,6 +80,8 @@
             this.HtmlTemplateService = Substitute.For<IHtmlTemplateService<PurchaseOrder>>();
             this.PurchaseLedgerMaster = Substitute.For<ISingleRecordRepository<PurchaseLedgerMaster>>();
             this.NominalAccountRepository = Substitute.For<IRepository<NominalAccount, int>>();
+            this.PartQueryRepository = Substitute.For<IQueryRepository<Part>>();
+            this.PartSupplierRepository = Substitute.For<IRepository<PartSupplier, PartSupplierKey>>();
 
             this.Log = Substitute.For<ILog>();
 
@@ -94,6 +102,8 @@
                 this.HtmlTemplateService,
                 this.PurchaseLedgerMaster,
                 this.NominalAccountRepository,
+                this.PartQueryRepository,
+                this.PartSupplierRepository,
                 this.Log);
         }
     }

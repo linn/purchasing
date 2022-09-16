@@ -8,6 +8,7 @@
     using Linn.Common.Logging;
     using Linn.Common.Messaging.RabbitMQ.Dispatchers;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources.Messages;
 
@@ -36,7 +37,11 @@
 
         protected BackgroundService Sut { get; set; }
         
-        protected IRepository<SupplierAutoEmails, int> Repository { get; set; }
+        protected IRepository<SupplierAutoEmails, int> Repository { get; private set; }
+
+        protected IQueryRepository<MrPurchaseOrderDetail> OutstandingPosRepository { get; private set; }
+
+        protected ISingleRecordRepository<MrMaster> MrMaster { get; private set; }
 
         protected ILog Log { get; set; }
 
@@ -47,6 +52,11 @@
                 Substitute.For<IMessageDispatcher<EmailOrderBookMessageResource>>();
             this.EmailMonthlyForecastMessageDispatcher = Substitute.For<IMessageDispatcher<EmailMonthlyForecastReportMessageResource>>();
             this.Repository = Substitute.For<IRepository<SupplierAutoEmails, int>>();
+            this.OutstandingPosRepository = Substitute.For<IQueryRepository<MrPurchaseOrderDetail>>();
+            this.MrMaster = Substitute.For<ISingleRecordRepository<MrMaster>>();
+
+            this.MrMaster.GetRecord().Returns(new MrMaster { JobRef = "AABBCC" });
+            
             this.Log = Substitute.For<ILog>();
             this.Repository.FindAll().Returns(
                 new List<SupplierAutoEmails>
@@ -81,6 +91,8 @@
 
             services.AddHostedService<BackgroundService>(_ => this.Sut);
             services.AddTransient<IRepository<SupplierAutoEmails, int>>(_ => this.Repository);
+            services.AddTransient<IQueryRepository<MrPurchaseOrderDetail>>(_ => this.OutstandingPosRepository);
+            services.AddTransient<ISingleRecordRepository<MrMaster>>(_ => this.MrMaster);
 
             this.ServiceProvider = services.BuildServiceProvider();
         }

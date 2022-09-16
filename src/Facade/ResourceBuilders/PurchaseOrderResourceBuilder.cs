@@ -35,9 +35,10 @@
 
         public PurchaseOrderResource Build(PurchaseOrder entity, IEnumerable<string> claims)
         {
+            var claimsList = claims.ToList();
             if (entity == null)
             {
-                return new PurchaseOrderResource { Links = this.BuildLinks(null, claims).ToArray() };
+                return new PurchaseOrderResource { Links = this.BuildLinks(null, claimsList).ToArray() };
             }
 
             return new PurchaseOrderResource
@@ -60,7 +61,7 @@
                            OverbookQty = entity.OverbookQty,
                            Details =
                                entity.Details?.Select(
-                                   d => (PurchaseOrderDetailResource)this.detailResourceBuilder.Build(d, claims)),
+                                   d => (PurchaseOrderDetailResource)this.detailResourceBuilder.Build(d, claimsList)),
                            OrderContactName = entity.OrderContactName,
                            ExchangeRate = entity.ExchangeRate,
                            IssuePartsToSupplier = entity.IssuePartsToSupplier,
@@ -68,7 +69,7 @@
                                entity.DeliveryAddress != null
                                    ? (LinnDeliveryAddressResource)this.deliveryAddressResourceBuilder.Build(
                                        entity.DeliveryAddress,
-                                       claims)
+                                       claimsList)
                                    : null,
                            RequestedBy =
                                new EmployeeResource
@@ -99,14 +100,14 @@
                                    },
                            OrderAddress =
                                entity.OrderAddress != null
-                                   ? (AddressResource)this.addressResourceBuilder.Build(entity.OrderAddress, claims)
+                                   ? (AddressResource)this.addressResourceBuilder.Build(entity.OrderAddress, claimsList)
                                    : null,
                 InvoiceAddressId = entity.InvoiceAddressId,
                 SupplierContactEmail = entity.Supplier.SupplierContacts?.FirstOrDefault(c => c.IsMainOrderContact == "Y")?.EmailAddress,
                            SupplierContactPhone = entity.Supplier.SupplierContacts?.FirstOrDefault(c => c.IsMainOrderContact == "Y")?.PhoneNumber,
                            BaseOrderNetTotal = entity.BaseOrderNetTotal,
                            OrderNetTotal = entity.OrderNetTotal,
-                           Links = this.BuildLinks(entity, claims).ToArray()
+                           Links = this.BuildLinks(entity, claimsList).ToArray()
                        };
         }
 
@@ -131,6 +132,7 @@
                                      Rel = "allow-over-book-search", Href = "/purchasing/purchase-orders/allow-over-book"
                                  };
             }
+
             if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, privileges))
             {
                 yield return new LinkResource

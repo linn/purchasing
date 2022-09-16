@@ -47,9 +47,15 @@ function SigningLimits() {
     );
 
     const dispatch = useDispatch();
-    useEffect(() => dispatch(signingLimitsActions.fetch()), [dispatch]);
-    useEffect(() => dispatch(signingLimitsApplicationStateActions.fetchState()), [dispatch]);
-    useEffect(() => dispatch(employeesActions.fetch()), [dispatch]);
+    useEffect(() => {
+        dispatch(signingLimitsActions.fetch());
+    }, [dispatch]);
+    useEffect(() => {
+        dispatch(signingLimitsApplicationStateActions.fetchState());
+    }, [dispatch]);
+    useEffect(() => {
+        dispatch(employeesActions.fetch());
+    }, [dispatch]);
 
     useEffect(() => {
         setRows(

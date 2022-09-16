@@ -321,3 +321,9 @@ export const ledgerPeriods = new ItemType(
     'LEDGER_PERIODS',
     '/purchasing/ledger-periods'
 );
+
+export const changeRequest = new ItemType(
+    'changeRequest',
+    'CHANGE_REQUEST',
+    '/purchasing/change-requests'
+);

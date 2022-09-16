@@ -1,11 +1,11 @@
 ﻿import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { AppContainer } from 'react-hot-loader';
 import { SnackbarProvider } from 'notistack';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import { linnTheme } from '@linn-it/linn-form-components-library';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import AdapterDateMoment from '@mui/lab/AdapterMoment';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import configureStore from './configureStore';
 import Root from './components/Root';
 import userManager from './helpers/userManager';
@@ -17,20 +17,22 @@ const initialState = {};
 const store = configureStore(initialState);
 const { user } = store.getState().oidc;
 
+const container = document.getElementById('root');
+const root = createRoot(container);
+
 const render = Component => {
-    ReactDOM.render(
+    root.render(
         <StyledEngineProvider injectFirst>
             <ThemeProvider theme={linnTheme}>
                 <SnackbarProvider dense maxSnack={5}>
                     <AppContainer>
-                        <LocalizationProvider dateAdapter={AdapterDateMoment} locale="en-GB">
+                        <LocalizationProvider dateAdapter={AdapterMoment} locale="en-GB">
                             <Component store={store} />
                         </LocalizationProvider>
                     </AppContainer>
                 </SnackbarProvider>
             </ThemeProvider>
-        </StyledEngineProvider>,
-        document.getElementById('root')
+        </StyledEngineProvider>
     );
 };
 

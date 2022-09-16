@@ -1,7 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.MaterialRequirements
 {
+    using System;
     using System.Collections.Generic;
-    using System.Security.Cryptography;
 
     public class MrHeader
     {
@@ -48,9 +48,9 @@
         public string HasProductionRequirement { get; set; }
 
         public string HasNonProductionRequirement { get; set; }
-        
+
         public string HasDeliveryForecast { get; set; }
-        
+
         public string HasSalesOrders { get; set; }
 
         public string HasPurchaseOrders { get; set; }
@@ -58,7 +58,7 @@
         public string HasAssumedPurchaseOrders { get; set; }
 
         public string HasUnauthPurchaseOrders { get; set; }
-        
+
         public string HasTriggerBuild { get; set; }
 
         public string HasFixedBuild { get; set; }
@@ -86,7 +86,7 @@
         public string MrComments { get; set; }
 
         public decimal? LatePurchaseOrders { get; set; }
-        
+
         public string HighStockWithOrders { get; set; }
 
         public string HighStockWithNoOrders { get; set; }
@@ -94,6 +94,10 @@
         public string HasUnacknowledgedPurchaseOrders { get; set; }
 
         public string StockCategoryName { get; set; }
+
+        public decimal? RecommendedOrderQuantity { get; set; }
+
+        public DateTime? RecommendedOrderDate { get; set; }
 
         public IEnumerable<MrDetail> MrDetails { get; set; }
     }
