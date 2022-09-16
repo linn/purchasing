@@ -602,8 +602,8 @@
                                                         OrderDeliveryQty = detail.OrderQty,
                                                         OurUnitPriceCurrency = detail.OurUnitPriceCurrency,
                                                         OrderUnitPriceCurrency = detail.OrderUnitPriceCurrency,
-                                                        DateRequested = DateTime.Now,
-                                                        DateAdvised = DateTime.Now.AddDays(leadTimeWeeks * 7),
+                                                        DateRequested = DateTime.Now.AddDays(leadTimeWeeks * 7),
+                                                        DateAdvised = null,
                                                         CallOffDate = DateTime.Now,
                                                         Cancelled = "N",
                                                         CallOffRef = null,
@@ -622,7 +622,7 @@
                                                         QuantityOutstanding = detail.OurQty,
                                                         QtyNetReceived = 0,
                                                         QtyPassedForPayment = 0,
-                                                        RescheduleReason = string.Empty // todo make this Requested? Check old form
+                                                        RescheduleReason = "REQUESTED"
                                                     }
                                             };
         }
