@@ -252,7 +252,6 @@
                             + $"{orderUrl} \n"
                              + $"Thanks";
 
-
             var email1 = this.employeeRepository.FindById(33107).PhoneListEntry.EmailAddress; //32864
             var email2 = this.employeeRepository.FindById(33107).PhoneListEntry.EmailAddress; //32835
             var email2Name = this.employeeRepository.FindById(32835).FullName;
@@ -374,7 +373,6 @@
             else
             {
                 return new ProcessResult(false, $"Order {order.OrderNumber} YOU CANNOT AUTHORISE THIS ORDER");
-
             }
         }
 
