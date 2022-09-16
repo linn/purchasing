@@ -94,6 +94,7 @@ import authoriseMultiplePurchaseOrders from './authoriseMultiplePurchaseOrders';
 import emailMultiplePurchaseOrders from './emailMultiplePurchaseOrders';
 import forecastWeekChangesReport from './forecastWeekChangesReport';
 import sendPurchaseOrderAuthEmail from './sendPurchaseOrderAuthEmail';
+import changeRequest from './changeRequest';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -110,6 +111,7 @@ const rootReducer = history =>
         automaticPurchaseOrderSuggestions,
         batchPurchaseOrderDeliveriesUpload,
         bulkLeadTimesUpload,
+        changeRequest,
         countries,
         currencies,
         deliveryAddresses,

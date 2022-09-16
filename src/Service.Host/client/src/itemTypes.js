@@ -322,6 +322,12 @@ export const ledgerPeriods = new ItemType(
     '/purchasing/ledger-periods'
 );
 
+export const changeRequest = new ItemType(
+    'changeRequest',
+    'CHANGE_REQUEST',
+    '/purchasing/change-requests'
+);
+
 export const sendPurchaseOrderAuthEmail = new ItemType(
     'sendPurchaseOrderAuthEmail',
     'SEND_PURCHASE_ORDER_AUTH_EMAIL',

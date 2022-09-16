@@ -180,6 +180,8 @@
 
         public DbSet<ForecastWeekChange> ForecastWeekChanges { get; set; }
 
+        public DbSet<ChangeRequest> ChangeRequests { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -276,6 +278,7 @@
             this.BuildMonthlyForecastPartRequirements(builder);
             this.BuildForecastReportMonths(builder);
             this.BuildForecastWeekChanges(builder);
+            this.BuildChangeRequests(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1796,6 +1799,18 @@
             entity.Property(s => s.PercentageChange).HasColumnName("PERCENTAGE_CHANGE");
             entity.HasOne(s => s.LinnWeek).WithOne(w => w.ForecastChange)
                 .HasForeignKey<ForecastWeekChange>(c => c.LinnWeekNumber);
+        }
+
+        private void BuildChangeRequests(ModelBuilder builder)
+        {
+            var entity = builder.Entity<ChangeRequest>().ToTable("CHANGE_REQUESTS");
+            entity.HasKey(c => c.DocumentNumber);
+            entity.Property(c => c.DocumentType).HasColumnName("DOCUMENT_TYPE").HasMaxLength(6);
+            entity.Property(c => c.DocumentNumber).HasColumnName("DOCUMENT_NUMBER");
+            entity.Property(c => c.DateEntered).HasColumnName("DATE_ENTERED");
+            entity.Property(c => c.ChangeState).HasColumnName("CHANGE_STATE").HasMaxLength(6);
+            entity.Property(c => c.ReasonForChange).HasColumnName("REASON_FOR_CHANGE").HasMaxLength(2000);
+            entity.Property(c => c.DescriptionOfChange).HasColumnName("DESCRIPTION_OF_CHANGE").HasMaxLength(2000);
         }
     }
 }
