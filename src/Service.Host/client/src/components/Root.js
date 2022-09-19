@@ -67,6 +67,7 @@ import DeliveryPerformanceSupplierReport from './reports/DeliveryPerformanceSupp
 import DeliveryPerformanceDetailReport from './reports/DeliveryPerformanceDetailReport';
 import CreatePurchaseOrderUt from './PurchaseOrders/CreatePurchaseOrderUt';
 import PurchaseOrdersAuthSend from './PurchaseOrders/PurchaseOrdersAuthSend';
+import BomTree from './BomTree';
 import ChangeRequestSearch from './ChangeRequests/ChangeRequestsSearch';
 import ChangeRequest from './ChangeRequests/ChangeRequest';
 
@@ -402,6 +403,7 @@ const Root = ({ store }) => (
                                     path="/purchasing/reports/delivery-performance-details/report"
                                     component={DeliveryPerformanceDetailReport}
                                 />
+                                <Route exact path="/purchasing/boms/tree/:id" component={BomTree} />
                                 <Route
                                     exact
                                     path="/purchasing/change-requests"

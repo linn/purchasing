@@ -40,6 +40,15 @@ export default function purchaseOrderReducer(state = initialState, action) {
                     action.payload
                 ]
             };
+        case 'currencyChange':
+            return {
+                ...state,
+                currency: action.newCurrency,
+                exchangeRate: action.newExchangeRate,
+                details: state.details.map(detail =>
+                    recalculateDetailFields(detail, action.newExchangeRate)
+                )
+            };
         case 'detailCalculationFieldChange':
             return {
                 ...state,

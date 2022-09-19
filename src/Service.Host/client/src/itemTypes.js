@@ -327,3 +327,11 @@ export const changeRequest = new ItemType(
     'CHANGE_REQUEST',
     '/purchasing/change-requests'
 );
+
+export const bomTreeNodes = new ItemType('bomTreeNodes', 'BOM_TREE_NODES', '/purchasing/boms');
+
+export const sendPurchaseOrderAuthEmail = new ItemType(
+    'sendPurchaseOrderAuthEmail',
+    'SEND_PURCHASE_ORDER_AUTH_EMAIL',
+    '/purchasing/purchase-orders/email-for-authorisation'
+);
