@@ -86,7 +86,8 @@
                 .AddTransient<IBuilder<AutomaticPurchaseOrder>, AutomaticPurchaseOrderResourceBuilder>()
                 .AddTransient<IBuilder<AutomaticPurchaseOrderSuggestion>, AutomaticPurchaseOrderSuggestionResourceBuilder>()
                 .AddTransient<IBuilder<LedgerPeriod>, LedgerPeriodResourceBuilder>()
-                .AddTransient<IBuilder<ChangeRequest>, ChangeRequestResourceBuilder>();
+                .AddTransient<IBuilder<ChangeRequest>, ChangeRequestResourceBuilder>()
+                .AddTransient<IBuilder<Bom>, BomResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -151,7 +152,8 @@
                 .AddTransient<IForecastingReportsFacadeService, ForecastingReportsFacadeService>()
                 .AddTransient<IFacadeResourceService<LedgerPeriod, int, LedgerPeriodResource, LedgerPeriodResource>, LedgerPeriodFacadeService>()
                 .AddTransient<IForecastWeekChangesFacadeService, ForecastWeekChangesFacadeService>()
-                .AddTransient<IFacadeResourceService<ChangeRequest, int, ChangeRequestResource, ChangeRequestResource>, ChangeRequestFacadeService>();
+                .AddTransient<IFacadeResourceService<ChangeRequest, int, ChangeRequestResource, ChangeRequestResource>, ChangeRequestFacadeService>()
+                .AddTransient<IFacadeResourceService<Bom, int, BomResource, BomResource>, BomFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)

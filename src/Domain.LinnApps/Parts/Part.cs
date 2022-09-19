@@ -35,6 +35,8 @@
 
         public string OurUnitOfMeasure { get; set; }
 
+        public int? BomId { get; set; }
+
         public bool SupplierAssembly()
         {
             if (this.BomType == "A")
