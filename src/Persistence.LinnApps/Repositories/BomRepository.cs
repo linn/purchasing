@@ -20,7 +20,9 @@
 
         public Bom FindById(int key)
         {
-            return this.serviceDbContext.Boms.Where(b => b.BomId == key).Include(b => b.Details)
+            return this.serviceDbContext.Boms.Where(b => b.BomId == key)
+                .Include(b => b.Details.Where(d => d.ChangeState == "LIVE")
+                    .OrderBy(d => d.PartNumber))
                 .ThenInclude(d => d.Part).FirstOrDefault();
         }
 

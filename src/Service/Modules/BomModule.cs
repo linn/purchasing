@@ -19,7 +19,7 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/purchasing", this.GetApp);
+            app.MapGet("/purchasing/boms/tree/{id:int}", this.GetApp);
             app.MapGet("/purchasing/boms/{id:int}", this.GetBom);
         }
 

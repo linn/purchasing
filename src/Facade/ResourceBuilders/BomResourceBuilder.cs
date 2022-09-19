@@ -16,7 +16,13 @@
                            BomName = model.BomName,
                            BomId = model.BomId,
                            Details = model.Details.Select(
-                               d => new BomDetailResource { BomType = d.Part.BomType, PartNumber = d.PartNumber, BomId = d.Part.BomId })
+                               d => new BomDetailResource
+                                        {
+                                            BomType = d.Part.BomType, 
+                                            PartNumber = d.PartNumber, 
+                                            PartDescription = d.Part.Description,
+                                            BomId = d.Part.BomId
+                                        })
                        };
         }
 

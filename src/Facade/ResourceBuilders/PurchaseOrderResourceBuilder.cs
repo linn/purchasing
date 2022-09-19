@@ -149,7 +149,7 @@
                                  {
                                      Rel = "generate-order-fields",
                                      Href = "/purchasing/purchase-orders/generate-order-from-supplier-id"
-                };
+                                 };
             }
 
             if (model != null)
