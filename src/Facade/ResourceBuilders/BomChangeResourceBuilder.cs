@@ -24,7 +24,9 @@
                            PartNumber = model.PartNumber,
                            DateEntered = model.DateEntered.ToString("o"),
                            DateApplied = model.DateApplied.HasValue ? model.DateApplied.Value.ToString("o") : null,
-                           DateCancelled = model.DateCancelled.HasValue ? model.DateCancelled.Value.ToString("o") : null
+                           DateCancelled = model.DateCancelled.HasValue ? model.DateCancelled.Value.ToString("o") : null,
+                           PhaseInWeekNumber = model.PhaseInWeekNumber,
+                           PhaseInWWYYYY = model.PhaseInWeek == null ? string.Empty : model.PhaseInWeek.WwYyyy
             };
         }
 

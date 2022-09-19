@@ -16,7 +16,8 @@ function BomChanges({ bomChanges }) {
         { field: 'changeId', headerName: 'Id', width: 100 },
 
         { field: 'bomName', headerName: 'Bom', width: 200 },
-        { field: 'changeState', headerName: 'State', width: 200 }
+        { field: 'changeState', headerName: 'State', width: 200 },
+        { field: 'phaseInWWYYYY', headerName: 'Phase In Week', width: 200 }
     ];
 
     return (

@@ -1248,6 +1248,7 @@
             entity.Property(d => d.WeekNumber).HasColumnName("LINN_WEEK_NUMBER");
             entity.Property(d => d.StartsOn).HasColumnName("LINN_WEEK_START_DATE");
             entity.Property(d => d.EndsOn).HasColumnName("LINN_WEEK_END_DATE");
+            entity.Property(d => d.WwYyyy).HasColumnName("WWYYYY").HasMaxLength(8);
         }
 
         private void BuildCancelledPODetails(ModelBuilder builder)
@@ -1832,7 +1833,9 @@
             entity.Property(c => c.AppliedBy).HasColumnName("APPLIED_BY");
             entity.Property(c => c.DateCancelled).HasColumnName("DATE_CANCELLED");
             entity.Property(c => c.CancelledBy).HasColumnName("CANCELLED_BY");
+            entity.Property(c => c.PhaseInWeekNumber).HasColumnName("PHASE_IN_WEEK");
             entity.Property(c => c.Comments).HasColumnName("COMMENTS").HasMaxLength(2000);
+            entity.HasOne(c => c.PhaseInWeek).WithMany().HasForeignKey(c => c.PhaseInWeekNumber);
         }
     }
 }

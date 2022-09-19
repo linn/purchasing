@@ -12,6 +12,8 @@
 
         public DateTime EndsOn { get; set; }
 
+        public string WwYyyy { get; set; }
+
         public ForecastWeekChange ForecastChange { get; set; }
     }
 }

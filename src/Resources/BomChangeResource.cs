@@ -29,5 +29,9 @@
         public string PartNumber { get; set; }
 
         public string Comments { get; set; }
+
+        public int? PhaseInWeekNumber { get; set; }
+
+        public string PhaseInWWYYYY { get; set; }
     }
 }

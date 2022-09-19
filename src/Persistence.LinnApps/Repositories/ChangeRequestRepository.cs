@@ -25,7 +25,7 @@
         {
             return this.serviceDbContext
                 .ChangeRequests
-                .Include(c => c.BomChanges) // .ThenInclude(d => d.Part)
+                .Include(c => c.BomChanges).ThenInclude(c => c.PhaseInWeek) // .ThenInclude(d => d.Part)
                 .First(c => c.DocumentNumber == key && c.DocumentType == "CRF");
         }
     }

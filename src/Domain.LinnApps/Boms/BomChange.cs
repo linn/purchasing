@@ -30,6 +30,10 @@
 
         public string ChangeState { get; set; }
 
+        public int? PhaseInWeekNumber { get; set; }
+
+        public LinnWeek PhaseInWeek { get; set; }
+
         public string PartNumber { get; set; }
 
         public string Comments { get; set; }

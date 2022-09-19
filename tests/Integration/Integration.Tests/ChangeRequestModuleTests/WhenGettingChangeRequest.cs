@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
 
     using FluentAssertions;
@@ -27,7 +28,16 @@
                                  DateEntered = new DateTime(2020,1,1),
                                  ReasonForChange = "Everything changes",
                                  DescriptionOfChange = "Ch ch changes",
-                                 ChangeState = "ACCEPT"
+                                 ChangeState = "ACCEPT",
+                                 BomChanges = new List<BomChange>
+                                                  {
+                                                      new BomChange
+                                                          {
+                                                              ChangeId = 1,
+                                                              BomName = "TOAST 001",
+                                                              ChangeState = "ACCEPT"
+                                                          }
+                                                  }
                              };
             this.Repository.FindById(1).Returns(changeRequest);
 
@@ -62,6 +72,7 @@
             result.Should().NotBeNull();
             result.DocumentNumber.Should().Be(1);
             result.ChangeState.Should().Be("ACCEPT");
+            result.BomChanges.Count().Should().Be(1);
         }
     }
 }
