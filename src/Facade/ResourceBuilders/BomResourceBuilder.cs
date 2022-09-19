@@ -21,7 +21,8 @@
                                             BomType = d.Part.BomType, 
                                             PartNumber = d.PartNumber, 
                                             PartDescription = d.Part.Description,
-                                            BomId = d.Part.BomId
+                                            BomId = d.Part.BomId,
+                                            Qty = d.Qty
                                         })
                        };
         }

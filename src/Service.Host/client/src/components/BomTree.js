@@ -112,8 +112,16 @@ export default function BomTree() {
             return nodes.map(c => {
                 const label = (
                     <>
-                        <Typography display="inline" variant="body2">
+                        <Typography
+                            display="inline"
+                            variant="subtitle1"
+                            color={c.bomType === 'C' ? '' : 'primary'}
+                        >
                             {c.partNumber}
+                        </Typography>
+                        <Typography display="inline" variant="subtitle2">
+                            {' '}
+                            (x{c.qty})
                         </Typography>
                         <Typography display="inline" variant="caption">
                             {' - '}

@@ -9,5 +9,7 @@
         public string BomType { get; set; }
 
         public int? BomId { get; set; }
+
+        public decimal Qty { get; set; }
     }
 }
