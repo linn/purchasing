@@ -10,6 +10,7 @@ import {
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import changeRequestActions from '../../actions/changeRequestActions';
+import BomChanges from './BomChanges';
 
 import history from '../../history';
 
@@ -81,6 +82,7 @@ function ChangeRequest() {
                             rows={4}
                         />
                     </Grid>
+                    <BomChanges bomChanges={item?.bomChanges} />
                 </Grid>
             )}
         </Page>

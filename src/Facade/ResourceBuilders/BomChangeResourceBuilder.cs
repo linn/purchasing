@@ -16,6 +16,7 @@
         {
             return new BomChangeResource
                        {
+                           ChangeId = model.ChangeId,
                            DocumentType = model.DocumentType,
                            DocumentNumber = model.DocumentNumber,
                            ChangeState = model.ChangeState,
