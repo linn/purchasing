@@ -17,7 +17,11 @@
 
         IResult<ProcessResultResource> EmailSupplierAss(int orderNumber);
 
+        IResult<ProcessResultResource> EmailFinanceAuthRequest(int currentUserNumber, int orderNumber);
+
         IResult<PurchaseOrderResource> FillOutOrderFromSupplierId(PurchaseOrderResource resource, IEnumerable<string> privileges, int userId);
+
+        IResult<PurchaseOrderResource> AuthorisePurchaseOrder(int orderNumber, IEnumerable<string> privileges, int userId);
 
         IResult<ProcessResultResource> AuthorisePurchaseOrders(PurchaseOrdersProcessRequestResource resource, IEnumerable<string> privileges, int userId);
 
