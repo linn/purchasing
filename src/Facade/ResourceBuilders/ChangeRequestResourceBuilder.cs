@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.Boms;
@@ -9,6 +10,13 @@
 
     public class ChangeRequestResourceBuilder : IBuilder<ChangeRequest>
     {
+        private readonly IBuilder<BomChange> bomChangeBuilder;
+
+        public ChangeRequestResourceBuilder(IBuilder<BomChange> bomChangeBuilder)
+        {
+            this.bomChangeBuilder = bomChangeBuilder;
+        }
+
         public ChangeRequestResource Build(ChangeRequest model, IEnumerable<string> claims)
         {
             return new ChangeRequestResource
@@ -18,7 +26,10 @@
                            ChangeState = model.ChangeState, 
                            ReasonForChange = model.ReasonForChange, 
                            DescriptionOfChange = model.DescriptionOfChange,
-                           DateEntered = model.DateEntered.ToString("o")
+                           DateEntered = model.DateEntered.ToString("o"),
+                           BomChanges =
+                               model.BomChanges?.Select(
+                                   d => (BomChangeResource)this.bomChangeBuilder.Build(d, claims)),
             };
         }
 
