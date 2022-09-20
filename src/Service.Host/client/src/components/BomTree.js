@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Page, Title, Loading } from '@linn-it/linn-form-components-library';
 import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
@@ -15,8 +15,6 @@ import Typography from '@mui/material/Typography';
 import history from '../history';
 import config from '../config';
 import bomTreeNodeActions from '../actions/bomTreeNodeActions';
-
-const set = new Set();
 
 /* eslint react/jsx-props-no-spreading: 0 */
 /* eslint react/destructuring-assignment: 0 */
@@ -84,6 +82,12 @@ const StyledTreeItem = styled(props => (
 }));
 
 export default function BomTree() {
+    const [hasBeenExpanded, setHasBeenExpanded] = useState(new Set());
+
+    const [expanded, setExpanded] = useState([]);
+
+    const [loaded, setLoaded] = useState([]);
+
     const { id } = useParams();
     const dispatch = useDispatch();
     useEffect(() => {
@@ -95,16 +99,31 @@ export default function BomTree() {
     const root = boms.find(x => Number(x.bomId) === Number(id));
 
     const handleToggle = (_, nodeIds) => {
-        const previousLength = set.size;
+        const previousLength = hasBeenExpanded.size;
         nodeIds.forEach(i => {
             if (i) {
-                set.add(i);
+                setHasBeenExpanded(l => l.add(i));
             }
         });
-        if (set.size !== previousLength) {
-            dispatch(bomTreeNodeActions.fetch(Array.from(set).pop()));
+        if (hasBeenExpanded.size !== previousLength) {
+            dispatch(bomTreeNodeActions.fetch(Array.from(hasBeenExpanded).pop()));
         }
+        setExpanded(nodeIds);
     };
+
+    // useEffect(() => {
+    //     boms[boms.length - 1]?.children?.forEach(c => {
+    //         if (c.bomId && !loaded.includes(c.bomId)) {
+    //             setLoaded(l => [...l, c.bomId]);
+    //             dispatch(bomTreeNodeActions.fetch(c.bomId));
+    //         }
+    //     });
+    // }, [boms, loaded, dispatch]);
+
+    // useEffect(() => {
+    //     console.log(loaded);
+    //     setExpanded(loaded.map(l => l.toString()));
+    // }, [loaded]);
 
     const renderNode = bomName => {
         const nodes = boms.find(x => x.bomName === bomName)?.children;
@@ -158,6 +177,7 @@ export default function BomTree() {
                         defaultExpandIcon={<PlusSquare />}
                         defaultEndIcon={<CloseSquare />}
                         onNodeToggle={handleToggle}
+                        expanded={expanded}
                     >
                         {root && renderNode(root.bomName)}
                     </TreeView>
