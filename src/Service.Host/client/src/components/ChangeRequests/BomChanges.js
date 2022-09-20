@@ -23,16 +23,20 @@ function BomChanges({ bomChanges }) {
     return (
         <Grid container spacing={3}>
             <Grid item xs={12}>
-                <DataGrid
-                    getRowId={row => row.changeId}
-                    className={classes.gap}
-                    rows={bomChanges}
-                    columns={columns}
-                    rowHeight={34}
-                    autoHeight
-                    loading={false}
-                    hideFooter
-                />
+                {bomChanges ? (
+                    <DataGrid
+                        getRowId={row => row.changeId}
+                        className={classes.gap}
+                        rows={bomChanges}
+                        columns={columns}
+                        rowHeight={34}
+                        autoHeight
+                        loading={false}
+                        hideFooter
+                    />
+                ) : (
+                    <span>No Bom Changes</span>
+                )}
             </Grid>
         </Grid>
     );
