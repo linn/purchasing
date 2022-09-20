@@ -128,7 +128,7 @@ function PurchaseOrderUtility({ creating }) {
     useEffect(() => {
         if (item?.supplier?.id) {
             dispatch({ type: 'initialise', payload: item });
-            setPurchaseOrderEmailState({ bcc: false, email: item.supplierContactEmail });
+            setPurchaseOrderEmailState({ bcc: false, email: item.supplierContactEmail?.trim() });
         } else if (creating && applicationState) {
             dispatch({ type: 'initialise', payload: applicationState });
         } else {
@@ -405,7 +405,7 @@ function PurchaseOrderUtility({ creating }) {
     }));
 
     const classes = useStyles();
-    const screenIsSmall = useMediaQuery({ query: `(max-width: 1024px)` });
+    const screenIsSmall = useMediaQuery({ query: `(max-width: 1200px)` });
     const [overridingOrderPrice, setOverridingOrderPrice] = useState(false);
     const [overridingOrderQty, setOverridingOrderQty] = useState(false);
 
@@ -540,7 +540,7 @@ function PurchaseOrderUtility({ creating }) {
                                                     onChange={(name, newEmail) => {
                                                         setPurchaseOrderEmailState({
                                                             ...purchaseOrderEmailState,
-                                                            email: newEmail
+                                                            email: newEmail.trim()
                                                         });
                                                     }}
                                                 />
@@ -762,7 +762,9 @@ function PurchaseOrderUtility({ creating }) {
                                     value={order.supplierContactEmail}
                                     label="Email Address"
                                     propertyName="supplierContactEmail"
-                                    onChange={handleFieldChange}
+                                    onChange={(propertyName, newValue) =>
+                                        handleFieldChange(propertyName, newValue.trim())
+                                    }
                                     disabled={!creating}
                                     required
                                 />

@@ -62,7 +62,7 @@
         {
             try
             {
-                var emailResult = this.domainService.SendPdfEmail(emailAddress, orderNumber, bcc, currentUserId);
+                var emailResult = this.domainService.SendPdfEmail(emailAddress.Trim(), orderNumber, bcc, currentUserId);
 
                 this.transactionManager.Commit();
                 return new SuccessResult<ProcessResultResource>(
