@@ -412,11 +412,14 @@ function POReqUtility({ creating }) {
 
     useEffect(() => {
         if (req.unitPrice && req.qty) {
+            const exRate = req.currency?.exchangeRate ?? 0;
             let total = Decimal.mul(req.unitPrice, req.qty);
             if (req.carriage) {
                 total = Decimal.add(total, req.carriage);
             }
-            if (!alreadyShownCostWarning && total > 250) {
+
+            const gbpTotal = total * exRate;
+            if (!alreadyShownCostWarning && gbpTotal > 250) {
                 setShowCostWarning(true);
                 setAlreadyShownCostWarning(true);
             }
@@ -425,7 +428,7 @@ function POReqUtility({ creating }) {
                 totalReqPrice: parseFloat(total).toFixed(2)
             }));
         }
-    }, [req.qty, req.carriage, req.unitPrice, alreadyShownCostWarning, creating]);
+    }, [req.qty, req.carriage, req.unitPrice, alreadyShownCostWarning, creating, req.currency]);
 
     const useStyles = makeStyles(theme => ({
         buttonMarginTop: {
@@ -897,12 +900,13 @@ function POReqUtility({ creating }) {
                                     }))}
                                     allowNoValue
                                     onChange={(propertyName, newValue) => {
+                                        const currency = currencies.find(x => x.code === newValue);
                                         setReq(a => ({
                                             ...a,
                                             currency: {
                                                 code: newValue,
-                                                name: currencies.find(x => x.code === newValue)
-                                                    ?.name
+                                                name: currency?.name,
+                                                exchangeRate: currency?.exchangeRate
                                             }
                                         }));
                                     }}
