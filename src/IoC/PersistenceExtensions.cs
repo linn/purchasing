@@ -199,7 +199,8 @@
                     r => new EntityFrameworkQueryRepository<ForecastReportMonth>(r.GetService<ServiceDbContext>()
                         ?.ForecastReportMonths))
                 .AddTransient<IQueryRepository<ForecastWeekChange>, ForecastWeekChangesRepository>()
-                .AddTransient<IRepository<ChangeRequest, int>, ChangeRequestRepository>();
+                .AddTransient<IRepository<ChangeRequest, int>, ChangeRequestRepository>()
+                .AddTransient<IRepository<Bom, int>, BomRepository>();
         }
     }
 }

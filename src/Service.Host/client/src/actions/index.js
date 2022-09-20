@@ -304,3 +304,9 @@ export const forecastWeekChangesReportActionTypes = makeReportActionTypes(
 );
 
 export const changeRequestActionTypes = makeActionTypes(itemTypes.changeRequest.actionType, false);
+
+export const bomTreeNodesActionTypes = makeActionTypes(itemTypes.bomTreeNodes.actionType);
+
+export const sendPurchaseOrderAuthEmailActionTypes = makeProcessActionTypes(
+    itemTypes.sendPurchaseOrderAuthEmail.actionType
+);

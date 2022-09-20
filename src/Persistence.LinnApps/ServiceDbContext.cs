@@ -166,6 +166,8 @@
 
         public DbSet<BomDetail> BomDetails { get; set; }
 
+        public DbSet<Bom> Boms { get; set; }
+
         public DbSet<SuppliersLeadTimesEntry> SuppliersLeadTimesEntries { get; set; }
 
         public DbSet<MonthlyForecastPart> MonthlyForecastParts { get; set; }
@@ -280,6 +282,7 @@
             this.BuildForecastWeekChanges(builder);
             this.BuildChangeRequests(builder);
             this.BuildBomChanges(builder);
+            this.BuildBoms(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -454,6 +457,7 @@
             entity.HasOne(a => a.PreferredSupplier).WithMany().HasForeignKey("PREFERRED_SUPPLIER");
             entity.Property(a => a.CurrencyUnitPrice).HasColumnName("CURRENCY_UNIT_PRICE");
             entity.Property(a => a.OurUnitOfMeasure).HasColumnName("OUR_UNIT_OF_MEASURE");
+            entity.Property(a => a.BomId).HasColumnName("BOM_ID");
         }
 
         private void BuildSuppliers(ModelBuilder builder)
@@ -1696,24 +1700,6 @@
             entity.Property(a => a.JobRef).HasColumnName("JOBREF").HasColumnType("VARCHAR2").HasMaxLength(6);
         }
 
-        private void BuildBomDetails(ModelBuilder builder)
-        {
-            var entity = builder.Entity<BomDetail>().ToTable("BOM_DETAIL_VIEW").HasNoKey();
-            entity.HasKey(a => a.DetailId);
-            entity.Property(a => a.DetailId).HasColumnName("DETAIL_ID");
-            entity.Property(a => a.BomName).HasColumnName("BOM_NAME").HasColumnType("VARCHAR2").HasMaxLength(14);
-            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2").HasMaxLength(14);
-            entity.Property(a => a.BomId).HasColumnName("BOM_ID");
-            entity.Property(a => a.Qty).HasColumnName("QTY");
-            entity.Property(a => a.GenerateRequirement).HasColumnName("GENERATE_REQUIREMENT").HasColumnType("VARCHAR2").HasMaxLength(1);
-            entity.Property(a => a.ChangeState).HasColumnName("CHANGE_STATE").HasColumnType("VARCHAR2").HasMaxLength(6);
-            entity.Property(a => a.AddChangeId).HasColumnName("ADD_CHANGE_ID");
-            entity.Property(a => a.AddReplaceSeq).HasColumnName("ADD_REPLACE_SEQ");
-            entity.Property(a => a.DeleteChangeId).HasColumnName("DELETE_CHANGE_ID");
-            entity.Property(a => a.DeleteReplaceSeq).HasColumnName("DELETE_REPLACE_SEQ");
-            entity.HasOne(a => a.Part).WithMany().HasForeignKey(a => a.PartNumber);
-        }
-        
         private void BuildSupplierAutoEmails(ModelBuilder builder)
         {
             var entity = builder.Entity<SupplierAutoEmails>().ToTable("SUPPLIER_AUTO_EMAILS");
@@ -1836,6 +1822,33 @@
             entity.Property(c => c.PhaseInWeekNumber).HasColumnName("PHASE_IN_WEEK");
             entity.Property(c => c.Comments).HasColumnName("COMMENTS").HasMaxLength(2000);
             entity.HasOne(c => c.PhaseInWeek).WithMany().HasForeignKey(c => c.PhaseInWeekNumber);
+        }
+
+        private void BuildBoms(ModelBuilder builder)
+        {
+            var entity = builder.Entity<Bom>().ToTable("BOMS");
+            entity.HasKey(b => b.BomId);
+            entity.Property(b => b.BomId).HasColumnName("BOM_ID");
+            entity.Property(b => b.BomName).HasColumnName("BOM_NAME");
+            entity.HasMany(b => b.Details).WithOne().HasForeignKey(d => d.BomId);
+        }
+
+        private void BuildBomDetails(ModelBuilder builder)
+        {
+            var entity = builder.Entity<BomDetail>().ToTable("BOM_DETAIL_VIEW").HasNoKey();
+            entity.HasKey(a => a.DetailId);
+            entity.Property(a => a.DetailId).HasColumnName("DETAIL_ID");
+            entity.Property(a => a.BomName).HasColumnName("BOM_NAME").HasColumnType("VARCHAR2").HasMaxLength(14);
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2").HasMaxLength(14);
+            entity.Property(a => a.BomId).HasColumnName("BOM_ID");
+            entity.Property(a => a.Qty).HasColumnName("QTY");
+            entity.Property(a => a.GenerateRequirement).HasColumnName("GENERATE_REQUIREMENT").HasColumnType("VARCHAR2").HasMaxLength(1);
+            entity.Property(a => a.ChangeState).HasColumnName("CHANGE_STATE").HasColumnType("VARCHAR2").HasMaxLength(6);
+            entity.Property(a => a.AddChangeId).HasColumnName("ADD_CHANGE_ID");
+            entity.Property(a => a.AddReplaceSeq).HasColumnName("ADD_REPLACE_SEQ");
+            entity.Property(a => a.DeleteChangeId).HasColumnName("DELETE_CHANGE_ID");
+            entity.Property(a => a.DeleteReplaceSeq).HasColumnName("DELETE_REPLACE_SEQ");
+            entity.HasOne(a => a.Part).WithMany().HasForeignKey(a => a.PartNumber);
         }
     }
 }

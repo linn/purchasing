@@ -8,7 +8,6 @@
     using FluentAssertions;
 
     using Linn.Purchasing.Domain.LinnApps.Boms;
-    using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 

@@ -67,7 +67,7 @@
                            IssuePartsToSupplier = entity.IssuePartsToSupplier,
                            DeliveryAddress =
                                entity.DeliveryAddress != null
-                                   ? (LinnDeliveryAddressResource)this.deliveryAddressResourceBuilder.Build(
+                                   ? (LinnDeliveryAddressResource) this.deliveryAddressResourceBuilder.Build(
                                        entity.DeliveryAddress,
                                        claimsList)
                                    : null,
@@ -83,7 +83,7 @@
                                entity.AuthorisedById.HasValue
                                    ? new EmployeeResource
                                          {
-                                             Id = (int)entity.AuthorisedById, FullName = entity.AuthorisedBy?.FullName
+                                             Id = (int) entity.AuthorisedById, FullName = entity.AuthorisedBy?.FullName
                                          }
                                    : null,
                            SentByMethod = entity.SentByMethod,
@@ -102,9 +102,13 @@
                                entity.OrderAddress != null
                                    ? (AddressResource)this.addressResourceBuilder.Build(entity.OrderAddress, claimsList)
                                    : null,
-                InvoiceAddressId = entity.InvoiceAddressId,
-                SupplierContactEmail = entity.Supplier.SupplierContacts?.FirstOrDefault(c => c.IsMainOrderContact == "Y")?.EmailAddress,
-                           SupplierContactPhone = entity.Supplier.SupplierContacts?.FirstOrDefault(c => c.IsMainOrderContact == "Y")?.PhoneNumber,
+                           InvoiceAddressId = entity.InvoiceAddressId,
+                           SupplierContactEmail =
+                               entity.Supplier.SupplierContacts?.FirstOrDefault(c => c.IsMainOrderContact == "Y")
+                                   ?.EmailAddress,
+                           SupplierContactPhone =
+                               entity.Supplier.SupplierContacts?.FirstOrDefault(c => c.IsMainOrderContact == "Y")
+                                   ?.PhoneNumber,
                            BaseOrderNetTotal = entity.BaseOrderNetTotal,
                            OrderNetTotal = entity.OrderNetTotal,
                            Links = this.BuildLinks(entity, claimsList).ToArray()
@@ -129,27 +133,23 @@
             {
                 yield return new LinkResource
                                  {
-                                     Rel = "allow-over-book-search", Href = "/purchasing/purchase-orders/allow-over-book"
+                                     Rel = "allow-over-book-search",
+                                     Href = "/purchasing/purchase-orders/allow-over-book"
                                  };
             }
 
             if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, privileges))
             {
+                yield return new LinkResource { Rel = "create", Href = "/purchasing/purchase-orders/create" };
                 yield return new LinkResource
                                  {
-                                     Rel = "create",
-                                     Href = "/purchasing/purchase-orders/create"
-                                 };
-                yield return new LinkResource
-                                 {
-                                     Rel = "quick-create",
-                                     Href = "/purchasing/purchase-orders/quick-create"
+                                     Rel = "quick-create", Href = "/purchasing/purchase-orders/quick-create"
                                  };
                 yield return new LinkResource
                                  {
                                      Rel = "generate-order-fields",
                                      Href = "/purchasing/purchase-orders/generate-order-from-supplier-id"
-                };
+                                 };
             }
 
             if (model != null)
@@ -164,6 +164,11 @@
                                      {
                                          Rel = "allow-over-book", Href = $"{this.GetLocation(model)}/allow-over-book"
                                      };
+                }
+
+                if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderAuthorise, privileges))
+                {
+                    yield return new LinkResource { Rel = "authorise", Href = $"{this.GetLocation(model)}/authorise" };
                 }
             }
         }
