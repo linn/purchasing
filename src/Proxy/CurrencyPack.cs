@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Proxy
 {
+    using System;
     using System.Data;
 
     using Linn.Common.Proxy.LinnApps;
@@ -106,7 +107,12 @@
             cmd.ExecuteNonQuery();
             connection.Close();
 
-            return decimal.Parse(result.Value.ToString() ?? string.Empty);
+            if (result.Value?.ToString() == "null")
+            {
+                return 0;
+            }
+
+            return result.Value != DBNull.Value ? decimal.Parse(result.Value?.ToString() ?? string.Empty) : 0;
         }
     }
 }
