@@ -19,5 +19,7 @@
         public string ReasonForChange { get; set; }
 
         public string DescriptionOfChange { get; set; }
+
+        public ICollection<BomChange> BomChanges { get; set; }
     }
 }

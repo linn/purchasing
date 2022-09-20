@@ -281,6 +281,7 @@
             this.BuildForecastReportMonths(builder);
             this.BuildForecastWeekChanges(builder);
             this.BuildChangeRequests(builder);
+            this.BuildBomChanges(builder);
             this.BuildBoms(builder);
         }
 
@@ -1251,6 +1252,7 @@
             entity.Property(d => d.WeekNumber).HasColumnName("LINN_WEEK_NUMBER");
             entity.Property(d => d.StartsOn).HasColumnName("LINN_WEEK_START_DATE");
             entity.Property(d => d.EndsOn).HasColumnName("LINN_WEEK_END_DATE");
+            entity.Property(d => d.WwYyyy).HasColumnName("WWYYYY").HasMaxLength(8);
         }
 
         private void BuildCancelledPODetails(ModelBuilder builder)
@@ -1797,6 +1799,29 @@
             entity.Property(c => c.ChangeState).HasColumnName("CHANGE_STATE").HasMaxLength(6);
             entity.Property(c => c.ReasonForChange).HasColumnName("REASON_FOR_CHANGE").HasMaxLength(2000);
             entity.Property(c => c.DescriptionOfChange).HasColumnName("DESCRIPTION_OF_CHANGE").HasMaxLength(2000);
+            entity.HasMany(c => c.BomChanges).WithOne(d => d.ChangeRequest).HasForeignKey(d => d.DocumentNumber);
+        }
+
+        private void BuildBomChanges(ModelBuilder builder)
+        {
+            var entity = builder.Entity<BomChange>().ToTable("BOM_CHANGES");
+            entity.HasKey(c => c.ChangeId);
+            entity.Property(c => c.ChangeId).HasColumnName("CHANGE_ID");
+            entity.Property(c => c.BomId).HasColumnName("BOM_ID");
+            entity.Property(c => c.BomName).HasColumnName("BOM_NAME").HasMaxLength(14);
+            entity.Property(c => c.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
+            entity.Property(c => c.ChangeState).HasColumnName("CHANGE_STATE").HasMaxLength(6);
+            entity.Property(c => c.DocumentType).HasColumnName("DOCUMENT_TYPE").HasMaxLength(6);
+            entity.Property(c => c.DocumentNumber).HasColumnName("DOCUMENT_NUMBER");
+            entity.Property(c => c.DateEntered).HasColumnName("DATE_ENTERED");
+            entity.Property(c => c.EnteredBy).HasColumnName("ENTERED_BY");
+            entity.Property(c => c.DateApplied).HasColumnName("DATE_APPLIED");
+            entity.Property(c => c.AppliedBy).HasColumnName("APPLIED_BY");
+            entity.Property(c => c.DateCancelled).HasColumnName("DATE_CANCELLED");
+            entity.Property(c => c.CancelledBy).HasColumnName("CANCELLED_BY");
+            entity.Property(c => c.PhaseInWeekNumber).HasColumnName("PHASE_IN_WEEK");
+            entity.Property(c => c.Comments).HasColumnName("COMMENTS").HasMaxLength(2000);
+            entity.HasOne(c => c.PhaseInWeek).WithMany().HasForeignKey(c => c.PhaseInWeekNumber);
         }
 
         private void BuildBoms(ModelBuilder builder)

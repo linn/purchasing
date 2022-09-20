@@ -87,6 +87,7 @@
                 .AddTransient<IBuilder<AutomaticPurchaseOrderSuggestion>, AutomaticPurchaseOrderSuggestionResourceBuilder>()
                 .AddTransient<IBuilder<LedgerPeriod>, LedgerPeriodResourceBuilder>()
                 .AddTransient<IBuilder<ChangeRequest>, ChangeRequestResourceBuilder>()
+                .AddTransient<IBuilder<BomChange>, BomChangeResourceBuilder>()
                 .AddTransient<IBuilder<Bom>, BomResourceBuilder>();
         }
 
