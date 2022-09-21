@@ -1,6 +1,6 @@
 import { bomTreeNodesActionTypes } from '../actions';
 
-export default (state = { loading: false, items: [] }, action) => {
+export default (state = { loading: false, items: {} }, action) => {
     switch (action.type) {
         case bomTreeNodesActionTypes.REQUEST_BOM_TREE_NODES:
             return {
@@ -12,14 +12,14 @@ export default (state = { loading: false, items: [] }, action) => {
             return {
                 ...state,
                 loading: false,
-                items: [
+                items: {
                     ...state.items,
-                    {
+                    [action.payload.data.bomId]: {
                         bomId: action.payload.data.bomId,
                         bomName: action.payload.data.bomName,
                         children: action.payload.data.details
                     }
-                ]
+                }
             };
         default:
             return state;

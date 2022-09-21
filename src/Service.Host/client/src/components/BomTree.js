@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Page, Title, Loading } from '@linn-it/linn-form-components-library';
+import { Page, Loading } from '@linn-it/linn-form-components-library';
 import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 
@@ -9,8 +9,11 @@ import { alpha, styled } from '@mui/material/styles';
 import TreeView from '@mui/lab/TreeView';
 import TreeItem, { treeItemClasses } from '@mui/lab/TreeItem';
 import Collapse from '@mui/material/Collapse';
+import Grid from '@mui/material/Grid';
 import { useSpring, animated } from 'react-spring';
 import LinearProgress from '@mui/material/LinearProgress';
+import Button from '@mui/material/Button';
+
 import Typography from '@mui/material/Typography';
 import history from '../history';
 import config from '../config';
@@ -83,10 +86,8 @@ const StyledTreeItem = styled(props => (
 
 export default function BomTree() {
     const [hasBeenExpanded, setHasBeenExpanded] = useState(new Set());
-
+    const [expandAll, setExpandAll] = useState(false);
     const [expanded, setExpanded] = useState([]);
-
-    const [loaded, setLoaded] = useState([]);
 
     const { id } = useParams();
     const dispatch = useDispatch();
@@ -96,9 +97,21 @@ export default function BomTree() {
 
     const boms = useSelector(state => state.bomTreeNodes.items);
 
-    const root = boms.find(x => Number(x.bomId) === Number(id));
+    const bomsLoading = useSelector(state => state.bomTreeNodes.loading);
 
-    const handleToggle = (_, nodeIds) => {
+    useEffect(() => {
+        if (expandAll) {
+            setExpanded(
+                Object.keys(boms)
+                    .map(b => b.toString())
+                    .filter(x => x !== id)
+            );
+        }
+    }, [boms, id, expandAll]);
+
+    const root = boms[Number(id)];
+
+    const handleToggle = (event, nodeIds) => {
         const previousLength = hasBeenExpanded.size;
         nodeIds.forEach(i => {
             if (i) {
@@ -111,22 +124,8 @@ export default function BomTree() {
         setExpanded(nodeIds);
     };
 
-    // useEffect(() => {
-    //     boms[boms.length - 1]?.children?.forEach(c => {
-    //         if (c.bomId && !loaded.includes(c.bomId)) {
-    //             setLoaded(l => [...l, c.bomId]);
-    //             dispatch(bomTreeNodeActions.fetch(c.bomId));
-    //         }
-    //     });
-    // }, [boms, loaded, dispatch]);
-
-    // useEffect(() => {
-    //     console.log(loaded);
-    //     setExpanded(loaded.map(l => l.toString()));
-    // }, [loaded]);
-
-    const renderNode = bomName => {
-        const nodes = boms.find(x => x.bomName === bomName)?.children;
+    const renderNode = bomId => {
+        const nodes = bomId ? boms[bomId.toString()]?.children : [];
         if (nodes) {
             return nodes.map(c => {
                 const label = (
@@ -148,7 +147,7 @@ export default function BomTree() {
                         </Typography>
                     </>
                 );
-                if (c.bomType === 'C') {
+                if (c.bomType === 'C' || !c.bomId) {
                     return <StyledTreeItem id={c.partNumber} nodeId={c.partNumber} label={label} />;
                 }
 
@@ -158,7 +157,7 @@ export default function BomTree() {
                         nodeId={`${c.bomId}` ?? c.partNumber}
                         label={label}
                     >
-                        {renderNode(c.partNumber)}
+                        {renderNode(c.bomId)}
                     </StyledTreeItem>
                 );
             });
@@ -168,22 +167,46 @@ export default function BomTree() {
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
-            {root && (
-                <>
-                    <Title text={root.bomName} />
-                    <TreeView
-                        aria-label="customized"
-                        defaultCollapseIcon={<MinusSquare />}
-                        defaultExpandIcon={<PlusSquare />}
-                        defaultEndIcon={<CloseSquare />}
-                        onNodeToggle={handleToggle}
-                        expanded={expanded}
-                    >
-                        {root && renderNode(root.bomName)}
-                    </TreeView>
-                </>
-            )}
-            {!root && <Loading />}
+            <Grid container spacing={3}>
+                {root && (
+                    <>
+                        <Grid item xs={12}>
+                            <Button onClick={() => setExpandAll(true)}>Expand All</Button>
+                            <Button
+                                onClick={() => {
+                                    setExpandAll(false);
+                                    setExpanded([]);
+                                }}
+                            >
+                                Collapse All
+                            </Button>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Typography variant="h4" color="primary" display="inline">
+                                {root.bomName} {bomsLoading && '...'}
+                            </Typography>
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <TreeView
+                                aria-label="customized"
+                                defaultCollapseIcon={<MinusSquare />}
+                                defaultExpandIcon={<PlusSquare />}
+                                defaultEndIcon={<CloseSquare />}
+                                onNodeToggle={handleToggle}
+                                expanded={expanded}
+                            >
+                                {root && renderNode(root.bomId.toString())}
+                            </TreeView>
+                        </Grid>
+                    </>
+                )}
+                {!root && (
+                    <Grid item xs={6}>
+                        <Loading />
+                    </Grid>
+                )}
+            </Grid>
         </Page>
     );
 }
