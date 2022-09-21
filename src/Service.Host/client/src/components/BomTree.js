@@ -85,7 +85,6 @@ const StyledTreeItem = styled(props => (
 }));
 
 export default function BomTree() {
-    const [hasBeenExpanded, setHasBeenExpanded] = useState(new Set());
     const [expandAll, setExpandAll] = useState(false);
     const [expanded, setExpanded] = useState([]);
 
@@ -111,16 +110,7 @@ export default function BomTree() {
 
     const root = boms[Number(id)];
 
-    const handleToggle = (event, nodeIds) => {
-        const previousLength = hasBeenExpanded.size;
-        nodeIds.forEach(i => {
-            if (i) {
-                setHasBeenExpanded(l => l.add(i));
-            }
-        });
-        if (hasBeenExpanded.size !== previousLength) {
-            dispatch(bomTreeNodeActions.fetch(Array.from(hasBeenExpanded).pop()));
-        }
+    const handleToggle = (_, nodeIds) => {
         setExpanded(nodeIds);
     };
 
