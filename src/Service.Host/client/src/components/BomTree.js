@@ -137,7 +137,7 @@ export default function BomTree() {
                         </Typography>
                     </>
                 );
-                if (c.bomType === 'C' || !c.bomId) {
+                if (c.bomType === 'C') {
                     return <StyledTreeItem id={c.partNumber} nodeId={c.partNumber} label={label} />;
                 }
 
@@ -189,7 +189,7 @@ export default function BomTree() {
                                 onNodeToggle={handleToggle}
                                 expanded={expanded}
                             >
-                                {root && renderNode(root.bomId.toString())}
+                                {renderNode(root.bomId.toString())}
                             </TreeView>
                         </Grid>
                     </>
