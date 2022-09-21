@@ -127,7 +127,7 @@
                     model.AddColumn("TotalBTReqt", "To achieve Ideal Build");
                     model.AddColumn("Supplier", "Supplier");
                     model.AddColumn("SupplierName", "Supplier Name");
-                    model.AddColumn("PlannerStory", "Planner Story");
+                    model.AddColumn("PlannerStory", "Comments");
 
                     var row = model.AddRow(partEntryRow.PartNumber);
 
