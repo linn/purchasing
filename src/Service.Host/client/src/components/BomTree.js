@@ -171,22 +171,25 @@ export default function BomTree() {
                 {root && (
                     <>
                         <Grid item xs={12}>
-                            <Button onClick={() => setExpandAll(true)}>Expand All</Button>
-                            <Button
-                                onClick={() => {
-                                    setExpandAll(false);
-                                    setExpanded([]);
-                                }}
-                            >
-                                Collapse All
-                            </Button>
-                        </Grid>
-                        <Grid item xs={12}>
                             <Typography variant="h4" color="primary" display="inline">
                                 {root.bomName} {bomsLoading && '...'}
                             </Typography>
                         </Grid>
-
+                        <Grid item xs={12}>
+                            <Button
+                                variant="outlined"
+                                onClick={() => {
+                                    if (!expandAll) {
+                                        setExpandAll(true);
+                                    } else {
+                                        setExpandAll(false);
+                                        setExpanded([]);
+                                    }
+                                }}
+                            >
+                                {expandAll ? 'Collapse All' : 'Expand All'}
+                            </Button>
+                        </Grid>
                         <Grid item xs={12}>
                             <TreeView
                                 aria-label="customized"
