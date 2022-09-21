@@ -1622,6 +1622,7 @@
             entity.Property(a => a.RequestedDate).HasColumnName("REQUESTED_DATE");
             entity.Property(a => a.AdvisedDate).HasColumnName("ADVISED_DATE");
             entity.Property(a => a.QtyOutstanding).HasColumnName("QTY_OUTSTANDING");
+            entity.Property(a => a.PlannerStory).HasColumnName("PLANNER_STORY");
         }
 
         private void BuildPartNumberLists(ModelBuilder builder)

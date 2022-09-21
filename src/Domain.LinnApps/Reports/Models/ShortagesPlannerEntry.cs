@@ -45,5 +45,7 @@
         public DateTime? AdvisedDate { get; set; }
 
         public int? QtyOutstanding { get; set; }
+
+        public string PlannerStory { get; set; }
     }
 }
