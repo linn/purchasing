@@ -127,6 +127,7 @@
                     model.AddColumn("TotalBTReqt", "To achieve Ideal Build");
                     model.AddColumn("Supplier", "Supplier");
                     model.AddColumn("SupplierName", "Supplier Name");
+                    model.AddColumn("PlannerStory", "Planner Story");
 
                     var row = model.AddRow(partEntryRow.PartNumber);
 
@@ -138,6 +139,7 @@
                     model.SetGridTextValue(row.RowIndex, model.ColumnIndex("TotalBTReqt"), partEntryRow.TotalBtReqt.ToString());
                     model.SetGridTextValue(row.RowIndex, model.ColumnIndex("Supplier"), partEntryRow.PreferredSupplier.ToString());
                     model.SetGridTextValue(row.RowIndex, model.ColumnIndex("SupplierName"), partEntryRow.SupplierName);
+                    model.SetGridTextValue(row.RowIndex, model.ColumnIndex("PlannerStory"), partEntryRow.PlannerStory);
 
                     returnResults.Add(model);
 
