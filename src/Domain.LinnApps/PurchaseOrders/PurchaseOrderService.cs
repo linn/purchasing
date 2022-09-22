@@ -773,7 +773,6 @@
             var updatedDetail = updatedOrder.Details.First();
 
             miniOrder.Remarks = updatedOrder.Remarks;
-            miniOrder.Department = updatedDetail.OrderPosting.NominalAccount.Department.DepartmentCode;
 
             var nomAcc = this.nominalAccountRepository.FindById(updatedDetail.OrderPosting.NominalAccountId);
             miniOrder.Nominal = nomAcc.NominalCode;
