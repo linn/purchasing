@@ -398,6 +398,7 @@
                          null))
             {
                 order.AuthorisedById = userNumber;
+                AuthoriseMiniOrder(order);
 
                 return new ProcessResult(true, $"Order {order.OrderNumber} successfully authorised");
 
@@ -437,6 +438,7 @@
                              null))
                 {
                     order.AuthorisedById = userNumber;
+                    AuthoriseMiniOrder(order);
                     text += $"Order {orderNumber} authorised successfully\n";
                     success++;
                 }
@@ -830,6 +832,12 @@
                 miniOrder.OrderTotal / exchangeRate,
                 2,
                 MidpointRounding.AwayFromZero);
+        }
+
+        private void AuthoriseMiniOrder(PurchaseOrder updatedOrder)
+        {
+            var miniOrder = this.miniOrderRepository.FindById(updatedOrder.OrderNumber);
+            miniOrder.AuthorisedBy = updatedOrder.AuthorisedById;
         }
 
         private void UpdateOrderPostingsForDetail(PurchaseOrderDetail current, PurchaseOrderDetail updated)
