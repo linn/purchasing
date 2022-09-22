@@ -298,7 +298,7 @@
             var connectionString = $"Data Source={dataSource};User Id={userId};Password={password};";
 
             optionsBuilder.UseOracle(connectionString, options => options.UseOracleSQLCompatibility("11"));
-            //optionsBuilder.UseLoggerFactory(MyLoggerFactory);
+            optionsBuilder.UseLoggerFactory(MyLoggerFactory);
             optionsBuilder.EnableSensitiveDataLogging(true);
             base.OnConfiguring(optionsBuilder);
         }
