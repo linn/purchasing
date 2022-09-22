@@ -1615,7 +1615,6 @@
             entity.Property(a => a.TotalBiReqt).HasColumnName("TOTAL_BI_REQT");
             entity.Property(a => a.TotalBeReqt).HasColumnName("TOTAL_BE_REQT");
             entity.Property(a => a.TotalBtReqt).HasColumnName("TOTAL_BT_REQT");
-            entity.Property(a => a.EdPartNumber).HasColumnName("EDPART_NUMBER");
             entity.Property(a => a.OrderNumber).HasColumnName("ORDER_NUMBER");
             entity.Property(a => a.OrderLine).HasColumnName("ORDER_LINE");
             entity.Property(a => a.DeliverySeq).HasColumnName("DELIVERY_SEQ");
