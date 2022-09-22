@@ -263,15 +263,15 @@
                             + $"{orderUrl} \n"
                              + $"Thanks";
 
-            var email1 = this.employeeRepository.FindById(32864).PhoneListEntry.EmailAddress;
-            var email2 = this.employeeRepository.FindById(32835).PhoneListEntry.EmailAddress;
-            var email2Name = this.employeeRepository.FindById(32835).FullName;
+            var employee1 = this.employeeRepository.FindById(32864);
+            var employee2 = this.employeeRepository.FindById(32835);
+
             var cc = new List<Dictionary<string, string>>
                               {
                                   new Dictionary<string, string>
                                       {
-                                          { "name", email2Name },
-                                          { "address", email2 }
+                                          { "name", employee2.FullName },
+                                          { "address", employee2.PhoneListEntry.EmailAddress }
                                       }
                               };
             var bcc = new List<Dictionary<string, string>>
@@ -284,8 +284,8 @@
                          };
 
             this.emailService.SendEmail(
-                email1,
-                "Finance",
+                employee1.PhoneListEntry.EmailAddress,
+                employee1.FullName,
                 cc,
                 bcc,
                 ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
