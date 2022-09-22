@@ -398,7 +398,7 @@
                          null))
             {
                 order.AuthorisedById = userNumber;
-                AuthoriseMiniOrder(order);
+                this.AuthoriseMiniOrder(order);
 
                 return new ProcessResult(true, $"Order {order.OrderNumber} successfully authorised");
 
@@ -438,7 +438,7 @@
                              null))
                 {
                     order.AuthorisedById = userNumber;
-                    AuthoriseMiniOrder(order);
+                    this.AuthoriseMiniOrder(order);
                     text += $"Order {orderNumber} authorised successfully\n";
                     success++;
                 }
