@@ -774,7 +774,11 @@
 
             miniOrder.Remarks = updatedOrder.Remarks;
             miniOrder.Department = updatedDetail.OrderPosting.NominalAccount.Department.DepartmentCode;
-            miniOrder.Nominal = updatedDetail.OrderPosting.NominalAccount.Nominal.NominalCode;
+
+            var nomAcc = this.nominalAccountRepository.FindById(updatedDetail.OrderPosting.NominalAccountId);
+            miniOrder.Nominal = nomAcc.NominalCode;
+            miniOrder.Department = nomAcc.DepartmentCode;
+
             miniOrder.RequestedDeliveryDate = updatedDetail.PurchaseDeliveries.First().DateRequested;
             miniOrder.InternalComments = updatedDetail.InternalComments;
             miniOrder.SuppliersDesignation = updatedDetail.SuppliersDesignation;

@@ -308,6 +308,14 @@
 
             this.PurchaseLedgerMaster.GetRecord().Returns(new PurchaseLedgerMaster { OkToRaiseOrder = "Y" });
 
+            this.NominalAccountRepository.FindById(Arg.Any<int>()).Returns(
+                new NominalAccount
+                    {
+                        AccountId = 911,
+                        NominalCode = "00009222",
+                        DepartmentCode = "0000911"
+                    });
+
             this.Sut.UpdateOrder(this.current, this.updated, new List<string>());
         }
 
