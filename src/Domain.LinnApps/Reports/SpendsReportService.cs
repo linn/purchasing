@@ -76,7 +76,7 @@
                 this.reportingHelper,
                 CalculationValueModelType.Value,
                 null,
-                $"Spend by supplier report for Vendor Manager: {vendorManagerName}. In base currency, for this financial year and last, excludes factors & VAT.");
+                $"Spend by supplier report for Vendor Manager: {vendorManagerName}. In GBP, for this financial year and last, excludes factors & VAT.");
 
             AddSupplierReportColumns(reportLayout);
 
@@ -197,7 +197,7 @@
                 this.reportingHelper,
                 CalculationValueModelType.Value,
                 null,
-                $"Spend by part report for Supplier: {supplier.Name} ({supplierId}). In base currency, for this financial year and last, excludes factors & VAT.");
+                $"Spend by part report for Supplier: {supplier.Name} ({supplierId}). In GBP, for this financial year and last, excludes factors & VAT.");
 
             AddPartReportColumns(reportLayout);
 

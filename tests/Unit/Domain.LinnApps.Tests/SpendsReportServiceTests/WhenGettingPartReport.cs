@@ -142,7 +142,7 @@
         public void ShouldReturnData()
         {
             this.results.ReportTitle.DisplayValue.Should().Be(
-                $"Spend by part report for Supplier: The shop ({this.supplierId}). In base currency, for this financial year and last, excludes factors & VAT.");
+                $"Spend by part report for Supplier: The shop ({this.supplierId}). In GBP, for this financial year and last, excludes factors & VAT.");
             this.results.Rows.Count().Should().Be(3);
             this.results.Rows.First(x => x.RowId == "MCAS WAN").Should().NotBeNull();
             this.results.GetGridTextValue(0, 0).Should().Be("RAW 33");
