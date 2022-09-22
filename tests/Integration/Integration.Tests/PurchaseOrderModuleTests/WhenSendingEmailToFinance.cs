@@ -14,16 +14,12 @@
 
     using NUnit.Framework;
 
-    public class WhenSendingPdfEmail : ContextBase
+    public class WhenSendingEmailToFinance : ContextBase
     {
         [SetUp]
         public void SetUp()
         {
-            this.MockDomainService.SendPdfEmail(
-                Arg.Any<string>(),
-                Arg.Any<int>(),
-                false,
-                Arg.Any<int>())
+            this.MockDomainService.SendFinanceAuthRequestEmail(Arg.Any<int>(), Arg.Any<int>())
                 .Returns(new ProcessResult(true, "email sent"));
 
             this.MockPurchaseOrderRepository.FindById(158962).Returns(
@@ -33,7 +29,7 @@
                     });
 
             this.Response = this.Client.Post(
-                "/purchasing/purchase-orders/email-pdf?bcc=false&emailAddress=iain.crawford@linn.co.uk&orderNumber=158962",
+                "/purchasing/purchase-orders/email-for-authorisation?orderNumber=158962",
                 with => { with.Accept("application/json"); }).Result;
         }
 
@@ -62,11 +58,7 @@
         [Test]
         public void ShouldCallDomain()
         {
-            this.MockDomainService.Received().SendPdfEmail(
-                Arg.Any<string>(),
-                Arg.Any<int>(),
-                false,
-                Arg.Any<int>());
+            this.MockDomainService.Received().SendFinanceAuthRequestEmail(Arg.Any<int>(), Arg.Any<int>());
         }
     }
 }
