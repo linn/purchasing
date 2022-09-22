@@ -5,6 +5,7 @@
     using FluentAssertions;
 
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
 
     using NSubstitute;
 
@@ -31,23 +32,8 @@
                                   Details = new List<PurchaseOrderDetail> { new PurchaseOrderDetail { PartNumber = "P1" } }
                               };
             this.PurchaseOrderRepository.FindById(123).Returns(this.order123);
-            this.PurchaseOrderRepository.FindById(456).Returns(
-                new PurchaseOrder
-                    {
-                        OrderNumber = 456,
-                        AuthorisedById = null,
-                        BaseOrderNetTotal = 12300,
-                        Details = new List<PurchaseOrderDetail> { new PurchaseOrderDetail { PartNumber = "P2" } }
-                    });
-            this.PurchaseOrderRepository.FindById(789).Returns(
-                new PurchaseOrder
-                    {
-                        OrderNumber = 789,
-                        AuthorisedById = 654321,
-                        BaseOrderNetTotal = 123,
-                        Details = new List<PurchaseOrderDetail> { new PurchaseOrderDetail { PartNumber = "P3" } }
-                    });
-            this.PurchaseOrderRepository.FindById(101).Returns((PurchaseOrder)null);
+
+            this.MiniOrderRepository.FindById(123).Returns(new MiniOrder());
 
             this.PurchaseOrdersPack.OrderCanBeAuthorisedBy(123, null, this.userNumber, null, null, null)
                 .Returns(true);
