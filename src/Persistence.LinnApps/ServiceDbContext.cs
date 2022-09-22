@@ -298,7 +298,9 @@
             var connectionString = $"Data Source={dataSource};User Id={userId};Password={password};";
 
             optionsBuilder.UseOracle(connectionString, options => options.UseOracleSQLCompatibility("11"));
-            optionsBuilder.UseLoggerFactory(MyLoggerFactory);
+
+            // below line commented due to causing crashing during local dev. Uncomment if want to see sql in debug window
+            // optionsBuilder.UseLoggerFactory(MyLoggerFactory);
             optionsBuilder.EnableSensitiveDataLogging(true);
             base.OnConfiguring(optionsBuilder);
         }
