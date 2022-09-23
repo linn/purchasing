@@ -1,16 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import {
-    Page,
-    InputField,
-    Loading,
-    itemSelectorHelpers
-} from '@linn-it/linn-form-components-library';
+import { Page, Loading, itemSelectorHelpers } from '@linn-it/linn-form-components-library';
+import Box from '@mui/material/Box';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import changeRequestActions from '../../actions/changeRequestActions';
-import BomChanges from './BomChanges';
+import MainTab from './Tabs/MainTab';
+import BomChangesTab from './Tabs/BomChangesTab';
+import PcasChangesTab from './Tabs/PcasChangesTab';
 
 import history from '../../history';
 
@@ -30,6 +30,8 @@ function ChangeRequest() {
 
     const item = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.changeRequest));
 
+    const [tab, setTab] = useState(0);
+
     return (
         <Page history={history}>
             {loading ? (
@@ -37,52 +39,39 @@ function ChangeRequest() {
             ) : (
                 <Grid container spacing={2} justifyContent="center">
                     <Grid item xs={12}>
-                        <Typography variant="h6">Change Request</Typography>
+                        <Typography variant="h6">Change Request {id}</Typography>
                     </Grid>
-                    <Grid item xs={4}>
-                        <InputField
-                            value={item?.documentNumber}
-                            label="Change Request"
-                            disabled
-                            propertyName="documentNumber"
-                        />
+                    <Grid item xs={12}>
+                        <Box sx={{ width: '100%' }}>
+                            <Box sx={{ borderBottom: 0, borderColor: 'divider' }}>
+                                <Tabs
+                                    value={tab}
+                                    onChange={(event, newValue) => {
+                                        setTab(newValue);
+                                    }}
+                                >
+                                    <Tab label="Main" />
+                                    <Tab label="Pcas Changes" />
+                                    <Tab label="BOM Changes" />
+                                </Tabs>
+                            </Box>
+                        </Box>
+                        {tab === 0 && (
+                            <Box sx={{ paddingTop: 3 }}>
+                                <MainTab item={item} />
+                            </Box>
+                        )}
+                        {tab === 1 && (
+                            <Box sx={{ paddingTop: 3 }}>
+                                <PcasChangesTab pcasChanges={item?.pcasChanges} />
+                            </Box>
+                        )}
+                        {tab === 2 && (
+                            <Box sx={{ paddingTop: 3 }}>
+                                <BomChangesTab bomChanges={item?.bomChanges} />
+                            </Box>
+                        )}
                     </Grid>
-                    <Grid item xs={4}>
-                        <InputField
-                            value={item?.dateEntered}
-                            label="Date Entered"
-                            propertyName="dateEntered"
-                            type="date"
-                            disabled
-                        />
-                    </Grid>
-                    <Grid item xs={4}>
-                        <InputField
-                            value={item?.changeState}
-                            label="Change State"
-                            propertyName="changeState"
-                            disabled
-                        />
-                    </Grid>
-                    <Grid item xs={6}>
-                        <InputField
-                            fullWidth
-                            value={item?.reasonForChange}
-                            label="Reason For Change"
-                            propertyName="reasonForChange"
-                            rows={4}
-                        />
-                    </Grid>
-                    <Grid item xs={6}>
-                        <InputField
-                            fullWidth
-                            value={item?.descriptionOfChange}
-                            label="Description Of Change"
-                            propertyName="descriptionOfChange"
-                            rows={4}
-                        />
-                    </Grid>
-                    <BomChanges bomChanges={item?.bomChanges} />
                 </Grid>
             )}
         </Page>
