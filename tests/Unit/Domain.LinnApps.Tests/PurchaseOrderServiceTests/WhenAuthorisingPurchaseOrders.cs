@@ -5,6 +5,7 @@
     using FluentAssertions;
 
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
 
     using NSubstitute;
 
@@ -51,6 +52,7 @@
                         Details = new List<PurchaseOrderDetail> { new PurchaseOrderDetail { PartNumber = "P3" } }
                     });
             this.PurchaseOrderRepository.FindById(101).Returns((PurchaseOrder)null);
+            this.MiniOrderRepository.FindById(Arg.Any<int>()).Returns(new MiniOrder());
 
             this.PurchaseOrdersPack.OrderCanBeAuthorisedBy(123, null, this.userNumber, null, null, null)
                 .Returns(true);

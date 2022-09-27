@@ -398,6 +398,7 @@
                          null))
             {
                 order.AuthorisedById = userNumber;
+                this.AuthoriseMiniOrder(order);
 
                 return new ProcessResult(true, $"Order {order.OrderNumber} successfully authorised");
 
@@ -437,6 +438,7 @@
                              null))
                 {
                     order.AuthorisedById = userNumber;
+                    this.AuthoriseMiniOrder(order);
                     text += $"Order {orderNumber} authorised successfully\n";
                     success++;
                 }
@@ -771,8 +773,11 @@
             var updatedDetail = updatedOrder.Details.First();
 
             miniOrder.Remarks = updatedOrder.Remarks;
-            miniOrder.Department = updatedDetail.OrderPosting.NominalAccount.Department.DepartmentCode;
-            miniOrder.Nominal = updatedDetail.OrderPosting.NominalAccount.Nominal.NominalCode;
+
+            var nomAcc = this.nominalAccountRepository.FindById(updatedDetail.OrderPosting.NominalAccountId);
+            miniOrder.Nominal = nomAcc.NominalCode;
+            miniOrder.Department = nomAcc.DepartmentCode;
+
             miniOrder.RequestedDeliveryDate = updatedDetail.PurchaseDeliveries.First().DateRequested;
             miniOrder.InternalComments = updatedDetail.InternalComments;
             miniOrder.SuppliersDesignation = updatedDetail.SuppliersDesignation;
@@ -830,6 +835,12 @@
                 miniOrder.OrderTotal / exchangeRate,
                 2,
                 MidpointRounding.AwayFromZero);
+        }
+
+        private void AuthoriseMiniOrder(PurchaseOrder updatedOrder)
+        {
+            var miniOrder = this.miniOrderRepository.FindById(updatedOrder.OrderNumber);
+            miniOrder.AuthorisedBy = updatedOrder.AuthorisedById;
         }
 
         private void UpdateOrderPostingsForDetail(PurchaseOrderDetail current, PurchaseOrderDetail updated)
