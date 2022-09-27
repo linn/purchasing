@@ -43,8 +43,8 @@
                 // should use DateRequested if DateAdvised is null
                 this.result.GetGridTextValue(resultRow.RowIndex, 5).Should().Be(
                     dataRow.DateAdvised == null
-                        ? $"{dateRequested.Day}/{dateRequested.Month}/{dateRequested.Year}"
-                        : $"{dateAdvised.Day}/{dateAdvised.Month}/{dateAdvised.Year}");
+                        ? ((DateTime)dataRow.DateRequested).ToString("dd/MM/yyyy")
+                        : ((DateTime)dataRow.DateAdvised).ToString("dd/MM/yyyy"));
             }
         }
 

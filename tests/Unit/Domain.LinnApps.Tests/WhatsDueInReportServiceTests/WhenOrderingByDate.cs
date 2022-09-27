@@ -24,6 +24,7 @@
         {
             for (var i = 1; i < this.result.Rows.Count(); i++)
             {
+                var t = this.result.GetGridTextValue(i - 1, 5);
                 var previousDateBooked = DateTime.Parse(this.result.GetGridTextValue(i - 1, 5));
                 DateTime.Parse(this.result.GetGridTextValue(i, 5)).Should().BeOnOrAfter(previousDateBooked);
             }

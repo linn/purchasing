@@ -143,8 +143,7 @@
                     {
                         RowId = currentRowId,
                         ColumnId = "ExpectedDate",
-                        TextDisplay = 
-                            $"{datum.ExpectedDate?.Day}/{datum.ExpectedDate?.Month}/{datum.ExpectedDate?.Year}"
+                        TextDisplay = datum.ExpectedDate?.ToString("dd/MM/yyyy")
                     });
                 values.Add(
                     new CalculationValueModel
