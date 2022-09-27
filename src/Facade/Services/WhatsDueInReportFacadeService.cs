@@ -32,7 +32,7 @@
         {
             var resource = this.resultsModelResourceBuilder.Build(
                 this.domainService.GetReport(
-                    DateTime.Parse(fromDate), DateTime.Parse(toDate), orderBy, vendorManager, supplier));
+                    DateTime.Parse(fromDate).Date, DateTime.Parse(toDate).Date.AddDays(1), orderBy, vendorManager, supplier));
 
             return new SuccessResult<ReportReturnResource>(resource);
         }
@@ -41,8 +41,8 @@
             string fromDate, string toDate, string orderBy, string vendorManager, int? supplier)
         {
             return this.domainService.GetReport(
-                DateTime.Parse(fromDate),
-                DateTime.Parse(toDate),
+                DateTime.Parse(fromDate).Date,
+                DateTime.Parse(toDate).Date.AddDays(1),
                 orderBy,
                 vendorManager,
                 supplier).ConvertToCsvList();

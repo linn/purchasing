@@ -34,8 +34,8 @@
             this.orderBy = "ORDER";
 
             this.MockDomainService.GetReport(
-                    this.fromDate,
-                    this.toDate,
+                    this.fromDate.Date,
+                    this.toDate.Date.AddDays(1),
                     this.orderBy,
                     this.vendorManager,
                     this.supplierId)
@@ -52,8 +52,8 @@
         public void ShouldPassCorrectOptionsToDomainService()
         {
             this.MockDomainService.Received().GetReport(
-                this.fromDate,
-                this.toDate,
+                this.fromDate.Date,
+                this.toDate.Date.AddDays(1),
                 this.orderBy,
                 this.vendorManager,
                 this.supplierId);

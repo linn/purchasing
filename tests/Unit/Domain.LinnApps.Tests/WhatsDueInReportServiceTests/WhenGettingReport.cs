@@ -16,14 +16,14 @@
         [SetUp]
         public void SetUp()
         {
-            this.result = this.Sut.GetReport(DateTime.UnixEpoch, DateTime.Today, string.Empty, string.Empty, null);
+            this.result = this.Sut.GetReport(DateTime.UnixEpoch, DateTime.UnixEpoch.AddDays(1), string.Empty, string.Empty, null);
         }
 
         [Test]
         public void ShouldReturnReport()
         {
             this.result.ReportTitle.DisplayValue.Should().Be(
-                $"Stock controlled parts due in between {DateTime.UnixEpoch.ToShortDateString()} and {DateTime.Today.ToShortDateString()}");
+                $"Stock controlled parts due in between 1/1/1970 and 2/1/1970");
             this.result.Rows.Count().Should().Be(4);
         }
 
@@ -37,11 +37,14 @@
                     d => d.OrderNumber.ToString() == this.result.GetGridTextValue(resultRow.RowIndex, 0)
                          && d.OrderLine.ToString() == this.result.GetGridTextValue(resultRow.RowIndex, 1)
                          && d.DeliverySeq.ToString() == this.result.GetGridTextValue(resultRow.RowIndex, 2));
+                var dateRequested = (DateTime)dataRow.DateRequested.GetValueOrDefault();
+                var dateAdvised = (DateTime)dataRow.DateAdvised.GetValueOrDefault();
 
+                // should use DateRequested if DateAdvised is null
                 this.result.GetGridTextValue(resultRow.RowIndex, 5).Should().Be(
                     dataRow.DateAdvised == null
-                        ? ((DateTime)dataRow.DateRequested).ToShortDateString() // should use DateRequested if DateAdvised is null
-                        : ((DateTime)dataRow.DateAdvised).ToShortDateString());
+                        ? $"{dateRequested.Day}/{dateRequested.Month}/{dateRequested.Year}"
+                        : $"{dateAdvised.Day}/{dateAdvised.Month}/{dateAdvised.Year}");
             }
         }
 
