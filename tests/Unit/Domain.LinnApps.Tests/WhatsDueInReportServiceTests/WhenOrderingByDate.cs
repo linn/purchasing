@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.WhatsDueInReportServiceTests
 {
     using System;
+    using System.Globalization;
     using System.Linq;
 
     using FluentAssertions;
@@ -24,8 +25,8 @@
         {
             for (var i = 1; i < this.result.Rows.Count(); i++)
             {
-                var t = this.result.GetGridTextValue(i - 1, 5);
-                var previousDateBooked = DateTime.Parse(this.result.GetGridTextValue(i - 1, 5));
+                var previousDateBooked = DateTime.ParseExact(
+                    this.result.GetGridTextValue(i - 1, 5), "dd/MM/yyyy", CultureInfo.InvariantCulture);
                 DateTime.Parse(this.result.GetGridTextValue(i, 5)).Should().BeOnOrAfter(previousDateBooked);
             }
         }
