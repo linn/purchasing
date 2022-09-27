@@ -81,7 +81,7 @@
                 this.reportingHelper,
                 CalculationValueModelType.Value,
                 null,
-                $"Stock controlled parts due in between {fromDate.Day}/{fromDate.Month}/{fromDate.Year} and {toDate.Day}/{toDate.Month}/{toDate.Year}");
+                $"Stock controlled parts due in between {fromDate:dd/MM/yyyy} and {toDate:dd/MM/yyyy}");
 
             reportLayout.AddColumnComponent(
                 null,

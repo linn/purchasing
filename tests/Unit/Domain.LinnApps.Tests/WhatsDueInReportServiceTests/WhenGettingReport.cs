@@ -23,7 +23,7 @@
         public void ShouldReturnReport()
         {
             this.result.ReportTitle.DisplayValue.Should().Be(
-                $"Stock controlled parts due in between 1/1/1970 and 2/1/1970");
+                $"Stock controlled parts due in between 01/01/1970 and 02/01/1970");
             this.result.Rows.Count().Should().Be(4);
         }
 
