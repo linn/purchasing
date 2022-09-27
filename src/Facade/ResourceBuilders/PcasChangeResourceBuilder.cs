@@ -7,31 +7,29 @@
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Resources;
 
-    public class BomChangeResourceBuilder : IBuilder<BomChange>
+    public class PcasChangeResourceBuilder : IBuilder<PcasChange>
     {
-        public BomChangeResource Build(BomChange model, IEnumerable<string> claims)
+        public PcasChangeResource Build(PcasChange model, IEnumerable<string> claims)
         {
-            return new BomChangeResource
+            return new PcasChangeResource
                        {
                            ChangeId = model.ChangeId,
                            DocumentType = model.DocumentType,
                            DocumentNumber = model.DocumentNumber,
                            ChangeState = model.ChangeState,
-                           BomName = model.BomName,
-                           PartNumber = model.PartNumber,
+                           BoardCode = model.BoardCode,
+                           RevisionCode = model.RevisionCode,
                            DateEntered = model.DateEntered.ToString("o"),
                            DateApplied = model.DateApplied.HasValue ? model.DateApplied.Value.ToString("o") : null,
                            DateCancelled = model.DateCancelled.HasValue ? model.DateCancelled.Value.ToString("o") : null,
-                           PhaseInWeekNumber = model.PhaseInWeekNumber,
-                           PhaseInWWYYYY = model.PhaseInWeek == null ? string.Empty : model.PhaseInWeek.WwYyyy
-            };
+                       };
         }
 
-        public string GetLocation(BomChange model)
+        public string GetLocation(PcasChange model)
         {
             throw new NotImplementedException();
         }
 
-        object IBuilder<BomChange>.Build(BomChange entity, IEnumerable<string> claims) => this.Build(entity, claims);
+        object IBuilder<PcasChange>.Build(PcasChange entity, IEnumerable<string> claims) => this.Build(entity, claims);
     }
 }

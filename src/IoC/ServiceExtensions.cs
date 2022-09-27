@@ -88,7 +88,8 @@
                 .AddTransient<IBuilder<LedgerPeriod>, LedgerPeriodResourceBuilder>()
                 .AddTransient<IBuilder<ChangeRequest>, ChangeRequestResourceBuilder>()
                 .AddTransient<IBuilder<BomChange>, BomChangeResourceBuilder>()
-                .AddTransient<IBuilder<Bom>, BomResourceBuilder>();
+                .AddTransient<IBuilder<Bom>, BomResourceBuilder>()
+                .AddTransient<IBuilder<PcasChange>, PcasChangeResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)

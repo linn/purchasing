@@ -17,5 +17,7 @@
         public string DescriptionOfChange { get; set; }
 
         public IEnumerable<BomChangeResource> BomChanges { get; set; }
+
+        public IEnumerable<PcasChangeResource> PcasChanges { get; set; }
     }
 }
