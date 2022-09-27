@@ -4,7 +4,6 @@
 
     public class PcasChange
     {
-
         public int ChangeId { get; set; }
 
         public string BoardCode { get; set; }
