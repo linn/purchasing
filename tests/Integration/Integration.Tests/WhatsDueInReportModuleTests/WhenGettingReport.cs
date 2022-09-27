@@ -40,7 +40,7 @@
             this.resultsModel = new ResultsModel { ReportTitle = new NameModel("Whats Due In Report") };
             this.MockDomainService.GetReport(
                 this.fromDate.Date,
-                this.toDate.Date.AddDays(1),
+                this.toDate.Date.AddDays(1).AddTicks(-1),
                 this.orderBy,
                 this.vendorManager,
                 this.supplier).Returns(this.resultsModel);
@@ -64,7 +64,7 @@
         {
             this.MockDomainService.Received().GetReport(
                 this.fromDate.Date,
-                this.toDate.Date.AddDays(1),
+                this.toDate.Date.AddDays(1).AddTicks(-1),
                 this.orderBy,
                 this.vendorManager,
                 this.supplier);

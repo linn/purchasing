@@ -35,7 +35,7 @@
 
             this.MockDomainService.GetReport(
                     this.fromDate.Date,
-                    this.toDate.Date.AddDays(1),
+                    this.toDate.Date.AddDays(1).AddTicks(-1),
                     this.orderBy,
                     this.vendorManager,
                     this.supplierId)
@@ -53,7 +53,7 @@
         {
             this.MockDomainService.Received().GetReport(
                 this.fromDate.Date,
-                this.toDate.Date.AddDays(1),
+                this.toDate.Date.AddDays(1).AddTicks(-1),
                 this.orderBy,
                 this.vendorManager,
                 this.supplierId);
