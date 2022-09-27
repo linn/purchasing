@@ -26,7 +26,7 @@
             for (var i = 1; i < this.result.Rows.Count(); i++)
             {
                 var previousDateBooked = DateTime.ParseExact(
-                    this.result.GetGridTextValue(i - 1, 5), "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    this.result.GetGridTextValue(i - 1, 5), "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None);
                 DateTime.Parse(this.result.GetGridTextValue(i, 5)).Should().BeOnOrAfter(previousDateBooked);
             }
         }
