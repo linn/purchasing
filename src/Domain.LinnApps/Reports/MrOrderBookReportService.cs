@@ -76,7 +76,7 @@
                             {
                                 RowId = rowId,
                                 ColumnId = "Date",
-                                TextDisplay = delivery.CallOffDate?.ToShortDateString()
+                                TextDisplay = delivery.CallOffDate?.ToString("dd/MM/yyyy")
                             });
                     values.Add(
                         new CalculationValueModel
@@ -100,15 +100,15 @@
                             {
                                 RowId = rowId,
                                 ColumnId = "DateRequested",
-                                TextDisplay = delivery.RequestedDeliveryDate?.ToShortDateString()
+                                TextDisplay = delivery.RequestedDeliveryDate?.ToString("dd/MM/yyyy")
                             });
                     values.Add(
                         new CalculationValueModel
                             {
                                 RowId = rowId,
                                 ColumnId = "DateAdvised",
-                                TextDisplay = delivery.AdvisedDeliveryDate?.ToShortDateString()
-                            });
+                                TextDisplay = delivery.AdvisedDeliveryDate?.ToString("dd/MM/yyyy")
+                        });
                 }
 
                 reportLayout.SetGridData(values);
@@ -199,8 +199,8 @@
                             {
                                 RowId = rowId,
                                 ColumnId = "Date",
-                                TextDisplay = delivery.CallOffDate?.ToShortDateString()
-                            });
+                                TextDisplay = delivery.CallOffDate?.ToString("dd/MM/yyyy")
+                        });
                     values.Add(
                         new CalculationValueModel
                             {
@@ -223,15 +223,15 @@
                             {
                                 RowId = rowId,
                                 ColumnId = "DateRequested",
-                                TextDisplay = delivery.RequestedDeliveryDate?.ToShortDateString()
-                            });
+                                TextDisplay = delivery.RequestedDeliveryDate?.ToString("dd/MM/yyyy")
+                        });
                     values.Add(
                         new CalculationValueModel
                             {
                                 RowId = rowId,
                                 ColumnId = "DateAdvised",
-                                TextDisplay = delivery.AdvisedDeliveryDate?.ToShortDateString()
-                            });
+                                TextDisplay = delivery.AdvisedDeliveryDate?.ToString("dd/MM/yyyy")
+                        });
                 }
             }
             reportLayout.SetGridData(values);
