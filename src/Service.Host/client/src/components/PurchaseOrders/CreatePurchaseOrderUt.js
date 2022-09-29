@@ -19,7 +19,8 @@ import {
     Loading,
     getItemError,
     ErrorCard,
-    utilities
+    utilities,
+    Dropdown
 } from '@linn-it/linn-form-components-library';
 import queryString from 'query-string';
 import moment from 'moment';
@@ -62,6 +63,7 @@ function CreatePurchaseOrderUt() {
         if (item) {
             const initialOrder = {
                 ...item,
+                documentType: 'PO',
                 exchangeRate: 1,
                 dateRequired: dateRequired ? new Date(dateRequired) : new Date(),
                 supplier: { id: supplierId, name: supplierName },
@@ -192,6 +194,13 @@ function CreatePurchaseOrderUt() {
         });
     };
 
+    const handleOrderTypeChange = newOrderType => {
+        dispatch({
+            payload: newOrderType,
+            type: 'orderTypeChange'
+        });
+    };
+
     const partsSearchResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.parts)
     ).map?.(c => ({
@@ -209,6 +218,9 @@ function CreatePurchaseOrderUt() {
         buttonMarginTop: {
             marginTop: '28px',
             height: '40px'
+        },
+        buttonMarginLineUp: {
+            marginTop: '28px'
         },
         centerTextInDialog: {
             textAlign: 'center',
@@ -244,6 +256,15 @@ function CreatePurchaseOrderUt() {
         history.push(utilities.getHref(order, 'create'));
     };
 
+    const orderTypes = [
+        { id: 'PO', displayText: 'Purchase Order' },
+        { id: 'CO', displayText: 'Credit Order' },
+        { id: 'RO', displayText: 'Returns Order' }
+    ];
+
+    const isCreditOrReturn = () => order?.documentType === 'CO' || order?.documentType === 'RO';
+    const lookUpOriginalOrder = () => {};
+
     return (
         <>
             <Page history={history} homeUrl={config.appRoot} width={screenIsSmall ? 'l' : 's'}>
@@ -268,6 +289,70 @@ function CreatePurchaseOrderUt() {
                         <Grid item xs={12}>
                             <Typography variant="h6">Create Purchase Order Wizard</Typography>
                         </Grid>
+                        <Grid item xs={12}>
+                            <Dropdown
+                                items={orderTypes}
+                                value={order.documentType}
+                                allowNoValue={false}
+                                propertyName="documentType"
+                                label="Order Type"
+                                onChange={(_, value) => handleOrderTypeChange(value)}
+                            />
+                        </Grid>
+                        {isCreditOrReturn() && (
+                            <>
+                                <Grid item xs={3}>
+                                    <InputField
+                                        fullWidth
+                                        value={detail.originalOrderNumber}
+                                        label="Original Order"
+                                        propertyName="originalOrderNumber"
+                                        onChange={(propertyName, newValue) =>
+                                            handleDetailQtyFieldChange(
+                                                propertyName,
+                                                newValue,
+                                                detail
+                                            )
+                                        }
+                                        disabled={!allowedToCreate()}
+                                        type="number"
+                                        required
+                                    />
+                                </Grid>
+                                <Grid item xs={2}>
+                                    <InputField
+                                        fullWidth
+                                        value={detail.originalOrderLine}
+                                        label="Original Line"
+                                        propertyName="originalOrderLine"
+                                        onChange={(propertyName, newValue) =>
+                                            handleDetailQtyFieldChange(
+                                                propertyName,
+                                                newValue,
+                                                detail
+                                            )
+                                        }
+                                        disabled={!allowedToCreate()}
+                                        type="number"
+                                        required
+                                    />
+                                </Grid>
+                                <Grid item xs={2}>
+                                    <Button
+                                        className={classes.buttonMarginLineUp}
+                                        color="primary"
+                                        variant="contained"
+                                        onClick={() => lookUpOriginalOrder()}
+                                        disabled={
+                                            !detail.originalOrderNumber || !detail.originalOrderLine
+                                        }
+                                    >
+                                        Look Up
+                                    </Button>
+                                </Grid>
+                                <Grid item xs={5} />
+                            </>
+                        )}
                         <Grid item xs={11}>
                             <Typeahead
                                 label="Part"
@@ -290,7 +375,7 @@ function CreatePurchaseOrderUt() {
                                 links={false}
                                 debounce={1000}
                                 minimumSearchTermLength={2}
-                                disabled={!allowedToCreate()}
+                                disabled={!allowedToCreate() || isCreditOrReturn()}
                                 placeholder="click to set part"
                             />
                         </Grid>
@@ -325,7 +410,7 @@ function CreatePurchaseOrderUt() {
                                 }}
                                 minimumSearchTermLength={3}
                                 fullWidth
-                                disabled={!allowedToCreate()}
+                                disabled={!allowedToCreate() || isCreditOrReturn()}
                                 required
                             />
                         </Grid>

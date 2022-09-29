@@ -101,6 +101,18 @@ export default function purchaseOrderReducer(state = initialState, action) {
                 ...state,
                 supplier: action.payload
             };
+        case 'orderTypeChange':
+            return {
+                ...state,
+                documentType: action.payload,
+                details: [
+                    ...state.details.map(detail => ({
+                        ...detail,
+                        originalOrderNumber: null,
+                        originalOrderLine: action.payload === 'PO' ? null : 1
+                    }))
+                ]
+            };
         default:
             return state;
     }
