@@ -443,7 +443,7 @@
             yield return new LinkResource
                              {
                                  Rel = "place-order",
-                                 Href = $"/purchasing/purchase-orders/quick-create?supplierId={entity.PreferredSupplierId}&supplierName={entity.PreferredSupplierName}&partNumber={entity.PartNumber}&currencyUnitPrice={entity.CurrencyUnitPrice}"
+                                 Href = $"/purchasing/purchase-orders/quick-create?supplierId={entity.PreferredSupplierId}&supplierName={entity.PreferredSupplierName}&partNumber={entity.PartNumber}&currencyUnitPrice={entity.CurrencyUnitPrice}&qty={entity.MinimumOrderQuantity}"
                              };
 
             if (entity.RecommendedOrderQuantity > 0)
