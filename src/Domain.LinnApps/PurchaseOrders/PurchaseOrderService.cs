@@ -343,8 +343,12 @@
                 order.DeliveryAddress = mainDeliveryAddress;
             }
 
-            order.DocumentTypeName = "PO";
-            order.DocumentType = new DocumentType { Name = "PO", Description = "PURCHASE ORDER" };
+            order.DocumentTypeName = string.IsNullOrEmpty(order.DocumentTypeName) ? "PO" : order.DocumentTypeName;
+            order.DocumentType = new DocumentType
+                                     {
+                                         Name = order.DocumentTypeName,
+                                         Description = order.DocumentTypeName == "PO" ? "PURCHASE ORDER" : string.Empty
+                                     };
             order.OrderMethodName = "MANUAL";
             order.OrderMethod = new OrderMethod { Name = "MANUAL", Description = "MANUAL ORDERING" };
             var user = this.employeeRepository.FindById(currentUserId);
@@ -371,9 +375,7 @@
             // from MR is always nom Raw Materials 0000007617 Assets 0000002508
             var nomAcc = this.nominalAccountRepository.FindById(884);
 
-            detail.OrderPosting = new PurchaseOrderPosting();
-            detail.OrderPosting.NominalAccount = nomAcc;
-            detail.OrderPosting.NominalAccountId = 884;
+            detail.OrderPosting = new PurchaseOrderPosting { NominalAccount = nomAcc, NominalAccountId = 884 };
 
             return order;
         }

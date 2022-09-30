@@ -9,6 +9,7 @@
     using Linn.Common.Facade;
     using Linn.Common.Logging;
     using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -107,6 +108,7 @@
         {
             var updated = new PurchaseOrder
                               {
+                                  DocumentTypeName = resource.DocumentType?.Name,
                                   SupplierId = resource.Supplier.Id,
                                   Supplier = new Supplier
                                                  {
@@ -136,7 +138,9 @@
                                                    VatTotalCurrency = x.VatTotalCurrency,
                                                    BaseVatTotal = x.BaseVatTotal,
                                                    DetailTotalCurrency = x.DetailTotalCurrency,
-                                                   BaseDetailTotal = x.BaseDetailTotal
+                                                   BaseDetailTotal = x.BaseDetailTotal,
+                                                   OriginalOrderNumber = x.OriginalOrderNumber,
+                                                   OriginalOrderLine = x.OriginalOrderLine
                                                }).ToList()
                               };
 

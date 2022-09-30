@@ -24,6 +24,7 @@ import {
 } from '@linn-it/linn-form-components-library';
 import queryString from 'query-string';
 import moment from 'moment';
+import LinearProgress from '@mui/material/LinearProgress';
 import currenciesActions from '../../actions/currenciesActions';
 import suppliersActions from '../../actions/suppliersActions';
 import partsActions from '../../actions/partsActions';
@@ -34,6 +35,7 @@ import reducer from './purchaseOrderReducer';
 import { exchangeRates } from '../../itemTypes';
 import exchangeRatesActions from '../../actions/exchangeRatesActions';
 import currencyConvert from '../../helpers/currencyConvert';
+import purchaseOrdersActions from '../../actions/purchaseOrdersActions';
 
 function CreatePurchaseOrderUt() {
     const reduxDispatch = useDispatch();
@@ -63,7 +65,7 @@ function CreatePurchaseOrderUt() {
         if (item) {
             const initialOrder = {
                 ...item,
-                documentType: 'PO',
+                documentType: { name: 'PO' },
                 exchangeRate: 1,
                 dateRequired: dateRequired ? new Date(dateRequired) : new Date(),
                 supplier: { id: supplierId, name: supplierName },
@@ -103,6 +105,10 @@ function CreatePurchaseOrderUt() {
 
     const snackbarVisible = useSelector(state =>
         itemSelectorHelpers.getSnackbarVisible(state.purchaseOrder)
+    );
+    const previousOrderResults = useSelector(state => state.purchaseOrders?.searchItems || []);
+    const previousOrderLoading = useSelector(state =>
+        collectionSelectorHelpers.getSearchLoading(state.purchaseOrders)
     );
 
     const allowedToCreate = () => item?.links?.some(l => l.rel === 'create');
@@ -245,6 +251,69 @@ function CreatePurchaseOrderUt() {
 
     const detail = order ? order.details[0] : {};
 
+    useEffect(() => {
+        if (previousOrderResults && previousOrderResults[0]) {
+            const prevOrder = previousOrderResults[0];
+            dispatch({
+                payload: { id: prevOrder.supplier.id, name: prevOrder.supplier.name },
+                type: 'supplierChange'
+            });
+            dispatch({
+                payload: {
+                    lineNumber: 1,
+                    fieldName: 'partNumber',
+                    value: prevOrder.details[0].partNumber
+                },
+                type: 'detailFieldUpdate'
+            });
+            dispatch({
+                payload: {
+                    lineNumber: 1,
+                    fieldName: 'ourQty',
+                    value: prevOrder.details[0].ourQty
+                },
+                type: 'detailFieldUpdate'
+            });
+            dispatch({
+                payload: {
+                    lineNumber: 1,
+                    fieldName: 'ourUnitPriceCurrency',
+                    value: prevOrder.details[0].ourUnitPriceCurrency
+                },
+                type: 'detailFieldUpdate'
+            });
+        } else {
+            dispatch({
+                payload: { id: null, name: null },
+                type: 'supplierChange'
+            });
+            dispatch({
+                payload: {
+                    lineNumber: 1,
+                    fieldName: 'partNumber',
+                    value: null
+                },
+                type: 'detailFieldUpdate'
+            });
+            dispatch({
+                payload: {
+                    lineNumber: 1,
+                    fieldName: 'ourQty',
+                    value: 0
+                },
+                type: 'detailFieldUpdate'
+            });
+            dispatch({
+                payload: {
+                    lineNumber: 1,
+                    fieldName: 'ourUnitPriceCurrency',
+                    value: 0
+                },
+                type: 'detailFieldUpdate'
+            });
+        }
+    }, [previousOrderResults]);
+
     const progressToFullCreate = () => {
         reduxDispatch(
             purchaseOrderActions.postByHref(
@@ -262,8 +331,17 @@ function CreatePurchaseOrderUt() {
         { id: 'RO', displayText: 'Returns Order' }
     ];
 
-    const isCreditOrReturn = () => order?.documentType === 'CO' || order?.documentType === 'RO';
-    const lookUpOriginalOrder = () => {};
+    const isCreditOrReturn = () =>
+        order?.documentType?.name === 'CO' || order?.documentType?.name === 'RO';
+    const lookUpOriginalOrder = () => {
+        reduxDispatch(purchaseOrdersActions.clearSearch());
+        reduxDispatch(
+            purchaseOrdersActions.searchWithOptions(
+                '',
+                `&numberToTake=1&searchTerm=${detail.originalOrderNumber}`
+            )
+        );
+    };
 
     return (
         <>
@@ -292,7 +370,7 @@ function CreatePurchaseOrderUt() {
                         <Grid item xs={12}>
                             <Dropdown
                                 items={orderTypes}
-                                value={order.documentType}
+                                value={order.documentType?.name}
                                 allowNoValue={false}
                                 propertyName="documentType"
                                 label="Order Type"
@@ -350,7 +428,13 @@ function CreatePurchaseOrderUt() {
                                         Look Up
                                     </Button>
                                 </Grid>
-                                <Grid item xs={5} />
+                                <Grid item xs={5}>
+                                    {previousOrderLoading && (
+                                        <LinearProgress
+                                            style={{ marginTop: '20px', marginBottom: '20px' }}
+                                        />
+                                    )}
+                                </Grid>
                             </>
                         )}
                         <Grid item xs={11}>

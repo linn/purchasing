@@ -40,6 +40,19 @@ export default function purchaseOrderReducer(state = initialState, action) {
                     action.payload
                 ]
             };
+        case 'detailFieldUpdate':
+            return {
+                ...state,
+                details: [
+                    ...state.details.map(x => {
+                        if (x.lineNumber !== action.lineNumber) {
+                            return x;
+                        }
+
+                        return { ...x, [action.payload.fieldName]: action.payload.value };
+                    })
+                ]
+            };
         case 'currencyChange':
             return {
                 ...state,
@@ -104,7 +117,7 @@ export default function purchaseOrderReducer(state = initialState, action) {
         case 'orderTypeChange':
             return {
                 ...state,
-                documentType: action.payload,
+                documentType: { name: action.payload },
                 details: [
                     ...state.details.map(detail => ({
                         ...detail,
