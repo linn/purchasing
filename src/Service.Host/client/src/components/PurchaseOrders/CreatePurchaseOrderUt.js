@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useMemo } from 'react';
+import React, { useState, useEffect, useReducer, useMemo } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import Grid from '@mui/material/Grid';
 import { useSelector, useDispatch } from 'react-redux';
@@ -12,6 +12,7 @@ import { makeStyles } from '@mui/styles';
 import {
     Page,
     collectionSelectorHelpers,
+    Dropdown,
     Typeahead,
     InputField,
     SnackbarMessage,
@@ -26,6 +27,7 @@ import moment from 'moment';
 import currenciesActions from '../../actions/currenciesActions';
 import suppliersActions from '../../actions/suppliersActions';
 import partsActions from '../../actions/partsActions';
+import partSuppliersActions from '../../actions/partSuppliersActions';
 import history from '../../history';
 import config from '../../config';
 import purchaseOrderActions from '../../actions/purchaseOrderActions';
@@ -57,6 +59,8 @@ function CreatePurchaseOrderUt() {
     const { search } = useLocation();
     const { supplierId, supplierName, partNumber, qty, currencyUnitPrice, dateRequired } =
         queryString.parse(search);
+
+    const [stockControlledPart, setStockControlled] = useState(null);
 
     useEffect(() => {
         if (item) {
@@ -198,8 +202,23 @@ function CreatePurchaseOrderUt() {
         id: c.partNumber,
         name: c.partNumber,
         partNumber: c.partNumber,
-        description: c.description
+        description: c.description,
+        stockControlled: c.stockControlled
     }));
+
+    const partSuppliersSearchResults = useSelector(reduxState =>
+        collectionSelectorHelpers
+            .getSearchItems(reduxState.partSuppliers)
+            ?.sort((a, b) => (a.supplierRanking ?? 100) - (b.supplierRanking ?? 100))
+            .map(s => ({
+                id: s.supplierId,
+                displayText: `${s.supplierName} RANK : ${s.supplierRanking}`
+            }))
+    );
+
+    const partSuppliersSearchLoading = useSelector(reduxState =>
+        collectionSelectorHelpers.getSearchLoading(reduxState.partsSuppliers)
+    );
 
     const partsSearchLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.parts)
@@ -278,6 +297,18 @@ function CreatePurchaseOrderUt() {
                                         newPart.id,
                                         order.details[0]
                                     );
+                                    if (newPart.stockControlled === 'Y') {
+                                        setStockControlled(true);
+                                        reduxDispatch(
+                                            partSuppliersActions.searchWithOptions(
+                                                '',
+                                                `&partNumber=${newPart.partNumber}`
+                                            )
+                                        );
+                                        handleSupplierChange(newPart);
+                                    } else {
+                                        setStockControlled(false);
+                                    }
                                 }}
                                 items={partsSearchResults}
                                 loading={partsSearchLoading}
@@ -307,38 +338,65 @@ function CreatePurchaseOrderUt() {
                                 )}
                             </div>
                         </Grid>
-                        <Grid item xs={4}>
-                            <Typeahead
-                                label="Supplier"
-                                modal
-                                propertyName="supplierId"
-                                items={suppliersSearchResults}
-                                value={order.supplier ? order.supplier.id : null}
-                                loading={suppliersSearchLoading}
-                                fetchItems={searchSuppliers}
-                                links={false}
-                                text
-                                clearSearch={() => {}}
-                                placeholder="Search Suppliers"
-                                onSelect={newValue => {
-                                    handleSupplierChange(newValue);
-                                }}
-                                minimumSearchTermLength={3}
-                                fullWidth
-                                disabled={!allowedToCreate()}
-                                required
-                            />
-                        </Grid>
-                        <Grid item xs={8}>
-                            <InputField
-                                fullWidth
-                                value={order.supplier?.name}
-                                label="Supplier Name"
-                                number
-                                propertyName="supplierName"
-                                disabled
-                            />
-                        </Grid>
+
+                        {stockControlledPart ? (
+                            <Grid item xs={4}>
+                                <Dropdown
+                                    value={order.supplier ? order.supplier.id : null}
+                                    label="Supplier"
+                                    propertyName="supplierId"
+                                    loading={partSuppliersSearchLoading}
+                                    disabled={!allowedToCreate()}
+                                    items={partSuppliersSearchResults}
+                                    onChange={(propertyName, selected) => {
+                                        order.supplier.id = selected;
+                                        handleSupplierChange(order.supplier);
+                                    }}
+                                    allowNoValue={false}
+                                />
+                            </Grid>
+                        ) : (
+                            <Grid item xs={4}>
+                                <Typeahead
+                                    label="Supplier"
+                                    modal
+                                    propertyName="supplierId"
+                                    items={suppliersSearchResults}
+                                    value={order.supplier ? order.supplier.id : null}
+                                    loading={suppliersSearchLoading}
+                                    fetchItems={searchSuppliers}
+                                    links={false}
+                                    on
+                                    text
+                                    clearSearch={() => {}}
+                                    placeholder="Search Suppliers"
+                                    onSelect={newValue => {
+                                        handleSupplierChange(newValue);
+                                    }}
+                                    minimumSearchTermLength={3}
+                                    fullWidth
+                                    disabled={!allowedToCreate() || !order.details[0].partNumber}
+                                    required
+                                />
+                            </Grid>
+                        )}
+
+                        {stockControlledPart ? (
+                            <Grid item xs={8}>
+                                <></>
+                            </Grid>
+                        ) : (
+                            <Grid item xs={8}>
+                                <InputField
+                                    fullWidth
+                                    value={order.supplier ? order.supplier.name : null}
+                                    label="Supplier Name"
+                                    propertyName="supplierName"
+                                    disabled
+                                />
+                            </Grid>
+                        )}
+
                         <Grid item xs={6}>
                             <InputField
                                 fullWidth
