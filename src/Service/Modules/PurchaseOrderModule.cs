@@ -7,6 +7,9 @@
     using Carter.Response;
 
     using Linn.Common.Facade;
+    using Linn.Common.Pdf;
+    using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
@@ -40,6 +43,7 @@
             app.MapPost("/purchasing/purchase-orders/generate-order-from-supplier-id", this.FillOutPurchaseOrderFromSupplierId);
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}", this.GetPurchaseOrder);
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}/html", this.GetPurchaseOrderHtml);
+            app.MapGet("/purchasing/pl-notes/html", this.GetNoteHtml);
             app.MapPost("/purchasing/purchase-orders/email-pdf", this.EmailOrderPdf);
             app.MapPost("/purchasing/purchase-orders/email-supplier-ass", this.EmailSupplierAss);
             app.MapGet("/purchasing/purchase-orders/auth-or-send", this.GetApp);
@@ -199,6 +203,20 @@
             res.StatusCode = (int)HttpStatusCode.OK;
 
             await res.WriteAsync(result);
+        }
+
+        private async Task GetNoteHtml(
+            HttpRequest req,
+            HttpResponse res,
+            IRepository<PlCreditDebitNote, int> repo,
+            IHtmlTemplateService<PlCreditDebitNote> templateService)
+        {
+            var result = repo.FindById(22900);
+            var html = await templateService.GetHtml(result);
+            res.ContentType = "text/html";
+            res.StatusCode = (int)HttpStatusCode.OK;
+
+            await res.WriteAsync(html);
         }
 
         private async Task EmailOrderPdf(

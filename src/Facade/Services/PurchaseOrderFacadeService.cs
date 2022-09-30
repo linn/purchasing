@@ -211,7 +211,8 @@
             }
 
             this.transactionManager.Commit();
-            return new SuccessResult<ProcessResultResource>(new ProcessResultResource(result.Success, result.Message));
+            return new SuccessResult<ProcessResultResource>(
+                new ProcessResultResource(result.Success, result.Message));
         }
 
         public string GetOrderAsHtml(int orderNumber)
@@ -219,7 +220,8 @@
             return this.domainService.GetPurchaseOrderAsHtml(orderNumber);
         }
 
-        public new IResult<PurchaseOrderResource> Add(PurchaseOrderResource resource, IEnumerable<string> privileges = null, int? userNumber = null)
+        public new IResult<PurchaseOrderResource> Add(
+            PurchaseOrderResource resource, IEnumerable<string> privileges = null, int? userNumber = null)
         {
             var candidate = this.BuildEntityFromResourceHelper(resource);
 
@@ -234,7 +236,8 @@
 
             order.Supplier = this.supplierRepository.FindById(order.SupplierId);
 
-            return new CreatedResult<PurchaseOrderResource>((PurchaseOrderResource)this.resourceBuilder.Build(order, privileges.ToList()));
+            return new CreatedResult<PurchaseOrderResource>(
+                (PurchaseOrderResource)this.resourceBuilder.Build(order, privileges.ToList()));
         }
 
         protected override PurchaseOrder CreateFromResource(
@@ -244,7 +247,8 @@
             throw new NotImplementedException();
         }
 
-        protected override void DeleteOrObsoleteResource(PurchaseOrder entity, IEnumerable<string> privileges = null)
+        protected override void DeleteOrObsoleteResource(
+            PurchaseOrder entity, IEnumerable<string> privileges = null)
         {
             this.transactionManager.Commit();
             throw new NotImplementedException();
@@ -255,7 +259,9 @@
         {
             if (!string.IsNullOrEmpty(searchResource.StartDate))
             {
-                return a => a.OrderDate >= DateTime.Parse(searchResource.StartDate) && a.OrderDate <= DateTime.Parse(searchResource.EndDate);
+                return a => 
+                    a.OrderDate >= DateTime.Parse(searchResource.StartDate) 
+                    && a.OrderDate <= DateTime.Parse(searchResource.EndDate);
             }
 
             return x => x.OrderNumber.ToString().Contains(searchResource.OrderNumber);

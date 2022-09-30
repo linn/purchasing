@@ -1,0 +1,29 @@
+﻿@inherits RazorEngineCore.RazorEngineTemplateBase<Linn.Purchasing.Domain.LinnApps.PurchaseOrders.PlCreditDebitNote>
+@{
+    <style>
+        .grid-container {
+            column-gap: 10px;
+            display: grid;
+            grid-template-areas:
+                               'logo item1 . item2 item2 .'
+                               'logo address address address address address'
+                               '. regoff regoff regoff regoff regoff'
+                               'orderno orderno title title date date'
+                               'supplierName supplierName supplierName deliveryToText deliveryTo deliveryTo'
+                               'requestedByText requestedBy .  contactText contact .'
+                               'enteredByText enteredBy .  authByText authBy .'
+                               'quotationRefText quotationRef . . . .'
+                               'remarksText remarks . . . .';
+            padding: 10px;
+            padding-bottom: 50px;
+            row-gap: 5px;
+        }
+        .page { page-break-after: always; }
+    </style>
+    
+    <div class="page">
+        <div class="grid-container">
+            @Model.PartNumber
+        </div>
+    </div>
+}

@@ -218,6 +218,10 @@
                 .AddTransient<IHtmlTemplateService<PurchaseOrder>>(x =>
                     new HtmlTemplateService<PurchaseOrder>(
                         $"{ConfigurationManager.Configuration["VIEWS_ROOT"]}PurchaseOrder.cshtml",
+                        x.GetService<ITemplateEngine>()))
+                .AddTransient<IHtmlTemplateService<PurchaseOrder>>(x =>
+                    new HtmlTemplateService<PurchaseOrder>(
+                        $"{ConfigurationManager.Configuration["VIEWS_ROOT"]}PlCreditDebitNote.cshtml",
                         x.GetService<ITemplateEngine>()));
         }
     }
