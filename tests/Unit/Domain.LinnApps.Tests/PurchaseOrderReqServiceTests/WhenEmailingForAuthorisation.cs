@@ -2,10 +2,12 @@
 {
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
+    using Linn.Common.Email;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
 
     using NSubstitute;
@@ -98,10 +100,7 @@
                 "bigjim@gmail",
                 "Big Jimbo",
                 $"Purchase Order Req {this.entity.ReqNumber} requires authorisation",
-                Arg.Any<string>(),
-                "pdf",
-                Arg.Any<Stream>(),
-                string.Empty);
+                Arg.Any<string>());
         }
 
         [Test]

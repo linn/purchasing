@@ -5,6 +5,7 @@
 
     using FluentAssertions;
 
+    using Linn.Common.Email;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
@@ -91,9 +92,8 @@
                this.sender.FullName,
                $"Linn Products {this.note.NoteType.PrintDescription} {this.note.NoteNumber}",
                $"Attached is a copy of Linn Products {this.note.NoteType.PrintDescription} {this.note.NoteNumber}",
-               "pdf",
-               null,
-               $"{this.note.NoteType.PrintDescription} {this.note.NoteNumber}");
+               Arg.Is<IEnumerable<Attachment>>(a => 
+                   a.First().FileName == $"{this.note.NoteType.PrintDescription} {this.note.NoteNumber}.pdf"));
         }
 
         [Test]

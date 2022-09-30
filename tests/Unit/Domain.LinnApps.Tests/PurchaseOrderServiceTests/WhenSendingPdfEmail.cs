@@ -2,9 +2,11 @@
 {
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
 
     using FluentAssertions;
 
+    using Linn.Common.Email;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
 
@@ -55,9 +57,8 @@
                 "Linn Purchasing",
                 $"Linn Purchase Order {this.orderNumber}",
                 Arg.Any<string>(),
-                "pdf",
-                Arg.Any<Stream>(),
-                $"LinnPurchaseOrder{this.orderNumber}");
+                Arg.Is<IEnumerable<Attachment>>(a => a.First().FileName ==
+                                                     $"LinnPurchaseOrder{this.orderNumber}.pdf"));
         }
 
         [Test]

@@ -6,6 +6,7 @@
 
     using FluentAssertions;
 
+    using Linn.Common.Email;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -90,10 +91,8 @@
                     Arg.Any<string>(),
                     Arg.Any<string>(),
                     Arg.Any<string>(),
-                    Arg.Any<string>(),
-                    Arg.Any<Stream>(),
-                    Arg.Any<string>(),
-                    null);
+                    Arg.Is<IEnumerable<Attachment>>(
+                        a => a.First().FileName == $"LinnPurchaseOrder{this.order123.OrderNumber}.pdf"));
         }
 
         [Test]

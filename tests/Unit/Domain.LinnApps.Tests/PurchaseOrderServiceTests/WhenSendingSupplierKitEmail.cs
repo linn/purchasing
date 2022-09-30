@@ -64,11 +64,7 @@
                 Arg.Any<string>(),
                 Arg.Any<string>(),
                 Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<Stream>(),
-                Arg.Any<string>(),
-                null);
+                Arg.Any<string>());
         }
 
         [Test]

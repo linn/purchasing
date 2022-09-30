@@ -69,6 +69,8 @@
 
         protected IRepository<Supplier, int> MockSupplierRepository { get; private set; }
 
+        protected IPlCreditDebitNoteService MockPlCreditDebitNoteService { get; private set; }
+
         [SetUp]
         public void EstablishContext()
         {
@@ -96,6 +98,7 @@
 
             this.MockDatabaseService = Substitute.For<IDatabaseService>();
             this.MockAuthService = Substitute.For<IAuthorisationService>();
+            this.MockPlCreditDebitNoteService = Substitute.For<IPlCreditDebitNoteService>();
 
             var purchaseOrderResourceBuilder = new PurchaseOrderResourceBuilder(
                 this.MockAuthService,
@@ -114,6 +117,7 @@
                 this.MockDomainService,
                 this.OverbookAllowedByLogRepository,
                 this.MockSupplierRepository,
+                this.MockPlCreditDebitNoteService,
                 this.Log);
 
             this.Client = TestClient.With<PurchaseOrderModule>(

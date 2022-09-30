@@ -61,6 +61,8 @@
 
         protected ILog Log { get; private set; }
 
+        protected ISalesTaxPack SalesTaxPack { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -82,11 +84,10 @@
             this.NominalAccountRepository = Substitute.For<IRepository<NominalAccount, int>>();
             this.PartQueryRepository = Substitute.For<IQueryRepository<Part>>();
             this.PartSupplierRepository = Substitute.For<IRepository<PartSupplier, PartSupplierKey>>();
-
+            this.SalesTaxPack = Substitute.For<ISalesTaxPack>();
             this.Log = Substitute.For<ILog>();
 
             this.Sut = new PurchaseOrderService(
-                "localhost",
                 this.MockAuthService,
                 this.PurchaseLedgerPack,
                 this.MockDatabaseService,

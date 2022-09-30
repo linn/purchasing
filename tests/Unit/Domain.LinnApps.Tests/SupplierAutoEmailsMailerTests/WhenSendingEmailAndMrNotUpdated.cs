@@ -65,10 +65,7 @@
                 Arg.Any<string>(),
                 "Purchasing Outgoing",
                 "MR ORDER BOOK EMAIL ERROR",
-                "The Supplier Auto emails could not be sent because the MRP did not run over the weekend.",
-                null,
-                null,
-                null);
+                "The Supplier Auto emails could not be sent because the MRP did not run over the weekend.");
         }
     }
 }

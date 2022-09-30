@@ -22,8 +22,6 @@
 
     public class PurchaseOrderService : IPurchaseOrderService
     {
-        private readonly string appRoot;
-
         private readonly IAuthorisationService authService;
 
         private readonly IDatabaseService databaseService;
@@ -62,9 +60,7 @@
 
         private readonly IRepository<PartSupplier, PartSupplierKey> partSupplierRepository;
 
-
         public PurchaseOrderService(
-            string appRoot,
             IAuthorisationService authService,
             IPurchaseLedgerPack purchaseLedgerPack,
             IDatabaseService databaseService,
@@ -83,7 +79,7 @@
             IRepository<NominalAccount, int> nominalAccountRepository,
             IQueryRepository<Part> partQueryRepository,
             IRepository<PartSupplier, PartSupplierKey> partSupplierRepository,
-        ILog log)
+            ILog log)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;
@@ -104,7 +100,6 @@
             this.partQueryRepository = partQueryRepository;
             this.partSupplierRepository = partSupplierRepository;
             this.log = log;
-            this.appRoot = appRoot;
         }
 
         public void AllowOverbook(
@@ -158,7 +153,7 @@
             return order;
         }
 
-        public void CreateOrder(PurchaseOrder order, IEnumerable<string> privileges)
+        public PurchaseOrder CreateOrder(PurchaseOrder order, IEnumerable<string> privileges)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, privileges))
             {
@@ -175,21 +170,22 @@
             order.BaseOrderVatTotal = 0;
             order.OrderTotal = 0;
             order.BaseOrderTotal = 0;
-
+          
             foreach (var detail in order.Details)
             {
                 this.SetDetailFieldsForCreation(detail, newOrderNumber);
 
-                this.PerformDetailCalculations(detail, detail, order.ExchangeRate.GetValueOrDefault(1), order.SupplierId, creating: true);
+                this.PerformDetailCalculations(
+                    detail, detail, order.ExchangeRate.GetValueOrDefault(1), order.SupplierId, creating: true);
 
                 this.AddDeliveryToDetail(order, detail);
 
                 order.OrderNetTotal += detail.NetTotalCurrency;
                 order.BaseOrderNetTotal += detail.BaseNetTotal;
-                order.OrderVatTotal += detail.VatTotalCurrency.GetValueOrDefault(0m);
-                order.BaseOrderVatTotal += detail.BaseVatTotal.GetValueOrDefault(0m);
-                order.OrderTotal += detail.DetailTotalCurrency.GetValueOrDefault(0m);
-                order.BaseOrderTotal += detail.BaseDetailTotal.GetValueOrDefault(0m);
+                order.OrderVatTotal += detail.VatTotalCurrency.GetValueOrDefault();
+                order.BaseOrderVatTotal += detail.BaseVatTotal.GetValueOrDefault();
+                order.OrderTotal += detail.DetailTotalCurrency.GetValueOrDefault();
+                order.BaseOrderTotal += detail.BaseDetailTotal.GetValueOrDefault();
             }
 
             order.Cancelled = "N";
@@ -199,6 +195,8 @@
             order.DamagesPercent = 2m;
 
             this.purchaseOrderRepository.Add(order);
+
+            return order;
         }
 
         public ProcessResult SendPdfEmail(string emailAddress, int orderNumber, bool bcc, int currentUserId)
@@ -240,9 +238,7 @@
                 ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
                 "Linn Purchasing",
                 $"Purchase Order {orderNumber}",
-                emailBody,
-                null,
-                null);
+                emailBody);
 
             this.log.Write(
                 LoggingLevel.Info,
@@ -257,7 +253,7 @@
             var order = this.GetOrder(orderNumber);
 
             var user = this.employeeRepository.FindById(currentUserId);
-            var orderUrl = $"{this.appRoot}/purchasing/purchase-orders/{orderNumber}";
+            var orderUrl = $"{ConfigurationManager.Configuration["APP_ROOT"]}/purchasing/purchase-orders/{orderNumber}";
             var emailBody = $"Purchasing have raised order {orderNumber} for {order.Supplier.Name}.\n"
                             + $"{user.FullName} would like you to Authorise it which you can do here:\n"
                             + $"{orderUrl} \n"
@@ -291,9 +287,7 @@
                 ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
                 "Linn Purchasing",
                 $"Purchase Order {orderNumber} requires Authorisation",
-                emailBody,
-                null,
-                null);
+                emailBody);
 
             this.log.Write(
                 LoggingLevel.Info,
@@ -896,9 +890,10 @@
                     "Linn Purchasing",
                     $"Linn Purchase Order {order.OrderNumber}",
                     emailBody,
-                    "pdf",
-                    pdf.Result,
-                    $"LinnPurchaseOrder{order.OrderNumber}");
+                    new List<Attachment>
+                        {
+                            new PdfAttachment(pdf.Result, $"LinnPurchaseOrder{order.OrderNumber}")
+                        });
 
             order.SentByMethod = "EMAIL";
 

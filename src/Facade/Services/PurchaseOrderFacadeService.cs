@@ -35,6 +35,8 @@
 
         private readonly IRepository<PurchaseOrder, int> repository;
 
+        private readonly IPlCreditDebitNoteService creditDebitNoteService;
+
         public PurchaseOrderFacadeService(
             IRepository<PurchaseOrder, int> repository,
             ITransactionManager transactionManager,
@@ -42,6 +44,7 @@
             IPurchaseOrderService domainService,
             IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository,
             IRepository<Supplier, int> supplierRepository,
+            IPlCreditDebitNoteService creditDebitNoteService,
             ILog logger)
             : base(repository, transactionManager, resourceBuilder)
         {
@@ -52,6 +55,7 @@
             this.resourceBuilder = resourceBuilder;
             this.supplierRepository = supplierRepository;
             this.repository = repository;
+            this.creditDebitNoteService = creditDebitNoteService;
         }
 
         public IResult<ProcessResultResource> EmailOrderPdf(
@@ -217,12 +221,15 @@
 
         public new IResult<PurchaseOrderResource> Add(PurchaseOrderResource resource, IEnumerable<string> privileges = null, int? userNumber = null)
         {
-            var order = this.BuildEntityFromResourceHelper(resource);
+            var candidate = this.BuildEntityFromResourceHelper(resource);
 
-            this.domainService.CreateOrder(order, privileges);
+            var order = this.domainService.CreateOrder(candidate, privileges);
             this.transactionManager.Commit();
 
             this.domainService.CreateMiniOrder(order);
+            this.transactionManager.Commit();
+
+            this.creditDebitNoteService.CreateDebitOrNoteFromPurchaseOrder(order);
             this.transactionManager.Commit();
 
             order.Supplier = this.supplierRepository.FindById(order.SupplierId);

@@ -130,7 +130,216 @@ function PurchaseOrderUtility({ creating }) {
             dispatch({ type: 'initialise', payload: item });
             setPurchaseOrderEmailState({ bcc: false, email: item.supplierContactEmail?.trim() });
         } else if (creating && applicationState) {
-            dispatch({ type: 'initialise', payload: applicationState });
+            dispatch({
+                type: 'initialise',
+                payload: {
+                    orderNumber: 0,
+                    currency: {
+                        code: 'GBP',
+                        name: 'UK Sterling',
+                        exchangeRate: null
+                    },
+                    orderDate: '2022-09-30T12:24:17.6995820+01:00',
+                    orderMethod: {
+                        name: 'MANUAL',
+                        description: 'MANUAL ORDERING'
+                    },
+                    cancelled: null,
+                    overbook: null,
+                    documentType: {
+                        description: 'PURCHASE ORDER',
+                        name: 'PO'
+                    },
+                    supplier: {
+                        id: 41193,
+                        name: 'ABACUS POLAR SCOTLAND LTD',
+                        currencyCode: null,
+                        webAddress: null,
+                        phoneNumber: null,
+                        orderContactMethod: null,
+                        invoiceContactMethod: null,
+                        suppliersReference: null,
+                        liveOnOracle: null,
+                        invoiceGoesToId: null,
+                        invoiceGoesToName: null,
+                        expenseAccount: null,
+                        paymentDays: 0,
+                        paymentMethod: null,
+                        paysInFc: null,
+                        currencyName: null,
+                        approvedCarrier: null,
+                        accountingCompany: null,
+                        vatNumber: null,
+                        partCategory: null,
+                        partCategoryDescription: null,
+                        orderHold: null,
+                        notesForBuyer: null,
+                        deliveryDay: null,
+                        refersToFcId: null,
+                        refersToFcName: null,
+                        pmDeliveryDaysGrace: null,
+                        orderAddressId: null,
+                        orderFullAddress: null,
+                        invoiceAddressId: null,
+                        invoiceFullAddress: null,
+                        vendorManagerId: 'O',
+                        plannerId: null,
+                        accountControllerId: null,
+                        accountControllerName: null,
+                        openedById: null,
+                        openedByName: null,
+                        closedById: null,
+                        closedByName: null,
+                        dateOpened: null,
+                        dateClosed: null,
+                        reasonClosed: null,
+                        notes: null,
+                        organisationId: 0,
+                        supplierContacts: null,
+                        groupId: null,
+                        country: null,
+                        orderAddress: null,
+                        links: null
+                    },
+                    overbookQty: null,
+                    details: [
+                        {
+                            baseDetailTotal: 10,
+                            baseNetTotal: 10,
+                            baseOrderUnitPrice: null,
+                            baseOurUnitPrice: null,
+                            baseVatTotal: null,
+                            cancelled: null,
+                            cancelledDetails: null,
+                            deliveryConfirmedBy: null,
+                            deliveryInstructions: null,
+                            detailTotalCurrency: 10,
+                            internalComments: null,
+                            line: 1,
+                            mrOrders: null,
+                            netTotalCurrency: 10,
+                            orderNumber: 0,
+                            orderPosting: {
+                                building: null,
+                                id: 0,
+                                lineNumber: 0,
+                                nominalAccount: {
+                                    accountId: 884,
+                                    nominal: {
+                                        nominalCode: '0000007617',
+                                        description: 'RAW MATERIALS'
+                                    },
+                                    department: {
+                                        departmentCode: '0000002508',
+                                        description: 'ASSETS'
+                                    }
+                                },
+                                nominalAccountId: 884,
+                                notes: null,
+                                orderNumber: 0,
+                                person: null,
+                                product: null,
+                                qty: 0,
+                                vehicle: null
+                            },
+                            orderUnitOfMeasure: 'ONES',
+                            orderUnitPriceCurrency: 1,
+                            originalOrderLine: null,
+                            originalOrderNumber: null,
+                            ourQty: 10,
+                            orderQty: 10,
+                            ourUnitOfMeasure: 'ONES',
+                            ourUnitPriceCurrency: 1,
+                            partDescription: null,
+                            partNumber: 'CAP 520',
+                            purchaseDeliveries: null,
+                            rohsCompliant: null,
+                            stockPoolCode: null,
+                            suppliersDesignation:
+                                '1000UF,+20%,-20%,200V,ELTR,TH,PCS30X10,10MMP,30MML,,,30MMD. TEST\nNICHICON LGN2D102MELB30',
+                            vatTotalCurrency: 0
+                        }
+                    ],
+                    orderContactName: null,
+                    exchangeRate: 1,
+                    issuePartsToSupplier: 'N',
+                    deliveryAddress: {
+                        address:
+                            'Linn Products Ltd\nGlasgow Road\nWaterfoot, Eaglesham\nGlasgow\nG76 0EQ\nUnited Kingdom',
+                        addressId: 405284,
+                        description: 'LINN HQ'
+                    },
+                    requestedBy: {
+                        id: 33087,
+                        fullName: 'JOHN PARROTT'
+                    },
+                    enteredBy: {
+                        id: 33087,
+                        fullName: 'JOHN PARROTT'
+                    },
+                    quotationRef: null,
+                    authorisedBy: null,
+                    sentByMethod: null,
+                    filCancelled: null,
+                    remarks: null,
+                    dateFilCancelled: null,
+                    periodFilCancelled: null,
+                    currentlyUsingOverbookForm: false,
+                    orderAddress: {
+                        addressId: 454391,
+                        addressee: 'ABACUS POLAR SCOTLAND LTD',
+                        addressee2: null,
+                        line1: 'CELECT HOUSE',
+                        line2: 'FAIRBAIRN ROAD, KIRKTON NORTH',
+                        line3: 'LIVINGSTON',
+                        line4: null,
+                        postCode: 'EH54 6TS',
+                        countryCode: null,
+                        countryName: null,
+                        fullAddress:
+                            'ABACUS POLAR SCOTLAND LTD\nCELECT HOUSE\nFAIRBAIRN ROAD, KIRKTON NORTH\nLIVINGSTON\nEH54 6TS\nUnited Kingdom'
+                    },
+                    invoiceAddressId: 454392,
+                    supplierContactEmail: 'lparker@abacus.co.uk',
+                    supplierContactPhone: '01506424207',
+                    orderNetTotal: 0,
+                    baseOrderNetTotal: 0,
+                    links: [
+                        {
+                            href: '/purchasing/purchase-orders/allow-over-book',
+                            rel: 'allow-over-book-search'
+                        },
+                        {
+                            href: '/purchasing/purchase-orders/create',
+                            rel: 'create'
+                        },
+                        {
+                            href: '/purchasing/purchase-orders/quick-create',
+                            rel: 'quick-create'
+                        },
+                        {
+                            href: '/purchasing/purchase-orders/generate-order-from-supplier-id',
+                            rel: 'generate-order-fields'
+                        },
+                        {
+                            href: '/purchasing/purchase-orders/0',
+                            rel: 'self'
+                        },
+                        {
+                            href: '/purchasing/purchase-orders/0/html',
+                            rel: 'html'
+                        },
+                        {
+                            href: '/purchasing/purchase-orders/0',
+                            rel: 'edit'
+                        },
+                        {
+                            href: '/purchasing/purchase-orders/0/allow-over-book',
+                            rel: 'allow-over-book'
+                        }
+                    ]
+                }
+            });
         } else {
             reduxDispatch(purchaseOrderActions.clearErrorsForItem());
         }

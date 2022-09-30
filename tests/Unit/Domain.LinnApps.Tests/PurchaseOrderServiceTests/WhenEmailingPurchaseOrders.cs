@@ -6,6 +6,7 @@
 
     using FluentAssertions;
 
+    using Linn.Common.Email;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -120,7 +121,7 @@
         [Test]
         public void ShouldSendEmail()
         {
-            this.EmailService.Received().SendEmail(
+            this.EmailService.Received(1).SendEmail(
                     "email777",
                     "email777",
                     Arg.Any<IEnumerable<Dictionary<string, string>>>(),
@@ -129,10 +130,7 @@
                     Arg.Any<string>(),
                     Arg.Any<string>(),
                     Arg.Any<string>(),
-                    Arg.Any<string>(),
-                    Arg.Any<Stream>(),
-                    Arg.Any<string>(),
-                    null);
+                    Arg.Is<IEnumerable<Attachment>>(a => a.All(b => b.Type == "pdf")));
         }
 
         [Test]
