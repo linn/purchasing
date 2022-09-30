@@ -40,10 +40,12 @@
             app.MapGet("/purchasing/purchase-orders/packaging-groups", this.GetPackagingGroups);
             app.MapGet("/purchasing/purchase-orders/tariffs", this.SearchTariffs);
             app.MapGet("/purchasing/purchase-orders", this.SearchPurchaseOrders);
-            app.MapPost("/purchasing/purchase-orders/generate-order-from-supplier-id", this.FillOutPurchaseOrderFromSupplierId);
+            app.MapPost(
+                "/purchasing/purchase-orders/generate-order-from-supplier-id", 
+                this.FillOutPurchaseOrderFromSupplierId);
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}", this.GetPurchaseOrder);
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}/html", this.GetPurchaseOrderHtml);
-            app.MapGet("/purchasing/pl-notes/html", this.GetNoteHtml);
+            //app.MapGet("/purchasing/pl-notes/html", this.GetNoteHtml);
             app.MapPost("/purchasing/purchase-orders/email-pdf", this.EmailOrderPdf);
             app.MapPost("/purchasing/purchase-orders/email-supplier-ass", this.EmailSupplierAss);
             app.MapGet("/purchasing/purchase-orders/auth-or-send", this.GetApp);
@@ -61,7 +63,8 @@
             int id,
             IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
-            var result = purchaseOrderFacadeService.AuthorisePurchaseOrder(id, req.HttpContext.GetPrivileges(), req.HttpContext.User.GetEmployeeNumber());
+            var result = purchaseOrderFacadeService.AuthorisePurchaseOrder(
+                id, req.HttpContext.GetPrivileges(), req.HttpContext.User.GetEmployeeNumber());
 
             await res.Negotiate(result);
         }
@@ -205,19 +208,19 @@
             await res.WriteAsync(result);
         }
 
-        private async Task GetNoteHtml(
-            HttpRequest req,
-            HttpResponse res,
-            IRepository<PlCreditDebitNote, int> repo,
-            IHtmlTemplateService<PlCreditDebitNote> templateService)
-        {
-            var result = repo.FindById(22900);
-            var html = await templateService.GetHtml(result);
-            res.ContentType = "text/html";
-            res.StatusCode = (int)HttpStatusCode.OK;
-
-            await res.WriteAsync(html);
-        }
+        // private async Task GetNoteHtml(
+        //     HttpRequest req,
+        //     HttpResponse res,
+        //     IRepository<PlCreditDebitNote, int> repo,
+        //     IHtmlTemplateService<PlCreditDebitNote> templateService)
+        // {
+        //     var result = repo.FindById(22900);
+        //     var html = await templateService.GetHtml(result);
+        //     res.ContentType = "text/html";
+        //     res.StatusCode = (int)HttpStatusCode.OK;
+        //
+        //     await res.WriteAsync(html);
+        // }
 
         private async Task EmailOrderPdf(
             HttpRequest req,

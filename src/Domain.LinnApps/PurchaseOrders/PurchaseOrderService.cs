@@ -60,6 +60,10 @@
 
         private readonly IRepository<PartSupplier, PartSupplierKey> partSupplierRepository;
 
+        private readonly IHtmlTemplateService<PlCreditDebitNote> creditDebitNoteHtmlService;
+
+        private readonly IRepository<PlCreditDebitNote, int> creditDebitNoteRepository;
+
         public PurchaseOrderService(
             IAuthorisationService authService,
             IPurchaseLedgerPack purchaseLedgerPack,
@@ -79,7 +83,9 @@
             IRepository<NominalAccount, int> nominalAccountRepository,
             IQueryRepository<Part> partQueryRepository,
             IRepository<PartSupplier, PartSupplierKey> partSupplierRepository,
-            ILog log)
+            IHtmlTemplateService<PlCreditDebitNote> creditDebitNoteHtmlService,
+            ILog log,
+            IRepository<PlCreditDebitNote, int> creditDebitNoteRepository)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;
@@ -100,6 +106,8 @@
             this.partQueryRepository = partQueryRepository;
             this.partSupplierRepository = partSupplierRepository;
             this.log = log;
+            this.creditDebitNoteHtmlService = creditDebitNoteHtmlService;
+            this.creditDebitNoteRepository = creditDebitNoteRepository;
         }
 
         public void AllowOverbook(
@@ -204,6 +212,7 @@
             var order = this.GetOrder(orderNumber);
 
             var html = this.purchaseOrderTemplateService.GetHtml(order).Result;
+            // var debitNoteHtml = this.creditDebitNoteHtmlService.GetHtml(order.)
             this.SendOrderPdfEmail(html, emailAddress, bcc, currentUserId, order);
 
             return new ProcessResult(true, $"Email sent for purchase order {orderNumber} to {emailAddress}");
@@ -858,6 +867,12 @@
             PurchaseOrder order)
         {
             var pdf = this.pdfService.ConvertHtmlToPdf(html, false);
+
+            if (order.DocumentType?.Name == "RO" || order.DocumentType?.Name == "CO")
+            {
+
+            }
+
             var emailBody = $"Please accept the attached order no. {order.OrderNumber}.\n"
                             + "You will need Acrobat Reader to open the file which is available from www.adobe.com/acrobat\n"
                             + "Linn's standard Terms & Conditions apply at all times\n"
