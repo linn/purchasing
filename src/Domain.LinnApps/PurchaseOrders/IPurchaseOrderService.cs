@@ -28,7 +28,7 @@
 
         string GetPurchaseOrderAsHtml(int orderNumber);
 
-        void CreateOrder(PurchaseOrder order, IEnumerable<string> privileges);
+        PurchaseOrder CreateOrder(PurchaseOrder order, IEnumerable<string> privileges);
 
         void CreateMiniOrder(PurchaseOrder order);
     }

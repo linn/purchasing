@@ -1,12 +1,10 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderServiceTests
 {
     using System.Collections.Generic;
-    using System.IO;
 
     using FluentAssertions;
 
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
-    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NSubstitute;
@@ -19,17 +17,11 @@
 
         private readonly int orderNumber = 5678;
 
-        private readonly string supplierEmail = "seller@wesellthings.com";
-
-        private MiniOrder miniOrder;
-
         private ProcessResult result;
 
         [SetUp]
         public void SetUp()
         {
-            this.miniOrder = new MiniOrder { OrderNumber = this.orderNumber };
-
             this.EmployeeRepository.FindById(this.employeeNumber).Returns(
                 new Employee
                     {
@@ -71,9 +63,7 @@
                 Arg.Any<string>(),
                 "Linn Purchasing",
                 $"Purchase Order {this.orderNumber} requires Authorisation",
-                Arg.Any<string>(),
-                null,
-                null);
+                Arg.Any<string>());
         }
 
         [Test]

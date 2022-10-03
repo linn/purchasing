@@ -27,6 +27,17 @@
                 .FirstOrDefault(x => x.NoteNumber == key);
         }
 
+        public override PlCreditDebitNote FindBy(Expression<Func<PlCreditDebitNote, bool>> expression)
+        {
+            return this.FindAll()
+                .Include(x => x.NoteType)
+                .Include(x => x.Supplier).ThenInclude(s => s.OrderAddress)
+                .Include(x => x.Supplier).ThenInclude(s => s.SupplierContacts).ThenInclude(c => c.Person)
+                .Include(x => x.PurchaseOrder).ThenInclude(o => o.Details).ThenInclude(d => d.Part)
+                .Include(x => x.Currency)
+                .FirstOrDefault(expression);
+        }
+
         public override IQueryable<PlCreditDebitNote> FilterBy(
             Expression<Func<PlCreditDebitNote, bool>> expression)
         {

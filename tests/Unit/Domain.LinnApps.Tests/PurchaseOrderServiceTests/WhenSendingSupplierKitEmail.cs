@@ -1,7 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderServiceTests
 {
     using System.Collections.Generic;
-    using System.IO;
 
     using FluentAssertions;
 
@@ -64,11 +63,7 @@
                 Arg.Any<string>(),
                 Arg.Any<string>(),
                 Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<Stream>(),
-                Arg.Any<string>(),
-                null);
+                Arg.Any<string>());
         }
 
         [Test]

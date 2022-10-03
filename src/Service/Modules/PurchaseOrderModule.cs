@@ -7,6 +7,9 @@
     using Carter.Response;
 
     using Linn.Common.Facade;
+    using Linn.Common.Pdf;
+    using Linn.Common.Persistence;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
@@ -37,7 +40,9 @@
             app.MapGet("/purchasing/purchase-orders/packaging-groups", this.GetPackagingGroups);
             app.MapGet("/purchasing/purchase-orders/tariffs", this.SearchTariffs);
             app.MapGet("/purchasing/purchase-orders", this.SearchPurchaseOrders);
-            app.MapPost("/purchasing/purchase-orders/generate-order-from-supplier-id", this.FillOutPurchaseOrderFromSupplierId);
+            app.MapPost(
+                "/purchasing/purchase-orders/generate-order-from-supplier-id", 
+                this.FillOutPurchaseOrderFromSupplierId);
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}", this.GetPurchaseOrder);
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}/html", this.GetPurchaseOrderHtml);
             app.MapPost("/purchasing/purchase-orders/email-pdf", this.EmailOrderPdf);
@@ -57,7 +62,8 @@
             int id,
             IPurchaseOrderFacadeService purchaseOrderFacadeService)
         {
-            var result = purchaseOrderFacadeService.AuthorisePurchaseOrder(id, req.HttpContext.GetPrivileges(), req.HttpContext.User.GetEmployeeNumber());
+            var result = purchaseOrderFacadeService.AuthorisePurchaseOrder(
+                id, req.HttpContext.GetPrivileges(), req.HttpContext.User.GetEmployeeNumber());
 
             await res.Negotiate(result);
         }
@@ -199,6 +205,21 @@
             res.StatusCode = (int)HttpStatusCode.OK;
 
             await res.WriteAsync(result);
+        }
+
+        private async Task GetNoteHtml(
+            HttpRequest req,
+            HttpResponse res,
+            int noteNumber,
+            IRepository<PlCreditDebitNote, int> repo,
+            IHtmlTemplateService<PlCreditDebitNote> templateService)
+        {
+            var result = repo.FindById(noteNumber);
+            var html = await templateService.GetHtml(result);
+            res.ContentType = "text/html";
+            res.StatusCode = (int)HttpStatusCode.OK;
+        
+            await res.WriteAsync(html);
         }
 
         private async Task EmailOrderPdf(

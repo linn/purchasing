@@ -184,6 +184,8 @@
 
         public DbSet<ChangeRequest> ChangeRequests { get; set; }
 
+        public DbSet<CreditDebitNoteType> CreditDebitNoteTypes { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -284,6 +286,7 @@
             this.BuildBomChanges(builder);
             this.BuildBoms(builder);
             this.BuildPcasChanges(builder);
+            this.BuildPlCreditDebitNoteDetails(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -971,7 +974,7 @@
             entity.Property(a => a.OrderUnitOfMeasure).HasColumnName("ORDER_UNIT_OF_MEASURE");
             entity.Property(a => a.VatTotal).HasColumnName("VAT_TOTAL");
             entity.Property(a => a.SuppliersDesignation).HasColumnName("SUPPLIERS_DESIGNATION");
-            entity.HasOne(a => a.PurchaseOrder).WithMany().HasForeignKey("ORIGINAL_ORDER_NUMBER");
+            entity.HasOne(a => a.PurchaseOrder).WithMany().HasForeignKey(n => n.OriginalOrderNumber);
             entity.HasOne(a => a.Currency).WithMany().HasForeignKey("CURRENCY");
             entity.Property(a => a.ReturnsOrderLine).HasColumnName("RETURNS_ORDER_LINE");
             entity.Property(a => a.VatRate).HasColumnName("VAT_RATE");
@@ -979,6 +982,28 @@
             entity.Property(a => a.DateCancelled).HasColumnName("DATE_CANCELLED");
             entity.Property(a => a.ReasonCancelled).HasColumnName("REASON_CANCELLED");
             entity.HasOne(a => a.NoteType).WithMany().HasForeignKey("CDNOTE_TYPE");
+            entity.Property(a => a.CreditOrReplace).HasColumnName("CREDIT_OR_REPLACE");
+            entity.Property(a => a.OriginalOrderNumber).HasColumnName("ORIGINAL_ORDER_NUMBER");
+            entity.HasMany(a => a.Details).WithOne(d => d.Header).HasForeignKey(d => d.NoteNumber);
+        }
+
+        private void BuildPlCreditDebitNoteDetails(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PlCreditDebitNoteDetail>().ToTable("PL_CREDIT_DEBIT_NOTE_DETAILS");
+            entity.HasKey(a => new { a.NoteNumber, a.LineNumber });
+            entity.Property(a => a.NoteNumber).HasColumnName("CDNOTE_ID");
+            entity.Property(a => a.LineNumber).HasColumnName("LINE_NUMBER");
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
+            entity.Property(a => a.OrderQty).HasColumnName("ORDER_QTY");
+            entity.Property(a => a.NetTotal).HasColumnName("NET_TOTAL");
+            entity.Property(a => a.Notes).HasColumnName("NOTES").HasMaxLength(200);
+            entity.Property(a => a.Total).HasColumnName("TOTAL_INC_VAT");
+            entity.Property(a => a.OrderUnitPrice).HasColumnName("ORDER_UNIT_PRICE");
+            entity.Property(a => a.OrderUnitOfMeasure).HasColumnName("ORDER_UNIT_OF_MEASURE");
+            entity.Property(a => a.VatTotal).HasColumnName("VAT_TOTAL");
+            entity.Property(a => a.SuppliersDesignation).HasColumnName("SUPPLIERS_DESIGNATION");
+            entity.Property(a => a.ReturnsOrderLine).HasColumnName("RETURNS_ORDER_LINE");
+            entity.Property(a => a.OriginalOrderLine).HasColumnName("ORIGINAL_ORDER_LINE");
         }
 
         private void BuildCreditDebitNoteTypes(ModelBuilder builder)

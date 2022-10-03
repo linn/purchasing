@@ -1,0 +1,208 @@
+﻿@inherits RazorEngineCore.RazorEngineTemplateBase<Linn.Purchasing.Domain.LinnApps.PurchaseOrders.PlCreditDebitNote>
+@{
+    <style>
+        body { font-family: Trebuchet, sans-serif; }
+
+        .logo { grid-area: logo; text-align: right;  }
+        .address { grid-area: address; }
+        .header { grid-area: header; text-align: center; font-size: 32px; padding-bottom: 20px; }
+        .footer { grid-area: footer; text-align: center; font-weight: bold; padding-bottom: 20px; }
+
+        .label { text-align: right }
+        .value { font-weight: bold }
+        .supplierLabel { grid-area: supplierLabel; }
+        .supplierValue { grid-area: supplierValue; }
+        .yourRefLabel { grid-area: yourRefLabel; }
+        .yourRefValue { grid-area: yourRefValue; }
+        .dateLabel { grid-area: dateLabel; }
+        .dateValue { grid-area: dateValue; }
+        .returnsOrderLabel { grid-area: returnsOrderLabel; }
+        .returnsOrderValue { grid-area: returnsOrderValue; }
+        .returnsOrderLineLabel { grid-area: returnsOrderLineLabel; }
+        .returnsOrderLineValue { grid-area: returnsOrderLineValue; }
+        .origOrderLabel { grid-area: origOrderLabel; }
+        .origOrderValue { grid-area: origOrderValue; }
+        .origOrderLineLabel { grid-area: origOrderLineLabel; }
+        .origOrderLineValue { grid-area: origOrderLineValue; }
+        .partLabel { grid-area: partLabel; }
+        .partValue { grid-area: partValue; }
+        .qtyLabel { grid-area: qtyLabel; }
+        .qtyValue { grid-area: qtyValue; }
+        .partDesc { grid-area: partDesc; }
+        .unitPriceLabel { grid-area: unitPriceLabel; }
+        .unitPriceValue { grid-area: unitPriceValue; }
+        .currencyLabel { grid-area: currencyLabel; }
+        .currencyValue { grid-area: currencyValue; }
+        .netTotalLabel { grid-area: netTotalLabel; }
+        .netTotalValue { grid-area: netTotalValue; }
+        .vatTotalLabel { grid-area: vatTotalLabel; }
+        .vatTotalValue { grid-area: vatTotalValue; }
+        .totalValueLabel { grid-area: totalValueLabel; }
+        .totalValueValue { grid-area: totalValueValue; }
+        .notesLabel { grid-area: notesLabel; }
+        .notesValue { grid-area: notesValue; }
+        .debitNoteAddendum { grid-area: debitNoteAddendum; text-align: center }
+        .grid-container {
+            column-gap: 10px;
+            display: grid;
+            grid-template-areas:
+                               'address address address address address logo'
+                               'header header header header header header'
+                               'supplierLabel supplierValue supplierValue dateLabel dateValue dateValue'
+                               'yourRefLabel yourRefValue yourRefValue . . . '
+                               'returnsOrderLabel returnsOrderValue returnsOrderLineLabel returnsOrderLineValue . .'
+                               'origOrderLabel origOrderValue origOrderLineLabel origOrderLineValue . .'
+                               'partLabel partValue partDesc partDesc partDesc partDesc'
+                               'qtyLabel qtyValue qtyValue qtyValue qtyValue qtyValue'
+                               'unitPriceLabel unitPriceValue currencyLabel currencyValue currencyValue currencyValue'
+                               'netTotalLabel netTotalValue . . . . '
+                               'vatTotalLabel vatTotalValue . . . . '
+                               'totalValueLabel totalValueValue . . . . '
+                               'notesLabel notesValue notesValue notesValue notesValue notesValue'
+                               'debitNoteAddendum debitNoteAddendum debitNoteAddendum debitNoteAddendum debitNoteAddendum debitNoteAddendum'
+                               'footer footer footer footer footer footer'
+                               ;
+            padding: 30px;
+            padding-bottom: 50px;
+            row-gap: 20px;
+        }
+        .page { page-break-after: always; }
+    </style>
+    
+    <div class="page">
+        <div class="grid-container">
+            <div class="logo">
+                <img src="http://app.linn.co.uk/Content/images/linn-logo.png"/>
+            </div>
+            <div class="address">
+                Linn Products Ltd, Glasgow Road, Waterfoot, Eaglesham, Glasgow, G76 0EQ, Scotland, UK
+                Telephone: (0)141 307 777
+                Registered Office: Glasgow Road, Waterfoot, Eaglesham, Glasgow, G76 0EQ, Scotland, UK.
+                Registered In Scotland Number: SC52366 
+            </div>
+
+            <div class="header">
+                LINN @(Model.NoteType.Type == "C" ? "CREDIT" : "DEBIT" ) NOTE NUMBER @Model.NoteNumber
+            </div>
+
+            <div class="label supplierLabel">
+                Supplier:
+            </div>
+            <div class="value supplierValue">
+                @Model.Supplier.Name
+            </div>
+            <div class=" label dateLabel">
+                Date: 
+            </div>
+            <div class="value dateValue">
+                @Model.DateCreated.ToString("dd/MM/yyyy")
+            </div>
+
+            <div class="label yourRefLabel">
+                Your Ref:
+            </div>
+            <div class="value yourRefValue">
+                @Model.PurchaseOrder?.OrderContactName
+            </div>
+
+            <div class="label returnsOrderLabel">
+                Returns Order:
+            </div>
+            <div class="value returnsOrderValue">
+                @Model.ReturnsOrderNumber
+            </div>
+            <div class="label returnsOrderLineLabel">
+                Line:
+            </div>
+            <div class="value returnsOrderLineValue">
+                @Model.ReturnsOrderLine
+            </div>
+            
+            <div class="label origOrderLabel">
+                Original Order:
+            </div>
+            <div class="value origOrderValue">
+                @Model.OriginalOrderNumber
+            </div>
+            <div class="label origOrderLineLabel">
+                Line:
+            </div>
+            <div class="value origOrderLineValue">
+                1
+            </div>
+            
+            <div class="label partLabel">
+               Part:
+            </div>
+            <div class="value partValue">
+                @Model.PartNumber
+            </div>
+            <div class="value partDesc">
+                @Model.PurchaseOrder?.Details.First().Part.Description
+            </div>
+            
+            <div class="label qtyLabel">
+                Qty:
+            </div>
+            <div class="value qtyValue">
+                @Model.OrderQty in  @Model.OrderUnitOfMeasure
+            </div>
+
+            <div class="label unitPriceLabel">
+                Unit Price:
+            </div>
+            <div class="value unitPriceValue">
+                @Model.OrderUnitPrice
+            </div>
+            <div class="label currencyLabel">
+                Currency:
+            </div>
+            <div class="value currencyValue">
+                @Model.Currency.Name
+            </div>
+            
+            <div class="label netTotalLabel">
+                Net Total:
+            </div>
+            <div class="value netTotalValue">
+                @Model.NetTotal
+            </div>
+            
+            <div class="label vatTotalLabel">
+                Vat Total:
+            </div>
+            <div class="value vatTotalValue">
+                @Model.VatTotal at @Model.VatRate%
+            </div>
+            
+            <div class="label totalValueLabel">
+                Total:
+            </div>
+            <div class="value totalValueValue">
+                @Model.Total
+            </div>
+            
+            <div class="label notesLabel">
+                Notes
+            </div>
+            <div class="value notesValue">
+                @Model.Notes
+            </div>
+
+            @{
+                if (@Model.NoteType.Type == "D")
+                {
+                    <div class="debitNoteAddendum">
+                        <h4> THESE ITEMS ARE RETURNED FOR CREDIT</h4>
+                        <h4> DO NOT RESUPPLY </h4>
+                    </div>
+                }
+            }
+            
+            <div class="footer">
+                THIS IS A PURCHASE LEDGER @(Model.NoteType.Type == "C" ? "CREDIT" : "DEBIT" ) NOTE
+            </div>
+
+        </div>
+    </div>
+}

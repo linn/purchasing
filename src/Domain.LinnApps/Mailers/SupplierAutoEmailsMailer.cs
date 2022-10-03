@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Mailers
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
 
@@ -62,10 +63,10 @@
                 vendorManagerName != "No person assigned" ? vendorManagerName : "Linn",
                 $"MR Order Book - {timestamp}",
                 "Please find Order Book attached",
-                "csv",
-                null,
-                $"{toSupplier}_linn_order_book_{timestamp}",
-                export);
+                new List<Attachment>
+                    {
+                        new CsvAttachment(export, null, $"{toSupplier}_linn_order_book_{timestamp}")
+                    });
         }
 
         public void SendMonthlyForecastEmail(string toAddress, int toSupplier, string timestamp, bool test = false)
@@ -91,11 +92,10 @@
                 vendorManagerName,
                 $"Monthly Forecast - {timestamp}",
                 "Please find Monthly order forecast attached",
-                "csv",
-                null,
-                $"{toSupplier}_monthly_forecast_{timestamp}",
-                null,
-                export);
+                new List<Attachment>
+                    {
+                        new CsvAttachment(null, export, $"{toSupplier}_monthly_forecast_{timestamp}")
+                    });
         }
 
         private void CheckEmailDetailsOk(string toAddress, Supplier supplier)
@@ -117,10 +117,7 @@
                     ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
                     "Purchasing Outgoing",
                     "MR ORDER BOOK EMAIL ERROR",
-                    msg,
-                    null,
-                    null,
-                    null);
+                    msg);
 
                 throw new SupplierAutoEmailsException(msg);
             }
