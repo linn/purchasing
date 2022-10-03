@@ -336,7 +336,7 @@ function Note() {
                                 dispatch(sendPlNoteEmailActions.requestProcessStart(blob, { id }))
                             );
                         }}
-                        disabled={item?.cancelled}
+                        disabled
                         variant="contained"
                     >
                         email

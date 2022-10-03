@@ -866,7 +866,7 @@
             int currentUserId,
             PurchaseOrder order)
         {
-            var pdf = this.pdfService.ConvertHtmlToPdf(html, false);
+            var orderPdf = this.pdfService.ConvertHtmlToPdf(html, false);
 
             if (order.DocumentType?.Name == "RO" || order.DocumentType?.Name == "CO")
             {
@@ -907,7 +907,7 @@
                     emailBody,
                     new List<Attachment>
                         {
-                            new PdfAttachment(pdf.Result, $"LinnPurchaseOrder{order.OrderNumber}")
+                            new PdfAttachment(orderPdf.Result, $"LinnPurchaseOrder{order.OrderNumber}")
                         });
 
             order.SentByMethod = "EMAIL";
