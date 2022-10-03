@@ -45,7 +45,7 @@
                 this.FillOutPurchaseOrderFromSupplierId);
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}", this.GetPurchaseOrder);
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}/html", this.GetPurchaseOrderHtml);
-            //app.MapGet("/purchasing/pl-notes/html", this.GetNoteHtml);
+            app.MapGet("/purchasing/pl-notes/html/{noteNumber:int}", this.GetNoteHtml);
             app.MapPost("/purchasing/purchase-orders/email-pdf", this.EmailOrderPdf);
             app.MapPost("/purchasing/purchase-orders/email-supplier-ass", this.EmailSupplierAss);
             app.MapGet("/purchasing/purchase-orders/auth-or-send", this.GetApp);
@@ -211,10 +211,11 @@
         private async Task GetNoteHtml(
             HttpRequest req,
             HttpResponse res,
+            int noteNumber,
             IRepository<PlCreditDebitNote, int> repo,
             IHtmlTemplateService<PlCreditDebitNote> templateService)
         {
-            var result = repo.FindById(22900);
+            var result = repo.FindById(noteNumber);
             var html = await templateService.GetHtml(result);
             res.ContentType = "text/html";
             res.StatusCode = (int)HttpStatusCode.OK;

@@ -102,7 +102,7 @@
                 Your Ref:
             </div>
             <div class="value yourRefValue">
-                @Model.PurchaseOrder.OrderContactName
+                @Model.PurchaseOrder?.OrderContactName
             </div>
 
             <div class="label returnsOrderLabel">
@@ -138,7 +138,7 @@
                 @Model.PartNumber
             </div>
             <div class="value partDesc">
-                @Model.PurchaseOrder.Details.First().Part.Description
+                @Model.PurchaseOrder?.Details.First().Part.Description
             </div>
             
             <div class="label qtyLabel">
