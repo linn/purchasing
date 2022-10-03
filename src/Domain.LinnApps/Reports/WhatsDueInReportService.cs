@@ -81,7 +81,7 @@
                 this.reportingHelper,
                 CalculationValueModelType.Value,
                 null,
-                $"Stock controlled parts due in between {fromDate.ToShortDateString()} and {toDate.ToShortDateString()}");
+                $"Stock controlled parts due in between {fromDate:dd/MM/yyyy} and {toDate:dd/MM/yyyy}");
 
             reportLayout.AddColumnComponent(
                 null,
@@ -143,7 +143,7 @@
                     {
                         RowId = currentRowId,
                         ColumnId = "ExpectedDate",
-                        TextDisplay = datum.ExpectedDate?.ToShortDateString()
+                        TextDisplay = datum.ExpectedDate?.ToString("dd/MM/yyyy")
                     });
                 values.Add(
                     new CalculationValueModel

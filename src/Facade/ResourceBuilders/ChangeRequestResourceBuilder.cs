@@ -12,9 +12,12 @@
     {
         private readonly IBuilder<BomChange> bomChangeBuilder;
 
-        public ChangeRequestResourceBuilder(IBuilder<BomChange> bomChangeBuilder)
+        private readonly IBuilder<PcasChange> pcasChangeBuilder;
+
+        public ChangeRequestResourceBuilder(IBuilder<BomChange> bomChangeBuilder, IBuilder<PcasChange> pcasChangeBuilder)
         {
             this.bomChangeBuilder = bomChangeBuilder;
+            this.pcasChangeBuilder = pcasChangeBuilder;
         }
 
         public ChangeRequestResource Build(ChangeRequest model, IEnumerable<string> claims)
@@ -30,6 +33,9 @@
                            BomChanges =
                                model.BomChanges?.Select(
                                    d => (BomChangeResource)this.bomChangeBuilder.Build(d, claims)),
+                           PcasChanges =
+                               model.PcasChanges?.Select(
+                                   d => (PcasChangeResource)this.pcasChangeBuilder.Build(d, claims))
             };
         }
 

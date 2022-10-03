@@ -283,6 +283,7 @@
             this.BuildChangeRequests(builder);
             this.BuildBomChanges(builder);
             this.BuildBoms(builder);
+            this.BuildPcasChanges(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -298,7 +299,9 @@
             var connectionString = $"Data Source={dataSource};User Id={userId};Password={password};";
 
             optionsBuilder.UseOracle(connectionString, options => options.UseOracleSQLCompatibility("11"));
-            optionsBuilder.UseLoggerFactory(MyLoggerFactory);
+
+            // below line commented due to causing crashing during local dev. Uncomment if want to see sql in debug window
+            // optionsBuilder.UseLoggerFactory(MyLoggerFactory);
             optionsBuilder.EnableSensitiveDataLogging(true);
             base.OnConfiguring(optionsBuilder);
         }
@@ -1615,13 +1618,13 @@
             entity.Property(a => a.TotalBiReqt).HasColumnName("TOTAL_BI_REQT");
             entity.Property(a => a.TotalBeReqt).HasColumnName("TOTAL_BE_REQT");
             entity.Property(a => a.TotalBtReqt).HasColumnName("TOTAL_BT_REQT");
-            entity.Property(a => a.EdPartNumber).HasColumnName("EDPART_NUMBER");
             entity.Property(a => a.OrderNumber).HasColumnName("ORDER_NUMBER");
             entity.Property(a => a.OrderLine).HasColumnName("ORDER_LINE");
             entity.Property(a => a.DeliverySeq).HasColumnName("DELIVERY_SEQ");
             entity.Property(a => a.RequestedDate).HasColumnName("REQUESTED_DATE");
             entity.Property(a => a.AdvisedDate).HasColumnName("ADVISED_DATE");
             entity.Property(a => a.QtyOutstanding).HasColumnName("QTY_OUTSTANDING");
+            entity.Property(a => a.PlannerStory).HasColumnName("PLANNER_STORY");
         }
 
         private void BuildPartNumberLists(ModelBuilder builder)
@@ -1800,6 +1803,7 @@
             entity.Property(c => c.ReasonForChange).HasColumnName("REASON_FOR_CHANGE").HasMaxLength(2000);
             entity.Property(c => c.DescriptionOfChange).HasColumnName("DESCRIPTION_OF_CHANGE").HasMaxLength(2000);
             entity.HasMany(c => c.BomChanges).WithOne(d => d.ChangeRequest).HasForeignKey(d => d.DocumentNumber);
+            entity.HasMany(c => c.PcasChanges).WithOne(d => d.ChangeRequest).HasForeignKey(d => d.DocumentNumber);
         }
 
         private void BuildBomChanges(ModelBuilder builder)
@@ -1849,6 +1853,25 @@
             entity.Property(a => a.DeleteChangeId).HasColumnName("DELETE_CHANGE_ID");
             entity.Property(a => a.DeleteReplaceSeq).HasColumnName("DELETE_REPLACE_SEQ");
             entity.HasOne(a => a.Part).WithMany().HasForeignKey(a => a.PartNumber);
+        }
+
+        private void BuildPcasChanges(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PcasChange>().ToTable("PCAS_CHANGES");
+            entity.HasKey(c => c.ChangeId);
+            entity.Property(c => c.ChangeId).HasColumnName("CHANGE_ID");
+            entity.Property(c => c.BoardCode).HasColumnName("BOARD_CODE").HasMaxLength(6);
+            entity.Property(c => c.RevisionCode).HasColumnName("REVISION_CODE").HasMaxLength(10);
+            entity.Property(c => c.ChangeState).HasColumnName("CHANGE_STATE").HasMaxLength(6);
+            entity.Property(c => c.DocumentType).HasColumnName("DOCUMENT_TYPE").HasMaxLength(6);
+            entity.Property(c => c.DocumentNumber).HasColumnName("DOCUMENT_NUMBER");
+            entity.Property(c => c.DateEntered).HasColumnName("DATE_ENTERED");
+            entity.Property(c => c.EnteredBy).HasColumnName("ENTERED_BY");
+            entity.Property(c => c.DateApplied).HasColumnName("DATE_APPLIED");
+            entity.Property(c => c.AppliedBy).HasColumnName("APPLIED_BY");
+            entity.Property(c => c.DateCancelled).HasColumnName("DATE_CANCELLED");
+            entity.Property(c => c.CancelledBy).HasColumnName("CANCELLED_BY");
+            entity.Property(c => c.Comments).HasColumnName("COMMENTS").HasMaxLength(2000);
         }
     }
 }

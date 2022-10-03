@@ -263,15 +263,15 @@
                             + $"{orderUrl} \n"
                              + $"Thanks";
 
-            var email1 = this.employeeRepository.FindById(32864).PhoneListEntry.EmailAddress;
-            var email2 = this.employeeRepository.FindById(32835).PhoneListEntry.EmailAddress;
-            var email2Name = this.employeeRepository.FindById(32835).FullName;
+            var employee1 = this.employeeRepository.FindById(32864);
+            var employee2 = this.employeeRepository.FindById(32835);
+
             var cc = new List<Dictionary<string, string>>
                               {
                                   new Dictionary<string, string>
                                       {
-                                          { "name", email2Name },
-                                          { "address", email2 }
+                                          { "name", employee2.FullName },
+                                          { "address", employee2.PhoneListEntry.EmailAddress }
                                       }
                               };
             var bcc = new List<Dictionary<string, string>>
@@ -284,8 +284,8 @@
                          };
 
             this.emailService.SendEmail(
-                email1,
-                "Finance",
+                employee1.PhoneListEntry.EmailAddress,
+                employee1.FullName,
                 cc,
                 bcc,
                 ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
@@ -398,6 +398,7 @@
                          null))
             {
                 order.AuthorisedById = userNumber;
+                this.AuthoriseMiniOrder(order);
 
                 return new ProcessResult(true, $"Order {order.OrderNumber} successfully authorised");
 
@@ -437,6 +438,7 @@
                              null))
                 {
                     order.AuthorisedById = userNumber;
+                    this.AuthoriseMiniOrder(order);
                     text += $"Order {orderNumber} authorised successfully\n";
                     success++;
                 }
@@ -771,8 +773,11 @@
             var updatedDetail = updatedOrder.Details.First();
 
             miniOrder.Remarks = updatedOrder.Remarks;
-            miniOrder.Department = updatedDetail.OrderPosting.NominalAccount.Department.DepartmentCode;
-            miniOrder.Nominal = updatedDetail.OrderPosting.NominalAccount.Nominal.NominalCode;
+
+            var nomAcc = this.nominalAccountRepository.FindById(updatedDetail.OrderPosting.NominalAccountId);
+            miniOrder.Nominal = nomAcc.NominalCode;
+            miniOrder.Department = nomAcc.DepartmentCode;
+
             miniOrder.RequestedDeliveryDate = updatedDetail.PurchaseDeliveries.First().DateRequested;
             miniOrder.InternalComments = updatedDetail.InternalComments;
             miniOrder.SuppliersDesignation = updatedDetail.SuppliersDesignation;
@@ -830,6 +835,12 @@
                 miniOrder.OrderTotal / exchangeRate,
                 2,
                 MidpointRounding.AwayFromZero);
+        }
+
+        private void AuthoriseMiniOrder(PurchaseOrder updatedOrder)
+        {
+            var miniOrder = this.miniOrderRepository.FindById(updatedOrder.OrderNumber);
+            miniOrder.AuthorisedBy = updatedOrder.AuthorisedById;
         }
 
         private void UpdateOrderPostingsForDetail(PurchaseOrderDetail current, PurchaseOrderDetail updated)

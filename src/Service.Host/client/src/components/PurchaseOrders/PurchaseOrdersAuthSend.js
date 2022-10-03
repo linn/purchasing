@@ -177,7 +177,7 @@ function PurchaseOrdersAuthSend() {
             return [];
         }
 
-        let results = searchResults;
+        let results = searchResults.filter(a => a.cancelled === 'N');
         if (options.enteredBy === 'auto') {
             results = searchResults.filter(a => a.enteredBy.id === 100);
         } else if (options.enteredBy === 'self') {

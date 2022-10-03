@@ -21,5 +21,7 @@
         public string DescriptionOfChange { get; set; }
 
         public ICollection<BomChange> BomChanges { get; set; }
+
+        public ICollection<PcasChange> PcasChanges { get; set; }
     }
 }

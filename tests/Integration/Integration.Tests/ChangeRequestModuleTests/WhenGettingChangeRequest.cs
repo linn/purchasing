@@ -36,8 +36,18 @@
                                                               BomName = "TOAST 001",
                                                               ChangeState = "ACCEPT"
                                                           }
+                                                  },
+                                 PcasChanges = new List<PcasChange>
+                                                  {
+                                                      new PcasChange
+                                                          {
+                                                              ChangeId = 1,
+                                                              BoardCode = "TOAST",
+                                                              RevisionCode = "BREAD",
+                                                              ChangeState = "ACCEPT"
+                                                          }
                                                   }
-                             };
+            };
             this.Repository.FindById(1).Returns(changeRequest);
 
             this.Response = this.Client.Get(
@@ -72,6 +82,7 @@
             result.DocumentNumber.Should().Be(1);
             result.ChangeState.Should().Be("ACCEPT");
             result.BomChanges.Count().Should().Be(1);
+            result.PcasChanges.Count().Should().Be(1);
         }
     }
 }

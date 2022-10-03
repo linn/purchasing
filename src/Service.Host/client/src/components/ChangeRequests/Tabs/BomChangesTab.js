@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid';
 import { DataGrid } from '@mui/x-data-grid';
 import { makeStyles } from '@mui/styles';
 
-function BomChanges({ bomChanges }) {
+function BomChangesTab({ bomChanges }) {
     const useStyles = makeStyles(() => ({
         gap: {
             marginTop: '20px'
@@ -42,12 +42,12 @@ function BomChanges({ bomChanges }) {
     );
 }
 
-BomChanges.propTypes = {
+BomChangesTab.propTypes = {
     bomChanges: PropTypes.arrayOf(PropTypes.shape({}))
 };
 
-BomChanges.defaultProps = {
+BomChangesTab.defaultProps = {
     bomChanges: []
 };
 
-export default BomChanges;
+export default BomChangesTab;

@@ -32,18 +32,18 @@
 
         public decimal? TotalBtReqt { get; set; }
 
-        public string EdPartNumber { get; set; }
+        public int? OrderNumber { get; set; }
 
-        public int OrderNumber { get; set; }
+        public int? OrderLine { get; set; }
 
-        public int OrderLine { get; set; }
-
-        public int DeliverySeq { get; set; }
+        public int? DeliverySeq { get; set; }
 
         public DateTime? RequestedDate { get; set; }
 
         public DateTime? AdvisedDate { get; set; }
 
         public int? QtyOutstanding { get; set; }
+
+        public string PlannerStory { get; set; }
     }
 }

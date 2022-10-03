@@ -33,7 +33,7 @@
                 this.Log,
                 this.ServiceProvider);
             await this.Sut.StartAsync(CancellationToken.None);
-            await Task.Delay(TimeSpan.FromMilliseconds(100));
+            await Task.Delay(TimeSpan.FromMilliseconds(500));
             await this.Sut.StopAsync(CancellationToken.None);
         }
         
