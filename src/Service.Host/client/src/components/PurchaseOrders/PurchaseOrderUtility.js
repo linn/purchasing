@@ -130,7 +130,10 @@ function PurchaseOrderUtility({ creating }) {
             dispatch({ type: 'initialise', payload: item });
             setPurchaseOrderEmailState({ bcc: false, email: item.supplierContactEmail?.trim() });
         } else if (creating && applicationState) {
-            dispatch({ type: 'initialise', payload: applicationState });
+            dispatch({
+                type: 'initialise',
+                payload: applicationState
+            });
         } else {
             reduxDispatch(purchaseOrderActions.clearErrorsForItem());
         }

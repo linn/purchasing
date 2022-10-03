@@ -61,6 +61,10 @@
 
         protected ILog Log { get; private set; }
 
+        protected IHtmlTemplateService<PlCreditDebitNote> NoteTemplateService { get; private set; }
+
+        protected IRepository<PlCreditDebitNote, int> NoteRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -82,11 +86,10 @@
             this.NominalAccountRepository = Substitute.For<IRepository<NominalAccount, int>>();
             this.PartQueryRepository = Substitute.For<IQueryRepository<Part>>();
             this.PartSupplierRepository = Substitute.For<IRepository<PartSupplier, PartSupplierKey>>();
-
             this.Log = Substitute.For<ILog>();
-
+            this.NoteTemplateService = Substitute.For<IHtmlTemplateService<PlCreditDebitNote>>();
+            this.NoteRepository = Substitute.For<IRepository<PlCreditDebitNote, int>>();
             this.Sut = new PurchaseOrderService(
-                "localhost",
                 this.MockAuthService,
                 this.PurchaseLedgerPack,
                 this.MockDatabaseService,
@@ -105,7 +108,9 @@
                 this.NominalAccountRepository,
                 this.PartQueryRepository,
                 this.PartSupplierRepository,
-                this.Log);
+                this.NoteTemplateService,
+                this.Log,
+                this.NoteRepository);
         }
     }
 }

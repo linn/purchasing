@@ -8,7 +8,10 @@
     using Linn.Common.Authorisation;
     using Linn.Common.Email;
     using Linn.Common.Persistence;
+    using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
+    using Linn.Purchasing.Domain.LinnApps.ExternalServices;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     public class PlCreditDebitNoteService : IPlCreditDebitNoteService
     {
@@ -18,14 +21,34 @@
 
         private readonly IRepository<Employee, int> employeeRepository;
 
+        private readonly IRepository<PlCreditDebitNote, int> repository;
+
+        private readonly IRepository<Supplier, int> supplierRepository;
+
+        private readonly IDatabaseService databaseService;
+
+        private readonly ISalesTaxPack salesTaxPack;
+
+        private readonly IRepository<CreditDebitNoteType, string> noteTypesRepository;
+
         public PlCreditDebitNoteService(
             IAuthorisationService authService,
             IEmailService emailService,
-            IRepository<Employee, int> employeeRepository)
+            IRepository<Employee, int> employeeRepository,
+            IRepository<PlCreditDebitNote, int> repository,
+            ISalesTaxPack salesTaxPack,
+            IRepository<Supplier, int> supplierRepository,
+            IDatabaseService databaseService,
+            IRepository<CreditDebitNoteType, string> noteTypesRepository)
         {
             this.authService = authService;
             this.emailService = emailService;
             this.employeeRepository = employeeRepository;
+            this.repository = repository;
+            this.salesTaxPack = salesTaxPack;
+            this.databaseService = databaseService;
+            this.supplierRepository = supplierRepository;
+            this.noteTypesRepository = noteTypesRepository;
         }
 
         public void CloseDebitNote(
@@ -122,9 +145,10 @@
                     sender.FullName,
                     $"Linn Products {note.NoteType.PrintDescription} {note.NoteNumber}",
                     $"Attached is a copy of Linn Products {note.NoteType.PrintDescription} {note.NoteNumber}",
-                    "pdf",
-                    pdfAttachment,
-                    $"{note.NoteType.PrintDescription} {note.NoteNumber}");
+                    new List<Attachment>
+                        {
+                            new PdfAttachment(pdfAttachment, $"{note.NoteType.PrintDescription} {note.NoteNumber}")
+                        });
 
                 return new ProcessResult(true, "Email Sent");
             }
@@ -135,6 +159,63 @@
                                Success = false,
                                Message = $"Error sending email. Error Message: {e.Message}"
                            };
+            }
+        }
+
+        public void CreateDebitOrNoteFromPurchaseOrder(PurchaseOrder order)
+        {
+            if (order.DocumentTypeName == "CO" || order.DocumentTypeName == "RO")
+            {
+                var note = new PlCreditDebitNote
+                {
+                    NoteNumber = this.databaseService.GetNextVal("PLCDN_SEQ"),
+                    PartNumber = order.Details.First().PartNumber,
+                    OrderQty = order.Details.First().OrderQty.GetValueOrDefault(),
+                    ReturnsOrderNumber = order.OrderNumber,
+                    ReturnsOrderLine = 1,
+                    NetTotal = order.Details.First().NetTotalCurrency,
+                    Total = order.Details.First().DetailTotalCurrency.GetValueOrDefault(),
+                    OrderUnitPrice = order.Details.First().OrderUnitPriceCurrency.GetValueOrDefault(),
+                    OrderUnitOfMeasure = order.Details.First().OrderUnitOfMeasure,
+                    VatTotal = order.Details.First().VatTotalCurrency.GetValueOrDefault(),
+                    Notes = null,
+                    DateClosed = null,
+                    DateCreated = DateTime.Now,
+                    ClosedBy = null,
+                    ReasonClosed = null,
+                    Supplier = this.supplierRepository.FindById(order.SupplierId),
+                    SuppliersDesignation = order.Details.First().SuppliersDesignation,
+                    Currency = order.Currency,
+                    VatRate = this.salesTaxPack.GetVatRateSupplier(order.SupplierId),
+                    CancelledBy = null,
+                    DateCancelled = null,
+                    ReasonCancelled = null,
+                    NoteType = order.DocumentTypeName == "CO" 
+                                   ? this.noteTypesRepository.FindById("C") 
+                                   : this.noteTypesRepository.FindById("D"),
+                    CreditOrReplace = order.DocumentTypeName == "CO" ? "CREDIT" : "REPLACE",
+                    OriginalOrderNumber = order.OrderNumber
+                };
+
+                note.Details = order.Details.Select(detail => new PlCreditDebitNoteDetail
+                {
+                    NoteNumber = note.NoteNumber,
+                    LineNumber = detail.Line,
+                    PartNumber = detail.PartNumber,
+                    OrderQty = detail.OrderQty.GetValueOrDefault(),
+                    OriginalOrderLine = detail.Line,
+                    ReturnsOrderLine = detail.Line,
+                    NetTotal = detail.NetTotalCurrency,
+                    Total = detail.DetailTotalCurrency.GetValueOrDefault(),
+                    OrderUnitPrice = detail.OrderUnitPriceCurrency.GetValueOrDefault(),
+                    OrderUnitOfMeasure = detail.OrderUnitOfMeasure,
+                    VatTotal = detail.VatTotalCurrency.GetValueOrDefault(),
+                    Notes = null,
+                    SuppliersDesignation = detail.SuppliersDesignation,
+                    Header = note
+                }).ToList();
+
+                this.repository.Add(note);
             }
         }
     }

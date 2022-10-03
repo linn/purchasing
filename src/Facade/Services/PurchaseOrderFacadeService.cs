@@ -35,6 +35,8 @@
 
         private readonly IRepository<PurchaseOrder, int> repository;
 
+        private readonly IPlCreditDebitNoteService creditDebitNoteService;
+
         public PurchaseOrderFacadeService(
             IRepository<PurchaseOrder, int> repository,
             ITransactionManager transactionManager,
@@ -42,6 +44,7 @@
             IPurchaseOrderService domainService,
             IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository,
             IRepository<Supplier, int> supplierRepository,
+            IPlCreditDebitNoteService creditDebitNoteService,
             ILog logger)
             : base(repository, transactionManager, resourceBuilder)
         {
@@ -52,6 +55,7 @@
             this.resourceBuilder = resourceBuilder;
             this.supplierRepository = supplierRepository;
             this.repository = repository;
+            this.creditDebitNoteService = creditDebitNoteService;
         }
 
         public IResult<ProcessResultResource> EmailOrderPdf(
@@ -207,7 +211,8 @@
             }
 
             this.transactionManager.Commit();
-            return new SuccessResult<ProcessResultResource>(new ProcessResultResource(result.Success, result.Message));
+            return new SuccessResult<ProcessResultResource>(
+                new ProcessResultResource(result.Success, result.Message));
         }
 
         public string GetOrderAsHtml(int orderNumber)
@@ -215,19 +220,27 @@
             return this.domainService.GetPurchaseOrderAsHtml(orderNumber);
         }
 
-        public new IResult<PurchaseOrderResource> Add(PurchaseOrderResource resource, IEnumerable<string> privileges = null, int? userNumber = null)
+        public new IResult<PurchaseOrderResource> Add(
+            PurchaseOrderResource resource, IEnumerable<string> privileges = null, int? userNumber = null)
         {
-            var order = this.BuildEntityFromResourceHelper(resource);
+            var candidate = this.BuildEntityFromResourceHelper(resource);
 
-            this.domainService.CreateOrder(order, privileges);
+            var order = this.domainService.CreateOrder(candidate, privileges);
             this.transactionManager.Commit();
 
             this.domainService.CreateMiniOrder(order);
             this.transactionManager.Commit();
 
+            if (order.DocumentType.Name is "CO" or "RO")
+            {
+                this.creditDebitNoteService.CreateDebitOrNoteFromPurchaseOrder(order);
+                this.transactionManager.Commit();
+            }
+            
             order.Supplier = this.supplierRepository.FindById(order.SupplierId);
 
-            return new CreatedResult<PurchaseOrderResource>((PurchaseOrderResource)this.resourceBuilder.Build(order, privileges.ToList()));
+            return new CreatedResult<PurchaseOrderResource>(
+                (PurchaseOrderResource)this.resourceBuilder.Build(order, privileges.ToList()));
         }
 
         protected override PurchaseOrder CreateFromResource(
@@ -237,7 +250,8 @@
             throw new NotImplementedException();
         }
 
-        protected override void DeleteOrObsoleteResource(PurchaseOrder entity, IEnumerable<string> privileges = null)
+        protected override void DeleteOrObsoleteResource(
+            PurchaseOrder entity, IEnumerable<string> privileges = null)
         {
             this.transactionManager.Commit();
             throw new NotImplementedException();
@@ -248,7 +262,9 @@
         {
             if (!string.IsNullOrEmpty(searchResource.StartDate))
             {
-                return a => a.OrderDate >= DateTime.Parse(searchResource.StartDate) && a.OrderDate <= DateTime.Parse(searchResource.EndDate);
+                return a => 
+                    a.OrderDate >= DateTime.Parse(searchResource.StartDate) 
+                    && a.OrderDate <= DateTime.Parse(searchResource.EndDate);
             }
 
             return x => x.OrderNumber.ToString().Contains(searchResource.OrderNumber);

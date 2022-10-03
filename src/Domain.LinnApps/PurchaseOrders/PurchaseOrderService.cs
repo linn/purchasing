@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
 
     using Linn.Common.Authorisation;
@@ -22,8 +23,6 @@
 
     public class PurchaseOrderService : IPurchaseOrderService
     {
-        private readonly string appRoot;
-
         private readonly IAuthorisationService authService;
 
         private readonly IDatabaseService databaseService;
@@ -62,9 +61,11 @@
 
         private readonly IRepository<PartSupplier, PartSupplierKey> partSupplierRepository;
 
+        private readonly IHtmlTemplateService<PlCreditDebitNote> creditDebitNoteHtmlService;
+
+        private readonly IRepository<PlCreditDebitNote, int> creditDebitNoteRepository;
 
         public PurchaseOrderService(
-            string appRoot,
             IAuthorisationService authService,
             IPurchaseLedgerPack purchaseLedgerPack,
             IDatabaseService databaseService,
@@ -83,7 +84,9 @@
             IRepository<NominalAccount, int> nominalAccountRepository,
             IQueryRepository<Part> partQueryRepository,
             IRepository<PartSupplier, PartSupplierKey> partSupplierRepository,
-        ILog log)
+            IHtmlTemplateService<PlCreditDebitNote> creditDebitNoteHtmlService,
+            ILog log,
+            IRepository<PlCreditDebitNote, int> creditDebitNoteRepository)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;
@@ -104,7 +107,8 @@
             this.partQueryRepository = partQueryRepository;
             this.partSupplierRepository = partSupplierRepository;
             this.log = log;
-            this.appRoot = appRoot;
+            this.creditDebitNoteHtmlService = creditDebitNoteHtmlService;
+            this.creditDebitNoteRepository = creditDebitNoteRepository;
         }
 
         public void AllowOverbook(
@@ -158,7 +162,7 @@
             return order;
         }
 
-        public void CreateOrder(PurchaseOrder order, IEnumerable<string> privileges)
+        public PurchaseOrder CreateOrder(PurchaseOrder order, IEnumerable<string> privileges)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, privileges))
             {
@@ -175,21 +179,22 @@
             order.BaseOrderVatTotal = 0;
             order.OrderTotal = 0;
             order.BaseOrderTotal = 0;
-
+          
             foreach (var detail in order.Details)
             {
                 this.SetDetailFieldsForCreation(detail, newOrderNumber);
 
-                this.PerformDetailCalculations(detail, detail, order.ExchangeRate.GetValueOrDefault(1), order.SupplierId, creating: true);
+                this.PerformDetailCalculations(
+                    detail, detail, order.ExchangeRate.GetValueOrDefault(1), order.SupplierId, creating: true);
 
                 this.AddDeliveryToDetail(order, detail);
 
                 order.OrderNetTotal += detail.NetTotalCurrency;
                 order.BaseOrderNetTotal += detail.BaseNetTotal;
-                order.OrderVatTotal += detail.VatTotalCurrency.GetValueOrDefault(0m);
-                order.BaseOrderVatTotal += detail.BaseVatTotal.GetValueOrDefault(0m);
-                order.OrderTotal += detail.DetailTotalCurrency.GetValueOrDefault(0m);
-                order.BaseOrderTotal += detail.BaseDetailTotal.GetValueOrDefault(0m);
+                order.OrderVatTotal += detail.VatTotalCurrency.GetValueOrDefault();
+                order.BaseOrderVatTotal += detail.BaseVatTotal.GetValueOrDefault();
+                order.OrderTotal += detail.DetailTotalCurrency.GetValueOrDefault();
+                order.BaseOrderTotal += detail.BaseDetailTotal.GetValueOrDefault();
             }
 
             order.Cancelled = "N";
@@ -199,14 +204,25 @@
             order.DamagesPercent = 2m;
 
             this.purchaseOrderRepository.Add(order);
+
+            return order;
         }
 
         public ProcessResult SendPdfEmail(string emailAddress, int orderNumber, bool bcc, int currentUserId)
         {
             var order = this.GetOrder(orderNumber);
 
+            string debitNoteHtml = null;
+
+            if (order.DocumentType.Name is "RO" or "CO")
+            {
+                var debitNote = this.creditDebitNoteRepository.FindBy(x => x.ReturnsOrderNumber == orderNumber);
+                debitNoteHtml = this.creditDebitNoteHtmlService.GetHtml(debitNote).Result;
+            }
+
             var html = this.purchaseOrderTemplateService.GetHtml(order).Result;
-            this.SendOrderPdfEmail(html, emailAddress, bcc, currentUserId, order);
+
+            this.SendOrderPdfEmail(html, emailAddress, bcc, currentUserId, order, debitNoteHtml);
 
             return new ProcessResult(true, $"Email sent for purchase order {orderNumber} to {emailAddress}");
         }
@@ -240,9 +256,7 @@
                 ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
                 "Linn Purchasing",
                 $"Purchase Order {orderNumber}",
-                emailBody,
-                null,
-                null);
+                emailBody);
 
             this.log.Write(
                 LoggingLevel.Info,
@@ -257,7 +271,7 @@
             var order = this.GetOrder(orderNumber);
 
             var user = this.employeeRepository.FindById(currentUserId);
-            var orderUrl = $"{this.appRoot}/purchasing/purchase-orders/{orderNumber}";
+            var orderUrl = $"{ConfigurationManager.Configuration["APP_ROOT"]}/purchasing/purchase-orders/{orderNumber}";
             var emailBody = $"Purchasing have raised order {orderNumber} for {order.Supplier.Name}.\n"
                             + $"{user.FullName} would like you to Authorise it which you can do here:\n"
                             + $"{orderUrl} \n"
@@ -291,9 +305,7 @@
                 ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
                 "Linn Purchasing",
                 $"Purchase Order {orderNumber} requires Authorisation",
-                emailBody,
-                null,
-                null);
+                emailBody);
 
             this.log.Write(
                 LoggingLevel.Info,
@@ -487,7 +499,7 @@
                 else
                 {
                     var html = this.purchaseOrderTemplateService.GetHtml(order).Result;
-                    this.SendOrderPdfEmail(html, supplierContactEmail, copyToSelf, userNumber, order);
+                    this.SendOrderPdfEmail(html, supplierContactEmail, copyToSelf, userNumber, order, null);
                     text += $"Order {orderNumber} emailed successfully to {supplierContactEmail}\n";
                     success++;
                 }
@@ -861,11 +873,12 @@
             string emailAddress,
             bool bcc,
             int currentUserId,
-            PurchaseOrder order)
+            PurchaseOrder order,
+            string debitNoteHtml)
         {
-            var pdf = this.pdfService.ConvertHtmlToPdf(html, false);
+            var orderPdf = this.pdfService.ConvertHtmlToPdf(html, false);
+
             var emailBody = $"Please accept the attached order no. {order.OrderNumber}.\n"
-                            + "You will need Acrobat Reader to open the file which is available from www.adobe.com/acrobat\n"
                             + "Linn's standard Terms & Conditions apply at all times\n"
                             + "and can be found at www.linn.co.uk/purchasing_conditions";
 
@@ -887,6 +900,17 @@
                         });
             }
 
+            var attachments = new List<Attachment>
+                                  {
+                                      new PdfAttachment(orderPdf.Result, $"LinnPurchaseOrder{order.OrderNumber}")
+                                  };
+
+            if (debitNoteHtml != null)
+            {
+                var debitNotePdf = this.pdfService.ConvertHtmlToPdf(debitNoteHtml, false);
+                attachments.Add(new PdfAttachment(debitNotePdf.Result, $"DebitNote"));
+            }
+
             this.emailService.SendEmail(
                     emailAddress,
                     emailAddress,
@@ -896,9 +920,7 @@
                     "Linn Purchasing",
                     $"Linn Purchase Order {order.OrderNumber}",
                     emailBody,
-                    "pdf",
-                    pdf.Result,
-                    $"LinnPurchaseOrder{order.OrderNumber}");
+                   attachments);
 
             order.SentByMethod = "EMAIL";
 

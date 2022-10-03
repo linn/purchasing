@@ -48,6 +48,8 @@
 
         protected IRepository<Supplier, int> SupplierRepository { get; private set; }
 
+        protected IPlCreditDebitNoteService PlCreditDebitNoteService { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -76,6 +78,8 @@
 
             this.Logger = Substitute.For<ILog>();
 
+            this.PlCreditDebitNoteService = Substitute.For<IPlCreditDebitNoteService>();
+
             this.Sut = new PurchaseOrderFacadeService(
                 this.PurchaseOrderRepository,
                 this.TransactionManager,
@@ -83,6 +87,7 @@
                 this.DomainService,
                 this.OverbookAllowedByLogRepository,
                 this.SupplierRepository,
+                this.PlCreditDebitNoteService,
                 this.Logger);
         }
     }
