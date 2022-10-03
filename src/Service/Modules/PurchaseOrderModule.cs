@@ -208,19 +208,19 @@
             await res.WriteAsync(result);
         }
 
-        // private async Task GetNoteHtml(
-        //     HttpRequest req,
-        //     HttpResponse res,
-        //     IRepository<PlCreditDebitNote, int> repo,
-        //     IHtmlTemplateService<PlCreditDebitNote> templateService)
-        // {
-        //     var result = repo.FindById(22900);
-        //     var html = await templateService.GetHtml(result);
-        //     res.ContentType = "text/html";
-        //     res.StatusCode = (int)HttpStatusCode.OK;
-        //
-        //     await res.WriteAsync(html);
-        // }
+        private async Task GetNoteHtml(
+            HttpRequest req,
+            HttpResponse res,
+            IRepository<PlCreditDebitNote, int> repo,
+            IHtmlTemplateService<PlCreditDebitNote> templateService)
+        {
+            var result = repo.FindById(22900);
+            var html = await templateService.GetHtml(result);
+            res.ContentType = "text/html";
+            res.StatusCode = (int)HttpStatusCode.OK;
+        
+            await res.WriteAsync(html);
+        }
 
         private async Task EmailOrderPdf(
             HttpRequest req,
