@@ -235,7 +235,7 @@
             this.domainService.CreateMiniOrder(order);
             this.transactionManager.Commit();
 
-            if (order.DocumentType.Name is "CO" or "RO")
+            if (order.DocumentTypeName is "CO" or "RO")
             {
                 this.creditDebitNoteService.CreateDebitOrNoteFromPurchaseOrder(order);
                 this.transactionManager.Commit();

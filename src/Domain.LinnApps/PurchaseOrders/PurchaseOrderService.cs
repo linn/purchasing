@@ -2,11 +2,11 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
 
     using Linn.Common.Authorisation;
     using Linn.Common.Configuration;
+    using Linn.Common.Domain.Exceptions;
     using Linn.Common.Email;
     using Linn.Common.Logging;
     using Linn.Common.Pdf;
@@ -334,7 +334,7 @@
         {
             if (order.Supplier?.SupplierId == null)
             {
-                throw new ArgumentNullException();
+                throw new DomainException("Cannot create a purchase order without a supplier");
             }
 
             var supplier = this.supplierRepository.FindById(order.Supplier.SupplierId);
@@ -356,10 +356,17 @@
             }
 
             order.DocumentTypeName = string.IsNullOrEmpty(order.DocumentTypeName) ? "PO" : order.DocumentTypeName;
+            var documentTypeDescription = order.DocumentTypeName switch
+                {
+                    "PO" => "PURCHASE ORDER",
+                    "RO" => "RETURNS ORDER",
+                    "CO" => "CREDIT ORDER",
+                    _ => string.Empty
+                };
             order.DocumentType = new DocumentType
                                      {
                                          Name = order.DocumentTypeName,
-                                         Description = order.DocumentTypeName == "PO" ? "PURCHASE ORDER" : string.Empty
+                                         Description = documentTypeDescription
                                      };
             order.OrderMethodName = "MANUAL";
             order.OrderMethod = new OrderMethod { Name = "MANUAL", Description = "MANUAL ORDERING" };
@@ -384,6 +391,7 @@
             detail.OurUnitOfMeasure = partSupplier != null ? partSupplier.UnitOfMeasure : string.Empty;
             detail.SuppliersDesignation = partSupplier != null ? partSupplier.SupplierDesignation : string.Empty;
 
+            //TODO THIS IS WRONG AND ALSO HAS A DATABASE ID HARDCODED INTO DOMAIN LOGIC
             // from MR is always nom Raw Materials 0000007617 Assets 0000002508
             var nomAcc = this.nominalAccountRepository.FindById(884);
 
@@ -574,14 +582,15 @@
             miniOrder.RohsCompliant = detail.RohsCompliant;
             miniOrder.DeliveryConfirmedBy = detail.DeliveryConfirmedById;
             miniOrder.InternalComments = detail.InternalComments;
+            miniOrder.PrevOrderNumber = detail.OriginalOrderNumber;
+            miniOrder.PrevOrderLine = detail.OriginalOrderLine;
 
             // I think drawing ref I think should be added, and maybe manuf part no
             // but not sure of rest. Todo
             // miniOrder.ManufacturerPartNumber = updatedOrder.;
             // miniOrder.DrawingReference = detail.dr; //dont think needed
             // miniOrder.TotalQtyDelivered = updatedOrder.Details
-            // miniOrder.PrevOrderNumber = detail.;
-            // miniOrder.PrevOrderLine = updatedOrder.;
+
             // miniOrder.ShouldHaveBeenBlueReq = updatedOrder.;
             // miniOrder.SpecialOrderType = updatedOrder.;
             // miniOrder.PpvAuthorisedBy = updatedOrder.;
