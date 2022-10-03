@@ -1,13 +1,10 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderReqServiceTests
 {
     using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-
+    
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
-    using Linn.Common.Email;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
 
     using NSubstitute;

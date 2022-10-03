@@ -1,7 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderServiceTests
 {
     using System.Collections.Generic;
-    using System.IO;
 
     using FluentAssertions;
 
