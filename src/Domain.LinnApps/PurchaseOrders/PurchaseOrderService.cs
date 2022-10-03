@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
 
     using Linn.Common.Authorisation;
@@ -211,9 +212,17 @@
         {
             var order = this.GetOrder(orderNumber);
 
+            string debitNoteHtml = null;
+
+            if (order.DocumentType.Name is "RO" or "CO")
+            {
+                var debitNote = this.creditDebitNoteRepository.FindBy(x => x.ReturnsOrderNumber == orderNumber);
+                debitNoteHtml = this.creditDebitNoteHtmlService.GetHtml(debitNote).Result;
+            }
+
             var html = this.purchaseOrderTemplateService.GetHtml(order).Result;
-            // var debitNoteHtml = this.creditDebitNoteHtmlService.GetHtml(order.)
-            this.SendOrderPdfEmail(html, emailAddress, bcc, currentUserId, order);
+
+            this.SendOrderPdfEmail(html, emailAddress, bcc, currentUserId, order, debitNoteHtml);
 
             return new ProcessResult(true, $"Email sent for purchase order {orderNumber} to {emailAddress}");
         }
@@ -490,7 +499,7 @@
                 else
                 {
                     var html = this.purchaseOrderTemplateService.GetHtml(order).Result;
-                    this.SendOrderPdfEmail(html, supplierContactEmail, copyToSelf, userNumber, order);
+                    this.SendOrderPdfEmail(html, supplierContactEmail, copyToSelf, userNumber, order, null);
                     text += $"Order {orderNumber} emailed successfully to {supplierContactEmail}\n";
                     success++;
                 }
@@ -864,17 +873,12 @@
             string emailAddress,
             bool bcc,
             int currentUserId,
-            PurchaseOrder order)
+            PurchaseOrder order,
+            string debitNoteHtml)
         {
             var orderPdf = this.pdfService.ConvertHtmlToPdf(html, false);
 
-            if (order.DocumentType?.Name == "RO" || order.DocumentType?.Name == "CO")
-            {
-
-            }
-
             var emailBody = $"Please accept the attached order no. {order.OrderNumber}.\n"
-                            + "You will need Acrobat Reader to open the file which is available from www.adobe.com/acrobat\n"
                             + "Linn's standard Terms & Conditions apply at all times\n"
                             + "and can be found at www.linn.co.uk/purchasing_conditions";
 
@@ -896,6 +900,17 @@
                         });
             }
 
+            var attachments = new List<Attachment>
+                                  {
+                                      new PdfAttachment(orderPdf.Result, $"LinnPurchaseOrder{order.OrderNumber}")
+                                  };
+
+            if (debitNoteHtml != null)
+            {
+                var debitNotePdf = this.pdfService.ConvertHtmlToPdf(debitNoteHtml, false);
+                attachments.Add(new PdfAttachment(debitNotePdf.Result, $"DebitNote"));
+            }
+
             this.emailService.SendEmail(
                     emailAddress,
                     emailAddress,
@@ -905,10 +920,7 @@
                     "Linn Purchasing",
                     $"Linn Purchase Order {order.OrderNumber}",
                     emailBody,
-                    new List<Attachment>
-                        {
-                            new PdfAttachment(orderPdf.Result, $"LinnPurchaseOrder{order.OrderNumber}")
-                        });
+                   attachments);
 
             order.SentByMethod = "EMAIL";
 

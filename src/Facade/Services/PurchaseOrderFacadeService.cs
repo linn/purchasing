@@ -231,9 +231,12 @@
             this.domainService.CreateMiniOrder(order);
             this.transactionManager.Commit();
 
-            this.creditDebitNoteService.CreateDebitOrNoteFromPurchaseOrder(order);
-            this.transactionManager.Commit();
-
+            if (order.DocumentType.Name is "CO" or "RO")
+            {
+                this.creditDebitNoteService.CreateDebitOrNoteFromPurchaseOrder(order);
+                this.transactionManager.Commit();
+            }
+            
             order.Supplier = this.supplierRepository.FindById(order.SupplierId);
 
             return new CreatedResult<PurchaseOrderResource>(

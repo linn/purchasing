@@ -1,8 +1,9 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderServiceTests
 {
+    using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
+    using System.Linq.Expressions;
 
     using FluentAssertions;
 
@@ -14,7 +15,7 @@
 
     using NUnit.Framework;
 
-    public class WhenSendingPdfEmail : ContextBase
+    public class WhenSendingReturnsOrderEmail : ContextBase
     {
         private readonly int employeeNumber = 33107;
 
@@ -26,27 +27,38 @@
 
         private ProcessResult result;
 
+        private PurchaseOrder order;
+
         [SetUp]
         public void SetUp()
         {
             this.miniOrder = new MiniOrder { OrderNumber = this.orderNumber };
-
+            this.order = new PurchaseOrder
+                             {
+                                 OrderNumber = this.orderNumber, DocumentType = new DocumentType { Name = "RO" }
+                             };
             this.EmployeeRepository.FindById(this.employeeNumber).Returns(
                 new Employee
-                    {
-                        Id = this.employeeNumber,
-                        FullName = "mario",
-                        PhoneListEntry = new PhoneListEntry { EmailAddress = "mario@karting.com" }
-                    });
+                {
+                    Id = this.employeeNumber,
+                    FullName = "mario",
+                    PhoneListEntry = new PhoneListEntry { EmailAddress = "mario@karting.com" }
+                });
+
+            this.NoteRepository.FindBy(Arg.Any<Expression<Func<PlCreditDebitNote, bool>>>())
+                .Returns(new PlCreditDebitNote
+                             {
+                                 PurchaseOrder = this.order
+                             });
 
             this.MiniOrderRepository.FindById(this.orderNumber).Returns(this.miniOrder);
             this.PurchaseOrderRepository.FindById(this.orderNumber)
-                .Returns(new PurchaseOrder { OrderNumber = this.orderNumber });
+                .Returns(this.order);
             this.result = this.Sut.SendPdfEmail("seller@wesellthings.com", this.orderNumber, true, this.employeeNumber);
         }
 
         [Test]
-        public void ShouldCallSendEmail()
+        public void ShouldCallSendEmailWithAttachments()
         {
             this.EmailService.Received().SendEmail(
                 this.supplierEmail,
@@ -57,8 +69,11 @@
                 "Linn Purchasing",
                 $"Linn Purchase Order {this.orderNumber}",
                 Arg.Any<string>(),
-                Arg.Is<IEnumerable<Attachment>>(a => a.First().FileName ==
-                                                     $"LinnPurchaseOrder{this.orderNumber}.pdf"));
+                Arg.Is<IEnumerable<Attachment>>(a => a.Count() == 2 && 
+                                                     a.First().FileName ==
+                                                     $"LinnPurchaseOrder{this.orderNumber}.pdf" &&
+                                                     a.ElementAt(1).FileName ==
+                                                     $"DebitNote.pdf"));
         }
 
         [Test]

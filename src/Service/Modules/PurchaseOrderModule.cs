@@ -45,7 +45,7 @@
                 this.FillOutPurchaseOrderFromSupplierId);
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}", this.GetPurchaseOrder);
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}/html", this.GetPurchaseOrderHtml);
-            app.MapGet("/purchasing/pl-notes/html/{noteNumber:int}", this.GetNoteHtml);
+            //app.MapGet("/purchasing/pl-notes/html/{noteNumber:int}", this.GetNoteHtml);
             app.MapPost("/purchasing/purchase-orders/email-pdf", this.EmailOrderPdf);
             app.MapPost("/purchasing/purchase-orders/email-supplier-ass", this.EmailSupplierAss);
             app.MapGet("/purchasing/purchase-orders/auth-or-send", this.GetApp);
