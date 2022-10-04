@@ -21,6 +21,8 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
+    using Microsoft.CodeAnalysis.FlowAnalysis;
+
     public class PurchaseOrderService : IPurchaseOrderService
     {
         private readonly IAuthorisationService authService;
@@ -920,6 +922,15 @@
             {
                 var debitNotePdf = this.pdfService.ConvertHtmlToPdf(debitNoteHtml, false);
                 attachments.Add(new PdfAttachment(debitNotePdf.Result, $"DebitNote"));
+                if (order.Supplier.AccountController?.PhoneListEntry != null)
+                {
+                    bccList.Add(
+                        new Dictionary<string, string>
+                            {
+                                { "name", order.Supplier.AccountController.FullName },
+                                { "address", order.Supplier.AccountController.PhoneListEntry.EmailAddress }
+                            });
+                }
             }
 
             this.emailService.SendEmail(
