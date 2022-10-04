@@ -217,7 +217,10 @@
             if (order.DocumentType.Name is "RO" or "CO")
             {
                 var debitNote = this.creditDebitNoteRepository.FindBy(x => x.ReturnsOrderNumber == orderNumber);
-                debitNoteHtml = this.creditDebitNoteHtmlService.GetHtml(debitNote).Result;
+                if (debitNote != null)
+                {
+                    debitNoteHtml = this.creditDebitNoteHtmlService.GetHtml(debitNote).Result;
+                }
             }
 
             var html = this.purchaseOrderTemplateService.GetHtml(order).Result;
