@@ -1,7 +1,7 @@
 ﻿@inherits RazorEngineCore.RazorEngineTemplateBase<Linn.Purchasing.Domain.LinnApps.PurchaseOrders.PlCreditDebitNote>
 @{
     <style>
-        body { font-family: Trebuchet, sans-serif; }
+        body { font-family: Trebuchet, sans-serif; font-size: 12px; }
 
         .logo { grid-area: logo; text-align: right;  }
         .address { grid-area: address; }
@@ -46,7 +46,7 @@
             column-gap: 10px;
             display: grid;
             grid-template-areas:
-                               'address address address address address logo'
+                               'logo address address address address address '
                                'header header header header header header'
                                'supplierLabel supplierValue supplierValue dateLabel dateValue dateValue'
                                'yourRefLabel yourRefValue yourRefValue . . . '
