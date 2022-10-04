@@ -19,10 +19,12 @@ import {
     Loading,
     getItemError,
     ErrorCard,
-    utilities
+    utilities,
+    Dropdown
 } from '@linn-it/linn-form-components-library';
 import queryString from 'query-string';
 import moment from 'moment';
+import LinearProgress from '@mui/material/LinearProgress';
 import currenciesActions from '../../actions/currenciesActions';
 import suppliersActions from '../../actions/suppliersActions';
 import partsActions from '../../actions/partsActions';
@@ -33,6 +35,7 @@ import reducer from './purchaseOrderReducer';
 import { exchangeRates } from '../../itemTypes';
 import exchangeRatesActions from '../../actions/exchangeRatesActions';
 import currencyConvert from '../../helpers/currencyConvert';
+import purchaseOrdersActions from '../../actions/purchaseOrdersActions';
 
 function CreatePurchaseOrderUt() {
     const reduxDispatch = useDispatch();
@@ -62,6 +65,7 @@ function CreatePurchaseOrderUt() {
         if (item) {
             const initialOrder = {
                 ...item,
+                documentType: { name: 'PO' },
                 exchangeRate: 1,
                 dateRequired: dateRequired ? new Date(dateRequired) : new Date(),
                 supplier: { id: supplierId, name: supplierName },
@@ -101,6 +105,10 @@ function CreatePurchaseOrderUt() {
 
     const snackbarVisible = useSelector(state =>
         itemSelectorHelpers.getSnackbarVisible(state.purchaseOrder)
+    );
+    const previousOrderResults = useSelector(state => state.purchaseOrders?.searchItems || []);
+    const previousOrderLoading = useSelector(state =>
+        collectionSelectorHelpers.getSearchLoading(state.purchaseOrders)
     );
 
     const allowedToCreate = () => item?.links?.some(l => l.rel === 'create');
@@ -192,6 +200,13 @@ function CreatePurchaseOrderUt() {
         });
     };
 
+    const handleOrderTypeChange = newOrderType => {
+        dispatch({
+            payload: newOrderType,
+            type: 'orderTypeChange'
+        });
+    };
+
     const partsSearchResults = useSelector(state =>
         collectionSelectorHelpers.getSearchItems(state.parts)
     ).map?.(c => ({
@@ -209,6 +224,9 @@ function CreatePurchaseOrderUt() {
         buttonMarginTop: {
             marginTop: '28px',
             height: '40px'
+        },
+        buttonMarginLineUp: {
+            marginTop: '28px'
         },
         centerTextInDialog: {
             textAlign: 'center',
@@ -233,6 +251,69 @@ function CreatePurchaseOrderUt() {
 
     const detail = order ? order.details[0] : {};
 
+    useEffect(() => {
+        if (previousOrderResults && previousOrderResults[0]) {
+            const prevOrder = previousOrderResults[0];
+            dispatch({
+                payload: { id: prevOrder.supplier.id, name: prevOrder.supplier.name },
+                type: 'supplierChange'
+            });
+            dispatch({
+                payload: {
+                    lineNumber: 1,
+                    fieldName: 'partNumber',
+                    value: prevOrder.details[0].partNumber
+                },
+                type: 'detailFieldUpdate'
+            });
+            dispatch({
+                payload: {
+                    lineNumber: 1,
+                    fieldName: 'ourQty',
+                    value: prevOrder.details[0].ourQty
+                },
+                type: 'detailFieldUpdate'
+            });
+            dispatch({
+                payload: {
+                    lineNumber: 1,
+                    fieldName: 'ourUnitPriceCurrency',
+                    value: prevOrder.details[0].ourUnitPriceCurrency
+                },
+                type: 'detailFieldUpdate'
+            });
+        } else {
+            dispatch({
+                payload: { id: null, name: null },
+                type: 'supplierChange'
+            });
+            dispatch({
+                payload: {
+                    lineNumber: 1,
+                    fieldName: 'partNumber',
+                    value: null
+                },
+                type: 'detailFieldUpdate'
+            });
+            dispatch({
+                payload: {
+                    lineNumber: 1,
+                    fieldName: 'ourQty',
+                    value: 0
+                },
+                type: 'detailFieldUpdate'
+            });
+            dispatch({
+                payload: {
+                    lineNumber: 1,
+                    fieldName: 'ourUnitPriceCurrency',
+                    value: 0
+                },
+                type: 'detailFieldUpdate'
+            });
+        }
+    }, [previousOrderResults]);
+
     const progressToFullCreate = () => {
         reduxDispatch(
             purchaseOrderActions.postByHref(
@@ -242,6 +323,24 @@ function CreatePurchaseOrderUt() {
         );
 
         history.push(utilities.getHref(order, 'create'));
+    };
+
+    const orderTypes = [
+        { id: 'PO', displayText: 'Purchase Order' },
+        { id: 'CO', displayText: 'Credit Order' },
+        { id: 'RO', displayText: 'Returns Order' }
+    ];
+
+    const isCreditOrReturn = () =>
+        order?.documentType?.name === 'CO' || order?.documentType?.name === 'RO';
+    const lookUpOriginalOrder = () => {
+        reduxDispatch(purchaseOrdersActions.clearSearch());
+        reduxDispatch(
+            purchaseOrdersActions.searchWithOptions(
+                '',
+                `&numberToTake=1&searchTerm=${detail.originalOrderNumber}`
+            )
+        );
     };
 
     return (
@@ -268,6 +367,76 @@ function CreatePurchaseOrderUt() {
                         <Grid item xs={12}>
                             <Typography variant="h6">Create Purchase Order Wizard</Typography>
                         </Grid>
+                        <Grid item xs={12}>
+                            <Dropdown
+                                items={orderTypes}
+                                value={order.documentType?.name}
+                                allowNoValue={false}
+                                propertyName="documentType"
+                                label="Order Type"
+                                onChange={(_, value) => handleOrderTypeChange(value)}
+                            />
+                        </Grid>
+                        {isCreditOrReturn() && (
+                            <>
+                                <Grid item xs={3}>
+                                    <InputField
+                                        fullWidth
+                                        value={detail.originalOrderNumber}
+                                        label="Original Order"
+                                        propertyName="originalOrderNumber"
+                                        onChange={(propertyName, newValue) =>
+                                            handleDetailQtyFieldChange(
+                                                propertyName,
+                                                newValue,
+                                                detail
+                                            )
+                                        }
+                                        disabled={!allowedToCreate()}
+                                        type="number"
+                                        required
+                                    />
+                                </Grid>
+                                <Grid item xs={2}>
+                                    <InputField
+                                        fullWidth
+                                        value={detail.originalOrderLine}
+                                        label="Original Line"
+                                        propertyName="originalOrderLine"
+                                        onChange={(propertyName, newValue) =>
+                                            handleDetailQtyFieldChange(
+                                                propertyName,
+                                                newValue,
+                                                detail
+                                            )
+                                        }
+                                        disabled={!allowedToCreate()}
+                                        type="number"
+                                        required
+                                    />
+                                </Grid>
+                                <Grid item xs={2}>
+                                    <Button
+                                        className={classes.buttonMarginLineUp}
+                                        color="primary"
+                                        variant="contained"
+                                        onClick={() => lookUpOriginalOrder()}
+                                        disabled={
+                                            !detail.originalOrderNumber || !detail.originalOrderLine
+                                        }
+                                    >
+                                        Look Up
+                                    </Button>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    {previousOrderLoading && (
+                                        <LinearProgress
+                                            style={{ marginTop: '20px', marginBottom: '20px' }}
+                                        />
+                                    )}
+                                </Grid>
+                            </>
+                        )}
                         <Grid item xs={11}>
                             <Typeahead
                                 label="Part"
@@ -290,7 +459,7 @@ function CreatePurchaseOrderUt() {
                                 links={false}
                                 debounce={1000}
                                 minimumSearchTermLength={2}
-                                disabled={!allowedToCreate()}
+                                disabled={!allowedToCreate() || isCreditOrReturn()}
                                 placeholder="click to set part"
                             />
                         </Grid>
@@ -325,7 +494,7 @@ function CreatePurchaseOrderUt() {
                                 }}
                                 minimumSearchTermLength={3}
                                 fullWidth
-                                disabled={!allowedToCreate()}
+                                disabled={!allowedToCreate() || isCreditOrReturn()}
                                 required
                             />
                         </Grid>

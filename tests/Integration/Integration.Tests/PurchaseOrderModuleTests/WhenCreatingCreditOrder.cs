@@ -61,7 +61,7 @@
 
             this.MockDomainService.CreateOrder(
                     Arg.Any<PurchaseOrder>(), Arg.Any<IEnumerable<string>>())
-                .Returns(new PurchaseOrder { DocumentType = new DocumentType { Name = "CO" } });
+                .Returns(new PurchaseOrder { DocumentType = new DocumentType { Name = "CO" }, DocumentTypeName = "CO" });
 
             this.Response =
                 this.Client.PostAsJsonAsync("/purchasing/purchase-orders", this.resource).Result;

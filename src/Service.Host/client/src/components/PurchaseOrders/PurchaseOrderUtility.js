@@ -1335,12 +1335,48 @@ function PurchaseOrderUtility({ creating }) {
                                                 disabled
                                             />
                                         </Grid>
-
+                                        {detail.originalOrderNumber && (
+                                            <>
+                                                <Grid item xs={3}>
+                                                    <InputField
+                                                        fullWidth
+                                                        value={detail.originalOrderNumber}
+                                                        label="Original Order Number"
+                                                        propertyName="originalOrderNumber"
+                                                        onChange={(propertyName, newValue) =>
+                                                            handleDetailFieldChange(
+                                                                propertyName,
+                                                                newValue,
+                                                                detail
+                                                            )
+                                                        }
+                                                        disabled={!creating}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <InputField
+                                                        fullWidth
+                                                        value={detail.originalOrderLine}
+                                                        label="Original Order Line"
+                                                        propertyName="originalOrderLine"
+                                                        onChange={(propertyName, newValue) =>
+                                                            handleDetailFieldChange(
+                                                                propertyName,
+                                                                newValue,
+                                                                detail
+                                                            )
+                                                        }
+                                                        disabled={!creating}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={6} />
+                                            </>
+                                        )}
                                         <Grid item xs={12}>
                                             <InputField
                                                 fullWidth
                                                 value={detail.deliveryInstructions}
-                                                label="Delivery instructions"
+                                                label="Delivery Instructions"
                                                 propertyName="deliveryInstructions"
                                                 onChange={(propertyName, newValue) =>
                                                     handleDetailFieldChange(
