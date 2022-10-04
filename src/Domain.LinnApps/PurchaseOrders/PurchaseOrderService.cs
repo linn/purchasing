@@ -21,8 +21,6 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
-    using Microsoft.CodeAnalysis.FlowAnalysis;
-
     public class PurchaseOrderService : IPurchaseOrderService
     {
         private readonly IAuthorisationService authService;
