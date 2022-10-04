@@ -10,6 +10,7 @@
     using Linn.Common.Email;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NSubstitute;
 
@@ -29,22 +30,29 @@
 
         private PurchaseOrder order;
 
+        private Employee employee;
+
         [SetUp]
         public void SetUp()
         {
+            this.employee = new Employee
+                                {
+                                    Id = this.employeeNumber,
+                                    FullName = "mario",
+                                    PhoneListEntry = new PhoneListEntry {EmailAddress = "test@email.com"}
+                                };
             this.miniOrder = new MiniOrder { OrderNumber = this.orderNumber };
             this.order = new PurchaseOrder
             {
                 OrderNumber = this.orderNumber,
-                DocumentType = new DocumentType { Name = "CO" }
+                DocumentType = new DocumentType { Name = "CO" },
+                Supplier = new Supplier
+                               {
+                                   AccountController = this.employee
+                               }
             };
             this.EmployeeRepository.FindById(this.employeeNumber).Returns(
-                new Employee
-                {
-                    Id = this.employeeNumber,
-                    FullName = "mario",
-                    PhoneListEntry = new PhoneListEntry { EmailAddress = "mario@karting.com" }
-                });
+                this.employee);
 
             this.NoteRepository.FindBy(Arg.Any<Expression<Func<PlCreditDebitNote, bool>>>())
                 .Returns(new PlCreditDebitNote
@@ -65,7 +73,8 @@
                 this.supplierEmail,
                 this.supplierEmail,
                 Arg.Any<IEnumerable<Dictionary<string, string>>>(),
-                Arg.Any<IEnumerable<Dictionary<string, string>>>(),
+                Arg.Is<IEnumerable<Dictionary<string, string>>>(
+                    l => l.Any(x => x.ContainsValue(this.employee.PhoneListEntry.EmailAddress))),
                 Arg.Any<string>(),
                 "Linn Purchasing",
                 $"Linn Purchase Order {this.orderNumber}",
