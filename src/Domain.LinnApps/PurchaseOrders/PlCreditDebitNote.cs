@@ -60,5 +60,7 @@
         public int? OriginalOrderNumber { get; set; }
 
         public ICollection<PlCreditDebitNoteDetail> Details { get; set; }
+
+        public int CreatedBy { get; set; }
     }
 }

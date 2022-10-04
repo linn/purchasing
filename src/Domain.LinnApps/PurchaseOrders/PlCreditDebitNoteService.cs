@@ -168,6 +168,7 @@
             {
                 var note = new PlCreditDebitNote
                 {
+                    CreatedBy = order.EnteredBy.Id,
                     NoteNumber = this.databaseService.GetNextVal("PLCDN_SEQ"),
                     PartNumber = order.Details.First().PartNumber,
                     OrderQty = order.Details.First().OrderQty.GetValueOrDefault(),

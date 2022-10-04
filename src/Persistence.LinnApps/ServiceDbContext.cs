@@ -984,6 +984,7 @@
             entity.HasOne(a => a.NoteType).WithMany().HasForeignKey("CDNOTE_TYPE");
             entity.Property(a => a.CreditOrReplace).HasColumnName("CREDIT_OR_REPLACE");
             entity.Property(a => a.OriginalOrderNumber).HasColumnName("ORIGINAL_ORDER_NUMBER");
+            entity.Property(a => a.CreatedBy).HasColumnName("CREATED_BY");
             entity.HasMany(a => a.Details).WithOne(d => d.Header).HasForeignKey(d => d.NoteNumber);
         }
 
