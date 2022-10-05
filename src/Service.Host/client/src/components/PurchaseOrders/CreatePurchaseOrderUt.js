@@ -106,7 +106,7 @@ function CreatePurchaseOrderUt() {
     const snackbarVisible = useSelector(state =>
         itemSelectorHelpers.getSnackbarVisible(state.purchaseOrder)
     );
-    const previousOrderResults = useSelector(state => state.purchaseOrders?.searchItems || []);
+    const previousOrderResults = useSelector(state => state.purchaseOrders.searchItems);
     const previousOrderLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.purchaseOrders)
     );
