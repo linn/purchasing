@@ -879,7 +879,7 @@ function PurchaseOrderUtility({ creating }) {
                                         className={classes.buttonMarginTop}
                                         color="primary"
                                         variant="contained"
-                                        disabled={!allowedToAuthorise || order.authorisedBy?.id}
+                                        disabled={!allowedToAuthorise}
                                         onClick={handleAuthorise}
                                     >
                                         Authorise
