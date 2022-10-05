@@ -196,8 +196,6 @@ function PurchaseOrderUtility({ creating }) {
         }))
     };
 
-    // const previousPaths = useSelector(state => getPreviousPaths(state));
-
     const allowedToAuthorise = () => !creating && order.links?.some(l => l.rel === 'authorise');
 
     const allowedToUpdate = () =>
@@ -679,9 +677,6 @@ function PurchaseOrderUtility({ creating }) {
                             </Grid>
                             <Grid item xs={3}>
                                 <Typeahead
-                                    // onSelect={newValue => {
-                                    //     handleSupplierChange(newValue);
-                                    // }}
                                     label="Supplier"
                                     modal
                                     propertyName="supplierId"
@@ -964,7 +959,6 @@ function PurchaseOrderUtility({ creating }) {
                                                     required
                                                 />
                                             </Grid>
-                                            {/* //todo make available based on button click to override */}
                                             <Grid item xs={6}>
                                                 {overridingOrderQty ? (
                                                     <Tooltip
@@ -1077,8 +1071,6 @@ function PurchaseOrderUtility({ creating }) {
                                                                         detail
                                                                     )
                                                                 }
-                                                                //  disabled={!allowedToUpdate()}
-                                                                //  disabled
                                                                 type="number"
                                                                 required
                                                             />
@@ -1449,7 +1441,6 @@ function PurchaseOrderUtility({ creating }) {
                             <Grid item xs={6}>
                                 <SaveBackCancelButtons
                                     saveDisabled={!canSave()}
-                                    // backClick={() => handleBackClick(previousPaths, history.goBack)}
                                     saveClick={() => {
                                         clearErrors();
                                         setEditStatus('view');
@@ -1466,9 +1457,6 @@ function PurchaseOrderUtility({ creating }) {
                                     }}
                                     cancelClick={() => {
                                         setEditStatus('view');
-                                        // if (creating) {
-                                        //     setOrder(defaultCreatingOrder);
-                                        // } else {
                                         dispatch(item);
                                     }}
                                 />
