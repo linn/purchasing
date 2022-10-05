@@ -5,8 +5,6 @@
     using FluentAssertions;
 
     using Linn.Purchasing.Domain.LinnApps;
-    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
-    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -14,22 +12,20 @@
 
     using NUnit.Framework;
 
-    public class WhenSendingEmailToFinance : ContextBase
+    public class WhenSendingDeptEmail : ContextBase
     {
-        private readonly int orderNumber = 123456;
+        private int orderNumber;
 
         [SetUp]
         public void SetUp()
         {
-            this.MockDomainService.SendFinanceAuthRequestEmail(Arg.Any<int>(), this.orderNumber)
+            this.orderNumber = 123456;
+            this.MockDomainService.EmailDept(this.orderNumber, Arg.Any<int>())
                 .Returns(new ProcessResult(true, "email sent"));
 
             this.Response = this.Client.Post(
-                $"/purchasing/purchase-orders/email-for-authorisation?orderNumber={this.orderNumber}",
-                with =>
-                    {
-                        with.Accept("application/json");
-                    }).Result;
+                $"/purchasing/purchase-orders/{this.orderNumber}/email-dept",
+                with => { with.Accept("application/json"); }).Result;
         }
 
         [Test]
@@ -57,8 +53,7 @@
         [Test]
         public void ShouldCallDomain()
         {
-            this.MockDomainService.Received()
-                .SendFinanceAuthRequestEmail(Arg.Any<int>(), this.orderNumber);
+            this.MockDomainService.Received().EmailDept(this.orderNumber, Arg.Any<int>());
         }
     }
 }
