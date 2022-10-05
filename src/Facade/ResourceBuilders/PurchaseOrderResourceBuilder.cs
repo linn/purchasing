@@ -166,9 +166,23 @@
                                      };
                 }
 
-                if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderAuthorise, privileges))
+                if (
+                    this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderAuthorise, privileges)
+                    && !model.AuthorisedById.HasValue)
                 {
-                    yield return new LinkResource { Rel = "authorise", Href = $"{this.GetLocation(model)}/authorise" };
+                    yield return new LinkResource
+                                     {
+                                         Rel = "authorise", Href = $"{this.GetLocation(model)}/authorise"
+                                     };
+                }
+
+                if (model.AuthorisedById.HasValue)
+                {
+                    yield return new LinkResource
+                                     {
+                                         Rel = "email-dept",
+                                         Href = $"{this.GetLocation(model)}/authorise/email-dept"
+                                     };
                 }
             }
         }

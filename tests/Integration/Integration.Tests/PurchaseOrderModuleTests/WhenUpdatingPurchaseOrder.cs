@@ -16,7 +16,7 @@
 
     using NUnit.Framework;
 
-    public class WhenUpdatingPurchaseOrders : ContextBase
+    public class WhenUpdatingPurchaseOrder : ContextBase
     {
         private readonly int orderNumber = 600179;
 
