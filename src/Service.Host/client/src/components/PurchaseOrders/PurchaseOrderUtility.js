@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { useParams } from 'react-router-dom';
 import Dialog from '@mui/material/Dialog';
+import LinearProgress from '@mui/material/LinearProgress';
 import IconButton from '@mui/material/IconButton';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import EditOffIcon from '@mui/icons-material/EditOff';
@@ -46,16 +47,18 @@ import unitsOfMeasureActions from '../../actions/unitsOfMeasureActions';
 import sendPurchaseOrderPdfEmailActionTypes from '../../actions/sendPurchaseOrderPdfEmailActions';
 import sendPurchaseOrderSupplierAssActionTypes from '../../actions/sendPurchaseOrderSupplierAssEmailActions';
 import {
+    purchaseOrder,
     sendPurchaseOrderPdfEmail,
     exchangeRates,
-    sendPurchaseOrderAuthEmail
+    sendPurchaseOrderAuthEmail,
+    sendPurchaseOrderDeptEmail
 } from '../../itemTypes';
 import exchangeRatesActions from '../../actions/exchangeRatesActions';
 import currencyConvert from '../../helpers/currencyConvert';
 import PurchaseOrderDeliveriesUtility from '../PurchaseOrderDeliveriesUtility';
 import sendOrderAuthEmailActions from '../../actions/sendPurchaseOrderAuthEmailActions';
 import purchaseOrderDeliveriesActions from '../../actions/purchaseOrderDeliveriesActions';
-import { util } from 'webpack';
+import sendPurchaseOrderDeptEmailActions from '../../actions/sendPurchaseOrderDeptEmailActions';
 
 function PurchaseOrderUtility({ creating }) {
     const reduxDispatch = useDispatch();
@@ -65,6 +68,7 @@ function PurchaseOrderUtility({ creating }) {
 
     useEffect(() => {
         if (orderNumber) {
+            reduxDispatch(sendPurchaseOrderDeptEmailActions.clearErrorsForItem());
             reduxDispatch(purchaseOrderActions.fetch(orderNumber));
         } else if (creating) {
             reduxDispatch(purchaseOrderActions.fetchState());
@@ -118,7 +122,11 @@ function PurchaseOrderUtility({ creating }) {
         itemSelectorHelpers.getItemLoading(state.purchaseOrderDeliveries)
     );
 
-    const itemError = useSelector(state => getItemError(state, 'purchaseOrder'));
+    const itemError = useSelector(state => getItemError(state, purchaseOrder.item));
+
+    const deptEmailError = useSelector(state =>
+        getItemError(state, sendPurchaseOrderDeptEmail.item)
+    );
 
     const [order, dispatch] = useReducer(reducer, null);
     const [purchaseOrderEmailState, setPurchaseOrderEmailState] = useState({
@@ -201,7 +209,7 @@ function PurchaseOrderUtility({ creating }) {
 
     const allowedToUpdate = () => {
         if (creating) {
-            return utilities.getHref(order, 'creating');
+            return utilities.getHref(order, 'create');
         }
         return utilities.getHref(order, 'edit');
     };
@@ -366,6 +374,16 @@ function PurchaseOrderUtility({ creating }) {
         processSelectorHelpers.getMessageText(state[sendPurchaseOrderAuthEmail.item])
     );
 
+    const deptEmailMessageVisible = useSelector(
+        state => state[sendPurchaseOrderDeptEmail.item].snackbarVisible
+    );
+
+    const deptEmailText = useSelector(
+        state => state[sendPurchaseOrderDeptEmail.item].item?.message
+    );
+
+    const deptEmailLoading = useSelector(state => state[sendPurchaseOrderDeptEmail.item].loading);
+
     const handleOrderPdfEmailClick = () => {
         setOrderPdfEmailDialogOpen(false);
         reduxDispatch(sendPurchaseOrderPdfEmailActionTypes.clearProcessData);
@@ -459,6 +477,17 @@ function PurchaseOrderUtility({ creating }) {
                                         )
                                     }
                                     message={authEmailMessage}
+                                />
+                                <SnackbarMessage
+                                    visible={deptEmailMessageVisible}
+                                    onClose={() =>
+                                        reduxDispatch(
+                                            sendPurchaseOrderDeptEmailActions.setSnackbarVisible(
+                                                false
+                                            )
+                                        )
+                                    }
+                                    message={deptEmailText}
                                 />
                                 {itemError && (
                                     <Grid item xs={12}>
@@ -1148,7 +1177,20 @@ function PurchaseOrderUtility({ creating }) {
                                                     className={classes.buttonMarginTop}
                                                     aria-label="Email"
                                                     variant="outlined"
-                                                    onClick={() => setOrderPdfEmailDialogOpen(true)}
+                                                    onClick={() => {
+                                                        reduxDispatch(
+                                                            sendPurchaseOrderDeptEmailActions.clearErrorsForItem()
+                                                        );
+                                                        reduxDispatch(
+                                                            sendPurchaseOrderDeptEmailActions.postByHref(
+                                                                utilities.getHref(
+                                                                    order,
+                                                                    'email-dept'
+                                                                ),
+                                                                {}
+                                                            )
+                                                        );
+                                                    }}
                                                     disabled={
                                                         creating ||
                                                         !utilities.getHref(order, 'email-dept')
@@ -1158,7 +1200,23 @@ function PurchaseOrderUtility({ creating }) {
                                                     Email Dept
                                                 </Button>
                                             </Grid>
-                                            <Grid item xs={9} />
+                                            <Grid
+                                                item
+                                                xs={9}
+                                                justify="flex-end"
+                                                alignItems="center"
+                                                spacing={2}
+                                            >
+                                                {deptEmailLoading && <LinearProgress />}
+                                                {deptEmailError && (
+                                                    <ErrorCard
+                                                        errorMessage={
+                                                            deptEmailError?.details ??
+                                                            itemError.statusText
+                                                        }
+                                                    />
+                                                )}
+                                            </Grid>
                                             <Grid item xs={4}>
                                                 <InputField
                                                     fullWidth

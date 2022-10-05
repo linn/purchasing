@@ -587,21 +587,62 @@
             miniOrder.InternalComments = detail.InternalComments;
             miniOrder.PrevOrderNumber = detail.OriginalOrderNumber;
             miniOrder.PrevOrderLine = detail.OriginalOrderLine;
-
-            // I think drawing ref I think should be added, and maybe manuf part no
-            // but not sure of rest. Todo
-            // miniOrder.ManufacturerPartNumber = updatedOrder.;
-            // miniOrder.DrawingReference = detail.dr; //dont think needed
-            // miniOrder.TotalQtyDelivered = updatedOrder.Details
-
-            // miniOrder.ShouldHaveBeenBlueReq = updatedOrder.;
-            // miniOrder.SpecialOrderType = updatedOrder.;
-            // miniOrder.PpvAuthorisedBy = updatedOrder.;
-            // miniOrder.PpvReason = updatedOrder.;
-            // miniOrder.MpvAuthorisedBy = updatedOrder.
-            // miniOrder.MpvReason = updatedOrder.
-            // miniOrder.FilCancelledBy = null
             this.miniOrderRepository.Add(miniOrder);
+        }
+
+        public ProcessResult EmailDept(int orderNumber, int userId)
+        {
+            var sender = this.employeeRepository.FindById(userId);
+
+            if (string.IsNullOrEmpty(sender?.PhoneListEntry?.EmailAddress))
+            {
+                throw new ItemNotFoundException($"Sender email not found. Check you have one set up in the phone list.");
+            }
+
+            var order = this.GetOrder(orderNumber);
+            if (order is null)
+            {
+                throw new ItemNotFoundException($"Could not find order {orderNumber}");
+            }
+
+            if (!order.AuthorisedById.HasValue)
+            {
+                throw new PurchaseOrderException("You cannot email this order until it has been authorised");
+            }
+
+            var recipient = order.EnteredBy;
+
+            if (string.IsNullOrEmpty(recipient?.PhoneListEntry?.EmailAddress))
+            {
+                throw new ItemNotFoundException($"Recipient email not found. Check they have one set up in the phone list.");
+            }
+
+            var cc  = new List<Dictionary<string, string>>
+                                  {
+                                      new Dictionary<string, string>
+                                          {
+                                              { "name", sender.FullName },
+                                              { "address",  sender.PhoneListEntry.EmailAddress }
+                                          }
+                                  };
+
+            var body =
+                "Please click the link when you have received the goods against this order to confirm delivery. \n";
+            body += "This will also confirm that payment can be made.  \n";
+            body += $"http://app.linn.co.uk/purch/po/podelcon.aspx?po={orderNumber}  \n";
+            body += "Any queries regarding this order - please contact a member of the Finance team.";
+            this.emailService.SendEmail(
+                    recipient.PhoneListEntry.EmailAddress,
+                    recipient.FullName,
+                    cc,
+                    null,
+                    sender.PhoneListEntry.EmailAddress,
+                    sender.FullName,
+                    $"Purchase Order {orderNumber} for Supplier {order.Supplier.Name}",
+                    body
+                );
+
+            return new ProcessResult { Success = true, Message = "Email Request Sent" };
         }
 
         private PurchaseOrder GetOrder(int orderNumber)
@@ -687,16 +728,6 @@
             {
                 var updatedDelivery = updatedDeliveries.First(x => x.DeliverySeq == delivery.DeliverySeq);
                 delivery.DateRequested = updatedDelivery.DateRequested;
-
-                // price updates to be done next
-                // delivery.OurUnitPriceCurrency = updatedDelivery.OurUnitPriceCurrency;
-                // delivery.OrderUnitPriceCurrency = updatedDelivery.OrderUnitPriceCurrency;
-                // delivery.BaseOrderUnitPrice = updatedDelivery.BaseOrderUnitPrice;
-                // delivery.BaseOurUnitPrice = updatedDelivery.BaseOurUnitPrice;
-                // delivery.VatTotalCurrency = updatedDelivery.VatTotalCurrency;
-                // delivery.BaseVatTotal = updatedDelivery.BaseVatTotal; //// vat totals might not change
-                // delivery.DeliveryTotalCurrency = updatedDelivery.DeliveryTotalCurrency;
-                // delivery.BaseDetailTotal = updatedDelivery.BaseDetailTotal;
             }
         }
 

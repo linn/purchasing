@@ -13,18 +13,25 @@
     {
         string GetOrderAsHtml(int orderNumber);
 
-        IResult<ProcessResultResource> EmailOrderPdf(int orderNumber, string emailAddress, bool bcc, int currentUserId);
+        IResult<ProcessResultResource> EmailOrderPdf(
+            int orderNumber, string emailAddress, bool bcc, int currentUserId);
 
         IResult<ProcessResultResource> EmailSupplierAss(int orderNumber);
 
         IResult<ProcessResultResource> EmailFinanceAuthRequest(int currentUserNumber, int orderNumber);
 
-        IResult<PurchaseOrderResource> FillOutOrderFromSupplierId(PurchaseOrderResource resource, IEnumerable<string> privileges, int userId);
+        IResult<PurchaseOrderResource> FillOutOrderFromSupplierId(
+            PurchaseOrderResource resource, IEnumerable<string> privileges, int userId);
 
-        IResult<PurchaseOrderResource> AuthorisePurchaseOrder(int orderNumber, IEnumerable<string> privileges, int userId);
+        IResult<PurchaseOrderResource> AuthorisePurchaseOrder(
+            int orderNumber, IEnumerable<string> privileges, int userId);
 
-        IResult<ProcessResultResource> AuthorisePurchaseOrders(PurchaseOrdersProcessRequestResource resource, IEnumerable<string> privileges, int userId);
+        IResult<ProcessResultResource> AuthorisePurchaseOrders(
+            PurchaseOrdersProcessRequestResource resource, IEnumerable<string> privileges, int userId);
 
-        IResult<ProcessResultResource> EmailOrderPdfs(PurchaseOrdersProcessRequestResource resource, IEnumerable<string> privileges, int userId);
+        IResult<ProcessResultResource> EmailOrderPdfs(
+            PurchaseOrdersProcessRequestResource resource, IEnumerable<string> privileges, int userId);
+
+        IResult<ProcessResultResource> EmailDept(int orderNumber, int userNumber);
     }
 }

@@ -335,3 +335,9 @@ export const sendPurchaseOrderAuthEmail = new ItemType(
     'SEND_PURCHASE_ORDER_AUTH_EMAIL',
     '/purchasing/purchase-orders/email-for-authorisation'
 );
+
+export const sendPurchaseOrderDeptEmail = new ItemType(
+    'sendPurchaseOrderDeptEmail',
+    'SEND_PURCHASE_ORDER_DEPT_EMAIL',
+    ''
+);

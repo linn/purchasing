@@ -219,6 +219,20 @@
                 new ProcessResultResource(result.Success, result.Message));
         }
 
+        public IResult<ProcessResultResource> EmailDept(int orderNumber, int userNumber)
+        {
+            try
+            {
+                var result = this.domainService.EmailDept(orderNumber, userNumber);
+                return new SuccessResult<ProcessResultResource>(
+                    new ProcessResultResource(result.Success, result.Message));
+            }
+            catch (Exception exception)
+            {
+                return new BadRequestResult<ProcessResultResource>(exception.Message);
+            }
+        }
+
         public string GetOrderAsHtml(int orderNumber)
         {
             return this.domainService.GetPurchaseOrderAsHtml(orderNumber);

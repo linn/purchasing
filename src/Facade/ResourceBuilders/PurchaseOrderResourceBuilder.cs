@@ -180,12 +180,13 @@
                                      };
                 }
 
-                if (model.AuthorisedById.HasValue)
+                if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderAuthorise, privileges)
+                    && model.AuthorisedById.HasValue)
                 {
                     yield return new LinkResource
                                      {
                                          Rel = "email-dept",
-                                         Href = $"{this.GetLocation(model)}/authorise/email-dept"
+                                         Href = $"{this.GetLocation(model)}/email-dept"
                                      };
                 }
             }

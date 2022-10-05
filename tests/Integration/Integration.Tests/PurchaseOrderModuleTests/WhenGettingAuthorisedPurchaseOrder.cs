@@ -1,11 +1,13 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrderModuleTests
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Net;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
@@ -39,7 +41,9 @@
 
             this.MockPurchaseOrderRepository.FindById(this.orderNumber).Returns(
                this.order);
-
+            this.MockAuthService.HasPermissionFor(
+                AuthorisedAction.PurchaseOrderAuthorise,
+                Arg.Any<IEnumerable<string>>()).Returns(true);
             this.Response = this.Client.Get(
                 $"/purchasing/purchase-orders/{this.orderNumber}",
                 with =>
