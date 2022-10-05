@@ -55,6 +55,7 @@ import currencyConvert from '../../helpers/currencyConvert';
 import PurchaseOrderDeliveriesUtility from '../PurchaseOrderDeliveriesUtility';
 import sendOrderAuthEmailActions from '../../actions/sendPurchaseOrderAuthEmailActions';
 import purchaseOrderDeliveriesActions from '../../actions/purchaseOrderDeliveriesActions';
+import { util } from 'webpack';
 
 function PurchaseOrderUtility({ creating }) {
     const reduxDispatch = useDispatch();
@@ -196,11 +197,14 @@ function PurchaseOrderUtility({ creating }) {
         }))
     };
 
-    const allowedToAuthorise = () => !creating && order.links?.some(l => l.rel === 'authorise');
+    const allowedToAuthorise = () => !creating && utilities.getHref(order, 'authorise');
 
-    const allowedToUpdate = () =>
-        (!creating && order.links?.some(l => l.rel === 'edit') && order.cancelled !== 'Y') ||
-        (creating && order.links?.some(l => l.rel === 'create'));
+    const allowedToUpdate = () => {
+        if (creating) {
+            return utilities.getHref(order, 'creating');
+        }
+        return utilities.getHref(order, 'edit');
+    };
 
     const inputIsValid = () =>
         order.supplier?.id &&
@@ -227,7 +231,7 @@ function PurchaseOrderUtility({ creating }) {
 
     const handleAuthorise = () => {
         setEditStatus('edit');
-        if (allowedToAuthorise) {
+        if (allowedToAuthorise()) {
             clearErrors();
             reduxDispatch(purchaseOrderActions.postByHref(utilities.getHref(item, 'authorise')));
         }
@@ -584,8 +588,29 @@ function PurchaseOrderUtility({ creating }) {
                                         </Typography>
                                     </div>
                                 </Dialog>
-                                <Grid item xs={12}>
+                                <Grid item xs={10}>
                                     <Typography variant="h6">Purchase Order Utility </Typography>
+                                </Grid>
+                                <Grid item xs={2}>
+                                    <div className={classes.centeredIcon}>
+                                        {allowedToUpdate() ? (
+                                            <Tooltip
+                                                title={`You can ${
+                                                    creating ? 'create' : 'edit'
+                                                } purchase orders`}
+                                            >
+                                                <ModeEditIcon fontSize="large" color="primary" />
+                                            </Tooltip>
+                                        ) : (
+                                            <Tooltip
+                                                title={`You cannot ${
+                                                    creating ? 'create' : 'edit'
+                                                } purchase orders`}
+                                            >
+                                                <EditOffIcon color="secondary" />
+                                            </Tooltip>
+                                        )}
+                                    </div>
                                 </Grid>
                                 <Grid item xs={2}>
                                     <InputField
@@ -627,45 +652,27 @@ function PurchaseOrderUtility({ creating }) {
                                     />
                                 </Grid>
                                 <Grid item xs={1}>
-                                    <IconButton
+                                    <Button
                                         className={classes.buttonMarginTop}
                                         aria-label="Print"
-                                        onClick={() => window.print()}
+                                        variant="contained"
+                                        onClick={window.print}
                                         disabled={creating}
-                                    >
-                                        <PrintIcon />
-                                    </IconButton>
+                                        startIcon={<PrintIcon />}
+                                    />
                                 </Grid>
-                                <Grid item xs={1}>
-                                    <IconButton
+
+                                <Grid item xs={2}>
+                                    <Button
                                         className={classes.buttonMarginTop}
                                         aria-label="Email"
+                                        variant="outlined"
                                         onClick={() => setOrderPdfEmailDialogOpen(true)}
                                         disabled={creating}
+                                        startIcon={<Email />}
                                     >
-                                        <Email />
-                                    </IconButton>
-                                </Grid>
-                                <Grid item xs={1}>
-                                    <div className={classes.centeredIcon}>
-                                        {allowedToUpdate() ? (
-                                            <Tooltip
-                                                title={`You can ${
-                                                    creating ? 'create' : 'edit'
-                                                } purchase orders`}
-                                            >
-                                                <ModeEditIcon fontSize="large" color="primary" />
-                                            </Tooltip>
-                                        ) : (
-                                            <Tooltip
-                                                title={`You cannot ${
-                                                    creating ? 'create' : 'edit'
-                                                } purchase orders`}
-                                            >
-                                                <EditOffIcon color="secondary" />
-                                            </Tooltip>
-                                        )}
-                                    </div>
+                                        Supplier
+                                    </Button>
                                 </Grid>
                                 <Grid item xs={3}>
                                     <Typeahead
@@ -861,27 +868,29 @@ function PurchaseOrderUtility({ creating }) {
                                             disabled
                                         />
                                     </Grid>
-                                    <Grid item xs={4}>
+                                    <Grid item xs={3}>
                                         <Button
                                             className={classes.buttonMarginTop}
                                             color="primary"
                                             variant="contained"
-                                            disabled={!allowedToAuthorise}
+                                            disabled={!allowedToAuthorise()}
                                             onClick={handleAuthorise}
                                         >
                                             Authorise
                                         </Button>
                                     </Grid>
-                                    <Grid item xs={2}>
+                                    <Grid item xs={3}>
                                         <Tooltip title="Email to request authorisation">
-                                            <IconButton
+                                            <Button
                                                 className={classes.buttonMarginTop}
-                                                aria-label="Email"
+                                                aria-label="Email Finance"
+                                                variant="outlined"
                                                 onClick={() => setAuthEmailDialogOpen(true)}
-                                                disabled={creating || order.authorisedBy?.id}
+                                                disabled={creating || !allowedToAuthorise()}
+                                                startIcon={<Email />}
                                             >
-                                                <Email />
-                                            </IconButton>
+                                                Finance
+                                            </Button>
                                         </Tooltip>
                                     </Grid>
                                     <Grid item xs={6}>
@@ -1134,7 +1143,22 @@ function PurchaseOrderUtility({ creating }) {
                                                     disabled={!allowedToUpdate()}
                                                 />
                                             </Grid>
-
+                                            <Grid item xs={3}>
+                                                <Button
+                                                    className={classes.buttonMarginTop}
+                                                    aria-label="Email"
+                                                    variant="outlined"
+                                                    onClick={() => setOrderPdfEmailDialogOpen(true)}
+                                                    disabled={
+                                                        creating ||
+                                                        !utilities.getHref(order, 'email-dept')
+                                                    }
+                                                    startIcon={<Email />}
+                                                >
+                                                    Email Dept
+                                                </Button>
+                                            </Grid>
+                                            <Grid item xs={9} />
                                             <Grid item xs={4}>
                                                 <InputField
                                                     fullWidth

@@ -159,7 +159,11 @@
 
                 if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
                 {
-                    yield return new LinkResource { Rel = "edit", Href = this.GetLocation(model) };
+                    if (model.Cancelled != "Y")
+                    {
+                        yield return new LinkResource { Rel = "edit", Href = this.GetLocation(model) };
+                    }
+
                     yield return new LinkResource
                                      {
                                          Rel = "allow-over-book", Href = $"{this.GetLocation(model)}/allow-over-book"
