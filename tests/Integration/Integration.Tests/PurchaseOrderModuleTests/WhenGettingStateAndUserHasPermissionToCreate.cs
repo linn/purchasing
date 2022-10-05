@@ -7,6 +7,7 @@
     using FluentAssertions;
 
     using Linn.Common.Resources;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
 
@@ -14,7 +15,7 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingPurchaseOrdersApplicationState : ContextBase
+    public class WhenGettingStateAndUserHasPermissionToCreate : ContextBase
     {
         [SetUp]
         public void SetUp()
@@ -27,7 +28,8 @@
                         }
                 };
 
-            this.MockAuthService.HasPermissionFor("purchase-order.update", Arg.Any<IEnumerable<string>>()).Returns(true);
+            this.MockAuthService
+                .HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, Arg.Any<IEnumerable<string>>()).Returns(true);
 
             this.Response = this.Client.Get(
                 $"/purchasing/purchase-orders/application-state",
@@ -35,17 +37,12 @@
         }
 
         [Test]
-        public void ShouldBuildLinks()
+        public void ShouldBuildCreateLinks()
         {
             var resource = this.Response.DeserializeBody<PurchaseOrderResource>();
-            resource.Links.Single(x => x.Rel == "allow-over-book-search").Href.Should()
-                .Be("/purchasing/purchase-orders/allow-over-book");
-        }
-
-        [Test]
-        public void ShouldReturnSuccess()
-        {
-            this.Response.StatusCode.Should().Be(HttpStatusCode.OK);
+            resource.Links.Any(l => l.Rel == "quick-create").Should().BeTrue();
+            resource.Links.Any(l => l.Rel == "create").Should().BeTrue();
+            resource.Links.Any(l => l.Rel == "generate-order-fields").Should().BeTrue();
         }
     }
 }

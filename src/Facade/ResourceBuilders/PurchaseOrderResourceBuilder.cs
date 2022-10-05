@@ -159,16 +159,35 @@
 
                 if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
                 {
-                    yield return new LinkResource { Rel = "edit", Href = this.GetLocation(model) };
+                    if (model.Cancelled != "Y")
+                    {
+                        yield return new LinkResource { Rel = "edit", Href = this.GetLocation(model) };
+                    }
+
                     yield return new LinkResource
                                      {
                                          Rel = "allow-over-book", Href = $"{this.GetLocation(model)}/allow-over-book"
                                      };
                 }
 
-                if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderAuthorise, privileges))
+                if (
+                    this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderAuthorise, privileges)
+                    && !model.AuthorisedById.HasValue)
                 {
-                    yield return new LinkResource { Rel = "authorise", Href = $"{this.GetLocation(model)}/authorise" };
+                    yield return new LinkResource
+                                     {
+                                         Rel = "authorise", Href = $"{this.GetLocation(model)}/authorise"
+                                     };
+                }
+
+                if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderAuthorise, privileges)
+                    && model.AuthorisedById.HasValue)
+                {
+                    yield return new LinkResource
+                                     {
+                                         Rel = "email-dept",
+                                         Href = $"{this.GetLocation(model)}/email-dept"
+                                     };
                 }
             }
         }

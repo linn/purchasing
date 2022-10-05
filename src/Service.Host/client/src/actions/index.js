@@ -310,3 +310,7 @@ export const bomTreeNodesActionTypes = makeActionTypes(itemTypes.bomTreeNodes.ac
 export const sendPurchaseOrderAuthEmailActionTypes = makeProcessActionTypes(
     itemTypes.sendPurchaseOrderAuthEmail.actionType
 );
+
+export const sendPurchaseOrderDeptEmailActionTypes = makeActionTypes(
+    itemTypes.sendPurchaseOrderDeptEmail.actionType
+);

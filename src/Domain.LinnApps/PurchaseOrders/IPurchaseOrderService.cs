@@ -31,5 +31,7 @@
         PurchaseOrder CreateOrder(PurchaseOrder order, IEnumerable<string> privileges);
 
         void CreateMiniOrder(PurchaseOrder order);
+
+        ProcessResult EmailDept(int orderNumber, int userId);
     }
 }
