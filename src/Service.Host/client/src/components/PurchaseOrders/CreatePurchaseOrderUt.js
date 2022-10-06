@@ -152,12 +152,6 @@ function CreatePurchaseOrderUt() {
         return '';
     }, [order?.currency?.code, exchangeRatesItems]);
 
-    useEffect(() => {
-        if (currentExchangeRate && order?.exchangeRate !== currentExchangeRate) {
-            handleFieldChange('exchangeRate', currentExchangeRate);
-        }
-    }, [order.exchangeRate, currentExchangeRate]);
-
     const handleDetailValueFieldChange = (propertyName, basePropertyName, newValue, detail) => {
         const { exchangeRate } = order;
 
@@ -522,9 +516,8 @@ function CreatePurchaseOrderUt() {
                                 required
                             />
                         </Grid>
-                        <Grid item xs={6}>
-                            <></>
-                        </Grid>
+                        <Grid item xs={6} />
+
                         <Grid item xs={6}>
                             <InputField
                                 fullWidth

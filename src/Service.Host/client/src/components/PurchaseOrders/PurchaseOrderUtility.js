@@ -129,6 +129,7 @@ function PurchaseOrderUtility({ creating }) {
     );
 
     const [order, dispatch] = useReducer(reducer, null);
+
     const [purchaseOrderEmailState, setPurchaseOrderEmailState] = useState({
         email: '',
         bcc: false
@@ -153,7 +154,7 @@ function PurchaseOrderUtility({ creating }) {
     useEffect(() => {
         if (item?.orderNumber) {
             fetch(config.appRoot + utilities.getHref(item, 'html'))
-                .then(response => response.text())
+                .then(response => response?.text?.())
                 .then(html => {
                     setPrintHtml(html);
                 });
@@ -1175,7 +1176,7 @@ function PurchaseOrderUtility({ creating }) {
                                             <Grid item xs={3}>
                                                 <Button
                                                     className={classes.buttonMarginTop}
-                                                    aria-label="Email"
+                                                    aria-label="Email Dept"
                                                     variant="outlined"
                                                     onClick={() => {
                                                         reduxDispatch(
