@@ -1,5 +1,4 @@
 import React, { useEffect, useReducer } from 'react';
-import { useMediaQuery } from 'react-responsive';
 import Grid from '@mui/material/Grid';
 import { useSelector, useDispatch } from 'react-redux';
 import Typography from '@mui/material/Typography';
@@ -203,7 +202,6 @@ function CreatePurchaseOrderUt() {
     }));
 
     const classes = useStyles();
-    const screenIsSmall = useMediaQuery({ query: `(max-width: 1024px)` });
 
     const detail = order ? order.details[0] : {};
 
@@ -301,7 +299,7 @@ function CreatePurchaseOrderUt() {
 
     return (
         <>
-            <Page history={history} homeUrl={config.appRoot} width={screenIsSmall ? 'l' : 's'}>
+            <Page history={history} homeUrl={config.appRoot} width="s">
                 {loading ? (
                     <Loading />
                 ) : (
