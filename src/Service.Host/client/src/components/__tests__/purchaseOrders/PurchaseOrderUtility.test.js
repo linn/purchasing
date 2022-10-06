@@ -23,8 +23,7 @@ const reduxState = {
     purchaseOrder: { item: order },
     sendPurchaseOrderDeptEmail: {},
     unitsOfMeasure: { items: [] },
-    currencies: { items: [] },
-    exchangeRates: { items: [] }
+    currencies: { items: [] }
 };
 
 const stateWithDeptLink = {

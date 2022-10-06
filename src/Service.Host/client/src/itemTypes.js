@@ -310,12 +310,6 @@ export const sendPurchaseOrderSupplierAssEmail = new ItemType(
     '/purchasing/purchase-orders/email-supplier-ass'
 );
 
-export const exchangeRates = new ItemType(
-    'exchangeRates',
-    'EXCHANGE_RATES',
-    '/logistics/import-books/exchange-rates'
-);
-
 export const ledgerPeriods = new ItemType(
     'ledgerPeriods',
     'LEDGER_PERIODS',
