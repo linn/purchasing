@@ -16,8 +16,6 @@ import {
     InputField,
     itemSelectorHelpers,
     Loading,
-    // getItemError,
-    // ErrorCard,
     utilities,
     Dropdown
 } from '@linn-it/linn-form-components-library';

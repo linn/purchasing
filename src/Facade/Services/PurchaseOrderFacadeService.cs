@@ -285,7 +285,7 @@
                     && a.OrderDate <= DateTime.Parse(searchResource.EndDate);
             }
 
-            return x => x.OrderNumber.ToString().Contains(searchResource.OrderNumber);
+            return x => x.OrderNumber.ToString().Equals(searchResource.OrderNumber);
         }
 
         protected override Expression<Func<PurchaseOrder, bool>> FindExpression(
