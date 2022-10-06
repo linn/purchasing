@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useMemo } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import Grid from '@mui/material/Grid';
 import { useSelector, useDispatch } from 'react-redux';
@@ -32,7 +32,6 @@ import history from '../../history';
 import config from '../../config';
 import purchaseOrderActions from '../../actions/purchaseOrderActions';
 import reducer from './purchaseOrderReducer';
-import { exchangeRates } from '../../itemTypes';
 import exchangeRatesActions from '../../actions/exchangeRatesActions';
 import currencyConvert from '../../helpers/currencyConvert';
 import purchaseOrdersActions from '../../actions/purchaseOrdersActions';
@@ -121,10 +120,6 @@ function CreatePurchaseOrderUt() {
 
     const canSave = () => allowedToCreate() && inputIsValid();
 
-    const handleFieldChange = (propertyName, newValue) => {
-        dispatch({ payload: newValue, propertyName, type: 'orderFieldChange' });
-    };
-
     const handleDetailFieldChange = (propertyName, newValue, detail) => {
         dispatch({ payload: { ...detail, [propertyName]: newValue }, type: 'detailFieldChange' });
     };
@@ -136,27 +131,6 @@ function CreatePurchaseOrderUt() {
             reduxDispatch(exchangeRatesActions.search(dateToDdMmmYyyy(order?.dateCreated)));
         }
     }, [order, reduxDispatch]);
-
-    const exchangeRatesItems = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(state[exchangeRates.item])
-    );
-
-    const currentExchangeRate = useMemo(() => {
-        if (exchangeRatesItems.length) {
-            if (order?.currency?.code) {
-                return exchangeRatesItems.find(
-                    x => x.exchangeCurrency === order.currency.code && x.baseCurrency === 'GBP'
-                )?.exchangeRate;
-            }
-        }
-        return '';
-    }, [order?.currency?.code, exchangeRatesItems]);
-
-    useEffect(() => {
-        if (currentExchangeRate && order?.exchangeRate !== currentExchangeRate) {
-            handleFieldChange('exchangeRate', currentExchangeRate);
-        }
-    }, [order.exchangeRate, currentExchangeRate]);
 
     const handleDetailValueFieldChange = (propertyName, basePropertyName, newValue, detail) => {
         const { exchangeRate } = order;
@@ -174,12 +148,6 @@ function CreatePurchaseOrderUt() {
             });
         }
     };
-
-    useEffect(() => {
-        if (currentExchangeRate && order?.exchangeRate !== currentExchangeRate) {
-            handleFieldChange('exchangeRate', currentExchangeRate);
-        }
-    }, [order.exchangeRate, currentExchangeRate]);
 
     const handleDetailQtyFieldChange = (propertyName, newValue, detail) => {
         if (newValue && newValue > 0 && newValue !== order[propertyName]) {
@@ -220,7 +188,7 @@ function CreatePurchaseOrderUt() {
         collectionSelectorHelpers.getSearchLoading(state.parts)
     );
 
-    const useStyles = makeStyles(theme => ({
+    const useStyles = makeStyles(() => ({
         buttonMarginTop: {
             marginTop: '28px',
             height: '40px'
@@ -228,21 +196,9 @@ function CreatePurchaseOrderUt() {
         buttonMarginLineUp: {
             marginTop: '28px'
         },
-        centerTextInDialog: {
-            textAlign: 'center',
-            margin: theme.spacing(2)
-        },
-        cursorPointer: {
-            '&:hover': {
-                cursor: 'pointer'
-            },
-            marginLeft: theme.spacing(2)
-        },
+
         centeredIcon: {
             textAlign: 'center'
-        },
-        pullRight: {
-            float: 'right'
         }
     }));
 
