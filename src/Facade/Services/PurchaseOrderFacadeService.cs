@@ -121,7 +121,7 @@
                                   Details = resource.Details?.Select(
                                       x => new PurchaseOrderDetail
                                                {
-                                                   Line = 1,
+                                                   Line = x.Line,
                                                    BaseNetTotal = x.BaseNetTotal,
                                                    NetTotalCurrency = x.NetTotalCurrency,
                                                    OurQty = x.OurQty,

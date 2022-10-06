@@ -35,7 +35,6 @@ import {
     OnOffSwitch,
     processSelectorHelpers
 } from '@linn-it/linn-form-components-library';
-import moment from 'moment';
 import currenciesActions from '../../actions/currenciesActions';
 import nominalsActions from '../../actions/nominalsActions';
 import suppliersActions from '../../actions/suppliersActions';
@@ -49,11 +48,9 @@ import sendPurchaseOrderSupplierAssActionTypes from '../../actions/sendPurchaseO
 import {
     purchaseOrder,
     sendPurchaseOrderPdfEmail,
-    exchangeRates,
     sendPurchaseOrderAuthEmail,
     sendPurchaseOrderDeptEmail
 } from '../../itemTypes';
-import exchangeRatesActions from '../../actions/exchangeRatesActions';
 import currencyConvert from '../../helpers/currencyConvert';
 import PurchaseOrderDeliveriesUtility from '../PurchaseOrderDeliveriesUtility';
 import sendOrderAuthEmailActions from '../../actions/sendPurchaseOrderAuthEmailActions';
@@ -257,33 +254,15 @@ function PurchaseOrderUtility({ creating }) {
         dispatch({ payload: { ...detail, [propertyName]: newValue }, type: 'detailFieldChange' });
     };
 
-    const exchangeRatesItems = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(state[exchangeRates.item])
-    );
-
     const handleCurrencyChange = (propertyName, newCurrencyCode) => {
         setEditStatus('edit');
         const name = currencies.find(x => x.code === newCurrencyCode)?.name;
-        const exchangeRate =
-            exchangeRatesItems.find(
-                x => x.exchangeCurrency === newCurrencyCode && x.baseCurrency === 'GBP'
-            )?.exchangeRate ?? 1;
-
         dispatch({
             newCurrency: { code: newCurrencyCode, name },
-            newExchangeRate: exchangeRate,
             propertyName: 'currency',
             type: 'currencyChange'
         });
     };
-
-    const dateToDdMmmYyyy = date => (date ? moment(date).format('DD-MMM-YYYY') : '-');
-
-    useEffect(() => {
-        if (order?.orderDate) {
-            reduxDispatch(exchangeRatesActions.search(dateToDdMmmYyyy(order?.orderDate)));
-        }
-    }, [order?.orderDate, reduxDispatch]);
 
     const handleDetailValueFieldChange = (propertyName, basePropertyName, newValue, detail) => {
         const { exchangeRate } = order;
