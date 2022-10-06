@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
 import { cleanup, fireEvent, screen } from '@testing-library/react';
 import { utilities } from '@linn-it/linn-form-components-library';
-import { sendPurchaseOrderDeptEmail } from '../../../itemTypes';
+import { sendPurchaseOrderDeptEmail, suggestedPurchaseOrderValues } from '../../../itemTypes';
 import render from '../../../test-utils';
 import order from '../fakeData/order';
 import PurchaseOrderUtility from '../../PurchaseOrders/PurchaseOrderUtility';
@@ -23,8 +23,7 @@ const reduxState = {
     purchaseOrder: { item: order },
     sendPurchaseOrderDeptEmail: {},
     unitsOfMeasure: { items: [] },
-    currencies: { items: [] },
-    exchangeRates: { items: [] }
+    currencies: { items: [] }
 };
 
 const stateWithDeptLink = {
@@ -60,7 +59,14 @@ const stateWithDeptEmailSuccess = {
     sendPurchaseOrderDeptEmail: { snackbarVisible: true, item: { message: 'Success! Woohooo!' } }
 };
 
-describe('When orders are returned...', () => {
+const stateWithSuggestedValues = {
+    ...reduxState,
+    [suggestedPurchaseOrderValues.item]: {
+        item: { supplier: { name: 'A SUPPLIER OF GOOD STUFF' } }
+    }
+};
+
+describe('When order...', () => {
     beforeEach(() => {
         cleanup();
         jest.clearAllMocks();
@@ -149,6 +155,23 @@ describe('When sendPurchaseOrderDeptEmail success...', () => {
         expect(
             screen.getByText(
                 stateWithDeptEmailSuccess[sendPurchaseOrderDeptEmail.item].item.message
+            )
+        ).toBeInTheDocument();
+    });
+});
+
+describe('When creating from suggested Values', () => {
+    beforeEach(() => {
+        cleanup();
+        jest.clearAllMocks();
+        useSelector.mockImplementation(callback => callback(stateWithSuggestedValues));
+        render(<PurchaseOrderUtility creating />);
+    });
+
+    test('Should render expected values', () => {
+        expect(
+            screen.getByDisplayValue(
+                stateWithSuggestedValues[suggestedPurchaseOrderValues.item].item.supplier.name
             )
         ).toBeInTheDocument();
     });

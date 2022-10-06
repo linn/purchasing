@@ -310,12 +310,6 @@ export const sendPurchaseOrderSupplierAssEmail = new ItemType(
     '/purchasing/purchase-orders/email-supplier-ass'
 );
 
-export const exchangeRates = new ItemType(
-    'exchangeRates',
-    'EXCHANGE_RATES',
-    '/logistics/import-books/exchange-rates'
-);
-
 export const ledgerPeriods = new ItemType(
     'ledgerPeriods',
     'LEDGER_PERIODS',
@@ -340,4 +334,10 @@ export const sendPurchaseOrderDeptEmail = new ItemType(
     'sendPurchaseOrderDeptEmail',
     'SEND_PURCHASE_ORDER_DEPT_EMAIL',
     ''
+);
+
+export const suggestedPurchaseOrderValues = new ItemType(
+    'suggestedPurchaseOrderValues',
+    'SUGGESTED_PURCHASE_ORDER_VALUES',
+    '/purchasing/purchase-orders/generate-order-from-supplier-id'
 );

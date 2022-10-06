@@ -275,8 +275,6 @@ export const supplierLeadTimesReportActionTypes = makeActionTypes(
     false
 );
 
-export const exchangeRatesActionTypes = makeActionTypes(itemTypes.exchangeRates.actionType);
-
 export const ledgerPeriodsActionTypes = makeActionTypes(itemTypes.ledgerPeriods.actionType, false);
 
 export const deliveryPerformanceSummaryReportActionTypes = makeReportActionTypes(
@@ -313,4 +311,9 @@ export const sendPurchaseOrderAuthEmailActionTypes = makeProcessActionTypes(
 
 export const sendPurchaseOrderDeptEmailActionTypes = makeActionTypes(
     itemTypes.sendPurchaseOrderDeptEmail.actionType
+);
+
+export const suggestedPurchaseOrderValuesActionTypes = makeActionTypes(
+    itemTypes.suggestedPurchaseOrderValues.actionType,
+    true
 );

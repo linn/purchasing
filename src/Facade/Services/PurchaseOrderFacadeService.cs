@@ -121,7 +121,7 @@
                                   Details = resource.Details?.Select(
                                       x => new PurchaseOrderDetail
                                                {
-                                                   Line = 1,
+                                                   Line = x.Line,
                                                    BaseNetTotal = x.BaseNetTotal,
                                                    NetTotalCurrency = x.NetTotalCurrency,
                                                    OurQty = x.OurQty,
@@ -285,7 +285,7 @@
                     && a.OrderDate <= DateTime.Parse(searchResource.EndDate);
             }
 
-            return x => x.OrderNumber.ToString().Contains(searchResource.OrderNumber);
+            return x => x.OrderNumber.ToString().Equals(searchResource.OrderNumber);
         }
 
         protected override Expression<Func<PurchaseOrder, bool>> FindExpression(
