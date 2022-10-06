@@ -14,34 +14,27 @@ import {
     collectionSelectorHelpers,
     Typeahead,
     InputField,
-    SnackbarMessage,
     itemSelectorHelpers,
     Loading,
-    getItemError,
-    ErrorCard,
+    // getItemError,
+    // ErrorCard,
     utilities,
     Dropdown
 } from '@linn-it/linn-form-components-library';
 import queryString from 'query-string';
 import LinearProgress from '@mui/material/LinearProgress';
-import currenciesActions from '../../actions/currenciesActions';
 import suppliersActions from '../../actions/suppliersActions';
 import partsActions from '../../actions/partsActions';
 import history from '../../history';
 import config from '../../config';
-import purchaseOrderActions from '../../actions/purchaseOrderActions';
+import suggestedPurchaseOrderValuesActions from '../../actions/suggestedPurchaseOrderValuesActions';
 import reducer from './purchaseOrderReducer';
 import currencyConvert from '../../helpers/currencyConvert';
 import purchaseOrdersActions from '../../actions/purchaseOrdersActions';
+import purchaseOrderActions from '../../actions/purchaseOrderActions';
 
 function CreatePurchaseOrderUt() {
     const reduxDispatch = useDispatch();
-
-    useEffect(() => {
-        reduxDispatch(purchaseOrderActions.clearErrorsForItem());
-        reduxDispatch(purchaseOrderActions.fetchState());
-        reduxDispatch(currenciesActions.fetch());
-    }, [reduxDispatch]);
 
     const item = useSelector(reduxState =>
         itemSelectorHelpers.getApplicationState(reduxState.purchaseOrder)
@@ -50,13 +43,15 @@ function CreatePurchaseOrderUt() {
         itemSelectorHelpers.getApplicationStateLoading(state.purchaseOrderApplicationState)
     );
 
-    const itemError = useSelector(state => getItemError(state, 'purchaseOrder'));
-
     const [order, dispatch] = useReducer(reducer, { details: [{}] });
 
     const { search } = useLocation();
     const { supplierId, supplierName, partNumber, qty, currencyUnitPrice, dateRequired } =
         queryString.parse(search);
+
+    useEffect(() => {
+        reduxDispatch(purchaseOrderActions.fetchState());
+    }, [reduxDispatch]);
 
     useEffect(() => {
         if (item) {
@@ -100,9 +95,6 @@ function CreatePurchaseOrderUt() {
     );
     const searchSuppliers = searchTerm => reduxDispatch(suppliersActions.search(searchTerm));
 
-    const snackbarVisible = useSelector(state =>
-        itemSelectorHelpers.getSnackbarVisible(state.purchaseOrder)
-    );
     const previousOrderResults = useSelector(state => state.purchaseOrders.searchItems);
     const previousOrderLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.purchaseOrders)
@@ -158,7 +150,7 @@ function CreatePurchaseOrderUt() {
         });
     };
 
-    const handleOrderTypeChange = newOrderType => {
+    const handleOrderTypeChange = (_, newOrderType) => {
         dispatch({
             payload: newOrderType,
             type: 'orderTypeChange'
@@ -273,14 +265,9 @@ function CreatePurchaseOrderUt() {
     }, [previousOrderResults]);
 
     const progressToFullCreate = () => {
-        reduxDispatch(
-            purchaseOrderActions.postByHref(
-                utilities.getHref(order, 'generate-order-fields'),
-                order
-            )
-        );
+        reduxDispatch(suggestedPurchaseOrderValuesActions.add(order));
 
-        history.push(utilities.getHref(order, 'create'));
+        history.push(utilities.getHref(item, 'create'));
     };
 
     const orderTypes = [
@@ -308,20 +295,6 @@ function CreatePurchaseOrderUt() {
                     <Loading />
                 ) : (
                     <Grid container spacing={1} justifyContent="center">
-                        <SnackbarMessage
-                            visible={snackbarVisible}
-                            onClose={() =>
-                                reduxDispatch(purchaseOrderActions.setSnackbarVisible(false))
-                            }
-                            message="Save successful"
-                        />
-                        {itemError && (
-                            <Grid item xs={12}>
-                                <ErrorCard
-                                    errorMessage={itemError?.details ?? itemError.statusText}
-                                />
-                            </Grid>
-                        )}
                         <Grid item xs={12}>
                             <Typography variant="h6">Create Purchase Order Wizard</Typography>
                         </Grid>
@@ -332,7 +305,7 @@ function CreatePurchaseOrderUt() {
                                 allowNoValue={false}
                                 propertyName="documentType"
                                 label="Order Type"
-                                onChange={(_, value) => handleOrderTypeChange(value)}
+                                onChange={handleOrderTypeChange}
                             />
                         </Grid>
                         {isCreditOrReturn() && (
@@ -378,7 +351,7 @@ function CreatePurchaseOrderUt() {
                                         className={classes.buttonMarginLineUp}
                                         color="primary"
                                         variant="contained"
-                                        onClick={() => lookUpOriginalOrder()}
+                                        onClick={lookUpOriginalOrder}
                                         disabled={
                                             !detail.originalOrderNumber || !detail.originalOrderLine
                                         }
@@ -447,9 +420,7 @@ function CreatePurchaseOrderUt() {
                                 text
                                 clearSearch={() => {}}
                                 placeholder="Search Suppliers"
-                                onSelect={newValue => {
-                                    handleSupplierChange(newValue);
-                                }}
+                                onSelect={handleSupplierChange}
                                 minimumSearchTermLength={3}
                                 fullWidth
                                 disabled={!allowedToCreate() || isCreditOrReturn()}
@@ -510,7 +481,7 @@ function CreatePurchaseOrderUt() {
                                 color="primary"
                                 variant="contained"
                                 disabled={!canSave()}
-                                onClick={() => progressToFullCreate()}
+                                onClick={progressToFullCreate}
                             >
                                 Next
                             </Button>

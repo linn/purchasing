@@ -312,3 +312,8 @@ export const sendPurchaseOrderAuthEmailActionTypes = makeProcessActionTypes(
 export const sendPurchaseOrderDeptEmailActionTypes = makeActionTypes(
     itemTypes.sendPurchaseOrderDeptEmail.actionType
 );
+
+export const suggestedPurchaseOrderValuesActionTypes = makeActionTypes(
+    itemTypes.suggestedPurchaseOrderValues.actionType,
+    true
+);

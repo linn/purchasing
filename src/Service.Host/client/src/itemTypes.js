@@ -335,3 +335,9 @@ export const sendPurchaseOrderDeptEmail = new ItemType(
     'SEND_PURCHASE_ORDER_DEPT_EMAIL',
     ''
 );
+
+export const suggestedPurchaseOrderValues = new ItemType(
+    'suggestedPurchaseOrderValues',
+    'SUGGESTED_PURCHASE_ORDER_VALUES',
+    '/purchasing/purchase-orders/generate-order-from-supplier-id'
+);

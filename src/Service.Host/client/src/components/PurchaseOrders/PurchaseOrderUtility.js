@@ -49,7 +49,9 @@ import {
     purchaseOrder,
     sendPurchaseOrderPdfEmail,
     sendPurchaseOrderAuthEmail,
-    sendPurchaseOrderDeptEmail
+    sendPurchaseOrderDeptEmail,
+    purchaseOrderDeliveries,
+    suggestedPurchaseOrderValues
 } from '../../itemTypes';
 import currencyConvert from '../../helpers/currencyConvert';
 import PurchaseOrderDeliveriesUtility from '../PurchaseOrderDeliveriesUtility';
@@ -78,7 +80,8 @@ function PurchaseOrderUtility({ creating }) {
     useEffect(() => {
         reduxDispatch(unitsOfMeasureActions.fetch());
     }, [reduxDispatch]);
-    const columns = [
+
+    const deliveryTableColumns = [
         { field: 'id', headerName: 'Id', width: 100, hide: true },
         { field: 'deliverySeq', headerName: 'Delivery', width: 100 },
         { field: 'ourDeliveryQty', headerName: 'Qty', width: 100 },
@@ -108,15 +111,25 @@ function PurchaseOrderUtility({ creating }) {
         reduxDispatch(unitsOfMeasureActions.fetch());
     }, [reduxDispatch]);
 
-    const item = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.purchaseOrder));
-    const applicationState = useSelector(reduxState =>
-        itemSelectorHelpers.getApplicationState(reduxState.purchaseOrder)
+    const item = useSelector(state => itemSelectorHelpers.getItem(state[purchaseOrder.item]));
+    const applicationState = useSelector(state =>
+        itemSelectorHelpers.getApplicationState(state[purchaseOrder.item])
     );
 
-    const loading = useSelector(state => itemSelectorHelpers.getItemLoading(state.purchaseOrder));
+    const suggestedValues = useSelector(state =>
+        itemSelectorHelpers.getItem(state[suggestedPurchaseOrderValues.item])
+    );
+
+    const loading = useSelector(state =>
+        itemSelectorHelpers.getItemLoading(state[purchaseOrder.item])
+    );
+
+    const suggestedValuesLoading = useSelector(state =>
+        itemSelectorHelpers.getItemLoading(state[suggestedPurchaseOrderValues.item])
+    );
 
     const deliveriesLoading = useSelector(state =>
-        itemSelectorHelpers.getItemLoading(state.purchaseOrderDeliveries)
+        itemSelectorHelpers.getItemLoading(state[purchaseOrderDeliveries.item])
     );
 
     const itemError = useSelector(state => getItemError(state, purchaseOrder.item));
@@ -133,18 +146,22 @@ function PurchaseOrderUtility({ creating }) {
     });
 
     useEffect(() => {
-        if (item?.supplier?.id) {
+        if (!creating && item?.supplier?.id) {
+            reduxDispatch(purchaseOrderActions.clearErrorsForItem());
             dispatch({ type: 'initialise', payload: item });
             setPurchaseOrderEmailState({ bcc: false, email: item.supplierContactEmail?.trim() });
-        } else if (creating && applicationState) {
+        } else if (creating && applicationState && !suggestedValues) {
+            reduxDispatch(purchaseOrderActions.clearErrorsForItem());
             dispatch({
                 type: 'initialise',
                 payload: applicationState
             });
-        } else {
+        } else if (creating && suggestedValues) {
+            console.log(suggestedValues);
             reduxDispatch(purchaseOrderActions.clearErrorsForItem());
+            dispatch({ type: 'initialise', payload: suggestedValues });
         }
-    }, [item, applicationState, creating, reduxDispatch]);
+    }, [item, applicationState, creating, reduxDispatch, suggestedValues]);
 
     const [printHtml, setPrintHtml] = useState(<span>loading</span>);
 
@@ -179,11 +196,11 @@ function PurchaseOrderUtility({ creating }) {
     );
 
     const snackbarVisible = useSelector(state =>
-        itemSelectorHelpers.getSnackbarVisible(state.purchaseOrder)
+        itemSelectorHelpers.getSnackbarVisible(state[purchaseOrder.item])
     );
 
     const deliveriesSnackbarVisible = useSelector(state =>
-        itemSelectorHelpers.getSnackbarVisible(state.purchaseOrderDeliveries)
+        itemSelectorHelpers.getSnackbarVisible(state[purchaseOrderDeliveries.item])
     );
 
     const [editStatus, setEditStatus] = useState('view');
@@ -419,7 +436,7 @@ function PurchaseOrderUtility({ creating }) {
         <>
             <div className="hide-when-printing">
                 <Page history={history} homeUrl={config.appRoot} width={screenIsSmall ? 'xl' : 'm'}>
-                    {loading || deliveriesLoading ? (
+                    {loading || deliveriesLoading || suggestedValuesLoading ? (
                         <Loading />
                     ) : (
                         order && (
@@ -1463,7 +1480,7 @@ function PurchaseOrderUtility({ creating }) {
                                                                         )
                                                                     })
                                                                 )}
-                                                                columns={columns}
+                                                                columns={deliveryTableColumns}
                                                                 density="compact"
                                                                 rowHeight={34}
                                                                 autoHeight
