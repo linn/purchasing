@@ -157,7 +157,6 @@ function PurchaseOrderUtility({ creating }) {
                 payload: applicationState
             });
         } else if (creating && suggestedValues) {
-            console.log(suggestedValues);
             reduxDispatch(purchaseOrderActions.clearErrorsForItem());
             dispatch({ type: 'initialise', payload: suggestedValues });
         }
