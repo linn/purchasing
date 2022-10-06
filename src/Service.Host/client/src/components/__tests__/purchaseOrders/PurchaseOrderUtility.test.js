@@ -8,7 +8,7 @@ import { cleanup, fireEvent, screen } from '@testing-library/react';
 import { utilities } from '@linn-it/linn-form-components-library';
 import { sendPurchaseOrderDeptEmail } from '../../../itemTypes';
 import render from '../../../test-utils';
-import order from '../fakedata/order';
+import order from '../fakeData/order';
 import PurchaseOrderUtility from '../../PurchaseOrders/PurchaseOrderUtility';
 import sendPurchaseOrderDeptEmailActions from '../../../actions/sendPurchaseOrderDeptEmailActions';
 
