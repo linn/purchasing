@@ -212,13 +212,15 @@ function CreatePurchaseOrderUt() {
             ?.sort((a, b) => (a.supplierRanking ?? 100) - (b.supplierRanking ?? 100))
             .map(s => ({
                 id: s.supplierId,
-                displayText: `${s.supplierName} RANK : ${s.supplierRanking}`
+                displayText: `${s.supplierName}  ${s.supplierRanking === 1 ? '(P)' : ''}`
             }))
     );
 
-    const partSuppliersSearchLoading = useSelector(reduxState =>
-        collectionSelectorHelpers.getSearchLoading(reduxState.partsSuppliers)
-    );
+    useEffect(() => {
+        if (partSuppliersSearchResults?.length) {
+            handleSupplierChange(partSuppliersSearchResults[0]);
+        }
+    }, [partSuppliersSearchResults]);
 
     const partsSearchLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.parts)
@@ -305,7 +307,6 @@ function CreatePurchaseOrderUt() {
                                                 `&partNumber=${newPart.partNumber}`
                                             )
                                         );
-                                        handleSupplierChange(newPart);
                                     } else {
                                         setStockControlled(false);
                                     }
@@ -342,15 +343,13 @@ function CreatePurchaseOrderUt() {
                         {stockControlledPart ? (
                             <Grid item xs={4}>
                                 <Dropdown
-                                    value={order.supplier ? order.supplier.id : null}
+                                    value={order.supplier?.id}
                                     label="Supplier"
                                     propertyName="supplierId"
-                                    loading={partSuppliersSearchLoading}
                                     disabled={!allowedToCreate()}
                                     items={partSuppliersSearchResults}
                                     onChange={(propertyName, selected) => {
-                                        order.supplier.id = selected;
-                                        handleSupplierChange(order.supplier);
+                                        handleSupplierChange({ id: selected });
                                     }}
                                     allowNoValue={false}
                                 />
@@ -362,7 +361,7 @@ function CreatePurchaseOrderUt() {
                                     modal
                                     propertyName="supplierId"
                                     items={suppliersSearchResults}
-                                    value={order.supplier ? order.supplier.id : null}
+                                    value={order.supplier?.id}
                                     loading={suppliersSearchLoading}
                                     fetchItems={searchSuppliers}
                                     links={false}
@@ -382,9 +381,7 @@ function CreatePurchaseOrderUt() {
                         )}
 
                         {stockControlledPart ? (
-                            <Grid item xs={8}>
-                                <></>
-                            </Grid>
+                            <Grid item xs={8} />
                         ) : (
                             <Grid item xs={8}>
                                 <InputField
