@@ -169,13 +169,7 @@ function CreatePurchaseOrderUt() {
     }));
 
     const partSuppliersSearchResults = useSelector(reduxState =>
-        collectionSelectorHelpers
-            .getSearchItems(reduxState.partSuppliers)
-            ?.sort((a, b) => (a.supplierRanking ?? 100) - (b.supplierRanking ?? 100))
-            .map(s => ({
-                id: s.supplierId,
-                displayText: `${s.supplierName}  ${s.supplierRanking === 1 ? '(P)' : ''}`
-            }))
+        collectionSelectorHelpers.getSearchItems(reduxState.partSuppliers)
     );
 
     useEffect(() => {
@@ -419,11 +413,7 @@ function CreatePurchaseOrderUt() {
                                 links={false}
                                 debounce={1000}
                                 minimumSearchTermLength={2}
-                                disabled={
-                                    !allowedToCreate() ||
-                                    isCreditOrReturn() ||
-                                    !order.details[0].partNumber
-                                }
+                                disabled={!allowedToCreate() || isCreditOrReturn()}
                                 placeholder="click to set part"
                             />
                         </Grid>
@@ -448,9 +438,20 @@ function CreatePurchaseOrderUt() {
                                     label="Supplier"
                                     propertyName="supplierId"
                                     disabled={!allowedToCreate()}
-                                    items={partSuppliersSearchResults}
+                                    items={partSuppliersSearchResults
+                                        .sort(
+                                            (a, b) =>
+                                                (a.supplierRanking ?? 100) -
+                                                (b.supplierRanking ?? 100)
+                                        )
+                                        .map(s => ({
+                                            id: s.supplierId,
+                                            displayText: `${s.supplierName}  ${
+                                                s.supplierRanking === 1 ? '(P)' : ''
+                                            }`
+                                        }))}
                                     onChange={(propertyName, selected) => {
-                                        handleSupplierChange({ id: selected });
+                                        handleSupplierChange({ id: selected, name: null });
                                     }}
                                     allowNoValue={false}
                                 />
@@ -475,7 +476,11 @@ function CreatePurchaseOrderUt() {
                                     }}
                                     minimumSearchTermLength={3}
                                     fullWidth
-                                    disabled={!allowedToCreate() || isCreditOrReturn()}
+                                    disabled={
+                                        !allowedToCreate() ||
+                                        isCreditOrReturn() ||
+                                        !order.details[0].partNumber
+                                    }
                                     required
                                 />
                             </Grid>
