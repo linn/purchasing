@@ -14,7 +14,7 @@
             this.partHistory = partHistory;
         }
 
-        public void AddPartHistory(Part prevPart, Part part, string changeType, Employee changedBy, string remarks, string priceChangeReason)
+        public void AddPartHistory(Part prevPart, Part part, string changeType, int changedBy, string remarks, string priceChangeReason)
         {
             // update Part History
             var history = this.partHistory.FilterBy(x => x.PartNumber == part.PartNumber);
@@ -31,7 +31,7 @@
                                          NewPreferredSupplierId = part.PreferredSupplier?.SupplierId,
                                          OldBomType = prevPart.BomType,
                                          NewBomType = part.BomType,
-                                         ChangedBy = changedBy.Id,
+                                         ChangedBy = changedBy,
                                          ChangeType = changeType,
                                          Remarks = remarks,
                                          PriceChangeReason = priceChangeReason,

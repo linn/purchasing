@@ -23,5 +23,7 @@
         public string OldBomType { get; set; }
 
         public string NewBomType { get; set; }
+
+        public int? ChangedBy { get; set; }
     }
 }

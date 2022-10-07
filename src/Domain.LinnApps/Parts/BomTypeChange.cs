@@ -12,6 +12,8 @@
 
         public int? NewSupplierId { get; set; }
 
+        public int? ChangedBy { get; set; }
+
         public Part Part { get; set; }
     }
 }

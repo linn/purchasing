@@ -77,7 +77,8 @@
                                         OldBomType = request.OldBomType,
                                         NewBomType = request.NewBomType,
                                         OldSupplierId = request.OldSupplierId,
-                                        NewSupplierId = request.NewSupplierId
+                                        NewSupplierId = request.NewSupplierId,
+                                        ChangedBy = request.ChangedBy
                                     };
             try
             {

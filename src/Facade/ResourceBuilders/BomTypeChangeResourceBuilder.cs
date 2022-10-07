@@ -16,7 +16,8 @@
                                    OldBomType = model.OldBomType,
                                    OldSupplierId = model.OldSupplierId,
                                    NewBomType = model.NewBomType,
-                                   NewSupplierId = model.NewSupplierId
+                                   NewSupplierId = model.NewSupplierId,
+                                   ChangedBy = model.ChangedBy
                                };
 
             if (model.Part != null)

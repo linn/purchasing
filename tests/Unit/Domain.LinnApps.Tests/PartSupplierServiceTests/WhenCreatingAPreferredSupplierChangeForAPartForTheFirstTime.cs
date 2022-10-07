@@ -125,7 +125,7 @@
         [Test]
         public void ShouldInsertAPartHistoryRecord()
         {
-            this.PartHistory.Received().AddPartHistory(Arg.Any<Part>(), Arg.Any<Part>(), "PREFSUP", Arg.Any<Employee>(),"REMARKS","CHG");
+            this.PartHistory.Received().AddPartHistory(Arg.Any<Part>(), Arg.Any<Part>(), "PREFSUP", Arg.Any<int>(),"REMARKS","CHG");
         }
     }
 }

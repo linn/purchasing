@@ -81,7 +81,7 @@
             part.PreferredSupplier = newPartSupplier?.Supplier;
             // TODO work out if under new standards we want to autocost a new price with possible material variance req
 
-            this.partHistoryService.AddPartHistory(prevPart, part, "CHGBOMTYPE", null, null, null);
+            this.partHistoryService.AddPartHistory(prevPart, part, "CHGBOMTYPE", bomTypeChange.ChangedBy ?? 100, null, null);
 
             return part;
         }

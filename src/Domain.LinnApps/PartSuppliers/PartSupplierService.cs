@@ -283,7 +283,7 @@
 
             // update Part History
 
-            this.partHistoryService.AddPartHistory(prevPart, part, "PREFSUP", candidate.ChangedBy, candidate.Remarks, candidate.ChangeReason?.ReasonCode);
+            this.partHistoryService.AddPartHistory(prevPart, part, "PREFSUP", candidate.ChangedBy.Id, candidate.Remarks, candidate.ChangeReason?.ReasonCode);
 
             /*
             var history = this.partHistory.FilterBy(x => x.PartNumber == candidate.PartNumber);
