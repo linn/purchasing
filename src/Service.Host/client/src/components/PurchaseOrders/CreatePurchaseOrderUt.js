@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import Grid from '@mui/material/Grid';
 import { useSelector, useDispatch } from 'react-redux';
@@ -17,8 +17,7 @@ import {
     InputField,
     itemSelectorHelpers,
     Loading,
-    utilities,
-    Dropdown
+    utilities
 } from '@linn-it/linn-form-components-library';
 import queryString from 'query-string';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -420,7 +419,11 @@ function CreatePurchaseOrderUt() {
                                 links={false}
                                 debounce={1000}
                                 minimumSearchTermLength={2}
-                                disabled={!allowedToCreate() || isCreditOrReturn()}
+                                disabled={
+                                    !allowedToCreate() ||
+                                    isCreditOrReturn() ||
+                                    !order.details[0].partNumber
+                                }
                                 placeholder="click to set part"
                             />
                         </Grid>
@@ -472,7 +475,7 @@ function CreatePurchaseOrderUt() {
                                     }}
                                     minimumSearchTermLength={3}
                                     fullWidth
-                                            disabled={!allowedToCreate() || isCreditOrReturn()}
+                                    disabled={!allowedToCreate() || isCreditOrReturn()}
                                     required
                                 />
                             </Grid>
@@ -482,13 +485,13 @@ function CreatePurchaseOrderUt() {
                             <Grid item xs={8} />
                         ) : (
                             <Grid item xs={8}>
-                                        <InputField
-                                            fullWidth
-                                            value={order.supplier?.name}
-                                            label="Supplier Name"
-                                            number
-                                            propertyName="supplierName"
-                                            disabled
+                                <InputField
+                                    fullWidth
+                                    value={order.supplier?.name}
+                                    label="Supplier Name"
+                                    number
+                                    propertyName="supplierName"
+                                    disabled
                                 />
                             </Grid>
                         )}
