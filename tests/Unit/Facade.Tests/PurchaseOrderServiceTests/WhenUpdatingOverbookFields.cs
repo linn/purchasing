@@ -23,7 +23,6 @@
 
         private PurchaseOrder updated;
 
-
         private IResult<PurchaseOrderResource> result;
 
         private PurchaseOrderResource toResource;
