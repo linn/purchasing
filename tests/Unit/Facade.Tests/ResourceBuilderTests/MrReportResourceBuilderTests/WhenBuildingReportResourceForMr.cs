@@ -374,7 +374,7 @@
             part1Resource.Links.Should().Contain(
                 a => a.Rel == "view-stock" && a.Href == $"/inventory/stock-locator/locators?partNumber={this.MrHeader1.PartNumber}");
             part1Resource.Links.Should().Contain(
-                a => a.Rel == "place-order" && a.Href == $"/purchasing/purchase-orders/quick-create?supplierId={this.MrHeader1.PreferredSupplierId}&supplierName={this.MrHeader1.PreferredSupplierName}&partNumber={this.MrHeader1.PartNumber}&currencyUnitPrice={this.MrHeader1.CurrencyUnitPrice}");
+                a => a.Rel == "place-order" && a.Href == $"/purchasing/purchase-orders/quick-create?supplierId={this.MrHeader1.PreferredSupplierId}&supplierName={this.MrHeader1.PreferredSupplierName}&partNumber={this.MrHeader1.PartNumber}&currencyUnitPrice={this.MrHeader1.CurrencyUnitPrice}&qty={this.MrHeader1.MinimumOrderQuantity}");
             part1Resource.Links.Should().Contain(
                 a => a.Rel == "place-recommended-order" && a.Href == $"/purchasing/purchase-orders/quick-create?supplierId={this.MrHeader1.PreferredSupplierId}&supplierName={this.MrHeader1.PreferredSupplierName}&partNumber={this.MrHeader1.PartNumber}&currencyUnitPrice={this.MrHeader1.CurrencyUnitPrice}&qty={this.MrHeader1.RecommendedOrderQuantity}&dateRequired={this.MrHeader1.RecommendedOrderDate.Value.ToString("o")}");
         }

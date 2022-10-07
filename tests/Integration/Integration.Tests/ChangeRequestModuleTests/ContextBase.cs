@@ -40,7 +40,7 @@
             this.FacadeService = new ChangeRequestFacadeService(
                 this.Repository,
                 this.TransactionManager,
-                new ChangeRequestResourceBuilder(new BomChangeResourceBuilder()));
+                new ChangeRequestResourceBuilder(new BomChangeResourceBuilder(), new PcasChangeResourceBuilder()));
 
             this.Client = TestClient.With<ChangeRequestModule>(
                 services =>

@@ -2,7 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
+    using Linn.Common.Email;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -60,11 +62,8 @@
                 this.supplier.VendorManager.Employee.FullName,
                 $"Monthly Forecast - {timestamp}",
                 "Please find Monthly order forecast attached",
-                "csv",
-                null,
-                $"{this.supplier.SupplierId}_monthly_forecast_{this.timestamp}",
-                null,
-                Arg.Any<IEnumerable<IEnumerable<string>>>());
+                Arg.Is<IEnumerable<Attachment>>(a => a.First().FileName 
+                                                     == $"{this.supplier.SupplierId}_monthly_forecast_{this.timestamp}.csv"));
         }
     }
 }

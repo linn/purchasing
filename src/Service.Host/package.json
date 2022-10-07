@@ -23,6 +23,7 @@
             "raf/polyfill",
             "./react-animation-test-shim.js"
         ],
+        "testPathIgnorePatterns": ["./client/src/components/__tests__/fakeData/*"],
         "transform": {
             "^.+\\.js$": "babel-jest",
             ".+\\.(css|scss|png|jpg|svg)$": "jest-transform-stub"

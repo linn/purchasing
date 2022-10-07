@@ -22,8 +22,10 @@
 
         public async Task<string> GetHtml(T data)
         {
-            var template = await new StreamReader(this.pathToTemplate, Encoding.UTF8).ReadToEndAsync();
-            var html = await this.templateEngine.Render(data, template);
+            using var template = new StreamReader(this.pathToTemplate, Encoding.UTF8);
+
+            var compiled = await template.ReadToEndAsync();
+            var html = await this.templateEngine.Render(data, compiled);
 
             return html;
         }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer, useMemo } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import Grid from '@mui/material/Grid';
 import { useSelector, useDispatch } from 'react-redux';
@@ -15,35 +15,26 @@ import {
     Dropdown,
     Typeahead,
     InputField,
-    SnackbarMessage,
     itemSelectorHelpers,
     Loading,
-    getItemError,
-    ErrorCard,
-    utilities
+    utilities,
+    Dropdown
 } from '@linn-it/linn-form-components-library';
 import queryString from 'query-string';
-import moment from 'moment';
-import currenciesActions from '../../actions/currenciesActions';
+import LinearProgress from '@mui/material/LinearProgress';
 import suppliersActions from '../../actions/suppliersActions';
 import partsActions from '../../actions/partsActions';
 import partSuppliersActions from '../../actions/partSuppliersActions';
 import history from '../../history';
 import config from '../../config';
-import purchaseOrderActions from '../../actions/purchaseOrderActions';
+import suggestedPurchaseOrderValuesActions from '../../actions/suggestedPurchaseOrderValuesActions';
 import reducer from './purchaseOrderReducer';
-import { exchangeRates } from '../../itemTypes';
-import exchangeRatesActions from '../../actions/exchangeRatesActions';
 import currencyConvert from '../../helpers/currencyConvert';
+import purchaseOrdersActions from '../../actions/purchaseOrdersActions';
+import purchaseOrderActions from '../../actions/purchaseOrderActions';
 
 function CreatePurchaseOrderUt() {
     const reduxDispatch = useDispatch();
-
-    useEffect(() => {
-        reduxDispatch(purchaseOrderActions.clearErrorsForItem());
-        reduxDispatch(purchaseOrderActions.fetchState());
-        reduxDispatch(currenciesActions.fetch());
-    }, [reduxDispatch]);
 
     const item = useSelector(reduxState =>
         itemSelectorHelpers.getApplicationState(reduxState.purchaseOrder)
@@ -51,8 +42,6 @@ function CreatePurchaseOrderUt() {
     const loading = useSelector(state =>
         itemSelectorHelpers.getApplicationStateLoading(state.purchaseOrderApplicationState)
     );
-
-    const itemError = useSelector(state => getItemError(state, 'purchaseOrder'));
 
     const [order, dispatch] = useReducer(reducer, { details: [{}] });
 
@@ -63,9 +52,14 @@ function CreatePurchaseOrderUt() {
     const [stockControlledPart, setStockControlled] = useState(null);
 
     useEffect(() => {
+        reduxDispatch(purchaseOrderActions.fetchState());
+    }, [reduxDispatch]);
+
+    useEffect(() => {
         if (item) {
             const initialOrder = {
                 ...item,
+                documentType: { name: 'PO' },
                 exchangeRate: 1,
                 dateRequired: dateRequired ? new Date(dateRequired) : new Date(),
                 supplier: { id: supplierId, name: supplierName },
@@ -103,8 +97,9 @@ function CreatePurchaseOrderUt() {
     );
     const searchSuppliers = searchTerm => reduxDispatch(suppliersActions.search(searchTerm));
 
-    const snackbarVisible = useSelector(state =>
-        itemSelectorHelpers.getSnackbarVisible(state.purchaseOrder)
+    const previousOrderResults = useSelector(state => state.purchaseOrders.searchItems);
+    const previousOrderLoading = useSelector(state =>
+        collectionSelectorHelpers.getSearchLoading(state.purchaseOrders)
     );
 
     const allowedToCreate = () => item?.links?.some(l => l.rel === 'create');
@@ -117,42 +112,9 @@ function CreatePurchaseOrderUt() {
 
     const canSave = () => allowedToCreate() && inputIsValid();
 
-    const handleFieldChange = (propertyName, newValue) => {
-        dispatch({ payload: newValue, propertyName, type: 'orderFieldChange' });
-    };
-
     const handleDetailFieldChange = (propertyName, newValue, detail) => {
         dispatch({ payload: { ...detail, [propertyName]: newValue }, type: 'detailFieldChange' });
     };
-
-    const dateToDdMmmYyyy = date => (date ? moment(date).format('DD-MMM-YYYY') : '-');
-
-    useEffect(() => {
-        if (order?.dateCreated) {
-            reduxDispatch(exchangeRatesActions.search(dateToDdMmmYyyy(order?.dateCreated)));
-        }
-    }, [order, reduxDispatch]);
-
-    const exchangeRatesItems = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(state[exchangeRates.item])
-    );
-
-    const currentExchangeRate = useMemo(() => {
-        if (exchangeRatesItems.length) {
-            if (order?.currency?.code) {
-                return exchangeRatesItems.find(
-                    x => x.exchangeCurrency === order.currency.code && x.baseCurrency === 'GBP'
-                )?.exchangeRate;
-            }
-        }
-        return '';
-    }, [order?.currency?.code, exchangeRatesItems]);
-
-    useEffect(() => {
-        if (currentExchangeRate && order?.exchangeRate !== currentExchangeRate) {
-            handleFieldChange('exchangeRate', currentExchangeRate);
-        }
-    }, [order.exchangeRate, currentExchangeRate]);
 
     const handleDetailValueFieldChange = (propertyName, basePropertyName, newValue, detail) => {
         const { exchangeRate } = order;
@@ -171,12 +133,6 @@ function CreatePurchaseOrderUt() {
         }
     };
 
-    useEffect(() => {
-        if (currentExchangeRate && order?.exchangeRate !== currentExchangeRate) {
-            handleFieldChange('exchangeRate', currentExchangeRate);
-        }
-    }, [order.exchangeRate, currentExchangeRate]);
-
     const handleDetailQtyFieldChange = (propertyName, newValue, detail) => {
         if (newValue && newValue > 0 && newValue !== order[propertyName]) {
             dispatch({
@@ -193,6 +149,13 @@ function CreatePurchaseOrderUt() {
         dispatch({
             payload: { id: newSupplier.id, name: newSupplier.description },
             type: 'supplierChange'
+        });
+    };
+
+    const handleOrderTypeChange = (_, newOrderType) => {
+        dispatch({
+            payload: newOrderType,
+            type: 'orderTypeChange'
         });
     };
 
@@ -231,6 +194,9 @@ function CreatePurchaseOrderUt() {
             marginTop: '28px',
             height: '40px'
         },
+        buttonMarginLineUp: {
+            marginTop: '28px'
+        },
         centerTextInDialog: {
             textAlign: 'center',
             margin: theme.spacing(2)
@@ -254,15 +220,91 @@ function CreatePurchaseOrderUt() {
 
     const detail = order ? order.details[0] : {};
 
+    useEffect(() => {
+        if (previousOrderResults && previousOrderResults[0]) {
+            const prevOrder = previousOrderResults[0];
+            dispatch({
+                payload: { id: prevOrder.supplier.id, name: prevOrder.supplier.name },
+                type: 'supplierChange'
+            });
+            dispatch({
+                payload: {
+                    lineNumber: 1,
+                    fieldName: 'partNumber',
+                    value: prevOrder.details[0].partNumber
+                },
+                type: 'detailFieldUpdate'
+            });
+            dispatch({
+                payload: {
+                    lineNumber: 1,
+                    fieldName: 'ourQty',
+                    value: prevOrder.details[0].ourQty
+                },
+                type: 'detailFieldUpdate'
+            });
+            dispatch({
+                payload: {
+                    lineNumber: 1,
+                    fieldName: 'ourUnitPriceCurrency',
+                    value: prevOrder.details[0].ourUnitPriceCurrency
+                },
+                type: 'detailFieldUpdate'
+            });
+        } else {
+            dispatch({
+                payload: { id: null, name: null },
+                type: 'supplierChange'
+            });
+            dispatch({
+                payload: {
+                    lineNumber: 1,
+                    fieldName: 'partNumber',
+                    value: null
+                },
+                type: 'detailFieldUpdate'
+            });
+            dispatch({
+                payload: {
+                    lineNumber: 1,
+                    fieldName: 'ourQty',
+                    value: 0
+                },
+                type: 'detailFieldUpdate'
+            });
+            dispatch({
+                payload: {
+                    lineNumber: 1,
+                    fieldName: 'ourUnitPriceCurrency',
+                    value: 0
+                },
+                type: 'detailFieldUpdate'
+            });
+        }
+    }, [previousOrderResults]);
+
     const progressToFullCreate = () => {
+        reduxDispatch(suggestedPurchaseOrderValuesActions.add(order));
+
+        history.push(utilities.getHref(item, 'create'));
+    };
+
+    const orderTypes = [
+        { id: 'PO', displayText: 'Purchase Order' },
+        { id: 'CO', displayText: 'Credit Order' },
+        { id: 'RO', displayText: 'Returns Order' }
+    ];
+
+    const isCreditOrReturn = () =>
+        order?.documentType?.name === 'CO' || order?.documentType?.name === 'RO';
+    const lookUpOriginalOrder = () => {
+        reduxDispatch(purchaseOrdersActions.clearSearch());
         reduxDispatch(
-            purchaseOrderActions.postByHref(
-                utilities.getHref(order, 'generate-order-fields'),
-                order
+            purchaseOrdersActions.searchWithOptions(
+                '',
+                `&numberToTake=1&searchTerm=${detail.originalOrderNumber}`
             )
         );
-
-        history.push(utilities.getHref(order, 'create'));
     };
 
     return (
@@ -272,23 +314,79 @@ function CreatePurchaseOrderUt() {
                     <Loading />
                 ) : (
                     <Grid container spacing={1} justifyContent="center">
-                        <SnackbarMessage
-                            visible={snackbarVisible}
-                            onClose={() =>
-                                reduxDispatch(purchaseOrderActions.setSnackbarVisible(false))
-                            }
-                            message="Save successful"
-                        />
-                        {itemError && (
-                            <Grid item xs={12}>
-                                <ErrorCard
-                                    errorMessage={itemError?.details ?? itemError.statusText}
-                                />
-                            </Grid>
-                        )}
                         <Grid item xs={12}>
                             <Typography variant="h6">Create Purchase Order Wizard</Typography>
                         </Grid>
+                        <Grid item xs={12}>
+                            <Dropdown
+                                items={orderTypes}
+                                value={order.documentType?.name}
+                                allowNoValue={false}
+                                propertyName="documentType"
+                                label="Order Type"
+                                onChange={handleOrderTypeChange}
+                            />
+                        </Grid>
+                        {isCreditOrReturn() && (
+                            <>
+                                <Grid item xs={3}>
+                                    <InputField
+                                        fullWidth
+                                        value={detail.originalOrderNumber}
+                                        label="Original Order"
+                                        propertyName="originalOrderNumber"
+                                        onChange={(propertyName, newValue) =>
+                                            handleDetailQtyFieldChange(
+                                                propertyName,
+                                                newValue,
+                                                detail
+                                            )
+                                        }
+                                        disabled={!allowedToCreate()}
+                                        type="number"
+                                        required
+                                    />
+                                </Grid>
+                                <Grid item xs={2}>
+                                    <InputField
+                                        fullWidth
+                                        value={detail.originalOrderLine}
+                                        label="Original Line"
+                                        propertyName="originalOrderLine"
+                                        onChange={(propertyName, newValue) =>
+                                            handleDetailQtyFieldChange(
+                                                propertyName,
+                                                newValue,
+                                                detail
+                                            )
+                                        }
+                                        disabled={!allowedToCreate()}
+                                        type="number"
+                                        required
+                                    />
+                                </Grid>
+                                <Grid item xs={2}>
+                                    <Button
+                                        className={classes.buttonMarginLineUp}
+                                        color="primary"
+                                        variant="contained"
+                                        onClick={lookUpOriginalOrder}
+                                        disabled={
+                                            !detail.originalOrderNumber || !detail.originalOrderLine
+                                        }
+                                    >
+                                        Look Up
+                                    </Button>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    {previousOrderLoading && (
+                                        <LinearProgress
+                                            style={{ marginTop: '20px', marginBottom: '20px' }}
+                                        />
+                                    )}
+                                </Grid>
+                            </>
+                        )}
                         <Grid item xs={11}>
                             <Typeahead
                                 label="Part"
@@ -322,7 +420,7 @@ function CreatePurchaseOrderUt() {
                                 links={false}
                                 debounce={1000}
                                 minimumSearchTermLength={2}
-                                disabled={!allowedToCreate()}
+                                disabled={!allowedToCreate() || isCreditOrReturn()}
                                 placeholder="click to set part"
                             />
                         </Grid>
@@ -374,7 +472,7 @@ function CreatePurchaseOrderUt() {
                                     }}
                                     minimumSearchTermLength={3}
                                     fullWidth
-                                    disabled={!allowedToCreate() || !order.details[0].partNumber}
+                                            disabled={!allowedToCreate() || isCreditOrReturn()}
                                     required
                                 />
                             </Grid>
@@ -384,12 +482,13 @@ function CreatePurchaseOrderUt() {
                             <Grid item xs={8} />
                         ) : (
                             <Grid item xs={8}>
-                                <InputField
-                                    fullWidth
-                                    value={order.supplier ? order.supplier.name : null}
-                                    label="Supplier Name"
-                                    propertyName="supplierName"
-                                    disabled
+                                        <InputField
+                                            fullWidth
+                                            value={order.supplier?.name}
+                                            label="Supplier Name"
+                                            number
+                                            propertyName="supplierName"
+                                            disabled
                                 />
                             </Grid>
                         )}
@@ -408,9 +507,8 @@ function CreatePurchaseOrderUt() {
                                 required
                             />
                         </Grid>
-                        <Grid item xs={6}>
-                            <></>
-                        </Grid>
+                        <Grid item xs={6} />
+
                         <Grid item xs={6}>
                             <InputField
                                 fullWidth
@@ -439,7 +537,7 @@ function CreatePurchaseOrderUt() {
                                 color="primary"
                                 variant="contained"
                                 disabled={!canSave()}
-                                onClick={() => progressToFullCreate()}
+                                onClick={progressToFullCreate}
                             >
                                 Next
                             </Button>

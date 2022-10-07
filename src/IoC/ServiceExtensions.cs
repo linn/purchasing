@@ -88,7 +88,8 @@
                 .AddTransient<IBuilder<LedgerPeriod>, LedgerPeriodResourceBuilder>()
                 .AddTransient<IBuilder<ChangeRequest>, ChangeRequestResourceBuilder>()
                 .AddTransient<IBuilder<BomChange>, BomChangeResourceBuilder>()
-                .AddTransient<IBuilder<Bom>, BomResourceBuilder>();
+                .AddTransient<IBuilder<Bom>, BomResourceBuilder>()
+                .AddTransient<IBuilder<PcasChange>, PcasChangeResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -138,15 +139,7 @@
                 .AddTransient<IMaterialRequirementsReportFacadeService, MaterialRequirementsReportFacadeService>()
                 .AddTransient<IShortagesReportFacadeService, ShortagesReportFacadeService>()
                 .AddTransient<IMrOrderBookReportFacadeService, MrOrderBookReportFacadeService>()
-                .AddTransient<IPurchaseOrderFacadeService>(x =>
-                    new PurchaseOrderFacadeService(
-                        x.GetService<IRepository<PurchaseOrder, int>>(),
-                        x.GetService<ITransactionManager>(),
-                        x.GetService<IBuilder<PurchaseOrder>>(),
-                        x.GetService<IPurchaseOrderService>(),
-                        x.GetService<IRepository<OverbookAllowedByLog, int>>(),
-                        x.GetService<IRepository<Supplier, int>>(),
-                        x.GetService<ILog>()))
+                .AddTransient<IPurchaseOrderFacadeService, PurchaseOrderFacadeService>()
                 .AddTransient<IFacadeResourceService<AutomaticPurchaseOrder, int, AutomaticPurchaseOrderResource, AutomaticPurchaseOrderResource>, AutomaticPurchaseOrderFacadeService>()
                 .AddTransient<IFacadeResourceFilterService<AutomaticPurchaseOrderSuggestion, int, AutomaticPurchaseOrderSuggestionResource, AutomaticPurchaseOrderSuggestionResource, PlannerSupplierRequestResource>, AutomaticPurchaseOrderSuggestionFacadeService>()
                 .AddTransient<ILeadTimesReportFacadeService, LeadTimesReportFacadeService>()
@@ -166,28 +159,7 @@
                 .AddTransient<IPdfService>(x => new PdfService(ConfigurationManager.Configuration["PDF_SERVICE_ROOT"], new HttpClient()))
                 .AddTransient<IReportingHelper, ReportingHelper>()
                 .AddTransient<IPurchaseOrdersReportService, PurchaseOrdersReportService>()
-                .AddTransient<IPurchaseOrderService>(
-                    x => new PurchaseOrderService(
-                    ConfigurationManager.Configuration["APP_ROOT"],
-                    x.GetService<IAuthorisationService>(),
-                    x.GetService<IPurchaseLedgerPack>(),
-                    x.GetService<IDatabaseService>(),
-                    x.GetService<IPdfService>(),
-                    x.GetService<IEmailService>(),
-                    x.GetService<IRepository<Employee, int>>(),
-                    x.GetService<IRepository<MiniOrder, int>>(),
-                    x.GetService<IRepository<Supplier, int>>(),
-                    x.GetService<IRepository<LinnDeliveryAddress, int>>(),
-                    x.GetService<IPurchaseOrdersPack>(),
-                    x.GetService<ICurrencyPack>(),
-                    x.GetService<ISupplierKitService>(),
-                    x.GetService<IRepository<PurchaseOrder, int>>(),
-                    x.GetService<IHtmlTemplateService<PurchaseOrder>>(),
-                    x.GetService<ISingleRecordRepository<PurchaseLedgerMaster>>(),
-                    x.GetService<IRepository<NominalAccount, int>>(),
-                    x.GetService<IQueryRepository<Part>>(),
-                    x.GetService<IRepository<PartSupplier, PartSupplierKey>>(),
-                    x.GetService<ILog>()))
+                .AddTransient<IPurchaseOrderService, PurchaseOrderService>()
                 .AddTransient<IAuthorisationService, AuthorisationService>()
                 .AddTransient<IDatabaseService, DatabaseService>()
                 .AddTransient<ISpendsReportService, SpendsReportService>()
@@ -240,11 +212,16 @@
                 .AddTransient<IPurchaseOrderAutoOrderPack, PurchaseOrderAutoOrderPack>()
                 .AddTransient<IRazorEngine, RazorEngine>()
                 .AddTransient<ITemplateEngine, RazorTemplateEngine>()
+                .AddTransient<ISalesTaxPack, SalesTaxPack>()
 
                 // proxy
                 .AddTransient<IHtmlTemplateService<PurchaseOrder>>(x =>
                     new HtmlTemplateService<PurchaseOrder>(
                         $"{ConfigurationManager.Configuration["VIEWS_ROOT"]}PurchaseOrder.cshtml",
+                        x.GetService<ITemplateEngine>()))
+                .AddTransient<IHtmlTemplateService<PlCreditDebitNote>>(x =>
+                    new HtmlTemplateService<PlCreditDebitNote>(
+                        $"{ConfigurationManager.Configuration["VIEWS_ROOT"]}PlCreditDebitNote.cshtml",
                         x.GetService<ITemplateEngine>()));
         }
     }

@@ -67,7 +67,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.LinnApps.Tests", "te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scheduling.Host", "src\Scheduling.Host\Scheduling.Host.csproj", "{15C14AF1-0B06-44DC-89DE-FE503CE8B338}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Integration.Scheduling.Tests", "tests\Integration\Integration.Scheduling.Tests\Integration.Scheduling.Tests.csproj", "{E43E584C-55FB-455D-9C23-6006DEBBC64C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Integration.Scheduling.Tests", "tests\Integration\Integration.Scheduling.Tests\Integration.Scheduling.Tests.csproj", "{E43E584C-55FB-455D-9C23-6006DEBBC64C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "database", "database", "{3F2DA0C5-48EA-45D5-9641-5DEC6F84AE0E}"
+	ProjectSection(SolutionItems) = preProject
+		pl_automatic_orders_view.sql = pl_automatic_orders_view.sql
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -171,6 +176,7 @@ Global
 		{831DA56D-0DFA-4A9F-AF1C-9E17834E4690} = {B31DDE0C-67E3-4D19-B524-039D7AD3A00C}
 		{E5E5B5E0-3AB8-41D3-93FA-A0C6AF68796A} = {19C8CAF7-D5D1-44CB-BE5F-23D416B667CA}
 		{E43E584C-55FB-455D-9C23-6006DEBBC64C} = {B31DDE0C-67E3-4D19-B524-039D7AD3A00C}
+		{3F2DA0C5-48EA-45D5-9641-5DEC6F84AE0E} = {3009A116-E434-4816-A0F4-570C303DA933}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A61BEBB2-67FD-4B79-8ED3-83FCB7F5E5E4}

@@ -184,6 +184,8 @@
 
         public DbSet<ChangeRequest> ChangeRequests { get; set; }
 
+        public DbSet<CreditDebitNoteType> CreditDebitNoteTypes { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -283,6 +285,8 @@
             this.BuildChangeRequests(builder);
             this.BuildBomChanges(builder);
             this.BuildBoms(builder);
+            this.BuildPcasChanges(builder);
+            this.BuildPlCreditDebitNoteDetails(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -298,7 +302,9 @@
             var connectionString = $"Data Source={dataSource};User Id={userId};Password={password};";
 
             optionsBuilder.UseOracle(connectionString, options => options.UseOracleSQLCompatibility("11"));
-            optionsBuilder.UseLoggerFactory(MyLoggerFactory);
+
+            // below line commented due to causing crashing during local dev. Uncomment if want to see sql in debug window
+            // optionsBuilder.UseLoggerFactory(MyLoggerFactory);
             optionsBuilder.EnableSensitiveDataLogging(true);
             base.OnConfiguring(optionsBuilder);
         }
@@ -968,7 +974,7 @@
             entity.Property(a => a.OrderUnitOfMeasure).HasColumnName("ORDER_UNIT_OF_MEASURE");
             entity.Property(a => a.VatTotal).HasColumnName("VAT_TOTAL");
             entity.Property(a => a.SuppliersDesignation).HasColumnName("SUPPLIERS_DESIGNATION");
-            entity.HasOne(a => a.PurchaseOrder).WithMany().HasForeignKey("ORIGINAL_ORDER_NUMBER");
+            entity.HasOne(a => a.PurchaseOrder).WithMany().HasForeignKey(n => n.OriginalOrderNumber);
             entity.HasOne(a => a.Currency).WithMany().HasForeignKey("CURRENCY");
             entity.Property(a => a.ReturnsOrderLine).HasColumnName("RETURNS_ORDER_LINE");
             entity.Property(a => a.VatRate).HasColumnName("VAT_RATE");
@@ -976,6 +982,29 @@
             entity.Property(a => a.DateCancelled).HasColumnName("DATE_CANCELLED");
             entity.Property(a => a.ReasonCancelled).HasColumnName("REASON_CANCELLED");
             entity.HasOne(a => a.NoteType).WithMany().HasForeignKey("CDNOTE_TYPE");
+            entity.Property(a => a.CreditOrReplace).HasColumnName("CREDIT_OR_REPLACE");
+            entity.Property(a => a.OriginalOrderNumber).HasColumnName("ORIGINAL_ORDER_NUMBER");
+            entity.Property(a => a.CreatedBy).HasColumnName("CREATED_BY");
+            entity.HasMany(a => a.Details).WithOne(d => d.Header).HasForeignKey(d => d.NoteNumber);
+        }
+
+        private void BuildPlCreditDebitNoteDetails(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PlCreditDebitNoteDetail>().ToTable("PL_CREDIT_DEBIT_NOTE_DETAILS");
+            entity.HasKey(a => new { a.NoteNumber, a.LineNumber });
+            entity.Property(a => a.NoteNumber).HasColumnName("CDNOTE_ID");
+            entity.Property(a => a.LineNumber).HasColumnName("LINE_NUMBER");
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
+            entity.Property(a => a.OrderQty).HasColumnName("ORDER_QTY");
+            entity.Property(a => a.NetTotal).HasColumnName("NET_TOTAL");
+            entity.Property(a => a.Notes).HasColumnName("NOTES").HasMaxLength(200);
+            entity.Property(a => a.Total).HasColumnName("TOTAL_INC_VAT");
+            entity.Property(a => a.OrderUnitPrice).HasColumnName("ORDER_UNIT_PRICE");
+            entity.Property(a => a.OrderUnitOfMeasure).HasColumnName("ORDER_UNIT_OF_MEASURE");
+            entity.Property(a => a.VatTotal).HasColumnName("VAT_TOTAL");
+            entity.Property(a => a.SuppliersDesignation).HasColumnName("SUPPLIERS_DESIGNATION");
+            entity.Property(a => a.ReturnsOrderLine).HasColumnName("RETURNS_ORDER_LINE");
+            entity.Property(a => a.OriginalOrderLine).HasColumnName("ORIGINAL_ORDER_LINE");
         }
 
         private void BuildCreditDebitNoteTypes(ModelBuilder builder)
@@ -1800,6 +1829,7 @@
             entity.Property(c => c.ReasonForChange).HasColumnName("REASON_FOR_CHANGE").HasMaxLength(2000);
             entity.Property(c => c.DescriptionOfChange).HasColumnName("DESCRIPTION_OF_CHANGE").HasMaxLength(2000);
             entity.HasMany(c => c.BomChanges).WithOne(d => d.ChangeRequest).HasForeignKey(d => d.DocumentNumber);
+            entity.HasMany(c => c.PcasChanges).WithOne(d => d.ChangeRequest).HasForeignKey(d => d.DocumentNumber);
         }
 
         private void BuildBomChanges(ModelBuilder builder)
@@ -1849,6 +1879,25 @@
             entity.Property(a => a.DeleteChangeId).HasColumnName("DELETE_CHANGE_ID");
             entity.Property(a => a.DeleteReplaceSeq).HasColumnName("DELETE_REPLACE_SEQ");
             entity.HasOne(a => a.Part).WithMany().HasForeignKey(a => a.PartNumber);
+        }
+
+        private void BuildPcasChanges(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PcasChange>().ToTable("PCAS_CHANGES");
+            entity.HasKey(c => c.ChangeId);
+            entity.Property(c => c.ChangeId).HasColumnName("CHANGE_ID");
+            entity.Property(c => c.BoardCode).HasColumnName("BOARD_CODE").HasMaxLength(6);
+            entity.Property(c => c.RevisionCode).HasColumnName("REVISION_CODE").HasMaxLength(10);
+            entity.Property(c => c.ChangeState).HasColumnName("CHANGE_STATE").HasMaxLength(6);
+            entity.Property(c => c.DocumentType).HasColumnName("DOCUMENT_TYPE").HasMaxLength(6);
+            entity.Property(c => c.DocumentNumber).HasColumnName("DOCUMENT_NUMBER");
+            entity.Property(c => c.DateEntered).HasColumnName("DATE_ENTERED");
+            entity.Property(c => c.EnteredBy).HasColumnName("ENTERED_BY");
+            entity.Property(c => c.DateApplied).HasColumnName("DATE_APPLIED");
+            entity.Property(c => c.AppliedBy).HasColumnName("APPLIED_BY");
+            entity.Property(c => c.DateCancelled).HasColumnName("DATE_CANCELLED");
+            entity.Property(c => c.CancelledBy).HasColumnName("CANCELLED_BY");
+            entity.Property(c => c.Comments).HasColumnName("COMMENTS").HasMaxLength(2000);
         }
     }
 }

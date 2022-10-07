@@ -6,6 +6,7 @@
 
     using Linn.Common.Authorisation;
     using Linn.Common.Configuration;
+    using Linn.Common.Domain.Exceptions;
     using Linn.Common.Email;
     using Linn.Common.Logging;
     using Linn.Common.Pdf;
@@ -22,8 +23,6 @@
 
     public class PurchaseOrderService : IPurchaseOrderService
     {
-        private readonly string appRoot;
-
         private readonly IAuthorisationService authService;
 
         private readonly IDatabaseService databaseService;
@@ -62,9 +61,11 @@
 
         private readonly IRepository<PartSupplier, PartSupplierKey> partSupplierRepository;
 
+        private readonly IHtmlTemplateService<PlCreditDebitNote> creditDebitNoteHtmlService;
+
+        private readonly IRepository<PlCreditDebitNote, int> creditDebitNoteRepository;
 
         public PurchaseOrderService(
-            string appRoot,
             IAuthorisationService authService,
             IPurchaseLedgerPack purchaseLedgerPack,
             IDatabaseService databaseService,
@@ -83,7 +84,9 @@
             IRepository<NominalAccount, int> nominalAccountRepository,
             IQueryRepository<Part> partQueryRepository,
             IRepository<PartSupplier, PartSupplierKey> partSupplierRepository,
-        ILog log)
+            IHtmlTemplateService<PlCreditDebitNote> creditDebitNoteHtmlService,
+            ILog log,
+            IRepository<PlCreditDebitNote, int> creditDebitNoteRepository)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;
@@ -104,7 +107,8 @@
             this.partQueryRepository = partQueryRepository;
             this.partSupplierRepository = partSupplierRepository;
             this.log = log;
-            this.appRoot = appRoot;
+            this.creditDebitNoteHtmlService = creditDebitNoteHtmlService;
+            this.creditDebitNoteRepository = creditDebitNoteRepository;
         }
 
         public void AllowOverbook(
@@ -158,7 +162,7 @@
             return order;
         }
 
-        public void CreateOrder(PurchaseOrder order, IEnumerable<string> privileges)
+        public PurchaseOrder CreateOrder(PurchaseOrder order, IEnumerable<string> privileges)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, privileges))
             {
@@ -175,21 +179,22 @@
             order.BaseOrderVatTotal = 0;
             order.OrderTotal = 0;
             order.BaseOrderTotal = 0;
-
+          
             foreach (var detail in order.Details)
             {
                 this.SetDetailFieldsForCreation(detail, newOrderNumber);
 
-                this.PerformDetailCalculations(detail, detail, order.ExchangeRate.GetValueOrDefault(1), order.SupplierId, creating: true);
+                this.PerformDetailCalculations(
+                    detail, detail, order.ExchangeRate.GetValueOrDefault(1), order.SupplierId, creating: true);
 
                 this.AddDeliveryToDetail(order, detail);
 
                 order.OrderNetTotal += detail.NetTotalCurrency;
                 order.BaseOrderNetTotal += detail.BaseNetTotal;
-                order.OrderVatTotal += detail.VatTotalCurrency.GetValueOrDefault(0m);
-                order.BaseOrderVatTotal += detail.BaseVatTotal.GetValueOrDefault(0m);
-                order.OrderTotal += detail.DetailTotalCurrency.GetValueOrDefault(0m);
-                order.BaseOrderTotal += detail.BaseDetailTotal.GetValueOrDefault(0m);
+                order.OrderVatTotal += detail.VatTotalCurrency.GetValueOrDefault();
+                order.BaseOrderVatTotal += detail.BaseVatTotal.GetValueOrDefault();
+                order.OrderTotal += detail.DetailTotalCurrency.GetValueOrDefault();
+                order.BaseOrderTotal += detail.BaseDetailTotal.GetValueOrDefault();
             }
 
             order.Cancelled = "N";
@@ -199,14 +204,28 @@
             order.DamagesPercent = 2m;
 
             this.purchaseOrderRepository.Add(order);
+
+            return order;
         }
 
         public ProcessResult SendPdfEmail(string emailAddress, int orderNumber, bool bcc, int currentUserId)
         {
             var order = this.GetOrder(orderNumber);
 
+            string debitNoteHtml = null;
+
+            if (order.DocumentType.Name is "RO" or "CO")
+            {
+                var debitNote = this.creditDebitNoteRepository.FindBy(x => x.ReturnsOrderNumber == orderNumber);
+                if (debitNote != null)
+                {
+                    debitNoteHtml = this.creditDebitNoteHtmlService.GetHtml(debitNote).Result;
+                }
+            }
+
             var html = this.purchaseOrderTemplateService.GetHtml(order).Result;
-            this.SendOrderPdfEmail(html, emailAddress, bcc, currentUserId, order);
+
+            this.SendOrderPdfEmail(html, emailAddress, bcc, currentUserId, order, debitNoteHtml);
 
             return new ProcessResult(true, $"Email sent for purchase order {orderNumber} to {emailAddress}");
         }
@@ -240,9 +259,7 @@
                 ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
                 "Linn Purchasing",
                 $"Purchase Order {orderNumber}",
-                emailBody,
-                null,
-                null);
+                emailBody);
 
             this.log.Write(
                 LoggingLevel.Info,
@@ -257,7 +274,7 @@
             var order = this.GetOrder(orderNumber);
 
             var user = this.employeeRepository.FindById(currentUserId);
-            var orderUrl = $"{this.appRoot}/purchasing/purchase-orders/{orderNumber}";
+            var orderUrl = $"{ConfigurationManager.Configuration["APP_ROOT"]}/purchasing/purchase-orders/{orderNumber}";
             var emailBody = $"Purchasing have raised order {orderNumber} for {order.Supplier.Name}.\n"
                             + $"{user.FullName} would like you to Authorise it which you can do here:\n"
                             + $"{orderUrl} \n"
@@ -291,9 +308,7 @@
                 ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
                 "Linn Purchasing",
                 $"Purchase Order {orderNumber} requires Authorisation",
-                emailBody,
-                null,
-                null);
+                emailBody);
 
             this.log.Write(
                 LoggingLevel.Info,
@@ -322,7 +337,7 @@
         {
             if (order.Supplier?.SupplierId == null)
             {
-                throw new ArgumentNullException();
+                throw new DomainException("Cannot create a purchase order without a supplier");
             }
 
             var supplier = this.supplierRepository.FindById(order.Supplier.SupplierId);
@@ -343,8 +358,19 @@
                 order.DeliveryAddress = mainDeliveryAddress;
             }
 
-            order.DocumentTypeName = "PO";
-            order.DocumentType = new DocumentType { Name = "PO", Description = "PURCHASE ORDER" };
+            order.DocumentTypeName = string.IsNullOrEmpty(order.DocumentTypeName) ? "PO" : order.DocumentTypeName;
+            var documentTypeDescription = order.DocumentTypeName switch
+                {
+                    "PO" => "PURCHASE ORDER",
+                    "RO" => "RETURNS ORDER",
+                    "CO" => "CREDIT ORDER",
+                    _ => string.Empty
+                };
+            order.DocumentType = new DocumentType
+                                     {
+                                         Name = order.DocumentTypeName,
+                                         Description = documentTypeDescription
+                                     };
             order.OrderMethodName = "MANUAL";
             order.OrderMethod = new OrderMethod { Name = "MANUAL", Description = "MANUAL ORDERING" };
             var user = this.employeeRepository.FindById(currentUserId);
@@ -368,12 +394,11 @@
             detail.OurUnitOfMeasure = partSupplier != null ? partSupplier.UnitOfMeasure : string.Empty;
             detail.SuppliersDesignation = partSupplier != null ? partSupplier.SupplierDesignation : string.Empty;
 
+            //TODO THIS IS WRONG AND ALSO HAS A DATABASE ID HARDCODED INTO DOMAIN LOGIC
             // from MR is always nom Raw Materials 0000007617 Assets 0000002508
             var nomAcc = this.nominalAccountRepository.FindById(884);
 
-            detail.OrderPosting = new PurchaseOrderPosting();
-            detail.OrderPosting.NominalAccount = nomAcc;
-            detail.OrderPosting.NominalAccountId = 884;
+            detail.OrderPosting = new PurchaseOrderPosting { NominalAccount = nomAcc, NominalAccountId = 884 };
 
             return order;
         }
@@ -398,6 +423,7 @@
                          null))
             {
                 order.AuthorisedById = userNumber;
+                this.AuthoriseMiniOrder(order);
 
                 return new ProcessResult(true, $"Order {order.OrderNumber} successfully authorised");
 
@@ -437,6 +463,7 @@
                              null))
                 {
                     order.AuthorisedById = userNumber;
+                    this.AuthoriseMiniOrder(order);
                     text += $"Order {orderNumber} authorised successfully\n";
                     success++;
                 }
@@ -485,7 +512,7 @@
                 else
                 {
                     var html = this.purchaseOrderTemplateService.GetHtml(order).Result;
-                    this.SendOrderPdfEmail(html, supplierContactEmail, copyToSelf, userNumber, order);
+                    this.SendOrderPdfEmail(html, supplierContactEmail, copyToSelf, userNumber, order, null);
                     text += $"Order {orderNumber} emailed successfully to {supplierContactEmail}\n";
                     success++;
                 }
@@ -558,22 +585,64 @@
             miniOrder.RohsCompliant = detail.RohsCompliant;
             miniOrder.DeliveryConfirmedBy = detail.DeliveryConfirmedById;
             miniOrder.InternalComments = detail.InternalComments;
-
-            // I think drawing ref I think should be added, and maybe manuf part no
-            // but not sure of rest. Todo
-            // miniOrder.ManufacturerPartNumber = updatedOrder.;
-            // miniOrder.DrawingReference = detail.dr; //dont think needed
-            // miniOrder.TotalQtyDelivered = updatedOrder.Details
-            // miniOrder.PrevOrderNumber = detail.;
-            // miniOrder.PrevOrderLine = updatedOrder.;
-            // miniOrder.ShouldHaveBeenBlueReq = updatedOrder.;
-            // miniOrder.SpecialOrderType = updatedOrder.;
-            // miniOrder.PpvAuthorisedBy = updatedOrder.;
-            // miniOrder.PpvReason = updatedOrder.;
-            // miniOrder.MpvAuthorisedBy = updatedOrder.
-            // miniOrder.MpvReason = updatedOrder.
-            // miniOrder.FilCancelledBy = null
+            miniOrder.PrevOrderNumber = detail.OriginalOrderNumber;
+            miniOrder.PrevOrderLine = detail.OriginalOrderLine;
             this.miniOrderRepository.Add(miniOrder);
+        }
+
+        public ProcessResult EmailDept(int orderNumber, int userId)
+        {
+            var sender = this.employeeRepository.FindById(userId);
+
+            if (string.IsNullOrEmpty(sender?.PhoneListEntry?.EmailAddress))
+            {
+                throw new ItemNotFoundException($"Sender email not found. Check you have one set up in the phone list.");
+            }
+
+            var order = this.GetOrder(orderNumber);
+            if (order is null)
+            {
+                throw new ItemNotFoundException($"Could not find order {orderNumber}");
+            }
+
+            if (!order.AuthorisedById.HasValue)
+            {
+                throw new PurchaseOrderException("You cannot email this order until it has been authorised");
+            }
+
+            var recipient = order.EnteredBy;
+
+            if (string.IsNullOrEmpty(recipient?.PhoneListEntry?.EmailAddress))
+            {
+                throw new ItemNotFoundException($"Recipient email not found. Check they have one set up in the phone list.");
+            }
+
+            var cc  = new List<Dictionary<string, string>>
+                                  {
+                                      new Dictionary<string, string>
+                                          {
+                                              { "name", sender.FullName },
+                                              { "address",  sender.PhoneListEntry.EmailAddress }
+                                          }
+                                  };
+
+            var body =
+                "Please click the link when you have received the goods against this order to confirm delivery. \n";
+            body += "This will also confirm that payment can be made.  \n";
+            body += $"http://app.linn.co.uk/purch/po/podelcon.aspx?po={orderNumber}  \n";
+            body += "Any queries regarding this order - please contact a member of the Finance team.";
+            this.emailService.SendEmail(
+                    recipient.PhoneListEntry.EmailAddress,
+                    recipient.FullName,
+                    cc,
+                    null,
+                    sender.PhoneListEntry.EmailAddress,
+                    sender.FullName,
+                    $"Purchase Order {orderNumber} for Supplier {order.Supplier.Name}",
+                    body
+                );
+
+            return new ProcessResult { Success = true, Message = "Email Request Sent" };
         }
 
         private PurchaseOrder GetOrder(int orderNumber)
@@ -659,16 +728,6 @@
             {
                 var updatedDelivery = updatedDeliveries.First(x => x.DeliverySeq == delivery.DeliverySeq);
                 delivery.DateRequested = updatedDelivery.DateRequested;
-
-                // price updates to be done next
-                // delivery.OurUnitPriceCurrency = updatedDelivery.OurUnitPriceCurrency;
-                // delivery.OrderUnitPriceCurrency = updatedDelivery.OrderUnitPriceCurrency;
-                // delivery.BaseOrderUnitPrice = updatedDelivery.BaseOrderUnitPrice;
-                // delivery.BaseOurUnitPrice = updatedDelivery.BaseOurUnitPrice;
-                // delivery.VatTotalCurrency = updatedDelivery.VatTotalCurrency;
-                // delivery.BaseVatTotal = updatedDelivery.BaseVatTotal; //// vat totals might not change
-                // delivery.DeliveryTotalCurrency = updatedDelivery.DeliveryTotalCurrency;
-                // delivery.BaseDetailTotal = updatedDelivery.BaseDetailTotal;
             }
         }
 
@@ -771,8 +830,11 @@
             var updatedDetail = updatedOrder.Details.First();
 
             miniOrder.Remarks = updatedOrder.Remarks;
-            miniOrder.Department = updatedDetail.OrderPosting.NominalAccount.Department.DepartmentCode;
-            miniOrder.Nominal = updatedDetail.OrderPosting.NominalAccount.Nominal.NominalCode;
+
+            var nomAcc = this.nominalAccountRepository.FindById(updatedDetail.OrderPosting.NominalAccountId);
+            miniOrder.Nominal = nomAcc.NominalCode;
+            miniOrder.Department = nomAcc.DepartmentCode;
+
             miniOrder.RequestedDeliveryDate = updatedDetail.PurchaseDeliveries.First().DateRequested;
             miniOrder.InternalComments = updatedDetail.InternalComments;
             miniOrder.SuppliersDesignation = updatedDetail.SuppliersDesignation;
@@ -832,6 +894,12 @@
                 MidpointRounding.AwayFromZero);
         }
 
+        private void AuthoriseMiniOrder(PurchaseOrder updatedOrder)
+        {
+            var miniOrder = this.miniOrderRepository.FindById(updatedOrder.OrderNumber);
+            miniOrder.AuthorisedBy = updatedOrder.AuthorisedById;
+        }
+
         private void UpdateOrderPostingsForDetail(PurchaseOrderDetail current, PurchaseOrderDetail updated)
         {
             if (current.OrderPosting.NominalAccountId != updated.OrderPosting.NominalAccountId)
@@ -850,11 +918,12 @@
             string emailAddress,
             bool bcc,
             int currentUserId,
-            PurchaseOrder order)
+            PurchaseOrder order,
+            string debitNoteHtml)
         {
-            var pdf = this.pdfService.ConvertHtmlToPdf(html, false);
+            var orderPdf = this.pdfService.ConvertHtmlToPdf(html, false);
+
             var emailBody = $"Please accept the attached order no. {order.OrderNumber}.\n"
-                            + "You will need Acrobat Reader to open the file which is available from www.adobe.com/acrobat\n"
                             + "Linn's standard Terms & Conditions apply at all times\n"
                             + "and can be found at www.linn.co.uk/purchasing_conditions";
 
@@ -876,6 +945,26 @@
                         });
             }
 
+            var attachments = new List<Attachment>
+                                  {
+                                      new PdfAttachment(orderPdf.Result, $"LinnPurchaseOrder{order.OrderNumber}")
+                                  };
+
+            if (debitNoteHtml != null)
+            {
+                var debitNotePdf = this.pdfService.ConvertHtmlToPdf(debitNoteHtml, false);
+                attachments.Add(new PdfAttachment(debitNotePdf.Result, $"DebitNote"));
+                if (order.Supplier.AccountController?.PhoneListEntry != null)
+                {
+                    bccList.Add(
+                        new Dictionary<string, string>
+                            {
+                                { "name", order.Supplier.AccountController.FullName },
+                                { "address", order.Supplier.AccountController.PhoneListEntry.EmailAddress }
+                            });
+                }
+            }
+
             this.emailService.SendEmail(
                     emailAddress,
                     emailAddress,
@@ -885,9 +974,7 @@
                     "Linn Purchasing",
                     $"Linn Purchase Order {order.OrderNumber}",
                     emailBody,
-                    "pdf",
-                    pdf.Result,
-                    $"LinnPurchaseOrder{order.OrderNumber}");
+                   attachments);
 
             order.SentByMethod = "EMAIL";
 

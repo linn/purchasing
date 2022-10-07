@@ -61,8 +61,7 @@
                 .AddTransient<IRepository<MiniOrder, int>, MiniOrderRepository>()
                 .AddTransient<IRepository<PurchaseLedger, int>, PurchaseLedgerRepository>()
                 .AddTransient<IRepository<Employee, int>, EmployeeRepository>()
-                .AddTransient<IRepository<PreferredSupplierChange, PreferredSupplierChangeKey>,
-                    PreferredSupplierChangeRepository>()
+                .AddTransient<IRepository<PreferredSupplierChange, PreferredSupplierChangeKey>, PreferredSupplierChangeRepository>()
                 .AddTransient<IRepository<PriceChangeReason, string>, EntityFrameworkRepository<PriceChangeReason, string>>(
                     r => new EntityFrameworkRepository<PriceChangeReason, string>(
                         r.GetService<ServiceDbContext>()?.PriceChangeReasons))
@@ -104,8 +103,7 @@
                 .AddTransient<IRepository<TqmsJobref, string>, EntityFrameworkRepository<TqmsJobref, string>>(
                     r => new EntityFrameworkRepository<TqmsJobref, string>(
                         r.GetService<ServiceDbContext>()?.TqmsJobrefs))
-                .AddTransient<IQueryRepository<PartReceivedRecord>,
-                    EntityFrameworkQueryRepository<PartReceivedRecord>>(
+                .AddTransient<IQueryRepository<PartReceivedRecord>, EntityFrameworkQueryRepository<PartReceivedRecord>>(
                     r => new EntityFrameworkQueryRepository<PartReceivedRecord>(
                         r.GetService<ServiceDbContext>()?.TqmsView))
                 .AddTransient<IPurchaseOrderDeliveryRepository, PurchaseOrderDeliveryRepository>()
@@ -200,7 +198,10 @@
                         ?.ForecastReportMonths))
                 .AddTransient<IQueryRepository<ForecastWeekChange>, ForecastWeekChangesRepository>()
                 .AddTransient<IRepository<ChangeRequest, int>, ChangeRequestRepository>()
-                .AddTransient<IRepository<Bom, int>, BomRepository>();
+                .AddTransient<IRepository<Bom, int>, BomRepository>()
+                .AddTransient<IRepository<CreditDebitNoteType, string>, EntityFrameworkRepository<CreditDebitNoteType, string>>(
+                    r => new EntityFrameworkRepository<CreditDebitNoteType, string>(r.GetService<ServiceDbContext>()
+                        ?.CreditDebitNoteTypes));
         }
     }
 }

@@ -17,7 +17,7 @@
 
     using NUnit.Framework;
 
-    public class WhenCreatingPurchaseOrders : ContextBase
+    public class WhenCreatingPurchaseOrder : ContextBase
     {
         private readonly int orderNumber = 600179;
 
@@ -162,15 +162,25 @@
             this.MockNominalAccountRepository.FindById(Arg.Any<int>())
                 .Returns(new NominalAccount { NominalCode = "00030405", DepartmentCode = "00001892", AccountId = 918 });
 
+            this.MockDomainService.CreateOrder(Arg.Any<PurchaseOrder>(), Arg.Any<IEnumerable<string>>())
+                .Returns(new PurchaseOrder { DocumentType = new DocumentType { Name = "PO" } });
+
             this.Response = this.Client.PostAsJsonAsync("/purchasing/purchase-orders", this.resource).Result;
         }
 
         [Test]
-        public void ShouldCallUpdate()
+        public void ShouldCallCreate()
         {
             this.MockDomainService.Received().CreateOrder(
                 Arg.Any<PurchaseOrder>(),
                 Arg.Any<IEnumerable<string>>());
+        }
+
+        [Test]
+        public void ShouldNotCallCreateDebitNote()
+        {
+            this.MockPlCreditDebitNoteService.DidNotReceive().CreateDebitOrNoteFromPurchaseOrder(
+                Arg.Any<PurchaseOrder>());
         }
 
         [Test]

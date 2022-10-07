@@ -9,6 +9,9 @@ export default () => next => action => {
         if (
             action.type !== actionTypes.signingLimitActionTypes.RECEIVE_NEW_SIGNING_LIMIT &&
             action.type !==
+                actionTypes.suggestedPurchaseOrderValuesActionTypes
+                    .RECEIVE_NEW_SUGGESTED_PURCHASE_ORDER_VALUES &&
+            action.type !==
                 actionTypes.preferredSupplierChangeActionTypes
                     .RECEIVE_NEW_PREFERRED_SUPPLIER_CHANGE &&
             action.type !== actionTypes.addressActionTypes.RECEIVE_NEW_ADDRESS
