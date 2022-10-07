@@ -4,7 +4,7 @@
 
     public interface IPurchaseOrderService
     {
-        void AllowOverbook(
+        PurchaseOrder AllowOverbook(
             PurchaseOrder current,
             string allowOverBook,
             decimal? overbookQty,

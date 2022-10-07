@@ -7,7 +7,8 @@ import {
     Loading,
     Page,
     SaveBackCancelButtons,
-    SnackbarMessage
+    SnackbarMessage,
+    utilities
 } from '@linn-it/linn-form-components-library';
 import { useParams } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
@@ -27,13 +28,21 @@ function AllowPurchaseOrderOverbook() {
     const overbookLoading = useSelector(reduxState =>
         itemSelectorHelpers.getItemLoading(reduxState.purchaseOrder)
     );
-    const canEdit = () => item?.links.some(l => l.rel === 'allow-over-book');
+    const canEdit = utilities.getHref(item, 'overbook');
     const clearErrors = () => reduxDispatch(purchaseOrderActions.clearErrorsForItem());
     const updatePurchaseOrder = () =>
         reduxDispatch(
-            purchaseOrderActions.update(state.orderNumber, {
-                ...state,
-                currentlyUsingOverbookForm: true
+            purchaseOrderActions.patch(item.orderNumber, {
+                from: {
+                    orderNumber: item.orderNumber,
+                    overbook: item.overbook,
+                    overbookQty: item.overbookQty
+                },
+                to: {
+                    orderNumber: item.orderNumber,
+                    overbook: state.overbook,
+                    overbookQty: state.overbookQty
+                }
             })
         );
     const snackbarVisible = useSelector(reduxState =>
@@ -91,7 +100,7 @@ function AllowPurchaseOrderOverbook() {
                         <Typography variant="h3">Allow Overbook UT</Typography>
                     </Grid>
                     <Grid item xs={1}>
-                        {canEdit() ? (
+                        {canEdit ? (
                             <Tooltip title="You have write access to allow overbooking">
                                 <ModeEditIcon fontSize="large" color="primary" />
                             </Tooltip>
@@ -104,7 +113,7 @@ function AllowPurchaseOrderOverbook() {
                     <Grid item xs={12}>
                         <OnOffSwitch
                             label="Overbook"
-                            value={state?.overbook === 'Y'}
+                            value={state.overbook === 'Y'}
                             onChange={() => {
                                 handleOverbookFieldChange();
                             }}
@@ -113,7 +122,7 @@ function AllowPurchaseOrderOverbook() {
                     </Grid>
                     <Grid item xs={6}>
                         <InputField
-                            value={state?.orderNumber}
+                            value={state.orderNumber}
                             label="Order Number"
                             propertyName="orderNumber"
                             onChange={() => {}}
@@ -121,13 +130,15 @@ function AllowPurchaseOrderOverbook() {
                         />
                     </Grid>
                     <Grid item xs={6}>
-                        Part:
-                        <br />
-                        {partDetails()}
+                        <Typography display="inline">
+                            Part:
+                            <br />
+                            {partDetails()}
+                        </Typography>
                     </Grid>
                     <Grid item xs={12}>
                         <InputField
-                            value={state?.overbookQty}
+                            value={state.overbookQty}
                             label="Overbook Qty"
                             type="number"
                             propertyName="overbookQty"
@@ -137,7 +148,7 @@ function AllowPurchaseOrderOverbook() {
                     </Grid>
                     <Grid item xs={12}>
                         <SaveBackCancelButtons
-                            saveDisabled={!canEdit() || saveDisabled}
+                            saveDisabled={!canEdit || saveDisabled}
                             saveClick={() => {
                                 setSaveDisabled(true);
                                 clearErrors();

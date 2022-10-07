@@ -9,7 +9,6 @@
     using Linn.Common.Facade;
     using Linn.Common.Logging;
     using Linn.Common.Persistence;
-    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -233,6 +232,53 @@
             }
         }
 
+        public IResult<PurchaseOrderResource> PatchOrder(
+            PatchRequestResource<PurchaseOrderResource> resource,
+            int who,
+            IEnumerable<string> privileges)
+        {
+            var order = this.repository.FindById(resource.From.OrderNumber);
+
+            if (resource.From.Cancelled != resource.To.Cancelled)
+            {
+
+            }
+
+            var privilegesList = privileges.ToList();
+
+            var overBookChange = false;
+
+            if (resource.From.Overbook != resource.To.Overbook)
+            {
+                overBookChange = true;
+                order = this.domainService.AllowOverbook(
+                    order, resource.To.Overbook, order.OverbookQty, privilegesList);
+            }
+
+            if (resource.From.OverbookQty != resource.To.OverbookQty)
+            {
+                overBookChange = true;
+                order = this.domainService.AllowOverbook(
+                    order, order.Overbook, resource.To.OverbookQty, privilegesList);
+            }
+
+            if (overBookChange)
+            {
+                var log = new OverbookAllowedByLog
+                              {
+                                  OrderNumber = order.OrderNumber,
+                                  OverbookQty = order.OverbookQty,
+                                  OverbookDate = DateTime.Now,
+                                  OverbookGrantedBy = who
+                              };
+                this.overbookAllowedByLogRepository.Add(log);
+            }
+
+            this.transactionManager.Commit();
+            return new SuccessResult<PurchaseOrderResource>(
+                (PurchaseOrderResource)this.resourceBuilder.Build(order, privilegesList));
+        }
+
         public string GetOrderAsHtml(int orderNumber)
         {
             return this.domainService.GetPurchaseOrderAsHtml(orderNumber);
@@ -301,17 +347,7 @@
             PurchaseOrderResource resource,
             PurchaseOrderResource updateResource)
         {
-            if (updateResource.CurrentlyUsingOverbookForm)
-            {
-                var log = new OverbookAllowedByLog
-                              {
-                                  OrderNumber = entity.OrderNumber,
-                                  OverbookQty = entity.OverbookQty,
-                                  OverbookDate = DateTime.Now,
-                                  OverbookGrantedBy = userNumber
-                              };
-                this.overbookAllowedByLogRepository.Add(log);
-            }
+            throw new NotImplementedException();
         }
 
         protected override Expression<Func<PurchaseOrder, bool>> SearchExpression(string searchTerm)

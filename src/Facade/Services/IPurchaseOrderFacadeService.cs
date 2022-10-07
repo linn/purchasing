@@ -33,5 +33,10 @@
             PurchaseOrdersProcessRequestResource resource, IEnumerable<string> privileges, int userId);
 
         IResult<ProcessResultResource> EmailDept(int orderNumber, int userNumber);
+
+        IResult<PurchaseOrderResource> PatchOrder(
+            PatchRequestResource<PurchaseOrderResource> resource,
+            int who,
+            IEnumerable<string> privileges);
     }
 }

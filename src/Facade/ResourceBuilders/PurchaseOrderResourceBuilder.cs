@@ -133,8 +133,8 @@
             {
                 yield return new LinkResource
                                  {
-                                     Rel = "allow-over-book-search",
-                                     Href = "/purchasing/purchase-orders/allow-over-book"
+                                     Rel = "overbook",
+                                     Href = this.GetLocation(model)
                                  };
             }
 

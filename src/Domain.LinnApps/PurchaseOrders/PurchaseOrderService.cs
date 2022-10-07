@@ -111,7 +111,7 @@
             this.creditDebitNoteRepository = creditDebitNoteRepository;
         }
 
-        public void AllowOverbook(
+        public PurchaseOrder AllowOverbook(
             PurchaseOrder current,
             string allowOverBook,
             decimal? overbookQty,
@@ -126,6 +126,8 @@
 
             current.Overbook = allowOverBook;
             current.OverbookQty = overbookQty;
+
+            return current;
         }
 
         public PurchaseOrder CancelOrder(PurchaseOrder order, int currentUserId, IEnumerable<string> privileges)
