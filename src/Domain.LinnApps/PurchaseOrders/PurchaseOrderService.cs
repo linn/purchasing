@@ -211,6 +211,10 @@
         public ProcessResult SendPdfEmail(string emailAddress, int orderNumber, bool bcc, int currentUserId)
         {
             var order = this.GetOrder(orderNumber);
+            if (order.AuthorisedById is null)
+            {
+                throw new UnauthorisedOrderException("You cannot email an order until it has been authorised");
+            }
 
             string debitNoteHtml = null;
 
