@@ -16,6 +16,8 @@
     using Linn.Purchasing.Resources.RequestResources;
     using Linn.Purchasing.Resources.SearchResources;
 
+    using RazorEngineCore;
+
     public class PurchaseOrderFacadeService :
         FacadeFilterResourceService<PurchaseOrder, int, PurchaseOrderResource, PurchaseOrderResource,
             PurchaseOrderSearchResource>,
@@ -239,11 +241,18 @@
         {
             var order = this.repository.FindById(resource.From.OrderNumber);
 
+            var privilegesList = privileges.ToList();
             if (resource.From.Cancelled != resource.To.Cancelled)
             {
+                if (resource.To.Cancelled == "Y")
+                {
+                    order = this.domainService.CancelOrder(
+                        resource.From.OrderNumber,
+                        who,
+                        resource.To.ReasonCancelled,
+                        privilegesList);
+                }
             }
-
-            var privilegesList = privileges.ToList();
 
             var overBookChange = false;
 

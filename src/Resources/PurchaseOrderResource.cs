@@ -65,5 +65,9 @@
         public decimal OrderNetTotal { get; set; }
 
         public decimal BaseOrderNetTotal { get; set; }
+
+        public string ReasonCancelled { get; set; }
+
+        public int? CancelledBy { get; set; }
     }
 }

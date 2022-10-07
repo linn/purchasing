@@ -67,7 +67,7 @@
                            IssuePartsToSupplier = entity.IssuePartsToSupplier,
                            DeliveryAddress =
                                entity.DeliveryAddress != null
-                                   ? (LinnDeliveryAddressResource) this.deliveryAddressResourceBuilder.Build(
+                                   ? (LinnDeliveryAddressResource)this.deliveryAddressResourceBuilder.Build(
                                        entity.DeliveryAddress,
                                        claimsList)
                                    : null,

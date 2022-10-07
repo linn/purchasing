@@ -136,11 +136,12 @@
 
         public PurchaseOrder CancelOrder(int orderNumber, int cancelledBy, string reason, IEnumerable<string> privileges)
         {
-            var order = this.GetOrder(orderNumber);
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCancel, privileges))
             {
                 throw new UnauthorisedActionException("You are not authorised to cancel purchase orders");
             }
+
+            var order = this.GetOrder(orderNumber);
 
             order.Cancelled = "Y";
 
