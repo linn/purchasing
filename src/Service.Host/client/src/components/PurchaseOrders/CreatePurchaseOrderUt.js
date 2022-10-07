@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import Grid from '@mui/material/Grid';
 import { useSelector, useDispatch } from 'react-redux';
@@ -12,17 +12,18 @@ import { makeStyles } from '@mui/styles';
 import {
     Page,
     collectionSelectorHelpers,
+    Dropdown,
     Typeahead,
     InputField,
     itemSelectorHelpers,
     Loading,
-    utilities,
-    Dropdown
+    utilities
 } from '@linn-it/linn-form-components-library';
 import queryString from 'query-string';
 import LinearProgress from '@mui/material/LinearProgress';
 import suppliersActions from '../../actions/suppliersActions';
 import partsActions from '../../actions/partsActions';
+import partSuppliersActions from '../../actions/partSuppliersActions';
 import history from '../../history';
 import config from '../../config';
 import suggestedPurchaseOrderValuesActions from '../../actions/suggestedPurchaseOrderValuesActions';
@@ -46,6 +47,8 @@ function CreatePurchaseOrderUt() {
     const { search } = useLocation();
     const { supplierId, supplierName, partNumber, qty, currencyUnitPrice, dateRequired } =
         queryString.parse(search);
+
+    const [stockControlledPart, setStockControlled] = useState(null);
 
     useEffect(() => {
         reduxDispatch(purchaseOrderActions.fetchState());
@@ -161,8 +164,21 @@ function CreatePurchaseOrderUt() {
         id: c.partNumber,
         name: c.partNumber,
         partNumber: c.partNumber,
-        description: c.description
+        description: c.description,
+        stockControlled: c.stockControlled
     }));
+
+    const partSuppliersSearchResults = useSelector(reduxState =>
+        collectionSelectorHelpers.getSearchItems(reduxState.partSuppliers)
+    );
+
+    useEffect(() => {
+        if (partSuppliersSearchResults?.length) {
+            handleSupplierChange({
+                id: `${partSuppliersSearchResults.find(s => s.supplierRanking === 1).supplierId}`
+            });
+        }
+    }, [partSuppliersSearchResults]);
 
     const partsSearchLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.parts)
@@ -376,6 +392,17 @@ function CreatePurchaseOrderUt() {
                                         newPart.id,
                                         order.details[0]
                                     );
+                                    if (newPart.stockControlled === 'Y') {
+                                        setStockControlled(true);
+                                        reduxDispatch(
+                                            partSuppliersActions.searchWithOptions(
+                                                '',
+                                                `&partNumber=${newPart.partNumber}`
+                                            )
+                                        );
+                                    } else {
+                                        setStockControlled(false);
+                                    }
                                 }}
                                 items={partsSearchResults}
                                 loading={partsSearchLoading}
@@ -405,36 +432,77 @@ function CreatePurchaseOrderUt() {
                                 )}
                             </div>
                         </Grid>
-                        <Grid item xs={4}>
-                            <Typeahead
-                                label="Supplier"
-                                modal
-                                propertyName="supplierId"
-                                items={suppliersSearchResults}
-                                value={order.supplier ? order.supplier.id : null}
-                                loading={suppliersSearchLoading}
-                                fetchItems={searchSuppliers}
-                                links={false}
-                                text
-                                clearSearch={() => {}}
-                                placeholder="Search Suppliers"
-                                onSelect={handleSupplierChange}
-                                minimumSearchTermLength={3}
-                                fullWidth
-                                disabled={!allowedToCreate() || isCreditOrReturn()}
-                                required
-                            />
-                        </Grid>
-                        <Grid item xs={8}>
-                            <InputField
-                                fullWidth
-                                value={order.supplier?.name}
-                                label="Supplier Name"
-                                number
-                                propertyName="supplierName"
-                                disabled
-                            />
-                        </Grid>
+
+                        {stockControlledPart ? (
+                            <Grid item xs={4}>
+                                <Dropdown
+                                    value={order.supplier?.id}
+                                    label="Supplier"
+                                    propertyName="supplierId"
+                                    disabled={!allowedToCreate()}
+                                    items={partSuppliersSearchResults
+                                        .sort(
+                                            (a, b) =>
+                                                (a.supplierRanking ?? 100) -
+                                                (b.supplierRanking ?? 100)
+                                        )
+                                        .map(s => ({
+                                            id: s.supplierId,
+                                            displayText: `${s.supplierName}  ${
+                                                s.supplierRanking === 1 ? '(P)' : ''
+                                            }`
+                                        }))}
+                                    onChange={(propertyName, selected) => {
+                                        handleSupplierChange({ id: selected });
+                                    }}
+                                    allowNoValue={false}
+                                />
+                            </Grid>
+                        ) : (
+                            <Grid item xs={4}>
+                                <Typeahead
+                                    label="Supplier"
+                                    modal
+                                    propertyName="supplierId"
+                                    items={suppliersSearchResults}
+                                    value={order.supplier?.id}
+                                    loading={suppliersSearchLoading}
+                                    fetchItems={searchSuppliers}
+                                    links={false}
+                                    on
+                                    text
+                                    clearSearch={() => {}}
+                                    placeholder="Search Suppliers"
+                                    onSelect={newValue => {
+                                        handleSupplierChange(newValue);
+                                    }}
+                                    minimumSearchTermLength={3}
+                                    fullWidth
+                                    disabled={
+                                        !allowedToCreate() ||
+                                        isCreditOrReturn() ||
+                                        !order.details[0].partNumber
+                                    }
+                                    required
+                                />
+                            </Grid>
+                        )}
+
+                        {stockControlledPart ? (
+                            <Grid item xs={8} />
+                        ) : (
+                            <Grid item xs={8}>
+                                <InputField
+                                    fullWidth
+                                    value={order.supplier?.name}
+                                    label="Supplier Name"
+                                    number
+                                    propertyName="supplierName"
+                                    disabled
+                                />
+                            </Grid>
+                        )}
+
                         <Grid item xs={6}>
                             <InputField
                                 fullWidth
