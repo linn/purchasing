@@ -65,6 +65,8 @@
 
         private readonly IRepository<PlCreditDebitNote, int> creditDebitNoteRepository;
 
+        private readonly IQueryRepository<PlOrderReceivedViewEntry> orderReceivedView;
+
         public PurchaseOrderService(
             IAuthorisationService authService,
             IPurchaseLedgerPack purchaseLedgerPack,
@@ -86,7 +88,8 @@
             IRepository<PartSupplier, PartSupplierKey> partSupplierRepository,
             IHtmlTemplateService<PlCreditDebitNote> creditDebitNoteHtmlService,
             ILog log,
-            IRepository<PlCreditDebitNote, int> creditDebitNoteRepository)
+            IRepository<PlCreditDebitNote, int> creditDebitNoteRepository,
+            IQueryRepository<PlOrderReceivedViewEntry> orderReceivedView)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;
@@ -109,6 +112,7 @@
             this.log = log;
             this.creditDebitNoteHtmlService = creditDebitNoteHtmlService;
             this.creditDebitNoteRepository = creditDebitNoteRepository;
+            this.orderReceivedView = orderReceivedView;
         }
 
         public PurchaseOrder AllowOverbook(
@@ -130,10 +134,10 @@
             return current;
         }
 
-        public PurchaseOrder CancelOrder(int orderNumber, int cancelledBy, int reason, IEnumerable<string> privileges)
+        public PurchaseOrder CancelOrder(int orderNumber, int cancelledBy, string reason, IEnumerable<string> privileges)
         {
             var order = this.GetOrder(orderNumber);
-            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCancel, privileges))
             {
                 throw new UnauthorisedActionException("You are not authorised to cancel purchase orders");
             }
@@ -152,15 +156,20 @@
                                               DateCancelled = DateTime.Today,
                                               PeriodCancelled = currentLedgerPeriod,
                                               CancelledById = cancelledBy,
-                                              ReasonCancelled = detail.Cancelled,
-                                              ValueCancelled = detail.BaseDetailTotal
-
-                                              // todo check for valueCancelled that:
-                                              // baseDetailTotal == round(nvl(v_qty_outstanding, 0) * :new.base_our_price, 2)
+                                              ReasonCancelled = reason,
+                                              ValueCancelled = Math.Round(
+                                                  detail.BaseOurUnitPrice.GetValueOrDefault() *
+                                                  this.orderReceivedView.FindBy(
+                                                      x => x.OrderNumber == orderNumber && x.OrderLine == detail.Line)
+                                                      .QtyOutstanding, 2)
                                           };
                 detail.Cancelled = "Y";
                 detail.CancelledDetails.Add(cancelledDetail);
             }
+
+            var miniOrder = this.miniOrderRepository.FindById(orderNumber);
+            miniOrder.CancelledBy = cancelledBy;
+            miniOrder.ReasonCancelled = reason;
 
             return order;
         }

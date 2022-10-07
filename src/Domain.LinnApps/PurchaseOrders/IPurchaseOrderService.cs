@@ -38,7 +38,7 @@
         ProcessResult EmailDept(int orderNumber, int userId);
 
         PurchaseOrder CancelOrder(
-            int orderNumber, int cancelledBy, int reason, IEnumerable<string> privileges);
+            int orderNumber, int cancelledBy, string reason, IEnumerable<string> privileges);
 
         PurchaseOrder UnCancelOrder(int orderNumber, IEnumerable<string> privileges);
     }
