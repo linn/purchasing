@@ -5,7 +5,6 @@
     using System.Net.Http.Json;
 
     using FluentAssertions;
-    using FluentAssertions.Extensions;
 
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
