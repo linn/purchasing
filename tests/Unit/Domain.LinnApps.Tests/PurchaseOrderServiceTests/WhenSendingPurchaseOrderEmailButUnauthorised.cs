@@ -40,10 +40,7 @@
                 .Returns(new PurchaseOrder 
                              { 
                                  OrderNumber = this.orderNumber, 
-                                 DocumentType = new DocumentType 
-                                                    {
-                                                        Name = "PO"
-                                                    }
+                                 DocumentType = new DocumentType { Name = "PO" }
                              });
             this.action = () => this.Sut.SendPdfEmail(
                 "seller@wesellthings.com",
@@ -53,7 +50,7 @@
         }
 
         [Test]
-        public void ShouldSetSentByMethod()
+        public void ShouldThrowException()
         {
             this.action.Should().Throw<UnauthorisedOrderException>();
         }
