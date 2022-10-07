@@ -35,5 +35,7 @@
         public const string SendEdi = "purchasing.edi.send";
 
         public const string PurchaseOrderAuthorise = "purchase-order.authorise";
+
+        public const string ChangeBomType = "part.change-bom-type";
     }
 }

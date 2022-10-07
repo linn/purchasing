@@ -103,7 +103,7 @@
             HttpResponse res,
             int partId,
             int supplierId,
-            IPartService partFacadeService,
+            IPartFacadeService partFacadeService,
             IFacadeResourceFilterService<PartSupplier, PartSupplierKey, PartSupplierResource, PartSupplierResource, PartSupplierSearchResource> partSupplierFacadeService)
         {
             var partNumber = partFacadeService.GetPartNumberFromId(partId);
@@ -237,7 +237,7 @@
             decimal newPrice,
             string ledger,
             string round,
-            IPartService partFacadeService)
+            IPartFacadeService partFacadeService)
         {
             var result = partFacadeService.GetPrices(
                 partNumber,

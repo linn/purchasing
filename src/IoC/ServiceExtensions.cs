@@ -89,7 +89,8 @@
                 .AddTransient<IBuilder<ChangeRequest>, ChangeRequestResourceBuilder>()
                 .AddTransient<IBuilder<BomChange>, BomChangeResourceBuilder>()
                 .AddTransient<IBuilder<Bom>, BomResourceBuilder>()
-                .AddTransient<IBuilder<PcasChange>, PcasChangeResourceBuilder>();
+                .AddTransient<IBuilder<PcasChange>, PcasChangeResourceBuilder>()
+                .AddTransient<IBuilder<BomTypeChange>, BomTypeChangeResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -100,7 +101,7 @@
                 .AddTransient<IFacadeResourceService<PreferredSupplierChange, PreferredSupplierChangeKey, PreferredSupplierChangeResource, PreferredSupplierChangeKey>, PreferredSupplierChangeService>()
                 .AddTransient<IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource>, SupplierFacadeService>()
                 .AddTransient<ISupplierHoldService, SupplierHoldService>()
-                .AddTransient<IPartService, PartService>()
+                .AddTransient<IPartFacadeService, PartFacadeService>()
                 .AddTransient<IFacadeResourceService<OrderMethod, string, OrderMethodResource, OrderMethodResource>, OrderMethodService>()
                 .AddTransient<IFacadeResourceService<Currency, string, CurrencyResource, CurrencyResource>, CurrencyFacadeService>()
                 .AddTransient<IFacadeResourceService<LinnDeliveryAddress, int, LinnDeliveryAddressResource, LinnDeliveryAddressResource>, LinnDeliveryAddressService>()
@@ -226,6 +227,8 @@
                 .AddTransient<IForecastOrdersReportService, ForecastOrdersReportService>()
                 .AddTransient<IDeliveryPerformanceReportService, DeliveryPerformanceReportService>()
                 .AddTransient<IForecastWeekChangesReportService, ForecastWeekChangesReportService>()
+                .AddTransient<IPartService, PartService>()
+                .AddTransient<IPartHistoryService, PartHistoryService>()
 
                 // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()

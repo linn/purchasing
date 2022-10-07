@@ -1,11 +1,13 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Parts
 {
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
-    public class Part
+    public class Part 
     {
         public string Description { get; set; }
 
@@ -53,6 +55,38 @@
             }
 
             return false;
+        }
+
+        public bool ValidBomTypeChange(string newBomType)
+        {
+            // check valid new bom type
+            var validBomTypes = new string[] {"C", "A", "P"};
+            if (!validBomTypes.Contains(newBomType))
+            {
+                return false;
+            }
+
+            if (this.BomType == newBomType)
+            {
+                return false;  // not a change
+            }
+
+            return true;
+        }
+
+        public Part ClonePricingFields()
+        {
+            return new Part
+                       {
+                           PartNumber = this.PartNumber,
+                           BomType = this.BomType,
+                           PreferredSupplier = this.PreferredSupplier,
+                           MaterialPrice = this.MaterialPrice,
+                           LabourPrice = this.LabourPrice,
+                           Currency = this.Currency,
+                           CurrencyUnitPrice = this.CurrencyUnitPrice,
+                           BaseUnitPrice = this.BaseUnitPrice
+                       };
         }
     }
 }
