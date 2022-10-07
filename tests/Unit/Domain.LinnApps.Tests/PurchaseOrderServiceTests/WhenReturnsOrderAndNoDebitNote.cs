@@ -46,6 +46,7 @@
             this.order = new PurchaseOrder
             {
                 OrderNumber = this.orderNumber,
+                AuthorisedById = 100,
                 DocumentType = new DocumentType { Name = "RO" },
                 Supplier = new Supplier
                 {

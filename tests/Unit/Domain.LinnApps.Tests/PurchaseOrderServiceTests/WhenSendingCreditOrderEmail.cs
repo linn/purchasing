@@ -42,15 +42,16 @@
                                     PhoneListEntry = new PhoneListEntry {EmailAddress = "test@email.com"}
                                 };
             this.miniOrder = new MiniOrder { OrderNumber = this.orderNumber };
-            this.order = new PurchaseOrder
-            {
-                OrderNumber = this.orderNumber,
-                DocumentType = new DocumentType { Name = "CO" },
-                Supplier = new Supplier
-                               {
-                                   AccountController = this.employee
-                               }
-            };
+            this.order = new PurchaseOrder 
+                             {
+                                 OrderNumber = this.orderNumber,
+                                 DocumentType = new DocumentType { Name = "CO" },
+                                 AuthorisedById = 100,
+                                 Supplier = new Supplier 
+                                                {
+                                                    AccountController = this.employee
+                                                }
+                             };
             this.EmployeeRepository.FindById(this.employeeNumber).Returns(
                 this.employee);
 

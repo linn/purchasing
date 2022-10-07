@@ -41,12 +41,10 @@
             this.MiniOrderRepository.FindById(this.orderNumber).Returns(this.miniOrder);
             this.PurchaseOrderRepository.FindById(this.orderNumber)
                 .Returns(new PurchaseOrder 
-                             { 
+                             {
                                  OrderNumber = this.orderNumber, 
-                                 DocumentType = new DocumentType 
-                                                    {
-                                                        Name = "PO"
-                                                    }
+                                 AuthorisedById = 100,
+                                 DocumentType = new DocumentType { Name = "PO" }
                              });
             this.result = this.Sut.SendPdfEmail("seller@wesellthings.com", this.orderNumber, true, this.employeeNumber);
         }
