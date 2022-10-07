@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState } from 'react';
 import { InputField, Page } from '@linn-it/linn-form-components-library';
 import { makeStyles } from '@mui/styles';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import purchaseOrdersActions from '../../actions/purchaseOrdersActions';
 import history from '../../history';
 import config from '../../config';
 
@@ -16,15 +14,7 @@ function OverbooksSearch() {
             marginTop: theme.spacing(4)
         }
     }));
-    const classes = useStyles();
-    const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(purchaseOrdersActions.fetch());
-    }, [dispatch]);
-    useEffect(() => {
-        dispatch(purchaseOrdersActions.fetchState());
-    }, [dispatch]);
-
+    const classes = useStyles();  
     const [orderNumber, setOrderNumber] = useState('');
 
     const search = () =>

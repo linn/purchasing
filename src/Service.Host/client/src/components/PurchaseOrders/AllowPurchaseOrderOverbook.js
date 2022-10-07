@@ -19,6 +19,7 @@ import Typography from '@mui/material/Typography';
 import purchaseOrderActions from '../../actions/purchaseOrderActions';
 import history from '../../history';
 import config from '../../config';
+import { purchaseOrder } from '../../itemTypes';
 
 function AllowPurchaseOrderOverbook() {
     const reduxDispatch = useDispatch();
@@ -157,9 +158,7 @@ function AllowPurchaseOrderOverbook() {
                             backClick={() =>
                                 history.push('/purchasing/purchase-orders/allow-over-book/')
                             }
-                            cancelClick={() =>
-                                history.push('/purchasing/purchase-orders/allow-over-book/')
-                            }
+                            cancelClick={() => setState(purchaseOrder)}
                         />
                     </Grid>
                 </Grid>
