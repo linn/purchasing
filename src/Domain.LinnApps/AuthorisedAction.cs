@@ -18,6 +18,8 @@
 
         public const string PurchaseOrderUpdate = "purchase-order.update";
 
+        public const string PurchaseOrderCancel = "purchase-order.update";
+
         public const string PurchaseOrderReqFinanceCheck = "purchase-order-req.finance-check";
 
         public const string PurchaseOrderCreate = "purchase-order.create";

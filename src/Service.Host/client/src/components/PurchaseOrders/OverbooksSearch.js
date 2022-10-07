@@ -14,7 +14,7 @@ function OverbooksSearch() {
             marginTop: theme.spacing(4)
         }
     }));
-    const classes = useStyles();  
+    const classes = useStyles();
     const [orderNumber, setOrderNumber] = useState('');
 
     const search = () =>

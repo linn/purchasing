@@ -130,8 +130,9 @@
             return current;
         }
 
-        public PurchaseOrder CancelOrder(PurchaseOrder order, int currentUserId, IEnumerable<string> privileges)
+        public PurchaseOrder CancelOrder(int orderNumber, int cancelledBy, int reason, IEnumerable<string> privileges)
         {
+            var order = this.GetOrder(orderNumber);
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
             {
                 throw new UnauthorisedActionException("You are not authorised to cancel purchase orders");
@@ -150,7 +151,7 @@
                                               LineNumber = detail.Line,
                                               DateCancelled = DateTime.Today,
                                               PeriodCancelled = currentLedgerPeriod,
-                                              CancelledById = currentUserId,
+                                              CancelledById = cancelledBy,
                                               ReasonCancelled = detail.Cancelled,
                                               ValueCancelled = detail.BaseDetailTotal
 
@@ -645,6 +646,11 @@
                 );
 
             return new ProcessResult { Success = true, Message = "Email Request Sent" };
+        }
+
+        public PurchaseOrder UnCancelOrder(int orderNumber, IEnumerable<string> privileges)
+        {
+            throw new NotImplementedException();
         }
 
         private PurchaseOrder GetOrder(int orderNumber)

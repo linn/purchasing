@@ -241,7 +241,6 @@
 
             if (resource.From.Cancelled != resource.To.Cancelled)
             {
-
             }
 
             var privilegesList = privileges.ToList();
