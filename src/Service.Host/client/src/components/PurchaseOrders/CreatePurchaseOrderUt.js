@@ -174,7 +174,9 @@ function CreatePurchaseOrderUt() {
 
     useEffect(() => {
         if (partSuppliersSearchResults?.length) {
-            handleSupplierChange(partSuppliersSearchResults[0]);
+            handleSupplierChange({
+                id: `${partSuppliersSearchResults.find(s => s.supplierRanking === 1).supplierId}`
+            });
         }
     }, [partSuppliersSearchResults]);
 
@@ -451,7 +453,7 @@ function CreatePurchaseOrderUt() {
                                             }`
                                         }))}
                                     onChange={(propertyName, selected) => {
-                                        handleSupplierChange({ id: selected, name: null });
+                                        handleSupplierChange({ id: selected });
                                     }}
                                     allowNoValue={false}
                                 />
