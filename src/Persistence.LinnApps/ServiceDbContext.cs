@@ -1868,7 +1868,8 @@
 
         private void BuildBomDetails(ModelBuilder builder)
         {
-            var entity = builder.Entity<BomDetail>().ToTable("BOM_DETAIL_VIEW").HasNoKey();
+            var entity = builder.Entity<BomDetail>().ToTable("BOM_DETAIL_VIEW");
+            entity.HasKey(a => a.DetailId);
             entity.Property(a => a.DetailId).HasColumnName("DETAIL_ID");
             entity.Property(a => a.BomName).HasColumnName("BOM_NAME").HasColumnType("VARCHAR2").HasMaxLength(14);
             entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2").HasMaxLength(14);

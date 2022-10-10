@@ -11,6 +11,7 @@ import render from '../../../test-utils';
 import order from '../fakeData/order';
 import PurchaseOrderUtility from '../../PurchaseOrders/PurchaseOrderUtility';
 import sendPurchaseOrderDeptEmailActions from '../../../actions/sendPurchaseOrderDeptEmailActions';
+import purchaseOrderActions from '../../../actions/purchaseOrderActions';
 
 jest.mock('react-redux', () => ({
     ...jest.requireActual('react-redux'),
@@ -18,6 +19,7 @@ jest.mock('react-redux', () => ({
 }));
 
 const sendDeptEmailSpy = jest.spyOn(sendPurchaseOrderDeptEmailActions, 'postByHref');
+const patchPurchaseOrderSpy = jest.spyOn(purchaseOrderActions, 'patch');
 
 const reduxState = {
     purchaseOrder: { item: order },
@@ -37,6 +39,16 @@ const stateWithDeptLink = {
                     rel: 'email-dept'
                 }
             ]
+        }
+    }
+};
+
+const stateWithCancelledOrder = {
+    ...reduxState,
+    purchaseOrder: {
+        item: {
+            ...order,
+            cancelled: 'Y'
         }
     }
 };
@@ -76,6 +88,82 @@ describe('When order...', () => {
 
     test('Should render order', () => {
         expect(screen.getByDisplayValue(100157)).toBeInTheDocument();
+    });
+});
+
+describe('When cancelling order...', () => {
+    beforeEach(() => {
+        cleanup();
+        jest.clearAllMocks();
+        useSelector.mockImplementation(callback => callback(reduxState));
+        render(<PurchaseOrderUtility />);
+    });
+
+    test('Should render cancel order button', () => {
+        expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+    });
+
+    test('Should Open Cancel Dialog when button clicked', () => {
+        const cancelButton = screen.getByRole('button', { name: 'Cancel' });
+        fireEvent.click(cancelButton);
+        expect(screen.getByText('Cancel this order?')).toBeInTheDocument();
+    });
+
+    test('Should dispatch patch action with cancel body when reason entered and confirm clicked', () => {
+        const cancelButton = screen.getByRole('button', { name: 'Cancel' });
+        fireEvent.click(cancelButton);
+
+        const reasonInput = screen.getByLabelText('Enter a reason');
+        fireEvent.change(reasonInput, { target: { value: 'SOME REASON' } });
+
+        const confirmButton = screen.getByRole('button', { name: 'confirm' });
+        fireEvent.click(confirmButton);
+
+        expect(patchPurchaseOrderSpy).toHaveBeenCalledWith(
+            100157,
+            expect.objectContaining({
+                to: expect.objectContaining({
+                    cancelled: 'Y',
+                    reasonCancelled: 'SOME REASON'
+                })
+            })
+        );
+    });
+});
+
+describe('When un-cancelling order...', () => {
+    beforeEach(() => {
+        cleanup();
+        jest.clearAllMocks();
+        useSelector.mockImplementation(callback => callback(stateWithCancelledOrder));
+        render(<PurchaseOrderUtility />);
+    });
+
+    test('Should render uncancel order button', () => {
+        expect(screen.getByRole('button', { name: 'UnCancel' })).toBeInTheDocument();
+    });
+
+    test('Should Open Cancel Dialog when button clicked', () => {
+        const uncancelButton = screen.getByRole('button', { name: 'UnCancel' });
+        fireEvent.click(uncancelButton);
+        expect(screen.getByText('Un-cancel this order?')).toBeInTheDocument();
+    });
+
+    test('Should dispatch patch action with uncancel body when confirm clicked', () => {
+        const uncancelButton = screen.getByRole('button', { name: 'UnCancel' });
+        fireEvent.click(uncancelButton);
+
+        const confirmButton = screen.getByRole('button', { name: 'confirm' });
+        fireEvent.click(confirmButton);
+
+        expect(patchPurchaseOrderSpy).toHaveBeenCalledWith(
+            100157,
+            expect.objectContaining({
+                to: expect.objectContaining({
+                    cancelled: 'N'
+                })
+            })
+        );
     });
 });
 

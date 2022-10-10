@@ -58,6 +58,7 @@ import PurchaseOrderDeliveriesUtility from '../PurchaseOrderDeliveriesUtility';
 import sendOrderAuthEmailActions from '../../actions/sendPurchaseOrderAuthEmailActions';
 import purchaseOrderDeliveriesActions from '../../actions/purchaseOrderDeliveriesActions';
 import sendPurchaseOrderDeptEmailActions from '../../actions/sendPurchaseOrderDeptEmailActions';
+import CancelUnCancelDialog from './CancelUnCancelDialog';
 
 function PurchaseOrderUtility({ creating }) {
     const reduxDispatch = useDispatch();
@@ -431,6 +432,8 @@ function PurchaseOrderUtility({ creating }) {
     const getDateString = isoString =>
         isoString ? new Date(isoString).toLocaleDateString('en-GB') : null;
 
+    const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+
     return (
         <>
             <div className="hide-when-printing">
@@ -494,6 +497,12 @@ function PurchaseOrderUtility({ creating }) {
                                         />
                                     </Grid>
                                 )}
+                                <CancelUnCancelDialog
+                                    open={cancelDialogOpen}
+                                    setOpen={setCancelDialogOpen}
+                                    mode={item.cancelled === 'Y' ? 'uncancel' : 'cancel'}
+                                    order={item.orderNumber}
+                                />
                                 <Dialog open={authEmailDialogOpen} fullWidth maxWidth="md">
                                     <div className={classes.centerTextInDialog}>
                                         <IconButton
@@ -614,7 +623,34 @@ function PurchaseOrderUtility({ creating }) {
                                     </div>
                                 </Dialog>
                                 <Grid item xs={10}>
-                                    <Typography variant="h6">Purchase Order Utility </Typography>
+                                    {' '}
+                                    <Typography variant="h6" display="inline">
+                                        Purchase Order {!creating && item.orderNumber}
+                                    </Typography>
+                                    {item.cancelled === 'Y' && (
+                                        <>
+                                            {' '}
+                                            <Typography
+                                                variant="h6"
+                                                display="inline"
+                                                color="secondary"
+                                            >
+                                                (CANCELLED)
+                                            </Typography>
+                                        </>
+                                    )}
+                                    {item.cancelled === 'Y' && (
+                                        <>
+                                            {' '}
+                                            <Typography
+                                                variant="h6"
+                                                display="inline"
+                                                color="secondary"
+                                            >
+                                                (CANCELLED)
+                                            </Typography>
+                                        </>
+                                    )}
                                 </Grid>
                                 <Grid item xs={2}>
                                     <div className={classes.centeredIcon}>
@@ -636,6 +672,24 @@ function PurchaseOrderUtility({ creating }) {
                                             </Tooltip>
                                         )}
                                     </div>
+                                </Grid>
+                                <Grid item xs={9} />
+                                <Grid item xs={3}>
+                                    {!creating && (
+                                        <Button
+                                            className={classes.buttonMarginTop}
+                                            aria-label={
+                                                item.cancelled === 'N' ? 'Cancel' : 'UnCancel'
+                                            }
+                                            color={item.cancelled === 'N' ? 'secondary' : 'primary'}
+                                            variant="contained"
+                                            onClick={() => setCancelDialogOpen(true)}
+                                        >
+                                            {item.cancelled === 'N'
+                                                ? 'Cancel Order'
+                                                : 'UnCancel Order'}
+                                        </Button>
+                                    )}
                                 </Grid>
                                 <Grid item xs={2}>
                                     <InputField

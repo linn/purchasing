@@ -237,58 +237,70 @@
             int who,
             IEnumerable<string> privileges)
         {
-            var order = this.repository.FindById(resource.From.OrderNumber);
-
-            var privilegesList = privileges.ToList();
-            if (resource.From.Cancelled != resource.To.Cancelled)
+            try
             {
-                if (resource.To.Cancelled == "Y")
+                var order = this.repository.FindById(resource.From.OrderNumber);
+
+                var privilegesList = privileges.ToList();
+                if (resource.From.Cancelled != resource.To.Cancelled)
                 {
-                    order = this.domainService.CancelOrder(
-                        resource.From.OrderNumber,
-                        who,
-                        resource.To.ReasonCancelled,
+                    if (resource.To.Cancelled == "Y")
+                    {
+                        order = this.domainService.CancelOrder(
+                            resource.From.OrderNumber,
+                            who,
+                            resource.To.ReasonCancelled,
+                            privilegesList);
+                    }
+
+                    if (resource.To.Cancelled == "N")
+                    {
+                        order = this.domainService.UnCancelOrder(resource.From.OrderNumber, privilegesList);
+                    }
+                }
+
+                var overBookChange = false;
+
+                if (resource.From.Overbook != resource.To.Overbook)
+                {
+                    overBookChange = true;
+                    order = this.domainService.AllowOverbook(
+                        order,
+                        resource.To.Overbook,
+                        order.OverbookQty,
                         privilegesList);
                 }
 
-                if (resource.To.Cancelled == "N")
+                if (resource.From.OverbookQty != resource.To.OverbookQty)
                 {
-                    order = this.domainService.UnCancelOrder(
-                        resource.From.OrderNumber, privilegesList);
+                    overBookChange = true;
+                    order = this.domainService.AllowOverbook(
+                        order,
+                        order.Overbook,
+                        resource.To.OverbookQty,
+                        privilegesList);
                 }
+
+                if (overBookChange)
+                {
+                    var log = new OverbookAllowedByLog
+                                  {
+                                      OrderNumber = order.OrderNumber,
+                                      OverbookQty = order.OverbookQty,
+                                      OverbookDate = DateTime.Now,
+                                      OverbookGrantedBy = who
+                                  };
+                    this.overbookAllowedByLogRepository.Add(log);
+                }
+
+                this.transactionManager.Commit();
+                return new SuccessResult<PurchaseOrderResource>(
+                    (PurchaseOrderResource)this.resourceBuilder.Build(order, privilegesList));
             }
-
-            var overBookChange = false;
-
-            if (resource.From.Overbook != resource.To.Overbook)
+            catch (DomainException ex)
             {
-                overBookChange = true;
-                order = this.domainService.AllowOverbook(
-                    order, resource.To.Overbook, order.OverbookQty, privilegesList);
+                return new BadRequestResult<PurchaseOrderResource>(ex.Message);
             }
-
-            if (resource.From.OverbookQty != resource.To.OverbookQty)
-            {
-                overBookChange = true;
-                order = this.domainService.AllowOverbook(
-                    order, order.Overbook, resource.To.OverbookQty, privilegesList);
-            }
-
-            if (overBookChange)
-            {
-                var log = new OverbookAllowedByLog
-                              {
-                                  OrderNumber = order.OrderNumber,
-                                  OverbookQty = order.OverbookQty,
-                                  OverbookDate = DateTime.Now,
-                                  OverbookGrantedBy = who
-                              };
-                this.overbookAllowedByLogRepository.Add(log);
-            }
-
-            this.transactionManager.Commit();
-            return new SuccessResult<PurchaseOrderResource>(
-                (PurchaseOrderResource)this.resourceBuilder.Build(order, privilegesList));
         }
 
         public string GetOrderAsHtml(int orderNumber)
