@@ -201,7 +201,13 @@
                 .AddTransient<IRepository<Bom, int>, BomRepository>()
                 .AddTransient<IRepository<CreditDebitNoteType, string>, EntityFrameworkRepository<CreditDebitNoteType, string>>(
                     r => new EntityFrameworkRepository<CreditDebitNoteType, string>(r.GetService<ServiceDbContext>()
-                        ?.CreditDebitNoteTypes));
+                        ?.CreditDebitNoteTypes))
+                .AddTransient<IQueryRepository<PlOrderReceivedViewEntry>, EntityFrameworkQueryRepository<PlOrderReceivedViewEntry>>(
+                    r => new EntityFrameworkQueryRepository<PlOrderReceivedViewEntry>(r.GetService<ServiceDbContext>()
+                        ?.PlOrderReceivedView))
+                .AddTransient<IRepository<CancelledOrderDetail, int>, EntityFrameworkRepository<CancelledOrderDetail, int>>(
+                    r => new EntityFrameworkRepository<CancelledOrderDetail, int>(r.GetService<ServiceDbContext>()
+                        ?.CancelledPurchaseOrderDetails));
         }
     }
 }

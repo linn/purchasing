@@ -186,6 +186,8 @@
 
         public DbSet<CreditDebitNoteType> CreditDebitNoteTypes { get; set; }
 
+        public DbSet<PlOrderReceivedViewEntry> PlOrderReceivedView { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -287,6 +289,7 @@
             this.BuildBoms(builder);
             this.BuildPcasChanges(builder);
             this.BuildPlCreditDebitNoteDetails(builder);
+            this.BuildPlOrderReceivedView(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1300,7 +1303,7 @@
             entity.HasOne(e => e.FilCancelledBy).WithMany().HasForeignKey(x => x.FilCancelledById);
             entity.Property(d => d.ReasonCancelled).HasColumnName("REASON_CANCELLED").HasMaxLength(200);
             entity.Property(d => d.PeriodCancelled).HasColumnName("PERIOD_CANCELLED");
-            entity.Property(d => d.PeriodFilCancelled).HasColumnName("PERIOD_CANCELLED");
+            entity.Property(d => d.PeriodFilCancelled).HasColumnName("PERIOD_FIL_CANCELLED");
             entity.Property(e => e.ValueCancelled).HasColumnName("VALUE_CANCELLED").HasMaxLength(16);
             entity.Property(e => e.BaseValueFilCancelled).HasColumnName("BASE_VALUE_FIL_CANCELLED").HasMaxLength(16);
             entity.Property(e => e.ValueFilCancelled).HasColumnName("VALUE_FIL_CANCELLED").HasMaxLength(16);
@@ -1865,7 +1868,7 @@
 
         private void BuildBomDetails(ModelBuilder builder)
         {
-            var entity = builder.Entity<BomDetail>().ToTable("BOM_DETAIL_VIEW").HasNoKey();
+            var entity = builder.Entity<BomDetail>().ToTable("BOM_DETAIL_VIEW");
             entity.HasKey(a => a.DetailId);
             entity.Property(a => a.DetailId).HasColumnName("DETAIL_ID");
             entity.Property(a => a.BomName).HasColumnName("BOM_NAME").HasColumnType("VARCHAR2").HasMaxLength(14);
@@ -1879,6 +1882,14 @@
             entity.Property(a => a.DeleteChangeId).HasColumnName("DELETE_CHANGE_ID");
             entity.Property(a => a.DeleteReplaceSeq).HasColumnName("DELETE_REPLACE_SEQ");
             entity.HasOne(a => a.Part).WithMany().HasForeignKey(a => a.PartNumber);
+        }
+
+        private void BuildPlOrderReceivedView(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PlOrderReceivedViewEntry>().ToTable("PLOD_RECEIVED_VIEW").HasNoKey();
+            entity.Property(a => a.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(a => a.OrderLine).HasColumnName("ORDER_LINE");
+            entity.Property(a => a.QtyOutstanding).HasColumnName("QTY_OUTSTANDING");
         }
 
         private void BuildPcasChanges(ModelBuilder builder)

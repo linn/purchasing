@@ -65,6 +65,10 @@
 
         private readonly IRepository<PlCreditDebitNote, int> creditDebitNoteRepository;
 
+        private readonly IQueryRepository<PlOrderReceivedViewEntry> orderReceivedView;
+
+        private readonly IRepository<CancelledOrderDetail, int> cancelledOrderDetailRepository;
+
         public PurchaseOrderService(
             IAuthorisationService authService,
             IPurchaseLedgerPack purchaseLedgerPack,
@@ -86,7 +90,9 @@
             IRepository<PartSupplier, PartSupplierKey> partSupplierRepository,
             IHtmlTemplateService<PlCreditDebitNote> creditDebitNoteHtmlService,
             ILog log,
-            IRepository<PlCreditDebitNote, int> creditDebitNoteRepository)
+            IRepository<PlCreditDebitNote, int> creditDebitNoteRepository,
+            IQueryRepository<PlOrderReceivedViewEntry> orderReceivedView,
+            IRepository<CancelledOrderDetail, int> cancelledOrderDetailRepository)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;
@@ -109,9 +115,11 @@
             this.log = log;
             this.creditDebitNoteHtmlService = creditDebitNoteHtmlService;
             this.creditDebitNoteRepository = creditDebitNoteRepository;
+            this.orderReceivedView = orderReceivedView;
+            this.cancelledOrderDetailRepository = cancelledOrderDetailRepository;
         }
 
-        public void AllowOverbook(
+        public PurchaseOrder AllowOverbook(
             PurchaseOrder current,
             string allowOverBook,
             decimal? overbookQty,
@@ -126,14 +134,18 @@
 
             current.Overbook = allowOverBook;
             current.OverbookQty = overbookQty;
+
+            return current;
         }
 
-        public PurchaseOrder CancelOrder(PurchaseOrder order, int currentUserId, IEnumerable<string> privileges)
+        public PurchaseOrder CancelOrder(int orderNumber, int cancelledBy, string reason, IEnumerable<string> privileges)
         {
-            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCancel, privileges))
             {
                 throw new UnauthorisedActionException("You are not authorised to cancel purchase orders");
             }
+
+            var order = this.GetOrder(orderNumber);
 
             order.Cancelled = "Y";
 
@@ -141,23 +153,29 @@
 
             foreach (var detail in order.Details)
             {
+                var id = this.databaseService.GetIdSequence("PLOC_SEQ");
                 var cancelledDetail = new CancelledOrderDetail
                                           {
-                                              Id = this.databaseService.GetNextVal("PLOC_SEQ"),
+                                              Id = id,
                                               OrderNumber = detail.OrderNumber,
                                               LineNumber = detail.Line,
                                               DateCancelled = DateTime.Today,
                                               PeriodCancelled = currentLedgerPeriod,
-                                              CancelledById = currentUserId,
-                                              ReasonCancelled = detail.Cancelled,
-                                              ValueCancelled = detail.BaseDetailTotal
-
-                                              // todo check for valueCancelled that:
-                                              // baseDetailTotal == round(nvl(v_qty_outstanding, 0) * :new.base_our_price, 2)
+                                              CancelledById = cancelledBy,
+                                              ReasonCancelled = reason,
+                                              ValueCancelled = Math.Round(
+                                                  detail.BaseOurUnitPrice.GetValueOrDefault() *
+                                                  this.orderReceivedView.FindBy(
+                                                      x => x.OrderNumber == orderNumber && x.OrderLine == detail.Line)
+                                                      .QtyOutstanding, 2)
                                           };
                 detail.Cancelled = "Y";
-                detail.CancelledDetails.Add(cancelledDetail);
+                this.cancelledOrderDetailRepository.Add(cancelledDetail);
             }
+
+            var miniOrder = this.miniOrderRepository.FindById(orderNumber);
+            miniOrder.CancelledBy = cancelledBy;
+            miniOrder.ReasonCancelled = reason;
 
             return order;
         }
@@ -647,6 +665,32 @@
                 );
 
             return new ProcessResult { Success = true, Message = "Email Request Sent" };
+        }
+
+        public PurchaseOrder UnCancelOrder(int orderNumber, IEnumerable<string> privileges)
+        {
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCancel, privileges))
+            {
+                throw new UnauthorisedActionException("You are not authorised to un-cancel purchase orders");
+            }
+            var order = this.GetOrder(orderNumber);
+            order.Cancelled = "N";
+            foreach (var detail in order.Details)
+            {
+                detail.Cancelled = "N";
+                foreach (var c in detail.CancelledDetails)
+                {
+                    if (!c.DateUncancelled.HasValue)
+                    {
+                        c.ValueCancelled = 0;
+                        c.DateUncancelled = DateTime.Today;
+                    }
+                }
+            }
+            var miniOrder = this.miniOrderRepository.FindById(orderNumber);
+            miniOrder.CancelledBy = null;
+            miniOrder.ReasonCancelled = null;
+            return order;
         }
 
         private PurchaseOrder GetOrder(int orderNumber)

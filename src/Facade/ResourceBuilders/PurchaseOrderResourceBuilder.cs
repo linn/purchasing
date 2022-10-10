@@ -41,6 +41,8 @@
                 return new PurchaseOrderResource { Links = this.BuildLinks(null, claimsList).ToArray() };
             }
 
+            var cancelledDetail = entity.Details?.FirstOrDefault()?.CancelledDetails?.FirstOrDefault();
+
             return new PurchaseOrderResource
                        {
                            OrderNumber = entity.OrderNumber,
@@ -67,7 +69,7 @@
                            IssuePartsToSupplier = entity.IssuePartsToSupplier,
                            DeliveryAddress =
                                entity.DeliveryAddress != null
-                                   ? (LinnDeliveryAddressResource) this.deliveryAddressResourceBuilder.Build(
+                                   ? (LinnDeliveryAddressResource)this.deliveryAddressResourceBuilder.Build(
                                        entity.DeliveryAddress,
                                        claimsList)
                                    : null,
@@ -111,7 +113,12 @@
                                    ?.PhoneNumber,
                            BaseOrderNetTotal = entity.BaseOrderNetTotal,
                            OrderNetTotal = entity.OrderNetTotal,
-                           Links = this.BuildLinks(entity, claimsList).ToArray()
+                           Links = this.BuildLinks(entity, claimsList).ToArray(),
+                           CancelledByName = cancelledDetail?.CancelledBy?.FullName,
+                           DateCancelled = cancelledDetail != null && cancelledDetail.DateCancelled.HasValue 
+                                                ? cancelledDetail.DateCancelled.Value.ToString("dd/MM/yyyy") 
+                                                : string.Empty,
+                           ReasonCancelled = cancelledDetail?.ReasonCancelled
                        };
         }
 
@@ -128,15 +135,6 @@
         private IEnumerable<LinkResource> BuildLinks(PurchaseOrder model, IEnumerable<string> claims)
         {
             var privileges = claims as string[] ?? claims.ToArray();
-
-            if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
-            {
-                yield return new LinkResource
-                                 {
-                                     Rel = "allow-over-book-search",
-                                     Href = "/purchasing/purchase-orders/allow-over-book"
-                                 };
-            }
 
             if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, privileges))
             {
@@ -164,10 +162,14 @@
                         yield return new LinkResource { Rel = "edit", Href = this.GetLocation(model) };
                     }
 
-                    yield return new LinkResource
-                                     {
-                                         Rel = "allow-over-book", Href = $"{this.GetLocation(model)}/allow-over-book"
-                                     };
+                    if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
+                    {
+                        yield return new LinkResource
+                                         {
+                                             Rel = "overbook",
+                                             Href = this.GetLocation(model)
+                                         };
+                    }
                 }
 
                 if (

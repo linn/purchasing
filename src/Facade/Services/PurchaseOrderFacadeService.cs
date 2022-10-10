@@ -232,6 +232,77 @@
             }
         }
 
+        public IResult<PurchaseOrderResource> PatchOrder(
+            PatchRequestResource<PurchaseOrderResource> resource,
+            int who,
+            IEnumerable<string> privileges)
+        {
+            try
+            {
+                var order = this.repository.FindById(resource.From.OrderNumber);
+
+                var privilegesList = privileges.ToList();
+                if (resource.From.Cancelled != resource.To.Cancelled)
+                {
+                    if (resource.To.Cancelled == "Y")
+                    {
+                        order = this.domainService.CancelOrder(
+                            resource.From.OrderNumber,
+                            who,
+                            resource.To.ReasonCancelled,
+                            privilegesList);
+                    }
+
+                    if (resource.To.Cancelled == "N")
+                    {
+                        order = this.domainService.UnCancelOrder(resource.From.OrderNumber, privilegesList);
+                    }
+                }
+
+                var overBookChange = false;
+
+                if (resource.From.Overbook != resource.To.Overbook)
+                {
+                    overBookChange = true;
+                    order = this.domainService.AllowOverbook(
+                        order,
+                        resource.To.Overbook,
+                        order.OverbookQty,
+                        privilegesList);
+                }
+
+                if (resource.From.OverbookQty != resource.To.OverbookQty)
+                {
+                    overBookChange = true;
+                    order = this.domainService.AllowOverbook(
+                        order,
+                        order.Overbook,
+                        resource.To.OverbookQty,
+                        privilegesList);
+                }
+
+                if (overBookChange)
+                {
+                    var log = new OverbookAllowedByLog
+                                  {
+                                      OrderNumber = order.OrderNumber,
+                                      OverbookQty = order.OverbookQty,
+                                      OverbookDate = DateTime.Now,
+                                      OverbookGrantedBy = who
+                                  };
+                    this.overbookAllowedByLogRepository.Add(log);
+                }
+
+                this.transactionManager.Commit();
+                return new SuccessResult<PurchaseOrderResource>(
+                    (PurchaseOrderResource)this.resourceBuilder.Build(order, privilegesList));
+            }
+            catch (DomainException ex)
+            {
+                return new BadRequestResult<PurchaseOrderResource>(ex.Message);
+            }
+        }
+
         public string GetOrderAsHtml(int orderNumber)
         {
             return this.domainService.GetPurchaseOrderAsHtml(orderNumber);
@@ -300,17 +371,7 @@
             PurchaseOrderResource resource,
             PurchaseOrderResource updateResource)
         {
-            if (updateResource.CurrentlyUsingOverbookForm)
-            {
-                var log = new OverbookAllowedByLog
-                              {
-                                  OrderNumber = entity.OrderNumber,
-                                  OverbookQty = entity.OverbookQty,
-                                  OverbookDate = DateTime.Now,
-                                  OverbookGrantedBy = userNumber
-                              };
-                this.overbookAllowedByLogRepository.Add(log);
-            }
+            throw new NotImplementedException();
         }
 
         protected override Expression<Func<PurchaseOrder, bool>> SearchExpression(string searchTerm)

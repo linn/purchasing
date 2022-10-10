@@ -65,6 +65,10 @@
 
         protected IRepository<PlCreditDebitNote, int> NoteRepository { get; private set; }
 
+        protected IQueryRepository<PlOrderReceivedViewEntry> OrderReceivedView { get; private set; }
+
+        protected IRepository<CancelledOrderDetail, int> CancelledOrderDetailRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -88,6 +92,8 @@
             this.PartSupplierRepository = Substitute.For<IRepository<PartSupplier, PartSupplierKey>>();
             this.Log = Substitute.For<ILog>();
             this.NoteTemplateService = Substitute.For<IHtmlTemplateService<PlCreditDebitNote>>();
+            this.OrderReceivedView = Substitute.For<IQueryRepository<PlOrderReceivedViewEntry>>();
+            this.CancelledOrderDetailRepository = Substitute.For<IRepository<CancelledOrderDetail, int>>();
             this.NoteRepository = Substitute.For<IRepository<PlCreditDebitNote, int>>();
             this.Sut = new PurchaseOrderService(
                 this.MockAuthService,
@@ -110,7 +116,9 @@
                 this.PartSupplierRepository,
                 this.NoteTemplateService,
                 this.Log,
-                this.NoteRepository);
+                this.NoteRepository,
+                this.OrderReceivedView,
+                this.CancelledOrderDetailRepository);
         }
     }
 }
