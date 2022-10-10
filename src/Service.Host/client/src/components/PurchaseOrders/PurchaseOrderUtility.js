@@ -1603,7 +1603,7 @@ function PurchaseOrderUtility({ creating }) {
                                     ))}
                                 <Grid item xs={6}>
                                     <SaveBackCancelButtons
-                                        saveDisabled={!canSave()}
+                                        saveDisabled={!canSave}
                                         saveClick={() => {
                                             clearErrors();
                                             reduxDispatch(
