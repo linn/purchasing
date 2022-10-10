@@ -18,7 +18,7 @@
         {
             // update Part History
             var history = this.partHistory.FilterBy(x => x.PartNumber == part.PartNumber);
-            var maxSeqForPart = history.Any() ? history.Max(x => x.Seq) : 1;
+            var maxSeqForPart = history.Any() ? history.Max(x => x.Seq) : 0;
             this.partHistory.Add(new PartHistoryEntry
                                      {
                                          PartNumber = part.PartNumber,

@@ -7,7 +7,7 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
-    public class Part 
+    public class Part
     {
         public string Description { get; set; }
 
