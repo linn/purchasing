@@ -660,7 +660,25 @@
 
         public PurchaseOrder UnCancelOrder(int orderNumber, IEnumerable<string> privileges)
         {
-            throw new NotImplementedException();
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCancel, privileges))
+            {
+                throw new UnauthorisedActionException("You are not authorised to un-cancel purchase orders");
+            }
+            var order = this.GetOrder(orderNumber);
+            order.Cancelled = "N";
+            foreach (var detail in order.Details)
+            {
+                detail.Cancelled = "N";
+                foreach (var c in detail.CancelledDetails)
+                {
+                    if (!c.DateUncancelled.HasValue)
+                    {
+                        c.ValueCancelled = 0;
+                        c.DateUncancelled = DateTime.Today;
+                    }
+                }
+            }
+            return order;
         }
 
         private PurchaseOrder GetOrder(int orderNumber)

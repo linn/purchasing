@@ -250,6 +250,12 @@
                         resource.To.ReasonCancelled,
                         privilegesList);
                 }
+
+                if (resource.To.Cancelled == "N")
+                {
+                    order = this.domainService.UnCancelOrder(
+                        resource.From.OrderNumber, privilegesList);
+                }
             }
 
             var overBookChange = false;

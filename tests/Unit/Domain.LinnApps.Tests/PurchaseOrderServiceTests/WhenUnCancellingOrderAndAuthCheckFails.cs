@@ -9,14 +9,14 @@
 
     using NUnit.Framework;
 
-    public class WhenCancellingOrderAndAuthCheckFails : ContextBase
+    public class WhenUnCancellingOrderAndAuthCheckFails : ContextBase
     {
         private Action action;
 
         [SetUp]
         public void SetUp()
         {
-            this.action = () => this.Sut.CancelOrder(1, 1, string.Empty, new List<string>());
+            this.action = () => this.Sut.UnCancelOrder(1, new List<string>());
         }
 
         [Test]
