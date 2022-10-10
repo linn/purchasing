@@ -639,18 +639,7 @@ function PurchaseOrderUtility({ creating }) {
                                             </Typography>
                                         </>
                                     )}
-                                    {item.cancelled === 'Y' && (
-                                        <>
-                                            {' '}
-                                            <Typography
-                                                variant="h6"
-                                                display="inline"
-                                                color="secondary"
-                                            >
-                                                (CANCELLED)
-                                            </Typography>
-                                        </>
-                                    )}
+
                                 </Grid>
                                 <Grid item xs={2}>
                                     <div className={classes.centeredIcon}>
@@ -672,24 +661,6 @@ function PurchaseOrderUtility({ creating }) {
                                             </Tooltip>
                                         )}
                                     </div>
-                                </Grid>
-                                <Grid item xs={9} />
-                                <Grid item xs={3}>
-                                    {!creating && (
-                                        <Button
-                                            className={classes.buttonMarginTop}
-                                            aria-label={
-                                                item.cancelled === 'N' ? 'Cancel' : 'UnCancel'
-                                            }
-                                            color={item.cancelled === 'N' ? 'secondary' : 'primary'}
-                                            variant="contained"
-                                            onClick={() => setCancelDialogOpen(true)}
-                                        >
-                                            {item.cancelled === 'N'
-                                                ? 'Cancel Order'
-                                                : 'UnCancel Order'}
-                                        </Button>
-                                    )}
                                 </Grid>
                                 <Grid item xs={2}>
                                     <InputField
@@ -1267,6 +1238,65 @@ function PurchaseOrderUtility({ creating }) {
                                                     />
                                                 )}
                                             </Grid>
+                                            <Grid item xs={3}>
+                                                {!creating && (
+                                                    <Button
+                                                        className={classes.buttonMarginTop}
+                                                        aria-label={
+                                                            item.cancelled === 'N'
+                                                                ? 'Cancel'
+                                                                : 'UnCancel'
+                                                        }
+                                                        color={
+                                                            item.cancelled === 'N'
+                                                                ? 'secondary'
+                                                                : 'primary'
+                                                        }
+                                                        variant="contained"
+                                                        onClick={() => setCancelDialogOpen(true)}
+                                                    >
+                                                        {item.cancelled === 'N'
+                                                            ? 'Cancel Order'
+                                                            : 'UnCancel Order'}
+                                                    </Button>
+                                                )}
+                                            </Grid>
+                                            {item.cancelled === 'Y' ? (
+                                                <>
+                                                    <Grid item xs={3}>
+                                                        <InputField
+                                                            fullWidth
+                                                            value={item.cancelledByName}
+                                                            label="Cancelled By"
+                                                            propertyName="cancelledByName"
+                                                            onChange={() => {}}
+                                                            disabled
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={3}>
+                                                        <InputField
+                                                            fullWidth
+                                                            value={item.dateCancelled}
+                                                            label="Date"
+                                                            propertyName="dateCancelled"
+                                                            onChange={() => {}}
+                                                            disabled
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={3}>
+                                                        <InputField
+                                                            fullWidth
+                                                            value={item.reasonCancelled}
+                                                            label="Reason"
+                                                            propertyName="reasonCancelled"
+                                                            onChange={() => {}}
+                                                            disabled
+                                                        />
+                                                    </Grid>
+                                                </>
+                                            ) : (
+                                                <Grid item xs={9} />
+                                            )}
                                             <Grid item xs={4}>
                                                 <InputField
                                                     fullWidth

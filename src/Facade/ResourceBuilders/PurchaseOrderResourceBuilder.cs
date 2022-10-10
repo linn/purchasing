@@ -41,6 +41,8 @@
                 return new PurchaseOrderResource { Links = this.BuildLinks(null, claimsList).ToArray() };
             }
 
+            var cancelledDetail = entity.Details?.FirstOrDefault()?.CancelledDetails?.FirstOrDefault();
+
             return new PurchaseOrderResource
                        {
                            OrderNumber = entity.OrderNumber,
@@ -111,7 +113,12 @@
                                    ?.PhoneNumber,
                            BaseOrderNetTotal = entity.BaseOrderNetTotal,
                            OrderNetTotal = entity.OrderNetTotal,
-                           Links = this.BuildLinks(entity, claimsList).ToArray()
+                           Links = this.BuildLinks(entity, claimsList).ToArray(),
+                           CancelledByName = cancelledDetail?.CancelledBy?.FullName,
+                           DateCancelled = cancelledDetail != null && cancelledDetail.DateCancelled.HasValue 
+                                                ? cancelledDetail.DateCancelled.Value.ToString("dd/MM/yyyy") 
+                                                : string.Empty,
+                           ReasonCancelled = cancelledDetail?.ReasonCancelled
                        };
         }
 

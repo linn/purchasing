@@ -41,7 +41,7 @@
             this.MockAuthService.HasPermissionFor(
                     AuthorisedAction.PurchaseOrderCancel, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
-            this.MockDatabaseService.GetNextVal("PLOC_SEQ").Returns(123);
+            this.MockDatabaseService.GetIdSequence("PLOC_SEQ").Returns(123);
             this.OrderReceivedView.FindBy(Arg.Any<Expression<Func<PlOrderReceivedViewEntry, bool>>>())
                 .Returns(new PlOrderReceivedViewEntry { QtyOutstanding = 10 });
             this.result = this.Sut.CancelOrder(1, 123, "REASON", new List<string>());
@@ -57,14 +57,14 @@
         [Test]
         public void ShouldAddCancelledDetails()
         {
-            this.result.Details.First().CancelledDetails.Count.Should().Be(1);
-            var cancelledDetail = this.result.Details.First().CancelledDetails.First();
-            cancelledDetail.Id.Should().Be(123);
-            cancelledDetail.OrderNumber.Should().Be(this.current.OrderNumber);
-            cancelledDetail.LineNumber.Should().Be(1);
-            cancelledDetail.PeriodCancelled.Should().Be(12);
-            cancelledDetail.ReasonCancelled.Should().Be("REASON");
-            cancelledDetail.ValueCancelled.Should().Be(15); 
+            this.CancelledOrderDetailRepository.Received()
+                .Add(Arg.Is<CancelledOrderDetail>(cancelledDetail => 
+                    cancelledDetail.Id == 123
+                    && cancelledDetail.OrderNumber == this.current.OrderNumber
+                    && cancelledDetail.LineNumber == 1
+                    && cancelledDetail.PeriodCancelled == 12
+                    && cancelledDetail.ReasonCancelled == "REASON"
+                    && cancelledDetail.ValueCancelled == 15));
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Resources
 {
+    using System;
     using System.Collections.Generic;
 
     using Linn.Common.Resources;
@@ -68,6 +69,8 @@
 
         public string ReasonCancelled { get; set; }
 
-        public int? CancelledBy { get; set; }
+        public string CancelledByName { get; set; }
+
+        public string? DateCancelled { get; set; }
     }
 }

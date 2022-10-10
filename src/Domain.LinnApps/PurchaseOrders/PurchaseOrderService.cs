@@ -67,6 +67,8 @@
 
         private readonly IQueryRepository<PlOrderReceivedViewEntry> orderReceivedView;
 
+        private readonly IRepository<CancelledOrderDetail, int> cancelledOrderDetailRepository;
+
         public PurchaseOrderService(
             IAuthorisationService authService,
             IPurchaseLedgerPack purchaseLedgerPack,
@@ -89,7 +91,8 @@
             IHtmlTemplateService<PlCreditDebitNote> creditDebitNoteHtmlService,
             ILog log,
             IRepository<PlCreditDebitNote, int> creditDebitNoteRepository,
-            IQueryRepository<PlOrderReceivedViewEntry> orderReceivedView)
+            IQueryRepository<PlOrderReceivedViewEntry> orderReceivedView,
+            IRepository<CancelledOrderDetail, int> cancelledOrderDetailRepository)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;
@@ -113,6 +116,7 @@
             this.creditDebitNoteHtmlService = creditDebitNoteHtmlService;
             this.creditDebitNoteRepository = creditDebitNoteRepository;
             this.orderReceivedView = orderReceivedView;
+            this.cancelledOrderDetailRepository = cancelledOrderDetailRepository;
         }
 
         public PurchaseOrder AllowOverbook(
@@ -149,9 +153,10 @@
 
             foreach (var detail in order.Details)
             {
+                var id = this.databaseService.GetIdSequence("PLOC_SEQ");
                 var cancelledDetail = new CancelledOrderDetail
                                           {
-                                              Id = this.databaseService.GetNextVal("PLOC_SEQ"),
+                                              Id = id,
                                               OrderNumber = detail.OrderNumber,
                                               LineNumber = detail.Line,
                                               DateCancelled = DateTime.Today,
@@ -165,7 +170,7 @@
                                                       .QtyOutstanding, 2)
                                           };
                 detail.Cancelled = "Y";
-                detail.CancelledDetails.Add(cancelledDetail);
+                this.cancelledOrderDetailRepository.Add(cancelledDetail);
             }
 
             var miniOrder = this.miniOrderRepository.FindById(orderNumber);
@@ -678,6 +683,9 @@
                     }
                 }
             }
+            var miniOrder = this.miniOrderRepository.FindById(orderNumber);
+            miniOrder.CancelledBy = null;
+            miniOrder.ReasonCancelled = null;
             return order;
         }
 

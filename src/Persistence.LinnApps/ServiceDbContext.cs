@@ -1303,7 +1303,7 @@
             entity.HasOne(e => e.FilCancelledBy).WithMany().HasForeignKey(x => x.FilCancelledById);
             entity.Property(d => d.ReasonCancelled).HasColumnName("REASON_CANCELLED").HasMaxLength(200);
             entity.Property(d => d.PeriodCancelled).HasColumnName("PERIOD_CANCELLED");
-            entity.Property(d => d.PeriodFilCancelled).HasColumnName("PERIOD_CANCELLED");
+            entity.Property(d => d.PeriodFilCancelled).HasColumnName("PERIOD_FIL_CANCELLED");
             entity.Property(e => e.ValueCancelled).HasColumnName("VALUE_CANCELLED").HasMaxLength(16);
             entity.Property(e => e.BaseValueFilCancelled).HasColumnName("BASE_VALUE_FIL_CANCELLED").HasMaxLength(16);
             entity.Property(e => e.ValueFilCancelled).HasColumnName("VALUE_FIL_CANCELLED").HasMaxLength(16);
