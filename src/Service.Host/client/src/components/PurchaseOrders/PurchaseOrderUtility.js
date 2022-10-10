@@ -209,7 +209,9 @@ function PurchaseOrderUtility({ creating }) {
         itemSelectorHelpers.getSnackbarVisible(state[purchaseOrderDeliveries.item])
     );
 
-    const [editStatus, setEditStatus] = useState('view');
+    const editStatus = useSelector(state =>
+        itemSelectorHelpers.getItemEditStatus(state[purchaseOrder.item])
+    );
     const [authEmailDialogOpen, setAuthEmailDialogOpen] = useState(false);
 
     const nominalAccountsTable = {
@@ -255,11 +257,10 @@ function PurchaseOrderUtility({ creating }) {
         order.currency.code &&
         order.deliveryAddress?.addressId;
 
-    const canSave = () =>
-        editStatus !== 'view' && allowedToUpdate() && inputIsValid() && order !== item;
+    const canSave = editStatus !== 'view' && allowedToUpdate() && inputIsValid();
 
     const handleAuthorise = () => {
-        setEditStatus('edit');
+        reduxDispatch(purchaseOrderActions.setEditStatus('edit'));
         if (allowedToAuthorise()) {
             clearErrors();
             reduxDispatch(purchaseOrderActions.postByHref(utilities.getHref(item, 'authorise')));
@@ -267,18 +268,18 @@ function PurchaseOrderUtility({ creating }) {
     };
 
     const handleFieldChange = (propertyName, newValue) => {
-        setEditStatus('edit');
+        reduxDispatch(purchaseOrderActions.setEditStatus('edit'));
         dispatch({ payload: newValue, propertyName, type: 'orderFieldChange' });
     };
 
     const handleDetailFieldChange = (propertyName, newValue, detail) => {
-        setEditStatus('edit');
-
+        reduxDispatch(purchaseOrderActions.setEditStatus('edit'));
         dispatch({ payload: { ...detail, [propertyName]: newValue }, type: 'detailFieldChange' });
     };
 
     const handleCurrencyChange = (propertyName, newCurrencyCode) => {
-        setEditStatus('edit');
+        reduxDispatch(purchaseOrderActions.setEditStatus('edit'));
+
         const name = currencies.find(x => x.code === newCurrencyCode)?.name;
         dispatch({
             newCurrency: { code: newCurrencyCode, name },
@@ -291,7 +292,8 @@ function PurchaseOrderUtility({ creating }) {
         const { exchangeRate } = order;
 
         if (exchangeRate && newValue && newValue > 0 && newValue !== order[propertyName]) {
-            setEditStatus('edit');
+            reduxDispatch(purchaseOrderActions.setEditStatus('edit'));
+
             const convertedValue = currencyConvert(newValue, exchangeRate);
 
             dispatch({
@@ -307,7 +309,7 @@ function PurchaseOrderUtility({ creating }) {
 
     const handleDetailQtyFieldChange = (propertyName, newValue, detail) => {
         if (newValue && newValue > 0 && newValue !== order[propertyName]) {
-            setEditStatus('edit');
+            reduxDispatch(purchaseOrderActions.setEditStatus('edit'));
 
             dispatch({
                 payload: {
@@ -330,7 +332,8 @@ function PurchaseOrderUtility({ creating }) {
     };
 
     const handleNominalUpdate = (newNominal, lineNumber) => {
-        setEditStatus('edit');
+        reduxDispatch(purchaseOrderActions.setEditStatus('edit'));
+
         const newNominalAccount = {
             nominal: {
                 nominalCode: newNominal.values.find(x => x.id === 'nominalCode')?.value,
@@ -1603,7 +1606,10 @@ function PurchaseOrderUtility({ creating }) {
                                         saveDisabled={!canSave()}
                                         saveClick={() => {
                                             clearErrors();
-                                            setEditStatus('view');
+                                            reduxDispatch(
+                                                purchaseOrderActions.setEditStatus('view')
+                                            );
+
                                             if (creating) {
                                                 reduxDispatch(purchaseOrderActions.add(order));
                                             } else {
@@ -1616,8 +1622,13 @@ function PurchaseOrderUtility({ creating }) {
                                             }
                                         }}
                                         cancelClick={() => {
-                                            setEditStatus('view');
-                                            dispatch(item);
+                                            if (!creating) {
+                                                reduxDispatch(
+                                                    purchaseOrderActions.setEditStatus('view')
+                                                );
+
+                                                dispatch(item);
+                                            }
                                         }}
                                     />
                                 </Grid>
