@@ -136,15 +136,6 @@
         {
             var privileges = claims as string[] ?? claims.ToArray();
 
-            if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
-            {
-                yield return new LinkResource
-                                 {
-                                     Rel = "overbook",
-                                     Href = this.GetLocation(model)
-                                 };
-            }
-
             if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, privileges))
             {
                 yield return new LinkResource { Rel = "create", Href = "/purchasing/purchase-orders/create" };
@@ -171,10 +162,14 @@
                         yield return new LinkResource { Rel = "edit", Href = this.GetLocation(model) };
                     }
 
-                    yield return new LinkResource
-                                     {
-                                         Rel = "allow-over-book", Href = $"{this.GetLocation(model)}/allow-over-book"
-                                     };
+                    if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
+                    {
+                        yield return new LinkResource
+                                         {
+                                             Rel = "overbook",
+                                             Href = this.GetLocation(model)
+                                         };
+                    }
                 }
 
                 if (

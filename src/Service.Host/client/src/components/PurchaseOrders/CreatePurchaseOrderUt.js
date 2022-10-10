@@ -387,7 +387,7 @@ function CreatePurchaseOrderUt() {
                                 modal
                                 links={false}
                                 debounce={1000}
-                                minimumSearchTermLength={2}
+                                minimumSearchTermLength={4}
                                 disabled={!allowedToCreate() || isCreditOrReturn()}
                                 placeholder="click to set part"
                             />

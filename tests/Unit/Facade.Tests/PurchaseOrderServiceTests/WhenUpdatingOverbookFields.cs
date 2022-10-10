@@ -88,13 +88,10 @@
         }
 
         [Test]
-        public void ShouldBuildCorrectResourceWithLinks()
+        public void ShouldBuildResource()
         {
             this.result.Should().BeOfType<SuccessResult<PurchaseOrderResource>>();
-            var dataResult = ((SuccessResult<PurchaseOrderResource>) this.result).Data;
-            dataResult.Links.Length.Should().Be(5);
-            dataResult.Links.First().Rel.Should().Be("overbook");
-            dataResult.Links.First().Href.Should().Be("/purchasing/purchase-orders/600179");
+            var dataResult = ((SuccessResult<PurchaseOrderResource>)this.result).Data;
         }
 
         [Test]

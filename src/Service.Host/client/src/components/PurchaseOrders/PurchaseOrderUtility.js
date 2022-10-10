@@ -106,6 +106,12 @@ function PurchaseOrderUtility({ creating }) {
     ];
 
     useEffect(() => {
+        if (creating) {
+            reduxDispatch(purchaseOrderActions.setEditStatus('create'));
+        }
+    }, [creating, reduxDispatch]);
+
+    useEffect(() => {
         reduxDispatch(currenciesActions.fetch());
     }, [reduxDispatch]);
     useEffect(() => {
@@ -497,12 +503,14 @@ function PurchaseOrderUtility({ creating }) {
                                         />
                                     </Grid>
                                 )}
-                                <CancelUnCancelDialog
-                                    open={cancelDialogOpen}
-                                    setOpen={setCancelDialogOpen}
-                                    mode={item.cancelled === 'Y' ? 'uncancel' : 'cancel'}
-                                    order={item.orderNumber}
-                                />
+                                {!creating && (
+                                    <CancelUnCancelDialog
+                                        open={cancelDialogOpen}
+                                        setOpen={setCancelDialogOpen}
+                                        mode={item.cancelled === 'Y' ? 'uncancel' : 'cancel'}
+                                        order={item.orderNumber}
+                                    />
+                                )}
                                 <Dialog open={authEmailDialogOpen} fullWidth maxWidth="md">
                                     <div className={classes.centerTextInDialog}>
                                         <IconButton
@@ -627,7 +635,7 @@ function PurchaseOrderUtility({ creating }) {
                                     <Typography variant="h6" display="inline">
                                         Purchase Order {!creating && item.orderNumber}
                                     </Typography>
-                                    {item.cancelled === 'Y' && (
+                                    {item?.cancelled === 'Y' && (
                                         <>
                                             {' '}
                                             <Typography
@@ -639,7 +647,6 @@ function PurchaseOrderUtility({ creating }) {
                                             </Typography>
                                         </>
                                     )}
-
                                 </Grid>
                                 <Grid item xs={2}>
                                     <div className={classes.centeredIcon}>
@@ -967,7 +974,99 @@ function PurchaseOrderUtility({ creating }) {
                                         disabled={!allowedToUpdate()}
                                     />
                                 </Grid>
-
+                                <Grid item xs={3}>
+                                    <Button
+                                        className={classes.buttonMarginTop}
+                                        aria-label="Email Dept"
+                                        variant="outlined"
+                                        onClick={() => {
+                                            reduxDispatch(
+                                                sendPurchaseOrderDeptEmailActions.clearErrorsForItem()
+                                            );
+                                            reduxDispatch(
+                                                sendPurchaseOrderDeptEmailActions.postByHref(
+                                                    utilities.getHref(order, 'email-dept'),
+                                                    {}
+                                                )
+                                            );
+                                        }}
+                                        disabled={
+                                            creating || !utilities.getHref(order, 'email-dept')
+                                        }
+                                        startIcon={<Email />}
+                                    >
+                                        Email Dept
+                                    </Button>
+                                </Grid>
+                                <Grid
+                                    item
+                                    xs={9}
+                                    justify="flex-end"
+                                    alignItems="center"
+                                    spacing={2}
+                                >
+                                    {deptEmailLoading && <LinearProgress />}
+                                    {deptEmailError && (
+                                        <ErrorCard
+                                            errorMessage={
+                                                deptEmailError?.details ?? itemError.statusText
+                                            }
+                                        />
+                                    )}
+                                </Grid>
+                                <Grid item xs={3}>
+                                    {!creating && (
+                                        <Button
+                                            className={classes.buttonMarginTop}
+                                            aria-label={
+                                                item.cancelled === 'N' ? 'Cancel' : 'UnCancel'
+                                            }
+                                            color={item.cancelled === 'N' ? 'secondary' : 'primary'}
+                                            variant="contained"
+                                            onClick={() => setCancelDialogOpen(true)}
+                                        >
+                                            {item.cancelled === 'N'
+                                                ? 'Cancel Order'
+                                                : 'UnCancel Order'}
+                                        </Button>
+                                    )}
+                                </Grid>
+                                {!creating && item.cancelled === 'Y' ? (
+                                    <>
+                                        <Grid item xs={3}>
+                                            <InputField
+                                                fullWidth
+                                                value={item.cancelledByName}
+                                                label="Cancelled By"
+                                                propertyName="cancelledByName"
+                                                onChange={() => {}}
+                                                disabled
+                                            />
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <InputField
+                                                fullWidth
+                                                value={item.dateCancelled}
+                                                label="Date"
+                                                propertyName="dateCancelled"
+                                                onChange={() => {}}
+                                                disabled
+                                            />
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <InputField
+                                                fullWidth
+                                                value={item.reasonCancelled}
+                                                label="Reason"
+                                                propertyName="reasonCancelled"
+                                                onChange={() => {}}
+                                                disabled
+                                            />
+                                        </Grid>
+                                    </>
+                                ) : (
+                                    <Grid item xs={9} />
+                                )}
                                 {order.details
                                     ?.sort((a, b) => a.line - b.line)
                                     .map(detail => (
@@ -1193,110 +1292,6 @@ function PurchaseOrderUtility({ creating }) {
                                                     disabled={!allowedToUpdate()}
                                                 />
                                             </Grid>
-                                            <Grid item xs={3}>
-                                                <Button
-                                                    className={classes.buttonMarginTop}
-                                                    aria-label="Email Dept"
-                                                    variant="outlined"
-                                                    onClick={() => {
-                                                        reduxDispatch(
-                                                            sendPurchaseOrderDeptEmailActions.clearErrorsForItem()
-                                                        );
-                                                        reduxDispatch(
-                                                            sendPurchaseOrderDeptEmailActions.postByHref(
-                                                                utilities.getHref(
-                                                                    order,
-                                                                    'email-dept'
-                                                                ),
-                                                                {}
-                                                            )
-                                                        );
-                                                    }}
-                                                    disabled={
-                                                        creating ||
-                                                        !utilities.getHref(order, 'email-dept')
-                                                    }
-                                                    startIcon={<Email />}
-                                                >
-                                                    Email Dept
-                                                </Button>
-                                            </Grid>
-                                            <Grid
-                                                item
-                                                xs={9}
-                                                justify="flex-end"
-                                                alignItems="center"
-                                                spacing={2}
-                                            >
-                                                {deptEmailLoading && <LinearProgress />}
-                                                {deptEmailError && (
-                                                    <ErrorCard
-                                                        errorMessage={
-                                                            deptEmailError?.details ??
-                                                            itemError.statusText
-                                                        }
-                                                    />
-                                                )}
-                                            </Grid>
-                                            <Grid item xs={3}>
-                                                {!creating && (
-                                                    <Button
-                                                        className={classes.buttonMarginTop}
-                                                        aria-label={
-                                                            item.cancelled === 'N'
-                                                                ? 'Cancel'
-                                                                : 'UnCancel'
-                                                        }
-                                                        color={
-                                                            item.cancelled === 'N'
-                                                                ? 'secondary'
-                                                                : 'primary'
-                                                        }
-                                                        variant="contained"
-                                                        onClick={() => setCancelDialogOpen(true)}
-                                                    >
-                                                        {item.cancelled === 'N'
-                                                            ? 'Cancel Order'
-                                                            : 'UnCancel Order'}
-                                                    </Button>
-                                                )}
-                                            </Grid>
-                                            {item.cancelled === 'Y' ? (
-                                                <>
-                                                    <Grid item xs={3}>
-                                                        <InputField
-                                                            fullWidth
-                                                            value={item.cancelledByName}
-                                                            label="Cancelled By"
-                                                            propertyName="cancelledByName"
-                                                            onChange={() => {}}
-                                                            disabled
-                                                        />
-                                                    </Grid>
-                                                    <Grid item xs={3}>
-                                                        <InputField
-                                                            fullWidth
-                                                            value={item.dateCancelled}
-                                                            label="Date"
-                                                            propertyName="dateCancelled"
-                                                            onChange={() => {}}
-                                                            disabled
-                                                        />
-                                                    </Grid>
-                                                    <Grid item xs={3}>
-                                                        <InputField
-                                                            fullWidth
-                                                            value={item.reasonCancelled}
-                                                            label="Reason"
-                                                            propertyName="reasonCancelled"
-                                                            onChange={() => {}}
-                                                            disabled
-                                                        />
-                                                    </Grid>
-                                                </>
-                                            ) : (
-                                                <Grid item xs={9} />
-                                            )}
                                             <Grid item xs={4}>
                                                 <InputField
                                                     fullWidth

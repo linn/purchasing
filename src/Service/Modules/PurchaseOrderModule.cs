@@ -30,9 +30,10 @@
         {
             app.MapGet("/purchasing/purchase-orders/application-state", this.GetApplicationState);
             app.MapGet("/purchasing/purchase-orders/allow-over-book", this.GetApp);
+            app.MapGet("/purchasing/purchase-orders/quick-create", this.GetApp);
+
             app.MapGet("/purchasing/purchase-orders/{orderNumber:int}/allow-over-book/", this.GetApp);
             app.MapGet("/purchasing/purchase-orders/create", this.GetApp);
-            app.MapGet("/purchasing/purchase-orders/quick-create", this.GetApp);
             app.MapGet("/purchasing/purchase-orders/currencies", this.GetCurrencies);
             app.MapGet("/purchasing/purchase-orders/methods", this.GetOrderMethods);
             app.MapGet("/purchasing/purchase-orders/delivery-addresses", this.GetDeliveryAddresses);
