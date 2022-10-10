@@ -24,7 +24,7 @@
             {
                 resource.PartDescription = model.Part.Description;
                 resource.PartBomType = model.Part.BomType;
-                resource.PartCurrency = model.Part.Currency.Name;
+                resource.PartCurrency = model.Part.Currency?.Name;
                 resource.PartCurrencyUnitPrice = model.Part.CurrencyUnitPrice;
                 resource.PartBaseUnitPrice = model.Part.BaseUnitPrice;
             }
