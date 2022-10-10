@@ -60,9 +60,13 @@ function PurchaseOrdersSearch() {
                 <Grid item xs={10}>
                     <Typography variant="h3">Search Purchase Orders</Typography>
                 </Grid>
-                <Grid item xs={2}>
-                    <CreateButton createUrl={utilities.getHref(applicationState, 'quick-create')} />
-                </Grid>
+                {utilities.getHref(applicationState, 'quick-create') && (
+                    <Grid item xs={2}>
+                        <CreateButton
+                            createUrl={utilities.getHref(applicationState, 'quick-create')}
+                        />
+                    </Grid>
+                )}
                 <Grid item xs={5}>
                     <InputField
                         fullWidth
