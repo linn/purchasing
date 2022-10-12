@@ -438,8 +438,13 @@ function PurchaseOrderUtility({ creating }) {
     const [overridingOrderPrice, setOverridingOrderPrice] = useState(false);
     const [overridingOrderQty, setOverridingOrderQty] = useState(false);
 
-    const getDateString = isoString =>
-        isoString ? new Date(isoString).toLocaleDateString('en-GB') : null;
+    const getDateString = isoString => {
+        if (!isoString) {
+            return null;
+        }
+        const date = new Date(isoString);
+        return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    };
 
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
 
