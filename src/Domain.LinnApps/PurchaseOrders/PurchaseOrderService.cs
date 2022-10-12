@@ -416,9 +416,6 @@
             detail.OurUnitOfMeasure = partSupplier != null ? partSupplier.UnitOfMeasure : string.Empty;
             detail.SuppliersDesignation = partSupplier != null ? partSupplier.SupplierDesignation : string.Empty;
 
-            //TODO THIS IS WRONG AND ALSO HAS A DATABASE ID HARDCODED INTO DOMAIN LOGIC
-            // from MR is always nom Raw Materials 0000007617 Assets 0000002508
-
             NominalAccount nomAcc = null;
             if (part.StockControlled == "Y")
             {
