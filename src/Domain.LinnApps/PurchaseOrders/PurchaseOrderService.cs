@@ -421,17 +421,18 @@
             {
                 if (part.RawOrFinished == "R")
                 {
-                    nomAcc = this.nominalAccountRepository.FindById(884);
+                    nomAcc = this.nominalAccountRepository.FindBy(
+                        a => a.NominalCode == "0000007617" && a.DepartmentCode == "0000002508");
                 }
                 else
                 {
-                    nomAcc = this.nominalAccountRepository.FindById(886);
+                    nomAcc = this.nominalAccountRepository.FindBy(
+                        a => a.NominalCode == "0000007635" && a.DepartmentCode == "0000002508");
                 }
             }
             else if (part.PartNumber != "SUNDRY")
             {
                 nomAcc = part.NominalAccount;
-
             }
             
             detail.OrderPosting = nomAcc == null ?
@@ -576,7 +577,7 @@
             var miniOrder = new MiniOrder();
             var detail = order.Details.First();
 
-            var nomAcc = this.nominalAccountRepository.FindById(detail.OrderPosting.NominalAccountId);
+            var nomAcc = this.nominalAccountRepository.FindById((int)detail.OrderPosting.NominalAccountId);
 
             miniOrder.OrderNumber = order.OrderNumber;
             miniOrder.DocumentType = order.DocumentTypeName;
@@ -899,7 +900,7 @@
 
             miniOrder.Remarks = updatedOrder.Remarks;
 
-            var nomAcc = this.nominalAccountRepository.FindById(updatedDetail.OrderPosting.NominalAccountId);
+            var nomAcc = this.nominalAccountRepository.FindById((int)updatedDetail.OrderPosting.NominalAccountId);
             miniOrder.Nominal = nomAcc.NominalCode;
             miniOrder.Department = nomAcc.DepartmentCode;
 

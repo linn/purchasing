@@ -20,16 +20,17 @@
 
         public PurchaseOrderPostingResource Build(PurchaseOrderPosting entity, IEnumerable<string> claims)
         {
-            var nomacc = this.nomaccRepository.FindById(entity.NominalAccountId);
+            var nomacc = entity.NominalAccountId.HasValue ? this.nomaccRepository.FindById((int)entity.NominalAccountId)
+                             : null;
             return new PurchaseOrderPostingResource
                        {
                            Building = entity.Building,
                            Id = entity.Id,
                            LineNumber = entity.LineNumber,
-                           NominalAccount =
+                           NominalAccount = nomacc != null ? 
                                new NominalAccountResource
                                    {
-                                       AccountId = entity.NominalAccountId,
+                                       AccountId = (int)entity.NominalAccountId,
                                        Department = new DepartmentResource
                                                         {
                                                             Description = nomacc.Department?.Description,
@@ -41,8 +42,9 @@
                                                          Description = nomacc.Nominal?.Description,
                                                          NominalCode = nomacc.Nominal?.NominalCode
                                                      }
-                                   },
-                           NominalAccountId = entity.NominalAccountId,
+                                   } 
+                               : null,
+                           NominalAccountId = nomacc != null ? (int)entity.NominalAccountId : null,
                            Notes = entity.Notes,
                            OrderNumber = entity.OrderNumber,
                            Person = entity.Person,
