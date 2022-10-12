@@ -467,6 +467,9 @@
             entity.Property(a => a.CurrencyUnitPrice).HasColumnName("CURRENCY_UNIT_PRICE");
             entity.Property(a => a.OurUnitOfMeasure).HasColumnName("OUR_UNIT_OF_MEASURE");
             entity.Property(a => a.BomId).HasColumnName("BOM_ID");
+            entity.Property(a => a.RawOrFinished).HasColumnName("RM_FG");
+            entity.HasOne(a => a.NominalAccount).WithMany().HasForeignKey("NOMACC_NOMACC_ID");
+
         }
 
         private void BuildSuppliers(ModelBuilder builder)

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer } from 'react';
+import React, { useEffect, useState, useReducer, Fragment } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
@@ -438,8 +438,13 @@ function PurchaseOrderUtility({ creating }) {
     const [overridingOrderPrice, setOverridingOrderPrice] = useState(false);
     const [overridingOrderQty, setOverridingOrderQty] = useState(false);
 
-    const getDateString = isoString =>
-        isoString ? new Date(isoString).toLocaleDateString('en-GB') : null;
+    const getDateString = isoString => {
+        if (!isoString) {
+            return null;
+        }
+        const date = new Date(isoString);
+        return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    };
 
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
 
@@ -634,7 +639,6 @@ function PurchaseOrderUtility({ creating }) {
                                     </div>
                                 </Dialog>
                                 <Grid item xs={10}>
-                                    {' '}
                                     <Typography variant="h6" display="inline">
                                         Purchase Order {!creating && item.orderNumber}
                                     </Typography>
@@ -780,14 +784,18 @@ function PurchaseOrderUtility({ creating }) {
                                 <Grid item xs={1}>
                                     {order.issuePartsToSupplier === 'Y' && (
                                         <Tooltip title="Email kitting to logistics">
-                                            <IconButton
-                                                className={classes.buttonMarginTop}
-                                                aria-label="Email"
-                                                onClick={() => handleSupplierAssEmailClick(true)}
-                                                disabled={creating}
-                                            >
-                                                <Email />
-                                            </IconButton>
+                                            <span>
+                                                <IconButton
+                                                    className={classes.buttonMarginTop}
+                                                    aria-label="Email"
+                                                    onClick={() =>
+                                                        handleSupplierAssEmailClick(true)
+                                                    }
+                                                    disabled={creating}
+                                                >
+                                                    <Email />
+                                                </IconButton>
+                                            </span>
                                         </Tooltip>
                                     )}
                                 </Grid>
@@ -865,7 +873,7 @@ function PurchaseOrderUtility({ creating }) {
                                     />
                                 </Grid>
 
-                                <Grid container item spacing={1} xs={4}>
+                                <Grid item xs={4}>
                                     <Grid item xs={12}>
                                         <InputField
                                             fullWidth
@@ -911,13 +919,14 @@ function PurchaseOrderUtility({ creating }) {
                                     />
                                 </Grid>
                                 <Grid item xs={12} />
-                                <Grid container item spacing={1} xs={7}>
+                                <Grid container spacing={1} xs={7}>
                                     <Grid item xs={6}>
                                         <InputField
                                             fullWidth
                                             value={`${order.requestedBy?.fullName} (${order.requestedBy?.id})`}
                                             label="Requested By"
                                             disabled
+                                            propertyName="requestedBy"
                                         />
                                     </Grid>
                                     <Grid item xs={6}>
@@ -925,6 +934,7 @@ function PurchaseOrderUtility({ creating }) {
                                             fullWidth
                                             value={`${order.enteredBy?.fullName} (${order.enteredBy?.id})`}
                                             label="Entered By"
+                                            propertyName="enteredBy"
                                             disabled
                                         />
                                     </Grid>
@@ -941,16 +951,18 @@ function PurchaseOrderUtility({ creating }) {
                                     </Grid>
                                     <Grid item xs={3}>
                                         <Tooltip title="Email to request authorisation">
-                                            <Button
-                                                className={classes.buttonMarginTop}
-                                                aria-label="Email Finance"
-                                                variant="outlined"
-                                                onClick={() => setAuthEmailDialogOpen(true)}
-                                                disabled={creating || !allowedToAuthorise()}
-                                                startIcon={<Email />}
-                                            >
-                                                Finance
-                                            </Button>
+                                            <span>
+                                                <Button
+                                                    className={classes.buttonMarginTop}
+                                                    aria-label="Email Finance"
+                                                    variant="outlined"
+                                                    onClick={() => setAuthEmailDialogOpen(true)}
+                                                    disabled={creating || !allowedToAuthorise()}
+                                                    startIcon={<Email />}
+                                                >
+                                                    Finance
+                                                </Button>
+                                            </span>
                                         </Tooltip>
                                     </Grid>
                                     <Grid item xs={6}>
@@ -962,6 +974,7 @@ function PurchaseOrderUtility({ creating }) {
                                                     : ''
                                             }
                                             label="Authorised by"
+                                            propertyName="authorisedBy"
                                             disabled
                                         />
                                     </Grid>
@@ -1001,13 +1014,7 @@ function PurchaseOrderUtility({ creating }) {
                                         Email Dept
                                     </Button>
                                 </Grid>
-                                <Grid
-                                    item
-                                    xs={9}
-                                    justify="flex-end"
-                                    alignItems="center"
-                                    spacing={2}
-                                >
+                                <Grid item xs={9} justify="flex-end" alignItems="center">
                                     {deptEmailLoading && <LinearProgress />}
                                     {deptEmailError && (
                                         <ErrorCard
@@ -1073,8 +1080,8 @@ function PurchaseOrderUtility({ creating }) {
                                 {order.details
                                     ?.sort((a, b) => a.line - b.line)
                                     .map(detail => (
-                                        <>
-                                            <Grid container item spacing={1} xs={6}>
+                                        <Fragment key={detail.line}>
+                                            <Grid container spacing={1} xs={6}>
                                                 <Grid item xs={4}>
                                                     <InputField
                                                         fullWidth
@@ -1240,7 +1247,7 @@ function PurchaseOrderUtility({ creating }) {
                                                             placement="top"
                                                             className={classes.cursorPointer}
                                                         >
-                                                            <Grid container xs={12}>
+                                                            <Grid item xs={12}>
                                                                 <Grid item xs={4}>
                                                                     <InputField
                                                                         fullWidth
@@ -1278,7 +1285,7 @@ function PurchaseOrderUtility({ creating }) {
                                                     )}
                                                 </Grid>
                                             </Grid>
-                                            <Grid item xs={6} spacing={1}>
+                                            <Grid container xs={6} spacing={1}>
                                                 <InputField
                                                     fullWidth
                                                     value={detail.suppliersDesignation}
@@ -1599,7 +1606,7 @@ function PurchaseOrderUtility({ creating }) {
                                                     disabled={!allowedToUpdate()}
                                                 />
                                             </Grid>
-                                        </>
+                                        </Fragment>
                                     ))}
                                 <Grid item xs={6}>
                                     <SaveBackCancelButtons

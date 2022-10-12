@@ -10,7 +10,7 @@
 
         public NominalAccount NominalAccount { get; set; }
 
-        public int NominalAccountId { get; set; }
+        public int? NominalAccountId { get; set; }
 
         public string Notes { get; set; }
 

@@ -416,11 +416,32 @@
             detail.OurUnitOfMeasure = partSupplier != null ? partSupplier.UnitOfMeasure : string.Empty;
             detail.SuppliersDesignation = partSupplier != null ? partSupplier.SupplierDesignation : string.Empty;
 
-            //TODO THIS IS WRONG AND ALSO HAS A DATABASE ID HARDCODED INTO DOMAIN LOGIC
-            // from MR is always nom Raw Materials 0000007617 Assets 0000002508
-            var nomAcc = this.nominalAccountRepository.FindById(884);
-
-            detail.OrderPosting = new PurchaseOrderPosting { NominalAccount = nomAcc, NominalAccountId = 884 };
+            NominalAccount nomAcc = null;
+            if (part.StockControlled == "Y")
+            {
+                if (part.RawOrFinished == "R")
+                {
+                    nomAcc = this.nominalAccountRepository.FindBy(
+                        a => a.NominalCode == "0000007617" && a.DepartmentCode == "0000002508");
+                }
+                else
+                {
+                    nomAcc = this.nominalAccountRepository.FindBy(
+                        a => a.NominalCode == "0000007635" && a.DepartmentCode == "0000002508");
+                }
+            }
+            else if (part.PartNumber != "SUNDRY")
+            {
+                nomAcc = part.NominalAccount;
+            }
+            
+            detail.OrderPosting = nomAcc == null ?
+                                      new PurchaseOrderPosting() 
+                                      : new PurchaseOrderPosting
+                                            {
+                                                NominalAccount = nomAcc, 
+                                                NominalAccountId = nomAcc.AccountId,
+                                            };
 
             return order;
         }
@@ -556,7 +577,7 @@
             var miniOrder = new MiniOrder();
             var detail = order.Details.First();
 
-            var nomAcc = this.nominalAccountRepository.FindById(detail.OrderPosting.NominalAccountId);
+            var nomAcc = this.nominalAccountRepository.FindById((int)detail.OrderPosting.NominalAccountId);
 
             miniOrder.OrderNumber = order.OrderNumber;
             miniOrder.DocumentType = order.DocumentTypeName;
@@ -879,7 +900,7 @@
 
             miniOrder.Remarks = updatedOrder.Remarks;
 
-            var nomAcc = this.nominalAccountRepository.FindById(updatedDetail.OrderPosting.NominalAccountId);
+            var nomAcc = this.nominalAccountRepository.FindById((int)updatedDetail.OrderPosting.NominalAccountId);
             miniOrder.Nominal = nomAcc.NominalCode;
             miniOrder.Department = nomAcc.DepartmentCode;
 
