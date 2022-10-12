@@ -78,7 +78,7 @@
         {
             this.result.Details.First().OrderPosting.NominalAccount.NominalCode.Should()
                 .Be(this.part.NominalAccount.NominalCode);
-            this.result.Details.First().OrderPosting.NominalAccount.Department.DepartmentCode.Should()
+            this.result.Details.First().OrderPosting.NominalAccount.DepartmentCode.Should()
                 .Be(this.part.NominalAccount.DepartmentCode);
         }
     }

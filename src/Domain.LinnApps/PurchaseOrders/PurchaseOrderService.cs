@@ -418,9 +418,29 @@
 
             //TODO THIS IS WRONG AND ALSO HAS A DATABASE ID HARDCODED INTO DOMAIN LOGIC
             // from MR is always nom Raw Materials 0000007617 Assets 0000002508
-            var nomAcc = this.nominalAccountRepository.FindById(884);
 
-            detail.OrderPosting = new PurchaseOrderPosting { NominalAccount = nomAcc, NominalAccountId = 884 };
+            NominalAccount nomAcc = null;
+            if (part.StockControlled == "Y")
+            {
+                if (part.RawOrFinished == "R")
+                {
+                    nomAcc = this.nominalAccountRepository.FindById(884);
+                }
+                else
+                {
+                    nomAcc = this.nominalAccountRepository.FindById(886);
+                }
+            }
+            else if (part.PartNumber != "SUNDRY")
+            {
+                nomAcc = part.NominalAccount;
+
+            }
+            
+            detail.OrderPosting = new PurchaseOrderPosting
+                                      {
+                                          NominalAccount = nomAcc, NominalAccountId = 884
+                                      };
 
             return order;
         }

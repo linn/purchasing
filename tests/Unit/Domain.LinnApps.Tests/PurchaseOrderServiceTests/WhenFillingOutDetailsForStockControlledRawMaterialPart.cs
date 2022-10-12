@@ -36,13 +36,13 @@
                 {
                     DepartmentCode = "0000002508"
                 },
-                AccountId = 886
+                AccountId = 884
             };
             this.part = new Part
             {
                 OurUnitOfMeasure = "ONES",
                 StockControlled = "Y",
-                RawOrFinished = "F"
+                RawOrFinished = "R"
             };
             this.PartQueryRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(this.part);
