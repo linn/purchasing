@@ -434,10 +434,13 @@
 
             }
             
-            detail.OrderPosting = new PurchaseOrderPosting
-                                      {
-                                          NominalAccount = nomAcc, NominalAccountId = 884
-                                      };
+            detail.OrderPosting = nomAcc == null ?
+                                      new PurchaseOrderPosting() 
+                                      : new PurchaseOrderPosting
+                                            {
+                                                NominalAccount = nomAcc, 
+                                                NominalAccountId = nomAcc.AccountId,
+                                            };
 
             return order;
         }
