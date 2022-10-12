@@ -1081,7 +1081,7 @@ function PurchaseOrderUtility({ creating }) {
                                     ?.sort((a, b) => a.line - b.line)
                                     .map(detail => (
                                         <Fragment key={detail.line}>
-                                            <Grid container spacing={1} xs={6}>
+                                            <Grid container item spacing={1} xs={6}>
                                                 <Grid item xs={4}>
                                                     <InputField
                                                         fullWidth
@@ -1155,7 +1155,7 @@ function PurchaseOrderUtility({ creating }) {
                                                             placement="top"
                                                             className={classes.cursorPointer}
                                                         >
-                                                            <Grid container item>
+                                                            <Grid container spacing={1}>
                                                                 <Grid item xs={4}>
                                                                     <InputField
                                                                         fullWidth
@@ -1247,7 +1247,7 @@ function PurchaseOrderUtility({ creating }) {
                                                             placement="top"
                                                             className={classes.cursorPointer}
                                                         >
-                                                            <Grid item xs={12}>
+                                                            <Grid container spacing={1}>
                                                                 <Grid item xs={4}>
                                                                     <InputField
                                                                         fullWidth
@@ -1285,7 +1285,7 @@ function PurchaseOrderUtility({ creating }) {
                                                     )}
                                                 </Grid>
                                             </Grid>
-                                            <Grid container xs={6} spacing={1}>
+                                            <Grid item xs={6}>
                                                 <InputField
                                                     fullWidth
                                                     value={detail.suppliersDesignation}
