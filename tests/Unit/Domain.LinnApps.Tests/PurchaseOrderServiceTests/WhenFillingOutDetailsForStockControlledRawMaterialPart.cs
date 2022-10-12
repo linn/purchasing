@@ -69,8 +69,9 @@
                         InvoiceFullAddress = new FullAddress(),
                         Currency = new Currency()
                     });
-            this.NominalAccountRepository.FindById(this.nominal.AccountId).Returns(this.nominal);
-            
+            this.NominalAccountRepository
+                .FindBy(Arg.Any<Expression<Func<NominalAccount, bool>>>()).Returns(this.nominal);
+
             this.result = this.Sut.FillOutUnsavedOrder(this.args, 33087);
         }
 
