@@ -203,7 +203,7 @@
                     LineNumber = detail.Line,
                     PartNumber = detail.PartNumber,
                     OrderQty = detail.OrderQty.GetValueOrDefault(),
-                    OriginalOrderLine = detail.Line,
+                    OriginalOrderLine = detail.OriginalOrderLine,
                     ReturnsOrderLine = detail.Line,
                     NetTotal = detail.NetTotalCurrency,
                     Total = detail.DetailTotalCurrency.GetValueOrDefault(),

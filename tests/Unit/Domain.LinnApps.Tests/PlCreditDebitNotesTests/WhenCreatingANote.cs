@@ -63,7 +63,10 @@
         {
             this.MockRepository.Received().Add(
                 Arg.Is<PlCreditDebitNote>(
-                    a => a.NoteType.Type == "D" && a.OriginalOrderNumber == 456 && a.OriginalOrderLine == 11 && a.CreditOrReplace == "CREDIT"));
+                    a => a.NoteType.Type == "D" 
+                         && a.OriginalOrderNumber == 456 
+                         && a.OriginalOrderLine == 11
+                         && a.CreditOrReplace == "CREDIT"));
         }
     }
 }
