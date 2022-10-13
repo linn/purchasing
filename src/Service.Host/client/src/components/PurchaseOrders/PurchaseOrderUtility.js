@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { DataGrid } from '@mui/x-data-grid';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import Dialog from '@mui/material/Dialog';
 import LinearProgress from '@mui/material/LinearProgress';
 import IconButton from '@mui/material/IconButton';
@@ -35,6 +35,7 @@ import {
     OnOffSwitch,
     processSelectorHelpers
 } from '@linn-it/linn-form-components-library';
+import queryString from 'query-string';
 import currenciesActions from '../../actions/currenciesActions';
 import nominalsActions from '../../actions/nominalsActions';
 import suppliersActions from '../../actions/suppliersActions';
@@ -66,6 +67,7 @@ function PurchaseOrderUtility({ creating }) {
     const clearErrors = () => reduxDispatch(purchaseOrderActions.clearErrorsForItem());
 
     const { orderNumber } = useParams();
+    const loc = useLocation();
 
     useEffect(() => {
         if (orderNumber) {
@@ -215,7 +217,9 @@ function PurchaseOrderUtility({ creating }) {
     );
     const [authEmailDialogOpen, setAuthEmailDialogOpen] = useState(false);
 
-    const [invRecDialogOpen, setInvRecDialogOpen] = useState(false);
+    const [invRecDialogOpen, setInvRecDialogOpen] = useState(
+        !!queryString.parse(loc.search).invRecDialogOpen
+    );
 
     const nominalAccountsTable = {
         totalItemCount: nominalsSearchItems.length,
@@ -527,6 +531,7 @@ function PurchaseOrderUtility({ creating }) {
                                         open={invRecDialogOpen}
                                         setOpen={setInvRecDialogOpen}
                                         ledgerEntries={order.ledgerEntries}
+                                        inDialog
                                     />
                                 )}
                                 <Dialog open={authEmailDialogOpen} fullWidth maxWidth="md">
