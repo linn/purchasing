@@ -64,6 +64,7 @@
                 .Include(p => p.OrderAddress).ThenInclude(x => x.FullAddress)
                 .Include(p => p.OrderAddress).ThenInclude(x => x.Country)
                 .Include(o => o.Details).ThenInclude(d => d.DeliveryConfirmedBy)
+                .Include(o => o.LedgerEntries)
                 .First(o => o.OrderNumber == key);
         }
 

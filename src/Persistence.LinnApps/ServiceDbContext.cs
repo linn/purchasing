@@ -668,6 +668,7 @@
             entity.Property(o => o.OrderTotal).HasColumnName("ORDER_TOTAL");
             entity.Property(o => o.BaseOrderTotal).HasColumnName("BASE_ORDER_TOTAL");
             entity.Property(o => o.BaseOrderVatTotal).HasColumnName("BASE_ORDER_VAT_TOTAL");
+            entity.HasMany(o => o.LedgerEntries).WithOne().HasForeignKey(l => l.OrderNumber);
         }
 
         private void BuildPurchaseOrderDetails(ModelBuilder builder)

@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { DataGrid } from '@mui/x-data-grid';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import Dialog from '@mui/material/Dialog';
 import LinearProgress from '@mui/material/LinearProgress';
 import IconButton from '@mui/material/IconButton';
@@ -35,6 +35,7 @@ import {
     OnOffSwitch,
     processSelectorHelpers
 } from '@linn-it/linn-form-components-library';
+import queryString from 'query-string';
 import currenciesActions from '../../actions/currenciesActions';
 import nominalsActions from '../../actions/nominalsActions';
 import suppliersActions from '../../actions/suppliersActions';
@@ -59,12 +60,14 @@ import sendOrderAuthEmailActions from '../../actions/sendPurchaseOrderAuthEmailA
 import purchaseOrderDeliveriesActions from '../../actions/purchaseOrderDeliveriesActions';
 import sendPurchaseOrderDeptEmailActions from '../../actions/sendPurchaseOrderDeptEmailActions';
 import CancelUnCancelDialog from './CancelUnCancelDialog';
+import PlInvRecDialog from './PlInvRecDialog';
 
 function PurchaseOrderUtility({ creating }) {
     const reduxDispatch = useDispatch();
     const clearErrors = () => reduxDispatch(purchaseOrderActions.clearErrorsForItem());
 
     const { orderNumber } = useParams();
+    const loc = useLocation();
 
     useEffect(() => {
         if (orderNumber) {
@@ -213,6 +216,10 @@ function PurchaseOrderUtility({ creating }) {
         itemSelectorHelpers.getItemEditStatus(state[purchaseOrder.item])
     );
     const [authEmailDialogOpen, setAuthEmailDialogOpen] = useState(false);
+
+    const [invRecDialogOpen, setInvRecDialogOpen] = useState(
+        !!queryString.parse(loc.search).invRecDialogOpen
+    );
 
     const nominalAccountsTable = {
         totalItemCount: nominalsSearchItems.length,
@@ -519,6 +526,14 @@ function PurchaseOrderUtility({ creating }) {
                                         order={item.orderNumber}
                                     />
                                 )}
+                                {!creating && (
+                                    <PlInvRecDialog
+                                        open={invRecDialogOpen}
+                                        setOpen={setInvRecDialogOpen}
+                                        ledgerEntries={order.ledgerEntries}
+                                        inDialog
+                                    />
+                                )}
                                 <Dialog open={authEmailDialogOpen} fullWidth maxWidth="md">
                                     <div className={classes.centerTextInDialog}>
                                         <IconButton
@@ -675,6 +690,16 @@ function PurchaseOrderUtility({ creating }) {
                                             </Tooltip>
                                         )}
                                     </div>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Button
+                                        className={classes.buttonMarginTop}
+                                        aria-label="Pl Inv/Rec"
+                                        onClick={() => setInvRecDialogOpen(true)}
+                                        disabled={creating}
+                                    >
+                                        Pl Inv/Rec
+                                    </Button>
                                 </Grid>
                                 <Grid item xs={2}>
                                     <InputField

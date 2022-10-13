@@ -118,7 +118,20 @@
                            DateCancelled = cancelledDetail != null && cancelledDetail.DateCancelled.HasValue 
                                                 ? cancelledDetail.DateCancelled.Value.ToString("dd/MM/yyyy") 
                                                 : string.Empty,
-                           ReasonCancelled = cancelledDetail?.ReasonCancelled
+                           ReasonCancelled = cancelledDetail?.ReasonCancelled,
+                           LedgerEntries = entity.LedgerEntries?.OrderByDescending(x => x.Pltref).Select(
+                               e => new PurchaseLedgerResource
+                                        {
+                                            TransType = e.PlTransType, 
+                                            PlDeliveryRef = e.PlDeliveryRef, 
+                                            Qty = e.PlQuantity, 
+                                            NetTotal = e.PlNetTotal,
+                                            VatTotal = e.PlVat,
+                                            InvoiceRef = e.PlInvoiceRef,
+                                            BaseVat = e.BaseVatTotal,
+                                            InvoiceDate = e.InvoiceDate.ToString("dd/MM/yyyy"),
+                                            Tref = e.Pltref
+                                        })
                        };
         }
 

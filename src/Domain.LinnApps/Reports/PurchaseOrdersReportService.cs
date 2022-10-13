@@ -159,7 +159,7 @@
                         }
 
                         var rowIndex = $"{orderDetail.OrderNumber}/{orderDetail.Line}/{delivery.DeliverySeq}";
-                        reportLayout.AddValueDrillDownDetails("order", "/purchasing/purchase-orders/{textValue}", null, 0);
+                        reportLayout.AddValueDrillDownDetails("order", "/purchasing/purchase-orders/{textValue}?invRecDialogOpen=true", null, 0);
 
                         var part = this.partRepository.FindBy(x => x.PartNumber == orderDetail.Part.PartNumber);
                         if (stockControlled != "A" && ((stockControlled == "N" && part.StockControlled != "N")
