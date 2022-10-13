@@ -38,7 +38,11 @@
             this.MockAuthService = Substitute.For<IAuthorisationService>();
             this.MockEmailService = Substitute.For<IEmailService>();
             this.MockEmployeeRepository = Substitute.For<IRepository<Employee, int>>();
+            this.MockSupplierRepository = Substitute.For<IRepository<Supplier, int>>();
+            this.MockDatabaseService = Substitute.For<IDatabaseService>();
+            this.MockSalesTaxPack = Substitute.For<ISalesTaxPack>();
             this.MockNoteTypeRepository = Substitute.For<IRepository<CreditDebitNoteType, string>>();
+            this.MockRepository = Substitute.For<IRepository<PlCreditDebitNote, int>>();
             this.Sut = new PlCreditDebitNoteService(
                 this.MockAuthService, 
                 this.MockEmailService, 

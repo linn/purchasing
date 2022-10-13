@@ -191,11 +191,10 @@
                     CancelledBy = null,
                     DateCancelled = null,
                     ReasonCancelled = null,
-                    NoteType = order.DocumentTypeName == "CO" 
-                                   ? this.noteTypesRepository.FindById("C") 
-                                   : this.noteTypesRepository.FindById("D"),
+                    NoteType = this.noteTypesRepository.FindById("D"),
                     CreditOrReplace = order.DocumentTypeName == "CO" ? "CREDIT" : "REPLACE",
-                    OriginalOrderNumber = order.OrderNumber
+                    OriginalOrderNumber = order.Details.First().OriginalOrderNumber,
+                    OriginalOrderLine = order.Details.First().OriginalOrderLine
                 };
 
                 note.Details = order.Details.Select(detail => new PlCreditDebitNoteDetail
