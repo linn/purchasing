@@ -6,6 +6,7 @@
     using Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Edi;
+    using Linn.Purchasing.Domain.LinnApps.Finance.Models;
     using Linn.Purchasing.Domain.LinnApps.Forecasting;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
@@ -207,7 +208,13 @@
                         ?.PlOrderReceivedView))
                 .AddTransient<IRepository<CancelledOrderDetail, int>, EntityFrameworkRepository<CancelledOrderDetail, int>>(
                     r => new EntityFrameworkRepository<CancelledOrderDetail, int>(r.GetService<ServiceDbContext>()
-                        ?.CancelledPurchaseOrderDetails));
+                        ?.CancelledPurchaseOrderDetails))
+                .AddTransient<IQueryRepository<ImmediateLiability>, EntityFrameworkQueryRepository<ImmediateLiability>>(
+                    r => new EntityFrameworkQueryRepository<ImmediateLiability>(r.GetService<ServiceDbContext>()
+                        ?.ImmediateLiability))
+                .AddTransient<IQueryRepository<ImmediateLiabilityBase>, EntityFrameworkQueryRepository<ImmediateLiabilityBase>>(
+                    r => new EntityFrameworkQueryRepository<ImmediateLiabilityBase>(r.GetService<ServiceDbContext>()
+                        ?.ImmediateLiabilityBase));
         }
     }
 }

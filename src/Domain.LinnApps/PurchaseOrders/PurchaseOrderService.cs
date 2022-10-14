@@ -14,6 +14,7 @@
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
+    using Linn.Purchasing.Domain.LinnApps.Finance.Models;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
@@ -69,6 +70,10 @@
 
         private readonly IRepository<CancelledOrderDetail, int> cancelledOrderDetailRepository;
 
+        private readonly IQueryRepository<ImmediateLiability> liabilityRepository;
+
+        private readonly IQueryRepository<ImmediateLiabilityBase> baseLiabilityRepository;
+
         public PurchaseOrderService(
             IAuthorisationService authService,
             IPurchaseLedgerPack purchaseLedgerPack,
@@ -92,7 +97,9 @@
             ILog log,
             IRepository<PlCreditDebitNote, int> creditDebitNoteRepository,
             IQueryRepository<PlOrderReceivedViewEntry> orderReceivedView,
-            IRepository<CancelledOrderDetail, int> cancelledOrderDetailRepository)
+            IRepository<CancelledOrderDetail, int> cancelledOrderDetailRepository,
+            IQueryRepository<ImmediateLiability> liabilityRepository,
+            IQueryRepository<ImmediateLiabilityBase> baseLiabilityRepository)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;
@@ -117,6 +124,8 @@
             this.creditDebitNoteRepository = creditDebitNoteRepository;
             this.orderReceivedView = orderReceivedView;
             this.cancelledOrderDetailRepository = cancelledOrderDetailRepository;
+            this.liabilityRepository = liabilityRepository;
+            this.baseLiabilityRepository = baseLiabilityRepository;
         }
 
         public PurchaseOrder AllowOverbook(
@@ -721,7 +730,53 @@
             string reasonFilCancelled,
             IEnumerable<string> privileges)
         {
-            throw new NotImplementedException();
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderFilCancel, privileges))
+            {
+                throw new UnauthorisedActionException("You are not authorised to fil cancel purchase orders");
+            }
+
+            var order = this.GetOrder(orderNumber);
+            var detail = order.Details.First(a => a.Line == line);
+            detail.FilCancelled = "Y";
+            
+            var currentLedgerPeriod = this.purchaseLedgerPack.GetLedgerPeriod();
+            var immediateLiability =
+                this.liabilityRepository.FindBy(a => a.OrderNumber == orderNumber && a.OrderLine == line);
+            var baseImmediateLiability =
+                this.baseLiabilityRepository.FindBy(a => a.OrderNumber == orderNumber && a.OrderLine == line);
+
+            var id = this.databaseService.GetIdSequence("PLOC_SEQ");
+            var cancelledDetail = new CancelledOrderDetail
+                                      {
+                                          Id = id,
+                                          OrderNumber = orderNumber,
+                                          LineNumber = line,
+                                          DateFilCancelled = DateTime.Today,
+                                          PeriodFilCancelled = currentLedgerPeriod,
+                                          FilCancelledById = filCancelledBy,
+                                          ReasonFilCancelled = reasonFilCancelled,
+                                          ValueFilCancelled = immediateLiability.Liability,
+                                          BaseValueFilCancelled= baseImmediateLiability.Liability
+                                      };
+            this.cancelledOrderDetailRepository.Add(cancelledDetail);
+
+            if (order.Details.Count == 1)
+            {
+                // only one line so fil cancel the top level order
+                order.FilCancelled = "Y";
+                order.DateFilCancelled = DateTime.Today;
+                order.PeriodFilCancelled = currentLedgerPeriod;
+            }
+
+            var miniOrder = this.miniOrderRepository.FindById(orderNumber);
+            if (miniOrder is not null)
+            {
+                miniOrder.FilCancelledBy = filCancelledBy;
+                miniOrder.ReasonFilCancelled = reasonFilCancelled;
+                miniOrder.DateFilCancelled = DateTime.Today;
+            }
+
+            return order;
         }
 
         public PurchaseOrder UnFilCancelLine(int orderNumber, int line, IEnumerable<string> privileges)

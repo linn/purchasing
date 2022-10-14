@@ -5,6 +5,7 @@
     using Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Edi;
+    using Linn.Purchasing.Domain.LinnApps.Finance.Models;
     using Linn.Purchasing.Domain.LinnApps.Forecasting;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
@@ -187,6 +188,10 @@
         public DbSet<CreditDebitNoteType> CreditDebitNoteTypes { get; set; }
 
         public DbSet<PlOrderReceivedViewEntry> PlOrderReceivedView { get; set; }
+        
+        public DbSet<ImmediateLiability> ImmediateLiability { get; set; }
+        
+        public DbSet<ImmediateLiabilityBase> ImmediateLiabilityBase { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -290,6 +295,8 @@
             this.BuildPcasChanges(builder);
             this.BuildPlCreditDebitNoteDetails(builder);
             this.BuildPlOrderReceivedView(builder);
+            this.BuildImmediateLiability(builder);
+            this.BuildImmediateLiabilityBase(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1915,6 +1922,24 @@
             entity.Property(c => c.DateCancelled).HasColumnName("DATE_CANCELLED");
             entity.Property(c => c.CancelledBy).HasColumnName("CANCELLED_BY");
             entity.Property(c => c.Comments).HasColumnName("COMMENTS").HasMaxLength(2000);
+        }
+
+        private void BuildImmediateLiability(ModelBuilder builder)
+        {
+            var entity = builder.Entity<ImmediateLiability>().ToTable("PL_IMM_LIABILITY_VIEW").HasNoKey();
+            entity.Property(a => a.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(a => a.OrderLine).HasColumnName("ORDER_LINE");
+            entity.Property(a => a.Quantity).HasColumnName("FIL_QTY");
+            entity.Property(a => a.Liability).HasColumnName("IMM_LIB");
+        }
+
+        private void BuildImmediateLiabilityBase(ModelBuilder builder)
+        {
+            var entity = builder.Entity<ImmediateLiabilityBase>().ToTable("PL_BASE_LIABILITY_VIEW").HasNoKey();
+            entity.Property(a => a.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(a => a.OrderLine).HasColumnName("ORDER_LINE");
+            entity.Property(a => a.Quantity).HasColumnName("FIL_QTY");
+            entity.Property(a => a.Liability).HasColumnName("IMM_LIB");
         }
     }
 }

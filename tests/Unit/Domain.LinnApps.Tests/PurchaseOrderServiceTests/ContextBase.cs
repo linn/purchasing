@@ -7,6 +7,7 @@
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
+    using Linn.Purchasing.Domain.LinnApps.Finance.Models;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
@@ -69,6 +70,11 @@
 
         protected IRepository<CancelledOrderDetail, int> CancelledOrderDetailRepository { get; private set; }
 
+        protected IQueryRepository<ImmediateLiability> ImmediateLiabilityRepository { get; private set; }
+
+        protected IQueryRepository<ImmediateLiabilityBase> ImmediateLiabilityBaseRepository { get; private set; }
+
+
         [SetUp]
         public void SetUpContext()
         {
@@ -95,6 +101,9 @@
             this.OrderReceivedView = Substitute.For<IQueryRepository<PlOrderReceivedViewEntry>>();
             this.CancelledOrderDetailRepository = Substitute.For<IRepository<CancelledOrderDetail, int>>();
             this.NoteRepository = Substitute.For<IRepository<PlCreditDebitNote, int>>();
+            this.ImmediateLiabilityRepository = Substitute.For<IQueryRepository<ImmediateLiability>>();
+            this.ImmediateLiabilityBaseRepository = Substitute.For<IQueryRepository<ImmediateLiabilityBase>>();
+
             this.Sut = new PurchaseOrderService(
                 this.MockAuthService,
                 this.PurchaseLedgerPack,
@@ -118,7 +127,9 @@
                 this.Log,
                 this.NoteRepository,
                 this.OrderReceivedView,
-                this.CancelledOrderDetailRepository);
+                this.CancelledOrderDetailRepository,
+                this.ImmediateLiabilityRepository,
+                this.ImmediateLiabilityBaseRepository);
         }
     }
 }
