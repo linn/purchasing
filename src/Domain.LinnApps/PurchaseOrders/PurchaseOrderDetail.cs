@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
 {
+    using System;
     using System.Collections.Generic;
 
     using Linn.Purchasing.Domain.LinnApps.Parts;
@@ -79,6 +80,10 @@
         public string PriceType { get; set; }
 
         public string FilCancelled { get; set; }
+
+        public DateTime? DateFilCancelled { get; set; }
+
+        public int? PeriodFilCancelled { get; set; }
 
         public string UpdatePartsupPrice { get; set; }
 

@@ -68,7 +68,7 @@
                 .Returns(new ImmediateLiability { Liability = 20.20m });
             this.result = this.Sut.FilCancelLine(
                 this.orderNumber,
-                2,
+                1,
                 this.cancelledBy,
                 "some reason",
                 new List<string>());
@@ -77,7 +77,10 @@
         [Test]
         public void ShouldFilCancelTheLine()
         {
-            this.result.Details.First(a => a.Line == 2).FilCancelled.Should().Be("Y");
+            var detail = this.result.Details.First(a => a.Line == 1);
+            detail.FilCancelled.Should().Be("Y");
+            detail.DateFilCancelled.Should().Be(DateTime.Today);
+            detail.PeriodFilCancelled.Should().Be(123);
         }
 
         [Test]
@@ -87,7 +90,7 @@
                 .Add(Arg.Is<CancelledOrderDetail>(cancelledDetail => 
                     cancelledDetail.Id == this.cancelId
                     && cancelledDetail.OrderNumber == this.orderNumber
-                    && cancelledDetail.LineNumber == 2
+                    && cancelledDetail.LineNumber == 1
                     && cancelledDetail.PeriodFilCancelled == 123
                     && cancelledDetail.FilCancelledById == this.cancelledBy
                     && cancelledDetail.ReasonFilCancelled == "some reason"
@@ -108,6 +111,8 @@
         public void ShouldNotFilCancelTopLevelOrder()
         {
             this.result.FilCancelled.Should().Be("N");
+            this.result.DateFilCancelled.Should().BeNull();
+            this.result.PeriodFilCancelled.Should().BeNull();
         }
     }
 }

@@ -718,6 +718,8 @@
             entity.Property(o => o.IssuePartsToSupplier).HasColumnName("ISSUE_PARTS_TO_SUPPLIER").HasMaxLength(1);
             entity.Property(o => o.PriceType).HasColumnName("PRICE_TYPE").HasMaxLength(10);
             entity.Property(o => o.FilCancelled).HasColumnName("FIL_CANCELLED").HasMaxLength(1);
+            entity.Property(o => o.DateFilCancelled).HasColumnName("DATE_FIL_CANCELLED");
+            entity.Property(o => o.PeriodFilCancelled).HasColumnName("PERIOD_FIL_CANCELLED");
             entity.Property(o => o.UpdatePartsupPrice).HasColumnName("UPDATE_PARTSUP_PRICE").HasMaxLength(1);
             entity.Property(o => o.WasPreferredSupplier).HasColumnName("WAS_PREFERRED_SUPPLIER").HasMaxLength(1);
             entity.Property(o => o.OverbookQtyAllowed).HasColumnName("OVERBOOK_QTY_ALLOWED").HasMaxLength(19);

@@ -736,14 +736,16 @@
             }
 
             var order = this.GetOrder(orderNumber);
-            var detail = order.Details.First(a => a.Line == line);
-            detail.FilCancelled = "Y";
-            
             var currentLedgerPeriod = this.purchaseLedgerPack.GetLedgerPeriod();
             var immediateLiability =
                 this.liabilityRepository.FindBy(a => a.OrderNumber == orderNumber && a.OrderLine == line);
             var baseImmediateLiability =
                 this.baseLiabilityRepository.FindBy(a => a.OrderNumber == orderNumber && a.OrderLine == line);
+
+            var detail = order.Details.First(a => a.Line == line);
+            detail.FilCancelled = "Y";
+            detail.DateFilCancelled = DateTime.Today;
+            detail.PeriodFilCancelled = currentLedgerPeriod;
 
             var id = this.databaseService.GetIdSequence("PLOC_SEQ");
             var cancelledDetail = new CancelledOrderDetail
@@ -768,12 +770,15 @@
                 order.PeriodFilCancelled = currentLedgerPeriod;
             }
 
-            var miniOrder = this.miniOrderRepository.FindById(orderNumber);
-            if (miniOrder is not null)
+            if (line == 1)
             {
-                miniOrder.FilCancelledBy = filCancelledBy;
-                miniOrder.ReasonFilCancelled = reasonFilCancelled;
-                miniOrder.DateFilCancelled = DateTime.Today;
+                var miniOrder = this.miniOrderRepository.FindById(orderNumber);
+                if (miniOrder is not null)
+                {
+                    miniOrder.FilCancelledBy = filCancelledBy;
+                    miniOrder.ReasonFilCancelled = reasonFilCancelled;
+                    miniOrder.DateFilCancelled = DateTime.Today;
+                }
             }
 
             return order;
@@ -781,7 +786,33 @@
 
         public PurchaseOrder UnFilCancelLine(int orderNumber, int line, IEnumerable<string> privileges)
         {
-            throw new NotImplementedException();
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderFilCancel, privileges))
+            {
+                throw new UnauthorisedActionException("You are not authorised to fil un-cancel purchase orders");
+            }
+
+            var order = this.GetOrder(orderNumber);
+            var detail = order.Details.First(a => a.Line == line);
+            detail.FilCancelled = "N";
+            detail.DateFilCancelled = null;
+            detail.PeriodFilCancelled = null;
+
+            var cancelledDetail = detail.CancelledDetails.First(a => a.FilCancelledById.HasValue && !a.DateFilUncancelled.HasValue);
+            cancelledDetail.DateFilUncancelled = DateTime.Today;
+
+            order.FilCancelled = "N";
+            order.DateFilCancelled = null;
+            order.PeriodFilCancelled = null;
+
+            var miniOrder = this.miniOrderRepository.FindById(orderNumber);
+            if (miniOrder is not null)
+            {
+                miniOrder.FilCancelledBy = null;
+                miniOrder.ReasonFilCancelled = null;
+                miniOrder.DateFilCancelled = null;
+            }
+
+            return order;
         }
 
         private PurchaseOrder GetOrder(int orderNumber)

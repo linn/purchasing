@@ -15,7 +15,7 @@
 
     using NUnit.Framework;
 
-    public class WhenFilCancellingOnlyOrderLine : ContextBase
+    public class WhenFilCancellingLineOnSingleLineOrder : ContextBase
     {
         private PurchaseOrder result;
 
@@ -79,6 +79,8 @@
         public void ShouldFilCancelTopLevelOrder()
         {
             this.result.FilCancelled.Should().Be("Y");
+            this.result.DateFilCancelled.Should().Be(DateTime.Today);
+            this.result.PeriodFilCancelled.Should().Be(123);
         }
     }
 }
