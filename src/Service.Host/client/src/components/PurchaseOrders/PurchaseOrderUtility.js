@@ -16,6 +16,7 @@ import PrintIcon from '@mui/icons-material/Print';
 import Tooltip from '@mui/material/Tooltip';
 import Close from '@mui/icons-material/Close';
 import Email from '@mui/icons-material/Email';
+import moment from 'moment';
 import Send from '@mui/icons-material/Send';
 import { makeStyles } from '@mui/styles';
 import {
@@ -935,7 +936,6 @@ function PurchaseOrderUtility({ creating }) {
                                         />
                                     </Grid>
                                 </Grid>
-
                                 <Grid item xs={8}>
                                     <InputField
                                         fullWidth
@@ -947,7 +947,30 @@ function PurchaseOrderUtility({ creating }) {
                                         disabled
                                     />
                                 </Grid>
-                                <Grid item xs={12} />
+                                {creating && order.details?.[0].purchaseDeliveries && (
+                                    <Grid item xs={12}>
+                                        <InputField
+                                            value={
+                                                order.details?.[0].purchaseDeliveries[0]
+                                                    .dateRequested
+                                                    ? moment(
+                                                          order.details?.[0].purchaseDeliveries[0]
+                                                              .dateRequested
+                                                      ).format('YYYY-MM-DDTHH:mm:ss')
+                                                    : null
+                                            }
+                                            label="Date Requested"
+                                            propertyName="dateRequested"
+                                            onChange={(_, newValue) =>
+                                                dispatch({
+                                                    type: 'dateRequestedChange',
+                                                    payload: { line: 1, newValue }
+                                                })
+                                            }
+                                            type="date"
+                                        />
+                                    </Grid>
+                                )}
                                 <Grid container spacing={1} xs={7}>
                                     <Grid item xs={6}>
                                         <InputField
