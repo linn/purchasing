@@ -471,11 +471,12 @@
                     var deliveryDay = supplier.DeliveryDay ?? "MONDAY";
 
                     var leadTimeFromNow = DateTime.Today.AddDays(partSupplierRecord.LeadTimeWeeks * 7);
+                    var dateRequested = NextOccurrenceOfDay(leadTimeFromNow, deliveryDay);
 
                     d.PurchaseDeliveries.Add(
                         new PurchaseOrderDelivery
                             {
-                                DateRequested = NextOccurrenceOfDay(leadTimeFromNow, deliveryDay),
+                                DateRequested = dateRequested,
                                 PurchaseOrderDetail = d
                             });
                 }

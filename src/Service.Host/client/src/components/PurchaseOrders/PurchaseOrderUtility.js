@@ -16,6 +16,7 @@ import PrintIcon from '@mui/icons-material/Print';
 import Tooltip from '@mui/material/Tooltip';
 import Close from '@mui/icons-material/Close';
 import Email from '@mui/icons-material/Email';
+import moment from 'moment';
 import Send from '@mui/icons-material/Send';
 import { makeStyles } from '@mui/styles';
 import {
@@ -33,8 +34,7 @@ import {
     utilities,
     SaveBackCancelButtons,
     OnOffSwitch,
-    processSelectorHelpers,
-    DatePicker
+    processSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import queryString from 'query-string';
 import currenciesActions from '../../actions/currenciesActions';
@@ -949,25 +949,25 @@ function PurchaseOrderUtility({ creating }) {
                                 </Grid>
                                 {creating && order.details?.[0].purchaseDeliveries && (
                                     <Grid item xs={12}>
-                                        <DatePicker
+                                        <InputField
+                                            value={
+                                                order.details?.[0].purchaseDeliveries[0]
+                                                    .dateRequested
+                                                    ? moment(
+                                                          order.details?.[0].purchaseDeliveries[0]
+                                                              .dateRequested
+                                                      ).format('YYYY-MM-DDTHH:mm:ss')
+                                                    : null
+                                            }
                                             label="Date Requested"
                                             propertyName="dateRequested"
-                                            minDate="01/01/2000"
-                                            maxDate="01/01/2100"
-                                            onChange={newValue =>
+                                            onChange={(_, newValue) =>
                                                 dispatch({
                                                     type: 'dateRequestedChange',
                                                     payload: { line: 1, newValue }
                                                 })
                                             }
-                                            value={
-                                                order.details?.[0].purchaseDeliveries?.[0]
-                                                    .dateRequested
-                                                    ? new Date(
-                                                          order.details?.[0].purchaseDeliveries[0].dateRequested
-                                                      )
-                                                    : new Date()
-                                            }
+                                            type="date"
                                         />
                                     </Grid>
                                 )}
