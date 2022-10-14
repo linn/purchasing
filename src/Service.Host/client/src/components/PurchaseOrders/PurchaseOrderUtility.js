@@ -655,7 +655,7 @@ function PurchaseOrderUtility({ creating }) {
                                 </Dialog>
                                 <Grid item xs={10}>
                                     <Typography variant="h6" display="inline">
-                                        Purchase Order {!creating && item.orderNumber}
+                                        Purchase Order {!creating && item?.orderNumber}
                                     </Typography>
                                     {item?.cancelled === 'Y' && (
                                         <>
