@@ -458,16 +458,48 @@
 
             foreach (var d in order.Details)
             {
-                d.PurchaseDeliveries = new List<PurchaseOrderDelivery>();
-                d.PurchaseDeliveries.Add(
-                    new PurchaseOrderDelivery
-                        {
-                            DateRequested = DateTime.Today.AddDays(2),
-                            PurchaseOrderDetail = d
-                        });
+                var partSupplierRecord = this.partSupplierRepository.FindById(
+                    new PartSupplierKey { SupplierId = order.SupplierId, PartNumber = d.PartNumber });
+
+                if (d.Part.StockControlled == "Y" && partSupplierRecord != null)
+                {
+                    var deliveryDay = supplier.DeliveryDay ?? "MONDAY";
+
+                    var leadTimeFromNow = DateTime.Today.AddDays(partSupplierRecord.LeadTimeWeeks * 7);
+
+                    d.PurchaseDeliveries = new List<PurchaseOrderDelivery>();
+                    d.PurchaseDeliveries.Add(
+                        new PurchaseOrderDelivery
+                            {
+                                DateRequested = NextOccurrenceOfDay(leadTimeFromNow, deliveryDay),
+                                PurchaseOrderDetail = d
+                            });
+                }
             }
 
             return order;
+        }
+
+        public static DateTime NextOccurrenceOfDay(DateTime from, string deliveryDay)
+        {
+            var days = new List<string>
+                           {
+                               "SUNDAY",
+                               "MONDAY",
+                               "TUESDAY",
+                               "WEDNESDAY",
+                               "THURSDAY",
+                               "FRIDAY",
+                               "SATURDAY"
+                           };
+
+            var dayIndex = days.IndexOf(deliveryDay);
+
+            var start = (int)from.DayOfWeek;
+            var target = dayIndex;
+            if (target <= start)
+                target += 7;
+            return from.AddDays(target - start);
         }
 
         public ProcessResult AuthorisePurchaseOrder(PurchaseOrder order, int userNumber, IEnumerable<string> privileges)
@@ -752,8 +784,6 @@
         private void AddDeliveryToDetail(PurchaseOrder order, PurchaseOrderDetail detail)
         {
             var partSupplier = this.partSupplierRepository.FindById(new PartSupplierKey { PartNumber = detail.PartNumber, SupplierId = order.SupplierId });
-
-            var leadTimeWeeks = partSupplier.LeadTimeWeeks;
 
             detail.PurchaseDeliveries = new List<PurchaseOrderDelivery>
                                             {
