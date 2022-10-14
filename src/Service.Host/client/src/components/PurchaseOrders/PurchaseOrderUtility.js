@@ -33,7 +33,8 @@ import {
     utilities,
     SaveBackCancelButtons,
     OnOffSwitch,
-    processSelectorHelpers
+    processSelectorHelpers,
+    DatePicker
 } from '@linn-it/linn-form-components-library';
 import queryString from 'query-string';
 import currenciesActions from '../../actions/currenciesActions';
@@ -935,7 +936,6 @@ function PurchaseOrderUtility({ creating }) {
                                         />
                                     </Grid>
                                 </Grid>
-
                                 <Grid item xs={8}>
                                     <InputField
                                         fullWidth
@@ -947,7 +947,27 @@ function PurchaseOrderUtility({ creating }) {
                                         disabled
                                     />
                                 </Grid>
-                                <Grid item xs={12} />
+                                {creating && order.details?.[0].purchaseDeliveries && (
+                                    <Grid item xs={12}>
+                                        <DatePicker
+                                            label="Date Requested"
+                                            propertyName="dateRequested"
+                                            minDate="01/01/2000"
+                                            maxDate="01/01/2100"
+                                            onChange={newValue =>
+                                                dispatch({
+                                                    type: 'dateRequestedChange',
+                                                    payload: { line: 1, newValue }
+                                                })
+                                            }
+                                            value={
+                                                new Date(
+                                                    order.details?.[0].purchaseDeliveries[0].dateRequested
+                                                )
+                                            }
+                                        />
+                                    </Grid>
+                                )}
                                 <Grid container spacing={1} xs={7}>
                                     <Grid item xs={6}>
                                         <InputField

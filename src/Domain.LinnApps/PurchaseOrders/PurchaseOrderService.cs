@@ -456,6 +456,17 @@
                                                 NominalAccountId = nomAcc.AccountId,
                                             };
 
+            foreach (var d in order.Details)
+            {
+                d.PurchaseDeliveries = new List<PurchaseOrderDelivery>();
+                d.PurchaseDeliveries.Add(
+                    new PurchaseOrderDelivery
+                        {
+                            DateRequested = DateTime.Today.AddDays(2),
+                            PurchaseOrderDetail = d
+                        });
+            }
+
             return order;
         }
 
@@ -753,7 +764,7 @@
                                                         OrderDeliveryQty = detail.OrderQty,
                                                         OurUnitPriceCurrency = detail.OurUnitPriceCurrency,
                                                         OrderUnitPriceCurrency = detail.OrderUnitPriceCurrency,
-                                                        DateRequested = DateTime.Now.AddDays(leadTimeWeeks * 7),
+                                                        DateRequested = detail.PurchaseDeliveries?.First().DateRequested,
                                                         DateAdvised = null,
                                                         CallOffDate = DateTime.Now,
                                                         Cancelled = "N",
