@@ -7,6 +7,7 @@
 
     using FluentAssertions;
 
+    using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
@@ -67,11 +68,13 @@
                     {
                         OrderAddress = new Address(),
                         InvoiceFullAddress = new FullAddress(),
-                        Currency = new Currency()
+                        Currency = new Currency(),
+                        DeliveryDay = "THURSDAY"
                     });
             this.NominalAccountRepository
                 .FindBy(Arg.Any<Expression<Func<NominalAccount, bool>>>()).Returns(this.nominal);
-
+            this.PartSupplierRepository.FindById(Arg.Any<PartSupplierKey>())
+                .Returns(new PartSupplier { LeadTimeWeeks = 2 });
             this.result = this.Sut.FillOutUnsavedOrder(this.args, 33087);
         }
 
@@ -85,6 +88,13 @@
                 .First().OrderPosting.NominalAccount.NominalCode
                 .Should().Be(this.nominal.NominalCode);
         }
+
+        [Test]
+        public void ShouldSetRequetedDateToBeOnSuppliersDeliveryDay()
+        {
+            this.result.Details.First().PurchaseDeliveries.First()
+                .DateRequested.GetValueOrDefault().DayOfWeek.Should()
+                .Be(DayOfWeek.Thursday);
+        }
     }
 }
-

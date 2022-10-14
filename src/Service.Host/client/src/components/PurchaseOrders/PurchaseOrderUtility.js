@@ -16,6 +16,7 @@ import PrintIcon from '@mui/icons-material/Print';
 import Tooltip from '@mui/material/Tooltip';
 import Close from '@mui/icons-material/Close';
 import Email from '@mui/icons-material/Email';
+import moment from 'moment';
 import Send from '@mui/icons-material/Send';
 import { makeStyles } from '@mui/styles';
 import {
@@ -74,10 +75,14 @@ function PurchaseOrderUtility({ creating }) {
         if (orderNumber) {
             reduxDispatch(sendPurchaseOrderDeptEmailActions.clearErrorsForItem());
             reduxDispatch(purchaseOrderActions.fetch(orderNumber));
-        } else if (creating) {
+        }
+    }, [orderNumber, reduxDispatch]);
+
+    useEffect(() => {
+        if (creating) {
             reduxDispatch(purchaseOrderActions.fetchState());
         }
-    }, [orderNumber, reduxDispatch, creating]);
+    }, [reduxDispatch, creating]);
 
     useEffect(() => {
         reduxDispatch(currenciesActions.fetch());
@@ -528,7 +533,7 @@ function PurchaseOrderUtility({ creating }) {
                                         />
                                     </Grid>
                                 )}
-                                {!creating && (
+                                {!creating && item && (
                                     <CancelUnCancelDialog
                                         open={cancelDialogOpen}
                                         setOpen={setCancelDialogOpen}
@@ -679,7 +684,7 @@ function PurchaseOrderUtility({ creating }) {
                                 </Dialog>
                                 <Grid item xs={10}>
                                     <Typography variant="h6" display="inline">
-                                        Purchase Order {!creating && item.orderNumber}
+                                        Purchase Order {!creating && item?.orderNumber}
                                     </Typography>
                                     {item?.cancelled === 'Y' && (
                                         <>
@@ -955,7 +960,6 @@ function PurchaseOrderUtility({ creating }) {
                                         />
                                     </Grid>
                                 </Grid>
-
                                 <Grid item xs={8}>
                                     <InputField
                                         fullWidth
@@ -967,7 +971,30 @@ function PurchaseOrderUtility({ creating }) {
                                         disabled
                                     />
                                 </Grid>
-                                <Grid item xs={12} />
+                                {creating && order.details?.[0].purchaseDeliveries && (
+                                    <Grid item xs={12}>
+                                        <InputField
+                                            value={
+                                                order.details?.[0].purchaseDeliveries[0]
+                                                    .dateRequested
+                                                    ? moment(
+                                                          order.details?.[0].purchaseDeliveries[0]
+                                                              .dateRequested
+                                                      ).format('YYYY-MM-DDTHH:mm:ss')
+                                                    : null
+                                            }
+                                            label="Date Requested"
+                                            propertyName="dateRequested"
+                                            onChange={(_, newValue) =>
+                                                dispatch({
+                                                    type: 'dateRequestedChange',
+                                                    payload: { line: 1, newValue }
+                                                })
+                                            }
+                                            type="date"
+                                        />
+                                    </Grid>
+                                )}
                                 <Grid container spacing={1} xs={7}>
                                     <Grid item xs={6}>
                                         <InputField
@@ -1074,7 +1101,7 @@ function PurchaseOrderUtility({ creating }) {
                                     )}
                                 </Grid>
                                 <Grid item xs={3}>
-                                    {!creating && (
+                                    {!creating && item && (
                                         <Button
                                             className={classes.buttonMarginTop}
                                             aria-label={
@@ -1090,7 +1117,7 @@ function PurchaseOrderUtility({ creating }) {
                                         </Button>
                                     )}
                                 </Grid>
-                                {!creating && item.cancelled === 'Y' ? (
+                                {!creating && item?.cancelled === 'Y' ? (
                                     <>
                                         <Grid item xs={3}>
                                             <InputField

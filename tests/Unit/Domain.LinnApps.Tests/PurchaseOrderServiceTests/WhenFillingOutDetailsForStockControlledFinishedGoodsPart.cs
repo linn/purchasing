@@ -67,7 +67,7 @@
                     {
                         OrderAddress = new Address(),
                         InvoiceFullAddress = new FullAddress(),
-                        Currency = new Currency()
+                        Currency = new Currency { Code = "GB" }
                     });
             this.NominalAccountRepository
                 .FindBy(Arg.Any<Expression<Func<NominalAccount, bool>>>()).Returns(this.nominal);

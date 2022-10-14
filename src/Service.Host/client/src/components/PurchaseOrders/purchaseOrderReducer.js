@@ -70,25 +70,17 @@ export default function purchaseOrderReducer(state = initialState, action) {
                     recalculateDetailFields(action.payload, state.exchangeRate)
                 ]
             };
-        case 'deliveryFieldChange':
+        case 'dateRequestedChange':
             return {
                 ...state,
-                details: [
-                    ...state.details.map(detail => {
-                        if (detail.line !== action.payload.orderLine) {
-                            return detail;
-                        }
-                        return {
-                            ...detail,
-                            purchaseDeliveries: [
-                                ...detail.purchaseDeliveries.filter(
-                                    x => x.deliverySeq !== action.payload.deliverySeq
-                                ),
-                                action.payload
-                            ]
-                        };
-                    })
-                ]
+                details: state.details.map(d =>
+                    d.line === action.payload.line
+                        ? {
+                              ...d,
+                              purchaseDeliveries: [{ dateRequested: action.payload.newValue }]
+                          }
+                        : d
+                )
             };
         case 'nominalChange':
             return {

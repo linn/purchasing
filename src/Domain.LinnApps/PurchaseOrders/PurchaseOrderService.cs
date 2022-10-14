@@ -412,11 +412,17 @@
 
             order.ExchangeRate = this.currencyPack.GetExchangeRate("GBP", order.CurrencyCode);
 
+            if (order.ExchangeRate.GetValueOrDefault() == 0)
+            {
+                order.ExchangeRate = 1;
+            }
+
             var detail = order.Details.First();
             detail.OrderUnitPriceCurrency = detail.OurUnitPriceCurrency;
             detail.OrderQty = detail.OurQty;
 
             var part = this.partQueryRepository.FindBy(p => p.PartNumber == detail.PartNumber);
+
             detail.OurUnitOfMeasure = part.OurUnitOfMeasure;
             order.IssuePartsToSupplier = part.SupplierAssembly() ? "Y" : "N";
 
@@ -424,6 +430,14 @@
             detail.OrderUnitOfMeasure = partSupplier != null ? partSupplier.UnitOfMeasure : string.Empty;
             detail.OurUnitOfMeasure = partSupplier != null ? partSupplier.UnitOfMeasure : string.Empty;
             detail.SuppliersDesignation = partSupplier != null ? partSupplier.SupplierDesignation : string.Empty;
+
+            detail.NetTotalCurrency = detail.OurQty.GetValueOrDefault() 
+                                      * detail.OurUnitPriceCurrency.GetValueOrDefault();
+
+            detail.DetailTotalCurrency = detail.NetTotalCurrency + detail.VatTotalCurrency;
+            detail.BaseNetTotal = Math.Round(detail.NetTotalCurrency / (decimal)order.ExchangeRate, 2);
+            detail.BaseDetailTotal = 
+                Math.Round(detail.DetailTotalCurrency.GetValueOrDefault() / (decimal)order.ExchangeRate, 2);
 
             NominalAccount nomAcc = null;
             if (part.StockControlled == "Y")
@@ -452,7 +466,54 @@
                                                 NominalAccountId = nomAcc.AccountId,
                                             };
 
+            foreach (var d in order.Details)
+            {
+                var partSupplierRecord = this.partSupplierRepository.FindById(
+                    new PartSupplierKey { SupplierId = order.SupplierId, PartNumber = d.PartNumber });
+
+                if (this.partQueryRepository.FindBy(p => p.PartNumber == d.PartNumber).StockControlled == "Y" 
+                    && partSupplierRecord != null
+                    && d.PurchaseDeliveries?.First()?.DateRequested == null) // might already have a suggested date from MR
+                {
+                    d.PurchaseDeliveries = new List<PurchaseOrderDelivery>();
+
+                    var deliveryDay = supplier.DeliveryDay ?? "MONDAY";
+
+                    var leadTimeFromNow = DateTime.Today.AddDays(partSupplierRecord.LeadTimeWeeks * 7);
+                    var dateRequested = NextOccurrenceOfDay(leadTimeFromNow, deliveryDay);
+
+                    d.PurchaseDeliveries.Add(
+                        new PurchaseOrderDelivery
+                            {
+                                DateRequested = dateRequested,
+                                PurchaseOrderDetail = d
+                            });
+                }
+            }
+
             return order;
+        }
+
+        public static DateTime NextOccurrenceOfDay(DateTime from, string deliveryDay)
+        {
+            var days = new List<string>
+                           {
+                               "SUNDAY",
+                               "MONDAY",
+                               "TUESDAY",
+                               "WEDNESDAY",
+                               "THURSDAY",
+                               "FRIDAY",
+                               "SATURDAY"
+                           };
+
+            var dayIndex = days.IndexOf(deliveryDay);
+
+            var start = (int)from.DayOfWeek;
+            var target = dayIndex;
+            if (target <= start)
+                target += 7;
+            return from.AddDays(target - start);
         }
 
         public ProcessResult AuthorisePurchaseOrder(PurchaseOrder order, int userNumber, IEnumerable<string> privileges)
@@ -830,8 +891,6 @@
         {
             var partSupplier = this.partSupplierRepository.FindById(new PartSupplierKey { PartNumber = detail.PartNumber, SupplierId = order.SupplierId });
 
-            var leadTimeWeeks = partSupplier.LeadTimeWeeks;
-
             detail.PurchaseDeliveries = new List<PurchaseOrderDelivery>
                                             {
                                                 new PurchaseOrderDelivery
@@ -841,7 +900,7 @@
                                                         OrderDeliveryQty = detail.OrderQty,
                                                         OurUnitPriceCurrency = detail.OurUnitPriceCurrency,
                                                         OrderUnitPriceCurrency = detail.OrderUnitPriceCurrency,
-                                                        DateRequested = DateTime.Now.AddDays(leadTimeWeeks * 7),
+                                                        DateRequested = detail.PurchaseDeliveries?.First().DateRequested,
                                                         DateAdvised = null,
                                                         CallOffDate = DateTime.Now,
                                                         Cancelled = "N",

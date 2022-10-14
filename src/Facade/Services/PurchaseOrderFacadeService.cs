@@ -125,6 +125,12 @@
                                                    NetTotalCurrency = x.NetTotalCurrency,
                                                    OurQty = x.OurQty,
                                                    OrderQty = x.OrderQty,
+                                                   PurchaseDeliveries = x.PurchaseDeliveries?.Select(d =>
+                                                       new PurchaseOrderDelivery
+                                                           {
+                                                               DateRequested = !string.IsNullOrEmpty(d.DateRequested) 
+                                                                                   ? DateTime.Parse(d.DateRequested) : null,
+                                                           })?.ToList(),
                                                    Part =
                                                        new Part
                                                            {

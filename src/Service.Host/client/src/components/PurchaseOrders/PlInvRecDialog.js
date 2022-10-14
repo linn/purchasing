@@ -37,7 +37,7 @@ function PlInvRecDialog({ open, setOpen, ledgerEntries, orderNumber, inDialog })
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (!ledgerEntries) {
+        if (!ledgerEntries && orderNumber) {
             dispatch(purchaseOrderActions.fetch(orderNumber));
         }
     }, [ledgerEntries, orderNumber, dispatch]);
