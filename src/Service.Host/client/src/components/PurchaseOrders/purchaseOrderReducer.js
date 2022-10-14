@@ -71,7 +71,6 @@ export default function purchaseOrderReducer(state = initialState, action) {
                 ]
             };
         case 'dateRequestedChange':
-            console.log(action);
             return {
                 ...state,
                 details: state.details.map(d =>
