@@ -961,9 +961,12 @@ function PurchaseOrderUtility({ creating }) {
                                                 })
                                             }
                                             value={
-                                                new Date(
-                                                    order.details?.[0].purchaseDeliveries[0].dateRequested
-                                                )
+                                                order.details?.[0].purchaseDeliveries?.[0]
+                                                    .dateRequested
+                                                    ? new Date(
+                                                          order.details?.[0].purchaseDeliveries[0].dateRequested
+                                                      )
+                                                    : new Date()
                                             }
                                         />
                                     </Grid>

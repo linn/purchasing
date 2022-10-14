@@ -413,6 +413,7 @@
             detail.OrderQty = detail.OurQty;
 
             var part = this.partQueryRepository.FindBy(p => p.PartNumber == detail.PartNumber);
+
             detail.OurUnitOfMeasure = part.OurUnitOfMeasure;
             order.IssuePartsToSupplier = part.SupplierAssembly() ? "Y" : "N";
 
@@ -461,13 +462,16 @@
                 var partSupplierRecord = this.partSupplierRepository.FindById(
                     new PartSupplierKey { SupplierId = order.SupplierId, PartNumber = d.PartNumber });
 
-                if (d.Part.StockControlled == "Y" && partSupplierRecord != null)
+                if (this.partQueryRepository.FindBy(p => p.PartNumber == d.PartNumber).StockControlled == "Y" 
+                    && partSupplierRecord != null
+                    && d.PurchaseDeliveries?.First()?.DateRequested == null) // might already have a suggested date from MR
                 {
+                    d.PurchaseDeliveries = new List<PurchaseOrderDelivery>();
+
                     var deliveryDay = supplier.DeliveryDay ?? "MONDAY";
 
                     var leadTimeFromNow = DateTime.Today.AddDays(partSupplierRecord.LeadTimeWeeks * 7);
 
-                    d.PurchaseDeliveries = new List<PurchaseOrderDelivery>();
                     d.PurchaseDeliveries.Add(
                         new PurchaseOrderDelivery
                             {
