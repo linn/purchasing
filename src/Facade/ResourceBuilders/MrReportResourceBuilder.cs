@@ -41,10 +41,10 @@
 
         private MrHeaderResource BuildHeader(MrHeader entity, int runWeekNumber)
         {
-            var recommendedOrderDate = entity.RecommendedOrderDate?.ToString("o");
+            var recommendedOrderDate = entity.RecommendedOrderDate?.Date.ToString("o");
             if (entity.RecommendedOrderDate != null && entity.RecommendedOrderDate < DateTime.Now)
             {
-                recommendedOrderDate = DateTime.Now.AddDays(1).ToString("o");
+                recommendedOrderDate = DateTime.Now.AddDays(1).Date.ToString("o");
             }
 
             return new MrHeaderResource
