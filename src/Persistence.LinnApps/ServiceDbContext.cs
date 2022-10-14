@@ -1316,6 +1316,7 @@
             entity.Property(e => e.DateFilUncancelled).HasColumnName("DATE_UNFIL_CANCELLED");
             entity.Property(e => e.DatePreviouslyCancelled).HasColumnName("DATE_PREVIOUSLY_CANCELLED");
             entity.Property(e => e.DatePreviouslyFilCancelled).HasColumnName("DATE_PREVIOUSLY_FIL_CANCELLED");
+            entity.Property(e => e.ReasonFilCancelled).HasColumnName("REASON_FIL_CANCELLED").HasMaxLength(300);
         }
 
         private void BuildPurchaseOrderPostings(ModelBuilder builder)

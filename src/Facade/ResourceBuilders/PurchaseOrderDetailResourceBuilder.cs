@@ -54,6 +54,10 @@
                            DetailTotalCurrency = entity.DetailTotalCurrency,
                            BaseDetailTotal = entity.BaseDetailTotal,
                            DeliveryInstructions = entity.DeliveryInstructions,
+                           FilCancelled = entity.FilCancelled,
+                           ReasonFilCancelled = entity.CancelledDetails?.FirstOrDefault()?.ReasonFilCancelled,
+                           FilCancelledBy = entity.CancelledDetails?.FirstOrDefault()?.FilCancelledById,
+                           DateFilCancelled = entity.CancelledDetails?.FirstOrDefault()?.DateFilCancelled?.ToString("dd-MMM-yyyy"),
                            DeliveryConfirmedBy =
                                entity.DeliveryConfirmedBy != null
                                    ? new EmployeeResource
@@ -68,9 +72,6 @@
                                                   entity.OrderPosting,
                                                   claims)
                                               : null
-
-                           // MrOrders = entity.MrOrders.Select( resourceBuilder.Build),
-                           // CancelledDetails = entity.CancelledDetails.Select(resourceBuilder.Build)
                        };
         }
 

@@ -43,8 +43,9 @@
                            DatePreviouslyCancelled = entity.DatePreviouslyCancelled,
                            DatePreviouslyFilCancelled = entity.DatePreviouslyFilCancelled,
                            ValueFilCancelled = entity.ValueFilCancelled,
-                           BaseValueFilCancelled = entity.BaseValueFilCancelled
-                       };
+                           BaseValueFilCancelled = entity.BaseValueFilCancelled,
+                           ReasonFilCancelled = entity.ReasonFilCancelled
+            };
         }
 
         public string GetLocation(CancelledOrderDetail p)

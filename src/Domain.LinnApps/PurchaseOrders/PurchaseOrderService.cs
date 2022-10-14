@@ -714,6 +714,21 @@
             return order;
         }
 
+        public PurchaseOrder FilCancelLine(
+            int orderNumber,
+            int line,
+            int filCancelledBy,
+            string reasonFilCancelled,
+            IEnumerable<string> privileges)
+        {
+            throw new NotImplementedException();
+        }
+
+        public PurchaseOrder UnFilCancelLine(int orderNumber, int line, IEnumerable<string> privileges)
+        {
+            throw new NotImplementedException();
+        }
+
         private PurchaseOrder GetOrder(int orderNumber)
         {
             var order = this.purchaseOrderRepository.FindById(orderNumber);

@@ -39,5 +39,7 @@
         public decimal? ValueFilCancelled { get; set; }
 
         public decimal? BaseValueFilCancelled { get; set; }
+
+        public string ReasonFilCancelled { get; set; }
     }
 }

@@ -65,5 +65,13 @@
         public string SuppliersDesignation { get; set; }
 
         public decimal? VatTotalCurrency { get; set; }
+
+        public string FilCancelled { get; set; }
+
+        public string DateFilCancelled { get; set; }
+
+        public string ReasonFilCancelled { get; set; }
+
+        public int? FilCancelledBy { get; set; }
     }
 }
