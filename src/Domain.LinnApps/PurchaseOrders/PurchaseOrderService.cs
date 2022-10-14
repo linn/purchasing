@@ -425,9 +425,9 @@
                                       * detail.OurUnitPriceCurrency.GetValueOrDefault();
 
             detail.DetailTotalCurrency = detail.NetTotalCurrency + detail.VatTotalCurrency;
-            detail.BaseNetTotal = detail.NetTotalCurrency/ (decimal)order.ExchangeRate;
+            detail.BaseNetTotal = Math.Round(detail.NetTotalCurrency / (decimal)order.ExchangeRate, 2);
             detail.BaseDetailTotal = 
-                detail.DetailTotalCurrency.GetValueOrDefault() / (decimal)order.ExchangeRate;
+                Math.Round(detail.DetailTotalCurrency.GetValueOrDefault() / (decimal)order.ExchangeRate, 2);
 
             NominalAccount nomAcc = null;
             if (part.StockControlled == "Y")
