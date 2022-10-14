@@ -67,9 +67,9 @@
                     {
                         OrderAddress = new Address(),
                         InvoiceFullAddress = new FullAddress(),
-                        Currency = new Currency()
+                        Currency = new Currency { Code = "GBP" }
                     });
-
+            this.CurrencyPack.GetExchangeRate("GBP", "GBP").Returns(1);
             this.result = this.Sut.FillOutUnsavedOrder(this.args, 33087);
         }
 

@@ -403,6 +403,11 @@
 
             order.ExchangeRate = this.currencyPack.GetExchangeRate("GBP", order.CurrencyCode);
 
+            if (order.ExchangeRate.GetValueOrDefault() == 0)
+            {
+                order.ExchangeRate = 1;
+            }
+
             var detail = order.Details.First();
             detail.OrderUnitPriceCurrency = detail.OurUnitPriceCurrency;
             detail.OrderQty = detail.OurQty;
@@ -415,6 +420,14 @@
             detail.OrderUnitOfMeasure = partSupplier != null ? partSupplier.UnitOfMeasure : string.Empty;
             detail.OurUnitOfMeasure = partSupplier != null ? partSupplier.UnitOfMeasure : string.Empty;
             detail.SuppliersDesignation = partSupplier != null ? partSupplier.SupplierDesignation : string.Empty;
+
+            detail.NetTotalCurrency = detail.OurQty.GetValueOrDefault() 
+                                      * detail.OurUnitPriceCurrency.GetValueOrDefault();
+
+            detail.DetailTotalCurrency = detail.NetTotalCurrency + detail.VatTotalCurrency;
+            detail.BaseNetTotal = Math.Round(detail.NetTotalCurrency / (decimal)order.ExchangeRate, 2);
+            detail.BaseDetailTotal = 
+                Math.Round(detail.DetailTotalCurrency.GetValueOrDefault() / (decimal)order.ExchangeRate, 2);
 
             NominalAccount nomAcc = null;
             if (part.StockControlled == "Y")
