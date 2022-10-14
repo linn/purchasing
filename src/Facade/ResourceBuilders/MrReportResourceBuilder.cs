@@ -44,7 +44,7 @@
             var recommendedOrderDate = entity.RecommendedOrderDate?.Date.ToString("o");
             if (entity.RecommendedOrderDate != null && entity.RecommendedOrderDate < DateTime.Now)
             {
-                recommendedOrderDate = DateTime.Now.AddDays(1).Date.ToString("o");
+                recommendedOrderDate = DateTime.UtcNow.Date.AddDays(1).ToString("o");
             }
 
             return new MrHeaderResource
