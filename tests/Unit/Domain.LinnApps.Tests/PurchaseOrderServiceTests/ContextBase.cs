@@ -74,7 +74,6 @@
 
         protected IQueryRepository<ImmediateLiabilityBase> ImmediateLiabilityBaseRepository { get; private set; }
 
-
         [SetUp]
         public void SetUpContext()
         {

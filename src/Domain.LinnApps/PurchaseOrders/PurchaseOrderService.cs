@@ -865,12 +865,15 @@
             order.DateFilCancelled = null;
             order.PeriodFilCancelled = null;
 
-            var miniOrder = this.miniOrderRepository.FindById(orderNumber);
-            if (miniOrder is not null)
+            if (line == 1)
             {
-                miniOrder.FilCancelledBy = null;
-                miniOrder.ReasonFilCancelled = null;
-                miniOrder.DateFilCancelled = null;
+                var miniOrder = this.miniOrderRepository.FindById(orderNumber);
+                if (miniOrder is not null)
+                {
+                    miniOrder.FilCancelledBy = null;
+                    miniOrder.ReasonFilCancelled = null;
+                    miniOrder.DateFilCancelled = null;
+                }
             }
 
             return order;
