@@ -519,23 +519,20 @@
                                                                      OrderNumber = c.OrderNumber,
                                                                      LineNumber = c.LineNumber,
                                                                      DeliverySequence = c.DeliverySequence,
-                                                                     DateCancelled = c.DateCancelled,
+                                                                     DateCancelled = string.IsNullOrEmpty(c.DateCancelled) ? null : DateTime.Parse(c.DateCancelled),
                                                                      CancelledById = c.CancelledBy.Id,
-                                                                     DateFilCancelled = c.DateFilCancelled,
+                                                                     DateFilCancelled = string.IsNullOrEmpty(c.DateFilCancelled) ? null : DateTime.Parse(c.DateFilCancelled),
                                                                      FilCancelledById = c.FilCancelledBy.Id,
                                                                      ReasonCancelled = c.ReasonCancelled,
                                                                      Id = c.Id,
                                                                      PeriodCancelled = c.PeriodCancelled,
                                                                      PeriodFilCancelled = c.PeriodFilCancelled,
                                                                      ValueCancelled = c.ValueCancelled,
-                                                                     DateUncancelled = c.DateUncancelled,
-                                                                     DateFilUncancelled = c.DateFilUncancelled,
-                                                                     DatePreviouslyCancelled =
-                                                                         c.DatePreviouslyCancelled,
-                                                                     DatePreviouslyFilCancelled =
-                                                                         c.DatePreviouslyFilCancelled,
+                                                                     DateUncancelled = string.IsNullOrEmpty(c.DateUncancelled) ? null : DateTime.Parse(c.DateUncancelled),
+                                                                     DateFilUncancelled = string.IsNullOrEmpty(c.DateFilUncancelled) ? null : DateTime.Parse(c.DateFilUncancelled),
                                                                      ValueFilCancelled = c.ValueFilCancelled,
-                                                                     BaseValueFilCancelled = c.BaseValueFilCancelled
+                                                                     BaseValueFilCancelled = c.BaseValueFilCancelled,
+                                                                     ReasonFilCancelled = c.ReasonFilCancelled
                                                                  }).ToList(),
                                                 InternalComments = x.InternalComments,
                                                 OrderPosting = new PurchaseOrderPosting

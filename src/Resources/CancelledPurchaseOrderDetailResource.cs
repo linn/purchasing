@@ -1,7 +1,5 @@
 ﻿namespace Linn.Purchasing.Resources
 {
-    using System;
-
     public class CancelledPurchaseOrderDetailResource
     {
         public int OrderNumber { get; set; }
@@ -10,11 +8,11 @@
 
         public int? DeliverySequence { get; set; }
 
-        public DateTime? DateCancelled { get; set; }
+        public string DateCancelled { get; set; }
 
         public EmployeeResource CancelledBy { get; set; }
 
-        public DateTime? DateFilCancelled { get; set; }
+        public string DateFilCancelled { get; set; }
 
         public EmployeeResource FilCancelledBy { get; set; }
 
@@ -28,13 +26,9 @@
 
         public decimal? ValueCancelled { get; set; }
 
-        public DateTime? DateUncancelled { get; set; }
+        public string DateUncancelled { get; set; }
 
-        public DateTime? DateFilUncancelled { get; set; }
-
-        public DateTime? DatePreviouslyCancelled { get; set; }
-
-        public DateTime? DatePreviouslyFilCancelled { get; set; }
+        public string DateFilUncancelled { get; set; }
 
         public decimal? ValueFilCancelled { get; set; }
 

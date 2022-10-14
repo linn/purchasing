@@ -3,12 +3,10 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Linq.Expressions;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
-    using Linn.Purchasing.Domain.LinnApps.Finance.Models;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
 
@@ -26,15 +24,9 @@
 
         private MiniOrder miniOrder;
 
-        private int cancelId;
-
-        private int cancelledBy;
-
         [SetUp]
         public void SetUp()
         {
-            this.cancelId = 123;
-            this.cancelledBy = 456;
             this.orderNumber = 808808;
             this.order = new PurchaseOrder
                                {
