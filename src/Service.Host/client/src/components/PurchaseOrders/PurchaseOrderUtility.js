@@ -1050,7 +1050,7 @@ function PurchaseOrderUtility({ creating }) {
                                     )}
                                 </Grid>
                                 <Grid item xs={3}>
-                                    {!creating && (
+                                    {!creating && item && (
                                         <Button
                                             className={classes.buttonMarginTop}
                                             aria-label={
@@ -1066,7 +1066,7 @@ function PurchaseOrderUtility({ creating }) {
                                         </Button>
                                     )}
                                 </Grid>
-                                {!creating && item.cancelled === 'Y' ? (
+                                {!creating && item?.cancelled === 'Y' ? (
                                     <>
                                         <Grid item xs={3}>
                                             <InputField
