@@ -73,10 +73,14 @@ function PurchaseOrderUtility({ creating }) {
         if (orderNumber) {
             reduxDispatch(sendPurchaseOrderDeptEmailActions.clearErrorsForItem());
             reduxDispatch(purchaseOrderActions.fetch(orderNumber));
-        } else if (creating) {
+        }
+    }, [orderNumber, reduxDispatch]);
+
+    useEffect(() => {
+        if (creating) {
             reduxDispatch(purchaseOrderActions.fetchState());
         }
-    }, [orderNumber, reduxDispatch, creating]);
+    }, [reduxDispatch, creating]);
 
     useEffect(() => {
         reduxDispatch(currenciesActions.fetch());
