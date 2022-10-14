@@ -518,7 +518,7 @@ function PurchaseOrderUtility({ creating }) {
                                         />
                                     </Grid>
                                 )}
-                                {!creating && (
+                                {!creating && item && (
                                     <CancelUnCancelDialog
                                         open={cancelDialogOpen}
                                         setOpen={setCancelDialogOpen}
