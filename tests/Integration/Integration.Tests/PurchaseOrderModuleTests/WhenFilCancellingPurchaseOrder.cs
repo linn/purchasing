@@ -96,7 +96,7 @@
             this.MockDomainService.FilCancelLine(
                 this.from.OrderNumber,
                 1,
-                this.filCancelledBy,
+                Arg.Any<int>(),
                 this.to.Details.First().ReasonFilCancelled,
                 Arg.Any<IEnumerable<string>>()).Returns(this.order);
 
@@ -130,7 +130,7 @@
             this.MockDomainService.Received().FilCancelLine(
                 this.from.OrderNumber,
                 this.to.Details.First().Line,
-                this.filCancelledBy,
+                Arg.Any<int>(),
                 this.to.Details.First().ReasonFilCancelled,
                 Arg.Any<IEnumerable<string>>());
         }

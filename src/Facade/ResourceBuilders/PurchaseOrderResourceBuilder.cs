@@ -41,7 +41,7 @@
                 return new PurchaseOrderResource { Links = this.BuildLinks(null, claimsList).ToArray() };
             }
 
-            var cancelledDetail = entity.Details?.FirstOrDefault()?.CancelledDetails?.FirstOrDefault();
+            var cancelledDetail = entity.Details?.FirstOrDefault()?.CancelledDetails?.FirstOrDefault(a => a.CancelledById.HasValue);
 
             return new PurchaseOrderResource
                        {
@@ -202,6 +202,15 @@
                                      {
                                          Rel = "email-dept",
                                          Href = $"{this.GetLocation(model)}/email-dept"
+                                     };
+                }
+
+                if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderFilCancel, privileges))
+                {
+                    yield return new LinkResource
+                                     {
+                                         Rel = "fil-cancel",
+                                         Href = $"{this.GetLocation(model)}"
                                      };
                 }
             }

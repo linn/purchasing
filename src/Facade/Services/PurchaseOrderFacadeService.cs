@@ -300,12 +300,12 @@
                         if (purchaseOrderDetailResource.FilCancelled
                             != resource.From.Details?.FirstOrDefault(a => a.Line == purchaseOrderDetailResource.Line)?.FilCancelled)
                         {
-                            if (purchaseOrderDetailResource.FilCancelled == "Y" && purchaseOrderDetailResource.FilCancelledBy.HasValue)
+                            if (purchaseOrderDetailResource.FilCancelled == "Y")
                             {
                                 order = this.domainService.FilCancelLine(
                                     resource.From.OrderNumber,
                                     purchaseOrderDetailResource.Line,
-                                    purchaseOrderDetailResource.FilCancelledBy.Value,
+                                    who,
                                     purchaseOrderDetailResource.ReasonFilCancelled,
                                     privilegesList);
                             }

@@ -757,8 +757,8 @@
                                           PeriodFilCancelled = currentLedgerPeriod,
                                           FilCancelledById = filCancelledBy,
                                           ReasonFilCancelled = reasonFilCancelled,
-                                          ValueFilCancelled = immediateLiability.Liability,
-                                          BaseValueFilCancelled= baseImmediateLiability.Liability
+                                          ValueFilCancelled = immediateLiability?.Liability ?? 0,
+                                          BaseValueFilCancelled = baseImmediateLiability?.Liability ?? 0
                                       };
             this.cancelledOrderDetailRepository.Add(cancelledDetail);
 

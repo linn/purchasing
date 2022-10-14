@@ -73,5 +73,7 @@
         public string ReasonFilCancelled { get; set; }
 
         public int? FilCancelledBy { get; set; }
+
+        public string FilCancelledByName { get; set; }
     }
 }
