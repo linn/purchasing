@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderServiceTests
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -21,6 +22,8 @@
         private readonly int orderNumber = 600179;
 
         private PurchaseOrder order;
+
+        private PurchaseOrder result;
 
         [SetUp]
         public void SetUp()
@@ -97,7 +100,14 @@
                                                                             Product = "macs",
                                                                             Qty = 1,
                                                                             Vehicle = "van"
-                                                                        }
+                                                                        },
+                                                     PurchaseDeliveries = new List<PurchaseOrderDelivery>
+                                                                              {
+                                                                                  new PurchaseOrderDelivery
+                                                                                      {
+                                                                                          DateRequested = DateTime.UnixEpoch
+                                                                                      }
+                                                                              }
                                                  }
                                          },
                                  Currency = new Currency { Code = "EUR", Name = "Euros" },
@@ -130,13 +140,13 @@
             this.PartSupplierRepository.FindById(Arg.Any<PartSupplierKey>()).Returns(
                 new PartSupplier { UnitOfMeasure = "Potatoes", LeadTimeWeeks = 2 });
 
-            this.Sut.CreateOrder(this.order, new List<string>());
+            this.result = this.Sut.CreateOrder(this.order, new List<string>());
         }
 
         [Test]
         public void ShouldSetFields()
         {
-            var firstDetail = this.order.Details.First();
+            var firstDetail = this.result.Details.First();
 
             firstDetail.OrderPosting.Id.Should().Be(123);
             firstDetail.OrderConversionFactor.Should().Be(1, "conversion factor set to 1 for everything for now");
@@ -165,6 +175,9 @@
             firstDetail.BaseDetailTotal.Should().Be(24827.91m);
 
             firstDetail.OrderPosting.NominalAccountId.Should().Be(911);
+
+            firstDetail.PurchaseDeliveries
+                .First().DateRequested.Should().Be(DateTime.UnixEpoch);
         }
 
         [Test]
