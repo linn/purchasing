@@ -54,6 +54,21 @@
                            DetailTotalCurrency = entity.DetailTotalCurrency,
                            BaseDetailTotal = entity.BaseDetailTotal,
                            DeliveryInstructions = entity.DeliveryInstructions,
+                           FilCancelled = entity.FilCancelled,
+                           ReasonFilCancelled = entity.FilCancelled == "Y"
+                                                    ? entity.CancelledDetails
+                                                        ?.LastOrDefault(a => a.FilCancelledById.HasValue)
+                                                        ?.ReasonFilCancelled
+                                                    : null,
+                           FilCancelledBy = entity.FilCancelled == "Y"
+                                                ? entity.CancelledDetails?.LastOrDefault(a => a.FilCancelledById.HasValue)?.FilCancelledById
+                                                : null,
+                           DateFilCancelled = entity.FilCancelled == "Y"
+                                                  ? entity.CancelledDetails?.LastOrDefault(a => a.FilCancelledById.HasValue)?.DateFilCancelled?.ToString("dd-MMM-yyyy")
+                                                  : null,
+                           FilCancelledByName = entity.FilCancelled == "Y"
+                                                    ? entity.CancelledDetails?.LastOrDefault(a => a.FilCancelledById.HasValue)?.FilCancelledBy?.FullName
+                                                    : null,
                            DeliveryConfirmedBy =
                                entity.DeliveryConfirmedBy != null
                                    ? new EmployeeResource
@@ -68,9 +83,6 @@
                                                   entity.OrderPosting,
                                                   claims)
                                               : null
-
-                           // MrOrders = entity.MrOrders.Select( resourceBuilder.Build),
-                           // CancelledDetails = entity.CancelledDetails.Select(resourceBuilder.Build)
                        };
         }
 

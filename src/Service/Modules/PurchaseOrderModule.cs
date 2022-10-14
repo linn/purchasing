@@ -7,7 +7,6 @@
     using Carter.Response;
 
     using Linn.Common.Facade;
-    using Linn.Common.Pdf;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Parts;

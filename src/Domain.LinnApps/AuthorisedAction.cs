@@ -19,6 +19,8 @@
         public const string PurchaseOrderUpdate = "purchase-order.update";
 
         public const string PurchaseOrderCancel = "purchase-order.cancel";
+        
+        public const string PurchaseOrderFilCancel = "purchase-order.fil-cancel";
 
         public const string PurchaseOrderReqFinanceCheck = "purchase-order-req.finance-check";
 

@@ -5,6 +5,7 @@
     using Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Edi;
+    using Linn.Purchasing.Domain.LinnApps.Finance.Models;
     using Linn.Purchasing.Domain.LinnApps.Forecasting;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
@@ -187,6 +188,10 @@
         public DbSet<CreditDebitNoteType> CreditDebitNoteTypes { get; set; }
 
         public DbSet<PlOrderReceivedViewEntry> PlOrderReceivedView { get; set; }
+        
+        public DbSet<ImmediateLiability> ImmediateLiability { get; set; }
+        
+        public DbSet<ImmediateLiabilityBase> ImmediateLiabilityBase { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -290,6 +295,8 @@
             this.BuildPcasChanges(builder);
             this.BuildPlCreditDebitNoteDetails(builder);
             this.BuildPlOrderReceivedView(builder);
+            this.BuildImmediateLiability(builder);
+            this.BuildImmediateLiabilityBase(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -711,6 +718,8 @@
             entity.Property(o => o.IssuePartsToSupplier).HasColumnName("ISSUE_PARTS_TO_SUPPLIER").HasMaxLength(1);
             entity.Property(o => o.PriceType).HasColumnName("PRICE_TYPE").HasMaxLength(10);
             entity.Property(o => o.FilCancelled).HasColumnName("FIL_CANCELLED").HasMaxLength(1);
+            entity.Property(o => o.DateFilCancelled).HasColumnName("DATE_FIL_CANCELLED");
+            entity.Property(o => o.PeriodFilCancelled).HasColumnName("PERIOD_FIL_CANCELLED");
             entity.Property(o => o.UpdatePartsupPrice).HasColumnName("UPDATE_PARTSUP_PRICE").HasMaxLength(1);
             entity.Property(o => o.WasPreferredSupplier).HasColumnName("WAS_PREFERRED_SUPPLIER").HasMaxLength(1);
             entity.Property(o => o.OverbookQtyAllowed).HasColumnName("OVERBOOK_QTY_ALLOWED").HasMaxLength(19);
@@ -1316,6 +1325,7 @@
             entity.Property(e => e.DateFilUncancelled).HasColumnName("DATE_UNFIL_CANCELLED");
             entity.Property(e => e.DatePreviouslyCancelled).HasColumnName("DATE_PREVIOUSLY_CANCELLED");
             entity.Property(e => e.DatePreviouslyFilCancelled).HasColumnName("DATE_PREVIOUSLY_FIL_CANCELLED");
+            entity.Property(e => e.ReasonFilCancelled).HasColumnName("REASON_FIL_CANCELLED").HasMaxLength(300);
         }
 
         private void BuildPurchaseOrderPostings(ModelBuilder builder)
@@ -1914,6 +1924,24 @@
             entity.Property(c => c.DateCancelled).HasColumnName("DATE_CANCELLED");
             entity.Property(c => c.CancelledBy).HasColumnName("CANCELLED_BY");
             entity.Property(c => c.Comments).HasColumnName("COMMENTS").HasMaxLength(2000);
+        }
+
+        private void BuildImmediateLiability(ModelBuilder builder)
+        {
+            var entity = builder.Entity<ImmediateLiability>().ToTable("PL_IMM_LIABILITY_VIEW").HasNoKey();
+            entity.Property(a => a.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(a => a.OrderLine).HasColumnName("ORDER_LINE");
+            entity.Property(a => a.Quantity).HasColumnName("FIL_QTY");
+            entity.Property(a => a.Liability).HasColumnName("IMM_LIB");
+        }
+
+        private void BuildImmediateLiabilityBase(ModelBuilder builder)
+        {
+            var entity = builder.Entity<ImmediateLiabilityBase>().ToTable("PL_BASE_LIABILITY_VIEW").HasNoKey();
+            entity.Property(a => a.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(a => a.OrderLine).HasColumnName("ORDER_LINE");
+            entity.Property(a => a.Quantity).HasColumnName("FIL_QTY");
+            entity.Property(a => a.Liability).HasColumnName("IMM_LIB");
         }
     }
 }

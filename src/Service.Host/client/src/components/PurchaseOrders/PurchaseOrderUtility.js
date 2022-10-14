@@ -61,6 +61,7 @@ import sendOrderAuthEmailActions from '../../actions/sendPurchaseOrderAuthEmailA
 import purchaseOrderDeliveriesActions from '../../actions/purchaseOrderDeliveriesActions';
 import sendPurchaseOrderDeptEmailActions from '../../actions/sendPurchaseOrderDeptEmailActions';
 import CancelUnCancelDialog from './CancelUnCancelDialog';
+import FilCancelUnCancelDialog from './FilCancelUnCancelDialog';
 import PlInvRecDialog from './PlInvRecDialog';
 
 function PurchaseOrderUtility({ creating }) {
@@ -248,6 +249,8 @@ function PurchaseOrderUtility({ creating }) {
         }
         return utilities.getHref(order, 'edit');
     };
+
+    const allowedToFilCancel = () => !creating && utilities.getHref(order, 'fil-cancel');
 
     const inputIsValid = () =>
         order.supplier?.id &&
@@ -459,6 +462,13 @@ function PurchaseOrderUtility({ creating }) {
     };
 
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+    const [currentLine, setCurrentLine] = useState(1);
+    const [filCancelDialogOpen, setFilCancelDialogOpen] = useState(false);
+
+    const filCancelLine = lineNumber => {
+        setCurrentLine(lineNumber);
+        setFilCancelDialogOpen(true);
+    };
 
     return (
         <>
@@ -529,6 +539,20 @@ function PurchaseOrderUtility({ creating }) {
                                         setOpen={setCancelDialogOpen}
                                         mode={item.cancelled === 'Y' ? 'uncancel' : 'cancel'}
                                         order={item.orderNumber}
+                                    />
+                                )}
+                                {!creating && (
+                                    <FilCancelUnCancelDialog
+                                        open={filCancelDialogOpen}
+                                        setOpen={setFilCancelDialogOpen}
+                                        mode={
+                                            item.details.find(a => a.line === currentLine)
+                                                .filCancelled === 'Y'
+                                                ? 'uncancel'
+                                                : 'cancel'
+                                        }
+                                        order={item.orderNumber}
+                                        line={currentLine}
                                     />
                                 )}
                                 {!creating && (
@@ -1467,8 +1491,63 @@ function PurchaseOrderUtility({ creating }) {
                                                     required
                                                 />
                                             </Grid>
-                                            <Grid item xs={4} />
-
+                                            <Grid item xs={1} />
+                                            {detail.filCancelled === 'Y' && (
+                                                <>
+                                                    <Grid item xs={3} />
+                                                    <Grid item xs={2}>
+                                                        <InputField
+                                                            fullWidth
+                                                            value={detail.dateFilCancelled}
+                                                            label="Date Fil Cancelled"
+                                                            propertyName="dateFilCancelled"
+                                                            disabled
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={3}>
+                                                        <InputField
+                                                            fullWidth
+                                                            value={detail.filCancelledByName}
+                                                            label="By"
+                                                            propertyName="filCancelledByName"
+                                                            disabled
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={4}>
+                                                        <InputField
+                                                            fullWidth
+                                                            value={detail.reasonFilCancelled}
+                                                            label="Reason Fil Cancelled"
+                                                            propertyName="reasonFilCancelled"
+                                                            disabled
+                                                        />
+                                                    </Grid>
+                                                </>
+                                            )}
+                                            <Grid item xs={3}>
+                                                {!creating && (
+                                                    <Button
+                                                        className={classes.buttonMarginTop}
+                                                        aria-label={
+                                                            detail.filCancelled === 'N'
+                                                                ? 'Fil Cancel'
+                                                                : 'UnFilCancel'
+                                                        }
+                                                        color={
+                                                            detail.filCancelled === 'N'
+                                                                ? 'secondary'
+                                                                : 'primary'
+                                                        }
+                                                        variant="contained"
+                                                        disabled={!allowedToFilCancel()}
+                                                        onClick={() => filCancelLine(detail.line)}
+                                                    >
+                                                        {detail.filCancelled === 'N'
+                                                            ? 'Fil Cancel'
+                                                            : 'Un Fil Cancel'}
+                                                    </Button>
+                                                )}
+                                            </Grid>
                                             <Grid item xs={4}>
                                                 <TypeaheadTable
                                                     table={nominalAccountsTable}
