@@ -37,6 +37,10 @@
 
         public int? BomId { get; set; }
 
+        public string RawOrFinished { get; set; }
+
+        public NominalAccount NominalAccount { get; set; }
+
         public bool SupplierAssembly()
         {
             if (this.BomType == "A")

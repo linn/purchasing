@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.PurchaseOrderModuleTests
 {
-    using System.Collections.Generic;
     using System.Net;
 
     using FluentAssertions;
@@ -32,14 +31,12 @@
                                OrderDate = 10.January(2021),
                                Overbook = string.Empty,
                                OverbookQty = 1,
-                               SupplierId = 1224
+                               SupplierId = 1224,
+                               Supplier = new Supplier { SupplierId = 1224 }
             };
 
             this.MockPurchaseOrderRepository.FindById(this.orderNumber).Returns(
-                new PurchaseOrder
-                    {
-                        OrderNumber = 600179, OverbookQty = 1, Supplier = new Supplier { SupplierId = 1224 }, Details = new List<PurchaseOrderDetail>()
-                    });
+               this.order);
 
             this.Response = this.Client.Get(
                 $"/purchasing/purchase-orders/{this.orderNumber}",

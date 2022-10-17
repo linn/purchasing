@@ -14,6 +14,8 @@
         
         .suppliers-designation {  grid-column: 4 / span 3; }
 
+        .span4 { grid-column: span 4; }
+
         .drawref {  grid-column: 2 / span 5; }
 
         .grid-item { text-align: center; }
@@ -177,12 +179,12 @@ Telephone (0)141 307 7777.
         <div class="supplierName">
             <pre>
             @Model.Supplier.Name @Model.Supplier.SupplierId
-            @Model.Supplier.OrderAddress.Line1
-            @Model.Supplier.OrderAddress.Line2
-            @Model.Supplier.OrderAddress.Line3
-            @Model.Supplier.OrderAddress.Line4
-            @Model.Supplier.OrderAddress.PostCode
-            @Model.Supplier.OrderAddress.Country.Name
+            @Model.OrderAddress?.Line1
+            @Model.OrderAddress?.Line2
+            @Model.OrderAddress?.Line3
+            @Model.OrderAddress?.Line4
+            @Model.OrderAddress?.PostCode
+            @Model.OrderAddress?.Country.Name
             </pre>
         </div>
 
@@ -245,11 +247,8 @@ Telephone (0)141 307 7777.
                     <b>@purchaseOrderDetail.Line</b>
                 </span>
             </div>
-            <div class="grid-item"></div>
-            <div class="grid-item"></div>
-            <div class="grid-item"></div>
-            <div class="grid-item"></div>
-
+            <div class="span4"></div>
+         
             <div class="grid-item">
                 <span>
                     <b>Part Number </b>
@@ -261,7 +260,7 @@ Telephone (0)141 307 7777.
                 </span>
             </div>
             <div class="suppliers-designation">
-                <pre>@purchaseOrderDetail.SuppliersDesignation</pre>
+                <span>@purchaseOrderDetail.SuppliersDesignation</span>
             </div>
 
             @if (!string.IsNullOrWhiteSpace(@purchaseOrderDetail.DrawingRef))
@@ -376,7 +375,7 @@ Telephone (0)141 307 7777.
                     <span>@delivery.NetTotalCurrency</span>
                 </div>
                 <div class="grid-item">
-                    <span>@delivery.DateRequested.Value.ToString("dd-MMM-yyyy")</span>
+                    <span>@delivery.DateRequested.GetValueOrDefault().ToString("dd-MMM-yyyy")</span>
                 </div>
                 <div class="grid-item">
                     @{

@@ -4,6 +4,7 @@
     using System.Collections.Generic;
 
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     public class PurchaseOrder
@@ -95,5 +96,7 @@
         public decimal BaseOrderVatTotal { get; set; }
 
         public decimal BaseOrderTotal { get; set; }
+
+        public IEnumerable<PurchaseLedger> LedgerEntries { get; set; }
     }
 }

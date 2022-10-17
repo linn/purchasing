@@ -21,7 +21,7 @@
                            RescheduleReason = entity.RescheduleReason,
                            SupplierConfirmationComment = entity.SupplierConfirmationComment,
                            AvailableAtSupplier = entity.AvailableAtSupplier,
-                           PartNumber = entity.PurchaseOrderDetail.PartNumber,
+                           PartNumber = entity.PurchaseOrderDetail?.PartNumber,
                            Cancelled = entity.Cancelled,
                            DeliverySeq = entity.DeliverySeq,
                            NetTotalCurrency = entity.NetTotalCurrency,

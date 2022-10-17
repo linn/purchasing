@@ -2,7 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
+    using Linn.Common.Email;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -61,10 +63,8 @@
                 this.supplier.VendorManager.Employee.FullName,
                 $"MR Order Book - {timestamp}",
                 "Please find Order Book attached",
-                "csv",
-                null,
-                $"{this.supplier.SupplierId}_linn_order_book_{this.timestamp}",
-                Arg.Any<ResultsModel>());
+                Arg.Is<IEnumerable<Attachment>>(
+                    a => a.First().FileName  == $"{this.supplier.SupplierId}_linn_order_book_{this.timestamp}.csv"));
         }
     }
 }

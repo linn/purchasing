@@ -23,6 +23,7 @@
             return this.serviceDbContext.Parts
                 .Include(p => p.Currency)
                 .Include(p => p.PreferredSupplier)
+                .Include(p => p.NominalAccount).ThenInclude(n => n.Department)
                 .SingleOrDefault(expression);
         }
 

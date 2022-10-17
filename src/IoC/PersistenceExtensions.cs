@@ -6,6 +6,7 @@
     using Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Edi;
+    using Linn.Purchasing.Domain.LinnApps.Finance.Models;
     using Linn.Purchasing.Domain.LinnApps.Forecasting;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
@@ -61,8 +62,7 @@
                 .AddTransient<IRepository<MiniOrder, int>, MiniOrderRepository>()
                 .AddTransient<IRepository<PurchaseLedger, int>, PurchaseLedgerRepository>()
                 .AddTransient<IRepository<Employee, int>, EmployeeRepository>()
-                .AddTransient<IRepository<PreferredSupplierChange, PreferredSupplierChangeKey>,
-                    PreferredSupplierChangeRepository>()
+                .AddTransient<IRepository<PreferredSupplierChange, PreferredSupplierChangeKey>, PreferredSupplierChangeRepository>()
                 .AddTransient<IRepository<PriceChangeReason, string>, EntityFrameworkRepository<PriceChangeReason, string>>(
                     r => new EntityFrameworkRepository<PriceChangeReason, string>(
                         r.GetService<ServiceDbContext>()?.PriceChangeReasons))
@@ -104,8 +104,7 @@
                 .AddTransient<IRepository<TqmsJobref, string>, EntityFrameworkRepository<TqmsJobref, string>>(
                     r => new EntityFrameworkRepository<TqmsJobref, string>(
                         r.GetService<ServiceDbContext>()?.TqmsJobrefs))
-                .AddTransient<IQueryRepository<PartReceivedRecord>,
-                    EntityFrameworkQueryRepository<PartReceivedRecord>>(
+                .AddTransient<IQueryRepository<PartReceivedRecord>, EntityFrameworkQueryRepository<PartReceivedRecord>>(
                     r => new EntityFrameworkQueryRepository<PartReceivedRecord>(
                         r.GetService<ServiceDbContext>()?.TqmsView))
                 .AddTransient<IPurchaseOrderDeliveryRepository, PurchaseOrderDeliveryRepository>()
@@ -200,7 +199,22 @@
                         ?.ForecastReportMonths))
                 .AddTransient<IQueryRepository<ForecastWeekChange>, ForecastWeekChangesRepository>()
                 .AddTransient<IRepository<ChangeRequest, int>, ChangeRequestRepository>()
-                .AddTransient<IRepository<Bom, int>, BomRepository>();
+                .AddTransient<IRepository<Bom, int>, BomRepository>()
+                .AddTransient<IRepository<CreditDebitNoteType, string>, EntityFrameworkRepository<CreditDebitNoteType, string>>(
+                    r => new EntityFrameworkRepository<CreditDebitNoteType, string>(r.GetService<ServiceDbContext>()
+                        ?.CreditDebitNoteTypes))
+                .AddTransient<IQueryRepository<PlOrderReceivedViewEntry>, EntityFrameworkQueryRepository<PlOrderReceivedViewEntry>>(
+                    r => new EntityFrameworkQueryRepository<PlOrderReceivedViewEntry>(r.GetService<ServiceDbContext>()
+                        ?.PlOrderReceivedView))
+                .AddTransient<IRepository<CancelledOrderDetail, int>, EntityFrameworkRepository<CancelledOrderDetail, int>>(
+                    r => new EntityFrameworkRepository<CancelledOrderDetail, int>(r.GetService<ServiceDbContext>()
+                        ?.CancelledPurchaseOrderDetails))
+                .AddTransient<IQueryRepository<ImmediateLiability>, EntityFrameworkQueryRepository<ImmediateLiability>>(
+                    r => new EntityFrameworkQueryRepository<ImmediateLiability>(r.GetService<ServiceDbContext>()
+                        ?.ImmediateLiability))
+                .AddTransient<IQueryRepository<ImmediateLiabilityBase>, EntityFrameworkQueryRepository<ImmediateLiabilityBase>>(
+                    r => new EntityFrameworkQueryRepository<ImmediateLiabilityBase>(r.GetService<ServiceDbContext>()
+                        ?.ImmediateLiabilityBase));
         }
     }
 }

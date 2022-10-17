@@ -11,6 +11,7 @@
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.RequestResources;
 
     using NSubstitute;
 
@@ -20,13 +21,32 @@
     {
         private PurchaseOrder model;
 
+        private PurchaseOrder updated;
+
         private IResult<PurchaseOrderResource> result;
 
-        private PurchaseOrderResource updateResource;
+        private PurchaseOrderResource toResource;
+
+        private PurchaseOrderResource fromResource;
+
 
         [SetUp]
         public void SetUp()
         {
+            this.fromResource = new PurchaseOrderResource
+                                    {
+                                        OrderNumber = 600179,
+                                        Overbook = "N",
+                                        OverbookQty = 0
+                                    };
+
+            this.toResource = new PurchaseOrderResource
+                                  {
+                                      OrderNumber = 600179,
+                                      Overbook = "Y",
+                                      OverbookQty = 1
+                                  };
+
             this.model = new PurchaseOrder
                              {
                                  OrderNumber = 600179,
@@ -42,33 +62,36 @@
                                  EnteredById = 222,
             };
 
-            this.updateResource = new PurchaseOrderResource
-                                      {
-                                          OrderNumber = 600179,
-                                          Cancelled = string.Empty,
-                                          OrderDate = 10.January(2021).ToString("O"),
-                                          Overbook = "Y",
-                                          OverbookQty = 1,
-                                          Supplier = new SupplierResource { Id = 1224 },
-                                          CurrentlyUsingOverbookForm = true
+            this.updated = this.model;
+            this.updated.OverbookQty = this.toResource.OverbookQty;
+            this.updated.Overbook = this.toResource.Overbook;
 
-            };
-
-            this.PurchaseOrderRepository.Add(this.model);
             this.PurchaseOrderRepository.FindById(this.model.OrderNumber).Returns(this.model);
+
+            this.DomainService.AllowOverbook(
+                Arg.Is<PurchaseOrder>(p => p.OrderNumber == this.model.OrderNumber),
+                this.toResource.Overbook,
+                this.toResource.OverbookQty,
+                Arg.Any<IEnumerable<string>>())
+                .Returns(this.model);
+
             this.AuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
-            this.result = this.Sut.Update(this.updateResource.OrderNumber, this.updateResource, new List<string>(), 33111);
+            this.result = this.Sut.PatchOrder(
+                new PatchRequestResource<PurchaseOrderResource>
+                    {
+                        From = this.fromResource,
+                        To = this.toResource
+                    },
+                33111, 
+                new List<string>());
         }
 
         [Test]
-        public void ShouldBuildCorrectResourceWithLinks()
+        public void ShouldBuildResource()
         {
             this.result.Should().BeOfType<SuccessResult<PurchaseOrderResource>>();
-            var dataResult = ((SuccessResult<PurchaseOrderResource>) this.result).Data;
-            dataResult.Links.Length.Should().Be(5);
-            dataResult.Links.First().Rel.Should().Be("allow-over-book-search");
-            dataResult.Links.First().Href.Should().Be("/purchasing/purchase-orders/allow-over-book");
+            var dataResult = ((SuccessResult<PurchaseOrderResource>)this.result).Data;
         }
 
         [Test]

@@ -16,21 +16,20 @@
 
     public class WhenSendingEmailToFinance : ContextBase
     {
+        private readonly int orderNumber = 123456;
+
         [SetUp]
         public void SetUp()
         {
-            this.MockDomainService.SendFinanceAuthRequestEmail(Arg.Any<int>(), Arg.Any<int>())
+            this.MockDomainService.SendFinanceAuthRequestEmail(Arg.Any<int>(), this.orderNumber)
                 .Returns(new ProcessResult(true, "email sent"));
 
-            this.MockPurchaseOrderRepository.FindById(158962).Returns(
-                new PurchaseOrder
-                    {
-                        OrderNumber = 158962, OverbookQty = 1, Supplier = new Supplier { SupplierId = 1224 }
-                    });
-
             this.Response = this.Client.Post(
-                "/purchasing/purchase-orders/email-for-authorisation?orderNumber=158962",
-                with => { with.Accept("application/json"); }).Result;
+                $"/purchasing/purchase-orders/email-for-authorisation?orderNumber={this.orderNumber}",
+                with =>
+                    {
+                        with.Accept("application/json");
+                    }).Result;
         }
 
         [Test]
@@ -58,7 +57,8 @@
         [Test]
         public void ShouldCallDomain()
         {
-            this.MockDomainService.Received().SendFinanceAuthRequestEmail(Arg.Any<int>(), Arg.Any<int>());
+            this.MockDomainService.Received()
+                .SendFinanceAuthRequestEmail(Arg.Any<int>(), this.orderNumber);
         }
     }
 }

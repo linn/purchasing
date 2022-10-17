@@ -96,6 +96,8 @@ import forecastWeekChangesReport from './forecastWeekChangesReport';
 import sendPurchaseOrderAuthEmail from './sendPurchaseOrderAuthEmail';
 import changeRequest from './changeRequest';
 import bomTreeNodes from './bomTreeNodes';
+import sendPurchaseOrderDeptEmail from './sendPurchaseOrderDeptEmail';
+import suggestedPurchaseOrderValues from './suggestedPurchaseOrderValues';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -162,6 +164,7 @@ const rootReducer = history =>
         purchaseOrderReqStates,
         purchaseOrderDelivery,
         purchaseOrderDeliveries,
+        sendPurchaseOrderDeptEmail,
         purchaseOrders,
         putSupplierOnHold,
         router: connectRouter(history),
@@ -180,6 +183,7 @@ const rootReducer = history =>
         spendBySupplierReport,
         spendBySupplierByDateRangeReport,
         spendByPartReport,
+        suggestedPurchaseOrderValues,
         supplier,
         supplierGroups,
         suppliers,

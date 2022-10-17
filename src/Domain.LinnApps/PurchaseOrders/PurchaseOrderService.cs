@@ -6,6 +6,7 @@
 
     using Linn.Common.Authorisation;
     using Linn.Common.Configuration;
+    using Linn.Common.Domain.Exceptions;
     using Linn.Common.Email;
     using Linn.Common.Logging;
     using Linn.Common.Pdf;
@@ -13,6 +14,7 @@
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
+    using Linn.Purchasing.Domain.LinnApps.Finance.Models;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
@@ -22,8 +24,6 @@
 
     public class PurchaseOrderService : IPurchaseOrderService
     {
-        private readonly string appRoot;
-
         private readonly IAuthorisationService authService;
 
         private readonly IDatabaseService databaseService;
@@ -62,9 +62,19 @@
 
         private readonly IRepository<PartSupplier, PartSupplierKey> partSupplierRepository;
 
+        private readonly IHtmlTemplateService<PlCreditDebitNote> creditDebitNoteHtmlService;
+
+        private readonly IRepository<PlCreditDebitNote, int> creditDebitNoteRepository;
+
+        private readonly IQueryRepository<PlOrderReceivedViewEntry> orderReceivedView;
+
+        private readonly IRepository<CancelledOrderDetail, int> cancelledOrderDetailRepository;
+
+        private readonly IQueryRepository<ImmediateLiability> liabilityRepository;
+
+        private readonly IQueryRepository<ImmediateLiabilityBase> baseLiabilityRepository;
 
         public PurchaseOrderService(
-            string appRoot,
             IAuthorisationService authService,
             IPurchaseLedgerPack purchaseLedgerPack,
             IDatabaseService databaseService,
@@ -83,7 +93,13 @@
             IRepository<NominalAccount, int> nominalAccountRepository,
             IQueryRepository<Part> partQueryRepository,
             IRepository<PartSupplier, PartSupplierKey> partSupplierRepository,
-        ILog log)
+            IHtmlTemplateService<PlCreditDebitNote> creditDebitNoteHtmlService,
+            ILog log,
+            IRepository<PlCreditDebitNote, int> creditDebitNoteRepository,
+            IQueryRepository<PlOrderReceivedViewEntry> orderReceivedView,
+            IRepository<CancelledOrderDetail, int> cancelledOrderDetailRepository,
+            IQueryRepository<ImmediateLiability> liabilityRepository,
+            IQueryRepository<ImmediateLiabilityBase> baseLiabilityRepository)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;
@@ -104,10 +120,15 @@
             this.partQueryRepository = partQueryRepository;
             this.partSupplierRepository = partSupplierRepository;
             this.log = log;
-            this.appRoot = appRoot;
+            this.creditDebitNoteHtmlService = creditDebitNoteHtmlService;
+            this.creditDebitNoteRepository = creditDebitNoteRepository;
+            this.orderReceivedView = orderReceivedView;
+            this.cancelledOrderDetailRepository = cancelledOrderDetailRepository;
+            this.liabilityRepository = liabilityRepository;
+            this.baseLiabilityRepository = baseLiabilityRepository;
         }
 
-        public void AllowOverbook(
+        public PurchaseOrder AllowOverbook(
             PurchaseOrder current,
             string allowOverBook,
             decimal? overbookQty,
@@ -122,14 +143,18 @@
 
             current.Overbook = allowOverBook;
             current.OverbookQty = overbookQty;
+
+            return current;
         }
 
-        public PurchaseOrder CancelOrder(PurchaseOrder order, int currentUserId, IEnumerable<string> privileges)
+        public PurchaseOrder CancelOrder(int orderNumber, int cancelledBy, string reason, IEnumerable<string> privileges)
         {
-            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCancel, privileges))
             {
                 throw new UnauthorisedActionException("You are not authorised to cancel purchase orders");
             }
+
+            var order = this.GetOrder(orderNumber);
 
             order.Cancelled = "Y";
 
@@ -137,28 +162,34 @@
 
             foreach (var detail in order.Details)
             {
+                var id = this.databaseService.GetIdSequence("PLOC_SEQ");
                 var cancelledDetail = new CancelledOrderDetail
                                           {
-                                              Id = this.databaseService.GetNextVal("PLOC_SEQ"),
+                                              Id = id,
                                               OrderNumber = detail.OrderNumber,
                                               LineNumber = detail.Line,
                                               DateCancelled = DateTime.Today,
                                               PeriodCancelled = currentLedgerPeriod,
-                                              CancelledById = currentUserId,
-                                              ReasonCancelled = detail.Cancelled,
-                                              ValueCancelled = detail.BaseDetailTotal
-
-                                              // todo check for valueCancelled that:
-                                              // baseDetailTotal == round(nvl(v_qty_outstanding, 0) * :new.base_our_price, 2)
+                                              CancelledById = cancelledBy,
+                                              ReasonCancelled = reason,
+                                              ValueCancelled = Math.Round(
+                                                  detail.BaseOurUnitPrice.GetValueOrDefault() *
+                                                  this.orderReceivedView.FindBy(
+                                                      x => x.OrderNumber == orderNumber && x.OrderLine == detail.Line)
+                                                      .QtyOutstanding, 2)
                                           };
                 detail.Cancelled = "Y";
-                detail.CancelledDetails.Add(cancelledDetail);
+                this.cancelledOrderDetailRepository.Add(cancelledDetail);
             }
+
+            var miniOrder = this.miniOrderRepository.FindById(orderNumber);
+            miniOrder.CancelledBy = cancelledBy;
+            miniOrder.ReasonCancelled = reason;
 
             return order;
         }
 
-        public void CreateOrder(PurchaseOrder order, IEnumerable<string> privileges)
+        public PurchaseOrder CreateOrder(PurchaseOrder order, IEnumerable<string> privileges)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, privileges))
             {
@@ -175,21 +206,22 @@
             order.BaseOrderVatTotal = 0;
             order.OrderTotal = 0;
             order.BaseOrderTotal = 0;
-
+          
             foreach (var detail in order.Details)
             {
                 this.SetDetailFieldsForCreation(detail, newOrderNumber);
 
-                this.PerformDetailCalculations(detail, detail, order.ExchangeRate.GetValueOrDefault(1), order.SupplierId, creating: true);
+                this.PerformDetailCalculations(
+                    detail, detail, order.ExchangeRate.GetValueOrDefault(1), order.SupplierId, creating: true);
 
                 this.AddDeliveryToDetail(order, detail);
 
                 order.OrderNetTotal += detail.NetTotalCurrency;
                 order.BaseOrderNetTotal += detail.BaseNetTotal;
-                order.OrderVatTotal += detail.VatTotalCurrency.GetValueOrDefault(0m);
-                order.BaseOrderVatTotal += detail.BaseVatTotal.GetValueOrDefault(0m);
-                order.OrderTotal += detail.DetailTotalCurrency.GetValueOrDefault(0m);
-                order.BaseOrderTotal += detail.BaseDetailTotal.GetValueOrDefault(0m);
+                order.OrderVatTotal += detail.VatTotalCurrency.GetValueOrDefault();
+                order.BaseOrderVatTotal += detail.BaseVatTotal.GetValueOrDefault();
+                order.OrderTotal += detail.DetailTotalCurrency.GetValueOrDefault();
+                order.BaseOrderTotal += detail.BaseDetailTotal.GetValueOrDefault();
             }
 
             order.Cancelled = "N";
@@ -199,14 +231,32 @@
             order.DamagesPercent = 2m;
 
             this.purchaseOrderRepository.Add(order);
+
+            return order;
         }
 
         public ProcessResult SendPdfEmail(string emailAddress, int orderNumber, bool bcc, int currentUserId)
         {
             var order = this.GetOrder(orderNumber);
+            if (order.AuthorisedById is null)
+            {
+                throw new UnauthorisedOrderException("You cannot email an order until it has been authorised");
+            }
+
+            string debitNoteHtml = null;
+
+            if (order.DocumentType.Name is "RO" or "CO")
+            {
+                var debitNote = this.creditDebitNoteRepository.FindBy(x => x.ReturnsOrderNumber == orderNumber);
+                if (debitNote != null)
+                {
+                    debitNoteHtml = this.creditDebitNoteHtmlService.GetHtml(debitNote).Result;
+                }
+            }
 
             var html = this.purchaseOrderTemplateService.GetHtml(order).Result;
-            this.SendOrderPdfEmail(html, emailAddress, bcc, currentUserId, order);
+
+            this.SendOrderPdfEmail(html, emailAddress, bcc, currentUserId, order, debitNoteHtml);
 
             return new ProcessResult(true, $"Email sent for purchase order {orderNumber} to {emailAddress}");
         }
@@ -240,9 +290,7 @@
                 ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
                 "Linn Purchasing",
                 $"Purchase Order {orderNumber}",
-                emailBody,
-                null,
-                null);
+                emailBody);
 
             this.log.Write(
                 LoggingLevel.Info,
@@ -257,7 +305,7 @@
             var order = this.GetOrder(orderNumber);
 
             var user = this.employeeRepository.FindById(currentUserId);
-            var orderUrl = $"{this.appRoot}/purchasing/purchase-orders/{orderNumber}";
+            var orderUrl = $"{ConfigurationManager.Configuration["APP_ROOT"]}/purchasing/purchase-orders/{orderNumber}";
             var emailBody = $"Purchasing have raised order {orderNumber} for {order.Supplier.Name}.\n"
                             + $"{user.FullName} would like you to Authorise it which you can do here:\n"
                             + $"{orderUrl} \n"
@@ -291,9 +339,7 @@
                 ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
                 "Linn Purchasing",
                 $"Purchase Order {orderNumber} requires Authorisation",
-                emailBody,
-                null,
-                null);
+                emailBody);
 
             this.log.Write(
                 LoggingLevel.Info,
@@ -322,7 +368,7 @@
         {
             if (order.Supplier?.SupplierId == null)
             {
-                throw new ArgumentNullException();
+                throw new DomainException("Cannot create a purchase order without a supplier");
             }
 
             var supplier = this.supplierRepository.FindById(order.Supplier.SupplierId);
@@ -343,8 +389,19 @@
                 order.DeliveryAddress = mainDeliveryAddress;
             }
 
-            order.DocumentTypeName = "PO";
-            order.DocumentType = new DocumentType { Name = "PO", Description = "PURCHASE ORDER" };
+            order.DocumentTypeName = string.IsNullOrEmpty(order.DocumentTypeName) ? "PO" : order.DocumentTypeName;
+            var documentTypeDescription = order.DocumentTypeName switch
+                {
+                    "PO" => "PURCHASE ORDER",
+                    "RO" => "RETURNS ORDER",
+                    "CO" => "CREDIT ORDER",
+                    _ => string.Empty
+                };
+            order.DocumentType = new DocumentType
+                                     {
+                                         Name = order.DocumentTypeName,
+                                         Description = documentTypeDescription
+                                     };
             order.OrderMethodName = "MANUAL";
             order.OrderMethod = new OrderMethod { Name = "MANUAL", Description = "MANUAL ORDERING" };
             var user = this.employeeRepository.FindById(currentUserId);
@@ -355,11 +412,17 @@
 
             order.ExchangeRate = this.currencyPack.GetExchangeRate("GBP", order.CurrencyCode);
 
+            if (order.ExchangeRate.GetValueOrDefault() == 0)
+            {
+                order.ExchangeRate = 1;
+            }
+
             var detail = order.Details.First();
             detail.OrderUnitPriceCurrency = detail.OurUnitPriceCurrency;
             detail.OrderQty = detail.OurQty;
 
             var part = this.partQueryRepository.FindBy(p => p.PartNumber == detail.PartNumber);
+
             detail.OurUnitOfMeasure = part.OurUnitOfMeasure;
             order.IssuePartsToSupplier = part.SupplierAssembly() ? "Y" : "N";
 
@@ -368,14 +431,89 @@
             detail.OurUnitOfMeasure = partSupplier != null ? partSupplier.UnitOfMeasure : string.Empty;
             detail.SuppliersDesignation = partSupplier != null ? partSupplier.SupplierDesignation : string.Empty;
 
-            // from MR is always nom Raw Materials 0000007617 Assets 0000002508
-            var nomAcc = this.nominalAccountRepository.FindById(884);
+            detail.NetTotalCurrency = detail.OurQty.GetValueOrDefault() 
+                                      * detail.OurUnitPriceCurrency.GetValueOrDefault();
 
-            detail.OrderPosting = new PurchaseOrderPosting();
-            detail.OrderPosting.NominalAccount = nomAcc;
-            detail.OrderPosting.NominalAccountId = 884;
+            detail.DetailTotalCurrency = detail.NetTotalCurrency + detail.VatTotalCurrency;
+            detail.BaseNetTotal = Math.Round(detail.NetTotalCurrency / (decimal)order.ExchangeRate, 2);
+            detail.BaseDetailTotal = 
+                Math.Round(detail.DetailTotalCurrency.GetValueOrDefault() / (decimal)order.ExchangeRate, 2);
+
+            NominalAccount nomAcc = null;
+            if (part.StockControlled == "Y")
+            {
+                if (part.RawOrFinished == "R")
+                {
+                    nomAcc = this.nominalAccountRepository.FindBy(
+                        a => a.NominalCode == "0000007617" && a.DepartmentCode == "0000002508");
+                }
+                else
+                {
+                    nomAcc = this.nominalAccountRepository.FindBy(
+                        a => a.NominalCode == "0000007635" && a.DepartmentCode == "0000002508");
+                }
+            }
+            else if (part.PartNumber != "SUNDRY")
+            {
+                nomAcc = part.NominalAccount;
+            }
+            
+            detail.OrderPosting = nomAcc == null ?
+                                      new PurchaseOrderPosting() 
+                                      : new PurchaseOrderPosting
+                                            {
+                                                NominalAccount = nomAcc, 
+                                                NominalAccountId = nomAcc.AccountId,
+                                            };
+
+            foreach (var d in order.Details)
+            {
+                var partSupplierRecord = this.partSupplierRepository.FindById(
+                    new PartSupplierKey { SupplierId = order.SupplierId, PartNumber = d.PartNumber });
+
+                if (this.partQueryRepository.FindBy(p => p.PartNumber == d.PartNumber).StockControlled == "Y" 
+                    && partSupplierRecord != null
+                    && d.PurchaseDeliveries?.First()?.DateRequested == null) // might already have a suggested date from MR
+                {
+                    d.PurchaseDeliveries = new List<PurchaseOrderDelivery>();
+
+                    var deliveryDay = supplier.DeliveryDay ?? "MONDAY";
+
+                    var leadTimeFromNow = DateTime.Today.AddDays(partSupplierRecord.LeadTimeWeeks * 7);
+                    var dateRequested = NextOccurrenceOfDay(leadTimeFromNow, deliveryDay);
+
+                    d.PurchaseDeliveries.Add(
+                        new PurchaseOrderDelivery
+                            {
+                                DateRequested = dateRequested,
+                                PurchaseOrderDetail = d
+                            });
+                }
+            }
 
             return order;
+        }
+
+        public static DateTime NextOccurrenceOfDay(DateTime from, string deliveryDay)
+        {
+            var days = new List<string>
+                           {
+                               "SUNDAY",
+                               "MONDAY",
+                               "TUESDAY",
+                               "WEDNESDAY",
+                               "THURSDAY",
+                               "FRIDAY",
+                               "SATURDAY"
+                           };
+
+            var dayIndex = days.IndexOf(deliveryDay);
+
+            var start = (int)from.DayOfWeek;
+            var target = dayIndex;
+            if (target <= start)
+                target += 7;
+            return from.AddDays(target - start);
         }
 
         public ProcessResult AuthorisePurchaseOrder(PurchaseOrder order, int userNumber, IEnumerable<string> privileges)
@@ -487,7 +625,7 @@
                 else
                 {
                     var html = this.purchaseOrderTemplateService.GetHtml(order).Result;
-                    this.SendOrderPdfEmail(html, supplierContactEmail, copyToSelf, userNumber, order);
+                    this.SendOrderPdfEmail(html, supplierContactEmail, copyToSelf, userNumber, order, null);
                     text += $"Order {orderNumber} emailed successfully to {supplierContactEmail}\n";
                     success++;
                 }
@@ -509,7 +647,7 @@
             var miniOrder = new MiniOrder();
             var detail = order.Details.First();
 
-            var nomAcc = this.nominalAccountRepository.FindById(detail.OrderPosting.NominalAccountId);
+            var nomAcc = this.nominalAccountRepository.FindById((int)detail.OrderPosting.NominalAccountId);
 
             miniOrder.OrderNumber = order.OrderNumber;
             miniOrder.DocumentType = order.DocumentTypeName;
@@ -560,22 +698,185 @@
             miniOrder.RohsCompliant = detail.RohsCompliant;
             miniOrder.DeliveryConfirmedBy = detail.DeliveryConfirmedById;
             miniOrder.InternalComments = detail.InternalComments;
-
-            // I think drawing ref I think should be added, and maybe manuf part no
-            // but not sure of rest. Todo
-            // miniOrder.ManufacturerPartNumber = updatedOrder.;
-            // miniOrder.DrawingReference = detail.dr; //dont think needed
-            // miniOrder.TotalQtyDelivered = updatedOrder.Details
-            // miniOrder.PrevOrderNumber = detail.;
-            // miniOrder.PrevOrderLine = updatedOrder.;
-            // miniOrder.ShouldHaveBeenBlueReq = updatedOrder.;
-            // miniOrder.SpecialOrderType = updatedOrder.;
-            // miniOrder.PpvAuthorisedBy = updatedOrder.;
-            // miniOrder.PpvReason = updatedOrder.;
-            // miniOrder.MpvAuthorisedBy = updatedOrder.
-            // miniOrder.MpvReason = updatedOrder.
-            // miniOrder.FilCancelledBy = null
+            miniOrder.PrevOrderNumber = detail.OriginalOrderNumber;
+            miniOrder.PrevOrderLine = detail.OriginalOrderLine;
             this.miniOrderRepository.Add(miniOrder);
+        }
+
+        public ProcessResult EmailDept(int orderNumber, int userId)
+        {
+            var sender = this.employeeRepository.FindById(userId);
+
+            if (string.IsNullOrEmpty(sender?.PhoneListEntry?.EmailAddress))
+            {
+                throw new ItemNotFoundException($"Sender email not found. Check you have one set up in the phone list.");
+            }
+
+            var order = this.GetOrder(orderNumber);
+            if (order is null)
+            {
+                throw new ItemNotFoundException($"Could not find order {orderNumber}");
+            }
+
+            if (!order.AuthorisedById.HasValue)
+            {
+                throw new PurchaseOrderException("You cannot email this order until it has been authorised");
+            }
+
+            var recipient = order.EnteredBy;
+
+            if (string.IsNullOrEmpty(recipient?.PhoneListEntry?.EmailAddress))
+            {
+                throw new ItemNotFoundException($"Recipient email not found. Check they have one set up in the phone list.");
+            }
+
+            var cc  = new List<Dictionary<string, string>>
+                                  {
+                                      new Dictionary<string, string>
+                                          {
+                                              { "name", sender.FullName },
+                                              { "address",  sender.PhoneListEntry.EmailAddress }
+                                          }
+                                  };
+
+            var body =
+                "Please click the link when you have received the goods against this order to confirm delivery. \n";
+            body += "This will also confirm that payment can be made.  \n";
+            body += $"http://app.linn.co.uk/purch/po/podelcon.aspx?po={orderNumber}  \n";
+            body += "Any queries regarding this order - please contact a member of the Finance team.";
+            this.emailService.SendEmail(
+                    recipient.PhoneListEntry.EmailAddress,
+                    recipient.FullName,
+                    cc,
+                    null,
+                    sender.PhoneListEntry.EmailAddress,
+                    sender.FullName,
+                    $"Purchase Order {orderNumber} for Supplier {order.Supplier.Name}",
+                    body
+                );
+
+            return new ProcessResult { Success = true, Message = "Email Request Sent" };
+        }
+
+        public PurchaseOrder UnCancelOrder(int orderNumber, IEnumerable<string> privileges)
+        {
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCancel, privileges))
+            {
+                throw new UnauthorisedActionException("You are not authorised to un-cancel purchase orders");
+            }
+            var order = this.GetOrder(orderNumber);
+            order.Cancelled = "N";
+            foreach (var detail in order.Details)
+            {
+                detail.Cancelled = "N";
+                foreach (var c in detail.CancelledDetails)
+                {
+                    if (!c.DateUncancelled.HasValue)
+                    {
+                        c.ValueCancelled = 0;
+                        c.DateUncancelled = DateTime.Today;
+                    }
+                }
+            }
+            var miniOrder = this.miniOrderRepository.FindById(orderNumber);
+            miniOrder.CancelledBy = null;
+            miniOrder.ReasonCancelled = null;
+            return order;
+        }
+
+        public PurchaseOrder FilCancelLine(
+            int orderNumber,
+            int line,
+            int filCancelledBy,
+            string reasonFilCancelled,
+            IEnumerable<string> privileges)
+        {
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderFilCancel, privileges))
+            {
+                throw new UnauthorisedActionException("You are not authorised to fil cancel purchase orders");
+            }
+
+            var order = this.GetOrder(orderNumber);
+            var currentLedgerPeriod = this.purchaseLedgerPack.GetLedgerPeriod();
+            var immediateLiability =
+                this.liabilityRepository.FindBy(a => a.OrderNumber == orderNumber && a.OrderLine == line);
+            var baseImmediateLiability =
+                this.baseLiabilityRepository.FindBy(a => a.OrderNumber == orderNumber && a.OrderLine == line);
+
+            var detail = order.Details.First(a => a.Line == line);
+            detail.FilCancelled = "Y";
+            detail.DateFilCancelled = DateTime.Today;
+            detail.PeriodFilCancelled = currentLedgerPeriod;
+
+            var id = this.databaseService.GetIdSequence("PLOC_SEQ");
+            var cancelledDetail = new CancelledOrderDetail
+                                      {
+                                          Id = id,
+                                          OrderNumber = orderNumber,
+                                          LineNumber = line,
+                                          DateFilCancelled = DateTime.Today,
+                                          PeriodFilCancelled = currentLedgerPeriod,
+                                          FilCancelledById = filCancelledBy,
+                                          ReasonFilCancelled = reasonFilCancelled,
+                                          ValueFilCancelled = immediateLiability?.Liability ?? 0,
+                                          BaseValueFilCancelled = baseImmediateLiability?.Liability ?? 0
+                                      };
+            this.cancelledOrderDetailRepository.Add(cancelledDetail);
+
+            if (order.Details.Count == 1)
+            {
+                // only one line so fil cancel the top level order
+                order.FilCancelled = "Y";
+                order.DateFilCancelled = DateTime.Today;
+                order.PeriodFilCancelled = currentLedgerPeriod;
+            }
+
+            if (line == 1)
+            {
+                var miniOrder = this.miniOrderRepository.FindById(orderNumber);
+                if (miniOrder is not null)
+                {
+                    miniOrder.FilCancelledBy = filCancelledBy;
+                    miniOrder.ReasonFilCancelled = reasonFilCancelled;
+                    miniOrder.DateFilCancelled = DateTime.Today;
+                }
+            }
+
+            return order;
+        }
+
+        public PurchaseOrder UnFilCancelLine(int orderNumber, int line, IEnumerable<string> privileges)
+        {
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderFilCancel, privileges))
+            {
+                throw new UnauthorisedActionException("You are not authorised to fil un-cancel purchase orders");
+            }
+
+            var order = this.GetOrder(orderNumber);
+            var detail = order.Details.First(a => a.Line == line);
+            detail.FilCancelled = "N";
+            detail.DateFilCancelled = null;
+            detail.PeriodFilCancelled = null;
+
+            var cancelledDetail = detail.CancelledDetails.First(a => a.FilCancelledById.HasValue && !a.DateFilUncancelled.HasValue);
+            cancelledDetail.DateFilUncancelled = DateTime.Today;
+
+            order.FilCancelled = "N";
+            order.DateFilCancelled = null;
+            order.PeriodFilCancelled = null;
+
+            if (line == 1)
+            {
+                var miniOrder = this.miniOrderRepository.FindById(orderNumber);
+                if (miniOrder is not null)
+                {
+                    miniOrder.FilCancelledBy = null;
+                    miniOrder.ReasonFilCancelled = null;
+                    miniOrder.DateFilCancelled = null;
+                }
+            }
+
+            return order;
         }
 
         private PurchaseOrder GetOrder(int orderNumber)
@@ -593,8 +894,6 @@
         {
             var partSupplier = this.partSupplierRepository.FindById(new PartSupplierKey { PartNumber = detail.PartNumber, SupplierId = order.SupplierId });
 
-            var leadTimeWeeks = partSupplier.LeadTimeWeeks;
-
             detail.PurchaseDeliveries = new List<PurchaseOrderDelivery>
                                             {
                                                 new PurchaseOrderDelivery
@@ -604,7 +903,7 @@
                                                         OrderDeliveryQty = detail.OrderQty,
                                                         OurUnitPriceCurrency = detail.OurUnitPriceCurrency,
                                                         OrderUnitPriceCurrency = detail.OrderUnitPriceCurrency,
-                                                        DateRequested = DateTime.Now.AddDays(leadTimeWeeks * 7),
+                                                        DateRequested = detail.PurchaseDeliveries?.First().DateRequested,
                                                         DateAdvised = null,
                                                         CallOffDate = DateTime.Now,
                                                         Cancelled = "N",
@@ -661,16 +960,6 @@
             {
                 var updatedDelivery = updatedDeliveries.First(x => x.DeliverySeq == delivery.DeliverySeq);
                 delivery.DateRequested = updatedDelivery.DateRequested;
-
-                // price updates to be done next
-                // delivery.OurUnitPriceCurrency = updatedDelivery.OurUnitPriceCurrency;
-                // delivery.OrderUnitPriceCurrency = updatedDelivery.OrderUnitPriceCurrency;
-                // delivery.BaseOrderUnitPrice = updatedDelivery.BaseOrderUnitPrice;
-                // delivery.BaseOurUnitPrice = updatedDelivery.BaseOurUnitPrice;
-                // delivery.VatTotalCurrency = updatedDelivery.VatTotalCurrency;
-                // delivery.BaseVatTotal = updatedDelivery.BaseVatTotal; //// vat totals might not change
-                // delivery.DeliveryTotalCurrency = updatedDelivery.DeliveryTotalCurrency;
-                // delivery.BaseDetailTotal = updatedDelivery.BaseDetailTotal;
             }
         }
 
@@ -774,7 +1063,7 @@
 
             miniOrder.Remarks = updatedOrder.Remarks;
 
-            var nomAcc = this.nominalAccountRepository.FindById(updatedDetail.OrderPosting.NominalAccountId);
+            var nomAcc = this.nominalAccountRepository.FindById((int)updatedDetail.OrderPosting.NominalAccountId);
             miniOrder.Nominal = nomAcc.NominalCode;
             miniOrder.Department = nomAcc.DepartmentCode;
 
@@ -861,11 +1150,12 @@
             string emailAddress,
             bool bcc,
             int currentUserId,
-            PurchaseOrder order)
+            PurchaseOrder order,
+            string debitNoteHtml)
         {
-            var pdf = this.pdfService.ConvertHtmlToPdf(html, false);
+            var orderPdf = this.pdfService.ConvertHtmlToPdf(html, false);
+
             var emailBody = $"Please accept the attached order no. {order.OrderNumber}.\n"
-                            + "You will need Acrobat Reader to open the file which is available from www.adobe.com/acrobat\n"
                             + "Linn's standard Terms & Conditions apply at all times\n"
                             + "and can be found at www.linn.co.uk/purchasing_conditions";
 
@@ -887,6 +1177,26 @@
                         });
             }
 
+            var attachments = new List<Attachment>
+                                  {
+                                      new PdfAttachment(orderPdf.Result, $"LinnPurchaseOrder{order.OrderNumber}")
+                                  };
+
+            if (debitNoteHtml != null)
+            {
+                var debitNotePdf = this.pdfService.ConvertHtmlToPdf(debitNoteHtml, false);
+                attachments.Add(new PdfAttachment(debitNotePdf.Result, $"DebitNote"));
+                if (order.Supplier.AccountController?.PhoneListEntry != null)
+                {
+                    bccList.Add(
+                        new Dictionary<string, string>
+                            {
+                                { "name", order.Supplier.AccountController.FullName },
+                                { "address", order.Supplier.AccountController.PhoneListEntry.EmailAddress }
+                            });
+                }
+            }
+
             this.emailService.SendEmail(
                     emailAddress,
                     emailAddress,
@@ -896,9 +1206,7 @@
                     "Linn Purchasing",
                     $"Linn Purchase Order {order.OrderNumber}",
                     emailBody,
-                    "pdf",
-                    pdf.Result,
-                    $"LinnPurchaseOrder{order.OrderNumber}");
+                   attachments);
 
             order.SentByMethod = "EMAIL";
 

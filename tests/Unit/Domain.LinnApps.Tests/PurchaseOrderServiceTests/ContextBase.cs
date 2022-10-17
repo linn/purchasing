@@ -7,6 +7,7 @@
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
+    using Linn.Purchasing.Domain.LinnApps.Finance.Models;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
@@ -61,6 +62,18 @@
 
         protected ILog Log { get; private set; }
 
+        protected IHtmlTemplateService<PlCreditDebitNote> NoteTemplateService { get; private set; }
+
+        protected IRepository<PlCreditDebitNote, int> NoteRepository { get; private set; }
+
+        protected IQueryRepository<PlOrderReceivedViewEntry> OrderReceivedView { get; private set; }
+
+        protected IRepository<CancelledOrderDetail, int> CancelledOrderDetailRepository { get; private set; }
+
+        protected IQueryRepository<ImmediateLiability> ImmediateLiabilityRepository { get; private set; }
+
+        protected IQueryRepository<ImmediateLiabilityBase> ImmediateLiabilityBaseRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -82,11 +95,15 @@
             this.NominalAccountRepository = Substitute.For<IRepository<NominalAccount, int>>();
             this.PartQueryRepository = Substitute.For<IQueryRepository<Part>>();
             this.PartSupplierRepository = Substitute.For<IRepository<PartSupplier, PartSupplierKey>>();
-
             this.Log = Substitute.For<ILog>();
+            this.NoteTemplateService = Substitute.For<IHtmlTemplateService<PlCreditDebitNote>>();
+            this.OrderReceivedView = Substitute.For<IQueryRepository<PlOrderReceivedViewEntry>>();
+            this.CancelledOrderDetailRepository = Substitute.For<IRepository<CancelledOrderDetail, int>>();
+            this.NoteRepository = Substitute.For<IRepository<PlCreditDebitNote, int>>();
+            this.ImmediateLiabilityRepository = Substitute.For<IQueryRepository<ImmediateLiability>>();
+            this.ImmediateLiabilityBaseRepository = Substitute.For<IQueryRepository<ImmediateLiabilityBase>>();
 
             this.Sut = new PurchaseOrderService(
-                "localhost",
                 this.MockAuthService,
                 this.PurchaseLedgerPack,
                 this.MockDatabaseService,
@@ -105,7 +122,13 @@
                 this.NominalAccountRepository,
                 this.PartQueryRepository,
                 this.PartSupplierRepository,
-                this.Log);
+                this.NoteTemplateService,
+                this.Log,
+                this.NoteRepository,
+                this.OrderReceivedView,
+                this.CancelledOrderDetailRepository,
+                this.ImmediateLiabilityRepository,
+                this.ImmediateLiabilityBaseRepository);
         }
     }
 }

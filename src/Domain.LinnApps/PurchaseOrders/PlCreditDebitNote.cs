@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.PurchaseOrders
 {
     using System;
+    using System.Collections.Generic;
 
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
@@ -10,7 +11,7 @@
 
         public string PartNumber { get; set; }
 
-        public int OrderQty { get; set; }
+        public decimal OrderQty { get; set; }
 
         public int? ReturnsOrderNumber { get; set; }
 
@@ -53,5 +54,15 @@
         public string ReasonCancelled { get; set; }
 
         public CreditDebitNoteType NoteType { get; set; }
+
+        public string CreditOrReplace { get; set; }
+
+        public int? OriginalOrderNumber { get; set; }
+
+        public int? OriginalOrderLine { get; set; }
+
+        public ICollection<PlCreditDebitNoteDetail> Details { get; set; }
+
+        public int CreatedBy { get; set; }
     }
 }

@@ -65,5 +65,13 @@
         public decimal OrderNetTotal { get; set; }
 
         public decimal BaseOrderNetTotal { get; set; }
+
+        public string ReasonCancelled { get; set; }
+
+        public string CancelledByName { get; set; }
+
+        public string? DateCancelled { get; set; }
+
+        public IEnumerable<PurchaseLedgerResource> LedgerEntries { get; set; }
     }
 }

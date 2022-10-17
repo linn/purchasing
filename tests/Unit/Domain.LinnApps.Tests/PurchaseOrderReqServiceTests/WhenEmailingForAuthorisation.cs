@@ -1,8 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderReqServiceTests
 {
     using System.Collections.Generic;
-    using System.IO;
-
+    
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
@@ -98,10 +97,7 @@
                 "bigjim@gmail",
                 "Big Jimbo",
                 $"Purchase Order Req {this.entity.ReqNumber} requires authorisation",
-                Arg.Any<string>(),
-                "pdf",
-                Arg.Any<Stream>(),
-                string.Empty);
+                Arg.Any<string>());
         }
 
         [Test]

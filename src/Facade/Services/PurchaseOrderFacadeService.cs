@@ -35,6 +35,8 @@
 
         private readonly IRepository<PurchaseOrder, int> repository;
 
+        private readonly IPlCreditDebitNoteService creditDebitNoteService;
+
         public PurchaseOrderFacadeService(
             IRepository<PurchaseOrder, int> repository,
             ITransactionManager transactionManager,
@@ -42,6 +44,7 @@
             IPurchaseOrderService domainService,
             IRepository<OverbookAllowedByLog, int> overbookAllowedByLogRepository,
             IRepository<Supplier, int> supplierRepository,
+            IPlCreditDebitNoteService creditDebitNoteService,
             ILog logger)
             : base(repository, transactionManager, resourceBuilder)
         {
@@ -52,6 +55,7 @@
             this.resourceBuilder = resourceBuilder;
             this.supplierRepository = supplierRepository;
             this.repository = repository;
+            this.creditDebitNoteService = creditDebitNoteService;
         }
 
         public IResult<ProcessResultResource> EmailOrderPdf(
@@ -107,6 +111,7 @@
         {
             var updated = new PurchaseOrder
                               {
+                                  DocumentTypeName = resource.DocumentType?.Name,
                                   SupplierId = resource.Supplier.Id,
                                   Supplier = new Supplier
                                                  {
@@ -115,11 +120,17 @@
                                   Details = resource.Details?.Select(
                                       x => new PurchaseOrderDetail
                                                {
-                                                   Line = 1,
+                                                   Line = x.Line,
                                                    BaseNetTotal = x.BaseNetTotal,
                                                    NetTotalCurrency = x.NetTotalCurrency,
                                                    OurQty = x.OurQty,
                                                    OrderQty = x.OrderQty,
+                                                   PurchaseDeliveries = x.PurchaseDeliveries?.Select(d =>
+                                                       new PurchaseOrderDelivery
+                                                           {
+                                                               DateRequested = !string.IsNullOrEmpty(d.DateRequested) 
+                                                                                   ? DateTime.Parse(d.DateRequested) : null,
+                                                           })?.ToList(),
                                                    Part =
                                                        new Part
                                                            {
@@ -136,7 +147,9 @@
                                                    VatTotalCurrency = x.VatTotalCurrency,
                                                    BaseVatTotal = x.BaseVatTotal,
                                                    DetailTotalCurrency = x.DetailTotalCurrency,
-                                                   BaseDetailTotal = x.BaseDetailTotal
+                                                   BaseDetailTotal = x.BaseDetailTotal,
+                                                   OriginalOrderNumber = x.OriginalOrderNumber,
+                                                   OriginalOrderLine = x.OriginalOrderLine
                                                }).ToList()
                               };
 
@@ -207,7 +220,120 @@
             }
 
             this.transactionManager.Commit();
-            return new SuccessResult<ProcessResultResource>(new ProcessResultResource(result.Success, result.Message));
+            return new SuccessResult<ProcessResultResource>(
+                new ProcessResultResource(result.Success, result.Message));
+        }
+
+        public IResult<ProcessResultResource> EmailDept(int orderNumber, int userNumber)
+        {
+            try
+            {
+                var result = this.domainService.EmailDept(orderNumber, userNumber);
+                return new SuccessResult<ProcessResultResource>(
+                    new ProcessResultResource(result.Success, result.Message));
+            }
+            catch (Exception exception)
+            {
+                return new BadRequestResult<ProcessResultResource>(exception.Message);
+            }
+        }
+
+        public IResult<PurchaseOrderResource> PatchOrder(
+            PatchRequestResource<PurchaseOrderResource> resource,
+            int who,
+            IEnumerable<string> privileges)
+        {
+            try
+            {
+                var order = this.repository.FindById(resource.From.OrderNumber);
+
+                var privilegesList = privileges.ToList();
+                if (resource.From.Cancelled != resource.To.Cancelled)
+                {
+                    if (resource.To.Cancelled == "Y")
+                    {
+                        order = this.domainService.CancelOrder(
+                            resource.From.OrderNumber,
+                            who,
+                            resource.To.ReasonCancelled,
+                            privilegesList);
+                    }
+
+                    if (resource.To.Cancelled == "N")
+                    {
+                        order = this.domainService.UnCancelOrder(resource.From.OrderNumber, privilegesList);
+                    }
+                }
+
+                var overBookChange = false;
+
+                if (resource.From.Overbook != resource.To.Overbook)
+                {
+                    overBookChange = true;
+                    order = this.domainService.AllowOverbook(
+                        order,
+                        resource.To.Overbook,
+                        order.OverbookQty,
+                        privilegesList);
+                }
+
+                if (resource.From.OverbookQty != resource.To.OverbookQty)
+                {
+                    overBookChange = true;
+                    order = this.domainService.AllowOverbook(
+                        order,
+                        order.Overbook,
+                        resource.To.OverbookQty,
+                        privilegesList);
+                }
+
+                if (overBookChange)
+                {
+                    var log = new OverbookAllowedByLog
+                                  {
+                                      OrderNumber = order.OrderNumber,
+                                      OverbookQty = order.OverbookQty,
+                                      OverbookDate = DateTime.Now,
+                                      OverbookGrantedBy = who
+                                  };
+                    this.overbookAllowedByLogRepository.Add(log);
+                }
+
+                if (resource.To?.Details != null && resource.To.Details.Any())
+                {
+                    foreach (var purchaseOrderDetailResource in resource.To.Details)
+                    {
+                        if (purchaseOrderDetailResource.FilCancelled
+                            != resource.From.Details?.FirstOrDefault(a => a.Line == purchaseOrderDetailResource.Line)?.FilCancelled)
+                        {
+                            if (purchaseOrderDetailResource.FilCancelled == "Y")
+                            {
+                                order = this.domainService.FilCancelLine(
+                                    resource.From.OrderNumber,
+                                    purchaseOrderDetailResource.Line,
+                                    who,
+                                    purchaseOrderDetailResource.ReasonFilCancelled,
+                                    privilegesList);
+                            }
+                            else
+                            {
+                                order = this.domainService.UnFilCancelLine(
+                                    resource.From.OrderNumber,
+                                    purchaseOrderDetailResource.Line,
+                                    privilegesList);
+                            }
+                        }
+                    }
+                }
+
+                this.transactionManager.Commit();
+                return new SuccessResult<PurchaseOrderResource>(
+                    (PurchaseOrderResource)this.resourceBuilder.Build(order, privilegesList));
+            }
+            catch (DomainException ex)
+            {
+                return new BadRequestResult<PurchaseOrderResource>(ex.Message);
+            }
         }
 
         public string GetOrderAsHtml(int orderNumber)
@@ -215,19 +341,27 @@
             return this.domainService.GetPurchaseOrderAsHtml(orderNumber);
         }
 
-        public new IResult<PurchaseOrderResource> Add(PurchaseOrderResource resource, IEnumerable<string> privileges = null, int? userNumber = null)
+        public new IResult<PurchaseOrderResource> Add(
+            PurchaseOrderResource resource, IEnumerable<string> privileges = null, int? userNumber = null)
         {
-            var order = this.BuildEntityFromResourceHelper(resource);
+            var candidate = this.BuildEntityFromResourceHelper(resource);
 
-            this.domainService.CreateOrder(order, privileges);
+            var order = this.domainService.CreateOrder(candidate, privileges);
             this.transactionManager.Commit();
 
             this.domainService.CreateMiniOrder(order);
             this.transactionManager.Commit();
 
+            if (order.DocumentTypeName is "CO" or "RO")
+            {
+                this.creditDebitNoteService.CreateDebitOrNoteFromPurchaseOrder(order);
+                this.transactionManager.Commit();
+            }
+            
             order.Supplier = this.supplierRepository.FindById(order.SupplierId);
 
-            return new CreatedResult<PurchaseOrderResource>((PurchaseOrderResource)this.resourceBuilder.Build(order, privileges.ToList()));
+            return new CreatedResult<PurchaseOrderResource>(
+                (PurchaseOrderResource)this.resourceBuilder.Build(order, privileges.ToList()));
         }
 
         protected override PurchaseOrder CreateFromResource(
@@ -237,7 +371,8 @@
             throw new NotImplementedException();
         }
 
-        protected override void DeleteOrObsoleteResource(PurchaseOrder entity, IEnumerable<string> privileges = null)
+        protected override void DeleteOrObsoleteResource(
+            PurchaseOrder entity, IEnumerable<string> privileges = null)
         {
             this.transactionManager.Commit();
             throw new NotImplementedException();
@@ -248,10 +383,12 @@
         {
             if (!string.IsNullOrEmpty(searchResource.StartDate))
             {
-                return a => a.OrderDate >= DateTime.Parse(searchResource.StartDate) && a.OrderDate <= DateTime.Parse(searchResource.EndDate);
+                return a => 
+                    a.OrderDate >= DateTime.Parse(searchResource.StartDate) 
+                    && a.OrderDate <= DateTime.Parse(searchResource.EndDate);
             }
 
-            return x => x.OrderNumber.ToString().Contains(searchResource.OrderNumber);
+            return x => x.OrderNumber.ToString().Equals(searchResource.OrderNumber);
         }
 
         protected override Expression<Func<PurchaseOrder, bool>> FindExpression(
@@ -267,17 +404,7 @@
             PurchaseOrderResource resource,
             PurchaseOrderResource updateResource)
         {
-            if (updateResource.CurrentlyUsingOverbookForm)
-            {
-                var log = new OverbookAllowedByLog
-                              {
-                                  OrderNumber = entity.OrderNumber,
-                                  OverbookQty = entity.OverbookQty,
-                                  OverbookDate = DateTime.Now,
-                                  OverbookGrantedBy = userNumber
-                              };
-                this.overbookAllowedByLogRepository.Add(log);
-            }
+            throw new NotImplementedException();
         }
 
         protected override Expression<Func<PurchaseOrder, bool>> SearchExpression(string searchTerm)
@@ -398,23 +525,20 @@
                                                                      OrderNumber = c.OrderNumber,
                                                                      LineNumber = c.LineNumber,
                                                                      DeliverySequence = c.DeliverySequence,
-                                                                     DateCancelled = c.DateCancelled,
+                                                                     DateCancelled = string.IsNullOrEmpty(c.DateCancelled) ? null : DateTime.Parse(c.DateCancelled),
                                                                      CancelledById = c.CancelledBy.Id,
-                                                                     DateFilCancelled = c.DateFilCancelled,
+                                                                     DateFilCancelled = string.IsNullOrEmpty(c.DateFilCancelled) ? null : DateTime.Parse(c.DateFilCancelled),
                                                                      FilCancelledById = c.FilCancelledBy.Id,
                                                                      ReasonCancelled = c.ReasonCancelled,
                                                                      Id = c.Id,
                                                                      PeriodCancelled = c.PeriodCancelled,
                                                                      PeriodFilCancelled = c.PeriodFilCancelled,
                                                                      ValueCancelled = c.ValueCancelled,
-                                                                     DateUncancelled = c.DateUncancelled,
-                                                                     DateFilUncancelled = c.DateFilUncancelled,
-                                                                     DatePreviouslyCancelled =
-                                                                         c.DatePreviouslyCancelled,
-                                                                     DatePreviouslyFilCancelled =
-                                                                         c.DatePreviouslyFilCancelled,
+                                                                     DateUncancelled = string.IsNullOrEmpty(c.DateUncancelled) ? null : DateTime.Parse(c.DateUncancelled),
+                                                                     DateFilUncancelled = string.IsNullOrEmpty(c.DateFilUncancelled) ? null : DateTime.Parse(c.DateFilUncancelled),
                                                                      ValueFilCancelled = c.ValueFilCancelled,
-                                                                     BaseValueFilCancelled = c.BaseValueFilCancelled
+                                                                     BaseValueFilCancelled = c.BaseValueFilCancelled,
+                                                                     ReasonFilCancelled = c.ReasonFilCancelled
                                                                  }).ToList(),
                                                 InternalComments = x.InternalComments,
                                                 OrderPosting = new PurchaseOrderPosting

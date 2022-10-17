@@ -41,6 +41,8 @@
                 return new PurchaseOrderResource { Links = this.BuildLinks(null, claimsList).ToArray() };
             }
 
+            var cancelledDetail = entity.Details?.FirstOrDefault()?.CancelledDetails?.FirstOrDefault(a => a.CancelledById.HasValue);
+
             return new PurchaseOrderResource
                        {
                            OrderNumber = entity.OrderNumber,
@@ -67,7 +69,7 @@
                            IssuePartsToSupplier = entity.IssuePartsToSupplier,
                            DeliveryAddress =
                                entity.DeliveryAddress != null
-                                   ? (LinnDeliveryAddressResource) this.deliveryAddressResourceBuilder.Build(
+                                   ? (LinnDeliveryAddressResource)this.deliveryAddressResourceBuilder.Build(
                                        entity.DeliveryAddress,
                                        claimsList)
                                    : null,
@@ -111,7 +113,25 @@
                                    ?.PhoneNumber,
                            BaseOrderNetTotal = entity.BaseOrderNetTotal,
                            OrderNetTotal = entity.OrderNetTotal,
-                           Links = this.BuildLinks(entity, claimsList).ToArray()
+                           Links = this.BuildLinks(entity, claimsList).ToArray(),
+                           CancelledByName = cancelledDetail?.CancelledBy?.FullName,
+                           DateCancelled = cancelledDetail != null && cancelledDetail.DateCancelled.HasValue 
+                                                ? cancelledDetail.DateCancelled.Value.ToString("dd/MM/yyyy") 
+                                                : string.Empty,
+                           ReasonCancelled = cancelledDetail?.ReasonCancelled,
+                           LedgerEntries = entity.LedgerEntries?.OrderByDescending(x => x.Pltref).Select(
+                               e => new PurchaseLedgerResource
+                                        {
+                                            TransType = e.PlTransType, 
+                                            PlDeliveryRef = e.PlDeliveryRef, 
+                                            Qty = e.PlQuantity, 
+                                            NetTotal = e.PlNetTotal,
+                                            VatTotal = e.PlVat,
+                                            InvoiceRef = e.PlInvoiceRef,
+                                            BaseVat = e.BaseVatTotal,
+                                            InvoiceDate = e.InvoiceDate.ToString("dd/MM/yyyy"),
+                                            Tref = e.Pltref
+                                        })
                        };
         }
 
@@ -128,15 +148,6 @@
         private IEnumerable<LinkResource> BuildLinks(PurchaseOrder model, IEnumerable<string> claims)
         {
             var privileges = claims as string[] ?? claims.ToArray();
-
-            if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
-            {
-                yield return new LinkResource
-                                 {
-                                     Rel = "allow-over-book-search",
-                                     Href = "/purchasing/purchase-orders/allow-over-book"
-                                 };
-            }
 
             if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, privileges))
             {
@@ -159,16 +170,48 @@
 
                 if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
                 {
-                    yield return new LinkResource { Rel = "edit", Href = this.GetLocation(model) };
+                    if (model.Cancelled != "Y")
+                    {
+                        yield return new LinkResource { Rel = "edit", Href = this.GetLocation(model) };
+                    }
+
+                    if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
+                    {
+                        yield return new LinkResource
+                                         {
+                                             Rel = "overbook",
+                                             Href = this.GetLocation(model)
+                                         };
+                    }
+                }
+
+                if (
+                    this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderAuthorise, privileges)
+                    && !model.AuthorisedById.HasValue)
+                {
                     yield return new LinkResource
                                      {
-                                         Rel = "allow-over-book", Href = $"{this.GetLocation(model)}/allow-over-book"
+                                         Rel = "authorise", Href = $"{this.GetLocation(model)}/authorise"
                                      };
                 }
 
-                if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderAuthorise, privileges))
+                if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderAuthorise, privileges)
+                    && model.AuthorisedById.HasValue)
                 {
-                    yield return new LinkResource { Rel = "authorise", Href = $"{this.GetLocation(model)}/authorise" };
+                    yield return new LinkResource
+                                     {
+                                         Rel = "email-dept",
+                                         Href = $"{this.GetLocation(model)}/email-dept"
+                                     };
+                }
+
+                if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderFilCancel, privileges))
+                {
+                    yield return new LinkResource
+                                     {
+                                         Rel = "fil-cancel",
+                                         Href = $"{this.GetLocation(model)}"
+                                     };
                 }
             }
         }
