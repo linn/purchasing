@@ -111,11 +111,8 @@ function CreatePurchaseOrderUt() {
 
     const canSave = () => allowedToCreate() && inputIsValid();
 
-    const handleDetailFieldChange = (propertyName, newValue, detailId) => {
-        dispatch({
-            payload: { id: detailId, [propertyName]: newValue },
-            type: 'detailFieldChange'
-        });
+    const handleDetailFieldChange = (propertyName, newValue, detail) => {
+        dispatch({ payload: { ...detail, [propertyName]: newValue }, type: 'detailFieldChange' });
     };
 
     const handleDetailValueFieldChange = (propertyName, basePropertyName, newValue, detail) => {
@@ -277,14 +274,6 @@ function CreatePurchaseOrderUt() {
         if (partSuppliersSearchResults?.length) {
             handleSupplierChange({
                 id: `${partSuppliersSearchResults.find(s => s.supplierRanking === 1).supplierId}`
-            });
-            dispatch({
-                payload: {
-                    lineNumber: 1,
-                    fieldName: 'ourQty',
-                    value: partSuppliersSearchResults.find(s => s.supplierRanking === 1).ourQty
-                },
-                type: 'detailFieldUpdate'
             });
             dispatch({
                 payload: {
