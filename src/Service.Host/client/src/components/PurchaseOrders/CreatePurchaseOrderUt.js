@@ -399,7 +399,7 @@ function CreatePurchaseOrderUt() {
                                     handleDetailFieldChange(
                                         'partNumber',
                                         newPart.id,
-                                        order.details[0].id
+                                        order.details[0]
                                     );
                                     if (newPart.stockControlled === 'Y') {
                                         setStockControlled(true);
