@@ -111,8 +111,11 @@ function CreatePurchaseOrderUt() {
 
     const canSave = () => allowedToCreate() && inputIsValid();
 
-    const handleDetailFieldChange = (propertyName, newValue, detail) => {
-        dispatch({ payload: { ...detail, [propertyName]: newValue }, type: 'detailFieldChange' });
+    const handleDetailFieldChange = (propertyName, newValue, detailId) => {
+        dispatch({
+            payload: { id: detailId, [propertyName]: newValue },
+            type: 'detailFieldChange'
+        });
     };
 
     const handleDetailValueFieldChange = (propertyName, basePropertyName, newValue, detail) => {
@@ -171,14 +174,6 @@ function CreatePurchaseOrderUt() {
     const partSuppliersSearchResults = useSelector(reduxState =>
         collectionSelectorHelpers.getSearchItems(reduxState.partSuppliers)
     );
-
-    useEffect(() => {
-        if (partSuppliersSearchResults?.length) {
-            handleSupplierChange({
-                id: `${partSuppliersSearchResults.find(s => s.supplierRanking === 1).supplierId}`
-            });
-        }
-    }, [partSuppliersSearchResults]);
 
     const partsSearchLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.parts)
@@ -277,6 +272,31 @@ function CreatePurchaseOrderUt() {
             });
         }
     }, [previousOrderResults]);
+
+    useEffect(() => {
+        if (partSuppliersSearchResults?.length) {
+            handleSupplierChange({
+                id: `${partSuppliersSearchResults.find(s => s.supplierRanking === 1).supplierId}`
+            });
+            dispatch({
+                payload: {
+                    lineNumber: 1,
+                    fieldName: 'ourQty',
+                    value: partSuppliersSearchResults.find(s => s.supplierRanking === 1).ourQty
+                },
+                type: 'detailFieldUpdate'
+            });
+            dispatch({
+                payload: {
+                    lineNumber: 1,
+                    fieldName: 'ourUnitPriceCurrency',
+                    value: partSuppliersSearchResults.find(s => s.supplierRanking === 1)
+                        .currencyUnitPrice
+                },
+                type: 'detailFieldUpdate'
+            });
+        }
+    }, [detail.id, partSuppliersSearchResults]);
 
     const progressToFullCreate = () => {
         reduxDispatch(suggestedPurchaseOrderValuesActions.add(order));
@@ -390,7 +410,7 @@ function CreatePurchaseOrderUt() {
                                     handleDetailFieldChange(
                                         'partNumber',
                                         newPart.id,
-                                        order.details[0]
+                                        order.details[0].id
                                     );
                                     if (newPart.stockControlled === 'Y') {
                                         setStockControlled(true);
@@ -454,6 +474,14 @@ function CreatePurchaseOrderUt() {
                                         }))}
                                     onChange={(propertyName, selected) => {
                                         handleSupplierChange({ id: selected });
+                                        handleDetailValueFieldChange(
+                                            'ourUnitPriceCurrency',
+                                            'baseUnitPrice',
+                                            partSuppliersSearchResults.find(
+                                                x => x.supplierId === Number(selected)
+                                            ).currencyUnitPrice,
+                                            detail
+                                        );
                                     }}
                                     allowNoValue={false}
                                 />
