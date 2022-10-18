@@ -10,6 +10,7 @@ namespace Linn.Purchasing.Service.Host
     using Linn.Common.Configuration;
     using Linn.Common.Facade;
     using Linn.Common.Logging;
+    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.IoC;
     using Linn.Purchasing.Service.Host.Negotiators;
 
@@ -88,8 +89,9 @@ namespace Linn.Purchasing.Service.Host
                         var log = app.ApplicationServices.GetService<ILog>();
                         log.Error(exception?.Message);
 
-                        await context.Response.Negotiate(new ServerFailureResult<string>(exception?.Message));
-                }));
+                        var response = new { error = exception?.Message };
+                        await context.Response.WriteAsJsonAsync(response);
+                    }));
             app.UseRouting();
             app.UseEndpoints(cfg => cfg.MapCarter());
         }
