@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
+    using System;
     using System.Net;
     using System.Threading.Tasks;
 
@@ -56,6 +57,8 @@
             app.MapPost("/purchasing/purchase-orders/{id:int}/authorise", this.AuthoriseOrder);
             app.MapPost("/purchasing/purchase-orders/{orderNumber:int}/email-dept", this.EmailDept);
             app.MapPatch("/purchasing/purchase-orders/{orderNumber:int}", this.PatchOrder);
+
+            app.MapGet("purchasing/test-error", this.TestError);
         }
 
         private async Task AuthoriseOrder(
@@ -331,6 +334,13 @@
                 res.HttpContext.User.GetEmployeeNumber());
 
             await res.Negotiate(result);
+        }
+
+        private Task TestError(
+            HttpRequest req,
+            HttpResponse res)
+        {
+            throw new Exception("A test exception");
         }
     }
 }

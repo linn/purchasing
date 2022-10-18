@@ -4,13 +4,11 @@ namespace Linn.Purchasing.Service.Host
     using System.IO;
 
     using Carter;
-    using Carter.Response;
 
     using Linn.Common.Authentication.Host.Extensions;
     using Linn.Common.Configuration;
     using Linn.Common.Facade;
     using Linn.Common.Logging;
-    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.IoC;
     using Linn.Purchasing.Service.Host.Negotiators;
 
