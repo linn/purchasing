@@ -7,7 +7,6 @@ namespace Linn.Purchasing.Service.Host
 
     using Linn.Common.Authentication.Host.Extensions;
     using Linn.Common.Configuration;
-    using Linn.Common.Facade;
     using Linn.Common.Logging;
     using Linn.Purchasing.IoC;
     using Linn.Purchasing.Service.Host.Negotiators;
