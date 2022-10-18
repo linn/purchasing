@@ -63,8 +63,6 @@
             this.EmployeeRepository.FindById(33087).Returns(this.candidate.ChangedBy);
             this.ChangeReasonsRepository.FindById(this.candidate.ChangeReason.ReasonCode)
                 .Returns(this.candidate.ChangeReason);
-            this.PartHistory.FilterBy(Arg.Any<Expression<Func<PartHistoryEntry, bool>>>())
-                .Returns(new List<PartHistoryEntry>().AsQueryable());
             this.CurrencyRepository.FindById("USD").Returns(new Currency {Code = "USD"});
 
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PartSupplierUpdate, Arg.Any<IEnumerable<string>>())
@@ -127,27 +125,7 @@
         [Test]
         public void ShouldInsertAPartHistoryRecord()
         {
-            this.PartHistory.Received().Add(Arg.Is<PartHistoryEntry>(x =>
-                x.Seq == 1
-                && x.PartNumber == "PART"
-                && x.OldMaterialPrice == null
-                && x.OldLabourPrice == null
-                && x.NewMaterialPrice == 3m
-                && x.NewLabourPrice == 0m
-                && x.OldPreferredSupplierId == null
-                && x.NewPreferredSupplierId == 2
-                && x.OldBomType == "A"
-                && x.NewBomType == "A"
-                && x.ChangedBy == 33087
-                && x.ChangeType == "PREFSUP"
-                && x.Remarks == "REMARKS"
-                && x.PriceChangeReason == "CHG"
-                && x.OldCurrency == null
-                && x.NewCurrency == "USD"
-                && x.OldCurrencyUnitPrice == null
-                && x.NewCurrencyUnitPrice == 100m
-                && x.OldBaseUnitPrice == null
-                && x.NewBaseUnitPrice == 3m));
+            this.PartHistory.Received().AddPartHistory(Arg.Any<Part>(), Arg.Any<Part>(), "PREFSUP", Arg.Any<int>(),"REMARKS","CHG");
         }
     }
 }

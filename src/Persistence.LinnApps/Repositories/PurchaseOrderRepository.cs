@@ -25,6 +25,7 @@
                 .Include(o => o.Supplier)
                 .Include(o => o.Details).ThenInclude(d => d.Part)
                 .Include(o => o.Details).ThenInclude(d => d.PurchaseDeliveries)
+                .Include(o => o.Details).ThenInclude(d => d.CancelledDetails).ThenInclude(p => p.FilCancelledBy)
                 .Include(x => x.Supplier)
                 .Include(x => x.Currency)
                 .Include(x => x.AuthorisedBy)

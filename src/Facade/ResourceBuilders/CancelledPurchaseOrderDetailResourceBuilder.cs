@@ -17,7 +17,7 @@
                            OrderNumber = entity.OrderNumber,
                            LineNumber = entity.LineNumber,
                            DeliverySequence = entity.DeliverySequence,
-                           DateCancelled = entity.DateCancelled,
+                           DateCancelled = entity.DateCancelled?.ToString("o"),
                            CancelledBy =
                                entity.CancelledBy != null
                                    ? new EmployeeResource
@@ -25,7 +25,7 @@
                                              Id = entity.CancelledBy.Id, FullName = entity.CancelledBy.FullName
                                          }
                                    : null,
-                           DateFilCancelled = entity.DateFilCancelled,
+                           DateFilCancelled = entity.DateFilCancelled?.ToString("o"),
                            FilCancelledBy =
                                entity.FilCancelledBy != null
                                    ? new EmployeeResource
@@ -38,13 +38,12 @@
                            PeriodCancelled = entity.PeriodCancelled,
                            PeriodFilCancelled = entity.PeriodFilCancelled,
                            ValueCancelled = entity.ValueCancelled,
-                           DateUncancelled = entity.DateUncancelled,
-                           DateFilUncancelled = entity.DateFilUncancelled,
-                           DatePreviouslyCancelled = entity.DatePreviouslyCancelled,
-                           DatePreviouslyFilCancelled = entity.DatePreviouslyFilCancelled,
+                           DateUncancelled = entity.DateUncancelled?.ToString("o"),
+                           DateFilUncancelled = entity.DateFilUncancelled?.ToString("o"),
                            ValueFilCancelled = entity.ValueFilCancelled,
-                           BaseValueFilCancelled = entity.BaseValueFilCancelled
-                       };
+                           BaseValueFilCancelled = entity.BaseValueFilCancelled,
+                           ReasonFilCancelled = entity.ReasonFilCancelled
+            };
         }
 
         public string GetLocation(CancelledOrderDetail p)
