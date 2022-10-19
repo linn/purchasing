@@ -305,7 +305,7 @@ describe('When Updating Deliveries', () => {
     test('Should post when save clicked', () => {
         // trigger a change to a cell to enable the Save button
         const cells = screen.getAllByRole('cell');
-        fireEvent.doubleClick(cells[3]);
+        fireEvent.doubleClick(cells[2]);
 
         const saveButton = screen.getByRole('button', { name: 'Save' });
         fireEvent.click(saveButton);

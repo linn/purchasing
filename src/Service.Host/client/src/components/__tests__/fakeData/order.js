@@ -16,6 +16,7 @@ const order = {
         description: 'PURCHASE ORDER',
         name: 'PO'
     },
+    links: [{ href: '/fil-cancel', rel: 'fil-cancel' }],
     supplier: {
         id: 6231,
         name: 'THE SAW CENTRE',
@@ -80,6 +81,7 @@ const order = {
             deliveryConfirmedBy: null,
             deliveryInstructions: 'PARTIAL SHIPMENT IS NOT ALLOWED',
             detailTotalCurrency: 7200,
+            filCancelled: 'N',
             internalComments: null,
             line: 1,
             mrOrders: null,

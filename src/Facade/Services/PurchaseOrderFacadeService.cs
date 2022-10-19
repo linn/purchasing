@@ -125,6 +125,12 @@
                                                    NetTotalCurrency = x.NetTotalCurrency,
                                                    OurQty = x.OurQty,
                                                    OrderQty = x.OrderQty,
+                                                   PurchaseDeliveries = x.PurchaseDeliveries?.Select(d =>
+                                                       new PurchaseOrderDelivery
+                                                           {
+                                                               DateRequested = !string.IsNullOrEmpty(d.DateRequested) 
+                                                                                   ? DateTime.Parse(d.DateRequested) : null,
+                                                           })?.ToList(),
                                                    Part =
                                                        new Part
                                                            {
@@ -291,6 +297,33 @@
                                       OverbookGrantedBy = who
                                   };
                     this.overbookAllowedByLogRepository.Add(log);
+                }
+
+                if (resource.To?.Details != null && resource.To.Details.Any())
+                {
+                    foreach (var purchaseOrderDetailResource in resource.To.Details)
+                    {
+                        if (purchaseOrderDetailResource.FilCancelled
+                            != resource.From.Details?.FirstOrDefault(a => a.Line == purchaseOrderDetailResource.Line)?.FilCancelled)
+                        {
+                            if (purchaseOrderDetailResource.FilCancelled == "Y")
+                            {
+                                order = this.domainService.FilCancelLine(
+                                    resource.From.OrderNumber,
+                                    purchaseOrderDetailResource.Line,
+                                    who,
+                                    purchaseOrderDetailResource.ReasonFilCancelled,
+                                    privilegesList);
+                            }
+                            else
+                            {
+                                order = this.domainService.UnFilCancelLine(
+                                    resource.From.OrderNumber,
+                                    purchaseOrderDetailResource.Line,
+                                    privilegesList);
+                            }
+                        }
+                    }
                 }
 
                 this.transactionManager.Commit();
@@ -492,23 +525,20 @@
                                                                      OrderNumber = c.OrderNumber,
                                                                      LineNumber = c.LineNumber,
                                                                      DeliverySequence = c.DeliverySequence,
-                                                                     DateCancelled = c.DateCancelled,
+                                                                     DateCancelled = string.IsNullOrEmpty(c.DateCancelled) ? null : DateTime.Parse(c.DateCancelled),
                                                                      CancelledById = c.CancelledBy.Id,
-                                                                     DateFilCancelled = c.DateFilCancelled,
+                                                                     DateFilCancelled = string.IsNullOrEmpty(c.DateFilCancelled) ? null : DateTime.Parse(c.DateFilCancelled),
                                                                      FilCancelledById = c.FilCancelledBy.Id,
                                                                      ReasonCancelled = c.ReasonCancelled,
                                                                      Id = c.Id,
                                                                      PeriodCancelled = c.PeriodCancelled,
                                                                      PeriodFilCancelled = c.PeriodFilCancelled,
                                                                      ValueCancelled = c.ValueCancelled,
-                                                                     DateUncancelled = c.DateUncancelled,
-                                                                     DateFilUncancelled = c.DateFilUncancelled,
-                                                                     DatePreviouslyCancelled =
-                                                                         c.DatePreviouslyCancelled,
-                                                                     DatePreviouslyFilCancelled =
-                                                                         c.DatePreviouslyFilCancelled,
+                                                                     DateUncancelled = string.IsNullOrEmpty(c.DateUncancelled) ? null : DateTime.Parse(c.DateUncancelled),
+                                                                     DateFilUncancelled = string.IsNullOrEmpty(c.DateFilUncancelled) ? null : DateTime.Parse(c.DateFilUncancelled),
                                                                      ValueFilCancelled = c.ValueFilCancelled,
-                                                                     BaseValueFilCancelled = c.BaseValueFilCancelled
+                                                                     BaseValueFilCancelled = c.BaseValueFilCancelled,
+                                                                     ReasonFilCancelled = c.ReasonFilCancelled
                                                                  }).ToList(),
                                                 InternalComments = x.InternalComments,
                                                 OrderPosting = new PurchaseOrderPosting

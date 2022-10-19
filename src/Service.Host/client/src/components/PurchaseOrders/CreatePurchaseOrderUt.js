@@ -59,7 +59,6 @@ function CreatePurchaseOrderUt() {
                 ...item,
                 documentType: { name: 'PO' },
                 exchangeRate: 1,
-                dateRequired: dateRequired ? new Date(dateRequired) : new Date(),
                 supplier: { id: supplierId, name: supplierName },
                 details: [
                     {
@@ -70,7 +69,8 @@ function CreatePurchaseOrderUt() {
                         ourUnitPriceCurrency: currencyUnitPrice ?? 0,
                         orderUnitPriceCurrency: currencyUnitPrice ?? 0,
                         vatTotalCurrency: 0,
-                        baseNetTotal: 0
+                        baseNetTotal: 0,
+                        purchaseDeliveries: [{ dateRequested: dateRequired }]
                     }
                 ]
             };

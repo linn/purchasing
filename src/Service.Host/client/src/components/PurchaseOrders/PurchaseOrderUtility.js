@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer } from 'react';
+import React, { useEffect, useState, useReducer, Fragment } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { DataGrid } from '@mui/x-data-grid';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import Dialog from '@mui/material/Dialog';
 import LinearProgress from '@mui/material/LinearProgress';
 import IconButton from '@mui/material/IconButton';
@@ -16,6 +16,7 @@ import PrintIcon from '@mui/icons-material/Print';
 import Tooltip from '@mui/material/Tooltip';
 import Close from '@mui/icons-material/Close';
 import Email from '@mui/icons-material/Email';
+import moment from 'moment';
 import Send from '@mui/icons-material/Send';
 import { makeStyles } from '@mui/styles';
 import {
@@ -35,6 +36,7 @@ import {
     OnOffSwitch,
     processSelectorHelpers
 } from '@linn-it/linn-form-components-library';
+import queryString from 'query-string';
 import currenciesActions from '../../actions/currenciesActions';
 import nominalsActions from '../../actions/nominalsActions';
 import suppliersActions from '../../actions/suppliersActions';
@@ -59,21 +61,28 @@ import sendOrderAuthEmailActions from '../../actions/sendPurchaseOrderAuthEmailA
 import purchaseOrderDeliveriesActions from '../../actions/purchaseOrderDeliveriesActions';
 import sendPurchaseOrderDeptEmailActions from '../../actions/sendPurchaseOrderDeptEmailActions';
 import CancelUnCancelDialog from './CancelUnCancelDialog';
+import FilCancelUnCancelDialog from './FilCancelUnCancelDialog';
+import PlInvRecDialog from './PlInvRecDialog';
 
 function PurchaseOrderUtility({ creating }) {
     const reduxDispatch = useDispatch();
     const clearErrors = () => reduxDispatch(purchaseOrderActions.clearErrorsForItem());
 
     const { orderNumber } = useParams();
+    const loc = useLocation();
 
     useEffect(() => {
         if (orderNumber) {
             reduxDispatch(sendPurchaseOrderDeptEmailActions.clearErrorsForItem());
             reduxDispatch(purchaseOrderActions.fetch(orderNumber));
-        } else if (creating) {
+        }
+    }, [orderNumber, reduxDispatch]);
+
+    useEffect(() => {
+        if (creating) {
             reduxDispatch(purchaseOrderActions.fetchState());
         }
-    }, [orderNumber, reduxDispatch, creating]);
+    }, [reduxDispatch, creating]);
 
     useEffect(() => {
         reduxDispatch(currenciesActions.fetch());
@@ -214,6 +223,10 @@ function PurchaseOrderUtility({ creating }) {
     );
     const [authEmailDialogOpen, setAuthEmailDialogOpen] = useState(false);
 
+    const [invRecDialogOpen, setInvRecDialogOpen] = useState(
+        !!queryString.parse(loc.search).invRecDialogOpen
+    );
+
     const nominalAccountsTable = {
         totalItemCount: nominalsSearchItems.length,
         rows: nominalsSearchItems?.map(nom => ({
@@ -236,6 +249,8 @@ function PurchaseOrderUtility({ creating }) {
         }
         return utilities.getHref(order, 'edit');
     };
+
+    const allowedToFilCancel = () => !creating && utilities.getHref(order, 'fil-cancel');
 
     const inputIsValid = () =>
         order.supplier?.id &&
@@ -438,10 +453,22 @@ function PurchaseOrderUtility({ creating }) {
     const [overridingOrderPrice, setOverridingOrderPrice] = useState(false);
     const [overridingOrderQty, setOverridingOrderQty] = useState(false);
 
-    const getDateString = isoString =>
-        isoString ? new Date(isoString).toLocaleDateString('en-GB') : null;
+    const getDateString = isoString => {
+        if (!isoString) {
+            return null;
+        }
+        const date = new Date(isoString);
+        return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    };
 
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+    const [currentLine, setCurrentLine] = useState(1);
+    const [filCancelDialogOpen, setFilCancelDialogOpen] = useState(false);
+
+    const filCancelLine = lineNumber => {
+        setCurrentLine(lineNumber);
+        setFilCancelDialogOpen(true);
+    };
 
     return (
         <>
@@ -506,12 +533,34 @@ function PurchaseOrderUtility({ creating }) {
                                         />
                                     </Grid>
                                 )}
-                                {!creating && (
+                                {!creating && item && (
                                     <CancelUnCancelDialog
                                         open={cancelDialogOpen}
                                         setOpen={setCancelDialogOpen}
                                         mode={item.cancelled === 'Y' ? 'uncancel' : 'cancel'}
                                         order={item.orderNumber}
+                                    />
+                                )}
+                                {!creating && (
+                                    <FilCancelUnCancelDialog
+                                        open={filCancelDialogOpen}
+                                        setOpen={setFilCancelDialogOpen}
+                                        mode={
+                                            item.details.find(a => a.line === currentLine)
+                                                .filCancelled === 'Y'
+                                                ? 'uncancel'
+                                                : 'cancel'
+                                        }
+                                        order={item.orderNumber}
+                                        line={currentLine}
+                                    />
+                                )}
+                                {!creating && (
+                                    <PlInvRecDialog
+                                        open={invRecDialogOpen}
+                                        setOpen={setInvRecDialogOpen}
+                                        ledgerEntries={order.ledgerEntries}
+                                        inDialog
                                     />
                                 )}
                                 <Dialog open={authEmailDialogOpen} fullWidth maxWidth="md">
@@ -564,8 +613,8 @@ function PurchaseOrderUtility({ creating }) {
                                                 deliveries={selectedDeliveries.map(d => ({
                                                     ...d,
                                                     id: `${d.orderNumber}/${d.line}/${d.deliverySeq}`,
-                                                    dateRequested: getDateString(d.dateRequested),
-                                                    dateAdvised: getDateString(d.dateAdvised)
+                                                    dateRequested: d.dateRequested,
+                                                    dateAdvised: d.dateAdvised
                                                 }))}
                                                 backClick={() => setDeliveriesDialogOpen(false)}
                                                 closeOnSave
@@ -634,9 +683,8 @@ function PurchaseOrderUtility({ creating }) {
                                     </div>
                                 </Dialog>
                                 <Grid item xs={10}>
-                                    {' '}
                                     <Typography variant="h6" display="inline">
-                                        Purchase Order {!creating && item.orderNumber}
+                                        Purchase Order {!creating && item?.orderNumber}
                                     </Typography>
                                     {item?.cancelled === 'Y' && (
                                         <>
@@ -671,6 +719,16 @@ function PurchaseOrderUtility({ creating }) {
                                             </Tooltip>
                                         )}
                                     </div>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Button
+                                        className={classes.buttonMarginTop}
+                                        aria-label="Pl Inv/Rec"
+                                        onClick={() => setInvRecDialogOpen(true)}
+                                        disabled={creating}
+                                    >
+                                        Pl Inv/Rec
+                                    </Button>
                                 </Grid>
                                 <Grid item xs={2}>
                                     <InputField
@@ -780,14 +838,18 @@ function PurchaseOrderUtility({ creating }) {
                                 <Grid item xs={1}>
                                     {order.issuePartsToSupplier === 'Y' && (
                                         <Tooltip title="Email kitting to logistics">
-                                            <IconButton
-                                                className={classes.buttonMarginTop}
-                                                aria-label="Email"
-                                                onClick={() => handleSupplierAssEmailClick(true)}
-                                                disabled={creating}
-                                            >
-                                                <Email />
-                                            </IconButton>
+                                            <span>
+                                                <IconButton
+                                                    className={classes.buttonMarginTop}
+                                                    aria-label="Email"
+                                                    onClick={() =>
+                                                        handleSupplierAssEmailClick(true)
+                                                    }
+                                                    disabled={creating}
+                                                >
+                                                    <Email />
+                                                </IconButton>
+                                            </span>
                                         </Tooltip>
                                     )}
                                 </Grid>
@@ -865,7 +927,7 @@ function PurchaseOrderUtility({ creating }) {
                                     />
                                 </Grid>
 
-                                <Grid container item spacing={1} xs={4}>
+                                <Grid item xs={4}>
                                     <Grid item xs={12}>
                                         <InputField
                                             fullWidth
@@ -898,7 +960,6 @@ function PurchaseOrderUtility({ creating }) {
                                         />
                                     </Grid>
                                 </Grid>
-
                                 <Grid item xs={8}>
                                     <InputField
                                         fullWidth
@@ -910,14 +971,38 @@ function PurchaseOrderUtility({ creating }) {
                                         disabled
                                     />
                                 </Grid>
-                                <Grid item xs={12} />
-                                <Grid container item spacing={1} xs={7}>
+                                {creating && order.details?.[0].purchaseDeliveries && (
+                                    <Grid item xs={12}>
+                                        <InputField
+                                            value={
+                                                order.details?.[0].purchaseDeliveries[0]
+                                                    .dateRequested
+                                                    ? moment(
+                                                          order.details?.[0].purchaseDeliveries[0]
+                                                              .dateRequested
+                                                      ).format('YYYY-MM-DDTHH:mm:ss')
+                                                    : null
+                                            }
+                                            label="Date Requested"
+                                            propertyName="dateRequested"
+                                            onChange={(_, newValue) =>
+                                                dispatch({
+                                                    type: 'dateRequestedChange',
+                                                    payload: { line: 1, newValue }
+                                                })
+                                            }
+                                            type="date"
+                                        />
+                                    </Grid>
+                                )}
+                                <Grid container spacing={1} xs={7}>
                                     <Grid item xs={6}>
                                         <InputField
                                             fullWidth
                                             value={`${order.requestedBy?.fullName} (${order.requestedBy?.id})`}
                                             label="Requested By"
                                             disabled
+                                            propertyName="requestedBy"
                                         />
                                     </Grid>
                                     <Grid item xs={6}>
@@ -925,6 +1010,7 @@ function PurchaseOrderUtility({ creating }) {
                                             fullWidth
                                             value={`${order.enteredBy?.fullName} (${order.enteredBy?.id})`}
                                             label="Entered By"
+                                            propertyName="enteredBy"
                                             disabled
                                         />
                                     </Grid>
@@ -941,16 +1027,18 @@ function PurchaseOrderUtility({ creating }) {
                                     </Grid>
                                     <Grid item xs={3}>
                                         <Tooltip title="Email to request authorisation">
-                                            <Button
-                                                className={classes.buttonMarginTop}
-                                                aria-label="Email Finance"
-                                                variant="outlined"
-                                                onClick={() => setAuthEmailDialogOpen(true)}
-                                                disabled={creating || !allowedToAuthorise()}
-                                                startIcon={<Email />}
-                                            >
-                                                Finance
-                                            </Button>
+                                            <span>
+                                                <Button
+                                                    className={classes.buttonMarginTop}
+                                                    aria-label="Email Finance"
+                                                    variant="outlined"
+                                                    onClick={() => setAuthEmailDialogOpen(true)}
+                                                    disabled={creating || !allowedToAuthorise()}
+                                                    startIcon={<Email />}
+                                                >
+                                                    Finance
+                                                </Button>
+                                            </span>
                                         </Tooltip>
                                     </Grid>
                                     <Grid item xs={6}>
@@ -962,6 +1050,7 @@ function PurchaseOrderUtility({ creating }) {
                                                     : ''
                                             }
                                             label="Authorised by"
+                                            propertyName="authorisedBy"
                                             disabled
                                         />
                                     </Grid>
@@ -1001,13 +1090,7 @@ function PurchaseOrderUtility({ creating }) {
                                         Email Dept
                                     </Button>
                                 </Grid>
-                                <Grid
-                                    item
-                                    xs={9}
-                                    justify="flex-end"
-                                    alignItems="center"
-                                    spacing={2}
-                                >
+                                <Grid item xs={9} justify="flex-end" alignItems="center">
                                     {deptEmailLoading && <LinearProgress />}
                                     {deptEmailError && (
                                         <ErrorCard
@@ -1018,7 +1101,7 @@ function PurchaseOrderUtility({ creating }) {
                                     )}
                                 </Grid>
                                 <Grid item xs={3}>
-                                    {!creating && (
+                                    {!creating && item && (
                                         <Button
                                             className={classes.buttonMarginTop}
                                             aria-label={
@@ -1034,7 +1117,7 @@ function PurchaseOrderUtility({ creating }) {
                                         </Button>
                                     )}
                                 </Grid>
-                                {!creating && item.cancelled === 'Y' ? (
+                                {!creating && item?.cancelled === 'Y' ? (
                                     <>
                                         <Grid item xs={3}>
                                             <InputField
@@ -1073,7 +1156,7 @@ function PurchaseOrderUtility({ creating }) {
                                 {order.details
                                     ?.sort((a, b) => a.line - b.line)
                                     .map(detail => (
-                                        <>
+                                        <Fragment key={detail.line}>
                                             <Grid container item spacing={1} xs={6}>
                                                 <Grid item xs={4}>
                                                     <InputField
@@ -1148,7 +1231,7 @@ function PurchaseOrderUtility({ creating }) {
                                                             placement="top"
                                                             className={classes.cursorPointer}
                                                         >
-                                                            <Grid container item>
+                                                            <Grid container spacing={1}>
                                                                 <Grid item xs={4}>
                                                                     <InputField
                                                                         fullWidth
@@ -1240,7 +1323,7 @@ function PurchaseOrderUtility({ creating }) {
                                                             placement="top"
                                                             className={classes.cursorPointer}
                                                         >
-                                                            <Grid container xs={12}>
+                                                            <Grid container spacing={1}>
                                                                 <Grid item xs={4}>
                                                                     <InputField
                                                                         fullWidth
@@ -1278,7 +1361,7 @@ function PurchaseOrderUtility({ creating }) {
                                                     )}
                                                 </Grid>
                                             </Grid>
-                                            <Grid item xs={6} spacing={1}>
+                                            <Grid item xs={6}>
                                                 <InputField
                                                     fullWidth
                                                     value={detail.suppliersDesignation}
@@ -1408,8 +1491,63 @@ function PurchaseOrderUtility({ creating }) {
                                                     required
                                                 />
                                             </Grid>
-                                            <Grid item xs={4} />
-
+                                            <Grid item xs={1} />
+                                            {detail.filCancelled === 'Y' && (
+                                                <>
+                                                    <Grid item xs={3} />
+                                                    <Grid item xs={2}>
+                                                        <InputField
+                                                            fullWidth
+                                                            value={detail.dateFilCancelled}
+                                                            label="Date Fil Cancelled"
+                                                            propertyName="dateFilCancelled"
+                                                            disabled
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={3}>
+                                                        <InputField
+                                                            fullWidth
+                                                            value={detail.filCancelledByName}
+                                                            label="By"
+                                                            propertyName="filCancelledByName"
+                                                            disabled
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={4}>
+                                                        <InputField
+                                                            fullWidth
+                                                            value={detail.reasonFilCancelled}
+                                                            label="Reason Fil Cancelled"
+                                                            propertyName="reasonFilCancelled"
+                                                            disabled
+                                                        />
+                                                    </Grid>
+                                                </>
+                                            )}
+                                            <Grid item xs={3}>
+                                                {!creating && (
+                                                    <Button
+                                                        className={classes.buttonMarginTop}
+                                                        aria-label={
+                                                            detail.filCancelled === 'N'
+                                                                ? 'Fil Cancel'
+                                                                : 'UnFilCancel'
+                                                        }
+                                                        color={
+                                                            detail.filCancelled === 'N'
+                                                                ? 'secondary'
+                                                                : 'primary'
+                                                        }
+                                                        variant="contained"
+                                                        disabled={!allowedToFilCancel()}
+                                                        onClick={() => filCancelLine(detail.line)}
+                                                    >
+                                                        {detail.filCancelled === 'N'
+                                                            ? 'Fil Cancel'
+                                                            : 'Un Fil Cancel'}
+                                                    </Button>
+                                                )}
+                                            </Grid>
                                             <Grid item xs={4}>
                                                 <TypeaheadTable
                                                     table={nominalAccountsTable}
@@ -1599,7 +1737,7 @@ function PurchaseOrderUtility({ creating }) {
                                                     disabled={!allowedToUpdate()}
                                                 />
                                             </Grid>
-                                        </>
+                                        </Fragment>
                                     ))}
                                 <Grid item xs={6}>
                                     <SaveBackCancelButtons

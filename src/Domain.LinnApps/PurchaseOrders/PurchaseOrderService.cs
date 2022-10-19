@@ -14,6 +14,7 @@
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
+    using Linn.Purchasing.Domain.LinnApps.Finance.Models;
     using Linn.Purchasing.Domain.LinnApps.Keys;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
@@ -69,6 +70,10 @@
 
         private readonly IRepository<CancelledOrderDetail, int> cancelledOrderDetailRepository;
 
+        private readonly IQueryRepository<ImmediateLiability> liabilityRepository;
+
+        private readonly IQueryRepository<ImmediateLiabilityBase> baseLiabilityRepository;
+
         public PurchaseOrderService(
             IAuthorisationService authService,
             IPurchaseLedgerPack purchaseLedgerPack,
@@ -92,7 +97,9 @@
             ILog log,
             IRepository<PlCreditDebitNote, int> creditDebitNoteRepository,
             IQueryRepository<PlOrderReceivedViewEntry> orderReceivedView,
-            IRepository<CancelledOrderDetail, int> cancelledOrderDetailRepository)
+            IRepository<CancelledOrderDetail, int> cancelledOrderDetailRepository,
+            IQueryRepository<ImmediateLiability> liabilityRepository,
+            IQueryRepository<ImmediateLiabilityBase> baseLiabilityRepository)
         {
             this.authService = authService;
             this.purchaseLedgerPack = purchaseLedgerPack;
@@ -117,6 +124,8 @@
             this.creditDebitNoteRepository = creditDebitNoteRepository;
             this.orderReceivedView = orderReceivedView;
             this.cancelledOrderDetailRepository = cancelledOrderDetailRepository;
+            this.liabilityRepository = liabilityRepository;
+            this.baseLiabilityRepository = baseLiabilityRepository;
         }
 
         public PurchaseOrder AllowOverbook(
@@ -403,11 +412,17 @@
 
             order.ExchangeRate = this.currencyPack.GetExchangeRate("GBP", order.CurrencyCode);
 
+            if (order.ExchangeRate.GetValueOrDefault() == 0)
+            {
+                order.ExchangeRate = 1;
+            }
+
             var detail = order.Details.First();
             detail.OrderUnitPriceCurrency = detail.OurUnitPriceCurrency;
             detail.OrderQty = detail.OurQty;
 
             var part = this.partQueryRepository.FindBy(p => p.PartNumber == detail.PartNumber);
+
             detail.OurUnitOfMeasure = part.OurUnitOfMeasure;
             order.IssuePartsToSupplier = part.SupplierAssembly() ? "Y" : "N";
 
@@ -416,13 +431,89 @@
             detail.OurUnitOfMeasure = partSupplier != null ? partSupplier.UnitOfMeasure : string.Empty;
             detail.SuppliersDesignation = partSupplier != null ? partSupplier.SupplierDesignation : string.Empty;
 
-            //TODO THIS IS WRONG AND ALSO HAS A DATABASE ID HARDCODED INTO DOMAIN LOGIC
-            // from MR is always nom Raw Materials 0000007617 Assets 0000002508
-            var nomAcc = this.nominalAccountRepository.FindById(884);
+            detail.NetTotalCurrency = detail.OurQty.GetValueOrDefault() 
+                                      * detail.OurUnitPriceCurrency.GetValueOrDefault();
 
-            detail.OrderPosting = new PurchaseOrderPosting { NominalAccount = nomAcc, NominalAccountId = 884 };
+            detail.DetailTotalCurrency = detail.NetTotalCurrency + detail.VatTotalCurrency;
+            detail.BaseNetTotal = Math.Round(detail.NetTotalCurrency / (decimal)order.ExchangeRate, 2);
+            detail.BaseDetailTotal = 
+                Math.Round(detail.DetailTotalCurrency.GetValueOrDefault() / (decimal)order.ExchangeRate, 2);
+
+            NominalAccount nomAcc = null;
+            if (part.StockControlled == "Y")
+            {
+                if (part.RawOrFinished == "R")
+                {
+                    nomAcc = this.nominalAccountRepository.FindBy(
+                        a => a.NominalCode == "0000007617" && a.DepartmentCode == "0000002508");
+                }
+                else
+                {
+                    nomAcc = this.nominalAccountRepository.FindBy(
+                        a => a.NominalCode == "0000007635" && a.DepartmentCode == "0000002508");
+                }
+            }
+            else if (part.PartNumber != "SUNDRY")
+            {
+                nomAcc = part.NominalAccount;
+            }
+            
+            detail.OrderPosting = nomAcc == null ?
+                                      new PurchaseOrderPosting() 
+                                      : new PurchaseOrderPosting
+                                            {
+                                                NominalAccount = nomAcc, 
+                                                NominalAccountId = nomAcc.AccountId,
+                                            };
+
+            foreach (var d in order.Details)
+            {
+                var partSupplierRecord = this.partSupplierRepository.FindById(
+                    new PartSupplierKey { SupplierId = order.SupplierId, PartNumber = d.PartNumber });
+
+                if (this.partQueryRepository.FindBy(p => p.PartNumber == d.PartNumber).StockControlled == "Y" 
+                    && partSupplierRecord != null
+                    && d.PurchaseDeliveries?.First()?.DateRequested == null) // might already have a suggested date from MR
+                {
+                    d.PurchaseDeliveries = new List<PurchaseOrderDelivery>();
+
+                    var deliveryDay = supplier.DeliveryDay ?? "MONDAY";
+
+                    var leadTimeFromNow = DateTime.Today.AddDays(partSupplierRecord.LeadTimeWeeks * 7);
+                    var dateRequested = NextOccurrenceOfDay(leadTimeFromNow, deliveryDay);
+
+                    d.PurchaseDeliveries.Add(
+                        new PurchaseOrderDelivery
+                            {
+                                DateRequested = dateRequested,
+                                PurchaseOrderDetail = d
+                            });
+                }
+            }
 
             return order;
+        }
+
+        public static DateTime NextOccurrenceOfDay(DateTime from, string deliveryDay)
+        {
+            var days = new List<string>
+                           {
+                               "SUNDAY",
+                               "MONDAY",
+                               "TUESDAY",
+                               "WEDNESDAY",
+                               "THURSDAY",
+                               "FRIDAY",
+                               "SATURDAY"
+                           };
+
+            var dayIndex = days.IndexOf(deliveryDay);
+
+            var start = (int)from.DayOfWeek;
+            var target = dayIndex;
+            if (target <= start)
+                target += 7;
+            return from.AddDays(target - start);
         }
 
         public ProcessResult AuthorisePurchaseOrder(PurchaseOrder order, int userNumber, IEnumerable<string> privileges)
@@ -556,7 +647,7 @@
             var miniOrder = new MiniOrder();
             var detail = order.Details.First();
 
-            var nomAcc = this.nominalAccountRepository.FindById(detail.OrderPosting.NominalAccountId);
+            var nomAcc = this.nominalAccountRepository.FindById((int)detail.OrderPosting.NominalAccountId);
 
             miniOrder.OrderNumber = order.OrderNumber;
             miniOrder.DocumentType = order.DocumentTypeName;
@@ -693,6 +784,101 @@
             return order;
         }
 
+        public PurchaseOrder FilCancelLine(
+            int orderNumber,
+            int line,
+            int filCancelledBy,
+            string reasonFilCancelled,
+            IEnumerable<string> privileges)
+        {
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderFilCancel, privileges))
+            {
+                throw new UnauthorisedActionException("You are not authorised to fil cancel purchase orders");
+            }
+
+            var order = this.GetOrder(orderNumber);
+            var currentLedgerPeriod = this.purchaseLedgerPack.GetLedgerPeriod();
+            var immediateLiability =
+                this.liabilityRepository.FindBy(a => a.OrderNumber == orderNumber && a.OrderLine == line);
+            var baseImmediateLiability =
+                this.baseLiabilityRepository.FindBy(a => a.OrderNumber == orderNumber && a.OrderLine == line);
+
+            var detail = order.Details.First(a => a.Line == line);
+            detail.FilCancelled = "Y";
+            detail.DateFilCancelled = DateTime.Today;
+            detail.PeriodFilCancelled = currentLedgerPeriod;
+
+            var id = this.databaseService.GetIdSequence("PLOC_SEQ");
+            var cancelledDetail = new CancelledOrderDetail
+                                      {
+                                          Id = id,
+                                          OrderNumber = orderNumber,
+                                          LineNumber = line,
+                                          DateFilCancelled = DateTime.Today,
+                                          PeriodFilCancelled = currentLedgerPeriod,
+                                          FilCancelledById = filCancelledBy,
+                                          ReasonFilCancelled = reasonFilCancelled,
+                                          ValueFilCancelled = immediateLiability?.Liability ?? 0,
+                                          BaseValueFilCancelled = baseImmediateLiability?.Liability ?? 0
+                                      };
+            this.cancelledOrderDetailRepository.Add(cancelledDetail);
+
+            if (order.Details.Count == 1)
+            {
+                // only one line so fil cancel the top level order
+                order.FilCancelled = "Y";
+                order.DateFilCancelled = DateTime.Today;
+                order.PeriodFilCancelled = currentLedgerPeriod;
+            }
+
+            if (line == 1)
+            {
+                var miniOrder = this.miniOrderRepository.FindById(orderNumber);
+                if (miniOrder is not null)
+                {
+                    miniOrder.FilCancelledBy = filCancelledBy;
+                    miniOrder.ReasonFilCancelled = reasonFilCancelled;
+                    miniOrder.DateFilCancelled = DateTime.Today;
+                }
+            }
+
+            return order;
+        }
+
+        public PurchaseOrder UnFilCancelLine(int orderNumber, int line, IEnumerable<string> privileges)
+        {
+            if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderFilCancel, privileges))
+            {
+                throw new UnauthorisedActionException("You are not authorised to fil un-cancel purchase orders");
+            }
+
+            var order = this.GetOrder(orderNumber);
+            var detail = order.Details.First(a => a.Line == line);
+            detail.FilCancelled = "N";
+            detail.DateFilCancelled = null;
+            detail.PeriodFilCancelled = null;
+
+            var cancelledDetail = detail.CancelledDetails.First(a => a.FilCancelledById.HasValue && !a.DateFilUncancelled.HasValue);
+            cancelledDetail.DateFilUncancelled = DateTime.Today;
+
+            order.FilCancelled = "N";
+            order.DateFilCancelled = null;
+            order.PeriodFilCancelled = null;
+
+            if (line == 1)
+            {
+                var miniOrder = this.miniOrderRepository.FindById(orderNumber);
+                if (miniOrder is not null)
+                {
+                    miniOrder.FilCancelledBy = null;
+                    miniOrder.ReasonFilCancelled = null;
+                    miniOrder.DateFilCancelled = null;
+                }
+            }
+
+            return order;
+        }
+
         private PurchaseOrder GetOrder(int orderNumber)
         {
             var order = this.purchaseOrderRepository.FindById(orderNumber);
@@ -708,8 +894,6 @@
         {
             var partSupplier = this.partSupplierRepository.FindById(new PartSupplierKey { PartNumber = detail.PartNumber, SupplierId = order.SupplierId });
 
-            var leadTimeWeeks = partSupplier.LeadTimeWeeks;
-
             detail.PurchaseDeliveries = new List<PurchaseOrderDelivery>
                                             {
                                                 new PurchaseOrderDelivery
@@ -719,7 +903,7 @@
                                                         OrderDeliveryQty = detail.OrderQty,
                                                         OurUnitPriceCurrency = detail.OurUnitPriceCurrency,
                                                         OrderUnitPriceCurrency = detail.OrderUnitPriceCurrency,
-                                                        DateRequested = DateTime.Now.AddDays(leadTimeWeeks * 7),
+                                                        DateRequested = detail.PurchaseDeliveries?.First().DateRequested,
                                                         DateAdvised = null,
                                                         CallOffDate = DateTime.Now,
                                                         Cancelled = "N",
@@ -879,7 +1063,7 @@
 
             miniOrder.Remarks = updatedOrder.Remarks;
 
-            var nomAcc = this.nominalAccountRepository.FindById(updatedDetail.OrderPosting.NominalAccountId);
+            var nomAcc = this.nominalAccountRepository.FindById((int)updatedDetail.OrderPosting.NominalAccountId);
             miniOrder.Nominal = nomAcc.NominalCode;
             miniOrder.Department = nomAcc.DepartmentCode;
 

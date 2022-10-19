@@ -167,6 +167,45 @@ describe('When un-cancelling order...', () => {
     });
 });
 
+describe('When fil cancelling order...', () => {
+    beforeEach(() => {
+        cleanup();
+        jest.clearAllMocks();
+        useSelector.mockImplementation(callback => callback(reduxState));
+        render(<PurchaseOrderUtility />);
+    });
+
+    test('Should render fil cancel  button', () => {
+        expect(screen.getByRole('button', { name: 'Fil Cancel' })).toBeInTheDocument();
+    });
+
+    test('Should Open File Cancel Dialog when button clicked', () => {
+        const cancelButton = screen.getByRole('button', { name: 'Fil Cancel' });
+        fireEvent.click(cancelButton);
+        expect(screen.getByText('Fil Cancel order line 1?')).toBeInTheDocument();
+    });
+
+    test('Should dispatch patch action with cancel body when reason entered and confirm clicked', () => {
+        const cancelButton = screen.getByRole('button', { name: 'Fil Cancel' });
+        fireEvent.click(cancelButton);
+
+        const reasonInput = screen.getByLabelText('Enter a reason');
+        fireEvent.change(reasonInput, { target: { value: 'SOME REASON' } });
+
+        const confirmButton = screen.getByRole('button', { name: 'confirm' });
+        fireEvent.click(confirmButton);
+
+        expect(patchPurchaseOrderSpy).toHaveBeenCalledWith(
+            100157,
+            expect.objectContaining({
+                to: expect.objectContaining({
+                    details: [{ filCancelled: 'Y', line: 1, reasonFilCancelled: 'SOME REASON' }]
+                })
+            })
+        );
+    });
+});
+
 describe('When no email dept link...', () => {
     beforeEach(() => {
         cleanup();

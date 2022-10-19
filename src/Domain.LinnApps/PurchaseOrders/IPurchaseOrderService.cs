@@ -41,5 +41,14 @@
             int orderNumber, int cancelledBy, string reason, IEnumerable<string> privileges);
 
         PurchaseOrder UnCancelOrder(int orderNumber, IEnumerable<string> privileges);
+
+        PurchaseOrder FilCancelLine(
+            int orderNumber,
+            int line,
+            int filCancelledBy,
+            string reason,
+            IEnumerable<string> privileges);
+
+        PurchaseOrder UnFilCancelLine(int orderNumber, int line, IEnumerable<string> privileges);
     }
 }

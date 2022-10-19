@@ -5,6 +5,7 @@
     using Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Edi;
+    using Linn.Purchasing.Domain.LinnApps.Finance.Models;
     using Linn.Purchasing.Domain.LinnApps.Forecasting;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
@@ -187,6 +188,10 @@
         public DbSet<CreditDebitNoteType> CreditDebitNoteTypes { get; set; }
 
         public DbSet<PlOrderReceivedViewEntry> PlOrderReceivedView { get; set; }
+        
+        public DbSet<ImmediateLiability> ImmediateLiability { get; set; }
+        
+        public DbSet<ImmediateLiabilityBase> ImmediateLiabilityBase { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -290,6 +295,8 @@
             this.BuildPcasChanges(builder);
             this.BuildPlCreditDebitNoteDetails(builder);
             this.BuildPlOrderReceivedView(builder);
+            this.BuildImmediateLiability(builder);
+            this.BuildImmediateLiabilityBase(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -467,6 +474,9 @@
             entity.Property(a => a.CurrencyUnitPrice).HasColumnName("CURRENCY_UNIT_PRICE");
             entity.Property(a => a.OurUnitOfMeasure).HasColumnName("OUR_UNIT_OF_MEASURE");
             entity.Property(a => a.BomId).HasColumnName("BOM_ID");
+            entity.Property(a => a.RawOrFinished).HasColumnName("RM_FG");
+            entity.HasOne(a => a.NominalAccount).WithMany().HasForeignKey("NOMACC_NOMACC_ID");
+
         }
 
         private void BuildSuppliers(ModelBuilder builder)
@@ -665,6 +675,7 @@
             entity.Property(o => o.OrderTotal).HasColumnName("ORDER_TOTAL");
             entity.Property(o => o.BaseOrderTotal).HasColumnName("BASE_ORDER_TOTAL");
             entity.Property(o => o.BaseOrderVatTotal).HasColumnName("BASE_ORDER_VAT_TOTAL");
+            entity.HasMany(o => o.LedgerEntries).WithOne().HasForeignKey(l => l.OrderNumber);
         }
 
         private void BuildPurchaseOrderDetails(ModelBuilder builder)
@@ -707,6 +718,8 @@
             entity.Property(o => o.IssuePartsToSupplier).HasColumnName("ISSUE_PARTS_TO_SUPPLIER").HasMaxLength(1);
             entity.Property(o => o.PriceType).HasColumnName("PRICE_TYPE").HasMaxLength(10);
             entity.Property(o => o.FilCancelled).HasColumnName("FIL_CANCELLED").HasMaxLength(1);
+            entity.Property(o => o.DateFilCancelled).HasColumnName("DATE_FIL_CANCELLED");
+            entity.Property(o => o.PeriodFilCancelled).HasColumnName("PERIOD_FIL_CANCELLED");
             entity.Property(o => o.UpdatePartsupPrice).HasColumnName("UPDATE_PARTSUP_PRICE").HasMaxLength(1);
             entity.Property(o => o.WasPreferredSupplier).HasColumnName("WAS_PREFERRED_SUPPLIER").HasMaxLength(1);
             entity.Property(o => o.OverbookQtyAllowed).HasColumnName("OVERBOOK_QTY_ALLOWED").HasMaxLength(19);
@@ -987,6 +1000,7 @@
             entity.HasOne(a => a.NoteType).WithMany().HasForeignKey("CDNOTE_TYPE");
             entity.Property(a => a.CreditOrReplace).HasColumnName("CREDIT_OR_REPLACE");
             entity.Property(a => a.OriginalOrderNumber).HasColumnName("ORIGINAL_ORDER_NUMBER");
+            entity.Property(a => a.OriginalOrderLine).HasColumnName("ORIGINAL_ORDER_LINE");
             entity.Property(a => a.CreatedBy).HasColumnName("CREATED_BY");
             entity.HasMany(a => a.Details).WithOne(d => d.Header).HasForeignKey(d => d.NoteNumber);
         }
@@ -1311,6 +1325,7 @@
             entity.Property(e => e.DateFilUncancelled).HasColumnName("DATE_UNFIL_CANCELLED");
             entity.Property(e => e.DatePreviouslyCancelled).HasColumnName("DATE_PREVIOUSLY_CANCELLED");
             entity.Property(e => e.DatePreviouslyFilCancelled).HasColumnName("DATE_PREVIOUSLY_FIL_CANCELLED");
+            entity.Property(e => e.ReasonFilCancelled).HasColumnName("REASON_FIL_CANCELLED").HasMaxLength(300);
         }
 
         private void BuildPurchaseOrderPostings(ModelBuilder builder)
@@ -1909,6 +1924,24 @@
             entity.Property(c => c.DateCancelled).HasColumnName("DATE_CANCELLED");
             entity.Property(c => c.CancelledBy).HasColumnName("CANCELLED_BY");
             entity.Property(c => c.Comments).HasColumnName("COMMENTS").HasMaxLength(2000);
+        }
+
+        private void BuildImmediateLiability(ModelBuilder builder)
+        {
+            var entity = builder.Entity<ImmediateLiability>().ToTable("PL_IMM_LIABILITY_VIEW").HasNoKey();
+            entity.Property(a => a.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(a => a.OrderLine).HasColumnName("ORDER_LINE");
+            entity.Property(a => a.Quantity).HasColumnName("FIL_QTY");
+            entity.Property(a => a.Liability).HasColumnName("IMM_LIB");
+        }
+
+        private void BuildImmediateLiabilityBase(ModelBuilder builder)
+        {
+            var entity = builder.Entity<ImmediateLiabilityBase>().ToTable("PL_BASE_LIABILITY_VIEW").HasNoKey();
+            entity.Property(a => a.OrderNumber).HasColumnName("ORDER_NUMBER");
+            entity.Property(a => a.OrderLine).HasColumnName("ORDER_LINE");
+            entity.Property(a => a.Quantity).HasColumnName("FIL_QTY");
+            entity.Property(a => a.Liability).HasColumnName("IMM_LIB");
         }
     }
 }

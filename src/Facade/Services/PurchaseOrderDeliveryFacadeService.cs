@@ -217,14 +217,26 @@
                 var entities = resourceList.Select(
                     d =>
                         {
-                            var dateAdvised = new DateTime();
+                            DateTime? dateAdvised = null;
 
-                            if (!string.IsNullOrEmpty(d.DateAdvised) && (!DateTime.TryParse(d.DateAdvised, out dateAdvised))
+                            if (string.IsNullOrEmpty(d.DateRequested)
                                 || !DateTime.TryParse(
                                     d.DateRequested,
                                     out var dateRequested))
                             {
-                                throw new InvalidOperationException("Invalid Date supplied");
+                                throw new InvalidOperationException("Invalid Date Requested supplied");
+                            }
+
+                            if (!string.IsNullOrEmpty(d.DateAdvised))
+                            {
+                                if (!DateTime.TryParse(d.DateAdvised, out var parsedDateAdvised))
+                                {
+                                    throw new InvalidOperationException("Invalid Date Advised supplied");
+                                }
+                                else
+                                {
+                                    dateAdvised = parsedDateAdvised;
+                                }
                             }
 
                             return new PurchaseOrderDelivery
@@ -232,7 +244,7 @@
                                            DeliverySeq = d.DeliverySeq,
                                            OurDeliveryQty = d.OurDeliveryQty,
                                            Cancelled = d.Cancelled,
-                                           DateAdvised = string.IsNullOrEmpty(d.DateAdvised) ? null : dateAdvised,
+                                           DateAdvised = dateAdvised,
                                            DateRequested = dateRequested,
                                            NetTotalCurrency = d.NetTotalCurrency,
                                            BaseNetTotal = d.BaseNetTotal,
