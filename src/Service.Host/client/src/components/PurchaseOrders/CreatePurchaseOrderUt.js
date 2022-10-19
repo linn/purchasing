@@ -285,7 +285,7 @@ function CreatePurchaseOrderUt() {
                 type: 'detailFieldUpdate'
             });
         }
-    }, [detail.id, partSuppliersSearchResults]);
+    }, [partSuppliersSearchResults]);
 
     const progressToFullCreate = () => {
         reduxDispatch(suggestedPurchaseOrderValuesActions.add(order));
