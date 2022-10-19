@@ -4,6 +4,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import {
     Page,
@@ -14,6 +15,7 @@ import {
     ErrorCard,
     InputField
 } from '@linn-it/linn-form-components-library';
+import { DatePicker } from '@mui/x-date-pickers';
 import history from '../history';
 import config from '../config';
 import purchaseOrderDeliveriesActions from '../actions/purchaseOrderDeliveriesActions';
@@ -38,6 +40,16 @@ function PurchaseOrderDeliveriesUtility({
     const orderLoading = useSelector(state =>
         itemSelectorHelpers.getItemLoading(state[purchaseOrder.item])
     );
+    const [rows, setRows] = useState(deliveries);
+    const [changesMade, setChangesMade] = useState(false);
+
+    const getDateString = isoString => {
+        if (!isoString) {
+            return '__/__/____';
+        }
+        const date = new Date(isoString);
+        return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    };
 
     const columns = [
         { field: 'id', headerName: 'Id', width: 100, hide: true },
@@ -46,16 +58,48 @@ function PurchaseOrderDeliveriesUtility({
         {
             field: 'dateRequested',
             headerName: 'Request Date',
-            width: 100,
-            type: 'date',
-            editable: true
+            width: 200,
+            renderCell: params => (
+                <DatePicker
+                    label=""
+                    value={params.row.dateRequested}
+                    onChange={newValue => {
+                        setChangesMade(true);
+                        setRows(r =>
+                            r.map(x => (x.id === params.id ? { ...x, dateRequested: newValue } : x))
+                        );
+                    }}
+                    renderInput={({ inputRef, InputProps }) => (
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <span>{getDateString(params.row.dateRequested)}</span>
+                            <span ref={inputRef}> {InputProps?.endAdornment}</span>
+                        </Box>
+                    )}
+                />
+            )
         },
         {
             field: 'dateAdvised',
             headerName: 'Advised Date',
-            width: 100,
-            editable: true,
-            type: 'date'
+            width: 200,
+            renderCell: params => (
+                <DatePicker
+                    label=""
+                    value={params.row.dateAdvised}
+                    onChange={newValue => {
+                        setChangesMade(true);
+                        setRows(r =>
+                            r.map(x => (x.id === params.id ? { ...x, dateAdvised: newValue } : x))
+                        );
+                    }}
+                    renderInput={({ inputRef, InputProps }) => (
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <span>{getDateString(params.row.dateAdvised)}</span>
+                            <span ref={inputRef}> {InputProps?.endAdornment}</span>
+                        </Box>
+                    )}
+                />
+            )
         },
         {
             field: 'availableAtSupplier',
@@ -67,8 +111,6 @@ function PurchaseOrderDeliveriesUtility({
         }
     ];
     const [editRowsModel, setEditRowsModel] = useState({});
-    const [changesMade, setChangesMade] = useState(false);
-    const [rows, setRows] = useState(deliveries);
 
     useEffect(() => {
         if (deliveries && order?.orderNumber !== orderNumber) {
@@ -167,7 +209,7 @@ function PurchaseOrderDeliveriesUtility({
                 <DataGrid
                     rows={rows}
                     columns={columns}
-                    rowHeight={34}
+                    rowHeight={50}
                     autoHeight
                     columnBuffer={6}
                     disableSelectionOnClick

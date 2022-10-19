@@ -95,8 +95,13 @@ function AcknowledgeOrdersUtility() {
         collectionSelectorHelpers.getLoading(state[purchaseOrderDeliveries.item])
     );
 
-    const getDateString = isoString =>
-        isoString ? new Date(isoString).toLocaleDateString('en-GB') : null;
+    const getDateString = isoString => {
+        if (!isoString) {
+            return null;
+        }
+        const date = new Date(isoString);
+        return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    };
 
     const columns = [
         { field: 'id', headerName: 'Id', width: 100, hide: true },
@@ -111,17 +116,11 @@ function AcknowledgeOrdersUtility() {
                     <Button
                         onClick={() => {
                             setDeliveriesToUpdate(
-                                rows
-                                    .filter(
-                                        d =>
-                                            d.orderNumber === params.row.orderNumber &&
-                                            d.orderLine === params.row.orderLine
-                                    )
-                                    .map(d => ({
-                                        ...d,
-                                        dateRequested: getDateString(d.dateRequested),
-                                        dateAdvised: getDateString(d.dateAdvised)
-                                    }))
+                                rows.filter(
+                                    d =>
+                                        d.orderNumber === params.row.orderNumber &&
+                                        d.orderLine === params.row.orderLine
+                                )
                             );
                             setDeliveriesDialogOpen(true);
                         }}
