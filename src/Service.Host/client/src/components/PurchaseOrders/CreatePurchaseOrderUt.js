@@ -267,7 +267,7 @@ function CreatePurchaseOrderUt() {
                 type: 'detailFieldUpdate'
             });
         }
-    }, [detail.id, partSuppliersSearchResults]);
+    }, [partSuppliersSearchResults]);
 
     const progressToFullCreate = () => {
         reduxDispatch(suggestedPurchaseOrderValuesActions.add(order));
@@ -530,7 +530,7 @@ function CreatePurchaseOrderUt() {
                                     dispatch({
                                         payload: {
                                             lineNumber: 1,
-                                            fieldName: 'propertyName',
+                                            fieldName: 'ourUnitPriceCurrency',
                                             value: newValue
                                         },
                                         type: 'detailFieldUpdate'
