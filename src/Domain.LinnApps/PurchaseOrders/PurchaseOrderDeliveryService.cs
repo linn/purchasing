@@ -154,6 +154,7 @@
         {
             var updated = new List<PurchaseOrderDelivery>();
 
+
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
             {
                 throw new UnauthorisedActionException("You are not authorised to acknowledge orders.");
@@ -164,6 +165,8 @@
             var successCount = 0;
 
             var errors = new List<Error>();
+
+            var notes = new List<string>();
 
             var purchaseOrderDeliveryUpdates = changes as PurchaseOrderDeliveryUpdate[] ?? changes.ToArray();
 
@@ -178,17 +181,10 @@
 
             foreach (var group in orderLineGroups)
             {
+                var updates = group.DeliveryUpdates.OrderBy(u => u.NewDateAdvised).ToList();
+
                 var existingDeliveries = this.repository.FilterBy(
                     x => x.OrderNumber == group.OrderNumber && x.OrderLine == group.OrderLine);
-
-                if (existingDeliveries.Any(x => x.QtyNetReceived.GetValueOrDefault() > 0))
-                {
-                    errors.Add(
-                        new Error(
-                            $"Order: {group.OrderNumber}",
-                            "Order has been partially received. Cannot update deliveries automatically."));
-                    continue;
-                }
 
                 var detail = this.purchaseOrderRepository.FindById(group.OrderNumber).Details
                     .Single(d => d.Line == group.OrderLine);
@@ -210,86 +206,95 @@
                     continue;
                 }
 
-                var existingDelivery = existingDeliveries.First();
-
-                var isPricesMismatch = group.DeliveryUpdates.Any(
-                    u => Math.Round(u.UnitPrice, 4) != Math.Round(
-                             detail.OrderUnitPriceCurrency.GetValueOrDefault(),
-                             4));
-
-                if (isPricesMismatch)
+                if (existingDeliveries.Any(x => x.QtyNetReceived.GetValueOrDefault() > 0))
                 {
-                    var msg = $"Unit Price on lines uploaded ({group.DeliveryUpdates.First().UnitPrice}) "
-                              + $"for the specified order does not match unit price on our system " 
-                              + $"({detail.OrderUnitPriceCurrency})";
-                    errors.Add(
-                        new Error(
-                            $"Order: {group.OrderNumber}",
-                            msg));
-                    continue;
+                    var latestDate = group.DeliveryUpdates.Max(x => x.NewDateAdvised);
+                    foreach (var delivery in existingDeliveries)
+                    {
+                        delivery.DateAdvised = latestDate;
+                    }
+
+                    notes.Add(
+                        $"Note: Order ${group.OrderNumber} has been partially received. Updating all Deliveries to have the latest Date Advised in the spreadsheet: {latestDate}");
+                    successCount++;
                 }
-
-                var updates = group.DeliveryUpdates.OrderBy(u => u.NewDateAdvised).ToList();
-                var index = 1;
-                var updatedDeliveries = new List<PurchaseOrderDelivery>();
-                
-                foreach (var update in updates)
+                else
                 {
-                    var vatAmount = Math.Round(
-                        this.purchaseOrdersPack.GetVatAmountSupplier(
-                            detail.OrderUnitPriceCurrency.GetValueOrDefault() * update.Qty,
-                            existingDelivery.PurchaseOrderDetail.PurchaseOrder.SupplierId),
-                        2);
+                    var isPricesMismatch = group.DeliveryUpdates.Any(
+                        u => Math.Round(u.UnitPrice, 4) != Math.Round(
+                                 detail.OrderUnitPriceCurrency.GetValueOrDefault(),
+                                 4));
 
-                    var baseVatAmount = Math.Round(
-                        this.purchaseOrdersPack.GetVatAmountSupplier(
-                            detail.BaseOurUnitPrice.GetValueOrDefault() * update.Qty,
-                            existingDelivery.PurchaseOrderDetail.PurchaseOrder.SupplierId),
-                        2);
-                    updatedDeliveries.Add(new PurchaseOrderDelivery
-                                              {
-                                                  OrderNumber = group.OrderNumber,
-                                                  OrderLine = group.OrderLine,
-                                                  DeliverySeq = index,
-                                                  OurDeliveryQty = update.Qty,
-                                                  QtyNetReceived = 0,
-                                                  QuantityOutstanding = update.Qty,
-                                                  DateAdvised = update.NewDateAdvised,
-                                                  AvailableAtSupplier = update.AvailableAtSupplier,
-                                                  RescheduleReason = update.NewReason,
-                                                  DateRequested = update.DateRequested ?? existingDelivery.DateRequested,
-                                                  SupplierConfirmationComment = update.Comment,
-                                                  OurUnitPriceCurrency = detail.OurUnitPriceCurrency,
-                                                  OrderUnitPriceCurrency = detail.OrderUnitPriceCurrency,
-                                                  BaseOurUnitPrice = detail.BaseOurUnitPrice,
-                                                  BaseDeliveryTotal = Math.Round(
-                                                      (update.Qty * detail.BaseOurUnitPrice.GetValueOrDefault())
-                                                    + baseVatAmount, 
-                                                      2),
-                                                  BaseNetTotal = Math.Round(
-                                                      update.Qty * detail.BaseOurUnitPrice.GetValueOrDefault(),
-                                                      2),
-                                                  OrderDeliveryQty = update.Qty / detail.OrderConversionFactor,
-                                                  BaseOrderUnitPrice = existingDelivery.BaseOrderUnitPrice,
-                                                  VatTotalCurrency = vatAmount,
-                                                  BaseVatTotal = baseVatAmount,
-                                                  CallOffDate = existingDelivery.CallOffDate,
-                                                  CallOffRef = existingDelivery.CallOffRef,
-                                                  Cancelled = "N",
-                                                  DeliveryTotalCurrency = Math.Round(
-                                                                              detail.OrderUnitPriceCurrency.GetValueOrDefault() * update.Qty,
-                                                                              2) + vatAmount,
-                                                  FilCancelled = "N",
-                                                  QtyPassedForPayment = 0,
-                                                  NetTotalCurrency = update.Qty * update.UnitPrice
-                                              });
+                    if (isPricesMismatch)
+                    {
+                        var msg = $"Unit Price on lines uploaded ({group.DeliveryUpdates.First().UnitPrice}) "
+                                  + $"for the specified order does not match unit price on our system "
+                                  + $"({detail.OrderUnitPriceCurrency})";
+                        errors.Add(new Error($"Order: {group.OrderNumber}", msg));
+                        continue;
+                    }
+
+                    var index = 1;
+                    var updatedDeliveries = new List<PurchaseOrderDelivery>();
+
+                    foreach (var update in updates)
+                    {
+                        var vatAmount = Math.Round(
+                            this.purchaseOrdersPack.GetVatAmountSupplier(
+                                detail.OrderUnitPriceCurrency.GetValueOrDefault() * update.Qty,
+                                existingDeliveries.First().PurchaseOrderDetail.PurchaseOrder.SupplierId),
+                            2);
+
+                        var baseVatAmount = Math.Round(
+                            this.purchaseOrdersPack.GetVatAmountSupplier(
+                                detail.BaseOurUnitPrice.GetValueOrDefault() * update.Qty,
+                                existingDeliveries.First().PurchaseOrderDetail.PurchaseOrder.SupplierId),
+                            2);
+                        updatedDeliveries.Add(
+                            new PurchaseOrderDelivery
+                                {
+                                    OrderNumber = group.OrderNumber,
+                                    OrderLine = group.OrderLine,
+                                    DeliverySeq = index,
+                                    OurDeliveryQty = update.Qty,
+                                    QtyNetReceived = 0,
+                                    QuantityOutstanding = update.Qty,
+                                    DateAdvised = update.NewDateAdvised,
+                                    AvailableAtSupplier = update.AvailableAtSupplier,
+                                    RescheduleReason = update.NewReason,
+                                    DateRequested = update.DateRequested ?? existingDeliveries.First().DateRequested,
+                                    SupplierConfirmationComment = update.Comment,
+                                    OurUnitPriceCurrency = detail.OurUnitPriceCurrency,
+                                    OrderUnitPriceCurrency = detail.OrderUnitPriceCurrency,
+                                    BaseOurUnitPrice = detail.BaseOurUnitPrice,
+                                    BaseDeliveryTotal =
+                                        Math.Round(
+                                            (update.Qty * detail.BaseOurUnitPrice.GetValueOrDefault()) + baseVatAmount,
+                                            2),
+                                    BaseNetTotal =
+                                        Math.Round(update.Qty * detail.BaseOurUnitPrice.GetValueOrDefault(), 2),
+                                    OrderDeliveryQty = update.Qty / detail.OrderConversionFactor,
+                                    BaseOrderUnitPrice = existingDeliveries.First().BaseOrderUnitPrice,
+                                    VatTotalCurrency = vatAmount,
+                                    BaseVatTotal = baseVatAmount,
+                                    CallOffDate = existingDeliveries.First().CallOffDate,
+                                    CallOffRef = existingDeliveries.First().CallOffRef,
+                                    Cancelled = "N",
+                                    DeliveryTotalCurrency =
+                                        Math.Round(detail.OrderUnitPriceCurrency.GetValueOrDefault() * update.Qty, 2)
+                                        + vatAmount,
+                                    FilCancelled = "N",
+                                    QtyPassedForPayment = 0,
+                                    NetTotalCurrency = update.Qty * update.UnitPrice
+                                });
                         index++;
+                    }
+
+                    detail.PurchaseDeliveries = updatedDeliveries;
                 }
 
-                detail.PurchaseDeliveries = updatedDeliveries;
-
-                    this.UpdateMiniOrder(
-                        existingDelivery.OrderNumber,
+                this.UpdateMiniOrder(
+                        existingDeliveries.First().OrderNumber,
                         updates.Last().NewDateAdvised,
                         null,
                         null,

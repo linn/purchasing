@@ -5,5 +5,7 @@
     public class BatchUpdateProcessResultResource : ProcessResultResource
     {
         public IEnumerable<ErrorResource> Errors { get; set; }
+
+        public IEnumerable<string> Notes { get; set; }
     }
 }

@@ -3,6 +3,8 @@
     using System;
     using System.Collections.Generic;
 
+    using Linn.Common.Resources;
+
     public class PurchaseOrderDelivery
     {
         public string Cancelled { get; set; }

@@ -13,7 +13,8 @@ import {
     FileUploader,
     getItemError,
     ErrorCard,
-    SaveBackCancelButtons
+    SaveBackCancelButtons,
+    utilities
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import moment from 'moment';
@@ -25,9 +26,12 @@ import IconButton from '@mui/material/IconButton';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import queryString from 'query-string';
 import { useLocation } from 'react-router';
+import Card from '@mui/material/Card';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
+import Info from '@mui/icons-material/Info';
+
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import purchaseOrderDeliveryActions from '../actions/purchaseOrderDeliveryActions';
 import purchaseOrderDeliveriesActions from '../actions/purchaseOrderDeliveriesActions';
@@ -68,6 +72,17 @@ function AcknowledgeOrdersUtility() {
         dialog: {
             margin: theme.spacing(6),
             minWidth: theme.spacing(62)
+        },
+        infoCard: {
+            justifyContent: 'center',
+            width: '50%',
+            margin: 'auto',
+            padding: 10,
+            backgroundColor: '#FFFFE0'
+        },
+        icon: {
+            marginRight: 5,
+            float: 'right'
         }
     }));
     const classes = useStyles();
@@ -105,7 +120,20 @@ function AcknowledgeOrdersUtility() {
 
     const columns = [
         { field: 'id', headerName: 'Id', width: 100, hide: true },
-        { field: 'orderNumber', headerName: 'Order', width: 100 },
+        {
+            field: 'orderNumber',
+            headerName: 'Order',
+            width: 100,
+            renderCell: params => (
+                <a
+                    href={`${config.appRoot}${utilities.getHref(params.row, 'order')}`}
+                    target="_blank"
+                    rel="noreferrer"
+                >
+                    {params.row.orderNumber}
+                </a>
+            )
+        },
         {
             field: 'orderLine',
             headerName: 'Line',
@@ -484,6 +512,12 @@ function AcknowledgeOrdersUtility() {
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
+                                    <Typography variant="caption">
+                                        Note: Clicking the order number will open the order in a new
+                                        tab.
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12}>
                                     <Button
                                         variant="outlined"
                                         disabled={!rows.some(r => r.selected)}
@@ -522,6 +556,17 @@ function AcknowledgeOrdersUtility() {
                         helperText="Upload a csv file with the following columns: Order Number, New Advised Date, Qty, Unit Price and (optionally) New Reason. Date must be in a format matching either 31/01/2022, 31-jan-2022 or 2022-01-31. New Reason must be one of the following: ADVISED, AUTO FAIL, AUTO PASS, BROUGHT IN, DECOMMIT, IGNORE, REQUESTED, RESCHEDULE OUT and will default to ADVISED if no value is supplied."
                     />
                 </Grid>
+                {uploadResult?.notes && (
+                    <Grid item xs={12}>
+                        <Card className={classes.infoCard}>
+                            <Info color="primary" className={classes.icon} />
+
+                            {uploadResult.notes.map(n => (
+                                <Typography variant="subtitle1">{n}</Typography>
+                            ))}
+                        </Card>
+                    </Grid>
+                )}
             </Grid>
         </Page>
     );
