@@ -154,7 +154,6 @@
         {
             var updated = new List<PurchaseOrderDelivery>();
 
-
             if (!this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderUpdate, privileges))
             {
                 throw new UnauthorisedActionException("You are not authorised to acknowledge orders.");
@@ -211,14 +210,7 @@
                     var latestDate = group.DeliveryUpdates.Max(x => x.NewDateAdvised).GetValueOrDefault();
                     foreach (var delivery in existingDeliveries)
                     {
-                        var toUpdate = this.repository.FindById(
-                            new PurchaseOrderDeliveryKey
-                                {
-                                    DeliverySequence = delivery.DeliverySeq,
-                                    OrderLine = delivery.OrderLine,
-                                    OrderNumber = delivery.OrderNumber
-                                });
-                        toUpdate.DateAdvised = latestDate;
+                        delivery.DateAdvised = latestDate;
                     }
 
                     notes.Add(
