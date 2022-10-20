@@ -208,15 +208,21 @@
 
                 if (existingDeliveries.Any(x => x.QtyNetReceived.GetValueOrDefault() > 0))
                 {
-                    var latestDate = group.DeliveryUpdates.Max(x => x.NewDateAdvised);
+                    var latestDate = group.DeliveryUpdates.Max(x => x.NewDateAdvised).GetValueOrDefault();
                     foreach (var delivery in existingDeliveries)
                     {
-                        delivery.DateAdvised = latestDate;
+                        var toUpdate = this.repository.FindById(
+                            new PurchaseOrderDeliveryKey
+                                {
+                                    DeliverySequence = delivery.DeliverySeq,
+                                    OrderLine = delivery.OrderLine,
+                                    OrderNumber = delivery.OrderNumber
+                                });
+                        toUpdate.DateAdvised = latestDate;
                     }
 
                     notes.Add(
-                        $"Note: Order ${group.OrderNumber} has been partially received. Updating all Deliveries to have the latest Date Advised in the spreadsheet: {latestDate}");
-                    successCount++;
+                        $"Note: Order {group.OrderNumber} has been partially received. Updating all Deliveries to have the latest Date Advised in the spreadsheet: {latestDate.ToString("dd/MM/yyyy")}");
                 }
                 else
                 {
@@ -308,6 +314,7 @@
                 return new UploadPurchaseOrderDeliveriesResult
                            {
                                Success = false,
+                               Notes = notes,
                                Message =
                                    $"{successCount} orders updated successfully. The following errors occurred: ",
                                Errors = errors,
@@ -318,6 +325,7 @@
             return new UploadPurchaseOrderDeliveriesResult
                        {
                            Success = true, 
+                           Notes = notes,
                            Message = $"{successCount} orders updated successfully.",
                            Updated = updated
                        };
