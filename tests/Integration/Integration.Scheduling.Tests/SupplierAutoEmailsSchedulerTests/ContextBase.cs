@@ -67,7 +67,7 @@
                                 ForecastInterval = "WEEKLY",
                                 SupplierId = 1,
                                 OrderBook = "Y",
-                                EmailAddress = "orderbookperson@gmail.com"
+                                EmailAddresses = "orderbookperson@gmail.com"
                             },
                         new SupplierAutoEmails
                             {
@@ -75,7 +75,7 @@
                                 ForecastInterval = "WEEKLY",
                                 SupplierId = 2,
                                 OrderBook = "N",
-                                EmailAddress = "weeklyforecastperson@gmail.com"
+                                EmailAddresses = "weeklyforecastperson@gmail.com"
                             },
                         new SupplierAutoEmails
                             {
@@ -83,7 +83,7 @@
                                 ForecastInterval = "MONTHLY",
                                 SupplierId = 3,
                                 OrderBook = "N",
-                                EmailAddress = "monthlyforecastperson@gmail.com"
+                                EmailAddresses = "monthlyforecastperson@gmail.com"
                             }
                     }.AsQueryable());
 

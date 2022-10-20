@@ -138,27 +138,45 @@
                 null,
                 new List<AxisDetailsModel>
                     {
-                        new("PartNumber", "Part", GridDisplayType.TextValue),
-                        new("PartDescription", "Desc", GridDisplayType.TextValue),
-                        new("UoM", "Our UoM", GridDisplayType.TextValue),
-                        new("LeadTimeWeeks", "Lead Time Weeks", GridDisplayType.TextValue),
-                        new("Delivery", "Delivery", GridDisplayType.TextValue),
-                        new("Date", "Date", GridDisplayType.TextValue),
-                        new("QtyOnOrder", "Order Qty", GridDisplayType.Value) { DecimalPlaces = 2 },
-                        new("Qty", "Qty", GridDisplayType.Value) { DecimalPlaces = 2 },
-                        new("QtyReceived", "Qty Received", GridDisplayType.Value) { DecimalPlaces = 2 },
-                        new("QtyInvoiced", "Qty Invoiced", GridDisplayType.Value) { DecimalPlaces = 2 },
-                        new("DateRequested", "DateRequested", GridDisplayType.TextValue),
-                        new("DateAdvised", "DateAdvised", GridDisplayType.TextValue)
+                        new("OrderNumber", "ORDER NUMBER", GridDisplayType.TextValue),
+                        new("Delivery", "CALL OFF", GridDisplayType.TextValue),
+                        new("Date", "DATE OF ORDER", GridDisplayType.TextValue),
+                        new("PartNumber", "PART NUMBER", GridDisplayType.TextValue),
+                        new("PartDescription", "SUPPLIERS DESIGNATION", GridDisplayType.TextValue),
+                        new("Qty", "QTY", GridDisplayType.Value) { DecimalPlaces = 2 },
+                        new("DateRequested", "REQUESTED DATE", GridDisplayType.TextValue),
+                        new("DateAdvised", "ADVISED DATE", GridDisplayType.TextValue),
+                        new("UnitPrice", "UNIT PRICE", GridDisplayType.TextValue)
                     });
             var values = new List<CalculationValueModel>();
 
-            foreach (var datum in data)
+            foreach (var datum in data.OrderByDescending(d => d.OrderNumber))
             {
                 foreach (var delivery in datum.Deliveries.Where(d => d.Quantity > d.QuantityReceived)
                              .OrderBy(c => c.DeliverySequence))
                 {
                     var rowId = $"{delivery.OrderNumber}/{delivery.OrderLine}/{delivery.DeliverySequence}";
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = rowId,
+                                ColumnId = "OrderNumber",
+                                TextDisplay = datum.OrderNumber.ToString()
+                            });
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = rowId,
+                                ColumnId = "Delivery",
+                                TextDisplay = $"{delivery.DeliverySequence}"
+                            });
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = rowId,
+                                ColumnId = "Date",
+                                TextDisplay = delivery.CallOffDate?.ToString("dd/MM/yyyy")
+                            });
                     values.Add(
                         new CalculationValueModel
                             {
@@ -171,52 +189,21 @@
                             {
                                 RowId = rowId,
                                 ColumnId = "PartDescription",
-                                TextDisplay = datum.PartSupplierRecord.Part.Description
+                                TextDisplay = datum.PartSupplierRecord.SupplierDesignation
+                            });
+                    values.Add(
+                        new CalculationValueModel 
+                            { 
+                                RowId = rowId,
+                                ColumnId = "Qty", 
+                                Value = delivery.Quantity
                             });
                     values.Add(
                         new CalculationValueModel
                             {
                                 RowId = rowId,
-                                ColumnId = "UoM",
-                                TextDisplay = datum.PartSupplierRecord.Part.OurUnitOfMeasure
-                            });
-                    values.Add(
-                        new CalculationValueModel
-                            {
-                                RowId = rowId,
-                                ColumnId = "LeadTimeWeeks",
-                                TextDisplay = datum.PartSupplierRecord.LeadTimeWeeks.ToString()
-                            });
-                    values.Add(
-                        new CalculationValueModel
-                            {
-                                RowId = rowId,
-                                ColumnId = "Delivery",
-                                TextDisplay = $"{delivery.OrderNumber}/{delivery.DeliverySequence}"
-                            });
-                    values.Add(
-                        new CalculationValueModel
-                            {
-                                RowId = rowId,
-                                ColumnId = "Date",
-                                TextDisplay = delivery.CallOffDate?.ToString("dd/MM/yyyy")
-                        });
-                    values.Add(
-                        new CalculationValueModel
-                            {
-                                RowId = rowId, ColumnId = "QtyOnOrder", Value = datum.OurQuantity
-                            });
-                    values.Add(
-                        new CalculationValueModel { RowId = rowId, ColumnId = "Qty", Value = delivery.Quantity });
-                    values.Add(
-                        new CalculationValueModel
-                            {
-                                RowId = rowId, ColumnId = "QtyReceived", Value = delivery.QuantityReceived
-                            });
-                    values.Add(
-                        new CalculationValueModel
-                            {
-                                RowId = rowId, ColumnId = "QtyInvoiced", Value = datum.QuantityInvoiced ?? 0
+                                ColumnId = "UnitPrice",
+                                Value = datum.PartSupplierRecord.CurrencyUnitPrice ?? 0m
                             });
                     values.Add(
                         new CalculationValueModel

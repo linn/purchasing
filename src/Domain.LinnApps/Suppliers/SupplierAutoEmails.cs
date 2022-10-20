@@ -4,7 +4,7 @@
     {
         public int SupplierId { get; set; }
 
-        public string EmailAddress { get; set; }
+        public string EmailAddresses { get; set; }
 
         public string OrderBook { get; set; }
 
