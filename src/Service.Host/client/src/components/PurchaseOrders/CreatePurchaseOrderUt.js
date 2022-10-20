@@ -28,7 +28,6 @@ import history from '../../history';
 import config from '../../config';
 import suggestedPurchaseOrderValuesActions from '../../actions/suggestedPurchaseOrderValuesActions';
 import reducer from './purchaseOrderReducer';
-import currencyConvert from '../../helpers/currencyConvert';
 import purchaseOrdersActions from '../../actions/purchaseOrdersActions';
 import purchaseOrderActions from '../../actions/purchaseOrderActions';
 
@@ -115,23 +114,6 @@ function CreatePurchaseOrderUt() {
         dispatch({ payload: { ...detail, [propertyName]: newValue }, type: 'detailFieldChange' });
     };
 
-    const handleDetailValueFieldChange = (propertyName, basePropertyName, newValue, detail) => {
-        const { exchangeRate } = order;
-
-        if (exchangeRate && newValue && newValue > 0 && newValue !== order[propertyName]) {
-            const convertedValue = currencyConvert(newValue, exchangeRate);
-
-            dispatch({
-                payload: {
-                    ...detail,
-                    [propertyName]: newValue,
-                    [basePropertyName]: convertedValue
-                },
-                type: 'detailCalculationFieldChange'
-            });
-        }
-    };
-
     const handleDetailQtyFieldChange = (propertyName, newValue, detail) => {
         if (newValue && newValue > 0 && newValue !== order[propertyName]) {
             dispatch({
@@ -171,14 +153,6 @@ function CreatePurchaseOrderUt() {
     const partSuppliersSearchResults = useSelector(reduxState =>
         collectionSelectorHelpers.getSearchItems(reduxState.partSuppliers)
     );
-
-    useEffect(() => {
-        if (partSuppliersSearchResults?.length) {
-            handleSupplierChange({
-                id: `${partSuppliersSearchResults.find(s => s.supplierRanking === 1).supplierId}`
-            });
-        }
-    }, [partSuppliersSearchResults]);
 
     const partsSearchLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.parts)
@@ -277,6 +251,23 @@ function CreatePurchaseOrderUt() {
             });
         }
     }, [previousOrderResults]);
+
+    useEffect(() => {
+        if (partSuppliersSearchResults?.length) {
+            handleSupplierChange({
+                id: `${partSuppliersSearchResults.find(s => s.supplierRanking === 1).supplierId}`
+            });
+            dispatch({
+                payload: {
+                    lineNumber: 1,
+                    fieldName: 'ourUnitPriceCurrency',
+                    value: partSuppliersSearchResults.find(s => s.supplierRanking === 1)
+                        .currencyUnitPrice
+                },
+                type: 'detailFieldUpdate'
+            });
+        }
+    }, [partSuppliersSearchResults]);
 
     const progressToFullCreate = () => {
         reduxDispatch(suggestedPurchaseOrderValuesActions.add(order));
@@ -454,6 +445,16 @@ function CreatePurchaseOrderUt() {
                                         }))}
                                     onChange={(propertyName, selected) => {
                                         handleSupplierChange({ id: selected });
+                                        dispatch({
+                                            payload: {
+                                                lineNumber: 1,
+                                                fieldName: 'ourUnitPriceCurrency',
+                                                value: partSuppliersSearchResults.find(
+                                                    x => x.supplierId === Number(selected)
+                                                ).currencyUnitPrice
+                                            },
+                                            type: 'detailFieldUpdate'
+                                        });
                                     }}
                                     allowNoValue={false}
                                 />
@@ -526,12 +527,14 @@ function CreatePurchaseOrderUt() {
                                 label="Our price (currency)"
                                 propertyName="ourUnitPriceCurrency"
                                 onChange={(propertyName, newValue) =>
-                                    handleDetailValueFieldChange(
-                                        propertyName,
-                                        'baseUnitPrice',
-                                        newValue,
-                                        detail
-                                    )
+                                    dispatch({
+                                        payload: {
+                                            lineNumber: 1,
+                                            fieldName: 'ourUnitPriceCurrency',
+                                            value: newValue
+                                        },
+                                        type: 'detailFieldUpdate'
+                                    })
                                 }
                                 disabled={!allowedToCreate()}
                                 type="number"
