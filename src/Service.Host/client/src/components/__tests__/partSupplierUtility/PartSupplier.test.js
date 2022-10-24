@@ -73,6 +73,7 @@ const stateWithPart = {
 
 const validitem = {
     supplierName: 'SUPPLIER',
+    supplierId: 123,
     partNumber: 'PART',
     orderMethodName: 'METHOD',
     currencyCode: 'GBP',
@@ -249,6 +250,9 @@ describe('When save clicked when creating...', () => {
                 parts: {
                     searchItems: [{ id: 1, partNumber: 'SOME PART', description: 'SOME DESC' }]
                 },
+                suppliers: {
+                    searchItems: [{ id: 123, name: 'SOME SUPPLIER' }]
+                },
                 orderMethods: { items: [{ name: 'METHOD', description: 'METHOD' }] },
                 currencies: {
                     items: [
@@ -266,7 +270,12 @@ describe('When save clicked when creating...', () => {
         // Part Supplier Tab
         let input = screen.getByLabelText('Part');
         fireEvent.click(input);
-        const result = screen.getByRole('button', { name: 'SOME PART SOME DESC' });
+        let result = screen.getByRole('button', { name: 'SOME PART SOME DESC' });
+        fireEvent.click(result);
+
+        input = screen.getByLabelText('Supplier');
+        fireEvent.click(input);
+        result = screen.getByRole('button', { name: 'SOME SUPPLIER 123' });
         fireEvent.click(result);
 
         // Order Details tab

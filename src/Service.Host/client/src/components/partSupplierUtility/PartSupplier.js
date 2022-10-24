@@ -84,7 +84,7 @@ function PartSupplier({ creating }) {
 
     const searchSuppliers = searchTerm => reduxDispatch(suppliersActions.search(searchTerm));
     const suppliersSearchResults = useSelector(reduxState =>
-        collectionSelectorHelpers.getSearchItems(reduxState.suppliers, 100, 'id', 'name', 'name')
+        collectionSelectorHelpers.getSearchItems(reduxState.suppliers, 100, 'id', 'name', 'id')
     );
     const suppliersSearchLoading = useSelector(reduxState =>
         collectionSelectorHelpers.getSearchLoading(reduxState.suppliers)
@@ -186,8 +186,6 @@ function PartSupplier({ creating }) {
     const partPriceConversionsResult = useSelector(reduxState =>
         itemSelectorHelpers.getItem(reduxState.partPriceConversions)
     );
-
-    const [partId, setPartId] = useState(null);
 
     useEffect(() => {
         if (partPriceConversionsResult) {
@@ -481,7 +479,6 @@ function PartSupplier({ creating }) {
                                                 part={part}
                                                 canEdit={canEdit}
                                                 creating={creating}
-                                                setPartId={newVal => setPartId(newVal)}
                                             />
                                         </Box>
                                     )}
