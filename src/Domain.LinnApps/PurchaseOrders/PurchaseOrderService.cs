@@ -958,8 +958,20 @@
         {
             foreach (var delivery in deliveries)
             {
-                var updatedDelivery = updatedDeliveries.First(x => x.DeliverySeq == delivery.DeliverySeq);
-                delivery.DateRequested = updatedDelivery.DateRequested;
+                if (delivery.QuantityOutstanding > 0)
+                {
+                    var updatedDelivery = updatedDeliveries.First(x => x.DeliverySeq == delivery.DeliverySeq);
+                    delivery.OrderUnitPriceCurrency = updatedDelivery.OrderUnitPriceCurrency;
+                    delivery.OurUnitPriceCurrency = updatedDelivery.OurUnitPriceCurrency;
+                    delivery.NetTotalCurrency = Math.Round((decimal)(updatedDelivery.OurDeliveryQty * updatedDelivery.OurUnitPriceCurrency));
+                    delivery.VatTotalCurrency = updatedDelivery.VatTotalCurrency;
+                    delivery.DeliveryTotalCurrency = updatedDelivery.DeliveryTotalCurrency;
+                    delivery.BaseOurUnitPrice = updatedDelivery.BaseOurUnitPrice;
+                    delivery.BaseOrderUnitPrice = updatedDelivery.BaseOrderUnitPrice;
+                    delivery.BaseVatTotal = updatedDelivery.BaseVatTotal;
+                    delivery.BaseDeliveryTotal = Math.Round((decimal)((updatedDelivery.OurDeliveryQty * updatedDelivery.BaseOurUnitPrice.GetValueOrDefault()) + updatedDelivery.BaseVatTotal), 2);
+                    delivery.BaseNetTotal = Math.Round((decimal)(updatedDelivery.OurDeliveryQty * updatedDelivery.BaseOurUnitPrice.GetValueOrDefault()), 2);
+                }
             }
         }
 
