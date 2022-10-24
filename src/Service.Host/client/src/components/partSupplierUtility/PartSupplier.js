@@ -304,6 +304,7 @@ function PartSupplier({ creating }) {
 
     const invalid = () =>
         !state.partSupplier?.partNumber ||
+        !state.partSupplier?.supplierId ||
         !state.partSupplier?.orderMethodName ||
         !state.partSupplier?.currencyCode ||
         !state.partSupplier?.minimumOrderQty ||
