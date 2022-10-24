@@ -282,36 +282,7 @@
             }
 
             // update Part History
-
             this.partHistoryService.AddPartHistory(prevPart, part, "PREFSUP", candidate.ChangedBy.Id, candidate.Remarks, candidate.ChangeReason?.ReasonCode);
-
-            /*
-            var history = this.partHistory.FilterBy(x => x.PartNumber == candidate.PartNumber);
-            var maxSeqForPart = history.Any() ? history.Max(x => x.Seq) : 0;
-            this.partHistory.Add(new PartHistoryEntry
-                                     {
-                                         PartNumber = candidate.PartNumber,
-                                         Seq = maxSeqForPart + 1,
-                                         OldMaterialPrice = prevPart.MaterialPrice,
-                                         OldLabourPrice = prevPart.LabourPrice,
-                                         NewMaterialPrice = part.MaterialPrice,
-                                         NewLabourPrice = labourPrice,
-                                         OldPreferredSupplierId = prevPart.PreferredSupplier?.SupplierId,
-                                         NewPreferredSupplierId = candidate.NewSupplier.SupplierId,
-                                         OldBomType = prevPart.BomType,
-                                         NewBomType = part.BomType,
-                                         ChangedBy = candidate.ChangedBy.Id,
-                                         ChangeType = "PREFSUP",
-                                         Remarks = candidate.Remarks,
-                                         PriceChangeReason = candidate.ChangeReason?.ReasonCode,
-                                         OldCurrency = prevPart.Currency?.Code,
-                                         NewCurrency = part.Currency.Code,
-                                         OldCurrencyUnitPrice = prevPart.CurrencyUnitPrice,
-                                         NewCurrencyUnitPrice = part.CurrencyUnitPrice,
-                                         OldBaseUnitPrice = prevPart.BaseUnitPrice,
-                                         NewBaseUnitPrice = part.BaseUnitPrice
-                                     });
-            */
 
             return candidate;
         }
@@ -388,6 +359,11 @@
         private static void ValidateFields(PartSupplier candidate)
         {
             var errors = new List<string>();
+
+            if (candidate.SupplierId == 0)
+            {
+                errors.Add("Supplier");
+            }
 
             if (candidate.MinimumOrderQty == 0)
             {
