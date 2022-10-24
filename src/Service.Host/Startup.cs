@@ -83,9 +83,9 @@ namespace Linn.Purchasing.Service.Host
                             ?.Error;
 
                         var log = app.ApplicationServices.GetService<ILog>();
-                        log.Error(exception?.Message);
+                        log.Error(exception?.Message, exception);
 
-                        var response = new { error = exception?.Message };
+                        var response = new { error = $"{exception?.Message}  -  {exception?.StackTrace}" };
                         await context.Response.WriteAsJsonAsync(response);
                     }));
             app.UseRouting();
