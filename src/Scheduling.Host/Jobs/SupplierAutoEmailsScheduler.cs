@@ -35,7 +35,7 @@
             this.currentTime = currentTime;
         }
 
-        // Dispatches a message to instruct various reports to be emailed to suppliers on Monday mornings 6am
+        // Dispatches messages to instruct various reports to be emailed to suppliers on Monday mornings 6am
         // emails configured here https://app.linn.co.uk/purch/planning/plautoem.aspx
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -72,7 +72,7 @@
                                     {
                                         ForSupplier = s.SupplierId,
                                         Timestamp = this.currentTime(),
-                                        ToAddress = s.EmailAddress,
+                                        ToAddress = s.EmailAddresses,
                                         Test = true
                                     });
                         }
@@ -89,7 +89,7 @@
                                           {
                                               ForSupplier = s.SupplierId,
                                               Timestamp = this.currentTime().Date,
-                                              ToAddress = s.EmailAddress, 
+                                              ToAddress = s.EmailAddresses, 
                                               Test = true
                                           });
                     }
@@ -117,7 +117,7 @@
                         {
                             ForSupplier = s.SupplierId,
                             Timestamp = this.currentTime().Date,
-                            ToAddress = s.EmailAddress,
+                            ToAddress = s.EmailAddresses,
                             Test = true
                             });
                 }

@@ -3,13 +3,13 @@
     public interface ISupplierAutoEmailsMailer
     {
         void SendOrderBookEmail(
-            string toAddress, 
+            string toAddresses, 
             int toSupplier, 
             string timestamp, 
             bool test = false);
 
         void SendMonthlyForecastEmail(
-            string toAddress,
+            string toAddresses,
             int toSupplier,
             string timestamp,
             bool test = false);
