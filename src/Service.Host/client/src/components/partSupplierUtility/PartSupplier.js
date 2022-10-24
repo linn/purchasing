@@ -286,17 +286,6 @@ function PartSupplier({ creating }) {
             return;
         }
         dispatch({ type: 'fieldChange', fieldName: propertyName, payload: formatted });
-
-        if (propertyName === 'supplierId') {
-            if (partId) {
-                reduxDispatch(
-                    partSupplierActions.fetchByHref(
-                        `${partSupplier.uri}?partId=${partId}&supplierId=${formatted}`
-                    )
-                );
-            }
-            setErrorMessage(null);
-        }
     };
 
     const canEdit = () =>
