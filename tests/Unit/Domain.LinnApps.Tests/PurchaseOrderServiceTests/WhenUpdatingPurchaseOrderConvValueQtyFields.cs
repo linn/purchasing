@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderServiceTests
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 
