@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.PurchaseOrderServiceTests
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -73,7 +72,7 @@
                                                                            SupplierConfirmationComment = "supplied",
                                                                            OurUnitPriceCurrency = 0m,
                                                                            OrderUnitPriceCurrency = 0m,
-                                                                           BaseOrderUnitPrice = 100m,
+                                                                           BaseOrderUnitPrice = 0m,
                                                                            VatTotalCurrency = 0m,
                                                                            BaseVatTotal = 0m,
                                                                            DeliveryTotalCurrency =  0m,
@@ -404,23 +403,23 @@
             var delivery = firstDetail.PurchaseDeliveries.First();
 
             // order unit price currency, our unit price currency, our delivery qty
-            delivery.OrderUnitPriceCurrency.Should().Be(120m);
-            delivery.OurUnitPriceCurrency.Should().Be(120m);
+            delivery.OrderUnitPriceCurrency.Should().Be(400.44m);
+            delivery.OurUnitPriceCurrency.Should().Be(200.22m);
             delivery.OurDeliveryQty.Should().Be(2);
 
             //our delivery qty * our unit currency = net total currency
-            delivery.NetTotalCurrency.Should().Be(240m);
-            delivery.VatTotalCurrency.Should().Be(60);
-            delivery.DeliveryTotalCurrency.Should().Be(120m);
+            delivery.NetTotalCurrency.Should().Be(19821.78m);
+            delivery.VatTotalCurrency.Should().Be(40.55m);
+            delivery.DeliveryTotalCurrency.Should().Be(19862.33m);
 
             // base our unit price, base order unit price
-            delivery.BaseOurUnitPrice.Should().Be(100m);
-            delivery.BaseOrderUnitPrice.Should().Be(100m);
+            delivery.BaseOurUnitPrice.Should().Be(250.28m);
+            delivery.BaseOrderUnitPrice.Should().Be(500.55m);
 
             //(our delivery qty * base our unit price) + base vat total  = base delivery total
-            delivery.BaseNetTotal.Should().Be(200m);
-            delivery.BaseVatTotal.Should().Be(60m);
-            delivery.BaseDeliveryTotal.Should().Be(260m);
+            delivery.BaseNetTotal.Should().Be(24777.23m);
+            delivery.BaseVatTotal.Should().Be(50.69m);
+            delivery.BaseDeliveryTotal.Should().Be(551.25m);
         }
     }
 }

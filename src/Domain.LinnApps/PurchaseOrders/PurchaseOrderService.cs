@@ -954,23 +954,22 @@
 
         private void UpdateDeliveries(
             ICollection<PurchaseOrderDelivery> deliveries,
-            ICollection<PurchaseOrderDelivery> updatedDeliveries)
+            PurchaseOrderDetail purchaseOrder)
         {
             foreach (var delivery in deliveries)
             {
                 if (delivery.QuantityOutstanding > 0)
                 {
-                    var updatedDelivery = updatedDeliveries.First(x => x.DeliverySeq == delivery.DeliverySeq);
-                    delivery.OrderUnitPriceCurrency = updatedDelivery.OrderUnitPriceCurrency;
-                    delivery.OurUnitPriceCurrency = updatedDelivery.OurUnitPriceCurrency;
-                    delivery.NetTotalCurrency = Math.Round((decimal)(updatedDelivery.OurDeliveryQty * updatedDelivery.OurUnitPriceCurrency));
-                    delivery.VatTotalCurrency = updatedDelivery.VatTotalCurrency;
-                    delivery.DeliveryTotalCurrency = updatedDelivery.DeliveryTotalCurrency;
-                    delivery.BaseOurUnitPrice = updatedDelivery.BaseOurUnitPrice;
-                    delivery.BaseOrderUnitPrice = updatedDelivery.BaseOrderUnitPrice;
-                    delivery.BaseVatTotal = updatedDelivery.BaseVatTotal;
-                    delivery.BaseDeliveryTotal = Math.Round((decimal)((updatedDelivery.OurDeliveryQty * updatedDelivery.BaseOurUnitPrice.GetValueOrDefault()) + updatedDelivery.BaseVatTotal), 2);
-                    delivery.BaseNetTotal = Math.Round((decimal)(updatedDelivery.OurDeliveryQty * updatedDelivery.BaseOurUnitPrice.GetValueOrDefault()), 2);
+                    delivery.OrderUnitPriceCurrency = purchaseOrder.OrderUnitPriceCurrency;
+                    delivery.OurUnitPriceCurrency = purchaseOrder.OurUnitPriceCurrency;
+                    delivery.NetTotalCurrency = purchaseOrder.NetTotalCurrency;
+                    delivery.VatTotalCurrency = purchaseOrder.VatTotalCurrency;
+                    delivery.DeliveryTotalCurrency = purchaseOrder.DetailTotalCurrency;
+                    delivery.BaseOurUnitPrice = purchaseOrder.BaseOurUnitPrice;
+                    delivery.BaseOrderUnitPrice = purchaseOrder.BaseOrderUnitPrice;
+                    delivery.BaseVatTotal = purchaseOrder.BaseVatTotal;
+                    delivery.BaseDeliveryTotal = Math.Round((decimal)((delivery.OurDeliveryQty * purchaseOrder.BaseOurUnitPrice.GetValueOrDefault()) + purchaseOrder.BaseVatTotal), 2);
+                    delivery.BaseNetTotal = purchaseOrder.BaseNetTotal;
                 }
             }
         }
@@ -988,7 +987,7 @@
 
             this.UpdateOrderPostingsForDetail(current, updated);
 
-            this.UpdateDeliveries(current.PurchaseDeliveries, updated.PurchaseDeliveries);
+            this.UpdateDeliveries(current.PurchaseDeliveries, current);
         }
 
         private void PerformDetailCalculations(PurchaseOrderDetail current, PurchaseOrderDetail updated, decimal exchangeRate, int supplierId, bool creating = false)

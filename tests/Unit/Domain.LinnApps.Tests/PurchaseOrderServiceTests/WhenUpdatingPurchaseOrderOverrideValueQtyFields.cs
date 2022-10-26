@@ -400,23 +400,23 @@
             var delivery = firstDetail.PurchaseDeliveries.First();
 
             // order unit price currency, our unit price currency, our delivery qty
-            delivery.OrderUnitPriceCurrency.Should().Be(120m);
-            delivery.OurUnitPriceCurrency.Should().Be(120m);
+            delivery.OrderUnitPriceCurrency.Should().Be(200m);
+            delivery.OurUnitPriceCurrency.Should().Be(200.22m);
             delivery.OurDeliveryQty.Should().Be(5);
 
-            //Our Delivery Qty * Our Unit Currency = Net Total Currency
-            delivery.NetTotalCurrency.Should().Be(600m);
-            delivery.VatTotalCurrency.Should().Be(60);
-            delivery.DeliveryTotalCurrency.Should().Be(120m);
+            //our delivery qty * our unit currency = net total currency
+            delivery.NetTotalCurrency.Should().Be(19821.78m);
+            delivery.VatTotalCurrency.Should().Be(40.55m);
+            delivery.DeliveryTotalCurrency.Should().Be(19862.33m);
 
             // base our unit price, base order unit price
-            delivery.BaseOurUnitPrice.Should().Be(100m);
-            delivery.BaseOrderUnitPrice.Should().Be(100m);
+            delivery.BaseOurUnitPrice.Should().Be(250.28m);
+            delivery.BaseOrderUnitPrice.Should().Be(250m);
 
             //(our delivery qty * base our unit price) + base vat total  = base delivery total
-            delivery.BaseNetTotal.Should().Be(500m);
-            delivery.BaseVatTotal.Should().Be(60m);
-            delivery.BaseDeliveryTotal.Should().Be(560m);
+            delivery.BaseNetTotal.Should().Be(24777.23m);
+            delivery.BaseVatTotal.Should().Be(50.69m);
+            delivery.BaseDeliveryTotal.Should().Be(1302.09m);
         }
     }
 }
