@@ -36,6 +36,8 @@
 
         protected IQueryRepository<Part> PartRepository { get; private set; }
 
+        protected IRepository<LedgerPeriod, int> LedgerPeriodRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -47,6 +49,7 @@
             this.VendorManagerRepository = Substitute.For<IRepository<VendorManager, string>>();
             this.PartRepository = Substitute.For<IQueryRepository<Part>>();
             this.LedgerPeriodPack = Substitute.For<ILedgerPeriodPack>();
+            this.LedgerPeriodRepository = Substitute.For<IRepository<LedgerPeriod, int>>();
 
             this.ReportingHelper = new ReportingHelper();
 
@@ -58,7 +61,8 @@
                 this.PurchaseOrderRepository,
                 this.SupplierRepository,
                 this.PartRepository,
-                this.ReportingHelper);
+                this.ReportingHelper,
+                this.LedgerPeriodRepository);
         }
     }
 }
