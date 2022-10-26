@@ -36,5 +36,7 @@
         public int? MinimumLeadTimeWeeks { get; set; }
 
         public int? MinimumAnnualUsage { get; set; }
+
+        public DateTime? RunDateOption { get; set; }
     }
 }

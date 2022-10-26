@@ -103,12 +103,24 @@
             string stockCategoryName,
             int? minimumLeadTimeWeeks,
             int? minimumAnnualUsage,
+            DateTime? runDate,
             int reportChunk = 0)
         {
-            if (string.IsNullOrEmpty(jobRef))
+            MrpRunLog runLog;
+            if (string.IsNullOrEmpty(jobRef) && !runDate.HasValue)
             {
                 var master = this.masterRepository.GetRecord();
                 jobRef = master.JobRef;
+                runLog = this.runLogRepository.FindBy(a => a.JobRef == jobRef);
+            } 
+            else if (runDate.HasValue)
+            {
+                runLog = this.runLogRepository.FindBy(a => a.RunDate.Date == runDate.Value.Date);
+                jobRef = runLog.JobRef;
+            }
+            else
+            {
+                runLog = this.runLogRepository.FindBy(a => a.JobRef == jobRef);
             }
 
             if (typeOfReport != "MR")
@@ -131,7 +143,6 @@
                 throw new InvalidOptionException("You must supply a stock category name");
             }
 
-            var runLog = this.runLogRepository.FindBy(a => a.JobRef == jobRef);
             partNumbers = partNumbers?.ToList();
             var partsSelected = partNumbers;
 
@@ -269,7 +280,8 @@
                                  StockCategoryNameOption = stockCategoryName,
                                  SupplierIdOption = supplierId,
                                  MinimumLeadTimeWeeks = minimumLeadTimeWeeks,
-                                 MinimumAnnualUsage = minimumAnnualUsage
+                                 MinimumAnnualUsage = minimumAnnualUsage,
+                                 RunDateOption = runDate
                              };
             return report;
         }

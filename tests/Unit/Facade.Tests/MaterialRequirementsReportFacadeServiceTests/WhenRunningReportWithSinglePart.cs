@@ -55,6 +55,7 @@
                     this.requestResource.StockCategoryName,
                     this.requestResource.MinimumLeadTimeWeeks,
                     this.requestResource.MinimumAnnualUsage,
+                    null,
                     this.requestResource.ReportChunk)
                 .Returns(
                     new MrReport
@@ -84,6 +85,7 @@
                 this.requestResource.StockCategoryName,
                 this.requestResource.MinimumLeadTimeWeeks,
                 this.requestResource.MinimumAnnualUsage,
+                null,
                 this.requestResource.ReportChunk);
         }
 

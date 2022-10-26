@@ -61,6 +61,10 @@ function MaterialRequirementsReport() {
         itemSelectorHelpers.getItemLoading(state.mrReportOrders)
     );
 
+    const runDate = mrReport?.runDate
+        ? new Date(mrReport.runDate).toLocaleDateString('en-gb')
+        : 'None';
+
     const theme = createTheme({
         typography: {
             fontSize: 12
@@ -778,6 +782,7 @@ function MaterialRequirementsReport() {
                                         <Typography variant="body2">
                                             Jobref: {selectedItem.jobRef}
                                         </Typography>
+                                        <Typography variant="body2">{runDate}</Typography>
                                     </Stack>
                                 </Grid>
                                 <Grid item xs={8}>

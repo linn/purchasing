@@ -4,6 +4,10 @@
 
     public class MrReportResource
     {
+        public string JobRef { get; set; }
+
+        public string RunDate { get; set; }
+
         public int ReportChunk { get; set; }
 
         public int TotalChunks { get; set; }
@@ -27,6 +31,8 @@
         public int? MinimumLeadTimeWeeks { get; set; }
 
         public int? MinimumAnnualUsage { get; set; }
+
+        public string RunDateOption { get; set; }
 
         public IEnumerable<MrHeaderResource> Results { get; set; }
     }
