@@ -67,6 +67,7 @@
                 null,
                 null,
                 null,
+                null,
                 this.reportChunk);
         }
 

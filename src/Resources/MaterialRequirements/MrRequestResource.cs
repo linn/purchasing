@@ -31,5 +31,7 @@
         public int? MinimumLeadTimeWeeks { get; set; }
 
         public int? MinimumAnnualUsage { get; set; }
+
+        public string RunDate { get; set; }
     }
 }

@@ -48,10 +48,7 @@ function SpendBySupplierByDateRangeReportOptions() {
     const handleClick = () =>
         history.push({
             pathname: `/purchasing/reports/spend-by-supplier-by-date-range/report`,
-            search:
-                `?vm=${vm}` +
-                `&fromDate=${fromDate.toISOString()}` +
-                `&toDate=${toDate.toISOString()}`
+            search: `?vm=${vm}&fromDate=${fromDate.toISOString()}&toDate=${toDate.toISOString()}`
         });
 
     return (

@@ -154,6 +154,7 @@ describe('When report is run...', () => {
             orderBySelector: 'supplier/part',
             supplierId: undefined,
             partNumberList: null,
+            runDate: null,
             stockCategoryName: null,
             partOption: null,
             minimumAnnualUsage: null,

@@ -17,6 +17,8 @@
             return new MrReportResource
                        {
                            ReportChunk = entity.ReportChunk,
+                           JobRef = entity.JobRef,
+                           RunDate = entity.RunDate.ToString("o"),
                            TotalChunks = entity.TotalChunks,
                            SupplierIdOption = entity.SupplierIdOption,
                            PartOption = entity.PartOption,
@@ -28,6 +30,7 @@
                            StockLevelOption = entity.StockLevelOption,
                            MinimumAnnualUsage = entity.MinimumAnnualUsage,
                            MinimumLeadTimeWeeks = entity.MinimumLeadTimeWeeks,
+                           RunDateOption = entity.RunDateOption?.ToString("o"),
                            Results = entity.Headers.Select(h => this.BuildHeader(h, entity.RunWeekNumber))
                        };
         }
