@@ -51,8 +51,7 @@
             this.SpendsRepository.FilterBy(Arg.Any<Expression<Func<SupplierSpend, bool>>>())
                 .Returns(spends.AsQueryable());
             var vendorManager = new VendorManager { Id = "A", UserNumber = 999, Employee = new Employee { FullName = "Aloo Gobi" } };
-            this.LedgerPeriodPack.GetPeriodNumber(DateTime.Parse(this.fromDate)).Returns(7);
-            this.LedgerPeriodPack.GetPeriodNumber(DateTime.Parse(this.toDate).Date.AddDays(1).AddTicks(-1)).Returns(8);
+            this.LedgerPeriodPack.GetPeriodNumber(Arg.Any<DateTime>()).Returns(7, 8);
             this.LedgerPeriodRepository.FindById(7).Returns(new LedgerPeriod { MonthName = "Jul2007" });
             this.LedgerPeriodRepository.FindById(8).Returns(new LedgerPeriod { MonthName = "Aug2022" });
             this.VendorManagerRepository.FindById(Arg.Any<string>()).Returns(vendorManager);
