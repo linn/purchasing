@@ -32,7 +32,7 @@ function SpendBySupplierByDateRangeReport() {
     const location = useLocation();
     const fromDate = queryString.parse(location.search)?.fromDate;
     const toDate = queryString.parse(location.search)?.toDate;
-    const vendorManager = queryString.parse(location.search)?.vendorManager;
+    const vendorManager = queryString.parse(location.search)?.vm;
     useEffect(() => {
         dispatch(
             spendBySupplierByDateRangeActions.fetchReport({ vendorManager, fromDate, toDate })
