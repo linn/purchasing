@@ -5,7 +5,6 @@
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
-    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
@@ -21,8 +20,6 @@
         protected ILedgerPeriodPack LedgerPeriodPack { get; private set; }
 
         protected IRepository<PurchaseLedger, int> PurchaseLedgerRepository { get; private set; }
-
-        protected IRepository<PurchaseOrder, int> PurchaseOrderRepository { get; private set; }
 
         protected IReportingHelper ReportingHelper { get; private set; }
 
@@ -42,7 +39,6 @@
         public void SetUpContext()
         {
             this.PurchaseLedgerRepository = Substitute.For<IRepository<PurchaseLedger, int>>();
-            this.PurchaseOrderRepository = Substitute.For<IRepository<PurchaseOrder, int>>();
             this.SupplierRepository = Substitute.For<IRepository<Supplier, int>>();
             this.SpendsRepository = Substitute.For<IQueryRepository<SupplierSpend>>();
             this.PurchaseLedgerPack = Substitute.For<IPurchaseLedgerPack>();
@@ -58,7 +54,6 @@
                 this.VendorManagerRepository,
                 this.PurchaseLedgerPack,
                 this.LedgerPeriodPack,
-                this.PurchaseOrderRepository,
                 this.SupplierRepository,
                 this.PartRepository,
                 this.ReportingHelper,

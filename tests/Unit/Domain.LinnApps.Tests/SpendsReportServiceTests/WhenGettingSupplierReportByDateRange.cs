@@ -31,20 +31,23 @@
                                  new SupplierSpend
                                      {
                                          SupplierId = 1234,
-                                         Supplier = new Supplier { SupplierId = 1234, Name = "seller1" },
-                                         LedgerPeriod = 1295
+                                         LedgerPeriod = 1295,
+                                         SupplierName = "seller1",
+                                         VendorManager = "A"
                                      },
                                  new SupplierSpend
                                      {
                                          SupplierId = 5678,
-                                         Supplier = new Supplier { SupplierId = 5678, Name = "seller2" },
-                                         LedgerPeriod = 1342
+                                         LedgerPeriod = 1342,
+                                         SupplierName = "seller2",
+                                         VendorManager = "A"
                                      },
                                  new SupplierSpend
                                      {
                                          SupplierId = 9101,
-                                         Supplier = new Supplier { SupplierId = 9101, Name = "seller3" },
-                                         LedgerPeriod = 1400
+                                         LedgerPeriod = 1400,
+                                         SupplierName = "seller3",
+                                         VendorManager = "A"
                                      }
                              };
 

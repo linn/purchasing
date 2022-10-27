@@ -9,7 +9,6 @@
 
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Parts;
-    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
@@ -38,83 +37,36 @@
                                      {
                                          SupplierId = this.supplierId,
                                          BaseTotal = 120m,
-                                         Supplier = new Supplier { SupplierId = this.supplierId, Name = "seller1" },
                                          LedgerPeriod = 1290,
                                          OrderNumber = this.orderNumber1,
-                                         OrderLine = 1
+                                         OrderLine = 1,
+                                         SupplierName = "seller1",
+                                         PartNumber = "MCAS WAN"
                                      },
                                  new SupplierSpend
                                      {
                                          SupplierId = this.supplierId,
                                          BaseTotal = 130.87m,
-                                         Supplier = new Supplier { SupplierId = this.supplierId, Name = "seller1" },
                                          LedgerPeriod = 1288,
                                          OrderNumber = this.orderNumber2,
-                                         OrderLine = 1
+                                         OrderLine = 1,
+                                         SupplierName = "seller1",
+                                         PartNumber = "MCAS 222"
                                      },
                                  new SupplierSpend
                                      {
                                          SupplierId = this.supplierId,
                                          BaseTotal = 500m,
-                                         Supplier = new Supplier { SupplierId = this.supplierId, Name = "seller1" },
                                          LedgerPeriod = 1273,
                                          OrderNumber = this.orderNumber3,
-                                         OrderLine = 1
+                                         OrderLine = 1,
+                                         SupplierName = "seller1",
+                                         PartNumber = "RAW 33"
                                      }
                              };
 
-            var purchaseOrders = new List<PurchaseOrder>
-                                     {
-                                        new PurchaseOrder
-                                            {
-                                                SupplierId = this.supplierId,
-                                                OrderNumber = this.orderNumber1,
-                                                Details = new List<PurchaseOrderDetail>
-                                                              {
-                                                                  new PurchaseOrderDetail
-                                                                      {
-                                                                          Line = 1,
-                                                                          OrderNumber = this.orderNumber1,
-                                                                          Part = new Part { PartNumber = "MCAS WAN" }
-                                                                      }
-                                                              }
-                                            },
-                                        new PurchaseOrder
-                                            {
-                                                SupplierId = this.supplierId,
-                                                OrderNumber = this.orderNumber2,
-                                                Details = new List<PurchaseOrderDetail>
-                                                              {
-                                                                  new PurchaseOrderDetail
-                                                                      {
-                                                                          Line = 1,
-                                                                          OrderNumber = this.orderNumber2,
-                                                                          Part = new Part { PartNumber = "MCAS 222" }
-
-                                                                      }
-                                                              }
-                                            },
-                                        new PurchaseOrder
-                                            {
-                                                SupplierId = this.supplierId,
-                                                OrderNumber = this.orderNumber3,
-                                                Details = new List<PurchaseOrderDetail>
-                                                              {
-                                                                  new PurchaseOrderDetail
-                                                                      {
-                                                                          Line = 1,
-                                                                          OrderNumber = this.orderNumber3,
-                                                                          Part = new Part { PartNumber = "RAW 33" }
-                                                                      }
-                                                              }
-                                            }
-                                     };
-
             this.SpendsRepository.FilterBy(Arg.Any<Expression<Func<SupplierSpend, bool>>>())
                 .Returns(spends.AsQueryable());
-
-            this.PurchaseOrderRepository.FilterBy(Arg.Any<Expression<Func<PurchaseOrder, bool>>>())
-                .Returns(purchaseOrders.AsQueryable());
 
             this.PurchaseLedgerPack.GetLedgerPeriod().Returns(1290);
             this.PurchaseLedgerPack.GetYearStartLedgerPeriod().Returns(1285);
