@@ -960,14 +960,14 @@
                 {
                     delivery.OrderUnitPriceCurrency = purchaseOrder.OrderUnitPriceCurrency;
                     delivery.OurUnitPriceCurrency = purchaseOrder.OurUnitPriceCurrency;
-                    delivery.NetTotalCurrency = purchaseOrder.NetTotalCurrency;
                     delivery.VatTotalCurrency = purchaseOrder.VatTotalCurrency;
-                    delivery.DeliveryTotalCurrency = purchaseOrder.DetailTotalCurrency;
                     delivery.BaseOurUnitPrice = purchaseOrder.BaseOurUnitPrice;
                     delivery.BaseOrderUnitPrice = purchaseOrder.BaseOrderUnitPrice;
                     delivery.BaseVatTotal = purchaseOrder.BaseVatTotal;
-                    delivery.BaseDeliveryTotal = Math.Round((decimal)((delivery.OurDeliveryQty * purchaseOrder.BaseOurUnitPrice.GetValueOrDefault()) + purchaseOrder.BaseVatTotal), 2);
-                    delivery.BaseNetTotal = purchaseOrder.BaseNetTotal;
+                    delivery.BaseNetTotal = Math.Round(delivery.OurDeliveryQty.GetValueOrDefault() * purchaseOrder.BaseOurUnitPrice.GetValueOrDefault(), 2);
+                    delivery.BaseDeliveryTotal = Math.Round((decimal)((delivery.OurDeliveryQty.GetValueOrDefault() * purchaseOrder.BaseOurUnitPrice.GetValueOrDefault()) + purchaseOrder.BaseVatTotal), 2);
+                    delivery.NetTotalCurrency = Math.Round(delivery.OurDeliveryQty.GetValueOrDefault() * purchaseOrder.OurUnitPriceCurrency.GetValueOrDefault(), 2, MidpointRounding.AwayFromZero);
+                    delivery.DeliveryTotalCurrency = Math.Round((decimal)delivery.NetTotalCurrency + delivery.VatTotalCurrency.Value, 2);
                 }
             }
         }
