@@ -952,14 +952,23 @@
             detail.RohsCompliant = "Y";
         }
 
-        private void UpdateDeliveries(
-            ICollection<PurchaseOrderDelivery> deliveries,
-            ICollection<PurchaseOrderDelivery> updatedDeliveries)
+        private void UpdateDeliveries(PurchaseOrderDetail purchaseOrder)
         {
-            foreach (var delivery in deliveries)
+            foreach (var delivery in purchaseOrder.PurchaseDeliveries)
             {
-                var updatedDelivery = updatedDeliveries.First(x => x.DeliverySeq == delivery.DeliverySeq);
-                delivery.DateRequested = updatedDelivery.DateRequested;
+                if (delivery.QuantityOutstanding > 0)
+                {
+                    delivery.OrderUnitPriceCurrency = purchaseOrder.OrderUnitPriceCurrency;
+                    delivery.OurUnitPriceCurrency = purchaseOrder.OurUnitPriceCurrency;
+                    delivery.NetTotalCurrency = purchaseOrder.NetTotalCurrency;
+                    delivery.VatTotalCurrency = purchaseOrder.VatTotalCurrency;
+                    delivery.DeliveryTotalCurrency = purchaseOrder.DetailTotalCurrency;
+                    delivery.BaseOurUnitPrice = purchaseOrder.BaseOurUnitPrice;
+                    delivery.BaseOrderUnitPrice = purchaseOrder.BaseOrderUnitPrice;
+                    delivery.BaseVatTotal = purchaseOrder.BaseVatTotal;
+                    delivery.BaseDeliveryTotal = Math.Round((decimal)((delivery.OurDeliveryQty * purchaseOrder.BaseOurUnitPrice.GetValueOrDefault()) + purchaseOrder.BaseVatTotal), 2);
+                    delivery.BaseNetTotal = purchaseOrder.BaseNetTotal;
+                }
             }
         }
 
@@ -976,7 +985,7 @@
 
             this.UpdateOrderPostingsForDetail(current, updated);
 
-            this.UpdateDeliveries(current.PurchaseDeliveries, updated.PurchaseDeliveries);
+            this.UpdateDeliveries(current);
         }
 
         private void PerformDetailCalculations(PurchaseOrderDetail current, PurchaseOrderDetail updated, decimal exchangeRate, int supplierId, bool creating = false)
