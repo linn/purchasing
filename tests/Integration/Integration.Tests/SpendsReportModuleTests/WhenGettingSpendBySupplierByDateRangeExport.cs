@@ -3,6 +3,7 @@
     using System.Net;
 
     using FluentAssertions;
+    using FluentAssertions.Extensions;
 
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Integration.Tests.Extensions;
@@ -24,23 +25,32 @@
         {
             this.requestResource = new SpendBySupplierByDateRangeReportRequestResource
             {
-                FromDate = string.Empty,
-                ToDate = string.Empty,
-                VendorManager = string.Empty
+                FromDate = 1.December(2025).ToString("o"),
+                ToDate = 1.December(2026).ToString("o"),
+                VendorManager = "A",
+                SupplierId = 123
             };
 
-            this.DomainService.GetSpendBySupplierByDateRangeReport(this.requestResource.FromDate, this.requestResource.ToDate, this.requestResource.VendorManager)
+            this.DomainService.GetSpendBySupplierByDateRangeReport(
+                    this.requestResource.FromDate,
+                    this.requestResource.ToDate,
+                    this.requestResource.VendorManager,
+                    this.requestResource.SupplierId)
                 .Returns(new ResultsModel { ReportTitle = new NameModel(this.title) });
 
             this.Response = this.Client.Get(
-                $"/purchasing/reports/spend-by-supplier-by-date-range/export?fromDate={this.requestResource.FromDate}&toDate={this.requestResource.ToDate}&vm={this.requestResource.VendorManager}",
+                $"/purchasing/reports/spend-by-supplier-by-date-range/export?fromDate={this.requestResource.FromDate}&toDate={this.requestResource.ToDate}&vm={this.requestResource.VendorManager}&supplierId={this.requestResource.SupplierId}",
                 with => { with.Accept("text/csv"); }).Result;
         }
 
         [Test]
         public void ShouldCallDomainService()
         {
-            this.DomainService.Received().GetSpendBySupplierByDateRangeReport(string.Empty, string.Empty, string.Empty);
+            this.DomainService.Received().GetSpendBySupplierByDateRangeReport(
+                this.requestResource.FromDate,
+                this.requestResource.ToDate,
+                this.requestResource.VendorManager,
+                this.requestResource.SupplierId);
         }
 
         [Test]

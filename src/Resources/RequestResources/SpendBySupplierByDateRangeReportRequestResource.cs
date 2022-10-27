@@ -7,5 +7,7 @@
         public string ToDate { get; set; }
 
         public string VendorManager { get; set; }
+
+        public int? SupplierId { get; set; }
     }
 }

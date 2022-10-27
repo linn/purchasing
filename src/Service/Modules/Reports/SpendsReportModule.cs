@@ -92,13 +92,15 @@
             ISpendsReportFacadeService spendsReportFacadeService,
             string fromDate,
             string toDate,
-            string vm)
+            string vm,
+            int? supplierId)
         {
             var options = new SpendBySupplierByDateRangeReportRequestResource
             {
                 VendorManager = vm ?? string.Empty,
                 FromDate = fromDate,
                 ToDate = toDate,
+                SupplierId = supplierId
             };
 
             var csv = spendsReportFacadeService.GetSpendBySupplierByDateRangeReportExport(options);

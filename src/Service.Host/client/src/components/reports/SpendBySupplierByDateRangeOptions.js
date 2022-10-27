@@ -5,6 +5,7 @@ import {
     Page,
     DatePicker,
     Dropdown,
+    Typeahead,
     Title,
     collectionSelectorHelpers,
     reportSelectorHelpers,
@@ -14,8 +15,19 @@ import { useSelector, useDispatch } from 'react-redux';
 import history from '../../history';
 import config from '../../config';
 import vendorManagersActions from '../../actions/vendorManagersActions';
+import suppliersActions from '../../actions/suppliersActions';
 
 function SpendBySupplierByDateRangeReportOptions() {
+    const suppliersSearchResults = useSelector(state =>
+        collectionSelectorHelpers.getSearchItems(state.suppliers)
+    )?.map(c => ({
+        id: c.id,
+        name: c.id.toString(),
+        description: c.name
+    }));
+    const suppliersSearchLoading = useSelector(state =>
+        collectionSelectorHelpers.getSearchLoading(state.suppliers)
+    );
     const vendorManagers = useSelector(state =>
         collectionSelectorHelpers.getItems(state.vendorManagers)
     );
@@ -29,6 +41,9 @@ function SpendBySupplierByDateRangeReportOptions() {
 
     const dispatch = useDispatch();
 
+    const [supplier, setSupplier] = useState(
+        prevOptions?.id ? { id: prevOptions.id, name: '' } : null
+    );
     const defaultStartDate = new Date();
     defaultStartDate.setMonth(defaultStartDate.getMonth() - 1);
 
@@ -39,17 +54,26 @@ function SpendBySupplierByDateRangeReportOptions() {
         prevOptions?.toDate ? new Date(prevOptions?.toDate) : new Date()
     );
 
+    const handleSupplierChange = selectedsupplier => {
+        setSupplier(selectedsupplier);
+    };
+
     useEffect(() => {
         dispatch(vendorManagersActions.fetch());
     }, [dispatch]);
 
     const [vm, setVm] = useState(prevOptions?.vm ? prevOptions.vm : '');
 
-    const handleClick = () =>
+    const handleClick = () => {
+        let search = `?vm=${vm}&fromDate=${fromDate.toISOString()}&toDate=${toDate.toISOString()}`;
+        if (supplier?.id) {
+            search = `${search}&supplierId=${supplier.id}`;
+        }
         history.push({
             pathname: `/purchasing/reports/spend-by-supplier-by-date-range/report`,
-            search: `?vm=${vm}&fromDate=${fromDate.toISOString()}&toDate=${toDate.toISOString()}`
+            search
         });
+    };
 
     return (
         <Page history={history} homeUrl={config.appRoot} width="s">
@@ -61,7 +85,7 @@ function SpendBySupplierByDateRangeReportOptions() {
                     </Grid>
                 ) : (
                     <>
-                        <Grid item xs={4}>
+                        <Grid item xs={6}>
                             <Dropdown
                                 fullWidth
                                 value={vm}
@@ -88,6 +112,7 @@ function SpendBySupplierByDateRangeReportOptions() {
                                 onChange={(_, newValue) => setVm(newValue)}
                             />
                         </Grid>
+                        <Grid item xs={6} />
                         <Grid item xs={6}>
                             <DatePicker
                                 label="From Date"
@@ -107,6 +132,24 @@ function SpendBySupplierByDateRangeReportOptions() {
                                 onChange={newValue => {
                                     setToDate(newValue);
                                 }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} data-testid="supplierSearch">
+                            <Typeahead
+                                label="Supplier"
+                                title="Search for a supplier"
+                                onSelect={handleSupplierChange}
+                                items={suppliersSearchResults}
+                                loading={suppliersSearchLoading}
+                                fetchItems={searchTerm =>
+                                    dispatch(suppliersActions.search(searchTerm))
+                                }
+                                clearSearch={() => dispatch(suppliersActions.clearSearch)}
+                                value={`${supplier?.id ?? ''} - ${supplier?.description ?? ''}`}
+                                modal
+                                links={false}
+                                debounce={1000}
+                                minimumSearchTermLength={2}
                             />
                         </Grid>
                         <Grid item xs={12} />

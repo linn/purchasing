@@ -21,6 +21,8 @@
 
         private readonly IReportingHelper reportingHelper;
 
+        private readonly IRepository<LedgerPeriod, int> ledgerPeriodRepository;
+
         private readonly IQueryRepository<SupplierSpend> spendsRepository;
 
         private readonly IRepository<VendorManager, string> vendorManagerRepository;
@@ -39,13 +41,15 @@
             IRepository<PurchaseOrder, int> purchaseOrderRepository,
             IRepository<Supplier, int> supplierRepository,
             IQueryRepository<Part> partRepository,
-            IReportingHelper reportingHelper)
+            IReportingHelper reportingHelper,
+            IRepository<LedgerPeriod, int> ledgerPeriodRepository)
         {
             this.spendsRepository = spendsRepository;
             this.vendorManagerRepository = vendorManagerRepository;
             this.purchaseLedgerPack = purchaseLedgerPack;
             this.ledgerPeriodPack = ledgerPeriodPack;
             this.reportingHelper = reportingHelper;
+            this.ledgerPeriodRepository = ledgerPeriodRepository;
             this.purchaseOrderRepository = purchaseOrderRepository;
             this.supplierRepository = supplierRepository;
             this.partRepository = partRepository;
@@ -118,12 +122,18 @@
             return model;
         }
 
-        public ResultsModel GetSpendBySupplierByDateRangeReport(string fromDate, string toDate, string vendorManagerId)
+        public ResultsModel GetSpendBySupplierByDateRangeReport(
+            string fromDate,
+            string toDate,
+            string vendorManagerId,
+            int? supplierId)
         {
             var from = DateTime.Parse(fromDate).Date;
             var to = DateTime.Parse(toDate).Date.AddDays(1).AddTicks(-1);
             var fromLedgerPeriod = this.ledgerPeriodPack.GetPeriodNumber(from);
+            var fromPeriod = this.ledgerPeriodRepository.FindById(fromLedgerPeriod);
             var toLedgerPeriod = this.ledgerPeriodPack.GetPeriodNumber(to);
+            var toPeriod = this.ledgerPeriodRepository.FindById(toLedgerPeriod);
 
             var supplierSpends = this.spendsRepository.FilterBy(
                     x =>
@@ -140,11 +150,16 @@
                 vendorManagerName = $"{vendorManagerId} - {vendorManager.Employee.FullName} ({vendorManager.UserNumber})";
             }
 
+            if (supplierId.HasValue)
+            {
+                supplierSpends = supplierSpends.Where(a => a.SupplierId == supplierId).ToList();
+            }
+
             var reportLayout = new SimpleGridLayout(
                 this.reportingHelper,
                 CalculationValueModelType.Value,
                 null,
-                $"Spend by supplier report for Vendor Manager: {vendorManagerName} between ledger period {fromLedgerPeriod} to {toLedgerPeriod}.");
+                $"Spend by supplier report for Vendor Manager: {vendorManagerName} between {fromPeriod.MonthName} and {toPeriod.MonthName}.");
 
             AddSupplierByDateRangeReportColumns(reportLayout);
 

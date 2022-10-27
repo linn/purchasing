@@ -42,7 +42,8 @@
             return this.domainService.GetSpendBySupplierByDateRangeReport(
                 options.FromDate,
                 options.ToDate,
-                options.VendorManager).ConvertToCsvList();
+                options.VendorManager,
+                options.SupplierId).ConvertToCsvList();
         }
 
         public IResult<ReportReturnResource> GetSpendBySupplierByDateRangeReport(SpendBySupplierByDateRangeReportRequestResource options)
@@ -51,7 +52,8 @@
                 this.domainService.GetSpendBySupplierByDateRangeReport(
                     options.FromDate,
                     options.ToDate,
-                    options.VendorManager));
+                    options.VendorManager,
+                    options.SupplierId));
 
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
