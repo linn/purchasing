@@ -28,15 +28,12 @@
 
         private readonly IRepository<Supplier, int> supplierRepository;
 
-        private readonly IQueryRepository<Part> partRepository;
-
         public SpendsReportService(
             IQueryRepository<SupplierSpend> spendsRepository,
             IRepository<VendorManager, string> vendorManagerRepository,
             IPurchaseLedgerPack purchaseLedgerPack,
             ILedgerPeriodPack ledgerPeriodPack,
             IRepository<Supplier, int> supplierRepository,
-            IQueryRepository<Part> partRepository,
             IReportingHelper reportingHelper,
             IRepository<LedgerPeriod, int> ledgerPeriodRepository)
         {
@@ -47,7 +44,6 @@
             this.reportingHelper = reportingHelper;
             this.ledgerPeriodRepository = ledgerPeriodRepository;
             this.supplierRepository = supplierRepository;
-            this.partRepository = partRepository;
         }
 
         public ResultsModel GetSpendBySupplierReport(string vendorManagerId)
@@ -225,7 +221,7 @@
                                      BaseTotal = x.BaseTotal ?? 0,
                                      LedgerPeriod = x.LedgerPeriod,
                                      PartNumber = x.PartNumber,
-                                     PartDescription = this.partRepository.FindBy(p => p.PartNumber == x.PartNumber).Description,
+                                     PartDescription = x.PartDescription,
                                      MonthTotal = supplierSpends
                                          .Where(s => s.PartNumber == x.PartNumber && s.LedgerPeriod == currentLedgerPeriod)
                                          .Sum(z => z.BaseTotal ?? 0),

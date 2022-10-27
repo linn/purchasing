@@ -3,7 +3,6 @@
     using Linn.Common.Persistence;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
-    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
@@ -31,8 +30,6 @@
 
         protected IRepository<VendorManager, string> VendorManagerRepository { get; set; }
 
-        protected IQueryRepository<Part> PartRepository { get; private set; }
-
         protected IRepository<LedgerPeriod, int> LedgerPeriodRepository { get; private set; }
 
         [SetUp]
@@ -43,7 +40,6 @@
             this.SpendsRepository = Substitute.For<IQueryRepository<SupplierSpend>>();
             this.PurchaseLedgerPack = Substitute.For<IPurchaseLedgerPack>();
             this.VendorManagerRepository = Substitute.For<IRepository<VendorManager, string>>();
-            this.PartRepository = Substitute.For<IQueryRepository<Part>>();
             this.LedgerPeriodPack = Substitute.For<ILedgerPeriodPack>();
             this.LedgerPeriodRepository = Substitute.For<IRepository<LedgerPeriod, int>>();
 
@@ -55,7 +51,6 @@
                 this.PurchaseLedgerPack,
                 this.LedgerPeriodPack,
                 this.SupplierRepository,
-                this.PartRepository,
                 this.ReportingHelper,
                 this.LedgerPeriodRepository);
         }

@@ -8,7 +8,6 @@
     using FluentAssertions;
 
     using Linn.Common.Reporting.Models;
-    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.Reports.Models;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
@@ -41,7 +40,8 @@
                                          OrderNumber = this.orderNumber1,
                                          OrderLine = 1,
                                          SupplierName = "seller1",
-                                         PartNumber = "MCAS WAN"
+                                         PartNumber = "MCAS WAN",
+                                         PartDescription = "Another part of some sort"
                                      },
                                  new SupplierSpend
                                      {
@@ -61,7 +61,8 @@
                                          OrderNumber = this.orderNumber3,
                                          OrderLine = 1,
                                          SupplierName = "seller1",
-                                         PartNumber = "RAW 33"
+                                         PartNumber = "RAW 33",
+                                         PartDescription  = "A part of some sort"
                                      }
                              };
 
@@ -74,9 +75,6 @@
             this.SupplierRepository.FindById(this.supplierId)
                 .Returns(new Supplier { SupplierId = this.supplierId, Name = "The shop" });
 
-            this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
-                .Returns(new Part { Description = "A part of some sort" });
-
             this.results = this.Sut.GetSpendByPartReport(this.supplierId);
         }
 
@@ -87,7 +85,6 @@
             this.PurchaseLedgerPack.Received().GetYearStartLedgerPeriod();
             this.SpendsRepository.Received().FilterBy(Arg.Any<Expression<Func<SupplierSpend, bool>>>());
             this.SupplierRepository.Received().FindById(this.supplierId);
-            this.PartRepository.Received(3).FindBy(Arg.Any<Expression<Func<Part, bool>>>());
         }
 
         [Test]
