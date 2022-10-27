@@ -30,22 +30,25 @@
                                      {
                                          SupplierId = this.supplierId,
                                          BaseTotal = 120m,
-                                         Supplier = new Supplier { SupplierId = this.supplierId, Name = "seller1" },
-                                         LedgerPeriod = 1290
+                                         LedgerPeriod = 1290,
+                                         SupplierName = "seller1",
+                                         VendorManager = "X"
                                      },
                                  new SupplierSpend
                                      {
                                          SupplierId = this.supplierId,
                                          BaseTotal = 130.87m,
-                                         Supplier = new Supplier { SupplierId = this.supplierId, Name = "seller1" },
-                                         LedgerPeriod = 1288
+                                         LedgerPeriod = 1288,
+                                         SupplierName = "seller1",
+                                         VendorManager = "X"
                                      },
                                  new SupplierSpend
                                      {
                                          SupplierId = this.supplierId,
                                          BaseTotal = 500m,
-                                         Supplier = new Supplier { SupplierId = this.supplierId, Name = "seller1" },
-                                         LedgerPeriod = 1273
+                                         LedgerPeriod = 1273,
+                                         SupplierName = "seller1",
+                                         VendorManager = "X"
                                      }
                              };
 

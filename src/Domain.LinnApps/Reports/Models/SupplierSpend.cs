@@ -1,7 +1,5 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Reports.Models
 {
-    using Linn.Purchasing.Domain.LinnApps.Suppliers;
-
     public class SupplierSpend
     {
         public decimal? BaseTotal { get; set; }
@@ -12,10 +10,14 @@
 
         public int? OrderNumber { get; set; }
 
-        public int PlTref { get; }
-
-        public Supplier Supplier { get; set; }
+        public int PlTRef { get; set; }
 
         public int SupplierId { get; set; }
+
+        public string SupplierName { get; set; }
+
+        public string VendorManager { get; set; }
+
+        public string PartNumber { get; set; }
     }
 }

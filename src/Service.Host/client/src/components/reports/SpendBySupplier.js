@@ -67,8 +67,8 @@ function SpendBySupplierReport() {
                                 showRowTitles
                                 placeholderRows={4}
                                 placeholderColumns={4}
+                                showRowCount
                             />
-                            <p>Total number of suppliers: {reportData?.results?.length}</p>
                         </>
                     )}
                 </Grid>
