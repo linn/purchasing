@@ -84,7 +84,7 @@ function PartSupplier({ creating }) {
 
     const searchSuppliers = searchTerm => reduxDispatch(suppliersActions.search(searchTerm));
     const suppliersSearchResults = useSelector(reduxState =>
-        collectionSelectorHelpers.getSearchItems(reduxState.suppliers, 100, 'id', 'name', 'name')
+        collectionSelectorHelpers.getSearchItems(reduxState.suppliers, 100, 'id', 'name', 'id')
     );
     const suppliersSearchLoading = useSelector(reduxState =>
         collectionSelectorHelpers.getSearchLoading(reduxState.suppliers)
@@ -187,8 +187,6 @@ function PartSupplier({ creating }) {
         itemSelectorHelpers.getItem(reduxState.partPriceConversions)
     );
 
-    const [partId, setPartId] = useState(null);
-
     useEffect(() => {
         if (partPriceConversionsResult) {
             dispatch({
@@ -286,17 +284,6 @@ function PartSupplier({ creating }) {
             return;
         }
         dispatch({ type: 'fieldChange', fieldName: propertyName, payload: formatted });
-
-        if (propertyName === 'supplierId') {
-            if (partId) {
-                reduxDispatch(
-                    partSupplierActions.fetchByHref(
-                        `${partSupplier.uri}?partId=${partId}&supplierId=${formatted}`
-                    )
-                );
-            }
-            setErrorMessage(null);
-        }
     };
 
     const canEdit = () =>
@@ -304,6 +291,7 @@ function PartSupplier({ creating }) {
 
     const invalid = () =>
         !state.partSupplier?.partNumber ||
+        !state.partSupplier?.supplierId ||
         !state.partSupplier?.orderMethodName ||
         !state.partSupplier?.currencyCode ||
         !state.partSupplier?.minimumOrderQty ||
@@ -491,7 +479,6 @@ function PartSupplier({ creating }) {
                                                 part={part}
                                                 canEdit={canEdit}
                                                 creating={creating}
-                                                setPartId={newVal => setPartId(newVal)}
                                             />
                                         </Box>
                                     )}

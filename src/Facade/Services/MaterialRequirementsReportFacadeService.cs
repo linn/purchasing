@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -46,6 +47,7 @@
                 request.StockCategoryName,
                 request.MinimumLeadTimeWeeks,
                 request.MinimumAnnualUsage,
+                string.IsNullOrEmpty(request.RunDate) ? null : DateTime.Parse(request.RunDate).Date,
                 request.ReportChunk);
 
             return new SuccessResult<MrReportResource>((MrReportResource)this.builder.Build(report, privileges));

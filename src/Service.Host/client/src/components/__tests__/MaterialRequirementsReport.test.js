@@ -2593,9 +2593,9 @@ describe('When report is returned...', () => {
     });
 
     test('Should render nav buttons', () => {
-        expect(screen.getByRole('button', { name: 'At first' })).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: 'At first' })).toBeDisabled();
-        expect(screen.getByRole('button', { name: 'At last' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Prev Part' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Prev Part' })).toBeDisabled();
+        expect(screen.getByRole('button', { name: 'Next Part' })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: 'Order' })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: 'Used On' })).toBeInTheDocument();
         expect(screen.getByText('View Part')).toBeInTheDocument();

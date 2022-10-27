@@ -25,7 +25,7 @@
             this.candidate = new PartSupplier
                                {
                                    PartNumber = "PART",
-                                   SupplierId = 1,
+                                   SupplierId = 0,
                                    SupplierDesignation = "We updated this to this."
                                };
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PartSupplierCreate, Arg.Any<IEnumerable<string>>())
@@ -45,7 +45,7 @@
         {
             this.action.Should().Throw<PartSupplierException>()
                 .WithMessage(
-                    "The inputs for the following fields are empty/invalid: Minimum Order Qty, Created By, Order Increment, Lead Time Weeks, Order Method, Currency Unit Price, Minimum Delivery Quantity, Currency, ");
+                    "The inputs for the following fields are empty/invalid: Supplier, Minimum Order Qty, Created By, Order Increment, Lead Time Weeks, Order Method, Currency Unit Price, Minimum Delivery Quantity, Currency, ");
         }
     }
 }
