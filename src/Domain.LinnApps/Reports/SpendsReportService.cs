@@ -309,6 +309,7 @@
 
             reportLayout.SetGridData(values);
             var model = reportLayout.GetResultsModel();
+            this.reportingHelper.SortRowsByColumnValue(model, model.ColumnIndex("PartNumber"));
 
             return model;
         }
