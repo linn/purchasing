@@ -187,7 +187,7 @@
             reportLayout.SetGridData(values);
             var model = reportLayout.GetResultsModel();
 
-            model.RowDrillDownTemplates.Add(new DrillDownModel("Id", "/purchasing/reports/spend-by-part/report?id={textValue}"));
+            model.RowDrillDownTemplates.Add(new DrillDownModel("by part", $"/purchasing/reports/spend-by-part-by-date/report?id={{textValue}}&fromDate={fromDate}&toDate={toDate}&vm={vendorManagerId}"));
             model.RowHeader = "Supplier (Drilldown)";
 
             return model;
@@ -245,6 +245,70 @@
             foreach (var part in distinctPartSpends)
             {
                 ExtractDetailsForPartReport(values, part);
+            }
+
+            reportLayout.SetGridData(values);
+            var model = reportLayout.GetResultsModel();
+
+            return model;
+        }
+
+        public ResultsModel GetSpendByPartByDateReport(int supplierId, string fromDate, string toDate)
+        {
+            var from = DateTime.Parse(fromDate).Date;
+            var to = DateTime.Parse(toDate).Date.AddDays(1).AddTicks(-1);
+            var fromLedgerPeriod = this.ledgerPeriodPack.GetPeriodNumber(from);
+            var toLedgerPeriod = this.ledgerPeriodPack.GetPeriodNumber(to);
+
+            var supplierSpends = this.spendsRepository
+                .FilterBy(x => x.LedgerPeriod >= fromLedgerPeriod
+                               && x.LedgerPeriod <= toLedgerPeriod
+                               && x.SupplierId == supplierId)
+                .ToList();
+
+            var supplier = this.supplierRepository.FindById(supplierId);
+
+            var reportLayout = new SimpleGridLayout(
+                this.reportingHelper,
+                CalculationValueModelType.Value,
+                null,
+                $"Spend by part report for Supplier: {supplier.Name} ({supplierId}) in GBP between {from.ToString("dd-MMM-yyyy")} and {to.ToString("dd-MMM-yyyy")}");
+
+            reportLayout.AddColumnComponent(
+                null,
+                new List<AxisDetailsModel>
+                    {
+                        new AxisDetailsModel("PartNumber", "PartNumber", GridDisplayType.TextValue)
+                            {
+                                AllowWrap = false
+                            },
+                        new AxisDetailsModel("Description", "Description", GridDisplayType.TextValue),
+                        new AxisDetailsModel("Spend", "Spend", GridDisplayType.Value) { DecimalPlaces = 2 },
+                    });
+
+            var values = new List<CalculationValueModel>();
+            foreach (var supplierSpend in supplierSpends.GroupBy(a => a.PartNumber))
+            {
+                var value = supplierSpend.Sum(a => a.BaseTotal ?? 0);
+                values.Add(new CalculationValueModel
+                               {
+                                   Value = value,
+                                   BaseValue = value,
+                                   ColumnId = "Spend",
+                                   RowId = supplierSpend.Key
+                               });
+                values.Add(new CalculationValueModel
+                               {
+                                   TextDisplay = supplierSpend.Key,
+                                   ColumnId = "PartNumber",
+                                   RowId = supplierSpend.Key
+                               });
+                values.Add(new CalculationValueModel
+                               {
+                                   TextDisplay = supplierSpend.First().PartDescription,
+                                   ColumnId = "Description",
+                                   RowId = supplierSpend.Key
+                               });
             }
 
             reportLayout.SetGridData(values);
