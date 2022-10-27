@@ -952,11 +952,9 @@
             detail.RohsCompliant = "Y";
         }
 
-        private void UpdateDeliveries(
-            ICollection<PurchaseOrderDelivery> deliveries,
-            PurchaseOrderDetail purchaseOrder)
+        private void UpdateDeliveries(PurchaseOrderDetail purchaseOrder)
         {
-            foreach (var delivery in deliveries)
+            foreach (var delivery in purchaseOrder.PurchaseDeliveries)
             {
                 if (delivery.QuantityOutstanding > 0)
                 {
@@ -987,7 +985,7 @@
 
             this.UpdateOrderPostingsForDetail(current, updated);
 
-            this.UpdateDeliveries(current.PurchaseDeliveries, current);
+            this.UpdateDeliveries(current);
         }
 
         private void PerformDetailCalculations(PurchaseOrderDetail current, PurchaseOrderDetail updated, decimal exchangeRate, int supplierId, bool creating = false)
