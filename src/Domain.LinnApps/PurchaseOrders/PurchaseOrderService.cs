@@ -952,7 +952,7 @@
             detail.RohsCompliant = "Y";
         }
 
-        private void UpdateDeliveries(PurchaseOrderDetail purchaseOrder)
+        private void UpdateDeliveries(PurchaseOrderDetail purchaseOrder, decimal exchangeRate, int supplierId)
         {
             foreach (var delivery in purchaseOrder.PurchaseDeliveries)
             {
@@ -960,13 +960,13 @@
                 {
                     delivery.OrderUnitPriceCurrency = purchaseOrder.OrderUnitPriceCurrency;
                     delivery.OurUnitPriceCurrency = purchaseOrder.OurUnitPriceCurrency;
-                    delivery.VatTotalCurrency = purchaseOrder.VatTotalCurrency;
+                    delivery.NetTotalCurrency = Math.Round(delivery.OurDeliveryQty.GetValueOrDefault() * purchaseOrder.OurUnitPriceCurrency.GetValueOrDefault(), 2, MidpointRounding.AwayFromZero);
+                    delivery.VatTotalCurrency = this.purchaseOrdersPack.GetVatAmountSupplier((decimal)delivery.NetTotalCurrency, supplierId);
                     delivery.BaseOurUnitPrice = purchaseOrder.BaseOurUnitPrice;
                     delivery.BaseOrderUnitPrice = purchaseOrder.BaseOrderUnitPrice;
-                    delivery.BaseVatTotal = purchaseOrder.BaseVatTotal;
+                    delivery.BaseVatTotal = Math.Round(delivery.VatTotalCurrency.GetValueOrDefault() / exchangeRate, 2, MidpointRounding.AwayFromZero);
                     delivery.BaseNetTotal = Math.Round(delivery.OurDeliveryQty.GetValueOrDefault() * purchaseOrder.BaseOurUnitPrice.GetValueOrDefault(), 2);
                     delivery.BaseDeliveryTotal = Math.Round((decimal)((delivery.OurDeliveryQty.GetValueOrDefault() * purchaseOrder.BaseOurUnitPrice.GetValueOrDefault()) + purchaseOrder.BaseVatTotal), 2);
-                    delivery.NetTotalCurrency = Math.Round(delivery.OurDeliveryQty.GetValueOrDefault() * purchaseOrder.OurUnitPriceCurrency.GetValueOrDefault(), 2, MidpointRounding.AwayFromZero);
                     delivery.DeliveryTotalCurrency = Math.Round((decimal)delivery.NetTotalCurrency + delivery.VatTotalCurrency.Value, 2);
                 }
             }
@@ -985,7 +985,7 @@
 
             this.UpdateOrderPostingsForDetail(current, updated);
 
-            this.UpdateDeliveries(current);
+            this.UpdateDeliveries(current, exchangeRate, supplierId);
         }
 
         private void PerformDetailCalculations(PurchaseOrderDetail current, PurchaseOrderDetail updated, decimal exchangeRate, int supplierId, bool creating = false)
