@@ -38,7 +38,7 @@ function SpendBySupplierByDateRangeReport() {
     useEffect(() => {
         dispatch(
             spendBySupplierByDateRangeActions.fetchReport({
-                vendorManager,
+                vm: vendorManager,
                 fromDate,
                 toDate,
                 supplierId

@@ -19,5 +19,7 @@
         IEnumerable<IEnumerable<string>> GetSpendByPartExport(int supplierId);
 
         IResult<ReportReturnResource> GetSpendByPartReport(int supplierId);
+
+        IResult<ReportReturnResource> GetSpendByPartByDateReport(SpendBySupplierByDateRangeReportRequestResource options);
     }
 }

@@ -19,5 +19,7 @@
         public string VendorManager { get; set; }
 
         public string PartNumber { get; set; }
+
+        public string PartDescription { get; set; }
     }
 }
