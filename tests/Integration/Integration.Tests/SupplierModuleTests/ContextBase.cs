@@ -48,7 +48,7 @@
 
         protected ILog Log { get; private set; }
 
-        protected IPartService PartFacadeService { get; private set; }
+        protected IPartFacadeService PartFacadeService { get; private set; }
 
         protected IFacadeResourceService<Supplier, int, SupplierResource, SupplierResource> SupplierFacadeService
         {
@@ -119,7 +119,7 @@
                 new PartSupplierResourceBuilder(this.MockAuthService),
                 this.MockPartSupplierDomainService);
 
-                this.PartFacadeService = Substitute.For<IPartService>();
+                this.PartFacadeService = Substitute.For<IPartFacadeService>();
 
             this.Log = Substitute.For<ILog>();
 

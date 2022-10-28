@@ -315,7 +315,7 @@
 
             // below line commented due to causing crashing during local dev. Uncomment if want to see sql in debug window
             // optionsBuilder.UseLoggerFactory(MyLoggerFactory);
-            optionsBuilder.EnableSensitiveDataLogging(true);
+            // optionsBuilder.EnableSensitiveDataLogging(true);
             base.OnConfiguring(optionsBuilder);
         }
 
@@ -906,15 +906,17 @@
 
         private void BuildSpendsView(ModelBuilder builder)
         {
-            var entity = builder.Entity<SupplierSpend>().ToTable("PL_PL_SUPPLIERS_EX_VAT");
-            entity.HasKey(m => m.PlTref);
-            entity.Property(e => e.PlTref).HasColumnName("PL_TREF");
+            var entity = builder.Entity<SupplierSpend>().ToTable("SUPPLIER_SPEND_VIEW").HasNoKey();
+            entity.Property(e => e.PlTRef).HasColumnName("PL_TREF");
             entity.Property(e => e.BaseTotal).HasColumnName("BASE_TOTAL");
             entity.Property(e => e.LedgerPeriod).HasColumnName("LEDGER_PERIOD");
             entity.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID");
             entity.Property(e => e.OrderNumber).HasColumnName("ORDER_NUMBER");
             entity.Property(e => e.OrderLine).HasColumnName("ORDER_LINE");
-            entity.HasOne(x => x.Supplier).WithMany().HasForeignKey(z => z.SupplierId);
+            entity.Property(e => e.SupplierName).HasColumnName("SUPPLIER_NAME");
+            entity.Property(e => e.VendorManager).HasColumnName("VENDOR_MANAGER");
+            entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER");
+            entity.Property(e => e.PartDescription).HasColumnName("PART_DESCRIPTION");
         }
 
         private void BuildUnacknowledgedOrders(ModelBuilder builder)
@@ -1753,7 +1755,7 @@
             entity.HasKey(s => s.SupplierId);
             entity.Property(s => s.SupplierId).HasColumnName("SUPPLIER_ID");
             entity.Property(s => s.OrderBook).HasColumnName("ORDER_BOOK");
-            entity.Property(s => s.EmailAddress).HasColumnName("EMAIL_ADDRESS");
+            entity.Property(s => s.EmailAddresses).HasColumnName("EMAIL_ADDRESS");
             entity.Property(s => s.Forecast).HasColumnName("FORECAST");
             entity.Property(s => s.ForecastInterval).HasColumnName("FORECAST_INTERVAL");
         }

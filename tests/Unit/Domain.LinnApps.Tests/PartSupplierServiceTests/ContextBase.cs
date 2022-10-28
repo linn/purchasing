@@ -34,7 +34,7 @@
 
         protected IRepository<PartSupplier, PartSupplierKey> PartSupplierRepository { get; private set; }
 
-        protected IRepository<PartHistoryEntry, PartHistoryEntryKey> PartHistory { get; private set; }
+        protected IPartHistoryService PartHistory { get; private set; }
 
         protected IRepository<PriceChangeReason, string> ChangeReasonsRepository { get; private set; }
 
@@ -55,7 +55,7 @@
             this.PartRepository = Substitute.For<IQueryRepository<Part>>();
             this.SupplierRepository = Substitute.For<IRepository<Supplier, int>>();
             this.PartSupplierRepository = Substitute.For<IRepository<PartSupplier, PartSupplierKey>>();
-            this.PartHistory = Substitute.For<IRepository<PartHistoryEntry, PartHistoryEntryKey>>();
+            this.PartHistory = Substitute.For<IPartHistoryService>();
             this.ChangeReasonsRepository = Substitute.For<IRepository<PriceChangeReason, string>>();
             this.PreferredSupplierChangeRepository =
                 Substitute.For<IRepository<PreferredSupplierChange, PreferredSupplierChangeKey>>();

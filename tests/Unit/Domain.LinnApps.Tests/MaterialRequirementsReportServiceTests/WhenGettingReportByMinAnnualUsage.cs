@@ -62,6 +62,7 @@
                 null,
                 null,
                 this.minAnnualUsage,
+                null,
                 0);
         }
 

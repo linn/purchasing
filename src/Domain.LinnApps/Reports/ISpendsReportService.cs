@@ -6,8 +6,14 @@
     {
         ResultsModel GetSpendBySupplierReport(string vendorManagerId);
 
-        ResultsModel GetSpendBySupplierByDateRangeReport(string from, string to, string vendorManagerId);
+        ResultsModel GetSpendBySupplierByDateRangeReport(
+            string from,
+            string to,
+            string vendorManagerId,
+            int? supplierId);
 
         ResultsModel GetSpendByPartReport(int supplierId);
+
+        ResultsModel GetSpendByPartByDateReport(int supplierId, string fromDate, string toDate);
     }
 }

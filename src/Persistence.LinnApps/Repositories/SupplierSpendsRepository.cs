@@ -20,7 +20,7 @@
 
         public IQueryable<SupplierSpend> FilterBy(Expression<Func<SupplierSpend, bool>> expression)
         {
-           return this.serviceDbContext.SupplierSpends.Include(s => s.Supplier).AsNoTracking().Where(expression);
+           return this.serviceDbContext.SupplierSpends.AsNoTracking().Where(expression);
         }
 
         IQueryable<SupplierSpend> IQueryRepository<SupplierSpend>.FindAll()

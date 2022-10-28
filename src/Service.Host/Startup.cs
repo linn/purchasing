@@ -7,10 +7,12 @@ namespace Linn.Purchasing.Service.Host
 
     using Linn.Common.Authentication.Host.Extensions;
     using Linn.Common.Configuration;
+    using Linn.Common.Logging;
     using Linn.Purchasing.IoC;
     using Linn.Purchasing.Service.Host.Negotiators;
 
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Diagnostics;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.DependencyInjection;
@@ -73,7 +75,19 @@ namespace Linn.Purchasing.Service.Host
             app.UseAuthentication();
 
             app.UseBearerTokenAuthentication();
+            app.UseExceptionHandler(
+                c => c.Run(async context =>
+                    {
+                        var exception = context.Features
+                            .Get<IExceptionHandlerPathFeature>()
+                            ?.Error;
 
+                        var log = app.ApplicationServices.GetService<ILog>();
+                        log.Error(exception?.Message, exception);
+
+                        var response = new { error = $"{exception?.Message}  -  {exception?.StackTrace}" };
+                        await context.Response.WriteAsJsonAsync(response);
+                    }));
             app.UseRouting();
             app.UseEndpoints(cfg => cfg.MapCarter());
         }

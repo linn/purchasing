@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.MaterialRequirements
 {
+    using System;
     using System.Collections.Generic;
 
     public interface IMaterialRequirementsReportService
@@ -17,6 +18,7 @@
             string stockCategoryName,
             int? minimumLeadTimeWeeks,
             int? minimumAnnualUsage,
+            DateTime? runDate,
             int reportChunk = 0);
 
         MrReportOptions GetOptions();

@@ -31,30 +31,35 @@
                                  new SupplierSpend
                                      {
                                          SupplierId = 1234,
-                                         Supplier = new Supplier { SupplierId = 1234, Name = "seller1" },
-                                         LedgerPeriod = 1295
+                                         LedgerPeriod = 1295,
+                                         SupplierName = "seller1",
+                                         VendorManager = "A"
                                      },
                                  new SupplierSpend
                                      {
                                          SupplierId = 5678,
-                                         Supplier = new Supplier { SupplierId = 5678, Name = "seller2" },
-                                         LedgerPeriod = 1342
+                                         LedgerPeriod = 1342,
+                                         SupplierName = "seller2",
+                                         VendorManager = "A"
                                      },
                                  new SupplierSpend
                                      {
                                          SupplierId = 9101,
-                                         Supplier = new Supplier { SupplierId = 9101, Name = "seller3" },
-                                         LedgerPeriod = 1400
+                                         LedgerPeriod = 1400,
+                                         SupplierName = "seller3",
+                                         VendorManager = "A"
                                      }
                              };
 
             this.SpendsRepository.FilterBy(Arg.Any<Expression<Func<SupplierSpend, bool>>>())
                 .Returns(spends.AsQueryable());
             var vendorManager = new VendorManager { Id = "A", UserNumber = 999, Employee = new Employee { FullName = "Aloo Gobi" } };
-
+            this.LedgerPeriodPack.GetPeriodNumber(Arg.Any<DateTime>()).Returns(7, 8);
+            this.LedgerPeriodRepository.FindById(7).Returns(new LedgerPeriod { MonthName = "Jul2007" });
+            this.LedgerPeriodRepository.FindById(8).Returns(new LedgerPeriod { MonthName = "Aug2022" });
             this.VendorManagerRepository.FindById(Arg.Any<string>()).Returns(vendorManager);
 
-            this.results = this.Sut.GetSpendBySupplierByDateRangeReport(this.fromDate, this.toDate, "A");
+            this.results = this.Sut.GetSpendBySupplierByDateRangeReport(this.fromDate, this.toDate, "A", null);
         }
 
         [Test]
@@ -69,7 +74,7 @@
         public void ShouldReturnData()
         {
             this.results.ReportTitle.DisplayValue.Should().Be(
-                "Spend by supplier report for Vendor Manager: A - Aloo Gobi (999) between ledger period 0 to 0.");
+                "Spend by supplier report for Vendor Manager: A - Aloo Gobi (999) between Jul2007 and Aug2022.");
             this.results.Rows.Count().Should().Be(3);
             var row = this.results.Rows.First();
             row.RowId.Should().Be(1234.ToString());

@@ -7,7 +7,8 @@ import {
     Typeahead,
     Dropdown,
     collectionSelectorHelpers,
-    InputField
+    InputField,
+    DatePicker
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import Snackbar from '@mui/material/Snackbar';
@@ -46,6 +47,7 @@ function MaterialRequirementsOptions() {
     const [minimumLeadTimeWeeks, setMinimumLeadTimeWeeks] = useState(null);
     const [minimumAnnualUsage, setMinimumAnnualUsage] = useState(null);
     const [orderBySelector, setOrderBySelector] = useState('supplier/part');
+    const [runDate, setRunDate] = useState(null);
     const mrMaster = useSelector(state => itemSelectorHelpers.getItem(state.mrMaster));
     const mrMasterLoading = useSelector(state =>
         itemSelectorHelpers.getItemLoading(state.mrMaster)
@@ -163,6 +165,10 @@ function MaterialRequirementsOptions() {
             if (mrReport.partOption) {
                 setPartOption(mrReport.partOption);
             }
+
+            if (mrReport.runDateOption) {
+                setRunDate(new Date(mrReport.runDateOption));
+            }
         }
     }, [mrReportOptions, mrReport]);
 
@@ -212,7 +218,8 @@ function MaterialRequirementsOptions() {
             stockCategoryName,
             partOption,
             minimumAnnualUsage,
-            minimumLeadTimeWeeks
+            minimumLeadTimeWeeks,
+            runDate: runDate ? runDate.toISOString() : null
         };
         history.push('/purchasing/material-requirements/report', body);
     };
@@ -286,10 +293,12 @@ function MaterialRequirementsOptions() {
                     {mrMasterLoading ? (
                         <Loading />
                     ) : (
-                        <Typography variant="subtitle1">Jobref: {mrMaster?.jobRef}</Typography>
+                        <Typography variant="subtitle1">
+                            Latest Jobref: {mrMaster?.jobRef}
+                        </Typography>
                     )}
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={8}>
                     <Dropdown
                         propertyName="Parts Options"
                         label="Parts Options"
@@ -302,6 +311,15 @@ function MaterialRequirementsOptions() {
                             }))}
                         optionsLoading={mrReportOptionsLoading}
                         onChange={(_, value) => handlePartOptionChange(value)}
+                    />
+                </Grid>
+                <Grid item xs={4}>
+                    <DatePicker
+                        label="Date Of Run"
+                        value={runDate}
+                        onChange={newValue => setRunDate(newValue)}
+                        minDate="01/01/1970"
+                        maxDate="01/01/2100"
                     />
                 </Grid>
                 {getOptionTag(mrReportOptions?.partSelectorOptions, partSelector) === 'parts' && (

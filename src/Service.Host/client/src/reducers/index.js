@@ -42,6 +42,7 @@ import suppliersWithUnacknowledgedOrders from './suppliersWithUnacknowledgedOrde
 import unacknowledgedOrdersReport from './unacknowledgedOrdersReport';
 import planners from './planners';
 import spendByPartReport from './spendByPartReport';
+import spendByPartByDateReport from './spendByPartByDateReport';
 import plCreditDebitNote from './plCreditDebitNote';
 import plCreditDebitNotes from './plCreditDebitNotes';
 import openDebitNotes from './openDebitNotes';
@@ -182,6 +183,7 @@ const rootReducer = history =>
         signingLimits,
         spendBySupplierReport,
         spendBySupplierByDateRangeReport,
+        spendByPartByDateReport,
         spendByPartReport,
         suggestedPurchaseOrderValues,
         supplier,

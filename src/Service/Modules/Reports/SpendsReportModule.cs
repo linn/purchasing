@@ -28,6 +28,7 @@
             app.MapGet("/purchasing/reports/spend-by-supplier/export", this.GetSpendBySupplierExport);
             app.MapGet("/purchasing/reports/spend-by-supplier-by-date-range/report", this.GetSpendBySupplierByDateRangeReport);
             app.MapGet("/purchasing/reports/spend-by-supplier-by-date-range/export", this.GetSpendBySupplierByDateRangeExport);
+            app.MapGet("/purchasing/reports/spend-by-part-by-date/report", this.GetSpendByPartByDateReport);
             app.MapGet("/purchasing/reports/spend-by-part/report", this.GetSpendByPartReport);
             app.MapGet("/purchasing/reports/spend-by-part/export", this.GetSpendByPartExport);
         }
@@ -55,6 +56,25 @@
             ISpendsReportFacadeService spendsReportFacadeService)
         {
             var results = spendsReportFacadeService.GetSpendByPartReport(id);
+
+            await res.Negotiate(results);
+        }
+
+        private async Task GetSpendByPartByDateReport(
+            HttpRequest req,
+            HttpResponse res,
+            int id,
+            string fromDate,
+            string toDate,
+            ISpendsReportFacadeService spendsReportFacadeService)
+        {
+            var options = new SpendBySupplierByDateRangeReportRequestResource
+                              {
+                                  FromDate = fromDate,
+                                  ToDate = toDate,
+                                  SupplierId = id
+                              };
+            var results = spendsReportFacadeService.GetSpendByPartByDateReport(options);
 
             await res.Negotiate(results);
         }
@@ -92,13 +112,15 @@
             ISpendsReportFacadeService spendsReportFacadeService,
             string fromDate,
             string toDate,
-            string vm)
+            string vm,
+            int? supplierId)
         {
             var options = new SpendBySupplierByDateRangeReportRequestResource
             {
                 VendorManager = vm ?? string.Empty,
                 FromDate = fromDate,
                 ToDate = toDate,
+                SupplierId = supplierId
             };
 
             var csv = spendsReportFacadeService.GetSpendBySupplierByDateRangeReportExport(options);

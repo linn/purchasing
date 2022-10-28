@@ -40,67 +40,79 @@
             this.forecastOrdersReportService = forecastOrdersReportService;
         }
 
-        public void SendOrderBookEmail(string toAddress, int toSupplier, string timestamp, bool test = false)
+        public void SendOrderBookEmail(string toAddresses, int toSupplier, string timestamp, bool test = false)
         {
             var supplier = this.supplierRepository.FindById(toSupplier);
 
-            var emailAddress = string.IsNullOrEmpty(toAddress) ? supplier.SupplierContacts
-                ?.First(c => c.IsMainOrderContact.Equals("Y"))?.EmailAddress : toAddress;
+            var emailAddresses = string.IsNullOrEmpty(toAddresses) ? supplier.SupplierContacts
+                ?.First(c => c.IsMainOrderContact.Equals("Y"))?.EmailAddress : toAddresses;
 
-            this.CheckEmailDetailsOk(emailAddress, supplier);
+            this.CheckEmailDetailsOk(emailAddresses, supplier);
             
             var vendorManagerAddress = supplier.VendorManager.Employee.PhoneListEntry?.EmailAddress;
             var vendorManagerName = supplier.VendorManager.Employee.FullName;
 
             var export = this.orderBookReportService.GetOrderBookExport(toSupplier);
 
-            this.emailService.SendEmail(
-                test ? ConfigurationManager.Configuration["ORDER_BOOK_TEST_ADDRESS"] : emailAddress,
-                supplier.Name,
-                null,
-                null,
-                vendorManagerAddress ?? ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
-                vendorManagerName != "No person assigned" ? vendorManagerName : "Linn",
-                $"MR Order Book - {timestamp}",
-                "Please find Order Book attached",
-                new List<Attachment>
-                    {
-                        new CsvAttachment(export, null, $"{toSupplier}_linn_order_book_{timestamp}")
-                    });
+            foreach (var address in emailAddresses.Split(","))
+            {
+                if (!string.IsNullOrWhiteSpace(address))
+                {
+                    this.emailService.SendEmail(
+                        test ? ConfigurationManager.Configuration["ORDER_BOOK_TEST_ADDRESS"] : address.Trim(),
+                        supplier.Name,
+                        null,
+                        null,
+                        vendorManagerAddress ?? ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
+                        vendorManagerName != "No person assigned" ? vendorManagerName : "Linn",
+                        $"MR Order Book - {timestamp}",
+                        "Please find Order Book attached",
+                        new List<Attachment>
+                            {
+                                new CsvAttachment(export, null, $"{toSupplier}_linn_order_book_{timestamp}")
+                            });
+                }
+            }
         }
 
-        public void SendMonthlyForecastEmail(string toAddress, int toSupplier, string timestamp, bool test = false)
+        public void SendMonthlyForecastEmail(string toAddresses, int toSupplier, string timestamp, bool test = false)
         {
             var supplier = this.supplierRepository.FindById(toSupplier);
 
-            var emailAddress = string.IsNullOrEmpty(toAddress) ? supplier.SupplierContacts
-                                   ?.First(c => c.IsMainOrderContact.Equals("Y"))?.EmailAddress : toAddress;
+            var emailAddresses = string.IsNullOrEmpty(toAddresses) ? supplier.SupplierContacts
+                                   ?.First(c => c.IsMainOrderContact.Equals("Y"))?.EmailAddress : toAddresses;
 
-            this.CheckEmailDetailsOk(emailAddress, supplier);
+            this.CheckEmailDetailsOk(emailAddresses, supplier);
 
             var vendorManagerAddress = supplier.VendorManager.Employee.PhoneListEntry.EmailAddress;
             var vendorManagerName = supplier.VendorManager.Employee.FullName;
 
             var export = this.forecastOrdersReportService.GetMonthlyExport(toSupplier);
 
-            this.emailService.SendEmail(
-                test ? ConfigurationManager.Configuration["ORDER_BOOK_TEST_ADDRESS"] : emailAddress,
-                supplier.Name,
-                null,
-                null,
-                vendorManagerAddress,
-                vendorManagerName,
-                $"Monthly Forecast - {timestamp}",
-                "Please find Monthly order forecast attached",
-                new List<Attachment>
-                    {
-                        new CsvAttachment(null, export, $"{toSupplier}_monthly_forecast_{timestamp}")
-                    });
+            foreach (var address in emailAddresses.Split(","))
+            {
+                if (!string.IsNullOrWhiteSpace(address))
+                {
+                    this.emailService.SendEmail(
+                        test ? ConfigurationManager.Configuration["ORDER_BOOK_TEST_ADDRESS"] : address.Trim(),
+                        supplier.Name,
+                        null,
+                        null,
+                        vendorManagerAddress,
+                        vendorManagerName,
+                        $"Monthly Forecast - {timestamp}",
+                        "Please find Monthly order forecast attached",
+                        new List<Attachment>
+                            {
+                                new CsvAttachment(null, export, $"{toSupplier}_monthly_forecast_{timestamp}")
+                            });
+                }
+            }
         }
 
-        private void CheckEmailDetailsOk(string toAddress, Supplier supplier)
+        private void CheckEmailDetailsOk(string toAddresses, Supplier supplier)
         {
-            if (string.IsNullOrEmpty(toAddress))
+            if (string.IsNullOrEmpty(toAddresses))
             {
                 throw new SupplierAutoEmailsException($"No recipient address set for: {supplier.Name}");
             }

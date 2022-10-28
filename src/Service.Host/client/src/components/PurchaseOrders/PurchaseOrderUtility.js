@@ -613,8 +613,8 @@ function PurchaseOrderUtility({ creating }) {
                                                 deliveries={selectedDeliveries.map(d => ({
                                                     ...d,
                                                     id: `${d.orderNumber}/${d.line}/${d.deliverySeq}`,
-                                                    dateRequested: getDateString(d.dateRequested),
-                                                    dateAdvised: getDateString(d.dateAdvised)
+                                                    dateRequested: d.dateRequested,
+                                                    dateAdvised: d.dateAdvised
                                                 }))}
                                                 backClick={() => setDeliveriesDialogOpen(false)}
                                                 closeOnSave

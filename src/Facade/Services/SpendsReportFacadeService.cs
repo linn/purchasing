@@ -42,7 +42,8 @@
             return this.domainService.GetSpendBySupplierByDateRangeReport(
                 options.FromDate,
                 options.ToDate,
-                options.VendorManager).ConvertToCsvList();
+                options.VendorManager,
+                options.SupplierId).ConvertToCsvList();
         }
 
         public IResult<ReportReturnResource> GetSpendBySupplierByDateRangeReport(SpendBySupplierByDateRangeReportRequestResource options)
@@ -51,7 +52,8 @@
                 this.domainService.GetSpendBySupplierByDateRangeReport(
                     options.FromDate,
                     options.ToDate,
-                    options.VendorManager));
+                    options.VendorManager,
+                    options.SupplierId));
 
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
@@ -64,6 +66,20 @@
         public IResult<ReportReturnResource> GetSpendByPartReport(int supplierId)
         {
             var results = this.domainService.GetSpendByPartReport(supplierId);
+
+            var returnResource = this.resultsModelResourceBuilder.Build(results);
+
+            return new SuccessResult<ReportReturnResource>(returnResource);
+        }
+
+        public IResult<ReportReturnResource> GetSpendByPartByDateReport(SpendBySupplierByDateRangeReportRequestResource options)
+        {
+            if (options?.SupplierId is null)
+            {
+                return new BadRequestResult<ReportReturnResource>("You must supply a supplier id");
+            }
+
+            var results = this.domainService.GetSpendByPartByDateReport(options.SupplierId.Value, options.FromDate, options.ToDate);
 
             var returnResource = this.resultsModelResourceBuilder.Build(results);
 

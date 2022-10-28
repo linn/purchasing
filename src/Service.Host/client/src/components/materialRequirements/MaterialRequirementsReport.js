@@ -61,6 +61,10 @@ function MaterialRequirementsReport() {
         itemSelectorHelpers.getItemLoading(state.mrReportOrders)
     );
 
+    const runDate = mrReport?.runDate
+        ? new Date(mrReport.runDate).toLocaleDateString('en-gb')
+        : 'None';
+
     const theme = createTheme({
         typography: {
             fontSize: 12
@@ -650,7 +654,10 @@ function MaterialRequirementsReport() {
                                     className="hide-when-printing"
                                 >
                                     <Stack direction="row" spacing={2}>
-                                        <Tooltip title="Previous part" placement="top-start">
+                                        <Tooltip
+                                            title={previousPart || 'At first'}
+                                            placement="top-start"
+                                        >
                                             <div>
                                                 <Button
                                                     style={{ float: 'left', marginRight: '60px' }}
@@ -660,7 +667,7 @@ function MaterialRequirementsReport() {
                                                     startIcon={<ArrowBackIcon />}
                                                     disabled={!previousPart}
                                                 >
-                                                    {previousPart || 'At first'}
+                                                    Prev Part
                                                 </Button>
                                             </div>
                                         </Tooltip>
@@ -736,7 +743,7 @@ function MaterialRequirementsReport() {
                                     style={{ paddingBottom: '10px' }}
                                     className="hide-when-printing"
                                 >
-                                    <Tooltip title="Next part" placement="top-end">
+                                    <Tooltip title={nextPart || 'At last'} placement="top-end">
                                         <div>
                                             <Button
                                                 style={{ float: 'right' }}
@@ -746,7 +753,7 @@ function MaterialRequirementsReport() {
                                                 onClick={goToNextPart}
                                                 endIcon={<ArrowForwardIcon />}
                                             >
-                                                {nextPart || 'At last'}
+                                                Next Part
                                             </Button>
                                         </div>
                                     </Tooltip>
@@ -778,6 +785,7 @@ function MaterialRequirementsReport() {
                                         <Typography variant="body2">
                                             Jobref: {selectedItem.jobRef}
                                         </Typography>
+                                        <Typography variant="body2">{runDate}</Typography>
                                     </Stack>
                                 </Grid>
                                 <Grid item xs={8}>

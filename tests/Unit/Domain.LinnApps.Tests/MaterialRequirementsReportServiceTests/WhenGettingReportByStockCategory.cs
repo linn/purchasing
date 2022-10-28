@@ -61,6 +61,7 @@
                 this.stockCategoryName,
                 null,
                 null,
+                null,
                 0);
         }
 

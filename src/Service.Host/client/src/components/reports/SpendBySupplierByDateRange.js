@@ -32,12 +32,19 @@ function SpendBySupplierByDateRangeReport() {
     const location = useLocation();
     const fromDate = queryString.parse(location.search)?.fromDate;
     const toDate = queryString.parse(location.search)?.toDate;
-    const vendorManager = queryString.parse(location.search)?.vendorManager;
+    const vendorManager = queryString.parse(location.search)?.vm;
+    const supplierId = queryString.parse(location.search)?.supplierId;
+
     useEffect(() => {
         dispatch(
-            spendBySupplierByDateRangeActions.fetchReport({ vendorManager, fromDate, toDate })
+            spendBySupplierByDateRangeActions.fetchReport({
+                vm: vendorManager,
+                fromDate,
+                toDate,
+                supplierId
+            })
         );
-    }, [fromDate, toDate, vendorManager, dispatch]);
+    }, [fromDate, toDate, vendorManager, supplierId, dispatch]);
 
     return (
         <>
@@ -52,7 +59,7 @@ function SpendBySupplierByDateRangeReport() {
                                 `${config.appRoot}/purchasing/reports/spend-by-supplier-by-date-range/export` +
                                 `?&vm=${vendorManager}` +
                                 `&fromDate=${fromDate}` +
-                                `&toDate=${toDate}`
+                                `&toDate=${toDate}&supplierId=${supplierId}`
                             }
                         />
                     ) : (
@@ -72,8 +79,8 @@ function SpendBySupplierByDateRangeReport() {
                                 showRowTitles
                                 placeholderRows={4}
                                 placeholderColumns={4}
+                                showRowCount
                             />
-                            <p>Total number of suppliers: {reportData?.results?.length}</p>
                         </>
                     )}
                 </Grid>
