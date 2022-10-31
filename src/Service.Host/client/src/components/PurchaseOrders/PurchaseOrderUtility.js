@@ -939,13 +939,16 @@ function PurchaseOrderUtility({ creating }) {
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <InputField
+                                        <Dropdown
                                             fullWidth
                                             value={order.sentByMethod}
                                             label="Sent by method"
                                             propertyName="sentByMethod"
                                             onChange={handleFieldChange}
-                                            disabled
+                                            disabled={!creating}
+                                            items={['EMAIL', 'FAX', 'POST', 'EDI', 'NONE']}
+                                            required
+                                            allowNoValue
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
