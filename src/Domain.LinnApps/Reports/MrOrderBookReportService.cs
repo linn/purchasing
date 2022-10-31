@@ -146,7 +146,7 @@
                         new("Qty", "QTY", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new("DateRequested", "REQUESTED DATE", GridDisplayType.TextValue),
                         new("DateAdvised", "ADVISED DATE", GridDisplayType.TextValue),
-                        new("UnitPrice", "UNIT PRICE", GridDisplayType.TextValue)
+                        new("UnitPrice", "UNIT PRICE", GridDisplayType.Value) { DecimalPlaces = 4 }
                     });
             var values = new List<CalculationValueModel>();
 
