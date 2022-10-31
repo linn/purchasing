@@ -1,6 +1,8 @@
 ﻿namespace Linn.Purchasing.Resources
 {
-    public class PurchaseOrderDeliveryResource
+    using Linn.Common.Resources;
+
+    public class PurchaseOrderDeliveryResource : HypermediaResource
     {
         public string Cancelled { get; set; }
 

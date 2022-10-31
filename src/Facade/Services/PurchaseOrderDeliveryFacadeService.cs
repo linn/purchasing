@@ -153,6 +153,7 @@
                         {
                             Success = result.Success,
                             Message = result.Message,
+                            Notes = result.Notes,
                             Errors = result.Errors?.Select(e => new ErrorResource
                                                                    {
                                                                        Descriptor = e.Descriptor,
@@ -189,14 +190,14 @@
             var result = this.domainService
                 .UpdateDeliveries(updates, privileges);
 
-            this.transactionManager.Commit();
+             this.transactionManager.Commit();
 
             //update the mini order to keep its deliveries in sync
             updates.ForEach(u => this.domainService
                 .UpdateMiniOrderDelivery(
                     u.Key.OrderNumber, u.Key.DeliverySequence, u.NewDateAdvised, u.AvailableAtSupplier, u.Qty));
            
-            this.transactionManager.Commit();
+             this.transactionManager.Commit();
 
             return new SuccessResult<BatchUpdateProcessResultResource>(new BatchUpdateProcessResultResource
                                                                            {
@@ -279,7 +280,7 @@
                     orderLine,
                     entities,
                     privileges);
-                this.transactionManager.Commit();
+                 this.transactionManager.Commit();
 
                 // update the mini order to keep its deliveries in sync
                 this.domainService.UpdateMiniOrderDeliveries(entities);
