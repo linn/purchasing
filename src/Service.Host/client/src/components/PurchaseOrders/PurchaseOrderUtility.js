@@ -33,7 +33,8 @@ import {
     utilities,
     SaveBackCancelButtons,
     OnOffSwitch,
-    processSelectorHelpers
+    processSelectorHelpers,
+    getPreviousPaths
 } from '@linn-it/linn-form-components-library';
 import queryString from 'query-string';
 import currenciesActions from '../../actions/currenciesActions';
@@ -62,6 +63,7 @@ import sendPurchaseOrderDeptEmailActions from '../../actions/sendPurchaseOrderDe
 import CancelUnCancelDialog from './CancelUnCancelDialog';
 import FilCancelUnCancelDialog from './FilCancelUnCancelDialog';
 import PlInvRecDialog from './PlInvRecDialog';
+import handleBackClick from '../../helpers/handleBackClick';
 
 function PurchaseOrderUtility({ creating }) {
     const reduxDispatch = useDispatch();
@@ -307,6 +309,7 @@ function PurchaseOrderUtility({ creating }) {
             type: 'currencyChange'
         });
     };
+    const previousPaths = useSelector(state => getPreviousPaths(state));
 
     const handleDetailValueFieldChange = (propertyName, basePropertyName, newValue, detail) => {
         const { exchangeRate } = order;
@@ -1792,6 +1795,9 @@ function PurchaseOrderUtility({ creating }) {
                                                 dispatch(item);
                                             }
                                         }}
+                                        backClick={() =>
+                                            handleBackClick(previousPaths, history.goBack)
+                                        }
                                     />
                                 </Grid>
                             </Grid>
