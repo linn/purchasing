@@ -417,7 +417,6 @@
             PurchaseOrderResource updateResource,
             IEnumerable<string> privileges = null)
         {
-            
             var updated = this.BuildEntityFromResourceHelper(updateResource);
             this.domainService.UpdateOrder(entity, updated, privileges);
         }
