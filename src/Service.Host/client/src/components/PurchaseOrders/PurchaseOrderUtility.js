@@ -1629,7 +1629,7 @@ function PurchaseOrderUtility({ creating }) {
                                                     links={false}
                                                     title="Search Nominals"
                                                     clearSearch={() => {}}
-                                                    placeholder="Enter Nominal Code or click search icon to look up"
+                                                    placeholder="Search Nominals"
                                                     minimumSearchTermLength={3}
                                                 />
                                             </Grid>
