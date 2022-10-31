@@ -52,8 +52,6 @@
 
         public int? PeriodFilCancelled { get; set; }
 
-        public bool CurrentlyUsingOverbookForm { get; set; }
-
         public AddressResource OrderAddress { get; set; }
 
         public int InvoiceAddressId { get; set; }

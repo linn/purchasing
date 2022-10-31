@@ -10,6 +10,7 @@
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.RequestResources;
 
     using NSubstitute;
 
@@ -17,18 +18,25 @@
 
     public class WhenUpdatingPurchaseOrdersOverbookFields : ContextBase
     {
-        private PurchaseOrderResource resource;
+        private PurchaseOrderResource from;
+
+        private PurchaseOrderResource to;
 
         [SetUp]
         public void SetUp()
         {
-            this.resource = new PurchaseOrderResource
+            this.from = new PurchaseOrderResource
             {
                 OrderNumber = 600179,
-                Overbook = "Y",
-                OverbookQty = 1,
-                CurrentlyUsingOverbookForm = true
+                Overbook = "N"
             };
+
+            this.to = new PurchaseOrderResource
+                            {
+                                OrderNumber = 600179,
+                                Overbook = "Y",
+                                OverbookQty = 1,
+                            };
 
             this.MockPurchaseOrderRepository.FindById(600179).Returns(
                 new PurchaseOrder
@@ -38,9 +46,28 @@
                     Supplier = new Supplier { SupplierId = 1224 }
                 });
 
-            this.Response = this.Client.PutAsJsonAsync(
-                $"/purchasing/purchase-orders/600179",
-                this.resource).Result;
+            var resource = new PatchRequestResource<PurchaseOrderResource>
+                               {
+                                   From = this.from,
+                                   To = this.to,
+                               };
+
+            this.MockDomainService.AllowOverbook(
+                Arg.Any<PurchaseOrder>(),
+                "Y",
+                1m,
+                Arg.Any<IEnumerable<string>>())
+                .Returns(new PurchaseOrder
+                             {
+                                 OrderNumber = 600179,
+                                 Overbook = "Y",
+                                 OverbookQty = 1,
+                                 Supplier = new Supplier()
+                            });
+
+            this.Response = this.Client.PatchAsync(
+                $"/purchasing/purchase-orders/{this.from.OrderNumber}",
+                JsonContent.Create(resource)).Result;
         }
 
         [Test]
@@ -72,6 +99,8 @@
         {
             var resultResource = this.Response.DeserializeBody<PurchaseOrderResource>();
             resultResource.Should().NotBeNull();
+            resultResource.Overbook.Should().Be("Y");
+            resultResource.OverbookQty.Should().Be(1);
         }
     }
 }
