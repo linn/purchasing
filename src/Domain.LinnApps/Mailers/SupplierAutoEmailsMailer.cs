@@ -65,7 +65,7 @@
                         null,
                         vendorManagerAddress ?? ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
                         vendorManagerName != "No person assigned" ? vendorManagerName : "Linn",
-                        $"MR Order Book - {timestamp}",
+                        $"Linn Products Order Book - {supplier.Name}",
                         "Please find Order Book attached",
                         new List<Attachment>
                             {

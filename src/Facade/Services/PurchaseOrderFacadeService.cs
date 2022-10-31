@@ -417,19 +417,8 @@
             PurchaseOrderResource updateResource,
             IEnumerable<string> privileges = null)
         {
-            if (updateResource.CurrentlyUsingOverbookForm)
-            {
-                this.domainService.AllowOverbook(
-                    entity,
-                    updateResource.Overbook,
-                    updateResource.OverbookQty,
-                    privileges);
-            }
-            else
-            {
-                var updated = this.BuildEntityFromResourceHelper(updateResource);
-                this.domainService.UpdateOrder(entity, updated, privileges);
-            }
+            var updated = this.BuildEntityFromResourceHelper(updateResource);
+            this.domainService.UpdateOrder(entity, updated, privileges);
         }
 
         private PurchaseOrder BuildEntityFromResourceHelper(PurchaseOrderResource resource)
