@@ -427,8 +427,8 @@
             order.IssuePartsToSupplier = part.SupplierAssembly() ? "Y" : "N";
 
             var partSupplier = this.partSupplierRepository.FindById(new PartSupplierKey { PartNumber = detail.PartNumber, SupplierId = order.SupplierId });
-            detail.OrderUnitOfMeasure = partSupplier != null ? partSupplier.UnitOfMeasure : string.Empty;
-            detail.OurUnitOfMeasure = partSupplier != null ? partSupplier.UnitOfMeasure : string.Empty;
+            detail.OrderUnitOfMeasure = partSupplier != null ? partSupplier.UnitOfMeasure : part.OurUnitOfMeasure;
+            detail.OurUnitOfMeasure = partSupplier != null ? partSupplier.UnitOfMeasure : part.OurUnitOfMeasure;
             detail.SuppliersDesignation = partSupplier != null ? partSupplier.SupplierDesignation : string.Empty;
 
             detail.NetTotalCurrency = detail.OurQty.GetValueOrDefault() 
