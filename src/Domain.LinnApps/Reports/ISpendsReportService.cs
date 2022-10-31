@@ -13,5 +13,7 @@
             int? supplierId);
 
         ResultsModel GetSpendByPartReport(int supplierId);
+
+        ResultsModel GetSpendByPartByDateReport(int supplierId, string fromDate, string toDate);
     }
 }

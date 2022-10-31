@@ -916,6 +916,7 @@
             entity.Property(e => e.SupplierName).HasColumnName("SUPPLIER_NAME");
             entity.Property(e => e.VendorManager).HasColumnName("VENDOR_MANAGER");
             entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER");
+            entity.Property(e => e.PartDescription).HasColumnName("PART_DESCRIPTION");
         }
 
         private void BuildUnacknowledgedOrders(ModelBuilder builder)

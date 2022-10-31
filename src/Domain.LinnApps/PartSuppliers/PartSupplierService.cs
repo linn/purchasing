@@ -215,7 +215,11 @@
 
                 var oldPartSupplier = this.partSupplierRepository.FindById(
                     new PartSupplierKey { PartNumber = part.PartNumber, SupplierId = candidate.OldSupplier.SupplierId });
-                oldPartSupplier.SupplierRanking = 2;
+
+                if (oldPartSupplier != null)
+                {
+                    oldPartSupplier.SupplierRanking = 2;
+                }
             }
             
             var newPartSupplier = this.partSupplierRepository.FindById(

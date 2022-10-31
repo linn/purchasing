@@ -29,6 +29,7 @@ import SuppliersWithUnacknowledgedOrders from './reports/SuppliersWithUnacknowle
 import UnacknowledgedOrdersReport from './reports/UnacknowledgedOrdersReport';
 import SpendByPartOptions from './reports/SpendByPartOptions';
 import SpendByPart from './reports/SpendByPart';
+import SpendByPartByDate from './reports/SpendByPartByDate';
 import OpenDebitNotes from './plDebitCreditNotes/OpenDebitNotes';
 import Search from './plDebitCreditNotes/Search';
 import Note from './plDebitCreditNotes/Note';
@@ -194,6 +195,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/reports/spend-by-part/report"
                                     component={SpendByPart}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/spend-by-part-by-date/report"
+                                    component={SpendByPartByDate}
                                 />
                                 <Route
                                     exact

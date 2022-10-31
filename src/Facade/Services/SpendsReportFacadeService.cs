@@ -71,5 +71,19 @@
 
             return new SuccessResult<ReportReturnResource>(returnResource);
         }
+
+        public IResult<ReportReturnResource> GetSpendByPartByDateReport(SpendBySupplierByDateRangeReportRequestResource options)
+        {
+            if (options?.SupplierId is null)
+            {
+                return new BadRequestResult<ReportReturnResource>("You must supply a supplier id");
+            }
+
+            var results = this.domainService.GetSpendByPartByDateReport(options.SupplierId.Value, options.FromDate, options.ToDate);
+
+            var returnResource = this.resultsModelResourceBuilder.Build(results);
+
+            return new SuccessResult<ReportReturnResource>(returnResource);
+        }
     }
 }
