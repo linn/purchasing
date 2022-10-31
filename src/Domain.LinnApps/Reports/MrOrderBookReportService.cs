@@ -55,7 +55,7 @@
                         new("DateAdvised", "DateAdvised", GridDisplayType.TextValue)
                     });
 
-            foreach (var group in partGroups)
+            foreach (var group in partGroups.OrderBy(g => g.Key))
             {
                 var values = new List<CalculationValueModel>();
 
