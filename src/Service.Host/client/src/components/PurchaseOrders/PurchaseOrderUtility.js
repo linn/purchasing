@@ -945,9 +945,8 @@ function PurchaseOrderUtility({ creating }) {
                                             label="Sent by method"
                                             propertyName="sentByMethod"
                                             onChange={handleFieldChange}
-                                            disabled={!creating}
+                                            disabled={creating}
                                             items={['EMAIL', 'FAX', 'POST', 'EDI', 'NONE']}
-                                            required
                                             allowNoValue
                                         />
                                     </Grid>
