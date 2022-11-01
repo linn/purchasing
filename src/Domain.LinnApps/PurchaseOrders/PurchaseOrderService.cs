@@ -1071,6 +1071,7 @@
             var updatedDetail = updatedOrder.Details.First();
 
             miniOrder.Remarks = updatedOrder.Remarks;
+            miniOrder.SentByMethod = updatedOrder.SentByMethod;
 
             var nomAcc = this.nominalAccountRepository.FindById((int)updatedDetail.OrderPosting.NominalAccountId);
             miniOrder.Nominal = nomAcc.NominalCode;
@@ -1152,6 +1153,7 @@
         private void UpdateOrderProperties(PurchaseOrder current, PurchaseOrder updated)
         {
             current.Remarks = updated.Remarks;
+            current.SentByMethod = updated.SentByMethod;
         }
 
         private void SendOrderPdfEmail(

@@ -146,6 +146,8 @@
         [Test]
         public void ShouldSetFields()
         {
+            this.result.SentByMethod.Should().Be("EMAIL");
+
             var firstDetail = this.result.Details.First();
 
             firstDetail.OrderPosting.Id.Should().Be(123);
