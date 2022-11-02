@@ -1703,6 +1703,7 @@ function PurchaseOrderUtility({ creating }) {
                                                     }
                                                     disabled={!creating}
                                                     rows={2}
+                                                    maxLength={200}
                                                 />
                                             </Grid>
                                             {!creating && detail.purchaseDeliveries && (
