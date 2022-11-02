@@ -48,7 +48,7 @@
                         new("Delivery", "Delivery", GridDisplayType.TextValue),
                         new("Date", "Date", GridDisplayType.TextValue),
                         new("QtyOnOrder", "Order Qty", GridDisplayType.Value) { DecimalPlaces = 2 },
-                        new("Qty", "Qty", GridDisplayType.Value) { DecimalPlaces = 2 },
+                        new("Qty", "Open Order Qty", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new("QtyReceived", "Qty Received", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new("QtyInvoiced", "Qty Invoiced", GridDisplayType.Value) { DecimalPlaces = 2 },
                         new("DateRequested", "DateRequested", GridDisplayType.TextValue),
@@ -60,6 +60,7 @@
                 var values = new List<CalculationValueModel>();
 
                 foreach (var member in group)
+
                 foreach (var delivery in member.Deliveries.Where(d => d.Quantity > d.QuantityReceived)
                              .OrderBy(c => c.DeliverySequence))
                 {
@@ -88,7 +89,7 @@
                     values.Add(
                         new CalculationValueModel
                             {
-                                RowId = rowId, ColumnId = "QtyReceived", Value = delivery.QuantityReceived
+                                RowId = rowId, ColumnId = "QtyReceived", Value = member.QuantityReceived.GetValueOrDefault()
                             });
                     values.Add(
                         new CalculationValueModel
