@@ -119,11 +119,10 @@ function Supplier({ creating }) {
             reduxDispatch(supplierActions.fetch(id));
         }
     }, [id, reduxDispatch]);
-    const [tab, setTab] = useState(4);
+    const [tab, setTab] = useState(0);
     const setEditStatus = status => reduxDispatch(supplierActions.setEditStatus(status));
 
     const handleFieldChange = (propertyName, newValue) => {
-        console.log(propertyName, newValue);
         setEditStatus('edit');
         let formatted = newValue;
         if (propertyName === 'plannerId' || propertyName === 'groupId') {
