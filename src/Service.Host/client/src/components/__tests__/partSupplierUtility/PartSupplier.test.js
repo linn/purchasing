@@ -270,12 +270,14 @@ describe('When save clicked when creating...', () => {
         // Part Supplier Tab
         let input = screen.getByLabelText('Part');
         fireEvent.click(input);
+        fireEvent.keyDown(input, { key: 'Enter', keyCode: 13, charCode: 13 });
         let result = screen.getByRole('button', { name: 'SOME PART SOME DESC' });
         fireEvent.click(result);
 
         input = screen.getByLabelText('Supplier');
         fireEvent.click(input);
-        result = screen.getByRole('button', { name: 'SOME SUPPLIER 123' });
+        fireEvent.keyDown(input, { key: 'Enter', keyCode: 13, charCode: 13 });
+        result = screen.getByRole('button', { name: '123 SOME SUPPLIER' });
         fireEvent.click(result);
 
         // Order Details tab
@@ -339,6 +341,8 @@ describe('When new part selected...', () => {
     test('Should set designation and part description to be selected results description', () => {
         const input = screen.getByLabelText('Part');
         fireEvent.click(input);
+        fireEvent.keyDown(input, { key: 'Enter', keyCode: 13, charCode: 13 });
+
         const result = screen.getByText('SOME PART');
         fireEvent.click(result);
         expect(screen.getAllByText('SOME DESC')).toHaveLength(2);
