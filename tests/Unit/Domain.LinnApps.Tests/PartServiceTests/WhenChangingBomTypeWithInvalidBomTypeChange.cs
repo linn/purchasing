@@ -22,7 +22,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.authService
+            this.AuthService
                 .HasPermissionFor(AuthorisedAction.ChangeBomType, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
@@ -31,7 +31,7 @@
                                PartNumber = "TEST 001",
                                BomType = "C"
                            };
-            this.partRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>()).Returns(part);
+            this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>()).Returns(part);
 
             this.bomTypeChange = new BomTypeChange
                                      {

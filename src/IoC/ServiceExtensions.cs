@@ -9,7 +9,6 @@
     using Linn.Common.Configuration;
     using Linn.Common.Email;
     using Linn.Common.Facade;
-    using Linn.Common.Logging;
     using Linn.Common.Pdf;
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
@@ -26,16 +25,15 @@
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
-    using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrderReqs;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
-    using Linn.Purchasing.Domain.LinnApps.PurchaseOrders.MiniOrders;
     using Linn.Purchasing.Domain.LinnApps.Reports;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Proxy;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.Boms;
     using Linn.Purchasing.Resources.MaterialRequirements;
     using Linn.Purchasing.Resources.RequestResources;
     using Linn.Purchasing.Resources.SearchResources;
@@ -90,7 +88,8 @@
                 .AddTransient<IBuilder<BomChange>, BomChangeResourceBuilder>()
                 .AddTransient<IBuilder<Bom>, BomResourceBuilder>()
                 .AddTransient<IBuilder<PcasChange>, PcasChangeResourceBuilder>()
-                .AddTransient<IBuilder<BomTypeChange>, BomTypeChangeResourceBuilder>();
+                .AddTransient<IBuilder<BomTypeChange>, BomTypeChangeResourceBuilder>()
+                .AddTransient<IBuilder<CircuitBoard>, CircuitBoardResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -148,7 +147,8 @@
                 .AddTransient<IFacadeResourceService<LedgerPeriod, int, LedgerPeriodResource, LedgerPeriodResource>, LedgerPeriodFacadeService>()
                 .AddTransient<IForecastWeekChangesFacadeService, ForecastWeekChangesFacadeService>()
                 .AddTransient<IFacadeResourceService<ChangeRequest, int, ChangeRequestResource, ChangeRequestResource>, ChangeRequestFacadeService>()
-                .AddTransient<IFacadeResourceService<Bom, int, BomResource, BomResource>, BomFacadeService>();
+                .AddTransient<IFacadeResourceService<Bom, int, BomResource, BomResource>, BomFacadeService>()
+                .AddTransient<IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource>, CircuitBoardFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
