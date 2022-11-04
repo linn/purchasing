@@ -9,6 +9,7 @@
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
+    using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
     using NSubstitute;
 
@@ -43,6 +44,8 @@
 
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { PartNumber = "PART", Description = "DESC" });
+            this.SupplierRepository.FindById(1)
+                .Returns(new Supplier { SupplierId = 1, Name = "A SUPPLIER" });
             this.MockAuthService.HasPermissionFor(
                     AuthorisedAction.PartSupplierCreate, 
                     Arg.Any<IEnumerable<string>>())
@@ -57,6 +60,7 @@
             this.result.PartNumber.Should().Be("PART");
             this.result.SupplierDesignation.Should().Be("1234567");
             this.result.OverbookingAllowed.Should().Be("Y");
+            this.result.Supplier.Name.Should().Be("A SUPPLIER");
         }
     }
 }

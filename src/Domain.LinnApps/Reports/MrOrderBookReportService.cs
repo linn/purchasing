@@ -58,7 +58,6 @@
             foreach (var group in partGroups.OrderBy(g => g.Key))
             {
                 var values = new List<CalculationValueModel>();
-
                 foreach (var member in group)
 
                 foreach (var delivery in member.Deliveries.Where(d => d.Quantity > d.QuantityReceived)
@@ -85,7 +84,12 @@
                                 RowId = rowId, ColumnId = "QtyOnOrder", Value = member.OurQuantity
                             });
                     values.Add(
-                        new CalculationValueModel { RowId = rowId, ColumnId = "Qty", Value = delivery.Quantity });
+                        new CalculationValueModel 
+                            { 
+                                RowId = rowId, 
+                                ColumnId = "Qty", 
+                                Value = member.OurQuantity - member.QuantityReceived.GetValueOrDefault()
+                            });
                     values.Add(
                         new CalculationValueModel
                             {

@@ -143,6 +143,10 @@
 
             candidate.CreatedBy = this.employeeRepository.FindById(candidate.CreatedBy.Id);
             var part = this.partRepository.FindBy(x => x.PartNumber == candidate.PartNumber);
+            if (part == null)
+            {
+                throw new PartSupplierException("Part Not Found");
+            }
             candidate.Part = part;
             
             if (string.IsNullOrEmpty(candidate.SupplierDesignation))
@@ -151,6 +155,10 @@
             }
 
             candidate.Supplier = this.supplierRepository.FindById(candidate.SupplierId);
+            if (candidate.Supplier == null)
+            {
+                throw new PartSupplierException("Supplier Not Found");
+            }
 
             if (!string.IsNullOrEmpty(candidate.OrderMethod?.Name))
             {

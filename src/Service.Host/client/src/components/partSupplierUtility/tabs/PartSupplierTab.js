@@ -2,14 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-
-import {
-    InputField,
-    LinkButton,
-    Typeahead,
-    utilities
-} from '@linn-it/linn-form-components-library';
+import { InputField, LinkButton, utilities } from '@linn-it/linn-form-components-library';
 import config from '../../../config';
+import Search from '../../Search';
 
 function PartSupplierTab({
     partNumber,
@@ -32,25 +27,24 @@ function PartSupplierTab({
     return (
         <Grid container spacing={3}>
             <Grid item xs={4}>
-                <Typeahead
-                    onSelect={newValue => {
+                <Search
+                    propertyName="partNumber"
+                    label="Part"
+                    resultsInModal
+                    resultLimit={100}
+                    value={partNumber}
+                    handleValueChange={handleFieldChange}
+                    disabled={!creating}
+                    search={searchParts}
+                    searchResults={partsSearchResults}
+                    loading={partsSearchLoading}
+                    priorityFunction="closestMatchesFirst"
+                    onResultSelect={newValue => {
                         handleFieldChange('partNumber', newValue.partNumber);
                         handleFieldChange('partDescription', newValue.description);
                         handleFieldChange('designation', newValue.description);
                     }}
-                    label="Part"
-                    modal
-                    propertyName="partNumber"
-                    items={partsSearchResults}
-                    value={partNumber}
-                    loading={partsSearchLoading}
-                    fetchItems={searchParts}
-                    links={false}
-                    text
-                    disabled={!creating}
                     clearSearch={() => {}}
-                    placeholder="Search Parts"
-                    minimumSearchTermLength={3}
                 />
             </Grid>
             <Grid item xs={8}>
@@ -63,25 +57,24 @@ function PartSupplierTab({
                 />
             </Grid>
             <Grid item xs={4}>
-                <Typeahead
-                    onSelect={newValue => {
+                <Search
+                    propertyName="supplierId"
+                    label="Supplier"
+                    resultsInModal
+                    resultLimit={100}
+                    value={supplierId}
+                    handleValueChange={handleFieldChange}
+                    disabled={!creating}
+                    search={searchSuppliers}
+                    searchResults={suppliersSearchResults}
+                    loading={suppliersSearchLoading}
+                    priorityFunction="closestMatchesFirst"
+                    onResultSelect={newValue => {
                         handleFieldChange('supplierId', newValue.id);
-                        handleFieldChange('supplierName', newValue.name);
+                        handleFieldChange('supplierName', newValue.description);
                         handleFieldChange('currencyCode', newValue.currencyCode);
                     }}
-                    label="Supplier"
-                    modal
-                    propertyName="supplierId"
-                    items={suppliersSearchResults}
-                    value={supplierId?.toString()}
-                    loading={suppliersSearchLoading}
-                    fetchItems={searchSuppliers}
-                    disabled={!creating}
-                    links={false}
-                    text
                     clearSearch={() => {}}
-                    placeholder="Search Suppliers"
-                    minimumSearchTermLength={3}
                 />
             </Grid>
             <Grid item xs={8}>
