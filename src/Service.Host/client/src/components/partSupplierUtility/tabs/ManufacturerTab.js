@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 
-import { InputField, Typeahead } from '@linn-it/linn-form-components-library';
+import { InputField } from '@linn-it/linn-form-components-library';
+import Search from '../../Search';
 
 function ManufacturerTab({
     handleFieldChange,
@@ -17,23 +18,22 @@ function ManufacturerTab({
     return (
         <Grid container spacing={3}>
             <Grid item xs={4}>
-                <Typeahead
-                    onSelect={newValue => {
+                <Search
+                    propertyName="manufacturerCode"
+                    label="Manufacturer"
+                    resultsInModal
+                    resultLimit={100}
+                    value={manufacturer}
+                    handleValueChange={handleFieldChange}
+                    search={searchManufacturers}
+                    searchResults={manufacturersSearchResults}
+                    loading={manufacturersSearchLoading}
+                    priorityFunction="closestMatchesFirst"
+                    onResultSelect={newValue => {
                         handleFieldChange('manufacturerCode', newValue.code);
                         handleFieldChange('manufacturerName', newValue.description);
                     }}
-                    label="Manufacturer"
-                    modal
-                    propertyName="manufacturerId"
-                    items={manufacturersSearchResults}
-                    value={manufacturer}
-                    loading={manufacturersSearchLoading}
-                    fetchItems={searchManufacturers}
-                    links={false}
-                    text
                     clearSearch={() => {}}
-                    placeholder="Search manufacturers"
-                    minimumSearchTermLength={3}
                 />
             </Grid>
             <Grid item xs={6}>

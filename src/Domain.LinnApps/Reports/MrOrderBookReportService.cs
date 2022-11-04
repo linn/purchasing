@@ -58,7 +58,6 @@
             foreach (var group in partGroups.OrderBy(g => g.Key))
             {
                 var values = new List<CalculationValueModel>();
-
                 foreach (var member in group)
 
                 foreach (var delivery in member.Deliveries.Where(d => d.Quantity > d.QuantityReceived)

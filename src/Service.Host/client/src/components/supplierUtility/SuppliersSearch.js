@@ -39,7 +39,7 @@ function SuppliersSearch() {
     const createUrl = utilities.getHref(item, 'create');
 
     const getClosedString = dateClosed =>
-        dateClosed ? ` --- CLOSED: ${new Date(dateClosed).toLocaleDateString('en-GB')}` : '';
+        dateClosed ? `CLOSED: ${new Date(dateClosed).toLocaleDateString('en-GB')}` : '';
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
@@ -59,7 +59,7 @@ function SuppliersSearch() {
                         search={searchSuppliers}
                         searchResults={searchResults.map(s => ({
                             ...s,
-                            description: `${s.description} ${getClosedString(s.dateClosed)}`
+                            description: `${getClosedString(s.dateClosed)}`
                         }))}
                         loading={searchLoading}
                         priorityFunction="closestMatchesFirst"

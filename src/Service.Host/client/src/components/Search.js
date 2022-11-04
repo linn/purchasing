@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
         margin: theme.spacing(6),
         minWidth: theme.spacing(62)
     },
-    pad: { padding: theme.spacing(1) }
+    pad: { padding: theme.spacing(2) }
 }));
 function Search({
     propertyName,
@@ -41,7 +41,10 @@ function Search({
     onResultSelect,
     resultLimit,
     resultsInModal,
-    clearSearch
+    clearSearch,
+    searchOnEnter,
+    onKeyPressFunctions,
+    helperText
 }) {
     const classes = useStyles();
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -49,11 +52,14 @@ function Search({
 
     const countMatchingCharacters = (item, searchTerm) => {
         let count = 0;
-        for (let i = 0; i < searchTerm.length; i += 1) {
-            if (item.name.toUpperCase?.()[i] === searchTerm.toUpperCase()[i]) {
-                count += 1;
+        if (searchTerm) {
+            for (let i = 0; i < searchTerm.length; i += 1) {
+                if (item.name.toUpperCase?.()[i] === searchTerm.toUpperCase()[i]) {
+                    count += 1;
+                }
             }
         }
+
         return count;
     };
 
@@ -146,17 +152,22 @@ function Search({
                 label={label}
                 adornment={<SearchIcon />}
                 onChange={handleValueChange}
-                helperText="PRESS ENTER TO SEARCH"
+                helperText={helperText}
                 textFieldProps={{
                     disabled,
                     onKeyDown: data => {
-                        if (data.keyCode === 13) {
+                        if (searchOnEnter && data.keyCode === 13) {
                             if (resultsInModal) {
                                 setDialogOpen(true);
                             }
                             search(value);
                             setHasSearched(true);
                         }
+                        onKeyPressFunctions.forEach(element => {
+                            if (data.keyCode === element.keyCode) {
+                                element.action();
+                            }
+                        });
                     }
                 }}
             />
@@ -194,16 +205,24 @@ Search.propTypes = {
     loading: PropTypes.bool,
     priorityFunction: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
     resultLimit: PropTypes.number,
-    resultsInModal: PropTypes.bool
+    resultsInModal: PropTypes.bool,
+    searchOnEnter: PropTypes.bool,
+    onKeyPressFunctions: PropTypes.arrayOf(
+        PropTypes.shape({ keyCode: PropTypes.number, action: PropTypes.func })
+    ),
+    helperText: PropTypes.string
 };
 Search.defaultProps = {
+    searchOnEnter: true,
+    onKeyPressFunctions: [],
     value: null,
     disabled: false,
     searchResults: [],
     loading: false,
     priorityFunction: null,
     resultLimit: null,
-    resultsInModal: false
+    resultsInModal: false,
+    helperText: 'PRESS ENTER TO SEARCH'
 };
 
 export default Search;
