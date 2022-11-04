@@ -5,6 +5,7 @@
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Domain.LinnApps.Finance.Models;
     using Linn.Purchasing.Domain.LinnApps.Forecasting;
@@ -214,7 +215,11 @@
                         ?.ImmediateLiability))
                 .AddTransient<IQueryRepository<ImmediateLiabilityBase>, EntityFrameworkQueryRepository<ImmediateLiabilityBase>>(
                     r => new EntityFrameworkQueryRepository<ImmediateLiabilityBase>(r.GetService<ServiceDbContext>()
-                        ?.ImmediateLiabilityBase));
+                        ?.ImmediateLiabilityBase))
+                .AddTransient<IRepository<CircuitBoard, string>, CircuitBoardRepository>()
+                .AddTransient<IQueryRepository<BoardComponentSummary>, EntityFrameworkQueryRepository<BoardComponentSummary>>(
+                    r => new EntityFrameworkQueryRepository<BoardComponentSummary>(r.GetService<ServiceDbContext>()
+                        ?.BoardComponentSummary));
         }
     }
 }

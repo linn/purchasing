@@ -6,6 +6,7 @@
     using Linn.Common.Facade.Carter.Handlers;
     using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.Boms;
     using Linn.Purchasing.Resources.MaterialRequirements;
     using Linn.Purchasing.Service.ResultHandlers;
 
@@ -85,7 +86,8 @@
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<LedgerPeriodResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<ChangeRequestResource>>()
                 .AddTransient<IHandler, JsonResultHandler<BomResource>>()
-                .AddTransient<IHandler, JsonResultHandler<BomTypeChangeResource>>();
+                .AddTransient<IHandler, JsonResultHandler<BomTypeChangeResource>>()
+                .AddTransient<IHandler, JsonResultHandler<CircuitBoardResource>>();
         }
     }
 }

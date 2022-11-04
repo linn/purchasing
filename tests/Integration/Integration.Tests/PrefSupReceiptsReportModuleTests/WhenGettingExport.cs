@@ -16,9 +16,10 @@
         [SetUp]
         public void SetUp()
         {
-            var csv = new List<List<string>>()
+            var csv = new List<List<string>>
                           {
-                              new List<string> {"mary", "little", "lamb"}, new List<string> {"princess", "frog", "kiss"}
+                              new List<string> { "mary", "little", "lamb" },
+                              new List<string> { "princess", "frog", "kiss" }
                           };
 
             this.ReportFacadeService.GetExport("abc1234567", "xyz1234567")
