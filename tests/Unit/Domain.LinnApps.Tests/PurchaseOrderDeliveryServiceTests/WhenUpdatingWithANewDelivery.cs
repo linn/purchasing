@@ -117,7 +117,7 @@
                 this.baseVatAmount + (updateData.OurDeliveryQty.GetValueOrDefault()
                                       * this.line.BaseOurUnitPrice.GetValueOrDefault()));
             updated.QuantityOutstanding.Should().Be(
-               updateData.OurDeliveryQty);
+              10);
             updated.RescheduleReason.Should().Be("REQUESTED");
             updated.AvailableAtSupplier.Should().Be(updateData.AvailableAtSupplier);
         }

@@ -456,6 +456,8 @@
                             existing = this.repository.FindBy(
                                 d => d.OrderNumber == orderNumber && d.OrderLine == orderLine
                                                                   && d.DeliverySeq == seq);
+                            existing.QuantityOutstanding =
+                                existing.QuantityOutstanding - existing.OurDeliveryQty + del.OurDeliveryQty;
                             existing.OurDeliveryQty = del.OurDeliveryQty;
                             existing.OrderDeliveryQty = del.OurDeliveryQty / detail.OrderConversionFactor;
                             existing.OurUnitPriceCurrency = detail.OurUnitPriceCurrency;
@@ -481,8 +483,6 @@
                                 (del.OurDeliveryQty.GetValueOrDefault() * detail.BaseOurUnitPrice.GetValueOrDefault())
                                 + baseVatAmount,
                                 2);
-                            existing.QuantityOutstanding =
-                                del.OurDeliveryQty - existing.OurDeliveryQty + existing.QuantityOutstanding;
                             existing.RescheduleReason = reason;
                             existing.AvailableAtSupplier = del.AvailableAtSupplier;
                             return existing;
