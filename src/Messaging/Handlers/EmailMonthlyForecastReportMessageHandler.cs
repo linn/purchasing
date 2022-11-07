@@ -40,7 +40,7 @@
             }
             catch (Exception e)
             {
-                this.Logger.Error(e.Message);
+                this.Logger.Error(e.Message, e);
                 return false;
             }
         }
