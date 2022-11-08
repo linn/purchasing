@@ -110,7 +110,7 @@ class Program
                     && o.OurQuantity > o.QuantityReceived
                     && !string.IsNullOrEmpty(o.AuthorisedBy)).Any())
             {
-                if (args[1] != "all" && supplierIds.Contains(s.SupplierId))
+                if (args[1] == "all" || supplierIds.Contains(s.SupplierId))
                 {
                     emailOrderBookMessageDispatcher.Dispatch(
                         new EmailOrderBookMessageResource
