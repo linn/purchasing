@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Tools": {
+      "commandName": "Project",
+      "commandLineArgs": "",
+      "workingDirectory": ""
+    }
+  }
+}
