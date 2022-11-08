@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Reports
 {
     using System.Collections.Generic;
+    using System.Diagnostics.Metrics;
     using System.Linq;
 
     using Linn.Common.Persistence;
@@ -135,7 +136,7 @@
                     x => x.SupplierId.Equals(supplierId) && x.PartSupplierRecord != null && x.JobRef.Equals(jobRef)
                          && !x.DateCancelled.HasValue && !string.IsNullOrEmpty(x.AuthorisedBy)
                          && x.OurQuantity > x.QuantityReceived && !string.IsNullOrEmpty(x.AuthorisedBy))
-                .OrderBy(x => x.OrderNumber).ToList();
+                .OrderBy(x => x.PartNumber).ToList();
 
             var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
 
@@ -155,7 +156,7 @@
                     });
             var values = new List<CalculationValueModel>();
 
-            foreach (var datum in data.OrderByDescending(d => d.OrderNumber))
+            foreach (var datum in data.OrderBy(d => d.PartNumber))
             {
                 foreach (var delivery in datum.Deliveries.Where(d => d.Quantity > d.QuantityReceived)
                              .OrderBy(c => c.DeliverySequence))
@@ -200,9 +201,9 @@
                         new CalculationValueModel 
                             { 
                                 RowId = rowId,
-                                ColumnId = "Qty", 
-                                Value = delivery.Quantity
-                            });
+                            ColumnId = "Qty",
+                            Value = datum.OurQuantity - datum.QuantityReceived.GetValueOrDefault()
+                        });
                     values.Add(
                         new CalculationValueModel
                             {
