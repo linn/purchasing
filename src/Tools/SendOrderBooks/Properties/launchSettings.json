@@ -2,8 +2,8 @@
   "profiles": {
     "Tools": {
       "commandName": "Project",
-      "commandLineArgs": "true all lewisrenfrew7@gmail.com",
-      "workingDirectory": "C:\\Users\\Lewis Renfrew\\Projects\\purchasing2\\purchasing\\src\\Tools"
+      "commandLineArgs": "",
+      "workingDirectory": ""
     }
   }
 }
