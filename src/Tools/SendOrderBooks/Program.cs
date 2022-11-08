@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Tools;
+﻿namespace Linn.Purchasing.Tools.SendOrderBooks;
 
 using System;
 
@@ -44,7 +44,7 @@ class Program
     {
         var services = new ServiceCollection();
         ConfigureServices(services);
-        
+
         if (args.Length < 2)
         {
             Console.WriteLine("Not enough arguments passed!");
@@ -53,15 +53,15 @@ class Program
             Console.WriteLine("Third arg (string) if test = true, must specify the test address");
             return;
         }
-        
+
         if (!bool.TryParse(args[0], out var test))
         {
             Console.WriteLine("First argument must be a boolean to specify whether to run in test configuration or not");
             return;
         }
-        
+
         var supplierIds = new List<int>();
-        
+
         if (args[1] != "all")
         {
             var supplierIdStrings = args[1].Split(",");
@@ -72,11 +72,11 @@ class Program
                     Console.WriteLine("Invalid Supplier Id(s) in list -- must be a comma separated list of numbers.");
                     return;
                 }
-               
+
                 supplierIds.Add(supplierId);
             }
         }
-        
+
         if (test)
         {
             if (args.Length < 3 || !IsValidEmail(args[2]))
@@ -91,12 +91,12 @@ class Program
         var repository =
             serviceProvider.GetRequiredService<IRepository<SupplierAutoEmails, int>>();
 
-        var outstandingPosRepository 
+        var outstandingPosRepository
             = serviceProvider.GetRequiredService<IQueryRepository<MrPurchaseOrderDetail>>();
 
         var mrMaster = serviceProvider.GetRequiredService<ISingleRecordRepository<MrMaster>>();
 
-        var emailOrderBookMessageDispatcher 
+        var emailOrderBookMessageDispatcher
             = serviceProvider.GetRequiredService<IMessageDispatcher<EmailOrderBookMessageResource>>();
 
         // dispatch a message for all the suppliers to receive an order book
@@ -114,12 +114,12 @@ class Program
                 {
                     emailOrderBookMessageDispatcher.Dispatch(
                         new EmailOrderBookMessageResource
-                            {
-                                ForSupplier = s.SupplierId,
-                                Timestamp = DateTime.Now,
-                                ToAddress = s.EmailAddresses,
-                                Test = test
-                            });
+                        {
+                            ForSupplier = s.SupplierId,
+                            Timestamp = DateTime.Now,
+                            ToAddress = s.EmailAddresses,
+                            Test = test
+                        });
                 }
             }
         }
