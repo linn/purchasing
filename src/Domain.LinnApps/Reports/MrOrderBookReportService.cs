@@ -200,9 +200,9 @@
                         new CalculationValueModel 
                             { 
                                 RowId = rowId,
-                            ColumnId = "Qty",
-                            Value = datum.OurQuantity - datum.QuantityReceived.GetValueOrDefault()
-                        });
+                                ColumnId = "Qty",
+                                Value = datum.OurQuantity - datum.QuantityReceived.GetValueOrDefault()
+                            });
                     values.Add(
                         new CalculationValueModel
                             {
