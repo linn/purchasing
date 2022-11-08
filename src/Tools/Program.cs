@@ -110,14 +110,17 @@ class Program
                     && o.OurQuantity > o.QuantityReceived
                     && !string.IsNullOrEmpty(o.AuthorisedBy)).Any())
             {
-                emailOrderBookMessageDispatcher.Dispatch(
-                    new EmailOrderBookMessageResource
-                        {
-                            ForSupplier = s.SupplierId,
-                            Timestamp = DateTime.Now,
-                            ToAddress = s.EmailAddresses,
-                            Test = test
-                        });
+                if (args[1] != "all" && supplierIds.Contains(s.SupplierId))
+                {
+                    emailOrderBookMessageDispatcher.Dispatch(
+                        new EmailOrderBookMessageResource
+                            {
+                                ForSupplier = s.SupplierId,
+                                Timestamp = DateTime.Now,
+                                ToAddress = s.EmailAddresses,
+                                Test = test
+                            });
+                }
             }
         }
     }
