@@ -2,7 +2,7 @@
   "profiles": {
     "Tools": {
       "commandName": "Project",
-      "commandLineArgs": "true all lewis.renfrew@linn.co.uk"
+      "commandLineArgs": ""
     }
   }
 }
