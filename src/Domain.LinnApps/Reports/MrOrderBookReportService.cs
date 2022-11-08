@@ -1,7 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Reports
 {
     using System.Collections.Generic;
-    using System.Diagnostics.Metrics;
     using System.Linq;
 
     using Linn.Common.Persistence;
