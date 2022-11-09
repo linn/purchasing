@@ -274,7 +274,7 @@
                                !string.IsNullOrEmpty(resource.DateRequired)
                                    ? DateTime.Parse(resource.DateRequired)
                                    : null,
-                           RequestedById = resource.RequestedBy.Id,
+                           RequestedById = resource.RequestedBy.Id.GetValueOrDefault(),
                            AuthorisedById = resource.AuthorisedBy?.Id,
                            SecondAuthById = resource.SecondAuthBy?.Id,
                            FinanceCheckById = resource.FinanceCheckBy?.Id,

@@ -60,6 +60,7 @@ import PurchaseOrderDeliveriesUtility from '../PurchaseOrderDeliveriesUtility';
 import sendOrderAuthEmailActions from '../../actions/sendPurchaseOrderAuthEmailActions';
 import purchaseOrderDeliveriesActions from '../../actions/purchaseOrderDeliveriesActions';
 import sendPurchaseOrderDeptEmailActions from '../../actions/sendPurchaseOrderDeptEmailActions';
+import vendorManagersActions from '../../actions/vendorManagersActions';
 import CancelUnCancelDialog from './CancelUnCancelDialog';
 import FilCancelUnCancelDialog from './FilCancelUnCancelDialog';
 import PlInvRecDialog from './PlInvRecDialog';
@@ -179,6 +180,9 @@ function PurchaseOrderUtility({ creating }) {
         } else if (creating && suggestedValues) {
             reduxDispatch(purchaseOrderActions.clearErrorsForItem());
             dispatch({ type: 'initialise', payload: suggestedValues });
+            if (utilities.getHref(applicationState, 'create-for-other-user')) {
+                reduxDispatch(vendorManagersActions.fetch());
+            }
         }
     }, [item, applicationState, creating, reduxDispatch, suggestedValues]);
 
@@ -205,6 +209,10 @@ function PurchaseOrderUtility({ creating }) {
     const currencies = useSelector(state => collectionSelectorHelpers.getItems(state.currencies));
     const unitsOfMeasure = useSelector(reduxState =>
         collectionSelectorHelpers.getItems(reduxState.unitsOfMeasure)
+    );
+
+    const vendorManagers = useSelector(reduxState =>
+        collectionSelectorHelpers.getItems(reduxState.vendorManagers)
     );
 
     const deptSearchResults = useSelector(state =>
@@ -475,6 +483,17 @@ function PurchaseOrderUtility({ creating }) {
     const filCancelLine = lineNumber => {
         setCurrentLine(lineNumber);
         setFilCancelDialogOpen(true);
+    };
+
+    const getDistinctVendorManagers = () => {
+        const distinctUserNumbers = [...new Set(vendorManagers.map(x => x.userNumber))];
+        const distinctVendorManagers = distinctUserNumbers.map(e =>
+            vendorManagers.find(v => v.userNumber === e)
+        );
+        return distinctVendorManagers.map(v => ({
+            id: v.userNumber.toString(),
+            displayText: v.name
+        }));
     };
 
     return (
@@ -1005,13 +1024,28 @@ function PurchaseOrderUtility({ creating }) {
                                 )}
                                 <Grid container spacing={1} xs={7}>
                                     <Grid item xs={6}>
-                                        <InputField
-                                            fullWidth
-                                            value={`${order.requestedBy?.fullName} (${order.requestedBy?.id})`}
-                                            label="Requested By"
-                                            disabled
-                                            propertyName="requestedBy"
-                                        />
+                                        {creating &&
+                                        utilities.getHref(
+                                            applicationState,
+                                            'create-for-other-user'
+                                        ) ? (
+                                            <Dropdown
+                                                fullWidth
+                                                value={order.requestedBy?.id}
+                                                label="Requested By (Leave blank to set as you)"
+                                                onChange={handleFieldChange}
+                                                items={getDistinctVendorManagers()}
+                                                propertyName="requestedBy"
+                                            />
+                                        ) : (
+                                            <InputField
+                                                fullWidth
+                                                value={`${order.requestedBy?.fullName} (${order.requestedBy?.id})`}
+                                                label="Requested By"
+                                                disabled
+                                                propertyName="requestedBy"
+                                            />
+                                        )}
                                     </Grid>
                                     <Grid item xs={6}>
                                         <InputField

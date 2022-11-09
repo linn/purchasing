@@ -78,6 +78,20 @@ const stateWithSuggestedValues = {
     }
 };
 
+const stateWithCreateForOtherUserLink = {
+    ...stateWithSuggestedValues,
+    purchaseOrder: {
+        applicationState: {
+            links: [
+                {
+                    href: '/purchasing/purchase-orders/create',
+                    rel: 'create-for-other-user'
+                }
+            ]
+        }
+    }
+};
+
 describe('When order...', () => {
     beforeEach(() => {
         cleanup();
@@ -301,5 +315,34 @@ describe('When creating from suggested Values', () => {
                 stateWithSuggestedValues[suggestedPurchaseOrderValues.item].item.supplier.name
             )
         ).toBeInTheDocument();
+    });
+});
+
+describe('When creating and create-for-other-user link...', () => {
+    beforeEach(() => {
+        cleanup();
+        jest.clearAllMocks();
+        useSelector.mockImplementation(callback => callback(stateWithCreateForOtherUserLink));
+        render(<PurchaseOrderUtility creating />);
+    });
+
+    test('Should Render Dropdown for requestedBy field', () => {
+        expect(
+            screen.getByLabelText('Requested By (Leave blank to set as you)')
+        ).toBeInTheDocument();
+    });
+});
+
+describe('When creating and no create-for-other-user link...', () => {
+    beforeEach(() => {
+        cleanup();
+        jest.clearAllMocks();
+        useSelector.mockImplementation(callback => callback(stateWithSuggestedValues));
+        render(<PurchaseOrderUtility creating />);
+    });
+
+    test('Should render readonly input for requestedBy field ', () => {
+        expect(screen.getByLabelText('Requested By')).toBeInTheDocument();
+        expect(screen.getByLabelText('Requested By')).toBeDisabled();
     });
 });

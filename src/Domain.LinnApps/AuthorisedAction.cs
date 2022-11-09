@@ -26,6 +26,8 @@
 
         public const string PurchaseOrderCreate = "purchase-order.create";
 
+        public const string PurchaseOrderCreateForOtherUser = "purchase-order.create-for-other-user";
+
         public const string PlCreditDebitNoteClose = "purchasing.pl-credit-debit-note.close";
 
         public const string PlCreditDebitNoteCancel = "purchasing.pl-credit-debit-note.cancel";

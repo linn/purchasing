@@ -28,6 +28,12 @@ export default function purchaseOrderReducer(state = initialState, action) {
         case 'initialise':
             return { ...action.payload };
         case 'orderFieldChange':
+            if (action.propertyName === 'requestedBy') {
+                return {
+                    ...state,
+                    requestedBy: { id: action.payload || null }
+                };
+            }
             return {
                 ...state,
                 [action.propertyName]: action.payload
