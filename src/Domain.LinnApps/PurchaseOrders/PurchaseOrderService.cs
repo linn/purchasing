@@ -723,7 +723,7 @@
                 throw new PurchaseOrderException("You cannot email this order until it has been authorised");
             }
 
-            var recipient = order.EnteredBy;
+            var recipient = order.RequestedBy;
 
             if (string.IsNullOrEmpty(recipient?.PhoneListEntry?.EmailAddress))
             {
