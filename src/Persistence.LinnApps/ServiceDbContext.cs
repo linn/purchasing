@@ -908,7 +908,7 @@
             entity.Property(e => e.Id).HasColumnName("VM_ID").HasMaxLength(1);
             entity.Property(e => e.UserNumber).HasColumnName("USER_NUMBER").HasMaxLength(6);
             entity.Property(e => e.PmMeasured).HasColumnName("PM_MEASURED").HasMaxLength(1);
-            entity.HasOne(x => x.Employee).WithOne().HasForeignKey<VendorManager>(z => z.UserNumber);
+            entity.HasOne(x => x.Employee).WithMany().HasForeignKey(z => z.UserNumber);
         }
 
         private void BuildSpendsView(ModelBuilder builder)
