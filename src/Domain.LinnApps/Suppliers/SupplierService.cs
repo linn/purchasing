@@ -105,7 +105,6 @@
             current.Name = updated.Name;
             current.Currency = updated.Currency;
             current.WebAddress = updated.WebAddress;
-            current.VendorManager = updated.VendorManager;
             current.Planner = updated.Planner;
             current.InvoiceContactMethod = updated.InvoiceContactMethod;
             current.PhoneNumber = updated.PhoneNumber;
@@ -261,7 +260,7 @@
                 throw new UnauthorisedActionException("You do not have permission to change Supplier Hold Status");
             }
 
-            Supplier supplier = this.supplierRepository.FindById(data.SupplierId);
+            var supplier = this.supplierRepository.FindById(data.SupplierId);
 
             if (!string.IsNullOrEmpty(data.ReasonOnHold))
             {
