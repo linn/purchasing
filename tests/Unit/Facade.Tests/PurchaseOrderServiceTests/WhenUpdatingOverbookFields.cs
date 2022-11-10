@@ -1,7 +1,6 @@
 ﻿namespace Linn.Purchasing.Facade.Tests.PurchaseOrderServiceTests
 {
     using System.Collections.Generic;
-    using System.Linq;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
@@ -114,7 +113,7 @@
         public void ShouldReturnSuccess()
         {
             this.result.Should().BeOfType<SuccessResult<PurchaseOrderResource>>();
-            var dataResult = ((SuccessResult<PurchaseOrderResource>) this.result).Data;
+            var dataResult = ((SuccessResult<PurchaseOrderResource>)this.result).Data;
             dataResult.OrderNumber.Should().Be(this.model.OrderNumber);
             dataResult.Cancelled.Should().Be(this.model.Cancelled);
             dataResult.OrderDate.Should().Be(this.model.OrderDate.ToString("O"));

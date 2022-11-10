@@ -102,6 +102,7 @@ describe('When order...', () => {
 
     test('Should render order', () => {
         expect(screen.getByDisplayValue(100157)).toBeInTheDocument();
+        expect(screen.getByDisplayValue('Rev 123')).toBeInTheDocument();
     });
 });
 

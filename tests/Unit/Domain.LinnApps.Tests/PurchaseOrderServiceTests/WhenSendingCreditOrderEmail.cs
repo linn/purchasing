@@ -39,7 +39,7 @@
                                 {
                                     Id = this.employeeNumber,
                                     FullName = "mario",
-                                    PhoneListEntry = new PhoneListEntry {EmailAddress = "test@email.com"}
+                                    PhoneListEntry = new PhoneListEntry { EmailAddress = "test@email.com" }
                                 };
             this.miniOrder = new MiniOrder { OrderNumber = this.orderNumber };
             this.order = new PurchaseOrder 

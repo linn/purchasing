@@ -43,7 +43,8 @@
             {
                 OurUnitOfMeasure = "ONES",
                 StockControlled = "Y",
-                RawOrFinished = "R"
+                RawOrFinished = "R",
+                DrawingReference = "Rev 123"
             };
             this.PartQueryRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(this.part);
@@ -90,11 +91,17 @@
         }
 
         [Test]
-        public void ShouldSetRequetedDateToBeOnSuppliersDeliveryDay()
+        public void ShouldSetRequestedDateToBeOnSuppliersDeliveryDay()
         {
             this.result.Details.First().PurchaseDeliveries.First()
                 .DateRequested.GetValueOrDefault().DayOfWeek.Should()
                 .Be(DayOfWeek.Thursday);
+        }
+
+        [Test]
+        public void ShouldSetDrawingReference()
+        {
+            this.result.Details.First().DrawingReference.Should().Be(this.part.DrawingReference);
         }
     }
 }
