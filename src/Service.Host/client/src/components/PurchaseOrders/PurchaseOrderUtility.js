@@ -283,7 +283,6 @@ function PurchaseOrderUtility({ creating }) {
                 d.baseNetTotal &&
                 d.baseDetailTotal
         ) &&
-        order.supplierContactEmail &&
         order.currency.code &&
         order.deliveryAddress?.addressId;
 
