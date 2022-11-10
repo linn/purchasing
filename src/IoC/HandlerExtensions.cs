@@ -87,7 +87,8 @@
                 .AddTransient<IHandler, JsonResultHandler<ChangeRequestResource>>()
                 .AddTransient<IHandler, JsonResultHandler<BomResource>>()
                 .AddTransient<IHandler, JsonResultHandler<BomTypeChangeResource>>()
-                .AddTransient<IHandler, JsonResultHandler<CircuitBoardResource>>();
+                .AddTransient<IHandler, JsonResultHandler<CircuitBoardResource>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<CircuitBoardResource>>>();
         }
     }
 }

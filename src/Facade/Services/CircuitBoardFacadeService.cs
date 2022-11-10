@@ -31,7 +31,7 @@
 
         protected override Expression<Func<CircuitBoard, bool>> SearchExpression(string searchTerm)
         {
-            throw new NotImplementedException();
+            return a => a.BoardCode.Contains(searchTerm) || a.Description.Contains(searchTerm);
         }
 
         protected override void SaveToLogTable(

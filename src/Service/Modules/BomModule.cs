@@ -23,6 +23,7 @@
             app.MapGet("/purchasing/boms/tree/{id:int}", this.GetApp);
             app.MapGet("/purchasing/boms/{id:int}", this.GetBom);
             app.MapGet("/purchasing/boms/boards/{id}", this.GetBoard);
+            app.MapGet("/purchasing/boms/boards", this.GetBoards);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -50,6 +51,24 @@
             var result = circuitBoardFacadeService.GetById(id, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
+        }
+
+        private async Task GetBoards(
+            HttpRequest req,
+            HttpResponse res,
+            string searchTerm,
+            IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource> circuitBoardFacadeService)
+        {
+            if (string.IsNullOrEmpty(searchTerm))
+            {
+                var result = circuitBoardFacadeService.GetAll();
+                await res.Negotiate(result);
+            }
+            else
+            {
+                var searchResult = circuitBoardFacadeService.Search(searchTerm);
+                await res.Negotiate(searchResult);
+            }
         }
     }
 }

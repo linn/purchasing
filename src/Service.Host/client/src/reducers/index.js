@@ -99,6 +99,8 @@ import changeRequest from './changeRequest';
 import bomTreeNodes from './bomTreeNodes';
 import sendPurchaseOrderDeptEmail from './sendPurchaseOrderDeptEmail';
 import suggestedPurchaseOrderValues from './suggestedPurchaseOrderValues';
+import board from './board';
+import boards from './boards';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -114,6 +116,8 @@ const rootReducer = history =>
         automaticPurchaseOrder,
         automaticPurchaseOrderSuggestions,
         batchPurchaseOrderDeliveriesUpload,
+        board,
+        boards,
         bomTreeNodes,
         bulkLeadTimesUpload,
         changeRequest,
