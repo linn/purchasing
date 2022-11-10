@@ -41,6 +41,8 @@
 
         public string RawOrFinished { get; set; }
 
+        public string DrawingReference { get; set; }
+
         public NominalAccount NominalAccount { get; set; }
 
         public bool SupplierAssembly()

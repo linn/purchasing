@@ -396,6 +396,5 @@
             firstDetail.SuppliersDesignation.Should().Be("updated suppliers designation");
             firstDetail.InternalComments.Should().Be("updated internal comment");
         }
-       
     }
 }

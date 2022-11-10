@@ -75,5 +75,7 @@
         public int? FilCancelledBy { get; set; }
 
         public string FilCancelledByName { get; set; }
+
+        public string DrawingReference { get; set; }
     }
 }

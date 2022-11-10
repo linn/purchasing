@@ -130,7 +130,7 @@
                                                            {
                                                                DateRequested = !string.IsNullOrEmpty(d.DateRequested) 
                                                                                    ? DateTime.Parse(d.DateRequested) : null,
-                                                           })?.ToList(),
+                                                           }).ToList(),
                                                    Part =
                                                        new Part
                                                            {
@@ -444,6 +444,7 @@
                                                 OurQty = x.OurQty,
                                                 OrderQty = x.OrderQty,
                                                 PartNumber = x.PartNumber,
+                                                DrawingReference = x.DrawingReference,
                                                 PurchaseDeliveries =
                                                     x.PurchaseDeliveries?.Select(
                                                         d => new PurchaseOrderDelivery

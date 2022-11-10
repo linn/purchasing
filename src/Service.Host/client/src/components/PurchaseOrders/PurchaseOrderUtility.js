@@ -1722,7 +1722,7 @@ function PurchaseOrderUtility({ creating }) {
                                                     <Grid item xs={6} />
                                                 </>
                                             )}
-                                            <Grid item xs={12}>
+                                            <Grid item xs={9}>
                                                 <InputField
                                                     fullWidth
                                                     value={detail.deliveryInstructions}
@@ -1738,6 +1738,22 @@ function PurchaseOrderUtility({ creating }) {
                                                     disabled={!creating}
                                                     rows={2}
                                                     maxLength={200}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={3}>
+                                                <InputField
+                                                    fullWidth
+                                                    value={detail.drawingReference}
+                                                    label="Drawing Ref"
+                                                    propertyName="drawingReference"
+                                                    onChange={(propertyName, newValue) =>
+                                                        handleDetailFieldChange(
+                                                            propertyName,
+                                                            newValue,
+                                                            detail
+                                                        )
+                                                    }
+                                                    maxLength={100}
                                                 />
                                             </Grid>
                                             {!creating && detail.purchaseDeliveries && (

@@ -424,6 +424,7 @@
             var part = this.partQueryRepository.FindBy(p => p.PartNumber == detail.PartNumber);
 
             detail.OurUnitOfMeasure = part.OurUnitOfMeasure;
+            detail.DrawingReference = part.DrawingReference;
             order.IssuePartsToSupplier = part.SupplierAssembly() ? "Y" : "N";
 
             var partSupplier = this.partSupplierRepository.FindById(new PartSupplierKey { PartNumber = detail.PartNumber, SupplierId = order.SupplierId });

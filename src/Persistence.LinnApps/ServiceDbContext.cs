@@ -481,6 +481,7 @@
             entity.Property(a => a.CurrencyUnitPrice).HasColumnName("CURRENCY_UNIT_PRICE");
             entity.Property(a => a.OurUnitOfMeasure).HasColumnName("OUR_UNIT_OF_MEASURE");
             entity.Property(a => a.BomId).HasColumnName("BOM_ID");
+            entity.Property(a => a.DrawingReference).HasColumnName("DRAWING_REFERENCE").HasMaxLength(100);
             entity.Property(a => a.RawOrFinished).HasColumnName("RM_FG");
             entity.HasOne(a => a.NominalAccount).WithMany().HasForeignKey("NOMACC_NOMACC_ID");
 
@@ -730,7 +731,7 @@
             entity.Property(o => o.UpdatePartsupPrice).HasColumnName("UPDATE_PARTSUP_PRICE").HasMaxLength(1);
             entity.Property(o => o.WasPreferredSupplier).HasColumnName("WAS_PREFERRED_SUPPLIER").HasMaxLength(1);
             entity.Property(o => o.OverbookQtyAllowed).HasColumnName("OVERBOOK_QTY_ALLOWED").HasMaxLength(19);
-            entity.Property(o => o.DrawingRef).HasColumnName("DRAWING_REF").HasMaxLength(100);
+            entity.Property(o => o.DrawingReference).HasColumnName("DRAWING_REF").HasMaxLength(100);
         }
 
         private void BuildPurchaseOrderDeliveries(ModelBuilder builder)

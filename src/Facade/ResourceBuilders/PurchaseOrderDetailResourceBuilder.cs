@@ -69,6 +69,7 @@
                            FilCancelledByName = entity.FilCancelled == "Y"
                                                     ? entity.CancelledDetails?.LastOrDefault(a => a.FilCancelledById.HasValue)?.FilCancelledBy?.FullName
                                                     : null,
+                           DrawingReference = entity.DrawingReference,
                            DeliveryConfirmedBy =
                                entity.DeliveryConfirmedBy != null
                                    ? new EmployeeResource
