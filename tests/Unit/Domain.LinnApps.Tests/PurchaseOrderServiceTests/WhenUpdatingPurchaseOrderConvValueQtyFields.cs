@@ -454,7 +454,7 @@
 
             var firstDetail = this.current.Details.First();
 
-            //get first delivery 
+            // get first delivery 
             var delivery = firstDetail.PurchaseDeliveries.First();
 
             // order unit price currency, our unit price currency, our delivery qty (2)
@@ -462,7 +462,7 @@
             delivery.OurUnitPriceCurrency.Should().Be(200.22m);
             delivery.OurDeliveryQty.Should().Be(2);
 
-            //our delivery qty (2) * our unit currency = net total currency
+            // our delivery qty (2) * our unit currency = net total currency
             delivery.NetTotalCurrency.Should().Be(400.44m);
             delivery.VatTotalCurrency.Should().Be(40.55m);
             delivery.DeliveryTotalCurrency.Should().Be(440.99m);
@@ -471,7 +471,7 @@
             delivery.BaseOurUnitPrice.Should().Be(250.28m);
             delivery.BaseOrderUnitPrice.Should().Be(500.55m);
 
-            //(our delivery qty (2) * base our unit price) + base vat total  = base delivery total
+            // (our delivery qty (2) * base our unit price) + base vat total  = base delivery total
             delivery.BaseNetTotal.Should().Be(500.56m);
             delivery.BaseVatTotal.Should().Be(50.69m);
             delivery.BaseDeliveryTotal.Should().Be(551.25m);

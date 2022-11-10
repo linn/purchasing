@@ -893,8 +893,6 @@
 
         private void AddDeliveryToDetail(PurchaseOrder order, PurchaseOrderDetail detail)
         {
-            var partSupplier = this.partSupplierRepository.FindById(new PartSupplierKey { PartNumber = detail.PartNumber, SupplierId = order.SupplierId });
-
             detail.PurchaseDeliveries = new List<PurchaseOrderDelivery>
                                             {
                                                 new PurchaseOrderDelivery
