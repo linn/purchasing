@@ -75,8 +75,7 @@
             this.EmailService.Received().SendEmail(
                 this.order.RequestedBy.PhoneListEntry.EmailAddress,
                 this.order.RequestedBy.FullName,
-                Arg.Is<List<Dictionary<string, string>>>(l => l.First()
-                    .ContainsValue(this.user.PhoneListEntry.EmailAddress)),
+                Arg.Any<IEnumerable<Dictionary<string, string>>>(),
                 Arg.Any<IEnumerable<Dictionary<string, string>>>(),
                 this.user.PhoneListEntry.EmailAddress,
                 this.user.FullName,

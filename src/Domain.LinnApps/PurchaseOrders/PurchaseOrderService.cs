@@ -731,15 +731,6 @@
                 throw new ItemNotFoundException($"Recipient email not found. Check they have one set up in the phone list.");
             }
 
-            var cc  = new List<Dictionary<string, string>>
-                                  {
-                                      new Dictionary<string, string>
-                                          {
-                                              { "name", sender.FullName },
-                                              { "address",  sender.PhoneListEntry.EmailAddress }
-                                          }
-                                  };
-
             var body =
                 "Please click the link when you have received the goods against this order to confirm delivery. \n";
             body += "This will also confirm that payment can be made.  \n";
@@ -748,7 +739,7 @@
             this.emailService.SendEmail(
                     recipient.PhoneListEntry.EmailAddress,
                     recipient.FullName,
-                    cc,
+                    null,
                     null,
                     sender.PhoneListEntry.EmailAddress,
                     sender.FullName,

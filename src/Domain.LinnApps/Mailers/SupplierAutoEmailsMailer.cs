@@ -63,7 +63,7 @@
                                       new Dictionary<string, string>
                                           {
                                               { "name", supplier.Name },
-                                              { "address", ConfigurationManager.Configuration["ORDER_BOOKS_BCC"] }
+                                              { "address", ConfigurationManager.Configuration["ACKNOWLEDGEMENTS_BCC"] }
                                           }
                                   };
                     this.emailService.SendEmail(
