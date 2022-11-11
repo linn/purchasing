@@ -13,7 +13,7 @@
 
     using NUnit.Framework;
 
-    public class WhenSendingEmailAndNoEmailAddressGiven : ContextBase
+    public class WhenSendingOrderBookEmailAndNoEmailAddressGiven : ContextBase
     {
         private Supplier supplier;
 
@@ -57,8 +57,8 @@
             this.EmailService.Received().SendEmail(
                 this.contact.EmailAddress,
                 this.supplier.Name,
-                null,
-                null,
+                Arg.Any<IEnumerable<Dictionary<string, string>>>(),
+                Arg.Any<IEnumerable<Dictionary<string, string>>>(),
                 this.supplier.VendorManager.Employee.PhoneListEntry.EmailAddress,
                 this.supplier.VendorManager.Employee.FullName,
                 $"Linn Products Order Book - {this.supplier.Name}",
