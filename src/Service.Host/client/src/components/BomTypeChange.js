@@ -37,10 +37,6 @@ function BomTypeChange() {
         description: c.description
     }));
 
-    const applicationState = useSelector(state =>
-        collectionSelectorHelpers.getApplicationState(state.suppliers)
-    );
-
     const emailSentResult = useSelector(state => itemSelectorHelpers.getItem(state.sendEdiEmail));
 
     const partsSearchLoading = useSelector(state =>
