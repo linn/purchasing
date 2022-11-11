@@ -58,11 +58,19 @@
             {
                 if (!string.IsNullOrWhiteSpace(address))
                 {
+                    var bcc = new List<Dictionary<string, string>>
+                                  {
+                                      new Dictionary<string, string>
+                                          {
+                                              { "name", supplier.Name },
+                                              { "address", ConfigurationManager.Configuration["ACKNOWLEDGEMENTS_BCC"] }
+                                          }
+                                  };
                     this.emailService.SendEmail(
                         test ? ConfigurationManager.Configuration["ORDER_BOOK_TEST_ADDRESS"] : address.Trim(),
                         supplier.Name,
                         null,
-                        null,
+                        bcc,
                         vendorManagerAddress ?? ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
                         vendorManagerName != "No person assigned" ? vendorManagerName : "Linn",
                         $"Linn Products Order Book - {supplier.Name}",

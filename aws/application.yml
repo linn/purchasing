@@ -58,6 +58,9 @@ Parameters:
   purchasingFromAddress:
     Type: String
     Description: address to send purchasing emails from
+  acknowledgementsBcc:
+    Type: String
+    Description: address to bcc automatic purchasing emails to
   logisticsToAddress:
     Type: String
     Description: address to send emails to for logistics
@@ -233,6 +236,8 @@ Resources:
           Value: !Ref proxyRoot
         - Name: PURCHASING_FROM_ADDRESS
           Value: !Ref purchasingFromAddress
+        - Name: ACKNOWLEDGEMENTS_BCC
+          Value: !Ref acknowledgementsBcc
         - Name: ORDER_BOOK_TEST_ADDRESS
           Value: !Ref orderBookTestAddress
         - Name: LOG_AMAZON_SQSQUEUEURI
