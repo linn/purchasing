@@ -341,3 +341,9 @@ export const suggestedPurchaseOrderValues = new ItemType(
     'SUGGESTED_PURCHASE_ORDER_VALUES',
     '/purchasing/purchase-orders/generate-order-from-supplier-id'
 );
+
+export const bomTypeChange = new ItemType(
+    'bomTypeChange',
+    'BOM_TYPE_CHANGES',
+    '/purchasing/bom-type-change'
+);

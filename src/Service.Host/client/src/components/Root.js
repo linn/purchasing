@@ -71,6 +71,7 @@ import PurchaseOrdersAuthSend from './PurchaseOrders/PurchaseOrdersAuthSend';
 import BomTree from './BomTree';
 import ChangeRequestSearch from './ChangeRequests/ChangeRequestsSearch';
 import ChangeRequest from './ChangeRequests/ChangeRequest';
+import BomTypeChange from './BomTypeChange';
 
 const Root = ({ store }) => (
     <div>
@@ -419,6 +420,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/change-requests/:id"
                                     component={ChangeRequest}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/bom-type-change"
+                                    component={BomTypeChange}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>

@@ -306,7 +306,7 @@ export const forecastWeekChangesReportActionTypes = makeReportActionTypes(
     reportTypes.forecastWeekChangesReport.actionType
 );
 
-export const changeRequestActionTypes = makeActionTypes(itemTypes.changeRequest.actionType, false);
+export const changeRequestActionTypes = makeActionTypes(itemTypes.changeRequest.actionType);
 
 export const bomTreeNodesActionTypes = makeActionTypes(itemTypes.bomTreeNodes.actionType);
 
@@ -322,3 +322,5 @@ export const suggestedPurchaseOrderValuesActionTypes = makeActionTypes(
     itemTypes.suggestedPurchaseOrderValues.actionType,
     true
 );
+
+export const bomTypeChangeActionTypes = makeActionTypes(itemTypes.bomTypeChange.actionType);

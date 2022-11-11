@@ -32,6 +32,9 @@ function App() {
                 <ListItem component={Link} to="/purchasing/edi" button>
                     <Typography color="primary">Send EDI Orders</Typography>
                 </ListItem>
+                <ListItem component={Link} to="/purchasing/bom-type-change" button>
+                    <Typography color="primary">Bom Type Change</Typography>
+                </ListItem>
                 <ListItem
                     component={Link}
                     to="purchasing/automatic-purchase-order-suggestions"

@@ -5,7 +5,7 @@ import * as actionTypes from '../actions/index';
 export default () => next => action => {
     const result = next(action);
 
-    if (action.type.startsWith('RECEIVE_NEW_')) {
+    if (action.type?.startsWith('RECEIVE_NEW_')) {
         if (
             action.type !== actionTypes.signingLimitActionTypes.RECEIVE_NEW_SIGNING_LIMIT &&
             action.type !==

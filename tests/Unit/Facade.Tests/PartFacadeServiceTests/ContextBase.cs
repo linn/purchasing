@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Facade.Tests.PartFacadeServiceTests
 {
+    using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
@@ -20,6 +21,8 @@
 
         protected ICurrencyPack currencyPack;
 
+        protected IAuthorisationService authorisationService;
+
         protected PartFacadeService Sut { get; private set; }
 
         [SetUp]
@@ -29,8 +32,10 @@
             this.autocostPack = Substitute.For<IAutocostPack>();
             this.currencyPack = Substitute.For<ICurrencyPack>();
             this.partService = Substitute.For<IPartService>();
+            this.authorisationService = Substitute.For<IAuthorisationService>();
 
-            this.Sut = new PartFacadeService(this.partRepository, this.autocostPack, this.currencyPack, this.partService, new BomTypeChangeResourceBuilder());
+            this.Sut = new PartFacadeService(this.partRepository, this.autocostPack, this.currencyPack, this.partService, new 
+                BomTypeChangeResourceBuilder(this.authorisationService));
         }
     }
 }

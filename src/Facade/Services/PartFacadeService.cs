@@ -64,6 +64,33 @@
             }
         }
 
+        public IResult<BomTypeChangeResource> GetBomType(int partNumberId, IEnumerable<string> privileges = null)
+        {
+            var part = this.partRepository.FindBy(p => p.Id == partNumberId);
+            if (part == null)
+            {
+                return new NotFoundResult<BomTypeChangeResource>("Part not found");
+            }
+
+            var model = new BomTypeChange { PartNumber = part.PartNumber, Part = part, OldBomType = part.BomType, OldSupplierId = part.PreferredSupplier?.SupplierId };
+
+            var resource = (BomTypeChangeResource)this.bomTypeChangeBuilder.Build(model, privileges);
+            
+            /* new BomTypeChangeResource
+                               {
+                                   PartNumber = part.PartNumber,
+                                   PartDescription = part.Description,
+                                   PartBaseUnitPrice = part.BaseUnitPrice,
+                                   PartCurrency = part.Currency?.Code,
+                                   PreferredSuppliedId = part.PreferredSupplier?.SupplierId,
+                                   PreferredSupplierName = part.PreferredSupplier?.Name,
+                                   OldSupplierId = part.PreferredSupplier?.SupplierId,
+                                   OldBomType = part.BomType
+            };*/
+
+            return new SuccessResult<BomTypeChangeResource>(resource);
+        }
+        
         public IResult<BomTypeChangeResource> ChangeBomType(BomTypeChangeResource request, IEnumerable<string> privileges = null)
         {
             if (request == null)

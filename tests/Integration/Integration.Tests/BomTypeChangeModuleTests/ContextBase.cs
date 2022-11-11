@@ -2,6 +2,7 @@
 {
     using System.Net.Http;
 
+    using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
@@ -33,6 +34,8 @@
 
         protected IPartFacadeService FacadeService { get; set; }
 
+        protected IAuthorisationService AuthorisationService;
+
         [SetUp]
         public void SetUpContext()
         {
@@ -40,12 +43,13 @@
             this.AutocostPack = Substitute.For<IAutocostPack>();
             this.CurrencyPack = Substitute.For<ICurrencyPack>();
             this.PartService = Substitute.For<IPartService>();
+            this.AuthorisationService = Substitute.For<IAuthorisationService>();
             this.FacadeService = new PartFacadeService(
                 this.PartRepository,
                 this.AutocostPack,
                 this.CurrencyPack,
                 this.PartService,
-                new BomTypeChangeResourceBuilder());
+                new BomTypeChangeResourceBuilder(this.AuthorisationService));
 
             this.Client = TestClient.With<BomTypeChangeModule>(
                 services =>
