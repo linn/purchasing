@@ -131,10 +131,13 @@
                     "Cannot create new PO req into state other than Draft or Authorise Wait");
             }
 
-            this.CheckIfCanOrderFromSupplier(entity);
+            this.CheckIfCanOrderFromSupplier(entity.SupplierId);
 
-            this.CheckPartIsNotStockControlled(entity);
-
+            this.CheckPartIsNotStockControlled(entity.PartNumber);
+            var requestedBy = this.employeeRepository.FindById(entity.RequestedById);
+            entity.RemarksForOrder = string.IsNullOrEmpty(requestedBy?.FullName)
+            ? $"Please send with reference PO Req {entity.OrderNumber}. {Environment.NewLine}{entity.RemarksForOrder}"
+            : $"Please send for the attention of {requestedBy.FullName}. {Environment.NewLine}{entity.RemarksForOrder}";
             return entity;
         }
 
@@ -359,9 +362,9 @@
                 }
             }
 
-            this.CheckIfCanOrderFromSupplier(entity);
+            this.CheckIfCanOrderFromSupplier(entity.SupplierId);
 
-            this.CheckPartIsNotStockControlled(entity);
+            this.CheckPartIsNotStockControlled(entity.PartNumber);
 
             entity.State = updatedEntity.State;
             entity.ReqDate = updatedEntity.ReqDate;
@@ -408,9 +411,9 @@
             return stateChange != null;
         }
 
-        private void CheckIfCanOrderFromSupplier(PurchaseOrderReq entity)
+        private void CheckIfCanOrderFromSupplier(int supplierId)
         {
-            var supplier = this.supplierRepository.FindById(entity.SupplierId);
+            var supplier = this.supplierRepository.FindById(supplierId);
             if (supplier.DateClosed.HasValue && supplier.DateClosed.Value <= DateTime.Now)
             {
                 throw new UnauthorisedActionException(
@@ -424,9 +427,9 @@
             }
         }
 
-        private void CheckPartIsNotStockControlled(PurchaseOrderReq entity)
+        private void CheckPartIsNotStockControlled(string partNumber)
         {
-            var part = this.partRepository.FindBy(p => p.PartNumber == entity.PartNumber);
+            var part = this.partRepository.FindBy(p => p.PartNumber == partNumber);
             if (part.StockControlled == "Y")
             {
                 throw new UnauthorisedActionException(
