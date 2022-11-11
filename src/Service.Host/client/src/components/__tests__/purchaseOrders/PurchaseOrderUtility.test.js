@@ -106,6 +106,21 @@ describe('When order...', () => {
     });
 });
 
+describe('When updating our unit price to 0...', () => {
+    beforeEach(() => {
+        cleanup();
+        jest.clearAllMocks();
+        useSelector.mockImplementation(callback => callback(reduxState));
+        render(<PurchaseOrderUtility />);
+    });
+
+    test('Should set field to zero', () => {
+        const input = screen.getByRole('spinbutton', { name: 'Our price (unit, currency)' });
+        fireEvent.change(input, { target: { value: 0 } });
+        expect(input.value).toBe('0');
+    });
+});
+
 describe('When cancelling order...', () => {
     beforeEach(() => {
         cleanup();

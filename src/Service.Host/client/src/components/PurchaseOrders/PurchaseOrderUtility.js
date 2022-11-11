@@ -321,15 +321,15 @@ function PurchaseOrderUtility({ creating }) {
     const handleDetailValueFieldChange = (propertyName, basePropertyName, newValue, detail) => {
         const { exchangeRate } = order;
 
-        if (exchangeRate && newValue && newValue > 0 && newValue !== order[propertyName]) {
+        if (exchangeRate && newValue !== order[propertyName]) {
             reduxDispatch(purchaseOrderActions.setEditStatus('edit'));
 
-            const convertedValue = currencyConvert(newValue, exchangeRate);
+            const convertedValue = currencyConvert(newValue || 0, exchangeRate);
 
             dispatch({
                 payload: {
                     ...detail,
-                    [propertyName]: newValue,
+                    [propertyName]: newValue || 0,
                     [basePropertyName]: convertedValue
                 },
                 type: 'detailCalculationFieldChange'
@@ -1314,14 +1314,14 @@ function PurchaseOrderUtility({ creating }) {
                                                         value={detail.ourUnitPriceCurrency}
                                                         label="Our price (unit, currency)"
                                                         propertyName="ourUnitPriceCurrency"
-                                                        onChange={(propertyName, newValue) =>
+                                                        onChange={(propertyName, newValue) => {
                                                             handleDetailValueFieldChange(
                                                                 propertyName,
                                                                 'baseUnitPrice',
                                                                 newValue,
                                                                 detail
-                                                            )
-                                                        }
+                                                            );
+                                                        }}
                                                         disabled={!allowedToUpdate()}
                                                         type="number"
                                                         required
