@@ -13,7 +13,7 @@
 
     using NUnit.Framework;
 
-    public class WhenSendingEmailAndNoEmailAddressSuppliedAndSupplierHasNoMainOrderContact 
+    public class WhenSendingOrderBookAndNoEmailAddressSuppliedAndSupplierHasNoMainOrderContact 
         : ContextBase
     {
         private Supplier supplier;
