@@ -40,14 +40,15 @@
             this.forecastOrdersReportService = forecastOrdersReportService;
         }
 
-        public void SendOrderBookEmail(string toAddresses, int toSupplier, string timestamp, bool test = false)
+        public void SendOrderBookEmail(
+            string toAddresses, int toSupplier, string timestamp, bool test = false, bool bypassMrpCheck = false)
         {
             var supplier = this.supplierRepository.FindById(toSupplier);
 
             var emailAddresses = string.IsNullOrEmpty(toAddresses) ? supplier.SupplierContacts
                 ?.First(c => c.IsMainOrderContact.Equals("Y"))?.EmailAddress : toAddresses;
 
-            this.CheckEmailDetailsOk(emailAddresses, supplier);
+            this.CheckEmailDetailsOk(emailAddresses, supplier, bypassMrpCheck);
             
             var vendorManagerAddress = supplier.VendorManager.Employee.PhoneListEntry?.EmailAddress;
             var vendorManagerName = supplier.VendorManager.Employee.FullName;
@@ -90,7 +91,7 @@
             var emailAddresses = string.IsNullOrEmpty(toAddresses) ? supplier.SupplierContacts
                                    ?.First(c => c.IsMainOrderContact.Equals("Y"))?.EmailAddress : toAddresses;
 
-            this.CheckEmailDetailsOk(emailAddresses, supplier);
+            this.CheckEmailDetailsOk(emailAddresses, supplier, false);
 
             var vendorManagerAddress = supplier.VendorManager.Employee.PhoneListEntry.EmailAddress;
             var vendorManagerName = supplier.VendorManager.Employee.FullName;
@@ -118,7 +119,7 @@
             }
         }
 
-        private void CheckEmailDetailsOk(string toAddresses, Supplier supplier)
+        private void CheckEmailDetailsOk(string toAddresses, Supplier supplier, bool bypassMrpCheck)
         {
             if (string.IsNullOrEmpty(toAddresses))
             {
@@ -126,7 +127,7 @@
             }
 
             // notify the vendor managers if mrp jobs failed
-            if (this.mrMaster.GetRecord().RunDate.Date != DateTime.Today.Date)
+            if (!bypassMrpCheck && this.mrMaster.GetRecord().RunDate.Date != DateTime.Today.Date)
             {
                 var msg = "The Supplier Auto emails could not be sent because the MRP did not run over the weekend.";
                 this.emailService.SendEmail(
