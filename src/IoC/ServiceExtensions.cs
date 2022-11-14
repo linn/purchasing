@@ -148,7 +148,8 @@
                 .AddTransient<IForecastWeekChangesFacadeService, ForecastWeekChangesFacadeService>()
                 .AddTransient<IFacadeResourceService<ChangeRequest, int, ChangeRequestResource, ChangeRequestResource>, ChangeRequestFacadeService>()
                 .AddTransient<IFacadeResourceService<Bom, int, BomResource, BomResource>, BomFacadeService>()
-                .AddTransient<IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource>, CircuitBoardFacadeService>();
+                .AddTransient<IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource>, CircuitBoardFacadeService>()
+                .AddTransient<IBomTreeReportsService, BomTreeReportService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
