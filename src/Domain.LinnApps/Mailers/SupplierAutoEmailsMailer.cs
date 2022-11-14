@@ -41,14 +41,14 @@
         }
 
         public void SendOrderBookEmail(
-            string toAddresses, int toSupplier, string timestamp, bool test = false, bool bypassMrpCheck = false)
+            string toAddresses, int toSupplier, string timestamp, bool test = false, bool? bypassMrpCheck = false)
         {
             var supplier = this.supplierRepository.FindById(toSupplier);
 
             var emailAddresses = string.IsNullOrEmpty(toAddresses) ? supplier.SupplierContacts
                 ?.First(c => c.IsMainOrderContact.Equals("Y"))?.EmailAddress : toAddresses;
 
-            this.CheckEmailDetailsOk(emailAddresses, supplier, bypassMrpCheck);
+            this.CheckEmailDetailsOk(emailAddresses, supplier, bypassMrpCheck.GetValueOrDefault());
             
             var vendorManagerAddress = supplier.VendorManager.Employee.PhoneListEntry?.EmailAddress;
             var vendorManagerName = supplier.VendorManager.Employee.FullName;
@@ -84,14 +84,15 @@
             }
         }
 
-        public void SendMonthlyForecastEmail(string toAddresses, int toSupplier, string timestamp, bool test = false)
+        public void SendMonthlyForecastEmail(
+            string toAddresses, int toSupplier, string timestamp, bool test = false, bool? bypassMrpCheck = false)
         {
             var supplier = this.supplierRepository.FindById(toSupplier);
 
             var emailAddresses = string.IsNullOrEmpty(toAddresses) ? supplier.SupplierContacts
                                    ?.First(c => c.IsMainOrderContact.Equals("Y"))?.EmailAddress : toAddresses;
 
-            this.CheckEmailDetailsOk(emailAddresses, supplier, false);
+            this.CheckEmailDetailsOk(emailAddresses, supplier, bypassMrpCheck.GetValueOrDefault());
 
             var vendorManagerAddress = supplier.VendorManager.Employee.PhoneListEntry.EmailAddress;
             var vendorManagerName = supplier.VendorManager.Employee.FullName;
