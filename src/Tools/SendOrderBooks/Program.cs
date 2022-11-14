@@ -118,7 +118,8 @@ class Program
                             ForSupplier = s.SupplierId,
                             Timestamp = DateTime.Now,
                             ToAddress = s.EmailAddresses,
-                            Test = test
+                            Test = test, 
+                            BypassMrpCheck = true
                         });
                 }
             }
