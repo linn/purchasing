@@ -111,13 +111,13 @@ export default function BomTree() {
         while (q.length !== 0) {
             let n = q.length;
             while (n > 0) {
-                const p = q[0];
+                const current = q[0];
                 q.shift();
-                if (p.children) {
-                    result.push(p.name);
+                if (current.children) {
+                    result.push(current.name);
                 }
-                for (let i = 0; i < p.children.length; i += 1) {
-                    q.push(p.children[i]);
+                for (let i = 0; i < current.children.length; i += 1) {
+                    q.push(current.children[i]);
                 }
                 n -= 1;
             }
