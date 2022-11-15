@@ -96,9 +96,9 @@ import emailMultiplePurchaseOrders from './emailMultiplePurchaseOrders';
 import forecastWeekChangesReport from './forecastWeekChangesReport';
 import sendPurchaseOrderAuthEmail from './sendPurchaseOrderAuthEmail';
 import changeRequest from './changeRequest';
-import bomTreeNodes from './bomTreeNodes';
 import sendPurchaseOrderDeptEmail from './sendPurchaseOrderDeptEmail';
 import suggestedPurchaseOrderValues from './suggestedPurchaseOrderValues';
+import bomTree from './bomTree';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -114,7 +114,7 @@ const rootReducer = history =>
         automaticPurchaseOrder,
         automaticPurchaseOrderSuggestions,
         batchPurchaseOrderDeliveriesUpload,
-        bomTreeNodes,
+        bomTree,
         bulkLeadTimesUpload,
         changeRequest,
         countries,

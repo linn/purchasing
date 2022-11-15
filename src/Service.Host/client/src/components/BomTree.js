@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Page, Loading } from '@linn-it/linn-form-components-library';
 import PropTypes from 'prop-types';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
 import SvgIcon from '@mui/material/SvgIcon';
@@ -10,14 +10,14 @@ import TreeView from '@mui/lab/TreeView';
 import TreeItem, { treeItemClasses } from '@mui/lab/TreeItem';
 import Collapse from '@mui/material/Collapse';
 import Grid from '@mui/material/Grid';
+import queryString from 'query-string';
 import { useSpring, animated } from 'react-spring';
-import LinearProgress from '@mui/material/LinearProgress';
-import Button from '@mui/material/Button';
-
+// import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import history from '../history';
 import config from '../config';
-import bomTreeNodeActions from '../actions/bomTreeNodeActions';
+import bomTreeActions from '../actions/bomTreeActions';
+import { bomTree as bomTreeItemType } from '../itemTypes';
 
 /* eslint react/jsx-props-no-spreading: 0 */
 /* eslint react/destructuring-assignment: 0 */
@@ -85,100 +85,89 @@ const StyledTreeItem = styled(props => (
 }));
 
 export default function BomTree() {
-    const [expandAll, setExpandAll] = useState(false);
     const [expanded, setExpanded] = useState([]);
 
-    const { id } = useParams();
+    const { search } = useLocation();
+    const { bomName } = queryString.parse(search);
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(bomTreeNodeActions.fetch(id));
-    }, [dispatch, id]);
+        dispatch(bomTreeActions.fetchByHref(`/purchasing/boms/tree?bomName=${bomName}`));
+    }, [dispatch, bomName]);
 
-    const boms = useSelector(state => state.bomTreeNodes.items);
+    const bomTree = useSelector(state => state[bomTreeItemType.item].item);
 
-    const bomsLoading = useSelector(state => state.bomTreeNodes.loading);
-
-    useEffect(() => {
-        if (expandAll) {
-            setExpanded(
-                Object.keys(boms)
-                    .map(b => b.toString())
-                    .filter(x => x !== id)
-            );
-        }
-    }, [boms, id, expandAll]);
-
-    const root = boms[Number(id)];
+    const bomTreeLoading = useSelector(state => state[bomTreeItemType.item].loading);
 
     const handleToggle = (_, nodeIds) => {
         setExpanded(nodeIds);
     };
 
-    const renderNode = bomId => {
-        const nodes = bomId ? boms[bomId.toString()]?.children : [];
-        if (nodes) {
-            return nodes.map(c => {
-                const label = (
-                    <>
-                        <Typography
-                            display="inline"
-                            variant="subtitle1"
-                            color={c.bomType === 'C' ? '' : 'primary'}
-                        >
-                            {c.partNumber}
-                        </Typography>
-                        <Typography display="inline" variant="subtitle2">
-                            {' '}
-                            (x{c.qty})
-                        </Typography>
-                        <Typography display="inline" variant="caption">
-                            {' - '}
-                            {c.partDescription}
-                        </Typography>
-                    </>
-                );
-                if (c.bomType === 'C') {
-                    return <StyledTreeItem id={c.partNumber} nodeId={c.partNumber} label={label} />;
-                }
-
-                return (
-                    <StyledTreeItem
-                        id={`${c.bomId}` ?? c.partNumber}
-                        nodeId={`${c.bomId}` ?? c.partNumber}
-                        label={label}
-                    >
-                        {renderNode(c.bomId)}
-                    </StyledTreeItem>
-                );
-            });
+    const nodesWithChildren = root => {
+        const result = [];
+        if (root == null) {
+            return result;
         }
-        return <LinearProgress />;
+        const q = [];
+        q.push(root);
+        while (q.length !== 0) {
+            let n = q.length;
+            while (n > 0) {
+                const p = q[0];
+                q.shift();
+                if (p.children) {
+                    result.push(p.name);
+                }
+                for (let i = 0; i < p.children.length; i += 1) {
+                    q.push(p.children[i]);
+                }
+                n -= 1;
+            }
+        }
+        return result;
+    };
+
+    useEffect(() => {
+        setExpanded(nodesWithChildren(bomTree));
+    }, [bomTree]);
+
+    const renderTree = nodes => {
+        const label = (
+            <>
+                <Typography
+                    display="inline"
+                    variant="subtitle1"
+                    color={!nodes.children ? '' : 'primary'}
+                >
+                    {nodes.name}
+                </Typography>
+                <Typography display="inline" variant="subtitle2">
+                    {' '}
+                    (x{nodes.qty})
+                </Typography>
+                <Typography display="inline" variant="caption">
+                    {' - '}
+                    {nodes.description}
+                </Typography>
+            </>
+        );
+        return (
+            <StyledTreeItem key={nodes.name} nodeId={nodes.name} label={label}>
+                {Array.isArray(nodes.children)
+                    ? nodes.children.map(node => renderTree(node))
+                    : null}
+            </StyledTreeItem>
+        );
     };
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
-                {root && (
+                {bomTree && (
                     <>
                         <Grid item xs={12}>
                             <Typography variant="h4" color="primary" display="inline">
-                                {root.bomName} {bomsLoading && '...'}
+                                {bomName}
                             </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Button
-                                variant="outlined"
-                                onClick={() => {
-                                    if (!expandAll) {
-                                        setExpandAll(true);
-                                    } else {
-                                        setExpandAll(false);
-                                        setExpanded([]);
-                                    }
-                                }}
-                            >
-                                {expandAll ? 'Collapse All' : 'Expand All'}
-                            </Button>
                         </Grid>
                         <Grid item xs={12}>
                             <TreeView
@@ -189,12 +178,12 @@ export default function BomTree() {
                                 onNodeToggle={handleToggle}
                                 expanded={expanded}
                             >
-                                {renderNode(root.bomId.toString())}
+                                {renderTree(bomTree)}
                             </TreeView>
                         </Grid>
                     </>
                 )}
-                {!root && (
+                {bomTreeLoading && (
                     <Grid item xs={6}>
                         <Loading />
                     </Grid>

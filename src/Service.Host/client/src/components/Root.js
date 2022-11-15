@@ -409,7 +409,7 @@ const Root = ({ store }) => (
                                     path="/purchasing/reports/delivery-performance-details/report"
                                     component={DeliveryPerformanceDetailReport}
                                 />
-                                <Route exact path="/purchasing/boms/tree/:id" component={BomTree} />
+                                <Route exact path="/purchasing/boms/tree" component={BomTree} />
                                 <Route
                                     exact
                                     path="/purchasing/change-requests"

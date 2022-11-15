@@ -308,8 +308,6 @@ export const forecastWeekChangesReportActionTypes = makeReportActionTypes(
 
 export const changeRequestActionTypes = makeActionTypes(itemTypes.changeRequest.actionType, false);
 
-export const bomTreeNodesActionTypes = makeActionTypes(itemTypes.bomTreeNodes.actionType);
-
 export const sendPurchaseOrderAuthEmailActionTypes = makeProcessActionTypes(
     itemTypes.sendPurchaseOrderAuthEmail.actionType
 );
@@ -322,3 +320,5 @@ export const suggestedPurchaseOrderValuesActionTypes = makeActionTypes(
     itemTypes.suggestedPurchaseOrderValues.actionType,
     true
 );
+
+export const bomTreeActionTypes = makeActionTypes(itemTypes.bomTree.actionType);
