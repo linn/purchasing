@@ -135,7 +135,7 @@ export default function BomTree() {
                 <Typography
                     display="inline"
                     variant="subtitle1"
-                    color={!nodes.children ? '' : 'primary'}
+                    color={!nodes.children?.length ? '' : 'primary'}
                 >
                     {nodes.name}
                 </Typography>
