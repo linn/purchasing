@@ -140,14 +140,18 @@ export default function BomTree() {
                 >
                     {nodes.name}
                 </Typography>
-                <Typography display="inline" variant="subtitle2">
-                    {' '}
-                    (x{nodes.qty})
-                </Typography>
-                <Typography display="inline" variant="caption">
-                    {' - '}
-                    {nodes.description}
-                </Typography>
+                {nodes.name !== bomName && (
+                    <>
+                        <Typography display="inline" variant="subtitle2">
+                            {' '}
+                            (x{nodes.qty})
+                        </Typography>
+                        <Typography display="inline" variant="caption">
+                            {' - '}
+                            {nodes.description}
+                        </Typography>
+                    </>
+                )}
             </>
         );
         return (
