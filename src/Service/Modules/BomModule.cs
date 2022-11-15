@@ -6,6 +6,7 @@
     using Carter.Response;
 
     using Linn.Common.Facade;
+    using Linn.Common.Facade.Carter.Extensions;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
@@ -26,6 +27,7 @@
             app.MapGet("/purchasing/boms/{id:int}", this.GetBom);
             app.MapGet("/purchasing/boms/boards/{id}", this.GetBoard);
             app.MapGet("/purchasing/boms/tree", this.GetTree);
+            app.MapGet("/purchasing/boms/tree/export", this.GetTreeExport);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -54,6 +56,18 @@
             var result = facadeService.GetBomTree(bomName, levels);
 
             await res.Negotiate(result);
+        }
+
+        private async Task GetTreeExport(
+            HttpRequest req,
+            HttpResponse res,
+            string bomName,
+            IBomTreeReportsService facadeService)
+        {
+            var result = facadeService.GetFlatBomTreeExport(bomName);
+
+            await res.FromCsv(result, $"{bomName}.csv");
+
         }
 
         private async Task GetBoard(
