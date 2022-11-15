@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Page, Loading } from '@linn-it/linn-form-components-library';
+import { Page, Loading, ExportButton } from '@linn-it/linn-form-components-library';
 import PropTypes from 'prop-types';
 import { useLocation } from 'react-router-dom';
-
 import { useDispatch, useSelector } from 'react-redux';
 import SvgIcon from '@mui/material/SvgIcon';
 import { alpha, styled } from '@mui/material/styles';
@@ -166,6 +165,11 @@ export default function BomTree() {
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
+                <Grid item xs={12}>
+                    <ExportButton
+                        href={`${config.appRoot}/purchasing/boms/tree/export?bomName=${bomName}`}
+                    />
+                </Grid>
                 {bomTree && (
                     <>
                         <Grid item xs={12}>
@@ -188,9 +192,16 @@ export default function BomTree() {
                     </>
                 )}
                 {bomTreeLoading && (
-                    <Grid item xs={6}>
-                        <Loading />
-                    </Grid>
+                    <>
+                        <Grid item xs={12}>
+                            <Typography variant="subtitle2">
+                                Filling out the tree... May take a while...
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Loading />
+                        </Grid>
+                    </>
                 )}
             </Grid>
         </Page>
