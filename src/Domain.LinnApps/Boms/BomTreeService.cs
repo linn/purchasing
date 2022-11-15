@@ -26,8 +26,7 @@
 
             // basically level order traversal of a general tree
             // where each time we visit a node we populate its children's children by performing an additional .FilterBy() lookup
-            // since the children are .Include()'d in the repository methods
-
+            
             // look up the root node
             var root = this.repository.FindBy(x => x.BomName == bomName);
             var rootNode = new BomTreeNode
@@ -37,8 +36,13 @@
                                        d => new BomTreeNode
                                                 {
                                                     Name = d.Part.PartNumber,
+                                                    Description = d.Part.Description,
+                                                    Qty = d.Qty
                                                 }).OrderBy(x => x.Name)
                                };
+
+            // keep track of the depth so we can optionally exit out if the specified levels depth is met
+            var currentDepth = 1;
 
             // queue the root node
             var q = new Queue<BomTreeNode>();
@@ -47,6 +51,11 @@
             // while there are nodes in the queue
             while (q.Count != 0)
             {
+                if (currentDepth == levels)
+                {
+                    break;
+                }
+
                 // while this node has children
                 var numChildren = q.Count;
                 while (numChildren > 0)
@@ -54,13 +63,15 @@
                     // dequeue a child node
                     var current = q.Dequeue();
 
-                    // populate it's children's children nodes by performing an repository lookup
+                    // populate it's children's children nodes by performing a repository lookup
                     current.Children = current.Children?.Select(
                         child =>
                         {
                             var node = new BomTreeNode
                             {
                                 Name = child.Name,
+                                Description = child.Description,
+                                Qty = child.Qty,
                                 Children =
                                     this.detailRepository
                                         .FilterBy(x => x.BomName == child.Name && x.ChangeState == "LIVE")
@@ -70,8 +81,10 @@
 
                                                 new BomTreeNode
                                                     {
-                                                        Name = detail.Part.PartNumber
-                                                    })
+                                                        Name = detail.Part.PartNumber,
+                                                        Description = detail.Part.Description,
+                                                        Qty = detail.Qty
+                                                })
                             };
                             return node;
                         }).ToList();
@@ -87,11 +100,76 @@
 
                     numChildren--;
                 }
+
+                currentDepth++;
             }
 
 
             // return the root node - all of its children will have children now, and so on...
             return rootNode;
+        }
+
+        public IEnumerable<BomTreeNode> FlattenTree(string bomName)
+        {
+            // same as above except each time we visit a node we add it to the results list
+            var result = new List<BomTreeNode>();
+            var root = this.repository.FindBy(x => x.BomName == bomName);
+            var rootNode = new BomTreeNode
+            {
+                Name = root.BomName,
+                Children = root.Details?.Select(
+                                       d => new BomTreeNode
+                                       {
+                                           Name = d.Part.PartNumber,
+                                           Description = d.Part.Description,
+                                           Qty = d.Qty
+                                       }).OrderBy(x => x.Name)
+            };
+            var q = new Queue<BomTreeNode>();
+            q.Enqueue(rootNode);
+            while (q.Count != 0)
+            {
+                var numChildren = q.Count;
+                while (numChildren > 0)
+                {
+                    var current = q.Dequeue();
+                    result.Add(current);
+                    current.Children = current.Children?.Select(
+                        child =>
+                        {
+                            var node = new BomTreeNode
+                            {
+                                Name = child.Name,
+                                Description = child.Description,
+                                Qty = child.Qty,
+                                Children =
+                                    this.detailRepository
+                                        .FilterBy(x => x.BomName == child.Name && x.ChangeState == "LIVE")
+                                        .OrderBy(x => x.Part.PartNumber)
+                                        .Select(
+                                            detail =>
+
+                                                new BomTreeNode
+                                                {
+                                                    Name = detail.Part.PartNumber,
+                                                    Description = detail.Part.Description,
+                                                    Qty = detail.Qty
+                                                })
+                            };
+                            return node;
+                        }).ToList();
+                    if (current.Children != null)
+                    {
+                        foreach (var child in current.Children)
+                        {
+                            q.Enqueue(child);
+                        }
+                    }
+                    numChildren--;
+                }
+            }
+
+            return result;
         }
     }
 }

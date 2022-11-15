@@ -37,6 +37,10 @@
 
         protected ITransactionManager TransactionManager { get; set; }
 
+        protected IBomTreeService BomTreeService { get; private set; }
+
+        protected IBomTreeReportsService BomTreeReportsService { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -48,6 +52,10 @@
                 this.TransactionManager,
                 new BomResourceBuilder());
 
+            this.BomTreeService = Substitute.For<IBomTreeService>();
+
+            this.BomTreeReportsService = new BomTreeReportService(this.BomTreeService);
+
             this.CircuitBoardFacadeService = new CircuitBoardFacadeService(
                 this.CircuitBoardRepository,
                 this.TransactionManager,
@@ -57,6 +65,7 @@
                 services =>
                     {
                         services.AddSingleton(this.FacadeService);
+                        services.AddSingleton(this.BomTreeReportsService);
                         services.AddSingleton(this.CircuitBoardFacadeService);
                         services.AddHandlers();
                     },

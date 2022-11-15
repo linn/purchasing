@@ -21,10 +21,11 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
+           
             app.MapGet("/purchasing/boms/tree/{id:int}", this.GetApp);
             app.MapGet("/purchasing/boms/{id:int}", this.GetBom);
             app.MapGet("/purchasing/boms/boards/{id}", this.GetBoard);
-            // app.MapGet("/purchasing/boms/tree", this.GetTree);
+            app.MapGet("/purchasing/boms/tree", this.GetTree);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -47,7 +48,7 @@
             HttpRequest req,
             HttpResponse res,
             string bomName,
-            int levels,
+            int? levels,
             IBomTreeReportsService facadeService)
         {
             var result = facadeService.GetBomTree(bomName, levels);

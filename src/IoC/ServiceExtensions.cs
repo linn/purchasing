@@ -201,6 +201,7 @@
                 .AddTransient<IForecastWeekChangesReportService, ForecastWeekChangesReportService>()
                 .AddTransient<IPartService, PartService>()
                 .AddTransient<IPartHistoryService, PartHistoryService>()
+                .AddTransient<IBomTreeService, BomTreeService>()
 
                 // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()
