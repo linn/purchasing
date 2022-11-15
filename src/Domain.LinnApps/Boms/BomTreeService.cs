@@ -147,7 +147,6 @@
                                         .OrderBy(x => x.Part.PartNumber)
                                         .Select(
                                             detail =>
-
                                                 new BomTreeNode
                                                 {
                                                     Name = detail.Part.PartNumber,
