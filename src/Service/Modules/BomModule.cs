@@ -67,7 +67,6 @@
             var result = facadeService.GetFlatBomTreeExport(bomName);
 
             await res.FromCsv(result, $"{bomName}.csv");
-
         }
 
         private async Task GetBoard(
