@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -12,10 +12,6 @@ import { board as boardItemType } from '../../itemTypes';
 
 function BoardSearch() {
     const dispatch = useDispatch();
-
-    useEffect(() => {
-        dispatch(boardsActions.fetchState());
-    }, [dispatch]);
 
     const [board, setBoard] = useState(null);
     const searchBoards = searchTerm => dispatch(boardsActions.search(searchTerm));
