@@ -22,7 +22,7 @@
 
         public BomTreeNode BuildTree(string bomName, int? levels = null)
         {
-            // given with the root node, we need to make repository method calls until this entire bom tree is populated with information
+            // given the root node, we need to make repository method calls until this entire bom tree is populated with information
 
             // basically level order traversal of a general tree
             // where each time we visit a node we populate its children's children by performing an additional .FilterBy() lookup
