@@ -104,7 +104,6 @@
                 currentDepth++;
             }
 
-
             // return the root node - all of its children will have children now, and so on...
             return rootNode;
         }
