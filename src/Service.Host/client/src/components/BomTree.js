@@ -103,7 +103,7 @@ export default function BomTree() {
 
     const nodesWithChildren = root => {
         const result = [];
-        if (root == null) {
+        if (!root) {
             return result;
         }
         const q = [];
@@ -113,7 +113,7 @@ export default function BomTree() {
             while (n > 0) {
                 const current = q[0];
                 q.shift();
-                if (current.children) {
+                if (current.children?.length) {
                     result.push(current.name);
                     for (let i = 0; i < current.children.length; i += 1) {
                         q.push(current.children[i]);
@@ -135,7 +135,7 @@ export default function BomTree() {
                 <Typography
                     display="inline"
                     variant="subtitle1"
-                    color={!nodes.children ? '' : 'primary'}
+                    color={!nodes.children?.length ? '' : 'primary'}
                 >
                     {nodes.name}
                 </Typography>
