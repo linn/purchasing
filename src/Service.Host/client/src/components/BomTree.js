@@ -115,9 +115,9 @@ export default function BomTree() {
                 q.shift();
                 if (current.children) {
                     result.push(current.name);
-                }
-                for (let i = 0; i < current.children.length; i += 1) {
-                    q.push(current.children[i]);
+                    for (let i = 0; i < current.children.length; i += 1) {
+                        q.push(current.children[i]);
+                    }
                 }
                 n -= 1;
             }
@@ -135,7 +135,7 @@ export default function BomTree() {
                 <Typography
                     display="inline"
                     variant="subtitle1"
-                    color={!nodes.children?.length ? '' : 'primary'}
+                    color={!nodes.children ? '' : 'primary'}
                 >
                     {nodes.name}
                 </Typography>
