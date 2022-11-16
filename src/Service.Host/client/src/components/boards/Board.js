@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -17,7 +18,7 @@ import history from '../../history';
 import config from '../../config';
 import BoardTab from './BoardTab';
 
-function Board() {
+function Board({ creating }) {
     const reduxDispatch = useDispatch();
     const { id } = useParams();
 
@@ -32,24 +33,29 @@ function Board() {
     const updateBoard = board => reduxDispatch(boardActions.update(board.boardCode, board));
     const createBoard = board => reduxDispatch(boardActions.add(board));
 
+    const initialCreateState = { coreBoard: 'N', clusterBoard: 'N', idBoard: 'N', splitBom: 'N' };
     const [selectedTab, setSelectedTab] = useState(0);
-    const [board, setBoard] = useState(null);
+    const [board, setBoard] = useState(initialCreateState);
 
     const requestErrors = useSelector(state =>
         getRequestErrors(state)?.filter(error => error.type !== 'FETCH_ERROR')
     );
 
     useEffect(() => {
-        if (id) {
+        if (!creating && id) {
             reduxDispatch(boardActions.fetch(id));
         }
-    }, [id, reduxDispatch]);
+    }, [id, reduxDispatch, creating]);
 
     useEffect(() => {
-        setBoard(item);
+        if (item) {
+            setBoard(item);
+        }
     }, [item]);
 
-    const creating = () => false;
+    useEffect(() => {
+        reduxDispatch(boardActions.fetchState());
+    }, [reduxDispatch]);
 
     const handleFieldChange = (propertyName, newValue) => {
         setEditStatus('edit');
@@ -58,7 +64,7 @@ function Board() {
 
     const saveBoard = () => {
         clearErrors();
-        if (creating()) {
+        if (creating) {
             createBoard(board);
         } else {
             updateBoard(board);
@@ -67,9 +73,22 @@ function Board() {
 
     const handleCancel = () => {
         clearErrors();
-        setBoard(item);
-        setEditStatus('view');
+        if (creating) {
+            setBoard(initialCreateState);
+        } else {
+            setEditStatus('view');
+            setBoard(item);
+        }
     };
+
+    const okToSave = () =>
+        board &&
+        board.clusterBoard &&
+        board.idBoard &&
+        board.coreBoard &&
+        board.description &&
+        board.splitBom &&
+        board.boardCode;
 
     return (
         <Page
@@ -86,7 +105,7 @@ function Board() {
                             fullWidth
                             value={board.boardCode}
                             label="Board Code"
-                            disabled={!creating()}
+                            disabled
                             propertyName="boardCode"
                             onChange={() => {}}
                         />
@@ -96,6 +115,7 @@ function Board() {
                             fullWidth
                             value={board.description}
                             label="Description"
+                            disabled
                             propertyName="description"
                             onChange={() => {}}
                         />
@@ -121,13 +141,14 @@ function Board() {
                                 defaultPcbNumber={board.defaultPcbNumber}
                                 variantOfBoardCode={board.variantOfBoardCode}
                                 splitBom={board.splitBom}
+                                creating={creating}
                                 style={{ paddingTop: '40px' }}
                             />
                         )}
                     </Grid>
                     <Grid item xs={12}>
                         <SaveBackCancelButtons
-                            saveDisabled={editStatus === 'view'}
+                            saveDisabled={!okToSave() || editStatus === 'view'}
                             saveClick={saveBoard}
                             cancelClick={handleCancel}
                             backClick={() => history.push('/purchasing/boms/boards')}
@@ -138,5 +159,13 @@ function Board() {
         </Page>
     );
 }
+
+Board.propTypes = {
+    creating: PropTypes.bool
+};
+
+Board.defaultProps = {
+    creating: false
+};
 
 export default Board;

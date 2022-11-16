@@ -22,8 +22,12 @@
         {
             app.MapGet("/purchasing/boms/tree/{id:int}", this.GetApp);
             app.MapGet("/purchasing/boms/{id:int}", this.GetBom);
+            app.MapGet("/purchasing/boms/boards/application-state", this.GetBoardApplicationState);
             app.MapGet("/purchasing/boms/boards/{id}", this.GetBoard);
             app.MapGet("/purchasing/boms/boards", this.GetBoards);
+            app.MapGet("/purchasing/boms/boards/create", this.GetApp);
+            app.MapPost("/purchasing/boms/boards", this.AddCircuitBoard);
+            app.MapPut("/purchasing/boms/boards/{id}", this.UpdateCircuitBoard);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -69,6 +73,44 @@
                 var searchResult = circuitBoardFacadeService.Search(searchTerm);
                 await res.Negotiate(searchResult);
             }
+        }
+        
+        private async Task UpdateCircuitBoard(
+            HttpRequest req,
+            HttpResponse res,
+            string id,
+            CircuitBoardResource resource,
+            IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource> circuitBoardFacadeService)
+        {
+            var result = circuitBoardFacadeService.Update(id, resource, req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task GetBoardApplicationState(
+            HttpRequest req,
+            HttpResponse res,
+            IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource> circuitBoardFacadeService)
+        {
+            var privileges = req.HttpContext.GetPrivileges();
+
+            var result = circuitBoardFacadeService.GetApplicationState(privileges);
+
+            await res.Negotiate(result);
+        }
+
+        private async Task AddCircuitBoard(
+            HttpRequest req,
+            HttpResponse res,
+            CircuitBoardResource resource,
+            IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource> circuitBoardFacadeService)
+        {
+            var result = circuitBoardFacadeService.Add(
+                resource,
+                req.HttpContext.GetPrivileges(),
+                null);
+
+            await res.Negotiate(result);
         }
     }
 }

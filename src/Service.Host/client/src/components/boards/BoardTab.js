@@ -12,7 +12,8 @@ function BoardTab({
     handleFieldChange,
     defaultPcbNumber,
     variantOfBoardCode,
-    splitBom
+    splitBom,
+    creating
 }) {
     return (
         <Grid container spacing={2} style={{ paddingTop: '30px' }}>
@@ -21,9 +22,9 @@ function BoardTab({
                     fullWidth
                     value={boardCode}
                     label="Board Code"
-                    disabled
+                    disabled={!creating}
                     propertyName="boardCode"
-                    onChange={() => {}}
+                    onChange={(propertyName, newValue) => handleFieldChange(propertyName, newValue)}
                 />
             </Grid>
             <Grid item xs={10} />
@@ -123,7 +124,8 @@ BoardTab.propTypes = {
     idBoard: PropTypes.string,
     defaultPcbNumber: PropTypes.string,
     variantOfBoardCode: PropTypes.string,
-    splitBom: PropTypes.string
+    splitBom: PropTypes.string,
+    creating: PropTypes.bool
 };
 
 BoardTab.defaultProps = {
@@ -134,7 +136,8 @@ BoardTab.defaultProps = {
     idBoard: null,
     defaultPcbNumber: null,
     variantOfBoardCode: null,
-    splitBom: null
+    splitBom: null,
+    creating: false
 };
 
 export default BoardTab;

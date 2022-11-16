@@ -218,7 +218,17 @@ const Root = ({ store }) => (
                                     path="/purchasing/boms/boards"
                                     component={BoardSearch}
                                 />
+                                <Route
+                                    exact
+                                    path="/purchasing/boms/boards/create"
+                                    render={() => <Board creating />}
+                                />
                                 <Route exact path="/purchasing/boms/boards/:id" component={Board} />
+                                <Route
+                                    exact
+                                    path="/purchasing/part-suppliers/create"
+                                    render={() => <Board creating />}
+                                />
                                 <Route
                                     exact
                                     path="/purchasing/open-debit-notes"
