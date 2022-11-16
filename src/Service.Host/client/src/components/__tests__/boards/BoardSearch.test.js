@@ -17,10 +17,6 @@ jest.mock('react-redux', () => ({
 const historySpy = jest.spyOn(history, 'push');
 
 const initialState = {
-    board: {
-        item: null,
-        loading: false
-    },
     boards: {
         items: [],
         loading: false
