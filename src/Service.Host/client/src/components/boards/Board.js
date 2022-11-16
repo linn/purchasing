@@ -9,7 +9,8 @@ import {
     itemSelectorHelpers,
     SaveBackCancelButtons,
     Loading,
-    InputField
+    InputField,
+    getRequestErrors
 } from '@linn-it/linn-form-components-library';
 import boardActions from '../../actions/boardActions';
 import history from '../../history';
@@ -27,21 +28,22 @@ function Board() {
         itemSelectorHelpers.getItemEditStatus(reduxState.board)
     );
     const clearErrors = () => reduxDispatch(boardActions.clearErrorsForItem());
+
     const updateBoard = board => reduxDispatch(boardActions.update(board.boardCode, board));
     const createBoard = board => reduxDispatch(boardActions.add(board));
 
     const [selectedTab, setSelectedTab] = useState(0);
     const [board, setBoard] = useState(null);
 
+    const requestErrors = useSelector(state =>
+        getRequestErrors(state)?.filter(error => error.type !== 'FETCH_ERROR')
+    );
+
     useEffect(() => {
         if (id) {
             reduxDispatch(boardActions.fetch(id));
         }
     }, [id, reduxDispatch]);
-
-    useEffect(() => {
-        reduxDispatch(boardActions.fetchState());
-    }, [reduxDispatch]);
 
     useEffect(() => {
         setBoard(item);
@@ -64,12 +66,18 @@ function Board() {
     };
 
     const handleCancel = () => {
+        clearErrors();
         setBoard(item);
         setEditStatus('view');
     };
 
     return (
-        <Page history={history} homeUrl={config.appRoot}>
+        <Page
+            history={history}
+            homeUrl={config.appRoot}
+            requestErrors={requestErrors}
+            showRequestErrors
+        >
             {loading && <Loading />}
             {board && (
                 <Grid container spacing={2}>
