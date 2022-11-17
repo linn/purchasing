@@ -10,7 +10,6 @@ import {
     Loading,
     Page,
     SaveBackCancelButtons,
-    SnackbarMessage,
     Typeahead,
     utilities
 } from '@linn-it/linn-form-components-library';
@@ -36,8 +35,6 @@ function BomTypeChange() {
         partNumber: c.partNumber,
         description: c.description
     }));
-
-    const emailSentResult = useSelector(state => itemSelectorHelpers.getItem(state.sendEdiEmail));
 
     const partsSearchLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.parts)
@@ -65,17 +62,6 @@ function BomTypeChange() {
     };
 
     const changeBomTypeUri = utilities.getHref(item, 'change-bom-type');
-
-    const snackbarMessage = () => {
-        if (emailSentResult) {
-            if (emailSentResult.success) {
-                return 'Email will be sent by server';
-            }
-
-            return emailSentResult.message;
-        }
-        return '';
-    };
 
     const lookupPart = () => {
         if (part?.id) {
@@ -126,7 +112,6 @@ function BomTypeChange() {
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
-            <SnackbarMessage visible={emailSentResult} message={snackbarMessage()} />
             <Grid container spacing={3}>
                 <Grid item xs={11}>
                     <Typography variant="h3">Change BOM Type</Typography>
