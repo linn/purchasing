@@ -322,3 +322,7 @@ export const suggestedPurchaseOrderValuesActionTypes = makeActionTypes(
 );
 
 export const bomTreeActionTypes = makeActionTypes(itemTypes.bomTree.actionType);
+
+export const boardActionTypes = makeActionTypes(itemTypes.board.actionType);
+
+export const boardsActionTypes = makeActionTypes(itemTypes.boards.actionType);

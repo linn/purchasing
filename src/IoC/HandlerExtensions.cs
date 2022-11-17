@@ -28,6 +28,7 @@
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<SigningLimitResource>>>()
                 .AddTransient<IHandler, SigningLimitApplicationStateResultHandler>()
                 .AddTransient<IHandler, PartSupplierApplicationStateResultHandler>()
+                .AddTransient<IHandler, CircuitBoardApplicationStateResultHandler>()
                 .AddTransient<IHandler, SuppliersApplicationStateResultHandler>()
                 .AddTransient<IHandler, JsonResultHandler<CurrencyResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<CurrencyResource>>>()
@@ -89,7 +90,8 @@
                 .AddTransient<IHandler, JsonResultHandler<BomResource>>()
                 .AddTransient<IHandler, JsonResultHandler<BomTypeChangeResource>>()
                 .AddTransient<IHandler, JsonResultHandler<CircuitBoardResource>>()
-                .AddTransient<IHandler, JsonResultHandler<BomTreeNode>>();
+                .AddTransient<IHandler, JsonResultHandler<BomTreeNode>>()
+                .AddTransient<IHandler, JsonResultHandler<IEnumerable<CircuitBoardResource>>>();
         }
     }
 }
