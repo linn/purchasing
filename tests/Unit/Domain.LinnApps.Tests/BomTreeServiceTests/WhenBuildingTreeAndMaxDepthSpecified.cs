@@ -15,7 +15,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.result = this.Sut.BuildTree("root", 1, false);
+            this.result = this.Sut.BuildBomTree("root", 1, false);
         }
 
         [Test]

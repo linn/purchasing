@@ -30,5 +30,7 @@
         public int? DeleteReplaceSeq { get; set; }
 
         public PartRequirement PartRequirement { get; set; }
+
+        public string BomPartNumber { get; set; }
     }
 }

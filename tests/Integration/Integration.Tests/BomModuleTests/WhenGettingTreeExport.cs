@@ -16,11 +16,11 @@
         [SetUp]
         public void SetUp()
         {
-            this.BomTreeService.FlattenTree("root").Returns(
+            this.BomTreeService.FlattenBomTree("root").Returns(
                 new List<BomTreeNode> { new BomTreeNode { Name = "root", Description = "root node" } });
 
             this.Response = this.Client.Get(
-                "/purchasing/boms/tree/export?bomName=root",
+                "/purchasing/boms/tree/export?bomName=root&requirementOnly=true&showChanges=false",
                 with => { with.Accept("application/json"); }).Result;
         }
 

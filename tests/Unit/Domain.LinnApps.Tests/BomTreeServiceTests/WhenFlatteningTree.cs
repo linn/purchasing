@@ -16,7 +16,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.result = this.Sut.FlattenTree("root", null, false);
+            this.result = this.Sut.FlattenBomTree("root", null, false);
         }
 
         [Test]

@@ -14,10 +14,10 @@
         [SetUp]
         public void SetUp()
         {
-            this.BomTreeService.BuildTree("ROOT").Returns(new BomTreeNode { Name = "root", Description = "root node"});
+            this.BomTreeService.BuildBomTree("ROOT").Returns(new BomTreeNode { Name = "root", Description = "root node"});
 
             this.Response = this.Client.Get(
-                "/purchasing/boms/tree?bomName=root",
+                "/purchasing/boms/tree?bomName=root&requirementOnly=true&showChanges=false",
                 with => { with.Accept("application/json"); }).Result;
         }
 

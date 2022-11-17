@@ -23,7 +23,7 @@
             bool requirementOnly = true,
             bool showChanges = false)
         {
-            return new SuccessResult<BomTreeNode>(this.domainService.BuildTree(bomName, levels, requirementOnly, showChanges));
+            return new SuccessResult<BomTreeNode>(this.domainService.BuildBomTree(bomName, levels, requirementOnly, showChanges));
         }
 
         public IEnumerable<IEnumerable<string>> GetFlatBomTreeExport(
@@ -32,7 +32,7 @@
             bool requirementOnly = true,
             bool showChanges = false)
         {
-            var flattened = this.domainService.FlattenTree(bomName, levels, requirementOnly, showChanges);
+            var flattened = this.domainService.FlattenBomTree(bomName, levels, requirementOnly, showChanges);
             var csvData = new List<List<string>>();
             foreach (var node in flattened)
             {

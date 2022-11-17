@@ -20,7 +20,7 @@
             this.detailRepository = detailRepository;
         }
 
-        public BomTreeNode BuildTree(
+        public BomTreeNode BuildBomTree(
             string bomName, 
             int? levels = null,
             bool requirementOnly = true,
@@ -121,7 +121,7 @@
             return rootNode;
         }
 
-        public IEnumerable<BomTreeNode> FlattenTree(
+        public IEnumerable<BomTreeNode> FlattenBomTree(
             string bomName, 
             int? levels = null,
             bool requirementOnly = true,
@@ -203,6 +203,37 @@
             }
 
             return result;
+        }
+
+        public BomTreeNode BuildWhereUsedTree(
+            string partNumber,
+            int? levels = null,
+            bool requirementOnly = true,
+            bool showChanges = false)
+        {
+            //var root = this.detailRepository.FindBy(x => x.PartNumber == partNumber);
+            var rootNode = new BomTreeNode
+                               {
+                                   Name = partNumber,
+                                   Qty = 0,
+                                   Children = this.detailRepository.FilterBy(d => d.PartNumber == partNumber)
+                                       .Select(c => new BomTreeNode
+                                                        {
+                                                            Name = c.BomPartNumber,
+                                                            Qty = c.Qty
+                                                        })
+
+                               };
+            return rootNode;
+        }
+
+        public IEnumerable<BomTreeNode> FlattenWhereUsedTree(
+            string partNumber,
+            int? levels = null,
+            bool requirementOnly = true,
+            bool showChanges = false)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
