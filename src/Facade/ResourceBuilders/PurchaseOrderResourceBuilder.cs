@@ -163,6 +163,11 @@
                                  };
             }
 
+            if (this.authService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreateForOtherUser, privileges))
+            {
+                yield return new LinkResource { Rel = "create-for-other-user", Href = "/purchasing/purchase-orders/create" };
+            }
+
             if (model != null)
             {
                 yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };

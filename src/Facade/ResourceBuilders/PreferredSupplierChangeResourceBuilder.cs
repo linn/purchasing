@@ -26,7 +26,7 @@
                            ChangeReasonDescription = entity.ChangeReason?.Description,
                            ChangedById = entity.ChangedBy.Id,
                            ChangedByName = entity.ChangedBy.FullName,
-                           OldCurrencyCode = entity.OldCurrency.Code,
+                           OldCurrencyCode = entity.OldCurrency?.Code,
                            DateChanged = entity.DateChanged.ToString("o"),
                            NewPrice = entity.NewPrice,
                            NewSupplierId = entity.NewSupplier.SupplierId,

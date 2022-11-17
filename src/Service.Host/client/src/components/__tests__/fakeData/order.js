@@ -87,6 +87,7 @@ const order = {
             mrOrders: null,
             netTotalCurrency: 6000,
             orderNumber: 100157,
+            drawingReference: 'Rev 123',
             orderPosting: {
                 building: null,
                 id: 13227,

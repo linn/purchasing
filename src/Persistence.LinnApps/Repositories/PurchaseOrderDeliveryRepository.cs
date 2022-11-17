@@ -23,7 +23,7 @@
 
         public override IQueryable<PurchaseOrderDelivery> FilterBy(Expression<Func<PurchaseOrderDelivery, bool>> expression)
         {
-            return this.serviceDbContext.PurchaseOrderDeliveries.AsNoTracking()
+            return this.serviceDbContext.PurchaseOrderDeliveries
                .Include(d => d.PurchaseOrderDetail).ThenInclude(plod => plod.Part)
                .Include(d => d.PurchaseOrderDetail).ThenInclude(plod => plod.PurchaseOrder)
                .ThenInclude(plo => plo.Supplier).ThenInclude(s => s.VendorManager).Where(expression);

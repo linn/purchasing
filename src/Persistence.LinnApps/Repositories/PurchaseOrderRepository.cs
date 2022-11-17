@@ -49,7 +49,7 @@
                 .PurchaseOrders
                 .Include(o => o.Supplier).ThenInclude(s => s.SupplierContacts)
                 .Include(o => o.Supplier).ThenInclude(s => s.AccountController).ThenInclude(e => e.PhoneListEntry)
-                .Include(o => o.RequestedBy)
+                .Include(o => o.RequestedBy).ThenInclude(s => s.PhoneListEntry)
                 .Include(o => o.EnteredBy)
                 .Include(o => o.AuthorisedBy)
                 .Include(o => o.DeliveryAddress).ThenInclude(a => a.FullAddress)

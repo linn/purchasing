@@ -48,7 +48,7 @@
 
                 DeliveryAddress = new LinnDeliveryAddressResource(),
                 RequestedBy = new EmployeeResource(),
-                EnteredBy = new EmployeeResource(),
+                EnteredBy = new EmployeeResource { Id = 1 },
                 AuthorisedBy = new EmployeeResource(),
                 OrderAddress = new AddressResource()
             };

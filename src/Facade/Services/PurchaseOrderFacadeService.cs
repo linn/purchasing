@@ -130,7 +130,7 @@
                                                            {
                                                                DateRequested = !string.IsNullOrEmpty(d.DateRequested) 
                                                                                    ? DateTime.Parse(d.DateRequested) : null,
-                                                           })?.ToList(),
+                                                           }).ToList(),
                                                    Part =
                                                        new Part
                                                            {
@@ -417,19 +417,8 @@
             PurchaseOrderResource updateResource,
             IEnumerable<string> privileges = null)
         {
-            if (updateResource.CurrentlyUsingOverbookForm)
-            {
-                this.domainService.AllowOverbook(
-                    entity,
-                    updateResource.Overbook,
-                    updateResource.OverbookQty,
-                    privileges);
-            }
-            else
-            {
-                var updated = this.BuildEntityFromResourceHelper(updateResource);
-                this.domainService.UpdateOrder(entity, updated, privileges);
-            }
+            var updated = this.BuildEntityFromResourceHelper(updateResource);
+            this.domainService.UpdateOrder(entity, updated, privileges);
         }
 
         private PurchaseOrder BuildEntityFromResourceHelper(PurchaseOrderResource resource)
@@ -455,6 +444,7 @@
                                                 OurQty = x.OurQty,
                                                 OrderQty = x.OrderQty,
                                                 PartNumber = x.PartNumber,
+                                                DrawingReference = x.DrawingReference,
                                                 PurchaseDeliveries =
                                                     x.PurchaseDeliveries?.Select(
                                                         d => new PurchaseOrderDelivery
@@ -506,8 +496,8 @@
                                                 StockPoolCode = x.StockPoolCode,
                                                 OriginalOrderNumber = x.OriginalOrderNumber,
                                                 OriginalOrderLine = x.OriginalOrderLine,
-                                                OurUnitOfMeasure = x.OurUnitOfMeasure,
-                                                OrderUnitOfMeasure = x.OrderUnitOfMeasure,
+                                                OurUnitOfMeasure = x.OurUnitOfMeasure?.Trim(),
+                                                OrderUnitOfMeasure = x.OrderUnitOfMeasure?.Trim(),
                                                 OurUnitPriceCurrency = x.OurUnitPriceCurrency,
                                                 OrderUnitPriceCurrency = x.OrderUnitPriceCurrency,
                                                 BaseOurUnitPrice = x.BaseOurUnitPrice,
@@ -564,8 +554,8 @@
                            DeliveryAddressId = resource.DeliveryAddress.AddressId,
                            OrderAddressId = resource.OrderAddress.AddressId,
                            InvoiceAddressId = resource.InvoiceAddressId,
-                           RequestedById = resource.RequestedBy.Id,
-                           EnteredById = resource.EnteredBy.Id,
+                           RequestedById = resource.RequestedBy.Id ?? (int)resource.EnteredBy.Id,
+                           EnteredById = (int)resource.EnteredBy.Id,
                            QuotationRef = resource.QuotationRef,
                            AuthorisedById = resource.AuthorisedBy?.Id,
                            SentByMethod = resource.SentByMethod,

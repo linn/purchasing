@@ -170,11 +170,11 @@
             var orderLineGroups = purchaseOrderDeliveryUpdates
                 .GroupBy(x => new { x.Key.OrderNumber, x.Key.OrderLine })
                 .Select(group => new
-                                     {
-                                         group.Key.OrderNumber,
-                                         group.Key.OrderLine,
-                                         DeliveryUpdates = group.OrderBy(x => x.NewDateAdvised)
-                                     });
+                {
+                    group.Key.OrderNumber,
+                    group.Key.OrderLine,
+                    DeliveryUpdates = group.OrderBy(x => x.NewDateAdvised)
+                });
 
             foreach (var group in orderLineGroups)
             {
@@ -220,7 +220,7 @@
                 if (isPricesMismatch)
                 {
                     var msg = $"Unit Price on lines uploaded ({group.DeliveryUpdates.First().UnitPrice}) "
-                              + $"for the specified order does not match unit price on our system " 
+                              + $"for the specified order does not match unit price on our system "
                               + $"({detail.OrderUnitPriceCurrency})";
                     errors.Add(
                         new Error(
@@ -232,7 +232,7 @@
                 var updates = group.DeliveryUpdates.OrderBy(u => u.NewDateAdvised).ToList();
                 var index = 1;
                 var updatedDeliveries = new List<PurchaseOrderDelivery>();
-                
+
                 foreach (var update in updates)
                 {
                     var vatAmount = Math.Round(
@@ -247,53 +247,53 @@
                             existingDelivery.PurchaseOrderDetail.PurchaseOrder.SupplierId),
                         2);
                     updatedDeliveries.Add(new PurchaseOrderDelivery
-                                              {
-                                                  OrderNumber = group.OrderNumber,
-                                                  OrderLine = group.OrderLine,
-                                                  DeliverySeq = index,
-                                                  OurDeliveryQty = update.Qty,
-                                                  QtyNetReceived = 0,
-                                                  QuantityOutstanding = update.Qty,
-                                                  DateAdvised = update.NewDateAdvised,
-                                                  AvailableAtSupplier = update.AvailableAtSupplier,
-                                                  RescheduleReason = update.NewReason,
-                                                  DateRequested = update.DateRequested ?? existingDelivery.DateRequested,
-                                                  SupplierConfirmationComment = update.Comment,
-                                                  OurUnitPriceCurrency = detail.OurUnitPriceCurrency,
-                                                  OrderUnitPriceCurrency = detail.OrderUnitPriceCurrency,
-                                                  BaseOurUnitPrice = detail.BaseOurUnitPrice,
-                                                  BaseDeliveryTotal = Math.Round(
+                    {
+                        OrderNumber = group.OrderNumber,
+                        OrderLine = group.OrderLine,
+                        DeliverySeq = index,
+                        OurDeliveryQty = update.Qty,
+                        QtyNetReceived = 0,
+                        QuantityOutstanding = update.Qty,
+                        DateAdvised = update.NewDateAdvised,
+                        AvailableAtSupplier = update.AvailableAtSupplier,
+                        RescheduleReason = update.NewReason,
+                        DateRequested = update.DateRequested ?? existingDelivery.DateRequested,
+                        SupplierConfirmationComment = update.Comment,
+                        OurUnitPriceCurrency = detail.OurUnitPriceCurrency,
+                        OrderUnitPriceCurrency = detail.OrderUnitPriceCurrency,
+                        BaseOurUnitPrice = detail.BaseOurUnitPrice,
+                        BaseDeliveryTotal = Math.Round(
                                                       (update.Qty * detail.BaseOurUnitPrice.GetValueOrDefault())
-                                                    + baseVatAmount, 
+                                                    + baseVatAmount,
                                                       2),
-                                                  BaseNetTotal = Math.Round(
+                        BaseNetTotal = Math.Round(
                                                       update.Qty * detail.BaseOurUnitPrice.GetValueOrDefault(),
                                                       2),
-                                                  OrderDeliveryQty = update.Qty / detail.OrderConversionFactor,
-                                                  BaseOrderUnitPrice = existingDelivery.BaseOrderUnitPrice,
-                                                  VatTotalCurrency = vatAmount,
-                                                  BaseVatTotal = baseVatAmount,
-                                                  CallOffDate = existingDelivery.CallOffDate,
-                                                  CallOffRef = existingDelivery.CallOffRef,
-                                                  Cancelled = "N",
-                                                  DeliveryTotalCurrency = Math.Round(
+                        OrderDeliveryQty = update.Qty / detail.OrderConversionFactor,
+                        BaseOrderUnitPrice = existingDelivery.BaseOrderUnitPrice,
+                        VatTotalCurrency = vatAmount,
+                        BaseVatTotal = baseVatAmount,
+                        CallOffDate = existingDelivery.CallOffDate,
+                        CallOffRef = existingDelivery.CallOffRef,
+                        Cancelled = "N",
+                        DeliveryTotalCurrency = Math.Round(
                                                                               detail.OrderUnitPriceCurrency.GetValueOrDefault() * update.Qty,
                                                                               2) + vatAmount,
-                                                  FilCancelled = "N",
-                                                  QtyPassedForPayment = 0,
-                                                  NetTotalCurrency = update.Qty * update.UnitPrice
-                                              });
-                        index++;
+                        FilCancelled = "N",
+                        QtyPassedForPayment = 0,
+                        NetTotalCurrency = update.Qty * update.UnitPrice
+                    });
+                    index++;
                 }
 
                 detail.PurchaseDeliveries = updatedDeliveries;
 
-                    this.UpdateMiniOrder(
-                        existingDelivery.OrderNumber,
-                        updates.Last().NewDateAdvised,
-                        null,
-                        null,
-                        updates.Last().Comment);
+                this.UpdateMiniOrder(
+                    existingDelivery.OrderNumber,
+                    updates.Last().NewDateAdvised,
+                    null,
+                    null,
+                    updates.Last().Comment);
                 updated?.AddRange(detail?.PurchaseDeliveries);
                 successCount++;
             }
@@ -301,21 +301,21 @@
             if (errors.Any())
             {
                 return new UploadPurchaseOrderDeliveriesResult
-                           {
-                               Success = false,
-                               Message =
+                {
+                    Success = false,
+                    Message =
                                    $"{successCount} orders updated successfully. The following errors occurred: ",
-                               Errors = errors,
-                               Updated = updated
-                           };
+                    Errors = errors,
+                    Updated = updated
+                };
             }
 
             return new UploadPurchaseOrderDeliveriesResult
-                       {
-                           Success = true, 
-                           Message = $"{successCount} orders updated successfully.",
-                           Updated = updated
-                       };
+            {
+                Success = true,
+                Message = $"{successCount} orders updated successfully.",
+                Updated = updated
+            };
         }
 
         public BatchUpdateProcessResult UpdateDeliveries(
@@ -429,104 +429,105 @@
 
             var newDeliveries = updatedDeliveriesForOrderLine.Select(
                 del =>
+                {
+                    var existing = list.FirstOrDefault(x => x.DeliverySeq == del.DeliverySeq);
+                    var vatAmount = Math.Round(
+                        this.purchaseOrdersPack.GetVatAmountSupplier(
+                            detail.OrderUnitPriceCurrency.GetValueOrDefault() * del.OurDeliveryQty.GetValueOrDefault(),
+                            order.SupplierId),
+                        2);
+
+                    var baseVatAmount = Math.Round(
+                        this.purchaseOrdersPack.GetVatAmountSupplier(
+                            detail.BaseOurUnitPrice.GetValueOrDefault() * del.OurDeliveryQty.GetValueOrDefault(),
+                            order.SupplierId),
+                        2);
+                    var reason = del.DateAdvised.HasValue ? "ADVISED" : "REQUESTED";
+
+                    // update the existing record if it exists
+                    if (existing != null)
                     {
-                        var existing = list.FirstOrDefault(x => x.DeliverySeq == del.DeliverySeq);
-                        var vatAmount = Math.Round(
-                            this.purchaseOrdersPack.GetVatAmountSupplier(
-                                detail.OrderUnitPriceCurrency.GetValueOrDefault() * del.OurDeliveryQty.GetValueOrDefault(),
-                                order.SupplierId),
+                        var seq = existing.DeliverySeq;
+                        existing = this.repository.FindBy(
+                            d => d.OrderNumber == orderNumber && d.OrderLine == orderLine
+                                                              && d.DeliverySeq == seq);
+                        existing.QuantityOutstanding =
+                            existing.QuantityOutstanding - existing.OurDeliveryQty + del.OurDeliveryQty;
+                        existing.RescheduleReason = reason;
+                        existing.OurDeliveryQty = del.OurDeliveryQty;
+                        existing.OrderDeliveryQty = del.OurDeliveryQty / detail.OrderConversionFactor;
+                        existing.OurUnitPriceCurrency = detail.OurUnitPriceCurrency;
+                        existing.DateRequested = del.DateRequested;
+                        existing.DateAdvised = del.DateAdvised;
+                        existing.CallOffDate = DateTime.Now;
+                        existing.NetTotalCurrency = Math.Round(
+                            del.OurDeliveryQty.GetValueOrDefault()
+                            * detail.OurUnitPriceCurrency.GetValueOrDefault(),
                             2);
-
-                        var baseVatAmount = Math.Round(
-                            this.purchaseOrdersPack.GetVatAmountSupplier(
-                                detail.BaseOurUnitPrice.GetValueOrDefault() * del.OurDeliveryQty.GetValueOrDefault(),
-                                order.SupplierId),
+                        existing.VatTotalCurrency = vatAmount;
+                        existing.DeliveryTotalCurrency = Math.Round(
+                                                             detail.OrderUnitPriceCurrency.GetValueOrDefault()
+                                                             * del.OurDeliveryQty.GetValueOrDefault(),
+                                                             2) + vatAmount;
+                        existing.BaseOurUnitPrice = detail.BaseOurUnitPrice;
+                        existing.BaseOrderUnitPrice = detail.BaseOrderUnitPrice;
+                        existing.BaseNetTotal = Math.Round(
+                            del.OurDeliveryQty.GetValueOrDefault() * detail.BaseOurUnitPrice.GetValueOrDefault(),
                             2);
-                        var reason = del.DateAdvised.HasValue ? "ADVISED" : "REQUESTED";
+                        existing.BaseVatTotal = baseVatAmount;
+                        existing.BaseDeliveryTotal = Math.Round(
+                            (del.OurDeliveryQty.GetValueOrDefault() * detail.BaseOurUnitPrice.GetValueOrDefault())
+                            + baseVatAmount,
+                            2);
+                        existing.RescheduleReason = reason;
+                        existing.AvailableAtSupplier = del.AvailableAtSupplier;
+                        return existing;
+                    }
 
-                        // update the existing record if it exists
-                        if (existing != null)
-                        {
-                            var seq = existing.DeliverySeq;
-                            existing = this.repository.FindBy(
-                                d => d.OrderNumber == orderNumber && d.OrderLine == orderLine
-                                                                  && d.DeliverySeq == seq);
-                            existing.OurDeliveryQty = del.OurDeliveryQty;
-                            existing.OrderDeliveryQty = del.OurDeliveryQty / detail.OrderConversionFactor;
-                            existing.OurUnitPriceCurrency = detail.OurUnitPriceCurrency;
-                            existing.DateRequested = del.DateRequested;
-                            existing.DateAdvised = del.DateAdvised;
-                            existing.CallOffDate = DateTime.Now;
-                            existing.NetTotalCurrency = Math.Round(
-                                del.OurDeliveryQty.GetValueOrDefault()
-                                * detail.OurUnitPriceCurrency.GetValueOrDefault(),
-                                2);
-                            existing.VatTotalCurrency = vatAmount;
-                            existing.DeliveryTotalCurrency = Math.Round(
-                                                                 detail.OrderUnitPriceCurrency.GetValueOrDefault()
-                                                                 * del.OurDeliveryQty.GetValueOrDefault(),
-                                                                 2) + vatAmount;
-                            existing.BaseOurUnitPrice = detail.BaseOurUnitPrice;
-                            existing.BaseOrderUnitPrice = detail.BaseOrderUnitPrice;
-                            existing.BaseNetTotal = Math.Round(
-                                del.OurDeliveryQty.GetValueOrDefault() * detail.BaseOurUnitPrice.GetValueOrDefault(),
-                                2);
-                            existing.BaseVatTotal = baseVatAmount;
-                            existing.BaseDeliveryTotal = Math.Round(
-                                (del.OurDeliveryQty.GetValueOrDefault() * detail.BaseOurUnitPrice.GetValueOrDefault())
-                                + baseVatAmount,
-                                2);
-                            existing.QuantityOutstanding =
-                                del.OurDeliveryQty - existing.OurDeliveryQty + existing.QuantityOutstanding;
-                            existing.RescheduleReason = reason;
-                            existing.AvailableAtSupplier = del.AvailableAtSupplier;
-                            return existing;
-                        }
-
-                        // or create a new record
-                        return new PurchaseOrderDelivery
-                                         {
-                                             DeliverySeq = del.DeliverySeq,
-                                             OurDeliveryQty = del.OurDeliveryQty,
-                                             OrderDeliveryQty = del.OurDeliveryQty / detail.OrderConversionFactor,
-                                             OurUnitPriceCurrency = detail.OurUnitPriceCurrency,
-                                             OrderUnitPriceCurrency = detail.OrderUnitPriceCurrency,
-                                             DateRequested = del.DateRequested,
-                                             DateAdvised = del.DateAdvised,
-                                             CallOffDate = DateTime.Now,
-                                             Cancelled = "N",
-                                             CallOffRef = null,
-                                             OrderNumber = orderNumber,
-                                             OrderLine = orderLine,
-                                             FilCancelled = "N",
-                                             NetTotalCurrency = Math.Round(
-                                                 del.OurDeliveryQty.GetValueOrDefault()
-                                                 * detail.OurUnitPriceCurrency.GetValueOrDefault(),
+                    // or create a new record
+                    return new PurchaseOrderDelivery
+                    {
+                        DeliverySeq = del.DeliverySeq,
+                        OurDeliveryQty = del.OurDeliveryQty,
+                        OrderDeliveryQty = del.OurDeliveryQty / detail.OrderConversionFactor,
+                        OurUnitPriceCurrency = detail.OurUnitPriceCurrency,
+                        OrderUnitPriceCurrency = detail.OrderUnitPriceCurrency,
+                        DateRequested = del.DateRequested,
+                        DateAdvised = del.DateAdvised,
+                        CallOffDate = DateTime.Now,
+                        Cancelled = "N",
+                        CallOffRef = null,
+                        OrderNumber = orderNumber,
+                        OrderLine = orderLine,
+                        FilCancelled = "N",
+                        NetTotalCurrency = Math.Round(
+                                             del.OurDeliveryQty.GetValueOrDefault()
+                                             * detail.OurUnitPriceCurrency.GetValueOrDefault(),
+                                             2),
+                        VatTotalCurrency = vatAmount,
+                        DeliveryTotalCurrency = Math.Round(
+                                             detail.OrderUnitPriceCurrency.GetValueOrDefault() * del.OurDeliveryQty.GetValueOrDefault(), 2)
+                                         + vatAmount,
+                        SupplierConfirmationComment = null,
+                        BaseOurUnitPrice = del.BaseOurUnitPrice,
+                        BaseOrderUnitPrice = del.BaseOrderUnitPrice,
+                        BaseNetTotal = Math.Round(
+                                             del.OurDeliveryQty.GetValueOrDefault()
+                                             * detail.BaseOurUnitPrice.GetValueOrDefault(),
+                                             2),
+                        BaseVatTotal = baseVatAmount,
+                        BaseDeliveryTotal = Math.Round(
+                                                 (del.OurDeliveryQty.GetValueOrDefault()
+                                                  * detail.BaseOurUnitPrice.GetValueOrDefault())
+                                                 + baseVatAmount,
                                                  2),
-                                             VatTotalCurrency = vatAmount,
-                                             DeliveryTotalCurrency = Math.Round(
-                                                 detail.OrderUnitPriceCurrency.GetValueOrDefault() * del.OurDeliveryQty.GetValueOrDefault(), 2)
-                                             + vatAmount,
-                                             SupplierConfirmationComment = null,
-                                             BaseOurUnitPrice = del.BaseOurUnitPrice,
-                                             BaseOrderUnitPrice = del.BaseOrderUnitPrice,
-                                             BaseNetTotal = Math.Round(
-                                                 del.OurDeliveryQty.GetValueOrDefault()
-                                                 * detail.BaseOurUnitPrice.GetValueOrDefault(),
-                                                 2),
-                                             BaseVatTotal = baseVatAmount,
-                                             BaseDeliveryTotal = Math.Round(
-                                                     (del.OurDeliveryQty.GetValueOrDefault()
-                                                      * detail.BaseOurUnitPrice.GetValueOrDefault())
-                                                     + baseVatAmount,
-                                                     2),
-                                             QuantityOutstanding = del.OurDeliveryQty,
-                                             QtyNetReceived = 0,
-                                             QtyPassedForPayment = 0,
-                                             RescheduleReason = reason,
-                                             AvailableAtSupplier = del.AvailableAtSupplier
-                                         };
-                    });
+                        QuantityOutstanding = del.OurDeliveryQty,
+                        QtyNetReceived = 0,
+                        QtyPassedForPayment = 0,
+                        RescheduleReason = reason,
+                        AvailableAtSupplier = del.AvailableAtSupplier
+                    };
+                });
 
             detail.PurchaseDeliveries = newDeliveries.ToList();
 
@@ -551,31 +552,31 @@
 
             miniOrder.Deliveries = updatedPurchaseOrderDeliveries
                 .Select(del =>
+                {
+                    var existing =
+                        miniOrder.Deliveries?.FirstOrDefault(d => d.DeliverySequence == del.DeliverySeq);
+
+                    if (existing != null)
                     {
-                        var existing =
-                            miniOrder.Deliveries?.FirstOrDefault(d => d.DeliverySequence == del.DeliverySeq);
+                        existing = this.miniOrderDeliveryRepository.FindBy(
+                            d => d.OrderNumber == miniOrder.OrderNumber && d.DeliverySequence == del.DeliverySeq);
+                        existing.AdvisedDate = del.DateAdvised;
+                        existing.RequestedDate = del.DateRequested ?? existing.RequestedDate;
+                        existing.AvailableAtSupplier = del.AvailableAtSupplier;
+                        existing.OurQty = del.OurDeliveryQty;
+                        return existing;
+                    }
 
-                        if (existing != null)
-                        {
-                            existing = this.miniOrderDeliveryRepository.FindBy(
-                                d => d.OrderNumber == miniOrder.OrderNumber && d.DeliverySequence == del.DeliverySeq);
-                            existing.AdvisedDate = del.DateAdvised;
-                            existing.RequestedDate = del.DateRequested ?? existing.RequestedDate;
-                            existing.AvailableAtSupplier = del.AvailableAtSupplier;
-                            existing.OurQty = del.OurDeliveryQty;
-                            return existing;
-                        }
-
-                        return new MiniOrderDelivery
-                                   {
-                                       AdvisedDate = del.DateAdvised,
-                                       RequestedDate = del.DateRequested,
-                                       DeliverySequence = del.DeliverySeq,
-                                       OrderNumber = del.OrderNumber,
-                                       AvailableAtSupplier = del.AvailableAtSupplier,
-                                       OurQty = del.OurDeliveryQty
-                                   };
-                    }).ToList();
+                    return new MiniOrderDelivery
+                    {
+                        AdvisedDate = del.DateAdvised,
+                        RequestedDate = del.DateRequested,
+                        DeliverySequence = del.DeliverySeq,
+                        OrderNumber = del.OrderNumber,
+                        AvailableAtSupplier = del.AvailableAtSupplier,
+                        OurQty = del.OurDeliveryQty
+                    };
+                }).ToList();
         }
 
         public void ReplaceMiniOrderDeliveries(IEnumerable<PurchaseOrderDelivery> updated)
@@ -583,14 +584,14 @@
             var miniOrder = this.miniOrderRepository.FindById(updated.First().OrderNumber);
             miniOrder.Deliveries = updated.Select(
                 del => new MiniOrderDelivery
-                           {
-                               AdvisedDate = del.DateAdvised,
-                               RequestedDate = del.DateRequested,
-                               DeliverySequence = del.DeliverySeq,
-                               OrderNumber = del.OrderNumber,
-                               AvailableAtSupplier = del.AvailableAtSupplier,
-                               OurQty = del.OurDeliveryQty
-                           }).ToList();
+                {
+                    AdvisedDate = del.DateAdvised,
+                    RequestedDate = del.DateRequested,
+                    DeliverySequence = del.DeliverySeq,
+                    OrderNumber = del.OrderNumber,
+                    AvailableAtSupplier = del.AvailableAtSupplier,
+                    OurQty = del.OurDeliveryQty
+                }).ToList();
         }
 
         // syncs changes to an individual delivery back to the corresponding mini order delivery
@@ -599,7 +600,7 @@
         {
             var miniOrder = this.miniOrderRepository.FindById(orderNumber);
             var del = miniOrder.Deliveries.FirstOrDefault(x => x.DeliverySequence == seq);
-            
+
             if (del != null)
             {
                 if (!string.IsNullOrEmpty(availableAtSupplier))
@@ -613,15 +614,15 @@
             {
                 var existing = miniOrder.Deliveries;
                 this.miniOrderDeliveryRepository.Add(new MiniOrderDelivery
-                                                         {
-                                                             OrderNumber = orderNumber,
-                                                             DeliverySequence = existing.Any() 
+                {
+                    OrderNumber = orderNumber,
+                    DeliverySequence = existing.Any()
                                                                  ? existing.Max(d => d.DeliverySequence) + 1 : 1,
-                                                             AdvisedDate = newDateAdvised,
-                                                             OurQty = qty,
-                                                             AvailableAtSupplier = availableAtSupplier,
-                                                             RequestedDate = miniOrder.RequestedDeliveryDate
-                                                         });
+                    AdvisedDate = newDateAdvised,
+                    OurQty = qty,
+                    AvailableAtSupplier = availableAtSupplier,
+                    RequestedDate = miniOrder.RequestedDeliveryDate
+                });
             }
         }
 

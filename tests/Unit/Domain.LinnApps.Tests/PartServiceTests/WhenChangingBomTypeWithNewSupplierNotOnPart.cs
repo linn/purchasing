@@ -24,7 +24,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.authService
+            this.AuthService
                 .HasPermissionFor(AuthorisedAction.ChangeBomType, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
@@ -34,9 +34,10 @@
                                BomType = "C",
                                PreferredSupplier = new Supplier { SupplierId = 1, Name = "Shugs Shoes" }
                            };
-            this.partRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>()).Returns(part);
+            this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>()).Returns(part);
 
-            this.partSupplierRepository.FindBy(Arg.Any<Expression<Func<PartSupplier, bool>>>()).Returns((PartSupplier)null);
+            this.PartSupplierRepository.FindBy(Arg.Any<Expression<Func<PartSupplier, bool>>>())
+                .Returns((PartSupplier)null);
 
             this.bomTypeChange = new BomTypeChange
                                      {

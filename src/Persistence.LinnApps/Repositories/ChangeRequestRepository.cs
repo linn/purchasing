@@ -1,10 +1,6 @@
 ﻿namespace Linn.Purchasing.Persistence.LinnApps.Repositories
 {
-    using System;
-    using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     using Linn.Common.Persistence.EntityFramework;
     using Linn.Purchasing.Domain.LinnApps.Boms;
@@ -25,7 +21,7 @@
         {
             return this.serviceDbContext
                 .ChangeRequests
-                .Include(c => c.BomChanges).ThenInclude(c => c.PhaseInWeek) // .ThenInclude(d => d.Part)
+                .Include(c => c.BomChanges).ThenInclude(c => c.PhaseInWeek)
                 .Include(c => c.PcasChanges)
                 .First(c => c.DocumentNumber == key && c.DocumentType == "CRF");
         }

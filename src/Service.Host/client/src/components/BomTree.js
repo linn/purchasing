@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Page, Loading } from '@linn-it/linn-form-components-library';
+import {
+    Page,
+    Loading,
+    ExportButton,
+    Search,
+    InputField,
+    collectionSelectorHelpers
+} from '@linn-it/linn-form-components-library';
 import PropTypes from 'prop-types';
-import { useParams } from 'react-router-dom';
-
+import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import SvgIcon from '@mui/material/SvgIcon';
 import { alpha, styled } from '@mui/material/styles';
@@ -10,14 +16,15 @@ import TreeView from '@mui/lab/TreeView';
 import TreeItem, { treeItemClasses } from '@mui/lab/TreeItem';
 import Collapse from '@mui/material/Collapse';
 import Grid from '@mui/material/Grid';
+import queryString from 'query-string';
 import { useSpring, animated } from 'react-spring';
-import LinearProgress from '@mui/material/LinearProgress';
 import Button from '@mui/material/Button';
-
 import Typography from '@mui/material/Typography';
 import history from '../history';
 import config from '../config';
-import bomTreeNodeActions from '../actions/bomTreeNodeActions';
+import bomTreeActions from '../actions/bomTreeActions';
+import { bomTree as bomTreeItemType, parts } from '../itemTypes';
+import partsActions from '../actions/partsActions';
 
 /* eslint react/jsx-props-no-spreading: 0 */
 /* eslint react/destructuring-assignment: 0 */
@@ -85,100 +92,167 @@ const StyledTreeItem = styled(props => (
 }));
 
 export default function BomTree() {
-    const [expandAll, setExpandAll] = useState(false);
     const [expanded, setExpanded] = useState([]);
 
-    const { id } = useParams();
+    const { search } = useLocation();
+    const { bomName } = queryString.parse(search);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [explode, setExplode] = useState(null);
+
     const dispatch = useDispatch();
+
+    const partsSearchResults = useSelector(reduxState =>
+        collectionSelectorHelpers.getSearchItems(
+            reduxState[parts.item],
+            100,
+            'id',
+            'partNumber',
+            'description'
+        )
+    );
+    const partsSearchLoading = useSelector(reduxState =>
+        collectionSelectorHelpers.getSearchLoading(reduxState[parts.item])
+    );
+
     useEffect(() => {
-        dispatch(bomTreeNodeActions.fetch(id));
-    }, [dispatch, id]);
-
-    const boms = useSelector(state => state.bomTreeNodes.items);
-
-    const bomsLoading = useSelector(state => state.bomTreeNodes.loading);
-
-    useEffect(() => {
-        if (expandAll) {
-            setExpanded(
-                Object.keys(boms)
-                    .map(b => b.toString())
-                    .filter(x => x !== id)
-            );
+        if (bomName) {
+            setSearchTerm(bomName);
         }
-    }, [boms, id, expandAll]);
+    }, [bomName]);
 
-    const root = boms[Number(id)];
+    const bomTree = useSelector(state => state[bomTreeItemType.item].item);
+
+    const bomTreeLoading = useSelector(state => state[bomTreeItemType.item].loading);
 
     const handleToggle = (_, nodeIds) => {
         setExpanded(nodeIds);
     };
 
-    const renderNode = bomId => {
-        const nodes = bomId ? boms[bomId.toString()]?.children : [];
-        if (nodes) {
-            return nodes.map(c => {
-                const label = (
+    const nodesWithChildren = root => {
+        const result = [];
+        if (!root) {
+            return result;
+        }
+        const q = [];
+        q.push(root);
+        while (q.length !== 0) {
+            let n = q.length;
+            while (n > 0) {
+                const current = q[0];
+                q.shift();
+                if (current.children?.length) {
+                    result.push(current.name);
+                    for (let i = 0; i < current.children.length; i += 1) {
+                        q.push(current.children[i]);
+                    }
+                }
+                n -= 1;
+            }
+        }
+        return result;
+    };
+
+    useEffect(() => {
+        setExpanded(nodesWithChildren(bomTree));
+    }, [bomTree]);
+
+    const renderTree = nodes => {
+        const label = (
+            <>
+                <Typography
+                    display="inline"
+                    variant="subtitle1"
+                    color={!nodes.children?.length ? '' : 'primary'}
+                >
+                    {nodes.name}
+                </Typography>
+                {nodes.name !== bomName && (
                     <>
-                        <Typography
-                            display="inline"
-                            variant="subtitle1"
-                            color={c.bomType === 'C' ? '' : 'primary'}
-                        >
-                            {c.partNumber}
-                        </Typography>
                         <Typography display="inline" variant="subtitle2">
                             {' '}
-                            (x{c.qty})
+                            (x{nodes.qty})
                         </Typography>
                         <Typography display="inline" variant="caption">
                             {' - '}
-                            {c.partDescription}
+                            {nodes.description}
                         </Typography>
                     </>
-                );
-                if (c.bomType === 'C') {
-                    return <StyledTreeItem id={c.partNumber} nodeId={c.partNumber} label={label} />;
-                }
-
-                return (
-                    <StyledTreeItem
-                        id={`${c.bomId}` ?? c.partNumber}
-                        nodeId={`${c.bomId}` ?? c.partNumber}
-                        label={label}
-                    >
-                        {renderNode(c.bomId)}
-                    </StyledTreeItem>
-                );
-            });
-        }
-        return <LinearProgress />;
+                )}
+            </>
+        );
+        return (
+            <StyledTreeItem key={nodes.name} nodeId={nodes.name} label={label}>
+                {Array.isArray(nodes.children)
+                    ? nodes.children.map(node => renderTree(node))
+                    : null}
+            </StyledTreeItem>
+        );
     };
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
-                {root && (
+                <Grid item xs={12}>
+                    <ExportButton
+                        href={`${config.appRoot}/purchasing/boms/tree/export?bomName=${bomName}&levels=${explode}`}
+                    />
+                </Grid>
+                <Grid item xs={4}>
+                    <Search
+                        propertyName="searchTerm"
+                        label="Bom Name"
+                        resultsInModal
+                        resultLimit={100}
+                        value={searchTerm}
+                        handleValueChange={(_, newVal) => setSearchTerm(newVal)}
+                        search={partNumber => {
+                            dispatch(partsActions.search(partNumber));
+                        }}
+                        searchResults={partsSearchResults}
+                        helperText="Enter a value. Press the enter key if you want to search parts."
+                        loading={partsSearchLoading}
+                        priorityFunction="closestMatchesFirst"
+                        onResultSelect={newValue => {
+                            setSearchTerm(newValue.partNumber);
+                        }}
+                        clearSearch={() => {}}
+                    />
+                </Grid>
+                <Grid item xs={4}>
+                    <InputField
+                        value={explode}
+                        type="number"
+                        propertyName="explode"
+                        label="Explode levels"
+                        helperText="Leave blank to see the whole tree"
+                        onChange={(_, newVal) => {
+                            setExplode(newVal);
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={12}>
+                    <Button
+                        color="primary"
+                        variant="contained"
+                        disabled={!searchTerm}
+                        onClick={() => {
+                            dispatch(
+                                bomTreeActions.fetchByHref(
+                                    `/purchasing/boms/tree?bomName=${bomName}&levels=${explode}`
+                                )
+                            );
+                        }}
+                    >
+                        {' '}
+                        Run{' '}
+                    </Button>
+                </Grid>
+                {bomTree && (
                     <>
                         <Grid item xs={12}>
                             <Typography variant="h4" color="primary" display="inline">
-                                {root.bomName} {bomsLoading && '...'}
+                                {bomName}
                             </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Button
-                                variant="outlined"
-                                onClick={() => {
-                                    if (!expandAll) {
-                                        setExpandAll(true);
-                                    } else {
-                                        setExpandAll(false);
-                                        setExpanded([]);
-                                    }
-                                }}
-                            >
-                                {expandAll ? 'Collapse All' : 'Expand All'}
-                            </Button>
                         </Grid>
                         <Grid item xs={12}>
                             <TreeView
@@ -189,15 +263,22 @@ export default function BomTree() {
                                 onNodeToggle={handleToggle}
                                 expanded={expanded}
                             >
-                                {renderNode(root.bomId.toString())}
+                                {renderTree(bomTree)}
                             </TreeView>
                         </Grid>
                     </>
                 )}
-                {!root && (
-                    <Grid item xs={6}>
-                        <Loading />
-                    </Grid>
+                {bomTreeLoading && (
+                    <>
+                        <Grid item xs={12}>
+                            <Typography variant="subtitle2">
+                                Filling out the tree... May take a while...
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Loading />
+                        </Grid>
+                    </>
                 )}
             </Grid>
         </Page>

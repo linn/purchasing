@@ -137,5 +137,16 @@
             this.results.First().Rows.Count().Should().Be(4);
             this.results.Last().Rows.Count().Should().Be(1);
         }
+
+        [Test]
+        public void ShouldOrderByPart()
+        {
+            for (int i = 1; i < this.results.Count(); i++)
+            {
+                var currentPart = this.results.ElementAt(i).ReportTitle.DisplayValue.Split(" _ ").First();
+                var previousPart = this.results.ElementAt(i - 1).ReportTitle.DisplayValue.Split(" _ ").First();
+                Assert.IsTrue(string.CompareOrdinal(currentPart, previousPart) > 0);
+            }
+        }
     }
 }

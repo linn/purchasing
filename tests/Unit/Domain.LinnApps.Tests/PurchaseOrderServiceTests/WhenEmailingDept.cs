@@ -40,7 +40,7 @@
                                  OrderNumber = 321,
                                  AuthorisedById = 456,
                                  Supplier = this.supplier,
-                                 EnteredBy = new Employee
+                                 RequestedBy = new Employee
                                                  {
                                                      FullName = "PERSON",
                                                      PhoneListEntry 
@@ -73,10 +73,9 @@
             expectedBody += "Any queries regarding this order - please contact a member of the Finance team.";
             
             this.EmailService.Received().SendEmail(
-                this.order.EnteredBy.PhoneListEntry.EmailAddress,
-                this.order.EnteredBy.FullName,
-                Arg.Is<List<Dictionary<string, string>>>(l => l.First()
-                    .ContainsValue(this.user.PhoneListEntry.EmailAddress)),
+                this.order.RequestedBy.PhoneListEntry.EmailAddress,
+                this.order.RequestedBy.FullName,
+                Arg.Any<IEnumerable<Dictionary<string, string>>>(),
                 Arg.Any<IEnumerable<Dictionary<string, string>>>(),
                 this.user.PhoneListEntry.EmailAddress,
                 this.user.FullName,

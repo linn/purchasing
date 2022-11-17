@@ -91,6 +91,6 @@
 
         public decimal OverbookQtyAllowed { get; set; }
 
-        public string DrawingRef { get; set; }
+        public string DrawingReference { get; set; }
     }
 }
