@@ -14,7 +14,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.BomTreeService.BuildTree("root").Returns(new BomTreeNode { Name = "root", Description = "root node"});
+            this.BomTreeService.BuildTree("ROOT").Returns(new BomTreeNode { Name = "root", Description = "root node"});
 
             this.Response = this.Client.Get(
                 "/purchasing/boms/tree?bomName=root",

@@ -23,10 +23,10 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
+            app.MapGet("/purchasing/boms/tree", this.GetTree);
             app.MapGet("/purchasing/boms/{id:int}", this.GetBom);
             app.MapGet("/purchasing/boms/boards/application-state", this.GetBoardApplicationState);
             app.MapGet("/purchasing/boms/boards/{id}", this.GetBoard);
-            app.MapGet("/purchasing/boms/tree", this.GetTree);
             app.MapGet("/purchasing/boms/tree/export", this.GetTreeExport);
             app.MapGet("/purchasing/boms/boards", this.GetBoards);
             app.MapGet("/purchasing/boms/boards/create", this.GetApp);
@@ -61,8 +61,8 @@
             if (!string.IsNullOrEmpty(bomName))
             {
                 result = facadeService.GetBomTree(bomName.Trim().ToUpper(), levels);
-
             }
+
             await res.Negotiate(result);
         }
 
