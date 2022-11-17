@@ -96,9 +96,9 @@ import emailMultiplePurchaseOrders from './emailMultiplePurchaseOrders';
 import forecastWeekChangesReport from './forecastWeekChangesReport';
 import sendPurchaseOrderAuthEmail from './sendPurchaseOrderAuthEmail';
 import changeRequest from './changeRequest';
-import bomTreeNodes from './bomTreeNodes';
 import sendPurchaseOrderDeptEmail from './sendPurchaseOrderDeptEmail';
 import suggestedPurchaseOrderValues from './suggestedPurchaseOrderValues';
+import bomTree from './bomTree';
 import board from './board';
 import boards from './boards';
 
@@ -116,9 +116,9 @@ const rootReducer = history =>
         automaticPurchaseOrder,
         automaticPurchaseOrderSuggestions,
         batchPurchaseOrderDeliveriesUpload,
+        bomTree,
         board,
         boards,
-        bomTreeNodes,
         bulkLeadTimesUpload,
         changeRequest,
         countries,

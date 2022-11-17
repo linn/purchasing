@@ -6,7 +6,10 @@
     using Carter.Response;
 
     using Linn.Common.Facade;
+    using Linn.Common.Facade.Carter.Extensions;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
+    using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.Boms;
     using Linn.Purchasing.Service.Extensions;
@@ -20,10 +23,11 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/purchasing/boms/tree/{id:int}", this.GetApp);
+            app.MapGet("/purchasing/boms/tree", this.GetTree);
             app.MapGet("/purchasing/boms/{id:int}", this.GetBom);
             app.MapGet("/purchasing/boms/boards/application-state", this.GetBoardApplicationState);
             app.MapGet("/purchasing/boms/boards/{id}", this.GetBoard);
+            app.MapGet("/purchasing/boms/tree/export", this.GetTreeExport);
             app.MapGet("/purchasing/boms/boards", this.GetBoards);
             app.MapGet("/purchasing/boms/boards/create", this.GetApp);
             app.MapPost("/purchasing/boms/boards", this.AddCircuitBoard);
@@ -44,6 +48,34 @@
             var result = facadeService.GetById(id, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
+        }
+
+        private async Task GetTree(
+            HttpRequest req,
+            HttpResponse res,
+            string bomName,
+            int? levels,
+            IBomTreeReportsService facadeService)
+        {
+            IResult<BomTreeNode> result = null;
+            if (!string.IsNullOrEmpty(bomName))
+            {
+                result = facadeService.GetBomTree(bomName.Trim().ToUpper(), levels);
+            }
+
+            await res.Negotiate(result);
+        }
+
+        private async Task GetTreeExport(
+            HttpRequest req,
+            HttpResponse res,
+            string bomName,
+            int? levels,
+            IBomTreeReportsService facadeService)
+        {
+            var result = facadeService.GetFlatBomTreeExport(bomName, levels);
+
+            await res.FromCsv(result, $"{bomName}.csv");
         }
 
         private async Task GetBoard(

@@ -5,6 +5,7 @@
     using Linn.Common.Facade.Carter;
     using Linn.Common.Facade.Carter.Handlers;
     using Linn.Common.Reporting.Resources.ReportResultResources;
+    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.Boms;
     using Linn.Purchasing.Resources.MaterialRequirements;
@@ -89,6 +90,7 @@
                 .AddTransient<IHandler, JsonResultHandler<BomResource>>()
                 .AddTransient<IHandler, JsonResultHandler<BomTypeChangeResource>>()
                 .AddTransient<IHandler, JsonResultHandler<CircuitBoardResource>>()
+                .AddTransient<IHandler, JsonResultHandler<BomTreeNode>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<CircuitBoardResource>>>();
         }
     }
