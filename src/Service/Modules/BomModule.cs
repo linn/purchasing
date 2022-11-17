@@ -8,6 +8,7 @@
     using Linn.Common.Facade;
     using Linn.Common.Facade.Carter.Extensions;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.Boms;
@@ -56,8 +57,12 @@
             int? levels,
             IBomTreeReportsService facadeService)
         {
-            var result = facadeService.GetBomTree(bomName, levels);
+            IResult<BomTreeNode> result = null;
+            if (!string.IsNullOrEmpty(bomName))
+            {
+                result = facadeService.GetBomTree(bomName.Trim().ToUpper(), levels);
 
+            }
             await res.Negotiate(result);
         }
 

@@ -234,6 +234,7 @@ export default function BomTree() {
                     <Button
                         color="primary"
                         variant="contained"
+                        disabled={!searchTerm}
                         onClick={() => {
                             dispatch(
                                 bomTreeActions.fetchByHref(
