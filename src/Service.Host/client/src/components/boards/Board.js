@@ -106,7 +106,7 @@ function Board({ creating }) {
                             value={board.boardCode}
                             label="Board Code"
                             disabled
-                            propertyName="boardCode"
+                            propertyName="boardCodeDisplay"
                             onChange={() => {}}
                         />
                     </Grid>
@@ -114,9 +114,9 @@ function Board({ creating }) {
                         <InputField
                             fullWidth
                             value={board.description}
-                            label="Description"
+                            label="Board Description"
                             disabled
-                            propertyName="description"
+                            propertyName="boardDescriptionDisplay"
                             onChange={() => {}}
                         />
                     </Grid>

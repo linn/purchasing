@@ -21,7 +21,7 @@ function BoardTab({
                 <InputField
                     fullWidth
                     value={boardCode}
-                    label="Board Code"
+                    label="Code"
                     disabled={!creating}
                     propertyName="boardCode"
                     onChange={(propertyName, newValue) => handleFieldChange(propertyName, newValue)}
