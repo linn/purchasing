@@ -166,7 +166,7 @@ export default function BomTree() {
                 >
                     {nodes.name}
                 </Typography>
-                {nodes.name !== bomName && (
+                {nodes.name !== searchTerm && (
                     <>
                         <Typography display="inline" variant="subtitle2">
                             {' '}
@@ -194,7 +194,7 @@ export default function BomTree() {
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <ExportButton
-                        href={`${config.appRoot}/purchasing/boms/tree/export?bomName=${bomName}&levels=${explode}`}
+                        href={`${config.appRoot}/purchasing/boms/tree/export?bomName=${searchTerm}&levels=${explode}`}
                     />
                 </Grid>
                 <Grid item xs={4}>
@@ -238,7 +238,7 @@ export default function BomTree() {
                         onClick={() => {
                             dispatch(
                                 bomTreeActions.fetchByHref(
-                                    `/purchasing/boms/tree?bomName=${bomName}&levels=${explode}`
+                                    `/purchasing/boms/tree?bomName=${searchTerm}&levels=${explode}`
                                 )
                             );
                         }}
@@ -251,7 +251,7 @@ export default function BomTree() {
                     <>
                         <Grid item xs={12}>
                             <Typography variant="h4" color="primary" display="inline">
-                                {bomName}
+                                {bomTree.name}
                             </Typography>
                         </Grid>
                         <Grid item xs={12}>
