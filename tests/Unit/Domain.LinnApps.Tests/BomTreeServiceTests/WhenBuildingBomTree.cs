@@ -15,7 +15,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.result = this.Sut.BuildTree("root", null);
+            this.result = this.Sut.BuildTree("root", null, false);
         }
 
         [Test]

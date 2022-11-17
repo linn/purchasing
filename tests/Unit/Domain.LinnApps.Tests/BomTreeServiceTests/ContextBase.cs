@@ -50,38 +50,38 @@
                         BomName = "root",
                         Details = new List<BomDetail>
                                       {
-                                          new BomDetail { Part = new Part { PartNumber = "n1" } },
-                                          new BomDetail { Part = new Part { PartNumber = "n2" } },
-                                          new BomDetail { Part = new Part { PartNumber = "n3" } }
+                                          new BomDetail { ChangeState = "LIVE", Part = new Part { PartNumber = "n1" } },
+                                          new BomDetail { ChangeState = "LIVE", Part = new Part { PartNumber = "n2" } },
+                                          new BomDetail { ChangeState = "LIVE", Part = new Part { PartNumber = "n3" } }
                                       }
                     });
 
             var n1Children = new List<BomDetail>
                                  {
-                                     new BomDetail { Part = new Part { PartNumber = "n11" } },
-                                     new BomDetail { Part = new Part { PartNumber = "n12" } },
-                                     new BomDetail { Part = new Part { PartNumber = "n13" } }
+                                     new BomDetail { ChangeState = "LIVE", Part = new Part { PartNumber = "n11" } },
+                                     new BomDetail { ChangeState = "LIVE", Part = new Part { PartNumber = "n12" } },
+                                     new BomDetail { ChangeState = "LIVE", Part = new Part { PartNumber = "n13" } }
                                  };
 
             var n11Children = new List<BomDetail>
                                   {
-                                      new BomDetail { Part = new Part { PartNumber = "n111" } },
-                                      new BomDetail { Part = new Part { PartNumber = "n112" } }
+                                      new BomDetail { ChangeState = "LIVE", Part = new Part { PartNumber = "n111" } },
+                                      new BomDetail { ChangeState = "LIVE", Part = new Part { PartNumber = "n112" } }
                                   };
 
             var n13Children = new List<BomDetail>
                                   {
-                                      new BomDetail { Part = new Part { PartNumber = "n131" } }
+                                      new BomDetail { ChangeState = "LIVE", Part = new Part { PartNumber = "n131" } }
                                   };
 
             var n111Children = new List<BomDetail>
                                   {
-                                      new BomDetail { Part = new Part { PartNumber = "n1111" } }
+                                      new BomDetail { ChangeState = "LIVE", Part = new Part { PartNumber = "n1111" } }
                                   };
 
             var n112Children = new List<BomDetail>
                                    {
-                                       new BomDetail { Part = new Part { PartNumber = "n1121" } }
+                                       new BomDetail { ChangeState = "LIVE", Part = new Part { PartNumber = "n1121" } }
                                    };
 
             this.BomDetailRepository.FilterBy(Arg.Any<Expression<Func<BomDetail, bool>>>()).Returns(

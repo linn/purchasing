@@ -20,7 +20,11 @@
             this.detailRepository = detailRepository;
         }
 
-        public BomTreeNode BuildTree(string bomName, int? levels = null)
+        public BomTreeNode BuildTree(
+            string bomName, 
+            int? levels = null,
+            bool requirementOnly = true,
+            bool showChanges = false)
         {
             // given the root node, we need to make repository method calls until this entire bom tree is populated with information
 
@@ -32,7 +36,11 @@
             var rootNode = new BomTreeNode
                                {
                                    Name = root.BomName,
-                                   Children = root.Details?.Select(
+                                   Children = root.Details
+                                       .Where(x => showChanges || x.ChangeState == "LIVE")
+                                       .Where(c => !requirementOnly 
+                                                   || c.PartRequirement is { AnnualUsage: > 0 })
+                                       ?.Select(
                                        d => new BomTreeNode
                                                 {
                                                     Name = d.Part.PartNumber,
@@ -66,15 +74,20 @@
                     // populate it's children's children nodes by performing a repository lookup
                     current.Children = current.Children?.Select(
                         child =>
-                        {
-                            var node = new BomTreeNode
                             {
-                                Name = child.Name,
-                                Description = child.Description,
-                                Qty = child.Qty,
-                                Children =
-                                    this.detailRepository
-                                        .FilterBy(x => x.BomName == child.Name && x.ChangeState == "LIVE")
+                                var children = this.detailRepository
+                                    .FilterBy(x => x.BomName == child.Name)
+                                    .Where(x => showChanges || x.ChangeState == "LIVE")
+                                    .Where(c => !requirementOnly
+                                                || (c.PartRequirement != null && c.PartRequirement.AnnualUsage > 0));
+
+                                var node = new BomTreeNode
+                                {
+                                    Name = child.Name,
+                                    Description = child.Description,
+                                    Qty = child.Qty,
+                                    Children =
+                                    children
                                         .OrderBy(x => x.Part.PartNumber)
                                         .Select(
                                             detail =>
@@ -85,8 +98,8 @@
                                                         Description = detail.Part.Description,
                                                         Qty = detail.Qty
                                                 })
-                            };
-                            return node;
+                                };
+                                return node;
                         }).ToList();
 
                     // add all the children (now with their own children populated) to the queue, if they exist
@@ -108,7 +121,11 @@
             return rootNode;
         }
 
-        public IEnumerable<BomTreeNode> FlattenTree(string bomName, int? levels = null)
+        public IEnumerable<BomTreeNode> FlattenTree(
+            string bomName, 
+            int? levels = null,
+            bool requirementOnly = true,
+            bool showChanges = false)
         {
             // same as above except each time we visit a node we add it to the results list
             var result = new List<BomTreeNode>();
@@ -116,13 +133,17 @@
             var rootNode = new BomTreeNode
             {
                 Name = root.BomName,
-                Children = root.Details?.Select(
-                                       d => new BomTreeNode
-                                       {
-                                           Name = d.Part.PartNumber,
-                                           Description = d.Part.Description,
-                                           Qty = d.Qty
-                                       }).OrderBy(x => x.Name)
+                Children = root.Details
+                    .Where(c => !requirementOnly
+                                || c.PartRequirement is { AnnualUsage: > 0 })
+                    .Where(x => showChanges || x.ChangeState == "LIVE")
+                    ?.Select(
+                        d => new BomTreeNode
+                                 {
+                                     Name = d.Part.PartNumber,
+                                     Description = d.Part.Description,
+                                     Qty = d.Qty
+                                 }).OrderBy(x => x.Name)
             };
             var q = new Queue<BomTreeNode>();
             q.Enqueue(rootNode);
@@ -144,14 +165,17 @@
                     current.Children = current.Children?.Select(
                         child =>
                         {
+                            var children = this.detailRepository
+                                .FilterBy(x => x.BomName == child.Name)
+                                .Where(x => showChanges || x.ChangeState == "LIVE")
+                                .Where(c => !requirementOnly
+                                            || (c.PartRequirement != null && c.PartRequirement.AnnualUsage > 0));
                             var node = new BomTreeNode
                             {
                                 Name = child.Name,
                                 Description = child.Description,
                                 Qty = child.Qty,
-                                Children =
-                                    this.detailRepository
-                                        .FilterBy(x => x.BomName == child.Name && x.ChangeState == "LIVE")
+                                Children = children
                                         .OrderBy(x => x.Part.PartNumber)
                                         .Select(
                                             detail =>

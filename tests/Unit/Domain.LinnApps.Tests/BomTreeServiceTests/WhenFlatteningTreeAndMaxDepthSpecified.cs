@@ -16,7 +16,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.result = this.Sut.FlattenTree("root", 2);
+            this.result = this.Sut.FlattenTree("root", 2, false);
         }
 
         [Test]

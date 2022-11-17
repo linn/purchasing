@@ -17,14 +17,22 @@
            this.domainService = domainService;
         }
 
-        public IResult<BomTreeNode> GetBomTree(string bomName, int? levels = null)
+        public IResult<BomTreeNode> GetBomTree(
+            string bomName, 
+            int? levels = null,
+            bool requirementOnly = true,
+            bool showChanges = false)
         {
-            return new SuccessResult<BomTreeNode>(this.domainService.BuildTree(bomName, levels));
+            return new SuccessResult<BomTreeNode>(this.domainService.BuildTree(bomName, levels, requirementOnly, showChanges));
         }
 
-        public IEnumerable<IEnumerable<string>> GetFlatBomTreeExport(string bomName, int? levels)
+        public IEnumerable<IEnumerable<string>> GetFlatBomTreeExport(
+            string bomName, 
+            int? levels,
+            bool requirementOnly = true,
+            bool showChanges = false)
         {
-            var flattened = this.domainService.FlattenTree(bomName, levels);
+            var flattened = this.domainService.FlattenTree(bomName, levels, requirementOnly, showChanges);
             var csvData = new List<List<string>>();
             foreach (var node in flattened)
             {

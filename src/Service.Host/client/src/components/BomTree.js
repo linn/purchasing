@@ -5,7 +5,8 @@ import {
     ExportButton,
     Search,
     InputField,
-    collectionSelectorHelpers
+    collectionSelectorHelpers,
+    CheckboxWithLabel
 } from '@linn-it/linn-form-components-library';
 import PropTypes from 'prop-types';
 import { useLocation } from 'react-router-dom';
@@ -97,7 +98,9 @@ export default function BomTree() {
     const { search } = useLocation();
     const { bomName } = queryString.parse(search);
     const [searchTerm, setSearchTerm] = useState('');
-    const [explode, setExplode] = useState(null);
+    const [explode, setExplode] = useState(0);
+    const [requirementOnly, setRequirementOnly] = useState(true);
+    const [showChanges, setShowChanges] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -194,10 +197,10 @@ export default function BomTree() {
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <ExportButton
-                        href={`${config.appRoot}/purchasing/boms/tree/export?bomName=${searchTerm}&levels=${explode}`}
+                        href={`${config.appRoot}/purchasing/boms/tree/export?bomName=${searchTerm}&levels=${explode}&requirementOnly=${requirementOnly}&showChanges=${showChanges}`}
                     />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={3}>
                     <Search
                         propertyName="searchTerm"
                         label="Bom Name"
@@ -218,15 +221,35 @@ export default function BomTree() {
                         clearSearch={() => {}}
                     />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={3}>
                     <InputField
                         value={explode}
                         type="number"
                         propertyName="explode"
                         label="Explode levels"
-                        helperText="Leave blank to see the whole tree"
+                        helperText="Leave as zero to see the whole tree"
                         onChange={(_, newVal) => {
                             setExplode(newVal);
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={6} />
+
+                <Grid item xs={3}>
+                    <CheckboxWithLabel
+                        label="Show only Parts with Material Reqt"
+                        checked={requirementOnly}
+                        onChange={() => {
+                            setRequirementOnly(!requirementOnly);
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={3}>
+                    <CheckboxWithLabel
+                        label="Show Proposed/Accepted changes"
+                        checked={showChanges}
+                        onChange={() => {
+                            setShowChanges(!showChanges);
                         }}
                     />
                 </Grid>
@@ -238,7 +261,7 @@ export default function BomTree() {
                         onClick={() => {
                             dispatch(
                                 bomTreeActions.fetchByHref(
-                                    `/purchasing/boms/tree?bomName=${searchTerm}&levels=${explode}`
+                                    `/purchasing/boms/tree?bomName=${searchTerm}&levels=${explode}&requirementOnly=${requirementOnly}&showChanges=${showChanges}`
                                 )
                             );
                         }}

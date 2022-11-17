@@ -198,6 +198,8 @@
 
         public DbSet<BoardComponentSummary> BoardComponentSummary { get; set; }
 
+        public DbSet<PartRequirement> VMasterMrh { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -304,6 +306,7 @@
             this.BuildImmediateLiabilityBase(builder);
             this.BuildCircuitBoards(builder);
             this.BuildBoardComponentSummary(builder);
+            this.BuildVMasterMrh(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1995,6 +1998,15 @@
             entity.Property(a => a.PcasPartNumber).HasColumnName("PCAS_PART_NUMBER").HasMaxLength(14);
             entity.Property(a => a.PcsmPartNumber).HasColumnName("PCSM_PART_NUMBER").HasMaxLength(14);
             entity.Property(a => a.PcbPartNumber).HasColumnName("PCB_PART_NUMBER").HasMaxLength(14);
+        }
+
+        private void BuildVMasterMrh(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PartRequirement>().ToTable("V_MASTER_MRH");
+            entity.HasKey(x => x.PartNumber);
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER");
+            entity.Property(a => a.AnnualUsage).HasColumnName("ANNUAL_USAGE");
+            entity.HasOne(a => a.BomDetail).WithOne(b => b.PartRequirement).HasForeignKey<BomDetail>(a => a.PartNumber);
         }
     }
 }

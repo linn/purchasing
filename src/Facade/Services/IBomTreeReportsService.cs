@@ -7,8 +7,16 @@
 
     public interface IBomTreeReportsService
     {
-        IResult<BomTreeNode> GetBomTree(string bomName, int? levels = null);
+        IResult<BomTreeNode> GetBomTree(
+            string bomName, 
+            int? levels = null,
+            bool requirementOnly = true,
+            bool showChanges = false);
 
-        IEnumerable<IEnumerable<string>> GetFlatBomTreeExport(string bomName, int? levels);
+        IEnumerable<IEnumerable<string>> GetFlatBomTreeExport(
+            string bomName, 
+            int? levels,
+            bool requirementOnly = true,
+            bool showChanges = false);
     }
 }

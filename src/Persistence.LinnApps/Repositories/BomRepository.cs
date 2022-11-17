@@ -44,8 +44,10 @@
         public Bom FindBy(Expression<Func<Bom, bool>> expression)
         {
             return this.serviceDbContext.Boms.Where(expression)
-                .Include(b => b.Details.Where(d => d.ChangeState == "LIVE"))
-                .ThenInclude(d => d.Part).FirstOrDefault();
+                .Include(b => b.Details)
+                .ThenInclude(d => d.Part)
+                .Include(b => b.Details)
+                .ThenInclude(d => d.PartRequirement).FirstOrDefault();
         }
 
         public IQueryable<Bom> FilterBy(Expression<Func<Bom, bool>> expression)
