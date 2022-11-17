@@ -2,12 +2,15 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
+    using System.Text;
+    using System.Threading.Tasks;
+
     using FluentAssertions;
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.Parts;
-    using Linn.Purchasing.Domain.LinnApps.Parts.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
 
@@ -15,7 +18,7 @@
 
     using NUnit.Framework;
 
-    public class WhenChangingBomType : ContextBase
+    public class WhenGettingBomChangeType : ContextBase
     {
         private IResult<BomTypeChangeResource> result;
 
@@ -24,17 +27,18 @@
         {
             var part = new Part
                            {
-                               PartNumber = "CONN 1", 
-                               BomType = "A", 
-                               MaterialPrice = 2, 
-                               Description = "CONNECTOR", 
-                               Currency = new Currency { Code = "LZD",  Name = "Liz Truss Dollars" }
+                               Id= 1,
+                               PartNumber = "CONN 1",
+                               BomType = "A",
+                               MaterialPrice = 2,
+                               Description = "CONNECTOR",
+                               Currency = new Currency { Code = "LZD", Name = "Liz Truss Dollars" }
                            };
 
-            this.partService.ChangeBomType(Arg.Any<BomTypeChange>(), Arg.Any<IEnumerable<string>>()).Returns(part);
+            this.partRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>()).Returns(part);
+            this.authorisationService.HasPermissionFor(Arg.Any<string>(), Arg.Any<IEnumerable<string>>()).Returns(true);
 
-            var request = new BomTypeChangeResource { PartNumber = "CONN 1", OldBomType = "C", NewBomType = "A" };
-            this.result = this.Sut.ChangeBomType(request, new List<string>() { "change-bom-type" });
+            this.result = this.Sut.GetBomType(1, new List<string>() { "change-bom-type" });
         }
 
         [Test]
@@ -48,9 +52,10 @@
         {
             var resource = ((SuccessResult<BomTypeChangeResource>)this.result).Data;
             resource.PartNumber.Should().Be("CONN 1");
-            resource.PartBomType.Should().Be("A");
             resource.PartCurrency.Should().Be("LZD");
-            resource.NewBomType.Should().Be("A");
+            resource.OldBomType.Should().Be("A");
+            resource.OldSupplierId.Should().BeNull();
+            resource.Links.Length.Should().Be(1);
         }
     }
 }

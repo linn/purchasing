@@ -98,6 +98,7 @@ import sendPurchaseOrderAuthEmail from './sendPurchaseOrderAuthEmail';
 import changeRequest from './changeRequest';
 import sendPurchaseOrderDeptEmail from './sendPurchaseOrderDeptEmail';
 import suggestedPurchaseOrderValues from './suggestedPurchaseOrderValues';
+import bomTypeChange from './bomTypeChange';
 import bomTree from './bomTree';
 import board from './board';
 import boards from './boards';
@@ -116,6 +117,7 @@ const rootReducer = history =>
         automaticPurchaseOrder,
         automaticPurchaseOrderSuggestions,
         batchPurchaseOrderDeliveriesUpload,
+        bomTypeChange,
         bomTree,
         board,
         boards,
