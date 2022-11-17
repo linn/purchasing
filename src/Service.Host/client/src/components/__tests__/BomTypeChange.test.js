@@ -76,6 +76,12 @@ describe('When part information loaded', () => {
         render(<BomTypeChange />);
     });
 
+    test('Should show part information', () => {
+        expect(screen.getByDisplayValue('CAP 001')).toBeInTheDocument();
+        expect(screen.getByDisplayValue('Some Capacitor')).toBeInTheDocument();
+        expect(screen.getByDisplayValue('Tescos')).toBeInTheDocument();
+    });
+
     test('Save button should be disabled', () => {
         expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled();
     });
