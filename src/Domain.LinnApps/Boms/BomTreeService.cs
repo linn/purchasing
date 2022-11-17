@@ -126,14 +126,15 @@
             };
             var q = new Queue<BomTreeNode>();
             q.Enqueue(rootNode);
-            var currentDepth = 1;
+            var currentDepth = 0;
 
             while (q.Count != 0)
             {
-                if (currentDepth == levels)
+                if (currentDepth > levels)
                 {
                     break;
                 }
+
                 var numChildren = q.Count;
 
                 while (numChildren > 0)
@@ -170,8 +171,10 @@
                             q.Enqueue(child);
                         }
                     }
+
                     numChildren--;
                 }
+
                 currentDepth++;
             }
 

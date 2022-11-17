@@ -24,7 +24,7 @@
 
         public IEnumerable<IEnumerable<string>> GetFlatBomTreeExport(string bomName, int? levels)
         {
-            var flattened = this.domainService.FlattenTree(bomName);
+            var flattened = this.domainService.FlattenTree(bomName, levels);
             var csvData = new List<List<string>>();
             foreach (var node in flattened)
             {
