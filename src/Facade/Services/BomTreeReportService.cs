@@ -22,7 +22,7 @@
             return new SuccessResult<BomTreeNode>(this.domainService.BuildTree(bomName, levels));
         }
 
-        public IEnumerable<IEnumerable<string>> GetFlatBomTreeExport(string bomName)
+        public IEnumerable<IEnumerable<string>> GetFlatBomTreeExport(string bomName, int? levels)
         {
             var flattened = this.domainService.FlattenTree(bomName);
             var csvData = new List<List<string>>();

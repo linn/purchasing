@@ -108,7 +108,7 @@
             return rootNode;
         }
 
-        public IEnumerable<BomTreeNode> FlattenTree(string bomName)
+        public IEnumerable<BomTreeNode> FlattenTree(string bomName, int? levels = null)
         {
             // same as above except each time we visit a node we add it to the results list
             var result = new List<BomTreeNode>();
@@ -126,9 +126,16 @@
             };
             var q = new Queue<BomTreeNode>();
             q.Enqueue(rootNode);
+            var currentDepth = 1;
+
             while (q.Count != 0)
             {
+                if (currentDepth == levels)
+                {
+                    break;
+                }
                 var numChildren = q.Count;
+
                 while (numChildren > 0)
                 {
                     var current = q.Dequeue();
@@ -165,6 +172,7 @@
                     }
                     numChildren--;
                 }
+                currentDepth++;
             }
 
             return result;

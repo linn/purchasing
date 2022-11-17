@@ -9,6 +9,6 @@
     {
         IResult<BomTreeNode> GetBomTree(string bomName, int? levels = null);
 
-        IEnumerable<IEnumerable<string>> GetFlatBomTreeExport(string bomName);
+        IEnumerable<IEnumerable<string>> GetFlatBomTreeExport(string bomName, int? levels);
     }
 }

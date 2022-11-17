@@ -8,6 +8,6 @@
     {
         BomTreeNode BuildTree(string bomName, int? levels = null);
 
-        IEnumerable<BomTreeNode> FlattenTree(string bomName);
+        IEnumerable<BomTreeNode> FlattenTree(string bomName, int? levels = null);
     }
 }

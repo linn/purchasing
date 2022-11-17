@@ -62,9 +62,10 @@
             HttpRequest req,
             HttpResponse res,
             string bomName,
+            int? levels,
             IBomTreeReportsService facadeService)
         {
-            var result = facadeService.GetFlatBomTreeExport(bomName);
+            var result = facadeService.GetFlatBomTreeExport(bomName, levels);
 
             await res.FromCsv(result, $"{bomName}.csv");
         }

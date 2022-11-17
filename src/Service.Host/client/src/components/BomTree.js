@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Page, Loading, ExportButton } from '@linn-it/linn-form-components-library';
+import {
+    Page,
+    Loading,
+    ExportButton,
+    Search,
+    InputField
+} from '@linn-it/linn-form-components-library';
 import PropTypes from 'prop-types';
 import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,7 +17,7 @@ import Collapse from '@mui/material/Collapse';
 import Grid from '@mui/material/Grid';
 import queryString from 'query-string';
 import { useSpring, animated } from 'react-spring';
-// import Button from '@mui/material/Button';
+import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import history from '../history';
 import config from '../config';
@@ -88,10 +94,16 @@ export default function BomTree() {
 
     const { search } = useLocation();
     const { bomName } = queryString.parse(search);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [explode, setExplode] = useState(null);
+
     const dispatch = useDispatch();
+
     useEffect(() => {
-        dispatch(bomTreeActions.fetchByHref(`/purchasing/boms/tree?bomName=${bomName}`));
-    }, [dispatch, bomName]);
+        if (bomName) {
+            setSearchTerm(bomName);
+        }
+    }, [bomName]);
 
     const bomTree = useSelector(state => state[bomTreeItemType.item].item);
 
@@ -167,8 +179,55 @@ export default function BomTree() {
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <ExportButton
-                        href={`${config.appRoot}/purchasing/boms/tree/export?bomName=${bomName}`}
+                        href={`${config.appRoot}/purchasing/boms/tree/export?bomName=${bomName}&levels=${explode}`}
                     />
+                </Grid>
+                <Grid item xs={4}>
+                    <Search
+                        propertyName="searchTerm"
+                        label="Bom Name"
+                        resultsInModal
+                        resultLimit={100}
+                        value={searchTerm}
+                        handleValueChange={(_, newVal) => setSearchTerm(newVal)}
+                        search={() => {}}
+                        searchResults={[]}
+                        helperText="Enter a value. Press the enter key if you want to search parts."
+                        loading={false}
+                        priorityFunction="closestMatchesFirst"
+                        onResultSelect={newValue => {
+                            setSearchTerm(newValue.partNumber);
+                        }}
+                        clearSearch={() => {}}
+                    />
+                </Grid>
+                <Grid item xs={4}>
+                    <InputField
+                        value={explode}
+                        type="number"
+                        propertyName="explode"
+                        label="Explode levels"
+                        helperText="Leave blank to see the whole tree"
+                        onChange={(_, newVal) => {
+                            setExplode(newVal);
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={12}>
+                    <Button
+                        color="primary"
+                        variant="contained"
+                        onClick={() => {
+                            dispatch(
+                                bomTreeActions.fetchByHref(
+                                    `/purchasing/boms/tree?bomName=${bomName}&levels=${explode}`
+                                )
+                            );
+                        }}
+                    >
+                        {' '}
+                        Run{' '}
+                    </Button>
                 </Grid>
                 {bomTree && (
                     <>
