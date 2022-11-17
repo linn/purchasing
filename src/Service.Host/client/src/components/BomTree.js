@@ -4,7 +4,8 @@ import {
     Loading,
     ExportButton,
     Search,
-    InputField
+    InputField,
+    collectionSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import PropTypes from 'prop-types';
 import { useLocation } from 'react-router-dom';
@@ -22,7 +23,8 @@ import Typography from '@mui/material/Typography';
 import history from '../history';
 import config from '../config';
 import bomTreeActions from '../actions/bomTreeActions';
-import { bomTree as bomTreeItemType } from '../itemTypes';
+import { bomTree as bomTreeItemType, parts } from '../itemTypes';
+import partsActions from '../actions/partsActions';
 
 /* eslint react/jsx-props-no-spreading: 0 */
 /* eslint react/destructuring-assignment: 0 */
@@ -98,6 +100,19 @@ export default function BomTree() {
     const [explode, setExplode] = useState(null);
 
     const dispatch = useDispatch();
+
+    const partsSearchResults = useSelector(reduxState =>
+        collectionSelectorHelpers.getSearchItems(
+            reduxState[parts.item],
+            100,
+            'id',
+            'partNumber',
+            'description'
+        )
+    );
+    const partsSearchLoading = useSelector(reduxState =>
+        collectionSelectorHelpers.getSearchLoading(reduxState[parts.item])
+    );
 
     useEffect(() => {
         if (bomName) {
@@ -190,10 +205,12 @@ export default function BomTree() {
                         resultLimit={100}
                         value={searchTerm}
                         handleValueChange={(_, newVal) => setSearchTerm(newVal)}
-                        search={() => {}}
-                        searchResults={[]}
+                        search={partNumber => {
+                            dispatch(partsActions.search(partNumber));
+                        }}
+                        searchResults={partsSearchResults}
                         helperText="Enter a value. Press the enter key if you want to search parts."
-                        loading={false}
+                        loading={partsSearchLoading}
                         priorityFunction="closestMatchesFirst"
                         onResultSelect={newValue => {
                             setSearchTerm(newValue.partNumber);
