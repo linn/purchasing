@@ -6,12 +6,14 @@
             string toAddresses, 
             int toSupplier, 
             string timestamp, 
-            bool test = false);
+            bool test = false,
+            bool? bypassMrpCheck = false);
 
         void SendMonthlyForecastEmail(
             string toAddresses,
             int toSupplier,
             string timestamp,
-            bool test = false);
+            bool test = false,
+            bool? bypassMrpCheck = false);
     }
 }

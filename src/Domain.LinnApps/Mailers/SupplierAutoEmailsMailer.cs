@@ -40,14 +40,15 @@
             this.forecastOrdersReportService = forecastOrdersReportService;
         }
 
-        public void SendOrderBookEmail(string toAddresses, int toSupplier, string timestamp, bool test = false)
+        public void SendOrderBookEmail(
+            string toAddresses, int toSupplier, string timestamp, bool test = false, bool? bypassMrpCheck = false)
         {
             var supplier = this.supplierRepository.FindById(toSupplier);
 
             var emailAddresses = string.IsNullOrEmpty(toAddresses) ? supplier.SupplierContacts
                 ?.First(c => c.IsMainOrderContact.Equals("Y"))?.EmailAddress : toAddresses;
 
-            this.CheckEmailDetailsOk(emailAddresses, supplier);
+            this.CheckEmailDetailsOk(emailAddresses, supplier, bypassMrpCheck.GetValueOrDefault());
             
             var vendorManagerAddress = supplier.VendorManager.Employee.PhoneListEntry?.EmailAddress;
             var vendorManagerName = supplier.VendorManager.Employee.FullName;
@@ -58,14 +59,22 @@
             {
                 if (!string.IsNullOrWhiteSpace(address))
                 {
+                    var bcc = new List<Dictionary<string, string>>
+                                  {
+                                      new Dictionary<string, string>
+                                          {
+                                              { "name", supplier.Name },
+                                              { "address", ConfigurationManager.Configuration["ACKNOWLEDGEMENTS_BCC"] }
+                                          }
+                                  };
                     this.emailService.SendEmail(
                         test ? ConfigurationManager.Configuration["ORDER_BOOK_TEST_ADDRESS"] : address.Trim(),
                         supplier.Name,
                         null,
-                        null,
+                        bcc,
                         vendorManagerAddress ?? ConfigurationManager.Configuration["PURCHASING_FROM_ADDRESS"],
                         vendorManagerName != "No person assigned" ? vendorManagerName : "Linn",
-                        $"MR Order Book - {timestamp}",
+                        $"Linn Products Order Book - {supplier.Name}",
                         "Please find Order Book attached",
                         new List<Attachment>
                             {
@@ -75,14 +84,15 @@
             }
         }
 
-        public void SendMonthlyForecastEmail(string toAddresses, int toSupplier, string timestamp, bool test = false)
+        public void SendMonthlyForecastEmail(
+            string toAddresses, int toSupplier, string timestamp, bool test = false, bool? bypassMrpCheck = false)
         {
             var supplier = this.supplierRepository.FindById(toSupplier);
 
             var emailAddresses = string.IsNullOrEmpty(toAddresses) ? supplier.SupplierContacts
                                    ?.First(c => c.IsMainOrderContact.Equals("Y"))?.EmailAddress : toAddresses;
 
-            this.CheckEmailDetailsOk(emailAddresses, supplier);
+            this.CheckEmailDetailsOk(emailAddresses, supplier, bypassMrpCheck.GetValueOrDefault());
 
             var vendorManagerAddress = supplier.VendorManager.Employee.PhoneListEntry.EmailAddress;
             var vendorManagerName = supplier.VendorManager.Employee.FullName;
@@ -110,7 +120,7 @@
             }
         }
 
-        private void CheckEmailDetailsOk(string toAddresses, Supplier supplier)
+        private void CheckEmailDetailsOk(string toAddresses, Supplier supplier, bool bypassMrpCheck)
         {
             if (string.IsNullOrEmpty(toAddresses))
             {
@@ -118,7 +128,7 @@
             }
 
             // notify the vendor managers if mrp jobs failed
-            if (this.mrMaster.GetRecord().RunDate.Date != DateTime.Today.Date)
+            if (!bypassMrpCheck && this.mrMaster.GetRecord().RunDate.Date != DateTime.Today.Date)
             {
                 var msg = "The Supplier Auto emails could not be sent because the MRP did not run over the weekend.";
                 this.emailService.SendEmail(

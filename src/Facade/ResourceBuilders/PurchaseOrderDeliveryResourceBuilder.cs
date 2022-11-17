@@ -4,6 +4,7 @@
     using System.Collections.Generic;
 
     using Linn.Common.Facade;
+    using Linn.Common.Resources;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Resources;
 
@@ -40,7 +41,11 @@
                            BaseDeliveryTotal = entity.BaseDeliveryTotal,
                            CallOffRef = entity.CallOffRef,
                            FilCancelled = entity.FilCancelled,
-                           QtyPassedForPayment = entity.QtyPassedForPayment
+                           QtyPassedForPayment = entity.QtyPassedForPayment,
+                           Links = new[]
+                                       {
+                                           new LinkResource { Rel = "order", Href = $"/purchasing/purchase-orders/{entity.OrderNumber}" }
+                                       }
                        };
         }
 

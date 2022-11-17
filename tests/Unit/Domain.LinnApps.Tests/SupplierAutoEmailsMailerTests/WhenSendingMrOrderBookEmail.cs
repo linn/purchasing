@@ -56,11 +56,11 @@
             this.EmailService.Received().SendEmail(
                 this.email,
                 this.supplier.Name,
-                null,
-                null,
+                Arg.Any<IEnumerable<Dictionary<string, string>>>(),
+                Arg.Any<IEnumerable<Dictionary<string, string>>>(),
                 this.supplier.VendorManager.Employee.PhoneListEntry.EmailAddress,
                 this.supplier.VendorManager.Employee.FullName,
-                $"MR Order Book - {timestamp}",
+                $"Linn Products Order Book - {this.supplier.Name}",
                 "Please find Order Book attached",
                 Arg.Is<IEnumerable<Attachment>>(
                     a => a.First().FileName == $"{this.supplier.SupplierId}_linn_order_book_{this.timestamp}.csv"));

@@ -1,16 +1,10 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using System.Threading.Tasks;
 
     using Carter;
     using Carter.Response;
 
-    using Linn.Common.Facade;
-    using Linn.Purchasing.Domain.LinnApps.Suppliers;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.Extensions;

@@ -23,7 +23,9 @@
             "raf/polyfill",
             "./react-animation-test-shim.js"
         ],
-        "testPathIgnorePatterns": ["./client/src/components/__tests__/fakeData/*"],
+        "testPathIgnorePatterns": [
+            "./client/src/components/__tests__/fakeData/*"
+        ],
         "transform": {
             "^.+\\.js$": "babel-jest",
             ".+\\.(css|scss|png|jpg|svg)$": "jest-transform-stub"
@@ -80,7 +82,7 @@
         "@date-io/moment": "^2.11.0",
         "@emotion/react": "^11.10.4",
         "@emotion/styled": "^11.10.4",
-        "@linn-it/linn-form-components-library": "15.0.0",
+        "@linn-it/linn-form-components-library": "17.0.0",
         "@mui/icons-material": "^5.10.3",
         "@mui/lab": "*",
         "@mui/material": "^5.10.5",

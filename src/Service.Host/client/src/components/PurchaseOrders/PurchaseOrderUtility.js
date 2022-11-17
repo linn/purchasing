@@ -28,13 +28,13 @@ import {
     itemSelectorHelpers,
     Loading,
     Dropdown,
-    TypeaheadTable,
     getItemError,
     ErrorCard,
     utilities,
     SaveBackCancelButtons,
     OnOffSwitch,
-    processSelectorHelpers
+    processSelectorHelpers,
+    getPreviousPaths
 } from '@linn-it/linn-form-components-library';
 import queryString from 'query-string';
 import currenciesActions from '../../actions/currenciesActions';
@@ -60,9 +60,11 @@ import PurchaseOrderDeliveriesUtility from '../PurchaseOrderDeliveriesUtility';
 import sendOrderAuthEmailActions from '../../actions/sendPurchaseOrderAuthEmailActions';
 import purchaseOrderDeliveriesActions from '../../actions/purchaseOrderDeliveriesActions';
 import sendPurchaseOrderDeptEmailActions from '../../actions/sendPurchaseOrderDeptEmailActions';
+import vendorManagersActions from '../../actions/vendorManagersActions';
 import CancelUnCancelDialog from './CancelUnCancelDialog';
 import FilCancelUnCancelDialog from './FilCancelUnCancelDialog';
 import PlInvRecDialog from './PlInvRecDialog';
+import handleBackClick from '../../helpers/handleBackClick';
 
 function PurchaseOrderUtility({ creating }) {
     const reduxDispatch = useDispatch();
@@ -70,6 +72,9 @@ function PurchaseOrderUtility({ creating }) {
 
     const { orderNumber } = useParams();
     const loc = useLocation();
+
+    const [deptCode, setDeptCode] = useState('');
+    const [deptDesc, setDeptDesc] = useState('');
 
     useEffect(() => {
         if (orderNumber) {
@@ -175,6 +180,9 @@ function PurchaseOrderUtility({ creating }) {
         } else if (creating && suggestedValues) {
             reduxDispatch(purchaseOrderActions.clearErrorsForItem());
             dispatch({ type: 'initialise', payload: suggestedValues });
+            if (utilities.getHref(applicationState, 'create-for-other-user')) {
+                reduxDispatch(vendorManagersActions.fetch());
+            }
         }
     }, [item, applicationState, creating, reduxDispatch, suggestedValues]);
 
@@ -203,9 +211,30 @@ function PurchaseOrderUtility({ creating }) {
         collectionSelectorHelpers.getItems(reduxState.unitsOfMeasure)
     );
 
-    const nominalsSearchItems = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(state.nominals)
+    const vendorManagers = useSelector(reduxState =>
+        collectionSelectorHelpers.getItems(reduxState.vendorManagers)
     );
+
+    const deptSearchResults = useSelector(state =>
+        collectionSelectorHelpers.getSearchItems(
+            state.nominals,
+            100,
+            'departmentCode',
+            'departmentCode',
+            'departmentDescription'
+        )
+    );
+
+    const nominalSearchResults = useSelector(state =>
+        collectionSelectorHelpers.getSearchItems(
+            state.nominals,
+            100,
+            'nominalCode',
+            'nominalCode',
+            'description'
+        )
+    );
+
     const nominalsSearchLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.nominals)
     );
@@ -226,20 +255,6 @@ function PurchaseOrderUtility({ creating }) {
     const [invRecDialogOpen, setInvRecDialogOpen] = useState(
         !!queryString.parse(loc.search).invRecDialogOpen
     );
-
-    const nominalAccountsTable = {
-        totalItemCount: nominalsSearchItems.length,
-        rows: nominalsSearchItems?.map(nom => ({
-            id: nom.nominalAccountId,
-            values: [
-                { id: 'nominalCode', value: `${nom.nominalCode}` },
-                { id: 'description', value: `${nom.description || ''}` },
-                { id: 'departmentCode', value: `${nom.departmentCode || ''}` },
-                { id: 'departmentDescription', value: `${nom.departmentDescription || ''}` }
-            ],
-            links: nom.links
-        }))
-    };
 
     const allowedToAuthorise = () => !creating && utilities.getHref(order, 'authorise');
 
@@ -268,7 +283,6 @@ function PurchaseOrderUtility({ creating }) {
                 d.baseNetTotal &&
                 d.baseDetailTotal
         ) &&
-        order.supplierContactEmail &&
         order.currency.code &&
         order.deliveryAddress?.addressId;
 
@@ -302,19 +316,20 @@ function PurchaseOrderUtility({ creating }) {
             type: 'currencyChange'
         });
     };
+    const previousPaths = useSelector(state => getPreviousPaths(state));
 
     const handleDetailValueFieldChange = (propertyName, basePropertyName, newValue, detail) => {
         const { exchangeRate } = order;
 
-        if (exchangeRate && newValue && newValue > 0 && newValue !== order[propertyName]) {
+        if (exchangeRate && newValue !== order[propertyName]) {
             reduxDispatch(purchaseOrderActions.setEditStatus('edit'));
 
-            const convertedValue = currencyConvert(newValue, exchangeRate);
+            const convertedValue = currencyConvert(newValue || 0, exchangeRate);
 
             dispatch({
                 payload: {
                     ...detail,
-                    [propertyName]: newValue,
+                    [propertyName]: newValue || 0,
                     [basePropertyName]: convertedValue
                 },
                 type: 'detailCalculationFieldChange'
@@ -348,17 +363,16 @@ function PurchaseOrderUtility({ creating }) {
 
     const handleNominalUpdate = (newNominal, lineNumber) => {
         reduxDispatch(purchaseOrderActions.setEditStatus('edit'));
-
         const newNominalAccount = {
             nominal: {
-                nominalCode: newNominal.values.find(x => x.id === 'nominalCode')?.value,
-                description: newNominal.values.find(x => x.id === 'description')?.value
+                nominalCode: newNominal.nominalCode,
+                description: newNominal.description
             },
             department: {
-                departmentCode: newNominal.values.find(x => x.id === 'departmentCode')?.value,
-                description: newNominal.values.find(x => x.id === 'departmentDescription')?.value
+                departmentCode: newNominal.departmentCode,
+                description: newNominal.departmentDescription
             },
-            accountId: newNominal.id
+            accountId: newNominal.nominalAccountId
         };
         dispatch({
             payload: newNominalAccount,
@@ -468,6 +482,17 @@ function PurchaseOrderUtility({ creating }) {
     const filCancelLine = lineNumber => {
         setCurrentLine(lineNumber);
         setFilCancelDialogOpen(true);
+    };
+
+    const getDistinctVendorManagers = () => {
+        const distinctUserNumbers = [...new Set(vendorManagers.map(x => x.userNumber))];
+        const distinctVendorManagers = distinctUserNumbers.map(e =>
+            vendorManagers.find(v => v.userNumber === e)
+        );
+        return distinctVendorManagers.map(v => ({
+            id: v.userNumber.toString(),
+            displayText: v.name
+        }));
     };
 
     return (
@@ -939,13 +964,14 @@ function PurchaseOrderUtility({ creating }) {
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <InputField
+                                        <Dropdown
                                             fullWidth
                                             value={order.sentByMethod}
                                             label="Sent by method"
                                             propertyName="sentByMethod"
                                             onChange={handleFieldChange}
-                                            disabled
+                                            items={['EMAIL', 'FAX', 'POST', 'EDI', 'NONE']}
+                                            allowNoValue
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
@@ -997,13 +1023,28 @@ function PurchaseOrderUtility({ creating }) {
                                 )}
                                 <Grid container spacing={1} xs={7}>
                                     <Grid item xs={6}>
-                                        <InputField
-                                            fullWidth
-                                            value={`${order.requestedBy?.fullName} (${order.requestedBy?.id})`}
-                                            label="Requested By"
-                                            disabled
-                                            propertyName="requestedBy"
-                                        />
+                                        {creating &&
+                                        utilities.getHref(
+                                            applicationState,
+                                            'create-for-other-user'
+                                        ) ? (
+                                            <Dropdown
+                                                fullWidth
+                                                value={order.requestedBy?.id}
+                                                label="Requested By (Leave blank to set as you)"
+                                                onChange={handleFieldChange}
+                                                items={getDistinctVendorManagers()}
+                                                propertyName="requestedBy"
+                                            />
+                                        ) : (
+                                            <InputField
+                                                fullWidth
+                                                value={`${order.requestedBy?.fullName} (${order.requestedBy?.id})`}
+                                                label="Requested By"
+                                                disabled
+                                                propertyName="requestedBy"
+                                            />
+                                        )}
                                     </Grid>
                                     <Grid item xs={6}>
                                         <InputField
@@ -1273,14 +1314,14 @@ function PurchaseOrderUtility({ creating }) {
                                                         value={detail.ourUnitPriceCurrency}
                                                         label="Our price (unit, currency)"
                                                         propertyName="ourUnitPriceCurrency"
-                                                        onChange={(propertyName, newValue) =>
+                                                        onChange={(propertyName, newValue) => {
                                                             handleDetailValueFieldChange(
                                                                 propertyName,
                                                                 'baseUnitPrice',
                                                                 newValue,
                                                                 detail
-                                                            )
-                                                        }
+                                                            );
+                                                        }}
                                                         disabled={!allowedToUpdate()}
                                                         type="number"
                                                         required
@@ -1549,47 +1590,50 @@ function PurchaseOrderUtility({ creating }) {
                                                 )}
                                             </Grid>
                                             <Grid item xs={4}>
-                                                <TypeaheadTable
-                                                    table={nominalAccountsTable}
-                                                    columnNames={[
-                                                        'Nominal',
-                                                        'Description',
-                                                        'Dept',
-                                                        'Name'
-                                                    ]}
+                                                <Typeahead
+                                                    onSelect={newValue => {
+                                                        setDeptCode(newValue.departmentCode);
+                                                        setDeptDesc(newValue.departmentDescription);
+                                                    }}
+                                                    label="Search Departments"
+                                                    modal
+                                                    openModalOnClick={false}
+                                                    handleFieldChange={(_, newValue) => {
+                                                        setDeptCode(newValue);
+                                                    }}
+                                                    propertyName="deptCode"
+                                                    items={[
+                                                        ...new Set(
+                                                            deptSearchResults.map(
+                                                                n => n.departmentCode
+                                                            )
+                                                        )
+                                                    ].map(r => ({
+                                                        ...deptSearchResults.find(
+                                                            s => s.departmentCode === r
+                                                        )
+                                                    }))}
+                                                    value={deptCode}
+                                                    loading={nominalsSearchLoading}
                                                     fetchItems={searchTerm =>
                                                         reduxDispatch(
                                                             nominalsActions.search(searchTerm)
                                                         )
                                                     }
-                                                    modal
-                                                    placeholder="Search Dept/Nominal"
                                                     links={false}
-                                                    clearSearch={() =>
-                                                        reduxDispatch(nominalsActions.clearSearch)
-                                                    }
-                                                    loading={nominalsSearchLoading}
-                                                    label="Department"
-                                                    title="Search on Department or Nominal"
-                                                    value={
-                                                        detail.orderPosting?.nominalAccount
-                                                            ?.department?.departmentCode
-                                                    }
-                                                    onSelect={newValue =>
-                                                        handleNominalUpdate(newValue, detail.line)
-                                                    }
-                                                    debounce={1000}
-                                                    minimumSearchTermLength={2}
-                                                    disabled={!allowedToUpdate}
-                                                    required
+                                                    title="Search Departments"
+                                                    clearSearch={() => {}}
+                                                    placeholder="Enter Dept Code or click search icon to look up"
+                                                    minimumSearchTermLength={3}
                                                 />
                                             </Grid>
+
                                             <Grid item xs={8}>
                                                 <InputField
                                                     fullWidth
                                                     value={
                                                         detail.orderPosting?.nominalAccount
-                                                            ?.department?.description
+                                                            ?.department?.description || deptDesc
                                                     }
                                                     label="Description"
                                                     disabled
@@ -1597,19 +1641,36 @@ function PurchaseOrderUtility({ creating }) {
                                                 />
                                             </Grid>
                                             <Grid item xs={4}>
-                                                <InputField
-                                                    fullWidth
+                                                <Typeahead
+                                                    onSelect={newValue => {
+                                                        handleNominalUpdate(newValue, detail.line);
+                                                    }}
+                                                    label="Search Nominals"
+                                                    modal
+                                                    propertyName="nominalCode"
+                                                    items={nominalSearchResults.filter(
+                                                        x =>
+                                                            !deptCode ||
+                                                            x.departmentCode.endsWith(deptCode)
+                                                    )}
                                                     value={
                                                         detail.orderPosting?.nominalAccount?.nominal
                                                             ?.nominalCode
                                                     }
-                                                    label="Nominal"
-                                                    onChange={() => {}}
-                                                    propertyName="nominalCode"
-                                                    required
-                                                    disabled
+                                                    loading={nominalsSearchLoading}
+                                                    fetchItems={searchTerm =>
+                                                        reduxDispatch(
+                                                            nominalsActions.search(searchTerm)
+                                                        )
+                                                    }
+                                                    links={false}
+                                                    title="Search Nominals"
+                                                    clearSearch={() => {}}
+                                                    placeholder="Search Nominals"
+                                                    minimumSearchTermLength={3}
                                                 />
                                             </Grid>
+
                                             <Grid item xs={8}>
                                                 <InputField
                                                     fullWidth
@@ -1660,7 +1721,7 @@ function PurchaseOrderUtility({ creating }) {
                                                     <Grid item xs={6} />
                                                 </>
                                             )}
-                                            <Grid item xs={12}>
+                                            <Grid item xs={9}>
                                                 <InputField
                                                     fullWidth
                                                     value={detail.deliveryInstructions}
@@ -1675,6 +1736,23 @@ function PurchaseOrderUtility({ creating }) {
                                                     }
                                                     disabled={!creating}
                                                     rows={2}
+                                                    maxLength={200}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={3}>
+                                                <InputField
+                                                    fullWidth
+                                                    value={detail.drawingReference}
+                                                    label="Drawing Ref"
+                                                    propertyName="drawingReference"
+                                                    onChange={(propertyName, newValue) =>
+                                                        handleDetailFieldChange(
+                                                            propertyName,
+                                                            newValue,
+                                                            detail
+                                                        )
+                                                    }
+                                                    maxLength={100}
                                                 />
                                             </Grid>
                                             {!creating && detail.purchaseDeliveries && (
@@ -1768,6 +1846,9 @@ function PurchaseOrderUtility({ creating }) {
                                                 dispatch(item);
                                             }
                                         }}
+                                        backClick={() =>
+                                            handleBackClick(previousPaths, history.goBack)
+                                        }
                                     />
                                 </Grid>
                             </Grid>

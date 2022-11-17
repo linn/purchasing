@@ -72,6 +72,8 @@ import BomTree from './BomTree';
 import ChangeRequestSearch from './ChangeRequests/ChangeRequestsSearch';
 import ChangeRequest from './ChangeRequests/ChangeRequest';
 import BomTypeChange from './BomTypeChange';
+import Board from './boards/Board';
+import BoardSearch from './boards/BoardSearch';
 
 const Root = ({ store }) => (
     <div>
@@ -211,6 +213,22 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/pl-credit-debit-notes/:id"
                                     component={Note}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/boms/boards"
+                                    component={BoardSearch}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/boms/boards/create"
+                                    render={() => <Board creating />}
+                                />
+                                <Route exact path="/purchasing/boms/boards/:id" component={Board} />
+                                <Route
+                                    exact
+                                    path="/purchasing/part-suppliers/create"
+                                    render={() => <Board creating />}
                                 />
                                 <Route
                                     exact
@@ -410,7 +428,7 @@ const Root = ({ store }) => (
                                     path="/purchasing/reports/delivery-performance-details/report"
                                     component={DeliveryPerformanceDetailReport}
                                 />
-                                <Route exact path="/purchasing/boms/tree/:id" component={BomTree} />
+                                <Route exact path="/purchasing/boms/tree" component={BomTree} />
                                 <Route
                                     exact
                                     path="/purchasing/change-requests"

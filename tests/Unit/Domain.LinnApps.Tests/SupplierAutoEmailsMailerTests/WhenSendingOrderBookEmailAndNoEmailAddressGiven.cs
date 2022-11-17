@@ -1,11 +1,11 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.SupplierAutoEmailsMailerTests
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
-    using FluentAssertions;
-
+    using Linn.Common.Email;
     using Linn.Common.Reporting.Models;
-    using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
@@ -13,18 +13,18 @@
 
     using NUnit.Framework;
 
-    public class WhenSendingEmailAndNoEmailAddressSuppliedAndSupplierHasNoMainOrderContact 
-        : ContextBase
+    public class WhenSendingOrderBookEmailAndNoEmailAddressGiven : ContextBase
     {
         private Supplier supplier;
 
-        private Action action;
+        private SupplierContact contact;
 
         private string timestamp;
 
         [SetUp]
         public void SetUp()
         {
+            this.contact = new SupplierContact { EmailAddress = "mainordercontact@supplier.com", IsMainOrderContact = "Y" };
             this.timestamp = DateTime.Today.ToShortTimeString();
             this.supplier = new Supplier
             {
@@ -40,22 +40,31 @@
                             EmailAddress = "test@mcperson.com"
                         }
                     }
-                }
+                },
+                SupplierContacts = new List<SupplierContact> { this.contact }
             };
 
             this.SupplierRepository.FindById(this.supplier.SupplierId).Returns(this.supplier);
             this.MrMaster.GetRecord().Returns(new MrMaster { RunDate = DateTime.Today });
             this.ReportService.GetOrderBookExport(this.supplier.SupplierId).Returns(new ResultsModel());
 
-            this.action  = () =>
-                this.Sut.SendOrderBookEmail(null, this.supplier.SupplierId, this.timestamp);
+            this.Sut.SendOrderBookEmail(null, this.supplier.SupplierId, this.timestamp);
         }
 
         [Test]
-        public void ShouldThrow()
+        public void ShouldUseMainOrderContactEmail()
         {
-            this.action.Should().Throw<SupplierAutoEmailsException>()
-                .WithMessage($"No recipient address set for: {this.supplier.Name}");
+            this.EmailService.Received().SendEmail(
+                this.contact.EmailAddress,
+                this.supplier.Name,
+                Arg.Any<IEnumerable<Dictionary<string, string>>>(),
+                Arg.Any<IEnumerable<Dictionary<string, string>>>(),
+                this.supplier.VendorManager.Employee.PhoneListEntry.EmailAddress,
+                this.supplier.VendorManager.Employee.FullName,
+                $"Linn Products Order Book - {this.supplier.Name}",
+                "Please find Order Book attached",
+                Arg.Is<IEnumerable<Attachment>>(
+                    a => a.First().FileName  == $"{this.supplier.SupplierId}_linn_order_book_{this.timestamp}.csv"));
         }
     }
 }

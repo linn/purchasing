@@ -4,6 +4,7 @@
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Domain.LinnApps.Finance.Models;
     using Linn.Purchasing.Domain.LinnApps.Forecasting;
@@ -193,6 +194,10 @@
         
         public DbSet<ImmediateLiabilityBase> ImmediateLiabilityBase { get; set; }
 
+        public DbSet<CircuitBoard> CircuitBoards { get; set; }
+
+        public DbSet<BoardComponentSummary> BoardComponentSummary { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -297,6 +302,8 @@
             this.BuildPlOrderReceivedView(builder);
             this.BuildImmediateLiability(builder);
             this.BuildImmediateLiabilityBase(builder);
+            this.BuildCircuitBoards(builder);
+            this.BuildBoardComponentSummary(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -474,6 +481,7 @@
             entity.Property(a => a.CurrencyUnitPrice).HasColumnName("CURRENCY_UNIT_PRICE");
             entity.Property(a => a.OurUnitOfMeasure).HasColumnName("OUR_UNIT_OF_MEASURE");
             entity.Property(a => a.BomId).HasColumnName("BOM_ID");
+            entity.Property(a => a.DrawingReference).HasColumnName("DRAWING_REFERENCE").HasMaxLength(100);
             entity.Property(a => a.RawOrFinished).HasColumnName("RM_FG");
             entity.HasOne(a => a.NominalAccount).WithMany().HasForeignKey("NOMACC_NOMACC_ID");
 
@@ -723,7 +731,7 @@
             entity.Property(o => o.UpdatePartsupPrice).HasColumnName("UPDATE_PARTSUP_PRICE").HasMaxLength(1);
             entity.Property(o => o.WasPreferredSupplier).HasColumnName("WAS_PREFERRED_SUPPLIER").HasMaxLength(1);
             entity.Property(o => o.OverbookQtyAllowed).HasColumnName("OVERBOOK_QTY_ALLOWED").HasMaxLength(19);
-            entity.Property(o => o.DrawingRef).HasColumnName("DRAWING_REF").HasMaxLength(100);
+            entity.Property(o => o.DrawingReference).HasColumnName("DRAWING_REF").HasMaxLength(100);
         }
 
         private void BuildPurchaseOrderDeliveries(ModelBuilder builder)
@@ -901,7 +909,7 @@
             entity.Property(e => e.Id).HasColumnName("VM_ID").HasMaxLength(1);
             entity.Property(e => e.UserNumber).HasColumnName("USER_NUMBER").HasMaxLength(6);
             entity.Property(e => e.PmMeasured).HasColumnName("PM_MEASURED").HasMaxLength(1);
-            entity.HasOne(x => x.Employee).WithOne().HasForeignKey<VendorManager>(z => z.UserNumber);
+            entity.HasOne(x => x.Employee).WithMany().HasForeignKey(z => z.UserNumber);
         }
 
         private void BuildSpendsView(ModelBuilder builder)
@@ -1944,6 +1952,49 @@
             entity.Property(a => a.OrderLine).HasColumnName("ORDER_LINE");
             entity.Property(a => a.Quantity).HasColumnName("FIL_QTY");
             entity.Property(a => a.Liability).HasColumnName("IMM_LIB");
+        }
+
+        private void BuildCircuitBoards(ModelBuilder builder)
+        {
+            var entity = builder.Entity<CircuitBoard>().ToTable("PCAS_BOARDS");
+            entity.HasKey(a => a.BoardCode);
+            entity.Property(a => a.BoardCode).HasColumnName("BOARD_CODE").HasMaxLength(6);
+            entity.Property(a => a.Description).HasColumnName("DESCRIPTION").HasMaxLength(200);
+            entity.Property(a => a.ChangeState).HasColumnName("CHANGE_STATE").HasMaxLength(6);
+            entity.Property(a => a.ChangeId).HasColumnName("CHANGE_ID");
+            entity.Property(a => a.SplitBom).HasColumnName("SPLIT_BOM").HasMaxLength(1);
+            entity.Property(a => a.DefaultPcbNumber).HasColumnName("DEFAULT_PCB_NUMBER").HasMaxLength(4);
+            entity.Property(a => a.VariantOfBoardCode).HasColumnName("VARIANT_OF_BOARD_CODE").HasMaxLength(6);
+            entity.Property(a => a.LoadDirectory).HasColumnName("LOAD_DIRECTORY").HasMaxLength(128);
+            entity.Property(a => a.BoardsPerSheet).HasColumnName("BOARDS_PER_SHEET");
+            entity.Property(a => a.CoreBoard).HasColumnName("CORE_BOARD").HasMaxLength(1);
+            entity.Property(a => a.ClusterBoard).HasColumnName("CLUSTER_BOARD").HasMaxLength(1);
+            entity.Property(a => a.IdBoard).HasColumnName("ID_BOARD").HasMaxLength(1);
+        }
+
+        private void BuildBoardComponentSummary(ModelBuilder builder)
+        {
+            var entity = builder.Entity<BoardComponentSummary>().ToTable("PCAS_REVISION_COMP_VIEW").HasNoKey();
+            entity.Property(a => a.BoardCode).HasColumnName("BOARD_CODE").HasMaxLength(6);
+            entity.Property(a => a.RevisionCode).HasColumnName("REVISION_CODE").HasMaxLength(10);
+            entity.Property(a => a.Cref).HasColumnName("CREF").HasMaxLength(8);
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
+            entity.Property(a => a.AssemblyTechnology).HasColumnName("ASSEMBLY_TECHNOLOGY").HasMaxLength(4);
+            entity.Property(a => a.Quantity).HasColumnName("QTY");
+            entity.Property(a => a.BoardLine).HasColumnName("BOARD_LINE");
+            entity.Property(a => a.ChangeState).HasColumnName("CHANGE_STATE").HasMaxLength(6);
+            entity.Property(a => a.AddChangeId).HasColumnName("ADD_CHANGE_ID");
+            entity.Property(a => a.DeleteChangeId).HasColumnName("DELETE_CHANGE_ID");
+            entity.Property(a => a.FromLayoutVersion).HasColumnName("FROM_LAYOUT_VERSION");
+            entity.Property(a => a.FromRevisionVersion).HasColumnName("FROM_REVISION_VERSION");
+            entity.Property(a => a.ToLayoutVersion).HasColumnName("TO_LAYOUT_VERSION");
+            entity.Property(a => a.ToRevisionVersion).HasColumnName("TO_REVISION_VERSION");
+            entity.Property(a => a.LayoutSequence).HasColumnName("LAYOUT_SEQ");
+            entity.Property(a => a.VersionNumber).HasColumnName("VERSION_NUMBER");
+            entity.Property(a => a.BomPartNumber).HasColumnName("BOM_PART_NUMBER").HasMaxLength(14);
+            entity.Property(a => a.PcasPartNumber).HasColumnName("PCAS_PART_NUMBER").HasMaxLength(14);
+            entity.Property(a => a.PcsmPartNumber).HasColumnName("PCSM_PART_NUMBER").HasMaxLength(14);
+            entity.Property(a => a.PcbPartNumber).HasColumnName("PCB_PART_NUMBER").HasMaxLength(14);
         }
     }
 }

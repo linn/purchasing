@@ -44,6 +44,7 @@
                                             OurUnitPriceCurrency = 555,
                                             DeliverySeq = 1,
                                             OrderLine = 1,
+                                            QuantityOutstanding = 123
                                         };
             this.updatedDeliveries = new List<PurchaseOrderDelivery>
                                          {
@@ -110,6 +111,7 @@
             var updateData = this.updatedDeliveries.First();
             var updated = this.result.First();
             updated.OurDeliveryQty.Should().Be(updateData.OurDeliveryQty);
+            updated.QuantityOutstanding.Should().Be(10);
             updated.OrderDeliveryQty.Should().Be(updateData.OurDeliveryQty / this.line.OrderConversionFactor);
             updated.OurUnitPriceCurrency.Should().Be(this.line.OurUnitPriceCurrency);
             updated.DateRequested.Should().Be(updateData.DateRequested);

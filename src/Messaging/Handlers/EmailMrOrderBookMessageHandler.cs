@@ -35,12 +35,16 @@
                 this.Logger.Info("Sending MR order book email to: " + resource.ForSupplier);
 
                 this.mailer.SendOrderBookEmail(
-                    resource.ToAddress, resource.ForSupplier, resource.Timestamp.ToShortTimeString(), resource.Test);
+                    resource.ToAddress,
+                    resource.ForSupplier, 
+                    resource.Timestamp.ToShortTimeString(), 
+                    resource.Test,
+                    resource.BypassMrpCheck.GetValueOrDefault());
                 return true;
             }
             catch (Exception e)
             {
-                this.Logger.Error(e.Message);
+                this.Logger.Error(e.Message, e);
                 return false;
             }
         }

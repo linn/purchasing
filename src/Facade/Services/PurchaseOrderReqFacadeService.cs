@@ -242,10 +242,6 @@
 
         private PurchaseOrderReq BuildEntityFromResourceHelper(PurchaseOrderReqResource resource)
         {
-            var remarksForOrder = string.IsNullOrEmpty(resource.RequestedBy?.FullName)
-                                      ? $"Please send with reference PO Req {resource.OrderNumber}. {Environment.NewLine}{resource.RemarksForOrder}"
-                                      : $"Please send for the attention of {resource.RequestedBy.FullName}. {Environment.NewLine}{resource.RemarksForOrder}";
-
             return new PurchaseOrderReq
                        {
                            State = resource.State,
@@ -274,13 +270,13 @@
                                !string.IsNullOrEmpty(resource.DateRequired)
                                    ? DateTime.Parse(resource.DateRequired)
                                    : null,
-                           RequestedById = resource.RequestedBy.Id,
+                           RequestedById = resource.RequestedBy.Id.GetValueOrDefault(),
                            AuthorisedById = resource.AuthorisedBy?.Id,
                            SecondAuthById = resource.SecondAuthBy?.Id,
                            FinanceCheckById = resource.FinanceCheckBy?.Id,
                            TurnedIntoOrderById = resource.TurnedIntoOrderBy?.Id,
                            NominalCode = resource.Nominal?.NominalCode,
-                           RemarksForOrder = remarksForOrder,
+                           RemarksForOrder = resource.RemarksForOrder,
                            InternalNotes = resource.InternalNotes,
                            DepartmentCode = resource.Department?.DepartmentCode
                        };

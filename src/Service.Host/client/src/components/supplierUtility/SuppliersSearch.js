@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     collectionSelectorHelpers,
     CreateButton,
     Page,
-    Typeahead,
     utilities
 } from '@linn-it/linn-form-components-library';
 import Typography from '@mui/material/Typography';
@@ -13,17 +12,21 @@ import Grid from '@mui/material/Grid';
 import suppliersActions from '../../actions/suppliersActions';
 import history from '../../history';
 import config from '../../config';
+import Search from '../Search';
 
 function SuppliersSearch() {
     const dispatch = useDispatch();
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         dispatch(suppliersActions.fetchState());
     }, [dispatch]);
 
-    const searchSuppliers = searchTerm => dispatch(suppliersActions.search(searchTerm));
+    const searchSuppliers = term => dispatch(suppliersActions.search(term));
+    const clearSearch = () => dispatch(suppliersActions.clearSearch());
+
     const searchResults = useSelector(state =>
-        collectionSelectorHelpers.getSearchItems(state.suppliers, 100, 'id', 'id', 'name')
+        collectionSelectorHelpers.getSearchItems(state.suppliers, 100, 'id', 'name', 'name')
     );
     const searchLoading = useSelector(state =>
         collectionSelectorHelpers.getSearchLoading(state.suppliers)
@@ -36,7 +39,7 @@ function SuppliersSearch() {
     const createUrl = utilities.getHref(item, 'create');
 
     const getClosedString = dateClosed =>
-        dateClosed ? ` --- CLOSED: ${new Date(dateClosed).toLocaleDateString('en-GB')}` : '';
+        dateClosed ? `CLOSED: ${new Date(dateClosed).toLocaleDateString('en-GB')}` : '';
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
@@ -48,17 +51,20 @@ function SuppliersSearch() {
                     <CreateButton createUrl={createUrl} disabled={!createUrl} />
                 </Grid>
                 <Grid item xs={12}>
-                    <Typeahead
-                        items={searchResults.map(s => ({
+                    <Search
+                        propertyName="supplier"
+                        label="Search for a Supplier"
+                        value={searchTerm}
+                        handleValueChange={(_, newVal) => setSearchTerm(newVal)}
+                        search={searchSuppliers}
+                        searchResults={searchResults.map(s => ({
                             ...s,
-                            description: `${s.description} ${getClosedString(s.dateClosed)}`
+                            description: `${getClosedString(s.dateClosed)}`
                         }))}
-                        fetchItems={searchSuppliers}
-                        clearSearch={() => {}}
-                        resultLimit={100}
                         loading={searchLoading}
-                        history={history}
-                        links
+                        priorityFunction="closestMatchesFirst"
+                        onResultSelect={res => history.push(utilities.getSelfHref(res))}
+                        clearSearch={clearSearch}
                     />
                 </Grid>
             </Grid>

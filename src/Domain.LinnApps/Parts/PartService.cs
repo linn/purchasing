@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Parts
 {
-    using System;
     using System.Collections.Generic;
 
     using Linn.Common.Authorisation;
@@ -20,7 +19,11 @@
 
         private readonly IAuthorisationService authService;
 
-        public PartService(IQueryRepository<Part> partRepository, IRepository<PartSupplier, PartSupplierKey> partSupplierRepository, IPartHistoryService partHistoryService, IAuthorisationService authService)
+        public PartService(
+            IQueryRepository<Part> partRepository,
+            IRepository<PartSupplier, PartSupplierKey> partSupplierRepository,
+            IPartHistoryService partHistoryService,
+            IAuthorisationService authService)
         {
             this.partRepository = partRepository;
             this.partSupplierRepository = partSupplierRepository;
@@ -68,7 +71,14 @@
                     $"Inconsistent old supplier id should be {part.PreferredSupplier.SupplierId} was {bomTypeChange.OldSupplierId}");
             }
 
-            var newPartSupplier = bomTypeChange.NewSupplierId.HasValue ? this.partSupplierRepository.FindById(new PartSupplierKey {PartNumber = part.PartNumber, SupplierId = (int) bomTypeChange.NewSupplierId }) : null;
+            var newPartSupplier = bomTypeChange.NewSupplierId.HasValue
+                                      ? this.partSupplierRepository.FindById(
+                                          new PartSupplierKey
+                                              {
+                                                  PartNumber = part.PartNumber,
+                                                  SupplierId = (int) bomTypeChange.NewSupplierId
+                                              })
+                                      : null;
             if ((newPartSupplier == null) && bomTypeChange.NewSupplierId.HasValue)
             {
                 throw new InvalidBomTypeChangeException(
@@ -81,7 +91,13 @@
             part.PreferredSupplier = newPartSupplier?.Supplier;
             // TODO work out if under new standards we want to autocost a new price with possible material variance req
 
-            this.partHistoryService.AddPartHistory(prevPart, part, "CHGBOMTYPE", bomTypeChange.ChangedBy ?? 100, null, null);
+            this.partHistoryService.AddPartHistory(
+                prevPart,
+                part,
+                "CHGBOMTYPE",
+                bomTypeChange.ChangedBy ?? 100,
+                null,
+                null);
 
             return part;
         }

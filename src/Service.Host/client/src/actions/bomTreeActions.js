@@ -1,12 +1,12 @@
 import { UpdateApiActions } from '@linn-it/linn-form-components-library';
-import { bomTreeNodesActionTypes as actionTypes } from './index';
+import { bomTreeActionTypes as actionTypes } from './index';
 import * as itemTypes from '../itemTypes';
 import config from '../config';
 
 export default new UpdateApiActions(
-    itemTypes.bomTreeNodes.item,
-    itemTypes.bomTreeNodes.actionType,
-    itemTypes.bomTreeNodes.uri,
+    itemTypes.bomTree.item,
+    itemTypes.bomTree.actionType,
+    itemTypes.bomTree.uri,
     actionTypes,
     config.appRoot
 );

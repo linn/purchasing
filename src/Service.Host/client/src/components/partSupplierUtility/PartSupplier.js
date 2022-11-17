@@ -84,7 +84,7 @@ function PartSupplier({ creating }) {
 
     const searchSuppliers = searchTerm => reduxDispatch(suppliersActions.search(searchTerm));
     const suppliersSearchResults = useSelector(reduxState =>
-        collectionSelectorHelpers.getSearchItems(reduxState.suppliers, 100, 'id', 'name', 'id')
+        collectionSelectorHelpers.getSearchItems(reduxState.suppliers, 100, null, 'id', 'name')
     );
     const suppliersSearchLoading = useSelector(reduxState =>
         collectionSelectorHelpers.getSearchLoading(reduxState.suppliers)
@@ -369,12 +369,12 @@ function PartSupplier({ creating }) {
                 />
                 {itemError && (
                     <Grid item xs={12}>
-                        <ErrorCard errorMessage={itemError.details} />
+                        <ErrorCard errorMessage={itemError.details?.error || itemError.details} />
                     </Grid>
                 )}
                 {errorMessage && (
                     <Grid item xs={12}>
-                        <ErrorCard errorMessage={errorMessage} />
+                        <ErrorCard errorMessage={errorMessage.toString()} />
                     </Grid>
                 )}
                 <Grid container spacing={3}>
@@ -604,7 +604,10 @@ function PartSupplier({ creating }) {
                                 }
                             }}
                             cancelClick={() => {
-                                dispatch({ type: 'initialise', payload: item });
+                                dispatch({
+                                    type: 'initialise',
+                                    payload: !creating ? item : { dateCreated: new Date() }
+                                });
                                 setEditStatus('view');
                             }}
                             backClick={() => history.push('/purchasing/part-suppliers')}

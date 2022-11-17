@@ -467,7 +467,7 @@ function Supplier({ creating }) {
                                             }
                                             setEditStatus('view');
                                         }}
-                                        backClick={() => history.push('/purchasing/part-suppliers')}
+                                        backClick={() => history.push('/purchasing/suppliers')}
                                     />
                                 </Grid>
                             </>

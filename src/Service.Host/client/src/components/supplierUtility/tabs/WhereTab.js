@@ -5,7 +5,8 @@ import {
     InputField,
     Typeahead,
     collectionSelectorHelpers,
-    itemSelectorHelpers
+    itemSelectorHelpers,
+    AddressUtility
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import Dialog from '@mui/material/Dialog';
@@ -14,9 +15,10 @@ import IconButton from '@mui/material/IconButton';
 import Close from '@mui/icons-material/Close';
 import Button from '@mui/material/Button';
 import addressesActions from '../../../actions/addressesActions';
-import AddressUtility from '../../AddressUtility';
 import addressActions from '../../../actions/addressActions';
 import countriesActions from '../../../actions/countriesActions';
+import history from '../../../history';
+import config from '../../../config';
 
 function WhereTab({
     orderAddressId,
@@ -98,6 +100,10 @@ function WhereTab({
                     </IconButton>
                     <div className={classes.dialog}>
                         <AddressUtility
+                            addressActions={addressActions}
+                            countriesActions={countriesActions}
+                            history={history}
+                            config={config}
                             addressee={supplierName}
                             inDialogBox
                             closeDialog={() => setOrderAddressDialogOpen(false)}

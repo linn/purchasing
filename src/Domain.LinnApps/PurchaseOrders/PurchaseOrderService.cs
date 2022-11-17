@@ -424,11 +424,12 @@
             var part = this.partQueryRepository.FindBy(p => p.PartNumber == detail.PartNumber);
 
             detail.OurUnitOfMeasure = part.OurUnitOfMeasure;
+            detail.DrawingReference = part.DrawingReference;
             order.IssuePartsToSupplier = part.SupplierAssembly() ? "Y" : "N";
 
             var partSupplier = this.partSupplierRepository.FindById(new PartSupplierKey { PartNumber = detail.PartNumber, SupplierId = order.SupplierId });
-            detail.OrderUnitOfMeasure = partSupplier != null ? partSupplier.UnitOfMeasure : string.Empty;
-            detail.OurUnitOfMeasure = partSupplier != null ? partSupplier.UnitOfMeasure : string.Empty;
+            detail.OrderUnitOfMeasure = partSupplier != null ? partSupplier.UnitOfMeasure : part.OurUnitOfMeasure;
+            detail.OurUnitOfMeasure = partSupplier != null ? partSupplier.UnitOfMeasure : part.OurUnitOfMeasure;
             detail.SuppliersDesignation = partSupplier != null ? partSupplier.SupplierDesignation : string.Empty;
 
             detail.NetTotalCurrency = detail.OurQty.GetValueOrDefault() 
@@ -723,21 +724,12 @@
                 throw new PurchaseOrderException("You cannot email this order until it has been authorised");
             }
 
-            var recipient = order.EnteredBy;
+            var recipient = order.RequestedBy;
 
             if (string.IsNullOrEmpty(recipient?.PhoneListEntry?.EmailAddress))
             {
                 throw new ItemNotFoundException($"Recipient email not found. Check they have one set up in the phone list.");
             }
-
-            var cc  = new List<Dictionary<string, string>>
-                                  {
-                                      new Dictionary<string, string>
-                                          {
-                                              { "name", sender.FullName },
-                                              { "address",  sender.PhoneListEntry.EmailAddress }
-                                          }
-                                  };
 
             var body =
                 "Please click the link when you have received the goods against this order to confirm delivery. \n";
@@ -747,7 +739,7 @@
             this.emailService.SendEmail(
                     recipient.PhoneListEntry.EmailAddress,
                     recipient.FullName,
-                    cc,
+                    null,
                     null,
                     sender.PhoneListEntry.EmailAddress,
                     sender.FullName,
@@ -892,8 +884,6 @@
 
         private void AddDeliveryToDetail(PurchaseOrder order, PurchaseOrderDetail detail)
         {
-            var partSupplier = this.partSupplierRepository.FindById(new PartSupplierKey { PartNumber = detail.PartNumber, SupplierId = order.SupplierId });
-
             detail.PurchaseDeliveries = new List<PurchaseOrderDelivery>
                                             {
                                                 new PurchaseOrderDelivery
@@ -952,22 +942,22 @@
             detail.RohsCompliant = "Y";
         }
 
-        private void UpdateDeliveries(PurchaseOrderDetail purchaseOrder)
+        private void UpdateDeliveries(PurchaseOrderDetail purchaseOrderDetail, decimal exchangeRate, int supplierId)
         {
-            foreach (var delivery in purchaseOrder.PurchaseDeliveries)
+            foreach (var delivery in purchaseOrderDetail.PurchaseDeliveries)
             {
                 if (delivery.QuantityOutstanding > 0)
                 {
-                    delivery.OrderUnitPriceCurrency = purchaseOrder.OrderUnitPriceCurrency;
-                    delivery.OurUnitPriceCurrency = purchaseOrder.OurUnitPriceCurrency;
-                    delivery.NetTotalCurrency = purchaseOrder.NetTotalCurrency;
-                    delivery.VatTotalCurrency = purchaseOrder.VatTotalCurrency;
-                    delivery.DeliveryTotalCurrency = purchaseOrder.DetailTotalCurrency;
-                    delivery.BaseOurUnitPrice = purchaseOrder.BaseOurUnitPrice;
-                    delivery.BaseOrderUnitPrice = purchaseOrder.BaseOrderUnitPrice;
-                    delivery.BaseVatTotal = purchaseOrder.BaseVatTotal;
-                    delivery.BaseDeliveryTotal = Math.Round((decimal)((delivery.OurDeliveryQty * purchaseOrder.BaseOurUnitPrice.GetValueOrDefault()) + purchaseOrder.BaseVatTotal), 2);
-                    delivery.BaseNetTotal = purchaseOrder.BaseNetTotal;
+                    delivery.OrderUnitPriceCurrency = purchaseOrderDetail.OrderUnitPriceCurrency;
+                    delivery.OurUnitPriceCurrency = purchaseOrderDetail.OurUnitPriceCurrency;
+                    delivery.NetTotalCurrency = Math.Round(delivery.OurDeliveryQty.GetValueOrDefault() * delivery.OurUnitPriceCurrency.GetValueOrDefault(), 2, MidpointRounding.AwayFromZero);
+                    delivery.VatTotalCurrency = this.purchaseOrdersPack.GetVatAmountSupplier((decimal)delivery.NetTotalCurrency, supplierId);
+                    delivery.BaseOurUnitPrice = purchaseOrderDetail.BaseOurUnitPrice;
+                    delivery.BaseOrderUnitPrice = purchaseOrderDetail.BaseOrderUnitPrice;
+                    delivery.BaseVatTotal = Math.Round(delivery.VatTotalCurrency.GetValueOrDefault() / exchangeRate, 2, MidpointRounding.AwayFromZero);
+                    delivery.BaseNetTotal = Math.Round(delivery.OurDeliveryQty.GetValueOrDefault() * delivery.BaseOurUnitPrice.GetValueOrDefault(), 2);
+                    delivery.BaseDeliveryTotal = Math.Round((decimal)((delivery.OurDeliveryQty.GetValueOrDefault() * delivery.BaseOurUnitPrice.GetValueOrDefault()) + delivery.BaseVatTotal), 2);
+                    delivery.DeliveryTotalCurrency = Math.Round((decimal)delivery.NetTotalCurrency + delivery.VatTotalCurrency.Value, 2);
                 }
             }
         }
@@ -985,7 +975,7 @@
 
             this.UpdateOrderPostingsForDetail(current, updated);
 
-            this.UpdateDeliveries(current);
+            this.UpdateDeliveries(current, exchangeRate, supplierId);
         }
 
         private void PerformDetailCalculations(PurchaseOrderDetail current, PurchaseOrderDetail updated, decimal exchangeRate, int supplierId, bool creating = false)
@@ -1071,6 +1061,7 @@
             var updatedDetail = updatedOrder.Details.First();
 
             miniOrder.Remarks = updatedOrder.Remarks;
+            miniOrder.SentByMethod = updatedOrder.SentByMethod;
 
             var nomAcc = this.nominalAccountRepository.FindById((int)updatedDetail.OrderPosting.NominalAccountId);
             miniOrder.Nominal = nomAcc.NominalCode;
@@ -1152,6 +1143,7 @@
         private void UpdateOrderProperties(PurchaseOrder current, PurchaseOrder updated)
         {
             current.Remarks = updated.Remarks;
+            current.SentByMethod = updated.SentByMethod;
         }
 
         private void SendOrderPdfEmail(

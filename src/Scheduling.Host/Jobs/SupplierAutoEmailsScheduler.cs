@@ -72,8 +72,7 @@
                                     {
                                         ForSupplier = s.SupplierId,
                                         Timestamp = this.currentTime(),
-                                        ToAddress = s.EmailAddresses,
-                                        Test = true
+                                        ToAddress = s.EmailAddresses
                                     });
                         }
                     }

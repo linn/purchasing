@@ -4,7 +4,6 @@
 
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
-    using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Facade.ResourceBuilders;
@@ -24,13 +23,13 @@
 
         protected HttpResponseMessage Response { get; set; }
 
-        protected IQueryRepository<Part> PartRepository;
+        protected IQueryRepository<Part> PartRepository { get; private set; }
 
-        protected IAutocostPack AutocostPack;
+        protected IAutocostPack AutocostPack { get; private set; }
 
-        protected ICurrencyPack CurrencyPack;
+        protected ICurrencyPack CurrencyPack { get; private set; }
 
-        protected IPartService PartService;
+        protected IPartService PartService { get; private set; }
 
         protected IPartFacadeService FacadeService { get; set; }
 

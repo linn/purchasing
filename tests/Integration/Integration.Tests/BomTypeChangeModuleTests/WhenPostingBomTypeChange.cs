@@ -21,7 +21,7 @@
         public void SetUp()
         {
             var resource = new BomTypeChangeResource { PartNumber = "TEST 1", OldBomType = "A", NewBomType = "C" };
-            var part = new Part { PartNumber = "TEST 1" , Currency = new Currency { Name = "Pebbles" } };
+            var part = new Part { PartNumber = "TEST 1", Currency = new Currency { Name = "Pebbles" } };
             this.PartService.ChangeBomType(Arg.Any<BomTypeChange>(), Arg.Any<IEnumerable<string>>()).Returns(part);
             this.Response = this.Client.PostAsJsonAsync("/purchasing/bom-type-change", resource).Result;
         }

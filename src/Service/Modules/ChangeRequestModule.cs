@@ -7,7 +7,6 @@
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.Boms;
-    using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.Extensions;
     using Linn.Purchasing.Service.Models;

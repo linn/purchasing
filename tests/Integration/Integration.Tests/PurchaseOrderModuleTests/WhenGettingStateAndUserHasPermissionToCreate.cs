@@ -20,14 +20,6 @@
         [SetUp]
         public void SetUp()
         {
-            LinkResource[] linkArray =
-                {
-                    new LinkResource()
-                        {
-                            Rel = "allow-over-book-search", Href = $"purchasing/purchase-orders/allow-over-book"
-                        }
-                };
-
             this.MockAuthService
                 .HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, Arg.Any<IEnumerable<string>>()).Returns(true);
 
