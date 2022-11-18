@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Page, Loading, ExportButton } from '@linn-it/linn-form-components-library';
 import { useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -64,13 +64,13 @@ export default function BomTree() {
 
     const bomTreeLoading = useSelector(state => state[bomTreeItemType.item].loading);
 
-    useEffect(() => {
+    if (!bomTree) {
         dispatch(
             bomTreeActions.fetchByHref(
                 `/purchasing/boms/tree?bomName=${bomName}&levels=${levels}&requirementOnly=${requirementOnly}&showChanges=${showChanges}&treeType=${treeType}`
             )
         );
-    }, [bomName, levels, requirementOnly, showChanges, treeType, dispatch]);
+    }
 
     const nodesWithChildren = useMemo(() => {
         const result = [];

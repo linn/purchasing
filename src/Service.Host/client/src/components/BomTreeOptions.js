@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
     Page,
     ExportButton,
@@ -46,11 +46,9 @@ export default function BomTreeOptions() {
         collectionSelectorHelpers.getSearchLoading(reduxState[parts.item])
     );
 
-    useEffect(() => {
-        if (bomName) {
-            setSearchTerm(bomName);
-        }
-    }, [bomName]);
+    if (bomName && !searchTerm) {
+        setSearchTerm(bomName);
+    }
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
