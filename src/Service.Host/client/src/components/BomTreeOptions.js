@@ -17,6 +17,7 @@ import history from '../history';
 import config from '../config';
 import { parts } from '../itemTypes';
 import partsActions from '../actions/partsActions';
+import bomTreeActions from '../actions/bomTreeActions';
 
 /* eslint react/jsx-props-no-spreading: 0 */
 /* eslint react/destructuring-assignment: 0 */
@@ -133,15 +134,16 @@ export default function BomTreeOptions() {
                         color="primary"
                         variant="contained"
                         disabled={!searchTerm}
-                        onClick={() =>
+                        onClick={() => {
+                            dispatch(bomTreeActions.clearItem());
                             history.push(
                                 `/purchasing/boms/tree?bomName=${searchTerm}&levels=${
                                     explode || 0
                                 }&requirementOnly=${requirementOnly}&showChanges=${showChanges}&treeType=${
                                     whereUsed ? 'whereUsed' : 'bom'
                                 }`
-                            )
-                        }
+                            );
+                        }}
                     >
                         Run
                     </Button>
