@@ -24,6 +24,7 @@
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/purchasing/boms/tree", this.GetTree);
+            app.MapGet("/purchasing/boms/tree/options", this.GetApp);
             app.MapGet("/purchasing/boms/{id:int}", this.GetBom);
             app.MapGet("/purchasing/boms/boards/application-state", this.GetBoardApplicationState);
             app.MapGet("/purchasing/boms/boards/{id}", this.GetBoard);
@@ -55,12 +56,15 @@
             HttpResponse res,
             string bomName,
             int? levels,
+            bool requirementOnly,
+            bool showChanges,
+            string treeType,
             IBomTreeReportsService facadeService)
         {
             IResult<BomTreeNode> result = null;
             if (!string.IsNullOrEmpty(bomName))
             {
-                result = facadeService.GetBomTree(bomName.Trim().ToUpper(), levels);
+                result = facadeService.GetTree(bomName.Trim().ToUpper(), levels, requirementOnly, showChanges, treeType);
             }
 
             await res.Negotiate(result);
@@ -71,9 +75,13 @@
             HttpResponse res,
             string bomName,
             int? levels,
+            bool requirementOnly,
+            bool showChanges,
+            string treeType,
             IBomTreeReportsService facadeService)
         {
-            var result = facadeService.GetFlatBomTreeExport(bomName, levels);
+            var result = facadeService.GetFlatTreeExport(
+                bomName.Trim().ToUpper(), levels, requirementOnly, showChanges, treeType);
 
             await res.FromCsv(result, $"{bomName}.csv");
         }

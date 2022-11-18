@@ -25,7 +25,9 @@
 
         public IQueryable<BomDetail> FilterBy(Expression<Func<BomDetail, bool>> expression)
         {
-            return this.bomDetails.Include(b => b.Part).Where(expression);
+            return this.bomDetails.Include(b => b.Part)
+                .Include(d => d.PartRequirement)
+                .Include(d => d.BomPart).Where(expression);
         }
 
         public IQueryable<BomDetail> FindAll()

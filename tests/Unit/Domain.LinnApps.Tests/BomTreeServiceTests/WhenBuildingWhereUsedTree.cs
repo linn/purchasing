@@ -8,31 +8,19 @@
 
     using NUnit.Framework;
 
-    public class WhenBuildingBomTree : BomContextBase
+    public class WhenBuildingWhereUsedTree : WhereUsedContextBase
     {
         private BomTreeNode result;
 
         [SetUp]
         public void SetUp()
         {
-            this.result = this.Sut.BuildBomTree("root", null, false);
+            this.result = this.Sut.BuildWhereUsedTree("root", null, false);
         }
 
         [Test]
         public void ShouldBuildTree()
         {
-            /* 
-                   __root__
-                  /    \   \
-                _n1_    n2  n3
-               /  |  \        
-             n11 n12 n13     
-            /   \      \
-          n111   n112   n131
-          /       |
-        n1111      n1121
-         
-        */
             this.result.Children.Count().Should().Be(3);
             this.result.Children.ElementAt(0).Name.Should().Be("n1");
             this.result.Children.ElementAt(1).Name.Should().Be("n2");
