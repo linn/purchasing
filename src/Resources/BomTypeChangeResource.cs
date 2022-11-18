@@ -1,6 +1,8 @@
 ﻿namespace Linn.Purchasing.Resources
 {
-    public class BomTypeChangeResource
+    using Linn.Common.Resources;
+
+    public class BomTypeChangeResource : HypermediaResource
     {
         public string PartNumber { get; set; }
 
@@ -9,6 +11,8 @@
         public string PartBomType { get; set; }
 
         public int? PreferredSuppliedId { get; set; }
+
+        public string PreferredSupplierName { get; set; }
 
         public decimal? PartCurrencyUnitPrice { get; set; }
 

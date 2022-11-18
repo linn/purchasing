@@ -342,5 +342,11 @@ export const suggestedPurchaseOrderValues = new ItemType(
     '/purchasing/purchase-orders/generate-order-from-supplier-id'
 );
 
+export const bomTypeChange = new ItemType(
+    'bomTypeChange',
+    'BOM_TYPE_CHANGES',
+    '/purchasing/bom-type-change'
+);
+
 export const board = new ItemType('board', 'BOARD', '/purchasing/boms/boards');
 export const boards = new ItemType('boards', 'BOARDS', '/purchasing/boms/boards');

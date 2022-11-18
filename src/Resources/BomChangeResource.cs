@@ -1,6 +1,8 @@
 ﻿namespace Linn.Purchasing.Resources
 {
-    public class BomChangeResource
+    using Linn.Common.Resources;
+
+    public class BomChangeResource : HypermediaResource
     {
         public int ChangeId { get; set; }
 

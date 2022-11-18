@@ -16,6 +16,9 @@
             string ledger, 
             string round);
 
+        IResult<BomTypeChangeResource> GetBomType(
+            int partNumberId, IEnumerable<string> privileges = null);
+
         IResult<BomTypeChangeResource> ChangeBomType(
             BomTypeChangeResource request, IEnumerable<string> privileges = null);
     }
