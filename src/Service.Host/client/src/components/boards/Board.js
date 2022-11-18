@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useReducer } from 'react';
 import { useParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
@@ -18,6 +18,7 @@ import history from '../../history';
 import config from '../../config';
 import BoardTab from './BoardTab';
 import LayoutTab from './LayoutTab';
+import boardReducer from './boardReducer';
 
 function Board({ creating }) {
     const reduxDispatch = useDispatch();
@@ -35,23 +36,24 @@ function Board({ creating }) {
     const updateBoard = board => reduxDispatch(boardActions.update(board.boardCode, board));
     const createBoard = board => reduxDispatch(boardActions.add(board));
 
-    const initialCreateState = { coreBoard: 'N', clusterBoard: 'N', idBoard: 'N', splitBom: 'N' };
     const [selectedTab, setSelectedTab] = useState(0);
-    const [board, setBoard] = useState(initialCreateState);
 
     const requestErrors = useSelector(state =>
         getRequestErrors(state)?.filter(error => error.type !== 'FETCH_ERROR')
     );
+    const [state, dispatch] = useReducer(boardReducer, { board: null });
 
     useEffect(() => {
-        if (!creating && id) {
+        if (creating) {
+            dispatch({ type: 'initialise' });
+        } else if (id) {
             reduxDispatch(boardActions.fetch(id));
         }
     }, [id, reduxDispatch, creating]);
 
     useEffect(() => {
         if (item) {
-            setBoard(item);
+            dispatch({ type: 'populate', payload: item });
             if (item.layouts && item.layouts.length > 0) {
                 setSelectedLayout([item.layouts[item.layouts.length - 1].layoutCode]);
             } else {
@@ -66,36 +68,36 @@ function Board({ creating }) {
 
     const handleFieldChange = (propertyName, newValue) => {
         setEditStatus('edit');
-        setBoard({ ...board, [propertyName]: newValue });
+        dispatch({ type: 'fieldChange', fieldName: propertyName, payload: newValue });
     };
 
     const saveBoard = () => {
         clearErrors();
         if (creating) {
-            createBoard(board);
+            createBoard(state.board);
         } else {
-            updateBoard(board);
+            updateBoard(state.board);
         }
     };
 
     const handleCancel = () => {
         clearErrors();
         if (creating) {
-            setBoard(initialCreateState);
+            dispatch({ type: 'initialise', payload: null });
         } else {
             setEditStatus('view');
-            setBoard(item);
+            dispatch({ type: 'populate', payload: item });
         }
     };
 
     const okToSave = () =>
-        board &&
-        board.clusterBoard &&
-        board.idBoard &&
-        board.coreBoard &&
-        board.description &&
-        board.splitBom &&
-        board.boardCode;
+        state.board &&
+        state.board.clusterBoard &&
+        state.board.idBoard &&
+        state.board.coreBoard &&
+        state.board.description &&
+        state.board.splitBom &&
+        state.board.boardCode;
 
     return (
         <Page
@@ -105,12 +107,12 @@ function Board({ creating }) {
             showRequestErrors
         >
             {loading && <Loading />}
-            {board && (
+            {state.board && (
                 <Grid container spacing={2}>
                     <Grid item xs={2}>
                         <InputField
                             fullWidth
-                            value={board.boardCode}
+                            value={state.board.boardCode}
                             label="Board Code"
                             disabled
                             propertyName="boardCodeDisplay"
@@ -120,7 +122,7 @@ function Board({ creating }) {
                     <Grid item xs={6}>
                         <InputField
                             fullWidth
-                            value={board.description}
+                            value={state.board.description}
                             label="Board Description"
                             disabled
                             propertyName="boardDescriptionDisplay"
@@ -141,21 +143,21 @@ function Board({ creating }) {
                         {selectedTab === 0 && (
                             <BoardTab
                                 handleFieldChange={handleFieldChange}
-                                boardCode={board.boardCode}
-                                description={board.description}
-                                coreBoard={board.coreBoard}
-                                clusterBoard={board.clusterBoard}
-                                idBoard={board.idBoard}
-                                defaultPcbNumber={board.defaultPcbNumber}
-                                variantOfBoardCode={board.variantOfBoardCode}
-                                splitBom={board.splitBom}
+                                boardCode={state.board.boardCode}
+                                description={state.board.description}
+                                coreBoard={state.board.coreBoard}
+                                clusterBoard={state.board.clusterBoard}
+                                idBoard={state.board.idBoard}
+                                defaultPcbNumber={state.board.defaultPcbNumber}
+                                variantOfBoardCode={state.board.variantOfBoardCode}
+                                splitBom={state.board.splitBom}
                                 creating={creating}
                                 style={{ paddingTop: '40px' }}
                             />
                         )}
                         {selectedTab === 1 && (
                             <LayoutTab
-                                layouts={board.layouts}
+                                layouts={state.board.layouts}
                                 style={{ paddingTop: '40px' }}
                                 selectedLayout={selectedLayout}
                                 setSelectedLayout={setSelectedLayout}
