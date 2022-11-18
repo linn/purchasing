@@ -229,7 +229,7 @@
             q.Enqueue(rootNode);
             while (q.Count != 0)
             {
-                if (currentDepth == levels)
+                if (currentDepth == levels && levels != 0)
                 {
                     break;
                 }

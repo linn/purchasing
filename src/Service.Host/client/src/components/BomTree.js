@@ -1,16 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import {
-    Page,
-    Loading,
-    ExportButton,
-    Search,
-    InputField,
-    collectionSelectorHelpers,
-    CheckboxWithLabel,
-    OnOffSwitch
-} from '@linn-it/linn-form-components-library';
+import React, { useEffect, useMemo } from 'react';
+import { Page, Loading, ExportButton } from '@linn-it/linn-form-components-library';
 import { useLocation } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import SvgIcon from '@mui/material/SvgIcon';
 import { alpha, styled } from '@mui/material/styles';
 import TreeView from '@mui/lab/TreeView';
@@ -21,9 +12,8 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import history from '../history';
 import config from '../config';
+import { bomTree as bomTreeItemType } from '../itemTypes';
 import bomTreeActions from '../actions/bomTreeActions';
-import { bomTree as bomTreeItemType, parts } from '../itemTypes';
-import partsActions from '../actions/partsActions';
 
 /* eslint react/jsx-props-no-spreading: 0 */
 /* eslint react/destructuring-assignment: 0 */
@@ -52,29 +42,6 @@ function CloseSquare(props) {
     );
 }
 
-// function TransitionComponent(props) {
-//     const style = useSpring({
-//         from: {
-//             opacity: 0,
-//             transform: 'translate3d(20px,0,0)'
-//         },
-//         to: {
-//             opacity: props.in ? 1 : 0,
-//             transform: `translate3d(${props.in ? 0 : 20}px,0,0)`
-//         }
-//     });
-
-//     return (
-//         <animated.div style={style}>
-//             <Collapse {...props} />
-//         </animated.div>
-//     );
-// }
-
-// TransitionComponent.propTypes = {
-//     in: PropTypes.bool.isRequired
-// };
-
 const StyledTreeItem = styled(props => <TreeItem {...props} />)(({ theme }) => ({
     [`& .${treeItemClasses.iconContainer}`]: {
         '& .close': {
@@ -89,38 +56,21 @@ const StyledTreeItem = styled(props => <TreeItem {...props} />)(({ theme }) => (
 }));
 
 export default function BomTree() {
-    const { search } = useLocation();
-    const { bomName } = queryString.parse(search);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [explode, setExplode] = useState(0);
-    const [requirementOnly, setRequirementOnly] = useState(true);
-    const [showChanges, setShowChanges] = useState(false);
-    const [whereUsed, setWhereUsed] = useState(false);
-
     const dispatch = useDispatch();
-
-    const partsSearchResults = useSelector(reduxState =>
-        collectionSelectorHelpers.getSearchItems(
-            reduxState[parts.item],
-            100,
-            'id',
-            'partNumber',
-            'description'
-        )
-    );
-    const partsSearchLoading = useSelector(reduxState =>
-        collectionSelectorHelpers.getSearchLoading(reduxState[parts.item])
-    );
-
-    useEffect(() => {
-        if (bomName) {
-            setSearchTerm(bomName);
-        }
-    }, [bomName]);
+    const { search } = useLocation();
+    const { bomName, levels, requirementOnly, showChanges, treeType } = queryString.parse(search);
 
     const bomTree = useSelector(state => state[bomTreeItemType.item].item);
 
     const bomTreeLoading = useSelector(state => state[bomTreeItemType.item].loading);
+
+    useEffect(() => {
+        dispatch(
+            bomTreeActions.fetchByHref(
+                `/purchasing/boms/tree?bomName=${bomName}&levels=${levels}&requirementOnly=${requirementOnly}&showChanges=${showChanges}&treeType=${treeType}`
+            )
+        );
+    }, [bomName, levels, requirementOnly, showChanges, treeType, dispatch]);
 
     const nodesWithChildren = useMemo(() => {
         const result = [];
@@ -156,7 +106,7 @@ export default function BomTree() {
                 >
                     {nodes.name}
                 </Typography>
-                {nodes.name !== searchTerm && (
+                {nodes.name !== bomName && (
                     <>
                         <Typography display="inline" variant="subtitle2">
                             {' '}
@@ -184,94 +134,20 @@ export default function BomTree() {
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <ExportButton
-                        href={`${
-                            config.appRoot
-                        }/purchasing/boms/tree/export?bomName=${searchTerm}&levels=${explode}&requirementOnly=${requirementOnly}&showChanges=${showChanges}&treeType=${
-                            whereUsed ? 'whereUsed' : 'bom'
-                        }`}
+                        href={`${config.appRoot}/purchasing/boms/tree/export?bomName=${bomName}&levels=${levels}&requirementOnly=${requirementOnly}&showChanges=${showChanges}&treeType=${treeType}`}
                     />
                 </Grid>
-                <Grid item xs={3}>
-                    <Search
-                        propertyName="searchTerm"
-                        label="Bom Name"
-                        resultsInModal
-                        resultLimit={100}
-                        value={searchTerm}
-                        handleValueChange={(_, newVal) => setSearchTerm(newVal)}
-                        search={partNumber => {
-                            dispatch(partsActions.search(partNumber));
-                        }}
-                        searchResults={partsSearchResults}
-                        helperText="Enter a value. Press the enter key if you want to search parts."
-                        loading={partsSearchLoading}
-                        priorityFunction="closestMatchesFirst"
-                        onResultSelect={newValue => {
-                            setSearchTerm(newValue.partNumber);
-                        }}
-                        clearSearch={() => {}}
-                    />
-                </Grid>
-                <Grid item xs={3}>
-                    <InputField
-                        value={explode}
-                        type="number"
-                        propertyName="explode"
-                        label="Explode levels"
-                        helperText="Leave as zero to see the whole tree"
-                        onChange={(_, newVal) => {
-                            setExplode(newVal);
-                        }}
-                    />
-                </Grid>
-                <Grid item xs={3}>
-                    <OnOffSwitch
-                        label="Where Used?"
-                        value={whereUsed}
-                        onChange={() => {
-                            setWhereUsed(!whereUsed);
-                        }}
-                        propertyName="whereUsed"
-                    />
-                </Grid>
-                <Grid item xs={3} />
-
-                <Grid item xs={3}>
-                    <CheckboxWithLabel
-                        label="Show only Parts with Material Reqt"
-                        checked={requirementOnly}
-                        onChange={() => {
-                            setRequirementOnly(!requirementOnly);
-                        }}
-                    />
-                </Grid>
-                <Grid item xs={3}>
-                    <CheckboxWithLabel
-                        label="Show Proposed/Accepted changes"
-                        checked={showChanges}
-                        onChange={() => {
-                            setShowChanges(!showChanges);
-                        }}
-                    />
-                </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={2}>
                     <Button
-                        color="primary"
-                        variant="contained"
-                        disabled={!searchTerm}
-                        onClick={() => {
-                            dispatch(
-                                bomTreeActions.fetchByHref(
-                                    `/purchasing/boms/tree?bomName=${searchTerm}&levels=${explode}&requirementOnly=${requirementOnly}&showChanges=${showChanges}&treeType=${
-                                        whereUsed ? 'whereUsed' : 'bom'
-                                    }`
-                                )
-                            );
-                        }}
+                        variant="outlined"
+                        onClick={() =>
+                            history.push(`/purchasing/boms/tree/options?bomName=${bomName}`)
+                        }
                     >
-                        Run
+                        Back
                     </Button>
                 </Grid>
+                <Grid item xs={10} />
                 {bomTree && (
                     <>
                         <Grid item xs={12}>
