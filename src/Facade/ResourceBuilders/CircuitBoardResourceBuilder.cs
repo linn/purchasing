@@ -31,7 +31,7 @@
                            CoreBoard = entity.CoreBoard,
                            ClusterBoard = entity.ClusterBoard,
                            IdBoard = entity.IdBoard,
-                           Layouts = entity.Layouts?.Select(MakeLayoutResource),
+                           Layouts = entity.Layouts?.OrderBy(a => a.LayoutSequence).Select(MakeLayoutResource),
                            Links = this.BuildLinks(entity, claims).ToArray()
                        };
         }

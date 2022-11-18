@@ -17,10 +17,12 @@ import boardActions from '../../actions/boardActions';
 import history from '../../history';
 import config from '../../config';
 import BoardTab from './BoardTab';
+import LayoutTab from './LayoutTab';
 
 function Board({ creating }) {
     const reduxDispatch = useDispatch();
     const { id } = useParams();
+    const [selectedLayout, setSelectedLayout] = useState(null);
 
     const item = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.board));
     const loading = useSelector(reduxState => itemSelectorHelpers.getItemLoading(reduxState.board));
@@ -50,6 +52,11 @@ function Board({ creating }) {
     useEffect(() => {
         if (item) {
             setBoard(item);
+            if (item.layouts && item.layouts.length > 0) {
+                setSelectedLayout([item.layouts[item.layouts.length - 1].layoutCode]);
+            } else {
+                setSelectedLayout([]);
+            }
         }
     }, [item]);
 
@@ -129,6 +136,7 @@ function Board({ creating }) {
                             }}
                         >
                             <Tab label="Board Details" />
+                            <Tab label="Layouts" />
                         </Tabs>
                         {selectedTab === 0 && (
                             <BoardTab
@@ -143,6 +151,14 @@ function Board({ creating }) {
                                 splitBom={board.splitBom}
                                 creating={creating}
                                 style={{ paddingTop: '40px' }}
+                            />
+                        )}
+                        {selectedTab === 1 && (
+                            <LayoutTab
+                                layouts={board.layouts}
+                                style={{ paddingTop: '40px' }}
+                                selectedLayout={selectedLayout}
+                                setSelectedLayout={setSelectedLayout}
                             />
                         )}
                     </Grid>
