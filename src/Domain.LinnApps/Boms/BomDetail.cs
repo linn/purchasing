@@ -32,5 +32,7 @@
         public PartRequirement PartRequirement { get; set; }
 
         public string BomPartNumber { get; set; }
+
+        public Part BomPart { get; set; }
     }
 }

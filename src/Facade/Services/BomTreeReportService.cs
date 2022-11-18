@@ -17,22 +17,32 @@
            this.domainService = domainService;
         }
 
-        public IResult<BomTreeNode> GetBomTree(
+        public IResult<BomTreeNode> GetTree(
             string bomName, 
             int? levels = null,
             bool requirementOnly = true,
-            bool showChanges = false)
+            bool showChanges = false,
+            string treeType = "bom")
         {
-            return new SuccessResult<BomTreeNode>(this.domainService.BuildBomTree(bomName, levels, requirementOnly, showChanges));
+            if (treeType == "bom")
+            {
+                return new SuccessResult<BomTreeNode>(this.domainService.BuildBomTree(bomName, levels, requirementOnly, showChanges));
+            }
+            else
+            {
+                return new SuccessResult<BomTreeNode>(this.domainService.BuildWhereUsedTree(bomName, levels, requirementOnly, showChanges));
+            }
         }
 
-        public IEnumerable<IEnumerable<string>> GetFlatBomTreeExport(
+        public IEnumerable<IEnumerable<string>> GetFlatTreeExport(
             string bomName, 
             int? levels,
             bool requirementOnly = true,
-            bool showChanges = false)
+            bool showChanges = false,
+            string treeType = "bom")
         {
-            var flattened = this.domainService.FlattenBomTree(bomName, levels, requirementOnly, showChanges);
+            var flattened = treeType == "bom" ? this.domainService.FlattenBomTree(bomName, levels, requirementOnly, showChanges)
+                                : this.domainService.FlattenWhereUsedTree(bomName, levels, requirementOnly, showChanges);
             var csvData = new List<List<string>>();
             foreach (var node in flattened)
             {

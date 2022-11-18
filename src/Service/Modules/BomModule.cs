@@ -57,12 +57,13 @@
             int? levels,
             bool requirementOnly,
             bool showChanges,
+            string treeType,
             IBomTreeReportsService facadeService)
         {
             IResult<BomTreeNode> result = null;
             if (!string.IsNullOrEmpty(bomName))
             {
-                result = facadeService.GetBomTree(bomName.Trim().ToUpper(), levels, requirementOnly, showChanges);
+                result = facadeService.GetTree(bomName.Trim().ToUpper(), levels, requirementOnly, showChanges, treeType);
             }
 
             await res.Negotiate(result);
@@ -75,9 +76,11 @@
             int? levels,
             bool requirementOnly,
             bool showChanges,
+            string treeType,
             IBomTreeReportsService facadeService)
         {
-            var result = facadeService.GetFlatBomTreeExport(bomName, levels, requirementOnly, showChanges);
+            var result = facadeService.GetFlatTreeExport(
+                bomName.Trim().ToUpper(), levels, requirementOnly, showChanges, treeType);
 
             await res.FromCsv(result, $"{bomName}.csv");
         }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
     Page,
     Loading,
@@ -6,19 +6,17 @@ import {
     Search,
     InputField,
     collectionSelectorHelpers,
-    CheckboxWithLabel
+    CheckboxWithLabel,
+    OnOffSwitch
 } from '@linn-it/linn-form-components-library';
-import PropTypes from 'prop-types';
 import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import SvgIcon from '@mui/material/SvgIcon';
 import { alpha, styled } from '@mui/material/styles';
 import TreeView from '@mui/lab/TreeView';
 import TreeItem, { treeItemClasses } from '@mui/lab/TreeItem';
-import Collapse from '@mui/material/Collapse';
 import Grid from '@mui/material/Grid';
 import queryString from 'query-string';
-import { useSpring, animated } from 'react-spring';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import history from '../history';
@@ -54,32 +52,30 @@ function CloseSquare(props) {
     );
 }
 
-function TransitionComponent(props) {
-    const style = useSpring({
-        from: {
-            opacity: 0,
-            transform: 'translate3d(20px,0,0)'
-        },
-        to: {
-            opacity: props.in ? 1 : 0,
-            transform: `translate3d(${props.in ? 0 : 20}px,0,0)`
-        }
-    });
+// function TransitionComponent(props) {
+//     const style = useSpring({
+//         from: {
+//             opacity: 0,
+//             transform: 'translate3d(20px,0,0)'
+//         },
+//         to: {
+//             opacity: props.in ? 1 : 0,
+//             transform: `translate3d(${props.in ? 0 : 20}px,0,0)`
+//         }
+//     });
 
-    return (
-        <animated.div style={style}>
-            <Collapse {...props} />
-        </animated.div>
-    );
-}
+//     return (
+//         <animated.div style={style}>
+//             <Collapse {...props} />
+//         </animated.div>
+//     );
+// }
 
-TransitionComponent.propTypes = {
-    in: PropTypes.bool.isRequired
-};
+// TransitionComponent.propTypes = {
+//     in: PropTypes.bool.isRequired
+// };
 
-const StyledTreeItem = styled(props => (
-    <TreeItem {...props} sub TransitionComponent={TransitionComponent} />
-))(({ theme }) => ({
+const StyledTreeItem = styled(props => <TreeItem {...props} />)(({ theme }) => ({
     [`& .${treeItemClasses.iconContainer}`]: {
         '& .close': {
             opacity: 0.3
@@ -93,14 +89,13 @@ const StyledTreeItem = styled(props => (
 }));
 
 export default function BomTree() {
-    const [expanded, setExpanded] = useState([]);
-
     const { search } = useLocation();
     const { bomName } = queryString.parse(search);
     const [searchTerm, setSearchTerm] = useState('');
     const [explode, setExplode] = useState(0);
     const [requirementOnly, setRequirementOnly] = useState(true);
     const [showChanges, setShowChanges] = useState(false);
+    const [whereUsed, setWhereUsed] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -127,17 +122,13 @@ export default function BomTree() {
 
     const bomTreeLoading = useSelector(state => state[bomTreeItemType.item].loading);
 
-    const handleToggle = (_, nodeIds) => {
-        setExpanded(nodeIds);
-    };
-
-    const nodesWithChildren = root => {
+    const nodesWithChildren = useMemo(() => {
         const result = [];
-        if (!root) {
+        if (!bomTree) {
             return result;
         }
         const q = [];
-        q.push(root);
+        q.push(bomTree);
         while (q.length !== 0) {
             let n = q.length;
             while (n > 0) {
@@ -153,10 +144,6 @@ export default function BomTree() {
             }
         }
         return result;
-    };
-
-    useEffect(() => {
-        setExpanded(nodesWithChildren(bomTree));
     }, [bomTree]);
 
     const renderTree = nodes => {
@@ -197,7 +184,11 @@ export default function BomTree() {
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <ExportButton
-                        href={`${config.appRoot}/purchasing/boms/tree/export?bomName=${searchTerm}&levels=${explode}&requirementOnly=${requirementOnly}&showChanges=${showChanges}`}
+                        href={`${
+                            config.appRoot
+                        }/purchasing/boms/tree/export?bomName=${searchTerm}&levels=${explode}&requirementOnly=${requirementOnly}&showChanges=${showChanges}&treeType=${
+                            whereUsed ? 'whereUsed' : 'bom'
+                        }`}
                     />
                 </Grid>
                 <Grid item xs={3}>
@@ -233,7 +224,17 @@ export default function BomTree() {
                         }}
                     />
                 </Grid>
-                <Grid item xs={6} />
+                <Grid item xs={3}>
+                    <OnOffSwitch
+                        label="Where Used?"
+                        value={whereUsed}
+                        onChange={() => {
+                            setWhereUsed(!whereUsed);
+                        }}
+                        propertyName="whereUsed"
+                    />
+                </Grid>
+                <Grid item xs={3} />
 
                 <Grid item xs={3}>
                     <CheckboxWithLabel
@@ -261,13 +262,14 @@ export default function BomTree() {
                         onClick={() => {
                             dispatch(
                                 bomTreeActions.fetchByHref(
-                                    `/purchasing/boms/tree?bomName=${searchTerm}&levels=${explode}&requirementOnly=${requirementOnly}&showChanges=${showChanges}`
+                                    `/purchasing/boms/tree?bomName=${searchTerm}&levels=${explode}&requirementOnly=${requirementOnly}&showChanges=${showChanges}&treeType=${
+                                        whereUsed ? 'whereUsed' : 'bom'
+                                    }`
                                 )
                             );
                         }}
                     >
-                        {' '}
-                        Run{' '}
+                        Run
                     </Button>
                 </Grid>
                 {bomTree && (
@@ -283,8 +285,7 @@ export default function BomTree() {
                                 defaultCollapseIcon={<MinusSquare />}
                                 defaultExpandIcon={<PlusSquare />}
                                 defaultEndIcon={<CloseSquare />}
-                                onNodeToggle={handleToggle}
-                                expanded={expanded}
+                                expanded={nodesWithChildren}
                             >
                                 {renderTree(bomTree)}
                             </TreeView>

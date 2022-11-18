@@ -8,7 +8,7 @@
 
     using NUnit.Framework;
 
-    public class WhenBuildingTreeAndMaxDepthSpecified : ContextBase
+    public class WhenBuildingBomTreeAndMaxDepthSpecified : BomContextBase
     {
         private BomTreeNode result;
 

@@ -13,7 +13,7 @@
 
     using NUnit.Framework;
 
-    public class ContextBase
+    public class BomContextBase
     {
         protected IRepository<Bom, int> Repository { get; private set; }
 
@@ -46,15 +46,15 @@
         */
             this.Repository.FindBy(Arg.Any<Expression<Func<Bom, bool>>>()).Returns(
                 new Bom
-                    {
-                        BomName = "root",
-                        Details = new List<BomDetail>
+                {
+                    BomName = "root",
+                    Details = new List<BomDetail>
                                       {
                                           new BomDetail { ChangeState = "LIVE", Part = new Part { PartNumber = "n1" } },
                                           new BomDetail { ChangeState = "LIVE", Part = new Part { PartNumber = "n2" } },
                                           new BomDetail { ChangeState = "LIVE", Part = new Part { PartNumber = "n3" } }
                                       }
-                    });
+                });
 
             var n1Children = new List<BomDetail>
                                  {

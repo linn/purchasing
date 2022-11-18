@@ -211,7 +211,6 @@
             bool requirementOnly = true,
             bool showChanges = false)
         {
-            //var root = this.detailRepository.FindBy(x => x.PartNumber == partNumber);
             var rootNode = new BomTreeNode
                                {
                                    Name = partNumber,
@@ -219,11 +218,69 @@
                                    Children = this.detailRepository.FilterBy(d => d.PartNumber == partNumber)
                                        .Select(c => new BomTreeNode
                                                         {
-                                                            Name = c.BomPartNumber,
+                                                            Name = c.BomPart.PartNumber,
+                                                            Description = c.BomPart.Description,
                                                             Qty = c.Qty
-                                                        })
+                                                        }).OrderBy(c => c.Name)
 
                                };
+            var currentDepth = 0;
+            var q = new Queue<BomTreeNode>();
+            q.Enqueue(rootNode);
+            while (q.Count != 0)
+            {
+                if (currentDepth == levels)
+                {
+                    break;
+                }
+
+                var numChildren = q.Count;
+                while (numChildren > 0)
+                {
+                    var current = q.Dequeue();
+                    current.Children = current.Children?.Select(
+                        child =>
+                        {
+                            var children = this.detailRepository
+                                .FilterBy(x => x.PartNumber == child.Name)
+                                .Where(x => showChanges || x.ChangeState == "LIVE")
+                                .Where(c => !requirementOnly
+                                            || (c.PartRequirement != null && c.PartRequirement.AnnualUsage > 0));
+
+                            var node = new BomTreeNode
+                            {
+                                Name = child.Name,
+                                Description = child.Description,
+                                Qty = child.Qty,
+                                Children =
+                                children
+                                    .Select(
+                                        detail =>
+
+                                            new BomTreeNode
+                                            {
+                                                Name = detail.BomPart.PartNumber,
+                                                Description = detail.BomPart.Description,
+                                                Qty = detail.Qty
+                                            })
+                                    .OrderBy(c => c.Name)
+                            };
+                            return node;
+                        }).ToList();
+
+                    if (current.Children != null)
+                    {
+                        foreach (var child in current.Children)
+                        {
+                            q.Enqueue(child);
+                        }
+                    }
+
+                    numChildren--;
+                }
+
+                currentDepth++;
+            }
             return rootNode;
         }
 
@@ -233,7 +290,80 @@
             bool requirementOnly = true,
             bool showChanges = false)
         {
-            throw new System.NotImplementedException();
+            var result = new List<BomTreeNode>();
+            var rootNode = new BomTreeNode
+            {
+                Name = partNumber,
+                Qty = 0,
+                Children = this.detailRepository.FilterBy(d => d.PartNumber == partNumber)
+                                       .Select(c => new BomTreeNode
+                                       {
+                                           Name = c.BomPart.PartNumber,
+                                           Description = c.BomPart.Description,
+                                           Qty = c.Qty
+                                       }).OrderBy(c => c.Name)
+
+            };
+            var currentDepth = 1;
+            var q = new Queue<BomTreeNode>();
+            q.Enqueue(rootNode);
+            while (q.Count != 0)
+            {
+                if (currentDepth == levels)
+                {
+                    break;
+                }
+
+                var numChildren = q.Count;
+                while (numChildren > 0)
+                {
+                    var current = q.Dequeue();
+                    result.Add(current);
+                    current.Children = current.Children?.Select(
+                        child =>
+                        {
+                            var children = this.detailRepository
+                                .FilterBy(x => x.PartNumber == child.Name)
+                                .Where(x => showChanges || x.ChangeState == "LIVE")
+                                .Where(c => !requirementOnly
+                                            || (c.PartRequirement != null && c.PartRequirement.AnnualUsage > 0));
+
+                            var node = new BomTreeNode
+                            {
+                                Name = child.Name,
+                                Description = child.Description,
+                                Qty = child.Qty,
+                                Children =
+                                children
+                                    .Select(
+                                        detail =>
+
+                                            new BomTreeNode
+                                            {
+                                                Name = detail.BomPart.PartNumber,
+                                                Description = detail.BomPart.Description,
+                                                Qty = detail.Qty
+                                            })
+                                    .OrderBy(c => c.Name)
+                            };
+                            return node;
+                        }).ToList();
+
+                    if (current.Children != null)
+                    {
+                        foreach (var child in current.Children)
+                        {
+                            q.Enqueue(child);
+                        }
+                    }
+
+                    numChildren--;
+                }
+
+                currentDepth++;
+            }
+
+            return result;
         }
     }
 }

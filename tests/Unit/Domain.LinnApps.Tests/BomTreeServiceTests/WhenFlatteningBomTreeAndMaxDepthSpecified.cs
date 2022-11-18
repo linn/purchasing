@@ -9,7 +9,7 @@
 
     using NUnit.Framework;
 
-    public class WhenFlatteningTreeAndMaxDepthSpecified : ContextBase
+    public class WhenFlatteningBomTreeAndMaxDepthSpecified : BomContextBase
     {
         private IEnumerable<BomTreeNode> result;
 

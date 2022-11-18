@@ -1911,6 +1911,7 @@
             entity.Property(a => a.DeleteChangeId).HasColumnName("DELETE_CHANGE_ID");
             entity.Property(a => a.DeleteReplaceSeq).HasColumnName("DELETE_REPLACE_SEQ");
             entity.HasOne(a => a.Part).WithMany().HasForeignKey(a => a.PartNumber);
+            entity.HasOne(a => a.BomPart).WithMany().HasForeignKey(a => a.BomPartNumber);
         }
 
         private void BuildPlOrderReceivedView(ModelBuilder builder)
