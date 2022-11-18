@@ -106,7 +106,7 @@ export default function BomTree() {
                 >
                     {nodes.name}
                 </Typography>
-                {nodes.name !== bomName && (
+                {nodes.name !== bomName.toUpperCase() && (
                     <>
                         <Typography display="inline" variant="subtitle2">
                             {' '}
