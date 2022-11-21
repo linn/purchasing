@@ -1,5 +1,8 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Boms
 {
+    using System.Collections.Generic;
+
+    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Domain.LinnApps.MaterialRequirements;
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
@@ -34,5 +37,9 @@
         public string BomPartNumber { get; set; }
 
         public Part BomPart { get; set; }
+
+        public string PcasLine { get; set; }
+
+        public IEnumerable<BoardComponentSummary> ComponentSummary { get; set; }
     }
 }

@@ -487,7 +487,7 @@
             entity.Property(a => a.DrawingReference).HasColumnName("DRAWING_REFERENCE").HasMaxLength(100);
             entity.Property(a => a.RawOrFinished).HasColumnName("RM_FG");
             entity.HasOne(a => a.NominalAccount).WithMany().HasForeignKey("NOMACC_NOMACC_ID");
-
+            entity.Property(a => a.DecrementRule).HasColumnName("DECREMENT_RULE");
         }
 
         private void BuildSuppliers(ModelBuilder builder)
@@ -1910,8 +1910,10 @@
             entity.Property(a => a.AddReplaceSeq).HasColumnName("ADD_REPLACE_SEQ");
             entity.Property(a => a.DeleteChangeId).HasColumnName("DELETE_CHANGE_ID");
             entity.Property(a => a.DeleteReplaceSeq).HasColumnName("DELETE_REPLACE_SEQ");
+            entity.Property(a => a.PcasLine).HasColumnName("PCAS_LINE");
             entity.HasOne(a => a.Part).WithMany().HasForeignKey(a => a.PartNumber);
             entity.HasOne(a => a.BomPart).WithMany().HasForeignKey(a => a.BomPartNumber);
+            entity.HasMany(a => a.ComponentSummary).WithOne().HasForeignKey(x => x.BomPartNumber);
         }
 
         private void BuildPlOrderReceivedView(ModelBuilder builder)
