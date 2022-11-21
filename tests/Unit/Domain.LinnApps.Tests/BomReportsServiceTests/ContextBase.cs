@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.BomReportsServiceTests
 {
-    using Linn.Common.Persistence;
     using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Boms;
 
@@ -12,12 +11,12 @@
     {
         protected IBomReportsService Sut { get; private set; }
 
-        protected IRepository<BomDetail, int> BomDetailRepository { get; private set; }
+        protected IBomDetailRepository BomDetailRepository { get; private set; }
 
         [SetUp]
         public void SetUpContext()
         {
-            this.BomDetailRepository = Substitute.For<IRepository<BomDetail, int>>();
+            this.BomDetailRepository = Substitute.For<IBomDetailRepository>();
             this.Sut = new BomReportsService(this.BomDetailRepository, new ReportingHelper());
         }
     }

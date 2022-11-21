@@ -9,11 +9,11 @@
 
     public class BomReportsService : IBomReportsService
     {
-        private readonly IRepository<BomDetail, int> bomDetailRepository;
+        private readonly IBomDetailRepository bomDetailRepository;
 
         private readonly IReportingHelper reportingHelper;
 
-        public BomReportsService(IRepository<BomDetail, int> bomDetailRepository, IReportingHelper reportingHelper)
+        public BomReportsService(IBomDetailRepository bomDetailRepository, IReportingHelper reportingHelper)
         {
             this.bomDetailRepository = bomDetailRepository;
             this.reportingHelper = reportingHelper;

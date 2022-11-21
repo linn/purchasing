@@ -454,7 +454,7 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
-                                    path="/purchasing/reports/bom/list"
+                                    path="/purchasing/boms/reports/list"
                                     component={PartsOnBomReport}
                                 />
                                 <Route component={NotFoundPage} />
