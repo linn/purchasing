@@ -180,6 +180,16 @@
 
             firstDetail.PurchaseDeliveries
                 .First().DateRequested.Should().Be(DateTime.UnixEpoch);
+           
+            //check delivery values 
+            firstDetail.PurchaseDeliveries.First().NetTotalCurrency.Should().Be(0);
+            firstDetail.PurchaseDeliveries.First().OrderUnitPriceCurrency.Should().Be(0);
+            firstDetail.PurchaseDeliveries.First().VatTotalCurrency.Should().Be(0);
+            firstDetail.PurchaseDeliveries.First().OurUnitPriceCurrency.Should().Be(0);
+            firstDetail.PurchaseDeliveries.First().BaseVatTotal.Should().Be(0);
+            firstDetail.PurchaseDeliveries.First().BaseNetTotal.Should().Be(0);
+            firstDetail.PurchaseDeliveries.First().BaseOrderUnitPrice.Should().Be(0);
+            firstDetail.PurchaseDeliveries.First().BaseOurUnitPrice.Should().Be(0);
         }
 
         [Test]
