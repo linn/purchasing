@@ -75,6 +75,7 @@ import ChangeRequest from './ChangeRequests/ChangeRequest';
 import BomTypeChange from './BomTypeChange';
 import Board from './boards/Board';
 import BoardSearch from './boards/BoardSearch';
+import PartsOnBomReport from './reports/PartsOnBomReport';
 
 const Root = ({ store }) => (
     <div>
@@ -450,6 +451,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/bom-type-change"
                                     component={BomTypeChange}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/reports/bom/list"
+                                    component={PartsOnBomReport}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>
