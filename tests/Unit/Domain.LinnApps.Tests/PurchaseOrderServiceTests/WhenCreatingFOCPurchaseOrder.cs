@@ -131,7 +131,7 @@
             this.MockAuthService.HasPermissionFor(AuthorisedAction.PurchaseOrderCreate, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
-            this.PurchaseOrdersPack.GetVatAmountSupplier(Arg.Any<decimal>(), Arg.Any<int>()).Returns(40.55m);
+            this.PurchaseOrdersPack.GetVatAmountSupplier(Arg.Any<decimal>(), Arg.Any<int>()).Returns(0m);
 
             this.MockDatabaseService.GetIdSequence("PLORP_SEQ").Returns(123);
 
@@ -169,12 +169,12 @@
             firstDetail.NetTotalCurrency.Should().Be(0m);
             firstDetail.BaseNetTotal.Should().Be(0m);
 
-            firstDetail.VatTotalCurrency.Should().Be(40.55m);
-            firstDetail.BaseVatTotal.Should().Be(50.69m);
+            firstDetail.VatTotalCurrency.Should().Be(0m);
+            firstDetail.BaseVatTotal.Should().Be(0m);
 
             // net total + vat total
-            firstDetail.DetailTotalCurrency.Should().Be(40.55m);
-            firstDetail.BaseDetailTotal.Should().Be(50.69m);
+            firstDetail.DetailTotalCurrency.Should().Be(0m);
+            firstDetail.BaseDetailTotal.Should().Be(0m);
 
             firstDetail.OrderPosting.NominalAccountId.Should().Be(911);
 
