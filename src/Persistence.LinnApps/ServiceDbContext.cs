@@ -1980,8 +1980,7 @@
 
         private void BuildBoardComponentSummary(ModelBuilder builder)
         {
-            var entity = builder.Entity<BoardComponentSummary>().ToTable("PCAS_REVISION_COMP_VIEW");
-            entity.HasKey(e => new { e.BomPartNumber, e.PartNumber, e.Cref });
+            var entity = builder.Entity<BoardComponentSummary>().ToTable("PCAS_REVISION_COMP_VIEW").HasNoKey();
             entity.Property(a => a.BoardCode).HasColumnName("BOARD_CODE").HasMaxLength(6);
             entity.Property(a => a.RevisionCode).HasColumnName("REVISION_CODE").HasMaxLength(10);
             entity.Property(a => a.Cref).HasColumnName("CREF").HasMaxLength(8);

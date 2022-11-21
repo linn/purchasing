@@ -116,7 +116,7 @@
                         {
                             RowId = rowId,
                             ColumnId = "Crefs",
-                            TextDisplay = this.componentSummaryRepository.FilterBy(x => x.BomPartNumber == bomName)
+                            TextDisplay = this.componentSummaryRepository.FilterBy(x => x.BomPartNumber == bomName && x.PartNumber == line.PartNumber)?.ToList()
                                 .Aggregate(string.Empty, (current, next) => current + $"{next.Cref}, ")
                         });
             }
