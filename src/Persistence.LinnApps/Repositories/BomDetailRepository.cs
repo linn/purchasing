@@ -35,7 +35,6 @@
         {
             return this.bomDetails
                 .Include(d => d.Part)
-                .Include(d => d.ComponentSummary)
                 .AsNoTracking();
         }
 

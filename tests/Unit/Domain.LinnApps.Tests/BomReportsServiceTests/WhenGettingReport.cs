@@ -1,7 +1,9 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.BomReportsServiceTests
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
 
     using FluentAssertions;
 
@@ -24,29 +26,20 @@
         public void SetUp()
         {
             this.bomName = "SK HUB";
-
+            this.ComponentSummaryRepository.FilterBy(Arg.Any<Expression<Func<BoardComponentSummary, bool>>>()).Returns(
+                new List<BoardComponentSummary>
+                    {
+                        new BoardComponentSummary { Cref = "U001" },
+                        new BoardComponentSummary { Cref = "U002" },
+                        new BoardComponentSummary { Cref = "U003" }
+                    }.AsQueryable());
             var data = new List<BomDetail>
                            {
                                new BomDetail
                                    {
                                        Part = new Part { PartNumber = "CAP 001" },
                                        PartNumber = "CAP 001",
-                                       BomPartNumber = this.bomName,
-                                       ComponentSummary = new List<BoardComponentSummary>
-                                                              {
-                                                                  new BoardComponentSummary
-                                                                      {
-                                                                          Cref = "U001"
-                                                                      },
-                                                                  new BoardComponentSummary
-                                                                      {
-                                                                          Cref = "U002"
-                                                                      },
-                                                                  new BoardComponentSummary
-                                                                      {
-                                                                          Cref = "U003"
-                                                                      }
-                                                              }
+                                       BomPartNumber = this.bomName
                                    }
                            };
 

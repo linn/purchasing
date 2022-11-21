@@ -39,7 +39,5 @@
         public Part BomPart { get; set; }
 
         public string PcasLine { get; set; }
-
-        public IEnumerable<BoardComponentSummary> ComponentSummary { get; set; }
     }
 }

@@ -1899,7 +1899,7 @@
             var entity = builder.Entity<BomDetail>().ToTable("BOM_DETAIL_VIEW");
             entity.HasKey(a => a.DetailId);
             entity.Property(a => a.DetailId).HasColumnName("DETAIL_ID");
-            entity.Property(a => a.BomPartNumber).HasColumnName("BOM_PART_NUMBER");
+            entity.Property(a => a.BomPartNumber).HasColumnName("BOM_PART_NUMBER").HasColumnType("VARCHAR");
             entity.Property(a => a.BomName).HasColumnName("BOM_NAME").HasColumnType("VARCHAR2").HasMaxLength(14);
             entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2").HasMaxLength(14);
             entity.Property(a => a.BomId).HasColumnName("BOM_ID");
@@ -1913,7 +1913,6 @@
             entity.Property(a => a.PcasLine).HasColumnName("PCAS_LINE");
             entity.HasOne(a => a.Part).WithMany().HasForeignKey(a => a.PartNumber);
             entity.HasOne(a => a.BomPart).WithMany().HasForeignKey(a => a.BomPartNumber);
-            entity.HasMany(a => a.ComponentSummary).WithOne().HasForeignKey(x => x.BomPartNumber);
         }
 
         private void BuildPlOrderReceivedView(ModelBuilder builder)
@@ -1981,7 +1980,8 @@
 
         private void BuildBoardComponentSummary(ModelBuilder builder)
         {
-            var entity = builder.Entity<BoardComponentSummary>().ToTable("PCAS_REVISION_COMP_VIEW").HasNoKey();
+            var entity = builder.Entity<BoardComponentSummary>().ToTable("PCAS_REVISION_COMP_VIEW");
+            entity.HasKey(e => new { e.BomPartNumber, e.PartNumber, e.Cref });
             entity.Property(a => a.BoardCode).HasColumnName("BOARD_CODE").HasMaxLength(6);
             entity.Property(a => a.RevisionCode).HasColumnName("REVISION_CODE").HasMaxLength(10);
             entity.Property(a => a.Cref).HasColumnName("CREF").HasMaxLength(8);

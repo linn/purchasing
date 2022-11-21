@@ -6,6 +6,7 @@
     using Linn.Common.Persistence;
     using Linn.Common.Reporting.Layouts;
     using Linn.Common.Reporting.Models;
+    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
 
     public class BomReportsService : IBomReportsService
     {
@@ -13,10 +14,16 @@
 
         private readonly IReportingHelper reportingHelper;
 
-        public BomReportsService(IBomDetailRepository bomDetailRepository, IReportingHelper reportingHelper)
+        private readonly IQueryRepository<BoardComponentSummary> componentSummaryRepository;
+
+        public BomReportsService(
+            IBomDetailRepository bomDetailRepository, 
+            IReportingHelper reportingHelper, 
+            IQueryRepository<BoardComponentSummary> componentSummaryRepository)
         {
             this.bomDetailRepository = bomDetailRepository;
             this.reportingHelper = reportingHelper;
+            this.componentSummaryRepository = componentSummaryRepository;
         }
 
         public ResultsModel GetPartsOnBomReport(string bomName)
@@ -109,7 +116,8 @@
                         {
                             RowId = rowId,
                             ColumnId = "Crefs",
-                            TextDisplay = line.ComponentSummary.Aggregate(string.Empty, (current, next) => current + $"{next.Cref}, ")
+                            TextDisplay = this.componentSummaryRepository.FilterBy(x => x.BomPartNumber == bomName)
+                                .Aggregate(string.Empty, (current, next) => current + $"{next.Cref}, ")
                         });
             }
             reportLayout.ReportTitle = bomName;
