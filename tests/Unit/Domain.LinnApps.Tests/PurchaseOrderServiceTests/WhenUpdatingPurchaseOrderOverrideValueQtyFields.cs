@@ -483,7 +483,7 @@
             var firstDetail = this.current.Details.First();
 
             // get second delivery
-            var delivery = firstDetail.PurchaseDeliveries.Last();
+            var delivery = firstDetail.PurchaseDeliveries.ElementAt(1);
 
             // order unit price currency, our unit price currency, our delivery qty (25)
             delivery.OrderUnitPriceCurrency.Should().Be(200m);
@@ -503,6 +503,39 @@
             delivery.BaseNetTotal.Should().Be(6257.00m);
             delivery.BaseVatTotal.Should().Be(50.69m);
             delivery.BaseDeliveryTotal.Should().Be(6307.69m);
+        }
+
+        [Test]
+        public void ThirdDeliveryShouldBeCreatedWithRemainder()
+        {
+            this.current.OrderNumber.Should().Be(600179);
+            this.current.Remarks.Should().Be("updated remarks");
+
+            var firstDetail = this.current.Details.First();
+
+            // get third and final delivery
+            var count = firstDetail.PurchaseDeliveries.Count;
+            var delivery = firstDetail.PurchaseDeliveries.ElementAt(2);
+            count.Should().Be(3);
+
+            // order unit price currency, our unit price currency, our delivery qty (100)
+            delivery.OrderUnitPriceCurrency.Should().Be(200m);
+            delivery.OurUnitPriceCurrency.Should().Be(200.22m);
+            delivery.OurDeliveryQty.Should().Be(100);
+
+            // our delivery qty (100) * our unit currency = net total currency
+            delivery.NetTotalCurrency.Should().Be(20022m);
+            delivery.VatTotalCurrency.Should().Be(40.55m);
+            delivery.DeliveryTotalCurrency.Should().Be(20062.55m);
+
+            // base our unit price, base order unit price
+            delivery.BaseOurUnitPrice.Should().Be(250.28m);
+            delivery.BaseOrderUnitPrice.Should().Be(250m);
+
+            // (our delivery qty (100) * base our unit price) + base vat total  = base delivery total
+            delivery.BaseNetTotal.Should().Be(25028m);
+            delivery.BaseVatTotal.Should().Be(50.69m);
+            delivery.BaseDeliveryTotal.Should().Be(25078.69m);
         }
     }
 }
