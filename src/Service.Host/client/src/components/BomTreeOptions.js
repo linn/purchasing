@@ -25,7 +25,7 @@ import bomTreeActions from '../actions/bomTreeActions';
 export default function BomTreeOptions() {
     const { search } = useLocation();
     const { bomName } = queryString.parse(search);
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTerm, setSearchTerm] = useState(null);
     const [explode, setExplode] = useState(0);
     const [requirementOnly, setRequirementOnly] = useState(true);
     const [showChanges, setShowChanges] = useState(false);
@@ -46,7 +46,7 @@ export default function BomTreeOptions() {
         collectionSelectorHelpers.getSearchLoading(reduxState[parts.item])
     );
 
-    if (bomName && !searchTerm) {
+    if (bomName && searchTerm == null) {
         setSearchTerm(bomName);
     }
 

@@ -7,6 +7,7 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Facade.Carter.Extensions;
+    using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Facade.Services;
@@ -33,6 +34,8 @@
             app.MapGet("/purchasing/boms/boards/create", this.GetApp);
             app.MapPost("/purchasing/boms/boards", this.AddCircuitBoard);
             app.MapPut("/purchasing/boms/boards/{id}", this.UpdateCircuitBoard);
+            app.MapGet("/purchasing/boms/reports/list", this.GetPartsOnBomReport);
+            app.MapGet("/purchasing/boms/reports/list/export", this.GetPartsOnBomExport);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -151,6 +154,32 @@
                 null);
 
             await res.Negotiate(result);
+        }
+
+        private async Task GetPartsOnBomReport(
+            HttpRequest req,
+            HttpResponse res,
+            string bomName,
+            IBomReportsFacadeService facadeService)
+        {
+            IResult<ReportReturnResource> result = null;
+            if (!string.IsNullOrEmpty(bomName))
+            {
+                result = facadeService.GetPartsOnBomReport(bomName);
+            }
+
+            await res.Negotiate(result);
+        }
+
+        private async Task GetPartsOnBomExport(
+            HttpRequest req,
+            HttpResponse res,
+            string bomName,
+            IBomReportsFacadeService facadeService)
+        {
+            var result = facadeService.GetPartsOnBomExport(bomName);
+
+            await res.FromCsv(result, $"{bomName}.csv");
         }
     }
 }

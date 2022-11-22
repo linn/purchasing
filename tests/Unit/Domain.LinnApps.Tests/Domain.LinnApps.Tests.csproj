@@ -24,6 +24,7 @@
     <Folder Include="ForecastingServiceTests\" />
     <Folder Include="MrOrderBookReportServiceTests\" />
     <Folder Include="ForecastOrdersReportServiceTests\" />
+    <Folder Include="BomReportsServiceTests\" />
     <Folder Include="WhatsInInspectionReportServiceTests\" />
     <Folder Include="OutstandingPoReqsReportServiceTests\" />
   </ItemGroup>

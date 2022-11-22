@@ -131,3 +131,9 @@ export const forecastWeekChangesReport = new ItemType(
     'FORECAST_WEEK_CHANGES_REPORT',
     '/purchasing/forecasting/apply-percentage-change/report'
 );
+
+export const partsOnBomReport = new ItemType(
+    'partsOnBomReport',
+    'PARTS_ON_BOM_REPORT',
+    '/purchasing/boms/reports/list'
+);

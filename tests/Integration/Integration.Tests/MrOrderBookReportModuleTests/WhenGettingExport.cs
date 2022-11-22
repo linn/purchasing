@@ -19,8 +19,7 @@
         public void SetUp()
         {
             this.supplierId = 1;
-          
-
+            
             this.MockDomainService.GetOrderBookExport(
                     this.supplierId)
                 .Returns(new ResultsModel());
