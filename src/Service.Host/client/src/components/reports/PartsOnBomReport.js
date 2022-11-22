@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import {
@@ -29,16 +29,17 @@ function PartsOnBomReport() {
     const loading = useSelector(state => state[partsOnBomReport.item]?.loading);
     const { search } = useLocation();
     const { bomName } = queryString.parse(search);
-    useEffect(() => {
-        if (bomName) {
-            dispatch(
-                partsOnBomReportActions.fetchReport({
-                    bomName
-                })
-            );
-            setSearchTerm(bomName);
-        }
-    }, [bomName, dispatch]);
+
+    const [prevBomName, setPrevBomName] = useState();
+    if (bomName && bomName !== prevBomName) {
+        setPrevBomName(bomName);
+        setSearchTerm(bomName);
+        dispatch(
+            partsOnBomReportActions.fetchReport({
+                bomName
+            })
+        );
+    }
 
     const reportData = useSelector(state => state[partsOnBomReport.item]?.data);
     const partsSearchResults = useSelector(reduxState =>
@@ -85,17 +86,13 @@ function PartsOnBomReport() {
                         variant="contained"
                         color="primary"
                         onClick={() =>
-                            dispatch(
-                                partsOnBomReportActions.fetchReport({
-                                    bomName: searchTerm
-                                })
-                            )
+                            history.push(`/purchasing/boms/reports/list?bomName=${searchTerm}`)
                         }
                     >
                         Run
                     </Button>
                 </Grid>
-
+                <Grid item xs={9} />
                 {loading ? (
                     <Grid item xs={12}>
                         <Loading />
