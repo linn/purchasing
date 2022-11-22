@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import {
@@ -11,8 +11,12 @@ import {
     collectionSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
+import { useLocation } from 'react-router-dom';
+import queryString from 'query-string';
+
 import history from '../../history';
 import config from '../../config';
+
 import { partsOnBomReport } from '../../reportTypes';
 import partsOnBomReportActions from '../../actions/partsOnBomReportActions';
 import partsActions from '../../actions/partsActions';
@@ -23,6 +27,18 @@ function PartsOnBomReport() {
     const [searchTerm, setSearchTerm] = useState();
 
     const loading = useSelector(state => state[partsOnBomReport.item]?.loading);
+    const { search } = useLocation();
+    const { bomName } = queryString.parse(search);
+    useEffect(() => {
+        if (bomName) {
+            dispatch(
+                partsOnBomReportActions.fetchReport({
+                    bomName
+                })
+            );
+            setSearchTerm(bomName);
+        }
+    }, [bomName, dispatch]);
 
     const reportData = useSelector(state => state[partsOnBomReport.item]?.data);
     const partsSearchResults = useSelector(reduxState =>

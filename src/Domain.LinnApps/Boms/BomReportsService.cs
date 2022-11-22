@@ -28,7 +28,6 @@
 
         public ResultsModel GetPartsOnBomReport(string bomName)
         {
-            var x = this.bomDetailRepository.FindAll();
             var lines = this.bomDetailRepository.FindAll().Where(d => d.BomPartNumber == bomName)
                 .OrderBy(x => x.PartNumber);
 
@@ -120,6 +119,12 @@
                                 .Aggregate(string.Empty, (current, next) => current + $"{next.Cref}, ")
                         });
             }
+            reportLayout.AddValueDrillDownDetails(
+                "Mr",
+                $"/purchasing/boms/reports/list?bomName={{rowId}}",
+                null,
+                2,
+                false);
             reportLayout.ReportTitle = bomName;
             reportLayout.SetGridData(values);
             return reportLayout.GetResultsModel();
