@@ -15,7 +15,7 @@
 
     using NUnit.Framework;
 
-    public class WhenUpdatingPurchaseOrderConvValueQtyFields : ContextBase
+    public class WhenUpdatingPurchaseOrderOverrideValueFields : ContextBase
     {
         private readonly int orderNumber = 600179;
 
@@ -59,12 +59,12 @@
                                                                            DateAdvised = 1.February(2022),
                                                                            DateRequested = 23.January(2022),
                                                                            DeliverySeq = 1,
-                                                                           NetTotalCurrency = 0m,
-                                                                           BaseNetTotal = 0m,
+                                                                           NetTotalCurrency = 120m,
+                                                                           BaseNetTotal = 100m,
                                                                            OrderDeliveryQty = 1,
                                                                            OrderLine = 1,
                                                                            OrderNumber = this.orderNumber,
-                                                                           OurDeliveryQty = 2,
+                                                                           OurDeliveryQty = 5,
                                                                            QtyNetReceived = 0,
                                                                            QuantityOutstanding = 1,
                                                                            CallOffDate = null,
@@ -75,35 +75,35 @@
                                                                            BaseOrderUnitPrice = 0m,
                                                                            VatTotalCurrency = 0m,
                                                                            BaseVatTotal = 0m,
-                                                                           DeliveryTotalCurrency =  0m,
+                                                                           DeliveryTotalCurrency = 0m,
                                                                            BaseDeliveryTotal = 0m,
                                                                            RescheduleReason = string.Empty,
                                                                            AvailableAtSupplier = "N"
                                                                        },
-                                                                    new PurchaseOrderDelivery
+                                                                   new PurchaseOrderDelivery
                                                                        {
                                                                            Cancelled = "N",
                                                                            DateAdvised = 1.February(2022),
-                                                                           DateRequested = 23.January(2022),
+                                                                           DateRequested = 29.January(2022),
                                                                            DeliverySeq = 1,
-                                                                           NetTotalCurrency = 0m,
-                                                                           BaseNetTotal = 0m,
+                                                                           NetTotalCurrency = 120m,
+                                                                           BaseNetTotal = 100m,
                                                                            OrderDeliveryQty = 1,
                                                                            OrderLine = 1,
                                                                            OrderNumber = this.orderNumber,
                                                                            OurDeliveryQty = 25,
-                                                                           QtyNetReceived = 0,
+                                                                           QtyNetReceived = 1,
                                                                            QuantityOutstanding = 1,
                                                                            CallOffDate = null,
-                                                                           BaseOurUnitPrice = 0m,
+                                                                           BaseOurUnitPrice = 100m,
                                                                            SupplierConfirmationComment = "supplied",
-                                                                           OurUnitPriceCurrency = 0m,
-                                                                           OrderUnitPriceCurrency = 0m,
-                                                                           BaseOrderUnitPrice = 0m,
-                                                                           VatTotalCurrency = 0m,
-                                                                           BaseVatTotal = 0m,
-                                                                           DeliveryTotalCurrency =  0m,
-                                                                           BaseDeliveryTotal = 0m,
+                                                                           OurUnitPriceCurrency = 120m,
+                                                                           OrderUnitPriceCurrency = 120m,
+                                                                           BaseOrderUnitPrice = 100m,
+                                                                           VatTotalCurrency = 60m,
+                                                                           BaseVatTotal = 60m,
+                                                                           DeliveryTotalCurrency = 120m,
+                                                                           BaseDeliveryTotal = 100m,
                                                                            RescheduleReason = string.Empty,
                                                                            AvailableAtSupplier = "N"
                                                                        }
@@ -201,7 +201,7 @@
                                                        NetTotalCurrency = 120m,
                                                        OrderNumber = this.orderNumber,
                                                        OurQty = 99m,
-                                                       OrderQty = 12m,
+                                                       OrderQty = 199m,
                                                        PartNumber = "macbookz",
                                                        PurchaseDeliveries =
                                                            new List<PurchaseOrderDelivery>
@@ -217,7 +217,7 @@
                                                                            OrderDeliveryQty = 1,
                                                                            OrderLine = 1,
                                                                            OrderNumber = this.orderNumber,
-                                                                           OurDeliveryQty = 2,
+                                                                           OurDeliveryQty = 25,
                                                                            QtyNetReceived = 1,
                                                                            QuantityOutstanding = 1,
                                                                            CallOffDate = null,
@@ -233,7 +233,7 @@
                                                                            RescheduleReason = string.Empty,
                                                                            AvailableAtSupplier = "N"
                                                                        },
-                                                                      new PurchaseOrderDelivery
+                                                                   new PurchaseOrderDelivery
                                                                        {
                                                                            Cancelled = "N",
                                                                            DateAdvised = 1.February(2022),
@@ -269,7 +269,7 @@
                                                        OurUnitOfMeasure = "cups?",
                                                        OrderUnitOfMeasure = "boxes",
                                                        OurUnitPriceCurrency = 200.22m,
-                                                       OrderUnitPriceCurrency = 120m,
+                                                       OrderUnitPriceCurrency = 200m,
                                                        BaseOurUnitPrice = 100m,
                                                        BaseOrderUnitPrice = 100m,
                                                        VatTotalCurrency = 0m,
@@ -368,7 +368,7 @@
                         AccountId = 911,
                         NominalCode = "00009222",
                         DepartmentCode = "0000911"
-                });
+                    });
 
             this.Sut.UpdateOrder(this.current, this.updated, new List<string>());
         }
@@ -382,14 +382,12 @@
             var firstDetail = this.current.Details.First();
 
             firstDetail.OurQty.Should().Be(99m);
-            //updated based on conv factor
-            firstDetail.OrderQty.Should().Be(198m);
+            //manually overridden here
+            firstDetail.OrderQty.Should().Be(199m);
+            // manually overridden 
+            firstDetail.OrderUnitPriceCurrency.Should().Be(200m);
 
             firstDetail.OurUnitPriceCurrency.Should().Be(200.22m);
-
-            //updated based on conv factor
-            firstDetail.OrderUnitPriceCurrency.Should().Be(400.44m);
-
             firstDetail.BaseOurUnitPrice.Should().Be(250.28m);
 
             // our qty * our unit price
@@ -425,11 +423,10 @@
 
             this.miniOrder.OurQty.Should().Be(99m);
 
-            // updated based on conv factor
-            this.miniOrder.OrderQty.Should().Be(198m);
-
-            // updated based on conv factor
-            this.miniOrder.OrderPrice.Should().Be(400.44m);
+            //manually overridden here
+            this.miniOrder.OrderQty.Should().Be(199m);
+            // manually overridden 
+            this.miniOrder.OrderPrice.Should().Be(200m);
 
             this.miniOrder.OurPrice.Should().Be(200.22m);
             this.miniOrder.BaseOurPrice.Should().Be(250.28m);
@@ -447,7 +444,7 @@
         }
 
         [Test]
-        public void ShouldUpdateFirstDeliveryTotalFields()
+        public void ShouldFirstUpdateDeliveryTotalFields()
         {
             this.current.OrderNumber.Should().Be(600179);
             this.current.Remarks.Should().Be("updated remarks");
@@ -457,28 +454,28 @@
             //get first delivery 
             var delivery = firstDetail.PurchaseDeliveries.First();
 
-            // order unit price currency, our unit price currency, our delivery qty (2)
-            delivery.OrderUnitPriceCurrency.Should().Be(400.44m);
+            // order unit price currency, our unit price currency, our delivery qty (5)
+            delivery.OrderUnitPriceCurrency.Should().Be(200m);
             delivery.OurUnitPriceCurrency.Should().Be(200.22m);
-            delivery.OurDeliveryQty.Should().Be(2);
+            delivery.OurDeliveryQty.Should().Be(5);
 
-            //our delivery qty (2) * our unit currency = net total currency
-            delivery.NetTotalCurrency.Should().Be(400.44m);
+            // our delivery qty (5) * our unit currency = net total currency
+            delivery.NetTotalCurrency.Should().Be(1001.10m);
             delivery.VatTotalCurrency.Should().Be(40.55m);
-            delivery.DeliveryTotalCurrency.Should().Be(440.99m);
+            delivery.DeliveryTotalCurrency.Should().Be(1041.65m);
 
             // base our unit price, base order unit price
             delivery.BaseOurUnitPrice.Should().Be(250.28m);
-            delivery.BaseOrderUnitPrice.Should().Be(500.55m);
+            delivery.BaseOrderUnitPrice.Should().Be(250m);
 
-            //(our delivery qty (2) * base our unit price) + base vat total  = base delivery total
-            delivery.BaseNetTotal.Should().Be(500.56m);
+            // (our delivery qty (5) * base our unit price) + base vat total  = base delivery total
+            delivery.BaseNetTotal.Should().Be(1251.40m);
             delivery.BaseVatTotal.Should().Be(50.69m);
-            delivery.BaseDeliveryTotal.Should().Be(551.25m);
+            delivery.BaseDeliveryTotal.Should().Be(1302.09m);
         }
-       
+
         [Test]
-        public void ShouldUpdateSecondDeliveryTotalFields()
+        public void ShouldSecondUpdateDeliveryTotalFields()
         {
             this.current.OrderNumber.Should().Be(600179);
             this.current.Remarks.Should().Be("updated remarks");
@@ -489,7 +486,7 @@
             var delivery = firstDetail.PurchaseDeliveries.ElementAt(1);
 
             // order unit price currency, our unit price currency, our delivery qty (25)
-            delivery.OrderUnitPriceCurrency.Should().Be(400.44m);
+            delivery.OrderUnitPriceCurrency.Should().Be(200m);
             delivery.OurUnitPriceCurrency.Should().Be(200.22m);
             delivery.OurDeliveryQty.Should().Be(25);
 
@@ -500,7 +497,7 @@
 
             // base our unit price, base order unit price
             delivery.BaseOurUnitPrice.Should().Be(250.28m);
-            delivery.BaseOrderUnitPrice.Should().Be(500.55m);
+            delivery.BaseOrderUnitPrice.Should().Be(250m);
 
             // (our delivery qty (25) * base our unit price) + base vat total  = base delivery total
             delivery.BaseNetTotal.Should().Be(6257.00m);

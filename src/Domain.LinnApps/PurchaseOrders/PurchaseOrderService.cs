@@ -954,42 +954,6 @@
 
         private void UpdateDeliveries(PurchaseOrderDetail purchaseOrderDetail, decimal exchangeRate, int supplierId)
         {
-            if (purchaseOrderDetail.OrderQty > purchaseOrderDetail.OurQty)
-            {
-                purchaseOrderDetail.PurchaseDeliveries.Add(
-                    new PurchaseOrderDelivery
-                    {
-                        DeliverySeq = 1,
-                        OurDeliveryQty = purchaseOrderDetail.OrderQty - purchaseOrderDetail.OurQty,
-                        OrderDeliveryQty = purchaseOrderDetail.OrderQty - purchaseOrderDetail.OurQty,
-                        OurUnitPriceCurrency = purchaseOrderDetail.OurUnitPriceCurrency,
-                        OrderUnitPriceCurrency = purchaseOrderDetail.OrderUnitPriceCurrency,
-                        DateRequested = purchaseOrderDetail.PurchaseDeliveries?.First().DateRequested,
-                        DateAdvised = null,
-                        CallOffDate = DateTime.Now,
-                        Cancelled = "N",
-                        CallOffRef = null,
-                        OrderNumber = purchaseOrderDetail.OrderNumber,
-                        OrderLine = 1,
-                        FilCancelled = "N",
-                        NetTotalCurrency = purchaseOrderDetail.NetTotalCurrency,
-                        VatTotalCurrency = purchaseOrderDetail.VatTotalCurrency,
-                        SupplierConfirmationComment = string.Empty,
-                        BaseNetTotal = purchaseOrderDetail.BaseNetTotal,
-                        BaseVatTotal = purchaseOrderDetail.BaseVatTotal,
-                        BaseOurUnitPrice = purchaseOrderDetail.BaseOurUnitPrice,
-                        BaseOrderUnitPrice = purchaseOrderDetail.BaseOrderUnitPrice,
-                        BaseDeliveryTotal = purchaseOrderDetail.BaseNetTotal,
-                        DeliveryTotalCurrency = purchaseOrderDetail.NetTotalCurrency,
-                        QuantityOutstanding = purchaseOrderDetail.OurQty,
-                        QtyNetReceived = 0,
-                        QtyPassedForPayment = 0,
-                        RescheduleReason = ""
-                    }
-
-                );
-            }
-
             foreach (var delivery in purchaseOrderDetail.PurchaseDeliveries)
             {
                 if (delivery.QuantityOutstanding > 0)
@@ -1053,6 +1017,40 @@
             }
             else if (updated.OrderQty != current.OrderQty)
             {
+                if (updated.OrderQty > current.OrderQty)
+                {
+                    current.PurchaseDeliveries.Add(
+                        new PurchaseOrderDelivery
+                        {
+                            DeliverySeq = 1,
+                            OurDeliveryQty = updated.OrderQty - current.OrderQty,
+                            OrderDeliveryQty = updated.OrderQty - current.OrderQty,
+                            OurUnitPriceCurrency = current.OurUnitPriceCurrency,
+                            OrderUnitPriceCurrency = current.OrderUnitPriceCurrency,
+                            DateRequested = current.PurchaseDeliveries?.First().DateRequested,
+                            DateAdvised = null,
+                            CallOffDate = DateTime.Now,
+                            Cancelled = "N",
+                            CallOffRef = null,
+                            OrderNumber = current.OrderNumber,
+                            OrderLine = 1,
+                            FilCancelled = "N",
+                            NetTotalCurrency = current.NetTotalCurrency,
+                            VatTotalCurrency = current.VatTotalCurrency,
+                            SupplierConfirmationComment = string.Empty,
+                            BaseNetTotal = current.BaseNetTotal,
+                            BaseVatTotal = current.BaseVatTotal,
+                            BaseOurUnitPrice = current.BaseOurUnitPrice,
+                            BaseOrderUnitPrice = current.BaseOrderUnitPrice,
+                            BaseDeliveryTotal = current.BaseNetTotal,
+                            DeliveryTotalCurrency = current.NetTotalCurrency,
+                            QuantityOutstanding = current.OurQty,
+                            QtyNetReceived = 0,
+                            QtyPassedForPayment = 0,
+                            RescheduleReason = ""
+                        }
+                    );
+                }
                 // if our qty has been manually overridden
                 current.OrderQty = updated.OrderQty;
             }

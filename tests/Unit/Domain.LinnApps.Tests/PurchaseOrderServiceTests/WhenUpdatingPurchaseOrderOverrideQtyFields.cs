@@ -15,7 +15,7 @@
 
     using NUnit.Framework;
 
-    public class WhenUpdatingPurchaseOrderOverrideValueQtyFields : ContextBase
+    public class WhenUpdatingPurchaseOrderOverrideQtyFields : ContextBase
     {
         private readonly int orderNumber = 600179;
 
@@ -49,7 +49,7 @@
                                                        OrderNumber = this.orderNumber,
                                                        OurQty = 12m,
                                                        OrderQty = 12m,
-                                                       PartNumber = "macbookz",
+                                                       PartNumber = "PART 31",
                                                        PurchaseDeliveries =
                                                            new List<PurchaseOrderDelivery>
                                                                {
@@ -109,7 +109,7 @@
                                                                        }
                                                                },
                                                        RohsCompliant = "No",
-                                                       SuppliersDesignation = "macbooks",
+                                                       SuppliersDesignation = "Demo",
                                                        StockPoolCode = "0141noidea",
                                                        OriginalOrderNumber = null,
                                                        OriginalOrderLine = null,
@@ -158,7 +158,7 @@
                                                                               Notes = "new laptops",
                                                                               OrderNumber = this.orderNumber,
                                                                               Person = 33107,
-                                                                              Product = "macs",
+                                                                              Product = "A part",
                                                                               Qty = 1,
                                                                               Vehicle = "van"
                                                                           }
@@ -170,13 +170,13 @@
                                    ExchangeRate = 1.2m,
                                    IssuePartsToSupplier = "N",
                                    DeliveryAddress = new LinnDeliveryAddress { AddressId = 1555 },
-                                   RequestedBy = new Employee { FullName = "Jim Halpert", Id = 1111 },
-                                   EnteredBy = new Employee { FullName = "Pam Beesley", Id = 2222 },
+                                   RequestedBy = new Employee { FullName = "Rick F. Pile", Id = 1111 },
+                                   EnteredBy = new Employee { FullName = "Pick F. Rile", Id = 2222 },
                                    QuotationRef = "ref11101",
-                                   AuthorisedBy = new Employee { FullName = "Dwight Schrute", Id = 3333 },
+                                   AuthorisedBy = new Employee { FullName = "Fick P. Rile", Id = 3333 },
                                    SentByMethod = "EMAIL",
                                    FilCancelled = string.Empty,
-                                   Remarks = "applebooks",
+                                   Remarks = "a remark!",
                                    DateFilCancelled = null,
                                    PeriodFilCancelled = null
                                };
@@ -200,9 +200,9 @@
                                                        BaseNetTotal = 100m,
                                                        NetTotalCurrency = 120m,
                                                        OrderNumber = this.orderNumber,
-                                                       OurQty = 99m,
-                                                       OrderQty = 199m,
-                                                       PartNumber = "macbookz",
+                                                       OurQty = 50m,
+                                                       OrderQty = 50m,
+                                                       PartNumber = "PART 32",
                                                        PurchaseDeliveries =
                                                            new List<PurchaseOrderDelivery>
                                                                {
@@ -307,7 +307,7 @@
                                                                                               }
                                                                                       },
                                                                               NominalAccountId = 911,
-                                                                              Notes = "new laptops",
+                                                                              Notes = "new parts",
                                                                               OrderNumber = this.orderNumber,
                                                                               Person = 33107,
                                                                               Product = "macs",
@@ -317,15 +317,15 @@
                                                    }
                                            },
                                    Currency = new Currency { Code = "EUR", Name = "Euros" },
-                                   OrderContactName = "Jim",
+                                   OrderContactName = "Rick",
                                    OrderMethod = new OrderMethod { Name = "online", Description = "website" },
                                    ExchangeRate = 0.8m,
                                    IssuePartsToSupplier = "N",
                                    DeliveryAddress = new LinnDeliveryAddress { AddressId = 1555 },
-                                   RequestedBy = new Employee { FullName = "Jim Halpert", Id = 1111 },
-                                   EnteredBy = new Employee { FullName = "Pam Beesley", Id = 2222 },
+                                   RequestedBy = new Employee { FullName = "Rick F. Pile", Id = 1111 },
+                                   EnteredBy = new Employee { FullName = "Pick F. Rile", Id = 2222 },
                                    QuotationRef = "ref11101",
-                                   AuthorisedBy = new Employee { FullName = "Dwight Schrute", Id = 3333 },
+                                   AuthorisedBy = new Employee { FullName = "Fick P. Rile", Id = 3333 },
                                    SentByMethod = "EMAIL",
                                    FilCancelled = string.Empty,
                                    Remarks = "updated remarks",
@@ -374,40 +374,6 @@
         }
 
         [Test]
-        public void ShouldUpdateFieldsForOrders()
-        {
-            this.current.OrderNumber.Should().Be(600179);
-            this.current.Remarks.Should().Be("updated remarks");
-
-            var firstDetail = this.current.Details.First();
-
-            firstDetail.OurQty.Should().Be(99m);
-            //manually overridden here
-            firstDetail.OrderQty.Should().Be(199m);
-            // manually overridden 
-            firstDetail.OrderUnitPriceCurrency.Should().Be(200m);
-
-            firstDetail.OurUnitPriceCurrency.Should().Be(200.22m);
-            firstDetail.BaseOurUnitPrice.Should().Be(250.28m);
-
-            // our qty * our unit price
-            firstDetail.NetTotalCurrency.Should().Be(19821.78m);
-            firstDetail.BaseNetTotal.Should().Be(24777.23m);
-
-            firstDetail.VatTotalCurrency.Should().Be(40.55m);
-            firstDetail.BaseVatTotal.Should().Be(50.69m);
-
-            // net total + vat total
-            firstDetail.DetailTotalCurrency.Should().Be(19862.33m);
-            firstDetail.BaseDetailTotal.Should().Be(24827.91m);
-
-            firstDetail.InternalComments.Should().Be("updated internal comment");
-            firstDetail.SuppliersDesignation.Should().Be("updated suppliers designation");
-
-            firstDetail.OrderPosting.NominalAccountId.Should().Be(911);
-        }
-
-        [Test]
         public void ShouldUpdateMiniOrderFields()
         {
             this.miniOrder.OrderNumber.Should().Be(600179);
@@ -419,12 +385,10 @@
             this.miniOrder.Nominal.Should().Be("00009222");
             this.miniOrder.Department.Should().Be("0000911");
 
-            var firstDetail = this.current.Details.First();
-
-            this.miniOrder.OurQty.Should().Be(99m);
+            this.miniOrder.OurQty.Should().Be(50m);
 
             //manually overridden here
-            this.miniOrder.OrderQty.Should().Be(199m);
+            this.miniOrder.OrderQty.Should().Be(50m);
             // manually overridden 
             this.miniOrder.OrderPrice.Should().Be(200m);
 
@@ -432,77 +396,15 @@
             this.miniOrder.BaseOurPrice.Should().Be(250.28m);
 
             // our qty * our unit price
-            this.miniOrder.NetTotal.Should().Be(19821.78m);
-            this.miniOrder.BaseNetTotal.Should().Be(24777.23m);
+            this.miniOrder.NetTotal.Should().Be(10011.00m);
+            this.miniOrder.BaseNetTotal.Should().Be(12513.75m);
 
             this.miniOrder.VatTotal.Should().Be(40.55m);
             this.miniOrder.BaseVatTotal.Should().Be(50.69m);
 
             // net total + vat total
-            this.miniOrder.OrderTotal.Should().Be(19862.33m);
-            this.miniOrder.BaseOrderTotal.Should().Be(24827.91m);
-        }
-
-        [Test]
-        public void ShouldFirstUpdateDeliveryTotalFields()
-        {
-            this.current.OrderNumber.Should().Be(600179);
-            this.current.Remarks.Should().Be("updated remarks");
-
-            var firstDetail = this.current.Details.First();
-
-            //get first delivery 
-            var delivery = firstDetail.PurchaseDeliveries.First();
-
-            // order unit price currency, our unit price currency, our delivery qty (5)
-            delivery.OrderUnitPriceCurrency.Should().Be(200m);
-            delivery.OurUnitPriceCurrency.Should().Be(200.22m);
-            delivery.OurDeliveryQty.Should().Be(5);
-
-            // our delivery qty (5) * our unit currency = net total currency
-            delivery.NetTotalCurrency.Should().Be(1001.10m);
-            delivery.VatTotalCurrency.Should().Be(40.55m);
-            delivery.DeliveryTotalCurrency.Should().Be(1041.65m);
-
-            // base our unit price, base order unit price
-            delivery.BaseOurUnitPrice.Should().Be(250.28m);
-            delivery.BaseOrderUnitPrice.Should().Be(250m);
-
-            // (our delivery qty (5) * base our unit price) + base vat total  = base delivery total
-            delivery.BaseNetTotal.Should().Be(1251.40m);
-            delivery.BaseVatTotal.Should().Be(50.69m);
-            delivery.BaseDeliveryTotal.Should().Be(1302.09m);
-        }
-
-        [Test]
-        public void ShouldSecondUpdateDeliveryTotalFields()
-        {
-            this.current.OrderNumber.Should().Be(600179);
-            this.current.Remarks.Should().Be("updated remarks");
-
-            var firstDetail = this.current.Details.First();
-
-            // get second delivery
-            var delivery = firstDetail.PurchaseDeliveries.ElementAt(1);
-
-            // order unit price currency, our unit price currency, our delivery qty (25)
-            delivery.OrderUnitPriceCurrency.Should().Be(200m);
-            delivery.OurUnitPriceCurrency.Should().Be(200.22m);
-            delivery.OurDeliveryQty.Should().Be(25);
-
-            // our delivery qty (25) * our unit currency = net total currency
-            delivery.NetTotalCurrency.Should().Be(5005.50m);
-            delivery.VatTotalCurrency.Should().Be(40.55m);
-            delivery.DeliveryTotalCurrency.Should().Be(5046.05m);
-
-            // base our unit price, base order unit price
-            delivery.BaseOurUnitPrice.Should().Be(250.28m);
-            delivery.BaseOrderUnitPrice.Should().Be(250m);
-
-            // (our delivery qty (25) * base our unit price) + base vat total  = base delivery total
-            delivery.BaseNetTotal.Should().Be(6257.00m);
-            delivery.BaseVatTotal.Should().Be(50.69m);
-            delivery.BaseDeliveryTotal.Should().Be(6307.69m);
+            this.miniOrder.OrderTotal.Should().Be(10051.55m);
+            this.miniOrder.BaseOrderTotal.Should().Be(12564.44m);
         }
 
         [Test]
@@ -518,24 +420,24 @@
             var delivery = firstDetail.PurchaseDeliveries.ElementAt(2);
             count.Should().Be(3);
 
-            // order unit price currency, our unit price currency, our delivery qty (100)
+            // new delivery of (38) added to reflect the update on the qty from 12 to 50.
             delivery.OrderUnitPriceCurrency.Should().Be(200m);
             delivery.OurUnitPriceCurrency.Should().Be(200.22m);
-            delivery.OurDeliveryQty.Should().Be(100);
+            delivery.OurDeliveryQty.Should().Be(38);
 
-            // our delivery qty (100) * our unit currency = net total currency
-            delivery.NetTotalCurrency.Should().Be(20022m);
+            // our delivery qty (38) * our unit currency = net total currency
+            delivery.NetTotalCurrency.Should().Be(7608.36m);
             delivery.VatTotalCurrency.Should().Be(40.55m);
-            delivery.DeliveryTotalCurrency.Should().Be(20062.55m);
+            delivery.DeliveryTotalCurrency.Should().Be(7648.91m);
 
             // base our unit price, base order unit price
             delivery.BaseOurUnitPrice.Should().Be(250.28m);
             delivery.BaseOrderUnitPrice.Should().Be(250m);
 
-            // (our delivery qty (100) * base our unit price) + base vat total  = base delivery total
-            delivery.BaseNetTotal.Should().Be(25028m);
+            // (our delivery qty (38) * base our unit price) + base vat total  = base delivery total
+            delivery.BaseNetTotal.Should().Be(9510.64m);
             delivery.BaseVatTotal.Should().Be(50.69m);
-            delivery.BaseDeliveryTotal.Should().Be(25078.69m);
+            delivery.BaseDeliveryTotal.Should().Be(9561.33m);
         }
     }
 }
