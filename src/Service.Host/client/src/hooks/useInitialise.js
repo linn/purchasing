@@ -4,7 +4,7 @@ import { getItemError } from '@linn-it/linn-form-components-library';
 
 export default function useInitialise(action, itemType) {
     const data = useSelector(state => state[itemType].item);
-    const dataLoading = useSelector(state => state[itemType].loading);
+    const loading = useSelector(state => state[itemType].loading);
     const error = useSelector(state => getItemError(state, itemType));
     const dispatch = useDispatch();
     const hasFetched = useRef(false);
@@ -14,5 +14,5 @@ export default function useInitialise(action, itemType) {
             hasFetched.current = true;
         }
     }, [action, dispatch]);
-    return [data, dataLoading, error];
+    return [data, loading, error];
 }
