@@ -27,7 +27,7 @@ function PartsOnBomReport() {
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
                 <Grid item xs={12}>
-                    <Title text="Parts Received Report" />
+                    <Title text="Bom Print" />
                 </Grid>
                 <Grid item xs={12}>
                     <InputField
@@ -71,7 +71,6 @@ function PartsOnBomReport() {
                                         reportData={reportData}
                                         title={reportData.title}
                                         showTitle
-                                        showTotals
                                         placeholderRows={4}
                                         placeholderColumns={4}
                                     />

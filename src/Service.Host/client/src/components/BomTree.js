@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { Page, Loading, ExportButton } from '@linn-it/linn-form-components-library';
 import { useLocation } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
 import SvgIcon from '@mui/material/SvgIcon';
 import { alpha, styled } from '@mui/material/styles';
 import TreeView from '@mui/lab/TreeView';
@@ -14,6 +13,7 @@ import history from '../history';
 import config from '../config';
 import { bomTree as bomTreeItemType } from '../itemTypes';
 import bomTreeActions from '../actions/bomTreeActions';
+import useInitialise from '../hooks/useInitialise';
 
 /* eslint react/jsx-props-no-spreading: 0 */
 /* eslint react/destructuring-assignment: 0 */
@@ -56,21 +56,14 @@ const StyledTreeItem = styled(props => <TreeItem {...props} />)(({ theme }) => (
 }));
 
 export default function BomTree() {
-    const dispatch = useDispatch();
     const { search } = useLocation();
     const { bomName, levels, requirementOnly, showChanges, treeType } = queryString.parse(search);
 
-    const bomTree = useSelector(state => state[bomTreeItemType.item].item);
-
-    const bomTreeLoading = useSelector(state => state[bomTreeItemType.item].loading);
-
-    if (!bomTree) {
-        dispatch(
-            bomTreeActions.fetchByHref(
-                `/purchasing/boms/tree?bomName=${bomName}&levels=${levels}&requirementOnly=${requirementOnly}&showChanges=${showChanges}&treeType=${treeType}`
-            )
-        );
-    }
+    const url = `/purchasing/boms/tree?bomName=${bomName}&levels=${levels}&requirementOnly=${requirementOnly}&showChanges=${showChanges}&treeType=${treeType}`;
+    const [bomTree, bomTreeLoading] = useInitialise(
+        () => bomTreeActions.fetchByHref(url),
+        bomTreeItemType.item
+    );
 
     const nodesWithChildren = useMemo(() => {
         const result = [];
