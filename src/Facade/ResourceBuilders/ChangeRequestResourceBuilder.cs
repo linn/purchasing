@@ -4,7 +4,10 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using Linn.Common.Authorisation;
     using Linn.Common.Facade;
+    using Linn.Common.Resources;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Resources;
 
@@ -14,10 +17,13 @@
 
         private readonly IBuilder<PcasChange> pcasChangeBuilder;
 
-        public ChangeRequestResourceBuilder(IBuilder<BomChange> bomChangeBuilder, IBuilder<PcasChange> pcasChangeBuilder)
+        private readonly IAuthorisationService authService;
+
+        public ChangeRequestResourceBuilder(IBuilder<BomChange> bomChangeBuilder, IBuilder<PcasChange> pcasChangeBuilder, IAuthorisationService authService)
         {
             this.bomChangeBuilder = bomChangeBuilder;
             this.pcasChangeBuilder = pcasChangeBuilder;
+            this.authService = authService;
         }
 
         public ChangeRequestResource Build(ChangeRequest model, IEnumerable<string> claims)
@@ -30,12 +36,14 @@
                            ReasonForChange = model.ReasonForChange, 
                            DescriptionOfChange = model.DescriptionOfChange,
                            DateEntered = model.DateEntered.ToString("o"),
+                           DateAccepted = model.DateAccepted?.ToString("o"),
                            BomChanges =
                                model.BomChanges?.Select(
                                    d => (BomChangeResource)this.bomChangeBuilder.Build(d, claims)),
                            PcasChanges =
                                model.PcasChanges?.Select(
-                                   d => (PcasChangeResource)this.pcasChangeBuilder.Build(d, claims))
+                                   d => (PcasChangeResource)this.pcasChangeBuilder.Build(d, claims)),
+                           Links = claims != null ? this.BuildLinks(claims).ToArray() : null
             };
         }
 
@@ -45,5 +53,15 @@
         }
 
         object IBuilder<ChangeRequest>.Build(ChangeRequest entity, IEnumerable<string> claims) => this.Build(entity, claims);
+
+        private IEnumerable<LinkResource> BuildLinks(IEnumerable<string> claims)
+        {
+            var privileges = claims as string[] ?? claims.ToArray();
+
+            if (this.authService.HasPermissionFor(AuthorisedAction.ApproveChangeRequest, privileges))
+            {
+                yield return new LinkResource { Rel = "approve", Href = $"/purchasing/change-requests" };
+            }
+        }
     }
 }

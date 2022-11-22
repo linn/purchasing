@@ -7,7 +7,9 @@
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.RequestResources;
     using Linn.Purchasing.Service.Extensions;
     using Linn.Purchasing.Service.Models;
 
@@ -21,6 +23,7 @@
         {
             app.MapGet("/purchasing/change-requests", this.GetApp);
             app.MapGet("/purchasing/change-requests/{id:int}", this.GetChangeRequest);
+            app.MapPost("/purchasing/change-requests/approve", this.ApproveChangeRequest);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -32,9 +35,20 @@
             HttpRequest req,
             HttpResponse res,
             int id,
-            IFacadeResourceService<ChangeRequest, int, ChangeRequestResource, ChangeRequestResource> facadeService)
+            IChangeRequestFacadeService facadeService)
         {
             var result = facadeService.GetById(id, req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task ApproveChangeRequest(
+            HttpRequest req,
+            HttpResponse res,
+            ChangeRequestRequestResource request,
+            IChangeRequestFacadeService facadeService)
+        {
+            var result = facadeService.ApproveChangeRequest(request.Id, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }

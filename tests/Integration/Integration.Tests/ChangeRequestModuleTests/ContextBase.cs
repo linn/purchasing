@@ -2,14 +2,13 @@
 {
     using System.Net.Http;
 
-    using Linn.Common.Facade;
+    using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
-    using Linn.Purchasing.Resources;
     using Linn.Purchasing.Service.Modules;
 
     using Microsoft.Extensions.DependencyInjection;
@@ -24,7 +23,7 @@
 
         protected HttpResponseMessage Response { get; set; }
 
-        protected IFacadeResourceService<ChangeRequest, int, ChangeRequestResource, ChangeRequestResource> FacadeService { get; set; }
+        protected IChangeRequestFacadeService FacadeService { get; set; }
 
         protected IRepository<ChangeRequest, int> Repository { get; set; }
 
@@ -32,15 +31,19 @@
 
         protected ITransactionManager TransactionManager { get; set; }
 
+        protected IAuthorisationService AuthService { get; set; }
+
         [SetUp]
         public void SetUpContext()
         {
             this.Repository = Substitute.For<IRepository<ChangeRequest, int>>();
             this.TransactionManager = Substitute.For<ITransactionManager>();
+            this.AuthService = Substitute.For<IAuthorisationService>();
             this.FacadeService = new ChangeRequestFacadeService(
                 this.Repository,
                 this.TransactionManager,
-                new ChangeRequestResourceBuilder(new BomChangeResourceBuilder(), new PcasChangeResourceBuilder()));
+                new ChangeRequestResourceBuilder(new BomChangeResourceBuilder(), new PcasChangeResourceBuilder(), this.AuthService),
+                new ChangeRequestService(this.AuthService, this.Repository));
 
             this.Client = TestClient.With<ChangeRequestModule>(
                 services =>

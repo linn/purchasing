@@ -2,13 +2,17 @@
 {
     using System.Collections.Generic;
 
-    public class ChangeRequestResource
+    using Linn.Common.Resources;
+
+    public class ChangeRequestResource : HypermediaResource
     {
         public string DocumentType { get; set; }
 
         public int DocumentNumber { get; set; }
 
         public string DateEntered { get; set; }
+
+        public string DateAccepted { get; set; }
 
         public string ChangeState { get; set; }
 
