@@ -7,22 +7,36 @@ import {
     Loading,
     ReportTable,
     ExportButton,
-    InputField
+    Search,
+    collectionSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import { useSelector, useDispatch } from 'react-redux';
 import history from '../../history';
 import config from '../../config';
 import { partsOnBomReport } from '../../reportTypes';
 import partsOnBomReportActions from '../../actions/partsOnBomReportActions';
+import partsActions from '../../actions/partsActions';
+import { parts } from '../../itemTypes';
 
 function PartsOnBomReport() {
     const dispatch = useDispatch();
-    const [bomName, setBomName] = useState();
+    const [searchTerm, setSearchTerm] = useState();
 
     const loading = useSelector(state => state[partsOnBomReport.item]?.loading);
 
     const reportData = useSelector(state => state[partsOnBomReport.item]?.data);
-
+    const partsSearchResults = useSelector(reduxState =>
+        collectionSelectorHelpers.getSearchItems(
+            reduxState[parts.item],
+            100,
+            'id',
+            'partNumber',
+            'description'
+        )
+    );
+    const partsSearchLoading = useSelector(reduxState =>
+        collectionSelectorHelpers.getSearchLoading(reduxState[parts.item])
+    );
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
@@ -30,11 +44,24 @@ function PartsOnBomReport() {
                     <Title text="Bom Print" />
                 </Grid>
                 <Grid item xs={12}>
-                    <InputField
-                        value={bomName}
-                        propertyName="bomName"
+                    <Search
+                        propertyName="searchTerm"
                         label="Bom Name"
-                        onChange={(_, newVal) => setBomName(newVal)}
+                        resultsInModal
+                        resultLimit={100}
+                        value={searchTerm}
+                        handleValueChange={(_, newVal) => setSearchTerm(newVal)}
+                        search={partNumber => {
+                            dispatch(partsActions.search(partNumber));
+                        }}
+                        searchResults={partsSearchResults}
+                        helperText="Enter a value. Press the enter key if you want to search parts."
+                        loading={partsSearchLoading}
+                        priorityFunction="closestMatchesFirst"
+                        onResultSelect={newValue => {
+                            setSearchTerm(newValue.partNumber);
+                        }}
+                        clearSearch={() => {}}
                     />
                 </Grid>
                 <Grid item xs={3}>
@@ -44,7 +71,7 @@ function PartsOnBomReport() {
                         onClick={() =>
                             dispatch(
                                 partsOnBomReportActions.fetchReport({
-                                    bomName
+                                    bomName: searchTerm
                                 })
                             )
                         }
@@ -63,7 +90,7 @@ function PartsOnBomReport() {
                             <>
                                 <Grid item xs={12}>
                                     <ExportButton
-                                        href={`${config.appRoot}/purchasing/boms/reports/list/export?bomName=${bomName}`}
+                                        href={`${config.appRoot}/purchasing/boms/reports/list/export?bomName=${searchTerm}`}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
