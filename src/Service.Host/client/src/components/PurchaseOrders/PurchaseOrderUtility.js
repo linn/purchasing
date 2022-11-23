@@ -273,15 +273,9 @@ function PurchaseOrderUtility({ creating }) {
             d =>
                 d.partNumber &&
                 d.ourQty &&
-                d.ourUnitPriceCurrency &&
-                d.orderUnitPriceCurrency &&
                 d.ourUnitOfMeasure &&
                 d.orderPosting?.nominalAccount?.department?.departmentCode &&
-                d.orderPosting?.nominalAccount?.nominal?.nominalCode &&
-                d.netTotalCurrency &&
-                d.detailTotalCurrency &&
-                d.baseNetTotal &&
-                d.baseDetailTotal
+                d.orderPosting?.nominalAccount?.nominal?.nominalCode
         ) &&
         order.currency.code &&
         order.deliveryAddress?.addressId;
