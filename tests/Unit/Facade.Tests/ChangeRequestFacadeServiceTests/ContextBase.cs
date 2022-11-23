@@ -1,8 +1,7 @@
-﻿namespace Linn.Purchasing.Facade.Tests.ChangeRequestFaceServiceTests
+﻿namespace Linn.Purchasing.Facade.Tests.ChangeRequestFacadeServiceTests
 {
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
-    using Linn.Common.Persistence.EntityFramework;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;

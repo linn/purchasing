@@ -54,10 +54,10 @@
             };
             this.Repository.FindById(1).Returns(changeRequest);
 
-            var request = new ChangeRequestRequestResource {Id = 1};
+            var request = new ChangeRequestStatusChangeResource {Id = 1, Status = "ACCEPT"};
 
             this.Response = this.Client.PostAsJsonAsync(
-                "/purchasing/change-requests/approve", request).Result;
+                "/purchasing/change-requests/status", request).Result;
         }
 
         [Test]

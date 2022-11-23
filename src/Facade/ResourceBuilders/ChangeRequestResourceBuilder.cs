@@ -37,6 +37,14 @@
                            DescriptionOfChange = model.DescriptionOfChange,
                            DateEntered = model.DateEntered.ToString("o"),
                            DateAccepted = model.DateAccepted?.ToString("o"),
+                           ProposedBy = 
+                               new EmployeeResource
+                                   {
+                                       Id = model.ProposedById,
+                                       FullName = model.ProposedBy?.FullName
+                                   },
+                           EnteredBy =
+                               new EmployeeResource { Id = model.EnteredById, FullName = model.EnteredBy?.FullName },
                            BomChanges =
                                model.BomChanges?.Select(
                                    d => (BomChangeResource)this.bomChangeBuilder.Build(d, claims)),

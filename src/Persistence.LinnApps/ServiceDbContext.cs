@@ -1854,6 +1854,10 @@
             entity.Property(c => c.DocumentNumber).HasColumnName("DOCUMENT_NUMBER");
             entity.Property(c => c.DateEntered).HasColumnName("DATE_ENTERED");
             entity.Property(c => c.DateAccepted).HasColumnName("DATE_ACCEPTED");
+            entity.Property(o => o.ProposedById).HasColumnName("PROPOSED_BY");
+            entity.HasOne(o => o.ProposedBy).WithMany().HasForeignKey(o => o.ProposedById);
+            entity.Property(o => o.EnteredById).HasColumnName("ENTERED_BY");
+            entity.HasOne(o => o.EnteredBy).WithMany().HasForeignKey(o => o.EnteredById);
             entity.Property(c => c.ChangeState).HasColumnName("CHANGE_STATE").HasMaxLength(6);
             entity.Property(c => c.ReasonForChange).HasColumnName("REASON_FOR_CHANGE").HasMaxLength(2000);
             entity.Property(c => c.DescriptionOfChange).HasColumnName("DESCRIPTION_OF_CHANGE").HasMaxLength(2000);

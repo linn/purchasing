@@ -15,6 +15,14 @@
 
         public string ChangeState { get; set; }
 
+        public Employee ProposedBy { get; set; }
+
+        public int ProposedById { get; set; }
+
+        public Employee EnteredBy { get; set; }
+
+        public int EnteredById { get; set; }
+
         public string ReasonForChange { get; set; }
 
         public string DescriptionOfChange { get; set; }

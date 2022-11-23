@@ -16,6 +16,10 @@
 
         public string ChangeState { get; set; }
 
+        public EmployeeResource ProposedBy { get; set; }
+
+        public EmployeeResource EnteredBy { get; set; }
+
         public string ReasonForChange { get; set; }
 
         public string DescriptionOfChange { get; set; }

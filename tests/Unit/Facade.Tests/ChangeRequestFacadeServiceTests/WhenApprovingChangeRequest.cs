@@ -1,7 +1,9 @@
-﻿namespace Linn.Purchasing.Facade.Tests.ChangeRequestFaceServiceTests
+﻿namespace Linn.Purchasing.Facade.Tests.ChangeRequestFacadeServiceTests
 {
     using System;
     using System.Collections.Generic;
+
+    using Castle.Core.Resource;
 
     using FluentAssertions;
 
@@ -14,7 +16,7 @@
 
     using NUnit.Framework;
 
-    public class WhenApprovingAlreadyApprovedChangeRequest : ContextBase
+    public class WhenApprovingChangeRequest : ContextBase
     {
         private IResult<ChangeRequestResource> result;
 
@@ -28,7 +30,7 @@
             var request = new ChangeRequest()
                               {
                                   DocumentNumber = 1,
-                                  ChangeState = "ACCEPT",
+                                  ChangeState = "PROPOS",
                                   DateEntered = new DateTime(2022, 1, 1),
                                   DescriptionOfChange = "Test Change"
                               };
@@ -37,10 +39,17 @@
         }
 
         [Test]
-        public void ShouldReturnBadRequest()
+        public void ShouldReturnSuccessRequest()
         {
-            this.result.Should().BeOfType<BadRequestResult<ChangeRequestResource>>();
-            ((BadRequestResult<ChangeRequestResource>)this.result).Message.Should().Be("Cannot approve this change request");
+            this.result.Should().BeOfType<SuccessResult<ChangeRequestResource>>();
+        }
+
+        [Test]
+        public void ShouldChangeStatusToAccepted()
+        {
+            var resource = ((SuccessResult<ChangeRequestResource>)this.result).Data;
+            resource.DocumentNumber.Should().Be(1);
+            resource.ChangeState.Should().Be("ACCEPT");
         }
     }
 }

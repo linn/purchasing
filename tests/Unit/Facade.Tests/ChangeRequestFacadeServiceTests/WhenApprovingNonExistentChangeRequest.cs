@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Facade.Tests.ChangeRequestFaceServiceTests
+﻿namespace Linn.Purchasing.Facade.Tests.ChangeRequestFacadeServiceTests
 {
     using System.Collections.Generic;
 
