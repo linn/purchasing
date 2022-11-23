@@ -36,7 +36,7 @@
                                          Remarks = remarks,
                                          PriceChangeReason = priceChangeReason,
                                          OldCurrency = prevPart.Currency?.Code,
-                                         NewCurrency = part.Currency.Code,
+                                         NewCurrency = part.Currency?.Code,
                                          OldCurrencyUnitPrice = prevPart.CurrencyUnitPrice,
                                          NewCurrencyUnitPrice = part.CurrencyUnitPrice,
                                          OldBaseUnitPrice = prevPart.BaseUnitPrice,

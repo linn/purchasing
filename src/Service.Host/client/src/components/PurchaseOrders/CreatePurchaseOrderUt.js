@@ -103,10 +103,7 @@ function CreatePurchaseOrderUt() {
     const allowedToCreate = () => item?.links?.some(l => l.rel === 'create');
 
     const inputIsValid = () =>
-        order.supplier?.id &&
-        order.details[0].partNumber &&
-        order.details[0].ourQty &&
-        order.details[0].ourUnitPriceCurrency;
+        order.supplier?.id && order.details[0].partNumber && order.details[0].ourQty;
 
     const canSave = () => allowedToCreate() && inputIsValid();
 

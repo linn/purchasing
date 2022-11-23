@@ -11,17 +11,23 @@
     using NSubstitute;
     using NUnit.Framework;
 
-    public class WhenGettingTreeExport : ContextBase
+    public class WhenGettingWhereUsedTreeExport : ContextBase
     {
         [SetUp]
         public void SetUp()
         {
-            this.BomTreeService.FlattenTree("root").Returns(
-                new List<BomTreeNode> { new BomTreeNode { Name = "root", Description = "root node" } });
+            this.BomTreeService.FlattenBomTree("root").Returns(
+                new List<BomTreeNode> { new BomTreeNode { Name = "part", Description = "root node" } });
 
             this.Response = this.Client.Get(
-                "/purchasing/boms/tree/export?bomName=root",
+                "/purchasing/boms/tree/export?bomName=part&requirementOnly=true&showChanges=false&treeType=whereUsed",
                 with => { with.Accept("application/json"); }).Result;
+        }
+
+        [Test]
+        public void ShouldCallService()
+        {
+            this.BomTreeService.Received().FlattenWhereUsedTree("PART", null, true, false);
         }
 
         [Test]

@@ -9,16 +9,22 @@
     using NSubstitute;
     using NUnit.Framework;
 
-    public class WhenGettingTree : ContextBase
+    public class WhenGettingWhereUsedTree : ContextBase
     {
         [SetUp]
         public void SetUp()
         {
-            this.BomTreeService.BuildTree("ROOT").Returns(new BomTreeNode { Name = "root", Description = "root node"});
+            this.BomTreeService.BuildWhereUsedTree("PART").Returns(new BomTreeNode { Name = "part", Description = "root node" });
 
             this.Response = this.Client.Get(
-                "/purchasing/boms/tree?bomName=root",
+                "/purchasing/boms/tree?bomName=part&requirementOnly=true&showChanges=false&treeType=whereUsed",
                 with => { with.Accept("application/json"); }).Result;
+        }
+
+        [Test]
+        public void ShouldCallService()
+        {
+            this.BomTreeService.Received().BuildWhereUsedTree("PART", null, true, false);
         }
 
         [Test]
@@ -39,7 +45,7 @@
         {
             var result = this.Response.DeserializeBody<BomTreeNode>();
             result.Should().NotBeNull();
-            result.Name.Should().Be("root");
+            result.Name.Should().Be("part");
             result.Description.Should().Be("root node");
         }
     }

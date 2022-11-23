@@ -6,7 +6,6 @@ import Button from '@mui/material/Button';
 
 function MainTab({ item, approve }) {
     const approveUri = utilities.getHref(item, 'approve');
-    console.log(`approveUri ${approveUri}`);
 
     return (
         <Grid container spacing={3}>

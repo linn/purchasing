@@ -59,61 +59,68 @@
             {
                 var values = new List<CalculationValueModel>();
                 foreach (var member in group)
-
-                foreach (var delivery in member.Deliveries.Where(d => d.Quantity > d.QuantityReceived)
-                             .OrderBy(c => c.DeliverySequence))
                 {
-                    var rowId = $"{delivery.OrderNumber}/{delivery.OrderLine}/{delivery.DeliverySequence}";
-                    values.Add(
-                        new CalculationValueModel
+                    foreach (var delivery in member.Deliveries.Where(d => d.Quantity > d.QuantityReceived)
+                             .OrderBy(c => c.DeliverySequence))
+                    {
+                        var rowId = $"{delivery.OrderNumber}/{delivery.OrderLine}/{delivery.DeliverySequence}";
+                        values.Add(
+                            new CalculationValueModel
                             {
                                 RowId = rowId,
                                 ColumnId = "Delivery",
                                 TextDisplay = $"{delivery.OrderNumber}/{delivery.DeliverySequence}"
                             });
-                    values.Add(
-                        new CalculationValueModel
+                        values.Add(
+                            new CalculationValueModel
                             {
                                 RowId = rowId,
                                 ColumnId = "Date",
                                 TextDisplay = delivery.CallOffDate?.ToString("dd/MM/yyyy")
                             });
-                    values.Add(
-                        new CalculationValueModel
+                        values.Add(
+                            new CalculationValueModel
                             {
-                                RowId = rowId, ColumnId = "QtyOnOrder", Value = member.OurQuantity
+                                RowId = rowId,
+                                ColumnId = "QtyOnOrder",
+                                Value = member.OurQuantity
                             });
-                    values.Add(
-                        new CalculationValueModel 
-                            { 
-                                RowId = rowId, 
-                                ColumnId = "Qty", 
+                        values.Add(
+                            new CalculationValueModel
+                            {
+                                RowId = rowId,
+                                ColumnId = "Qty",
                                 Value = member.OurQuantity - member.QuantityReceived.GetValueOrDefault()
                             });
-                    values.Add(
-                        new CalculationValueModel
+                        values.Add(
+                            new CalculationValueModel
                             {
-                                RowId = rowId, ColumnId = "QtyReceived", Value = member.QuantityReceived.GetValueOrDefault()
+                                RowId = rowId,
+                                ColumnId = "QtyReceived",
+                                Value = member.QuantityReceived.GetValueOrDefault()
                             });
-                    values.Add(
-                        new CalculationValueModel
+                        values.Add(
+                            new CalculationValueModel
                             {
-                                RowId = rowId, ColumnId = "QtyInvoiced", Value = member.QuantityInvoiced ?? 0
+                                RowId = rowId,
+                                ColumnId = "QtyInvoiced",
+                                Value = member.QuantityInvoiced ?? 0
                             });
-                    values.Add(
-                        new CalculationValueModel
+                        values.Add(
+                            new CalculationValueModel
                             {
                                 RowId = rowId,
                                 ColumnId = "DateRequested",
                                 TextDisplay = delivery.RequestedDeliveryDate?.ToString("dd/MM/yyyy")
                             });
-                    values.Add(
-                        new CalculationValueModel
+                        values.Add(
+                            new CalculationValueModel
                             {
                                 RowId = rowId,
                                 ColumnId = "DateAdvised",
                                 TextDisplay = delivery.AdvisedDeliveryDate?.ToString("dd/MM/yyyy")
-                        });
+                            });
+                    }
                 }
 
                 reportLayout.SetGridData(values);

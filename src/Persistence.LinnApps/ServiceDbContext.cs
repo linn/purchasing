@@ -198,6 +198,8 @@
 
         public DbSet<BoardComponentSummary> BoardComponentSummary { get; set; }
 
+        public DbSet<PartRequirement> VMasterMrh { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -304,6 +306,7 @@
             this.BuildImmediateLiabilityBase(builder);
             this.BuildCircuitBoards(builder);
             this.BuildBoardComponentSummary(builder);
+            this.BuildVMasterMrh(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -322,7 +325,7 @@
 
             // below line commented due to causing crashing during local dev. Uncomment if want to see sql in debug window
             // optionsBuilder.UseLoggerFactory(MyLoggerFactory);
-            // optionsBuilder.EnableSensitiveDataLogging(true);
+            optionsBuilder.EnableSensitiveDataLogging(true);
             base.OnConfiguring(optionsBuilder);
         }
 
@@ -484,7 +487,7 @@
             entity.Property(a => a.DrawingReference).HasColumnName("DRAWING_REFERENCE").HasMaxLength(100);
             entity.Property(a => a.RawOrFinished).HasColumnName("RM_FG");
             entity.HasOne(a => a.NominalAccount).WithMany().HasForeignKey("NOMACC_NOMACC_ID");
-
+            entity.Property(a => a.DecrementRule).HasColumnName("DECREMENT_RULE");
         }
 
         private void BuildSuppliers(ModelBuilder builder)
@@ -616,7 +619,7 @@
             entity.HasKey(m => m.Id);
             entity.Property(e => e.Id).HasColumnName("USER_NUMBER");
             entity.Property(e => e.FullName).HasColumnName("USER_NAME").HasMaxLength(4000);
-            entity.HasOne(e => e.PhoneListEntry).WithMany().HasForeignKey(e => e.Id);
+            entity.HasOne(e => e.PhoneListEntry).WithOne().HasForeignKey<PhoneListEntry>(e => e.UserNumber);
         }
 
         private void BuildPhoneList(ModelBuilder builder)
@@ -1901,6 +1904,7 @@
             var entity = builder.Entity<BomDetail>().ToTable("BOM_DETAIL_VIEW");
             entity.HasKey(a => a.DetailId);
             entity.Property(a => a.DetailId).HasColumnName("DETAIL_ID");
+            entity.Property(a => a.BomPartNumber).HasColumnName("BOM_PART_NUMBER").HasColumnType("VARCHAR");
             entity.Property(a => a.BomName).HasColumnName("BOM_NAME").HasColumnType("VARCHAR2").HasMaxLength(14);
             entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasColumnType("VARCHAR2").HasMaxLength(14);
             entity.Property(a => a.BomId).HasColumnName("BOM_ID");
@@ -1911,7 +1915,9 @@
             entity.Property(a => a.AddReplaceSeq).HasColumnName("ADD_REPLACE_SEQ");
             entity.Property(a => a.DeleteChangeId).HasColumnName("DELETE_CHANGE_ID");
             entity.Property(a => a.DeleteReplaceSeq).HasColumnName("DELETE_REPLACE_SEQ");
+            entity.Property(a => a.PcasLine).HasColumnName("PCAS_LINE");
             entity.HasOne(a => a.Part).WithMany().HasForeignKey(a => a.PartNumber);
+            entity.HasOne(a => a.BomPart).WithMany().HasForeignKey(a => a.BomPartNumber);
         }
 
         private void BuildPlOrderReceivedView(ModelBuilder builder)
@@ -2000,6 +2006,15 @@
             entity.Property(a => a.PcasPartNumber).HasColumnName("PCAS_PART_NUMBER").HasMaxLength(14);
             entity.Property(a => a.PcsmPartNumber).HasColumnName("PCSM_PART_NUMBER").HasMaxLength(14);
             entity.Property(a => a.PcbPartNumber).HasColumnName("PCB_PART_NUMBER").HasMaxLength(14);
+        }
+
+        private void BuildVMasterMrh(ModelBuilder builder)
+        {
+            var entity = builder.Entity<PartRequirement>().ToTable("V_MASTER_MRH");
+            entity.HasKey(x => x.PartNumber);
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER");
+            entity.Property(a => a.AnnualUsage).HasColumnName("ANNUAL_USAGE");
+            entity.HasOne(a => a.BomDetail).WithOne(b => b.PartRequirement).HasForeignKey<BomDetail>(a => a.PartNumber);
         }
     }
 }

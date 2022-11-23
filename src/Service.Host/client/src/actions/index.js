@@ -332,3 +332,7 @@ export const boardsActionTypes = makeActionTypes(itemTypes.boards.actionType);
 export const changeRequestStatusChangeActionTypes = makeActionTypes(
     itemTypes.changeRequestStatusChange.actionType
 );
+
+export const partsOnBomReportActionTypes = makeReportActionTypes(
+    reportTypes.partsOnBomReport.actionType
+);

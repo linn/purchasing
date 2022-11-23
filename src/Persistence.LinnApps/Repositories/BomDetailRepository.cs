@@ -25,12 +25,17 @@
 
         public IQueryable<BomDetail> FilterBy(Expression<Func<BomDetail, bool>> expression)
         {
-            return this.bomDetails.Include(b => b.Part).Where(expression);
+            return this.bomDetails.Include(b => b.Part)
+                .Include(d => d.PartRequirement)
+                .Include(d => d.BomPart).Where(expression)
+                .AsNoTracking();
         }
 
         public IQueryable<BomDetail> FindAll()
         {
-            throw new NotImplementedException();
+            return this.bomDetails
+                .Include(d => d.Part)
+                .AsNoTracking();
         }
 
         public IEnumerable<BomDetail> GetLiveBomDetails(string bomName)

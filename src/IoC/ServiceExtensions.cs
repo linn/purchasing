@@ -149,7 +149,8 @@
                 .AddTransient<IChangeRequestFacadeService, ChangeRequestFacadeService>()
                 .AddTransient<IFacadeResourceService<Bom, int, BomResource, BomResource>, BomFacadeService>()
                 .AddTransient<IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource>, CircuitBoardFacadeService>()
-                .AddTransient<IBomTreeReportsService, BomTreeReportService>();
+                .AddTransient<IBomTreeReportsService, BomTreeReportService>()
+                .AddTransient<IBomReportsFacadeService, BomReportsFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
@@ -203,6 +204,7 @@
                 .AddTransient<IPartHistoryService, PartHistoryService>()
                 .AddTransient<IBomTreeService, BomTreeService>()
                 .AddTransient<IChangeRequestService, ChangeRequestService>()
+                .AddTransient<IBomReportsService, BomReportsService>()
 
                 // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()

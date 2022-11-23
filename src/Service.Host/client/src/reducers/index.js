@@ -103,6 +103,7 @@ import bomTree from './bomTree';
 import board from './board';
 import boards from './boards';
 import changeRequestStatusChange from './changeRequestStatusChange';
+import partsOnBomReport from './partsOnBomReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -157,6 +158,7 @@ const rootReducer = history =>
         partCategories,
         partPriceConversions,
         parts,
+        partsOnBomReport,
         partsReceivedReport,
         partSupplier,
         partSuppliers,
