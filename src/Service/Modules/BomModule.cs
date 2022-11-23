@@ -37,7 +37,7 @@
             app.MapPut("/purchasing/boms/boards/{id}", this.UpdateCircuitBoard);
             app.MapGet("/purchasing/boms/reports/list", this.GetPartsOnBomReport);
             app.MapGet("/purchasing/boms/reports/list/export", this.GetPartsOnBomExport);
-            app.MapGet("/purchasing/boms/reports/cost", this.GetPartsOnBomReport);
+            app.MapGet("/purchasing/boms/reports/cost", this.GetBomCostReport);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
