@@ -17,14 +17,19 @@
 
         protected IQueryRepository<BoardComponentSummary> ComponentSummaryRepository { get; private set; }
 
+        protected IBomTreeService BomTreeService { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
             this.BomDetailRepository = Substitute.For<IBomDetailRepository>();
             this.ComponentSummaryRepository = Substitute.For<IQueryRepository<BoardComponentSummary>>();
-
+            this.BomTreeService = Substitute.For<IBomTreeService>();
             this.Sut = new BomReportsService(
-                this.BomDetailRepository, new ReportingHelper(), this.ComponentSummaryRepository);
+                this.BomDetailRepository, 
+                new ReportingHelper(), 
+                this.ComponentSummaryRepository, 
+                this.BomTreeService);
         }
     }
 }
