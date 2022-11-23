@@ -9,14 +9,14 @@
 
     using NUnit.Framework;
 
-    public class WhenFlatteningTree : ContextBase
+    public class WhenFlatteningBomTree : BomContextBase
     {
         private IEnumerable<BomTreeNode> result;
 
         [SetUp]
         public void SetUp()
         {
-            this.result = this.Sut.FlattenTree("root");
+            this.result = this.Sut.FlattenBomTree("root", null, false);
         }
 
         [Test]

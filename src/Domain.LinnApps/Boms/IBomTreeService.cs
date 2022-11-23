@@ -6,8 +6,28 @@
 
     public interface IBomTreeService
     {
-        BomTreeNode BuildTree(string bomName, int? levels = null);
+        BomTreeNode BuildBomTree(
+            string bomName, 
+            int? levels = null, 
+            bool requirementOnly = true,
+            bool showChanges = false);
 
-        IEnumerable<BomTreeNode> FlattenTree(string bomName, int? levels = null);
+        IEnumerable<BomTreeNode> FlattenBomTree(
+            string bomName, 
+            int? levels = null, 
+            bool requirementOnly = true,
+            bool showChanges = false);
+
+        BomTreeNode BuildWhereUsedTree(
+            string partNumber,
+            int? levels = null,
+            bool requirementOnly = true,
+            bool showChanges = false);
+
+        IEnumerable<BomTreeNode> FlattenWhereUsedTree(
+            string partNumber,
+            int? levels = null,
+            bool requirementOnly = true,
+            bool showChanges = false);
     }
 }

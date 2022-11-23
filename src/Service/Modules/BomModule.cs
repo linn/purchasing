@@ -7,6 +7,7 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Facade.Carter.Extensions;
+    using Linn.Common.Reporting.Resources.ReportResultResources;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Facade.Services;
@@ -24,6 +25,7 @@
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/purchasing/boms/tree", this.GetTree);
+            app.MapGet("/purchasing/boms/tree/options", this.GetApp);
             app.MapGet("/purchasing/boms/{id:int}", this.GetBom);
             app.MapGet("/purchasing/boms/boards/application-state", this.GetBoardApplicationState);
             app.MapGet("/purchasing/boms/boards/{id}", this.GetBoard);
@@ -32,6 +34,8 @@
             app.MapGet("/purchasing/boms/boards/create", this.GetApp);
             app.MapPost("/purchasing/boms/boards", this.AddCircuitBoard);
             app.MapPut("/purchasing/boms/boards/{id}", this.UpdateCircuitBoard);
+            app.MapGet("/purchasing/boms/reports/list", this.GetPartsOnBomReport);
+            app.MapGet("/purchasing/boms/reports/list/export", this.GetPartsOnBomExport);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -55,12 +59,15 @@
             HttpResponse res,
             string bomName,
             int? levels,
+            bool requirementOnly,
+            bool showChanges,
+            string treeType,
             IBomTreeReportsService facadeService)
         {
             IResult<BomTreeNode> result = null;
             if (!string.IsNullOrEmpty(bomName))
             {
-                result = facadeService.GetBomTree(bomName.Trim().ToUpper(), levels);
+                result = facadeService.GetTree(bomName.Trim().ToUpper(), levels, requirementOnly, showChanges, treeType);
             }
 
             await res.Negotiate(result);
@@ -71,9 +78,13 @@
             HttpResponse res,
             string bomName,
             int? levels,
+            bool requirementOnly,
+            bool showChanges,
+            string treeType,
             IBomTreeReportsService facadeService)
         {
-            var result = facadeService.GetFlatBomTreeExport(bomName, levels);
+            var result = facadeService.GetFlatTreeExport(
+                bomName.Trim().ToUpper(), levels, requirementOnly, showChanges, treeType);
 
             await res.FromCsv(result, $"{bomName}.csv");
         }
@@ -143,6 +154,32 @@
                 null);
 
             await res.Negotiate(result);
+        }
+
+        private async Task GetPartsOnBomReport(
+            HttpRequest req,
+            HttpResponse res,
+            string bomName,
+            IBomReportsFacadeService facadeService)
+        {
+            IResult<ReportReturnResource> result = null;
+            if (!string.IsNullOrEmpty(bomName))
+            {
+                result = facadeService.GetPartsOnBomReport(bomName);
+            }
+
+            await res.Negotiate(result);
+        }
+
+        private async Task GetPartsOnBomExport(
+            HttpRequest req,
+            HttpResponse res,
+            string bomName,
+            IBomReportsFacadeService facadeService)
+        {
+            var result = facadeService.GetPartsOnBomExport(bomName);
+
+            await res.FromCsv(result, $"{bomName}.csv");
         }
     }
 }

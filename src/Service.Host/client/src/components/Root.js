@@ -69,11 +69,13 @@ import DeliveryPerformanceDetailReport from './reports/DeliveryPerformanceDetail
 import CreatePurchaseOrderUt from './PurchaseOrders/CreatePurchaseOrderUt';
 import PurchaseOrdersAuthSend from './PurchaseOrders/PurchaseOrdersAuthSend';
 import BomTree from './BomTree';
+import BomTreeOptions from './BomTreeOptions';
 import ChangeRequestSearch from './ChangeRequests/ChangeRequestsSearch';
 import ChangeRequest from './ChangeRequests/ChangeRequest';
 import BomTypeChange from './BomTypeChange';
 import Board from './boards/Board';
 import BoardSearch from './boards/BoardSearch';
+import PartsOnBomReport from './reports/PartsOnBomReport';
 
 const Root = ({ store }) => (
     <div>
@@ -428,6 +430,12 @@ const Root = ({ store }) => (
                                     path="/purchasing/reports/delivery-performance-details/report"
                                     component={DeliveryPerformanceDetailReport}
                                 />
+                                <Route
+                                    exact
+                                    path="/purchasing/boms/tree/options"
+                                    component={BomTreeOptions}
+                                />
+
                                 <Route exact path="/purchasing/boms/tree" component={BomTree} />
                                 <Route
                                     exact
@@ -443,6 +451,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/bom-type-change"
                                     component={BomTypeChange}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/boms/reports/list"
+                                    component={PartsOnBomReport}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>

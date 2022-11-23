@@ -4,6 +4,7 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
+    using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Facade.ResourceBuilders;
@@ -41,6 +42,10 @@
 
         protected IBomTreeReportsService BomTreeReportsService { get; private set; }
 
+        protected IBomReportsFacadeService BomReportsFacadeService { get; private set; }
+
+        protected IBomReportsService MockBomReportsDomainService { get; set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -54,7 +59,13 @@
 
             this.BomTreeService = Substitute.For<IBomTreeService>();
 
+            this.MockBomReportsDomainService = Substitute.For<IBomReportsService>();
+
             this.BomTreeReportsService = new BomTreeReportService(this.BomTreeService);
+
+            this.BomReportsFacadeService = new BomReportsFacadeService(
+                this.MockBomReportsDomainService,
+                new ReportReturnResourceBuilder());
 
             this.CircuitBoardFacadeService = new CircuitBoardFacadeService(
                 this.CircuitBoardRepository,
@@ -67,6 +78,7 @@
                         services.AddSingleton(this.FacadeService);
                         services.AddSingleton(this.BomTreeReportsService);
                         services.AddSingleton(this.CircuitBoardFacadeService);
+                        services.AddSingleton(this.BomReportsFacadeService);
                         services.AddHandlers();
                     },
                 FakeAuthMiddleware.EmployeeMiddleware);

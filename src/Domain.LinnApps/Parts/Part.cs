@@ -45,6 +45,8 @@
 
         public NominalAccount NominalAccount { get; set; }
 
+        public string DecrementRule { get; set; }
+
         public bool SupplierAssembly()
         {
             if (this.BomType == "A")
