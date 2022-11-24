@@ -15,5 +15,7 @@
         public string Type { get; set; }
 
         public string ParentName { get; set; }
+
+        public int Id { get; set; }
     }
 }

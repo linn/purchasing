@@ -402,7 +402,7 @@
             entity.HasOne(e => e.MadeInvalidBy).WithMany().HasForeignKey("MADE_INVALID_BY");
             entity.Property(e => e.UnitOfMeasure).HasColumnName("ORDER_UNIT_OF_MEASURE").HasMaxLength(14);
             entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
-            entity.HasOne(e => e.Part).WithMany().HasForeignKey(p => p.PartNumber);
+            entity.HasOne(e => e.Part).WithMany(p => p.PartSuppliers).HasForeignKey(p => p.PartNumber);
             entity.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID");
             entity.HasOne(e => e.Supplier).WithMany().HasForeignKey(e => e.SupplierId);
             entity.HasOne(e => e.OrderMethod).WithMany().HasForeignKey("PL_ORDER_METHOD");

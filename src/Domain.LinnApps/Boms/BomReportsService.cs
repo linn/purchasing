@@ -141,6 +141,8 @@
             int levels, 
             decimal labourHourlyRate)
         {
+            var results = new List<BomCostReport>();
+
             var partsOnBom = this.bomTreeService.FlattenBomTree(bomName, levels);
 
             if (!splitBySubAssembly)
@@ -151,9 +153,31 @@
                 }
             }
 
-            var groups = partsOnBom.GroupBy(x => x.ParentName);
+            var assemblyGroups = partsOnBom.GroupBy(x => x.ParentName);
 
-            throw new System.NotImplementedException();
+            foreach (var bomTreeNodes in assemblyGroups)
+            {
+                var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
+
+                reportLayout.AddColumnComponent(
+                    null,
+                    new List<AxisDetailsModel>
+                        {
+                            new("PartNumber", "PartNumber", GridDisplayType.TextValue),
+                            new("Desc", "Desc", GridDisplayType.TextValue),
+                            new("Type", "Type", GridDisplayType.TextValue),
+                            new("PreferredSupplier", GridDisplayType.TextValue),
+                            new("Qty", "Qty", GridDisplayType.Value) { DecimalPlaces = 4 },
+                            new("StdPrice", "Std Price", GridDisplayType.Value) { DecimalPlaces = 5 },
+                            new("MaterialPrice", "Mat Price",  GridDisplayType.Value) { DecimalPlaces = 5 },
+                            new("CPA", "CPA",  GridDisplayType.Value) { DecimalPlaces = 5 },
+                            new("LabourTime", "Labour (mins)",  GridDisplayType.Value) { DecimalPlaces = 5 },
+                            new("TotalMaterial", "Total Material",  GridDisplayType.Value) { DecimalPlaces = 5 },
+                            new("TotalLabour", "Total Labour",  GridDisplayType.Value) { DecimalPlaces = 5 }
+                        });
+            }
+
+            return results;
         }
     }
 }

@@ -55,8 +55,13 @@
                                     node.ParentName
                                 });
             }
-            csvData.RemoveAt(0);
-            csvData.Insert(0, new List<string> { bomName, "DESCRIPTION", "QTY", "PARENT" });
+
+            if (csvData.Count > 0)
+            {
+                csvData.RemoveAt(0);
+                csvData.Insert(0, new List<string> { bomName, "DESCRIPTION", "QTY", "PARENT" });
+            }
+            
             return csvData;
         }
     }

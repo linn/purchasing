@@ -76,6 +76,7 @@ import BomTypeChange from './BomTypeChange';
 import Board from './boards/Board';
 import BoardSearch from './boards/BoardSearch';
 import PartsOnBomReport from './reports/PartsOnBomReport';
+import BomCostReport from './reports/BomCostReport';
 
 const Root = ({ store }) => (
     <div>
@@ -456,6 +457,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/boms/reports/list"
                                     component={PartsOnBomReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/boms/reports/cost"
+                                    component={BomCostReport}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>

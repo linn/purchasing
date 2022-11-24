@@ -150,7 +150,8 @@
                                      Description = d.Part.Description,
                                      Qty = d.Qty,
                                      Type = d.Part.BomType,
-                                     ParentName = root.BomName
+                                     ParentName = root.BomName,
+                                     Id = d.DetailId
                                  }).OrderBy(x => x.Name)
             };
             var q = new Queue<BomTreeNode>();
@@ -185,6 +186,8 @@
                                 Description = child.Description,
                                 Qty = child.Qty,
                                 ParentName = child.ParentName,
+                                Id = child.Id,
+                                Type = child.Type,
                                 Children = children?
                                         .OrderBy(x => x.Part.PartNumber)
                                         .Select(
@@ -195,7 +198,8 @@
                                                     Description = detail.Part.Description,
                                                     Qty = detail.Qty,
                                                     Type = detail.Part.BomType,
-                                                    ParentName = child.Name
+                                                    ParentName = child.Name,
+                                                    Id = detail.DetailId
                                                 })
                             };
                             return node;
