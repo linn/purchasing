@@ -23,7 +23,6 @@ import boardReducer from './boardReducer';
 function Board({ creating }) {
     const reduxDispatch = useDispatch();
     const { id } = useParams();
-    const [selectedLayout, setSelectedLayout] = useState(null);
 
     const item = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.board));
     const loading = useSelector(reduxState => itemSelectorHelpers.getItemLoading(reduxState.board));
@@ -54,11 +53,6 @@ function Board({ creating }) {
     useEffect(() => {
         if (item) {
             dispatch({ type: 'populate', payload: item });
-            if (item.layouts && item.layouts.length > 0) {
-                setSelectedLayout([item.layouts[item.layouts.length - 1].layoutCode]);
-            } else {
-                setSelectedLayout([]);
-            }
         }
     }, [item]);
 
@@ -159,8 +153,9 @@ function Board({ creating }) {
                             <LayoutTab
                                 layouts={state.board.layouts}
                                 style={{ paddingTop: '40px' }}
-                                selectedLayout={selectedLayout}
-                                setSelectedLayout={setSelectedLayout}
+                                dispatch={dispatch}
+                                selectedLayout={state.selectedLayout}
+                                setEditStatus={setEditStatus}
                             />
                         )}
                     </Grid>

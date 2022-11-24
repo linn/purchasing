@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
 
     using Linn.Common.Facade;
@@ -47,6 +48,19 @@
             entity.DefaultPcbNumber = updateResource.DefaultPcbNumber;
             entity.SplitBom = updateResource.SplitBom;
             entity.VariantOfBoardCode = updateResource.VariantOfBoardCode;
+            entity.Layouts = updateResource.Layouts?.Select(
+                a => new BoardLayout
+                         {
+                             BoardCode = a.BoardCode,
+                             LayoutCode = a.LayoutCode,
+                             LayoutSequence = a.LayoutSequence,
+                             PcbNumber = a.PcbNumber,
+                             LayoutType = a.LayoutType,
+                             LayoutNumber = a.LayoutNumber,
+                             PcbPartNumber = a.PcbPartNumber,
+                             ChangeId = a.ChangeId,
+                             ChangeState = a.ChangeState
+                         }).ToList();
         }
 
         protected override Expression<Func<CircuitBoard, bool>> SearchExpression(string searchTerm)
