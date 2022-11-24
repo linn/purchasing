@@ -11,5 +11,9 @@
         public decimal Qty { get; set; }
 
         public IEnumerable<BomTreeNode> Children { get; set; }
+
+        public string Type { get; set; }
+
+        public string ParentName { get; set; }
     }
 }

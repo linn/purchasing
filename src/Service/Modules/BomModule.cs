@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     using Carter;
@@ -36,6 +37,7 @@
             app.MapPut("/purchasing/boms/boards/{id}", this.UpdateCircuitBoard);
             app.MapGet("/purchasing/boms/reports/list", this.GetPartsOnBomReport);
             app.MapGet("/purchasing/boms/reports/list/export", this.GetPartsOnBomExport);
+            app.MapGet("/purchasing/boms/reports/cost", this.GetBomCostReport);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -180,6 +182,24 @@
             var result = facadeService.GetPartsOnBomExport(bomName);
 
             await res.FromCsv(result, $"{bomName}.csv");
+        }
+
+        private async Task GetBomCostReport(
+            HttpRequest req,
+            HttpResponse res,
+            string bomName,
+            bool splitBySubAssembly,
+            int levels,
+            decimal labourHourlyRate,
+            IBomReportsFacadeService facadeService)
+        {
+            IResult<IEnumerable<BomCostReportResource>> result = null;
+            if (!string.IsNullOrEmpty(bomName))
+            {
+                result = facadeService.GetBomCostReport(bomName, splitBySubAssembly, levels, labourHourlyRate);
+            }
+
+            await res.Negotiate(result);
         }
     }
 }

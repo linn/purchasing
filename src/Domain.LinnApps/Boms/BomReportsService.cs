@@ -16,14 +16,18 @@
 
         private readonly IQueryRepository<BoardComponentSummary> componentSummaryRepository;
 
+        private readonly IBomTreeService bomTreeService;
+
         public BomReportsService(
             IBomDetailRepository bomDetailRepository, 
             IReportingHelper reportingHelper, 
-            IQueryRepository<BoardComponentSummary> componentSummaryRepository)
+            IQueryRepository<BoardComponentSummary> componentSummaryRepository,
+            IBomTreeService bomTreeService)
         {
             this.bomDetailRepository = bomDetailRepository;
             this.reportingHelper = reportingHelper;
             this.componentSummaryRepository = componentSummaryRepository;
+            this.bomTreeService = bomTreeService;
         }
 
         public ResultsModel GetPartsOnBomReport(string bomName)
@@ -115,7 +119,8 @@
                         {
                             RowId = rowId,
                             ColumnId = "Crefs",
-                            TextDisplay = this.componentSummaryRepository.FilterBy(x => x.BomPartNumber == bomName && x.PartNumber == line.PartNumber)?.ToList()
+                            TextDisplay = this.componentSummaryRepository
+                                .FilterBy(x => x.BomPartNumber == bomName && x.PartNumber == line.PartNumber)?.ToList()
                                 .Aggregate(string.Empty, (current, next) => current + $"{next.Cref}, ")
                         });
             }
@@ -128,6 +133,27 @@
             reportLayout.ReportTitle = bomName;
             reportLayout.SetGridData(values);
             return reportLayout.GetResultsModel();
+        }
+
+        public IEnumerable<BomCostReport> GetBomCostReport(
+            string bomName, 
+            bool splitBySubAssembly, 
+            int levels, 
+            decimal labourHourlyRate)
+        {
+            var partsOnBom = this.bomTreeService.FlattenBomTree(bomName, levels);
+
+            if (!splitBySubAssembly)
+            {
+                foreach (var item in partsOnBom)
+                {
+                    item.ParentName = bomName;
+                }
+            }
+
+            var groups = partsOnBom.GroupBy(x => x.ParentName);
+
+            throw new System.NotImplementedException();
         }
     }
 }
