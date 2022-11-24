@@ -102,6 +102,7 @@ import bomTypeChange from './bomTypeChange';
 import bomTree from './bomTree';
 import board from './board';
 import boards from './boards';
+import changeRequestStatusChange from './changeRequestStatusChange';
 import partsOnBomReport from './partsOnBomReport';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
@@ -124,6 +125,7 @@ const rootReducer = history =>
         boards,
         bulkLeadTimesUpload,
         changeRequest,
+        changeRequestStatusChange,
         countries,
         currencies,
         deliveryAddresses,

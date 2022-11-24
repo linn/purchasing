@@ -146,7 +146,7 @@
                 .AddTransient<IForecastingReportsFacadeService, ForecastingReportsFacadeService>()
                 .AddTransient<IFacadeResourceService<LedgerPeriod, int, LedgerPeriodResource, LedgerPeriodResource>, LedgerPeriodFacadeService>()
                 .AddTransient<IForecastWeekChangesFacadeService, ForecastWeekChangesFacadeService>()
-                .AddTransient<IFacadeResourceService<ChangeRequest, int, ChangeRequestResource, ChangeRequestResource>, ChangeRequestFacadeService>()
+                .AddTransient<IChangeRequestFacadeService, ChangeRequestFacadeService>()
                 .AddTransient<IFacadeResourceService<Bom, int, BomResource, BomResource>, BomFacadeService>()
                 .AddTransient<IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource>, CircuitBoardFacadeService>()
                 .AddTransient<IBomTreeReportsService, BomTreeReportService>()
@@ -203,6 +203,7 @@
                 .AddTransient<IPartService, PartService>()
                 .AddTransient<IPartHistoryService, PartHistoryService>()
                 .AddTransient<IBomTreeService, BomTreeService>()
+                .AddTransient<IChangeRequestService, ChangeRequestService>()
                 .AddTransient<IBomReportsService, BomReportsService>()
 
                 // external services
