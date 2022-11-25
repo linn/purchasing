@@ -31,6 +31,7 @@
                            CoreBoard = entity.CoreBoard,
                            ClusterBoard = entity.ClusterBoard,
                            IdBoard = entity.IdBoard,
+                           Layouts = entity.Layouts?.OrderBy(a => a.LayoutSequence).Select(MakeLayoutResource),
                            Links = this.BuildLinks(entity, claims).ToArray()
                        };
         }
@@ -43,6 +44,22 @@
         object IBuilder<CircuitBoard>.Build(CircuitBoard entity, IEnumerable<string> claims)
         {
             return this.Build(entity, claims);
+        }
+
+        private static BoardLayoutResource MakeLayoutResource(BoardLayout a)
+        {
+            return new BoardLayoutResource
+                       {
+                           BoardCode = a.BoardCode,
+                           LayoutCode = a.LayoutCode,
+                           LayoutSequence = a.LayoutSequence,
+                           PcbNumber = a.PcbNumber,
+                           LayoutType = a.LayoutType,
+                           LayoutNumber = a.LayoutNumber,
+                           PcbPartNumber = a.PcbPartNumber,
+                           ChangeId = a.ChangeId,
+                           ChangeState = a.ChangeState
+                       };
         }
 
         private IEnumerable<LinkResource> BuildLinks(CircuitBoard model, IEnumerable<string> claims)

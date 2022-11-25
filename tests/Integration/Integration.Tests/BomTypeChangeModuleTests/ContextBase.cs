@@ -31,9 +31,9 @@
 
         protected IPartService PartService { get; private set; }
 
-        protected IPartFacadeService FacadeService { get; set; }
+        protected IPartFacadeService FacadeService { get; private set; }
 
-        protected IAuthorisationService AuthorisationService;
+        protected IAuthorisationService AuthorisationService { get; private set; }
 
         [SetUp]
         public void SetUpContext()
