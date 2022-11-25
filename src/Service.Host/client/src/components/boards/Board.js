@@ -84,6 +84,23 @@ function Board({ creating }) {
         }
     };
 
+    const layoutsAreOk = layouts => {
+        if (!layouts || !layouts.length) {
+            return true;
+        }
+
+        if (
+            layouts.some(a => a.layoutCode === 'new') ||
+            layouts.some(a => a.layoutCode === 'duplicate')
+        ) {
+            return false;
+        }
+
+        const codes = layouts.map(a => a.layoutCode);
+
+        return codes.every((a, i) => codes.indexOf(a) === i);
+    };
+
     const okToSave = () =>
         state.board &&
         state.board.clusterBoard &&
@@ -91,7 +108,8 @@ function Board({ creating }) {
         state.board.coreBoard &&
         state.board.description &&
         state.board.splitBom &&
-        state.board.boardCode;
+        state.board.boardCode &&
+        layoutsAreOk(state.board.layouts);
 
     return (
         <Page
@@ -156,6 +174,7 @@ function Board({ creating }) {
                                 dispatch={dispatch}
                                 selectedLayout={state.selectedLayout}
                                 setEditStatus={setEditStatus}
+                                okToSave={okToSave}
                             />
                         )}
                     </Grid>
