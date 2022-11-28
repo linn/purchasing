@@ -1017,40 +1017,6 @@
             }
             else if (updated.OrderQty != current.OrderQty)
             {
-                if (updated.OrderQty > current.OrderQty)
-                {
-                    current.PurchaseDeliveries.Add(
-                        new PurchaseOrderDelivery
-                        {
-                            DeliverySeq = 1,
-                            OurDeliveryQty = updated.OrderQty - current.OrderQty,
-                            OrderDeliveryQty = updated.OrderQty - current.OrderQty,
-                            OurUnitPriceCurrency = current.OurUnitPriceCurrency,
-                            OrderUnitPriceCurrency = current.OrderUnitPriceCurrency,
-                            DateRequested = current.PurchaseDeliveries?.First().DateRequested,
-                            DateAdvised = null,
-                            CallOffDate = DateTime.Now,
-                            Cancelled = "N",
-                            CallOffRef = null,
-                            OrderNumber = current.OrderNumber,
-                            OrderLine = 1,
-                            FilCancelled = "N",
-                            NetTotalCurrency = current.NetTotalCurrency,
-                            VatTotalCurrency = current.VatTotalCurrency,
-                            SupplierConfirmationComment = string.Empty,
-                            BaseNetTotal = current.BaseNetTotal,
-                            BaseVatTotal = current.BaseVatTotal,
-                            BaseOurUnitPrice = current.BaseOurUnitPrice,
-                            BaseOrderUnitPrice = current.BaseOrderUnitPrice,
-                            BaseDeliveryTotal = current.BaseNetTotal,
-                            DeliveryTotalCurrency = current.NetTotalCurrency,
-                            QuantityOutstanding = current.OurQty,
-                            QtyNetReceived = 0,
-                            QtyPassedForPayment = 0,
-                            RescheduleReason = ""
-                        }
-                    );
-                }
                 // if our qty has been manually overridden
                 current.OrderQty = updated.OrderQty;
             }

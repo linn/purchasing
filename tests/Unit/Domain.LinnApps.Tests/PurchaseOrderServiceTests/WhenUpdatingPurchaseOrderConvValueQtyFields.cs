@@ -486,7 +486,7 @@
             var firstDetail = this.current.Details.First();
 
             // get second delivery
-            var delivery = firstDetail.PurchaseDeliveries.ElementAt(1);
+            var delivery = firstDetail.PurchaseDeliveries.Last();
 
             // order unit price currency, our unit price currency, our delivery qty (25)
             delivery.OrderUnitPriceCurrency.Should().Be(400.44m);

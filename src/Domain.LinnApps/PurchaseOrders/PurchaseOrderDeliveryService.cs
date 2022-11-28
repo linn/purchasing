@@ -423,13 +423,8 @@
 
             var updatedDeliveriesForOrderLine = updated.ToList();
 
-            if (detail.OurQty.GetValueOrDefault() != updatedDeliveriesForOrderLine
-                    .Sum(x => x.OurDeliveryQty.GetValueOrDefault()))
-            {
-                throw new PurchaseOrderDeliveryException(
-                    "You must match the order qty when updating deliveries.");
-            }
-
+            detail.OrderQty = updatedDeliveriesForOrderLine.Sum(x => x.OurDeliveryQty.GetValueOrDefault());
+            
             var list = detail.PurchaseDeliveries.ToArray();
 
             var newDeliveries = updatedDeliveriesForOrderLine.Select(
