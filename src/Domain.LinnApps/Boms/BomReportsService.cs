@@ -16,18 +16,22 @@
 
         private readonly IQueryRepository<BoardComponentSummary> componentSummaryRepository;
 
+        private readonly IQueryRepository<BomCostReportDetail> bomCostReportDetails;
+
         private readonly IBomTreeService bomTreeService;
 
         public BomReportsService(
             IBomDetailRepository bomDetailRepository, 
             IReportingHelper reportingHelper, 
             IQueryRepository<BoardComponentSummary> componentSummaryRepository,
-            IBomTreeService bomTreeService)
+            IBomTreeService bomTreeService,
+            IQueryRepository<BomCostReportDetail> bomCostReportDetails)
         {
             this.bomDetailRepository = bomDetailRepository;
             this.reportingHelper = reportingHelper;
             this.componentSummaryRepository = componentSummaryRepository;
             this.bomTreeService = bomTreeService;
+            this.bomCostReportDetails = bomCostReportDetails;
         }
 
         public ResultsModel GetPartsOnBomReport(string bomName)
@@ -145,18 +149,27 @@
 
             var partsOnBom = this.bomTreeService.FlattenBomTree(bomName, levels);
 
+            var treeNodes = partsOnBom as BomTreeNode[] ?? partsOnBom.ToArray();
+
+            var ids = treeNodes.Select(x => x.Id).ToList();
+
+            var details = this.bomCostReportDetails.FilterBy(x => ids.Contains(x.DetailId)).ToList();
+
+            details = details.OrderBy(d => ids.IndexOf(d.DetailId)).ToList();
+
             if (!splitBySubAssembly)
             {
-                foreach (var item in partsOnBom)
-                {
-                    item.ParentName = bomName;
-                }
+                details.ForEach(d => d.BomName = bomName);
             }
 
-            var assemblyGroups = partsOnBom.GroupBy(x => x.ParentName);
+            var assemblyGroups = details.ToList().GroupBy(x => x.BomName).ToList();
 
-            foreach (var bomTreeNodes in assemblyGroups)
+            foreach (var group in assemblyGroups)
             {
+                var reportResult = new BomCostReport
+                                       {
+                                           SubAssembly = group.Key
+                                       };
                 var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);
 
                 reportLayout.AddColumnComponent(
@@ -175,6 +188,37 @@
                             new("TotalMaterial", "Total Material",  GridDisplayType.Value) { DecimalPlaces = 5 },
                             new("TotalLabour", "Total Labour",  GridDisplayType.Value) { DecimalPlaces = 5 }
                         });
+
+                var values = new List<CalculationValueModel>();
+
+                foreach (var member in group)
+                {
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = member.PartNumber,
+                                ColumnId = "PartNumber",
+                                TextDisplay = member.PartNumber
+                            });
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = member.PartNumber,
+                                ColumnId = "Desc",
+                                TextDisplay = member.PartDescription
+                            });
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = member.PartNumber,
+                                ColumnId = "Type",
+                                TextDisplay = member.BomType
+                            });
+                }
+                reportLayout.SetGridData(values);
+                reportResult.Breakdown = reportLayout.GetResultsModel();
+
+                results.Add(reportResult);
             }
 
             return results;

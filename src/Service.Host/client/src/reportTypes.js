@@ -138,4 +138,8 @@ export const partsOnBomReport = new ItemType(
     '/purchasing/boms/reports/list'
 );
 
-export const bomCostReport = new ItemType('bomCost', 'BOM_COST', '/purchasing/boms/reports/cost');
+export const bomCostReport = new ItemType(
+    'bomCostReport',
+    'BOM_COST_REPORT',
+    '/purchasing/boms/reports/cost'
+);

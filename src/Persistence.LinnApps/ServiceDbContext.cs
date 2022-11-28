@@ -200,6 +200,8 @@
 
         public DbSet<PartRequirement> VMasterMrh { get; set; }
 
+        public DbSet<BomCostReportDetail> BomCostDetails { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -307,6 +309,7 @@
             this.BuildCircuitBoards(builder);
             this.BuildBoardComponentSummary(builder);
             this.BuildVMasterMrh(builder);
+            this.BuildBomCostDetails(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -2010,6 +2013,22 @@
             entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER");
             entity.Property(a => a.AnnualUsage).HasColumnName("ANNUAL_USAGE");
             entity.HasOne(a => a.BomDetail).WithOne(b => b.PartRequirement).HasForeignKey<BomDetail>(a => a.PartNumber);
+        }
+
+        private void BuildBomCostDetails(ModelBuilder builder)
+        {
+            var entity = builder.Entity<BomCostReportDetail>().ToTable("BOM_COST_REPORT_DETAILS_VIEW").HasNoKey();
+            entity.Property(a => a.DetailId).HasColumnName("DETAIL_ID");
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER");
+            entity.Property(a => a.PartDescription).HasColumnName("DESCRIPTION");
+            entity.Property(a => a.BomType).HasColumnName("BOM_TYPE");
+            entity.Property(a => a.PreferredSupplier).HasColumnName("PREFERRED_SUPPLIER");
+            entity.Property(a => a.LeadTime).HasColumnName("LEADTIME");
+            entity.Property(a => a.Qty).HasColumnName("QTY");
+            entity.Property(a => a.StandardPrice).HasColumnName("STANDARD_PRICE");
+            entity.Property(a => a.MaterialPrice).HasColumnName("MATERIAL_PRICE");
+            entity.Property(a => a.LabourTimeMins).HasColumnName("LTT");
+            entity.Property(a => a.BomName).HasColumnName("BOM_NAME");
         }
     }
 }

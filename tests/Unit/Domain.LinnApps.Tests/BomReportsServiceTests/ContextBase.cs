@@ -17,6 +17,9 @@
 
         protected IQueryRepository<BoardComponentSummary> ComponentSummaryRepository { get; private set; }
 
+        protected IQueryRepository<BomCostReportDetail> BomCostReportDetailsRepository { get; private set; }
+
+
         protected IBomTreeService BomTreeService { get; private set; }
 
         [SetUp]
@@ -25,11 +28,13 @@
             this.BomDetailRepository = Substitute.For<IBomDetailRepository>();
             this.ComponentSummaryRepository = Substitute.For<IQueryRepository<BoardComponentSummary>>();
             this.BomTreeService = Substitute.For<IBomTreeService>();
+            this.BomCostReportDetailsRepository = Substitute.For<IQueryRepository<BomCostReportDetail>>();
             this.Sut = new BomReportsService(
                 this.BomDetailRepository, 
                 new ReportingHelper(), 
                 this.ComponentSummaryRepository, 
-                this.BomTreeService);
+                this.BomTreeService,
+                this.BomCostReportDetailsRepository);
         }
     }
 }

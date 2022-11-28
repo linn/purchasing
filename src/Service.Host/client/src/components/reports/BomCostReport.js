@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import {
@@ -6,7 +6,6 @@ import {
     Title,
     Loading,
     ReportTable,
-    ExportButton,
     Search,
     collectionSelectorHelpers
 } from '@linn-it/linn-form-components-library';
@@ -44,7 +43,7 @@ function BomCostReport() {
         );
     }
 
-    const reportData = useSelector(state => state[bomCostReport.item]?.data);
+    const reportData = useSelector(state => state[bomCostReport.item].data);
     const partsSearchResults = useSelector(reduxState =>
         collectionSelectorHelpers.getSearchItems(
             reduxState[parts.item],
@@ -89,7 +88,7 @@ function BomCostReport() {
                         variant="contained"
                         color="primary"
                         onClick={() =>
-                            history.push(`/purchasing/boms/reports/list?bomName=${searchTerm}`)
+                            history.push(`/purchasing/boms/reports/cost?bomName=${searchTerm}`)
                         }
                     >
                         Run
@@ -102,24 +101,20 @@ function BomCostReport() {
                     </Grid>
                 ) : (
                     <>
-                        {reportData && (
-                            <>
-                                <Grid item xs={12}>
-                                    <ExportButton
-                                        href={`${config.appRoot}/purchasing/boms/reports/list/export?bomName=${searchTerm}`}
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <ReportTable
-                                        reportData={reportData}
-                                        title={reportData.title}
-                                        showTitle
-                                        placeholderRows={4}
-                                        placeholderColumns={4}
-                                    />
-                                </Grid>
-                            </>
-                        )}
+                        {reportData &&
+                            reportData.map(d => (
+                                <Fragment key={d.subAssembly}>
+                                    <Grid item xs={12}>
+                                        <ReportTable
+                                            reportData={d.breakdown.reportResults[0]}
+                                            title={d.subAssembly}
+                                            showTitle
+                                            placeholderRows={4}
+                                            placeholderColumns={4}
+                                        />
+                                    </Grid>
+                                </Fragment>
+                            ))}
                     </>
                 )}
             </Grid>
