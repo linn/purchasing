@@ -214,6 +214,41 @@
                                 ColumnId = "Type",
                                 TextDisplay = member.BomType
                             });
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = member.PartNumber,
+                                ColumnId = "PreferredSupplier",
+                                TextDisplay = member.PreferredSupplier.ToString()
+                            });
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = member.PartNumber,
+                                ColumnId = "Qty",
+                                Value = member.Qty
+                            });
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = member.PartNumber,
+                                ColumnId = "StdPrice",
+                                Value = member.StandardPrice.GetValueOrDefault()
+                            });
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = member.PartNumber,
+                                ColumnId = "MaterialPrice",
+                                Value = member.MaterialPrice.GetValueOrDefault()
+                            });
+                    values.Add(
+                        new CalculationValueModel
+                            {
+                                RowId = member.PartNumber,
+                                ColumnId = "LabourTime",
+                                Value = member.LabourTimeMins.GetValueOrDefault()
+                            });
                 }
                 reportLayout.SetGridData(values);
                 reportResult.Breakdown = reportLayout.GetResultsModel();

@@ -16,7 +16,7 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingReport : ContextBase
+    public class WhenGettingPartsOnBomReport : ContextBase
     {
         private ResultsModel results;
 
