@@ -31,13 +31,17 @@ function BoardSearch() {
         history.push(`${boardItemType.uri}/${board}`);
     };
 
+    const goToCreate = () => {
+        history.push(`${boardItemType.uri}/create`);
+    };
+
     return (
         <Page history={history} style={{ paddingBottom: '20px' }} homeUrl={config.appRoot}>
             <Typography variant="h5" gutterBottom>
                 Search or select PCAS board
             </Typography>
             <Grid container spacing={2}>
-                <Grid item xs={12}>
+                <Grid item xs={9}>
                     <Stack direction="row" spacing={2}>
                         <Search
                             propertyName="boardCode"
@@ -69,6 +73,16 @@ function BoardSearch() {
                             Go
                         </Button>
                     </Stack>
+                </Grid>
+                <Grid item xs={3}>
+                    <Button
+                        variant="outlined"
+                        onClick={goToCreate}
+                        size="small"
+                        style={{ marginBottom: '25px' }}
+                    >
+                        Create New Board
+                    </Button>
                 </Grid>
             </Grid>
         </Page>

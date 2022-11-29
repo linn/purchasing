@@ -5,6 +5,8 @@
     using Linn.Common.Persistence.EntityFramework;
     using Linn.Purchasing.Domain.LinnApps.Boms;
 
+    using Microsoft.EntityFrameworkCore;
+
     public class CircuitBoardRepository : EntityFrameworkRepository<CircuitBoard, string>
     {
         private readonly ServiceDbContext serviceDbContext;
@@ -19,6 +21,7 @@
         {
             return this.serviceDbContext
                 .CircuitBoards
+                .Include(a => a.Layouts)
                 .FirstOrDefault(c => c.BoardCode == key);
         }
     }

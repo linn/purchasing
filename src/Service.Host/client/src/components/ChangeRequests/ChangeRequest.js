@@ -8,6 +8,7 @@ import Tab from '@mui/material/Tab';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import changeRequestActions from '../../actions/changeRequestActions';
+import changeRequestStatusChangeActions from '../../actions/changeRequestStatusChangeActions';
 import MainTab from './Tabs/MainTab';
 import BomChangesTab from './Tabs/BomChangesTab';
 import PcasChangesTab from './Tabs/PcasChangesTab';
@@ -30,7 +31,23 @@ function ChangeRequest() {
 
     const item = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.changeRequest));
 
+    const statusChange = useSelector(reduxState =>
+        itemSelectorHelpers.getItem(reduxState.changeRequestStatusChange)
+    );
+
+    useEffect(() => {
+        if (item && statusChange && statusChange?.changeState !== item?.changeState) {
+            reduxDispatch(changeRequestActions.fetch(id));
+        }
+    }, [statusChange, reduxDispatch, item, id]);
+
     const [tab, setTab] = useState(0);
+
+    const approve = request => {
+        if (request?.changeState === 'PROPOS') {
+            reduxDispatch(changeRequestStatusChangeActions.add({ id, status: 'ACCEPT' }));
+        }
+    };
 
     return (
         <Page history={history}>
@@ -58,7 +75,7 @@ function ChangeRequest() {
                         </Box>
                         {tab === 0 && (
                             <Box sx={{ paddingTop: 3 }}>
-                                <MainTab item={item} />
+                                <MainTab item={item} approve={approve} />
                             </Box>
                         )}
                         {tab === 1 && (

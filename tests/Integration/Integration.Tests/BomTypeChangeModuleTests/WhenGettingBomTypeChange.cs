@@ -1,10 +1,8 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.BomTypeChangeModuleTests
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq.Expressions;
     using System.Net;
-    using System.Net.Http.Json;
 
     using FluentAssertions;
 
@@ -57,4 +55,3 @@
         }
     }
 }
-

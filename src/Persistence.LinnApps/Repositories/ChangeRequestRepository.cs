@@ -23,6 +23,8 @@
                 .ChangeRequests
                 .Include(c => c.BomChanges).ThenInclude(c => c.PhaseInWeek)
                 .Include(c => c.PcasChanges)
+                .Include(x => x.ProposedBy)
+                .Include(x => x.EnteredBy)
                 .First(c => c.DocumentNumber == key && c.DocumentType == "CRF");
         }
     }

@@ -196,6 +196,8 @@
 
         public DbSet<CircuitBoard> CircuitBoards { get; set; }
 
+        public DbSet<BoardLayout> BoardLayouts { get; set; }
+
         public DbSet<BoardComponentSummary> BoardComponentSummary { get; set; }
 
         public DbSet<PartRequirement> VMasterMrh { get; set; }
@@ -307,6 +309,7 @@
             this.BuildImmediateLiability(builder);
             this.BuildImmediateLiabilityBase(builder);
             this.BuildCircuitBoards(builder);
+            this.BuildBoardLayouts(builder);
             this.BuildBoardComponentSummary(builder);
             this.BuildVMasterMrh(builder);
             this.BuildBomCostDetails(builder);
@@ -1859,6 +1862,11 @@
             entity.Property(c => c.DocumentType).HasColumnName("DOCUMENT_TYPE").HasMaxLength(6);
             entity.Property(c => c.DocumentNumber).HasColumnName("DOCUMENT_NUMBER");
             entity.Property(c => c.DateEntered).HasColumnName("DATE_ENTERED");
+            entity.Property(c => c.DateAccepted).HasColumnName("DATE_ACCEPTED");
+            entity.Property(o => o.ProposedById).HasColumnName("PROPOSED_BY");
+            entity.HasOne(o => o.ProposedBy).WithMany().HasForeignKey(o => o.ProposedById);
+            entity.Property(o => o.EnteredById).HasColumnName("ENTERED_BY");
+            entity.HasOne(o => o.EnteredBy).WithMany().HasForeignKey(o => o.EnteredById);
             entity.Property(c => c.ChangeState).HasColumnName("CHANGE_STATE").HasMaxLength(6);
             entity.Property(c => c.ReasonForChange).HasColumnName("REASON_FOR_CHANGE").HasMaxLength(2000);
             entity.Property(c => c.DescriptionOfChange).HasColumnName("DESCRIPTION_OF_CHANGE").HasMaxLength(2000);
@@ -1979,6 +1987,22 @@
             entity.Property(a => a.CoreBoard).HasColumnName("CORE_BOARD").HasMaxLength(1);
             entity.Property(a => a.ClusterBoard).HasColumnName("CLUSTER_BOARD").HasMaxLength(1);
             entity.Property(a => a.IdBoard).HasColumnName("ID_BOARD").HasMaxLength(1);
+            entity.HasMany(a => a.Layouts).WithOne().HasForeignKey(c => c.BoardCode);
+        }
+
+        private void BuildBoardLayouts(ModelBuilder builder)
+        {
+            var entity = builder.Entity<BoardLayout>().ToTable("PCAS_LAYOUTS");
+            entity.HasKey(a => new { a.BoardCode, a.LayoutCode });
+            entity.Property(a => a.BoardCode).HasColumnName("BOARD_CODE").HasMaxLength(6);
+            entity.Property(a => a.LayoutCode).HasColumnName("LAYOUT_CODE").HasMaxLength(2040);
+            entity.Property(a => a.ChangeState).HasColumnName("CHANGE_STATE").HasMaxLength(6);
+            entity.Property(a => a.ChangeId).HasColumnName("CHANGE_ID");
+            entity.Property(a => a.LayoutSequence).HasColumnName("LAYOUT_SEQ");
+            entity.Property(a => a.PcbNumber).HasColumnName("PCB_NUMBER").HasMaxLength(4);
+            entity.Property(a => a.LayoutType).HasColumnName("LAYOUT_TYPE").HasMaxLength(1);
+            entity.Property(a => a.LayoutNumber).HasColumnName("LAYOUT_NUMBER");
+            entity.Property(a => a.PcbPartNumber).HasColumnName("PCB_PART_NUMBER").HasMaxLength(14);
         }
 
         private void BuildBoardComponentSummary(ModelBuilder builder)

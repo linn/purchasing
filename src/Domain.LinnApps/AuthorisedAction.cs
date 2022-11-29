@@ -43,5 +43,7 @@
         public const string PurchaseOrderAuthorise = "purchase-order.authorise";
 
         public const string ChangeBomType = "part.change-bom-type";
+
+        public const string ApproveChangeRequest = "change-request.approve";
     }
 }

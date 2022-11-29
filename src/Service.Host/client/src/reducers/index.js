@@ -102,6 +102,7 @@ import bomTypeChange from './bomTypeChange';
 import bomTree from './bomTree';
 import board from './board';
 import boards from './boards';
+import changeRequestStatusChange from './changeRequestStatusChange';
 import partsOnBomReport from './partsOnBomReport';
 import bomCostReport from './bomCostReport';
 
@@ -126,6 +127,7 @@ const rootReducer = history =>
         boards,
         bulkLeadTimesUpload,
         changeRequest,
+        changeRequestStatusChange,
         countries,
         currencies,
         deliveryAddresses,
