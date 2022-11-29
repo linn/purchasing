@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { Page, Loading, ExportButton } from '@linn-it/linn-form-components-library';
+import PropTypes from 'prop-types';
+import { Loading } from '@linn-it/linn-form-components-library';
 import { useLocation } from 'react-router-dom';
 import SvgIcon from '@mui/material/SvgIcon';
 import { alpha, styled } from '@mui/material/styles';
@@ -7,10 +8,7 @@ import TreeView from '@mui/lab/TreeView';
 import TreeItem, { treeItemClasses } from '@mui/lab/TreeItem';
 import Grid from '@mui/material/Grid';
 import queryString from 'query-string';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import history from '../history';
-import config from '../config';
 import { bomTree as bomTreeItemType } from '../itemTypes';
 import bomTreeActions from '../actions/bomTreeActions';
 import useInitialise from '../hooks/useInitialise';
@@ -55,11 +53,13 @@ const StyledTreeItem = styled(props => <TreeItem {...props} />)(({ theme }) => (
     }
 }));
 
-export default function BomTree() {
+export default function BomTree({ onNodeSelect, renderComponents, renderDescriptions }) {
     const { search } = useLocation();
     const { bomName, levels, requirementOnly, showChanges, treeType } = queryString.parse(search);
 
-    const url = `/purchasing/boms/tree?bomName=${bomName}&levels=${levels}&requirementOnly=${requirementOnly}&showChanges=${showChanges}&treeType=${treeType}`;
+    const url = `/purchasing/boms/tree?bomName=${bomName}&levels=${levels ?? 0}&requirementOnly=${
+        requirementOnly ?? true
+    }&showChanges=${showChanges ?? false}&treeType=${treeType ?? 'bom'}`;
     const [bomTree, bomTreeLoading] = useInitialise(
         () => bomTreeActions.fetchByHref(url),
         bomTreeItemType.item
@@ -78,7 +78,7 @@ export default function BomTree() {
                 const current = q[0];
                 q.shift();
                 if (current.children?.length) {
-                    result.push(current.name);
+                    result.push(current);
                     for (let i = 0; i < current.children.length; i += 1) {
                         q.push(current.children[i]);
                     }
@@ -86,8 +86,8 @@ export default function BomTree() {
                 n -= 1;
             }
         }
-        return result;
-    }, [bomTree]);
+        return [{ name: bomName, id: 'root', children: bomTree.children }, ...result];
+    }, [bomTree, bomName]);
 
     const renderTree = nodes => {
         const label = (
@@ -105,75 +105,91 @@ export default function BomTree() {
                             {' '}
                             (x{nodes.qty})
                         </Typography>
-                        <Typography display="inline" variant="caption">
-                            {' - '}
-                            {nodes.description}
-                        </Typography>
+                        {renderDescriptions && (
+                            <Typography display="inline" variant="caption">
+                                {' - '}
+                                {nodes.description}
+                            </Typography>
+                        )}
                     </>
                 )}
             </>
         );
         return (
-            <StyledTreeItem key={nodes.name} nodeId={nodes.name} label={label}>
+            <StyledTreeItem key={nodes.id || 'root'} nodeId={nodes.id || 'root'} label={label}>
                 {Array.isArray(nodes.children)
-                    ? nodes.children.map(node => renderTree(node))
+                    ? nodes.children.map(node => {
+                          if (!renderComponents) {
+                              return node.type === 'C' ? <></> : renderTree(node);
+                          }
+                          return renderTree(node);
+                      })
                     : null}
             </StyledTreeItem>
         );
     };
 
     return (
-        <Page history={history} homeUrl={config.appRoot}>
-            <Grid container spacing={3}>
-                <Grid item xs={12}>
+        //<Page history={history} homeUrl={config.appRoot}>
+        <Grid container spacing={3}>
+            {/* <Grid item xs={12}>
                     <ExportButton
                         href={`${config.appRoot}/purchasing/boms/tree/export?bomName=${bomName}&levels=${levels}&requirementOnly=${requirementOnly}&showChanges=${showChanges}&treeType=${treeType}`}
                     />
-                </Grid>
-                <Grid item xs={2}>
-                    <Button
-                        variant="outlined"
-                        onClick={() =>
-                            history.push(`/purchasing/boms/tree/options?bomName=${bomName}`)
-                        }
-                    >
-                        Back
-                    </Button>
-                </Grid>
-                <Grid item xs={10} />
-                {bomTree && (
-                    <>
-                        <Grid item xs={12}>
-                            <Typography variant="h4" color="primary" display="inline">
-                                {bomTree.name}
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TreeView
-                                aria-label="customized"
-                                defaultCollapseIcon={<MinusSquare />}
-                                defaultExpandIcon={<PlusSquare />}
-                                defaultEndIcon={<CloseSquare />}
-                                expanded={nodesWithChildren}
-                            >
-                                {renderTree(bomTree)}
-                            </TreeView>
-                        </Grid>
-                    </>
-                )}
-                {bomTreeLoading && (
-                    <>
-                        <Grid item xs={12}>
-                            <Typography variant="subtitle2">
-                                Filling out the tree... May take a while...
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Loading />
-                        </Grid>
-                    </>
-                )}
-            </Grid>
-        </Page>
+                </Grid> */}
+            {/* <Grid item xs={2}>
+                <Button
+                    variant="outlined"
+                    onClick={() => history.push(`/purchasing/boms/tree/options?bomName=${bomName}`)}
+                >
+                    Back
+                </Button>
+            </Grid> */}
+            <Grid item xs={10} />
+            {bomTree && (
+                <>
+                    {/* <Grid item xs={12}>
+                        <Typography variant="h4" color="primary" display="inline">
+                            {bomTree.name}
+                        </Typography>
+                    </Grid> */}
+                    <Grid item xs={12}>
+                        <TreeView
+                            aria-label="customized"
+                            defaultCollapseIcon={<MinusSquare />}
+                            defaultExpandIcon={<PlusSquare />}
+                            multiSelect={false}
+                            defaultEndIcon={<CloseSquare />}
+                            expanded={nodesWithChildren.map(n => n.id)}
+                            onNodeSelect={(_, id) =>
+                                onNodeSelect?.(nodesWithChildren.find(x => x.id === id)?.children)
+                            }
+                        >
+                            {renderTree(bomTree)}
+                        </TreeView>
+                    </Grid>
+                </>
+            )}
+            {bomTreeLoading && (
+                <>
+                    <Grid item xs={12}>
+                        <Typography variant="subtitle2">
+                            Filling out the tree... May take a while...
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Loading />
+                    </Grid>
+                </>
+            )}
+        </Grid>
+        //</Page>
     );
 }
+
+BomTree.propTypes = {
+    renderDescriptions: PropTypes.bool,
+    onNodeSelect: PropTypes.func,
+    renderComponents: PropTypes.bool
+};
+BomTree.defaultProps = { renderDescriptions: true, onNodeSelect: null, renderComponents: true };
