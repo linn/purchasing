@@ -14,7 +14,7 @@
 
     using NUnit.Framework;
 
-    public class WhenUpdatingDetailsAddingToDeliveryTotal : ContextBase
+    public class WhenUpdatingShouldIncreaseOrderLineQty : ContextBase
     {
         private PurchaseOrder order;
 
@@ -67,10 +67,8 @@
                                                      BaseOurUnitPrice = 11,
                                                      DateRequested = 25.March(2022),
                                                      AvailableAtSupplier = "N"
-                                                 },
-
+                                                 }
                                          };
-
 
             // Order will be updated to delivery total. Simulate adding deliveries.
             this.line = new PurchaseOrderDetail
@@ -124,9 +122,6 @@
             updated.OurDeliveryQty.Should().Be(updateData.OurDeliveryQty);
             updated.OrderDeliveryQty.Should().Be(updateData.OurDeliveryQty / this.line.OrderConversionFactor);
             updated.OurUnitPriceCurrency.Should().Be(this.line.OurUnitPriceCurrency);
-            updated.DateRequested.Should().Be(updateData.DateRequested);
-            updated.DateAdvised.Should().Be(updateData.DateAdvised);
-            updated.CallOffDate.Should().BeCloseTo(DateTime.Now, new TimeSpan(0, 1, 0));
             updated.NetTotalCurrency.Should().Be(
                 Math.Round(
                     updateData.OurDeliveryQty.GetValueOrDefault() * this.line.OurUnitPriceCurrency.GetValueOrDefault(),
@@ -147,8 +142,6 @@
                                       * this.line.BaseOurUnitPrice.GetValueOrDefault()));
             updated.QuantityOutstanding.Should().Be(
               10);
-            updated.RescheduleReason.Should().Be("REQUESTED");
-            updated.AvailableAtSupplier.Should().Be(updateData.AvailableAtSupplier);
 
             //Sum total of the delivery quantities
             line.OrderQty.Should().Be(40);

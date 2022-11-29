@@ -14,7 +14,7 @@
 
     using NUnit.Framework;
 
-    public class WhenUpdatingDetailsRemovingFromDeliveryTotal : ContextBase
+    public class WhenUpdatingShouldDecreaseOrderLineQty : ContextBase
     {
         private PurchaseOrder order;
 
@@ -45,7 +45,6 @@
                                                      AvailableAtSupplier = "N"
                                                  }
                                          };
-
 
             // Order will be updated to delivery total. Simulate removing deliveries.  
             this.line = new PurchaseOrderDetail
@@ -98,10 +97,6 @@
             updated.DeliverySeq.Should().Be(1);
             updated.OurDeliveryQty.Should().Be(updateData.OurDeliveryQty);
             updated.OrderDeliveryQty.Should().Be(updateData.OurDeliveryQty / this.line.OrderConversionFactor);
-            updated.OurUnitPriceCurrency.Should().Be(this.line.OurUnitPriceCurrency);
-            updated.DateRequested.Should().Be(updateData.DateRequested);
-            updated.DateAdvised.Should().Be(updateData.DateAdvised);
-            updated.CallOffDate.Should().BeCloseTo(DateTime.Now, new TimeSpan(0, 1, 0));
             updated.NetTotalCurrency.Should().Be(
                 Math.Round(
                     updateData.OurDeliveryQty.GetValueOrDefault() * this.line.OurUnitPriceCurrency.GetValueOrDefault(),
@@ -122,8 +117,6 @@
                                       * this.line.BaseOurUnitPrice.GetValueOrDefault()));
             updated.QuantityOutstanding.Should().Be(
               10);
-            updated.RescheduleReason.Should().Be("REQUESTED");
-            updated.AvailableAtSupplier.Should().Be(updateData.AvailableAtSupplier);
 
             //Sum total of the delivery quantities
             line.OrderQty.Should().Be(10);

@@ -1197,7 +1197,7 @@ function PurchaseOrderUtility({ creating }) {
                                                                 detail
                                                             )
                                                         }
-                                                        disabled={!allowedToUpdate()}
+                                                        disabled={!creating}
                                                         type="number"
                                                         required
                                                     />
