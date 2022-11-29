@@ -5,6 +5,7 @@
 
     using FluentAssertions;
 
+    using Linn.Common.Reporting.Models;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Integration.Tests.Extensions;
 
@@ -21,7 +22,9 @@
         [SetUp]
         public void SetUp()
         {
-            this.results = new List<BomCostReport> { new BomCostReport { SubAssembly = "SK HUB" } };
+            this.results = new List<BomCostReport> { new BomCostReport { SubAssembly = "SK HUB", Breakdown = new ResultsModel() } };
+
+            this.bomName = "SK HUB";
 
             this.MockBomReportsDomainService.GetBomCostReport(this.bomName, true, 999, 15).Returns(this.results);
 
