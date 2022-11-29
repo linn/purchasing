@@ -130,29 +130,10 @@ export default function BomTree({ onNodeSelect, renderComponents, renderDescript
     };
 
     return (
-        //<Page history={history} homeUrl={config.appRoot}>
         <Grid container spacing={3}>
-            {/* <Grid item xs={12}>
-                    <ExportButton
-                        href={`${config.appRoot}/purchasing/boms/tree/export?bomName=${bomName}&levels=${levels}&requirementOnly=${requirementOnly}&showChanges=${showChanges}&treeType=${treeType}`}
-                    />
-                </Grid> */}
-            {/* <Grid item xs={2}>
-                <Button
-                    variant="outlined"
-                    onClick={() => history.push(`/purchasing/boms/tree/options?bomName=${bomName}`)}
-                >
-                    Back
-                </Button>
-            </Grid> */}
             <Grid item xs={10} />
             {bomTree && (
                 <>
-                    {/* <Grid item xs={12}>
-                        <Typography variant="h4" color="primary" display="inline">
-                            {bomTree.name}
-                        </Typography>
-                    </Grid> */}
                     <Grid item xs={12}>
                         <TreeView
                             aria-label="customized"
