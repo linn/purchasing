@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
 
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.Boms;
@@ -50,10 +51,17 @@
                                 {
                                     node.Name,
                                     node.Description,
-                                    node.Qty.ToString(CultureInfo.InvariantCulture)
+                                    node.Qty.ToString(CultureInfo.InvariantCulture),
+                                    node.ParentName
                                 });
             }
 
+            if (csvData.Count > 0)
+            {
+                csvData.RemoveAt(0);
+                csvData.Insert(0, new List<string> { bomName, "DESCRIPTION", "QTY", "PARENT" });
+            }
+            
             return csvData;
         }
     }

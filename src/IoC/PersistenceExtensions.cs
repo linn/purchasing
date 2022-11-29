@@ -219,7 +219,10 @@
                 .AddTransient<IRepository<CircuitBoard, string>, CircuitBoardRepository>()
                 .AddTransient<IQueryRepository<BoardComponentSummary>, EntityFrameworkQueryRepository<BoardComponentSummary>>(
                     r => new EntityFrameworkQueryRepository<BoardComponentSummary>(r.GetService<ServiceDbContext>()
-                        ?.BoardComponentSummary));
+                        ?.BoardComponentSummary))
+                .AddTransient<IQueryRepository<BomCostReportDetail>, EntityFrameworkQueryRepository<BomCostReportDetail>>(
+                    r => new EntityFrameworkQueryRepository<BomCostReportDetail>(r.GetService<ServiceDbContext>()
+                        ?.BomCostDetails));
         }
     }
 }
