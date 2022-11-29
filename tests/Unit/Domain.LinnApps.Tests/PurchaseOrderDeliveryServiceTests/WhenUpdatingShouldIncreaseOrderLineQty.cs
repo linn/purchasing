@@ -143,8 +143,9 @@
             updated.QuantityOutstanding.Should().Be(
               10);
 
-            //Sum total of the delivery quantities
+            //Sum total of the delivery quantities. Ensure both qtys are increased.
             line.OrderQty.Should().Be(40);
+            line.OurQty.Should().Be(40);
         }
 
         [Test]

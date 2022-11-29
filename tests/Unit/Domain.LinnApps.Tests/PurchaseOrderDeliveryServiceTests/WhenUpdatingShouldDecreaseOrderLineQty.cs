@@ -46,7 +46,7 @@
                                                  }
                                          };
 
-            // Order will be updated to delivery total. Simulate removing deliveries.  
+            // Order will be updated to delivery total.
             this.line = new PurchaseOrderDetail
             {
                 Line = 1,
@@ -118,8 +118,9 @@
             updated.QuantityOutstanding.Should().Be(
               10);
 
-            //Sum total of the delivery quantities
+            //Sum total of the delivery quantities. Ensure both qtys are decreased. 
             line.OrderQty.Should().Be(10);
+            line.OurQty.Should().Be(10);
         }
 
         [Test]
