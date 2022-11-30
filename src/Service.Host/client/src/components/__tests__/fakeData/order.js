@@ -16,7 +16,10 @@ const order = {
         description: 'PURCHASE ORDER',
         name: 'PO'
     },
-    links: [{ href: '/fil-cancel', rel: 'fil-cancel' }],
+    links: [
+        { href: '/fil-cancel', rel: 'fil-cancel' },
+        { href: '/edit', rel: 'edit' }
+    ],
     supplier: {
         id: 6231,
         name: 'THE SAW CENTRE',
