@@ -19,7 +19,6 @@
 
         protected IQueryRepository<BomCostReportDetail> BomCostReportDetailsRepository { get; private set; }
 
-
         protected IBomTreeService BomTreeService { get; private set; }
 
         [SetUp]

@@ -47,7 +47,8 @@
                                                     Name = d.Part.PartNumber,
                                                     Description = d.Part.Description,
                                                     Qty = d.Qty,
-                                                    Type = d.Part.BomType
+                                                    Type = d.Part.BomType,
+                                                    Id = d.DetailId
                                                 }).OrderBy(x => x.Name)
                                };
 
@@ -90,6 +91,8 @@
                                     Name = child.Name,
                                     Description = child.Description,
                                     Qty = child.Qty,
+                                    Id = child.Id,
+                                    Type = child.Type,
                                     Children =
                                     children?
                                         .OrderBy(x => x.Part.PartNumber)
@@ -101,9 +104,9 @@
                                                         Name = detail.Part.PartNumber,
                                                         Description = detail.Part.Description,
                                                         Qty = detail.Qty,
-                                                        Type = detail.Part.BomType
-
-                                                })
+                                                        Type = detail.Part.BomType,
+                                                        Id = detail.DetailId
+                                                    })
                                 };
                                 return node;
                         }).ToList();
