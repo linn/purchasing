@@ -32,6 +32,17 @@ export default function BomTreeReport() {
                     </Button>
                 </Grid>
                 <Grid item xs={10} />
+                <Grid item xs={2}>
+                    <Button
+                        variant="outlined"
+                        onClick={() =>
+                            history.push(`/purchasing/boms/bom-utility?bomName=${bomName}`)
+                        }
+                    >
+                        BOM UT
+                    </Button>
+                </Grid>
+                <Grid item xs={10} />
                 <BomTree />
             </Grid>
         </Page>
