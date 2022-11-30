@@ -250,21 +250,22 @@ function CreatePurchaseOrderUt() {
     }, [previousOrderResults]);
 
     useEffect(() => {
-        if (partSuppliersSearchResults?.length) {
+        const partSuppliersWithCorrectPart = partSuppliersSearchResults?.filter(a => a.partNumber === detail?.partNumber);
+        if (partSuppliersWithCorrectPart.length) {
             handleSupplierChange({
-                id: `${partSuppliersSearchResults.find(s => s.supplierRanking === 1).supplierId}`
+                id: `${partSuppliersWithCorrectPart.find(s => s.supplierRanking === 1).supplierId}`
             });
             dispatch({
                 payload: {
                     lineNumber: 1,
                     fieldName: 'ourUnitPriceCurrency',
-                    value: partSuppliersSearchResults.find(s => s.supplierRanking === 1)
+                    value: partSuppliersWithCorrectPart.find(s => s.supplierRanking === 1)
                         .currencyUnitPrice
                 },
                 type: 'detailFieldUpdate'
             });
         }
-    }, [partSuppliersSearchResults]);
+    }, [detail?.partNumber, partSuppliersSearchResults]);
 
     const progressToFullCreate = () => {
         reduxDispatch(suggestedPurchaseOrderValuesActions.add(order));
