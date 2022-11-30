@@ -23,6 +23,7 @@ function BomUtility() {
                     <BomTree
                         renderDescriptions={false}
                         renderComponents={false}
+                        renderQties={false}
                         onNodeSelect={id => setSelected(id)}
                     />
                 </Grid>

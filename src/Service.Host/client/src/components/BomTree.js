@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Loading } from '@linn-it/linn-form-components-library';
 import { useLocation } from 'react-router-dom';
@@ -53,12 +53,17 @@ const StyledTreeItem = styled(props => <TreeItem {...props} />)(({ theme }) => (
     }
 }));
 
-export default function BomTree({ onNodeSelect, renderComponents, renderDescriptions }) {
+export default function BomTree({
+    onNodeSelect,
+    renderComponents,
+    renderDescriptions,
+    renderQties
+}) {
     const { search } = useLocation();
     const { bomName, levels, requirementOnly, showChanges, treeType } = queryString.parse(search);
-
+    const [selected, setSelected] = useState([]);
     const url = `/purchasing/boms/tree?bomName=${bomName}&levels=${levels ?? 0}&requirementOnly=${
-        requirementOnly ?? true
+        requirementOnly ?? false
     }&showChanges=${showChanges ?? false}&treeType=${treeType ?? 'bom'}`;
     const [bomTree, bomTreeLoading] = useInitialise(
         () => bomTreeActions.fetchByHref(url),
@@ -88,6 +93,11 @@ export default function BomTree({ onNodeSelect, renderComponents, renderDescript
         }
         return [{ name: bomName, id: 'root', children: bomTree.children }, ...result];
     }, [bomTree, bomName]);
+    const [expanded, setExpanded] = React.useState([]);
+
+    useEffect(() => {
+        setExpanded(nodesWithChildren.map(x => x.id));
+    }, [nodesWithChildren]);
 
     const renderTree = nodes => {
         const label = (
@@ -101,10 +111,12 @@ export default function BomTree({ onNodeSelect, renderComponents, renderDescript
                 </Typography>
                 {nodes.name !== bomName.toUpperCase() && (
                     <>
-                        <Typography display="inline" variant="subtitle2">
-                            {' '}
-                            (x{nodes.qty})
-                        </Typography>
+                        {renderQties && (
+                            <Typography display="inline" variant="subtitle2">
+                                {' '}
+                                (x{nodes.qty})
+                            </Typography>
+                        )}
                         {renderDescriptions && (
                             <Typography display="inline" variant="caption">
                                 {' - '}
@@ -115,9 +127,11 @@ export default function BomTree({ onNodeSelect, renderComponents, renderDescript
                 )}
             </>
         );
+
         return (
             <StyledTreeItem key={nodes.id || 'root'} nodeId={nodes.id || 'root'} label={label}>
-                {Array.isArray(nodes.children)
+                {Array.isArray(nodes.children) &&
+                (renderComponents || nodes.children.some(x => x.type !== 'C'))
                     ? nodes.children.map(node => {
                           if (!renderComponents) {
                               return node.type === 'C' ? <></> : renderTree(node);
@@ -128,7 +142,11 @@ export default function BomTree({ onNodeSelect, renderComponents, renderDescript
             </StyledTreeItem>
         );
     };
-
+    const handleToggle = (event, nodeIds) => {
+        if (event.target.closest('.MuiTreeItem-iconContainer')) {
+            setExpanded(nodeIds);
+        }
+    };
     return (
         <Grid container spacing={3}>
             <Grid item xs={10} />
@@ -140,11 +158,18 @@ export default function BomTree({ onNodeSelect, renderComponents, renderDescript
                             defaultCollapseIcon={<MinusSquare />}
                             defaultExpandIcon={<PlusSquare />}
                             multiSelect={false}
+                            expanded={expanded}
+                            selected={selected}
+                            onNodeToggle={handleToggle}
                             defaultEndIcon={<CloseSquare />}
-                            expanded={nodesWithChildren.map(n => n.id)}
-                            onNodeSelect={(_, id) =>
-                                onNodeSelect?.(nodesWithChildren.find(x => x.id === id)?.children)
-                            }
+                            onNodeSelect={(event, id) => {
+                                if (!event.target.closest('.MuiTreeItem-iconContainer')) {
+                                    setSelected(id);
+                                    onNodeSelect?.(
+                                        nodesWithChildren.find(x => x.id === id)?.children
+                                    );
+                                }
+                            }}
                         >
                             {renderTree(bomTree)}
                         </TreeView>
@@ -164,13 +189,18 @@ export default function BomTree({ onNodeSelect, renderComponents, renderDescript
                 </>
             )}
         </Grid>
-        //</Page>
     );
 }
 
 BomTree.propTypes = {
     renderDescriptions: PropTypes.bool,
     onNodeSelect: PropTypes.func,
-    renderComponents: PropTypes.bool
+    renderComponents: PropTypes.bool,
+    renderQties: PropTypes.bool
 };
-BomTree.defaultProps = { renderDescriptions: true, onNodeSelect: null, renderComponents: true };
+BomTree.defaultProps = {
+    renderDescriptions: true,
+    onNodeSelect: null,
+    renderComponents: true,
+    renderQties: true
+};
