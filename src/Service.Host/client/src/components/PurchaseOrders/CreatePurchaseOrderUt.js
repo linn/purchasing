@@ -250,8 +250,10 @@ function CreatePurchaseOrderUt() {
     }, [previousOrderResults]);
 
     useEffect(() => {
-        const partSuppliersWithCorrectPart = partSuppliersSearchResults?.filter(a => a.partNumber === detail?.partNumber);
-        if (partSuppliersWithCorrectPart.length) {
+        const partSuppliersWithCorrectPart = partSuppliersSearchResults?.filter(
+            a => a.partNumber === detail?.partNumber
+        );
+        if (partSuppliersWithCorrectPart?.length) {
             handleSupplierChange({
                 id: `${partSuppliersWithCorrectPart.find(s => s.supplierRanking === 1).supplierId}`
             });
