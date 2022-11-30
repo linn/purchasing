@@ -266,7 +266,7 @@ function PurchaseOrderUtility({ creating }) {
     };
 
     const lineItemsReceived = lineNumber => {
-        const currentDetail = item.details?.find(a => a.lineNumber === lineNumber);
+        const currentDetail = item?.details?.find(a => a.lineNumber === lineNumber);
 
         if (currentDetail && currentDetail.purchaseDeliveries?.some(a => a.qtyNetReceived)) {
             return true;
