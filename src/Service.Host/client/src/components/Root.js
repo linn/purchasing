@@ -68,7 +68,7 @@ import DeliveryPerformanceSupplierReport from './reports/DeliveryPerformanceSupp
 import DeliveryPerformanceDetailReport from './reports/DeliveryPerformanceDetailReport';
 import CreatePurchaseOrderUt from './PurchaseOrders/CreatePurchaseOrderUt';
 import PurchaseOrdersAuthSend from './PurchaseOrders/PurchaseOrdersAuthSend';
-import BomTree from './BomTree';
+import BomTreeReport from './BomTreeReport';
 import BomTreeOptions from './BomTreeOptions';
 import ChangeRequestSearch from './ChangeRequests/ChangeRequestsSearch';
 import ChangeRequest from './ChangeRequests/ChangeRequest';
@@ -76,6 +76,8 @@ import BomTypeChange from './BomTypeChange';
 import Board from './boards/Board';
 import BoardSearch from './boards/BoardSearch';
 import PartsOnBomReport from './reports/PartsOnBomReport';
+import BomCostReport from './reports/BomCostReport';
+import BomUtility from './BomUtility/BomUtility';
 
 const Root = ({ store }) => (
     <div>
@@ -436,7 +438,11 @@ const Root = ({ store }) => (
                                     component={BomTreeOptions}
                                 />
 
-                                <Route exact path="/purchasing/boms/tree" component={BomTree} />
+                                <Route
+                                    exact
+                                    path="/purchasing/boms/tree"
+                                    component={BomTreeReport}
+                                />
                                 <Route
                                     exact
                                     path="/purchasing/change-requests"
@@ -456,6 +462,16 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/boms/reports/list"
                                     component={PartsOnBomReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/boms/reports/cost"
+                                    component={BomCostReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/boms/bom-utility"
+                                    component={BomUtility}
                                 />
                                 <Route component={NotFoundPage} />
                             </Switch>

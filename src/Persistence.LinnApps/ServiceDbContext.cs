@@ -196,9 +196,13 @@
 
         public DbSet<CircuitBoard> CircuitBoards { get; set; }
 
+        public DbSet<BoardLayout> BoardLayouts { get; set; }
+
         public DbSet<BoardComponentSummary> BoardComponentSummary { get; set; }
 
         public DbSet<PartRequirement> VMasterMrh { get; set; }
+
+        public DbSet<BomCostReportDetail> BomCostDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -305,8 +309,10 @@
             this.BuildImmediateLiability(builder);
             this.BuildImmediateLiabilityBase(builder);
             this.BuildCircuitBoards(builder);
+            this.BuildBoardLayouts(builder);
             this.BuildBoardComponentSummary(builder);
             this.BuildVMasterMrh(builder);
+            this.BuildBomCostDetails(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -402,7 +408,7 @@
             entity.HasOne(e => e.MadeInvalidBy).WithMany().HasForeignKey("MADE_INVALID_BY");
             entity.Property(e => e.UnitOfMeasure).HasColumnName("ORDER_UNIT_OF_MEASURE").HasMaxLength(14);
             entity.Property(e => e.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
-            entity.HasOne(e => e.Part).WithMany().HasForeignKey(p => p.PartNumber);
+            entity.HasOne(e => e.Part).WithMany(p => p.PartSuppliers).HasForeignKey(p => p.PartNumber);
             entity.Property(e => e.SupplierId).HasColumnName("SUPPLIER_ID");
             entity.HasOne(e => e.Supplier).WithMany().HasForeignKey(e => e.SupplierId);
             entity.HasOne(e => e.OrderMethod).WithMany().HasForeignKey("PL_ORDER_METHOD");
@@ -1981,6 +1987,22 @@
             entity.Property(a => a.CoreBoard).HasColumnName("CORE_BOARD").HasMaxLength(1);
             entity.Property(a => a.ClusterBoard).HasColumnName("CLUSTER_BOARD").HasMaxLength(1);
             entity.Property(a => a.IdBoard).HasColumnName("ID_BOARD").HasMaxLength(1);
+            entity.HasMany(a => a.Layouts).WithOne().HasForeignKey(c => c.BoardCode);
+        }
+
+        private void BuildBoardLayouts(ModelBuilder builder)
+        {
+            var entity = builder.Entity<BoardLayout>().ToTable("PCAS_LAYOUTS");
+            entity.HasKey(a => new { a.BoardCode, a.LayoutCode });
+            entity.Property(a => a.BoardCode).HasColumnName("BOARD_CODE").HasMaxLength(6);
+            entity.Property(a => a.LayoutCode).HasColumnName("LAYOUT_CODE").HasMaxLength(2040);
+            entity.Property(a => a.ChangeState).HasColumnName("CHANGE_STATE").HasMaxLength(6);
+            entity.Property(a => a.ChangeId).HasColumnName("CHANGE_ID");
+            entity.Property(a => a.LayoutSequence).HasColumnName("LAYOUT_SEQ");
+            entity.Property(a => a.PcbNumber).HasColumnName("PCB_NUMBER").HasMaxLength(4);
+            entity.Property(a => a.LayoutType).HasColumnName("LAYOUT_TYPE").HasMaxLength(1);
+            entity.Property(a => a.LayoutNumber).HasColumnName("LAYOUT_NUMBER");
+            entity.Property(a => a.PcbPartNumber).HasColumnName("PCB_PART_NUMBER").HasMaxLength(14);
         }
 
         private void BuildBoardComponentSummary(ModelBuilder builder)
@@ -2015,6 +2037,22 @@
             entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER");
             entity.Property(a => a.AnnualUsage).HasColumnName("ANNUAL_USAGE");
             entity.HasOne(a => a.BomDetail).WithOne(b => b.PartRequirement).HasForeignKey<BomDetail>(a => a.PartNumber);
+        }
+
+        private void BuildBomCostDetails(ModelBuilder builder)
+        {
+            var entity = builder.Entity<BomCostReportDetail>().ToTable("BOM_COST_REPORT_DETAILS_VIEW").HasNoKey();
+            entity.Property(a => a.DetailId).HasColumnName("DETAIL_ID");
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER");
+            entity.Property(a => a.PartDescription).HasColumnName("DESCRIPTION");
+            entity.Property(a => a.BomType).HasColumnName("BOM_TYPE");
+            entity.Property(a => a.PreferredSupplier).HasColumnName("PREFERRED_SUPPLIER");
+            entity.Property(a => a.LeadTime).HasColumnName("LEADTIME");
+            entity.Property(a => a.Qty).HasColumnName("QTY");
+            entity.Property(a => a.StandardPrice).HasColumnName("STANDARD_PRICE");
+            entity.Property(a => a.MaterialPrice).HasColumnName("MATERIAL_PRICE");
+            entity.Property(a => a.LabourTimeMins).HasColumnName("LTT");
+            entity.Property(a => a.BomName).HasColumnName("BOM_NAME");
         }
     }
 }

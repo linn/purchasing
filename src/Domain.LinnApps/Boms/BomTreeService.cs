@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Boms
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -45,7 +46,9 @@
                                                 {
                                                     Name = d.Part.PartNumber,
                                                     Description = d.Part.Description,
-                                                    Qty = d.Qty
+                                                    Qty = d.Qty,
+                                                    Type = d.Part.BomType,
+                                                    Id = d.DetailId
                                                 }).OrderBy(x => x.Name)
                                };
 
@@ -75,19 +78,23 @@
                     current.Children = current.Children?.Select(
                         child =>
                             {
-                                var children = this.detailRepository
+
+                                var children = child.Type != "C" ? this.detailRepository
                                     .FilterBy(x => x.BomName == child.Name)
                                     .Where(x => showChanges || x.ChangeState == "LIVE")
                                     .Where(c => !requirementOnly
-                                                || (c.PartRequirement != null && c.PartRequirement.AnnualUsage > 0));
+                                                || (c.PartRequirement != null && c.PartRequirement.AnnualUsage > 0))
+                                                   :null;
 
                                 var node = new BomTreeNode
                                 {
                                     Name = child.Name,
                                     Description = child.Description,
                                     Qty = child.Qty,
+                                    Id = child.Id,
+                                    Type = child.Type,
                                     Children =
-                                    children
+                                    children?
                                         .OrderBy(x => x.Part.PartNumber)
                                         .Select(
                                             detail =>
@@ -96,8 +103,10 @@
                                                     {
                                                         Name = detail.Part.PartNumber,
                                                         Description = detail.Part.Description,
-                                                        Qty = detail.Qty
-                                                })
+                                                        Qty = detail.Qty,
+                                                        Type = detail.Part.BomType,
+                                                        Id = detail.DetailId
+                                                    })
                                 };
                                 return node;
                         }).ToList();
@@ -142,7 +151,10 @@
                                  {
                                      Name = d.Part.PartNumber,
                                      Description = d.Part.Description,
-                                     Qty = d.Qty
+                                     Qty = d.Qty,
+                                     Type = d.Part.BomType,
+                                     ParentName = root.BomName,
+                                     Id = d.DetailId
                                  }).OrderBy(x => x.Name)
             };
             var q = new Queue<BomTreeNode>();
@@ -165,17 +177,21 @@
                     current.Children = current.Children?.Select(
                         child =>
                         {
-                            var children = this.detailRepository
+                            var children = child.Type != "C" ? this.detailRepository
                                 .FilterBy(x => x.BomName == child.Name)
                                 .Where(x => showChanges || x.ChangeState == "LIVE")
                                 .Where(c => !requirementOnly
-                                            || (c.PartRequirement != null && c.PartRequirement.AnnualUsage > 0));
+                                            || (c.PartRequirement != null && c.PartRequirement.AnnualUsage > 0))
+                                               : null;
                             var node = new BomTreeNode
                             {
                                 Name = child.Name,
                                 Description = child.Description,
                                 Qty = child.Qty,
-                                Children = children
+                                ParentName = child.ParentName,
+                                Id = child.Id,
+                                Type = child.Type,
+                                Children = children?
                                         .OrderBy(x => x.Part.PartNumber)
                                         .Select(
                                             detail =>
@@ -183,7 +199,10 @@
                                                 {
                                                     Name = detail.Part.PartNumber,
                                                     Description = detail.Part.Description,
-                                                    Qty = detail.Qty
+                                                    Qty = detail.Qty,
+                                                    Type = detail.Part.BomType,
+                                                    ParentName = child.Name,
+                                                    Id = detail.DetailId
                                                 })
                             };
                             return node;

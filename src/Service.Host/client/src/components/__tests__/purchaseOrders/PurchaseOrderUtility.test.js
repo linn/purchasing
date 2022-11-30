@@ -9,6 +9,7 @@ import { utilities } from '@linn-it/linn-form-components-library';
 import { sendPurchaseOrderDeptEmail, suggestedPurchaseOrderValues } from '../../../itemTypes';
 import render from '../../../test-utils';
 import order from '../fakeData/order';
+import detailWithReceived from '../fakeData/detailWithReceived';
 import PurchaseOrderUtility from '../../PurchaseOrders/PurchaseOrderUtility';
 import sendPurchaseOrderDeptEmailActions from '../../../actions/sendPurchaseOrderDeptEmailActions';
 import purchaseOrderActions from '../../../actions/purchaseOrderActions';
@@ -49,6 +50,16 @@ const stateWithCancelledOrder = {
         item: {
             ...order,
             cancelled: 'Y'
+        }
+    }
+};
+
+const stateWithDelivery = {
+    ...reduxState,
+    purchaseOrder: {
+        item: {
+            ...order,
+            details: [detailWithReceived]
         }
     }
 };
@@ -103,6 +114,25 @@ describe('When order...', () => {
     test('Should render order', () => {
         expect(screen.getByDisplayValue(100157)).toBeInTheDocument();
         expect(screen.getByDisplayValue('Rev 123')).toBeInTheDocument();
+    });
+
+    test('Should enable price change as no deliveries yet', () => {
+        expect(screen.getByLabelText('Our price (unit, currency) *')).toBeInTheDocument();
+        expect(screen.getByLabelText('Our price (unit, currency) *')).toBeEnabled();
+    });
+});
+
+describe('When order line has items received...', () => {
+    beforeEach(() => {
+        cleanup();
+        jest.clearAllMocks();
+        useSelector.mockImplementation(callback => callback(stateWithDelivery));
+        render(<PurchaseOrderUtility />);
+    });
+
+    test('Should disable price change', () => {
+        expect(screen.getByLabelText('Our price (unit, currency) *')).toBeInTheDocument();
+        expect(screen.getByLabelText('Our price (unit, currency) *')).toBeDisabled();
     });
 });
 

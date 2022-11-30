@@ -181,6 +181,11 @@ function PurchaseOrderDeliveriesUtility({
             <Grid item xs={12}>
                 <Typography variant="h5">Deliveries</Typography>
             </Grid>
+            <Grid item xs={12}>
+                <Typography variant="h6">
+                    Please be aware that by editing the deliveries, you are updating the Order Qty
+                </Typography>
+            </Grid>
             <Grid item xs={3}>
                 <InputField
                     propertyName="orderQty"
@@ -229,7 +234,10 @@ function PurchaseOrderDeliveriesUtility({
             <Grid item xs={1}>
                 <Button
                     variant="outlined"
-                    onClick={deleteSelected}
+                    onClick={() => {
+                        deleteSelected();
+                        setChangesMade(true);
+                    }}
                     disabled={
                         !rows.some(r => r.selected) ||
                         rows.length - rows.filter(r => r.selected).length === 0 ||

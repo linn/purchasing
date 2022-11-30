@@ -1,5 +1,7 @@
 ﻿namespace Linn.Purchasing.Resources.Boms
 {
+    using System.Collections.Generic;
+
     using Linn.Common.Resources;
 
     public class CircuitBoardResource : HypermediaResource
@@ -27,5 +29,7 @@
         public string ClusterBoard { get; set; }
 
         public string IdBoard { get; set; }
+
+        public IEnumerable<BoardLayoutResource> Layouts { get; set; }
     }
 }

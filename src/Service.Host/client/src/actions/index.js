@@ -336,3 +336,5 @@ export const changeRequestStatusChangeActionTypes = makeActionTypes(
 export const partsOnBomReportActionTypes = makeReportActionTypes(
     reportTypes.partsOnBomReport.actionType
 );
+
+export const bomCostReportActionTypes = makeReportActionTypes(reportTypes.bomCostReport.actionType);

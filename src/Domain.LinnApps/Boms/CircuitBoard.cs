@@ -1,5 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Boms
 {
+    using System.Collections.Generic;
+
     public class CircuitBoard
     {
         public string BoardCode { get; set; }
@@ -25,5 +27,7 @@
         public string ClusterBoard { get; set; }
 
         public string IdBoard { get; set; }
+
+        public IEnumerable<BoardLayout> Layouts { get; set; }
     }
 }

@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Suppliers;
 
@@ -46,6 +47,8 @@
         public NominalAccount NominalAccount { get; set; }
 
         public string DecrementRule { get; set; }
+
+        public IEnumerable<PartSupplier> PartSuppliers { get; set; }
 
         public bool SupplierAssembly()
         {

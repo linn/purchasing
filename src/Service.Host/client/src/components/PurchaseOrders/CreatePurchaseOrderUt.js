@@ -429,6 +429,7 @@ function CreatePurchaseOrderUt() {
                                     propertyName="supplierId"
                                     disabled={!allowedToCreate()}
                                     items={partSuppliersSearchResults
+                                        .filter(a => a.partNumber === order.details[0].partNumber)
                                         .sort(
                                             (a, b) =>
                                                 (a.supplierRanking ?? 100) -

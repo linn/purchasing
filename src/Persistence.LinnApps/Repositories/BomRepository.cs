@@ -45,7 +45,7 @@
         {
             return this.serviceDbContext.Boms.Where(expression)
                 .Include(b => b.Details)
-                .ThenInclude(d => d.Part)
+                .ThenInclude(d => d.Part).ThenInclude(p => p.PartSuppliers.Where(ps => ps.SupplierRanking == 1))
                 .Include(b => b.Details)
                 .ThenInclude(d => d.PartRequirement).FirstOrDefault();
         }

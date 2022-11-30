@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
 
     using Linn.Common.Facade;
@@ -23,19 +24,32 @@
         {
             return new CircuitBoard
                        {
-                           BoardCode = resource.BoardCode,
+                           BoardCode = resource.BoardCode.ToUpper(),
                            Description = resource.Description,
                            ChangeId = null,
                            ChangeState = "LIVE",
                            SplitBom = resource.SplitBom,
-                           DefaultPcbNumber = resource.DefaultPcbNumber,
+                           DefaultPcbNumber = resource.DefaultPcbNumber?.ToUpper(),
                            VariantOfBoardCode = resource.VariantOfBoardCode,
                            LoadDirectory = resource.LoadDirectory,
                            BoardsPerSheet = resource.BoardsPerSheet,
                            CoreBoard = resource.CoreBoard,
                            ClusterBoard = resource.ClusterBoard,
-                           IdBoard = resource.IdBoard
-                       };
+                           IdBoard = resource.IdBoard,
+                           Layouts = resource.Layouts?.Select(
+                               a => new BoardLayout
+                                        {
+                                            BoardCode = a.BoardCode,
+                                            LayoutCode = a.LayoutCode.ToUpper(),
+                                            LayoutSequence = a.LayoutSequence,
+                                            PcbNumber = string.IsNullOrEmpty(a.PcbNumber) ? resource.DefaultPcbNumber : a.PcbNumber,
+                                            LayoutType = a.LayoutType,
+                                            LayoutNumber = a.LayoutNumber,
+                                            PcbPartNumber = a.PcbPartNumber,
+                                            ChangeId = a.ChangeId,
+                                            ChangeState = "LIVE"
+                                        }).ToList()
+            };
         }
 
         protected override void UpdateFromResource(CircuitBoard entity, CircuitBoardResource updateResource, IEnumerable<string> privileges = null)
@@ -44,9 +58,22 @@
             entity.CoreBoard = updateResource.CoreBoard;
             entity.IdBoard = updateResource.IdBoard;
             entity.Description = updateResource.Description;
-            entity.DefaultPcbNumber = updateResource.DefaultPcbNumber;
+            entity.DefaultPcbNumber = updateResource.DefaultPcbNumber?.ToUpper();
             entity.SplitBom = updateResource.SplitBom;
             entity.VariantOfBoardCode = updateResource.VariantOfBoardCode;
+            entity.Layouts = updateResource.Layouts?.Select(
+                a => new BoardLayout
+                         {
+                             BoardCode = a.BoardCode,
+                             LayoutCode = a.LayoutCode.ToUpper(),
+                             LayoutSequence = a.LayoutSequence,
+                             PcbNumber = string.IsNullOrEmpty(a.PcbNumber) ? updateResource.DefaultPcbNumber : a.PcbNumber.ToUpper(),
+                             LayoutType = a.LayoutType,
+                             LayoutNumber = a.LayoutNumber,
+                             PcbPartNumber = a.PcbPartNumber,
+                             ChangeId = a.ChangeId,
+                             ChangeState = string.IsNullOrEmpty(a.ChangeState) ? "LIVE" : a.ChangeState
+                         }).ToList();
         }
 
         protected override Expression<Func<CircuitBoard, bool>> SearchExpression(string searchTerm)
