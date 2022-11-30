@@ -28,6 +28,8 @@
 
         private readonly IPurchaseOrdersPack purchaseOrdersPack;
 
+        private readonly IPurchaseOrderService purchaseOrderService;
+
         public PurchaseOrderDeliveryService(
             IPurchaseOrderDeliveryRepository repository,
             IAuthorisationService authService,
@@ -35,7 +37,8 @@
             IRepository<MiniOrder, int> miniOrderRepository,
             IRepository<MiniOrderDelivery, MiniOrderDeliveryKey> miniOrderDeliveryRepository,
             IRepository<PurchaseOrder, int> purchaseOrderRepository,
-            IPurchaseOrdersPack purchaseOrdersPack)
+            IPurchaseOrdersPack purchaseOrdersPack,
+            IPurchaseOrderService purchaseOrderService)
         {
             this.repository = repository;
             this.authService = authService;
@@ -44,6 +47,7 @@
             this.miniOrderDeliveryRepository = miniOrderDeliveryRepository;
             this.purchaseOrderRepository = purchaseOrderRepository;
             this.purchaseOrdersPack = purchaseOrdersPack;
+            this.purchaseOrderService = purchaseOrderService;
         }
 
         public IEnumerable<PurchaseOrderDelivery> SearchDeliveries(
@@ -418,12 +422,8 @@
 
             var updatedDeliveriesForOrderLine = updated.ToList();
 
-            if (detail.OurQty.GetValueOrDefault() != updatedDeliveriesForOrderLine
-                    .Sum(x => x.OurDeliveryQty.GetValueOrDefault()))
-            {
-                throw new PurchaseOrderDeliveryException(
-                    "You must match the order qty when updating deliveries.");
-            }
+            detail.OrderQty = updatedDeliveriesForOrderLine.Sum(x => x.OurDeliveryQty.GetValueOrDefault());
+            detail.OurQty = updatedDeliveriesForOrderLine.Sum(x => x.OurDeliveryQty.GetValueOrDefault());
 
             var list = detail.PurchaseDeliveries.ToArray();
 
@@ -530,6 +530,8 @@
                 });
 
             detail.PurchaseDeliveries = newDeliveries.ToList();
+
+            this.purchaseOrderService.UpdateOrder(order, order, privileges);
 
             // set mini order date requested to be first date requested of newly split deliveries
             this.UpdateMiniOrder(
