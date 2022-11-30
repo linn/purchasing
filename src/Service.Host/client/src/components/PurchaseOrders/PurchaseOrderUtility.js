@@ -265,6 +265,16 @@ function PurchaseOrderUtility({ creating }) {
         return utilities.getHref(order, 'edit');
     };
 
+    const lineItemsReceived = lineNumber => {
+        const currentDetail = item.details?.find(a => a.lineNumber === lineNumber);
+
+        if (currentDetail && currentDetail.purchaseDeliveries?.some(a => a.qtyNetReceived)) {
+            return true;
+        }
+
+        return false;
+    };
+
     const allowedToFilCancel = () => !creating && utilities.getHref(order, 'fil-cancel');
 
     const inputIsValid = () =>
@@ -1316,7 +1326,10 @@ function PurchaseOrderUtility({ creating }) {
                                                                 detail
                                                             );
                                                         }}
-                                                        disabled={!allowedToUpdate()}
+                                                        disabled={
+                                                            !allowedToUpdate() ||
+                                                            lineItemsReceived(detail.lineNumber)
+                                                        }
                                                         type="number"
                                                         required
                                                     />
@@ -1380,7 +1393,10 @@ function PurchaseOrderUtility({ creating }) {
                                                                         color="primary"
                                                                         variant="contained"
                                                                         disabled={
-                                                                            !allowedToUpdate()
+                                                                            !allowedToUpdate() ||
+                                                                            lineItemsReceived(
+                                                                                detail.lineNumber
+                                                                            )
                                                                         }
                                                                         onClick={() =>
                                                                             setOverridingOrderPrice(
