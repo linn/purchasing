@@ -94,7 +94,7 @@
             this.partHistoryService.AddPartHistory(
                 prevPart,
                 part,
-                "CHGBOMTYPE",
+                "BOM TYPE",
                 bomTypeChange.ChangedBy ?? 100,
                 null,
                 null);
