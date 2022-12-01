@@ -18,6 +18,7 @@ import history from '../../history';
 import config from '../../config';
 import BoardTab from './BoardTab';
 import LayoutTab from './LayoutTab';
+import RevisionTab from './RevisionTab';
 import boardReducer from './boardReducer';
 
 function Board({ creating }) {
@@ -151,6 +152,7 @@ function Board({ creating }) {
                         >
                             <Tab label="Board Details" />
                             <Tab label="Layouts" />
+                            <Tab label="Revisions" />
                         </Tabs>
                         {selectedTab === 0 && (
                             <BoardTab
@@ -173,6 +175,17 @@ function Board({ creating }) {
                                 style={{ paddingTop: '40px' }}
                                 dispatch={dispatch}
                                 selectedLayout={state.selectedLayout}
+                                setEditStatus={setEditStatus}
+                                okToSave={okToSave}
+                            />
+                        )}
+                        {selectedTab === 2 && (
+                            <RevisionTab
+                                layouts={state.board.layouts}
+                                style={{ paddingTop: '40px' }}
+                                dispatch={dispatch}
+                                selectedLayout={state.selectedLayout}
+                                selectedRevision={state.selectedRevision}
                                 setEditStatus={setEditStatus}
                                 okToSave={okToSave}
                             />

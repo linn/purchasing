@@ -1,5 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Boms
 {
+    using System.Collections.Generic;
+
     public class BoardLayout
     {
         public string BoardCode { get; set; }
@@ -19,5 +21,7 @@
         public int? ChangeId { get; set; }
 
         public string ChangeState { get; set; }
+
+        public IEnumerable<BoardRevision> Revisions { get; set; }
     }
 }

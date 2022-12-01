@@ -196,8 +196,6 @@
 
         public DbSet<CircuitBoard> CircuitBoards { get; set; }
 
-        public DbSet<BoardLayout> BoardLayouts { get; set; }
-
         public DbSet<BoardComponentSummary> BoardComponentSummary { get; set; }
 
         public DbSet<PartRequirement> VMasterMrh { get; set; }
@@ -311,6 +309,8 @@
             this.BuildImmediateLiabilityBase(builder);
             this.BuildCircuitBoards(builder);
             this.BuildBoardLayouts(builder);
+            this.BuildBoardRevisions(builder);
+            this.BuildBoardRevisionTypes(builder);
             this.BuildBoardComponentSummary(builder);
             this.BuildVMasterMrh(builder);
             this.BuildBomCostDetails(builder);
@@ -2015,6 +2015,42 @@
             entity.Property(a => a.LayoutType).HasColumnName("LAYOUT_TYPE").HasMaxLength(1);
             entity.Property(a => a.LayoutNumber).HasColumnName("LAYOUT_NUMBER");
             entity.Property(a => a.PcbPartNumber).HasColumnName("PCB_PART_NUMBER").HasMaxLength(14);
+            entity.HasMany(a => a.Revisions).WithOne().HasForeignKey(c => new { c.BoardCode, c.LayoutCode });
+        }
+
+        private void BuildBoardRevisions(ModelBuilder builder)
+        {
+            var entity = builder.Entity<BoardRevision>().ToTable("PCAS_REVISIONS");
+            entity.HasKey(a => new { a.BoardCode, a.RevisionCode });
+            entity.Property(a => a.BoardCode).HasColumnName("BOARD_CODE").HasMaxLength(6);
+            entity.Property(a => a.RevisionCode).HasColumnName("REVISION_CODE").HasMaxLength(10);
+            entity.Property(a => a.LayoutCode).HasColumnName("LAYOUT_CODE").HasMaxLength(2040);
+            entity.Property(a => a.VersionNumber).HasColumnName("VERSION_NUMBER");
+            entity.HasOne(a => a.RevisionType).WithMany().HasForeignKey("REVISION_TYPE");
+            entity.Property(a => a.ChangeState).HasColumnName("CHANGE_STATE").HasMaxLength(6);
+            entity.Property(a => a.ChangeId).HasColumnName("CHANGE_ID");
+            entity.Property(a => a.RevisionNumber).HasColumnName("REVISION_NUMBER");
+            entity.Property(a => a.SplitBom).HasColumnName("SPLIT_BOM").HasMaxLength(1);
+            entity.Property(a => a.LayoutSequence).HasColumnName("LAYOUT_SEQ");
+            entity.Property(a => a.PcasPartNumber).HasColumnName("PCAS_PART_NUMBER").HasMaxLength(14);
+            entity.Property(a => a.PcsmPartNumber).HasColumnName("PCSM_PART_NUMBER").HasMaxLength(14);
+            entity.Property(a => a.PcbPartNumber).HasColumnName("PCB_PART_NUMBER").HasMaxLength(14);
+            entity.Property(a => a.AteTestCommissioned).HasColumnName("ATE_TEST_COMMISSIONED").HasMaxLength(1);
+        }
+
+        private void BuildBoardRevisionTypes(ModelBuilder builder)
+        {
+            var entity = builder.Entity<BoardRevisionType>().ToTable("PCAS_REVISION_TYPES");
+            entity.HasKey(a => a.TypeCode);
+            entity.Property(a => a.TypeCode).HasColumnName("TYPE_CODE").HasMaxLength(10);
+            entity.Property(a => a.Description).HasColumnName("DESCRIPTION").HasMaxLength(50);
+            entity.Property(a => a.ReferenceRevision).HasColumnName("REFERENCE_REVISION").HasMaxLength(1);
+            entity.Property(a => a.ShowLayoutCode).HasColumnName("SHOW_LAYOUT_CODE").HasMaxLength(1);
+            entity.Property(a => a.RevisionCode).HasColumnName("REVISION_CODE").HasMaxLength(8);
+            entity.Property(a => a.ShowRevisionNumber).HasColumnName("SHOW_REVISION_NUMBER").HasMaxLength(1);
+            entity.Property(a => a.DefaultLayoutType).HasColumnName("DEFAULT_LAYOUT_TYPE").HasMaxLength(1);
+            entity.Property(a => a.DateObsolete).HasColumnName("DATE_OBSOLETE");
+            entity.Property(a => a.RevisionSuffix).HasColumnName("REVISION_SUFFIX").HasMaxLength(4);
         }
 
         private void BuildBoardComponentSummary(ModelBuilder builder)

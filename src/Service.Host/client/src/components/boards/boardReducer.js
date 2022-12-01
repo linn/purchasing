@@ -1,5 +1,8 @@
+import { utilities } from '@linn-it/linn-form-components-library';
+
 const initialState = {
     selectedLayout: null,
+    selectedRevision: null,
     board: { coreBoard: 'N', clusterBoard: 'N', idBoard: 'N', splitBom: 'N', layouts: [] }
 };
 
@@ -16,18 +19,30 @@ const layoutCodesAreUnique = (layouts, newLayoutCode) => {
     return codes.every((a, i) => codes.indexOf(a) === i);
 };
 
+const getLastRevisionCodeArray = (board, layoutCode) => {
+    const layout = board.layouts?.find(a => a.layoutCode === layoutCode);
+    if (layout?.revisions && layout.revisions.length) {
+        return [layout.revisions[layout.revisions.length - 1].revisionCode];
+    }
+
+    return [];
+};
+
 export default function boardReducer(state = initialState, action) {
     switch (action.type) {
         case 'initialise':
             return initialState;
         case 'populate': {
             let selectedLayout;
+            let selectedRevision;
             if (action.payload.layouts && action.payload.layouts.length > 0) {
                 selectedLayout = [
                     action.payload.layouts[action.payload.layouts.length - 1].layoutCode
                 ];
+                selectedRevision = getLastRevisionCodeArray(action.payload, selectedLayout[0]);
             } else {
                 selectedLayout = [];
+                selectedRevision = [];
             }
 
             const layouts = action.payload.layouts ? [...action.payload.layouts] : [];
@@ -37,7 +52,8 @@ export default function boardReducer(state = initialState, action) {
                     ...action.payload,
                     layouts
                 },
-                selectedLayout
+                selectedLayout,
+                selectedRevision
             };
         }
         case 'fieldChange':
@@ -77,10 +93,67 @@ export default function boardReducer(state = initialState, action) {
                 selectedLayout: [newLayoutCode]
             };
         }
+        case 'newRevision': {
+            if (state.selectedLayout?.length && state.board.layouts) {
+                let lastRevisionNumber;
+                let lastVersionNumber;
+
+                const layout = state.board.layouts.find(
+                    a => a.layoutCode === state.selectedLayout[0]
+                );
+                if (layout.revisions && layout.revisions.length) {
+                    lastRevisionNumber = Math.max(...layout.revisions.map(o => o.revisionNumber));
+                    lastVersionNumber = Math.max(...layout.revisions.map(o => o.versionNumber));
+                } else {
+                    lastRevisionNumber = 0;
+                    lastVersionNumber = 0;
+                }
+
+                const newRevisionCode = `${state.selectedLayout[0]}R${lastRevisionNumber + 1}`;
+                const newRevision = {
+                    layoutCode: state.selectedLayout[0],
+                    creating: true,
+                    splitBom: 'N',
+                    revisionCode: newRevisionCode,
+                    revisionNumber: lastRevisionNumber + 1,
+                    versionNumber: lastVersionNumber + 1
+                };
+
+                const index = state.board.layouts.findIndex(
+                    s => s.layoutCode === state.selectedLayout[0]
+                );
+
+                let updatedLayout = state.board.layouts.splice(index, 1)[0];
+                updatedLayout = {
+                    ...updatedLayout,
+                    revisions: [...updatedLayout.revisions, newRevision]
+                };
+                return {
+                    ...state,
+                    board: {
+                        ...state.board,
+                        layouts: utilities.sortEntityList(
+                            [...state.board.layouts, updatedLayout],
+                            'revisionNumber'
+                        )
+                    },
+                    selectedRevision: [newRevisionCode]
+                };
+            }
+
+            return state;
+        }
         case 'setSelectedLayout': {
             return {
                 ...state,
-                selectedLayout: action.payload
+                selectedLayout: action.payload,
+                selectedRevision: getLastRevisionCodeArray(state.board, action.payload[0])
+            };
+        }
+        case 'setSelectedRevision': {
+            return {
+                ...state,
+                selectedRevision: action.payload
             };
         }
         case 'updateLayout': {
