@@ -139,6 +139,10 @@
             // same as above except each time we visit a node we add it to the results list
             var result = new List<BomTreeNode>();
             var root = this.repository.FindBy(x => x.BomName == bomName);
+            if (root == null)
+            {
+                return result;
+            }
             var rootNode = new BomTreeNode
             {
                 Name = root.BomName,
