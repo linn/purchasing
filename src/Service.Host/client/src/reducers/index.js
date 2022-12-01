@@ -96,6 +96,7 @@ import emailMultiplePurchaseOrders from './emailMultiplePurchaseOrders';
 import forecastWeekChangesReport from './forecastWeekChangesReport';
 import sendPurchaseOrderAuthEmail from './sendPurchaseOrderAuthEmail';
 import changeRequest from './changeRequest';
+import changeRequests from './changeRequests';
 import sendPurchaseOrderDeptEmail from './sendPurchaseOrderDeptEmail';
 import suggestedPurchaseOrderValues from './suggestedPurchaseOrderValues';
 import bomTypeChange from './bomTypeChange';
@@ -127,6 +128,7 @@ const rootReducer = history =>
         boards,
         bulkLeadTimesUpload,
         changeRequest,
+        changeRequests,
         changeRequestStatusChange,
         countries,
         currencies,

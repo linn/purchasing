@@ -322,6 +322,12 @@ export const changeRequest = new ItemType(
     '/purchasing/change-requests'
 );
 
+export const changeRequests = new ItemType(
+    'changeRequests',
+    'CHANGE_REQUESTS',
+    '/purchasing/change-requests'
+);
+
 export const bomTree = new ItemType('bomTree', 'BOM_TREE', '/purchasing/boms/tree');
 
 export const sendPurchaseOrderAuthEmail = new ItemType(

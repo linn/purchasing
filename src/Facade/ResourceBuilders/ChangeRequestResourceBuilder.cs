@@ -37,6 +37,7 @@
                            DescriptionOfChange = model.DescriptionOfChange,
                            DateEntered = model.DateEntered.ToString("o"),
                            DateAccepted = model.DateAccepted?.ToString("o"),
+                           NewPartNumber = model.NewPartNumber,
                            ProposedBy = 
                                new EmployeeResource
                                    {
@@ -51,7 +52,7 @@
                            PcasChanges =
                                model.PcasChanges?.Select(
                                    d => (PcasChangeResource)this.pcasChangeBuilder.Build(d, claims)),
-                           Links = this.BuildLinks(claims).ToArray()
+                           Links = claims == null ? null : this.BuildLinks(claims).ToArray()
             };
         }
 

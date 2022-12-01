@@ -31,6 +31,8 @@
 
         public ICollection<PcasChange> PcasChanges { get; set; }
 
+        public string NewPartNumber { get; set; }
+
         public bool CanApprove()
         {
             return this.ChangeState == "PROPOS";

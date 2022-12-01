@@ -74,7 +74,8 @@
 
         protected override Expression<Func<ChangeRequest, bool>> SearchExpression(string searchTerm)
         {
-            throw new NotImplementedException();
+            return cr => searchTerm.Trim().ToUpper().Equals(cr.NewPartNumber) 
+                         && cr.ChangeState != "LIVE" && cr.ChangeState != "CANCEL";
         }
 
         protected override void SaveToLogTable(
