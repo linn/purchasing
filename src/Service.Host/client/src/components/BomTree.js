@@ -1,17 +1,12 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Loading } from '@linn-it/linn-form-components-library';
-import { useLocation } from 'react-router-dom';
 import SvgIcon from '@mui/material/SvgIcon';
 import { alpha, styled } from '@mui/material/styles';
 import TreeView from '@mui/lab/TreeView';
 import TreeItem, { treeItemClasses } from '@mui/lab/TreeItem';
 import Grid from '@mui/material/Grid';
-import queryString from 'query-string';
 import Typography from '@mui/material/Typography';
-import { bomTree as bomTreeItemType } from '../itemTypes';
-import bomTreeActions from '../actions/bomTreeActions';
-import useInitialise from '../hooks/useInitialise';
 
 /* eslint react/jsx-props-no-spreading: 0 */
 /* eslint react/destructuring-assignment: 0 */
@@ -57,18 +52,12 @@ export default function BomTree({
     onNodeSelect,
     renderComponents,
     renderDescriptions,
-    renderQties
+    renderQties,
+    bomName,
+    bomTree,
+    bomTreeLoading
 }) {
-    const { search } = useLocation();
-    const { bomName, levels, requirementOnly, showChanges, treeType } = queryString.parse(search);
     const [selected, setSelected] = useState([]);
-    const url = `/purchasing/boms/tree?bomName=${bomName}&levels=${levels ?? 0}&requirementOnly=${
-        requirementOnly ?? false
-    }&showChanges=${showChanges ?? false}&treeType=${treeType ?? 'bom'}`;
-    const [bomTree, bomTreeLoading] = useInitialise(
-        () => bomTreeActions.fetchByHref(url),
-        bomTreeItemType.item
-    );
 
     const nodesWithChildren = useMemo(() => {
         const result = [];
@@ -196,11 +185,16 @@ BomTree.propTypes = {
     renderDescriptions: PropTypes.bool,
     onNodeSelect: PropTypes.func,
     renderComponents: PropTypes.bool,
-    renderQties: PropTypes.bool
+    renderQties: PropTypes.bool,
+    bomTree: PropTypes.shape({ children: PropTypes.arrayOf(PropTypes.shape({})) }),
+    bomTreeLoading: PropTypes.bool,
+    bomName: PropTypes.string.isRequired
 };
 BomTree.defaultProps = {
     renderDescriptions: true,
     onNodeSelect: null,
     renderComponents: true,
-    renderQties: true
+    renderQties: true,
+    bomTree: null,
+    bomTreeLoading: false
 };

@@ -10,9 +10,13 @@ import queryString from 'query-string';
 import BomTree from '../BomTree';
 import history from '../../history';
 import config from '../../config';
-import { changeRequests as changeRequestsItemType } from '../../itemTypes';
+import {
+    changeRequests as changeRequestsItemType,
+    bomTree as bomTreeItemType
+} from '../../itemTypes';
 
 import changeRequestsActions from '../../actions/changeRequestsActions';
+import bomTreeActions from '../../actions/bomTreeActions';
 import useInitialise from '../../hooks/useInitialise';
 
 function BomUtility() {
@@ -25,7 +29,11 @@ function BomUtility() {
         'searchItems'
     );
 
-    console.log(changeRequests);
+    const url = `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${false}&treeType=${'bom'}`;
+    const [bomTree, bomTreeLoading] = useInitialise(
+        () => bomTreeActions.fetchByHref(url),
+        bomTreeItemType.item
+    );
 
     const columns = [
         { field: 'id', headerName: 'Id', width: 100, hide: true },
@@ -65,6 +73,9 @@ function BomUtility() {
                         renderComponents={false}
                         renderQties={false}
                         onNodeSelect={id => setSelected(id)}
+                        bomName={bomName}
+                        bomTree={bomTree}
+                        bomTreeLoading={bomTreeLoading}
                     />
                 </Grid>
                 <Grid item xs={8}>
