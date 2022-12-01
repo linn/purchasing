@@ -39,5 +39,7 @@
         public Part BomPart { get; set; }
 
         public string PcasLine { get; set; }
+
+        public IEnumerable<BomDetailComponent> Components { get; set; }
     }
 }

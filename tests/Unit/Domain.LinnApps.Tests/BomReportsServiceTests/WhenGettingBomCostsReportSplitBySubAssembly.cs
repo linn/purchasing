@@ -34,20 +34,23 @@
                                   new BomTreeNode { Id = 10 }
                               };
             this.BomTreeService.FlattenBomTree("SK HUB", 999).Returns(flatBom);
-            var details = new List<BomCostReportDetail>
+            var details 
+                = new List<BomCostReportDetail>
+                      {
+                          new BomCostReportDetail
                               {
-                                  new BomCostReportDetail { DetailId = 1, BomName = "SK HUB", PartNumber = "MCAS 073" },
-                                  new BomCostReportDetail { DetailId = 2, BomName = "SK HUB", PartNumber = "CONN 493" },
-                                  new BomCostReportDetail { DetailId = 3, BomName = "SK HUB", PartNumber = "SELEKT BITS" },
-                                  new BomCostReportDetail { DetailId = 4, BomName = "SK HUB", PartNumber = "MCP 1000" },
-                                  new BomCostReportDetail { DetailId = 5, BomName = "SK HUB", PartNumber = "PCAS 1234" },
-                                  new BomCostReportDetail { DetailId = 6, BomName = "MCAS 073", PartNumber = "RES 516" },
-                                  new BomCostReportDetail { DetailId = 7, BomName = "SELEKT BITS", PartNumber = "SELEKT DIAL" },
-                                  new BomCostReportDetail { DetailId = 8, BomName = "SELEKT DIAL", PartNumber = "SCREW" },
-                                  new BomCostReportDetail { DetailId = 9, BomName = "PRINTING BITS", PartNumber = "SELEKT BITS" },
-                                  new BomCostReportDetail { DetailId = 10, BomName = "PRINTING BITS", PartNumber = "INK" },
-                                
-                              }.AsQueryable();
+                                  DetailId = 1, BomName = "SK HUB", PartNumber = "MCAS 073", MaterialPrice = 123.45m, StandardPrice = 123.46m, Qty = 1
+                              },
+                          new BomCostReportDetail { DetailId = 2, BomName = "SK HUB", PartNumber = "CONN 493", MaterialPrice = 223.45m, StandardPrice = 223.46m, Qty = 1},
+                          new BomCostReportDetail { DetailId = 3, BomName = "SK HUB", PartNumber = "SELEKT BITS", MaterialPrice = 323.45m, StandardPrice = 323.46m, Qty = 1 },
+                          new BomCostReportDetail { DetailId = 4, BomName = "SK HUB", PartNumber = "MCP 1000", MaterialPrice = 423.45m, StandardPrice = 423.46m, Qty = 1 },
+                          new BomCostReportDetail { DetailId = 5, BomName = "SK HUB", PartNumber = "PCAS 1234", MaterialPrice = 523.45m, StandardPrice = 523.46m, Qty = 1 },
+                          new BomCostReportDetail { DetailId = 6, BomName = "MCAS 073", PartNumber = "RES 516", MaterialPrice = 623.45m, StandardPrice = 623.46m, Qty = 5 },
+                          new BomCostReportDetail { DetailId = 7, BomName = "SELEKT BITS", PartNumber = "SELEKT DIAL", MaterialPrice = 723.45m, StandardPrice = 723.46m, Qty = 1 },
+                          new BomCostReportDetail { DetailId = 8, BomName = "SELEKT DIAL", PartNumber = "SCREW", MaterialPrice = 823.45m, StandardPrice = 923.46m, Qty = 1 },
+                          new BomCostReportDetail { DetailId = 9, BomName = "PRINTING BITS", PartNumber = "SELEKT BITS", MaterialPrice = 13.45m, StandardPrice = 13.46m, Qty = 1 },
+                          new BomCostReportDetail { DetailId = 10, BomName = "PRINTING BITS", PartNumber = "INK", MaterialPrice = 23.45m, StandardPrice = 23.46m, Qty = 1 }
+                      }.AsQueryable();
             this.BomCostReportDetailsRepository.FilterBy(Arg.Any<Expression<Func<BomCostReportDetail, bool>>>())
                 .Returns(details);
 
@@ -74,6 +77,22 @@
             this.results.ElementAt(2).SubAssembly.Should().Be("SELEKT BITS");
             this.results.ElementAt(3).SubAssembly.Should().Be("SELEKT DIAL");
             this.results.ElementAt(4).SubAssembly.Should().Be("PRINTING BITS");
+        }
+
+        [Test]
+        public void ShouldCalculateTotalsTo5DP()
+        {
+            this.results.First().MaterialTotal.Should().Be(1617.25m);
+            this.results.First().StandardTotal.Should().Be(1617.30m);
+
+            this.results.ElementAt(1).MaterialTotal.Should().Be(3117.25m);
+            this.results.ElementAt(1).StandardTotal.Should().Be(3117.30m);
+
+            this.results.ElementAt(3).MaterialTotal.Should().Be(823.45m);
+            this.results.ElementAt(3).StandardTotal.Should().Be(923.46m);
+
+            this.results.ElementAt(4).MaterialTotal.Should().Be(36.9m);
+            this.results.ElementAt(4).StandardTotal.Should().Be(36.92m);
         }
     }
 }

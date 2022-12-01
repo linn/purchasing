@@ -35,6 +35,8 @@
 
         protected IAuthorisationService AuthorisationService { get; private set; }
 
+        protected ITransactionManager TransactionManager { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -43,12 +45,14 @@
             this.CurrencyPack = Substitute.For<ICurrencyPack>();
             this.PartService = Substitute.For<IPartService>();
             this.AuthorisationService = Substitute.For<IAuthorisationService>();
+            this.TransactionManager = Substitute.For<ITransactionManager>();
             this.FacadeService = new PartFacadeService(
                 this.PartRepository,
                 this.AutocostPack,
                 this.CurrencyPack,
                 this.PartService,
-                new BomTypeChangeResourceBuilder(this.AuthorisationService));
+                new BomTypeChangeResourceBuilder(this.AuthorisationService),
+                this.TransactionManager);
 
             this.Client = TestClient.With<BomTypeChangeModule>(
                 services =>

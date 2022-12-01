@@ -23,6 +23,8 @@
 
         protected IAuthorisationService authorisationService;
 
+        protected ITransactionManager transactionManager;
+
         protected PartFacadeService Sut { get; private set; }
 
         [SetUp]
@@ -33,9 +35,15 @@
             this.currencyPack = Substitute.For<ICurrencyPack>();
             this.partService = Substitute.For<IPartService>();
             this.authorisationService = Substitute.For<IAuthorisationService>();
+            this.transactionManager = Substitute.For<ITransactionManager>();
 
-            this.Sut = new PartFacadeService(this.partRepository, this.autocostPack, this.currencyPack, this.partService, new 
-                BomTypeChangeResourceBuilder(this.authorisationService));
+            this.Sut = new PartFacadeService(
+                this.partRepository,
+                this.autocostPack,
+                this.currencyPack,
+                this.partService,
+                new BomTypeChangeResourceBuilder(this.authorisationService),
+                this.transactionManager);
         }
     }
 }

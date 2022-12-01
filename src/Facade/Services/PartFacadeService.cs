@@ -23,18 +23,22 @@
 
         private readonly IBuilder<BomTypeChange> bomTypeChangeBuilder;
 
+        private readonly ITransactionManager transactionManager;
+
         public PartFacadeService(
             IQueryRepository<Part> partRepository, 
             IAutocostPack autocostPack, 
             ICurrencyPack currencyPack,
             IPartService partService,
-            IBuilder<BomTypeChange> bomTypeChangeBuilder)
+            IBuilder<BomTypeChange> bomTypeChangeBuilder,
+            ITransactionManager transactionManager)
         {
             this.partRepository = partRepository;
             this.autocostPack = autocostPack;
             this.currencyPack = currencyPack;
             this.partService = partService;
             this.bomTypeChangeBuilder = bomTypeChangeBuilder;
+            this.transactionManager = transactionManager;
         }
 
         public string GetPartNumberFromId(int id)
@@ -99,6 +103,7 @@
             {
                 var part = this.partService.ChangeBomType(bomTypeChange, privileges);
                 bomTypeChange.Part = part;
+                this.transactionManager.Commit();
             }
             catch (ItemNotFoundException e)
             {
