@@ -43,13 +43,13 @@
             string bomName, bool splitBySubAssembly, int levels, decimal labourHourlyRate)
         {
             var result = this.domainService
-                .GetBomCostReport(bomName, splitBySubAssembly, levels, labourHourlyRate).Select(r => new BomCostReportResource
+                .GetBomCostReport(bomName.Trim().ToUpper(), splitBySubAssembly, levels, labourHourlyRate)
+                .Select(r => new BomCostReportResource
                                           {
                                               Breakdown = this.reportReturnResourceBuilder.Build(r.Breakdown),
                                               SubAssembly = r.SubAssembly,
                                               MaterialTotal = r.MaterialTotal,
-                                              LabourTotal = r.LabourTotal,
-                                              OverallTotal = r.OverallTotal
+                                              StandardTotal = r.StandardTotal
                                           });
             return new SuccessResult<IEnumerable<BomCostReportResource>>(result);
         }

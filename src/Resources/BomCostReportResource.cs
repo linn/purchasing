@@ -10,8 +10,6 @@
 
         public decimal MaterialTotal { get; set; }
 
-        public decimal LabourTotal { get; set; }
-
-        public decimal OverallTotal { get; set; }
+        public decimal StandardTotal { get; set; }
     }
 }

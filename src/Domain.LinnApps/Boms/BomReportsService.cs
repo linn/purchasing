@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Boms
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -14,8 +15,6 @@
 
         private readonly IReportingHelper reportingHelper;
 
-        private readonly IQueryRepository<BoardComponentSummary> componentSummaryRepository;
-
         private readonly IQueryRepository<BomCostReportDetail> bomCostReportDetails;
 
         private readonly IBomTreeService bomTreeService;
@@ -23,13 +22,11 @@
         public BomReportsService(
             IBomDetailRepository bomDetailRepository, 
             IReportingHelper reportingHelper, 
-            IQueryRepository<BoardComponentSummary> componentSummaryRepository,
             IBomTreeService bomTreeService,
             IQueryRepository<BomCostReportDetail> bomCostReportDetails)
         {
             this.bomDetailRepository = bomDetailRepository;
             this.reportingHelper = reportingHelper;
-            this.componentSummaryRepository = componentSummaryRepository;
             this.bomTreeService = bomTreeService;
             this.bomCostReportDetails = bomCostReportDetails;
         }
@@ -123,9 +120,8 @@
                         {
                             RowId = rowId,
                             ColumnId = "Crefs",
-                            TextDisplay = this.componentSummaryRepository
-                                .FilterBy(x => x.BomPartNumber == bomName && x.PartNumber == line.PartNumber)?.ToList()
-                                .Aggregate(string.Empty, (current, next) => current + $"{next.Cref}, ")
+                            TextDisplay = line.Components?.ToList()
+                                .Aggregate(string.Empty, (current, next) => current + $"{next.CircuitRef}, ")
                         });
             }
             reportLayout.AddValueDrillDownDetails(
@@ -183,10 +179,7 @@
                             new("Qty", "Qty", GridDisplayType.Value) { DecimalPlaces = 4 },
                             new("StdPrice", "Std Price", GridDisplayType.Value) { DecimalPlaces = 5 },
                             new("MaterialPrice", "Mat Price",  GridDisplayType.Value) { DecimalPlaces = 5 },
-                            new("CPA", "CPA",  GridDisplayType.Value) { DecimalPlaces = 5 },
-                            new("LabourTime", "Labour (mins)",  GridDisplayType.Value) { DecimalPlaces = 5 },
                             new("TotalMaterial", "Total Material",  GridDisplayType.Value) { DecimalPlaces = 5 },
-                            new("TotalLabour", "Total Labour",  GridDisplayType.Value) { DecimalPlaces = 5 }
                         });
 
                 var values = new List<CalculationValueModel>();
@@ -246,12 +239,14 @@
                         new CalculationValueModel
                             {
                                 RowId = member.PartNumber,
-                                ColumnId = "LabourTime",
-                                Value = member.LabourTimeMins.GetValueOrDefault()
+                                ColumnId = "TotalMaterial",
+                                Value = member.Qty * member.MaterialPrice.GetValueOrDefault()
                             });
                 }
                 reportLayout.SetGridData(values);
                 reportResult.Breakdown = reportLayout.GetResultsModel();
+                reportResult.MaterialTotal = Math.Round(group.Sum(x => x.Qty * x.MaterialPrice.GetValueOrDefault()), 5);
+                reportResult.StandardTotal = Math.Round(group.Sum(x => x.Qty *  x.StandardPrice.GetValueOrDefault()), 5);
 
                 results.Add(reportResult);
             }
