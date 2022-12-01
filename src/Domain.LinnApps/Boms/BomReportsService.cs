@@ -15,8 +15,6 @@
 
         private readonly IReportingHelper reportingHelper;
 
-        private readonly IQueryRepository<BoardComponentSummary> componentSummaryRepository;
-
         private readonly IQueryRepository<BomCostReportDetail> bomCostReportDetails;
 
         private readonly IBomTreeService bomTreeService;
@@ -24,13 +22,11 @@
         public BomReportsService(
             IBomDetailRepository bomDetailRepository, 
             IReportingHelper reportingHelper, 
-            IQueryRepository<BoardComponentSummary> componentSummaryRepository,
             IBomTreeService bomTreeService,
             IQueryRepository<BomCostReportDetail> bomCostReportDetails)
         {
             this.bomDetailRepository = bomDetailRepository;
             this.reportingHelper = reportingHelper;
-            this.componentSummaryRepository = componentSummaryRepository;
             this.bomTreeService = bomTreeService;
             this.bomCostReportDetails = bomCostReportDetails;
         }
@@ -124,9 +120,8 @@
                         {
                             RowId = rowId,
                             ColumnId = "Crefs",
-                            TextDisplay = this.componentSummaryRepository
-                                .FilterBy(x => x.BomPartNumber == bomName && x.PartNumber == line.PartNumber)?.ToList()
-                                .Aggregate(string.Empty, (current, next) => current + $"{next.Cref}, ")
+                            TextDisplay = line.Components?.ToList()
+                                .Aggregate(string.Empty, (current, next) => current + $"{next.CircuitRef}, ")
                         });
             }
             reportLayout.AddValueDrillDownDetails(

@@ -26,20 +26,19 @@
         public void SetUp()
         {
             this.bomName = "SK HUB";
-            this.ComponentSummaryRepository.FilterBy(Arg.Any<Expression<Func<BoardComponentSummary, bool>>>()).Returns(
-                new List<BoardComponentSummary>
-                    {
-                        new BoardComponentSummary { Cref = "U001" },
-                        new BoardComponentSummary { Cref = "U002" },
-                        new BoardComponentSummary { Cref = "U003" }
-                    }.AsQueryable());
             var data = new List<BomDetail>
                            {
                                new BomDetail
                                    {
                                        Part = new Part { PartNumber = "CAP 001" },
                                        PartNumber = "CAP 001",
-                                       BomPartNumber = this.bomName
+                                       BomPartNumber = this.bomName,
+                                       Components = new List<BomDetailComponent>
+                                                        {
+                                                            new BomDetailComponent { CircuitRef = "U001" },
+                                                            new BomDetailComponent { CircuitRef = "U002" },
+                                                            new BomDetailComponent { CircuitRef = "U003" }
+                                                        }
                                    }
                            };
 

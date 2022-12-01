@@ -292,6 +292,7 @@
             this.BuildAutomaticPurchaseOrderDetails(builder);
             this.BuildAutomaticPurchaseOrderSuggestions(builder);
             this.BuildBomDetails(builder);
+            this.BuildBomDetailComponents(builder);
             this.BuildSupplierAutoEmails(builder);
             this.BuildSuppliersLeadTime(builder);
             this.BuildMonthlyForecastParts(builder);
@@ -330,7 +331,7 @@
             optionsBuilder.UseOracle(connectionString, options => options.UseOracleSQLCompatibility("11"));
 
             // below line commented due to causing crashing during local dev. Uncomment if want to see sql in debug window
-            // optionsBuilder.UseLoggerFactory(MyLoggerFactory);
+            optionsBuilder.UseLoggerFactory(MyLoggerFactory);
             optionsBuilder.EnableSensitiveDataLogging(true);
             base.OnConfiguring(optionsBuilder);
         }
@@ -1924,6 +1925,18 @@
             entity.Property(a => a.PcasLine).HasColumnName("PCAS_LINE");
             entity.HasOne(a => a.Part).WithMany().HasForeignKey(a => a.PartNumber);
             entity.HasOne(a => a.BomPart).WithMany().HasForeignKey(a => a.BomPartNumber);
+            // entity.HasMany(a => a.Components).WithOne(a => a.Detail).HasForeignKey(x => x.DetailId);
+        }
+
+        private void BuildBomDetailComponents(ModelBuilder builder)
+        {
+            var entity = builder.Entity<BomDetailComponent>().ToTable("BOM_DETAILS_COMPONENT_VIEW");
+            entity.HasKey(x => new { x.Component, x.CircuitRef });
+            entity.Property(a => a.DetailId).HasColumnName("DETAIL_ID");
+            entity.Property(a => a.Component).HasColumnName("PART_NUMBER");
+            entity.Property(a => a.CircuitRef).HasColumnName("CREF");
+            entity.Property(a => a.Bom).HasColumnName("BOM");
+            entity.HasOne(a => a.Detail).WithMany(d => d.Components).HasForeignKey(x => x.DetailId);
         }
 
         private void BuildPlOrderReceivedView(ModelBuilder builder)

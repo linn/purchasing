@@ -36,6 +36,7 @@
         {
             return this.bomDetails
                 .Include(d => d.Part)
+                .Include(d => d.Components)
                 .AsNoTracking();
         }
 
