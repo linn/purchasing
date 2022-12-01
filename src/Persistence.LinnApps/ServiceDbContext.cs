@@ -331,7 +331,7 @@
             optionsBuilder.UseOracle(connectionString, options => options.UseOracleSQLCompatibility("11"));
 
             // below line commented due to causing crashing during local dev. Uncomment if want to see sql in debug window
-            optionsBuilder.UseLoggerFactory(MyLoggerFactory);
+            // optionsBuilder.UseLoggerFactory(MyLoggerFactory);
             optionsBuilder.EnableSensitiveDataLogging(true);
             base.OnConfiguring(optionsBuilder);
         }
@@ -1925,7 +1925,6 @@
             entity.Property(a => a.PcasLine).HasColumnName("PCAS_LINE");
             entity.HasOne(a => a.Part).WithMany().HasForeignKey(a => a.PartNumber);
             entity.HasOne(a => a.BomPart).WithMany().HasForeignKey(a => a.BomPartNumber);
-            // entity.HasMany(a => a.Components).WithOne(a => a.Detail).HasForeignKey(x => x.DetailId);
         }
 
         private void BuildBomDetailComponents(ModelBuilder builder)

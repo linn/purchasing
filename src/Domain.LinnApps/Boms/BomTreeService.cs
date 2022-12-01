@@ -37,6 +37,7 @@
             var rootNode = new BomTreeNode
                                {
                                    Name = root.BomName,
+                                   Id = -1,
                                    Children = root.Details
                                        .Where(x => showChanges || x.ChangeState == "LIVE")
                                        .Where(c => !requirementOnly 
@@ -238,12 +239,14 @@
                                {
                                    Name = partNumber,
                                    Qty = 0,
+                                   Id = -1,
                                    Children = this.detailRepository.FilterBy(d => d.PartNumber == partNumber)
                                        .Select(c => new BomTreeNode
                                                         {
                                                             Name = c.BomPart.PartNumber,
                                                             Description = c.BomPart.Description,
-                                                            Qty = c.Qty
+                                                            Qty = c.Qty,
+                                                            Id = c.DetailId
                                                         }).OrderBy(c => c.Name)
 
                                };
@@ -261,7 +264,7 @@
                 while (numChildren > 0)
                 {
                     var current = q.Dequeue();
-                    current.Children = current.Children?.Select(
+                        current.Children = current.Children?.Select(
                         child =>
                         {
                             var children = this.detailRepository
@@ -275,8 +278,10 @@
                                 Name = child.Name,
                                 Description = child.Description,
                                 Qty = child.Qty,
+                                Type = child.Type,
+                                Id = child.Id,
                                 Children =
-                                children
+                                children?
                                     .Select(
                                         detail =>
 
@@ -284,7 +289,8 @@
                                             {
                                                 Name = detail.BomPart.PartNumber,
                                                 Description = detail.BomPart.Description,
-                                                Qty = detail.Qty
+                                                Qty = detail.Qty,
+                                                Id = detail.DetailId
                                             })
                                     .OrderBy(c => c.Name)
                             };
