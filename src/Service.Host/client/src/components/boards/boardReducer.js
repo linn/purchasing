@@ -193,7 +193,13 @@ export default function boardReducer(state = initialState, action) {
                 }
                 return {
                     ...state,
-                    board: { ...state.board, layouts: [...state.board.layouts, layout] },
+                    board: {
+                        ...state.board,
+                        layouts: utilities.sortEntityList(
+                            [...state.board.layouts, layout],
+                            'layoutSequence'
+                        )
+                    },
                     selectedLayout: [layout.layoutCode]
                 };
             }
