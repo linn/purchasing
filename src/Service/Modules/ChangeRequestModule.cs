@@ -19,6 +19,7 @@
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/purchasing/change-requests", this.GetApp);
+            app.MapGet("/purchasing/change-requests/create", this.GetApp);
             app.MapGet("/purchasing/change-requests/{id:int}", this.GetChangeRequest);
             app.MapPost("/purchasing/change-requests/status", this.ChangeStatus);
         }
