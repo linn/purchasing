@@ -25,6 +25,8 @@
                 .Include(c => c.PcasChanges)
                 .Include(x => x.ProposedBy)
                 .Include(x => x.EnteredBy)
+                .Include(x => x.OldPart)
+                .Include(x => x.NewPart)
                 .First(c => c.DocumentNumber == key && c.DocumentType == "CRF");
         }
     }

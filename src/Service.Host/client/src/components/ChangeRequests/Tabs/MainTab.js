@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import { InputField, utilities } from '@linn-it/linn-form-components-library';
 import Button from '@mui/material/Button';
+import AssemblyChange from '../ChangeTypes/AssemblyChange';
 
 function MainTab({ item, approve }) {
     const approveUri = utilities.getHref(item, 'approve');
@@ -33,6 +34,15 @@ function MainTab({ item, approve }) {
                     disabled
                 />
             </Grid>
+            <>
+                {
+                    {
+                        PARTEDIT: <AssemblyChange item={item} />,
+                        BOARDEDIT: <>Board Edit</>,
+                        REPLACE: <>Replace</>
+                    }[item?.changeType]
+                }
+            </>
             <Grid item xs={6}>
                 <InputField
                     fullWidth
@@ -97,6 +107,7 @@ MainTab.propTypes = {
         dateEntered: PropTypes.string,
         dateAccepted: PropTypes.string,
         changeState: PropTypes.string,
+        changeType: PropTypes.string,
         reasonForChange: PropTypes.string,
         descriptionOfChange: PropTypes.string,
         enteredBy: PropTypes.shape({

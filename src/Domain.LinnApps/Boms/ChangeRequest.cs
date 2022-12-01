@@ -3,6 +3,8 @@
     using System;
     using System.Collections.Generic;
 
+    using Linn.Purchasing.Domain.LinnApps.Parts;
+
     public class ChangeRequest
     {
         public string DocumentType { get; set; }
@@ -22,6 +24,16 @@
         public Employee EnteredBy { get; set; }
 
         public int EnteredById { get; set; }
+
+        public string ChangeRequestType { get; set; }
+
+        public string OldPartNumber { get; set; }
+
+        public Part OldPart { get; set; }
+
+        public string NewPartNumber { get; set; }
+
+        public Part NewPart { get; set; }
 
         public string ReasonForChange { get; set; }
 

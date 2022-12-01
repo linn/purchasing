@@ -1868,6 +1868,11 @@
             entity.HasOne(o => o.ProposedBy).WithMany().HasForeignKey(o => o.ProposedById);
             entity.Property(o => o.EnteredById).HasColumnName("ENTERED_BY");
             entity.HasOne(o => o.EnteredBy).WithMany().HasForeignKey(o => o.EnteredById);
+            entity.Property(c => c.ChangeRequestType).HasColumnName("CRF_TYPE_CODE").HasMaxLength(10);
+            entity.Property(c => c.OldPartNumber).HasColumnName("OLD_PART_NUMBER");
+            entity.HasOne(o => o.OldPart).WithMany().HasForeignKey(o => o.OldPartNumber);
+            entity.Property(c => c.NewPartNumber).HasColumnName("NEW_PART_NUMBER");
+            entity.HasOne(o => o.NewPart).WithMany().HasForeignKey(o => o.NewPartNumber);
             entity.Property(c => c.ChangeState).HasColumnName("CHANGE_STATE").HasMaxLength(6);
             entity.Property(c => c.ReasonForChange).HasColumnName("REASON_FOR_CHANGE").HasMaxLength(2000);
             entity.Property(c => c.DescriptionOfChange).HasColumnName("DESCRIPTION_OF_CHANGE").HasMaxLength(2000);

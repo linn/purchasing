@@ -37,6 +37,11 @@
                            DescriptionOfChange = model.DescriptionOfChange,
                            DateEntered = model.DateEntered.ToString("o"),
                            DateAccepted = model.DateAccepted?.ToString("o"),
+                           ChangeType = model.ChangeRequestType,
+                           OldPartNumber = model.OldPartNumber,
+                           OldPartDescription = model.OldPart?.Description,
+                           NewPartNumber = model.NewPartNumber,
+                           NewPartDescription = model.NewPart?.Description,
                            ProposedBy = 
                                new EmployeeResource
                                    {
