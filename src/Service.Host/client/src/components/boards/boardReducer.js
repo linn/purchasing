@@ -129,6 +129,7 @@ export default function boardReducer(state = initialState, action) {
                 const newRevisionCode = `${state.selectedLayout[0]}R${lastRevisionNumber + 1}`;
                 const newRevision = {
                     layoutCode: state.selectedLayout[0],
+                    layoutSequence: layout.layoutSequence,
                     creating: true,
                     splitBom: 'N',
                     revisionCode: newRevisionCode,

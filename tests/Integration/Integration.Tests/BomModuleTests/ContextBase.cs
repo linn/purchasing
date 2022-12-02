@@ -34,6 +34,8 @@
 
         protected IRepository<CircuitBoard, string> CircuitBoardRepository { get; set; }
 
+        protected IRepository<BoardRevisionType, string> BoardRevisionTypeRepository { get; set; }
+
         protected IEdiOrderService MockDomainService { get; set; }
 
         protected ITransactionManager TransactionManager { get; set; }
@@ -51,6 +53,7 @@
         {
             this.Repository = Substitute.For<IRepository<Bom, int>>();
             this.CircuitBoardRepository = Substitute.For<IRepository<CircuitBoard, string>>();
+            this.BoardRevisionTypeRepository = Substitute.For<IRepository<BoardRevisionType, string>>();
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.FacadeService = new BomFacadeService(
                 this.Repository,
@@ -70,7 +73,8 @@
             this.CircuitBoardFacadeService = new CircuitBoardFacadeService(
                 this.CircuitBoardRepository,
                 this.TransactionManager,
-                new CircuitBoardResourceBuilder());
+                new CircuitBoardResourceBuilder(),
+                this.BoardRevisionTypeRepository);
 
             this.Client = TestClient.With<BomModule>(
                 services =>

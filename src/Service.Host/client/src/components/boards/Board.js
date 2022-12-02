@@ -57,6 +57,7 @@ function Board({ creating }) {
     useEffect(() => {
         if (item) {
             dispatch({ type: 'populate', payload: item });
+            setSelectedTab(0);
         }
     }, [item]);
 

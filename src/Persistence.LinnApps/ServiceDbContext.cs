@@ -196,6 +196,8 @@
 
         public DbSet<CircuitBoard> CircuitBoards { get; set; }
 
+        public DbSet<BoardRevisionType> BoardRevisionTypes { get; set; }
+
         public DbSet<BoardComponentSummary> BoardComponentSummary { get; set; }
 
         public DbSet<PartRequirement> VMasterMrh { get; set; }
