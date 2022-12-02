@@ -98,7 +98,8 @@ export default function boardReducer(state = initialState, action) {
                 creating: true,
                 layoutCode: newLayoutCode,
                 layoutNumber: lastLayoutNumber + 1,
-                layoutSequence: lastLayoutSequence + 1
+                layoutSequence: lastLayoutSequence + 1,
+                revisions: []
             };
             return {
                 ...state,

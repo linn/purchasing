@@ -59,8 +59,13 @@
             entity.DefaultPcbNumber = updateResource.DefaultPcbNumber?.ToUpper();
             entity.SplitBom = updateResource.SplitBom;
             entity.VariantOfBoardCode = updateResource.VariantOfBoardCode;
+            if (entity.Layouts is null)
+            {
+                entity.Layouts = new List<BoardLayout>();
+            }
+
             this.UpdateLayouts(
-                entity.Layouts?.ToList() ?? new List<BoardLayout>(),
+                entity.Layouts,
                 updateResource.Layouts?.ToList(),
                 updateResource.DefaultPcbNumber?.ToUpper());
         }
@@ -113,9 +118,12 @@
                     string.IsNullOrEmpty(resource.ChangeState)
                         ? "LIVE"
                         : resource.ChangeState;
-                this.UpdateRevisions(
-                    boardLayout.Revisions?.ToList() ?? new List<BoardRevision>(),
-                    resource.Revisions?.ToList());
+                if (boardLayout.Revisions is null)
+                {
+                    boardLayout.Revisions = new List<BoardRevision>();
+                }
+
+                this.UpdateRevisions(boardLayout.Revisions, resource.Revisions?.ToList());
             }
 
             if (updatedResources.Count > 0)
@@ -150,9 +158,9 @@
                                                      t => t.TypeCode == boardRevisionResource.RevisionType.TypeCode);
                 boardRevision.RevisionNumber = boardRevisionResource.RevisionNumber;
                 boardRevision.SplitBom = boardRevisionResource.SplitBom;
-                boardRevision.PcasPartNumber = boardRevisionResource.PcasPartNumber.ToUpper();
-                boardRevision.PcsmPartNumber = boardRevisionResource.PcsmPartNumber.ToUpper();
-                boardRevision.PcbPartNumber = boardRevisionResource.PcbPartNumber.ToUpper();
+                boardRevision.PcasPartNumber = boardRevisionResource.PcasPartNumber?.ToUpper();
+                boardRevision.PcsmPartNumber = boardRevisionResource.PcsmPartNumber?.ToUpper();
+                boardRevision.PcbPartNumber = boardRevisionResource.PcbPartNumber?.ToUpper();
                 boardRevision.AteTestCommissioned = boardRevisionResource.AteTestCommissioned;
                 boardRevision.ChangeId = boardRevisionResource.ChangeId;
                 boardRevision.ChangeState = string.IsNullOrEmpty(boardRevisionResource.ChangeState)
@@ -179,7 +187,7 @@
                            PcbNumber =
                                string.IsNullOrEmpty(boardLayoutResource.PcbNumber)
                                    ? defaultPcbNumber
-                                   : boardLayoutResource.PcbNumber.ToUpper(),
+                                   : boardLayoutResource.PcbNumber?.ToUpper(),
                            LayoutType = boardLayoutResource.LayoutType,
                            LayoutNumber = boardLayoutResource.LayoutNumber,
                            PcbPartNumber = boardLayoutResource.PcbPartNumber,
@@ -188,7 +196,7 @@
                                string.IsNullOrEmpty(boardLayoutResource.ChangeState)
                                    ? "LIVE"
                                    : boardLayoutResource.ChangeState,
-                           Revisions = boardLayoutResource.Revisions?.Select(this.MakeRevision)
+                           Revisions = boardLayoutResource.Revisions?.Select(this.MakeRevision).ToList()
                        };
         }
 
@@ -201,12 +209,14 @@
                            RevisionCode = boardRevisionResource.RevisionCode.ToUpper(),
                            LayoutSequence = boardRevisionResource.LayoutSequence,
                            VersionNumber = boardRevisionResource.VersionNumber,
-                           RevisionType = new BoardRevisionType { TypeCode = boardRevisionResource.RevisionType.TypeCode },
-                           RevisionNumber = boardRevisionResource.RevisionNumber,
+                           RevisionType = boardRevisionResource.RevisionType?.TypeCode is null
+                                              ? null
+                                              : this.types.First(t => t.TypeCode == boardRevisionResource.RevisionType.TypeCode),
+            RevisionNumber = boardRevisionResource.RevisionNumber,
                            SplitBom = boardRevisionResource.SplitBom,
-                           PcasPartNumber = boardRevisionResource.PcasPartNumber.ToUpper(),
-                           PcsmPartNumber = boardRevisionResource.PcsmPartNumber.ToUpper(),
-                           PcbPartNumber = boardRevisionResource.PcbPartNumber.ToUpper(),
+                           PcasPartNumber = boardRevisionResource.PcasPartNumber?.ToUpper(),
+                           PcsmPartNumber = boardRevisionResource.PcsmPartNumber?.ToUpper(),
+                           PcbPartNumber = boardRevisionResource.PcbPartNumber?.ToUpper(),
                            AteTestCommissioned = boardRevisionResource.AteTestCommissioned,
                            ChangeId = boardRevisionResource.ChangeId,
                            ChangeState = string.IsNullOrEmpty(boardRevisionResource.ChangeState)

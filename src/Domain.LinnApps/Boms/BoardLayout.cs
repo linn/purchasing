@@ -22,6 +22,6 @@
 
         public string ChangeState { get; set; }
 
-        public IEnumerable<BoardRevision> Revisions { get; set; }
+        public IList<BoardRevision> Revisions { get; set; }
     }
 }
