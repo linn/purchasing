@@ -42,11 +42,11 @@
                 var resource = (ChangeRequestResource) this.resourceBuilder.Build(request, new List<string>());
                 return new SuccessResult<ChangeRequestResource>(resource);
             }
-            catch (ItemNotFoundException e)
+            catch (ItemNotFoundException)
             {
                 return new NotFoundResult<ChangeRequestResource>("Change Request not found");
             }
-            catch (InvalidStateChangeException e)
+            catch (InvalidStateChangeException)
             {
                 return new BadRequestResult<ChangeRequestResource>("Cannot approve this change request");
             }

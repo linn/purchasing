@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.BomModuleTests
 {
+    using System.Linq;
     using System.Net;
     using System.Net.Http.Json;
 
@@ -12,24 +13,12 @@
 
     public class WhenAddingCircuitBoard : ContextBase
     {
-        private CircuitBoardResource resource;
-
         [SetUp]
         public void SetUp()
         {
-            this.resource = new CircuitBoardResource
-                                {
-                                    BoardCode = "123",
-                                    Description = "Desc",
-                                    ClusterBoard = "Y",
-                                    CoreBoard = "Y",
-                                    IdBoard = "Y",
-                                    SplitBom = "Y"
-                                };
-
             this.Response = this.Client.PostAsJsonAsync(
                 $"/purchasing/boms/boards",
-                this.resource).Result;
+                this.Resource).Result;
         }
 
         [Test]
@@ -45,13 +34,32 @@
             this.Response.Content.Headers.ContentType?.ToString().Should().Be("application/json");
         }
 
+
         [Test]
         public void ShouldReturnJsonBody()
         {
             var resultResource = this.Response.DeserializeBody<CircuitBoardResource>();
             resultResource.Should().NotBeNull();
-            resultResource.BoardCode.Should().Be(this.resource.BoardCode);
-            resultResource.Description.Should().Be(this.resource.Description);
+            resultResource.BoardCode.Should().Be(this.BoardCode);
+            resultResource.Description.Should().Be(this.Resource.Description);
+            resultResource.ClusterBoard.Should().Be(this.Resource.ClusterBoard);
+            resultResource.CoreBoard.Should().Be(this.Resource.CoreBoard);
+            resultResource.IdBoard.Should().Be(this.Resource.IdBoard);
+            resultResource.Layouts.Should().HaveCount(2);
+            var layout = resultResource.Layouts.First(a => a.LayoutCode == "L1");
+            layout.LayoutCode.Should().Be("L1");
+            layout.PcbPartNumber.Should().Be("PCB PART");
+            layout.Revisions.Should().HaveCount(1);
+            var revision = layout.Revisions.First();
+            revision.PcasPartNumber.Should().Be("PCAS");
+            revision.RevisionCode.Should().Be("L1R1");
+            var layout2 = resultResource.Layouts.First(a => a.LayoutCode == "L2");
+            layout2.LayoutCode.Should().Be("L2");
+            layout2.PcbPartNumber.Should().Be("PCB PART2");
+            layout2.Revisions.Should().HaveCount(1);
+            var revision2 = layout2.Revisions.First();
+            revision2.PcasPartNumber.Should().Be("PCAS2");
+            revision2.RevisionCode.Should().Be("L2R1");
         }
     }
 }
