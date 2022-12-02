@@ -16,18 +16,19 @@
         FacadeResourceService<ChangeRequest, int, ChangeRequestResource, ChangeRequestResource>,
         IChangeRequestFacadeService
     {
-        private readonly IRepository<ChangeRequest, int> repository;
-
         private readonly IChangeRequestService changeRequestService;
 
         private readonly IBuilder<ChangeRequest> resourceBuilder;
 
         private readonly ITransactionManager transactionManager;
 
-        public ChangeRequestFacadeService(IRepository<ChangeRequest, int> repository, ITransactionManager transactionManager, IBuilder<ChangeRequest> resourceBuilder, IChangeRequestService changeRequestService)
+        public ChangeRequestFacadeService(
+            IRepository<ChangeRequest, int> repository,
+            ITransactionManager transactionManager,
+            IBuilder<ChangeRequest> resourceBuilder,
+            IChangeRequestService changeRequestService)
             : base(repository, transactionManager, resourceBuilder)
         {
-            this.repository = repository;
             this.resourceBuilder = resourceBuilder;
             this.changeRequestService = changeRequestService;
             this.transactionManager = transactionManager;
