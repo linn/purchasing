@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import { DataGrid } from '@mui/x-data-grid';
 import Grid from '@mui/material/Grid';
-import { InputField, Dropdown } from '@linn-it/linn-form-components-library';
+import { InputField, Dropdown, Search } from '@linn-it/linn-form-components-library';
 
 function RevisionTab({
     layouts,
@@ -11,7 +11,10 @@ function RevisionTab({
     selectedRevision,
     dispatch,
     setEditStatus,
-    okToSave
+    okToSave,
+    searchParts,
+    partsSearchResults,
+    partsSearchLoading
 }) {
     const columns = [{ field: 'revisionCode', headerName: 'Revision', width: 140 }];
     const rows =
@@ -101,30 +104,57 @@ function RevisionTab({
                             </Grid>
                             <Grid item xs={9} />
                             <Grid item xs={3}>
-                                <InputField
-                                    fullWidth
-                                    value={revision.pcasPartNumber}
-                                    label="Pcas Part Number"
+                                <Search
                                     propertyName="pcasPartNumber"
-                                    onChange={handleRevisionChange}
+                                    label="Pcas Part Number"
+                                    resultsInModal
+                                    resultLimit={100}
+                                    value={revision.pcasPartNumber}
+                                    handleValueChange={handleRevisionChange}
+                                    search={searchParts}
+                                    searchResults={partsSearchResults}
+                                    loading={partsSearchLoading}
+                                    priorityFunction="closestMatchesFirst"
+                                    onResultSelect={newValue => {
+                                        handleRevisionChange('pcasPartNumber', newValue.partNumber);
+                                    }}
+                                    clearSearch={() => {}}
                                 />
                             </Grid>
                             <Grid item xs={3}>
-                                <InputField
-                                    fullWidth
-                                    value={revision.pcsmPartNumber}
-                                    label="Pcsm Part Number"
+                                <Search
                                     propertyName="pcsmPartNumber"
-                                    onChange={handleRevisionChange}
+                                    label="Pcsm Part Number"
+                                    resultsInModal
+                                    resultLimit={100}
+                                    value={revision.pcsmPartNumber}
+                                    handleValueChange={handleRevisionChange}
+                                    search={searchParts}
+                                    searchResults={partsSearchResults}
+                                    loading={partsSearchLoading}
+                                    priorityFunction="closestMatchesFirst"
+                                    onResultSelect={newValue => {
+                                        handleRevisionChange('pcsmPartNumber', newValue.partNumber);
+                                    }}
+                                    clearSearch={() => {}}
                                 />
                             </Grid>
                             <Grid item xs={3}>
-                                <InputField
-                                    fullWidth
-                                    value={revision.pcbPartNumber}
-                                    label="PCB Part Number"
+                                <Search
                                     propertyName="pcbPartNumber"
-                                    onChange={handleRevisionChange}
+                                    label="PCB Part Number"
+                                    resultsInModal
+                                    resultLimit={100}
+                                    value={revision.pcbPartNumber}
+                                    handleValueChange={handleRevisionChange}
+                                    search={searchParts}
+                                    searchResults={partsSearchResults}
+                                    loading={partsSearchLoading}
+                                    priorityFunction="closestMatchesFirst"
+                                    onResultSelect={newValue => {
+                                        handleRevisionChange('pcbPartNumber', newValue.partNumber);
+                                    }}
+                                    clearSearch={() => {}}
                                 />
                             </Grid>
                             <Grid item xs={3} />
@@ -154,12 +184,17 @@ RevisionTab.propTypes = {
     selectedRevision: PropTypes.arrayOf(PropTypes.string),
     setEditStatus: PropTypes.func.isRequired,
     dispatch: PropTypes.func.isRequired,
-    okToSave: PropTypes.func.isRequired
+    okToSave: PropTypes.func.isRequired,
+    partsSearchResults: PropTypes.arrayOf(PropTypes.shape({})),
+    partsSearchLoading: PropTypes.bool,
+    searchParts: PropTypes.func.isRequired
 };
 
 RevisionTab.defaultProps = {
     selectedLayout: [],
-    selectedRevision: []
+    selectedRevision: [],
+    partsSearchResults: [],
+    partsSearchLoading: false
 };
 
 export default RevisionTab;

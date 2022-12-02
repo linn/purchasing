@@ -13,7 +13,8 @@ import {
     ErrorCard,
     InputField,
     getItemError,
-    getRequestErrors
+    getRequestErrors,
+    collectionSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import boardActions from '../../actions/boardActions';
 import history from '../../history';
@@ -22,6 +23,7 @@ import BoardTab from './BoardTab';
 import LayoutTab from './LayoutTab';
 import RevisionTab from './RevisionTab';
 import boardReducer from './boardReducer';
+import partsActions from '../../actions/partsActions';
 
 function Board({ creating }) {
     const reduxDispatch = useDispatch();
@@ -122,6 +124,20 @@ function Board({ creating }) {
         return revisionCodes.every((a, i) => revisionCodes.indexOf(a) === i);
     };
 
+    const searchParts = searchTerm => reduxDispatch(partsActions.search(searchTerm));
+    const partsSearchResults = useSelector(reduxState =>
+        collectionSelectorHelpers.getSearchItems(
+            reduxState.parts,
+            100,
+            'id',
+            'partNumber',
+            'description'
+        )
+    );
+    const partsSearchLoading = useSelector(reduxState =>
+        collectionSelectorHelpers.getSearchLoading(reduxState.parts)
+    );
+
     const okToSave = () =>
         state.board &&
         state.board.clusterBoard &&
@@ -198,6 +214,9 @@ function Board({ creating }) {
                                 selectedLayout={state.selectedLayout}
                                 setEditStatus={setEditStatus}
                                 okToSave={okToSave}
+                                searchParts={searchParts}
+                                partsSearchResults={partsSearchResults}
+                                partsSearchLoading={partsSearchLoading}
                             />
                         )}
                         {selectedTab === 2 && (
@@ -209,6 +228,9 @@ function Board({ creating }) {
                                 selectedRevision={state.selectedRevision}
                                 setEditStatus={setEditStatus}
                                 okToSave={okToSave}
+                                searchParts={searchParts}
+                                partsSearchResults={partsSearchResults}
+                                partsSearchLoading={partsSearchLoading}
                             />
                         )}
                     </Grid>
