@@ -10,7 +10,9 @@ import {
     itemSelectorHelpers,
     SaveBackCancelButtons,
     Loading,
+    ErrorCard,
     InputField,
+    getItemError,
     getRequestErrors
 } from '@linn-it/linn-form-components-library';
 import boardActions from '../../actions/boardActions';
@@ -42,6 +44,7 @@ function Board({ creating }) {
         getRequestErrors(state)?.filter(error => error.type !== 'FETCH_ERROR')
     );
     const [state, dispatch] = useReducer(boardReducer, { board: null });
+    const itemError = useSelector(reduxState => getItemError(reduxState, 'board'));
 
     useEffect(() => {
         if (creating) {
@@ -102,6 +105,22 @@ function Board({ creating }) {
         return codes.every((a, i) => codes.indexOf(a) === i);
     };
 
+    const revisionsAreOk = layouts => {
+        if (!layouts || !layouts.length) {
+            return true;
+        }
+
+        const allRevisions = layouts.flatMap(a => a.revisions);
+
+        if (allRevisions.some(a => a.revisionCode === 'duplicate')) {
+            return false;
+        }
+
+        const revisionCodes = allRevisions.map(a => a.revisionCode);
+
+        return revisionCodes.every((a, i) => revisionCodes.indexOf(a) === i);
+    };
+
     const okToSave = () =>
         state.board &&
         state.board.clusterBoard &&
@@ -110,7 +129,8 @@ function Board({ creating }) {
         state.board.description &&
         state.board.splitBom &&
         state.board.boardCode &&
-        layoutsAreOk(state.board.layouts);
+        layoutsAreOk(state.board.layouts) &&
+        revisionsAreOk(state.board.layouts);
 
     return (
         <Page
@@ -191,6 +211,13 @@ function Board({ creating }) {
                             />
                         )}
                     </Grid>
+                    {itemError && (
+                        <Grid item xs={12}>
+                            <ErrorCard
+                                errorMessage={itemError.details?.error || itemError.details}
+                            />
+                        </Grid>
+                    )}
                     <Grid item xs={12}>
                         <SaveBackCancelButtons
                             saveDisabled={!okToSave() || editStatus === 'view'}

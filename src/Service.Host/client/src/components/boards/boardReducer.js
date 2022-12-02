@@ -19,6 +19,19 @@ const layoutCodesAreUnique = (layouts, newLayoutCode) => {
     return codes.every((a, i) => codes.indexOf(a) === i);
 };
 
+const revisionCodesAreUnique = (revisions, newRevisionCode) => {
+    if (!revisions && !revisions.length) {
+        return true;
+    }
+
+    const codes = revisions.map(a => a.revisionCode);
+    if (newRevisionCode) {
+        codes.push(newRevisionCode);
+    }
+
+    return codes.every((a, i) => codes.indexOf(a) === i);
+};
+
 const getLastRevisionCodeArray = (board, layoutCode) => {
     const layout = board.layouts?.find(a => a.layoutCode === layoutCode);
     if (layout?.revisions && layout.revisions.length) {
@@ -101,6 +114,10 @@ export default function boardReducer(state = initialState, action) {
                 const layout = state.board.layouts.find(
                     a => a.layoutCode === state.selectedLayout[0]
                 );
+                const revisionType =
+                    layout.layoutType === 'L'
+                        ? { typeCode: 'PRODUCTION' }
+                        : { typeCode: 'PROTOTYPE' };
                 if (layout.revisions && layout.revisions.length) {
                     lastRevisionNumber = Math.max(...layout.revisions.map(o => o.revisionNumber));
                     lastVersionNumber = Math.max(...layout.revisions.map(o => o.versionNumber));
@@ -116,7 +133,9 @@ export default function boardReducer(state = initialState, action) {
                     splitBom: 'N',
                     revisionCode: newRevisionCode,
                     revisionNumber: lastRevisionNumber + 1,
-                    versionNumber: lastVersionNumber + 1
+                    versionNumber: lastVersionNumber + 1,
+                    revisionType,
+                    boardCode: state.board.boardCode
                 };
 
                 const index = state.board.layouts.findIndex(
@@ -158,49 +177,79 @@ export default function boardReducer(state = initialState, action) {
         }
         case 'updateLayout': {
             if (state.selectedLayout?.length) {
-                const index = state.board.layouts.findIndex(
-                    s => s.layoutCode === state.selectedLayout[0]
-                );
-
                 if (action.fieldName === 'layoutCode') {
                     if (!layoutCodesAreUnique(state.board.layouts, action.payload)) {
                         return state;
                     }
                 }
 
-                let layout = state.board.layouts.splice(index, 1)[0];
-                layout = { ...layout, [action.fieldName]: action.payload };
+                const layoutToUpdate = state.board.layouts.find(
+                    s => s.layoutCode === state.selectedLayout[0]
+                );
+
+                layoutToUpdate[action.fieldName] = action.payload;
 
                 if (action.fieldName === 'layoutType' || action.fieldName === 'layoutNumber') {
-                    if (layout.layoutType && layout.layoutNumber) {
+                    if (layoutToUpdate.layoutType && layoutToUpdate.layoutNumber) {
                         if (
                             !layoutCodesAreUnique(
                                 state.board.layouts,
-                                `${layout.layoutType}${layout.layoutNumber}`
+                                `${layoutToUpdate.layoutType}${layoutToUpdate.layoutNumber}`
                             )
                         ) {
-                            layout = {
-                                ...layout,
-                                layoutCode: `duplicate`
-                            };
+                            layoutToUpdate.layoutCode = `duplicate`;
                         } else {
-                            layout = {
-                                ...layout,
-                                layoutCode: `${layout.layoutType}${layout.layoutNumber}`
-                            };
+                            layoutToUpdate.layoutCode = `${layoutToUpdate.layoutType}${layoutToUpdate.layoutNumber}`;
                         }
                     }
                 }
                 return {
                     ...state,
-                    board: {
-                        ...state.board,
-                        layouts: utilities.sortEntityList(
-                            [...state.board.layouts, layout],
-                            'layoutSequence'
+                    selectedLayout: [layoutToUpdate.layoutCode]
+                };
+            }
+
+            return state;
+        }
+        case 'updateRevision': {
+            if (state.selectedLayout?.length && state.selectedRevision?.length) {
+                const layoutIndex = state.board.layouts.findIndex(
+                    s => s.layoutCode === state.selectedLayout[0]
+                );
+
+                if (action.fieldName === 'revisionCode') {
+                    if (
+                        !revisionCodesAreUnique(
+                            state.board.layouts[layoutIndex].revisions,
+                            action.payload
                         )
-                    },
-                    selectedLayout: [layout.layoutCode]
+                    ) {
+                        return state;
+                    }
+                }
+
+                const currentLayout = state.board.layouts[layoutIndex];
+                const revisionToUpdate = currentLayout.revisions?.find(
+                    a => a.revisionCode === state.selectedRevision[0]
+                );
+                revisionToUpdate[action.fieldName] = action.payload;
+
+                if (action.fieldName === 'revisionNumber') {
+                    if (
+                        !revisionCodesAreUnique(
+                            currentLayout.revisions,
+                            `${revisionToUpdate.layoutCode}R${revisionToUpdate.revisionNumber}`
+                        )
+                    ) {
+                        revisionToUpdate.revisionCode = `duplicate`;
+                    } else {
+                        revisionToUpdate.revisionCode = `${revisionToUpdate.layoutCode}R${revisionToUpdate.revisionNumber}`;
+                    }
+                }
+
+                return {
+                    ...state,
+                    selectedRevision: [revisionToUpdate.revisionCode]
                 };
             }
 
