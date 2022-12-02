@@ -154,9 +154,7 @@ export default function BomTree({
                             onNodeSelect={(event, id) => {
                                 if (!event.target.closest('.MuiTreeItem-iconContainer')) {
                                     setSelected(id);
-                                    onNodeSelect?.(
-                                        nodesWithChildren.find(x => x.id === id)?.children
-                                    );
+                                    onNodeSelect?.(nodesWithChildren.find(x => x.id === id));
                                 }
                             }}
                         >
