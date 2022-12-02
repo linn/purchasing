@@ -10,15 +10,20 @@ import {
     itemSelectorHelpers,
     SaveBackCancelButtons,
     Loading,
+    ErrorCard,
     InputField,
-    getRequestErrors
+    getItemError,
+    getRequestErrors,
+    collectionSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import boardActions from '../../actions/boardActions';
 import history from '../../history';
 import config from '../../config';
 import BoardTab from './BoardTab';
 import LayoutTab from './LayoutTab';
+import RevisionTab from './RevisionTab';
 import boardReducer from './boardReducer';
+import partsActions from '../../actions/partsActions';
 
 function Board({ creating }) {
     const reduxDispatch = useDispatch();
@@ -41,6 +46,7 @@ function Board({ creating }) {
         getRequestErrors(state)?.filter(error => error.type !== 'FETCH_ERROR')
     );
     const [state, dispatch] = useReducer(boardReducer, { board: null });
+    const itemError = useSelector(reduxState => getItemError(reduxState, 'board'));
 
     useEffect(() => {
         if (creating) {
@@ -53,6 +59,7 @@ function Board({ creating }) {
     useEffect(() => {
         if (item) {
             dispatch({ type: 'populate', payload: item });
+            setSelectedTab(0);
         }
     }, [item]);
 
@@ -101,6 +108,36 @@ function Board({ creating }) {
         return codes.every((a, i) => codes.indexOf(a) === i);
     };
 
+    const revisionsAreOk = layouts => {
+        if (!layouts || !layouts.length) {
+            return true;
+        }
+
+        const allRevisions = layouts.flatMap(a => a.revisions);
+
+        if (allRevisions.some(a => a.revisionCode === 'duplicate')) {
+            return false;
+        }
+
+        const revisionCodes = allRevisions.map(a => a.revisionCode);
+
+        return revisionCodes.every((a, i) => revisionCodes.indexOf(a) === i);
+    };
+
+    const searchParts = searchTerm => reduxDispatch(partsActions.search(searchTerm));
+    const partsSearchResults = useSelector(reduxState =>
+        collectionSelectorHelpers.getSearchItems(
+            reduxState.parts,
+            100,
+            'id',
+            'partNumber',
+            'description'
+        )
+    );
+    const partsSearchLoading = useSelector(reduxState =>
+        collectionSelectorHelpers.getSearchLoading(reduxState.parts)
+    );
+
     const okToSave = () =>
         state.board &&
         state.board.clusterBoard &&
@@ -109,7 +146,8 @@ function Board({ creating }) {
         state.board.description &&
         state.board.splitBom &&
         state.board.boardCode &&
-        layoutsAreOk(state.board.layouts);
+        layoutsAreOk(state.board.layouts) &&
+        revisionsAreOk(state.board.layouts);
 
     return (
         <Page
@@ -151,6 +189,7 @@ function Board({ creating }) {
                         >
                             <Tab label="Board Details" />
                             <Tab label="Layouts" />
+                            <Tab label="Revisions" />
                         </Tabs>
                         {selectedTab === 0 && (
                             <BoardTab
@@ -175,9 +214,33 @@ function Board({ creating }) {
                                 selectedLayout={state.selectedLayout}
                                 setEditStatus={setEditStatus}
                                 okToSave={okToSave}
+                                searchParts={searchParts}
+                                partsSearchResults={partsSearchResults}
+                                partsSearchLoading={partsSearchLoading}
+                            />
+                        )}
+                        {selectedTab === 2 && (
+                            <RevisionTab
+                                layouts={state.board.layouts}
+                                style={{ paddingTop: '40px' }}
+                                dispatch={dispatch}
+                                selectedLayout={state.selectedLayout}
+                                selectedRevision={state.selectedRevision}
+                                setEditStatus={setEditStatus}
+                                okToSave={okToSave}
+                                searchParts={searchParts}
+                                partsSearchResults={partsSearchResults}
+                                partsSearchLoading={partsSearchLoading}
                             />
                         )}
                     </Grid>
+                    {itemError && (
+                        <Grid item xs={12}>
+                            <ErrorCard
+                                errorMessage={itemError.details?.error || itemError.details}
+                            />
+                        </Grid>
+                    )}
                     <Grid item xs={12}>
                         <SaveBackCancelButtons
                             saveDisabled={!okToSave() || editStatus === 'view'}

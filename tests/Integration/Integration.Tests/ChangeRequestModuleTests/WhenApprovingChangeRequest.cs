@@ -1,19 +1,22 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.ChangeRequestModuleTests
 {
-    using FluentAssertions;
-    using Linn.Purchasing.Domain.LinnApps.Boms;
-    using Linn.Purchasing.Integration.Tests.Extensions;
-    using Linn.Purchasing.Resources;
-    using NSubstitute;
-    using NUnit.Framework;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
     using System.Net.Http.Json;
 
+    using FluentAssertions;
+
     using Linn.Purchasing.Domain.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Integration.Tests.Extensions;
+    using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.RequestResources;
+
+    using NSubstitute;
+
+    using NUnit.Framework;
 
     public class WhenApprovingChangeRequest : ContextBase
     {
@@ -54,7 +57,7 @@
             };
             this.Repository.FindById(1).Returns(changeRequest);
 
-            var request = new ChangeRequestStatusChangeResource {Id = 1, Status = "ACCEPT"};
+            var request = new ChangeRequestStatusChangeResource { Id = 1, Status = "ACCEPT" };
 
             this.Response = this.Client.PostAsJsonAsync(
                 "/purchasing/change-requests/status", request).Result;
