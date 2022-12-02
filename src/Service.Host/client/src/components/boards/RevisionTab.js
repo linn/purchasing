@@ -16,7 +16,7 @@ function RevisionTab({
     partsSearchResults,
     partsSearchLoading
 }) {
-    const columns = [{ field: 'revisionCode', headerName: 'Revision', width: 140 }];
+    const columns = [{ field: 'revisionCode', headerName: 'Revision', width: 175 }];
     const rows =
         layouts &&
         selectedLayout?.length &&
@@ -42,7 +42,7 @@ function RevisionTab({
     return (
         <Grid container spacing={2} style={{ paddingTop: '30px' }}>
             <Grid item xs={2}>
-                <div style={{ width: '150px' }}>
+                <div style={{ width: '180px' }}>
                     {revision && (
                         <>
                             <DataGrid
@@ -51,6 +51,7 @@ function RevisionTab({
                                 pageSize={10}
                                 selectionModel={selectedRevision}
                                 density="compact"
+                                hideFooterSelectedRowCount
                                 autoHeight
                                 onSelectionModelChange={newSelectionModel => {
                                     dispatch({

@@ -15,7 +15,7 @@ function LayoutTab({
     partsSearchResults,
     partsSearchLoading
 }) {
-    const columns = [{ field: 'layoutCode', headerName: 'Layout', width: 140 }];
+    const columns = [{ field: 'layoutCode', headerName: 'Layout', width: 175 }];
     const rows = layouts ? layouts.map(l => ({ ...l, id: l.layoutCode })) : [];
 
     const layout =
@@ -30,7 +30,7 @@ function LayoutTab({
     return (
         <Grid container spacing={2} style={{ paddingTop: '30px' }}>
             <Grid item xs={2}>
-                <div style={{ width: '150px' }}>
+                <div style={{ width: '180px' }}>
                     {layout && (
                         <>
                             <DataGrid
@@ -46,6 +46,7 @@ function LayoutTab({
                                         payload: newSelectionModel
                                     });
                                 }}
+                                hideFooterSelectedRowCount
                                 hideFooter={!layouts || layouts.length <= 10}
                             />
                         </>
