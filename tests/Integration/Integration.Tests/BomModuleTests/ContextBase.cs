@@ -26,7 +26,7 @@
 
         protected HttpResponseMessage Response { get; set; }
 
-        protected IFacadeResourceService<Bom, int, BomResource, BomResource> FacadeService { get; set; }
+        protected IBomFacadeService FacadeService { get; set; }
 
         protected IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource> CircuitBoardFacadeService { get; set; }
 
@@ -46,6 +46,8 @@
 
         protected IBomReportsService MockBomReportsDomainService { get; set; }
 
+        protected IBomChangeService BomChangeService { get; set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -53,9 +55,7 @@
             this.CircuitBoardRepository = Substitute.For<IRepository<CircuitBoard, string>>();
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.FacadeService = new BomFacadeService(
-                this.Repository,
-                this.TransactionManager,
-                new BomResourceBuilder());
+                this.BomChangeService);
 
             this.BomTreeService = Substitute.For<IBomTreeService>();
 
@@ -71,6 +71,8 @@
                 this.CircuitBoardRepository,
                 this.TransactionManager,
                 new CircuitBoardResourceBuilder());
+
+            this.BomChangeService = Substitute.For<IBomChangeService>();
 
             this.Client = TestClient.With<BomModule>(
                 services =>

@@ -88,7 +88,7 @@
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<LedgerPeriodResource>>>()
                 .AddTransient<IHandler, JsonResultHandler<ChangeRequestResource>>()
                 .AddTransient<IHandler, JsonResultHandler<IEnumerable<ChangeRequestResource>>>()
-                .AddTransient<IHandler, JsonResultHandler<BomResource>>()
+                .AddTransient<IHandler, JsonResultHandler<BomTreeNodeResource>>()
                 .AddTransient<IHandler, JsonResultHandler<BomTypeChangeResource>>()
                 .AddTransient<IHandler, JsonResultHandler<CircuitBoardResource>>()
                 .AddTransient<IHandler, JsonResultHandler<BomTreeNode>>()

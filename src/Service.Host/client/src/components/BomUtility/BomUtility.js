@@ -124,7 +124,6 @@ function BomUtility() {
         if (selected) {
             const node = getNode(selected.id);
             if (node?.children) return node.children;
-            return [];
         }
         return [];
     };
