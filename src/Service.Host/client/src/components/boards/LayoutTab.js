@@ -3,10 +3,19 @@ import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import { DataGrid } from '@mui/x-data-grid';
 import Grid from '@mui/material/Grid';
-import { InputField, Dropdown } from '@linn-it/linn-form-components-library';
+import { InputField, Dropdown, Search } from '@linn-it/linn-form-components-library';
 
-function LayoutTab({ layouts, selectedLayout, dispatch, setEditStatus, okToSave }) {
-    const columns = [{ field: 'layoutCode', headerName: 'Layout', width: 140 }];
+function LayoutTab({
+    layouts,
+    selectedLayout,
+    dispatch,
+    setEditStatus,
+    okToSave,
+    searchParts,
+    partsSearchResults,
+    partsSearchLoading
+}) {
+    const columns = [{ field: 'layoutCode', headerName: 'Layout', width: 175 }];
     const rows = layouts ? layouts.map(l => ({ ...l, id: l.layoutCode })) : [];
 
     const layout =
@@ -21,7 +30,7 @@ function LayoutTab({ layouts, selectedLayout, dispatch, setEditStatus, okToSave 
     return (
         <Grid container spacing={2} style={{ paddingTop: '30px' }}>
             <Grid item xs={2}>
-                <div style={{ width: '150px' }}>
+                <div style={{ width: '180px' }}>
                     {layout && (
                         <>
                             <DataGrid
@@ -37,6 +46,7 @@ function LayoutTab({ layouts, selectedLayout, dispatch, setEditStatus, okToSave 
                                         payload: newSelectionModel
                                     });
                                 }}
+                                hideFooterSelectedRowCount
                                 hideFooter={!layouts || layouts.length <= 10}
                             />
                         </>
@@ -84,12 +94,21 @@ function LayoutTab({ layouts, selectedLayout, dispatch, setEditStatus, okToSave 
                             </Grid>
                             <Grid item xs={10} />
                             <Grid item xs={3}>
-                                <InputField
-                                    fullWidth
-                                    value={layout.pcbPartNumber}
-                                    label="PCB Part Number"
+                                <Search
                                     propertyName="pcbPartNumber"
-                                    onChange={handleLayoutChange}
+                                    label="PCB Part Number"
+                                    resultsInModal
+                                    resultLimit={100}
+                                    value={layout.pcbPartNumber}
+                                    handleValueChange={handleLayoutChange}
+                                    search={searchParts}
+                                    searchResults={partsSearchResults}
+                                    loading={partsSearchLoading}
+                                    priorityFunction="closestMatchesFirst"
+                                    onResultSelect={newValue => {
+                                        handleLayoutChange('pcbPartNumber', newValue.partNumber);
+                                    }}
+                                    clearSearch={() => {}}
                                 />
                             </Grid>
                             <Grid item xs={9} />
@@ -118,11 +137,16 @@ LayoutTab.propTypes = {
     selectedLayout: PropTypes.arrayOf(PropTypes.string),
     setEditStatus: PropTypes.func.isRequired,
     dispatch: PropTypes.func.isRequired,
-    okToSave: PropTypes.func.isRequired
+    okToSave: PropTypes.func.isRequired,
+    partsSearchResults: PropTypes.arrayOf(PropTypes.shape({})),
+    partsSearchLoading: PropTypes.bool,
+    searchParts: PropTypes.func.isRequired
 };
 
 LayoutTab.defaultProps = {
-    selectedLayout: []
+    selectedLayout: [],
+    partsSearchResults: [],
+    partsSearchLoading: false
 };
 
 export default LayoutTab;

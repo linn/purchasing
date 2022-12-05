@@ -28,7 +28,6 @@
             app.MapGet("/purchasing/boms/tree", this.GetTree);
             app.MapGet("/purchasing/boms/tree/options", this.GetApp);
             app.MapGet("/purchasing/boms/cost/options", this.GetApp);
-
             app.MapGet("/purchasing/boms/boards/application-state", this.GetBoardApplicationState);
             app.MapGet("/purchasing/boms/boards/{id}", this.GetBoard);
             app.MapGet("/purchasing/boms/tree/export", this.GetTreeExport);
@@ -36,8 +35,11 @@
             app.MapGet("/purchasing/boms/boards/create", this.GetApp);
             app.MapPost("/purchasing/boms/boards", this.AddCircuitBoard);
             app.MapPut("/purchasing/boms/boards/{id}", this.UpdateCircuitBoard);
+            
             app.MapGet("/purchasing/boms/reports/list", this.GetPartsOnBomReport);
             app.MapGet("/purchasing/boms/reports/list/export", this.GetPartsOnBomExport);
+
+            app.MapGet("/purchasing/boms/reports/cost/options", this.GetApp);
             app.MapGet("/purchasing/boms/reports/cost", this.GetBomCostReport);
 
             app.MapPost("/purchasing/boms", this.SubmitBom);

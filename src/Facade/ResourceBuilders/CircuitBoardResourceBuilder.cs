@@ -46,19 +46,62 @@
             return this.Build(entity, claims);
         }
 
-        private static BoardLayoutResource MakeLayoutResource(BoardLayout a)
+        private static BoardLayoutResource MakeLayoutResource(BoardLayout layout)
         {
             return new BoardLayoutResource
                        {
-                           BoardCode = a.BoardCode,
-                           LayoutCode = a.LayoutCode,
-                           LayoutSequence = a.LayoutSequence,
-                           PcbNumber = a.PcbNumber,
-                           LayoutType = a.LayoutType,
-                           LayoutNumber = a.LayoutNumber,
-                           PcbPartNumber = a.PcbPartNumber,
-                           ChangeId = a.ChangeId,
-                           ChangeState = a.ChangeState
+                           BoardCode = layout.BoardCode,
+                           LayoutCode = layout.LayoutCode,
+                           LayoutSequence = layout.LayoutSequence,
+                           PcbNumber = layout.PcbNumber,
+                           LayoutType = layout.LayoutType,
+                           LayoutNumber = layout.LayoutNumber,
+                           PcbPartNumber = layout.PcbPartNumber,
+                           ChangeId = layout.ChangeId,
+                           ChangeState = layout.ChangeState,
+                           Revisions = layout.Revisions?.OrderBy(a => a.RevisionNumber).Select(MakeRevisionResource)
+                       };
+        }
+
+        private static BoardRevisionResource MakeRevisionResource(BoardRevision revision)
+        {
+            return new BoardRevisionResource
+                       {
+                           BoardCode = revision.BoardCode,
+                           LayoutCode = revision.LayoutCode,
+                           RevisionCode = revision.RevisionCode,
+                           LayoutSequence = revision.LayoutSequence,
+                           VersionNumber = revision.VersionNumber,
+                           RevisionType = MakeRevisionTypeResource(revision.RevisionType),
+                           RevisionNumber = revision.RevisionNumber,
+                           SplitBom = revision.SplitBom,
+                           PcasPartNumber = revision.PcasPartNumber,
+                           PcsmPartNumber = revision.PcsmPartNumber,
+                           PcbPartNumber = revision.PcbPartNumber,
+                           AteTestCommissioned = revision.AteTestCommissioned,
+                           ChangeId = revision.ChangeId,
+                           ChangeState = revision.ChangeState
+                       };
+        }
+
+        private static BoardRevisionTypeResource MakeRevisionTypeResource(BoardRevisionType revisionType)
+        {
+            if (revisionType is null)
+            {
+                return null;
+            }
+
+            return new BoardRevisionTypeResource
+                       {
+                           TypeCode = revisionType.TypeCode,
+                           Description = revisionType.Description,
+                           ReferenceRevision = revisionType.ReferenceRevision,
+                           ShowLayoutCode = revisionType.ShowLayoutCode,
+                           RevisionCode = revisionType.RevisionCode,
+                           ShowRevisionNumber = revisionType.ShowRevisionNumber,
+                           DefaultLayoutType = revisionType.DefaultLayoutType,
+                           DateObsolete = revisionType.DateObsolete?.ToString("o"),
+                           RevisionSuffix = revisionType.RevisionSuffix
                        };
         }
 

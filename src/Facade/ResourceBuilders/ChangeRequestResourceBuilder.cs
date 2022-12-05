@@ -19,7 +19,10 @@
 
         private readonly IAuthorisationService authService;
 
-        public ChangeRequestResourceBuilder(IBuilder<BomChange> bomChangeBuilder, IBuilder<PcasChange> pcasChangeBuilder, IAuthorisationService authService)
+        public ChangeRequestResourceBuilder(
+            IBuilder<BomChange> bomChangeBuilder,
+            IBuilder<PcasChange> pcasChangeBuilder,
+            IAuthorisationService authService)
         {
             this.bomChangeBuilder = bomChangeBuilder;
             this.pcasChangeBuilder = pcasChangeBuilder;

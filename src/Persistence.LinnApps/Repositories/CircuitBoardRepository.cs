@@ -22,6 +22,8 @@
             return this.serviceDbContext
                 .CircuitBoards
                 .Include(a => a.Layouts)
+                .ThenInclude(b => b.Revisions)
+                .ThenInclude(c => c.RevisionType)
                 .FirstOrDefault(c => c.BoardCode == key);
         }
     }
