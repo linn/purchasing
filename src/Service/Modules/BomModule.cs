@@ -40,7 +40,7 @@
             app.MapGet("/purchasing/boms/reports/list/export", this.GetPartsOnBomExport);
             app.MapGet("/purchasing/boms/reports/cost", this.GetBomCostReport);
 
-            //app.MapPost("/purchasing/boms", this.SubmitBom);
+            app.MapPost("/purchasing/boms", this.SubmitBom);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -159,12 +159,10 @@
             HttpRequest req,
             HttpResponse res,
             BomTreeNode resource,
-            IFacadeResourceService<BomTreeNode, string, BomTreeNode, BomTreeNode> bomFacadeService)
+            IBomFacadeService bomFacadeService)
         {
-            var result = bomFacadeService.Add(
-                resource,
-                req.HttpContext.GetPrivileges(),
-                null);
+            var result = bomFacadeService.PostBom(
+                resource);
 
             await res.Negotiate(result);
         }
