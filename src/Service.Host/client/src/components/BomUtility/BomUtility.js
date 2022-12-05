@@ -20,6 +20,9 @@ import changeRequestsActions from '../../actions/changeRequestsActions';
 import bomTreeActions from '../../actions/bomTreeActions';
 import useInitialise from '../../hooks/useInitialise';
 
+// unique id generator
+const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2);
+
 function BomUtility() {
     const { search } = useLocation();
     const { bomName } = queryString.parse(search);
@@ -48,8 +51,6 @@ function BomUtility() {
     ];
     const [selected, setSelected] = useState(null);
 
-    const [changes, setChanges] = useState({});
-
     useEffect(() => {
         if (bomTree === null) {
             setSelected({ id: 'root', name: bomName, children: [] });
@@ -61,7 +62,8 @@ function BomUtility() {
         );
     }, [bomTree, bomName, bomTreeLoading]);
 
-    const addNodeToTree = (tree, newNode) => {
+    // updates the tree with changes passed via a 'newNode' object
+    const updateTree = (tree, newNode) => {
         const newTree = { ...tree };
         const q = [];
         q.push(newTree);
@@ -71,7 +73,11 @@ function BomUtility() {
                 const current = q[0];
                 q.shift();
                 if (current.id === newNode.parent) {
-                    current.children = [...current.children, newNode];
+                    current.children = [
+                        ...current.children.filter(x => x.id !== newNode.id),
+                        { ...newNode, children: [{ id: uid(), type: 'C', parent: newNode.id }] }
+                    ];
+                    return newTree;
                 }
                 for (let i = 0; i < current.children?.length || 0; i += 1) {
                     q.push(current.children[i]);
@@ -79,30 +85,48 @@ function BomUtility() {
                 n -= 1;
             }
         }
-
         return newTree;
     };
 
-    const processRowUpdate = newRow => {
-        if (newRow.type === 'A' && newRow.name) {
-            setTreeView(tree => addNodeToTree(tree, newRow));
+    // find a node in the tree, by its id field
+    const getNode = id => {
+        if (treeView == null) return null;
+        const q = [];
+        q.push(treeView);
+        while (q.length !== 0) {
+            let n = q.length;
+            while (n > 0) {
+                const current = q[0];
+                q.shift();
+                if (current.id === id) return current;
+                if (current.children)
+                    for (let i = 0; i < current.children.length; i += 1)
+                        q.push(current.children[i]);
+                n -= 1;
+            }
         }
-        console.log(newRow);
-        setChanges(c => ({
-            ...c,
-            [newRow.parent]: [...c[newRow.parent].filter(x => x.id !== newRow.id), newRow]
-        }));
+        return null;
+    };
 
+    const processRowUpdate = newRow => {
+        if (newRow.name) {
+            setTreeView(tree => updateTree(tree, newRow));
+        }
         return newRow;
     };
-    const addLine = id => {
-        setChanges(c => ({
-            ...c,
-            [id]: [
-                ...(Array.isArray(c[id]) ? c[id] : []),
-                { id: -(c[id]?.length || 0) - 1, type: 'C', parent: selected.id }
-            ]
-        }));
+
+    // add a new line to the children list of the selected node
+    const addLine = () => {
+        setTreeView(tree => updateTree(tree, { id: uid(), type: 'C', parent: selected.id }));
+    };
+
+    const getRows = () => {
+        if (selected) {
+            const node = getNode(selected.id);
+            if (node?.children) return node.children;
+            return [];
+        }
+        return [];
     };
 
     return (
@@ -135,7 +159,6 @@ function BomUtility() {
                         renderComponents={false}
                         renderQties={false}
                         onNodeSelect={s => {
-                            console.log(s);
                             setSelected(s);
                         }}
                         bomName={bomName}
@@ -148,11 +171,7 @@ function BomUtility() {
                         <Grid item xs={12}>
                             <DataGrid
                                 columnBuffer={6}
-                                rows={
-                                    selected && changes[selected.id]
-                                        ? changes[selected.id]
-                                        : selected?.children || []
-                                }
+                                rows={getRows()}
                                 autoHeight
                                 processRowUpdate={processRowUpdate}
                                 hideFooter
