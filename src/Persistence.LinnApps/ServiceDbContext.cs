@@ -1874,6 +1874,9 @@
             entity.Property(c => c.NewPartNumber).HasColumnName("NEW_PART_NUMBER");
             entity.HasOne(o => o.NewPart).WithMany().HasForeignKey(o => o.NewPartNumber);
             entity.Property(c => c.ChangeState).HasColumnName("CHANGE_STATE").HasMaxLength(6);
+            entity.Property(c => c.GlobalReplace).HasColumnName("GLOBAL_REPLACE").HasMaxLength(1);
+            entity.Property(c => c.RequiresStartingSernos).HasColumnName("REQUIRES_STARTING_SERNOS").HasMaxLength(1);
+            entity.Property(c => c.RequiresVerification).HasColumnName("REQUIRES_VERIFICATION").HasMaxLength(1);
             entity.Property(c => c.ReasonForChange).HasColumnName("REASON_FOR_CHANGE").HasMaxLength(2000);
             entity.Property(c => c.DescriptionOfChange).HasColumnName("DESCRIPTION_OF_CHANGE").HasMaxLength(2000);
             entity.HasMany(c => c.BomChanges).WithOne(d => d.ChangeRequest).HasForeignKey(d => d.DocumentNumber);

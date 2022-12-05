@@ -39,6 +39,13 @@
 
         public string DescriptionOfChange { get; set; }
 
+        public string GlobalReplace { get; set; }
+
+        // RequiresStartingSernos and RequiresVerification only included for historic Change Requests
+        public string RequiresStartingSernos { get; set; }
+
+        public string RequiresVerification { get; set; }
+
         public ICollection<BomChange> BomChanges { get; set; }
 
         public ICollection<PcasChange> PcasChanges { get; set; }

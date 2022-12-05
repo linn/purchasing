@@ -4,8 +4,10 @@
     using System.Collections.Generic;
     using System.Linq.Expressions;
 
+    using Linn.Common.Domain.Exceptions;
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
+    using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Boms.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
@@ -24,12 +26,15 @@
 
         private readonly ITransactionManager transactionManager;
 
-        public ChangeRequestFacadeService(IRepository<ChangeRequest, int> repository, ITransactionManager transactionManager, IBuilder<ChangeRequest> resourceBuilder, IChangeRequestService changeRequestService)
+        private readonly IDatabaseService databaseService;
+
+        public ChangeRequestFacadeService(IRepository<ChangeRequest, int> repository, ITransactionManager transactionManager, IBuilder<ChangeRequest> resourceBuilder, IChangeRequestService changeRequestService, IDatabaseService databaseService)
             : base(repository, transactionManager, resourceBuilder)
         {
             this.repository = repository;
             this.resourceBuilder = resourceBuilder;
             this.changeRequestService = changeRequestService;
+            this.databaseService = databaseService;
             this.transactionManager = transactionManager;
         }
 
@@ -64,7 +69,29 @@
 
         protected override ChangeRequest CreateFromResource(ChangeRequestResource resource, IEnumerable<string> privileges = null)
         {
-            throw new NotImplementedException();
+            if (resource == null)
+            {
+                throw new DomainException("Change Request not present");
+            }
+
+            var requestId = this.databaseService.GetNextVal("CRF_SEQ");
+
+            return new ChangeRequest
+                       {
+                           DocumentType = "CRF",
+                           DocumentNumber = requestId,
+                           ChangeRequestType = resource.ChangeType,
+                           ChangeState = "PROPOS",
+                           DateEntered = DateTime.Now,
+                           EnteredById = (int) resource.EnteredBy.Id,
+                           ProposedById = (int) resource.ProposedBy.Id,
+                           NewPartNumber = resource.NewPartNumber,
+                           ReasonForChange = resource.ReasonForChange,
+                           DescriptionOfChange = resource.DescriptionOfChange,
+                           GlobalReplace = resource.GlobalReplace ? "Y" : "N",
+                           RequiresVerification = "N",
+                           RequiresStartingSernos = "N"
+                       };
         }
 
         protected override void UpdateFromResource(ChangeRequest entity, ChangeRequestResource updateResource, IEnumerable<string> privileges = null)
