@@ -1,11 +1,11 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Boms
 {
+    using System.Collections.Generic;
+
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Boms.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
-    using Linn.Purchasing.Domain.LinnApps.Parts;
-    using System.Collections.Generic;
 
     public class ChangeRequestService : IChangeRequestService
     {

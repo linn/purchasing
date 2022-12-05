@@ -16,18 +16,19 @@
         FacadeResourceService<ChangeRequest, int, ChangeRequestResource, ChangeRequestResource>,
         IChangeRequestFacadeService
     {
-        private readonly IRepository<ChangeRequest, int> repository;
-
         private readonly IChangeRequestService changeRequestService;
 
         private readonly IBuilder<ChangeRequest> resourceBuilder;
 
         private readonly ITransactionManager transactionManager;
 
-        public ChangeRequestFacadeService(IRepository<ChangeRequest, int> repository, ITransactionManager transactionManager, IBuilder<ChangeRequest> resourceBuilder, IChangeRequestService changeRequestService)
+        public ChangeRequestFacadeService(
+            IRepository<ChangeRequest, int> repository,
+            ITransactionManager transactionManager,
+            IBuilder<ChangeRequest> resourceBuilder,
+            IChangeRequestService changeRequestService)
             : base(repository, transactionManager, resourceBuilder)
         {
-            this.repository = repository;
             this.resourceBuilder = resourceBuilder;
             this.changeRequestService = changeRequestService;
             this.transactionManager = transactionManager;
@@ -42,11 +43,11 @@
                 var resource = (ChangeRequestResource) this.resourceBuilder.Build(request, new List<string>());
                 return new SuccessResult<ChangeRequestResource>(resource);
             }
-            catch (ItemNotFoundException e)
+            catch (ItemNotFoundException)
             {
                 return new NotFoundResult<ChangeRequestResource>("Change Request not found");
             }
-            catch (InvalidStateChangeException e)
+            catch (InvalidStateChangeException)
             {
                 return new BadRequestResult<ChangeRequestResource>("Cannot approve this change request");
             }
