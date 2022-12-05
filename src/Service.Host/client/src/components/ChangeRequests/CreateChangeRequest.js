@@ -5,15 +5,16 @@ import {
     collectionSelectorHelpers,
     Dropdown,
     InputField,
+    itemSelectorHelpers,
     userSelectors
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import AssemblyChange from './ChangeTypes/AssemblyChange';
-import history from '../../history';
 import employeesActions from '../../actions/employeesActions';
 import changeRequestActions from '../../actions/changeRequestActions';
+import history from '../../history';
 
 function CreateChangeRequest() {
     const dispatch = useDispatch();
@@ -55,9 +56,18 @@ function CreateChangeRequest() {
     };
 
     const create = () => {
-        console.log(item);
         dispatch(changeRequestActions.add(item));
     };
+
+    const createdItem = useSelector(reduxState =>
+        itemSelectorHelpers.getItem(reduxState.changeRequest)
+    );
+
+    useEffect(() => {
+        if (createdItem?.documentNumber) {
+            history.push(`/purchasing/change-requests/${createdItem?.documentNumber}/`);
+        }
+    }, [createdItem]);
 
     return (
         <Page history={history}>
