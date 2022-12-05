@@ -7,6 +7,7 @@
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Edi;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
@@ -36,6 +37,8 @@
 
         protected IDatabaseService DatabaseService { get; set; }
 
+        protected IQueryRepository<Part> PartRepository { get; set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -43,11 +46,12 @@
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.AuthService = Substitute.For<IAuthorisationService>();
             this.DatabaseService = Substitute.For<IDatabaseService>();
+            this.PartRepository = Substitute.For<IQueryRepository<Part>>();
             this.FacadeService = new ChangeRequestFacadeService(
                 this.Repository,
                 this.TransactionManager,
                 new ChangeRequestResourceBuilder(new BomChangeResourceBuilder(), new PcasChangeResourceBuilder(), this.AuthService),
-                new ChangeRequestService(this.AuthService, this.Repository),
+                new ChangeRequestService(this.AuthService, this.Repository, this.PartRepository),
                 this.DatabaseService);
 
             this.Client = TestClient.With<ChangeRequestModule>(

@@ -75,6 +75,7 @@
             }
 
             var requestId = this.databaseService.GetNextVal("CRF_SEQ");
+            var newPart = this.changeRequestService.ValidPartNumber(resource.NewPartNumber);
 
             return new ChangeRequest
                        {
