@@ -28,7 +28,7 @@
 
         protected HttpResponseMessage Response { get; set; }
 
-        protected IFacadeResourceService<Bom, int, BomResource, BomResource> FacadeService { get; set; }
+        protected IBomFacadeService FacadeService { get; set; }
 
         protected IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource> CircuitBoardFacadeService { get; set; }
 
@@ -50,6 +50,8 @@
 
         protected IBomReportsService MockBomReportsDomainService { get; set; }
 
+        protected IBomChangeService BomChangeService { get; set; }
+        
         protected string BoardCode { get; set; }
 
         protected CircuitBoardResource Resource { get; set; }
@@ -62,9 +64,7 @@
             this.BoardRevisionTypeRepository = Substitute.For<IRepository<BoardRevisionType, string>>();
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.FacadeService = new BomFacadeService(
-                this.Repository,
-                this.TransactionManager,
-                new BomResourceBuilder());
+                this.BomChangeService);
 
             this.BomTreeService = Substitute.For<IBomTreeService>();
 
@@ -87,6 +87,9 @@
                 this.TransactionManager,
                 new CircuitBoardResourceBuilder(),
                 this.BoardRevisionTypeRepository);
+
+            this.BomChangeService = Substitute.For<IBomChangeService>();
+              
             this.BoardCode = "808";
             this.Resource = new CircuitBoardResource
             {

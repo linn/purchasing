@@ -1869,6 +1869,7 @@
             entity.Property(o => o.ProposedById).HasColumnName("PROPOSED_BY");
             entity.HasOne(o => o.ProposedBy).WithMany().HasForeignKey(o => o.ProposedById);
             entity.Property(o => o.EnteredById).HasColumnName("ENTERED_BY");
+            entity.Property(o => o.NewPartNumber).HasColumnName("NEW_PART_NUMBER");
             entity.HasOne(o => o.EnteredBy).WithMany().HasForeignKey(o => o.EnteredById);
             entity.Property(c => c.ChangeState).HasColumnName("CHANGE_STATE").HasMaxLength(6);
             entity.Property(c => c.ReasonForChange).HasColumnName("REASON_FOR_CHANGE").HasMaxLength(2000);

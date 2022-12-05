@@ -27,7 +27,7 @@
         {
             app.MapGet("/purchasing/boms/tree", this.GetTree);
             app.MapGet("/purchasing/boms/tree/options", this.GetApp);
-            app.MapGet("/purchasing/boms/{id:int}", this.GetBom);
+            app.MapGet("/purchasing/boms/cost/options", this.GetApp);
             app.MapGet("/purchasing/boms/boards/application-state", this.GetBoardApplicationState);
             app.MapGet("/purchasing/boms/boards/{id}", this.GetBoard);
             app.MapGet("/purchasing/boms/tree/export", this.GetTreeExport);
@@ -41,22 +41,13 @@
 
             app.MapGet("/purchasing/boms/reports/cost/options", this.GetApp);
             app.MapGet("/purchasing/boms/reports/cost", this.GetBomCostReport);
+
+            app.MapPost("/purchasing/boms", this.SubmitBom);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
         {
             await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
-        }
-
-        private async Task GetBom(
-            HttpRequest req,
-            HttpResponse res,
-            int id,
-            IFacadeResourceService<Bom, int, BomResource, BomResource> facadeService)
-        {
-            var result = facadeService.GetById(id, req.HttpContext.GetPrivileges());
-
-            await res.Negotiate(result);
         }
 
         private async Task GetTree(
@@ -72,7 +63,12 @@
             IResult<BomTreeNode> result = null;
             if (!string.IsNullOrEmpty(bomName))
             {
-                result = facadeService.GetTree(bomName.Trim().ToUpper(), levels, requirementOnly, showChanges, treeType);
+                result = facadeService.GetTree(
+                    bomName.Trim().ToUpper(), 
+                    levels, 
+                    requirementOnly, 
+                    showChanges, 
+                    treeType);
             }
 
             await res.Negotiate(result);
@@ -157,6 +153,18 @@
                 resource,
                 req.HttpContext.GetPrivileges(),
                 null);
+
+            await res.Negotiate(result);
+        }
+
+        private async Task SubmitBom(
+            HttpRequest req,
+            HttpResponse res,
+            BomTreeNode resource,
+            IBomFacadeService bomFacadeService)
+        {
+            var result = bomFacadeService.PostBom(
+                resource);
 
             await res.Negotiate(result);
         }
