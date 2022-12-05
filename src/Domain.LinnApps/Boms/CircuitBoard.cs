@@ -28,6 +28,6 @@
 
         public string IdBoard { get; set; }
 
-        public IEnumerable<BoardLayout> Layouts { get; set; }
+        public IList<BoardLayout> Layouts { get; set; }
     }
 }

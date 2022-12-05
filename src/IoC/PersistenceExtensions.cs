@@ -222,7 +222,10 @@
                         ?.BoardComponentSummary))
                 .AddTransient<IQueryRepository<BomCostReportDetail>, EntityFrameworkQueryRepository<BomCostReportDetail>>(
                     r => new EntityFrameworkQueryRepository<BomCostReportDetail>(r.GetService<ServiceDbContext>()
-                        ?.BomCostDetails));
+                        ?.BomCostDetails))
+                .AddTransient<IRepository<BoardRevisionType, string>, EntityFrameworkRepository<BoardRevisionType, string>>(
+                    r => new EntityFrameworkRepository<BoardRevisionType, string>(r.GetService<ServiceDbContext>()
+                        ?.BoardRevisionTypes));
         }
     }
 }
