@@ -5,7 +5,6 @@ import {
     collectionSelectorHelpers,
     Dropdown,
     InputField,
-    itemSelectorHelpers,
     userSelectors
 } from '@linn-it/linn-form-components-library';
 import Grid from '@mui/material/Grid';

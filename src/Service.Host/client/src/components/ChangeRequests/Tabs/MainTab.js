@@ -81,11 +81,7 @@ function MainTab({ item, approve }) {
                         disabled
                     />
                 ) : (
-                    <Button
-                        variant="contained"
-                        disabled={!approveUri}
-                        onClick={() => approve(item)}
-                    >
+                    <Button variant="outlined" disabled={!approveUri} onClick={() => approve(item)}>
                         Approve
                     </Button>
                 )}

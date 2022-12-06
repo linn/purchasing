@@ -55,7 +55,7 @@ function ChangeRequest() {
         }
     };
 
-    const cancelUri = utilities.getHref(item, 'approve');
+    const cancelUri = utilities.getHref(item, 'cancel');
 
     const cancel = request => {
         if (request?.changeState === 'PROPOS' || request?.changeState === 'ACCEPT') {

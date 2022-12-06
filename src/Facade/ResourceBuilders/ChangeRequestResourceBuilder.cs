@@ -11,6 +11,8 @@
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Resources;
 
+    using Microsoft.EntityFrameworkCore.ChangeTracking;
+
     public class ChangeRequestResourceBuilder : IBuilder<ChangeRequest>
     {
         private readonly IBuilder<BomChange> bomChangeBuilder;
@@ -77,7 +79,7 @@
             var privileges = claims as string[] ?? claims.ToArray();
             var adminPrivs = this.authService.HasPermissionFor(AuthorisedAction.AdminChangeRequest, privileges);
 
-            if (this.authService.HasPermissionFor(AuthorisedAction.ApproveChangeRequest, privileges))
+            if (this.authService.HasPermissionFor(AuthorisedAction.ApproveChangeRequest, privileges) && model.CanApprove())
             {
                 yield return new LinkResource { Rel = "approve", Href = $"/purchasing/change-requests/status" };
             }

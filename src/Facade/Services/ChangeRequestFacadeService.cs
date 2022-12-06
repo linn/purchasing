@@ -61,7 +61,21 @@
 
         public IResult<ChangeRequestResource> CancelChangeRequest(int documentNumber, IEnumerable<string> privileges = null)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var request = this.changeRequestService.Cancel(documentNumber, privileges);
+                this.transactionManager.Commit();
+                var resource = (ChangeRequestResource)this.resourceBuilder.Build(request, privileges);
+                return new SuccessResult<ChangeRequestResource>(resource);
+            }
+            catch (ItemNotFoundException)
+            {
+                return new NotFoundResult<ChangeRequestResource>("Change Request not found");
+            }
+            catch (InvalidStateChangeException)
+            {
+                return new BadRequestResult<ChangeRequestResource>("Cannot cancel this change request");
+            }
         }
 
         public IResult<ChangeRequestResource> ChangeStatus(ChangeRequestStatusChangeResource request, IEnumerable<string> privileges = null)
