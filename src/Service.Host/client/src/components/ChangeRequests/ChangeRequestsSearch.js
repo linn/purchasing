@@ -23,11 +23,18 @@ function ChangeRequestSearch() {
 
     const search = () => history.push(`/purchasing/change-requests/${documentNumber}/`);
 
+    const create = () => history.push('/purchasing/change-requests/create');
+
     return (
         <Page history={history}>
             <Grid container>
-                <Grid item xs={11}>
+                <Grid item xs={10}>
                     <Typography variant="h3">Search Change Request</Typography>
+                </Grid>
+                <Grid item xs={2}>
+                    <Button variant="outlined" className={classes.button} onClick={create}>
+                        Create
+                    </Button>
                 </Grid>
                 <Grid item xs={5}>
                     <InputField

@@ -7,16 +7,37 @@
     using Linn.Purchasing.Domain.LinnApps.Boms.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
 
+    using Linn.Common.Domain.Exceptions;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
+
     public class ChangeRequestService : IChangeRequestService
     {
         private readonly IAuthorisationService authService;
 
         private readonly IRepository<ChangeRequest, int> repository;
 
-        public ChangeRequestService(IAuthorisationService authService, IRepository<ChangeRequest, int> repository)
+        private readonly IQueryRepository<Part> partRepository;
+
+        public ChangeRequestService(IAuthorisationService authService, IRepository<ChangeRequest, int> repository, IQueryRepository<Part> partRepository)
         {
             this.authService = authService;
             this.repository = repository;
+            this.partRepository = partRepository;
+        }
+
+        public Part ValidPartNumber(string partNumber)
+        {
+            if (string.IsNullOrEmpty(partNumber))
+            {
+                return null;
+            }
+            var part = this.partRepository.FindBy(p => p.PartNumber == partNumber);
+            if (part == null)
+            {
+                throw new DomainException("invalid part number");
+            }
+
+            return part;
         }
 
         public ChangeRequest Approve(int documentNumber, IEnumerable<string> privileges = null)

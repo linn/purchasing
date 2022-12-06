@@ -20,11 +20,21 @@
 
         public EmployeeResource EnteredBy { get; set; }
 
+        public string ChangeType { get; set; }
+
+        public string OldPartNumber { get; set; }
+
+        public string OldPartDescription { get; set; }
+
+        public string NewPartNumber { get; set; }
+
+        public string NewPartDescription { get; set; }
+
         public string ReasonForChange { get; set; }
 
         public string DescriptionOfChange { get; set; }
 
-        public string NewPartNumber { get; set; }
+        public bool GlobalReplace { get; set; }
 
         public IEnumerable<BomChangeResource> BomChanges { get; set; }
 

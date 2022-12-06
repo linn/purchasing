@@ -3,6 +3,7 @@
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
 
     using NSubstitute;
     using NUnit.Framework;
@@ -15,14 +16,18 @@
 
         protected IAuthorisationService AuthService { get; private set; }
 
+        protected IQueryRepository<Part> PartRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
             this.Repository = Substitute.For<IRepository<ChangeRequest, int>>();
             this.AuthService = Substitute.For<IAuthorisationService>();
+            this.PartRepository = Substitute.For<IQueryRepository<Part>>();
             this.Sut = new ChangeRequestService(
                 this.AuthService,
-                this.Repository);
+                this.Repository,
+                this.PartRepository);
         }
     }
 }
