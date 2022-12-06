@@ -61,7 +61,7 @@
                            PcasChanges =
                                model.PcasChanges?.Select(
                                    d => (PcasChangeResource)this.pcasChangeBuilder.Build(d, claims)),
-                           Links = claims == null ? null : this.BuildLinks(claims).ToArray()
+                           Links = claims == null ? null : this.BuildLinks(model, claims).ToArray()
             };
         }
 

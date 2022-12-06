@@ -27,6 +27,11 @@
             app.MapPost("/purchasing/change-requests/status", this.ChangeStatus);
         }
 
+        private async Task GetApp(HttpRequest req, HttpResponse res)
+        {
+            await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
+        }
+
         private async Task GetChangeRequests(
             HttpRequest req, 
             HttpResponse res,
@@ -40,6 +45,7 @@
 
             await res.Negotiate(facadeService.Search(searchTerm));
         }
+
 
         private async Task GetChangeRequest(
             HttpRequest req,
