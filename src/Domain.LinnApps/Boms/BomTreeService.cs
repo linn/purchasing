@@ -34,6 +34,10 @@
             
             // look up the root node
             var root = this.repository.FindBy(x => x.BomName == bomName);
+            if (root == null)
+            {
+                return null;
+            }
             var rootNode = new BomTreeNode
                                {
                                    Name = root.BomName,
