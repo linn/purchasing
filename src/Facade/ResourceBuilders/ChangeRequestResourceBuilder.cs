@@ -41,6 +41,12 @@
                            DateEntered = model.DateEntered.ToString("o"),
                            DateAccepted = model.DateAccepted?.ToString("o"),
                            NewPartNumber = model.NewPartNumber,
+
+                           ChangeType = model.ChangeRequestType,
+                           OldPartNumber = model.OldPartNumber,
+                           OldPartDescription = model.OldPart?.Description,
+                           NewPartDescription = model.NewPart?.Description,
+
                            ProposedBy = 
                                new EmployeeResource
                                    {
@@ -61,12 +67,12 @@
 
         public string GetLocation(ChangeRequest model)
         {
-            throw new NotImplementedException();
+            return $"/purchasing/change-requests/{model.DocumentNumber}";
         }
 
         object IBuilder<ChangeRequest>.Build(ChangeRequest entity, IEnumerable<string> claims) => this.Build(entity, claims);
 
-        private IEnumerable<LinkResource> BuildLinks(IEnumerable<string> claims)
+        private IEnumerable<LinkResource> BuildLinks(ChangeRequest model, IEnumerable<string> claims)
         {
             var privileges = claims as string[] ?? claims.ToArray();
 
@@ -74,6 +80,8 @@
             {
                 yield return new LinkResource { Rel = "approve", Href = $"/purchasing/change-requests" };
             }
+
+            yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
         }
     }
 }

@@ -7,6 +7,7 @@
     using Carter.Response;
 
     using Linn.Purchasing.Facade.Services;
+    using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.RequestResources;
     using Linn.Purchasing.Service.Extensions;
     using Linn.Purchasing.Service.Models;
@@ -19,6 +20,8 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
+            app.MapPost("/purchasing/change-requests", this.CreateChangeRequest);
+            app.MapGet("/purchasing/change-requests/create", this.GetApp);
             app.MapGet("/purchasing/change-requests", this.GetChangeRequests);
             app.MapGet("/purchasing/change-requests/{id:int}", this.GetChangeRequest);
             app.MapPost("/purchasing/change-requests/status", this.ChangeStatus);
@@ -56,6 +59,17 @@
             IChangeRequestFacadeService facadeService)
         {
             var result = facadeService.ChangeStatus(request, req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task CreateChangeRequest(
+            HttpRequest req,
+            HttpResponse res,
+            ChangeRequestResource request,
+            IChangeRequestFacadeService facadeService)
+        {
+            var result = facadeService.Add(request, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }

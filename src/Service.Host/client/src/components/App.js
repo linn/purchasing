@@ -45,6 +45,9 @@ function App() {
                 <ListItem component={Link} to="/purchasing/purchase-orders/auth-or-send" button>
                     <Typography color="primary">Auth or Send Purchase Orders</Typography>
                 </ListItem>
+                <ListItem component={Link} to="/purchasing/change-requests" button>
+                    <Typography color="primary">Change Request Utility</Typography>
+                </ListItem>
                 <ListItem component={Link} to="/purchasing/boms/boards" button>
                     <Typography color="primary">Boards Utility</Typography>
                 </ListItem>
