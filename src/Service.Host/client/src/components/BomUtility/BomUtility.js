@@ -3,7 +3,8 @@ import {
     Dropdown,
     Page,
     collectionSelectorHelpers,
-    Search
+    Search,
+    itemSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import { DataGrid } from '@mui/x-data-grid';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -31,6 +32,7 @@ import changeRequestsActions from '../../actions/changeRequestsActions';
 import bomTreeActions from '../../actions/bomTreeActions';
 import useInitialise from '../../hooks/useInitialise';
 import partsActions from '../../actions/partsActions';
+import subAssemblyActions from '../../actions/subAssemblyActions';
 
 // unique id generator
 const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -39,7 +41,7 @@ function BomUtility() {
     const reduxDispatch = useDispatch();
     const { search } = useLocation();
     const { bomName } = queryString.parse(search);
-    const [crNumber, setCrNumber] = useState(12345);
+    const [crNumber, setCrNumber] = useState();
     const [changeRequests, changeRequestsLoading] = useInitialise(
         () => changeRequestsActions.search(bomName),
         changeRequestsItemType.item,
@@ -56,11 +58,19 @@ function BomUtility() {
         bomTreeItemType.item
     );
 
-    const openPartLookUp = forRow => {
-        setPartLookUp({ open: true, forRow });
-    };
+    const subAssembly = useSelector(reduxState =>
+        itemSelectorHelpers.getItem(reduxState.subAssembly)
+    );
+    const subAssemblyLoading = useSelector(reduxState =>
+        itemSelectorHelpers.getItemLoading(reduxState.subAssembly)
+    );
 
     const [partSearchTerm, setPartSearchTerm] = useState();
+
+    const openPartLookUp = forRow => {
+        setPartLookUp({ open: true, forRow });
+        setPartSearchTerm(null);
+    };
 
     const searchParts = searchTerm => reduxDispatch(partsActions.search(searchTerm));
     const partsSearchResults = useSelector(reduxState =>
@@ -80,7 +90,10 @@ function BomUtility() {
         <>
             <span>
                 {params.row.name}
-                <IconButton onClick={() => openPartLookUp(params.row)}>
+                <IconButton
+                    onClick={() => openPartLookUp(params.row)}
+                    disabled={!crNumber || subAssemblyLoading}
+                >
                     <ManageSearchIcon />
                 </IconButton>
             </span>
@@ -90,7 +103,12 @@ function BomUtility() {
     const columns = [
         { field: 'id', headerName: 'Id', width: 100, hide: true },
         { field: 'parent', headerName: 'Id', width: 100, hide: true },
-        { field: 'type', headerName: 'Type', width: 100, editable: true },
+        {
+            field: 'type',
+            headerName: 'Type',
+            width: 100,
+            editable: !crNumber || subAssemblyLoading
+        },
         {
             field: 'name',
             headerName: 'Part',
@@ -99,7 +117,7 @@ function BomUtility() {
             align: 'right'
         },
         { field: 'description', headerName: 'Description', width: 500 },
-        { field: 'qty', headerName: 'Qty', width: 100, editable: true, type: 'numer' }
+        { field: 'qty', headerName: 'Qty', width: 100, editable: true, type: 'number' }
     ];
     const [selected, setSelected] = useState(null);
 
@@ -139,11 +157,6 @@ function BomUtility() {
 
                     return newTree;
                 }
-                // if (current.id === newNode.id) {
-                //     q[0] = { ...newNode, children: current.children };
-                //     console.log(q[0]);
-                //     return newTree;
-                // }
                 for (let i = 0; i < current.children?.length || 0; i += 1) {
                     q.push(current.children[i]);
                 }
@@ -174,10 +187,7 @@ function BomUtility() {
     };
 
     const processRowUpdate = React.useCallback(newRow => {
-        // if (newRow.name) {
         setTreeView(tree => updateTree(tree, newRow, false));
-        // }
-        console.log(newRow);
         return newRow;
     }, []);
 
@@ -193,6 +203,40 @@ function BomUtility() {
         }
         return [];
     };
+
+    const handlePartSelect = newValue => {
+        setPartLookUp(p => ({ ...p, selectedPart: newValue, open: false }));
+        if (newValue.bomType !== 'C') {
+            const subAssemblyUrl = `/purchasing/boms/tree?bomName=${
+                newValue.partNumber
+            }&levels=${0}&requirementOnly=${false}&showChanges=${false}&treeType=${'bom'}`;
+
+            // fetch this subAssembly's bomTree to add it to the tree view
+            reduxDispatch(subAssemblyActions.fetchByHref(subAssemblyUrl));
+        } else {
+            processRowUpdate({
+                ...partLookUp.forRow,
+                name: newValue.partNumber,
+                type: newValue.bomType,
+                description: newValue.description
+            });
+        }
+    };
+
+    // add the new subAssembly to the bom tree when it arrives
+    useEffect(() => {
+        if (subAssembly?.name && partLookUp.forRow?.id) {
+            processRowUpdate({
+                ...partLookUp.forRow,
+                name: subAssembly.name,
+                type: subAssembly.type,
+                description: subAssembly.description,
+                children: subAssembly.children
+            });
+            reduxDispatch(subAssemblyActions.clearItem());
+            setPartLookUp({ open: false, forRow: null, selectedPart: null });
+        }
+    }, [subAssembly, partLookUp.forRow, reduxDispatch, processRowUpdate]);
 
     function renderPartLookUp() {
         return (
@@ -210,16 +254,7 @@ function BomUtility() {
                         searchResults={partsSearchResults}
                         loading={partsSearchLoading}
                         priorityFunction="closestMatchesFirst"
-                        onResultSelect={newValue => {
-                            setPartLookUp(p => ({ ...p, selectedPart: newValue }));
-                            processRowUpdate({
-                                ...partLookUp.forRow,
-                                name: newValue.partNumber,
-                                type: newValue.bomType,
-                                description: newValue.description
-                            });
-                            setPartLookUp({ open: false, forRow: null });
-                        }}
+                        onResultSelect={handlePartSelect}
                         clearSearch={() => {}}
                     />
                 </DialogContent>
@@ -262,6 +297,10 @@ function BomUtility() {
                     </Grid>
                 )}
                 <Grid item xs={4}>
+                    {subAssemblyLoading && <LinearProgress />}
+                </Grid>
+                <Grid item xs={8} height="30px" />
+                <Grid item xs={4}>
                     <BomTree
                         renderDescriptions={false}
                         renderComponents={false}
@@ -290,7 +329,11 @@ function BomUtility() {
                             />
                         </Grid>
                         <Grid item xs={1}>
-                            <Button variant="outlined" onClick={() => addLine(selected.id)}>
+                            <Button
+                                disabled={!crNumber || subAssemblyLoading}
+                                variant="outlined"
+                                onClick={() => addLine(selected.id)}
+                            >
                                 +
                             </Button>
                         </Grid>

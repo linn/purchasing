@@ -42,6 +42,7 @@
                                {
                                    Name = root.BomName,
                                    Id = -1,
+                                   Type = "A", // todo - need to know this type, description would be nice too
                                    Children = root.Details
                                        .Where(x => showChanges || x.ChangeState == "LIVE")
                                        .Where(c => !requirementOnly 

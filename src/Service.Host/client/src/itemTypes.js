@@ -362,3 +362,5 @@ export const changeRequestStatusChange = new ItemType(
     'CHANGE_REQUEST_STATUS',
     '/purchasing/change-requests/status'
 );
+
+export const subAssembly = new ItemType('subAssembly', 'SUB_ASSEMBLY', '/purchasing/boms/tree');
