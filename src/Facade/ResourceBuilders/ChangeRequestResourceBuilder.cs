@@ -61,18 +61,18 @@
                            PcasChanges =
                                model.PcasChanges?.Select(
                                    d => (PcasChangeResource)this.pcasChangeBuilder.Build(d, claims)),
-                           Links = claims == null ? null : this.BuildLinks(claims).ToArray()
+                           Links = claims == null ? null : this.BuildLinks(model, claims).ToArray()
             };
         }
 
         public string GetLocation(ChangeRequest model)
         {
-            throw new NotImplementedException();
+            return $"/purchasing/change-requests/{model.DocumentNumber}";
         }
 
         object IBuilder<ChangeRequest>.Build(ChangeRequest entity, IEnumerable<string> claims) => this.Build(entity, claims);
 
-        private IEnumerable<LinkResource> BuildLinks(IEnumerable<string> claims)
+        private IEnumerable<LinkResource> BuildLinks(ChangeRequest model, IEnumerable<string> claims)
         {
             var privileges = claims as string[] ?? claims.ToArray();
 
@@ -80,6 +80,8 @@
             {
                 yield return new LinkResource { Rel = "approve", Href = $"/purchasing/change-requests" };
             }
+
+            yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
         }
     }
 }

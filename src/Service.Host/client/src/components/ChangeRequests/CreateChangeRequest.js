@@ -59,16 +59,6 @@ function CreateChangeRequest() {
         dispatch(changeRequestActions.add(item));
     };
 
-    const createdItem = useSelector(reduxState =>
-        itemSelectorHelpers.getItem(reduxState.changeRequest)
-    );
-
-    useEffect(() => {
-        if (createdItem?.documentNumber) {
-            history.push(`/purchasing/change-requests/${createdItem?.documentNumber}/`);
-        }
-    }, [createdItem]);
-
     return (
         <Page history={history}>
             <Grid container>

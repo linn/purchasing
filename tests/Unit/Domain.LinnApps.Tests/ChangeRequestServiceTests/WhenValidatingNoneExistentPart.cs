@@ -1,20 +1,17 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeRequestServiceTests
 {
     using FluentAssertions;
-    using Linn.Purchasing.Domain.LinnApps.Exceptions;
+
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using NSubstitute;
     using NUnit.Framework;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Linq.Expressions;
-    using System.Text;
-    using System.Threading.Tasks;
 
     using Linn.Common.Domain.Exceptions;
 
-    public class WhenValidatingNoneExistantPart : ContextBase
+    public class WhenValidatingNoneExistentPart : ContextBase
     {
         private Action action;
 

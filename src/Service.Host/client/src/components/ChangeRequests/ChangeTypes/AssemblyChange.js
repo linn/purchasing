@@ -32,7 +32,6 @@ function AssemblyChange({ item, creating, handleFieldChange }) {
 
     return (
         <>
-            {' '}
             {creating ? (
                 <Grid item xs={12}>
                     <Typeahead
