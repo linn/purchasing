@@ -3,6 +3,8 @@
     using System;
     using System.Collections.Generic;
 
+    using Linn.Purchasing.Domain.LinnApps.Parts;
+
     public class ChangeRequest
     {
         public string DocumentType { get; set; }
@@ -23,15 +25,30 @@
 
         public int EnteredById { get; set; }
 
+        public string ChangeRequestType { get; set; }
+
+        public string OldPartNumber { get; set; }
+
+        public Part OldPart { get; set; }
+
+        public string NewPartNumber { get; set; }
+
+        public Part NewPart { get; set; }
+
         public string ReasonForChange { get; set; }
 
         public string DescriptionOfChange { get; set; }
 
+        public string GlobalReplace { get; set; }
+
+        // RequiresStartingSernos and RequiresVerification only included for historic Change Requests
+        public string RequiresStartingSernos { get; set; }
+
+        public string RequiresVerification { get; set; }
+
         public ICollection<BomChange> BomChanges { get; set; }
 
         public ICollection<PcasChange> PcasChanges { get; set; }
-
-        public string NewPartNumber { get; set; }
 
         public bool CanApprove()
         {
