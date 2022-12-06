@@ -26,14 +26,7 @@ function MainTab({ item, approve }) {
                     disabled
                 />
             </Grid>
-            <Grid item xs={4}>
-                <InputField
-                    value={item?.changeState}
-                    label="Change State"
-                    propertyName="changeState"
-                    disabled
-                />
-            </Grid>
+            <Grid item xs={4} />
             <>
                 {
                     {
@@ -96,6 +89,14 @@ function MainTab({ item, approve }) {
                         Approve
                     </Button>
                 )}
+            </Grid>
+            <Grid item xs={4}>
+                <InputField
+                    value={item?.changeState}
+                    label="Change State"
+                    propertyName="changeState"
+                    disabled
+                />
             </Grid>
         </Grid>
     );

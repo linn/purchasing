@@ -9,5 +9,7 @@
         Part ValidPartNumber(string partNumber);
 
         ChangeRequest Approve(int documentNumber, IEnumerable<string> privileges = null);
+
+        ChangeRequest Cancel(int documentNumber, IEnumerable<string> privileges = null);
     }
 }

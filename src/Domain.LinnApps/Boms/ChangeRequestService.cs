@@ -10,6 +10,8 @@
     using Linn.Common.Domain.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+
     public class ChangeRequestService : IChangeRequestService
     {
         private readonly IAuthorisationService authService;
@@ -61,6 +63,34 @@
             else
             {
                 throw new InvalidStateChangeException("Cannot approve this change request");
+            }
+
+            return request;
+        }
+
+        public ChangeRequest Cancel(int documentNumber, IEnumerable<string> privileges = null)
+        {
+
+
+            var request = this.repository.FindById(documentNumber);
+            if (request == null)
+            {
+                throw new ItemNotFoundException("Change Request not found");
+            }
+
+            if ( request.ChangeState == "ACCEPT" && !this.authService.HasPermissionFor(AuthorisedAction.AdminChangeRequest, privileges) )
+            {
+                throw new UnauthorisedActionException(
+                    "You are not authorised to cancel change requests");
+            }
+
+            if (request.CanCancel(true))
+            {
+                request.CancelAll();
+            }
+            else
+            {
+                throw new InvalidStateChangeException("Cannot cancel this change request");
             }
 
             return request;

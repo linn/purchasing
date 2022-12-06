@@ -11,6 +11,8 @@
     {
         IResult<ChangeRequestResource> ApproveChangeRequest(int documentNumber, IEnumerable<string> privileges = null);
 
+        IResult<ChangeRequestResource> CancelChangeRequest(int documentNumber, IEnumerable<string> privileges = null);
+
         IResult<ChangeRequestResource> ChangeStatus(ChangeRequestStatusChangeResource request, IEnumerable<string> privileges = null);
     }
 }

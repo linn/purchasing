@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { Page, Loading, itemSelectorHelpers } from '@linn-it/linn-form-components-library';
+import {
+    Page,
+    Loading,
+    itemSelectorHelpers,
+    utilities
+} from '@linn-it/linn-form-components-library';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Grid from '@mui/material/Grid';
@@ -49,6 +55,14 @@ function ChangeRequest() {
         }
     };
 
+    const cancelUri = utilities.getHref(item, 'approve');
+
+    const cancel = request => {
+        if (request?.changeState === 'PROPOS' || request?.changeState === 'ACCEPT') {
+            reduxDispatch(changeRequestStatusChangeActions.add({ id, status: 'CANCEL' }));
+        }
+    };
+
     return (
         <Page history={history}>
             {loading ? (
@@ -88,6 +102,15 @@ function ChangeRequest() {
                                 <BomChangesTab bomChanges={item?.bomChanges} />
                             </Box>
                         )}
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Button
+                            variant="outlined"
+                            disabled={!cancelUri}
+                            onClick={() => cancel(item)}
+                        >
+                            Cancel
+                        </Button>
                     </Grid>
                 </Grid>
             )}

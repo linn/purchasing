@@ -59,11 +59,21 @@
             }
         }
 
+        public IResult<ChangeRequestResource> CancelChangeRequest(int documentNumber, IEnumerable<string> privileges = null)
+        {
+            throw new NotImplementedException();
+        }
+
         public IResult<ChangeRequestResource> ChangeStatus(ChangeRequestStatusChangeResource request, IEnumerable<string> privileges = null)
         {
             if (request?.Status == "ACCEPT")
             {
                 return this.ApproveChangeRequest(request.Id, privileges);
+            }
+
+            if (request?.Status == "CANCEL")
+            {
+                return this.CancelChangeRequest(request.Id, privileges);
             }
 
             return new BadRequestResult<ChangeRequestResource>($"Cannot change status to {request?.Status}");

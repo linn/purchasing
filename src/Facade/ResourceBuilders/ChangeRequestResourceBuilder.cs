@@ -75,10 +75,16 @@
         private IEnumerable<LinkResource> BuildLinks(ChangeRequest model, IEnumerable<string> claims)
         {
             var privileges = claims as string[] ?? claims.ToArray();
+            var adminPrivs = this.authService.HasPermissionFor(AuthorisedAction.AdminChangeRequest, privileges);
 
             if (this.authService.HasPermissionFor(AuthorisedAction.ApproveChangeRequest, privileges))
             {
-                yield return new LinkResource { Rel = "approve", Href = $"/purchasing/change-requests" };
+                yield return new LinkResource { Rel = "approve", Href = $"/purchasing/change-requests/status" };
+            }
+
+            if (model.CanCancel(adminPrivs))
+            {
+                yield return new LinkResource { Rel = "cancel", Href = $"/purchasing/change-requests/status" };
             }
 
             yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };

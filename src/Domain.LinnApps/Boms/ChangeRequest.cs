@@ -55,12 +55,35 @@
             return this.ChangeState == "PROPOS";
         }
 
+        public bool CanCancel(bool adminPrivs)
+        {
+            if (this.ChangeState == "PROPOS")
+            {
+                return true;
+            }
+
+            if (this.ChangeState == "ACCEPT")
+            {
+                return adminPrivs;
+            }
+
+            return false;
+        }
+
         public void Approve()
         {
             if (this.CanApprove())
             {
                 this.ChangeState = "ACCEPT";
                 this.DateAccepted = DateTime.Now;
+            }
+        }
+
+        public void CancelAll()
+        {
+            if (this.CanCancel(true))
+            {
+                this.ChangeState = "CANCEL";
             }
         }
     }
