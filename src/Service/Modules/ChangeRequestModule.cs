@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     using Carter;
@@ -19,9 +20,9 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/purchasing/change-requests", this.GetApp);
             app.MapPost("/purchasing/change-requests", this.CreateChangeRequest);
             app.MapGet("/purchasing/change-requests/create", this.GetApp);
+            app.MapGet("/purchasing/change-requests", this.GetChangeRequests);
             app.MapGet("/purchasing/change-requests/{id:int}", this.GetChangeRequest);
             app.MapPost("/purchasing/change-requests/status", this.ChangeStatus);
         }
@@ -29,6 +30,20 @@
         private async Task GetApp(HttpRequest req, HttpResponse res)
         {
             await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
+        }
+
+        private async Task GetChangeRequests(
+            HttpRequest req, 
+            HttpResponse res,
+            IChangeRequestFacadeService facadeService,
+            string searchTerm)
+        {
+            if (string.IsNullOrEmpty(searchTerm))
+            {
+                await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
+            }
+
+            await res.Negotiate(facadeService.Search(searchTerm));
         }
 
         private async Task GetChangeRequest(

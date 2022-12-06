@@ -86,7 +86,6 @@
                 .AddTransient<IBuilder<LedgerPeriod>, LedgerPeriodResourceBuilder>()
                 .AddTransient<IBuilder<ChangeRequest>, ChangeRequestResourceBuilder>()
                 .AddTransient<IBuilder<BomChange>, BomChangeResourceBuilder>()
-                .AddTransient<IBuilder<Bom>, BomResourceBuilder>()
                 .AddTransient<IBuilder<PcasChange>, PcasChangeResourceBuilder>()
                 .AddTransient<IBuilder<BomTypeChange>, BomTypeChangeResourceBuilder>()
                 .AddTransient<IBuilder<CircuitBoard>, CircuitBoardResourceBuilder>();
@@ -147,7 +146,7 @@
                 .AddTransient<IFacadeResourceService<LedgerPeriod, int, LedgerPeriodResource, LedgerPeriodResource>, LedgerPeriodFacadeService>()
                 .AddTransient<IForecastWeekChangesFacadeService, ForecastWeekChangesFacadeService>()
                 .AddTransient<IChangeRequestFacadeService, ChangeRequestFacadeService>()
-                .AddTransient<IFacadeResourceService<Bom, int, BomResource, BomResource>, BomFacadeService>()
+                .AddTransient<IBomFacadeService, BomFacadeService>()
                 .AddTransient<IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource>, CircuitBoardFacadeService>()
                 .AddTransient<IBomTreeReportsService, BomTreeReportService>()
                 .AddTransient<IBomReportsFacadeService, BomReportsFacadeService>();
@@ -205,6 +204,7 @@
                 .AddTransient<IBomTreeService, BomTreeService>()
                 .AddTransient<IChangeRequestService, ChangeRequestService>()
                 .AddTransient<IBomReportsService, BomReportsService>()
+                .AddTransient<IBomChangeService, BomChangeService>()
 
                 // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()

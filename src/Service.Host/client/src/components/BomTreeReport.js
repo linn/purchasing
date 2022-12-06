@@ -7,12 +7,21 @@ import Button from '@mui/material/Button';
 import history from '../history';
 import config from '../config';
 import BomTree from './BomTree';
+import bomTreeActions from '../actions/bomTreeActions';
+import useInitialise from '../hooks/useInitialise';
+import { bomTree as bomTreeItemType } from '../itemTypes';
 
 export default function BomTreeReport() {
     const { search } = useLocation();
 
     const { bomName, levels, requirementOnly, showChanges, treeType } = queryString.parse(search);
-
+    const url = `/purchasing/boms/tree?bomName=${bomName}&levels=${levels ?? 0}&requirementOnly=${
+        requirementOnly ?? false
+    }&showChanges=${showChanges ?? false}&treeType=${treeType ?? 'bom'}`;
+    const [bomTree, bomTreeLoading] = useInitialise(
+        () => bomTreeActions.fetchByHref(url),
+        bomTreeItemType.item
+    );
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>
@@ -43,7 +52,7 @@ export default function BomTreeReport() {
                     </Button>
                 </Grid>
                 <Grid item xs={10} />
-                <BomTree />
+                <BomTree bomTree={bomTree} bomTreeLoading={bomTreeLoading} bomName={bomName} />
             </Grid>
         </Page>
     );

@@ -308,6 +308,8 @@ export const forecastWeekChangesReportActionTypes = makeReportActionTypes(
 
 export const changeRequestActionTypes = makeActionTypes(itemTypes.changeRequest.actionType);
 
+export const changeRequestsActionTypes = makeActionTypes(itemTypes.changeRequests.actionType);
+
 export const sendPurchaseOrderAuthEmailActionTypes = makeProcessActionTypes(
     itemTypes.sendPurchaseOrderAuthEmail.actionType
 );

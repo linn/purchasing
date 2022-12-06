@@ -1869,6 +1869,7 @@
             entity.Property(o => o.ProposedById).HasColumnName("PROPOSED_BY");
             entity.HasOne(o => o.ProposedBy).WithMany().HasForeignKey(o => o.ProposedById);
             entity.Property(o => o.EnteredById).HasColumnName("ENTERED_BY");
+            entity.Property(o => o.NewPartNumber).HasColumnName("NEW_PART_NUMBER");
             entity.HasOne(o => o.EnteredBy).WithMany().HasForeignKey(o => o.EnteredById);
             entity.Property(c => c.ChangeRequestType).HasColumnName("CRF_TYPE_CODE").HasMaxLength(10);
             entity.Property(c => c.OldPartNumber).HasColumnName("OLD_PART_NUMBER");
