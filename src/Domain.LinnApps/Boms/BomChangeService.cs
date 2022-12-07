@@ -42,36 +42,40 @@
                 while (n > 0)
                 {
                     var current = q.Dequeue();
+                    if (current.HasChanged.GetValueOrDefault())
+                    {
+                        var id = this.databaseService.GetIdSequence("CHG_SEQ");
+                        var change = new BomChange
+                                         {
+                                             BomId = id,
+                                             BomName = current.Name,
+                                             DocumentType = "CRF", // for now
+                                             DocumentNumber = changeRequestNumber,
+                                             PartNumber = current.Name,
+                                             DateEntered = DateTime.Today,
+                                             EnteredBy = enteredBy,
+                                             ChangeState = "PROPOS",
+                                             Comments = "BOM_UT",
+                                             PcasChange = "N"
+                                         };
+                        this.bomChangeRepository.Add(change);
+                        result.Add(change);
 
-                    var id = this.databaseService.GetIdSequence("CHG_SEQ");
-                    var change = new BomChange
-                                     {
-                                         BomId = id,
-                                         BomName = current.Name,
-                                         DocumentType = "CRF", // for now
-                                         DocumentNumber = changeRequestNumber,
-                                         PartNumber = current.Name,
-                                         DateEntered = DateTime.Today,
-                                         EnteredBy = enteredBy,
-                                         ChangeState = "PROPOS",
-                                         Comments = "BOM_UT",
-                                         PcasChange = "N"
-                                     };
-                    this.bomChangeRepository.Add(change);
-                    result.Add(change);
+                        // now we need to update the current assembly's details to match the new list
+                        // annoyingly they need to reference the bom_change which might not exist yet :(
+                        // could add the details with a null changeId, and then use the return of this function to populate the change ids after the new bom_change's committed?
 
-                    // now we need to update the current assembly's details to match the new list
-                    // annoyingly they need to reference the bom_change which might not exist yet :(
-                    // could maybe just add the details with a null changeId, and then use the return of this function to populate the change ids after the change add has been committed
+                        // general approach:
+                        // for every detail part...
+                        // add a new detail if the current subassembly doesn't have that part onthe bom
+                        // or update the qty/reqt if this sub assembly does have this part on the bom
+                        // can worry about deletes later
+                    }
 
-                    // for every detail part...
-                    // general approach will be adding a new detail if this subassembly doesn't have that part on the bom
-                    // or updating the qty if this sub assembly does have this part on the bom
-                    // can worry about deleting stuff later
+
                     for (var i = 0; i < current.Children.Count(); i++)
                     {
-                        // only queue subtrees with changes for processing
-                        if (current.Type != "C" && current.HasChanged.GetValueOrDefault())
+                        if (current.Type != "C")
                         {
                             q.Enqueue(current.Children.ElementAt(i));
                         }
