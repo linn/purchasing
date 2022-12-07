@@ -82,8 +82,22 @@ function ChangeRequest() {
                                     }}
                                 >
                                     <Tab label="Main" />
-                                    <Tab label="Pcas Changes" />
-                                    <Tab label="BOM Changes" />
+                                    <Tab
+                                        label={`Pcas Changes${
+                                            item?.pcasChanges.length
+                                                ? ` (${item?.pcasChanges.length})`
+                                                : ''
+                                        }`}
+                                        disabled={!item?.pcasChanges.length}
+                                    />
+                                    <Tab
+                                        label={`Bom Changes${
+                                            item?.bomChanges.length
+                                                ? ` (${item?.bomChanges.length})`
+                                                : ''
+                                        }`}
+                                        disabled={!item?.bomChanges.length}
+                                    />
                                 </Tabs>
                             </Box>
                         </Box>

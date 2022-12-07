@@ -4,6 +4,7 @@ import Grid from '@mui/material/Grid';
 import { InputField, utilities } from '@linn-it/linn-form-components-library';
 import Button from '@mui/material/Button';
 import AssemblyChange from '../ChangeTypes/AssemblyChange';
+import ChangeState from '../ChangeState';
 
 function MainTab({ item, approve }) {
     const approveUri = utilities.getHref(item, 'approve');
@@ -87,12 +88,7 @@ function MainTab({ item, approve }) {
                 )}
             </Grid>
             <Grid item xs={4}>
-                <InputField
-                    value={item?.changeState}
-                    label="Change State"
-                    propertyName="changeState"
-                    disabled
-                />
+                <ChangeState changeState={item?.changeState} />
             </Grid>
         </Grid>
     );
