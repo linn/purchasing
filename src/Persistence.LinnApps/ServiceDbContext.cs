@@ -1919,6 +1919,7 @@
             entity.Property(b => b.BomId).HasColumnName("BOM_ID");
             entity.Property(b => b.BomName).HasColumnName("BOM_NAME");
             entity.HasMany(b => b.Details).WithOne().HasForeignKey(d => d.BomId);
+            entity.HasOne(b => b.Part).WithOne().HasForeignKey<Part>(p => p.BomId);
         }
 
         private void BuildBomDetails(ModelBuilder builder)

@@ -23,15 +23,15 @@
 
         public IResult<BomTreeNode> PostBom(PostBomResource resource)
         {
-            var change = this.bomChangeService.CreateBomChange(
+            var change = this.bomChangeService.CreateBomChanges(
                 resource.TreeRoot,
                 resource.CrNumber.GetValueOrDefault(),
                 resource.EnteredBy.GetValueOrDefault());
-            this.transactionManager.Commit();
-            var result = this.bomChangeService.CreateBom(
-                resource.TreeRoot, resource.CrNumber.GetValueOrDefault(), change.ChangeId);
-            this.transactionManager.Commit();
-            return new SuccessResult<BomTreeNode>(result);
+            //this.transactionManager.Commit();
+            // var result = this.bomChangeService.CreateBom(
+            //     resource.TreeRoot, resource.CrNumber.GetValueOrDefault(), change.ChangeId);
+            // this.transactionManager.Commit();
+            return new SuccessResult<BomTreeNode>(new BomTreeNode());
         }
     }
 }

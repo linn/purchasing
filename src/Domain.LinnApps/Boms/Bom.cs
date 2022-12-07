@@ -2,11 +2,15 @@
 {
     using System.Collections.Generic;
 
+    using Linn.Purchasing.Domain.LinnApps.Parts;
+
     public class Bom
     {
         public int BomId { get; set; }
 
         public string BomName { get; set; }
+
+        public Part Part { get; set; }
 
         public IEnumerable<BomDetail> Details { get; set; }
     }

@@ -41,8 +41,9 @@
             var rootNode = new BomTreeNode
                                {
                                    Name = root.BomName,
-                                   Id = "-1",
-                                   Type = "A", // todo - need to know this type, description would be nice too
+                                   Id = "root",
+                                   Type = root.Part?.BomType,
+                                   Description = root.Part?.Description,
                                    Children = root.Details
                                        .Where(x => showChanges || x.ChangeState == "LIVE")
                                        .Where(c => !requirementOnly 
@@ -52,6 +53,7 @@
                                                 {
                                                     Name = d.Part.PartNumber,
                                                     Description = d.Part.Description,
+                                                    ParentName = d.BomName,
                                                     Qty = d.Qty,
                                                     Type = d.Part.BomType,
                                                     Id = d.DetailId.ToString()
@@ -99,6 +101,7 @@
                                     Qty = child.Qty,
                                     Id = child.Id,
                                     Type = child.Type,
+                                    ParentName = current.Name,
                                     Children =
                                     children?
                                         .OrderBy(x => x.Part.PartNumber)
@@ -111,6 +114,7 @@
                                                         Description = detail.Part.Description,
                                                         Qty = detail.Qty,
                                                         Type = detail.Part.BomType,
+                                                        ParentName = detail.BomPartNumber,
                                                         Id = detail.DetailId.ToString()
                                                     })
                                 };

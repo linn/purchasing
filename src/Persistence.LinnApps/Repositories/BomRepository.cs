@@ -44,6 +44,7 @@
         public Bom FindBy(Expression<Func<Bom, bool>> expression)
         {
             return this.serviceDbContext.Boms.Where(expression)
+                .Include(b => b.Part)
                 .Include(b => b.Details)
                 .ThenInclude(d => d.Part).ThenInclude(p => p.PartSuppliers.Where(ps => ps.SupplierRanking == 1))
                 .Include(b => b.Details)
