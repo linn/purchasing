@@ -149,9 +149,9 @@
 
             var ids = treeNodes.Select(x => x.Id).ToList();
 
-            var details = this.bomCostReportDetails.FilterBy(x => ids.Contains(x.DetailId)).ToList();
+            var details = this.bomCostReportDetails.FilterBy(x => ids.Contains(x.DetailId.ToString())).ToList();
 
-            details = details.OrderBy(d => ids.IndexOf(d.DetailId)).ToList();
+            details = details.OrderBy(d => ids.IndexOf(d.DetailId.ToString())).ToList();
 
             if (!splitBySubAssembly)
             {

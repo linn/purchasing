@@ -22,16 +22,16 @@
         {
             var flatBom = new List<BomTreeNode>
                               {
-                                  new BomTreeNode { Id = 1 },
-                                  new BomTreeNode { Id = 2 },
-                                  new BomTreeNode { Id = 3 },
-                                  new BomTreeNode { Id = 4 },
-                                  new BomTreeNode { Id = 5 },
-                                  new BomTreeNode { Id = 6 },
-                                  new BomTreeNode { Id = 7 },
-                                  new BomTreeNode { Id = 8 },
-                                  new BomTreeNode { Id = 9 },
-                                  new BomTreeNode { Id = 10 }
+                                  new BomTreeNode { Id = "1" },
+                                  new BomTreeNode { Id = "2" },
+                                  new BomTreeNode { Id = "3" },
+                                  new BomTreeNode { Id = "4" },
+                                  new BomTreeNode { Id = "5" },
+                                  new BomTreeNode { Id = "6" },
+                                  new BomTreeNode { Id = "7" },
+                                  new BomTreeNode { Id = "8" },
+                                  new BomTreeNode { Id = "9" },
+                                  new BomTreeNode { Id = "10" }
                               };
             this.BomTreeService.FlattenBomTree("SK HUB", 999).Returns(flatBom);
             var details 

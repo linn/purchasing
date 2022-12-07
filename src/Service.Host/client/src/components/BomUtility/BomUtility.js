@@ -4,7 +4,8 @@ import {
     Page,
     collectionSelectorHelpers,
     Search,
-    itemSelectorHelpers
+    itemSelectorHelpers,
+    SaveBackCancelButtons
 } from '@linn-it/linn-form-components-library';
 import { DataGrid } from '@mui/x-data-grid';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -283,7 +284,7 @@ function BomUtility() {
                     <Grid item xs={12}>
                         <Dropdown
                             items={changeRequests?.map(c => ({
-                                id: c.documnerNumber,
+                                id: c.documentNumber,
                                 displayText: `${c.documentType}${c.documentNumber}`
                             }))}
                             allowNoValue
@@ -338,6 +339,16 @@ function BomUtility() {
                             </Button>
                         </Grid>
                     </>
+                </Grid>
+                <Grid item xs={12}>
+                    <SaveBackCancelButtons
+                        saveDisabled={!crNumber || subAssemblyLoading}
+                        saveClick={() =>
+                            reduxDispatch(bomTreeActions.add({ treeRoot: treeView, crNumber }))
+                        }
+                        cancelClick={() => {}}
+                        backClick={() => {}}
+                    />
                 </Grid>
             </Grid>
         </Page>

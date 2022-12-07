@@ -16,6 +16,6 @@
 
         public string ParentName { get; set; }
 
-        public int Id { get; set; }
+        public string Id { get; set; }
     }
 }

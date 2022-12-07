@@ -46,7 +46,6 @@
             await res.Negotiate(facadeService.Search(searchTerm));
         }
 
-
         private async Task GetChangeRequest(
             HttpRequest req,
             HttpResponse res,

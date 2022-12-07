@@ -37,5 +37,7 @@
         public string PartNumber { get; set; }
 
         public string Comments { get; set; }
+
+        public string PcasChange { get; set; }
     }
 }

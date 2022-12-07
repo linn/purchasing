@@ -41,7 +41,7 @@
             var rootNode = new BomTreeNode
                                {
                                    Name = root.BomName,
-                                   Id = -1,
+                                   Id = "-1",
                                    Type = "A", // todo - need to know this type, description would be nice too
                                    Children = root.Details
                                        .Where(x => showChanges || x.ChangeState == "LIVE")
@@ -54,7 +54,7 @@
                                                     Description = d.Part.Description,
                                                     Qty = d.Qty,
                                                     Type = d.Part.BomType,
-                                                    Id = d.DetailId
+                                                    Id = d.DetailId.ToString()
                                                 }).OrderBy(x => x.Name)
                                };
 
@@ -111,7 +111,7 @@
                                                         Description = detail.Part.Description,
                                                         Qty = detail.Qty,
                                                         Type = detail.Part.BomType,
-                                                        Id = detail.DetailId
+                                                        Id = detail.DetailId.ToString()
                                                     })
                                 };
                                 return node;
@@ -164,7 +164,7 @@
                                      Qty = d.Qty,
                                      Type = d.Part.BomType,
                                      ParentName = root.BomName,
-                                     Id = d.DetailId
+                                     Id = d.DetailId.ToString()
                                  }).OrderBy(x => x.Name)
             };
             var q = new Queue<BomTreeNode>();
@@ -212,7 +212,7 @@
                                                     Qty = detail.Qty,
                                                     Type = detail.Part.BomType,
                                                     ParentName = child.Name,
-                                                    Id = detail.DetailId
+                                                    Id = detail.DetailId.ToString()
                                                 })
                             };
                             return node;
@@ -244,14 +244,14 @@
                                {
                                    Name = partNumber,
                                    Qty = 0,
-                                   Id = -1,
+                                   Id = "-1",
                                    Children = this.detailRepository.FilterBy(d => d.PartNumber == partNumber)
                                        .Select(c => new BomTreeNode
                                                         {
                                                             Name = c.BomPart.PartNumber,
                                                             Description = c.BomPart.Description,
                                                             Qty = c.Qty,
-                                                            Id = c.DetailId
+                                                            Id = c.DetailId.ToString()
                                                         }).OrderBy(c => c.Name)
 
                                };
@@ -295,7 +295,7 @@
                                                 Name = detail.BomPart.PartNumber,
                                                 Description = detail.BomPart.Description,
                                                 Qty = detail.Qty,
-                                                Id = detail.DetailId
+                                                Id = detail.DetailId.ToString()
                                             })
                                     .OrderBy(c => c.Name)
                             };

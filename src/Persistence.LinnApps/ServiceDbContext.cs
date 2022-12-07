@@ -204,6 +204,8 @@
 
         public DbSet<BomCostReportDetail> BomCostDetails { get; set; }
 
+        public DbSet<BomChange> BomChanges { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -1904,6 +1906,8 @@
             entity.Property(c => c.DateCancelled).HasColumnName("DATE_CANCELLED");
             entity.Property(c => c.CancelledBy).HasColumnName("CANCELLED_BY");
             entity.Property(c => c.PhaseInWeekNumber).HasColumnName("PHASE_IN_WEEK");
+            entity.Property(c => c.PcasChange).HasColumnName("PCAS_CHANGE").HasMaxLength(1);
+
             entity.Property(c => c.Comments).HasColumnName("COMMENTS").HasMaxLength(2000);
             entity.HasOne(c => c.PhaseInWeek).WithMany().HasForeignKey(c => c.PhaseInWeekNumber);
         }
