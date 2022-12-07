@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import { DataGrid } from '@mui/x-data-grid';
 import { makeStyles } from '@mui/styles';
+import ChangeState from '../ChangeState';
 
 function PcasChangesTab({ pcasChanges }) {
     const useStyles = makeStyles(() => ({
@@ -17,7 +18,16 @@ function PcasChangesTab({ pcasChanges }) {
 
         { field: 'boardCode', headerName: 'Board Code', width: 140 },
         { field: 'revisionCode', headerName: 'Revision Code', width: 140 },
-        { field: 'changeState', headerName: 'State', width: 200 }
+        {
+            field: 'changeState',
+            headerName: 'State',
+            width: 200,
+            renderCell: params => (
+                <>
+                    <ChangeState changeState={params.row.changeState} showLabel={false} />
+                </>
+            )
+        },
     ];
 
     return (
@@ -32,6 +42,7 @@ function PcasChangesTab({ pcasChanges }) {
                         rowHeight={34}
                         autoHeight
                         loading={false}
+                        checkboxSelection
                         hideFooter
                     />
                 ) : (

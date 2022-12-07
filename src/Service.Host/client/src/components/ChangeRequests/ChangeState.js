@@ -4,7 +4,7 @@ import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import makeStyles from '@mui/styles/makeStyles';
 
-function ChangeState({ changeState }) {
+function ChangeState({ changeState, showLabel }) {
     const stateColor = state => {
         if (state === 'PROPOS') {
             return 'yellow';
@@ -33,7 +33,7 @@ function ChangeState({ changeState }) {
 
     return (
         <>
-            <InputLabel classes={{ root: classes.label }}>Change State</InputLabel>
+            {showLabel && <InputLabel classes={{ root: classes.label }}>Change State</InputLabel>}
             <TextField
                 classes={{
                     root: classes.root
@@ -50,11 +50,13 @@ function ChangeState({ changeState }) {
 }
 
 ChangeState.propTypes = {
-    changeState: PropTypes.string
+    changeState: PropTypes.string,
+    showLabel: PropTypes.bool
 };
 
 ChangeState.defaultProps = {
-    changeState: null
+    changeState: null,
+    showLabel: true
 };
 
 export default ChangeState;

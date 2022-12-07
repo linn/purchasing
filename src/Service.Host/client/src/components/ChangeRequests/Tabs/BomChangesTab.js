@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import { DataGrid } from '@mui/x-data-grid';
 import { makeStyles } from '@mui/styles';
+import ChangeState from '../ChangeState';
 
 function BomChangesTab({ bomChanges }) {
     const useStyles = makeStyles(() => ({
@@ -16,7 +17,16 @@ function BomChangesTab({ bomChanges }) {
         { field: 'changeId', headerName: 'Id', width: 100 },
 
         { field: 'bomName', headerName: 'Bom', width: 200 },
-        { field: 'changeState', headerName: 'State', width: 200 },
+        {
+            field: 'changeState',
+            headerName: 'State',
+            width: 200,
+            renderCell: params => (
+                <>
+                    <ChangeState changeState={params.row.changeState} showLabel={false} />
+                </>
+            )
+        },
         { field: 'phaseInWWYYYY', headerName: 'Phase In Week', width: 200 }
     ];
 
@@ -32,6 +42,7 @@ function BomChangesTab({ bomChanges }) {
                         rowHeight={34}
                         autoHeight
                         loading={false}
+                        checkboxSelection
                         hideFooter
                     />
                 ) : (
