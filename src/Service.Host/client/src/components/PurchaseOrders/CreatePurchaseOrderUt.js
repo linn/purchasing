@@ -466,7 +466,7 @@ function CreatePurchaseOrderUt() {
                                     label="Supplier"
                                     modal
                                     propertyName="supplierId"
-                                    items={suppliersSearchResults}
+                                    items={suppliersSearchResults.filter(s => !s.dateClosed)}
                                     value={order.supplier?.id}
                                     loading={suppliersSearchLoading}
                                     fetchItems={searchSuppliers}
