@@ -469,6 +469,7 @@ function PurchaseOrderUtility({ creating }) {
     const classes = useStyles();
     const screenIsSmall = useMediaQuery({ query: `(max-width: 1200px)` });
     const [overridingOrderPrice, setOverridingOrderPrice] = useState(false);
+    const [overridingOrderQty, setOverridingOrderQty] = useState(false);
 
     const getDateString = isoString => {
         if (!isoString) {
@@ -1240,23 +1241,91 @@ function PurchaseOrderUtility({ creating }) {
                                                     />
                                                 </Grid>
                                                 <Grid item xs={6}>
-                                                    <InputField
-                                                        fullWidth
-                                                        value={detail.orderQty}
-                                                        label="Order quantity"
-                                                        propertyName="orderQty"
-                                                        onChange={(propertyName, newValue) =>
-                                                            handleDetailFieldChange(
-                                                                propertyName,
-                                                                newValue,
-                                                                detail
-                                                            )
-                                                        }
-                                                        type="number"
-                                                        required
-                                                        disabled
-                                                    />
+                                                    {overridingOrderQty ? (
+                                                        <Tooltip
+                                                            title="Order qty is set automatically based on Our qty.
+                                                            Only change this if you have a good reason to override it."
+                                                            placement="top"
+                                                            className={classes.cursorPointer}
+                                                        >
+                                                            <Grid item xs={12}>
+                                                                <InputField
+                                                                    fullWidth
+                                                                    value={detail.orderQty}
+                                                                    label="Order quantity"
+                                                                    propertyName="orderQty"
+                                                                    onChange={(
+                                                                        propertyName,
+                                                                        newValue
+                                                                    ) =>
+                                                                        handleDetailFieldChange(
+                                                                            propertyName,
+                                                                            newValue,
+                                                                            detail
+                                                                        )
+                                                                    }
+                                                                    type="number"
+                                                                    required
+                                                                />
+                                                            </Grid>
+                                                        </Tooltip>
+                                                    ) : (
+                                                        <Tooltip
+                                                            title="Order qty is set automatically based on Our qty.
+                                                Only change this if you have a good reason to override it."
+                                                            placement="top"
+                                                            className={classes.cursorPointer}
+                                                        >
+                                                            <Grid container spacing={1}>
+                                                                <Grid item xs={4}>
+                                                                    <InputField
+                                                                        fullWidth
+                                                                        value={detail.orderQty}
+                                                                        label="Order quantity"
+                                                                        propertyName="orderQty"
+                                                                        onChange={(
+                                                                            propertyName,
+                                                                            newValue
+                                                                        ) =>
+                                                                            handleDetailFieldChange(
+                                                                                propertyName,
+                                                                                newValue,
+                                                                                detail
+                                                                            )
+                                                                        }
+                                                                        type="number"
+                                                                        required
+                                                                        disabled
+                                                                    />
+                                                                </Grid>
+                                                                <Grid item xs={8}>
+                                                                    <Button
+                                                                        className={
+                                                                            classes.buttonMarginTop
+                                                                        }
+                                                                        color="primary"
+                                                                        variant="contained"
+                                                                        disabled={
+                                                                            !creating &&
+                                                                            (!allowedToUpdate() ||
+                                                                                lineItemsReceived(
+                                                                                    detail.lineNumber
+                                                                                ))
+                                                                        }
+                                                                        onClick={() =>
+                                                                            setOverridingOrderQty(
+                                                                                true
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        Override
+                                                                    </Button>
+                                                                </Grid>
+                                                            </Grid>
+                                                        </Tooltip>
+                                                    )}
                                                 </Grid>
+
                                                 <Grid item xs={6}>
                                                     <InputField
                                                         fullWidth
