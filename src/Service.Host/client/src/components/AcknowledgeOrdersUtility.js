@@ -530,10 +530,6 @@ function AcknowledgeOrdersUtility() {
                                         variant="outlined"
                                         disabled={!rows.some(r => r.selected)}
                                         onClick={() => {
-                                            // setNewValues(nv => ({
-                                            //     ...nv,
-                                            //     rescheduleReason: 'ADVISED'
-                                            // }));
                                             setApplyChangesDialogOpen(true);
                                         }}
                                     >
