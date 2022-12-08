@@ -1,5 +1,7 @@
 ﻿namespace Linn.Purchasing.Resources
 {
+    using System.Runtime.InteropServices;
+
     using Linn.Common.Resources;
 
     public class BomChangeResource : HypermediaResource
@@ -35,5 +37,7 @@
         public int? PhaseInWeekNumber { get; set; }
 
         public string PhaseInWWYYYY { get; set; }
+
+        public string LifecycleText { get; set; }
     }
 }

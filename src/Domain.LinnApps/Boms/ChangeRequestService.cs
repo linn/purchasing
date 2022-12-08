@@ -10,8 +10,6 @@
     using Linn.Common.Domain.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-
     public class ChangeRequestService : IChangeRequestService
     {
         private readonly IAuthorisationService authService;
@@ -20,11 +18,14 @@
 
         private readonly IQueryRepository<Part> partRepository;
 
-        public ChangeRequestService(IAuthorisationService authService, IRepository<ChangeRequest, int> repository, IQueryRepository<Part> partRepository)
+        private readonly IRepository<Employee, int> employeeRepository;
+
+        public ChangeRequestService(IAuthorisationService authService, IRepository<ChangeRequest, int> repository, IQueryRepository<Part> partRepository, IRepository<Employee, int> employeeRepository)
         {
             this.authService = authService;
             this.repository = repository;
             this.partRepository = partRepository;
+            this.employeeRepository = employeeRepository;
         }
 
         public Part ValidPartNumber(string partNumber)
@@ -68,14 +69,18 @@
             return request;
         }
 
-        public ChangeRequest Cancel(int documentNumber, IEnumerable<string> privileges = null)
+        public ChangeRequest Cancel(int documentNumber, int cancelledById, IEnumerable<string> privileges = null)
         {
-
-
             var request = this.repository.FindById(documentNumber);
             if (request == null)
             {
                 throw new ItemNotFoundException("Change Request not found");
+            }
+
+            var employee = this.employeeRepository.FindById(cancelledById);
+            if (employee == null)
+            {
+                throw new ItemNotFoundException("Employee not found");
             }
 
             if ( request.ChangeState == "ACCEPT" && !this.authService.HasPermissionFor(AuthorisedAction.AdminChangeRequest, privileges) )
@@ -86,7 +91,7 @@
 
             if (request.CanCancel(true))
             {
-                request.CancelAll();
+                request.CancelAll(employee);
             }
             else
             {

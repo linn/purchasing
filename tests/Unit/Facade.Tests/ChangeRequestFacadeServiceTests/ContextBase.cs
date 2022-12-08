@@ -3,6 +3,7 @@
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Facade.ResourceBuilders;
@@ -24,6 +25,8 @@
 
         protected IQueryRepository<Part> partRepository;
 
+        protected IRepository<Employee, int> employeeRepository { get; set; }
+
         protected ChangeRequestFacadeService Sut { get; private set; }
 
         [SetUp]
@@ -34,6 +37,7 @@
             this.authorisationService = Substitute.For<IAuthorisationService>();
             this.databaseService = Substitute.For<IDatabaseService>();
             this.partRepository = Substitute.For<IQueryRepository<Part>>();
+            this.employeeRepository = Substitute.For<IRepository<Employee, int>>();
 
             this.Sut = new ChangeRequestFacadeService(
                 this.repository,
@@ -42,7 +46,7 @@
                     new BomChangeResourceBuilder(),
                     new PcasChangeResourceBuilder(),
                     this.authorisationService),
-                new ChangeRequestService(this.authorisationService, this.repository, this.partRepository),
+                new ChangeRequestService(this.authorisationService, this.repository, this.partRepository, this.employeeRepository),
                 this.databaseService);
         }
     }

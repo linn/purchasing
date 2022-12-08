@@ -14,20 +14,20 @@ function PcasChangesTab({ pcasChanges }) {
     const classes = useStyles();
 
     const columns = [
-        { field: 'changeId', headerName: 'Id', width: 100 },
-
         { field: 'boardCode', headerName: 'Board Code', width: 140 },
         { field: 'revisionCode', headerName: 'Revision Code', width: 140 },
         {
             field: 'changeState',
             headerName: 'State',
-            width: 200,
+            width: 150,
             renderCell: params => (
                 <>
                     <ChangeState changeState={params.row.changeState} showLabel={false} />
                 </>
             )
         },
+        { field: 'changeId', headerName: 'Id', width: 100 },
+        { field: 'lifecycleText', headerName: 'Lifecycle', width: 350 }
     ];
 
     return (

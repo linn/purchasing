@@ -27,7 +27,10 @@
                               };
             this.Repository.FindById(1).Returns(request);
 
-            this.action = () => this.Sut.Cancel(1, new List<string>());
+            var employee = new Employee { Id = 7, FullName = "Bond, James Bond" };
+            this.EmployeeRepository.FindById(7).Returns(employee);
+
+            this.action = () => this.Sut.Cancel(1, 7, new List<string>());
         }
 
         [Test]

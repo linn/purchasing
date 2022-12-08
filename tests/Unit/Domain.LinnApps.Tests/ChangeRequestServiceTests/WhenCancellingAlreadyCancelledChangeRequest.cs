@@ -23,7 +23,7 @@
                 .HasPermissionFor(AuthorisedAction.AdminChangeRequest, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
-            var request = new ChangeRequest()
+            var request = new ChangeRequest
                               {
                                   DocumentNumber = 1,
                                   ChangeState = "CANCEL",
@@ -32,7 +32,10 @@
                               };
             this.Repository.FindById(1).Returns(request);
 
-            this.action = () => this.Sut.Cancel(1, new List<string>());
+            var employee = new Employee {Id = 7, FullName = "Bond, James Bond"};
+            this.EmployeeRepository.FindById(7).Returns(employee);
+
+            this.action = () => this.Sut.Cancel(1, 7, new List<string>());
         }
 
         [Test]

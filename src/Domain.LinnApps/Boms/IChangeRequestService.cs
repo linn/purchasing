@@ -10,6 +10,6 @@
 
         ChangeRequest Approve(int documentNumber, IEnumerable<string> privileges = null);
 
-        ChangeRequest Cancel(int documentNumber, IEnumerable<string> privileges = null);
+        ChangeRequest Cancel(int documentNumber, int cancelledById, IEnumerable<string> privileges = null);
     }
 }

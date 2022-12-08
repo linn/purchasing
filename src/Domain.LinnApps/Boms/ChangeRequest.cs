@@ -79,11 +79,32 @@
             }
         }
 
-        public void CancelAll()
+        public void CancelAll(Employee cancelledBy)
         {
             if (this.CanCancel(true))
             {
                 this.ChangeState = "CANCEL";
+                if (this.BomChanges != null)
+                {
+                    foreach (var bomChange in this.BomChanges)
+                    {
+                        if (bomChange.CanCancel())
+                        {
+                            bomChange.Cancel(cancelledBy);
+                        }
+                    }
+                }
+
+                if (this.PcasChanges != null)
+                {
+                    foreach (var pcasChange in this.PcasChanges)
+                    {
+                        if (pcasChange.CanCancel())
+                        {
+                            pcasChange.Cancel(cancelledBy);
+                        }
+                    }
+                }
             }
         }
     }

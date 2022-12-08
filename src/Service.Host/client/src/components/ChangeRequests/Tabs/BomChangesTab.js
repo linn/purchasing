@@ -14,20 +14,20 @@ function BomChangesTab({ bomChanges }) {
     const classes = useStyles();
 
     const columns = [
-        { field: 'changeId', headerName: 'Id', width: 100 },
-
         { field: 'bomName', headerName: 'Bom', width: 200 },
         {
             field: 'changeState',
             headerName: 'State',
-            width: 200,
+            width: 150,
             renderCell: params => (
                 <>
                     <ChangeState changeState={params.row.changeState} showLabel={false} />
                 </>
             )
         },
-        { field: 'phaseInWWYYYY', headerName: 'Phase In Week', width: 200 }
+        { field: 'phaseInWWYYYY', headerName: 'Phase In Week', width: 200 },
+        { field: 'changeId', headerName: 'Id', width: 100 },
+        { field: 'lifecycleText', headerName: 'Lifecycle', width: 350 }
     ];
 
     return (

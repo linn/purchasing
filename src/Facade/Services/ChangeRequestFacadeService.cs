@@ -59,11 +59,11 @@
             }
         }
 
-        public IResult<ChangeRequestResource> CancelChangeRequest(int documentNumber, IEnumerable<string> privileges = null)
+        public IResult<ChangeRequestResource> CancelChangeRequest(int documentNumber, int cancelledById, IEnumerable<string> privileges = null)
         {
             try
             {
-                var request = this.changeRequestService.Cancel(documentNumber, privileges);
+                var request = this.changeRequestService.Cancel(documentNumber, cancelledById, privileges);
                 this.transactionManager.Commit();
                 var resource = (ChangeRequestResource)this.resourceBuilder.Build(request, privileges);
                 return new SuccessResult<ChangeRequestResource>(resource);
@@ -78,7 +78,7 @@
             }
         }
 
-        public IResult<ChangeRequestResource> ChangeStatus(ChangeRequestStatusChangeResource request, IEnumerable<string> privileges = null)
+        public IResult<ChangeRequestResource> ChangeStatus(ChangeRequestStatusChangeResource request, int changedById, IEnumerable<string> privileges = null)
         {
             if (request?.Status == "ACCEPT")
             {
@@ -87,7 +87,7 @@
 
             if (request?.Status == "CANCEL")
             {
-                return this.CancelChangeRequest(request.Id, privileges);
+                return this.CancelChangeRequest(request.Id, changedById, privileges);
             }
 
             return new BadRequestResult<ChangeRequestResource>($"Cannot change status to {request?.Status}");
