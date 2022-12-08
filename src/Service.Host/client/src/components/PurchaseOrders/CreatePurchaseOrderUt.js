@@ -13,11 +13,11 @@ import {
     Page,
     collectionSelectorHelpers,
     Dropdown,
-    Typeahead,
     InputField,
     itemSelectorHelpers,
     Loading,
-    utilities
+    utilities,
+    Search
 } from '@linn-it/linn-form-components-library';
 import queryString from 'query-string';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -48,6 +48,10 @@ function CreatePurchaseOrderUt() {
         queryString.parse(search);
 
     const [stockControlledPart, setStockControlled] = useState(null);
+
+    const [supplierSearchTerm, setSupplierSearchTerm] = useState();
+
+    const [partSearchTerm, setPartSearchTerm] = useState();
 
     useEffect(() => {
         reduxDispatch(purchaseOrderActions.fetchState());
@@ -374,15 +378,24 @@ function CreatePurchaseOrderUt() {
                             </>
                         )}
                         <Grid item xs={11}>
-                            <Typeahead
-                                label="Part"
-                                title="Search for a part"
-                                onSelect={newPart => {
+                            <Search
+                                propertyName="searchTerm"
+                                label="Part Number"
+                                resultsInModal
+                                resultLimit={100}
+                                value={partSearchTerm}
+                                handleValueChange={(_, newVal) => setPartSearchTerm(newVal)}
+                                search={() => reduxDispatch(partsActions.search(partSearchTerm))}
+                                searchResults={partsSearchResults}
+                                loading={partsSearchLoading}
+                                priorityFunction="closestMatchesFirst"
+                                onResultSelect={newPart => {
                                     handleDetailFieldChange(
                                         'partNumber',
                                         newPart.id,
                                         order.details[0]
                                     );
+                                    setPartSearchTerm(newPart.partNumber);
                                     if (newPart.stockControlled === 'Y') {
                                         setStockControlled(true);
                                         reduxDispatch(
@@ -395,19 +408,7 @@ function CreatePurchaseOrderUt() {
                                         setStockControlled(false);
                                     }
                                 }}
-                                items={partsSearchResults}
-                                loading={partsSearchLoading}
-                                fetchItems={searchTerm =>
-                                    reduxDispatch(partsActions.search(searchTerm))
-                                }
-                                clearSearch={() => reduxDispatch(partsActions.clearSearch)}
-                                value={detail.partNumber}
-                                modal
-                                links={false}
-                                debounce={1000}
-                                minimumSearchTermLength={4}
-                                disabled={!allowedToCreate() || isCreditOrReturn()}
-                                placeholder="click to set part"
+                                clearSearch={() => {}}
                             />
                         </Grid>
                         <Grid item xs={1}>
@@ -444,7 +445,7 @@ function CreatePurchaseOrderUt() {
                                                 s.supplierRanking === 1 ? '(P)' : ''
                                             }`
                                         }))}
-                                    onChange={(propertyName, selected) => {
+                                    onChange={(_, selected) => {
                                         handleSupplierChange({ id: selected });
                                         dispatch({
                                             payload: {
@@ -462,21 +463,23 @@ function CreatePurchaseOrderUt() {
                             </Grid>
                         ) : (
                             <Grid item xs={4}>
-                                <Typeahead
+                                <Search
+                                    value={supplierSearchTerm}
+                                    handleValueChange={(_, newVal) => setSupplierSearchTerm(newVal)}
+                                    search={searchSuppliers}
+                                    searchResults={suppliersSearchResults.filter(
+                                        s => !s.dateClosed
+                                    )}
                                     label="Supplier"
-                                    modal
+                                    resultsInModal
                                     propertyName="supplierId"
-                                    items={suppliersSearchResults}
-                                    value={order.supplier?.id}
+                                    items={suppliersSearchResults.filter(s => !s.dateClosed)}
                                     loading={suppliersSearchLoading}
-                                    fetchItems={searchSuppliers}
-                                    links={false}
-                                    on
-                                    text
                                     clearSearch={() => {}}
                                     placeholder="Search Suppliers"
-                                    onSelect={newValue => {
+                                    onResultSelect={newValue => {
                                         handleSupplierChange(newValue);
+                                        setSupplierSearchTerm(newValue.name);
                                     }}
                                     minimumSearchTermLength={3}
                                     fullWidth
