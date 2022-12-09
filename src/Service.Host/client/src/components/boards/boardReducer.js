@@ -99,6 +99,7 @@ export default function boardReducer(state = initialState, action) {
                 layoutCode: newLayoutCode,
                 layoutNumber: lastLayoutNumber + 1,
                 layoutSequence: lastLayoutSequence + 1,
+                pcbPartNumber: `PCB ${state.board.boardCode}/${newLayoutCode}`,
                 revisions: []
             };
             return {
@@ -132,12 +133,17 @@ export default function boardReducer(state = initialState, action) {
                     layoutCode: state.selectedLayout[0],
                     layoutSequence: layout.layoutSequence,
                     creating: true,
-                    splitBom: 'N',
+                    splitBom: state.board.splitBom,
                     revisionCode: newRevisionCode,
                     revisionNumber: lastRevisionNumber + 1,
                     versionNumber: lastVersionNumber + 1,
                     revisionType,
-                    boardCode: state.board.boardCode
+                    boardCode: state.board.boardCode,
+                    pcasPartNumber: `PCAS ${state.board.boardCode}/${newRevisionCode}`,
+                    pcsmPartNumber:
+                        state.board.splitBom === 'Y'
+                            ? `PCSM ${state.board.boardCode}/${newRevisionCode}`
+                            : null
                 };
 
                 const index = state.board.layouts.findIndex(
@@ -202,9 +208,15 @@ export default function boardReducer(state = initialState, action) {
                             layoutToUpdate.layoutCode = `duplicate`;
                         } else {
                             layoutToUpdate.layoutCode = `${layoutToUpdate.layoutType}${layoutToUpdate.layoutNumber}`;
+                            layoutToUpdate.pcbPartNumber = `PCB ${state.board.boardCode}/${layoutToUpdate.layoutType}${layoutToUpdate.layoutNumber}`;
                         }
                     }
                 }
+
+                if (action.fieldName === 'layoutCode') {
+                    layoutToUpdate.pcbPartNumber = `PCB ${state.board.boardCode}/${action.payload}`;
+                }
+
                 return {
                     ...state,
                     selectedLayout: [layoutToUpdate.layoutCode]
@@ -246,6 +258,29 @@ export default function boardReducer(state = initialState, action) {
                         revisionToUpdate.revisionCode = `duplicate`;
                     } else {
                         revisionToUpdate.revisionCode = `${revisionToUpdate.layoutCode}R${revisionToUpdate.revisionNumber}`;
+                        revisionToUpdate.pcasPartNumber = `PCAS ${state.board.boardCode}/${revisionToUpdate.revisionCode}`;
+                        if (revisionToUpdate.splitBom === 'Y') {
+                            revisionToUpdate.pcsmPartNumber = `PCSM ${state.board.boardCode}/${revisionToUpdate.revisionCode}`;
+                        } else {
+                            revisionToUpdate.pcsmPartNumber = null;
+                        }
+                    }
+                }
+
+                if (action.fieldName === 'revisionCode') {
+                    revisionToUpdate.pcasPartNumber = `PCAS ${state.board.boardCode}/${action.payload}`;
+                    if (revisionToUpdate.splitBom === 'Y') {
+                        revisionToUpdate.pcsmPartNumber = `PCSM ${state.board.boardCode}/${action.payload}`;
+                    } else {
+                        revisionToUpdate.pcsmPartNumber = null;
+                    }
+                }
+
+                if (action.fieldName === 'splitBom') {
+                    if (revisionToUpdate.splitBom === 'Y') {
+                        revisionToUpdate.pcsmPartNumber = `PCSM ${state.board.boardCode}/${revisionToUpdate.revisionCode}`;
+                    } else {
+                        revisionToUpdate.pcsmPartNumber = null;
                     }
                 }
 
