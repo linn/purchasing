@@ -49,6 +49,17 @@ function ChangeRequest() {
 
     const [tab, setTab] = useState(0);
 
+    const [selectedBomChanges, setSelectedBomChanges] = useState(null);
+    const [selectedPcasChanges, setSelectedPcasChanges] = useState(null);
+
+    const handleBomChangesSelectRow = selected => {
+        setSelectedBomChanges(selected);
+    };
+
+    const handlePcasChangesSelectRow = selected => {
+        setSelectedPcasChanges(selected);
+    };
+
     const approve = request => {
         if (request?.changeState === 'PROPOS') {
             reduxDispatch(changeRequestStatusChangeActions.add({ id, status: 'ACCEPT' }));
@@ -59,7 +70,14 @@ function ChangeRequest() {
 
     const cancel = request => {
         if (request?.changeState === 'PROPOS' || request?.changeState === 'ACCEPT') {
-            reduxDispatch(changeRequestStatusChangeActions.add({ id, status: 'CANCEL' }));
+            reduxDispatch(
+                changeRequestStatusChangeActions.add({
+                    id,
+                    status: 'CANCEL',
+                    selectedBomChangeIds: selectedBomChanges,
+                    selectedPcasChangeIds: selectedPcasChanges
+                })
+            );
         }
     };
 
@@ -108,12 +126,18 @@ function ChangeRequest() {
                         )}
                         {tab === 1 && (
                             <Box sx={{ paddingTop: 3 }}>
-                                <PcasChangesTab pcasChanges={item?.pcasChanges} />
+                                <PcasChangesTab
+                                    pcasChanges={item?.pcasChanges}
+                                    handleSelectChange={handlePcasChangesSelectRow}
+                                />
                             </Box>
                         )}
                         {tab === 2 && (
                             <Box sx={{ paddingTop: 3 }}>
-                                <BomChangesTab bomChanges={item?.bomChanges} />
+                                <BomChangesTab
+                                    bomChanges={item?.bomChanges}
+                                    handleSelectChange={handleBomChangesSelectRow}
+                                />
                             </Box>
                         )}
                     </Grid>

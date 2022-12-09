@@ -5,7 +5,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { makeStyles } from '@mui/styles';
 import ChangeState from '../ChangeState';
 
-function PcasChangesTab({ pcasChanges }) {
+function PcasChangesTab({ pcasChanges, handleSelectChange }) {
     const useStyles = makeStyles(() => ({
         gap: {
             marginTop: '20px'
@@ -43,6 +43,7 @@ function PcasChangesTab({ pcasChanges }) {
                         autoHeight
                         loading={false}
                         checkboxSelection
+                        onSelectionModelChange={handleSelectChange}
                         hideFooter
                     />
                 ) : (
@@ -54,11 +55,13 @@ function PcasChangesTab({ pcasChanges }) {
 }
 
 PcasChangesTab.propTypes = {
-    pcasChanges: PropTypes.arrayOf(PropTypes.shape({}))
+    pcasChanges: PropTypes.arrayOf(PropTypes.shape({})),
+    handleSelectChange: PropTypes.func
 };
 
 PcasChangesTab.defaultProps = {
-    pcasChanges: []
+    pcasChanges: [],
+    handleSelectChange: null
 };
 
 export default PcasChangesTab;

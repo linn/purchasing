@@ -34,7 +34,7 @@
                 .HasPermissionFor(AuthorisedAction.AdminChangeRequest, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
-            this.result = this.Sut.Cancel(1, 7, new List<string>());
+            this.result = this.Sut.Cancel(1, 7, null, null, new List<string>());
         }
 
         [Test]

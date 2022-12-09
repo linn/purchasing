@@ -69,7 +69,7 @@
             return request;
         }
 
-        public ChangeRequest Cancel(int documentNumber, int cancelledById, IEnumerable<string> privileges = null)
+        public ChangeRequest Cancel(int documentNumber, int cancelledById, IEnumerable<int> selectedBomChangeIds, IEnumerable<int> selectedPcasChangeIds, IEnumerable<string> privileges = null)
         {
             var request = this.repository.FindById(documentNumber);
             if (request == null)
@@ -91,7 +91,7 @@
 
             if (request.CanCancel(true))
             {
-                request.CancelAll(employee);
+                request.Cancel(employee, selectedBomChangeIds, selectedPcasChangeIds);
             }
             else
             {
