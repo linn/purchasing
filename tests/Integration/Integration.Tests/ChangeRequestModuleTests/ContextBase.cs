@@ -5,12 +5,14 @@
     using Linn.Common.Authorisation;
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
+    using Linn.Purchasing.Persistence.LinnApps.Repositories;
     using Linn.Purchasing.Service.Modules;
 
     using Microsoft.Extensions.DependencyInjection;
@@ -39,6 +41,8 @@
 
         protected IQueryRepository<Part> PartRepository { get; set; }
 
+        protected IRepository<Employee, int> EmployeeRepository { get; set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -47,11 +51,12 @@
             this.AuthService = Substitute.For<IAuthorisationService>();
             this.DatabaseService = Substitute.For<IDatabaseService>();
             this.PartRepository = Substitute.For<IQueryRepository<Part>>();
+            this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
             this.FacadeService = new ChangeRequestFacadeService(
                 this.Repository,
                 this.TransactionManager,
                 new ChangeRequestResourceBuilder(new BomChangeResourceBuilder(), new PcasChangeResourceBuilder(), this.AuthService),
-                new ChangeRequestService(this.AuthService, this.Repository, this.PartRepository),
+                new ChangeRequestService(this.AuthService, this.Repository, this.PartRepository, this.EmployeeRepository),
                 this.DatabaseService);
 
             this.Client = TestClient.With<ChangeRequestModule>(

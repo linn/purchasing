@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
@@ -55,12 +56,85 @@
             return this.ChangeState == "PROPOS";
         }
 
+        public bool CanCancel(bool adminPrivs)
+        {
+            if (this.ChangeState == "PROPOS")
+            {
+                return true;
+            }
+
+            if (this.ChangeState == "ACCEPT")
+            {
+                return adminPrivs;
+            }
+
+            return false;
+        }
+
         public void Approve()
         {
             if (this.CanApprove())
             {
                 this.ChangeState = "ACCEPT";
                 this.DateAccepted = DateTime.Now;
+            }
+        }
+
+        public void Cancel(Employee cancelledBy, IEnumerable<int> selectedBomChangeIds, IEnumerable<int> selectedPcasChangeIds)
+        {
+            if (this.CanCancel(true))
+            {
+                var cancelledAll = true;
+                var globalCancel = !(selectedBomChangeIds?.Any() ?? false) && !(selectedPcasChangeIds?.Any() ?? false);
+
+                if (this.BomChanges != null)
+                {
+                    foreach (var bomChange in this.BomChanges)
+                    {
+                        if (bomChange.CanCancel())
+                        {
+                            if (selectedBomChangeIds == null && !globalCancel)
+                            {
+                                cancelledAll = false;
+                            }
+                            else if (globalCancel || selectedBomChangeIds.Contains(bomChange.ChangeId))
+                            {
+                                bomChange.Cancel(cancelledBy);
+                            }
+                            else
+                            {
+                                cancelledAll = false;
+                            }
+                        }
+                    }
+                }
+
+                if (this.PcasChanges != null)
+                {
+                    foreach (var pcasChange in this.PcasChanges)
+                    {
+                        if (pcasChange.CanCancel())
+                        {
+                            if (selectedPcasChangeIds == null && !globalCancel)
+                            {
+                                cancelledAll = false;
+                            }
+                            else if (globalCancel || selectedPcasChangeIds.Contains(pcasChange.ChangeId))
+                            {
+                                pcasChange.Cancel(cancelledBy);
+                            }
+                            else
+                            {
+                                cancelledAll = false;
+                            }
+                        }
+                    }
+                }
+
+                if (cancelledAll)
+                {
+                    this.ChangeState = "CANCEL";
+                }
             }
         }
     }

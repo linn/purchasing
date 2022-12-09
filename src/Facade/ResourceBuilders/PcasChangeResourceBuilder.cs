@@ -22,6 +22,7 @@
                            DateEntered = model.DateEntered.ToString("o"),
                            DateApplied = model.DateApplied.HasValue ? model.DateApplied.Value.ToString("o") : null,
                            DateCancelled = model.DateCancelled.HasValue ? model.DateCancelled.Value.ToString("o") : null,
+                           LifecycleText = model.LifecycleText()
                        };
         }
 

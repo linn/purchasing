@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import { DataGrid } from '@mui/x-data-grid';
 import { makeStyles } from '@mui/styles';
+import ChangeState from '../ChangeState';
 
-function BomChangesTab({ bomChanges }) {
+function BomChangesTab({ bomChanges, handleSelectChange }) {
     const useStyles = makeStyles(() => ({
         gap: {
             marginTop: '20px'
@@ -13,11 +14,18 @@ function BomChangesTab({ bomChanges }) {
     const classes = useStyles();
 
     const columns = [
-        { field: 'changeId', headerName: 'Id', width: 100 },
-
         { field: 'bomName', headerName: 'Bom', width: 200 },
-        { field: 'changeState', headerName: 'State', width: 200 },
-        { field: 'phaseInWWYYYY', headerName: 'Phase In Week', width: 200 }
+        {
+            field: 'changeState',
+            headerName: 'State',
+            width: 150,
+            renderCell: params => (
+                <ChangeState changeState={params.row.changeState} showLabel={false} />
+            )
+        },
+        { field: 'phaseInWWYYYY', headerName: 'Phase In Week', width: 200 },
+        { field: 'changeId', headerName: 'Id', width: 100 },
+        { field: 'lifecycleText', headerName: 'Lifecycle', width: 350 }
     ];
 
     return (
@@ -32,6 +40,8 @@ function BomChangesTab({ bomChanges }) {
                         rowHeight={34}
                         autoHeight
                         loading={false}
+                        checkboxSelection
+                        onSelectionModelChange={handleSelectChange}
                         hideFooter
                     />
                 ) : (
@@ -43,11 +53,13 @@ function BomChangesTab({ bomChanges }) {
 }
 
 BomChangesTab.propTypes = {
-    bomChanges: PropTypes.arrayOf(PropTypes.shape({}))
+    bomChanges: PropTypes.arrayOf(PropTypes.shape({})),
+    handleSelectChange: PropTypes.func
 };
 
 BomChangesTab.defaultProps = {
-    bomChanges: []
+    bomChanges: [],
+    handleSelectChange: null
 };
 
 export default BomChangesTab;

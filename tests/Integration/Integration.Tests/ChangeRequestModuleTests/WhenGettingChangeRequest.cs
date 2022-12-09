@@ -7,6 +7,7 @@
 
     using FluentAssertions;
 
+    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
@@ -25,6 +26,7 @@
                                  DocumentType = "CRF",
                                  DocumentNumber = 1,
                                  DateEntered = new DateTime(2020, 1, 1),
+                                 EnteredBy = new Employee { Id = 1, FullName = "David Bowie" },
                                  ReasonForChange = "Everything changes",
                                  DescriptionOfChange = "Ch ch changes",
                                  ChangeState = "ACCEPT",

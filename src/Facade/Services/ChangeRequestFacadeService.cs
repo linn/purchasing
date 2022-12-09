@@ -59,11 +59,35 @@
             }
         }
 
-        public IResult<ChangeRequestResource> ChangeStatus(ChangeRequestStatusChangeResource request, IEnumerable<string> privileges = null)
+        public IResult<ChangeRequestResource> CancelChangeRequest(int documentNumber, int cancelledById, IEnumerable<int> selectedBomChangeIds, IEnumerable<int> selectedPcasChangeIds, IEnumerable<string> privileges = null)
+        {
+            try
+            {
+                var request = this.changeRequestService.Cancel(documentNumber, cancelledById, selectedBomChangeIds, selectedPcasChangeIds, privileges);
+                this.transactionManager.Commit();
+                var resource = (ChangeRequestResource)this.resourceBuilder.Build(request, privileges);
+                return new SuccessResult<ChangeRequestResource>(resource);
+            }
+            catch (ItemNotFoundException)
+            {
+                return new NotFoundResult<ChangeRequestResource>("Change Request not found");
+            }
+            catch (InvalidStateChangeException)
+            {
+                return new BadRequestResult<ChangeRequestResource>("Cannot cancel this change request");
+            }
+        }
+
+        public IResult<ChangeRequestResource> ChangeStatus(ChangeRequestStatusChangeResource request, int changedById, IEnumerable<string> privileges = null)
         {
             if (request?.Status == "ACCEPT")
             {
                 return this.ApproveChangeRequest(request.Id, privileges);
+            }
+
+            if (request?.Status == "CANCEL")
+            {
+                return this.CancelChangeRequest(request.Id, changedById, request.SelectedBomChangeIds, request.SelectedPcasChangeIds, privileges);
             }
 
             return new BadRequestResult<ChangeRequestResource>($"Cannot change status to {request?.Status}");

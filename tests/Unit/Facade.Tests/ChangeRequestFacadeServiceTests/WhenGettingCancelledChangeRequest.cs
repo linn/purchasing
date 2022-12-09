@@ -15,7 +15,7 @@
 
     using NUnit.Framework;
 
-    public class WhenGettingProposedChangeRequest : ContextBase
+    public class WhenGettingCancelledChangeRequest : ContextBase
     {
         private IResult<ChangeRequestResource> result;
 
@@ -29,12 +29,12 @@
             var request = new ChangeRequest()
                               {
                                   DocumentNumber = 1,
-                                  ChangeState = "PROPOS",
+                                  ChangeState = "CANCEL",
                                   DateEntered = new DateTime(2022, 1, 1),
-                                  DescriptionOfChange = "Test Change"
+                                  DescriptionOfChange = "Cancelled already"
                               };
             this.repository.FindById(1).Returns(request);
-            this.result = this.Sut.GetById(1, new List<string>() { "superpowers"});
+            this.result = this.Sut.GetById(1, new List<string>() { "superpowers" });
         }
 
         [Test]
@@ -44,17 +44,16 @@
         }
 
         [Test]
-        public void ShouldBeProposedWithAppropriateLinks()
+        public void ShouldBeCancelledWithAppropriateLinks()
         {
             var resource = ((SuccessResult<ChangeRequestResource>)this.result).Data;
             resource.DocumentNumber.Should().Be(1);
-            resource.ChangeState.Should().Be("PROPOS");
-            resource.Links.Length.Should().Be(3);
-            resource.GlobalReplace.Should().BeFalse();
-            var acceptLink = resource.Links.Single(r => r.Rel == "approve");
-            acceptLink.Should().NotBeNull();
-            var cancelLink = resource.Links.Single(r => r.Rel == "cancel");
-            cancelLink.Should().NotBeNull();
+            resource.ChangeState.Should().Be("CANCEL");
+            resource.Links.Length.Should().Be(1);
+            var acceptLink = resource.Links.SingleOrDefault(r => r.Rel == "approve");
+            acceptLink.Should().BeNull();
+            var cancelLink = resource.Links.SingleOrDefault(r => r.Rel == "cancel");
+            cancelLink.Should().BeNull();
         }
     }
 }
