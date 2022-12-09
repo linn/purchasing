@@ -63,7 +63,7 @@
                            PcasChanges =
                                model.PcasChanges?.Select(
                                    d => (PcasChangeResource)this.pcasChangeBuilder.Build(d, claims)),
-                           Links = claims == null ? null : this.BuildLinks(model, claims).ToArray()
+                           Links = this.BuildLinks(model, claims).ToArray()
             };
         }
 
@@ -76,7 +76,7 @@
 
         private IEnumerable<LinkResource> BuildLinks(ChangeRequest model, IEnumerable<string> claims)
         {
-            var privileges = claims as string[] ?? claims.ToArray();
+            var privileges = claims == null ? Array.Empty<string>() : claims as string[] ?? claims.ToArray();
             var adminPrivs = this.authService.HasPermissionFor(AuthorisedAction.AdminChangeRequest, privileges);
 
             if (this.authService.HasPermissionFor(AuthorisedAction.ApproveChangeRequest, privileges) && model.CanApprove())
