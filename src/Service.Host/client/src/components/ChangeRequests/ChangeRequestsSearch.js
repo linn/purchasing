@@ -1,16 +1,29 @@
 import React, { useState } from 'react';
-import { Page, InputField } from '@linn-it/linn-form-components-library';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+    Page,
+    InputField,
+    Loading,
+    collectionSelectorHelpers,
+    utilities
+} from '@linn-it/linn-form-components-library';
 import { makeStyles } from '@mui/styles';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
+import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
-
+import { DataGrid } from '@mui/x-data-grid';
+import { Link as RouterLink } from 'react-router-dom';
+import changeRequestsActions from '../../actions/changeRequestsActions';
+import ChangeState from './ChangeState';
 import history from '../../history';
 
 function ChangeRequestSearch() {
-    const [documentNumber, setDocumentNumber] = useState('');
-
+    const dispatch = useDispatch();
     const useStyles = makeStyles(theme => ({
+        gap: {
+            marginTop: '50px'
+        },
         button: {
             marginLeft: theme.spacing(1),
             marginTop: theme.spacing(4)
@@ -21,9 +34,66 @@ function ChangeRequestSearch() {
     }));
     const classes = useStyles();
 
-    const search = () => history.push(`/purchasing/change-requests/${documentNumber}/`);
+    const [documentNumber, setDocumentNumber] = useState('');
+    const [newPartNumber, setNewPartNumber] = useState('');
+
+    const searchRequestsResults = useSelector(state =>
+        collectionSelectorHelpers.getSearchItems(state.changeRequests)
+    );
+    const searchRequestsLoading = useSelector(state =>
+        collectionSelectorHelpers.getSearchLoading(state.changeRequests)
+    );
+
+    const columns = [
+        {
+            field: 'documentNumber',
+            headerName: 'CRF',
+            width: 120,
+            renderCell: params => (
+                <Link
+                    className={classes.a}
+                    component={RouterLink}
+                    to={utilities.getSelfHref(params.row)}
+                >
+                    {params.row.documentNumber}
+                </Link>
+            )
+        },
+        {
+            field: 'changeState',
+            headerName: 'State',
+            width: 150,
+            renderCell: params => (
+                <ChangeState changeState={params.row.changeState} showLabel={false} />
+            )
+        },
+        {
+            field: 'dateEntered',
+            headerName: 'Entered',
+            width: 150,
+            renderCell: params => (
+                <InputField
+                    fullWidth
+                    value={params.row.dateEntered}
+                    propertyName="dateEntered"
+                    type="date"
+                    disabled
+                />
+            )
+        },
+        {
+            field: 'proposedBy',
+            headerName: 'Proposed By',
+            width: 200,
+            renderCell: params => <>{params.row.proposedBy?.fullName}</>
+        }
+    ];
+
+    const lookup = () => history.push(`/purchasing/change-requests/${documentNumber}/`);
 
     const create = () => history.push('/purchasing/change-requests/create');
+
+    const search = () => dispatch(changeRequestsActions.search(newPartNumber));
 
     return (
         <Page history={history}>
@@ -51,10 +121,47 @@ function ChangeRequestSearch() {
                         variant="outlined"
                         color="primary"
                         className={classes.button}
-                        onClick={search}
+                        onClick={lookup}
                     >
                         Go
                     </Button>
+                </Grid>
+                <Grid item xs={5} />
+                <Grid item xs={8} className={classes.gap}>
+                    <InputField
+                        fullWidth
+                        placeholder="Find proposed/accept CRFs with this part number"
+                        value={newPartNumber}
+                        label="New Part Number"
+                        propertyName="newPartNumber"
+                        onChange={(_, newValue) => setNewPartNumber(newValue)}
+                    />
+                </Grid>
+                <Grid item xs={2} className={classes.gap}>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        className={classes.button}
+                        onClick={search}
+                    >
+                        Search
+                    </Button>
+                </Grid>
+                <Grid item xs={2} />
+                <Grid item xs={12}>
+                    {searchRequestsLoading && <Loading />}
+                    {searchRequestsResults.length > 0 && (
+                        <DataGrid
+                            getRowId={row => row.documentNumber}
+                            className={classes.gap}
+                            rows={searchRequestsResults}
+                            columns={columns}
+                            rowHeight={34}
+                            autoHeight
+                            loading={false}
+                            hideFooter
+                        />
+                    )}
                 </Grid>
             </Grid>
         </Page>
