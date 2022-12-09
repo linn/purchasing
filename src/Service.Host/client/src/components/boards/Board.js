@@ -50,7 +50,7 @@ function Board({ creating }) {
 
     useEffect(() => {
         if (creating) {
-            dispatch({ type: 'initialise' });
+            reduxDispatch(boardActions.clearItem());
         } else if (id) {
             reduxDispatch(boardActions.fetch(id));
         }
@@ -59,8 +59,11 @@ function Board({ creating }) {
     useEffect(() => {
         if (item) {
             dispatch({ type: 'populate', payload: item });
-            setSelectedTab(0);
+        } else {
+            dispatch({ type: 'initialise' });
         }
+
+        setSelectedTab(0);
     }, [item]);
 
     useEffect(() => {
