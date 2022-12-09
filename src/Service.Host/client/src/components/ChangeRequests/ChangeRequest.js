@@ -41,8 +41,44 @@ function ChangeRequest() {
         itemSelectorHelpers.getItem(reduxState.changeRequestStatusChange)
     );
 
+    const changedState = (changereq, origreq) => {
+        if (changereq?.changeState !== origreq?.changeState) {
+            return true;
+        }
+
+        if (
+            changereq.bomChanges.filter(c => c.changeState === 'CANCEL').length >
+            origreq.bomChanges.filter(c => c.changeState === 'CANCEL').length
+        ) {
+            return true;
+        }
+
+        if (
+            changereq.pcasChanges.filter(c => c.changeState === 'CANCEL').length >
+            origreq.pcasChanges.filter(c => c.changeState === 'CANCEL').length
+        ) {
+            return true;
+        }
+
+        if (
+            changereq.bomChanges.filter(c => c.changeState === 'LIVE').length >
+            origreq.bomChanges.filter(c => c.changeState === 'LIVE').length
+        ) {
+            return true;
+        }
+
+        if (
+            changereq.pcasChanges.filter(c => c.changeState === 'LIVE').length >
+            origreq.pcasChanges.filter(c => c.changeState === 'LIVE').length
+        ) {
+            return true;
+        }
+
+        return false;
+    };
+
     useEffect(() => {
-        if (item && statusChange && statusChange?.changeState !== item?.changeState) {
+        if (item && statusChange && changedState(statusChange, item)) {
             reduxDispatch(changeRequestActions.fetch(id));
         }
     }, [statusChange, reduxDispatch, item, id]);
@@ -102,19 +138,19 @@ function ChangeRequest() {
                                     <Tab label="Main" />
                                     <Tab
                                         label={`Pcas Changes${
-                                            item?.pcasChanges.length
-                                                ? ` (${item?.pcasChanges.length})`
+                                            item?.pcasChanges?.length
+                                                ? ` (${item?.pcasChanges?.length})`
                                                 : ''
                                         }`}
-                                        disabled={!item?.pcasChanges.length}
+                                        disabled={!item?.pcasChanges?.length}
                                     />
                                     <Tab
                                         label={`Bom Changes${
-                                            item?.bomChanges.length
-                                                ? ` (${item?.bomChanges.length})`
+                                            item?.bomChanges?.length
+                                                ? ` (${item?.bomChanges?.length})`
                                                 : ''
                                         }`}
-                                        disabled={!item?.bomChanges.length}
+                                        disabled={!item?.bomChanges?.length}
                                     />
                                 </Tabs>
                             </Box>
