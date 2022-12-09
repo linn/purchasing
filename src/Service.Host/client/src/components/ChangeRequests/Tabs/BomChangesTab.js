@@ -20,9 +20,7 @@ function BomChangesTab({ bomChanges, handleSelectChange }) {
             headerName: 'State',
             width: 150,
             renderCell: params => (
-                <>
-                    <ChangeState changeState={params.row.changeState} showLabel={false} />
-                </>
+                <ChangeState changeState={params.row.changeState} showLabel={false} />
             )
         },
         { field: 'phaseInWWYYYY', headerName: 'Phase In Week', width: 200 },

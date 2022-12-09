@@ -1,7 +1,5 @@
 ﻿namespace Linn.Purchasing.Resources
 {
-    using System.Runtime.InteropServices;
-
     using Linn.Common.Resources;
 
     public class BomChangeResource : HypermediaResource
