@@ -4,8 +4,8 @@
 
     using Linn.Common.Persistence;
 
-    public interface IBomDetailRepository : IQueryRepository<BomDetail>
+    public interface IBomDetailRepository : IQueryRepository<BomDetailViewEntry>
     {
-        IEnumerable<BomDetail> GetLiveBomDetails(string bomName);
+        IEnumerable<BomDetailViewEntry> GetLiveBomDetails(string bomName);
     }
 }

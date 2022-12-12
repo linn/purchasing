@@ -16,6 +16,8 @@
 
         public string ParentName { get; set; }
 
-        public int Id { get; set; }
+        public string Id { get; set; }
+
+        public bool? HasChanged { get; set; }
     }
 }

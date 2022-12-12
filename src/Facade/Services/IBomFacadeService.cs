@@ -2,9 +2,10 @@
 {
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
+    using Linn.Purchasing.Resources.Boms;
 
     public interface IBomFacadeService
     {
-        IResult<BomTreeNode> PostBom(BomTreeNode node);
+        IResult<BomTreeNode> PostBom(PostBomResource node);
     }
 }

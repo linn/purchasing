@@ -106,6 +106,7 @@ import boards from './boards';
 import changeRequestStatusChange from './changeRequestStatusChange';
 import partsOnBomReport from './partsOnBomReport';
 import bomCostReport from './bomCostReport';
+import subAssembly from './subAssembly';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -199,6 +200,7 @@ const rootReducer = history =>
         spendBySupplierByDateRangeReport,
         spendByPartByDateReport,
         spendByPartReport,
+        subAssembly,
         suggestedPurchaseOrderValues,
         supplier,
         supplierGroups,

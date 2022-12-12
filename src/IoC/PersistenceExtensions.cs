@@ -225,7 +225,13 @@
                         ?.BomCostDetails))
                 .AddTransient<IRepository<BoardRevisionType, string>, EntityFrameworkRepository<BoardRevisionType, string>>(
                     r => new EntityFrameworkRepository<BoardRevisionType, string>(r.GetService<ServiceDbContext>()
-                        ?.BoardRevisionTypes));
+                        ?.BoardRevisionTypes))
+                .AddTransient<IRepository<BomChange, int>, EntityFrameworkRepository<BomChange, int>>(
+                    r => new EntityFrameworkRepository<BomChange, int>(r.GetService<ServiceDbContext>()
+                        ?.BomChanges))
+                .AddTransient<IRepository<BomDetail, int>, EntityFrameworkRepository<BomDetail, int>>(
+                    r => new EntityFrameworkRepository<BomDetail, int>(r.GetService<ServiceDbContext>()
+                        ?.BomDetails));
         }
     }
 }

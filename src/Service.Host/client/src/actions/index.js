@@ -340,3 +340,5 @@ export const partsOnBomReportActionTypes = makeReportActionTypes(
 );
 
 export const bomCostReportActionTypes = makeReportActionTypes(reportTypes.bomCostReport.actionType);
+
+export const subAssemblyActionTypes = makeActionTypes(itemTypes.subAssembly.actionType);

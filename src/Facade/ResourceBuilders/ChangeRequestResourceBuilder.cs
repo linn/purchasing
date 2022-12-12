@@ -42,11 +42,11 @@
                            DescriptionOfChange = model.DescriptionOfChange,
                            DateEntered = model.DateEntered.ToString("o"),
                            DateAccepted = model.DateAccepted?.ToString("o"),
+                           NewPartNumber = model.NewPartNumber,
 
                            ChangeType = model.ChangeRequestType,
                            OldPartNumber = model.OldPartNumber,
                            OldPartDescription = model.OldPart?.Description,
-                           NewPartNumber = model.NewPartNumber,
                            NewPartDescription = model.NewPart?.Description,
 
                            ProposedBy = 

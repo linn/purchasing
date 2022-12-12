@@ -64,7 +64,7 @@
             this.BoardRevisionTypeRepository = Substitute.For<IRepository<BoardRevisionType, string>>();
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.FacadeService = new BomFacadeService(
-                this.BomChangeService);
+                this.BomChangeService, this.TransactionManager);
 
             this.BomTreeService = Substitute.For<IBomTreeService>();
 

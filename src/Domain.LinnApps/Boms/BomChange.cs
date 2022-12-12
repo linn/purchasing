@@ -44,6 +44,8 @@
 
         public string Comments { get; set; }
 
+        public string PcasChange { get; set; }
+        
         public bool CanCancel() => this.ChangeState == "PROPOS" || this.ChangeState == "ACCEPT";
 
         public void Cancel(Employee cancelledBy)
