@@ -1,7 +1,5 @@
 ﻿namespace Linn.Purchasing.Facade.Services
 {
-    using System;
-
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Boms;
@@ -23,15 +21,12 @@
 
         public IResult<BomTreeNode> PostBom(PostBomResource resource)
         {
-            var change = this.bomChangeService.CreateBomChanges(
+            var result = this.bomChangeService.CreateBomChanges(
                 resource.TreeRoot,
                 resource.CrNumber.GetValueOrDefault(),
                 resource.EnteredBy.GetValueOrDefault());
-            //this.transactionManager.Commit();
-            // var result = this.bomChangeService.CreateBom(
-            //     resource.TreeRoot, resource.CrNumber.GetValueOrDefault(), change.ChangeId);
-            // this.transactionManager.Commit();
-            return new SuccessResult<BomTreeNode>(new BomTreeNode());
+            this.transactionManager.Commit();
+            return new SuccessResult<BomTreeNode>(result);
         }
     }
 }

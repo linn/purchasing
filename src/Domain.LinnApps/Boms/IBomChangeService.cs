@@ -6,8 +6,6 @@
 
     public interface IBomChangeService
     {
-        IEnumerable<BomChange> CreateBomChanges(BomTreeNode tree, int changeRequestNumber, int enteredBy);
-
-        BomTreeNode CreateBom(BomTreeNode tree, int changeRequestNumber, int changeId);
+        BomTreeNode CreateBomChanges(BomTreeNode tree, int changeRequestNumber, int enteredBy);
     }
 }
