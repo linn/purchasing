@@ -26,9 +26,9 @@
         public void SetUp()
         {
             this.bomName = "SK HUB";
-            var data = new List<BomDetail>
+            var data = new List<BomDetailViewEntry>
                            {
-                               new BomDetail
+                               new BomDetailViewEntry
                                    {
                                        Part = new Part { PartNumber = "CAP 001" },
                                        PartNumber = "CAP 001",

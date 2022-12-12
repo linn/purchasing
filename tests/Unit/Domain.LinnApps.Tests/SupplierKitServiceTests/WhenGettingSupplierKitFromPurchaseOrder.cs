@@ -24,7 +24,7 @@
 
         private Part regularPart;
 
-        private IEnumerable<BomDetail> bom;
+        private IEnumerable<BomDetailViewEntry> bom;
 
         private IEnumerable<SupplierKit> results;
 
@@ -48,10 +48,10 @@
                                    };
             var compPart1 = new Part { PartNumber = "FLAN 001" };
             var compPart2 = new Part { PartNumber = "EGG-AXT BOX" };
-            this.bom = new List<BomDetail>
+            this.bom = new List<BomDetailViewEntry>
                            {
-                               new BomDetail { Part = compPart1, PartNumber = compPart1.PartNumber, Qty = 1 },
-                               new BomDetail { Part = compPart2, PartNumber = compPart2.PartNumber, Qty = 10 }
+                               new BomDetailViewEntry { Part = compPart1, PartNumber = compPart1.PartNumber, Qty = 1 },
+                               new BomDetailViewEntry { Part = compPart2, PartNumber = compPart2.PartNumber, Qty = 10 }
                            };
             this.order = new PurchaseOrder
                              {

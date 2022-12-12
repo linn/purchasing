@@ -10,6 +10,6 @@
 
         public string Bom { get; set; }
 
-        public BomDetail Detail { get; set; }
+        public BomDetailViewEntry DetailViewEntry { get; set; }
     }
 }

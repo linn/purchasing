@@ -12,6 +12,6 @@
 
         public Part Part { get; set; }
 
-        public IEnumerable<BomDetail> Details { get; set; }
+        public IList<BomDetailViewEntry> Details { get; set; }
     }
 }

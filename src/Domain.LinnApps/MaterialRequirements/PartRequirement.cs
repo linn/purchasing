@@ -8,6 +8,6 @@
 
         public decimal AnnualUsage { get; set; }
 
-        public BomDetail BomDetail { get; set; }
+        public BomDetailViewEntry BomDetailViewEntry { get; set; }
     }
 }

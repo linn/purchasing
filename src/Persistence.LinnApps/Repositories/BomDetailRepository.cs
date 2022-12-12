@@ -11,19 +11,19 @@
 
     public class BomDetailRepository : IBomDetailRepository
     {
-        private readonly DbSet<BomDetail> bomDetails;
+        private readonly DbSet<BomDetailViewEntry> bomDetails;
 
         public BomDetailRepository(ServiceDbContext serviceDbContext)
         {
-            this.bomDetails = serviceDbContext.BomDetails;
+            this.bomDetails = serviceDbContext.BomDetailView;
         }
 
-        public BomDetail FindBy(Expression<Func<BomDetail, bool>> expression)
+        public BomDetailViewEntry FindBy(Expression<Func<BomDetailViewEntry, bool>> expression)
         {
             return this.bomDetails.Include(b => b.Part).SingleOrDefault(expression);
         }
 
-        public IQueryable<BomDetail> FilterBy(Expression<Func<BomDetail, bool>> expression)
+        public IQueryable<BomDetailViewEntry> FilterBy(Expression<Func<BomDetailViewEntry, bool>> expression)
         {
             return this.bomDetails.Include(b => b.Part)
                 .ThenInclude(p => p.PartSuppliers.Where(ps => ps.SupplierRanking == 1))
@@ -32,7 +32,7 @@
                 .AsNoTracking();
         }
 
-        public IQueryable<BomDetail> FindAll()
+        public IQueryable<BomDetailViewEntry> FindAll()
         {
             return this.bomDetails
                 .Include(d => d.Part)
@@ -40,7 +40,7 @@
                 .AsNoTracking();
         }
 
-        public IEnumerable<BomDetail> GetLiveBomDetails(string bomName)
+        public IEnumerable<BomDetailViewEntry> GetLiveBomDetails(string bomName)
         {
             return this.bomDetails.Include(b => b.Part).Where(b => b.BomName == bomName && b.ChangeState == "LIVE");
         }
