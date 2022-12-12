@@ -228,7 +228,10 @@
                         ?.BoardRevisionTypes))
                 .AddTransient<IRepository<BomChange, int>, EntityFrameworkRepository<BomChange, int>>(
                     r => new EntityFrameworkRepository<BomChange, int>(r.GetService<ServiceDbContext>()
-                        ?.BomChanges));
+                        ?.BomChanges))
+                .AddTransient<IRepository<BomDetail, int>, EntityFrameworkRepository<BomDetail, int>>(
+                    r => new EntityFrameworkRepository<BomDetail, int>(r.GetService<ServiceDbContext>()
+                        ?.BomDetails));
         }
     }
 }
