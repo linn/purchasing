@@ -44,15 +44,17 @@
         }
 
         [Test]
-        public void ShouldHaveApproveLinkUri()
+        public void ShouldBeProposedWithAppropriateLinks()
         {
             var resource = ((SuccessResult<ChangeRequestResource>)this.result).Data;
             resource.DocumentNumber.Should().Be(1);
             resource.ChangeState.Should().Be("PROPOS");
-            resource.Links.Length.Should().Be(2);
+            resource.Links.Length.Should().Be(3);
             resource.GlobalReplace.Should().BeFalse();
             var acceptLink = resource.Links.Single(r => r.Rel == "approve");
             acceptLink.Should().NotBeNull();
+            var cancelLink = resource.Links.Single(r => r.Rel == "cancel");
+            cancelLink.Should().NotBeNull();
         }
     }
 }

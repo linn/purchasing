@@ -18,11 +18,14 @@
 
         private readonly IQueryRepository<Part> partRepository;
 
-        public ChangeRequestService(IAuthorisationService authService, IRepository<ChangeRequest, int> repository, IQueryRepository<Part> partRepository)
+        private readonly IRepository<Employee, int> employeeRepository;
+
+        public ChangeRequestService(IAuthorisationService authService, IRepository<ChangeRequest, int> repository, IQueryRepository<Part> partRepository, IRepository<Employee, int> employeeRepository)
         {
             this.authService = authService;
             this.repository = repository;
             this.partRepository = partRepository;
+            this.employeeRepository = employeeRepository;
         }
 
         public Part ValidPartNumber(string partNumber)
@@ -61,6 +64,38 @@
             else
             {
                 throw new InvalidStateChangeException("Cannot approve this change request");
+            }
+
+            return request;
+        }
+
+        public ChangeRequest Cancel(int documentNumber, int cancelledById, IEnumerable<int> selectedBomChangeIds, IEnumerable<int> selectedPcasChangeIds, IEnumerable<string> privileges = null)
+        {
+            var request = this.repository.FindById(documentNumber);
+            if (request == null)
+            {
+                throw new ItemNotFoundException("Change Request not found");
+            }
+
+            var employee = this.employeeRepository.FindById(cancelledById);
+            if (employee == null)
+            {
+                throw new ItemNotFoundException("Employee not found");
+            }
+
+            if ( request.ChangeState == "ACCEPT" && !this.authService.HasPermissionFor(AuthorisedAction.AdminChangeRequest, privileges) )
+            {
+                throw new UnauthorisedActionException(
+                    "You are not authorised to cancel change requests");
+            }
+
+            if (request.CanCancel(true))
+            {
+                request.Cancel(employee, selectedBomChangeIds, selectedPcasChangeIds);
+            }
+            else
+            {
+                throw new InvalidStateChangeException("Cannot cancel this change request");
             }
 
             return request;

@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import { DataGrid } from '@mui/x-data-grid';
 import { makeStyles } from '@mui/styles';
+import ChangeState from '../ChangeState';
 
-function PcasChangesTab({ pcasChanges }) {
+function PcasChangesTab({ pcasChanges, handleSelectChange }) {
     const useStyles = makeStyles(() => ({
         gap: {
             marginTop: '20px'
@@ -13,11 +14,20 @@ function PcasChangesTab({ pcasChanges }) {
     const classes = useStyles();
 
     const columns = [
-        { field: 'changeId', headerName: 'Id', width: 100 },
-
         { field: 'boardCode', headerName: 'Board Code', width: 140 },
         { field: 'revisionCode', headerName: 'Revision Code', width: 140 },
-        { field: 'changeState', headerName: 'State', width: 200 }
+        {
+            field: 'changeState',
+            headerName: 'State',
+            width: 150,
+            renderCell: params => (
+                <>
+                    <ChangeState changeState={params.row.changeState} showLabel={false} />
+                </>
+            )
+        },
+        { field: 'changeId', headerName: 'Id', width: 100 },
+        { field: 'lifecycleText', headerName: 'Lifecycle', width: 350 }
     ];
 
     return (
@@ -32,6 +42,8 @@ function PcasChangesTab({ pcasChanges }) {
                         rowHeight={34}
                         autoHeight
                         loading={false}
+                        checkboxSelection
+                        onSelectionModelChange={handleSelectChange}
                         hideFooter
                     />
                 ) : (
@@ -43,11 +55,13 @@ function PcasChangesTab({ pcasChanges }) {
 }
 
 PcasChangesTab.propTypes = {
-    pcasChanges: PropTypes.arrayOf(PropTypes.shape({}))
+    pcasChanges: PropTypes.arrayOf(PropTypes.shape({})),
+    handleSelectChange: PropTypes.func
 };
 
 PcasChangesTab.defaultProps = {
-    pcasChanges: []
+    pcasChanges: [],
+    handleSelectChange: null
 };
 
 export default PcasChangesTab;

@@ -45,5 +45,7 @@
         public const string ChangeBomType = "part.change-bom-type";
 
         public const string ApproveChangeRequest = "change-request.approve";
+
+        public const string AdminChangeRequest = "change-request.admin";
     }
 }

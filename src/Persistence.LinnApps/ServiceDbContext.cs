@@ -1903,11 +1903,14 @@
             entity.Property(c => c.DocumentType).HasColumnName("DOCUMENT_TYPE").HasMaxLength(6);
             entity.Property(c => c.DocumentNumber).HasColumnName("DOCUMENT_NUMBER");
             entity.Property(c => c.DateEntered).HasColumnName("DATE_ENTERED");
-            entity.Property(c => c.EnteredBy).HasColumnName("ENTERED_BY");
+            entity.Property(c => c.EnteredById).HasColumnName("ENTERED_BY");
             entity.Property(c => c.DateApplied).HasColumnName("DATE_APPLIED");
-            entity.Property(c => c.AppliedBy).HasColumnName("APPLIED_BY");
+            entity.Property(c => c.AppliedById).HasColumnName("APPLIED_BY");
             entity.Property(c => c.DateCancelled).HasColumnName("DATE_CANCELLED");
-            entity.Property(c => c.CancelledBy).HasColumnName("CANCELLED_BY");
+            entity.Property(c => c.CancelledById).HasColumnName("CANCELLED_BY");
+            entity.HasOne(c => c.EnteredBy).WithMany().HasForeignKey(c => c.EnteredById);
+            entity.HasOne(c => c.AppliedBy).WithMany().HasForeignKey(c => c.AppliedById);
+            entity.HasOne(c => c.CancelledBy).WithMany().HasForeignKey(c => c.CancelledById);
             entity.Property(c => c.PhaseInWeekNumber).HasColumnName("PHASE_IN_WEEK");
             entity.Property(c => c.PcasChange).HasColumnName("PCAS_CHANGE").HasMaxLength(1);
 
@@ -1993,11 +1996,14 @@
             entity.Property(c => c.DocumentType).HasColumnName("DOCUMENT_TYPE").HasMaxLength(6);
             entity.Property(c => c.DocumentNumber).HasColumnName("DOCUMENT_NUMBER");
             entity.Property(c => c.DateEntered).HasColumnName("DATE_ENTERED");
-            entity.Property(c => c.EnteredBy).HasColumnName("ENTERED_BY");
+            entity.Property(c => c.EnteredById).HasColumnName("ENTERED_BY");
             entity.Property(c => c.DateApplied).HasColumnName("DATE_APPLIED");
-            entity.Property(c => c.AppliedBy).HasColumnName("APPLIED_BY");
+            entity.Property(c => c.AppliedById).HasColumnName("APPLIED_BY");
             entity.Property(c => c.DateCancelled).HasColumnName("DATE_CANCELLED");
-            entity.Property(c => c.CancelledBy).HasColumnName("CANCELLED_BY");
+            entity.Property(c => c.CancelledById).HasColumnName("CANCELLED_BY");
+            entity.HasOne(c => c.EnteredBy).WithMany().HasForeignKey(c => c.EnteredById);
+            entity.HasOne(c => c.AppliedBy).WithMany().HasForeignKey(c => c.AppliedById);
+            entity.HasOne(c => c.CancelledBy).WithMany().HasForeignKey(c => c.CancelledById);
             entity.Property(c => c.Comments).HasColumnName("COMMENTS").HasMaxLength(2000);
         }
 

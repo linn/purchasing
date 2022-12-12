@@ -31,7 +31,7 @@
                                   Id = 1,
                                   Status = "SLEEPY",
                               };
-            this.result = this.Sut.ChangeStatus(request);
+            this.result = this.Sut.ChangeStatus(request, 1);
         }
 
         [Test]

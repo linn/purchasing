@@ -240,6 +240,14 @@ function AcknowledgeOrdersUtility() {
                 selected.includes(r.id) ? { ...r, selected: true } : { ...r, selected: false }
             )
         );
+        if (selected.length) {
+            setNewValues(nv => ({
+                ...nv,
+                dateAdvised:
+                    moment(rows.find(x => x.id === selected[selected.length - 1])?.dateAdvised) ||
+                    moment()
+            }));
+        }
     };
 
     const uploadLoading = useSelector(state =>
@@ -522,10 +530,6 @@ function AcknowledgeOrdersUtility() {
                                         variant="outlined"
                                         disabled={!rows.some(r => r.selected)}
                                         onClick={() => {
-                                            setNewValues({
-                                                rescheduleReason: 'ADVISED',
-                                                dateAdvised: moment()
-                                            });
                                             setApplyChangesDialogOpen(true);
                                         }}
                                     >

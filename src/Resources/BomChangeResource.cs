@@ -35,5 +35,7 @@
         public int? PhaseInWeekNumber { get; set; }
 
         public string PhaseInWWYYYY { get; set; }
+
+        public string LifecycleText { get; set; }
     }
 }

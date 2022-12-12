@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { Page, Loading, itemSelectorHelpers } from '@linn-it/linn-form-components-library';
+import {
+    Page,
+    Loading,
+    itemSelectorHelpers,
+    utilities
+} from '@linn-it/linn-form-components-library';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Grid from '@mui/material/Grid';
@@ -35,17 +41,79 @@ function ChangeRequest() {
         itemSelectorHelpers.getItem(reduxState.changeRequestStatusChange)
     );
 
+    const changedState = (changereq, origreq) => {
+        if (changereq?.changeState !== origreq?.changeState) {
+            return true;
+        }
+
+        if (
+            changereq.bomChanges.filter(c => c.changeState === 'CANCEL').length >
+            origreq.bomChanges.filter(c => c.changeState === 'CANCEL').length
+        ) {
+            return true;
+        }
+
+        if (
+            changereq.pcasChanges.filter(c => c.changeState === 'CANCEL').length >
+            origreq.pcasChanges.filter(c => c.changeState === 'CANCEL').length
+        ) {
+            return true;
+        }
+
+        if (
+            changereq.bomChanges.filter(c => c.changeState === 'LIVE').length >
+            origreq.bomChanges.filter(c => c.changeState === 'LIVE').length
+        ) {
+            return true;
+        }
+
+        if (
+            changereq.pcasChanges.filter(c => c.changeState === 'LIVE').length >
+            origreq.pcasChanges.filter(c => c.changeState === 'LIVE').length
+        ) {
+            return true;
+        }
+
+        return false;
+    };
+
     useEffect(() => {
-        if (item && statusChange && statusChange?.changeState !== item?.changeState) {
+        if (item && statusChange && changedState(statusChange, item)) {
             reduxDispatch(changeRequestActions.fetch(id));
         }
     }, [statusChange, reduxDispatch, item, id]);
 
     const [tab, setTab] = useState(0);
 
+    const [selectedBomChanges, setSelectedBomChanges] = useState(null);
+    const [selectedPcasChanges, setSelectedPcasChanges] = useState(null);
+
+    const handleBomChangesSelectRow = selected => {
+        setSelectedBomChanges(selected);
+    };
+
+    const handlePcasChangesSelectRow = selected => {
+        setSelectedPcasChanges(selected);
+    };
+
     const approve = request => {
         if (request?.changeState === 'PROPOS') {
             reduxDispatch(changeRequestStatusChangeActions.add({ id, status: 'ACCEPT' }));
+        }
+    };
+
+    const cancelUri = utilities.getHref(item, 'cancel');
+
+    const cancel = request => {
+        if (request?.changeState === 'PROPOS' || request?.changeState === 'ACCEPT') {
+            reduxDispatch(
+                changeRequestStatusChangeActions.add({
+                    id,
+                    status: 'CANCEL',
+                    selectedBomChangeIds: selectedBomChanges,
+                    selectedPcasChangeIds: selectedPcasChanges
+                })
+            );
         }
     };
 
@@ -68,8 +136,22 @@ function ChangeRequest() {
                                     }}
                                 >
                                     <Tab label="Main" />
-                                    <Tab label="Pcas Changes" />
-                                    <Tab label="BOM Changes" />
+                                    <Tab
+                                        label={`Pcas Changes${
+                                            item?.pcasChanges?.length
+                                                ? ` (${item?.pcasChanges?.length})`
+                                                : ''
+                                        }`}
+                                        disabled={!item?.pcasChanges?.length}
+                                    />
+                                    <Tab
+                                        label={`Bom Changes${
+                                            item?.bomChanges?.length
+                                                ? ` (${item?.bomChanges?.length})`
+                                                : ''
+                                        }`}
+                                        disabled={!item?.bomChanges?.length}
+                                    />
                                 </Tabs>
                             </Box>
                         </Box>
@@ -80,14 +162,29 @@ function ChangeRequest() {
                         )}
                         {tab === 1 && (
                             <Box sx={{ paddingTop: 3 }}>
-                                <PcasChangesTab pcasChanges={item?.pcasChanges} />
+                                <PcasChangesTab
+                                    pcasChanges={item?.pcasChanges}
+                                    handleSelectChange={handlePcasChangesSelectRow}
+                                />
                             </Box>
                         )}
                         {tab === 2 && (
                             <Box sx={{ paddingTop: 3 }}>
-                                <BomChangesTab bomChanges={item?.bomChanges} />
+                                <BomChangesTab
+                                    bomChanges={item?.bomChanges}
+                                    handleSelectChange={handleBomChangesSelectRow}
+                                />
                             </Box>
                         )}
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Button
+                            variant="outlined"
+                            disabled={!cancelUri}
+                            onClick={() => cancel(item)}
+                        >
+                            Cancel
+                        </Button>
                     </Grid>
                 </Grid>
             )}

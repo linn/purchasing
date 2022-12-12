@@ -11,6 +11,8 @@
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Resources;
 
+    using Microsoft.EntityFrameworkCore.ChangeTracking;
+
     public class ChangeRequestResourceBuilder : IBuilder<ChangeRequest>
     {
         private readonly IBuilder<BomChange> bomChangeBuilder;
@@ -61,7 +63,7 @@
                            PcasChanges =
                                model.PcasChanges?.Select(
                                    d => (PcasChangeResource)this.pcasChangeBuilder.Build(d, claims)),
-                           Links = claims == null ? null : this.BuildLinks(model, claims).ToArray()
+                           Links = this.BuildLinks(model, claims).ToArray()
             };
         }
 
@@ -74,11 +76,17 @@
 
         private IEnumerable<LinkResource> BuildLinks(ChangeRequest model, IEnumerable<string> claims)
         {
-            var privileges = claims as string[] ?? claims.ToArray();
+            var privileges = claims == null ? Array.Empty<string>() : claims as string[] ?? claims.ToArray();
+            var adminPrivs = this.authService.HasPermissionFor(AuthorisedAction.AdminChangeRequest, privileges);
 
-            if (this.authService.HasPermissionFor(AuthorisedAction.ApproveChangeRequest, privileges))
+            if (this.authService.HasPermissionFor(AuthorisedAction.ApproveChangeRequest, privileges) && model.CanApprove())
             {
-                yield return new LinkResource { Rel = "approve", Href = $"/purchasing/change-requests" };
+                yield return new LinkResource { Rel = "approve", Href = $"/purchasing/change-requests/status" };
+            }
+
+            if (model.CanCancel(adminPrivs))
+            {
+                yield return new LinkResource { Rel = "cancel", Href = $"/purchasing/change-requests/status" };
             }
 
             yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };

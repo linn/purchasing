@@ -60,7 +60,7 @@
                                              DocumentNumber = changeRequestNumber,
                                              PartNumber = current.Name,
                                              DateEntered = DateTime.Today,
-                                             EnteredBy = enteredBy,
+                                             EnteredById = enteredBy,
                                              ChangeState = "PROPOS",
                                              Comments = "BOM_UT",
                                              PcasChange = "N"

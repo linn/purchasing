@@ -63,7 +63,8 @@
             ChangeRequestStatusChangeResource request,
             IChangeRequestFacadeService facadeService)
         {
-            var result = facadeService.ChangeStatus(request, req.HttpContext.GetPrivileges());
+            var employeeId = req.HttpContext.User.GetEmployeeNumber();
+            var result = facadeService.ChangeStatus(request, employeeId, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }

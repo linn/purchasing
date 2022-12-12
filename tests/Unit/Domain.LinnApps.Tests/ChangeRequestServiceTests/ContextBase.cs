@@ -18,16 +18,20 @@
 
         protected IQueryRepository<Part> PartRepository { get; private set; }
 
+        protected IRepository<Employee, int> EmployeeRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
             this.Repository = Substitute.For<IRepository<ChangeRequest, int>>();
             this.AuthService = Substitute.For<IAuthorisationService>();
             this.PartRepository = Substitute.For<IQueryRepository<Part>>();
+            this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
             this.Sut = new ChangeRequestService(
                 this.AuthService,
                 this.Repository,
-                this.PartRepository);
+                this.PartRepository,
+                this.EmployeeRepository);
         }
     }
 }

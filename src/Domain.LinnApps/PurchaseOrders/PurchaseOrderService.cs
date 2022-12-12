@@ -368,10 +368,15 @@
         {
             if (order.Supplier?.SupplierId == null)
             {
-                throw new DomainException("Cannot create a purchase order without a supplier");
+                throw new PurchaseOrderException("Cannot create a purchase order without a supplier");
             }
 
             var supplier = this.supplierRepository.FindById(order.Supplier.SupplierId);
+
+            if (supplier.DateClosed != null)
+            {
+                throw new PurchaseOrderException("Supplier is closed!");
+            }
 
             order.Supplier = supplier;
             order.OrderAddress = supplier.OrderAddress;
