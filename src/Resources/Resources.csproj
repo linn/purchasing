@@ -12,7 +12,4 @@
 	<ItemGroup>
 		<Folder Include="Messages\" />
 	</ItemGroup>
-	<ItemGroup>
-	  <ProjectReference Include="..\Domain.LinnApps\Domain.LinnApps.csproj" />
-	</ItemGroup>
 </Project>
