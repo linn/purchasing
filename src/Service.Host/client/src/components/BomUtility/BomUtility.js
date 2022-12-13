@@ -56,13 +56,13 @@ function BomUtility() {
         bomTreeItemType.item
     );
 
+    const [treeView, setTreeView] = useState();
+
     const [expanded, setExpanded, nodesWithChildren] = useExpandNodesWithChildren(
         [],
-        bomTree,
+        treeView,
         bomName
     );
-
-    const [treeView, setTreeView] = useState();
 
     const [partLookUp, setPartLookUp] = useState({ open: false, forRow: null });
 
@@ -323,7 +323,7 @@ function BomUtility() {
                         />
                     </Grid>
                 )}
-                <Grid item xs={4}>
+                <Grid item xs={4} height="30px">
                     {subAssemblyLoading && <LinearProgress />}
                 </Grid>
                 <Grid item xs={8} height="30px" />
