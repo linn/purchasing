@@ -113,11 +113,11 @@
         {
             var searchResource = new BoardComponentSummaryResource
                                      {
-                                         BoardCode = boardCode,
-                                         RevisionCode = revisionCode,
-                                         Cref = cref,
-                                         PartNumber = partNumber
-                                     };
+                                         BoardCode = boardCode?.ToUpper(),
+                                         RevisionCode = revisionCode?.ToUpper(),
+                                         Cref = cref?.ToUpper(),
+                                         PartNumber = partNumber?.ToUpper()
+            };
             var result = boardComponentSummaryFacadeService.FilterBy(searchResource, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);

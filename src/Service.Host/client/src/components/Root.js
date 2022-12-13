@@ -80,6 +80,7 @@ import PartsOnBomReport from './reports/PartsOnBomReport';
 import BomCostReport from './reports/BomCostReport';
 import BomUtility from './BomUtility/BomUtility';
 import BomCostReportOptions from './reports/BomCostReportOptions';
+import BoardsSummary from './boards/BoardsSummary';
 
 const Root = ({ store }) => (
     <div>
@@ -235,6 +236,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/part-suppliers/create"
                                     render={() => <Board creating />}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/boms/boards-summary"
+                                    component={BoardsSummary}
                                 />
                                 <Route
                                     exact
