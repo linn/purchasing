@@ -57,7 +57,7 @@
         [Test]
         public void ShouldReturnJsonBody()
         {
-            var result = this.Response.DeserializeBody<IEnumerable<ChangeRequestResource>>();
+            var result = this.Response.DeserializeBody<IEnumerable<ChangeRequestResource>>().ToList();
             result.Should().NotBeNull();
             result.Count().Should().Be(1);
             result.First().NewPartNumber.Should().Be("SK HUB");

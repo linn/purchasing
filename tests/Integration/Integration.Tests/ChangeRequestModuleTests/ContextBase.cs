@@ -12,7 +12,6 @@
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
-    using Linn.Purchasing.Persistence.LinnApps.Repositories;
     using Linn.Purchasing.Service.Modules;
 
     using Microsoft.Extensions.DependencyInjection;

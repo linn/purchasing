@@ -1,10 +1,13 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeRequestTests
 {
-    using FluentAssertions;
-    using Linn.Purchasing.Domain.LinnApps.Boms;
-    using NUnit.Framework;
     using System.Collections.Generic;
     using System.Linq;
+
+    using FluentAssertions;
+
+    using Linn.Purchasing.Domain.LinnApps.Boms;
+
+    using NUnit.Framework;
 
     public class WhenCancellingPartOfChangeRequest : ContextBase
     {

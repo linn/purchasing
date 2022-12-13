@@ -1,6 +1,5 @@
 ﻿namespace Linn.Purchasing.Service.Modules
 {
-    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     using Carter;

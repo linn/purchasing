@@ -19,7 +19,7 @@
         [SetUp]
         public void SetUp()
         {
-            this.authorisationService
+            this.AuthorisationService
                 .HasPermissionFor(AuthorisedAction.ApproveChangeRequest, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 

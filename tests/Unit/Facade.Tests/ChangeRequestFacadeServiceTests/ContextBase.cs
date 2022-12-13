@@ -15,39 +15,43 @@
 
     public class ContextBase
     {
-        protected IRepository<ChangeRequest, int> repository;
+        protected IRepository<ChangeRequest, int> Repository { get; private set; }
 
-        protected ITransactionManager transactionManager;
+        protected ITransactionManager TransactionManager { get; private set; }
 
-        protected IAuthorisationService authorisationService;
+        protected IAuthorisationService AuthorisationService { get; private set; }
 
-        protected IDatabaseService databaseService;
+        protected IDatabaseService DatabaseService { get; private set; }
 
-        protected IQueryRepository<Part> partRepository;
+        protected IQueryRepository<Part> PartRepository { get; private set; }
 
-        protected IRepository<Employee, int> employeeRepository { get; set; }
+        protected IRepository<Employee, int> EmployeeRepository { get; private set; }
 
         protected ChangeRequestFacadeService Sut { get; private set; }
 
         [SetUp]
         public void SetUpContext()
         {
-            this.repository = Substitute.For<IRepository<ChangeRequest, int>>();
-            this.transactionManager = Substitute.For<ITransactionManager>();
-            this.authorisationService = Substitute.For<IAuthorisationService>();
-            this.databaseService = Substitute.For<IDatabaseService>();
-            this.partRepository = Substitute.For<IQueryRepository<Part>>();
-            this.employeeRepository = Substitute.For<IRepository<Employee, int>>();
+            this.Repository = Substitute.For<IRepository<ChangeRequest, int>>();
+            this.TransactionManager = Substitute.For<ITransactionManager>();
+            this.AuthorisationService = Substitute.For<IAuthorisationService>();
+            this.DatabaseService = Substitute.For<IDatabaseService>();
+            this.PartRepository = Substitute.For<IQueryRepository<Part>>();
+            this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
 
             this.Sut = new ChangeRequestFacadeService(
-                this.repository,
-                this.transactionManager,
+                this.Repository,
+                this.TransactionManager,
                 new ChangeRequestResourceBuilder(
                     new BomChangeResourceBuilder(),
                     new PcasChangeResourceBuilder(),
-                    this.authorisationService),
-                new ChangeRequestService(this.authorisationService, this.repository, this.partRepository, this.employeeRepository),
-                this.databaseService);
+                    this.AuthorisationService),
+                new ChangeRequestService(
+                    this.AuthorisationService,
+                    this.Repository,
+                    this.PartRepository,
+                    this.EmployeeRepository),
+                this.DatabaseService);
         }
     }
 }

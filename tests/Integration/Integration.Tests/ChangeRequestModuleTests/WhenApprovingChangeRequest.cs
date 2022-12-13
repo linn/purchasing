@@ -32,7 +32,7 @@
                 DocumentType = "CRF",
                 DocumentNumber = 1,
                 DateEntered = new DateTime(2020, 1, 1),
-                EnteredBy = new Employee { Id=10, FullName = "Barry White" },
+                EnteredBy = new Employee { Id = 10, FullName = "Barry White" },
                 ReasonForChange = "Everything changes",
                 DescriptionOfChange = "Great idea",
                 ChangeState = "PROPOS",

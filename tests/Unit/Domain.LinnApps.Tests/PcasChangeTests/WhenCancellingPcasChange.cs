@@ -16,7 +16,7 @@
                                DocumentNumber = 1,
                                ChangeState = "PROPOS"
                            };
-            var employee = new Employee() { Id = 1, FullName = "Piers Morgan" };
+            var employee = new Employee { Id = 1, FullName = "Piers Morgan" };
             this.Sut.Cancel(employee);
         }
 

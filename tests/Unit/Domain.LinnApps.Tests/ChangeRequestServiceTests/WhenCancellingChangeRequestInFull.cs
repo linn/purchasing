@@ -18,7 +18,7 @@
         [SetUp]
         public void SetUp()
         {
-            var request = new ChangeRequest()
+            var request = new ChangeRequest
                               {
                                   DocumentNumber = 1,
                                   ChangeState = "PROPOS",
@@ -43,6 +43,5 @@
             this.result.Should().NotBeNull();
             this.result.ChangeState.Should().Be("CANCEL");
         }
-
     }
 }

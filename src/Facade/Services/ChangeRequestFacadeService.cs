@@ -59,7 +59,12 @@
             }
         }
 
-        public IResult<ChangeRequestResource> CancelChangeRequest(int documentNumber, int cancelledById, IEnumerable<int> selectedBomChangeIds, IEnumerable<int> selectedPcasChangeIds, IEnumerable<string> privileges = null)
+        public IResult<ChangeRequestResource> CancelChangeRequest(
+            int documentNumber,
+            int cancelledById,
+            IEnumerable<int> selectedBomChangeIds,
+            IEnumerable<int> selectedPcasChangeIds,
+            IEnumerable<string> privileges = null)
         {
             try
             {
@@ -110,8 +115,8 @@
                            ChangeRequestType = resource.ChangeType,
                            ChangeState = "PROPOS",
                            DateEntered = DateTime.Now,
-                           EnteredById = (int) resource.EnteredBy.Id,
-                           ProposedById = (int) resource.ProposedBy.Id,
+                           EnteredById = (int)resource.EnteredBy.Id,
+                           ProposedById = (int)resource.ProposedBy.Id,
                            NewPartNumber = resource.NewPartNumber,
                            ReasonForChange = resource.ReasonForChange,
                            DescriptionOfChange = resource.DescriptionOfChange,

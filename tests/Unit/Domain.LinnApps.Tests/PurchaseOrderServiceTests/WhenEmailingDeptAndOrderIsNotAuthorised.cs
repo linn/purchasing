@@ -28,8 +28,8 @@
             this.user = new Employee
             {
                 Id = 123,
-                PhoneListEntry = new PhoneListEntry()
-                {
+                PhoneListEntry = new PhoneListEntry
+                                     {
                     EmailAddress = "test@user.com"
                 },
                 FullName = "USER MCUSERSON"

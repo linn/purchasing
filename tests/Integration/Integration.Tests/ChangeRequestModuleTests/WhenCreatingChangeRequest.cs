@@ -1,25 +1,27 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.ChangeRequestModuleTests
 {
+    using System;
+    using System.Linq.Expressions;
+    using System.Net;
+    using System.Net.Http.Json;
+
     using FluentAssertions;
+
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
+
     using NSubstitute;
+
     using NUnit.Framework;
-
-    using System.Net.Http.Json;
-    using System.Net;
-    using System;
-
-    using Linn.Purchasing.Domain.LinnApps.Parts;
-    using System.Linq.Expressions;
 
     public class WhenCreatingChangeRequest : ContextBase
     {
         [SetUp]
         public void SetUp()
         {
-            var request = new ChangeRequestResource()
+            var request = new ChangeRequestResource
                               {
                                   EnteredBy = new EmployeeResource { Id = 1, FullName = "Matt Hancock" },
                                   ProposedBy = new EmployeeResource { Id = 2, FullName = "Bobby Davro" },
