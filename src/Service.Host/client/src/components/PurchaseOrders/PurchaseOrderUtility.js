@@ -1109,6 +1109,7 @@ function PurchaseOrderUtility({ creating }) {
                                         onChange={handleFieldChange}
                                         rows={4}
                                         disabled={!allowedToUpdate()}
+                                        maxLength={500}
                                     />
                                 </Grid>
                                 <Grid item xs={3}>
