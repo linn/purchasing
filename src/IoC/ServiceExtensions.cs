@@ -17,6 +17,7 @@
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.AutomaticPurchaseOrders;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Forecasting;
@@ -88,7 +89,8 @@
                 .AddTransient<IBuilder<BomChange>, BomChangeResourceBuilder>()
                 .AddTransient<IBuilder<PcasChange>, PcasChangeResourceBuilder>()
                 .AddTransient<IBuilder<BomTypeChange>, BomTypeChangeResourceBuilder>()
-                .AddTransient<IBuilder<CircuitBoard>, CircuitBoardResourceBuilder>();
+                .AddTransient<IBuilder<CircuitBoard>, CircuitBoardResourceBuilder>()
+                .AddTransient<IBuilder<BoardComponentSummary>, BoardComponentSummaryResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -149,7 +151,8 @@
                 .AddTransient<IBomFacadeService, BomFacadeService>()
                 .AddTransient<IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource>, CircuitBoardFacadeService>()
                 .AddTransient<IBomTreeReportsService, BomTreeReportService>()
-                .AddTransient<IBomReportsFacadeService, BomReportsFacadeService>();
+                .AddTransient<IBomReportsFacadeService, BomReportsFacadeService>()
+                .AddTransient<IQueryFacadeResourceService<BoardComponentSummary, BoardComponentSummaryResource, BoardComponentSummaryResource>, BoardComponentSummaryFacadeService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)

@@ -32,6 +32,7 @@
             app.MapGet("/purchasing/boms/boards/{id}", this.GetBoard);
             app.MapGet("/purchasing/boms/tree/export", this.GetTreeExport);
             app.MapGet("/purchasing/boms/boards", this.GetBoards);
+            app.MapGet("/purchasing/boms/boards-summary", this.GetBoardsSummary);
             app.MapGet("/purchasing/boms/boards/create", this.GetApp);
             app.MapPost("/purchasing/boms/boards", this.AddCircuitBoard);
             app.MapPut("/purchasing/boms/boards/{id}", this.UpdateCircuitBoard);
@@ -97,6 +98,27 @@
             IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource> circuitBoardFacadeService)
         {
             var result = circuitBoardFacadeService.GetById(id, req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task GetBoardsSummary(
+            HttpRequest req,
+            HttpResponse res,
+            string boardCode,
+            string revisionCode,
+            string cref,
+            string partNumber,
+            IQueryFacadeResourceService<BoardComponentSummary, BoardComponentSummaryResource, BoardComponentSummaryResource> boardComponentSummaryFacadeService)
+        {
+            var searchResource = new BoardComponentSummaryResource
+                                     {
+                                         BoardCode = boardCode,
+                                         RevisionCode = revisionCode,
+                                         Cref = cref,
+                                         PartNumber = partNumber
+                                     };
+            var result = boardComponentSummaryFacadeService.FilterBy(searchResource, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }

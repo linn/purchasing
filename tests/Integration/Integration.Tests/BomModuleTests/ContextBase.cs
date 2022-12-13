@@ -8,11 +8,11 @@
     using Linn.Common.Persistence;
     using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Domain.LinnApps.Edi;
     using Linn.Purchasing.Facade.ResourceBuilders;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.IoC;
-    using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.Boms;
     using Linn.Purchasing.Service.Modules;
 
@@ -37,6 +37,8 @@
         protected IRepository<CircuitBoard, string> CircuitBoardRepository { get; set; }
 
         protected IRepository<BoardRevisionType, string> BoardRevisionTypeRepository { get; set; }
+        
+        protected IQueryRepository<BoardComponentSummary> BoardComponentSummaryRepository { get; set; }
 
         protected IEdiOrderService MockDomainService { get; set; }
 
@@ -47,6 +49,8 @@
         protected IBomTreeReportsService BomTreeReportsService { get; private set; }
 
         protected IBomReportsFacadeService BomReportsFacadeService { get; private set; }
+
+        protected IQueryFacadeResourceService<BoardComponentSummary, BoardComponentSummaryResource, BoardComponentSummaryResource> BoardComponentSummaryFacadeService { get; private set; }
 
         protected IBomReportsService MockBomReportsDomainService { get; set; }
 
@@ -62,6 +66,7 @@
             this.Repository = Substitute.For<IRepository<Bom, int>>();
             this.CircuitBoardRepository = Substitute.For<IRepository<CircuitBoard, string>>();
             this.BoardRevisionTypeRepository = Substitute.For<IRepository<BoardRevisionType, string>>();
+            this.BoardComponentSummaryRepository = Substitute.For<IQueryRepository<BoardComponentSummary>>();
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.FacadeService = new BomFacadeService(
                 this.BomChangeService, this.TransactionManager);
@@ -75,6 +80,9 @@
             this.BomReportsFacadeService = new BomReportsFacadeService(
                 this.MockBomReportsDomainService,
                 new ReportReturnResourceBuilder());
+            this.BoardComponentSummaryFacadeService = new BoardComponentSummaryFacadeService(
+                this.BoardComponentSummaryRepository,
+                new BoardComponentSummaryResourceBuilder());
             this.BoardRevisionTypeRepository.FindAll().Returns(
                 new List<BoardRevisionType>
                     {
@@ -186,6 +194,7 @@
                         services.AddSingleton(this.BomTreeReportsService);
                         services.AddSingleton(this.CircuitBoardFacadeService);
                         services.AddSingleton(this.BomReportsFacadeService);
+                        services.AddSingleton(this.BoardComponentSummaryFacadeService);
                         services.AddHandlers();
                     },
                 FakeAuthMiddleware.EmployeeMiddleware);
