@@ -107,6 +107,7 @@ import changeRequestStatusChange from './changeRequestStatusChange';
 import partsOnBomReport from './partsOnBomReport';
 import bomCostReport from './bomCostReport';
 import subAssembly from './subAssembly';
+import boardComponentSummaries from './boardComponentSummaries';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -126,6 +127,7 @@ const rootReducer = history =>
         bomTypeChange,
         bomTree,
         board,
+        boardComponentSummaries,
         boards,
         bulkLeadTimesUpload,
         changeRequest,

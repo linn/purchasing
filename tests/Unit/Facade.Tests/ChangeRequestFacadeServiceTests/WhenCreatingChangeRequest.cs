@@ -7,7 +7,6 @@
     using FluentAssertions;
 
     using Linn.Common.Facade;
-    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Resources;
@@ -31,11 +30,11 @@
                                   ReasonForChange = "Cos",
                                   DescriptionOfChange = "Ch Ch Changes"
                               };
-            var part = new Part {PartNumber = "CONN 1", Description = "A Connector" };
+            var part = new Part { PartNumber = "CONN 1", Description = "A Connector" };
 
-            this.databaseService.GetNextVal("CRF_SEQ").Returns(42);
-            this.partRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>()).Returns(part);
-            this.result = this.Sut.Add(request, new List<string>() { "superpowers" });
+            this.DatabaseService.GetNextVal("CRF_SEQ").Returns(42);
+            this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>()).Returns(part);
+            this.result = this.Sut.Add(request, new List<string> { "superpowers" });
         }
 
         [Test]
@@ -47,7 +46,7 @@
         [Test]
         public void ShouldAddToRepository()
         {
-            this.repository.Received().Add(Arg.Any<ChangeRequest>());
+            this.Repository.Received().Add(Arg.Any<ChangeRequest>());
         }
 
         [Test]

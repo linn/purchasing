@@ -22,19 +22,19 @@
         [SetUp]
         public void SetUp()
         {
-            this.authorisationService
+            this.AuthorisationService
                 .HasPermissionFor(AuthorisedAction.ApproveChangeRequest, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
-            var request = new ChangeRequest()
+            var request = new ChangeRequest
                               {
                                   DocumentNumber = 1,
                                   ChangeState = "CANCEL",
                                   DateEntered = new DateTime(2022, 1, 1),
                                   DescriptionOfChange = "Cancelled already"
                               };
-            this.repository.FindById(1).Returns(request);
-            this.result = this.Sut.GetById(1, new List<string>() { "superpowers" });
+            this.Repository.FindById(1).Returns(request);
+            this.result = this.Sut.GetById(1, new List<string> { "superpowers" });
         }
 
         [Test]

@@ -3,11 +3,10 @@
     using System.Collections.Generic;
 
     using Linn.Common.Authorisation;
+    using Linn.Common.Domain.Exceptions;
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Boms.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
-
-    using Linn.Common.Domain.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
     public class ChangeRequestService : IChangeRequestService
@@ -20,7 +19,11 @@
 
         private readonly IRepository<Employee, int> employeeRepository;
 
-        public ChangeRequestService(IAuthorisationService authService, IRepository<ChangeRequest, int> repository, IQueryRepository<Part> partRepository, IRepository<Employee, int> employeeRepository)
+        public ChangeRequestService(
+            IAuthorisationService authService,
+            IRepository<ChangeRequest, int> repository,
+            IQueryRepository<Part> partRepository,
+            IRepository<Employee, int> employeeRepository)
         {
             this.authService = authService;
             this.repository = repository;
@@ -34,6 +37,7 @@
             {
                 return null;
             }
+
             var part = this.partRepository.FindBy(p => p.PartNumber == partNumber);
             if (part == null)
             {
@@ -69,7 +73,12 @@
             return request;
         }
 
-        public ChangeRequest Cancel(int documentNumber, int cancelledById, IEnumerable<int> selectedBomChangeIds, IEnumerable<int> selectedPcasChangeIds, IEnumerable<string> privileges = null)
+        public ChangeRequest Cancel(
+            int documentNumber,
+            int cancelledById,
+            IEnumerable<int> selectedBomChangeIds,
+            IEnumerable<int> selectedPcasChangeIds,
+            IEnumerable<string> privileges = null)
         {
             var request = this.repository.FindById(documentNumber);
             if (request == null)
@@ -83,7 +92,7 @@
                 throw new ItemNotFoundException("Employee not found");
             }
 
-            if ( request.ChangeState == "ACCEPT" && !this.authService.HasPermissionFor(AuthorisedAction.AdminChangeRequest, privileges) )
+            if (request.ChangeState == "ACCEPT" && !this.authService.HasPermissionFor(AuthorisedAction.AdminChangeRequest, privileges))
             {
                 throw new UnauthorisedActionException(
                     "You are not authorised to cancel change requests");

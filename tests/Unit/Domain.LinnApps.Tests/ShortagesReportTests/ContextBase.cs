@@ -31,7 +31,7 @@
         {
             this.Data = new List<ShortagesEntry>
                             {
-                                new ShortagesEntry()
+                                new ShortagesEntry
                                     {
                                         VendorManagerName = "Test VM L",
                                         PartNumber = "Test Part",
@@ -40,7 +40,7 @@
                                         Planner = 1,
                                         PurchaseLevel = 1
                                     },
-                                new ShortagesEntry()
+                                new ShortagesEntry
                                     {
                                         VendorManagerName = "Test VM L",
                                         PartNumber = "Test Part",
@@ -49,7 +49,7 @@
                                         Planner = 1,
                                         PurchaseLevel = 1
                                     },
-                                new ShortagesEntry()
+                                new ShortagesEntry
                                     {
                                         VendorManagerName = "Test VM M",
                                         PartNumber = "Test Part",
@@ -58,7 +58,7 @@
                                         Planner = 1,
                                         PurchaseLevel = 1
                                     },
-                                new ShortagesEntry()
+                                new ShortagesEntry
                                     {
                                         VendorManagerName = "Test VM M",
                                         PartNumber = "Test Part",
@@ -67,7 +67,7 @@
                                         Planner = 1,
                                         PurchaseLevel = 2
                                     },
-                                new ShortagesEntry()
+                                new ShortagesEntry
                                     {
                                         VendorManagerName = "Test VM M",
                                         PartNumber = "Test Part",
@@ -76,7 +76,7 @@
                                         Planner = 1,
                                         PurchaseLevel = 2
                                     },
-                                new ShortagesEntry()
+                                new ShortagesEntry
                                     {
                                         VendorManagerName = "Test VM L",
                                         PartNumber = "Test Part",
@@ -85,7 +85,7 @@
                                         Planner = 1,
                                         PurchaseLevel = 2
                                     },
-                                new ShortagesEntry()
+                                new ShortagesEntry
                                     {
                                         VendorManagerName = "Test VM L",
                                         PartNumber = "Second Test Part",
@@ -94,7 +94,7 @@
                                         Planner = 1,
                                         PurchaseLevel = 1
                                     },
-                                new ShortagesEntry()
+                                new ShortagesEntry
                                     {
                                         VendorManagerName = "Test VM L",
                                         PartNumber = "Second Test Part",
@@ -103,7 +103,7 @@
                                         Planner = 1,
                                         PurchaseLevel = 1
                                     },
-                                new ShortagesEntry()
+                                new ShortagesEntry
                                     {
                                         VendorManagerName = "Test VM T",
                                         PartNumber = "Second Test Part",
@@ -112,7 +112,7 @@
                                         Planner = 1,
                                         PurchaseLevel = 1
                                     },
-                                new ShortagesEntry()
+                                new ShortagesEntry
                                     {
                                         VendorManagerName = "Test VM T",
                                         PartNumber = "Third Test Part",
@@ -121,7 +121,7 @@
                                         Planner = 1,
                                         PurchaseLevel = 3
                                     },
-                                new ShortagesEntry()
+                                new ShortagesEntry
                                     {
                                         VendorManagerName = "Test VM T",
                                         PartNumber = "Fourth Test Part",

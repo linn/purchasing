@@ -23,7 +23,7 @@
                 .HasPermissionFor(AuthorisedAction.ApproveChangeRequest, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
-            var request = new ChangeRequest()
+            var request = new ChangeRequest
                               {
                                   DocumentNumber = 1,
                                   ChangeState = "ACCEPT",

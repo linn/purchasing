@@ -1,15 +1,16 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeRequestServiceTests
 {
-    using Linn.Purchasing.Domain.LinnApps.Exceptions;
-    using NUnit.Framework;
     using System;
     using System.Collections.Generic;
 
     using FluentAssertions;
 
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Domain.LinnApps.Exceptions;
 
     using NSubstitute;
+
+    using NUnit.Framework;
 
     public class WhenCancellingChangeRequestAndNotAuthorised : ContextBase
     {
@@ -18,7 +19,7 @@
         [SetUp]
         public void SetUp()
         {
-            var request = new ChangeRequest()
+            var request = new ChangeRequest
                               {
                                   DocumentNumber = 1,
                                   ChangeState = "ACCEPT",

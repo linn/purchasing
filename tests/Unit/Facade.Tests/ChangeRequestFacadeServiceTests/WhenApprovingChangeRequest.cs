@@ -3,8 +3,6 @@
     using System;
     using System.Collections.Generic;
 
-    using Castle.Core.Resource;
-
     using FluentAssertions;
 
     using Linn.Common.Facade;
@@ -23,18 +21,18 @@
         [SetUp]
         public void SetUp()
         {
-            this.authorisationService
+            this.AuthorisationService
                 .HasPermissionFor(AuthorisedAction.ApproveChangeRequest, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
-            var request = new ChangeRequest()
+            var request = new ChangeRequest
                               {
                                   DocumentNumber = 1,
                                   ChangeState = "PROPOS",
                                   DateEntered = new DateTime(2022, 1, 1),
                                   DescriptionOfChange = "Test Change"
                               };
-            this.repository.FindById(1).Returns(request);
+            this.Repository.FindById(1).Returns(request);
             this.result = this.Sut.ApproveChangeRequest(1);
         }
 

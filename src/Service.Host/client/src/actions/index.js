@@ -319,8 +319,7 @@ export const sendPurchaseOrderDeptEmailActionTypes = makeActionTypes(
 );
 
 export const suggestedPurchaseOrderValuesActionTypes = makeActionTypes(
-    itemTypes.suggestedPurchaseOrderValues.actionType,
-    true
+    itemTypes.suggestedPurchaseOrderValues.actionType
 );
 
 export const bomTypeChangeActionTypes = makeActionTypes(itemTypes.bomTypeChange.actionType);
@@ -342,3 +341,8 @@ export const partsOnBomReportActionTypes = makeReportActionTypes(
 export const bomCostReportActionTypes = makeReportActionTypes(reportTypes.bomCostReport.actionType);
 
 export const subAssemblyActionTypes = makeActionTypes(itemTypes.subAssembly.actionType);
+
+export const boardComponentSummariesActionTypes = makeActionTypes(
+    itemTypes.boardComponentSummaries.actionType,
+    false
+);

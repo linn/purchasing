@@ -364,3 +364,9 @@ export const changeRequestStatusChange = new ItemType(
 );
 
 export const subAssembly = new ItemType('subAssembly', 'SUB_ASSEMBLY', '/purchasing/boms/tree');
+
+export const boardComponentSummaries = new ItemType(
+    'boardComponentSummaries',
+    'BOARD_COMPONENT_SUMMARIES',
+    '/purchasing/boms/boards-summary'
+);

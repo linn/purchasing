@@ -35,7 +35,7 @@
             this.MonthlyForecastPartsRepository = Substitute.For<IQueryRepository<MonthlyForecastPart>>();
             this.MonthlyForecastRepository = Substitute.For<IQueryRepository<MonthlyForecastPartValues>>();
             this.ForecastReportMonthsRepository = Substitute.For<IQueryRepository<ForecastReportMonth>>();
-            var monthStrings = new List<string>()
+            var monthStrings = new List<string>
                                    {
                                        "Aug22",
                                        "Sep22",

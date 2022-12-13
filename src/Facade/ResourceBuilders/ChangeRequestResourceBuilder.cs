@@ -11,8 +11,6 @@
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Resources;
 
-    using Microsoft.EntityFrameworkCore.ChangeTracking;
-
     public class ChangeRequestResourceBuilder : IBuilder<ChangeRequest>
     {
         private readonly IBuilder<BomChange> bomChangeBuilder;
