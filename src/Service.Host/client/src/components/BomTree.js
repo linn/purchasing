@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import SvgIcon from '@mui/material/SvgIcon';
 import { alpha, styled } from '@mui/material/styles';
@@ -72,10 +72,8 @@ export default function BomTree({
     bomTreeLoading,
     expanded,
     setExpanded,
-    nodesWithChildren
+    selected
 }) {
-    const [selected, setSelected] = useState([]);
-
     const renderTree = nodes => {
         const label = (
             <>
@@ -146,8 +144,7 @@ export default function BomTree({
                             defaultEndIcon={<CloseSquare />}
                             onNodeSelect={(event, id) => {
                                 if (!event.target.closest('.MuiTreeItem-iconContainer')) {
-                                    setSelected(id);
-                                    onNodeSelect?.(nodesWithChildren.find(x => x.id === id));
+                                    onNodeSelect?.(id);
                                 }
                             }}
                         >
@@ -180,7 +177,7 @@ BomTree.propTypes = {
     bomName: PropTypes.string.isRequired,
     expanded: PropTypes.arrayOf(PropTypes.shape({})),
     setExpanded: PropTypes.func.isRequired,
-    nodesWithChildren: PropTypes.arrayOf(PropTypes.shape({}))
+    selected: PropTypes.string
 };
 BomTree.defaultProps = {
     renderDescriptions: true,
@@ -190,5 +187,5 @@ BomTree.defaultProps = {
     bomTree: null,
     bomTreeLoading: false,
     expanded: [],
-    nodesWithChildren: []
+    selected: null
 };

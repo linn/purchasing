@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
     Dropdown,
     Page,
@@ -206,7 +206,7 @@ function BomUtility() {
         return null;
     };
 
-    const processRowUpdate = React.useCallback(newRow => {
+    const processRowUpdate = useCallback(newRow => {
         setTreeView(tree => updateTree(tree, newRow, false));
         return newRow;
     }, []);
@@ -341,15 +341,15 @@ function BomUtility() {
                             renderDescriptions={false}
                             renderComponents={false}
                             renderQties={false}
-                            onNodeSelect={s => {
-                                setSelected(s);
+                            onNodeSelect={id => {
+                                setSelected(nodesWithChildren.find(x => x.id === id));
                             }}
                             bomName={bomName}
                             bomTree={treeView}
                             bomTreeLoading={bomTreeLoading}
                             expanded={expanded}
                             setExpanded={setExpanded}
-                            nodesWithChildren={nodesWithChildren}
+                            selected={selected?.id}
                         />
                     </div>
                 </Grid>
