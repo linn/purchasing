@@ -10,6 +10,7 @@ import BomTree from './BomTree';
 import bomTreeActions from '../actions/bomTreeActions';
 import useInitialise from '../hooks/useInitialise';
 import { bomTree as bomTreeItemType } from '../itemTypes';
+import useExpandNodesWithChildren from '../hooks/useExpandNodesWithChildren';
 
 export default function BomTreeReport() {
     const { search } = useLocation();
@@ -21,6 +22,12 @@ export default function BomTreeReport() {
     const [bomTree, bomTreeLoading] = useInitialise(
         () => bomTreeActions.fetchByHref(url),
         bomTreeItemType.item
+    );
+
+    const [expanded, setExpanded, nodesWithChildren] = useExpandNodesWithChildren(
+        [],
+        bomTree,
+        bomName
     );
     return (
         <Page history={history} homeUrl={config.appRoot}>
@@ -52,7 +59,14 @@ export default function BomTreeReport() {
                     </Button>
                 </Grid>
                 <Grid item xs={10} />
-                <BomTree bomTree={bomTree} bomTreeLoading={bomTreeLoading} bomName={bomName} />
+                <BomTree
+                    bomTree={bomTree}
+                    bomTreeLoading={bomTreeLoading}
+                    bomName={bomName}
+                    expanded={expanded}
+                    setExpanded={setExpanded}
+                    nodesWithChildren={nodesWithChildren}
+                />
             </Grid>
         </Page>
     );
