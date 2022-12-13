@@ -333,7 +333,8 @@ function BomUtility() {
                     sx={{
                         height: '85vh',
                         overflowY: bomTreeLoading ? 'hidden' : 'scroll',
-                        direction: 'rtl'
+                        direction: 'rtl',
+                        paddingTop: '0px ! important'
                     }}
                 >
                     <div style={{ direction: 'ltr' }}>
@@ -353,42 +354,46 @@ function BomUtility() {
                         />
                     </div>
                 </Grid>
-                <Grid item xs={8}>
-                    <>
-                        <Grid item xs={12}>
-                            <DataGrid
-                                sx={{
-                                    '& .propos': {
-                                        bgcolor: '#FFD580'
-                                    },
-                                    '& .accept': {
-                                        bgcolor: '#b0f7b9'
-                                    },
-                                    border: 0
-                                }}
-                                columnBuffer={6}
-                                rows={getRows()}
-                                loading={bomTreeLoading}
-                                processRowUpdate={processRowUpdate}
-                                hideFooter
-                                autoHeight
-                                experimentalFeatures={{ newEditingApi: true }}
-                                checkboxSelection
-                                disableSelectionOnClick
-                                columns={columns}
-                                getRowClassName={params => params.row.changeState?.toLowerCase()}
-                            />
-                        </Grid>
-                        <Grid item xs={1}>
-                            <Button
-                                disabled={!crNumber || subAssemblyLoading}
-                                variant="outlined"
-                                onClick={() => addLine(selected.id)}
-                            >
-                                +
-                            </Button>
-                        </Grid>
-                    </>
+                <Grid
+                    item
+                    xs={8}
+                    sx={{
+                        paddingTop: '0px ! important',
+                        height: '85vh',
+                        overflowY: bomTreeLoading ? 'hidden' : 'scroll'
+                    }}
+                >
+                    <DataGrid
+                        sx={{
+                            '& .propos': {
+                                bgcolor: '#FFD580'
+                            },
+                            '& .accept': {
+                                bgcolor: '#b0f7b9'
+                            },
+                            border: 0
+                        }}
+                        columnBuffer={6}
+                        rows={getRows()}
+                        loading={bomTreeLoading}
+                        processRowUpdate={processRowUpdate}
+                        hideFooter
+                        autoHeight
+                        experimentalFeatures={{ newEditingApi: true }}
+                        checkboxSelection
+                        disableSelectionOnClick
+                        columns={columns}
+                        getRowClassName={params => params.row.changeState?.toLowerCase()}
+                    />
+                    <Grid item xs={1}>
+                        <Button
+                            disabled={!crNumber || subAssemblyLoading}
+                            variant="outlined"
+                            onClick={() => addLine(selected.id)}
+                        >
+                            +
+                        </Button>
+                    </Grid>
                 </Grid>
                 <Grid item xs={12}>
                     <SaveBackCancelButtons
