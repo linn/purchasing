@@ -159,9 +159,7 @@ export default function BomTree({
             {bomTreeLoading && (
                 <>
                     <Grid item xs={12}>
-                        <Typography variant="subtitle2">
-                            Filling out the tree... May take a while...
-                        </Typography>
+                        <Typography variant="subtitle2">Filling out the tree..</Typography>
                     </Grid>
                     <Grid item xs={12}>
                         <LinearProgress />

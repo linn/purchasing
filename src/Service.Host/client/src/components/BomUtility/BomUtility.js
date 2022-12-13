@@ -271,7 +271,7 @@ function BomUtility() {
                 <DialogTitle>Search For A Part</DialogTitle>
                 <DialogContent dividers>
                     <Search
-                        propertyName="partNuimber"
+                        propertyName="partNumber"
                         label="Part Number"
                         resultsInModal
                         resultLimit={100}
@@ -327,21 +327,31 @@ function BomUtility() {
                     {subAssemblyLoading && <LinearProgress />}
                 </Grid>
                 <Grid item xs={8} height="30px" />
-                <Grid item xs={4}>
-                    <BomTree
-                        renderDescriptions={false}
-                        renderComponents={false}
-                        renderQties={false}
-                        onNodeSelect={s => {
-                            setSelected(s);
-                        }}
-                        bomName={bomName}
-                        bomTree={treeView}
-                        bomTreeLoading={bomTreeLoading}
-                        expanded={expanded}
-                        setExpanded={setExpanded}
-                        nodesWithChildren={nodesWithChildren}
-                    />
+                <Grid
+                    item
+                    xs={4}
+                    sx={{
+                        height: '85vh',
+                        overflowY: bomTreeLoading ? 'hidden' : 'scroll',
+                        direction: 'rtl'
+                    }}
+                >
+                    <div style={{ direction: 'ltr' }}>
+                        <BomTree
+                            renderDescriptions={false}
+                            renderComponents={false}
+                            renderQties={false}
+                            onNodeSelect={s => {
+                                setSelected(s);
+                            }}
+                            bomName={bomName}
+                            bomTree={treeView}
+                            bomTreeLoading={bomTreeLoading}
+                            expanded={expanded}
+                            setExpanded={setExpanded}
+                            nodesWithChildren={nodesWithChildren}
+                        />
+                    </div>
                 </Grid>
                 <Grid item xs={8}>
                     <>
@@ -358,10 +368,10 @@ function BomUtility() {
                                 }}
                                 columnBuffer={6}
                                 rows={getRows()}
-                                autoHeight
                                 loading={bomTreeLoading}
                                 processRowUpdate={processRowUpdate}
                                 hideFooter
+                                autoHeight
                                 experimentalFeatures={{ newEditingApi: true }}
                                 checkboxSelection
                                 disableSelectionOnClick
