@@ -23,5 +23,7 @@
         public string ChangeState { get; set; }
 
         public int AddChangeDocumentNumber { get; set; }
+
+        public bool IsReplaced { get; set; }
     }
 }

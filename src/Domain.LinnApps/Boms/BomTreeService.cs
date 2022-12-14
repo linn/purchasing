@@ -56,6 +56,7 @@
                                                     ParentName = d.BomName,
                                                     Qty = d.Qty,
                                                     ChangeState = d.ChangeState,
+                                                    IsReplaced = d.DeleteChangeId.HasValue,
                                                     Type = d.Part.BomType,
                                                     Id = d.DetailId.ToString(),
                                                     AddChangeDocumentNumber = d.AddChange.DocumentNumber
@@ -106,6 +107,8 @@
                                     ParentName = current.Name,
                                     ChangeState = child.ChangeState,
                                     AddChangeDocumentNumber = child.AddChangeDocumentNumber,
+                                    IsReplaced = child.IsReplaced,
+
                                     Children =
                                     children?
                                         .OrderBy(x => x.Part.PartNumber)
@@ -121,6 +124,7 @@
                                                         ParentName = detail.BomPartNumber,
                                                         AddChangeDocumentNumber = detail.AddChange.DocumentNumber,
                                                         ChangeState = detail.ChangeState,
+                                                        IsReplaced = detail.DeleteChangeId.HasValue,
                                                         Id = detail.DetailId.ToString()
                                                     })
                                 };

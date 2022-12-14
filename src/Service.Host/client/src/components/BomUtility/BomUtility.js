@@ -94,16 +94,20 @@ function BomUtility() {
     );
 
     const [contextMenu, setContextMenu] = useState(null);
+    const [selected, setSelected] = useState(null);
 
     const onContextMenu = e => {
         e.preventDefault();
         const { target } = e;
+        const detail = selected.children.find(x => x.name === target.innerText);
         setContextMenu(
-            contextMenu === null
+            crNumber && contextMenu === null
                 ? {
                       mouseX: e.clientX + 2,
                       mouseY: e.clientY - 6,
-                      part: target.innerText
+                      part: target.innerText,
+                      canReplace: Number(crNumber) !== detail.addChangeDocumentNumber,
+                      detail: { ...detail, parent: selected.id }
                   }
                 : null
         );
@@ -111,11 +115,11 @@ function BomUtility() {
 
     const partLookUpCell = params => (
         <>
-            <span onContextMenu={onContextMenu}>
-                {params.row.name}
+            <span onContextMenu={crNumber ? onContextMenu : null}>
+                {params.row.isReplaced ? <s>{params.row.name}</s> : params.row.name}
                 <IconButton
                     onClick={() => openPartLookUp(params.row)}
-                    disabled={!crNumber || subAssemblyLoading}
+                    disabled={!crNumber || subAssemblyLoading || params.row.isReplaced}
                 >
                     <ManageSearchIcon />
                 </IconButton>
@@ -130,7 +134,9 @@ function BomUtility() {
             field: 'type',
             headerName: 'Type',
             editable: false,
-            width: 100
+            width: 100,
+            renderCell: params =>
+                params.row.isReplaced ? <s>{params.row.type}</s> : <span>{params.row.type}</span>
         },
         {
             field: 'name',
@@ -140,14 +146,34 @@ function BomUtility() {
             renderCell: partLookUpCell,
             align: 'right'
         },
-        { field: 'description', headerName: 'Description', width: 500, editable: false },
-        { field: 'qty', headerName: 'Qty', width: 100, editable: true, type: 'number' }
+        {
+            field: 'description',
+            headerName: 'Description',
+            width: 500,
+            editable: false,
+            renderCell: params =>
+                params.row.isReplaced ? (
+                    <s>{params.row.description}</s>
+                ) : (
+                    <span>{params.row.description}</span>
+                )
+        },
+        {
+            field: 'qty',
+            headerName: 'Qty',
+            width: 100,
+            editable: true,
+            type: 'number',
+            renderCell: params =>
+                params.row.isReplaced ? <s>{params.row.qty}</s> : <span>{params.row.qty}</span>
+        }
     ];
-    const [selected, setSelected] = useState(null);
 
     useEffect(() => {
         if (bomTree === null) {
             setSelected({ id: 'root', name: bomName, children: [] });
+        } else {
+            setSelected(bomTree);
         }
         setTreeView(
             bomTree !== null || bomTreeLoading
@@ -169,25 +195,27 @@ function BomUtility() {
                 if (current.id === newNode.parent) {
                     current.hasChanged = true;
                     if (addNode) {
-                        current.children = [
-                            ...current.children.filter(x => x.id !== newNode.id),
-                            {
-                                ...newNode,
-                                children: [
-                                    {
-                                        id: uid(),
-                                        type: 'C',
-                                        parent: newNode.id,
-                                        changeState: 'PROPOS'
-                                    }
-                                ]
-                            }
-                        ];
+                        current.children = [...current.children, newNode];
                     } else {
-                        current.children = [
-                            ...current.children.filter(x => x.id !== newNode.id),
-                            { ...newNode, changeState: 'PROPOS' }
-                        ];
+                        let replacedIndex = null;
+                        current.children = current.children.map((x, index) => {
+                            if (x.id !== newNode.id) {
+                                return x;
+                            }
+                            if (newNode.isReplaced) {
+                                replacedIndex = index;
+                            }
+                            return { ...newNode, changeState: 'PROPOS' };
+                        });
+                        if (replacedIndex !== null) {
+                            current.children.splice(replacedIndex + 1, 0, {
+                                id: uid(),
+                                type: 'C',
+                                parent: current.id,
+                                changeState: 'PROPOS',
+                                isReplacement: true
+                            });
+                        }
                     }
 
                     return newTree;
@@ -315,7 +343,11 @@ function BomUtility() {
 
     const handleClose = () => setContextMenu(null);
 
-    const handleReplaceClick = () => {};
+    const handleReplaceClick = () => {
+        console.log(contextMenu.detail);
+        processRowUpdate({ ...contextMenu.detail, isReplaced: true });
+        setContextMenu(null);
+    };
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
@@ -410,7 +442,7 @@ function BomUtility() {
                         columns={columns}
                         getRowClassName={params => params.row.changeState?.toLowerCase()}
                     />
-                    {contextMenu && (
+                    {contextMenu && crNumber && (
                         <Menu
                             open={contextMenu !== null}
                             onClose={handleClose}
@@ -421,7 +453,12 @@ function BomUtility() {
                                     : undefined
                             }
                         >
-                            <MenuItem onClick={handleReplaceClick}>REPLACE</MenuItem>
+                            <MenuItem
+                                disabled={!contextMenu.canReplace}
+                                onClick={handleReplaceClick}
+                            >
+                                REPLACE
+                            </MenuItem>
                             <MenuItem disabled onClick={handleClose}>
                                 DELETE
                             </MenuItem>
