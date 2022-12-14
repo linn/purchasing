@@ -327,7 +327,7 @@ export const bomTypeChangeActionTypes = makeActionTypes(itemTypes.bomTypeChange.
 export const bomTreeActionTypes = makeActionTypes(itemTypes.bomTree.actionType);
 
 export const boardActionTypes = makeActionTypes(itemTypes.board.actionType);
-
+export const boardComponentsActionTypes = makeActionTypes(itemTypes.boardComponents.actionType);
 export const boardsActionTypes = makeActionTypes(itemTypes.boards.actionType);
 
 export const changeRequestStatusChangeActionTypes = makeActionTypes(

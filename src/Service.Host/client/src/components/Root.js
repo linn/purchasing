@@ -81,6 +81,7 @@ import BomCostReport from './reports/BomCostReport';
 import BomUtility from './BomUtility/BomUtility';
 import BomCostReportOptions from './reports/BomCostReportOptions';
 import BoardsSummary from './boards/BoardsSummary';
+import BoardComponents from './boards/BoardComponents';
 
 const Root = ({ store }) => (
     <div>
@@ -94,6 +95,7 @@ const Root = ({ store }) => (
                                 <Route exact path="/purchasing" component={App} />
                                 <Redirect exact from="/" to="/purchasing" />
                                 <Redirect exact from="/purchasing/reports" to="/purchasing" />
+                                <Redirect exact from="/purchasing/boms" to="/purchasing" />
                                 <Route
                                     exact
                                     path="/purchasing/suppliers"
@@ -241,6 +243,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/boms/boards-summary"
                                     component={BoardsSummary}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/boms/board-components"
+                                    component={BoardComponents}
                                 />
                                 <Route
                                     exact

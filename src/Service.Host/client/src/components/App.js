@@ -54,6 +54,9 @@ function App() {
                 <ListItem component={Link} to="/purchasing/boms/boards-summary" button>
                     <Typography color="primary">Boards Summary</Typography>
                 </ListItem>
+                <ListItem component={Link} to="/purchasing/boms/board-components" button>
+                    <Typography color="primary">Board Components</Typography>
+                </ListItem>
 
                 {/*Reports */}
                 <Typography variant="h6">Reports</Typography>

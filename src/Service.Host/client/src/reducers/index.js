@@ -108,6 +108,7 @@ import partsOnBomReport from './partsOnBomReport';
 import bomCostReport from './bomCostReport';
 import subAssembly from './subAssembly';
 import boardComponentSummaries from './boardComponentSummaries';
+import boardComponents from './boardComponents';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -127,6 +128,7 @@ const rootReducer = history =>
         bomTypeChange,
         bomTree,
         board,
+        boardComponents,
         boardComponentSummaries,
         boards,
         bulkLeadTimesUpload,
