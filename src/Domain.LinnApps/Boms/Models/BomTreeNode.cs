@@ -21,5 +21,7 @@
         public bool? HasChanged { get; set; }
 
         public string ChangeState { get; set; }
+
+        public int AddChangeDocumentNumber { get; set; }
     }
 }

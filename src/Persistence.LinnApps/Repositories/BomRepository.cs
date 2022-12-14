@@ -48,7 +48,9 @@
                 .Include(b => b.Details)
                 .ThenInclude(d => d.Part).ThenInclude(p => p.PartSuppliers.Where(ps => ps.SupplierRanking == 1))
                 .Include(b => b.Details)
-                .ThenInclude(d => d.PartRequirement).FirstOrDefault();
+                .ThenInclude(d => d.PartRequirement)
+                .Include(b => b.Details)
+                .ThenInclude(d => d.AddChange).FirstOrDefault();
         }
 
         public IQueryable<Bom> FilterBy(Expression<Func<Bom, bool>> expression)

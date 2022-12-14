@@ -24,7 +24,7 @@ export default function BomTreeReport() {
         bomTreeItemType.item
     );
 
-    const [expanded, setExpanded] = useExpandNodesWithChildren([], bomTree, bomName);
+    const { expanded, setExpanded } = useExpandNodesWithChildren([], bomTree, bomName);
     return (
         <Page history={history} homeUrl={config.appRoot}>
             <Grid container spacing={3}>

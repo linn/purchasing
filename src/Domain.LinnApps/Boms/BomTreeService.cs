@@ -57,7 +57,8 @@
                                                     Qty = d.Qty,
                                                     ChangeState = d.ChangeState,
                                                     Type = d.Part.BomType,
-                                                    Id = d.DetailId.ToString()
+                                                    Id = d.DetailId.ToString(),
+                                                    AddChangeDocumentNumber = d.AddChange.DocumentNumber
                                                 }).OrderBy(x => x.Name)
                                };
 
@@ -104,6 +105,7 @@
                                     Type = child.Type,
                                     ParentName = current.Name,
                                     ChangeState = child.ChangeState,
+                                    AddChangeDocumentNumber = child.AddChangeDocumentNumber,
                                     Children =
                                     children?
                                         .OrderBy(x => x.Part.PartNumber)
@@ -117,6 +119,7 @@
                                                         Qty = detail.Qty,
                                                         Type = detail.Part.BomType,
                                                         ParentName = detail.BomPartNumber,
+                                                        AddChangeDocumentNumber = detail.AddChange.DocumentNumber,
                                                         ChangeState = detail.ChangeState,
                                                         Id = detail.DetailId.ToString()
                                                     })

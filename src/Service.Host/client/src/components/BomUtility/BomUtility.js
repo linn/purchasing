@@ -19,7 +19,8 @@ import queryString from 'query-string';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import { useSelector, useDispatch } from 'react-redux';
-
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import BomTree from '../BomTree';
 import history from '../../history';
@@ -58,11 +59,9 @@ function BomUtility() {
 
     const [treeView, setTreeView] = useState();
 
-    const [expanded, setExpanded, nodesWithChildren] = useExpandNodesWithChildren(
-        [],
-        treeView,
-        bomName
-    );
+    const [expanded, setExpanded] = useState();
+
+    const { nodesWithChildren } = useExpandNodesWithChildren([], treeView, bomName);
 
     const [partLookUp, setPartLookUp] = useState({ open: false, forRow: null });
 
@@ -94,9 +93,25 @@ function BomUtility() {
         collectionSelectorHelpers.getSearchLoading(reduxState.parts)
     );
 
+    const [contextMenu, setContextMenu] = useState(null);
+
+    const onContextMenu = e => {
+        e.preventDefault();
+        const { target } = e;
+        setContextMenu(
+            contextMenu === null
+                ? {
+                      mouseX: e.clientX + 2,
+                      mouseY: e.clientY - 6,
+                      part: target.innerText
+                  }
+                : null
+        );
+    };
+
     const partLookUpCell = params => (
         <>
-            <span>
+            <span onContextMenu={onContextMenu}>
                 {params.row.name}
                 <IconButton
                     onClick={() => openPartLookUp(params.row)}
@@ -171,7 +186,7 @@ function BomUtility() {
                     } else {
                         current.children = [
                             ...current.children.filter(x => x.id !== newNode.id),
-                            newNode
+                            { ...newNode, changeState: 'PROPOS' }
                         ];
                     }
 
@@ -298,6 +313,10 @@ function BomUtility() {
         );
     }
 
+    const handleClose = () => setContextMenu(null);
+
+    const handleReplaceClick = () => {};
+
     return (
         <Page history={history} homeUrl={config.appRoot}>
             {renderPartLookUp()}
@@ -365,8 +384,14 @@ function BomUtility() {
                 >
                     <DataGrid
                         sx={{
+                            '& .propos.MuiDataGrid-row:hover': {
+                                bgcolor: '#FFD580'
+                            },
                             '& .propos': {
                                 bgcolor: '#FFD580'
+                            },
+                            '& .accept.MuiDataGrid-row:hover': {
+                                bgcolor: '#b0f7b9'
                             },
                             '& .accept': {
                                 bgcolor: '#b0f7b9'
@@ -385,6 +410,23 @@ function BomUtility() {
                         columns={columns}
                         getRowClassName={params => params.row.changeState?.toLowerCase()}
                     />
+                    {contextMenu && (
+                        <Menu
+                            open={contextMenu !== null}
+                            onClose={handleClose}
+                            anchorReference="anchorPosition"
+                            anchorPosition={
+                                contextMenu !== null
+                                    ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+                                    : undefined
+                            }
+                        >
+                            <MenuItem onClick={handleReplaceClick}>REPLACE</MenuItem>
+                            <MenuItem disabled onClick={handleClose}>
+                                DELETE
+                            </MenuItem>
+                        </Menu>
+                    )}
                     <Grid item xs={1}>
                         <Button
                             disabled={!crNumber || subAssemblyLoading}

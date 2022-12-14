@@ -32,6 +32,7 @@
 
         protected void MockData()
         {
+            var addChange = new BomChange { DocumentNumber = 123 };
             /* build a tree structure that looks like the following:
                    __root__
                   /    \   \
@@ -50,38 +51,38 @@
                     BomName = "root",
                     Details = new List<BomDetailViewEntry>
                                       {
-                                          new BomDetailViewEntry { ChangeState = "LIVE", Part = new Part { PartNumber = "n1" } },
-                                          new BomDetailViewEntry { ChangeState = "LIVE", Part = new Part { PartNumber = "n2" } },
-                                          new BomDetailViewEntry { ChangeState = "LIVE", Part = new Part { PartNumber = "n3" } }
+                                          new BomDetailViewEntry { ChangeState = "LIVE", Part = new Part { PartNumber = "n1" }, AddChange = addChange},
+                                          new BomDetailViewEntry { ChangeState = "LIVE", Part = new Part { PartNumber = "n2" }, AddChange = addChange },
+                                          new BomDetailViewEntry { ChangeState = "LIVE", Part = new Part { PartNumber = "n3" }, AddChange = addChange }
                                       }
                 });
 
             var n1Children = new List<BomDetailViewEntry>
                                  {
-                                     new BomDetailViewEntry { ChangeState = "LIVE", Part = new Part { PartNumber = "n11" } },
-                                     new BomDetailViewEntry { ChangeState = "LIVE", Part = new Part { PartNumber = "n12" } },
-                                     new BomDetailViewEntry { ChangeState = "LIVE", Part = new Part { PartNumber = "n13" } }
+                                     new BomDetailViewEntry { ChangeState = "LIVE", Part = new Part { PartNumber = "n11" }, AddChange = addChange },
+                                     new BomDetailViewEntry { ChangeState = "LIVE", Part = new Part { PartNumber = "n12" }, AddChange = addChange },
+                                     new BomDetailViewEntry { ChangeState = "LIVE", Part = new Part { PartNumber = "n13" }, AddChange = addChange }
                                  };
 
             var n11Children = new List<BomDetailViewEntry>
                                   {
-                                      new BomDetailViewEntry { ChangeState = "LIVE", Part = new Part { PartNumber = "n111" } },
-                                      new BomDetailViewEntry { ChangeState = "LIVE", Part = new Part { PartNumber = "n112" } }
+                                      new BomDetailViewEntry { ChangeState = "LIVE", Part = new Part { PartNumber = "n111" }, AddChange = addChange },
+                                      new BomDetailViewEntry { ChangeState = "LIVE", Part = new Part { PartNumber = "n112" }, AddChange = addChange }
                                   };
 
             var n13Children = new List<BomDetailViewEntry>
                                   {
-                                      new BomDetailViewEntry { ChangeState = "LIVE", Part = new Part { PartNumber = "n131" } }
+                                      new BomDetailViewEntry { ChangeState = "LIVE", Part = new Part { PartNumber = "n131" }, AddChange = addChange }
                                   };
 
             var n111Children = new List<BomDetailViewEntry>
                                   {
-                                      new BomDetailViewEntry { ChangeState = "LIVE", Part = new Part { PartNumber = "n1111" } }
+                                      new BomDetailViewEntry { ChangeState = "LIVE", Part = new Part { PartNumber = "n1111" }, AddChange = addChange }
                                   };
 
             var n112Children = new List<BomDetailViewEntry>
                                    {
-                                       new BomDetailViewEntry { ChangeState = "LIVE", Part = new Part { PartNumber = "n1121" } }
+                                       new BomDetailViewEntry { ChangeState = "LIVE", Part = new Part { PartNumber = "n1121" }, AddChange = addChange }
                                    };
 
             this.BomDetailRepository.FilterBy(Arg.Any<Expression<Func<BomDetailViewEntry, bool>>>()).Returns(

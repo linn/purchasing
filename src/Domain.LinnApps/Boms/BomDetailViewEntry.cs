@@ -40,5 +40,7 @@
         public string PcasLine { get; set; }
 
         public IEnumerable<BomDetailComponent> Components { get; set; }
+
+        public BomChange AddChange { get; set; }
     }
 }
