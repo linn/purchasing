@@ -31,5 +31,7 @@
         public string IdBoard { get; set; }
 
         public IEnumerable<BoardLayoutResource> Layouts { get; set; }
+
+        public IEnumerable<BoardComponentResource> Components { get; set; }
     }
 }

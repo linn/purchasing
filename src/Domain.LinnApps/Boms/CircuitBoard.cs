@@ -29,5 +29,7 @@
         public string IdBoard { get; set; }
 
         public IList<BoardLayout> Layouts { get; set; }
+
+        public IList<BoardComponent> Components { get; set; }
     }
 }
