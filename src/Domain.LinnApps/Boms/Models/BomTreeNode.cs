@@ -19,5 +19,7 @@
         public string Id { get; set; }
 
         public bool? HasChanged { get; set; }
+
+        public string ChangeState { get; set; }
     }
 }

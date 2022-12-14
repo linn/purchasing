@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
     Dropdown,
     Page,
@@ -34,6 +34,7 @@ import bomTreeActions from '../../actions/bomTreeActions';
 import useInitialise from '../../hooks/useInitialise';
 import partsActions from '../../actions/partsActions';
 import subAssemblyActions from '../../actions/subAssemblyActions';
+import useExpandNodesWithChildren from '../../hooks/useExpandNodesWithChildren';
 
 // unique id generator
 const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -48,16 +49,22 @@ function BomUtility() {
         changeRequestsItemType.item,
         'searchItems'
     );
+    const url = `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${true}&treeType=${'bom'}`;
 
-    const [treeView, setTreeView] = useState();
-
-    const [partLookUp, setPartLookUp] = useState({ open: false, forRow: null });
-
-    const url = `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${false}&treeType=${'bom'}`;
     const [bomTree, bomTreeLoading] = useInitialise(
         () => bomTreeActions.fetchByHref(url),
         bomTreeItemType.item
     );
+
+    const [treeView, setTreeView] = useState();
+
+    const [expanded, setExpanded, nodesWithChildren] = useExpandNodesWithChildren(
+        [],
+        treeView,
+        bomName
+    );
+
+    const [partLookUp, setPartLookUp] = useState({ open: false, forRow: null });
 
     const subAssembly = useSelector(reduxState =>
         itemSelectorHelpers.getItem(reduxState.subAssembly)
@@ -107,17 +114,18 @@ function BomUtility() {
         {
             field: 'type',
             headerName: 'Type',
-            width: 100,
-            editable: !crNumber || subAssemblyLoading
+            editable: false,
+            width: 100
         },
         {
             field: 'name',
             headerName: 'Part',
             width: 180,
+            editable: false,
             renderCell: partLookUpCell,
             align: 'right'
         },
-        { field: 'description', headerName: 'Description', width: 500 },
+        { field: 'description', headerName: 'Description', width: 500, editable: false },
         { field: 'qty', headerName: 'Qty', width: 100, editable: true, type: 'number' }
     ];
     const [selected, setSelected] = useState(null);
@@ -148,7 +156,17 @@ function BomUtility() {
                     if (addNode) {
                         current.children = [
                             ...current.children.filter(x => x.id !== newNode.id),
-                            { ...newNode, children: [{ id: uid(), type: 'C', parent: newNode.id }] }
+                            {
+                                ...newNode,
+                                children: [
+                                    {
+                                        id: uid(),
+                                        type: 'C',
+                                        parent: newNode.id,
+                                        changeState: 'PROPOS'
+                                    }
+                                ]
+                            }
                         ];
                     } else {
                         current.children = [
@@ -188,14 +206,20 @@ function BomUtility() {
         return null;
     };
 
-    const processRowUpdate = React.useCallback(newRow => {
+    const processRowUpdate = useCallback(newRow => {
         setTreeView(tree => updateTree(tree, newRow, false));
         return newRow;
     }, []);
 
     // add a new line to the children list of the selected node
     const addLine = () => {
-        setTreeView(tree => updateTree(tree, { id: uid(), type: 'C', parent: selected.id }, true));
+        setTreeView(tree =>
+            updateTree(
+                tree,
+                { id: uid(), type: 'C', parent: selected.id, changeState: 'PROPOS' },
+                true
+            )
+        );
     };
 
     const getRows = () => {
@@ -233,7 +257,8 @@ function BomUtility() {
                 name: subAssembly.name,
                 type: subAssembly.type,
                 description: subAssembly.description,
-                children: subAssembly.children
+                children: subAssembly.children,
+                changeState: 'PROPOS'
             });
             reduxDispatch(subAssemblyActions.clearItem());
             setPartLookUp({ open: false, forRow: null, selectedPart: null });
@@ -246,7 +271,7 @@ function BomUtility() {
                 <DialogTitle>Search For A Part</DialogTitle>
                 <DialogContent dividers>
                     <Search
-                        propertyName="partNuimber"
+                        propertyName="partNumber"
                         label="Part Number"
                         resultsInModal
                         resultLimit={100}
@@ -298,48 +323,77 @@ function BomUtility() {
                         />
                     </Grid>
                 )}
-                <Grid item xs={4}>
+                <Grid item xs={4} height="30px">
                     {subAssemblyLoading && <LinearProgress />}
                 </Grid>
                 <Grid item xs={8} height="30px" />
-                <Grid item xs={4}>
-                    <BomTree
-                        renderDescriptions={false}
-                        renderComponents={false}
-                        renderQties={false}
-                        onNodeSelect={s => {
-                            setSelected(s);
-                        }}
-                        bomName={bomName}
-                        bomTree={treeView}
-                        bomTreeLoading={bomTreeLoading}
-                    />
+                <Grid
+                    item
+                    xs={4}
+                    sx={{
+                        height: '85vh',
+                        overflowY: bomTreeLoading ? 'hidden' : 'scroll',
+                        direction: 'rtl',
+                        paddingTop: '0px ! important'
+                    }}
+                >
+                    <div style={{ direction: 'ltr' }}>
+                        <BomTree
+                            renderDescriptions={false}
+                            renderComponents={false}
+                            renderQties={false}
+                            onNodeSelect={id => {
+                                setSelected(nodesWithChildren.find(x => x.id === id));
+                            }}
+                            bomName={bomName}
+                            bomTree={treeView}
+                            bomTreeLoading={bomTreeLoading}
+                            expanded={expanded}
+                            setExpanded={setExpanded}
+                            selected={selected?.id}
+                        />
+                    </div>
                 </Grid>
-                <Grid item xs={8}>
-                    <>
-                        <Grid item xs={12}>
-                            <DataGrid
-                                columnBuffer={6}
-                                rows={getRows()}
-                                autoHeight
-                                processRowUpdate={processRowUpdate}
-                                hideFooter
-                                experimentalFeatures={{ newEditingApi: true }}
-                                checkboxSelection
-                                disableSelectionOnClick
-                                columns={columns}
-                            />
-                        </Grid>
-                        <Grid item xs={1}>
-                            <Button
-                                disabled={!crNumber || subAssemblyLoading}
-                                variant="outlined"
-                                onClick={() => addLine(selected.id)}
-                            >
-                                +
-                            </Button>
-                        </Grid>
-                    </>
+                <Grid
+                    item
+                    xs={8}
+                    sx={{
+                        paddingTop: '0px ! important',
+                        height: '85vh',
+                        overflowY: bomTreeLoading ? 'hidden' : 'scroll'
+                    }}
+                >
+                    <DataGrid
+                        sx={{
+                            '& .propos': {
+                                bgcolor: '#FFD580'
+                            },
+                            '& .accept': {
+                                bgcolor: '#b0f7b9'
+                            },
+                            border: 0
+                        }}
+                        columnBuffer={6}
+                        rows={getRows()}
+                        loading={bomTreeLoading}
+                        processRowUpdate={processRowUpdate}
+                        hideFooter
+                        autoHeight
+                        experimentalFeatures={{ newEditingApi: true }}
+                        checkboxSelection
+                        disableSelectionOnClick
+                        columns={columns}
+                        getRowClassName={params => params.row.changeState?.toLowerCase()}
+                    />
+                    <Grid item xs={1}>
+                        <Button
+                            disabled={!crNumber || subAssemblyLoading}
+                            variant="outlined"
+                            onClick={() => addLine(selected.id)}
+                        >
+                            +
+                        </Button>
+                    </Grid>
                 </Grid>
                 <Grid item xs={12}>
                     <SaveBackCancelButtons

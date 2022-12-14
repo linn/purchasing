@@ -1,12 +1,12 @@
-import React, { useMemo, useEffect, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { Loading } from '@linn-it/linn-form-components-library';
 import SvgIcon from '@mui/material/SvgIcon';
 import { alpha, styled } from '@mui/material/styles';
 import TreeView from '@mui/lab/TreeView';
 import TreeItem, { treeItemClasses } from '@mui/lab/TreeItem';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import LinearProgress from '@mui/material/LinearProgress';
 
 /* eslint react/jsx-props-no-spreading: 0 */
 /* eslint react/destructuring-assignment: 0 */
@@ -35,7 +35,7 @@ function CloseSquare(props) {
     );
 }
 
-const StyledTreeItem = styled(props => <TreeItem {...props} />)(({ theme }) => ({
+const StyledTreeItem = styled(props => <TreeItem {...props} />)(({ changeState, theme }) => ({
     [`& .${treeItemClasses.iconContainer}`]: {
         '& .close': {
             opacity: 0.3
@@ -45,6 +45,20 @@ const StyledTreeItem = styled(props => <TreeItem {...props} />)(({ theme }) => (
         marginLeft: 15,
         paddingLeft: 18,
         borderLeft: `1px dashed ${alpha(theme.palette.text.primary, 0.4)}`
+    },
+    [`& .${treeItemClasses.content}`]: {
+        backgroundColor: (() => {
+            if (changeState === 'PROPOS') {
+                return '#FFD580';
+            }
+            if (changeState === 'ACCEPT') {
+                return '#b0f7b9';
+            }
+            if (changeState === 'LIVE') {
+                return '#FFFFFF';
+            }
+            return '';
+        })()
     }
 }));
 
@@ -55,39 +69,11 @@ export default function BomTree({
     renderQties,
     bomName,
     bomTree,
-    bomTreeLoading
+    bomTreeLoading,
+    expanded,
+    setExpanded,
+    selected
 }) {
-    const [selected, setSelected] = useState([]);
-
-    const nodesWithChildren = useMemo(() => {
-        const result = [];
-        if (!bomTree) {
-            return result;
-        }
-        const q = [];
-        q.push(bomTree);
-        while (q.length !== 0) {
-            let n = q.length;
-            while (n > 0) {
-                const current = q[0];
-                q.shift();
-                if (current.children?.length) {
-                    result.push(current);
-                    for (let i = 0; i < current.children.length; i += 1) {
-                        q.push(current.children[i]);
-                    }
-                }
-                n -= 1;
-            }
-        }
-        return [{ name: bomName, id: 'root', children: bomTree.children }, ...result];
-    }, [bomTree, bomName]);
-    const [expanded, setExpanded] = React.useState([]);
-
-    useEffect(() => {
-        setExpanded(nodesWithChildren.map(x => x.id));
-    }, [nodesWithChildren]);
-
     const renderTree = nodes => {
         const label = (
             <>
@@ -118,7 +104,12 @@ export default function BomTree({
         );
 
         return (
-            <StyledTreeItem key={nodes.id || 'root'} nodeId={nodes.id || 'root'} label={label}>
+            <StyledTreeItem
+                key={nodes.id || 'root'}
+                nodeId={nodes.id || 'root'}
+                label={label}
+                changeState={nodes.changeState}
+            >
                 {Array.isArray(nodes.children) &&
                 (renderComponents || nodes.children.some(x => x.type !== 'C'))
                     ? nodes.children.map(node => {
@@ -153,8 +144,7 @@ export default function BomTree({
                             defaultEndIcon={<CloseSquare />}
                             onNodeSelect={(event, id) => {
                                 if (!event.target.closest('.MuiTreeItem-iconContainer')) {
-                                    setSelected(id);
-                                    onNodeSelect?.(nodesWithChildren.find(x => x.id === id));
+                                    onNodeSelect?.(id);
                                 }
                             }}
                         >
@@ -166,12 +156,10 @@ export default function BomTree({
             {bomTreeLoading && (
                 <>
                     <Grid item xs={12}>
-                        <Typography variant="subtitle2">
-                            Filling out the tree... May take a while...
-                        </Typography>
+                        <Typography variant="subtitle2">Filling out the tree..</Typography>
                     </Grid>
                     <Grid item xs={12}>
-                        <Loading />
+                        <LinearProgress />
                     </Grid>
                 </>
             )}
@@ -186,7 +174,10 @@ BomTree.propTypes = {
     renderQties: PropTypes.bool,
     bomTree: PropTypes.shape({ children: PropTypes.arrayOf(PropTypes.shape({})) }),
     bomTreeLoading: PropTypes.bool,
-    bomName: PropTypes.string.isRequired
+    bomName: PropTypes.string.isRequired,
+    expanded: PropTypes.arrayOf(PropTypes.shape({})),
+    setExpanded: PropTypes.func.isRequired,
+    selected: PropTypes.string
 };
 BomTree.defaultProps = {
     renderDescriptions: true,
@@ -194,5 +185,7 @@ BomTree.defaultProps = {
     renderComponents: true,
     renderQties: true,
     bomTree: null,
-    bomTreeLoading: false
+    bomTreeLoading: false,
+    expanded: [],
+    selected: null
 };

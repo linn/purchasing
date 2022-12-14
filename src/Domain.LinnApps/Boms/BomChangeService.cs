@@ -32,8 +32,6 @@
 
         public BomTreeNode CreateBomChanges(BomTreeNode tree, int changeRequestNumber, int enteredBy)
         {
-            var result = new List<BomChange>();
-
             // traversing the updated tree...
             var q = new Queue<BomTreeNode>();
             q.Enqueue(tree);
@@ -66,13 +64,13 @@
                                              PcasChange = "N"
                                          };
                         this.bomChangeRepository.Add(change);
-                        result.Add(change);
 
                         foreach (var child in current.Children)
                         {
                             // add a detail for any new part on the bom
                             if (bom.Details.All(d => d.PartNumber != child.Name))
                             {
+                                child.ChangeState = "PROPOS";
                                 this.bomDetailRepository.Add(new BomDetail
                                                                   {
                                                                       DetailId = this.databaseService.GetIdSequence("BOMDET_SEQ"),
