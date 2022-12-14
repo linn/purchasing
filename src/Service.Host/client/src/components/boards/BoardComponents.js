@@ -49,10 +49,23 @@ function BoardComponents() {
     const layoutRows = state.board?.layouts
         ? state.board.layouts.map(l => ({ ...l, id: l.layoutCode }))
         : [];
+    const revisionColumns = [{ field: 'revisionCode', headerName: 'Revision', width: 175 }];
+    const revisionRows =
+        state.board?.layouts &&
+        state.selectedLayout?.length &&
+        state.board.layouts.find(a => a.layoutCode === state.selectedLayout[0]).revisions
+            ? state.board.layouts
+                  .find(a => a.layoutCode === state.selectedLayout[0])
+                  .revisions.map(l => ({ ...l, id: l.revisionCode }))
+            : [];
 
     const layout =
         state.board?.layouts && state.selectedLayout?.length
             ? state.board.layouts.find(a => a.layoutCode === state.selectedLayout[0])
+            : null;
+    const revision =
+        layout && state.selectedRevision?.length && layout.revisions && layout.revisions.length
+            ? layout.revisions.find(a => a.revisionCode === state.selectedRevision[0])
             : null;
 
     const goToSelectedBoard = selectedBoard => {
@@ -130,7 +143,31 @@ function BoardComponents() {
                         )}
                     </div>
                 </Grid>
-                <Grid item xs={10} />
+                <Grid item xs={2}>
+                    <div style={{ width: '180px' }}>
+                        {revision && (
+                            <>
+                                <DataGrid
+                                    rows={revisionRows}
+                                    columns={revisionColumns}
+                                    pageSize={40}
+                                    selectionModel={state.selectedRevision}
+                                    density="compact"
+                                    hideFooterSelectedRowCount
+                                    autoHeight
+                                    onSelectionModelChange={newSelectionModel => {
+                                        dispatch({
+                                            type: 'setSelectedRevision',
+                                            payload: newSelectionModel
+                                        });
+                                    }}
+                                    hideFooter={revisionRows.length <= 40}
+                                />
+                            </>
+                        )}
+                    </div>
+                </Grid>
+                <Grid item xs={8} />
             </Grid>
         </Page>
     );
