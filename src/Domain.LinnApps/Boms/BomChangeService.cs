@@ -45,7 +45,7 @@
                     var current = q.Dequeue();
 
                     // add a new bom_change for any bom that has changed - db triggers will create the bom if required
-                    if (current.HasChanged.GetValueOrDefault())
+                    if (current.HasChanged.GetValueOrDefault() && current.Children != null)
                     {
                         var bom = this.bomRepository.FindBy(x => x.BomName == current.Name);
 
@@ -75,28 +75,27 @@
                             if (bom.Details.All(d => d.PartNumber != child.Name && d.ChangeState == "LIVE"))
                             {
                                 child.ChangeState = "PROPOS";
-                                this.bomDetailRepository.Add(new BomDetail
-                                                                  {
-                                                                      DetailId = this.databaseService.GetIdSequence("BOMDET_SEQ"),
-                                                                      BomId = bom.BomId,
-                                                                      PartNumber = child.Name,
-                                                                      Qty = child.Qty,
-                                                                      GenerateRequirement = "Y", // todo
-                                                                      ChangeState = "PROPOS",
-                                                                      AddChangeId = id,
-                                                                      AddReplaceSeq = string.IsNullOrEmpty(child.ReplacementFor) 
-                                                                          ? null : replacementSeq++,
-                                                                      DeleteChangeId = null,
-                                                                      DeleteReplaceSeq = null,
-                                                                      PcasLine = "N"
-                                                                  });
+                                this.bomDetailRepository.Add(new BomDetail 
+                                                                 {
+                                                                     DetailId = this.databaseService.GetIdSequence("BOMDET_SEQ"),
+                                                                     BomId = bom.BomId,
+                                                                     PartNumber = child.Name,
+                                                                     Qty = child.Qty,
+                                                                     GenerateRequirement = "Y", // todo
+                                                                     ChangeState = "PROPOS",
+                                                                     AddChangeId = id,
+                                                                     AddReplaceSeq = string.IsNullOrEmpty(child.ReplacementFor) 
+                                                                         ? null : replacementSeq++,
+                                                                     DeleteChangeId = null,
+                                                                     DeleteReplaceSeq = null,
+                                                                     PcasLine = "N"
+                                                                 });
                             }
 
                             // case: replacing a part on this bom with another part
                             if (!string.IsNullOrEmpty(child.ReplacedBy))
                             {
-                                var replacement =
-                                    current.Children.FirstOrDefault(c => c.ReplacementFor == child.Name);
+                                var replacement = current.Children.FirstOrDefault(c => c.ReplacementFor == child.Name);
 
                                 if (replacement == null)
                                 {
@@ -113,10 +112,7 @@
                                 replacedDetail.ChangeState = "PROPOS";
                             }
                         }
-                    }
 
-                    if (current.Children != null)
-                    {
                         for (var i = 0; i < current.Children.Count(); i++)
                         {
                             if (current.Children?.Count() > 0)
