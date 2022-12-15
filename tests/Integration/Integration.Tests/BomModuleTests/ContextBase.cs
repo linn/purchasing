@@ -67,6 +67,7 @@
             this.CircuitBoardRepository = Substitute.For<IRepository<CircuitBoard, string>>();
             this.BoardRevisionTypeRepository = Substitute.For<IRepository<BoardRevisionType, string>>();
             this.BoardComponentSummaryRepository = Substitute.For<IQueryRepository<BoardComponentSummary>>();
+            this.BomChangeService = Substitute.For<IBomChangeService>();
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.FacadeService = new BomFacadeService(
                 this.BomChangeService, this.TransactionManager);

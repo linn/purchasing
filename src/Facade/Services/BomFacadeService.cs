@@ -23,8 +23,8 @@
         {
             var result = this.bomChangeService.CreateBomChanges(
                 resource.TreeRoot,
-                resource.CrNumber.GetValueOrDefault(),
-                resource.EnteredBy.GetValueOrDefault());
+                resource.CrNumber,
+                resource.EnteredBy);
             this.transactionManager.Commit();
             return new SuccessResult<BomTreeNode>(result);
         }

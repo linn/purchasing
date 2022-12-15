@@ -4,10 +4,10 @@
 
     public class PostBomResource
     {
-        public int? CrNumber { get; set; }
+        public int CrNumber { get; set; }
 
         public BomTreeNode TreeRoot { get; set; }
 
-        public int? EnteredBy { get; set; }
+        public int EnteredBy { get; set; }
     }
 }
