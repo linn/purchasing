@@ -1,4 +1,5 @@
 import React, { useState, useReducer, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -6,6 +7,7 @@ import Stack from '@mui/material/Stack';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     Page,
+    Loading,
     collectionSelectorHelpers,
     itemSelectorHelpers,
     Search
@@ -20,6 +22,7 @@ import boardComponentsReducer from './boardComponentsReducer';
 
 function BoardComponents() {
     const reduxDispatch = useDispatch();
+    const { id } = useParams();
 
     const [board, setBoard] = useState(null);
     const searchBoards = searchTerm => reduxDispatch(boardsActions.search(searchTerm));
@@ -36,6 +39,13 @@ function BoardComponents() {
     const loading = useSelector(reduxState =>
         itemSelectorHelpers.getItemLoading(reduxState.boardComponents)
     );
+
+    useEffect(() => {
+        if (id) {
+            reduxDispatch(boardComponentsActions.fetch(id));
+            setBoard(id);
+        }
+    }, [id, reduxDispatch]);
 
     useEffect(() => {
         if (item) {
@@ -58,6 +68,14 @@ function BoardComponents() {
                   .find(a => a.layoutCode === state.selectedLayout[0])
                   .revisions.map(l => ({ ...l, id: l.revisionCode }))
             : [];
+    const componentColumns = [
+        { field: 'cRef', headerName: 'CRef', width: 140 },
+        { field: 'partNumber', headerName: 'Part Number', width: 140 },
+        { field: 'assemblyTechnology', headerName: 'Ass Tech', width: 140 }
+    ];
+    const componentRows = state.board?.components
+        ? state.board.components.map(c => ({ ...c, id: c.boardLine }))
+        : [];
 
     const layout =
         state.board?.layouts && state.selectedLayout?.length
@@ -73,7 +91,9 @@ function BoardComponents() {
     };
 
     const goToBoard = () => {
-        reduxDispatch(boardComponentsActions.fetch(board));
+        if (board) {
+            reduxDispatch(boardComponentsActions.fetch(board.toUpperCase()));
+        }
     };
 
     return (
@@ -116,6 +136,11 @@ function BoardComponents() {
                     </Stack>
                 </Grid>
                 <Grid item xs={3} />
+                {loading && (
+                    <Grid xs={12}>
+                        <Loading />
+                    </Grid>
+                )}
                 <Grid item xs={2}>
                     <div style={{ width: '180px' }}>
                         {layout && (
@@ -167,7 +192,34 @@ function BoardComponents() {
                         )}
                     </div>
                 </Grid>
-                <Grid item xs={8} />
+                <Grid item xs={8}>
+                    <div style={{ width: '400px' }}>
+                        {state.board?.components && (
+                            <>
+                                <DataGrid
+                                    rows={componentRows}
+                                    columns={componentColumns}
+                                    pageSize={40}
+                                    selectionModel={state.selectedComponent}
+                                    density="compact"
+                                    autoHeight
+                                    onSelectionModelChange={newSelectionModel => {
+                                        dispatch({
+                                            type: 'setSelectedComponent',
+                                            payload: newSelectionModel
+                                        });
+                                    }}
+                                    loading={loading}
+                                    hideFooterSelectedRowCount
+                                    hideFooter={
+                                        !state.board?.components ||
+                                        state.board.components.length <= 40
+                                    }
+                                />
+                            </>
+                        )}
+                    </div>
+                </Grid>
             </Grid>
         </Page>
     );

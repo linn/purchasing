@@ -251,6 +251,11 @@ const Root = ({ store }) => (
                                 />
                                 <Route
                                     exact
+                                    path="/purchasing/boms/board-components/:id"
+                                    component={BoardComponents}
+                                />
+                                <Route
+                                    exact
                                     path="/purchasing/open-debit-notes"
                                     component={OpenDebitNotes}
                                 />

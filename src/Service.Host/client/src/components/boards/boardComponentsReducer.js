@@ -59,6 +59,12 @@ export default function boardComponentsReducer(state = initialState, action) {
                 selectedRevision: action.payload
             };
         }
+        case 'setSelectedComponent': {
+            return {
+                ...state,
+                selectedComponent: action.payload
+            };
+        }
         default:
             return state;
     }
