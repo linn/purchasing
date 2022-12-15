@@ -132,7 +132,6 @@ function BomUtility() {
     );
 
     const columns = [
-        // { field: 'id', headerName: 'Id', width: 100, hide: true }, // don't think we need this
         { field: 'parent', headerName: 'Id', width: 100, hide: true },
         {
             field: 'type',
@@ -379,13 +378,11 @@ function BomUtility() {
     const handleClose = () => setContextMenu(null);
 
     const handleReplaceClick = () => {
-        console.log(contextMenu.detail);
         processRowUpdate({ ...contextMenu.detail, isReplaced: true });
         setContextMenu(null);
     };
 
     const handleDeleteClick = () => {
-        console.log(contextMenu.detail);
         processRowUpdate({ ...contextMenu.detail, toDelete: true });
         setContextMenu(null);
     };
