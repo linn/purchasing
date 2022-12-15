@@ -62,10 +62,10 @@ function BoardComponents() {
     const revisionColumns = [{ field: 'revisionCode', headerName: 'Revision', width: 175 }];
     const revisionRows =
         state.board?.layouts &&
-        state.selectedLayout?.length &&
-        state.board.layouts.find(a => a.layoutCode === state.selectedLayout[0]).revisions
+        state.layoutSelectionModel?.length &&
+        state.board.layouts.find(a => a.layoutCode === state.layoutSelectionModel[0]).revisions
             ? state.board.layouts
-                  .find(a => a.layoutCode === state.selectedLayout[0])
+                  .find(a => a.layoutCode === state.layoutSelectionModel[0])
                   .revisions.map(l => ({ ...l, id: l.revisionCode }))
             : [];
     const componentColumns = [
@@ -78,8 +78,8 @@ function BoardComponents() {
         : [];
 
     const layout =
-        state.board?.layouts && state.selectedLayout?.length
-            ? state.board.layouts.find(a => a.layoutCode === state.selectedLayout[0])
+        state.board?.layouts && state.layoutSelectionModel?.length
+            ? state.board.layouts.find(a => a.layoutCode === state.layoutSelectionModel[0])
             : null;
     const revision =
         layout && state.selectedRevision?.length && layout.revisions && layout.revisions.length
@@ -87,6 +87,7 @@ function BoardComponents() {
             : null;
 
     const goToSelectedBoard = selectedBoard => {
+        setBoard(selectedBoard.boardCode);
         reduxDispatch(boardComponentsActions.fetch(selectedBoard.boardCode));
     };
 
@@ -149,7 +150,7 @@ function BoardComponents() {
                                     rows={layoutRows}
                                     columns={layoutColumns}
                                     pageSize={40}
-                                    selectionModel={state.selectedLayout}
+                                    selectionModel={state.layoutSelectionModel}
                                     density="compact"
                                     autoHeight
                                     onSelectionModelChange={newSelectionModel => {

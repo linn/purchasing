@@ -1,5 +1,5 @@
 const initialState = {
-    selectedLayout: null,
+    layoutSelectionModel: null,
     selectedRevision: null,
     board: { coreBoard: 'N', clusterBoard: 'N', idBoard: 'N', splitBom: 'N', layouts: [] }
 };
@@ -18,15 +18,18 @@ export default function boardComponentsReducer(state = initialState, action) {
         case 'initialise':
             return initialState;
         case 'populate': {
-            let selectedLayout;
+            let layoutSelectionModel;
             let selectedRevision;
             if (action.payload.layouts && action.payload.layouts.length > 0) {
-                selectedLayout = [
+                layoutSelectionModel = [
                     action.payload.layouts[action.payload.layouts.length - 1].layoutCode
                 ];
-                selectedRevision = getLastRevisionCodeArray(action.payload, selectedLayout[0]);
+                selectedRevision = getLastRevisionCodeArray(
+                    action.payload,
+                    layoutSelectionModel[0]
+                );
             } else {
-                selectedLayout = [];
+                layoutSelectionModel = [];
                 selectedRevision = [];
             }
 
@@ -37,7 +40,7 @@ export default function boardComponentsReducer(state = initialState, action) {
                     ...action.payload,
                     layouts
                 },
-                selectedLayout,
+                layoutSelectionModel,
                 selectedRevision
             };
         }
@@ -49,7 +52,7 @@ export default function boardComponentsReducer(state = initialState, action) {
         case 'setSelectedLayout': {
             return {
                 ...state,
-                selectedLayout: action.payload,
+                layoutSelectionModel: action.payload,
                 selectedRevision: getLastRevisionCodeArray(state.board, action.payload[0])
             };
         }
