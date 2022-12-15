@@ -128,7 +128,7 @@ function BomUtility() {
     );
 
     const columns = [
-        { field: 'id', headerName: 'Id', width: 100, hide: true },
+        // { field: 'id', headerName: 'Id', width: 100, hide: true }, // don't think we need this
         { field: 'parent', headerName: 'Id', width: 100, hide: true },
         {
             field: 'type',
@@ -166,6 +166,20 @@ function BomUtility() {
             type: 'number',
             renderCell: params =>
                 params.row.isReplaced ? <s>{params.row.qty}</s> : <span>{params.row.qty}</span>
+        },
+        {
+            field: 'replacementFor',
+            headerName: 'Replacing',
+            width: 180,
+            editable: false,
+            hide: true // useful for debugging, but hidden generally
+        },
+        {
+            field: 'replacedBy',
+            headerName: 'Replaced By',
+            width: 180,
+            editable: false,
+            hide: true // useful for debugging, but hidden generally
         }
     ];
 
@@ -198,12 +212,21 @@ function BomUtility() {
                         current.children = [...current.children, newNode];
                     } else {
                         let replacedIndex = null;
+                        let replacementFor = null;
                         current.children = current.children.map((x, index) => {
                             if (x.id !== newNode.id) {
+                                if (
+                                    newNode.replacementFor &&
+                                    newNode.name &&
+                                    newNode.replacementFor === x.name
+                                ) {
+                                    return { ...x, replacedBy: newNode.name };
+                                }
                                 return x;
                             }
                             if (newNode.isReplaced) {
                                 replacedIndex = index;
+                                replacementFor = x.name;
                             }
                             return { ...newNode, changeState: 'PROPOS' };
                         });
@@ -213,7 +236,7 @@ function BomUtility() {
                                 type: 'C',
                                 parent: current.id,
                                 changeState: 'PROPOS',
-                                isReplacement: true
+                                replacementFor
                             });
                         }
                     }
@@ -366,6 +389,7 @@ function BomUtility() {
                             }))}
                             allowNoValue
                             label="CRF Number"
+                            propertyName="crNumber"
                             helperText="Select a corresponding CRF to start editing"
                             value={crNumber}
                             onChange={(_, n) => {

@@ -1,16 +1,17 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Boms.Exceptions
 {
     using System;
+
     using Linn.Common.Domain.Exceptions;
 
-    public class InvalidStateChangeException : DomainException
+    public class InvalidReplacementException : DomainException
     {
-        public InvalidStateChangeException(string message)
+        public InvalidReplacementException(string message)
             : base(message)
         {
         }
 
-        public InvalidStateChangeException(string message, Exception innerException)
+        public InvalidReplacementException(string message, Exception innerException)
             : base(message, innerException)
         {
         }
