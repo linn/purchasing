@@ -38,14 +38,13 @@
             this.resource = new PostBomResource
                                 {
                                     CrNumber = 4567,
-                                    EnteredBy = 33087,
                                     TreeRoot = this.tree
                                 };
 
             this.BomChangeService.CreateBomChanges(
                 Arg.Any<BomTreeNode>(),
-                this.resource.CrNumber,
-                this.resource.EnteredBy).Returns(this.tree);
+                Arg.Any<int>(),
+                Arg.Any<int>()).Returns(this.tree);
 
             this.Response = this.Client.PostAsJsonAsync(
                 $"/purchasing/boms/tree",
@@ -63,13 +62,6 @@
         public void ShouldReturnOk()
         {
             this.Response.StatusCode.Should().Be(HttpStatusCode.OK);
-        }
-
-        [Test]
-        public void ShouldReturnJsonBody()
-        {
-            var result = this.Response.DeserializeBody<BomTreeNode>();
-            result.Name.Should().Be("BOMBOM");
         }
     }
 }
