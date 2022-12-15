@@ -1,6 +1,6 @@
 const initialState = {
     layoutSelectionModel: null,
-    selectedRevision: null,
+    revisionSelectionModel: null,
     board: { coreBoard: 'N', clusterBoard: 'N', idBoard: 'N', splitBom: 'N', layouts: [] }
 };
 
@@ -19,18 +19,18 @@ export default function boardComponentsReducer(state = initialState, action) {
             return initialState;
         case 'populate': {
             let layoutSelectionModel;
-            let selectedRevision;
+            let revisionSelectionModel;
             if (action.payload.layouts && action.payload.layouts.length > 0) {
                 layoutSelectionModel = [
                     action.payload.layouts[action.payload.layouts.length - 1].layoutCode
                 ];
-                selectedRevision = getLastRevisionCodeArray(
+                revisionSelectionModel = getLastRevisionCodeArray(
                     action.payload,
                     layoutSelectionModel[0]
                 );
             } else {
                 layoutSelectionModel = [];
-                selectedRevision = [];
+                revisionSelectionModel = [];
             }
 
             const layouts = action.payload.layouts ? [...action.payload.layouts] : [];
@@ -41,7 +41,7 @@ export default function boardComponentsReducer(state = initialState, action) {
                     layouts
                 },
                 layoutSelectionModel,
-                selectedRevision
+                revisionSelectionModel
             };
         }
         case 'fieldChange':
@@ -53,13 +53,13 @@ export default function boardComponentsReducer(state = initialState, action) {
             return {
                 ...state,
                 layoutSelectionModel: action.payload,
-                selectedRevision: getLastRevisionCodeArray(state.board, action.payload[0])
+                revisionSelectionModel: getLastRevisionCodeArray(state.board, action.payload[0])
             };
         }
         case 'setSelectedRevision': {
             return {
                 ...state,
-                selectedRevision: action.payload
+                revisionSelectionModel: action.payload
             };
         }
         case 'setSelectedComponent': {

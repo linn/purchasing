@@ -82,8 +82,11 @@ function BoardComponents() {
             ? state.board.layouts.find(a => a.layoutCode === state.layoutSelectionModel[0])
             : null;
     const revision =
-        layout && state.selectedRevision?.length && layout.revisions && layout.revisions.length
-            ? layout.revisions.find(a => a.revisionCode === state.selectedRevision[0])
+        layout &&
+        state.revisionSelectionModel?.length &&
+        layout.revisions &&
+        layout.revisions.length
+            ? layout.revisions.find(a => a.revisionCode === state.revisionSelectionModel[0])
             : null;
 
     const goToSelectedBoard = selectedBoard => {
@@ -177,7 +180,7 @@ function BoardComponents() {
                                     rows={revisionRows}
                                     columns={revisionColumns}
                                     pageSize={40}
-                                    selectionModel={state.selectedRevision}
+                                    selectionModel={state.revisionSelectionModel}
                                     density="compact"
                                     hideFooterSelectedRowCount
                                     autoHeight
