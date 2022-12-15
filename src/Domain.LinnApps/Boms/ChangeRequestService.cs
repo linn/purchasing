@@ -109,5 +109,42 @@
 
             return request;
         }
+
+        public ChangeRequest MakeLive(
+            int documentNumber,
+            int appliedById,
+            IEnumerable<int> selectedBomChangeIds,
+            IEnumerable<int> selectedPcasChangeIds,
+            IEnumerable<string> privileges = null)
+        {
+            var request = this.repository.FindById(documentNumber);
+            if (request == null)
+            {
+                throw new ItemNotFoundException("Change Request not found");
+            }
+
+            var employee = this.employeeRepository.FindById(appliedById);
+            if (employee == null)
+            {
+                throw new ItemNotFoundException("Employee not found");
+            }
+
+            if (!this.authService.HasPermissionFor(AuthorisedAction.MakeLiveChangeRequest, privileges))
+            {
+                throw new UnauthorisedActionException(
+                    "You are not authorised to make live change requests");
+            }
+
+            if (request.CanMakeLive())
+            {
+                request.MakeLive(employee, selectedBomChangeIds, selectedPcasChangeIds);
+            }
+            else
+            {
+                throw new InvalidStateChangeException("Cannot make live this change request");
+            }
+
+            return request;
+        }
     }
 }

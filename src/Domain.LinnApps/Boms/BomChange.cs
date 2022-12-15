@@ -48,6 +48,8 @@
         
         public bool CanCancel() => this.ChangeState == "PROPOS" || this.ChangeState == "ACCEPT";
 
+        public bool CanMakeLive() => this.ChangeState == "ACCEPT";
+
         public void Cancel(Employee cancelledBy)
         {
             if (this.CanCancel() && (cancelledBy != null))
@@ -56,6 +58,17 @@
                 this.DateCancelled = DateTime.Now;
                 this.CancelledById = cancelledBy.Id;
                 this.CancelledBy = cancelledBy;
+            }
+        }
+
+        public void MakeLive(Employee appliedBy)
+        {
+            if (this.CanMakeLive() && (appliedBy != null))
+            {
+                this.ChangeState = "LIVE";
+                this.DateApplied = DateTime.Now;
+                this.AppliedById = appliedBy.Id;
+                this.AppliedBy = appliedBy;
             }
         }
 

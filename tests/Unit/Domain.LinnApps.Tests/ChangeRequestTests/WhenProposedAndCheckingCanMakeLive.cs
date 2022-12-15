@@ -1,4 +1,4 @@
-﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.BomChangeTests
+﻿namespace Linn.Purchasing.Domain.LinnApps.Tests.ChangeRequestTests
 {
     using FluentAssertions;
 
@@ -6,23 +6,22 @@
 
     using NUnit.Framework;
 
-    public class WhenLiveAndCheckingCanCancel : ContextBase
+    public class WhenProposedAndCheckingCanMakeLive : ContextBase
     {
         [SetUp]
         public void SetUp()
         {
-            this.Sut = new BomChange
+            this.Sut = new ChangeRequest
                            {
                                DocumentNumber = 1,
-                               ChangeState = "PROPOS"
+                               ChangeState = "ACCEPT"
                            };
         }
 
         [Test]
-        public void ShouldBeAbleToBeCancelled()
+        public void ShouldNotBeApprovable()
         {
-            this.Sut.CanCancel().Should().BeTrue();
+            this.Sut.CanApprove().Should().BeFalse();
         }
     }
 }
-

@@ -6,7 +6,7 @@
 
     using NUnit.Framework;
 
-    public class WhenLiveAndCheckingCanCancel : ContextBase
+    public class WhenAcceptedAndCheckingCanMakeLive : ContextBase
     {
         [SetUp]
         public void SetUp()
@@ -14,15 +14,14 @@
             this.Sut = new BomChange
                            {
                                DocumentNumber = 1,
-                               ChangeState = "PROPOS"
+                               ChangeState = "ACCEPT"
                            };
         }
 
         [Test]
-        public void ShouldBeAbleToBeCancelled()
+        public void ShouldBeAbleToBeMakeLive()
         {
-            this.Sut.CanCancel().Should().BeTrue();
+            this.Sut.CanMakeLive().Should().BeTrue();
         }
     }
 }
-

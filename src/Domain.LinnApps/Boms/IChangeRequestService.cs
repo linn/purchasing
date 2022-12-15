@@ -11,5 +11,7 @@
         ChangeRequest Approve(int documentNumber, IEnumerable<string> privileges = null);
 
         ChangeRequest Cancel(int documentNumber, int cancelledById, IEnumerable<int> selectedBomChangeIds, IEnumerable<int> selectedPcasChangeIds, IEnumerable<string> privileges = null);
+
+        ChangeRequest MakeLive(int documentNumber, int appliedById, IEnumerable<int> selectedBomChangeIds, IEnumerable<int> selectedPcasChangeIds, IEnumerable<string> privileges = null);
     }
 }
