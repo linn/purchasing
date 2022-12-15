@@ -1,6 +1,7 @@
 const initialState = {
-    layoutSelectionModel: null,
-    revisionSelectionModel: null,
+    layoutSelectionModel: [],
+    revisionSelectionModel: [],
+    componentSelectionModel: [],
     board: { coreBoard: 'N', clusterBoard: 'N', idBoard: 'N', splitBom: 'N', layouts: [] }
 };
 
@@ -53,19 +54,21 @@ export default function boardComponentsReducer(state = initialState, action) {
             return {
                 ...state,
                 layoutSelectionModel: action.payload,
-                revisionSelectionModel: getLastRevisionCodeArray(state.board, action.payload[0])
+                revisionSelectionModel: getLastRevisionCodeArray(state.board, action.payload[0]),
+                componentSelectionModel: []
             };
         }
         case 'setSelectedRevision': {
             return {
                 ...state,
-                revisionSelectionModel: action.payload
+                revisionSelectionModel: action.payload,
+                componentSelectionModel: []
             };
         }
         case 'setSelectedComponent': {
             return {
                 ...state,
-                selectedComponent: action.payload
+                componentSelectionModel: action.payload
             };
         }
         default:

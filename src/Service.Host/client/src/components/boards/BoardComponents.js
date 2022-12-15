@@ -141,7 +141,7 @@ function BoardComponents() {
                 </Grid>
                 <Grid item xs={3} />
                 {loading && (
-                    <Grid xs={12}>
+                    <Grid item xs={12}>
                         <Loading />
                     </Grid>
                 )}
@@ -204,7 +204,7 @@ function BoardComponents() {
                                     rows={componentRows}
                                     columns={componentColumns}
                                     pageSize={40}
-                                    selectionModel={state.selectedComponent}
+                                    selectionModel={state.componentSelectionModel}
                                     density="compact"
                                     autoHeight
                                     onSelectionModelChange={newSelectionModel => {
