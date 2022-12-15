@@ -43,8 +43,8 @@
 
             this.BomChangeService.CreateBomChanges(
                 Arg.Any<BomTreeNode>(),
-                Arg.Any<int>(),
-                Arg.Any<int>()).Returns(this.tree);
+                4567,
+                Arg.Any<int>()).Returns(this.resource.TreeRoot);
 
             this.Response = this.Client.PostAsJsonAsync(
                 $"/purchasing/boms/tree",
