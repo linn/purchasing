@@ -111,6 +111,13 @@
                                 replacedDetail.DeleteReplaceSeq = replacementSeq;
                                 replacedDetail.ChangeState = "PROPOS";
                             }
+
+                            // case: deleting a part from the bom
+                            if (child.ToDelete.GetValueOrDefault())
+                            {
+                                var toDelete = this.bomDetailRepository.FindById(int.Parse(child.Id));
+                                toDelete.DeleteChangeId = id;
+                            }
                         }
 
                         for (var i = 0; i < current.Children.Count(); i++)

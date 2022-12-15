@@ -116,7 +116,11 @@ function BomUtility() {
     const partLookUpCell = params => (
         <>
             <span onContextMenu={crNumber ? onContextMenu : null}>
-                {params.row.isReplaced ? <s>{params.row.name}</s> : params.row.name}
+                {params.row.isReplaced || params.row.toDelete ? (
+                    <s>{params.row.name}</s>
+                ) : (
+                    params.row.name
+                )}
                 <IconButton
                     onClick={() => openPartLookUp(params.row)}
                     disabled={!crNumber || subAssemblyLoading || params.row.isReplaced}
@@ -136,7 +140,11 @@ function BomUtility() {
             editable: false,
             width: 100,
             renderCell: params =>
-                params.row.isReplaced ? <s>{params.row.type}</s> : <span>{params.row.type}</span>
+                params.row.isReplaced || params.row.toDelete ? (
+                    <s>{params.row.type}</s>
+                ) : (
+                    <span>{params.row.type}</span>
+                )
         },
         {
             field: 'name',
@@ -152,7 +160,7 @@ function BomUtility() {
             width: 500,
             editable: false,
             renderCell: params =>
-                params.row.isReplaced ? (
+                params.row.isReplaced || params.row.toDelete ? (
                     <s>{params.row.description}</s>
                 ) : (
                     <span>{params.row.description}</span>
@@ -165,7 +173,11 @@ function BomUtility() {
             editable: true,
             type: 'number',
             renderCell: params =>
-                params.row.isReplaced ? <s>{params.row.qty}</s> : <span>{params.row.qty}</span>
+                params.row.isReplaced || params.row.toDelete ? (
+                    <s>{params.row.qty}</s>
+                ) : (
+                    <span>{params.row.qty}</span>
+                )
         },
         {
             field: 'replacementFor',
@@ -372,6 +384,12 @@ function BomUtility() {
         setContextMenu(null);
     };
 
+    const handleDeleteClick = () => {
+        console.log(contextMenu.detail);
+        processRowUpdate({ ...contextMenu.detail, toDelete: true });
+        setContextMenu(null);
+    };
+
     return (
         <Page history={history} homeUrl={config.appRoot}>
             {renderPartLookUp()}
@@ -483,9 +501,7 @@ function BomUtility() {
                             >
                                 REPLACE
                             </MenuItem>
-                            <MenuItem disabled onClick={handleClose}>
-                                DELETE
-                            </MenuItem>
+                            <MenuItem onClick={handleDeleteClick}>DELETE</MenuItem>
                         </Menu>
                     )}
                     <Grid item xs={1}>

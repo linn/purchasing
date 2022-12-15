@@ -33,5 +33,7 @@
         public int? AddReplaceSeq { get; set; }
 
         public int? DeleteReplaceSeq { get; set; }
+
+        public bool? ToDelete { get; set; }
     }
 }
