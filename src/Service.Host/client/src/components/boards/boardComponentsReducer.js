@@ -1,17 +1,19 @@
 const initialState = {
     layoutSelectionModel: [],
+    selectedLayout: null,
     revisionSelectionModel: [],
+    selectedRevision: null,
     componentSelectionModel: [],
     board: { coreBoard: 'N', clusterBoard: 'N', idBoard: 'N', splitBom: 'N', layouts: [] }
 };
 
-const getLastRevisionCodeArray = (board, layoutCode) => {
+const getLastRevision = (board, layoutCode) => {
     const layout = board.layouts?.find(a => a.layoutCode === layoutCode);
     if (layout?.revisions && layout.revisions.length) {
-        return [layout.revisions[layout.revisions.length - 1].revisionCode];
+        return layout.revisions[layout.revisions.length - 1];
     }
 
-    return [];
+    return null;
 };
 
 export default function boardComponentsReducer(state = initialState, action) {
@@ -20,18 +22,19 @@ export default function boardComponentsReducer(state = initialState, action) {
             return initialState;
         case 'populate': {
             let layoutSelectionModel;
+            let selectedLayout;
             let revisionSelectionModel;
+            let selectedRevision;
             if (action.payload.layouts && action.payload.layouts.length > 0) {
-                layoutSelectionModel = [
-                    action.payload.layouts[action.payload.layouts.length - 1].layoutCode
-                ];
-                revisionSelectionModel = getLastRevisionCodeArray(
-                    action.payload,
-                    layoutSelectionModel[0]
-                );
+                selectedLayout = action.payload.layouts[action.payload.layouts.length - 1];
+                layoutSelectionModel = [selectedLayout.layoutCode];
+                selectedRevision = getLastRevision(action.payload, selectedLayout.layoutCode);
+                revisionSelectionModel = selectedRevision ? [selectedRevision.revisionCode] : [];
             } else {
                 layoutSelectionModel = [];
+                selectedLayout = null;
                 revisionSelectionModel = [];
+                selectedRevision = null;
             }
 
             const layouts = action.payload.layouts ? [...action.payload.layouts] : [];
@@ -42,7 +45,9 @@ export default function boardComponentsReducer(state = initialState, action) {
                     layouts
                 },
                 layoutSelectionModel,
-                revisionSelectionModel
+                selectedLayout,
+                revisionSelectionModel,
+                selectedRevision
             };
         }
         case 'fieldChange':
@@ -51,17 +56,37 @@ export default function boardComponentsReducer(state = initialState, action) {
                 board: { ...state.board, [action.fieldName]: action.payload }
             };
         case 'setSelectedLayout': {
+            let selectedLayout;
+            if (action.payload?.length && state.board.layouts?.length) {
+                selectedLayout = state.board.layouts.find(a => a.layoutCode === action.payload[0]);
+            } else {
+                return state;
+            }
+
+            const lastRevisionForLayout = getLastRevision(state.board, selectedLayout.layoutCode);
+
             return {
                 ...state,
                 layoutSelectionModel: action.payload,
-                revisionSelectionModel: getLastRevisionCodeArray(state.board, action.payload[0]),
+                selectedLayout,
+                selectedRevision: lastRevisionForLayout,
+                revisionSelectionModel: lastRevisionForLayout
+                    ? [lastRevisionForLayout.revisionCode]
+                    : [],
                 componentSelectionModel: []
             };
         }
         case 'setSelectedRevision': {
+            if (!action.payload?.length || !state.selectedLayout) {
+                return state;
+            }
+
             return {
                 ...state,
                 revisionSelectionModel: action.payload,
+                selectedRevision: state.selectedLayout.revisions.find(
+                    a => a.revisionCode === action.payload[0]
+                ),
                 componentSelectionModel: []
             };
         }
