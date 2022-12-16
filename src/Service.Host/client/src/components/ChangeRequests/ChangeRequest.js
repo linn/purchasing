@@ -104,12 +104,27 @@ function ChangeRequest() {
 
     const cancelUri = utilities.getHref(item, 'cancel');
 
+    const makeLiveUri = utilities.getHref(item, 'make-live');
+
     const cancel = request => {
         if (request?.changeState === 'PROPOS' || request?.changeState === 'ACCEPT') {
             reduxDispatch(
                 changeRequestStatusChangeActions.add({
                     id,
                     status: 'CANCEL',
+                    selectedBomChangeIds: selectedBomChanges,
+                    selectedPcasChangeIds: selectedPcasChanges
+                })
+            );
+        }
+    };
+
+    const makeLive = request => {
+        if (request?.changeState === 'ACCEPT') {
+            reduxDispatch(
+                changeRequestStatusChangeActions.add({
+                    id,
+                    status: 'LIVE',
                     selectedBomChangeIds: selectedBomChanges,
                     selectedPcasChangeIds: selectedPcasChanges
                 })
@@ -178,6 +193,14 @@ function ChangeRequest() {
                         )}
                     </Grid>
                     <Grid item xs={12}>
+                        <Button
+                            variant="outlined"
+                            disabled={!makeLiveUri}
+                            onClick={() => makeLive(item)}
+                            style={{ marginRight: '30px' }}
+                        >
+                            Make Live
+                        </Button>
                         <Button
                             variant="outlined"
                             disabled={!cancelUri}

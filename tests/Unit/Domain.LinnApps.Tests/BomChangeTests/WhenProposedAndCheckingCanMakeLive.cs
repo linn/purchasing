@@ -6,7 +6,7 @@
 
     using NUnit.Framework;
 
-    public class WhenLiveAndCheckingCanCancel : ContextBase
+    public class WhenProposedAndCheckingCanMakeLive : ContextBase
     {
         [SetUp]
         public void SetUp()
@@ -19,10 +19,9 @@
         }
 
         [Test]
-        public void ShouldBeAbleToBeCancelled()
+        public void ShouldntBeAbleToBeMakeLive()
         {
-            this.Sut.CanCancel().Should().BeTrue();
+            this.Sut.CanMakeLive().Should().BeFalse();
         }
     }
 }
-

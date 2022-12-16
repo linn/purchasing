@@ -137,5 +137,65 @@
                 }
             }
         }
+
+        public bool CanMakeLive() => this.ChangeState == "ACCEPT";
+
+        public void MakeLive(Employee appliedBy, IEnumerable<int> selectedBomChangeIds, IEnumerable<int> selectedPcasChangeIds)
+        {
+            if (this.CanMakeLive())
+            {
+                var allLive = true;
+                var globalLive = !(selectedBomChangeIds?.Any() ?? false) && !(selectedPcasChangeIds?.Any() ?? false);
+
+                if (this.BomChanges != null)
+                {
+                    foreach (var bomChange in this.BomChanges)
+                    {
+                        if (bomChange.CanMakeLive())
+                        {
+                            if (selectedBomChangeIds == null && !allLive)
+                            {
+                                allLive = false;
+                            }
+                            else if (globalLive || selectedBomChangeIds.Contains(bomChange.ChangeId))
+                            {
+                                bomChange.MakeLive(appliedBy);
+                            }
+                            else
+                            {
+                                allLive = false;
+                            }
+                        }
+                    }
+                }
+
+                if (this.PcasChanges != null)
+                {
+                    foreach (var pcasChange in this.PcasChanges)
+                    {
+                        if (pcasChange.CanCancel())
+                        {
+                            if (selectedPcasChangeIds == null && !globalLive)
+                            {
+                                allLive = false;
+                            }
+                            else if (globalLive || selectedPcasChangeIds.Contains(pcasChange.ChangeId))
+                            {
+                                pcasChange.MakeLive(appliedBy);
+                            }
+                            else
+                            {
+                                allLive = false;
+                            }
+                        }
+                    }
+                }
+
+                if (allLive)
+                {
+                    this.ChangeState = "LIVE";
+                }
+            }
+        }
     }
 }

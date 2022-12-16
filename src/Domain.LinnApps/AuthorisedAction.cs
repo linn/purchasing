@@ -47,5 +47,7 @@
         public const string ApproveChangeRequest = "change-request.approve";
 
         public const string AdminChangeRequest = "change-request.admin";
+
+        public const string MakeLiveChangeRequest = "change-request.make-live";
     }
 }

@@ -87,6 +87,11 @@
                 yield return new LinkResource { Rel = "cancel", Href = $"/purchasing/change-requests/status" };
             }
 
+            if (model.CanMakeLive() && this.authService.HasPermissionFor(AuthorisedAction.MakeLiveChangeRequest, privileges))
+            {
+                yield return new LinkResource { Rel = "make-live", Href = $"/purchasing/change-requests/status" };
+            }
+
             yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
         }
     }

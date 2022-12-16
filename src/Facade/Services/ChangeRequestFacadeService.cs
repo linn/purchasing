@@ -83,6 +83,30 @@
             }
         }
 
+        public IResult<ChangeRequestResource> MakeLiveChangeRequest(
+            int documentNumber,
+            int appliedById,
+            IEnumerable<int> selectedBomChangeIds,
+            IEnumerable<int> selectedPcasChangeIds,
+            IEnumerable<string> privileges = null)
+        {
+            try
+            {
+                var request = this.changeRequestService.MakeLive(documentNumber, appliedById, selectedBomChangeIds, selectedPcasChangeIds, privileges);
+                this.transactionManager.Commit();
+                var resource = (ChangeRequestResource)this.resourceBuilder.Build(request, privileges);
+                return new SuccessResult<ChangeRequestResource>(resource);
+            }
+            catch (ItemNotFoundException)
+            {
+                return new NotFoundResult<ChangeRequestResource>("Change Request not found");
+            }
+            catch (InvalidStateChangeException)
+            {
+                return new BadRequestResult<ChangeRequestResource>("Cannot make this change request live");
+            }
+        }
+
         public IResult<ChangeRequestResource> ChangeStatus(ChangeRequestStatusChangeResource request, int changedById, IEnumerable<string> privileges = null)
         {
             if (request?.Status == "ACCEPT")
@@ -93,6 +117,11 @@
             if (request?.Status == "CANCEL")
             {
                 return this.CancelChangeRequest(request.Id, changedById, request.SelectedBomChangeIds, request.SelectedPcasChangeIds, privileges);
+            }
+
+            if (request?.Status == "LIVE")
+            {
+                return this.MakeLiveChangeRequest(request.Id, changedById, request.SelectedBomChangeIds, request.SelectedPcasChangeIds, privileges);
             }
 
             return new BadRequestResult<ChangeRequestResource>($"Cannot change status to {request?.Status}");
