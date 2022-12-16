@@ -75,12 +75,21 @@ function BoardComponents() {
         { field: 'quantity', headerName: 'Qty', width: 120 }
     ];
 
-    const layoutVersionIsCorrect = (from, to) => {
-        if (state.selectedLayout) {
+    const versionsAreCorrect = (fromLayout, toLayout, fromRevision, toRevision) => {
+        if (state.selectedLayout && state.selectedRevision) {
             if (
-                state.selectedLayout.layoutSequence >= from &&
-                (!to || state.selectedLayout.layoutSequence <= to)
+                state.selectedLayout.layoutSequence >= fromLayout &&
+                (!toLayout || state.selectedLayout.layoutSequence <= toLayout)
             ) {
+                if (
+                    (state.selectedRevision.versionNumber < fromRevision &&
+                        state.selectedLayout.layoutSequence === fromLayout) ||
+                    (state.selectedRevision.versionNumber > toRevision &&
+                        state.selectedLayout.layoutSequence === toLayout)
+                ) {
+                    return false;
+                }
+
                 return true;
             }
         }
@@ -94,7 +103,12 @@ function BoardComponents() {
                   f =>
                       f.changeState !== 'CANCEL' &&
                       f.changeState !== 'HIST' &&
-                      layoutVersionIsCorrect(f.fromLayoutVersion, f.toLayoutVersion)
+                      versionsAreCorrect(
+                          f.fromLayoutVersion,
+                          f.toLayoutVersion,
+                          f.fromRevisionVersion,
+                          f.toRevisionVersion
+                      )
               )
               .map(c => ({ ...c, id: c.boardLine }))
         : [];
