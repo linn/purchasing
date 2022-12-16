@@ -10,11 +10,11 @@
 
         public string BomType { get; set; }
 
-        public int PreferredSupplier { get; set; }
+        public int? PreferredSupplier { get; set; }
 
         public int? LeadTime { get; set; }
 
-        public decimal Qty { get; set; }
+        public decimal? Qty { get; set; }
 
         public decimal? StandardPrice { get; set; }
 
