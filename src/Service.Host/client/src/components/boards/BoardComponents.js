@@ -55,11 +55,11 @@ function BoardComponents() {
         }
     }, [item]);
 
-    const layoutColumns = [{ field: 'layoutCode', headerName: 'Layout', width: 175 }];
+    const layoutColumns = [{ field: 'layoutCode', headerName: 'Layout', width: 165 }];
     const layoutRows = state.board?.layouts
         ? state.board.layouts.map(l => ({ ...l, id: l.layoutCode }))
         : [];
-    const revisionColumns = [{ field: 'revisionCode', headerName: 'Revision', width: 175 }];
+    const revisionColumns = [{ field: 'revisionCode', headerName: 'Revision', width: 165 }];
     const revisionRows =
         state.board?.layouts &&
         state.layoutSelectionModel?.length &&
@@ -71,10 +71,32 @@ function BoardComponents() {
     const componentColumns = [
         { field: 'cRef', headerName: 'CRef', width: 140 },
         { field: 'partNumber', headerName: 'Part Number', width: 140 },
-        { field: 'assemblyTechnology', headerName: 'Ass Tech', width: 140 }
+        { field: 'assemblyTechnology', headerName: 'Ass Tech', width: 140 },
+        { field: 'quantity', headerName: 'Qty', width: 120 }
     ];
+
+    const layoutVersionIsCorrect = (from, to) => {
+        if (state.selectedLayout) {
+            if (
+                state.selectedLayout.layoutSequence >= from &&
+                (!to || state.selectedLayout.layoutSequence <= to)
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    };
+
     const componentRows = state.board?.components
-        ? state.board.components.map(c => ({ ...c, id: c.boardLine }))
+        ? state.board.components
+              .filter(
+                  f =>
+                      f.changeState !== 'CANCEL' &&
+                      f.changeState !== 'HIST' &&
+                      layoutVersionIsCorrect(f.fromLayoutVersion, f.toLayoutVersion)
+              )
+              .map(c => ({ ...c, id: c.boardLine }))
         : [];
 
     const layout =
@@ -146,7 +168,7 @@ function BoardComponents() {
                     </Grid>
                 )}
                 <Grid item xs={2}>
-                    <div style={{ width: '180px' }}>
+                    <div style={{ width: '170px' }}>
                         {layout && (
                             <>
                                 <DataGrid
@@ -173,7 +195,7 @@ function BoardComponents() {
                     </div>
                 </Grid>
                 <Grid item xs={2}>
-                    <div style={{ width: '180px' }}>
+                    <div style={{ width: '170px' }}>
                         {revision && (
                             <>
                                 <DataGrid
@@ -197,7 +219,7 @@ function BoardComponents() {
                     </div>
                 </Grid>
                 <Grid item xs={8}>
-                    <div style={{ width: '400px' }}>
+                    <div style={{ width: '600px' }}>
                         {state.board?.components && (
                             <>
                                 <DataGrid

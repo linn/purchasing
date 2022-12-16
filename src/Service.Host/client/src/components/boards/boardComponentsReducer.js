@@ -38,16 +38,19 @@ export default function boardComponentsReducer(state = initialState, action) {
             }
 
             const layouts = action.payload.layouts ? [...action.payload.layouts] : [];
+            const components = action.payload.components ? [...action.payload.components] : [];
             return {
                 ...state,
                 board: {
                     ...action.payload,
-                    layouts
+                    layouts,
+                    components
                 },
                 layoutSelectionModel,
                 selectedLayout,
                 revisionSelectionModel,
-                selectedRevision
+                selectedRevision,
+                componentSelectionModel: []
             };
         }
         case 'fieldChange':
