@@ -220,7 +220,7 @@
                             {
                                 RowId = member.PartNumber,
                                 ColumnId = "Qty",
-                                Value = member.Qty
+                                Value = member.Qty.GetValueOrDefault()
                             });
                     values.Add(
                         new CalculationValueModel
@@ -241,13 +241,17 @@
                             {
                                 RowId = member.PartNumber,
                                 ColumnId = "TotalMaterial",
-                                Value = member.Qty * member.MaterialPrice.GetValueOrDefault()
+                                Value = member.Qty.GetValueOrDefault() * member.MaterialPrice.GetValueOrDefault()
                             });
                 }
                 reportLayout.SetGridData(values);
                 reportResult.Breakdown = reportLayout.GetResultsModel();
-                reportResult.MaterialTotal = Math.Round(group.Sum(x => x.Qty * x.MaterialPrice.GetValueOrDefault()), 5);
-                reportResult.StandardTotal = Math.Round(group.Sum(x => x.Qty *  x.StandardPrice.GetValueOrDefault()), 5);
+                reportResult.MaterialTotal = Math.Round(
+                    group.Sum(
+                        x => x.Qty.GetValueOrDefault() * x.MaterialPrice.GetValueOrDefault()), 5);
+                reportResult.StandardTotal = Math.Round(
+                    group.Sum(
+                        x => x.Qty.GetValueOrDefault() *  x.StandardPrice.GetValueOrDefault()), 5);
 
                 results.Add(reportResult);
             }
