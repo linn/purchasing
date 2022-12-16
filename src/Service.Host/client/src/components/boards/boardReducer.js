@@ -184,18 +184,22 @@ export default function boardReducer(state = initialState, action) {
             };
         }
         case 'updateLayout': {
-            if (state.selectedLayout?.length) {
+            if (state.selectedLayout?.length && state.board?.layouts?.length) {
                 if (action.fieldName === 'layoutCode') {
                     if (!layoutCodesAreUnique(state.board.layouts, action.payload)) {
                         return state;
                     }
                 }
 
-                const layoutToUpdate = state.board.layouts.find(
-                    s => s.layoutCode === state.selectedLayout[0]
+                const { layouts } = state.board;
+
+                const layoutIndex = state.board.layouts.findIndex(
+                    i => i.layoutCode === state.selectedLayout[0]
                 );
 
-                layoutToUpdate[action.fieldName] = action.payload;
+                let layoutToUpdate = state.board.layouts[layoutIndex];
+
+                layoutToUpdate = { ...layoutToUpdate, [action.fieldName]: action.payload };
 
                 if (action.fieldName === 'layoutType' || action.fieldName === 'layoutNumber') {
                     if (layoutToUpdate.layoutType && layoutToUpdate.layoutNumber) {
@@ -217,6 +221,8 @@ export default function boardReducer(state = initialState, action) {
                     layoutToUpdate.pcbPartNumber = `PCB ${state.board.boardCode}/${action.payload}`;
                 }
 
+                layouts[layoutIndex] = layoutToUpdate;
+
                 return {
                     ...state,
                     selectedLayout: [layoutToUpdate.layoutCode]
@@ -227,7 +233,8 @@ export default function boardReducer(state = initialState, action) {
         }
         case 'updateRevision': {
             if (state.selectedLayout?.length && state.selectedRevision?.length) {
-                const layoutIndex = state.board.layouts.findIndex(
+                const { layouts } = state.board;
+                const layoutIndex = layouts.findIndex(
                     s => s.layoutCode === state.selectedLayout[0]
                 );
 
@@ -242,11 +249,21 @@ export default function boardReducer(state = initialState, action) {
                     }
                 }
 
-                const currentLayout = state.board.layouts[layoutIndex];
-                const revisionToUpdate = currentLayout.revisions?.find(
+                const currentLayout = { ...layouts[layoutIndex] };
+                layouts[layoutIndex] = currentLayout;
+
+                const revisionIndex = currentLayout.revisions?.findIndex(
                     a => a.revisionCode === state.selectedRevision[0]
                 );
-                revisionToUpdate[action.fieldName] = action.payload;
+
+                if (!currentLayout.revisions?.length || revisionIndex < 0) {
+                    return state;
+                }
+
+                const revisions = [...currentLayout.revisions];
+
+                let revisionToUpdate = revisions[revisionIndex];
+                revisionToUpdate = { ...revisionToUpdate, [action.fieldName]: action.payload };
 
                 if (action.fieldName === 'revisionNumber') {
                     if (
@@ -283,6 +300,9 @@ export default function boardReducer(state = initialState, action) {
                         revisionToUpdate.pcsmPartNumber = null;
                     }
                 }
+
+                revisions[revisionIndex] = revisionToUpdate;
+                currentLayout.revisions = [...revisions];
 
                 return {
                     ...state,

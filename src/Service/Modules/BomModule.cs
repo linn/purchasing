@@ -32,6 +32,7 @@
             app.MapGet("/purchasing/boms/boards/{id}", this.GetBoard);
             app.MapGet("/purchasing/boms/tree/export", this.GetTreeExport);
             app.MapGet("/purchasing/boms/boards", this.GetBoards);
+            app.MapGet("/purchasing/boms/board-components", this.GetApp);
             app.MapGet("/purchasing/boms/boards-summary", this.GetBoardsSummary);
             app.MapGet("/purchasing/boms/boards/create", this.GetApp);
             app.MapPost("/purchasing/boms/boards", this.AddCircuitBoard);

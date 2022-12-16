@@ -318,6 +318,7 @@
             this.BuildBoardRevisions(builder);
             this.BuildBoardRevisionTypes(builder);
             this.BuildBoardComponentSummary(builder);
+            this.BuildBoardComponents(builder);
             this.BuildVMasterMrh(builder);
             this.BuildBomDetails(builder);
             this.BuildBomCostDetails(builder);
@@ -2043,6 +2044,7 @@
             entity.Property(a => a.ClusterBoard).HasColumnName("CLUSTER_BOARD").HasMaxLength(1);
             entity.Property(a => a.IdBoard).HasColumnName("ID_BOARD").HasMaxLength(1);
             entity.HasMany(a => a.Layouts).WithOne().HasForeignKey(c => c.BoardCode);
+            entity.HasMany(a => a.Components).WithOne().HasForeignKey(c => c.BoardCode);
         }
 
         private void BuildBoardLayouts(ModelBuilder builder)
@@ -2119,6 +2121,25 @@
             entity.Property(a => a.PcasPartNumber).HasColumnName("PCAS_PART_NUMBER").HasMaxLength(14);
             entity.Property(a => a.PcsmPartNumber).HasColumnName("PCSM_PART_NUMBER").HasMaxLength(14);
             entity.Property(a => a.PcbPartNumber).HasColumnName("PCB_PART_NUMBER").HasMaxLength(14);
+        }
+
+        private void BuildBoardComponents(ModelBuilder builder)
+        {
+            var entity = builder.Entity<BoardComponent>().ToTable("PCAS_COMPONENTS");
+            entity.HasKey(a => new { a.BoardCode, a.BoardLine });
+            entity.Property(a => a.BoardCode).HasColumnName("BOARD_CODE").HasMaxLength(6);
+            entity.Property(a => a.BoardLine).HasColumnName("BOARD_LINE");
+            entity.Property(a => a.CRef).HasColumnName("CREF").HasMaxLength(8);
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER").HasMaxLength(14);
+            entity.Property(a => a.AssemblyTechnology).HasColumnName("ASSEMBLY_TECHNOLOGY").HasMaxLength(4);
+            entity.Property(a => a.ChangeState).HasColumnName("CHANGE_STATE").HasMaxLength(6);
+            entity.Property(a => a.FromLayoutVersion).HasColumnName("FROM_LAYOUT_VERSION");
+            entity.Property(a => a.FromRevisionVersion).HasColumnName("FROM_REVISION_VERSION");
+            entity.Property(a => a.ToLayoutVersion).HasColumnName("TO_LAYOUT_VERSION");
+            entity.Property(a => a.ToRevisionVersion).HasColumnName("TO_REVISION_VERSION");
+            entity.Property(a => a.AddChangeId).HasColumnName("ADD_CHANGE_ID");
+            entity.Property(a => a.DeleteChangeId).HasColumnName("DELETE_CHANGE_ID");
+            entity.Property(a => a.Quantity).HasColumnName("QTY");
         }
 
         private void BuildVMasterMrh(ModelBuilder builder)

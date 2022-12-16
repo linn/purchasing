@@ -32,6 +32,7 @@
                            ClusterBoard = entity.ClusterBoard,
                            IdBoard = entity.IdBoard,
                            Layouts = entity.Layouts?.OrderBy(a => a.LayoutSequence).Select(MakeLayoutResource),
+                           Components = entity.Components?.Select(MakeComponentResource),
                            Links = this.BuildLinks(entity, claims).ToArray()
                        };
         }
@@ -102,6 +103,31 @@
                            DefaultLayoutType = revisionType.DefaultLayoutType,
                            DateObsolete = revisionType.DateObsolete?.ToString("o"),
                            RevisionSuffix = revisionType.RevisionSuffix
+                       };
+        }
+
+        private static BoardComponentResource MakeComponentResource(BoardComponent boardComponent)
+        {
+            if (boardComponent is null)
+            {
+                return null;
+            }
+
+            return new BoardComponentResource
+                       {
+                           BoardCode = boardComponent.BoardCode,
+                           BoardLine = boardComponent.BoardLine,
+                           CRef = boardComponent.CRef,
+                           PartNumber = boardComponent.PartNumber,
+                           AssemblyTechnology = boardComponent.AssemblyTechnology,
+                           ChangeState = boardComponent.ChangeState,
+                           FromLayoutVersion = boardComponent.FromLayoutVersion,
+                           FromRevisionVersion = boardComponent.FromRevisionVersion,
+                           ToLayoutVersion = boardComponent.ToLayoutVersion,
+                           ToRevisionVersion = boardComponent.ToRevisionVersion,
+                           AddChangeId = boardComponent.AddChangeId,
+                           DeleteChangeId = boardComponent.DeleteChangeId,
+                           Quantity = boardComponent.Quantity
                        };
         }
 
