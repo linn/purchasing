@@ -149,7 +149,8 @@
 
             var ids = treeNodes.Select(x => x.Id).ToList();
 
-            var details = this.bomCostReportDetails.FilterBy(x => ids.Contains(x.DetailId.ToString())).ToList();
+            var details = this.bomCostReportDetails.FilterBy(x => ids.Select(
+                i => string.IsNullOrEmpty(i) ? 0 : int.Parse(i)).Contains(x.DetailId)).ToList();
 
             details = details.OrderBy(d => ids.IndexOf(d.DetailId.ToString())).ToList();
 
