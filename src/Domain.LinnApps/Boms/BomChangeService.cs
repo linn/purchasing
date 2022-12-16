@@ -6,6 +6,7 @@
 
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
+    using Linn.Purchasing.Domain.LinnApps.Boms.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
 
     public class BomChangeService : IBomChangeService
@@ -44,7 +45,7 @@
                     var current = q.Dequeue();
 
                     // add a new bom_change for any bom that has changed - db triggers will create the bom if required
-                    if (current.HasChanged.GetValueOrDefault())
+                    if (current.HasChanged.GetValueOrDefault() && current.Children != null)
                     {
                         var bom = this.bomRepository.FindBy(x => x.BomName == current.Name);
 
@@ -65,32 +66,60 @@
                                          };
                         this.bomChangeRepository.Add(change);
 
+                        var replacementSeq = 1;
+
                         foreach (var child in current.Children)
                         {
+                            // case: adding a new part that is not on this bom
                             // add a detail for any new part on the bom
-                            if (bom.Details.All(d => d.PartNumber != child.Name))
+                            if (bom.Details.All(d => d.PartNumber != child.Name && d.ChangeState == "LIVE"))
                             {
                                 child.ChangeState = "PROPOS";
-                                this.bomDetailRepository.Add(new BomDetail
-                                                                  {
-                                                                      DetailId = this.databaseService.GetIdSequence("BOMDET_SEQ"),
-                                                                      BomId = bom.BomId,
-                                                                      PartNumber = child.Name,
-                                                                      Qty = child.Qty,
-                                                                      GenerateRequirement = "Y", // todo
-                                                                      ChangeState = "PROPOS",
-                                                                      AddChangeId = id,
-                                                                      AddReplaceSeq = null, // todo
-                                                                      DeleteChangeId = null, // todo
-                                                                      DeleteReplaceSeq = null, // todo
-                                                                      PcasLine = "N"
-                                                                  });
+                                this.bomDetailRepository.Add(new BomDetail 
+                                                                 {
+                                                                     DetailId = this.databaseService.GetIdSequence("BOMDET_SEQ"),
+                                                                     BomId = bom.BomId,
+                                                                     PartNumber = child.Name,
+                                                                     Qty = child.Qty,
+                                                                     GenerateRequirement = "Y", // todo
+                                                                     ChangeState = "PROPOS",
+                                                                     AddChangeId = id,
+                                                                     AddReplaceSeq = string.IsNullOrEmpty(child.ReplacementFor) 
+                                                                         ? null : replacementSeq++,
+                                                                     DeleteChangeId = null,
+                                                                     DeleteReplaceSeq = null,
+                                                                     PcasLine = "N"
+                                                                 });
+                            }
+
+                            // case: replacing a part on this bom with another part
+                            if (!string.IsNullOrEmpty(child.ReplacedBy))
+                            {
+                                var replacement = current.Children.FirstOrDefault(c => c.ReplacementFor == child.Name);
+
+                                if (replacement == null)
+                                {
+                                    throw new InvalidReplacementException(
+                                        $"{child.Name} is marked for replacement but no replacement part is specified");
+                                }
+
+                                replacement.AddReplaceSeq = replacementSeq;
+                                child.DeleteReplaceSeq = replacementSeq;
+
+                                var replacedDetail = this.bomDetailRepository.FindById(int.Parse(child.Id));
+                                replacedDetail.DeleteChangeId = id;
+                                replacedDetail.DeleteReplaceSeq = replacementSeq;
+                                replacedDetail.ChangeState = "PROPOS";
+                            }
+
+                            // case: deleting a part from the bom
+                            if (child.ToDelete.GetValueOrDefault())
+                            {
+                                var toDelete = this.bomDetailRepository.FindById(int.Parse(child.Id));
+                                toDelete.DeleteChangeId = id;
                             }
                         }
-                    }
 
-                    if (current.Children != null)
-                    {
                         for (var i = 0; i < current.Children.Count(); i++)
                         {
                             if (current.Children?.Count() > 0)

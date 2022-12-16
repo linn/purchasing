@@ -1947,6 +1947,7 @@
             entity.Property(a => a.PcasLine).HasColumnName("PCAS_LINE");
             entity.HasOne(a => a.Part).WithMany().HasForeignKey(a => a.PartNumber);
             entity.HasOne(a => a.BomPart).WithMany().HasForeignKey(a => a.BomPartNumber);
+            entity.HasOne(a => a.AddChange).WithMany().HasForeignKey(d => d.AddChangeId);
         }
 
         private void BuildBomDetails(ModelBuilder builder)

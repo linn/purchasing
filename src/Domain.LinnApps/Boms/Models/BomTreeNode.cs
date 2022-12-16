@@ -21,5 +21,19 @@
         public bool? HasChanged { get; set; }
 
         public string ChangeState { get; set; }
+
+        public int AddChangeDocumentNumber { get; set; }
+
+        public bool IsReplaced { get; set; }
+
+        public string ReplacementFor { get; set; }
+
+        public string ReplacedBy { get; set; }
+
+        public int? AddReplaceSeq { get; set; }
+
+        public int? DeleteReplaceSeq { get; set; }
+
+        public bool? ToDelete { get; set; }
     }
 }

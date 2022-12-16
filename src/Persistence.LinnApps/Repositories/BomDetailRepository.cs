@@ -28,6 +28,7 @@
             return this.bomDetails.Include(b => b.Part)
                 .ThenInclude(p => p.PartSuppliers.Where(ps => ps.SupplierRanking == 1))
                 .Include(d => d.PartRequirement)
+                .Include(d => d.AddChange)
                 .Include(d => d.BomPart).Where(expression)
                 .AsNoTracking();
         }

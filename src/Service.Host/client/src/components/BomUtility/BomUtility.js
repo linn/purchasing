@@ -19,7 +19,8 @@ import queryString from 'query-string';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import { useSelector, useDispatch } from 'react-redux';
-
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import BomTree from '../BomTree';
 import history from '../../history';
@@ -58,11 +59,9 @@ function BomUtility() {
 
     const [treeView, setTreeView] = useState();
 
-    const [expanded, setExpanded, nodesWithChildren] = useExpandNodesWithChildren(
-        [],
-        treeView,
-        bomName
-    );
+    const [expanded, setExpanded] = useState();
+
+    const { nodesWithChildren } = useExpandNodesWithChildren([], treeView, bomName);
 
     const [partLookUp, setPartLookUp] = useState({ open: false, forRow: null });
 
@@ -94,13 +93,37 @@ function BomUtility() {
         collectionSelectorHelpers.getSearchLoading(reduxState.parts)
     );
 
+    const [contextMenu, setContextMenu] = useState(null);
+    const [selected, setSelected] = useState(null);
+
+    const onContextMenu = e => {
+        e.preventDefault();
+        const { target } = e;
+        const detail = selected.children.find(x => x.name === target.innerText);
+        setContextMenu(
+            crNumber && contextMenu === null
+                ? {
+                      mouseX: e.clientX + 2,
+                      mouseY: e.clientY - 6,
+                      part: target.innerText,
+                      canReplace: Number(crNumber) !== detail.addChangeDocumentNumber,
+                      detail: { ...detail, parent: selected.id }
+                  }
+                : null
+        );
+    };
+
     const partLookUpCell = params => (
         <>
-            <span>
-                {params.row.name}
+            <span onContextMenu={crNumber ? onContextMenu : null}>
+                {params.row.isReplaced || params.row.toDelete ? (
+                    <s>{params.row.name}</s>
+                ) : (
+                    params.row.name
+                )}
                 <IconButton
                     onClick={() => openPartLookUp(params.row)}
-                    disabled={!crNumber || subAssemblyLoading}
+                    disabled={!crNumber || subAssemblyLoading || params.row.isReplaced}
                 >
                     <ManageSearchIcon />
                 </IconButton>
@@ -109,13 +132,18 @@ function BomUtility() {
     );
 
     const columns = [
-        { field: 'id', headerName: 'Id', width: 100, hide: true },
         { field: 'parent', headerName: 'Id', width: 100, hide: true },
         {
             field: 'type',
             headerName: 'Type',
             editable: false,
-            width: 100
+            width: 100,
+            renderCell: params =>
+                params.row.isReplaced || params.row.toDelete ? (
+                    <s>{params.row.type}</s>
+                ) : (
+                    <span>{params.row.type}</span>
+                )
         },
         {
             field: 'name',
@@ -125,14 +153,52 @@ function BomUtility() {
             renderCell: partLookUpCell,
             align: 'right'
         },
-        { field: 'description', headerName: 'Description', width: 500, editable: false },
-        { field: 'qty', headerName: 'Qty', width: 100, editable: true, type: 'number' }
+        {
+            field: 'description',
+            headerName: 'Description',
+            width: 500,
+            editable: false,
+            renderCell: params =>
+                params.row.isReplaced || params.row.toDelete ? (
+                    <s>{params.row.description}</s>
+                ) : (
+                    <span>{params.row.description}</span>
+                )
+        },
+        {
+            field: 'qty',
+            headerName: 'Qty',
+            width: 100,
+            editable: true,
+            type: 'number',
+            renderCell: params =>
+                params.row.isReplaced || params.row.toDelete ? (
+                    <s>{params.row.qty}</s>
+                ) : (
+                    <span>{params.row.qty}</span>
+                )
+        },
+        {
+            field: 'replacementFor',
+            headerName: 'Replacing',
+            width: 180,
+            editable: false,
+            hide: true // useful for debugging, but hidden generally
+        },
+        {
+            field: 'replacedBy',
+            headerName: 'Replaced By',
+            width: 180,
+            editable: false,
+            hide: true // useful for debugging, but hidden generally
+        }
     ];
-    const [selected, setSelected] = useState(null);
 
     useEffect(() => {
         if (bomTree === null) {
             setSelected({ id: 'root', name: bomName, children: [] });
+        } else {
+            setSelected(bomTree);
         }
         setTreeView(
             bomTree !== null || bomTreeLoading
@@ -154,25 +220,36 @@ function BomUtility() {
                 if (current.id === newNode.parent) {
                     current.hasChanged = true;
                     if (addNode) {
-                        current.children = [
-                            ...current.children.filter(x => x.id !== newNode.id),
-                            {
-                                ...newNode,
-                                children: [
-                                    {
-                                        id: uid(),
-                                        type: 'C',
-                                        parent: newNode.id,
-                                        changeState: 'PROPOS'
-                                    }
-                                ]
-                            }
-                        ];
+                        current.children = [...current.children, newNode];
                     } else {
-                        current.children = [
-                            ...current.children.filter(x => x.id !== newNode.id),
-                            newNode
-                        ];
+                        let replacedIndex = null;
+                        let replacementFor = null;
+                        current.children = current.children.map((x, index) => {
+                            if (x.id !== newNode.id) {
+                                if (
+                                    newNode.replacementFor &&
+                                    newNode.name &&
+                                    newNode.replacementFor === x.name
+                                ) {
+                                    return { ...x, replacedBy: newNode.name };
+                                }
+                                return x;
+                            }
+                            if (newNode.isReplaced) {
+                                replacedIndex = index;
+                                replacementFor = x.name;
+                            }
+                            return { ...newNode, changeState: 'PROPOS' };
+                        });
+                        if (replacedIndex !== null) {
+                            current.children.splice(replacedIndex + 1, 0, {
+                                id: uid(),
+                                type: 'C',
+                                parent: current.id,
+                                changeState: 'PROPOS',
+                                replacementFor
+                            });
+                        }
                     }
 
                     return newTree;
@@ -298,6 +375,18 @@ function BomUtility() {
         );
     }
 
+    const handleClose = () => setContextMenu(null);
+
+    const handleReplaceClick = () => {
+        processRowUpdate({ ...contextMenu.detail, isReplaced: true });
+        setContextMenu(null);
+    };
+
+    const handleDeleteClick = () => {
+        processRowUpdate({ ...contextMenu.detail, toDelete: true });
+        setContextMenu(null);
+    };
+
     return (
         <Page history={history} homeUrl={config.appRoot}>
             {renderPartLookUp()}
@@ -315,6 +404,7 @@ function BomUtility() {
                             }))}
                             allowNoValue
                             label="CRF Number"
+                            propertyName="crNumber"
                             helperText="Select a corresponding CRF to start editing"
                             value={crNumber}
                             onChange={(_, n) => {
@@ -365,8 +455,14 @@ function BomUtility() {
                 >
                     <DataGrid
                         sx={{
+                            '& .propos.MuiDataGrid-row:hover': {
+                                bgcolor: '#FFD580'
+                            },
                             '& .propos': {
                                 bgcolor: '#FFD580'
+                            },
+                            '& .accept.MuiDataGrid-row:hover': {
+                                bgcolor: '#b0f7b9'
                             },
                             '& .accept': {
                                 bgcolor: '#b0f7b9'
@@ -385,6 +481,26 @@ function BomUtility() {
                         columns={columns}
                         getRowClassName={params => params.row.changeState?.toLowerCase()}
                     />
+                    {contextMenu && crNumber && (
+                        <Menu
+                            open={contextMenu !== null}
+                            onClose={handleClose}
+                            anchorReference="anchorPosition"
+                            anchorPosition={
+                                contextMenu !== null
+                                    ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+                                    : undefined
+                            }
+                        >
+                            <MenuItem
+                                disabled={!contextMenu.canReplace}
+                                onClick={handleReplaceClick}
+                            >
+                                REPLACE
+                            </MenuItem>
+                            <MenuItem onClick={handleDeleteClick}>DELETE</MenuItem>
+                        </Menu>
+                    )}
                     <Grid item xs={1}>
                         <Button
                             disabled={!crNumber || subAssemblyLoading}

@@ -29,5 +29,5 @@ export default function useExpandNodesWithChildren(initial, tree, rootName) {
     useEffect(() => {
         setExpanded(nodesWithChildren.map(x => x.id));
     }, [nodesWithChildren]);
-    return [expanded, setExpanded, nodesWithChildren];
+    return { expanded, setExpanded, nodesWithChildren };
 }
