@@ -116,7 +116,7 @@ function CreatePurchaseOrderUt() {
     };
 
     const handleDetailQtyFieldChange = (propertyName, newValue, detail) => {
-        if (newValue && newValue > 0 && newValue !== order[propertyName]) {
+        if (newValue >= 0 && newValue !== order[propertyName]) {
             dispatch({
                 payload: {
                     ...detail,
@@ -205,6 +205,7 @@ function CreatePurchaseOrderUt() {
                 },
                 type: 'detailFieldUpdate'
             });
+            setPartSearchTerm(prevOrder.details[0].partNumber);
             dispatch({
                 payload: {
                     lineNumber: 1,
@@ -234,6 +235,7 @@ function CreatePurchaseOrderUt() {
                 },
                 type: 'detailFieldUpdate'
             });
+            setPartSearchTerm(null);
             dispatch({
                 payload: {
                     lineNumber: 1,
