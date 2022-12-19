@@ -35,7 +35,9 @@ function CloseSquare(props) {
     );
 }
 
-const StyledTreeItem = styled(props => <TreeItem {...props} />)(({ changeState, theme }) => ({
+const StyledTreeItem = styled(props => <TreeItem {...props} />, {
+    shouldForwardProp: prop => prop !== 'changeState'
+})(({ changeState, theme }) => ({
     [`& .${treeItemClasses.iconContainer}`]: {
         '& .close': {
             opacity: 0.3
