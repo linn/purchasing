@@ -90,8 +90,8 @@
             var privileges = req.HttpContext.GetPrivileges();
 
             var result = facadeService.Update(
-            id,
-            resource,
+                id,
+                resource,
                 privileges,
                 res.HttpContext.User.GetEmployeeNumber());
 

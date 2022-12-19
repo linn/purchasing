@@ -20,7 +20,6 @@ function MainTab({ item, approve }) {
     const [updated, setUpdated] = useState(item);
 
     const handleFieldChange = (propertyName, newValue) => {
-        console.log(updated);
         setUpdated(r => ({ ...r, [propertyName]: newValue }));
     };
 
