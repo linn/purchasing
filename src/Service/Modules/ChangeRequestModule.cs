@@ -24,6 +24,7 @@
             app.MapGet("/purchasing/change-requests", this.GetChangeRequests);
             app.MapGet("/purchasing/change-requests/{id:int}", this.GetChangeRequest);
             app.MapPost("/purchasing/change-requests/status", this.ChangeStatus);
+            app.MapPut("/purchasing/change-requests/{id:int}", this.UpdateChangeRequest);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -75,6 +76,24 @@
             IChangeRequestFacadeService facadeService)
         {
             var result = facadeService.Add(request, req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task UpdateChangeRequest(
+            HttpRequest req,
+            HttpResponse res,
+            int id,
+            ChangeRequestResource resource,
+            IChangeRequestFacadeService facadeService)
+        {
+            var privileges = req.HttpContext.GetPrivileges();
+
+            var result = facadeService.Update(
+                id,
+                resource,
+                privileges,
+                res.HttpContext.User.GetEmployeeNumber());
 
             await res.Negotiate(result);
         }

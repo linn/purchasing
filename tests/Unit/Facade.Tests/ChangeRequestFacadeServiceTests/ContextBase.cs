@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Facade.Tests.ChangeRequestFacadeServiceTests
 {
     using Linn.Common.Authorisation;
+    using Linn.Common.Logging;
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps;
@@ -27,6 +28,8 @@
 
         protected IRepository<Employee, int> EmployeeRepository { get; private set; }
 
+        protected ILog Logger { get; set; }
+
         protected ChangeRequestFacadeService Sut { get; private set; }
 
         [SetUp]
@@ -38,20 +41,22 @@
             this.DatabaseService = Substitute.For<IDatabaseService>();
             this.PartRepository = Substitute.For<IQueryRepository<Part>>();
             this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
+            this.Logger = Substitute.For<ILog>();
 
             this.Sut = new ChangeRequestFacadeService(
                 this.Repository,
                 this.TransactionManager,
                 new ChangeRequestResourceBuilder(
-                    new BomChangeResourceBuilder(),
-                    new PcasChangeResourceBuilder(),
-                    this.AuthorisationService),
+                new BomChangeResourceBuilder(),
+                new PcasChangeResourceBuilder(),
+                this.AuthorisationService),
                 new ChangeRequestService(
-                    this.AuthorisationService,
-                    this.Repository,
-                    this.PartRepository,
-                    this.EmployeeRepository),
-                this.DatabaseService);
+                this.AuthorisationService,
+                this.Repository,
+                this.PartRepository,
+                this.EmployeeRepository),
+                this.DatabaseService, 
+                this.Logger);
         }
     }
 }
