@@ -8,6 +8,8 @@
     {
         Part ValidPartNumber(string partNumber);
 
+        bool ChangeRequestAdmin(IEnumerable<string> privileges);
+
         ChangeRequest Approve(int documentNumber, IEnumerable<string> privileges = null);
 
         ChangeRequest Cancel(int documentNumber, int cancelledById, IEnumerable<int> selectedBomChangeIds, IEnumerable<int> selectedPcasChangeIds, IEnumerable<string> privileges = null);

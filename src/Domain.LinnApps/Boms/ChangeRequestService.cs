@@ -47,6 +47,11 @@
             return part;
         }
 
+        public bool ChangeRequestAdmin(IEnumerable<string> privileges)
+        {
+            return this.authService.HasPermissionFor(AuthorisedAction.AdminChangeRequest, privileges);
+        }
+
         public ChangeRequest Approve(int documentNumber, IEnumerable<string> privileges = null)
         {
             if (!this.authService.HasPermissionFor(AuthorisedAction.ApproveChangeRequest, privileges))

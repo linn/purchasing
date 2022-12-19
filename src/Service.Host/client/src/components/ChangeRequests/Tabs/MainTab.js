@@ -1,13 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
-import { InputField, utilities } from '@linn-it/linn-form-components-library';
+import {
+    InputField,
+    utilities,
+    SaveBackCancelButtons
+} from '@linn-it/linn-form-components-library';
 import Button from '@mui/material/Button';
 import AssemblyChange from '../ChangeTypes/AssemblyChange';
 import ChangeState from '../ChangeState';
+import changeRequestActions from '../../../actions/changeRequestActions';
 
 function MainTab({ item, approve }) {
+    const reduxDispatch = useDispatch();
     const approveUri = utilities.getHref(item, 'approve');
+    const editUri = utilities.getHref(item, 'approve');
+
+    const [updated, setUpdated] = useState(item);
+
+    const handleFieldChange = (propertyName, newValue) => {
+        console.log(updated);
+        setUpdated(r => ({ ...r, [propertyName]: newValue }));
+    };
 
     return (
         <Grid container spacing={3}>
@@ -40,19 +55,23 @@ function MainTab({ item, approve }) {
             <Grid item xs={6}>
                 <InputField
                     fullWidth
-                    value={item?.reasonForChange}
+                    value={updated?.reasonForChange}
                     label="Reason For Change"
                     propertyName="reasonForChange"
                     rows={4}
+                    disabled={!editUri}
+                    onChange={handleFieldChange}
                 />
             </Grid>
             <Grid item xs={6}>
                 <InputField
                     fullWidth
-                    value={item?.descriptionOfChange}
+                    value={updated?.descriptionOfChange}
                     label="Description Of Change"
                     propertyName="descriptionOfChange"
                     rows={4}
+                    disabled={!editUri}
+                    onChange={handleFieldChange}
                 />
             </Grid>
             <Grid item xs={4}>
@@ -90,6 +109,24 @@ function MainTab({ item, approve }) {
             <Grid item xs={4}>
                 <ChangeState changeState={item?.changeState} />
             </Grid>
+            <Grid item xs={8} />
+            {editUri && (
+                <>
+                    <Grid item xs={8} />
+                    <Grid item xs={4}>
+                        <SaveBackCancelButtons
+                            saveDisabled={!editUri}
+                            saveClick={() =>
+                                reduxDispatch(
+                                    changeRequestActions.update(updated.documentNumber, updated)
+                                )
+                            }
+                            cancelClick={() => {}}
+                            backClick={() => {}}
+                        />
+                    </Grid>
+                </>
+            )}
         </Grid>
     );
 }

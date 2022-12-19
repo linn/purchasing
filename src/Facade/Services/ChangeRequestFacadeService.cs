@@ -6,6 +6,7 @@
 
     using Linn.Common.Domain.Exceptions;
     using Linn.Common.Facade;
+    using Linn.Common.Logging;
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
@@ -26,17 +27,21 @@
 
         private readonly IDatabaseService databaseService;
 
+        private readonly ILog log;
+
         public ChangeRequestFacadeService(
             IRepository<ChangeRequest, int> repository,
             ITransactionManager transactionManager,
             IBuilder<ChangeRequest> resourceBuilder,
             IChangeRequestService changeRequestService,
-            IDatabaseService databaseService)
+            IDatabaseService databaseService,
+            ILog log)
             : base(repository, transactionManager, resourceBuilder)
         {
             this.resourceBuilder = resourceBuilder;
             this.changeRequestService = changeRequestService;
             this.databaseService = databaseService;
+            this.log = log;
             this.transactionManager = transactionManager;
         }
 
@@ -157,7 +162,11 @@
 
         protected override void UpdateFromResource(ChangeRequest entity, ChangeRequestResource updateResource, IEnumerable<string> privileges = null)
         {
-            throw new NotImplementedException();
+            if (entity.CanEdit(this.changeRequestService.ChangeRequestAdmin(privileges)))
+            {
+                entity.ReasonForChange = updateResource.ReasonForChange;
+                entity.DescriptionOfChange = updateResource.DescriptionOfChange;
+            }
         }
 
         protected override Expression<Func<ChangeRequest, bool>> SearchExpression(string searchTerm)
@@ -173,7 +182,7 @@
             ChangeRequestResource resource,
             ChangeRequestResource updateResource)
         {
-            throw new NotImplementedException();
+            this.log.Info($"updated {entity.DocumentNumber}");
         }
 
         protected override void DeleteOrObsoleteResource(ChangeRequest entity, IEnumerable<string> privileges = null)

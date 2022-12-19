@@ -71,6 +71,21 @@
             return false;
         }
 
+        public bool CanEdit(bool adminPrivs)
+        {
+            if (this.ChangeState == "PROPOS")
+            {
+                return true;
+            }
+
+            if (this.ChangeState == "ACCEPT")
+            {
+                return adminPrivs;
+            }
+
+            return false;
+        }
+
         public void Approve()
         {
             if (this.CanApprove())
