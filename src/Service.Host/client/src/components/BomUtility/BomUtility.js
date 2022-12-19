@@ -52,6 +52,8 @@ function BomUtility() {
         'searchItems'
     );
     const [showChanges, setShowChanges] = useState(false);
+    const [disableChangesButton, setDisableChangesButton] = useState(false);
+
     const url = changes =>
         `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${changes}&treeType=${'bom'}`;
 
@@ -290,12 +292,14 @@ function BomUtility() {
     };
 
     const processRowUpdate = useCallback(newRow => {
+        setDisableChangesButton(true);
         setTreeView(tree => updateTree(tree, newRow, false));
         return newRow;
     }, []);
 
     // add a new line to the children list of the selected node
     const addLine = () => {
+        setDisableChangesButton(true);
         setTreeView(tree =>
             updateTree(
                 tree,
@@ -427,6 +431,8 @@ function BomUtility() {
                         </Grid>
                         <Grid item xs={12}>
                             <Button
+                                disabled={bomTreeLoading || disableChangesButton}
+                                variant="outlined"
                                 onClick={() => {
                                     reduxDispatch(bomTreeActions.fetchByHref(url(!showChanges)));
                                     setShowChanges(!showChanges);

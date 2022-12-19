@@ -99,14 +99,27 @@
 
                                 if (replacement == null)
                                 {
-                                    throw new InvalidReplacementException(
+                                    throw new InvalidBomChangeException(
                                         $"{child.Name} is marked for replacement but no replacement part is specified");
+                                }
+
+                                if (child.AddChangeDocumentNumber == changeRequestNumber)
+                                {
+                                    throw new InvalidBomChangeException(
+                                        $"{child.Name} was added by the current change request - no need to replace it - just edit it directly.");
+                                }
+
+                                var replacedDetail = this.bomDetailRepository.FindById(int.Parse(child.Id));
+
+                                if (replacedDetail.PcasLine == "Y")
+                                {
+                                    throw new InvalidBomChangeException(
+                                        $"{child.Name} is a PCAS line - cannot replace here.");
                                 }
 
                                 replacement.AddReplaceSeq = replacementSeq;
                                 child.DeleteReplaceSeq = replacementSeq;
 
-                                var replacedDetail = this.bomDetailRepository.FindById(int.Parse(child.Id));
                                 replacedDetail.DeleteChangeId = id;
                                 replacedDetail.DeleteReplaceSeq = replacementSeq;
                                 replacedDetail.ChangeState = "PROPOS";
@@ -116,6 +129,11 @@
                             if (child.ToDelete.GetValueOrDefault())
                             {
                                 var toDelete = this.bomDetailRepository.FindById(int.Parse(child.Id));
+                                if (toDelete.PcasLine == "Y")
+                                {
+                                    throw new InvalidBomChangeException($"{child.Name} is a PCAS line - cannot delete here.");
+                                }
+
                                 toDelete.DeleteChangeId = id;
                             }
                         }
