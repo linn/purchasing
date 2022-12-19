@@ -51,10 +51,12 @@ function BomUtility() {
         changeRequestsItemType.item,
         'searchItems'
     );
-    const url = `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${true}&treeType=${'bom'}`;
+    const [showChanges, setShowChanges] = useState(false);
+    const url = changes =>
+        `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${changes}&treeType=${'bom'}`;
 
     const [bomTree, bomTreeLoading] = useInitialise(
-        () => bomTreeActions.fetchByHref(url),
+        () => bomTreeActions.fetchByHref(url(showChanges)),
         bomTreeItemType.item
     );
 
@@ -406,22 +408,34 @@ function BomUtility() {
                         <LinearProgress />
                     </Grid>
                 ) : (
-                    <Grid item xs={12}>
-                        <Dropdown
-                            items={changeRequests?.map(c => ({
-                                id: c.documentNumber,
-                                displayText: `${c.documentType}${c.documentNumber}`
-                            }))}
-                            allowNoValue
-                            label="CRF Number"
-                            propertyName="crNumber"
-                            helperText="Select a corresponding CRF to start editing"
-                            value={crNumber}
-                            onChange={(_, n) => {
-                                setCrNumber(n);
-                            }}
-                        />
-                    </Grid>
+                    <>
+                        <Grid item xs={12}>
+                            <Dropdown
+                                items={changeRequests?.map(c => ({
+                                    id: c.documentNumber,
+                                    displayText: `${c.documentType}${c.documentNumber}`
+                                }))}
+                                allowNoValue
+                                label="CRF Number"
+                                propertyName="crNumber"
+                                helperText="Select a corresponding CRF to start editing"
+                                value={crNumber}
+                                onChange={(_, n) => {
+                                    setCrNumber(n);
+                                }}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Button
+                                onClick={() => {
+                                    reduxDispatch(bomTreeActions.fetchByHref(url(!showChanges)));
+                                    setShowChanges(!showChanges);
+                                }}
+                            >
+                                {showChanges ? 'hide' : 'show'} changes{' '}
+                            </Button>
+                        </Grid>
+                    </>
                 )}
                 <Grid item xs={4} height="30px">
                     {subAssemblyLoading && <LinearProgress />}
