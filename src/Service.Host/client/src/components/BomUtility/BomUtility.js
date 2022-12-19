@@ -5,7 +5,8 @@ import {
     collectionSelectorHelpers,
     Search,
     itemSelectorHelpers,
-    SaveBackCancelButtons
+    SaveBackCancelButtons,
+    SnackbarMessage
 } from '@linn-it/linn-form-components-library';
 import { DataGrid } from '@mui/x-data-grid';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -70,6 +71,9 @@ function BomUtility() {
     );
     const subAssemblyLoading = useSelector(reduxState =>
         itemSelectorHelpers.getItemLoading(reduxState.subAssembly)
+    );
+    const snackbarVisible = useSelector(reduxState =>
+        itemSelectorHelpers.getSnackbarVisible(reduxState.bomTree)
     );
 
     const [partSearchTerm, setPartSearchTerm] = useState();
@@ -391,6 +395,12 @@ function BomUtility() {
         <Page history={history} homeUrl={config.appRoot}>
             {renderPartLookUp()}
             <Grid container spacing={3}>
+                <SnackbarMessage
+                    visible={snackbarVisible}
+                    onClose={() => reduxDispatch(bomTreeActions.setSnackbarVisible(false))}
+                    message="Save Successful"
+                    timeOut={3000}
+                />
                 {changeRequestsLoading ? (
                     <Grid item xs={12}>
                         <LinearProgress />
