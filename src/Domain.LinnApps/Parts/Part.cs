@@ -50,6 +50,8 @@
 
         public IEnumerable<PartSupplier> PartSuppliers { get; set; }
 
+        public DateTime? DatePurchPhasedOut { get; set; }
+
         public bool SupplierAssembly()
         {
             if (this.BomType == "A")

@@ -503,6 +503,7 @@
             entity.Property(a => a.RawOrFinished).HasColumnName("RM_FG");
             entity.HasOne(a => a.NominalAccount).WithMany().HasForeignKey("NOMACC_NOMACC_ID");
             entity.Property(a => a.DecrementRule).HasColumnName("DECREMENT_RULE");
+            entity.Property(a => a.DatePurchPhasedOut).HasColumnName("DATE_PURCH_PHASED_OUT");
         }
 
         private void BuildSuppliers(ModelBuilder builder)

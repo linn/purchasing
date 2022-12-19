@@ -8,6 +8,7 @@
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
 
     public class BomChangeService : IBomChangeService
     {
@@ -19,16 +20,20 @@
 
         private readonly IRepository<Bom, int> bomRepository;
 
+        private IQueryRepository<Part> partRepository;
+
         public BomChangeService(
             IDatabaseService databaseService, 
             IRepository<BomChange, int> bomChangeRepository,
             IRepository<BomDetail, int> bomDetailRepository,
-            IRepository<Bom, int> bomRepository)
+            IRepository<Bom, int> bomRepository,
+            IQueryRepository<Part> partRepository)
         {
             this.databaseService = databaseService;
             this.bomChangeRepository = bomChangeRepository;
             this.bomDetailRepository = bomDetailRepository;
             this.bomRepository = bomRepository;
+            this.partRepository = partRepository;
         }
 
         public BomTreeNode CreateBomChanges(BomTreeNode tree, int changeRequestNumber, int enteredBy)
@@ -74,6 +79,13 @@
                             // add a detail for any new part on the bom
                             if (bom.Details.All(d => d.PartNumber != child.Name && d.ChangeState == "LIVE"))
                             {
+                                if (this.partRepository.FindBy(x => x.PartNumber == child.Name).DatePurchPhasedOut
+                                    .HasValue)
+                                {
+                                    throw new InvalidBomChangeException(
+                                        $"Can't add {child.Name} to {child.ParentName} - part has been phased out by purchasing");
+                                }
+
                                 child.ChangeState = "PROPOS";
                                 this.bomDetailRepository.Add(new BomDetail 
                                                                  {
@@ -96,6 +108,13 @@
                             if (!string.IsNullOrEmpty(child.ReplacedBy))
                             {
                                 var replacement = current.Children.FirstOrDefault(c => c.ReplacementFor == child.Name);
+
+                                if (this.partRepository.FindBy(x => x.PartNumber == replacement.Name).DatePurchPhasedOut
+                                    .HasValue)
+                                {
+                                    throw new InvalidBomChangeException(
+                                        $"Can't add {replacement.Name} to {child.ParentName} - part has been phased out by purchasing");
+                                }
 
                                 if (replacement == null)
                                 {
