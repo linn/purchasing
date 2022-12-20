@@ -9,15 +9,18 @@
 
     public class BomDetailRepository : EntityFrameworkRepository<BomDetail, int>
     {
-        public BomDetailRepository(DbSet<BomDetail> databaseSet)
-            : base(databaseSet)
+        private readonly ServiceDbContext serviceDbContext;
+
+        public BomDetailRepository(ServiceDbContext serviceDbContext)
+            : base(serviceDbContext.BomDetails)
         {
+            this.serviceDbContext = serviceDbContext;
         }
 
         public override BomDetail FindById(int key)
         {
-            return this.FindAll().Include(x => x.DeleteChange)
-                .FirstOrDefault(x => x.DetailId == key);
+            return this.FilterBy(x => x.DetailId == key).Include(x => x.DeleteChange)
+                .FirstOrDefault();
         }
     }
 }
