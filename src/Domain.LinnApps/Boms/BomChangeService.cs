@@ -149,13 +149,13 @@
                                 if (string.IsNullOrEmpty(replacementPart.DecrementRule))
                                 {
                                     throw new InvalidBomChangeException(
-                                        $"Can't add {child.Name} to {child.ParentName} - part has no decrement rule!");
+                                        $"Can't add {replacement.Name} to {child.ParentName} - part has no decrement rule!");
                                 }
 
                                 if (string.IsNullOrEmpty(replacementPart.BomType))
                                 {
                                     throw new InvalidBomChangeException(
-                                        $"Can't add {child.Name} to {child.ParentName} - part has no BOM Type!");
+                                        $"Can't add {replacement.Name} to {child.ParentName} - part has no BOM Type!");
                                 }
 
                                 if (replacement == null)
