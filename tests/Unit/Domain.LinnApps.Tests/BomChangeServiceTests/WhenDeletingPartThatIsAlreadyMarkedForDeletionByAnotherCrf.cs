@@ -9,6 +9,7 @@
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Boms.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
 
     using NSubstitute;
 
@@ -73,7 +74,8 @@
             };
             this.BomDetailRepository.FindById(4567)
                 .Returns(this.deletedDetail);
-
+            this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
+                .Returns(new Part { PartNumber = "ASS 1" });
             this.action = () => this.Sut.CreateBomChanges(this.newTree, 100, 33087);
         }
 

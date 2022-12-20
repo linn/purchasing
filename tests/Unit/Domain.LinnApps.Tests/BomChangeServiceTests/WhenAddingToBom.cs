@@ -70,7 +70,8 @@
                     BomId = 456,
                     Details = new List<BomDetailViewEntry>()
                 });
-            this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>()).Returns(new Part());
+            this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
+                .Returns(new Part { DecrementRule = "YES", BomType = "C" });
             this.DatabaseService.GetIdSequence("CHG_SEQ").Returns(1, 2);
             this.DatabaseService.GetIdSequence("BOMDET_SEQ").Returns(1, 2, 3);
             this.Sut.CreateBomChanges(this.newTree, 100, 33087);

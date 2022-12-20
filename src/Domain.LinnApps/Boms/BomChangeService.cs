@@ -8,6 +8,7 @@
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
+    using Linn.Purchasing.Domain.LinnApps.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
     public class BomChangeService : IBomChangeService
@@ -75,15 +76,34 @@
 
                         foreach (var child in current.Children)
                         {
+                            var part = this.partRepository.FindBy(x => x.PartNumber == child.Name);
+
+                            if (part == null)
+                            {
+                                throw new ItemNotFoundException($"Invalid Part Number: {child.Name} on Assembly: {current.Name}");
+                            }
+
                             // case: adding a new part that is not on this bom
                             // add a detail for any new part on the bom
                             if (bom.Details.All(d => d.PartNumber != child.Name && d.ChangeState == "LIVE"))
                             {
-                                if (this.partRepository.FindBy(x => x.PartNumber == child.Name).DatePurchPhasedOut
+                                if (part.DatePurchPhasedOut
                                     .HasValue)
                                 {
                                     throw new InvalidBomChangeException(
                                         $"Can't add {child.Name} to {child.ParentName} - part has been phased out by purchasing");
+                                }
+
+                                if (string.IsNullOrEmpty(part.DecrementRule))
+                                {
+                                    throw new InvalidBomChangeException(
+                                        $"Can't add {child.Name} to {child.ParentName} - part has no decrement rule!");
+                                }
+
+                                if (string.IsNullOrEmpty(part.BomType))
+                                {
+                                    throw new InvalidBomChangeException(
+                                        $"Can't add {child.Name} to {child.ParentName} - part has no BOM Type!");
                                 }
 
                                 child.ChangeState = "PROPOS";
@@ -118,12 +138,24 @@
                             if (!string.IsNullOrEmpty(child.ReplacedBy))
                             {
                                 var replacement = current.Children.FirstOrDefault(c => c.ReplacementFor == child.Name);
+                                var replacementPart = this.partRepository.FindBy(x => x.PartNumber == replacement.Name);
 
-                                if (this.partRepository.FindBy(x => x.PartNumber == replacement.Name).DatePurchPhasedOut
-                                    .HasValue)
+                                if (replacementPart.DatePurchPhasedOut.HasValue)
                                 {
                                     throw new InvalidBomChangeException(
                                         $"Can't add {replacement.Name} to {child.ParentName} - part has been phased out by purchasing");
+                                }
+
+                                if (string.IsNullOrEmpty(replacementPart.DecrementRule))
+                                {
+                                    throw new InvalidBomChangeException(
+                                        $"Can't add {child.Name} to {child.ParentName} - part has no decrement rule!");
+                                }
+
+                                if (string.IsNullOrEmpty(replacementPart.BomType))
+                                {
+                                    throw new InvalidBomChangeException(
+                                        $"Can't add {child.Name} to {child.ParentName} - part has no BOM Type!");
                                 }
 
                                 if (replacement == null)

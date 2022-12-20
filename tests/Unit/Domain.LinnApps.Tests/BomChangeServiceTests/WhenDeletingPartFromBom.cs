@@ -8,6 +8,7 @@
 
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
 
     using NSubstitute;
 
@@ -20,7 +21,6 @@
         private BomTreeNode c1;
 
         private BomDetail deletedDetail;
-
 
         [SetUp]
         public void SetUp()
@@ -57,6 +57,8 @@
                                           }
                                   }
                 });
+            this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
+                .Returns(new Part { PartNumber = "ASS 1" });
 
             this.DatabaseService.GetIdSequence("CHG_SEQ").Returns(6666);
             this.deletedDetail = new BomDetail
