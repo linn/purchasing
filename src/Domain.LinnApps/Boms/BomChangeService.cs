@@ -20,7 +20,7 @@
 
         private readonly IRepository<Bom, int> bomRepository;
 
-        private IQueryRepository<Part> partRepository;
+        private readonly IQueryRepository<Part> partRepository;
 
         public BomChangeService(
             IDatabaseService databaseService, 
