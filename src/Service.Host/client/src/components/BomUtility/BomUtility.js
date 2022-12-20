@@ -563,7 +563,9 @@ function BomUtility() {
                             reduxDispatch(bomTreeActions.add({ treeRoot: treeView, crNumber }));
                         }}
                         cancelClick={() => {}}
-                        backClick={() => {}}
+                        backClick={() => {
+                            history.push('/purchasing/boms/bom-utility/search');
+                        }}
                     />
                 </Grid>
             </Grid>

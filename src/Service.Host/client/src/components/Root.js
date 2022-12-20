@@ -82,6 +82,7 @@ import BomUtility from './BomUtility/BomUtility';
 import BomCostReportOptions from './reports/BomCostReportOptions';
 import BoardsSummary from './boards/BoardsSummary';
 import BoardComponents from './boards/BoardComponents';
+import BomUtilitySearch from './BomUtility/BomUtilitySearch';
 
 const Root = ({ store }) => (
     <div>
@@ -497,6 +498,11 @@ const Root = ({ store }) => (
                                     exact
                                     path="/purchasing/boms/reports/cost"
                                     component={BomCostReport}
+                                />
+                                <Route
+                                    exact
+                                    path="/purchasing/boms/bom-utility/search"
+                                    component={BomUtilitySearch}
                                 />
                                 <Route
                                     exact
