@@ -6,7 +6,9 @@ import {
     Search,
     itemSelectorHelpers,
     SaveBackCancelButtons,
-    SnackbarMessage
+    SnackbarMessage,
+    getItemError,
+    ErrorCard
 } from '@linn-it/linn-form-components-library';
 import { DataGrid } from '@mui/x-data-grid';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -59,7 +61,9 @@ function BomUtility() {
 
     const [bomTree, bomTreeLoading] = useInitialise(
         () => bomTreeActions.fetchByHref(url(showChanges)),
-        bomTreeItemType.item
+        bomTreeItemType.item,
+        'item',
+        bomTreeActions.clearErrorsForItem
     );
 
     const [treeView, setTreeView] = useState();
@@ -79,6 +83,7 @@ function BomUtility() {
     const snackbarVisible = useSelector(reduxState =>
         itemSelectorHelpers.getSnackbarVisible(reduxState.bomTree)
     );
+    const itemError = useSelector(reduxState => getItemError(reduxState, 'bomTree'));
 
     const [partSearchTerm, setPartSearchTerm] = useState();
 
@@ -413,7 +418,7 @@ function BomUtility() {
                     </Grid>
                 ) : (
                     <>
-                        <Grid item xs={12}>
+                        <Grid item xs={4}>
                             <Dropdown
                                 items={changeRequests?.map(c => ({
                                     id: c.documentNumber,
@@ -428,6 +433,15 @@ function BomUtility() {
                                     setCrNumber(n);
                                 }}
                             />
+                        </Grid>
+                        <Grid item xs={8}>
+                            {itemError && (
+                                <Grid item xs={12}>
+                                    <ErrorCard
+                                        errorMessage={itemError.details?.error || itemError.details}
+                                    />
+                                </Grid>
+                            )}
                         </Grid>
                         <Grid item xs={12}>
                             <Button
@@ -544,9 +558,10 @@ function BomUtility() {
                 <Grid item xs={12}>
                     <SaveBackCancelButtons
                         saveDisabled={!crNumber || subAssemblyLoading}
-                        saveClick={() =>
-                            reduxDispatch(bomTreeActions.add({ treeRoot: treeView, crNumber }))
-                        }
+                        saveClick={() => {
+                            reduxDispatch(bomTreeActions.clearErrorsForItem());
+                            reduxDispatch(bomTreeActions.add({ treeRoot: treeView, crNumber }));
+                        }}
                         cancelClick={() => {}}
                         backClick={() => {}}
                     />
