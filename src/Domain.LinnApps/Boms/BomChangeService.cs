@@ -85,7 +85,7 @@
 
                             // case: adding a new part that is not on this bom
                             // add a detail for any new part on the bom
-                            if (bom.Details.All(d => d.PartNumber != child.Name && d.ChangeState == "LIVE"))
+                            if (bom.Details.All(d => d.PartNumber != child.Name))
                             {
                                 if (part.DatePurchPhasedOut
                                     .HasValue)
