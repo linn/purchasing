@@ -1967,6 +1967,7 @@
             entity.Property(a => a.DeleteChangeId).HasColumnName("DELETE_CHANGE_ID");
             entity.Property(a => a.DeleteReplaceSeq).HasColumnName("DELETE_REPLACE_SEQ");
             entity.Property(a => a.PcasLine).HasColumnName("PCAS_LINE");
+            entity.HasOne(a => a.DeleteChange).WithMany().HasForeignKey(x => x.DeleteChangeId);
         }
 
         private void BuildBomDetailComponents(ModelBuilder builder)

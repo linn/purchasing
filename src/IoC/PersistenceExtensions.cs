@@ -174,7 +174,7 @@
                 .AddTransient<IRepository<PartNumberList, string>, PartNumberListRepository>()
                 .AddTransient<IRepository<AutomaticPurchaseOrder, int>, AutomaticPurchaseOrderRepository>()
                 .AddTransient<IRepository<NominalAccount, int>, NominalAccountRepository>()
-                .AddTransient<IBomDetailRepository, BomDetailRepository>()
+                .AddTransient<IBomDetailViewRepository, BomDetailViewRepository>()
                 .AddTransient<IRepository<AutomaticPurchaseOrderSuggestion, int>, EntityFrameworkRepository<AutomaticPurchaseOrderSuggestion, int>>(
                     r => new EntityFrameworkRepository<AutomaticPurchaseOrderSuggestion, int>(r.GetService<ServiceDbContext>()?.AutomaticPurchaseOrderSuggestions))
                 .AddTransient<IRepository<SupplierAutoEmails, int>, EntityFrameworkRepository<SupplierAutoEmails, int>>(
@@ -229,9 +229,7 @@
                 .AddTransient<IRepository<BomChange, int>, EntityFrameworkRepository<BomChange, int>>(
                     r => new EntityFrameworkRepository<BomChange, int>(r.GetService<ServiceDbContext>()
                         ?.BomChanges))
-                .AddTransient<IRepository<BomDetail, int>, EntityFrameworkRepository<BomDetail, int>>(
-                    r => new EntityFrameworkRepository<BomDetail, int>(r.GetService<ServiceDbContext>()
-                        ?.BomDetails));
+                .AddTransient<IRepository<BomDetail, int>, BomDetailRepository>();
         }
     }
 }

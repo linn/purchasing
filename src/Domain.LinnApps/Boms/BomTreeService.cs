@@ -11,14 +11,14 @@
     {
         private readonly IRepository<Bom, int> repository;
 
-        private readonly IBomDetailRepository detailRepository;
+        private readonly IBomDetailViewRepository detailViewRepository;
 
         public BomTreeService(
             IRepository<Bom, int> repository,
-            IBomDetailRepository detailRepository)
+            IBomDetailViewRepository detailViewRepository)
         {
             this.repository = repository;
-            this.detailRepository = detailRepository;
+            this.detailViewRepository = detailViewRepository;
         }
 
         public BomTreeNode BuildBomTree(
@@ -90,7 +90,7 @@
                         child =>
                             {
 
-                                var children = child.Type != "C" ? this.detailRepository
+                                var children = child.Type != "C" ? this.detailViewRepository
                                     .FilterBy(x => x.BomName == child.Name)
                                     .Where(x => showChanges || x.ChangeState == "LIVE")
                                     .Where(c => !requirementOnly
@@ -201,7 +201,7 @@
                     current.Children = current.Children?.Select(
                         child =>
                         {
-                            var children = child.Type != "C" ? this.detailRepository
+                            var children = child.Type != "C" ? this.detailViewRepository
                                 .FilterBy(x => x.BomName == child.Name)
                                 .Where(x => showChanges || x.ChangeState == "LIVE")
                                 .Where(c => !requirementOnly
@@ -259,7 +259,7 @@
                                    Name = partNumber,
                                    Qty = 0,
                                    Id = "-1",
-                                   Children = this.detailRepository.FilterBy(d => d.PartNumber == partNumber)
+                                   Children = this.detailViewRepository.FilterBy(d => d.PartNumber == partNumber)
                                        .Select(c => new BomTreeNode
                                                         {
                                                             Name = c.BomPart.PartNumber,
@@ -286,7 +286,7 @@
                         current.Children = current.Children?.Select(
                         child =>
                         {
-                            var children = this.detailRepository
+                            var children = this.detailViewRepository
                                 .FilterBy(x => x.PartNumber == child.Name)
                                 .Where(x => showChanges || x.ChangeState == "LIVE")
                                 .Where(c => !requirementOnly
@@ -343,7 +343,7 @@
             {
                 Name = partNumber,
                 Qty = 0,
-                Children = this.detailRepository.FilterBy(d => d.PartNumber == partNumber)
+                Children = this.detailViewRepository.FilterBy(d => d.PartNumber == partNumber)
                                        .Select(c => new BomTreeNode
                                        {
                                            Name = c.BomPart.PartNumber,
@@ -370,7 +370,7 @@
                     current.Children = current.Children?.Select(
                         child =>
                         {
-                            var children = this.detailRepository
+                            var children = this.detailViewRepository
                                 .FilterBy(x => x.PartNumber == child.Name)
                                 .Where(x => showChanges || x.ChangeState == "LIVE")
                                 .Where(c => !requirementOnly

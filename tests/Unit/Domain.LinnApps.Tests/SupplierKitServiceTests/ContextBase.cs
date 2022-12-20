@@ -9,15 +9,15 @@
 
     public class ContextBase
     {
-        protected IBomDetailRepository BomDetailRepository { get; private set; }
+        protected IBomDetailViewRepository BomDetailViewRepository { get; private set; }
 
         protected ISupplierKitService Sut { get; private set; }
 
         [SetUp]
         public void SetUpContext()
         {
-            this.BomDetailRepository = Substitute.For<IBomDetailRepository>();
-            this.Sut = new SupplierKitService(this.BomDetailRepository);
+            this.BomDetailViewRepository = Substitute.For<IBomDetailViewRepository>();
+            this.Sut = new SupplierKitService(this.BomDetailViewRepository);
         }
     }
 }

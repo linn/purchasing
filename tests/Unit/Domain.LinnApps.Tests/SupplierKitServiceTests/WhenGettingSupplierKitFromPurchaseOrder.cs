@@ -73,7 +73,7 @@
                                              }
                                      }
                              };
-            this.BomDetailRepository.GetLiveBomDetails(Arg.Any<string>()).Returns(this.bom.AsQueryable());
+            this.BomDetailViewRepository.GetLiveBomDetails(Arg.Any<string>()).Returns(this.bom.AsQueryable());
 
             this.results = this.Sut.GetSupplierKits(this.order, true);
         }

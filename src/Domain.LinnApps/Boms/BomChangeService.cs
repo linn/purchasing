@@ -148,6 +148,15 @@
                             if (child.ToDelete.GetValueOrDefault())
                             {
                                 var toDelete = this.bomDetailRepository.FindById(int.Parse(child.Id));
+
+                                if (toDelete.DeleteChangeId.HasValue 
+                                    && toDelete.DeleteChange?.DocumentNumber != changeRequestNumber)
+                                {
+                                    throw new InvalidBomChangeException(
+                                        $"{child.Name} is already marked for deletion by another change request" 
+                                        + $" ({toDelete.DeleteChange?.DocumentNumber})");
+                                }
+
                                 if (toDelete.PcasLine == "Y")
                                 {
                                     throw new InvalidBomChangeException($"{child.Name} is a PCAS line - cannot delete here.");
