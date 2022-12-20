@@ -28,7 +28,7 @@
             app.MapGet("/purchasing/boms/tree", this.GetTree);
             app.MapGet("/purchasing/boms/tree/options", this.GetApp);
             app.MapGet("/purchasing/boms/cost/options", this.GetApp);
-            app.MapGet("/purchasing/boms/bom-utility/search", this.GetApp);
+            app.MapGet("/purchasing/boms", this.GetApp);
             app.MapGet("/purchasing/boms/bom-utility", this.GetApp);
 
             app.MapGet("/purchasing/boms/boards/application-state", this.GetBoardApplicationState);

@@ -564,7 +564,7 @@ function BomUtility() {
                         }}
                         cancelClick={() => {}}
                         backClick={() => {
-                            history.push('/purchasing/boms/bom-utility/search');
+                            history.push('/purchasing/boms');
                         }}
                     />
                 </Grid>
