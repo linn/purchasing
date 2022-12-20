@@ -138,6 +138,8 @@
                                         $"{child.Name} was added by the current change request - no need to replace it - just edit it directly.");
                                 }
 
+                                // stop bom loops
+                                // todo: same consideration as above in the adding case
                                 if (replacement.Name == current.Name)
                                 {
                                     throw new InvalidBomChangeException($"Can't add {replacement.Name} to it's own BOM!");
