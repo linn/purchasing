@@ -87,6 +87,16 @@
                                 }
 
                                 child.ChangeState = "PROPOS";
+
+                                // stop bom loops
+                                // todo: this check will only stop us adding a part to its own bom in its first level of children
+                                // but we can still add a part to its own bom one level deeper, for example, and still create a loop
+                                // do we need to think of a way to stop this happening? Does the oracle form do anything more?
+                                if (child.Name == current.Name)
+                                {
+                                    throw new InvalidBomChangeException($"Can't add {child.Name} to it's own BOM!");
+                                }
+
                                 this.bomDetailRepository.Add(new BomDetail 
                                                                  {
                                                                      DetailId = this.databaseService.GetIdSequence("BOMDET_SEQ"),
@@ -126,6 +136,11 @@
                                 {
                                     throw new InvalidBomChangeException(
                                         $"{child.Name} was added by the current change request - no need to replace it - just edit it directly.");
+                                }
+
+                                if (replacement.Name == current.Name)
+                                {
+                                    throw new InvalidBomChangeException($"Can't add {replacement.Name} to it's own BOM!");
                                 }
 
                                 var replacedDetail = this.bomDetailRepository.FindById(int.Parse(child.Id));
