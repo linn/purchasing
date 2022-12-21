@@ -179,6 +179,12 @@ function BomUtility() {
                 )
         },
         {
+            field: 'safetyCritical',
+            headerName: 'Safety',
+            width: 100,
+            editable: false
+        },
+        {
             field: 'qty',
             headerName: 'Qty',
             width: 100,
@@ -190,6 +196,19 @@ function BomUtility() {
                 ) : (
                     <span>{params.row.qty}</span>
                 )
+        },
+        {
+            field: 'requirement',
+            headerName: 'Req',
+            editable: true,
+            type: 'singleSelect',
+            valueOptions: ['Y', 'N']
+        },
+        {
+            field: 'drawingReference',
+            headerName: 'Drawing Ref',
+            width: 200,
+            editable: false
         },
         {
             field: 'replacementFor',

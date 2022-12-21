@@ -44,6 +44,7 @@
                                    Id = "root",
                                    Type = root.Part?.BomType,
                                    Description = root.Part?.Description,
+                                   SafetyCritical = root.Part?.SafetyCritical,
                                    Children = root.Details
                                        .Where(x => showChanges || x.ChangeState == "LIVE")
                                        .Where(c => !requirementOnly 
@@ -57,6 +58,9 @@
                                                     Qty = d.Qty,
                                                     ChangeState = d.ChangeState,
                                                     IsReplaced = d.DeleteChangeId.HasValue,
+                                                    Requirement = d.GenerateRequirement,
+                                                    DrawingReference = d.Part.DrawingReference,
+                                                    SafetyCritical = d.Part.SafetyCritical,
                                                     Type = d.Part.BomType,
                                                     Id = d.DetailId.ToString(),
                                                     AddChangeDocumentNumber = d.AddChange.DocumentNumber
@@ -103,9 +107,12 @@
                                     Description = child.Description,
                                     Qty = child.Qty,
                                     Id = child.Id,
+                                    SafetyCritical = child.SafetyCritical,
                                     Type = child.Type,
                                     ParentName = current.Name,
                                     ChangeState = child.ChangeState,
+                                    Requirement = child.Requirement,
+                                    DrawingReference = child.DrawingReference,
                                     AddChangeDocumentNumber = child.AddChangeDocumentNumber,
                                     IsReplaced = child.IsReplaced,
 
@@ -122,6 +129,9 @@
                                                         Qty = detail.Qty,
                                                         Type = detail.Part.BomType,
                                                         ParentName = detail.BomPartNumber,
+                                                        Requirement = child.Requirement,
+                                                        SafetyCritical = child.SafetyCritical,
+                                                        DrawingReference = child.DrawingReference,
                                                         AddChangeDocumentNumber = detail.AddChange.DocumentNumber,
                                                         ChangeState = detail.ChangeState,
                                                         IsReplaced = detail.DeleteChangeId.HasValue,

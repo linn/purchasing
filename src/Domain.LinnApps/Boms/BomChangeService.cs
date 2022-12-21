@@ -123,14 +123,15 @@
                                                                      BomId = bom.BomId,
                                                                      PartNumber = child.Name,
                                                                      Qty = child.Qty,
-                                                                     GenerateRequirement = "Y", // todo
+                                                                     GenerateRequirement = child.Requirement,
                                                                      ChangeState = "PROPOS",
                                                                      AddChangeId = id,
                                                                      AddReplaceSeq = string.IsNullOrEmpty(child.ReplacementFor) 
                                                                          ? null : replacementSeq++,
                                                                      DeleteChangeId = null,
                                                                      DeleteReplaceSeq = null,
-                                                                     PcasLine = "N"
+                                                                     PcasLine = "N",
+                                                                     
                                                                  });
                             }
 

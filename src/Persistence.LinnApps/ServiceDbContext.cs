@@ -504,6 +504,7 @@
             entity.HasOne(a => a.NominalAccount).WithMany().HasForeignKey("NOMACC_NOMACC_ID");
             entity.Property(a => a.DecrementRule).HasColumnName("DECREMENT_RULE");
             entity.Property(a => a.DatePurchPhasedOut).HasColumnName("DATE_PURCH_PHASE_OUT");
+            entity.Property(a => a.SafetyCritical).HasColumnName("SAFETY_CRITICAL_PART");
         }
 
         private void BuildSuppliers(ModelBuilder builder)
