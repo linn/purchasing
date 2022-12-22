@@ -11,14 +11,14 @@
     {
         private readonly IRepository<Bom, int> repository;
 
-        private readonly IBomDetailRepository detailRepository;
+        private readonly IBomDetailViewRepository detailViewRepository;
 
         public BomTreeService(
             IRepository<Bom, int> repository,
-            IBomDetailRepository detailRepository)
+            IBomDetailViewRepository detailViewRepository)
         {
             this.repository = repository;
-            this.detailRepository = detailRepository;
+            this.detailViewRepository = detailViewRepository;
         }
 
         public BomTreeNode BuildBomTree(
@@ -44,6 +44,7 @@
                                    Id = "root",
                                    Type = root.Part?.BomType,
                                    Description = root.Part?.Description,
+                                   SafetyCritical = root.Part?.SafetyCritical,
                                    Children = root.Details
                                        .Where(x => showChanges || x.ChangeState == "LIVE")
                                        .Where(c => !requirementOnly 
@@ -57,6 +58,9 @@
                                                     Qty = d.Qty,
                                                     ChangeState = d.ChangeState,
                                                     IsReplaced = d.DeleteChangeId.HasValue,
+                                                    Requirement = d.GenerateRequirement,
+                                                    DrawingReference = d.Part.DrawingReference,
+                                                    SafetyCritical = d.Part.SafetyCritical,
                                                     Type = d.Part.BomType,
                                                     Id = d.DetailId.ToString(),
                                                     AddChangeDocumentNumber = d.AddChange.DocumentNumber
@@ -90,7 +94,7 @@
                         child =>
                             {
 
-                                var children = child.Type != "C" ? this.detailRepository
+                                var children = child.Type != "C" ? this.detailViewRepository
                                     .FilterBy(x => x.BomName == child.Name)
                                     .Where(x => showChanges || x.ChangeState == "LIVE")
                                     .Where(c => !requirementOnly
@@ -103,9 +107,12 @@
                                     Description = child.Description,
                                     Qty = child.Qty,
                                     Id = child.Id,
+                                    SafetyCritical = child.SafetyCritical,
                                     Type = child.Type,
                                     ParentName = current.Name,
                                     ChangeState = child.ChangeState,
+                                    Requirement = child.Requirement,
+                                    DrawingReference = child.DrawingReference,
                                     AddChangeDocumentNumber = child.AddChangeDocumentNumber,
                                     IsReplaced = child.IsReplaced,
 
@@ -122,6 +129,9 @@
                                                         Qty = detail.Qty,
                                                         Type = detail.Part.BomType,
                                                         ParentName = detail.BomPartNumber,
+                                                        Requirement = child.Requirement,
+                                                        SafetyCritical = child.SafetyCritical,
+                                                        DrawingReference = child.DrawingReference,
                                                         AddChangeDocumentNumber = detail.AddChange.DocumentNumber,
                                                         ChangeState = detail.ChangeState,
                                                         IsReplaced = detail.DeleteChangeId.HasValue,
@@ -201,7 +211,7 @@
                     current.Children = current.Children?.Select(
                         child =>
                         {
-                            var children = child.Type != "C" ? this.detailRepository
+                            var children = child.Type != "C" ? this.detailViewRepository
                                 .FilterBy(x => x.BomName == child.Name)
                                 .Where(x => showChanges || x.ChangeState == "LIVE")
                                 .Where(c => !requirementOnly
@@ -259,7 +269,7 @@
                                    Name = partNumber,
                                    Qty = 0,
                                    Id = "-1",
-                                   Children = this.detailRepository.FilterBy(d => d.PartNumber == partNumber)
+                                   Children = this.detailViewRepository.FilterBy(d => d.PartNumber == partNumber)
                                        .Select(c => new BomTreeNode
                                                         {
                                                             Name = c.BomPart.PartNumber,
@@ -286,7 +296,7 @@
                         current.Children = current.Children?.Select(
                         child =>
                         {
-                            var children = this.detailRepository
+                            var children = this.detailViewRepository
                                 .FilterBy(x => x.PartNumber == child.Name)
                                 .Where(x => showChanges || x.ChangeState == "LIVE")
                                 .Where(c => !requirementOnly
@@ -343,7 +353,7 @@
             {
                 Name = partNumber,
                 Qty = 0,
-                Children = this.detailRepository.FilterBy(d => d.PartNumber == partNumber)
+                Children = this.detailViewRepository.FilterBy(d => d.PartNumber == partNumber)
                                        .Select(c => new BomTreeNode
                                        {
                                            Name = c.BomPart.PartNumber,
@@ -370,7 +380,7 @@
                     current.Children = current.Children?.Select(
                         child =>
                         {
-                            var children = this.detailRepository
+                            var children = this.detailViewRepository
                                 .FilterBy(x => x.PartNumber == child.Name)
                                 .Where(x => showChanges || x.ChangeState == "LIVE")
                                 .Where(c => !requirementOnly

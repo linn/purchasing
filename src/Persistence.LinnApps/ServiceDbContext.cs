@@ -503,6 +503,8 @@
             entity.Property(a => a.RawOrFinished).HasColumnName("RM_FG");
             entity.HasOne(a => a.NominalAccount).WithMany().HasForeignKey("NOMACC_NOMACC_ID");
             entity.Property(a => a.DecrementRule).HasColumnName("DECREMENT_RULE");
+            entity.Property(a => a.DatePurchPhasedOut).HasColumnName("DATE_PURCH_PHASE_OUT");
+            entity.Property(a => a.SafetyCritical).HasColumnName("SAFETY_CRITICAL_PART");
         }
 
         private void BuildSuppliers(ModelBuilder builder)
@@ -1966,6 +1968,7 @@
             entity.Property(a => a.DeleteChangeId).HasColumnName("DELETE_CHANGE_ID");
             entity.Property(a => a.DeleteReplaceSeq).HasColumnName("DELETE_REPLACE_SEQ");
             entity.Property(a => a.PcasLine).HasColumnName("PCAS_LINE");
+            entity.HasOne(a => a.DeleteChange).WithMany().HasForeignKey(x => x.DeleteChangeId);
         }
 
         private void BuildBomDetailComponents(ModelBuilder builder)

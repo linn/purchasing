@@ -5,7 +5,10 @@ import {
     collectionSelectorHelpers,
     Search,
     itemSelectorHelpers,
-    SaveBackCancelButtons
+    SaveBackCancelButtons,
+    SnackbarMessage,
+    getItemError,
+    ErrorCard
 } from '@linn-it/linn-form-components-library';
 import { DataGrid } from '@mui/x-data-grid';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -50,11 +53,17 @@ function BomUtility() {
         changeRequestsItemType.item,
         'searchItems'
     );
-    const url = `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${true}&treeType=${'bom'}`;
+    const [showChanges, setShowChanges] = useState(false);
+    const [disableChangesButton, setDisableChangesButton] = useState(false);
+
+    const url = changes =>
+        `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${changes}&treeType=${'bom'}`;
 
     const [bomTree, bomTreeLoading] = useInitialise(
-        () => bomTreeActions.fetchByHref(url),
-        bomTreeItemType.item
+        () => bomTreeActions.fetchByHref(url(showChanges)),
+        bomTreeItemType.item,
+        'item',
+        bomTreeActions.clearErrorsForItem
     );
 
     const [treeView, setTreeView] = useState();
@@ -71,6 +80,10 @@ function BomUtility() {
     const subAssemblyLoading = useSelector(reduxState =>
         itemSelectorHelpers.getItemLoading(reduxState.subAssembly)
     );
+    const snackbarVisible = useSelector(reduxState =>
+        itemSelectorHelpers.getSnackbarVisible(reduxState.bomTree)
+    );
+    const itemError = useSelector(reduxState => getItemError(reduxState, 'bomTree'));
 
     const [partSearchTerm, setPartSearchTerm] = useState();
 
@@ -166,6 +179,12 @@ function BomUtility() {
                 )
         },
         {
+            field: 'safetyCritical',
+            headerName: 'Safety',
+            width: 100,
+            editable: false
+        },
+        {
             field: 'qty',
             headerName: 'Qty',
             width: 100,
@@ -177,6 +196,19 @@ function BomUtility() {
                 ) : (
                     <span>{params.row.qty}</span>
                 )
+        },
+        {
+            field: 'requirement',
+            headerName: 'Req',
+            editable: true,
+            type: 'singleSelect',
+            valueOptions: ['Y', 'N']
+        },
+        {
+            field: 'drawingReference',
+            headerName: 'Drawing Ref',
+            width: 200,
+            editable: false
         },
         {
             field: 'replacementFor',
@@ -284,12 +316,14 @@ function BomUtility() {
     };
 
     const processRowUpdate = useCallback(newRow => {
+        setDisableChangesButton(true);
         setTreeView(tree => updateTree(tree, newRow, false));
         return newRow;
     }, []);
 
     // add a new line to the children list of the selected node
     const addLine = () => {
+        setDisableChangesButton(true);
         setTreeView(tree =>
             updateTree(
                 tree,
@@ -391,27 +425,56 @@ function BomUtility() {
         <Page history={history} homeUrl={config.appRoot}>
             {renderPartLookUp()}
             <Grid container spacing={3}>
+                <SnackbarMessage
+                    visible={snackbarVisible}
+                    onClose={() => reduxDispatch(bomTreeActions.setSnackbarVisible(false))}
+                    message="Save Successful"
+                    timeOut={3000}
+                />
                 {changeRequestsLoading ? (
                     <Grid item xs={12}>
                         <LinearProgress />
                     </Grid>
                 ) : (
-                    <Grid item xs={12}>
-                        <Dropdown
-                            items={changeRequests?.map(c => ({
-                                id: c.documentNumber,
-                                displayText: `${c.documentType}${c.documentNumber}`
-                            }))}
-                            allowNoValue
-                            label="CRF Number"
-                            propertyName="crNumber"
-                            helperText="Select a corresponding CRF to start editing"
-                            value={crNumber}
-                            onChange={(_, n) => {
-                                setCrNumber(n);
-                            }}
-                        />
-                    </Grid>
+                    <>
+                        <Grid item xs={4}>
+                            <Dropdown
+                                items={changeRequests?.map(c => ({
+                                    id: c.documentNumber,
+                                    displayText: `${c.documentType}${c.documentNumber}`
+                                }))}
+                                allowNoValue
+                                label="CRF Number"
+                                propertyName="crNumber"
+                                helperText="Select a corresponding CRF to start editing"
+                                value={crNumber}
+                                onChange={(_, n) => {
+                                    setCrNumber(n);
+                                }}
+                            />
+                        </Grid>
+                        <Grid item xs={8}>
+                            {itemError && (
+                                <Grid item xs={12}>
+                                    <ErrorCard
+                                        errorMessage={itemError.details?.error || itemError.details}
+                                    />
+                                </Grid>
+                            )}
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Button
+                                disabled={bomTreeLoading || disableChangesButton}
+                                variant="outlined"
+                                onClick={() => {
+                                    reduxDispatch(bomTreeActions.fetchByHref(url(!showChanges)));
+                                    setShowChanges(!showChanges);
+                                }}
+                            >
+                                {showChanges ? 'hide' : 'show'} changes{' '}
+                            </Button>
+                        </Grid>
+                    </>
                 )}
                 <Grid item xs={4} height="30px">
                     {subAssemblyLoading && <LinearProgress />}
@@ -514,11 +577,14 @@ function BomUtility() {
                 <Grid item xs={12}>
                     <SaveBackCancelButtons
                         saveDisabled={!crNumber || subAssemblyLoading}
-                        saveClick={() =>
-                            reduxDispatch(bomTreeActions.add({ treeRoot: treeView, crNumber }))
-                        }
+                        saveClick={() => {
+                            reduxDispatch(bomTreeActions.clearErrorsForItem());
+                            reduxDispatch(bomTreeActions.add({ treeRoot: treeView, crNumber }));
+                        }}
                         cancelClick={() => {}}
-                        backClick={() => {}}
+                        backClick={() => {
+                            history.push('/purchasing/boms');
+                        }}
                     />
                 </Grid>
             </Grid>

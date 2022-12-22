@@ -4,14 +4,14 @@
 
     using Linn.Common.Domain.Exceptions;
 
-    public class InvalidReplacementException : DomainException
+    public class InvalidBomChangeException : DomainException
     {
-        public InvalidReplacementException(string message)
+        public InvalidBomChangeException(string message)
             : base(message)
         {
         }
 
-        public InvalidReplacementException(string message, Exception innerException)
+        public InvalidBomChangeException(string message, Exception innerException)
             : base(message, innerException)
         {
         }

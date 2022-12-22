@@ -6,6 +6,7 @@
 
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
 
     using NSubstitute;
 
@@ -32,12 +33,12 @@
                                 ParentName = "ASS 1"
                           };
             this.c12 = new BomTreeNode
-                          {
+                           {
                               Type = "C",
                               Qty = 2,
                               Name = "COMP 12",
                               ParentName = "ASS 1"
-            };
+                           };
             this.c1 = new BomTreeNode
                          {
                              Type = "A",
@@ -46,7 +47,7 @@
                              ParentName = "BOM",
                              HasChanged = true,
                              Children = new List<BomTreeNode> { this.c11, this.c12 }
-            };
+                         };
             this.newTree = new BomTreeNode
                                {
                                    Name = "BOM",
@@ -69,7 +70,8 @@
                     BomId = 456,
                     Details = new List<BomDetailViewEntry>()
                 });
-
+            this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
+                .Returns(new Part { DecrementRule = "YES", BomType = "C" });
             this.DatabaseService.GetIdSequence("CHG_SEQ").Returns(1, 2);
             this.DatabaseService.GetIdSequence("BOMDET_SEQ").Returns(1, 2, 3);
             this.Sut.CreateBomChanges(this.newTree, 100, 33087);
