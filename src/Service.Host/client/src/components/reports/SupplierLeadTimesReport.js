@@ -40,7 +40,7 @@ function SupplierLeadTimesReport() {
                 <Grid item xs={12}>
                     <BackButton backClick={() => handleBackClick(history, options)} />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={6}>
                     {loading || !reportData ? (
                         <Loading />
                     ) : (
@@ -56,6 +56,7 @@ function SupplierLeadTimesReport() {
                         </>
                     )}
                 </Grid>
+                <Grid item xs={6} />
 
                 <Grid item xs={12}>
                     <BackButton backClick={() => handleBackClick(history, options)} />
