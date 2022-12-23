@@ -473,16 +473,12 @@ function BomUtility() {
                             >
                                 {showChanges ? 'hide' : 'show'} changes{' '}
                             </Button>
-                            <Grid item xs={2}>
-                                <Button
-                                    variant="outlined"
-                                    onClick={() =>
-                                        history.push('/purchasing/change-requests/create')
-                                    }
-                                >
-                                    RAISE NEW CRF
-                                </Button>
-                            </Grid>
+                            <Button
+                                variant="outlined"
+                                onClick={() => history.push('/purchasing/change-requests/create')}
+                            >
+                                RAISE NEW CRF
+                            </Button>
                         </Grid>
                     </>
                 )}
