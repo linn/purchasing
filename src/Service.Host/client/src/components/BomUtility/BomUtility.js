@@ -49,7 +49,7 @@ function BomUtility() {
     const { bomName } = queryString.parse(search);
     const [crNumber, setCrNumber] = useState();
     const [changeRequests, changeRequestsLoading] = useInitialise(
-        () => changeRequestsActions.search(bomName),
+        () => changeRequestsActions.searchWithOptions(bomName, '&includeAllForBom=True'),
         changeRequestsItemType.item,
         'searchItems'
     );
@@ -441,7 +441,7 @@ function BomUtility() {
                             <Dropdown
                                 items={changeRequests?.map(c => ({
                                     id: c.documentNumber,
-                                    displayText: `${c.documentType}${c.documentNumber}`
+                                    displayText: `${c.documentType}${c.documentNumber} / ${c.newPartNumber} / ${c.changeState}`
                                 }))}
                                 allowNoValue
                                 label="CRF Number"
