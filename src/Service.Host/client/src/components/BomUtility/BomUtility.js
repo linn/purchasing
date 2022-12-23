@@ -453,13 +453,19 @@ function BomUtility() {
                                 }}
                             />
                         </Grid>
-                        <Grid item xs={8}>
+                        <Grid item xs={2}>
+                            <Button
+                                variant="outlined"
+                                onClick={() => history.push('/purchasing/change-requests/create')}
+                            >
+                                RAISE NEW CRF
+                            </Button>
+                        </Grid>
+                        <Grid item xs={6}>
                             {itemError && (
-                                <Grid item xs={12}>
-                                    <ErrorCard
-                                        errorMessage={itemError.details?.error || itemError.details}
-                                    />
-                                </Grid>
+                                <ErrorCard
+                                    errorMessage={itemError.details?.error || itemError.details}
+                                />
                             )}
                         </Grid>
                         <Grid item xs={12}>
