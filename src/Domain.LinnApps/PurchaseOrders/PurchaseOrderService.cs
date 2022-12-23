@@ -209,6 +209,11 @@
           
             foreach (var detail in order.Details)
             {
+                if (!this.partQueryRepository.FindBy(x => x.PartNumber == detail.PartNumber).DateLive.HasValue)
+                {
+                    throw new PurchaseOrderException("Cannot Order Non-Live Part!");
+                }
+
                 this.SetDetailFieldsForCreation(detail, newOrderNumber);
 
                 this.PerformDetailCalculations(

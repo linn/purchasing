@@ -52,6 +52,8 @@
 
         public DateTime? DatePurchPhasedOut { get; set; }
 
+        public DateTime? DateLive { get; set; }
+
         public string SafetyCritical { get; set; }
 
         public bool SupplierAssembly()
