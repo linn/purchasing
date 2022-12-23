@@ -43,6 +43,9 @@
 
         protected IRepository<Employee, int> EmployeeRepository { get; set; }
 
+        protected IBomTreeService BomTreeService { get; private set; }
+
+
         protected ILog Logger { get; set; }
 
         [SetUp]
@@ -55,16 +58,20 @@
             this.PartRepository = Substitute.For<IQueryRepository<Part>>();
             this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
             this.Logger = Substitute.For<ILog>();
+            this.BomTreeService = Substitute.For<IBomTreeService>();
+
             this.FacadeService = new ChangeRequestFacadeService(
                 this.Repository,
                 this.TransactionManager,
-                new ChangeRequestResourceBuilder(new BomChangeResourceBuilder(), new PcasChangeResourceBuilder(), this.AuthService),
+                new ChangeRequestResourceBuilder(
+                    new BomChangeResourceBuilder(), new PcasChangeResourceBuilder(), this.AuthService),
                 new ChangeRequestService(
                     this.AuthService,
                     this.Repository,
                     this.PartRepository,
                     this.EmployeeRepository),
                     this.DatabaseService,
+                    this.BomTreeService,
                     this.Logger);
 
             this.Client = TestClient.With<ChangeRequestModule>(

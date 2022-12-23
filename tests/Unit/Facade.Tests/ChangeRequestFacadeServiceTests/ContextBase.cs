@@ -30,6 +30,8 @@
 
         protected ILog Logger { get; set; }
 
+        protected IBomTreeService BomTreeService { get; private set; }
+
         protected ChangeRequestFacadeService Sut { get; private set; }
 
         [SetUp]
@@ -41,6 +43,7 @@
             this.DatabaseService = Substitute.For<IDatabaseService>();
             this.PartRepository = Substitute.For<IQueryRepository<Part>>();
             this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
+            this.BomTreeService = Substitute.For<IBomTreeService>();
             this.Logger = Substitute.For<ILog>();
 
             this.Sut = new ChangeRequestFacadeService(
@@ -56,6 +59,7 @@
                 this.PartRepository,
                 this.EmployeeRepository),
                 this.DatabaseService, 
+                this.BomTreeService,
                 this.Logger);
         }
     }
