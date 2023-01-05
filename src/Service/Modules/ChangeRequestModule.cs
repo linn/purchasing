@@ -37,7 +37,8 @@
             HttpResponse res,
             IChangeRequestFacadeService facadeService,
             string searchTerm,
-            bool? includeAllForBom)
+            bool? includeAllForBom,
+            bool? includeForBoard)
         {
             if (string.IsNullOrEmpty(searchTerm))
             {
@@ -47,6 +48,10 @@
             if (includeAllForBom.GetValueOrDefault())
             {
                 await res.Negotiate(facadeService.GetChangeRequestsRelevantToBom(searchTerm));
+            }
+            else if (includeForBoard.GetValueOrDefault())
+            {
+                await res.Negotiate(facadeService.GetChangeRequestsRelevantToBoard(searchTerm));
             }
             else
             {

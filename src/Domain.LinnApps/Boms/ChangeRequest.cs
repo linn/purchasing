@@ -36,6 +36,8 @@
 
         public Part NewPart { get; set; }
 
+        public string BoardCode { get; set; }
+
         public string ReasonForChange { get; set; }
 
         public string DescriptionOfChange { get; set; }

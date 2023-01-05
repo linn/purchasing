@@ -1884,6 +1884,7 @@
             entity.Property(c => c.OldPartNumber).HasColumnName("OLD_PART_NUMBER");
             entity.HasOne(o => o.OldPart).WithMany().HasForeignKey(o => o.OldPartNumber);
             entity.Property(c => c.NewPartNumber).HasColumnName("NEW_PART_NUMBER");
+            entity.Property(c => c.BoardCode).HasColumnName("BOARD_CODE").HasMaxLength(6);
             entity.HasOne(o => o.NewPart).WithMany().HasForeignKey(o => o.NewPartNumber);
             entity.Property(c => c.ChangeState).HasColumnName("CHANGE_STATE").HasMaxLength(6);
             entity.Property(c => c.GlobalReplace).HasColumnName("GLOBAL_REPLACE").HasMaxLength(1);
