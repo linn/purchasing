@@ -27,7 +27,7 @@ function BoardComponents() {
     const { id } = useParams();
 
     const [board, setBoard] = useState(null);
-    const [crNumber, setCrNumber] = useState();
+    const [crfNumber, setCrfNumber] = useState();
     const [showChanges, setShowChanges] = useState(true);
     const searchBoards = searchTerm => reduxDispatch(boardsActions.search(searchTerm));
     const clearSearchBoards = () => reduxDispatch(boardsActions.clearSearch());
@@ -86,7 +86,7 @@ function BoardComponents() {
         { field: 'cRef', headerName: 'CRef', width: 140 },
         { field: 'partNumber', headerName: 'Part Number', width: 140 },
         { field: 'assemblyTechnology', headerName: 'Ass Tech', width: 140 },
-        { field: 'quantity', headerName: 'Qty', width: 120, editable: { crNumber } }
+        { field: 'quantity', headerName: 'Qty', width: 120, editable: { crNumber: crfNumber } }
     ];
 
     const versionsAreCorrect = (fromLayout, toLayout, fromRevision, toRevision) => {
@@ -111,6 +111,14 @@ function BoardComponents() {
         return false;
     };
 
+    const changesStateOk = changeState => {
+        if (!crfNumber && !showChanges && (changeState === 'ACCEPT' || changeState === 'PROPOS')) {
+            return false;
+        }
+
+        return true;
+    };
+
     const componentRows = state.board?.components
         ? state.board.components
               .filter(
@@ -122,7 +130,8 @@ function BoardComponents() {
                           f.toLayoutVersion,
                           f.fromRevisionVersion,
                           f.toRevisionVersion
-                      )
+                      ) &&
+                      changesStateOk(f.changeState)
               )
               .map(c => ({ ...c, id: c.boardLine }))
         : [];
@@ -201,9 +210,9 @@ function BoardComponents() {
                             label="CRF Number"
                             propertyName="crNumber"
                             helperText="Select a corresponding CRF to start editing"
-                            value={crNumber}
+                            value={crfNumber}
                             onChange={(_, n) => {
-                                setCrNumber(n);
+                                setCrfNumber(n);
                             }}
                         />
                     </Stack>
