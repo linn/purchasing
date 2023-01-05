@@ -32,5 +32,8 @@
 
         IResult<IEnumerable<ChangeRequestResource>> GetChangeRequestsRelevantToBom(
             string bomName, IEnumerable<string> privileges = null);
+
+        IResult<IEnumerable<ChangeRequestResource>> GetChangeRequestsRelevantToBoard(
+            string bomName, IEnumerable<string> privileges = null);
     }
 }

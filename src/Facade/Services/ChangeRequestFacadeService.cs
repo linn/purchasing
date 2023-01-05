@@ -155,6 +155,15 @@
                 changeRequests.Select(x => (ChangeRequestResource)this.resourceBuilder.Build(x, privileges)));
         }
 
+        public IResult<IEnumerable<ChangeRequestResource>> GetChangeRequestsRelevantToBoard(string boardCode, IEnumerable<string> privileges = null)
+        {
+            var changeRequests = this.repository.FilterBy(x => x.BoardCode == boardCode.ToUpper()
+                     && (x.ChangeState == "ACCEPT" || x.ChangeState == "PROPOS")).ToList();
+
+            return new SuccessResult<IEnumerable<ChangeRequestResource>>(
+                changeRequests.Select(x => (ChangeRequestResource)this.resourceBuilder.Build(x, privileges)));
+        }
+
         protected override ChangeRequest CreateFromResource(
             ChangeRequestResource resource, IEnumerable<string> privileges = null)
         {
