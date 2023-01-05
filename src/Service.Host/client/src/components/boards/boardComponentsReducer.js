@@ -120,6 +120,24 @@ export default function boardComponentsReducer(state = initialState, action) {
                 ...state
             };
         }
+        case 'newComponent': {
+            const { components } = state.board;
+            if (!components) {
+                return state;
+            }
+
+            const lastLine = Math.max(...components.map(o => o.boardLine));
+            components.push({
+                adding: true,
+                changeState: 'PROPOS',
+                boardCode: state.board.boardCode,
+                boardLine: lastLine + 1
+            });
+
+            return {
+                ...state
+            };
+        }
         default:
             return state;
     }

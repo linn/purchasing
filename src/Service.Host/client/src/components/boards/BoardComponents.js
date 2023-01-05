@@ -15,6 +15,8 @@ import {
     SaveBackCancelButtons
 } from '@linn-it/linn-form-components-library';
 import { DataGrid } from '@mui/x-data-grid';
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import boardComponentsActions from '../../actions/boardComponentsActions';
 import boardsActions from '../../actions/boardsActions';
@@ -83,13 +85,37 @@ function BoardComponents() {
                   .find(a => a.layoutCode === state.layoutSelectionModel[0])
                   .revisions.map(l => ({ ...l, id: l.revisionCode }))
             : [];
+
+    const handleDeleteRow = params => {
+        const comp = params.row;
+        if (comp.addChangeDocumentNumber === crfNumber) {
+            dispatch({ type: 'deleteProposedComponent', payload: comp });
+        } else {
+            dispatch({ type: 'deleteComponent', payload: comp });
+        }
+    };
+
     const componentColumns = [
         { field: 'cRef', headerName: 'CRef', width: 140 },
         { field: 'partNumber', headerName: 'Part Number', width: 140 },
         { field: 'assemblyTechnology', headerName: 'Ass Tech', width: 140 },
         { field: 'quantity', headerName: 'Qty', width: 120, editable: crfNumber },
         { field: 'addChangeDocumentNumber', headerName: 'Add Crf', width: 140 },
-        { field: 'deleteChangeDocumentNumber', headerName: 'Del Crf', width: 140 }
+        { field: 'deleteChangeDocumentNumber', headerName: 'Del Crf', width: 140 },
+        {
+            field: 'delete',
+            headerName: ' ',
+            width: 130,
+            renderCell: params => (
+                <IconButton
+                    aria-label="delete"
+                    size="small"
+                    onClick={() => handleDeleteRow(params)}
+                >
+                    <DeleteIcon fontSize="inherit" />
+                </IconButton>
+            )
+        }
     ];
 
     const versionsAreCorrect = (fromLayout, toLayout, fromRevision, toRevision) => {
@@ -298,7 +324,7 @@ function BoardComponents() {
                     </div>
                 </Grid>
                 <Grid item xs={8}>
-                    <div style={{ width: '850px' }}>
+                    <div style={{ width: '880px' }}>
                         {state.board?.components && (
                             <>
                                 <DataGrid
@@ -337,6 +363,16 @@ function BoardComponents() {
                             </>
                         )}
                     </div>
+                </Grid>
+                <Grid item xs={4} />
+                <Grid item xs={8}>
+                    <Button
+                        onClick={() => {
+                            dispatch({ type: 'newComponent', payload: null });
+                        }}
+                    >
+                        New Component
+                    </Button>
                 </Grid>
                 <Grid item xs={12}>
                     <SaveBackCancelButtons

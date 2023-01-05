@@ -52,7 +52,7 @@
                            IdBoard = resource.IdBoard,
                            Layouts = resource.Layouts
                                ?.Select(l => this.MakeLayout(l, resource.DefaultPcbNumber?.ToUpper())).ToList()
-            };
+                       };
         }
 
         protected override void UpdateFromResource(
