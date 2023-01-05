@@ -99,6 +99,27 @@ export default function boardComponentsReducer(state = initialState, action) {
                 componentSelectionModel: action.payload
             };
         }
+        case 'updateComponent': {
+            if (!action.payload?.boardLine) {
+                return state;
+            }
+
+            const { components } = state.board;
+
+            const componentIndex = components.findIndex(
+                i => i.boardLine === action.payload.boardLine
+            );
+
+            let componentToUpdate = components[componentIndex];
+
+            componentToUpdate = action.payload;
+
+            components[componentIndex] = componentToUpdate;
+
+            return {
+                ...state
+            };
+        }
         default:
             return state;
     }

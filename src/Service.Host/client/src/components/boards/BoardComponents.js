@@ -11,7 +11,8 @@ import {
     Dropdown,
     collectionSelectorHelpers,
     itemSelectorHelpers,
-    Search
+    Search,
+    SaveBackCancelButtons
 } from '@linn-it/linn-form-components-library';
 import { DataGrid } from '@mui/x-data-grid';
 
@@ -86,7 +87,9 @@ function BoardComponents() {
         { field: 'cRef', headerName: 'CRef', width: 140 },
         { field: 'partNumber', headerName: 'Part Number', width: 140 },
         { field: 'assemblyTechnology', headerName: 'Ass Tech', width: 140 },
-        { field: 'quantity', headerName: 'Qty', width: 120, editable: { crNumber: crfNumber } }
+        { field: 'quantity', headerName: 'Qty', width: 120, editable: crfNumber },
+        { field: 'addChangeDocumentNumber', headerName: 'Add Crf', width: 140 },
+        { field: 'deleteChangeDocumentNumber', headerName: 'Del Crf', width: 140 }
     ];
 
     const versionsAreCorrect = (fromLayout, toLayout, fromRevision, toRevision) => {
@@ -157,6 +160,17 @@ function BoardComponents() {
         if (board) {
             reduxDispatch(boardComponentsActions.fetch(board.toUpperCase()));
         }
+    };
+
+    const processRowUpdate = newRow => {
+        dispatch({ type: 'updateComponent', payload: newRow });
+
+        return newRow;
+    };
+
+    const handleCancel = () => {
+        reduxDispatch(boardComponentsActions.clearErrorsForItem());
+        dispatch({ type: 'populate', payload: item });
     };
 
     return (
@@ -284,10 +298,18 @@ function BoardComponents() {
                     </div>
                 </Grid>
                 <Grid item xs={8}>
-                    <div style={{ width: '600px' }}>
+                    <div style={{ width: '850px' }}>
                         {state.board?.components && (
                             <>
                                 <DataGrid
+                                    sx={{
+                                        '& .propos': {
+                                            bgcolor: 'yellow'
+                                        },
+                                        '& .accept': {
+                                            bgcolor: '#b0f7b9'
+                                        }
+                                    }}
                                     rows={componentRows}
                                     columns={componentColumns}
                                     pageSize={40}
@@ -301,16 +323,35 @@ function BoardComponents() {
                                         });
                                     }}
                                     experimentalFeatures={{ newEditingApi: true }}
+                                    processRowUpdate={processRowUpdate}
                                     loading={loading}
                                     hideFooterSelectedRowCount
                                     hideFooter={
                                         !state.board?.components ||
                                         state.board.components.length <= 40
                                     }
+                                    getRowClassName={params =>
+                                        params.row.changeState?.toLowerCase()
+                                    }
                                 />
                             </>
                         )}
                     </div>
+                </Grid>
+                <Grid item xs={12}>
+                    <SaveBackCancelButtons
+                        saveDisabled={!crfNumber}
+                        saveClick={() => {
+                            reduxDispatch(boardComponentsActions.clearErrorsForItem());
+                            reduxDispatch(
+                                boardComponentsActions.update(state.board.boardCode, state.board)
+                            );
+                        }}
+                        cancelClick={handleCancel}
+                        backClick={() => {
+                            history.push('/purchasing/boms/board-components');
+                        }}
+                    />
                 </Grid>
             </Grid>
         </Page>

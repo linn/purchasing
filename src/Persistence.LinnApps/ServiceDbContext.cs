@@ -208,6 +208,8 @@
 
         public DbSet<BomDetail> BomDetails { get; set; }
 
+        public DbSet<PcasChange> PcasChanges { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);

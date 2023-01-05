@@ -24,8 +24,16 @@
         
         public int AddChangeId { get; set; }
 
+        public string AddChangeDocumentType { get; set; }
+
+        public int? AddChangeDocumentNumber { get; set; }
+
         public int? DeleteChangeId { get; set; }
-        
+
+        public string DeleteChangeDocumentType { get; set; }
+
+        public int? DeleteChangeDocumentNumber { get; set; }
+
         public decimal Quantity { get; set; }
     }
 }
