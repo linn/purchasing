@@ -131,8 +131,35 @@ export default function boardComponentsReducer(state = initialState, action) {
                 adding: true,
                 changeState: 'PROPOS',
                 boardCode: state.board.boardCode,
-                boardLine: lastLine + 1
+                boardLine: lastLine + 1,
+                fromLayoutVersion: state.selectedRevision.layoutSequence,
+                fromRevisionNumber: state.selectedRevision.versionNumber,
+                quantity: 1
             });
+
+            return {
+                ...state
+            };
+        }
+        case 'setComponentPart': {
+            if (!action.payload?.boardLine) {
+                return state;
+            }
+
+            const { components } = state.board;
+
+            const componentIndex = components.findIndex(
+                i => i.boardLine === action.payload.boardLine
+            );
+
+            let componentToUpdate = components[componentIndex];
+
+            componentToUpdate = {
+                ...componentToUpdate,
+                partNumber: action.payload.part?.partNumber
+            };
+
+            components[componentIndex] = componentToUpdate;
 
             return {
                 ...state
