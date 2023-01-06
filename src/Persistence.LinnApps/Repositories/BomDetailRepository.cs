@@ -1,49 +1,26 @@
 ﻿namespace Linn.Purchasing.Persistence.LinnApps.Repositories
 {
-    using System;
-    using System.Collections.Generic;
     using System.Linq;
-    using System.Linq.Expressions;
 
+    using Linn.Common.Persistence.EntityFramework;
     using Linn.Purchasing.Domain.LinnApps.Boms;
 
     using Microsoft.EntityFrameworkCore;
 
-    public class BomDetailRepository : IBomDetailRepository
+    public class BomDetailRepository : EntityFrameworkRepository<BomDetail, int>
     {
-        private readonly DbSet<BomDetailViewEntry> bomDetails;
+        private readonly ServiceDbContext serviceDbContext;
 
         public BomDetailRepository(ServiceDbContext serviceDbContext)
+            : base(serviceDbContext.BomDetails)
         {
-            this.bomDetails = serviceDbContext.BomDetailView;
+            this.serviceDbContext = serviceDbContext;
         }
 
-        public BomDetailViewEntry FindBy(Expression<Func<BomDetailViewEntry, bool>> expression)
+        public override BomDetail FindById(int key)
         {
-            return this.bomDetails.Include(b => b.Part).SingleOrDefault(expression);
-        }
-
-        public IQueryable<BomDetailViewEntry> FilterBy(Expression<Func<BomDetailViewEntry, bool>> expression)
-        {
-            return this.bomDetails.Include(b => b.Part)
-                .ThenInclude(p => p.PartSuppliers.Where(ps => ps.SupplierRanking == 1))
-                .Include(d => d.PartRequirement)
-                .Include(d => d.AddChange)
-                .Include(d => d.BomPart).Where(expression)
-                .AsNoTracking();
-        }
-
-        public IQueryable<BomDetailViewEntry> FindAll()
-        {
-            return this.bomDetails
-                .Include(d => d.Part)
-                .Include(d => d.Components)
-                .AsNoTracking();
-        }
-
-        public IEnumerable<BomDetailViewEntry> GetLiveBomDetails(string bomName)
-        {
-            return this.bomDetails.Include(b => b.Part).Where(b => b.BomName == bomName && b.ChangeState == "LIVE");
+            return this.FilterBy(x => x.DetailId == key).Include(x => x.DeleteChange)
+                .FirstOrDefault();
         }
     }
 }

@@ -41,12 +41,11 @@
                            DateEntered = model.DateEntered.ToString("o"),
                            DateAccepted = model.DateAccepted?.ToString("o"),
                            NewPartNumber = model.NewPartNumber,
-
+                           BoardCode = model.BoardCode,
                            ChangeType = model.ChangeRequestType,
                            OldPartNumber = model.OldPartNumber,
                            OldPartDescription = model.OldPart?.Description,
                            NewPartDescription = model.NewPart?.Description,
-
                            ProposedBy = 
                                new EmployeeResource
                                    {

@@ -8,6 +8,7 @@
 
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
 
     using NSubstitute;
 
@@ -71,6 +72,8 @@
             this.DatabaseService.GetIdSequence("BOMDET_SEQ").Returns(10023);
 
             this.replacedDetail = new BomDetail { PartNumber = "CAP OLD", Qty = 2, ChangeState = "LIVE" };
+            this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
+                .Returns(new Part { DecrementRule = "YES", BomType = "C" });
 
             this.BomDetailRepository.FindById(4567)
                 .Returns(this.replacedDetail);

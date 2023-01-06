@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
 
     using Linn.Common.Domain.Exceptions;
@@ -29,12 +30,17 @@
 
         private readonly ILog log;
 
+        private readonly IBomTreeService bomTreeService;
+
+        private readonly IRepository<ChangeRequest, int> repository;
+
         public ChangeRequestFacadeService(
             IRepository<ChangeRequest, int> repository,
             ITransactionManager transactionManager,
             IBuilder<ChangeRequest> resourceBuilder,
             IChangeRequestService changeRequestService,
             IDatabaseService databaseService,
+            IBomTreeService bomTreeService,
             ILog log)
             : base(repository, transactionManager, resourceBuilder)
         {
@@ -43,6 +49,8 @@
             this.databaseService = databaseService;
             this.log = log;
             this.transactionManager = transactionManager;
+            this.bomTreeService = bomTreeService;
+            this.repository = repository;
         }
 
         public IResult<ChangeRequestResource> ApproveChangeRequest(int documentNumber, IEnumerable<string> privileges = null)
@@ -132,7 +140,32 @@
             return new BadRequestResult<ChangeRequestResource>($"Cannot change status to {request?.Status}");
         }
 
-        protected override ChangeRequest CreateFromResource(ChangeRequestResource resource, IEnumerable<string> privileges = null)
+        public IResult<IEnumerable<ChangeRequestResource>> GetChangeRequestsRelevantToBom(
+            string bomName, IEnumerable<string> privileges = null)
+        {
+            var assemblies = this.bomTreeService
+                .FlattenBomTree(bomName.ToUpper().Trim(), null, false, true)
+                .Where(x => x.Type != "C").Select(a => a.Name).ToList();
+
+            var changeRequests = this.repository.FilterBy(
+                x => assemblies.Contains(x.NewPartNumber) 
+                     && (x.ChangeState == "ACCEPT" || x.ChangeState == "PROPOS")).ToList();
+
+            return new SuccessResult<IEnumerable<ChangeRequestResource>>(
+                changeRequests.Select(x => (ChangeRequestResource)this.resourceBuilder.Build(x, privileges)));
+        }
+
+        public IResult<IEnumerable<ChangeRequestResource>> GetChangeRequestsRelevantToBoard(string boardCode, IEnumerable<string> privileges = null)
+        {
+            var changeRequests = this.repository.FilterBy(x => x.BoardCode == boardCode.ToUpper()
+                     && (x.ChangeState == "ACCEPT" || x.ChangeState == "PROPOS")).ToList();
+
+            return new SuccessResult<IEnumerable<ChangeRequestResource>>(
+                changeRequests.Select(x => (ChangeRequestResource)this.resourceBuilder.Build(x, privileges)));
+        }
+
+        protected override ChangeRequest CreateFromResource(
+            ChangeRequestResource resource, IEnumerable<string> privileges = null)
         {
             if (resource == null)
             {

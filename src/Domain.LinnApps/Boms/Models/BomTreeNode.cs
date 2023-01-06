@@ -35,5 +35,11 @@
         public int? DeleteReplaceSeq { get; set; }
 
         public bool? ToDelete { get; set; }
+
+        public string Requirement { get; set; }
+
+        public string DrawingReference { get; set; }
+
+        public string SafetyCritical { get; set; }
     }
 }

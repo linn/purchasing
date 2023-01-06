@@ -36,14 +36,27 @@
             HttpRequest req, 
             HttpResponse res,
             IChangeRequestFacadeService facadeService,
-            string searchTerm)
+            string searchTerm,
+            bool? includeAllForBom,
+            bool? includeForBoard)
         {
             if (string.IsNullOrEmpty(searchTerm))
             {
                 await res.Negotiate(new ViewResponse { ViewName = "Index.html" });
             }
 
-            await res.Negotiate(facadeService.Search(searchTerm));
+            if (includeAllForBom.GetValueOrDefault())
+            {
+                await res.Negotiate(facadeService.GetChangeRequestsRelevantToBom(searchTerm));
+            }
+            else if (includeForBoard.GetValueOrDefault())
+            {
+                await res.Negotiate(facadeService.GetChangeRequestsRelevantToBoard(searchTerm));
+            }
+            else
+            {
+                await res.Negotiate(facadeService.Search(searchTerm));
+            }
         }
 
         private async Task GetChangeRequest(
