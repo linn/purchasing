@@ -20,8 +20,6 @@
 
         public int? AddChangeId { get; set; }
 
-        public BomChange DeleteChange { get; set; }
-
         public int? AddReplaceSeq { get; set; }
 
         public BomChange DeleteChange { get; set; }
