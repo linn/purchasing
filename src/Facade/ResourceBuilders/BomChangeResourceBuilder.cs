@@ -24,7 +24,8 @@
                            DateCancelled = model.DateCancelled.HasValue ? model.DateCancelled.Value.ToString("o") : null,
                            PhaseInWeekNumber = model.PhaseInWeekNumber,
                            PhaseInWWYYYY = model.PhaseInWeek == null ? string.Empty : model.PhaseInWeek.WwYyyy,
-                           LifecycleText = model.LifecycleText()
+                           LifecycleText = model.LifecycleText(),
+                           BomChangeDetails = model.BomChangeDetails()
             };
         }
 

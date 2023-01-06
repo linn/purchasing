@@ -1,6 +1,8 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Boms
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class BomChange
     {
@@ -45,7 +47,11 @@
         public string Comments { get; set; }
 
         public string PcasChange { get; set; }
-        
+
+        public IEnumerable<BomDetail> AddedBomDetails { get; set; }
+
+        public IEnumerable<BomDetail> DeletedBomDetails { get; set; }
+
         public bool CanCancel() => this.ChangeState == "PROPOS" || this.ChangeState == "ACCEPT";
 
         public bool CanMakeLive() => this.ChangeState == "ACCEPT";
@@ -83,6 +89,24 @@
                 return $"Live on {this.DateApplied?.ToString("dd-MMM-yy")} by {this.AppliedBy?.FullName}";
             }
             return $"Created on {this.DateEntered.ToString("dd-MMM-yy")} by {this.EnteredBy?.FullName}";
+        }
+
+        public IEnumerable<BomChangeDetail> BomChangeDetails()
+        {
+            var addedChanges = this.AddedBomDetails == null ? new List<BomChangeDetail>() : this.AddedBomDetails.Select(a => new BomChangeDetail(a, null, this.DeletedBomDetails)).ToList();
+            var deletedChanges = this.DeletedBomDetails == null ? new List<BomChangeDetail>() : this.DeletedBomDetails.Where(d => d.DeleteReplaceSeq == null)
+                                     .Select(d => new BomChangeDetail(null, d, null)).ToList();
+
+            if (!addedChanges.Any())
+            {
+                return deletedChanges;
+            }
+
+            if (!deletedChanges.Any())
+            {
+                return addedChanges;
+            }
+            return addedChanges.Concat(deletedChanges);
         }
     }
 }

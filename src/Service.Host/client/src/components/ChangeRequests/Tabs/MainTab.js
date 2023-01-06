@@ -132,7 +132,7 @@ function MainTab({ item, approve }) {
 
 MainTab.propTypes = {
     item: PropTypes.shape({
-        documentNumber: PropTypes.string,
+        documentNumber: PropTypes.number,
         dateEntered: PropTypes.string,
         dateAccepted: PropTypes.string,
         changeState: PropTypes.string,

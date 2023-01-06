@@ -1921,6 +1921,9 @@
 
             entity.Property(c => c.Comments).HasColumnName("COMMENTS").HasMaxLength(2000);
             entity.HasOne(c => c.PhaseInWeek).WithMany().HasForeignKey(c => c.PhaseInWeekNumber);
+
+            entity.HasMany(c => c.AddedBomDetails).WithOne(d => d.AddChange).HasForeignKey(d => d.AddChangeId);
+            entity.HasMany(c => c.DeletedBomDetails).WithOne(d => d.DeleteChange).HasForeignKey(d => d.DeleteChangeId);
         }
 
         private void BuildBoms(ModelBuilder builder)

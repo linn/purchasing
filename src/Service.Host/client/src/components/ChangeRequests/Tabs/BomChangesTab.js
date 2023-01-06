@@ -4,6 +4,7 @@ import Grid from '@mui/material/Grid';
 import { DataGrid } from '@mui/x-data-grid';
 import { makeStyles } from '@mui/styles';
 import ChangeState from '../ChangeState';
+import BomChangeDetails from '../BomChangeDetails';
 
 function BomChangesTab({ bomChanges, handleSelectChange }) {
     const useStyles = makeStyles(() => ({
@@ -24,8 +25,20 @@ function BomChangesTab({ bomChanges, handleSelectChange }) {
             )
         },
         { field: 'phaseInWWYYYY', headerName: 'Phase In Week', width: 200 },
-        { field: 'changeId', headerName: 'Id', width: 100 },
-        { field: 'lifecycleText', headerName: 'Lifecycle', width: 350 }
+        {
+            field: 'bomChangesDetails',
+            headerName: 'Chgs',
+            width: 40,
+            renderCell: params => (
+                <BomChangeDetails bomChangeDetails={params.row.bomChangeDetails} />
+            )
+        },
+        {
+            field: 'lifecycleText',
+            headerName: 'Lifecycle',
+            width: 400
+        },
+        { field: 'changeId', headerName: 'Id', width: 100 }
     ];
 
     return (
@@ -37,7 +50,7 @@ function BomChangesTab({ bomChanges, handleSelectChange }) {
                         className={classes.gap}
                         rows={bomChanges}
                         columns={columns}
-                        rowHeight={34}
+                        getRowHeight={() => 'auto'}
                         autoHeight
                         loading={false}
                         checkboxSelection
