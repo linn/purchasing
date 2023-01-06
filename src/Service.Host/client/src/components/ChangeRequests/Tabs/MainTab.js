@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
@@ -132,7 +132,7 @@ function MainTab({ item, approve }) {
 
 MainTab.propTypes = {
     item: PropTypes.shape({
-        documentNumber: PropTypes.string,
+        documentNumber: PropTypes.number,
         dateEntered: PropTypes.string,
         dateAccepted: PropTypes.string,
         changeState: PropTypes.string,
