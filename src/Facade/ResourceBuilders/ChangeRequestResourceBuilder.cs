@@ -42,6 +42,7 @@
                            DateAccepted = model.DateAccepted?.ToString("o"),
                            NewPartNumber = model.NewPartNumber,
                            BoardCode = model.BoardCode,
+                           RevisionCode = model.RevisionCode,
                            ChangeType = model.ChangeRequestType,
                            OldPartNumber = model.OldPartNumber,
                            OldPartDescription = model.OldPart?.Description,

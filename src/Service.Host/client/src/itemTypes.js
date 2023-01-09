@@ -358,7 +358,7 @@ export const board = new ItemType('board', 'BOARD', '/purchasing/boms/boards');
 export const boardComponents = new ItemType(
     'boardComponents',
     'BOARD_COMPONENTS',
-    '/purchasing/boms/boards'
+    '/purchasing/boms/board-components'
 );
 export const boards = new ItemType('boards', 'BOARDS', '/purchasing/boms/boards');
 

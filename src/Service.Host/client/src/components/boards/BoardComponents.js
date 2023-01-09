@@ -4,6 +4,7 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
+import Tooltip from '@mui/material/Tooltip';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     Page,
@@ -11,9 +12,18 @@ import {
     Dropdown,
     collectionSelectorHelpers,
     itemSelectorHelpers,
-    Search
+    Search,
+    SaveBackCancelButtons
 } from '@linn-it/linn-form-components-library';
 import { DataGrid } from '@mui/x-data-grid';
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
+import UpgradeIcon from '@mui/icons-material/Upgrade';
+import ManageSearchIcon from '@mui/icons-material/ManageSearch';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
 
 import boardComponentsActions from '../../actions/boardComponentsActions';
 import boardsActions from '../../actions/boardsActions';
@@ -21,6 +31,7 @@ import changeRequestsActions from '../../actions/changeRequestsActions';
 import history from '../../history';
 import config from '../../config';
 import boardComponentsReducer from './boardComponentsReducer';
+import partsActions from '../../actions/partsActions';
 
 function BoardComponents() {
     const reduxDispatch = useDispatch();
@@ -82,11 +93,150 @@ function BoardComponents() {
                   .find(a => a.layoutCode === state.layoutSelectionModel[0])
                   .revisions.map(l => ({ ...l, id: l.revisionCode }))
             : [];
+
+    const handleDeleteRow = params => {
+        const comp = params.row;
+        if (comp.addChangeDocumentNumber?.toString() === crfNumber) {
+            dispatch({ type: 'deleteProposedComponent', payload: comp });
+        } else {
+            dispatch({ type: 'deleteComponent', payload: comp });
+        }
+    };
+
+    const [partSearchTerm, setPartSearchTerm] = useState();
+    const [partLookUp, setPartLookUp] = useState({ open: false, forRow: null });
+    const openPartLookUp = forRow => {
+        setPartLookUp({ open: true, forRow });
+        setPartSearchTerm(null);
+    };
+    const searchParts = searchTerm => reduxDispatch(partsActions.search(searchTerm));
+    const partsSearchResults = useSelector(reduxState =>
+        collectionSelectorHelpers.getSearchItems(
+            reduxState.parts,
+            100,
+            'id',
+            'partNumber',
+            'description'
+        )
+    );
+    const partsSearchLoading = useSelector(reduxState =>
+        collectionSelectorHelpers.getSearchLoading(reduxState.parts)
+    );
+
+    const handlePartSelect = newValue => {
+        dispatch({
+            type: 'setComponentPart',
+            payload: { part: newValue, boardLine: partLookUp.forRow.boardLine }
+        });
+        setPartLookUp(p => ({ ...p, selectedPart: newValue, open: false }));
+    };
+
+    const setPartWithoutSearch = () => {
+        dispatch({
+            type: 'setComponentPart',
+            payload: {
+                part: { partNumber: partSearchTerm?.toUpperCase() },
+                boardLine: partLookUp.forRow.boardLine
+            }
+        });
+        setPartLookUp(p => ({
+            ...p,
+            selectedPart: { partNumber: partSearchTerm?.toUpperCase() },
+            open: false
+        }));
+    };
+
+    function renderPartLookUp() {
+        return (
+            <Dialog open={partLookUp.open}>
+                <DialogTitle>Search For A Part</DialogTitle>
+                <DialogContent dividers>
+                    <Search
+                        propertyName="partNumber"
+                        label="Part Number"
+                        resultsInModal
+                        resultLimit={100}
+                        value={partSearchTerm}
+                        handleValueChange={(_, newVal) => setPartSearchTerm(newVal)}
+                        search={searchParts}
+                        searchResults={partsSearchResults}
+                        helperText="Press ENTER to search or TAB to proceed"
+                        onKeyPressFunctions={[{ keyCode: 9, action: setPartWithoutSearch }]}
+                        loading={partsSearchLoading}
+                        priorityFunction="closestMatchesFirst"
+                        onResultSelect={handlePartSelect}
+                        clearSearch={() => {}}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={() =>
+                            setPartLookUp({ open: false, forRow: null, selectedPart: null })
+                        }
+                    >
+                        Cancel
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
+    }
+
+    const partLookUpCell = params => (
+        <>
+            <span style={{ float: 'left' }}>
+                {params.row.partNumber}
+                <IconButton onClick={() => openPartLookUp(params.row)} disabled={!crfNumber}>
+                    <ManageSearchIcon />
+                </IconButton>
+            </span>
+        </>
+    );
+
     const componentColumns = [
-        { field: 'cRef', headerName: 'CRef', width: 140 },
-        { field: 'partNumber', headerName: 'Part Number', width: 140 },
+        { field: 'cRef', headerName: 'CRef', width: 140, editable: true },
+        {
+            field: 'partNumber',
+            headerName: 'Part',
+            width: 140,
+            editable: false,
+            renderCell: partLookUpCell
+        },
         { field: 'assemblyTechnology', headerName: 'Ass Tech', width: 140 },
-        { field: 'quantity', headerName: 'Qty', width: 120, editable: { crNumber: crfNumber } }
+        { field: 'quantity', headerName: 'Qty', type: 'number', width: 120, editable: crfNumber },
+        { field: 'addChangeDocumentNumber', headerName: 'Add Crf', width: 140 },
+        { field: 'deleteChangeDocumentNumber', headerName: 'Del Crf', width: 140 },
+        {
+            field: 'delete',
+            headerName: ' ',
+            width: 50,
+            renderCell: params => (
+                <Tooltip title="Remove">
+                    <IconButton
+                        aria-label="remove"
+                        size="small"
+                        onClick={() => handleDeleteRow(params)}
+                    >
+                        <DeleteIcon fontSize="inherit" />
+                    </IconButton>
+                </Tooltip>
+            )
+        },
+        {
+            field: 'replace',
+            headerName: ' ',
+            width: 50,
+            renderCell: params => (
+                <Tooltip title="Replace">
+                    <IconButton
+                        aria-label="replace"
+                        size="small"
+                        onClick={() => handleDeleteRow(params)}
+                    >
+                        <UpgradeIcon fontSize="inherit" />
+                    </IconButton>
+                </Tooltip>
+            )
+        }
     ];
 
     const versionsAreCorrect = (fromLayout, toLayout, fromRevision, toRevision) => {
@@ -159,11 +309,23 @@ function BoardComponents() {
         }
     };
 
+    const processRowUpdate = newRow => {
+        dispatch({ type: 'updateComponent', payload: newRow });
+
+        return newRow;
+    };
+
+    const handleCancel = () => {
+        reduxDispatch(boardComponentsActions.clearErrorsForItem());
+        dispatch({ type: 'populate', payload: item });
+    };
+
     return (
         <Page history={history} style={{ paddingBottom: '20px' }} homeUrl={config.appRoot}>
             <Typography variant="h5" gutterBottom>
                 Search or select PCAS board
             </Typography>
+            {renderPartLookUp()}
             <Grid container spacing={2}>
                 <Grid item xs={6}>
                     <Stack direction="row" spacing={2}>
@@ -284,10 +446,18 @@ function BoardComponents() {
                     </div>
                 </Grid>
                 <Grid item xs={8}>
-                    <div style={{ width: '600px' }}>
+                    <div style={{ width: '940px' }}>
                         {state.board?.components && (
                             <>
                                 <DataGrid
+                                    sx={{
+                                        '& .propos': {
+                                            bgcolor: 'yellow'
+                                        },
+                                        '& .accept': {
+                                            bgcolor: '#b0f7b9'
+                                        }
+                                    }}
                                     rows={componentRows}
                                     columns={componentColumns}
                                     pageSize={40}
@@ -301,16 +471,49 @@ function BoardComponents() {
                                         });
                                     }}
                                     experimentalFeatures={{ newEditingApi: true }}
+                                    processRowUpdate={processRowUpdate}
                                     loading={loading}
                                     hideFooterSelectedRowCount
                                     hideFooter={
                                         !state.board?.components ||
                                         state.board.components.length <= 40
                                     }
+                                    getRowClassName={params =>
+                                        params.row.changeState?.toLowerCase()
+                                    }
+                                    isCellEditable={params => params.row.adding && crfNumber}
                                 />
                             </>
                         )}
                     </div>
+                </Grid>
+                <Grid item xs={4} />
+                <Grid item xs={8}>
+                    <Tooltip title="Remove">
+                        <Button
+                            disabled={!crfNumber}
+                            onClick={() => {
+                                dispatch({ type: 'newComponent', payload: null });
+                            }}
+                        >
+                            New Component
+                        </Button>
+                    </Tooltip>
+                </Grid>
+                <Grid item xs={12}>
+                    <SaveBackCancelButtons
+                        saveDisabled={!crfNumber}
+                        saveClick={() => {
+                            reduxDispatch(boardComponentsActions.clearErrorsForItem());
+                            reduxDispatch(
+                                boardComponentsActions.update(state.board.boardCode, state.board)
+                            );
+                        }}
+                        cancelClick={handleCancel}
+                        backClick={() => {
+                            history.push('/purchasing/boms/board-components');
+                        }}
+                    />
                 </Grid>
             </Grid>
         </Page>
