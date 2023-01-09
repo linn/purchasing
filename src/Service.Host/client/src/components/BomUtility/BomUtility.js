@@ -463,7 +463,9 @@ function BomUtility() {
             const parent = getNode(node.parentName, 'name');
             setSelected(parent);
             document.getElementById(parent.id).scrollIntoView();
-            document.getElementById(node.id).scrollIntoView();
+            (() => new Promise(resolve => setTimeout(resolve, 500)))().then(() => {
+                document.querySelectorAll(`[data-id="${node.id}"]`)?.[0]?.scrollIntoView();
+            });
         }
     };
 
