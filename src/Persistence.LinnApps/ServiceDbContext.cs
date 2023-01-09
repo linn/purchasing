@@ -1921,9 +1921,6 @@
 
             entity.Property(c => c.Comments).HasColumnName("COMMENTS").HasMaxLength(2000);
             entity.HasOne(c => c.PhaseInWeek).WithMany().HasForeignKey(c => c.PhaseInWeekNumber);
-
-            entity.HasMany(c => c.AddedBomDetails).WithOne(d => d.AddChange).HasForeignKey(d => d.AddChangeId);
-            entity.HasMany(c => c.DeletedBomDetails).WithOne(d => d.DeleteChange).HasForeignKey(d => d.DeleteChangeId);
         }
 
         private void BuildBoms(ModelBuilder builder)
@@ -1973,7 +1970,8 @@
             entity.Property(a => a.DeleteChangeId).HasColumnName("DELETE_CHANGE_ID");
             entity.Property(a => a.DeleteReplaceSeq).HasColumnName("DELETE_REPLACE_SEQ");
             entity.Property(a => a.PcasLine).HasColumnName("PCAS_LINE");
-            entity.HasOne(a => a.DeleteChange).WithMany().HasForeignKey(x => x.DeleteChangeId);
+            entity.HasOne(a => a.DeleteChange).WithMany(c => c.DeletedBomDetails).HasForeignKey(x => x.DeleteChangeId);
+            entity.HasOne(a => a.AddChange).WithMany(c => c.AddedBomDetails).HasForeignKey(x => x.AddChangeId);
         }
 
         private void BuildBomDetailComponents(ModelBuilder builder)
