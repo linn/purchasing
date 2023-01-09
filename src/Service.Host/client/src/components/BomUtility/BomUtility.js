@@ -8,7 +8,8 @@ import {
     SaveBackCancelButtons,
     SnackbarMessage,
     getItemError,
-    ErrorCard
+    ErrorCard,
+    InputField
 } from '@linn-it/linn-form-components-library';
 import { DataGrid } from '@mui/x-data-grid';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -53,8 +54,9 @@ function BomUtility() {
         changeRequestsItemType.item,
         'searchItems'
     );
-    const [showChanges, setShowChanges] = useState(false);
+    const [showChanges, setShowChanges] = useState(true);
     const [disableChangesButton, setDisableChangesButton] = useState(false);
+    const [searchBomTerm, setSearchBomTerm] = useState();
 
     const url = changes =>
         `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${changes}&treeType=${'bom'}`;
@@ -68,9 +70,11 @@ function BomUtility() {
 
     const [treeView, setTreeView] = useState();
 
-    const [expanded, setExpanded] = useState();
-
-    const { nodesWithChildren } = useExpandNodesWithChildren([], treeView, bomName);
+    const { expanded, setExpanded, nodesWithChildren } = useExpandNodesWithChildren(
+        [],
+        treeView,
+        bomName
+    );
 
     const [partLookUp, setPartLookUp] = useState({ open: false, forRow: null });
 
@@ -295,8 +299,8 @@ function BomUtility() {
         return newTree;
     };
 
-    // find a node in the tree, by its id field
-    const getNode = id => {
+    // find a node in the tree
+    const getNode = (searchTerm, fieldName = 'id') => {
         if (treeView == null) return null;
         const q = [];
         q.push(treeView);
@@ -305,10 +309,42 @@ function BomUtility() {
             while (n > 0) {
                 const current = q[0];
                 q.shift();
-                if (current.id === id) return current;
+                if (current[fieldName] === searchTerm) return current;
                 if (current.children)
                     for (let i = 0; i < current.children.length; i += 1)
                         q.push(current.children[i]);
+                n -= 1;
+            }
+        }
+        return null;
+    };
+
+    const [searchOccurenceCount, setSearchOccurenceCount] = useState(0);
+
+    const searchTree = searchTerm => {
+        let count = 0;
+        setExpanded(expanded);
+        if (treeView == null) return null;
+        const q = [];
+        q.push(treeView);
+        while (q.length !== 0) {
+            let n = q.length;
+            while (n > 0) {
+                const current = q[0];
+                q.shift();
+                if (current.children) {
+                    for (let i = 0; i < current.children.length; i += 1)
+                        q.push(current.children[i]);
+                    setExpanded(e => [...e, current.id]);
+                }
+                if (current.name === searchTerm) {
+                    count += 1;
+                }
+                if (current.name === searchTerm && count === searchOccurenceCount + 1) {
+                    setSearchOccurenceCount(prevValue => prevValue + 1);
+                    return current;
+                }
+
                 n -= 1;
             }
         }
@@ -421,6 +457,16 @@ function BomUtility() {
         setContextMenu(null);
     };
 
+    const doSearch = () => {
+        const node = searchTree(searchBomTerm?.toUpperCase?.());
+        if (node) {
+            const parent = getNode(node.parentName, 'name');
+            setSelected(parent);
+            document.getElementById(parent.id).scrollIntoView();
+            document.getElementById(node.id).scrollIntoView();
+        }
+    };
+
     return (
         <Page history={history} homeUrl={config.appRoot}>
             {renderPartLookUp()}
@@ -453,7 +499,26 @@ function BomUtility() {
                                 }}
                             />
                         </Grid>
-                        <Grid item xs={8}>
+                        <Grid item xs={4}>
+                            <InputField
+                                label="Search Bom"
+                                helperText="press enter to search"
+                                value={searchBomTerm}
+                                onChange={(_, v) => {
+                                    setSearchOccurenceCount(0);
+                                    setSearchBomTerm(v);
+                                }}
+                                propertyName="searchBomTerm"
+                                textFieldProps={{
+                                    onKeyDown: data => {
+                                        if (data.keyCode === 13) {
+                                            doSearch(searchBomTerm);
+                                        }
+                                    }
+                                }}
+                            />
+                        </Grid>
+                        <Grid item xs={4}>
                             {itemError && (
                                 <Grid item xs={12}>
                                     <ErrorCard
