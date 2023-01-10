@@ -246,9 +246,11 @@
             return tree;
         }
 
-        public void CopyBom(string srcPartNumber, int destBomId)
+        public void CopyBom(string srcPartNumber, int destBomId, int changedBy, int crfNumber)
         {
-            var changeId = this.databaseService.GetIdSequence("CHG_SEQ");
+            var changeId = this.databaseService.GetIdSequence("CHG_SEQ"); // not always right
+            // we need to look up the change if one exists for this bom
+            // or create a new one?
             this.bomPack.CopyBom(srcPartNumber, destBomId, changeId, "PROPOS", "O");
         }
     }

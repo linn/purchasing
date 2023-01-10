@@ -9,6 +9,7 @@
     {
         IResult<BomTreeNode> PostBom(PostBomResource node);
 
-        IResult<ProcessResult> CopyBom(string srcPartNumber, int destBomId, string destPartNumber);
+        IResult<ProcessResult> CopyBom(
+            string srcPartNumber, int destBomId, string destPartNumber, int changedBy, int crfNumber);
     }
 }

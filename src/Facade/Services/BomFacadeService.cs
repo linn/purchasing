@@ -39,9 +39,10 @@
             }
         }
 
-        public IResult<ProcessResult> CopyBom(string srcPartNumber, int destBomId, string destPartNumber)
+        public IResult<ProcessResult> CopyBom(
+            string srcPartNumber, int destBomId, string destPartNumber, int changedBy, int crfNumber)
         {
-            this.bomChangeService.CopyBom(srcPartNumber, destBomId);
+            this.bomChangeService.CopyBom(srcPartNumber, destBomId, changedBy, crfNumber);
             this.transactionManager.Commit();
 
             // todo - some error handling? Could this domain service throw errors?

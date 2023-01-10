@@ -6,6 +6,6 @@
     {
         BomTreeNode CreateBomChanges(BomTreeNode tree, int changeRequestNumber, int enteredBy);
 
-        void CopyBom(string srcPartNumber, int destBomId);
+        void CopyBom(string srcPartNumber, int destBomId, int changedBy, int crfNumber);
     }
 }
