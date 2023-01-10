@@ -512,6 +512,7 @@ function BomUtility() {
                                 }}
                                 propertyName="searchBomTerm"
                                 textFieldProps={{
+                                    autoFocus: true,
                                     onKeyDown: data => {
                                         if (data.keyCode === 13) {
                                             doSearch(searchBomTerm);

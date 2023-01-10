@@ -58,8 +58,9 @@
                     // add a new bom_change for any bom that has changed
                     if (current.HasChanged.GetValueOrDefault() && current.Children != null)
                     {
+                        var bomLookup = this.bomRepository.FindBy(x => x.BomName == current.Name);
                         // create a bom if required
-                        var bom = this.bomRepository.FindBy(x => x.BomName == current.Name) ?? new Bom
+                        var bom = bomLookup ?? new Bom
                                       {
                                           BomId = this.databaseService.GetIdSequence("BOM_SEQ"),
                                           BomName = tree.Name,
@@ -69,7 +70,11 @@
                                       };
 
                         this.bomRepository.Add(bom);
-                        bom.Part.BomId = bom.BomId;
+                        if (bomLookup == null)
+                        {
+                            bom.Part.BomId = bom.BomId;
+                        }
+
                         var id = this.databaseService.GetIdSequence("CHG_SEQ");
                         var change = new BomChange
                                          {
