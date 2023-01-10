@@ -248,10 +248,31 @@
 
         public void CopyBom(string srcPartNumber, int destBomId, int changedBy, int crfNumber)
         {
-            var changeId = this.databaseService.GetIdSequence("CHG_SEQ"); // not always right
-            // we need to look up the change if one exists for this bom
-            // or create a new one?
-            this.bomPack.CopyBom(srcPartNumber, destBomId, changeId, "PROPOS", "O");
+            var change = this.bomChangeRepository.FindBy(
+                x => x.DocumentNumber == crfNumber && x.BomId == destBomId && x.ChangeState == "PROPOS");
+            
+            if (change == null)
+            {
+                var destBom = this.bomRepository.FindById(destBomId);
+                var changeId = this.databaseService.GetIdSequence("CHG_SEQ");
+                change = new BomChange
+                             {
+                                 ChangeId = changeId,
+                                 BomName = destBom.BomName,
+                                 BomId = destBomId,
+                                 DocumentType = "CRF",
+                                 DocumentNumber = crfNumber,
+                                 DateEntered = DateTime.Today,
+                                 EnteredById = changedBy,
+                                 ChangeState = "PROPOS",
+                                 PartNumber = destBom.BomName,
+                                 Comments = "BOM_UT",
+                                 PcasChange = "N"
+                             };
+                this.bomChangeRepository.Add(change);
+            }
+
+            this.bomPack.CopyBom(srcPartNumber, destBomId, change.ChangeId, "PROPOS", "O");
         }
     }
 }
