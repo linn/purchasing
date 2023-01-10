@@ -9,6 +9,7 @@
     using Linn.Purchasing.Domain.LinnApps.Boms.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
+    using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
     public class BomChangeService : IBomChangeService
@@ -23,18 +24,22 @@
 
         private readonly IQueryRepository<Part> partRepository;
 
+        private readonly IBomPack bomPack;
+
         public BomChangeService(
             IDatabaseService databaseService, 
             IRepository<BomChange, int> bomChangeRepository,
             IRepository<BomDetail, int> bomDetailRepository,
             IRepository<Bom, int> bomRepository,
-            IQueryRepository<Part> partRepository)
+            IQueryRepository<Part> partRepository,
+            IBomPack bomPack)
         {
             this.databaseService = databaseService;
             this.bomChangeRepository = bomChangeRepository;
             this.bomDetailRepository = bomDetailRepository;
             this.bomRepository = bomRepository;
             this.partRepository = partRepository;
+            this.bomPack = bomPack;
         }
 
         public BomTreeNode CreateBomChanges(BomTreeNode tree, int changeRequestNumber, int enteredBy)
@@ -230,6 +235,12 @@
             }
 
             return tree;
+        }
+
+        public void CopyBom(string srcPartNumber, int destBomId)
+        {
+            var changeId = this.databaseService.GetIdSequence("CHG_SEQ");
+            this.bomPack.CopyBom(srcPartNumber, destBomId, changeId, "PROPOS", "O");
         }
     }
 }

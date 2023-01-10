@@ -5,5 +5,7 @@
     public interface IBomChangeService
     {
         BomTreeNode CreateBomChanges(BomTreeNode tree, int changeRequestNumber, int enteredBy);
+
+        void CopyBom(string srcPartNumber, int destBomId);
     }
 }

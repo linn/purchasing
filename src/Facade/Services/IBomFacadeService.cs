@@ -7,5 +7,7 @@
     public interface IBomFacadeService
     {
         IResult<BomTreeNode> PostBom(PostBomResource node);
+
+        IResult<BomTreeNode> CopyBom(string srcPartNumber, int destBomId, string destPartNumber);
     }
 }
