@@ -61,6 +61,9 @@ const StyledTreeItem = styled(props => <TreeItem {...props} />, {
             }
             return '';
         })()
+    },
+    [`& .${treeItemClasses.selected}`]: {
+        backgroundColor: '#e0f5f7 !important'
     }
 }));
 
@@ -82,6 +85,7 @@ export default function BomTree({
                 <Typography
                     display="inline"
                     variant="subtitle1"
+                    id={nodes.id}
                     color={!nodes.children?.length ? '' : 'primary'}
                 >
                     {nodes.name}
