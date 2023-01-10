@@ -55,11 +55,21 @@
                 {
                     var current = q.Dequeue();
 
-                    // add a new bom_change for any bom that has changed - db triggers will create the bom if required
+                    // add a new bom_change for any bom that has changed
                     if (current.HasChanged.GetValueOrDefault() && current.Children != null)
                     {
-                        var bom = this.bomRepository.FindBy(x => x.BomName == current.Name);
+                        // create a bom if required
+                        var bom = this.bomRepository.FindBy(x => x.BomName == current.Name) ?? new Bom
+                                      {
+                                          BomId = this.databaseService.GetIdSequence("BOM_SEQ"),
+                                          BomName = tree.Name,
+                                          Part = this.partRepository.FindBy(x => x.PartNumber == tree.Name),
+                                          Depth = 1,
+                                          CommonBom = "N"
+                                      };
 
+                        this.bomRepository.Add(bom);
+                        bom.Part.BomId = bom.BomId;
                         var id = this.databaseService.GetIdSequence("CHG_SEQ");
                         var change = new BomChange
                                          {
@@ -90,7 +100,7 @@
 
                             // case: adding a new part that is not on this bom
                             // add a detail for any new part on the bom
-                            if (bom.Details.All(d => d.PartNumber != child.Name))
+                            if (bom.Details == null || bom.Details.Count == 0 || bom.Details.All(d => d.PartNumber != child.Name))
                             {
                                 if (part.DatePurchPhasedOut
                                     .HasValue)
@@ -128,15 +138,14 @@
                                                                      BomId = bom.BomId,
                                                                      PartNumber = child.Name,
                                                                      Qty = child.Qty,
-                                                                     GenerateRequirement = child.Requirement,
+                                                                     GenerateRequirement = "Y", // todo  child.Requirement,
                                                                      ChangeState = "PROPOS",
                                                                      AddChangeId = id,
                                                                      AddReplaceSeq = string.IsNullOrEmpty(child.ReplacementFor) 
                                                                          ? null : replacementSeq++,
                                                                      DeleteChangeId = null,
                                                                      DeleteReplaceSeq = null,
-                                                                     PcasLine = "N",
-                                                                     
+                                                                     PcasLine = "N"
                                                                  });
                             }
 

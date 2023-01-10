@@ -50,6 +50,8 @@
             app.MapGet("/purchasing/boms/reports/cost", this.GetBomCostReport);
 
             app.MapPost("/purchasing/boms/tree", this.PostBomTree);
+
+            app.MapPost("/purchasing/boms/copy", this.CopyBom);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -250,6 +252,18 @@
             {
                 result = facadeService.GetBomCostReport(bomName, splitBySubAssembly, levels, labourHourlyRate);
             }
+
+            await res.Negotiate(result);
+        }
+
+        private async Task CopyBom(
+            HttpRequest req,
+            HttpResponse res,
+            CopyBomResource resource,
+            IBomFacadeService bomFacadeService)
+        {
+            var result = bomFacadeService.CopyBom(
+                resource.SrcPartNumber, resource.DestBomId, resource.DestPartNumber);
 
             await res.Negotiate(result);
         }

@@ -33,7 +33,7 @@
 
         public void Add(Bom entity)
         {
-            throw new NotImplementedException();
+            this.serviceDbContext.Add(entity);
         }
 
         public void Remove(Bom entity)
@@ -43,6 +43,7 @@
 
         public Bom FindBy(Expression<Func<Bom, bool>> expression)
         {
+            var test = this.serviceDbContext.Boms.Where(expression).Include(x => x.Details);
             return this.serviceDbContext.Boms.Where(expression)
                 .Include(b => b.Part)
                 .Include(b => b.Details)

@@ -73,7 +73,7 @@
             this.BomChangeService = Substitute.For<IBomChangeService>();
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.FacadeService = new BomFacadeService(
-                this.BomChangeService, this.TransactionManager, this.BomTreeService);
+                this.BomChangeService, this.TransactionManager);
 
             this.BomTreeService = Substitute.For<IBomTreeService>();
 
