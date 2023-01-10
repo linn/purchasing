@@ -24,6 +24,7 @@
             app.MapGet("/purchasing/change-requests", this.GetChangeRequests);
             app.MapGet("/purchasing/change-requests/{id:int}", this.GetChangeRequest);
             app.MapPost("/purchasing/change-requests/status", this.ChangeStatus);
+            app.MapPost("/purchasing/change-requests/phase-ins", this.PostPhaseIns);
             app.MapPut("/purchasing/change-requests/{id:int}", this.UpdateChangeRequest);
         }
 
@@ -78,6 +79,17 @@
         {
             var employeeId = req.HttpContext.User.GetEmployeeNumber();
             var result = facadeService.ChangeStatus(request, employeeId, req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+
+        private async Task PostPhaseIns(
+            HttpRequest req,
+            HttpResponse res,
+            ChangeRequestPhaseInsResource request,
+            IChangeRequestFacadeService facadeService)
+        {
+            var result = facadeService.PhaseInChangeRequest(request, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }

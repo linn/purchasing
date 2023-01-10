@@ -140,6 +140,27 @@
             return new BadRequestResult<ChangeRequestResource>($"Cannot change status to {request?.Status}");
         }
 
+        public IResult<ChangeRequestResource> PhaseInChangeRequest(
+            ChangeRequestPhaseInsResource request,
+            IEnumerable<string> privileges = null)
+        {
+            try
+            {
+                var changeRequest = this.changeRequestService.PhaseInChanges(request.DocumentNumber, request.PhaseInWeek, request.SelectedBomChangeIds, privileges);
+                this.transactionManager.Commit();
+                var resource = (ChangeRequestResource)this.resourceBuilder.Build(changeRequest, privileges);
+                return new SuccessResult<ChangeRequestResource>(resource);
+            }
+            catch (ItemNotFoundException)
+            {
+                return new NotFoundResult<ChangeRequestResource>("Change Request not found");
+            }
+            catch (InvalidStateChangeException)
+            {
+                return new BadRequestResult<ChangeRequestResource>("Cannot phase in this change request");
+            }
+        }
+
         public IResult<IEnumerable<ChangeRequestResource>> GetChangeRequestsRelevantToBom(
             string bomName, IEnumerable<string> privileges = null)
         {

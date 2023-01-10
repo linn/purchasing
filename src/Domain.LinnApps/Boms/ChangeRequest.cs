@@ -214,5 +214,27 @@
                 }
             }
         }
+
+        public bool CanPhaseIn() => this.ChangeState == "ACCEPT";
+
+        public void PhaseIn(LinnWeek week, IEnumerable<int> selectedBomChangeIds)
+        {
+            if (this.CanPhaseIn() && selectedBomChangeIds != null)
+            {
+                if (this.BomChanges != null)
+                {
+                    foreach (var bomChange in this.BomChanges)
+                    {
+                        if (bomChange.CanPhaseIn())
+                        {
+                            if (selectedBomChangeIds.Contains(bomChange.ChangeId))
+                            {
+                                bomChange.PhaseIn(week);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

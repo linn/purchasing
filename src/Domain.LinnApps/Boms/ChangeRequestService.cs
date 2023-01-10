@@ -19,16 +19,20 @@
 
         private readonly IRepository<Employee, int> employeeRepository;
 
+        private readonly IRepository<LinnWeek, int> weekRepository;
+
         public ChangeRequestService(
             IAuthorisationService authService,
             IRepository<ChangeRequest, int> repository,
             IQueryRepository<Part> partRepository,
-            IRepository<Employee, int> employeeRepository)
+            IRepository<Employee, int> employeeRepository,
+            IRepository<LinnWeek, int> weekRepository)
         {
             this.authService = authService;
             this.repository = repository;
             this.partRepository = partRepository;
             this.employeeRepository = employeeRepository;
+            this.weekRepository = weekRepository;
         }
 
         public Part ValidPartNumber(string partNumber)
@@ -148,6 +152,32 @@
             {
                 throw new InvalidStateChangeException("Cannot make live this change request");
             }
+
+            return request;
+        }
+
+        public ChangeRequest PhaseInChanges(int documentNumber, int linnWeekNumber, IEnumerable<int> selectedBomChangeIds, IEnumerable<string> privileges = null)
+        {
+            var request = this.repository.FindById(documentNumber);
+            if (request == null)
+            {
+                throw new ItemNotFoundException("Change Request not found");
+            }
+
+            var week = this.weekRepository.FindById(linnWeekNumber);
+            if (week == null)
+            {
+                throw new ItemNotFoundException("Linn Week not found");
+            }
+
+
+            if (!this.authService.HasPermissionFor(AuthorisedAction.AdminChangeRequest, privileges))
+            {
+                throw new UnauthorisedActionException(
+                    "You are not authorised to phase in change requests");
+            }
+
+            request.PhaseIn(week, selectedBomChangeIds);
 
             return request;
         }
