@@ -263,7 +263,7 @@
             IBomFacadeService bomFacadeService)
         {
             var result = bomFacadeService.CopyBom(
-                resource.SrcPartNumber, resource.DestBomId, resource.DestPartNumber);
+                resource.SrcPartNumber, resource.DestBomId, resource.DestPartNumber, req.HttpContext.User.GetEmployeeNumber(), resource.CrfNumber);
 
             await res.Negotiate(result);
         }
