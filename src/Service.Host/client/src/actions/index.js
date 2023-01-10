@@ -346,3 +346,5 @@ export const boardComponentSummariesActionTypes = makeActionTypes(
     itemTypes.boardComponentSummaries.actionType,
     false
 );
+
+export const copyBomActionTypes = makeProcessActionTypes(processTypes.copyBom.actionType);
