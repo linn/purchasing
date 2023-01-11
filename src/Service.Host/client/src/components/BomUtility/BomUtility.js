@@ -455,11 +455,13 @@ function BomUtility() {
         processSelectorHelpers.getData(reduxState.copyBom)
     );
 
+    console.log(copyBomResult);
+
     useEffect(() => {
-        if (copyBomResult.successs) {
+        if (copyBomResult?.success) {
             reduxDispatch(
                 bomTreeActions.fetchByHref(
-                    `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${true}&treeType=${'bom'}`
+                    `/purchasing/boms/tree?bomName=${bomName}&levels=0&requirementOnly=false&showChanges=true&treeType=bom`
                 )
             );
         }
