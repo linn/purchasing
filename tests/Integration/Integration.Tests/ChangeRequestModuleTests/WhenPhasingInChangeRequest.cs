@@ -13,6 +13,8 @@
     using System;
     using System.Linq;
 
+    using Linn.Purchasing.Resources.RequestResources;
+
     public class WhenPhasingInChangeRequest : ContextBase
     {
         [SetUp]
@@ -43,10 +45,15 @@
             };
             this.Repository.FindById(1).Returns(changeRequest);
 
-            var week = new LinnWeek { WeekNumber = 1, WwYyyy = "012022" };
+            var week = new LinnWeek { WeekNumber = 1, WwYyyy = "012100", EndsOn = new DateTime(2100, 12, 12) };
             this.WeekRepository.FindById(Arg.Any<int>()).Returns(week);
 
-            var request = new ChangeRequestPhaseInsResource { DocumentNumber = 1, PhaseInWeek = 1, SelectedBomChangeIds = new List<int> { 1 } };
+            var request = new ChangeRequestPhaseInsResource
+                              {
+                                  DocumentNumber = 1, 
+                                  PhaseInWeek = 1, 
+                                  SelectedBomChangeIds = new List<int> { 1 }
+                              };
 
             this.Response = this.Client.PostAsJsonAsync(
                 "/purchasing/change-requests/phase-ins", request).Result;
@@ -81,7 +88,7 @@
             result.BomChanges.Count().Should().Be(1);
             var change = result.BomChanges.FirstOrDefault();
             change.Should().NotBeNull();
-            change.PhaseInWWYYYY.Should().Be("012022");
+            change.PhaseInWWYYYY.Should().Be("012100");
         }
     }
 }

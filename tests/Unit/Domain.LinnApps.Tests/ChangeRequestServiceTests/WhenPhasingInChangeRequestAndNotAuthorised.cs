@@ -28,12 +28,12 @@
                               };
             this.Repository.FindById(1).Returns(request);
 
-            var week = new LinnWeek { WeekNumber = 1, WwYyyy = "012022" };
+            var week = new LinnWeek { WeekNumber = 1, WwYyyy = "012022", EndsOn = new DateTime(2100,12,12) };
             this.WeekRepository.FindById(1).Returns(week);
 
             var bomChangeIds = new List<int> { 1 };
 
-            this.action = () => this.Sut.PhaseInChanges(1, 1, new List<int>(), new List<string>());
+            this.action = () => this.Sut.PhaseInChanges(1, 1, null, new List<int>(), new List<string>());
         }
 
         [Test]

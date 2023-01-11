@@ -34,7 +34,7 @@
                                   };
                 this.Repository.FindById(1).Returns(request);
 
-                this.action = () => this.Sut.PhaseInChanges(1, 665, new List<int>(), new List<string>());
+                this.action = () => this.Sut.PhaseInChanges(1, 665, null, new List<int>(), new List<string>());
             }
 
             [Test]

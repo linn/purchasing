@@ -10,6 +10,7 @@
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Resources;
+    using Linn.Purchasing.Resources.RequestResources;
 
     using NSubstitute;
 
@@ -39,10 +40,15 @@
                               };
             this.Repository.FindById(1).Returns(request);
 
-            var week = new LinnWeek { WeekNumber = 1, WwYyyy = "012022" };
+            var week = new LinnWeek { WeekNumber = 1, WwYyyy = "012022", EndsOn = new DateTime(2100, 12, 12) };
             this.WeekRepository.FindById(1).Returns(week);
 
-            var phaseInRequest = new ChangeRequestPhaseInsResource { DocumentNumber = 1, PhaseInWeek = 1, SelectedBomChangeIds = new List<int> { 1 } };
+            var phaseInRequest = new ChangeRequestPhaseInsResource
+                                     {
+                                         DocumentNumber = 1, 
+                                         PhaseInWeek = 1, 
+                                         SelectedBomChangeIds = new List<int> { 1 }
+                                     };
             this.result = this.Sut.PhaseInChangeRequest(phaseInRequest, null);
         }
 

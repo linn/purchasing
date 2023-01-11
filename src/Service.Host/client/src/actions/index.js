@@ -346,3 +346,7 @@ export const boardComponentSummariesActionTypes = makeActionTypes(
     itemTypes.boardComponentSummaries.actionType,
     false
 );
+
+export const changeRequestPhaseInsActionTypes = makeActionTypes(
+    itemTypes.changeRequestPhaseIns.actionType
+);

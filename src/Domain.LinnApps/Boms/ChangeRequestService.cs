@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Boms
 {
+    using System;
     using System.Collections.Generic;
 
     using Linn.Common.Authorisation;
@@ -156,7 +157,7 @@
             return request;
         }
 
-        public ChangeRequest PhaseInChanges(int documentNumber, int linnWeekNumber, IEnumerable<int> selectedBomChangeIds, IEnumerable<string> privileges = null)
+        public ChangeRequest PhaseInChanges(int documentNumber, int? linnWeekNumber, DateTime? linnWeekStartDate, IEnumerable<int> selectedBomChangeIds, IEnumerable<string> privileges = null)
         {
             var request = this.repository.FindById(documentNumber);
             if (request == null)
@@ -164,12 +165,28 @@
                 throw new ItemNotFoundException("Change Request not found");
             }
 
-            var week = this.weekRepository.FindById(linnWeekNumber);
+            LinnWeek week = null;
+            if (linnWeekNumber != null)
+            {
+                week = this.weekRepository.FindById((int) linnWeekNumber);
+            }
+            else if (linnWeekStartDate != null)
+            {
+                var weekDate = ((DateTime) linnWeekStartDate).Date;
+                // if you don't do weekNumber > 0 then for this week you also get the Now week and Jacki doesn't want that
+                week = this.weekRepository.FindBy(
+                    d => d.StartsOn <= weekDate && d.EndsOn >= weekDate && d.WeekNumber > 0);
+            }
+
             if (week == null)
             {
                 throw new ItemNotFoundException("Linn Week not found");
             }
 
+            if (week.EndsOn < DateTime.Now.Date)
+            {
+                throw new InvalidPhaseInWeekException("Phase in week is in the past");
+            }
 
             if (!this.authService.HasPermissionFor(AuthorisedAction.AdminChangeRequest, privileges))
             {

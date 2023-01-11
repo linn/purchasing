@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
 
     using FluentAssertions;
 
@@ -12,7 +13,7 @@
 
     using NUnit.Framework;
 
-    public class WhenPhasingInChanges : ContextBase
+    public class WhenPhasingInChangesWithAWeekStartDate : ContextBase
     {
         private ChangeRequest result;
 
@@ -33,14 +34,14 @@
             this.Repository.FindById(1).Returns(request);
 
             var week = new LinnWeek { WeekNumber = 1, WwYyyy = "012100", EndsOn = new DateTime(2100, 12, 12) };
-            this.WeekRepository.FindById(1).Returns(week);
+            this.WeekRepository.FindBy(Arg.Any<Expression<Func<LinnWeek, bool>>>()).Returns(week);
 
             this.AuthService
                 .HasPermissionFor(AuthorisedAction.AdminChangeRequest, Arg.Any<IEnumerable<string>>())
                 .Returns(true);
 
             var bomChangeIds = new List<int> { 1 };
-            this.result = this.Sut.PhaseInChanges(1, 1, null, bomChangeIds, new List<string>());
+            this.result = this.Sut.PhaseInChanges(1, null, new DateTime(2100,12,12), bomChangeIds, new List<string>());
         }
 
         [Test]

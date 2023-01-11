@@ -144,9 +144,18 @@
             ChangeRequestPhaseInsResource request,
             IEnumerable<string> privileges = null)
         {
+            if (request == null)
+            {
+                return new BadRequestResult<ChangeRequestResource>("No parameters supplied");
+            }
+            else if (request.PhaseInWeek == null && request.PhaseInWeekStart == null)
+            {
+                return new BadRequestResult<ChangeRequestResource>("No phase in week supplied");
+            }
+
             try
             {
-                var changeRequest = this.changeRequestService.PhaseInChanges(request.DocumentNumber, request.PhaseInWeek, request.SelectedBomChangeIds, privileges);
+                var changeRequest = this.changeRequestService.PhaseInChanges(request.DocumentNumber, request.PhaseInWeek, request.PhaseInWeekStart, request.SelectedBomChangeIds, privileges);
                 this.transactionManager.Commit();
                 var resource = (ChangeRequestResource)this.resourceBuilder.Build(changeRequest, privileges);
                 return new SuccessResult<ChangeRequestResource>(resource);
