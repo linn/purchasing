@@ -455,8 +455,6 @@ function BomUtility() {
         processSelectorHelpers.getData(reduxState.copyBom)
     );
 
-    console.log(copyBomResult);
-
     useEffect(() => {
         if (copyBomResult?.success) {
             reduxDispatch(
@@ -571,7 +569,6 @@ function BomUtility() {
                         </Grid>
                         <Grid item xs={4}>
                             <InputField
-                                autoFocus
                                 label="Search Bom"
                                 helperText="press enter to search"
                                 value={searchBomTerm}
