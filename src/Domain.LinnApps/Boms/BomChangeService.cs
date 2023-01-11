@@ -12,7 +12,7 @@
     using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
-    public class BomChangeService : IBomChangeService
+    public class  BomChangeService : IBomChangeService
     {
         private readonly IDatabaseService databaseService;
 
