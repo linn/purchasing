@@ -9,7 +9,8 @@ import {
     SnackbarMessage,
     getItemError,
     ErrorCard,
-    InputField
+    InputField,
+    processSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import { DataGrid } from '@mui/x-data-grid';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -450,6 +451,19 @@ function BomUtility() {
     }
 
     const [copyBomDialogOpen, setCopyBomDialogOpen] = useState(false);
+    const copyBomResult = useSelector(reduxState =>
+        processSelectorHelpers.getData(reduxState.copyBom)
+    );
+
+    useEffect(() => {
+        if (copyBomResult.successs) {
+            reduxDispatch(
+                bomTreeActions.fetchByHref(
+                    `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${true}&treeType=${'bom'}`
+                )
+            );
+        }
+    }, [copyBomResult, reduxDispatch, bomName]);
 
     function renderCopyBomDialog() {
         return (
