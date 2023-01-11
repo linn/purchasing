@@ -59,6 +59,7 @@
                     if (current.HasChanged.GetValueOrDefault() && current.Children != null)
                     {
                         var bomLookup = this.bomRepository.FindBy(x => x.BomName == current.Name);
+
                         // create a bom if required
                         var bom = bomLookup ?? new Bom
                                       {
@@ -251,20 +252,20 @@
             return tree;
         }
 
-        public void CopyBom(string srcPartNumber, int destBomId, int changedBy, int crfNumber)
+        public void CopyBom(string srcPartNumber, string destBomPartNumber, int changedBy, int crfNumber)
         {
+            var destBom = this.bomRepository.FindBy(x => x.BomName == destBomPartNumber);
             var change = this.bomChangeRepository.FindBy(
-                x => x.DocumentNumber == crfNumber && x.BomId == destBomId && x.ChangeState == "PROPOS");
+                x => x.DocumentNumber == crfNumber && x.BomId == destBom.BomId && x.ChangeState == "PROPOS");
             
             if (change == null)
             {
-                var destBom = this.bomRepository.FindById(destBomId);
                 var changeId = this.databaseService.GetIdSequence("CHG_SEQ");
                 change = new BomChange
                              {
                                  ChangeId = changeId,
                                  BomName = destBom.BomName,
-                                 BomId = destBomId,
+                                 BomId = destBom.BomId,
                                  DocumentType = "CRF",
                                  DocumentNumber = crfNumber,
                                  DateEntered = DateTime.Today,
@@ -277,7 +278,7 @@
                 this.bomChangeRepository.Add(change);
             }
 
-            this.bomPack.CopyBom(srcPartNumber, destBomId, change.ChangeId, "PROPOS", "O");
+            this.bomPack.CopyBom(srcPartNumber, destBom.BomId, change.ChangeId, "PROPOS", "O");
         }
     }
 }

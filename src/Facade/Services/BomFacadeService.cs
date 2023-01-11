@@ -6,6 +6,7 @@
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
+    using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.Boms;
 
     public class BomFacadeService : IBomFacadeService
@@ -39,14 +40,14 @@
             }
         }
 
-        public IResult<ProcessResult> CopyBom(
-            string srcPartNumber, int destBomId, string destPartNumber, int changedBy, int crfNumber)
+        public IResult<ProcessResultResource> CopyBom(
+            string srcPartNumber, string destPartNumber, int changedBy, int crfNumber)
         {
-            this.bomChangeService.CopyBom(srcPartNumber, destBomId, changedBy, crfNumber);
+            this.bomChangeService.CopyBom(srcPartNumber, destPartNumber, changedBy, crfNumber);
             this.transactionManager.Commit();
 
             // todo - some error handling? Could this domain service throw errors?
-            return new SuccessResult<ProcessResult>(new ProcessResult(true, "Copied!"));
+            return new SuccessResult<ProcessResultResource>(new ProcessResultResource(true, "Copied!"));
         }
     }
 }

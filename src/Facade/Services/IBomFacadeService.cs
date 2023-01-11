@@ -3,13 +3,14 @@
     using Linn.Common.Facade;
     using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
+    using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.Boms;
 
     public interface IBomFacadeService
     {
         IResult<BomTreeNode> PostBom(PostBomResource node);
 
-        IResult<ProcessResult> CopyBom(
-            string srcPartNumber, int destBomId, string destPartNumber, int changedBy, int crfNumber);
+        IResult<ProcessResultResource> CopyBom(
+            string srcPartNumber, string destPartNumber, int changedBy, int crfNumber);
     }
 }

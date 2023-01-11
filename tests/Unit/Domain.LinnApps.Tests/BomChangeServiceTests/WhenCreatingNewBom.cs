@@ -28,6 +28,7 @@
 
             // since bom doesn't exist yet
             this.BomRepository.FindBy(Arg.Any<Expression<Func<Bom, bool>>>()).ReturnsNull();
+
             this.DatabaseService.GetIdSequence("BOM_SEQ").Returns(123);
             this.DatabaseService.GetIdSequence("CHG_SEQ").Returns(456);
 
