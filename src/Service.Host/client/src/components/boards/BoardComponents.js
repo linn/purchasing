@@ -214,6 +214,7 @@ function BoardComponents() {
                     <IconButton
                         aria-label="remove"
                         size="small"
+                        disabled={!crfNumber}
                         onClick={() => handleDeleteRow(params)}
                     >
                         <DeleteIcon fontSize="inherit" />
@@ -229,6 +230,7 @@ function BoardComponents() {
                 <Tooltip title="Replace">
                     <IconButton
                         aria-label="replace"
+                        disabled={!crfNumber}
                         size="small"
                         onClick={() => handleDeleteRow(params)}
                     >
@@ -493,7 +495,7 @@ function BoardComponents() {
                         <Button
                             disabled={!crfNumber}
                             onClick={() => {
-                                dispatch({ type: 'newComponent', payload: null });
+                                dispatch({ type: 'newComponent', payload: { crfNumber } });
                             }}
                         >
                             New Component

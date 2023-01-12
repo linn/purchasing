@@ -113,11 +113,29 @@ export default function boardComponentsReducer(state = initialState, action) {
             let componentToUpdate = components[componentIndex];
 
             componentToUpdate = action.payload;
-
+            componentToUpdate.cRef = componentToUpdate.cRef
+                ? componentToUpdate.cRef.toUpperCase()
+                : null;
             components[componentIndex] = componentToUpdate;
 
             return {
                 ...state
+            };
+        }
+        case 'deleteProposedComponent': {
+            if (!action.payload?.boardLine || !state.board?.components) {
+                return state;
+            }
+
+            const componentIndexToRemove = state.board.components.findIndex(
+                i => i.boardLine === action.payload.boardLine
+            );
+
+            const newComponents = [...state.board.components];
+            newComponents.splice(componentIndexToRemove, 1);
+            return {
+                ...state,
+                board: { ...state.board, components: newComponents }
             };
         }
         case 'newComponent': {
@@ -134,7 +152,8 @@ export default function boardComponentsReducer(state = initialState, action) {
                 boardLine: lastLine + 1,
                 fromLayoutVersion: state.selectedRevision.layoutSequence,
                 fromRevisionNumber: state.selectedRevision.versionNumber,
-                quantity: 1
+                quantity: 1,
+                addChangeDocumentNumber: action.payload.crfNumber
             });
 
             return {
