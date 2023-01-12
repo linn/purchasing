@@ -110,9 +110,7 @@ export default function boardComponentsReducer(state = initialState, action) {
                 i => i.boardLine === action.payload.boardLine
             );
 
-            let componentToUpdate = components[componentIndex];
-
-            componentToUpdate = action.payload;
+            const componentToUpdate = action.payload;
             componentToUpdate.cRef = componentToUpdate.cRef
                 ? componentToUpdate.cRef.toUpperCase()
                 : null;
@@ -136,6 +134,27 @@ export default function boardComponentsReducer(state = initialState, action) {
             return {
                 ...state,
                 board: { ...state.board, components: newComponents }
+            };
+        }
+        case 'deleteComponent': {
+            if (!action.payload?.component?.boardLine) {
+                return state;
+            }
+
+            const { components } = state.board;
+
+            const componentIndexToMarkForRemove = components.findIndex(
+                i => i.boardLine === action.payload.component.boardLine
+            );
+
+            const componentToUpdate = { ...components[componentIndexToMarkForRemove] };
+
+            componentToUpdate.removing = true;
+            componentToUpdate.deleteChangeDocumentNumber = action.payload.crfNumber;
+            components[componentIndexToMarkForRemove] = componentToUpdate;
+
+            return {
+                ...state
             };
         }
         case 'newComponent': {

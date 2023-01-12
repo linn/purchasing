@@ -99,7 +99,7 @@ function BoardComponents() {
         if (comp.addChangeDocumentNumber?.toString() === crfNumber) {
             dispatch({ type: 'deleteProposedComponent', payload: comp });
         } else {
-            dispatch({ type: 'deleteComponent', payload: comp });
+            dispatch({ type: 'deleteComponent', payload: { crfNumber, component: comp } });
         }
     };
 
@@ -109,7 +109,7 @@ function BoardComponents() {
             dispatch({ type: 'deleteProposedComponent', payload: comp });
             dispatch({ type: 'newComponent', payload: { crfNumber, component: comp } });
         } else {
-            dispatch({ type: 'deleteComponent', payload: comp });
+            dispatch({ type: 'deleteComponent', payload: crfNumber, component: comp });
             dispatch({ type: 'newComponent', payload: { crfNumber, component: comp } });
         }
     };
@@ -333,6 +333,14 @@ function BoardComponents() {
         dispatch({ type: 'populate', payload: item });
     };
 
+    const getDisplayClass = params => {
+        if (params.row.removing) {
+            return 'removing';
+        }
+
+        return params.row.changeState?.toLowerCase();
+    };
+
     return (
         <Page history={history} style={{ paddingBottom: '20px' }} homeUrl={config.appRoot}>
             <Typography variant="h5" gutterBottom>
@@ -469,6 +477,10 @@ function BoardComponents() {
                                         },
                                         '& .accept': {
                                             bgcolor: '#b0f7b9'
+                                        },
+                                        '& .removing': {
+                                            bgcolor: 'indianred',
+                                            textDecorationLine: 'line-through'
                                         }
                                     }}
                                     rows={componentRows}
@@ -491,9 +503,7 @@ function BoardComponents() {
                                         !state.board?.components ||
                                         state.board.components.length <= 40
                                     }
-                                    getRowClassName={params =>
-                                        params.row.changeState?.toLowerCase()
-                                    }
+                                    getRowClassName={params => getDisplayClass(params)}
                                     isCellEditable={params => params.row.adding && crfNumber}
                                 />
                             </>
