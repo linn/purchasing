@@ -9,9 +9,10 @@
     using Linn.Purchasing.Domain.LinnApps.Boms.Exceptions;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
+    using Linn.Purchasing.Domain.LinnApps.ExternalServices;
     using Linn.Purchasing.Domain.LinnApps.Parts;
 
-    public class BomChangeService : IBomChangeService
+    public class  BomChangeService : IBomChangeService
     {
         private readonly IDatabaseService databaseService;
 
@@ -23,18 +24,22 @@
 
         private readonly IQueryRepository<Part> partRepository;
 
+        private readonly IBomPack bomPack;
+
         public BomChangeService(
             IDatabaseService databaseService, 
             IRepository<BomChange, int> bomChangeRepository,
             IRepository<BomDetail, int> bomDetailRepository,
             IRepository<Bom, int> bomRepository,
-            IQueryRepository<Part> partRepository)
+            IQueryRepository<Part> partRepository,
+            IBomPack bomPack)
         {
             this.databaseService = databaseService;
             this.bomChangeRepository = bomChangeRepository;
             this.bomDetailRepository = bomDetailRepository;
             this.bomRepository = bomRepository;
             this.partRepository = partRepository;
+            this.bomPack = bomPack;
         }
 
         public BomTreeNode CreateBomChanges(BomTreeNode tree, int changeRequestNumber, int enteredBy)
@@ -50,10 +55,26 @@
                 {
                     var current = q.Dequeue();
 
-                    // add a new bom_change for any bom that has changed - db triggers will create the bom if required
+                    // add a new bom_change for any bom that has changed
                     if (current.HasChanged.GetValueOrDefault() && current.Children != null)
                     {
-                        var bom = this.bomRepository.FindBy(x => x.BomName == current.Name);
+                        var bomLookup = this.bomRepository.FindBy(x => x.BomName == current.Name);
+
+                        // create a bom if required
+                        var bom = bomLookup ?? new Bom
+                                      {
+                                          BomId = this.databaseService.GetIdSequence("BOM_SEQ"),
+                                          BomName = tree.Name,
+                                          Part = this.partRepository.FindBy(x => x.PartNumber == tree.Name),
+                                          Depth = 1,
+                                          CommonBom = "N"
+                                      };
+
+                        this.bomRepository.Add(bom);
+                        if (bomLookup == null)
+                        {
+                            bom.Part.BomId = bom.BomId;
+                        }
 
                         var id = this.databaseService.GetIdSequence("CHG_SEQ");
                         var change = new BomChange
@@ -85,7 +106,7 @@
 
                             // case: adding a new part that is not on this bom
                             // add a detail for any new part on the bom
-                            if (bom.Details.All(d => d.PartNumber != child.Name))
+                            if (bom.Details == null || bom.Details.Count == 0 || bom.Details.All(d => d.PartNumber != child.Name))
                             {
                                 if (part.DatePurchPhasedOut
                                     .HasValue)
@@ -123,15 +144,14 @@
                                                                      BomId = bom.BomId,
                                                                      PartNumber = child.Name,
                                                                      Qty = child.Qty,
-                                                                     GenerateRequirement = child.Requirement,
+                                                                     GenerateRequirement = "Y", // todo  child.Requirement,
                                                                      ChangeState = "PROPOS",
                                                                      AddChangeId = id,
                                                                      AddReplaceSeq = string.IsNullOrEmpty(child.ReplacementFor) 
                                                                          ? null : replacementSeq++,
                                                                      DeleteChangeId = null,
                                                                      DeleteReplaceSeq = null,
-                                                                     PcasLine = "N",
-                                                                     
+                                                                     PcasLine = "N"
                                                                  });
                             }
 
@@ -230,6 +250,35 @@
             }
 
             return tree;
+        }
+
+        public void CopyBom(string srcPartNumber, string destBomPartNumber, int changedBy, int crfNumber)
+        {
+            var destBom = this.bomRepository.FindBy(x => x.BomName == destBomPartNumber);
+            var change = this.bomChangeRepository.FindBy(
+                x => x.DocumentNumber == crfNumber && x.BomId == destBom.BomId && x.ChangeState == "PROPOS");
+            
+            if (change == null)
+            {
+                var changeId = this.databaseService.GetIdSequence("CHG_SEQ");
+                change = new BomChange
+                             {
+                                 ChangeId = changeId,
+                                 BomName = destBom.BomName,
+                                 BomId = destBom.BomId,
+                                 DocumentType = "CRF",
+                                 DocumentNumber = crfNumber,
+                                 DateEntered = DateTime.Today,
+                                 EnteredById = changedBy,
+                                 ChangeState = "PROPOS",
+                                 PartNumber = destBom.BomName,
+                                 Comments = "BOM_UT",
+                                 PcasChange = "N"
+                             };
+                this.bomChangeRepository.Add(change);
+            }
+
+            this.bomPack.CopyBom(srcPartNumber, destBom.BomId, change.ChangeId, "PROPOS", "O");
         }
     }
 }

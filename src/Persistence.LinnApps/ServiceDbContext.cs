@@ -1932,6 +1932,8 @@
             entity.HasKey(b => b.BomId);
             entity.Property(b => b.BomId).HasColumnName("BOM_ID");
             entity.Property(b => b.BomName).HasColumnName("BOM_NAME");
+            entity.Property(b => b.Depth).HasColumnName("DEPTH");
+            entity.Property(b => b.CommonBom).HasColumnName("COMMON_BOM");
             entity.HasMany(b => b.Details).WithOne().HasForeignKey(d => d.BomId);
             entity.HasOne(b => b.Part).WithOne().HasForeignKey<Part>(p => p.BomId);
         }

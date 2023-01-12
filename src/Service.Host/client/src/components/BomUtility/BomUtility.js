@@ -9,7 +9,8 @@ import {
     SnackbarMessage,
     getItemError,
     ErrorCard,
-    InputField
+    InputField,
+    processSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import { DataGrid } from '@mui/x-data-grid';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -33,13 +34,13 @@ import {
     changeRequests as changeRequestsItemType,
     bomTree as bomTreeItemType
 } from '../../itemTypes';
-
 import changeRequestsActions from '../../actions/changeRequestsActions';
 import bomTreeActions from '../../actions/bomTreeActions';
 import useInitialise from '../../hooks/useInitialise';
 import partsActions from '../../actions/partsActions';
 import subAssemblyActions from '../../actions/subAssemblyActions';
 import useExpandNodesWithChildren from '../../hooks/useExpandNodesWithChildren';
+import copyBomActions from '../../actions/copyBomActions';
 
 // unique id generator
 const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -377,6 +378,8 @@ function BomUtility() {
         return [];
     };
 
+    const [bomToCopy, setBomToCopy] = useState();
+
     const handlePartSelect = newValue => {
         setPartLookUp(p => ({ ...p, selectedPart: newValue, open: false }));
         if (newValue.bomType !== 'C') {
@@ -418,6 +421,8 @@ function BomUtility() {
                 <DialogTitle>Search For A Part</DialogTitle>
                 <DialogContent dividers>
                     <Search
+                        visible={partLookUp.open}
+                        autoFocus
                         propertyName="partNumber"
                         label="Part Number"
                         resultsInModal
@@ -439,6 +444,65 @@ function BomUtility() {
                         }
                     >
                         Cancel
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
+    }
+
+    const [copyBomDialogOpen, setCopyBomDialogOpen] = useState(false);
+    const copyBomResult = useSelector(reduxState =>
+        processSelectorHelpers.getData(reduxState.copyBom)
+    );
+
+    useEffect(() => {
+        if (copyBomResult?.success) {
+            reduxDispatch(
+                bomTreeActions.fetchByHref(
+                    `/purchasing/boms/tree?bomName=${bomName}&levels=0&requirementOnly=false&showChanges=true&treeType=bom`
+                )
+            );
+        }
+    }, [copyBomResult, reduxDispatch, bomName]);
+
+    function renderCopyBomDialog() {
+        return (
+            <Dialog open={copyBomDialogOpen} onClose={() => setPartSearchTerm(null)}>
+                <DialogTitle>Advanced Functions</DialogTitle>
+                <DialogContent dividers>
+                    <Search
+                        visible={copyBomDialogOpen}
+                        autoFocus
+                        propertyName="partNumber"
+                        label="Part Number"
+                        resultsInModal
+                        resultLimit={100}
+                        value={bomToCopy ?? partSearchTerm}
+                        handleValueChange={(_, newVal) => setPartSearchTerm(newVal)}
+                        search={searchParts}
+                        searchResults={partsSearchResults.filter(x => x.bomType !== 'C')}
+                        loading={partsSearchLoading}
+                        priorityFunction="closestMatchesFirst"
+                        onResultSelect={newVal => setBomToCopy(newVal.partNumber)}
+                        clearSearch={() => {}}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={() => {
+                            setCopyBomDialogOpen(false);
+                            setPartSearchTerm(null);
+                            reduxDispatch(
+                                copyBomActions.requestProcessStart({
+                                    srcPartNumber: bomToCopy,
+                                    destPartNumber: bomName,
+                                    crfNumber: crNumber
+                                })
+                            );
+                        }}
+                        disabled={!bomToCopy}
+                    >
+                        Confirm
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -472,6 +536,8 @@ function BomUtility() {
     return (
         <Page history={history} homeUrl={config.appRoot}>
             {renderPartLookUp()}
+            {renderCopyBomDialog()}
+
             <Grid container spacing={3}>
                 <SnackbarMessage
                     visible={snackbarVisible}
@@ -545,6 +611,16 @@ function BomUtility() {
                                 onClick={() => history.push('/purchasing/change-requests/create')}
                             >
                                 RAISE NEW CRF
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                disabled={!crNumber}
+                                onClick={() => {
+                                    setCopyBomDialogOpen(true);
+                                    setBomToCopy(null);
+                                }}
+                            >
+                                Copy Bom
                             </Button>
                         </Grid>
                     </>

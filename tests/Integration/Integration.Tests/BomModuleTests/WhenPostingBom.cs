@@ -7,7 +7,6 @@
     using FluentAssertions;
 
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
-    using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources.Boms;
 
     using NSubstitute;
