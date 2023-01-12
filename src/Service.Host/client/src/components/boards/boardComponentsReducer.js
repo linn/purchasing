@@ -152,8 +152,10 @@ export default function boardComponentsReducer(state = initialState, action) {
                 boardLine: lastLine + 1,
                 fromLayoutVersion: state.selectedRevision.layoutSequence,
                 fromRevisionNumber: state.selectedRevision.versionNumber,
-                quantity: 1,
-                addChangeDocumentNumber: action.payload.crfNumber
+                quantity: action.payload.component?.quantity ?? 1,
+                addChangeDocumentNumber: action.payload.crfNumber,
+                partNumber: action.payload.component?.partNumber ?? null,
+                cRef: action.payload.component?.cRef ?? null
             });
 
             return {

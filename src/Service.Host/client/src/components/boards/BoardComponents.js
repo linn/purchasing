@@ -103,6 +103,17 @@ function BoardComponents() {
         }
     };
 
+    const handleReplaceRow = params => {
+        const comp = params.row;
+        if (comp.addChangeDocumentNumber?.toString() === crfNumber) {
+            dispatch({ type: 'deleteProposedComponent', payload: comp });
+            dispatch({ type: 'newComponent', payload: { crfNumber, component: comp } });
+        } else {
+            dispatch({ type: 'deleteComponent', payload: comp });
+            dispatch({ type: 'newComponent', payload: { crfNumber, component: comp } });
+        }
+    };
+
     const [partSearchTerm, setPartSearchTerm] = useState();
     const [partLookUp, setPartLookUp] = useState({ open: false, forRow: null });
     const openPartLookUp = forRow => {
@@ -232,7 +243,7 @@ function BoardComponents() {
                         aria-label="replace"
                         disabled={!crfNumber}
                         size="small"
-                        onClick={() => handleDeleteRow(params)}
+                        onClick={() => handleReplaceRow(params)}
                     >
                         <UpgradeIcon fontSize="inherit" />
                     </IconButton>
