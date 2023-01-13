@@ -84,10 +84,6 @@ function ChangeRequest() {
         }
     }, [statusChange, reduxDispatch, item, id]);
 
-    const requestPhaseIns = useSelector(reduxState =>
-        itemSelectorHelpers.getItem(reduxState.changeRequestPhaseIns)
-    );
-
     const [tab, setTab] = useState(0);
 
     const [selectedBomChanges, setSelectedBomChanges] = useState(null);

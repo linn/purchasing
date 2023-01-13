@@ -45,7 +45,7 @@ function BomChangesTab({ bomChanges, handleSelectChange, phaseInsUri, phaseIn })
 
     const [weekStartDate, setWeekStartDate] = useState(null);
 
-    const ValidPhaseInWeek = weekStart => {
+    const validPhaseInWeek = weekStart => {
         if (!weekStart) {
             return false;
         }
@@ -94,7 +94,7 @@ function BomChangesTab({ bomChanges, handleSelectChange, phaseInsUri, phaseIn })
                     <Button
                         variant="outlined"
                         onClick={() => phaseIn(weekStartDate)}
-                        disabled={!ValidPhaseInWeek(weekStartDate)}
+                        disabled={!validPhaseInWeek(weekStartDate)}
                     >
                         Phase In
                     </Button>
