@@ -10,7 +10,7 @@
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Resources.Boms;
 
-    public class CircuitBoardFacadeService : FacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource>
+    public class CircuitBoardFacadeService : FacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource>, ICircuitBoardFacadeService
     {
         private readonly IQueryable<BoardRevisionType> types;
 
@@ -22,6 +22,14 @@
             : base(repository, transactionManager, resourceBuilder)
         {
             this.types = boardRevisionTypeRepository.FindAll();
+        }
+
+        public IResult<CircuitBoardResource> UpdateBoardComponents(
+            int id,
+            CircuitBoardResource updateResource,
+            IEnumerable<string> privileges = null)
+        {
+            throw new NotImplementedException();
         }
 
         protected override CircuitBoard CreateFromResource(
@@ -44,7 +52,7 @@
                            IdBoard = resource.IdBoard,
                            Layouts = resource.Layouts
                                ?.Select(l => this.MakeLayout(l, resource.DefaultPcbNumber?.ToUpper())).ToList()
-            };
+                       };
         }
 
         protected override void UpdateFromResource(

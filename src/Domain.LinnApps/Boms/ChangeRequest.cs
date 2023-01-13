@@ -38,6 +38,8 @@
 
         public string BoardCode { get; set; }
 
+        public string RevisionCode { get; set; }
+
         public string ReasonForChange { get; set; }
 
         public string DescriptionOfChange { get; set; }

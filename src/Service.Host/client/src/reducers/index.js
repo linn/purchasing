@@ -110,6 +110,7 @@ import subAssembly from './subAssembly';
 import boardComponentSummaries from './boardComponentSummaries';
 import boardComponents from './boardComponents';
 import changeRequestPhaseIns from './changeRequestPhaseIns';
+import copyBom from './copyBom';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -137,6 +138,7 @@ const rootReducer = history =>
         changeRequests,
         changeRequestStatusChange,
         changeRequestPhaseIns,
+        copyBom,
         countries,
         currencies,
         deliveryAddresses,

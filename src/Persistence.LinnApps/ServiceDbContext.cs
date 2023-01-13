@@ -208,6 +208,8 @@
 
         public DbSet<BomDetail> BomDetails { get; set; }
 
+        public DbSet<PcasChange> PcasChanges { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -1885,6 +1887,7 @@
             entity.HasOne(o => o.OldPart).WithMany().HasForeignKey(o => o.OldPartNumber);
             entity.Property(c => c.NewPartNumber).HasColumnName("NEW_PART_NUMBER");
             entity.Property(c => c.BoardCode).HasColumnName("BOARD_CODE").HasMaxLength(6);
+            entity.Property(c => c.RevisionCode).HasColumnName("REVISION_CODE").HasMaxLength(10);
             entity.HasOne(o => o.NewPart).WithMany().HasForeignKey(o => o.NewPartNumber);
             entity.Property(c => c.ChangeState).HasColumnName("CHANGE_STATE").HasMaxLength(6);
             entity.Property(c => c.GlobalReplace).HasColumnName("GLOBAL_REPLACE").HasMaxLength(1);
@@ -1929,6 +1932,8 @@
             entity.HasKey(b => b.BomId);
             entity.Property(b => b.BomId).HasColumnName("BOM_ID");
             entity.Property(b => b.BomName).HasColumnName("BOM_NAME");
+            entity.Property(b => b.Depth).HasColumnName("DEPTH");
+            entity.Property(b => b.CommonBom).HasColumnName("COMMON_BOM");
             entity.HasMany(b => b.Details).WithOne().HasForeignKey(d => d.BomId);
             entity.HasOne(b => b.Part).WithOne().HasForeignKey<Part>(p => p.BomId);
         }

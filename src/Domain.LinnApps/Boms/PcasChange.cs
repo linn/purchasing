@@ -44,7 +44,7 @@
 
         public void Cancel(Employee cancelledBy)
         {
-            if (this.CanCancel() && (cancelledBy != null))
+            if (this.CanCancel() && cancelledBy != null)
             {
                 this.ChangeState = "CANCEL";
                 this.DateCancelled = DateTime.Now;
@@ -55,7 +55,7 @@
 
         public void MakeLive(Employee appliedBy)
         {
-            if (this.CanMakeLive() && (appliedBy != null))
+            if (this.CanMakeLive() && appliedBy != null)
             {
                 this.ChangeState = "LIVE";
                 this.DateApplied = DateTime.Now;
@@ -70,10 +70,12 @@
             {
                 return $"Cancelled on {this.DateCancelled?.ToString("dd-MMM-yy")} by {this.CancelledBy?.FullName}";
             }
+
             if (this.ChangeState == "LIVE")
             {
                 return $"Live on {this.DateApplied?.ToString("dd-MMM-yy")} by {this.AppliedBy?.FullName}";
             }
+
             return $"Created on {this.DateEntered:dd-MMM-yy} by {this.EnteredBy?.FullName}";
         }
     }

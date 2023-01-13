@@ -177,7 +177,8 @@
                 .FlattenBomTree(bomName.ToUpper().Trim(), null, false, true)
                 .Where(x => x.Type != "C").Select(a => a.Name).ToList();
 
-            var changeRequests = this.repository.FilterBy(
+
+            var changeRequests = assemblies.Count == 0 ? this.repository.FilterBy(x => x.NewPartNumber == bomName).ToList() : this.repository.FilterBy(
                 x => assemblies.Contains(x.NewPartNumber) 
                      && (x.ChangeState == "ACCEPT" || x.ChangeState == "PROPOS")).ToList();
 

@@ -33,14 +33,16 @@
 
             app.MapGet("/purchasing/boms/boards/application-state", this.GetBoardApplicationState);
             app.MapGet("/purchasing/boms/boards/{id}", this.GetBoard);
+            app.MapGet("/purchasing/boms/board-components/{id}", this.GetBoard);
             app.MapGet("/purchasing/boms/tree/export", this.GetTreeExport);
             app.MapGet("/purchasing/boms/boards", this.GetBoards);
-            app.MapGet("/purchasing/boms/board-components", this.GetApp);
+            app.MapGet("/purchasing/boms/board-components", this.GetBoards);
             app.MapGet("/purchasing/boms/boards-summary", this.GetBoardsSummary);
             app.MapGet("/purchasing/boms/boards/create", this.GetApp);
             app.MapPost("/purchasing/boms/boards", this.AddCircuitBoard);
             app.MapPut("/purchasing/boms/boards/{id}", this.UpdateCircuitBoard);
-            
+            app.MapPut("/purchasing/boms/board-components/{id}", this.UpdateBoardComponents);
+
             app.MapGet("/purchasing/boms/reports/list", this.GetPartsOnBomReport);
             app.MapGet("/purchasing/boms/reports/list/export", this.GetPartsOnBomExport);
 
@@ -48,6 +50,8 @@
             app.MapGet("/purchasing/boms/reports/cost", this.GetBomCostReport);
 
             app.MapPost("/purchasing/boms/tree", this.PostBomTree);
+
+            app.MapPost("/purchasing/boms/copy", this.CopyBom);
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -157,6 +161,18 @@
             await res.Negotiate(result);
         }
 
+        private async Task UpdateBoardComponents(
+            HttpRequest req,
+            HttpResponse res,
+            string id,
+            CircuitBoardResource resource,
+            IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource> circuitBoardFacadeService)
+        {
+            var result = circuitBoardFacadeService.Update(id, resource, req.HttpContext.GetPrivileges());
+
+            await res.Negotiate(result);
+        }
+        
         private async Task GetBoardApplicationState(
             HttpRequest req,
             HttpResponse res,
@@ -236,6 +252,21 @@
             {
                 result = facadeService.GetBomCostReport(bomName, splitBySubAssembly, levels, labourHourlyRate);
             }
+
+            await res.Negotiate(result);
+        }
+
+        private async Task CopyBom(
+            HttpRequest req,
+            HttpResponse res,
+            CopyBomResource resource,
+            IBomFacadeService bomFacadeService)
+        {
+            var result = bomFacadeService.CopyBom(
+                resource.SrcPartNumber, 
+                resource.DestPartNumber, 
+                req.HttpContext.User.GetEmployeeNumber(), 
+                resource.CrfNumber);
 
             await res.Negotiate(result);
         }

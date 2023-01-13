@@ -40,6 +40,8 @@
         
         protected IQueryRepository<BoardComponentSummary> BoardComponentSummaryRepository { get; set; }
 
+        protected IRepository<PcasChange, int> PcasChangeRepository { get; set; }
+
         protected IEdiOrderService MockDomainService { get; set; }
 
         protected ITransactionManager TransactionManager { get; set; }
@@ -67,6 +69,7 @@
             this.CircuitBoardRepository = Substitute.For<IRepository<CircuitBoard, string>>();
             this.BoardRevisionTypeRepository = Substitute.For<IRepository<BoardRevisionType, string>>();
             this.BoardComponentSummaryRepository = Substitute.For<IQueryRepository<BoardComponentSummary>>();
+            this.PcasChangeRepository = Substitute.For<IRepository<PcasChange, int>>();
             this.BomChangeService = Substitute.For<IBomChangeService>();
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.FacadeService = new BomFacadeService(
@@ -94,7 +97,7 @@
             this.CircuitBoardFacadeService = new CircuitBoardFacadeService(
                 this.CircuitBoardRepository,
                 this.TransactionManager,
-                new CircuitBoardResourceBuilder(),
+                new CircuitBoardResourceBuilder(this.PcasChangeRepository),
                 this.BoardRevisionTypeRepository);
 
             this.BomChangeService = Substitute.For<IBomChangeService>();

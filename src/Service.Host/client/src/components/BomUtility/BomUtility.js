@@ -8,7 +8,9 @@ import {
     SaveBackCancelButtons,
     SnackbarMessage,
     getItemError,
-    ErrorCard
+    ErrorCard,
+    InputField,
+    processSelectorHelpers
 } from '@linn-it/linn-form-components-library';
 import { DataGrid } from '@mui/x-data-grid';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -32,13 +34,13 @@ import {
     changeRequests as changeRequestsItemType,
     bomTree as bomTreeItemType
 } from '../../itemTypes';
-
 import changeRequestsActions from '../../actions/changeRequestsActions';
 import bomTreeActions from '../../actions/bomTreeActions';
 import useInitialise from '../../hooks/useInitialise';
 import partsActions from '../../actions/partsActions';
 import subAssemblyActions from '../../actions/subAssemblyActions';
 import useExpandNodesWithChildren from '../../hooks/useExpandNodesWithChildren';
+import copyBomActions from '../../actions/copyBomActions';
 
 // unique id generator
 const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -53,8 +55,9 @@ function BomUtility() {
         changeRequestsItemType.item,
         'searchItems'
     );
-    const [showChanges, setShowChanges] = useState(false);
+    const [showChanges, setShowChanges] = useState(true);
     const [disableChangesButton, setDisableChangesButton] = useState(false);
+    const [searchBomTerm, setSearchBomTerm] = useState();
 
     const url = changes =>
         `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${changes}&treeType=${'bom'}`;
@@ -68,9 +71,11 @@ function BomUtility() {
 
     const [treeView, setTreeView] = useState();
 
-    const [expanded, setExpanded] = useState();
-
-    const { nodesWithChildren } = useExpandNodesWithChildren([], treeView, bomName);
+    const { expanded, setExpanded, nodesWithChildren } = useExpandNodesWithChildren(
+        [],
+        treeView,
+        bomName
+    );
 
     const [partLookUp, setPartLookUp] = useState({ open: false, forRow: null });
 
@@ -295,8 +300,8 @@ function BomUtility() {
         return newTree;
     };
 
-    // find a node in the tree, by its id field
-    const getNode = id => {
+    // find a node in the tree
+    const getNode = (searchTerm, fieldName = 'id') => {
         if (treeView == null) return null;
         const q = [];
         q.push(treeView);
@@ -305,10 +310,42 @@ function BomUtility() {
             while (n > 0) {
                 const current = q[0];
                 q.shift();
-                if (current.id === id) return current;
+                if (current[fieldName] === searchTerm) return current;
                 if (current.children)
                     for (let i = 0; i < current.children.length; i += 1)
                         q.push(current.children[i]);
+                n -= 1;
+            }
+        }
+        return null;
+    };
+
+    const [searchOccurenceCount, setSearchOccurenceCount] = useState(0);
+
+    const searchTree = searchTerm => {
+        let count = 0;
+        setExpanded(expanded);
+        if (treeView == null) return null;
+        const q = [];
+        q.push(treeView);
+        while (q.length !== 0) {
+            let n = q.length;
+            while (n > 0) {
+                const current = q[0];
+                q.shift();
+                if (current.children) {
+                    for (let i = 0; i < current.children.length; i += 1)
+                        q.push(current.children[i]);
+                    setExpanded(e => [...e, current.id]);
+                }
+                if (current.name === searchTerm) {
+                    count += 1;
+                }
+                if (current.name === searchTerm && count === searchOccurenceCount + 1) {
+                    setSearchOccurenceCount(prevValue => prevValue + 1);
+                    return current;
+                }
+
                 n -= 1;
             }
         }
@@ -340,6 +377,8 @@ function BomUtility() {
         }
         return [];
     };
+
+    const [bomToCopy, setBomToCopy] = useState();
 
     const handlePartSelect = newValue => {
         setPartLookUp(p => ({ ...p, selectedPart: newValue, open: false }));
@@ -382,6 +421,8 @@ function BomUtility() {
                 <DialogTitle>Search For A Part</DialogTitle>
                 <DialogContent dividers>
                     <Search
+                        visible={partLookUp.open}
+                        autoFocus
                         propertyName="partNumber"
                         label="Part Number"
                         resultsInModal
@@ -409,6 +450,65 @@ function BomUtility() {
         );
     }
 
+    const [copyBomDialogOpen, setCopyBomDialogOpen] = useState(false);
+    const copyBomResult = useSelector(reduxState =>
+        processSelectorHelpers.getData(reduxState.copyBom)
+    );
+
+    useEffect(() => {
+        if (copyBomResult?.success) {
+            reduxDispatch(
+                bomTreeActions.fetchByHref(
+                    `/purchasing/boms/tree?bomName=${bomName}&levels=0&requirementOnly=false&showChanges=true&treeType=bom`
+                )
+            );
+        }
+    }, [copyBomResult, reduxDispatch, bomName]);
+
+    function renderCopyBomDialog() {
+        return (
+            <Dialog open={copyBomDialogOpen} onClose={() => setPartSearchTerm(null)}>
+                <DialogTitle>Advanced Functions</DialogTitle>
+                <DialogContent dividers>
+                    <Search
+                        visible={copyBomDialogOpen}
+                        autoFocus
+                        propertyName="partNumber"
+                        label="Part Number"
+                        resultsInModal
+                        resultLimit={100}
+                        value={bomToCopy ?? partSearchTerm}
+                        handleValueChange={(_, newVal) => setPartSearchTerm(newVal)}
+                        search={searchParts}
+                        searchResults={partsSearchResults.filter(x => x.bomType !== 'C')}
+                        loading={partsSearchLoading}
+                        priorityFunction="closestMatchesFirst"
+                        onResultSelect={newVal => setBomToCopy(newVal.partNumber)}
+                        clearSearch={() => {}}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={() => {
+                            setCopyBomDialogOpen(false);
+                            setPartSearchTerm(null);
+                            reduxDispatch(
+                                copyBomActions.requestProcessStart({
+                                    srcPartNumber: bomToCopy,
+                                    destPartNumber: bomName,
+                                    crfNumber: crNumber
+                                })
+                            );
+                        }}
+                        disabled={!bomToCopy}
+                    >
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
+    }
+
     const handleClose = () => setContextMenu(null);
 
     const handleReplaceClick = () => {
@@ -421,9 +521,23 @@ function BomUtility() {
         setContextMenu(null);
     };
 
+    const doSearch = () => {
+        const node = searchTree(searchBomTerm?.toUpperCase?.());
+        if (node) {
+            const parent = getNode(node.parentName, 'name');
+            setSelected(parent);
+            document.getElementById(parent.id).scrollIntoView();
+            (() => new Promise(resolve => setTimeout(resolve, 500)))().then(() => {
+                document.querySelectorAll(`[data-id="${node.id}"]`)?.[0]?.scrollIntoView();
+            });
+        }
+    };
+
     return (
         <Page history={history} homeUrl={config.appRoot}>
             {renderPartLookUp()}
+            {renderCopyBomDialog()}
+
             <Grid container spacing={3}>
                 <SnackbarMessage
                     visible={snackbarVisible}
@@ -453,7 +567,26 @@ function BomUtility() {
                                 }}
                             />
                         </Grid>
-                        <Grid item xs={8}>
+                        <Grid item xs={4}>
+                            <InputField
+                                label="Search Bom"
+                                helperText="press enter to search"
+                                value={searchBomTerm}
+                                onChange={(_, v) => {
+                                    setSearchOccurenceCount(0);
+                                    setSearchBomTerm(v);
+                                }}
+                                propertyName="searchBomTerm"
+                                textFieldProps={{
+                                    onKeyDown: data => {
+                                        if (data.keyCode === 13) {
+                                            doSearch(searchBomTerm);
+                                        }
+                                    }
+                                }}
+                            />
+                        </Grid>
+                        <Grid item xs={4}>
                             {itemError && (
                                 <Grid item xs={12}>
                                     <ErrorCard
@@ -478,6 +611,16 @@ function BomUtility() {
                                 onClick={() => history.push('/purchasing/change-requests/create')}
                             >
                                 RAISE NEW CRF
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                disabled={!crNumber}
+                                onClick={() => {
+                                    setCopyBomDialogOpen(true);
+                                    setBomToCopy(null);
+                                }}
+                            >
+                                Copy Bom
                             </Button>
                         </Grid>
                     </>

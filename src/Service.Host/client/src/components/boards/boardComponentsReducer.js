@@ -99,6 +99,72 @@ export default function boardComponentsReducer(state = initialState, action) {
                 componentSelectionModel: action.payload
             };
         }
+        case 'updateComponent': {
+            if (!action.payload?.boardLine) {
+                return state;
+            }
+
+            const { components } = state.board;
+
+            const componentIndex = components.findIndex(
+                i => i.boardLine === action.payload.boardLine
+            );
+
+            let componentToUpdate = components[componentIndex];
+
+            componentToUpdate = action.payload;
+
+            components[componentIndex] = componentToUpdate;
+
+            return {
+                ...state
+            };
+        }
+        case 'newComponent': {
+            const { components } = state.board;
+            if (!components) {
+                return state;
+            }
+
+            const lastLine = Math.max(...components.map(o => o.boardLine));
+            components.push({
+                adding: true,
+                changeState: 'PROPOS',
+                boardCode: state.board.boardCode,
+                boardLine: lastLine + 1,
+                fromLayoutVersion: state.selectedRevision.layoutSequence,
+                fromRevisionNumber: state.selectedRevision.versionNumber,
+                quantity: 1
+            });
+
+            return {
+                ...state
+            };
+        }
+        case 'setComponentPart': {
+            if (!action.payload?.boardLine) {
+                return state;
+            }
+
+            const { components } = state.board;
+
+            const componentIndex = components.findIndex(
+                i => i.boardLine === action.payload.boardLine
+            );
+
+            let componentToUpdate = components[componentIndex];
+
+            componentToUpdate = {
+                ...componentToUpdate,
+                partNumber: action.payload.part?.partNumber
+            };
+
+            components[componentIndex] = componentToUpdate;
+
+            return {
+                ...state
+            };
+        }
         default:
             return state;
     }
