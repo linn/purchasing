@@ -78,6 +78,17 @@
             }
         }
 
+        public bool CanPhaseIn() => this.ChangeState == "ACCEPT";
+
+        public void PhaseIn(LinnWeek week)
+        {
+            if (this.CanPhaseIn() && (week != null))
+            {
+                this.PhaseInWeek = week;
+                this.PhaseInWeekNumber = week.WeekNumber;
+            }
+        }
+
         public string LifecycleText()
         {
             if (this.ChangeState == "CANCEL")

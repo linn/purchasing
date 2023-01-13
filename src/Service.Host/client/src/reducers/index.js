@@ -109,6 +109,7 @@ import bomCostReport from './bomCostReport';
 import subAssembly from './subAssembly';
 import boardComponentSummaries from './boardComponentSummaries';
 import boardComponents from './boardComponents';
+import changeRequestPhaseIns from './changeRequestPhaseIns';
 import copyBom from './copyBom';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
@@ -136,6 +137,7 @@ const rootReducer = history =>
         changeRequest,
         changeRequests,
         changeRequestStatusChange,
+        changeRequestPhaseIns,
         copyBom,
         countries,
         currencies,

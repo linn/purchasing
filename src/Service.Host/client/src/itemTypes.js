@@ -368,6 +368,12 @@ export const changeRequestStatusChange = new ItemType(
     '/purchasing/change-requests/status'
 );
 
+export const changeRequestPhaseIns = new ItemType(
+    'changeRequestPhaseInsChange',
+    'CHANGE_REQUEST_PHASE_INS',
+    '/purchasing/change-requests/phase-ins'
+);
+
 export const subAssembly = new ItemType('subAssembly', 'SUB_ASSEMBLY', '/purchasing/boms/tree');
 
 export const boardComponentSummaries = new ItemType(
