@@ -30,7 +30,7 @@
 
         protected IBomFacadeService FacadeService { get; set; }
 
-        protected IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource> CircuitBoardFacadeService { get; set; }
+        protected ICircuitBoardFacadeService CircuitBoardFacadeService { get; set; }
 
         protected IRepository<Bom, int> Repository { get; set; }
 

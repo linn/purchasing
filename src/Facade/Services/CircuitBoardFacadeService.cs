@@ -10,7 +10,7 @@
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Resources.Boms;
 
-    public class CircuitBoardFacadeService : FacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource>, ICircuitBoardFacadeService
+    public class CircuitBoardFacadeService : FacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardComponentsUpdateResource>, ICircuitBoardFacadeService
     {
         private readonly IQueryable<BoardRevisionType> types;
 
@@ -26,7 +26,7 @@
 
         public IResult<CircuitBoardResource> UpdateBoardComponents(
             int id,
-            CircuitBoardResource updateResource,
+            CircuitBoardComponentsUpdateResource updateResource,
             IEnumerable<string> privileges = null)
         {
             throw new NotImplementedException();
@@ -57,7 +57,7 @@
 
         protected override void UpdateFromResource(
             CircuitBoard entity,
-            CircuitBoardResource updateResource,
+            CircuitBoardComponentsUpdateResource updateResource,
             IEnumerable<string> privileges = null)
         {
             entity.ClusterBoard = updateResource.ClusterBoard;
@@ -88,7 +88,7 @@
             int userNumber,
             CircuitBoard entity,
             CircuitBoardResource resource,
-            CircuitBoardResource updateResource)
+            CircuitBoardComponentsUpdateResource updateResource)
         {
             throw new NotImplementedException();
         }

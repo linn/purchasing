@@ -7,11 +7,11 @@
     using Linn.Purchasing.Resources.Boms;
 
     public interface ICircuitBoardFacadeService 
-        : IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource>
+        : IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardComponentsUpdateResource>
     {
         IResult<CircuitBoardResource> UpdateBoardComponents(
             int id,
-            CircuitBoardResource updateResource,
+            CircuitBoardComponentsUpdateResource updateResource,
             IEnumerable<string> privileges = null);
     }
 }
