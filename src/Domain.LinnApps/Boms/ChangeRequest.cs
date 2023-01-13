@@ -221,18 +221,15 @@
 
         public void PhaseIn(LinnWeek week, IEnumerable<int> selectedBomChangeIds)
         {
-            if (this.CanPhaseIn() && selectedBomChangeIds != null)
+            if (this.CanPhaseIn() && selectedBomChangeIds != null && this.BomChanges != null)
             {
-                if (this.BomChanges != null)
+                foreach (var bomChange in this.BomChanges)
                 {
-                    foreach (var bomChange in this.BomChanges)
+                    if (bomChange.CanPhaseIn())
                     {
-                        if (bomChange.CanPhaseIn())
+                        if (selectedBomChangeIds.Contains(bomChange.ChangeId))
                         {
-                            if (selectedBomChangeIds.Contains(bomChange.ChangeId))
-                            {
-                                bomChange.PhaseIn(week);
-                            }
+                            bomChange.PhaseIn(week);
                         }
                     }
                 }

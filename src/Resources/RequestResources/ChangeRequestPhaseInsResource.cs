@@ -11,6 +11,6 @@
 
         public int? PhaseInWeek { get; set; }
 
-        public List<int> SelectedBomChangeIds { get; set; }
+        public IEnumerable<int> SelectedBomChangeIds { get; set; }
     }
 }
