@@ -43,13 +43,20 @@ function BomChangesTab({ bomChanges, handleSelectChange, phaseInsUri, phaseIn })
         { field: 'changeId', headerName: 'Id', width: 100 }
     ];
 
-    const today = new Date();
-    const lastSaturday = new Date(
-        new Date().setDate(today.getDate() - (today.getDay() === 0 ? 7 : today.getDay() + 1))
-    );
+    const [weekStartDate, setWeekStartDate] = useState(null);
 
-    const [weekStartDate, setWeekStartDate] = useState(lastSaturday);
-    console.log(weekStartDate);
+    const ValidPhaseInWeek = weekStart => {
+        if (!weekStart) {
+            return false;
+        }
+        const today = new Date();
+        const lastSaturday = new Date(
+            new Date().setDate(
+                today.getDate() - (today.getDay() + 1 === 0 ? 7 : today.getDay() + 2)
+            )
+        );
+        return weekStartDate >= lastSaturday;
+    };
 
     const handleWeekChange = (propertyName, newValue) => {
         setWeekStartDate(newValue);
@@ -79,7 +86,7 @@ function BomChangesTab({ bomChanges, handleSelectChange, phaseInsUri, phaseIn })
                 <Grid item xs={12}>
                     <LinnWeekPicker
                         label="From Week Starting"
-                        selectedDate={weekStartDate.toString()}
+                        selectedDate={weekStartDate?.toString()}
                         setWeekStartDate={handleWeekChange}
                         propertyName="weekStartDate"
                         required
@@ -87,7 +94,7 @@ function BomChangesTab({ bomChanges, handleSelectChange, phaseInsUri, phaseIn })
                     <Button
                         variant="outlined"
                         onClick={() => phaseIn(weekStartDate)}
-                        disabled={weekStartDate.setHours(0, 0, 0) < lastSaturday.setHours(0, 0, 0)}
+                        disabled={!ValidPhaseInWeek(weekStartDate)}
                     >
                         Phase In
                     </Button>
