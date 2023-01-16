@@ -5,31 +5,111 @@
     using System.Linq;
     using System.Linq.Expressions;
 
+    using Linn.Common.Domain.Exceptions;
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
+    using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
+    using Linn.Purchasing.Facade.Extensions;
     using Linn.Purchasing.Resources.Boms;
 
-    public class CircuitBoardFacadeService : FacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardComponentsUpdateResource>, ICircuitBoardFacadeService
+    public class CircuitBoardFacadeService :
+        FacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardComponentsUpdateResource>,
+        ICircuitBoardFacadeService
     {
+        private readonly ITransactionManager transactionManager;
+
+        private readonly IBuilder<CircuitBoard> resourceBuilder;
+
+        private readonly IRepository<PcasChange, int> pcasChangeRepository;
+
+        private readonly IRepository<ChangeRequest, int> changeRequestRepository;
+
+        private readonly ICircuitBoardService circuitBoardService;
+
+        private readonly IDatabaseService databaseService;
+
         private readonly IQueryable<BoardRevisionType> types;
 
         public CircuitBoardFacadeService(
             IRepository<CircuitBoard, string> repository,
             ITransactionManager transactionManager,
             IBuilder<CircuitBoard> resourceBuilder,
-            IRepository<BoardRevisionType, string> boardRevisionTypeRepository)
+            IRepository<BoardRevisionType, string> boardRevisionTypeRepository,
+            IRepository<PcasChange, int> pcasChangeRepository,
+            IRepository<ChangeRequest, int> changeRequestRepository,
+            ICircuitBoardService circuitBoardService,
+            IDatabaseService databaseService)
             : base(repository, transactionManager, resourceBuilder)
         {
+            this.transactionManager = transactionManager;
+            this.resourceBuilder = resourceBuilder;
+            this.pcasChangeRepository = pcasChangeRepository;
+            this.changeRequestRepository = changeRequestRepository;
+            this.circuitBoardService = circuitBoardService;
+            this.databaseService = databaseService;
             this.types = boardRevisionTypeRepository.FindAll();
         }
 
         public IResult<CircuitBoardResource> UpdateBoardComponents(
-            int id,
+            string id,
             CircuitBoardComponentsUpdateResource updateResource,
             IEnumerable<string> privileges = null)
         {
-            throw new NotImplementedException();
+            var pcasChange = this.pcasChangeRepository.FindBy(
+                a => a.BoardCode == id && a.RevisionCode == updateResource.ChangeRequestRevisionCode
+                                              && a.ChangeRequest.DocumentNumber == updateResource.ChangeRequestId);
+
+            if (pcasChange == null)
+            {
+                var nextChangeId = this.databaseService.GetIdSequence("CHG_SEQ");
+                var changeRequest =
+                    this.changeRequestRepository.FindBy(a => a.DocumentNumber == updateResource.ChangeRequestId);
+                if (changeRequest == null)
+                {
+                    return new BadRequestResult<CircuitBoardResource>(
+                        $"Could not find change request {updateResource.ChangeRequestId}");
+                }
+
+                pcasChange = new PcasChange
+                                 {
+                                     ChangeId = nextChangeId,
+                                     BoardCode = id,
+                                     RevisionCode = updateResource.ChangeRequestRevisionCode,
+                                     ChangeRequest = changeRequest,
+                                     DocumentType = changeRequest.DocumentType,
+                                     DocumentNumber = changeRequest.DocumentNumber,
+                                     DateEntered = DateTime.Now,
+                                     EnteredById = updateResource.UserNumber,
+                                     EnteredBy = null,
+                                     DateApplied = null,
+                                     AppliedById = null,
+                                     AppliedBy = null,
+                                     DateCancelled = null,
+                                     CancelledById = null,
+                                     CancelledBy = null,
+                                     ChangeState = changeRequest.ChangeState,
+                                     Comments = null
+                                 };
+                this.pcasChangeRepository.Add(pcasChange);
+            }
+
+            CircuitBoard result;
+            try
+            {
+                result = this.circuitBoardService.UpdateComponents(
+                    id,
+                    pcasChange,
+                    updateResource.Components.Where(a => a.Adding == true).Select(c => c.ToDomain()),
+                    updateResource.Components.Where(b => b.Removing == true).Select(c => c.ToDomain()));
+            }
+            catch (DomainException e)
+            {
+                return new BadRequestResult<CircuitBoardResource>(e.Message);
+            }
+
+            this.transactionManager.Commit();
+            return new SuccessResult<CircuitBoardResource>((CircuitBoardResource)this.resourceBuilder.Build(result, privileges));
         }
 
         protected override CircuitBoard CreateFromResource(

@@ -6,6 +6,7 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
+    using Linn.Common.Proxy.LinnApps;
     using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
@@ -57,10 +58,16 @@
         protected IBomReportsService MockBomReportsDomainService { get; set; }
 
         protected IBomChangeService BomChangeService { get; set; }
-        
+
+        protected IRepository<ChangeRequest, int> ChangeRequestRepository { get; private set; }
+
+        protected ICircuitBoardService CircuitBoardService { get; private set; }
+
         protected string BoardCode { get; set; }
 
         protected CircuitBoardResource Resource { get; set; }
+
+        protected IDatabaseService DatabaseService { get; private set; }
 
         [SetUp]
         public void SetUpContext()
@@ -68,13 +75,15 @@
             this.Repository = Substitute.For<IRepository<Bom, int>>();
             this.CircuitBoardRepository = Substitute.For<IRepository<CircuitBoard, string>>();
             this.BoardRevisionTypeRepository = Substitute.For<IRepository<BoardRevisionType, string>>();
+            this.ChangeRequestRepository = Substitute.For<IRepository<ChangeRequest, int>>();
             this.BoardComponentSummaryRepository = Substitute.For<IQueryRepository<BoardComponentSummary>>();
             this.PcasChangeRepository = Substitute.For<IRepository<PcasChange, int>>();
             this.BomChangeService = Substitute.For<IBomChangeService>();
+            this.CircuitBoardService = Substitute.For<ICircuitBoardService>();
             this.TransactionManager = Substitute.For<ITransactionManager>();
             this.FacadeService = new BomFacadeService(
                 this.BomChangeService, this.TransactionManager);
-
+            this.DatabaseService = Substitute.For<IDatabaseService>();
             this.BomTreeService = Substitute.For<IBomTreeService>();
 
             this.MockBomReportsDomainService = Substitute.For<IBomReportsService>();
@@ -98,7 +107,11 @@
                 this.CircuitBoardRepository,
                 this.TransactionManager,
                 new CircuitBoardResourceBuilder(this.PcasChangeRepository),
-                this.BoardRevisionTypeRepository);
+                this.BoardRevisionTypeRepository,
+                this.PcasChangeRepository,
+                this.ChangeRequestRepository,
+                this.CircuitBoardService,
+                this.DatabaseService);
 
             this.BomChangeService = Substitute.For<IBomChangeService>();
               

@@ -121,19 +121,38 @@ export default function boardComponentsReducer(state = initialState, action) {
             };
         }
         case 'deleteProposedComponent': {
-            if (!action.payload?.boardLine || !state.board?.components) {
+            // if (!action.payload?.boardLine || !state.board?.components) {
+            //     return state;
+            // }
+
+            // const componentIndexToRemove = state.board.components.findIndex(
+            //     i => i.boardLine === action.payload.boardLine
+            // );
+
+            // const newComponents = [...state.board.components];
+            // newComponents.splice(componentIndexToRemove, 1);
+            // return {
+            //     ...state,
+            //     board: { ...state.board, components: newComponents }
+            // };
+            if (!action.payload?.component?.boardLine) {
                 return state;
             }
 
-            const componentIndexToRemove = state.board.components.findIndex(
-                i => i.boardLine === action.payload.boardLine
+            const { components } = state.board;
+
+            const componentIndexToMarkForRemove = components.findIndex(
+                i => i.boardLine === action.payload.component.boardLine
             );
 
-            const newComponents = [...state.board.components];
-            newComponents.splice(componentIndexToRemove, 1);
+            const componentToUpdate = { ...components[componentIndexToMarkForRemove] };
+
+            componentToUpdate.removing = true;
+            componentToUpdate.deleteChangeDocumentNumber = null;
+            components[componentIndexToMarkForRemove] = componentToUpdate;
+
             return {
-                ...state,
-                board: { ...state.board, components: newComponents }
+                ...state
             };
         }
         case 'deleteComponent': {

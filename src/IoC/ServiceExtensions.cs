@@ -208,6 +208,7 @@
                 .AddTransient<IChangeRequestService, ChangeRequestService>()
                 .AddTransient<IBomReportsService, BomReportsService>()
                 .AddTransient<IBomChangeService, BomChangeService>()
+                .AddTransient<ICircuitBoardService, CircuitBoardService>()
 
                 // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()

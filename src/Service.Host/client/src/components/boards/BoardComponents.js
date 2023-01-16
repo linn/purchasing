@@ -39,6 +39,7 @@ function BoardComponents() {
 
     const [board, setBoard] = useState(null);
     const [crfNumber, setCrfNumber] = useState();
+    const [crfRevisionCode, setCrfRevisionCode] = useState();
     const [showChanges, setShowChanges] = useState(true);
     const searchBoards = searchTerm => reduxDispatch(boardsActions.search(searchTerm));
     const clearSearchBoards = () => reduxDispatch(boardsActions.clearSearch());
@@ -97,7 +98,7 @@ function BoardComponents() {
     const handleDeleteRow = params => {
         const comp = params.row;
         if (comp.addChangeDocumentNumber?.toString() === crfNumber) {
-            dispatch({ type: 'deleteProposedComponent', payload: comp });
+            dispatch({ type: 'deleteProposedComponent', payload: { component: comp } });
         } else {
             dispatch({ type: 'deleteComponent', payload: { crfNumber, component: comp } });
         }
@@ -106,7 +107,7 @@ function BoardComponents() {
     const handleReplaceRow = params => {
         const comp = params.row;
         if (comp.addChangeDocumentNumber?.toString() === crfNumber) {
-            dispatch({ type: 'deleteProposedComponent', payload: comp });
+            dispatch({ type: 'deleteProposedComponent', payload: { component: comp } });
             dispatch({ type: 'newComponent', payload: { crfNumber, component: comp } });
         } else {
             dispatch({ type: 'deleteComponent', payload: crfNumber, component: comp });
@@ -341,6 +342,12 @@ function BoardComponents() {
         return params.row.changeState?.toLowerCase();
     };
 
+    const setCrfDetails = documentNumber => {
+        setCrfNumber(documentNumber);
+        const crf = changeRequests.find(a => a.documentNumber.toString() === documentNumber);
+        setCrfRevisionCode(crf.revisionCode);
+    };
+
     return (
         <Page history={history} style={{ paddingBottom: '20px' }} homeUrl={config.appRoot}>
             <Typography variant="h5" gutterBottom>
@@ -395,7 +402,7 @@ function BoardComponents() {
                             helperText="Select a corresponding CRF to start editing"
                             value={crfNumber}
                             onChange={(_, n) => {
-                                setCrfNumber(n);
+                                setCrfDetails(n);
                             }}
                         />
                     </Stack>
@@ -529,7 +536,11 @@ function BoardComponents() {
                         saveClick={() => {
                             reduxDispatch(boardComponentsActions.clearErrorsForItem());
                             reduxDispatch(
-                                boardComponentsActions.update(state.board.boardCode, state.board)
+                                boardComponentsActions.update(state.board.boardCode, {
+                                    ...state.board,
+                                    changeRequestId: crfNumber,
+                                    changeRequestRevisionCode: crfRevisionCode
+                                })
                             );
                         }}
                         cancelClick={handleCancel}

@@ -9,7 +9,6 @@
     using Linn.Common.Facade;
     using Linn.Common.Facade.Carter.Extensions;
     using Linn.Common.Reporting.Resources.ReportResultResources;
-    using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
@@ -166,7 +165,8 @@
             CircuitBoardComponentsUpdateResource resource,
             ICircuitBoardFacadeService circuitBoardFacadeService)
         {
-            var result = circuitBoardFacadeService.Update(id, resource, req.HttpContext.GetPrivileges());
+            resource.UserNumber = req.HttpContext.User.GetEmployeeNumber();
+            var result = circuitBoardFacadeService.UpdateBoardComponents(id, resource, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }

@@ -10,7 +10,7 @@
         : IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardComponentsUpdateResource>
     {
         IResult<CircuitBoardResource> UpdateBoardComponents(
-            int id,
+            string id,
             CircuitBoardComponentsUpdateResource updateResource,
             IEnumerable<string> privileges = null);
     }
