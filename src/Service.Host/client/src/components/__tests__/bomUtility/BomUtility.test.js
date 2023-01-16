@@ -12,6 +12,7 @@ import bomTree from '../fakeData/bomTree';
 import BomUtility from '../../BomUtility/BomUtility';
 import bomTreeActions from '../../../actions/bomTreeActions';
 import changeRequestsActions from '../../../actions/changeRequestsActions';
+import subAssemblyActions from '../../../actions/subAssemblyActions';
 
 jest.mock('react-redux', () => ({
     ...jest.requireActual('react-redux'),
@@ -26,6 +27,7 @@ jest.mock('react-router', () => ({
 const fetchSpy = jest.spyOn(bomTreeActions, 'fetchByHref');
 const addSpy = jest.spyOn(bomTreeActions, 'add');
 const fetchChangeRequestsSpy = jest.spyOn(changeRequestsActions, 'searchWithOptions');
+const fetchSubAssemblySpy = jest.spyOn(subAssemblyActions, 'fetchByHref');
 
 const initialState = {
     changeRequests: { searchItems: [] },
@@ -153,8 +155,6 @@ describe('When change request selected...', () => {
 });
 
 describe('When adding a component to the bom...', () => {
-    beforeEach(() => {});
-
     test('should post bom with new part', async () => {
         cleanup();
         jest.clearAllMocks();
@@ -193,7 +193,9 @@ describe('When adding a component to the bom...', () => {
         fireEvent.keyDown(searchInput, { key: 'Enter', code: 'Enter', keyCode: 13 });
         const result = screen.getByText('CAP 100');
         fireEvent.click(result);
-        await screen.findAllByRole('cell');
+
+        // need to wait for modal to close
+        await screen.findAllByRole('cell', undefined, { timeout: 5000 });
 
         const saveButton = screen.getByRole('button', { name: 'Save' });
         fireEvent.click(saveButton);
@@ -229,5 +231,100 @@ describe('When adding a component to the bom...', () => {
                 crNumber: '48420'
             })
         );
+    });
+});
+
+describe('When adding an assembly to the bom...', () => {
+    test('should look up assembly', async () => {
+        cleanup();
+        jest.clearAllMocks();
+
+        useSelector.mockImplementation(callback =>
+            callback({
+                ...initialState,
+                bomTree: { loading: false, item: bomTree },
+                changeRequests: { searchLoading: false, searchItems: changeRequests },
+                parts: {
+                    searchItems: [
+                        {
+                            partNumber: 'NEW ASSEMBLY',
+                            description: 'THE NEW ASSEMBLY',
+                            id: 666,
+                            bomType: 'A'
+                        }
+                    ]
+                }
+            })
+        );
+        useLocation.mockImplementation(() => ({
+            search: 'bomName=PCAS%20LEWIS3'
+        }));
+        render(<BomUtility />);
+
+        // simulate all the input steps a user goes through to add an assembly
+        const crfDropdown = screen.getByLabelText('CRF Number');
+        fireEvent.change(crfDropdown, { target: { value: 48420 } });
+        const addButton = screen.getByRole('button', { name: '+' });
+        fireEvent.click(addButton);
+        const partLookupButton = screen.getAllByTestId('part-lookup-button')[2];
+        fireEvent.click(partLookupButton);
+        const searchInput = screen.getByLabelText('Part Number');
+        fireEvent.change(searchInput, { target: { value: 'NEW ASSEMBLY' } });
+        fireEvent.keyDown(searchInput, { key: 'Enter', code: 'Enter', keyCode: 13 });
+        const result = screen.getByText('NEW ASSEMBLY');
+        fireEvent.click(result);
+        await screen.findAllByRole('cell', undefined, { timeout: 5000 });
+
+        expect(fetchSubAssemblySpy).toHaveBeenCalledWith(
+            '/purchasing/boms/tree?bomName=NEW ASSEMBLY&levels=0&requirementOnly=false&showChanges=false&treeType=bom'
+        );
+    });
+});
+
+describe('When added assembly data arrives...', () => {
+    beforeEach(() => jest.setTimeout(30000));
+    test('should add new assembly to bom tree', async () => {
+        cleanup();
+        jest.clearAllMocks();
+
+        useSelector.mockImplementation(callback =>
+            callback({
+                ...initialState,
+                bomTree: { loading: false, item: bomTree },
+                changeRequests: { searchLoading: false, searchItems: changeRequests },
+                parts: {
+                    searchItems: [
+                        {
+                            partNumber: 'NEW ASSEMBLY',
+                            description: 'THE NEW ASSEMBLY',
+                            id: 666,
+                            bomType: 'A'
+                        }
+                    ]
+                },
+                subAssembly: { item: { name: 'NEW ASSEMBLY' }, loading: false }
+            })
+        );
+        useLocation.mockImplementation(() => ({
+            search: 'bomName=PCAS%20LEWIS3'
+        }));
+        render(<BomUtility />);
+
+        // simulate all the input steps a user goes through to open the partLookUp for a row
+        // need to do this so we know where in the tree to add the new assembly
+        const crfDropdown = screen.getByLabelText('CRF Number');
+        fireEvent.change(crfDropdown, { target: { value: 48420 } });
+        const addButton = screen.getByRole('button', { name: '+' });
+        fireEvent.click(addButton);
+        const partLookupButton = screen.getAllByTestId('part-lookup-button')[2];
+        fireEvent.click(partLookupButton);
+        const cancel = screen.getByRole('button', { name: 'Cancel' });
+        fireEvent.click(cancel);
+
+        // need to wait for modal to close
+        await screen.findAllByRole('cell', undefined, { timeout: 5000 });
+
+        expect(true).toBeTruthy();
+        expect(screen.getByRole('heading', { name: 'NEW ASSEMBLY' })).toBeInTheDocument();
     });
 });
