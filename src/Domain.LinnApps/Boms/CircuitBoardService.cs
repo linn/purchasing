@@ -38,7 +38,7 @@
                 throw new ItemNotFoundException($"Could not find board {boardCode}");
             }
 
-            var changeRequest = this.changeRequestRepository.FindBy(a => a.DocumentNumber == changeRequestId);
+            var changeRequest = this.changeRequestRepository.FindById(changeRequestId);
             if (changeRequest == null)
             {
                 throw new ItemNotFoundException($"Could not find change request {changeRequestId}");
@@ -56,14 +56,20 @@
 
             foreach (var boardComponent in componentsToRemove)
             {
+                var component = board.Components.First(a => a.BoardLine == boardComponent.BoardLine);
+                if (component == null)
+                {
+                    throw new ItemNotFoundException(
+                        $"Could not find component with board line {boardComponent.BoardLine} to remove");
+                }
+
                 if (boardComponent.AddChangeId == pcasChange.ChangeId && boardComponent.ChangeState != "LIVE")
                 {
-                    var component = board.Components.First(a => a.BoardLine == boardComponent.BoardLine);
                     board.Components.Remove(component);
                 }
                 else
                 {
-                    boardComponent.DeleteChangeId = pcasChange.ChangeId;
+                    component.DeleteChangeId = pcasChange.ChangeId;
                 }
             }
 
