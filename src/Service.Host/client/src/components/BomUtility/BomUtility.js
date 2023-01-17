@@ -26,6 +26,7 @@ import IconButton from '@mui/material/IconButton';
 import { useSelector, useDispatch } from 'react-redux';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import BomTree from '../BomTree';
 import history from '../../history';
@@ -41,6 +42,7 @@ import partsActions from '../../actions/partsActions';
 import subAssemblyActions from '../../actions/subAssemblyActions';
 import useExpandNodesWithChildren from '../../hooks/useExpandNodesWithChildren';
 import copyBomActions from '../../actions/copyBomActions';
+import deleteAllFromBomActions from '../../actions/deleteAllFromBomActions';
 
 // unique id generator
 const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -469,24 +471,30 @@ function BomUtility() {
     }
 
     const [copyBomDialogOpen, setCopyBomDialogOpen] = useState(false);
+    const [deleteAllFromBomDialogOpen, setDeleteAllFromBomDialogOpen] = useState(false);
+
     const copyBomResult = useSelector(reduxState =>
         processSelectorHelpers.getData(reduxState.copyBom)
     );
 
+    const deleteAllFromBomResult = useSelector(reduxState =>
+        processSelectorHelpers.getData(reduxState.deleteAllFromBom)
+    );
+
     useEffect(() => {
-        if (copyBomResult?.success) {
+        if (copyBomResult?.success || deleteAllFromBomResult?.success) {
             reduxDispatch(
                 bomTreeActions.fetchByHref(
                     `/purchasing/boms/tree?bomName=${bomName}&levels=0&requirementOnly=false&showChanges=true&treeType=bom`
                 )
             );
         }
-    }, [copyBomResult, reduxDispatch, bomName]);
+    }, [copyBomResult, deleteAllFromBomResult, reduxDispatch, bomName]);
 
     function renderCopyBomDialog() {
         return (
             <Dialog open={copyBomDialogOpen} onClose={() => setPartSearchTerm(null)}>
-                <DialogTitle>Advanced Functions</DialogTitle>
+                <DialogTitle>Copy BOM</DialogTitle>
                 <DialogContent dividers>
                     <Search
                         visible={copyBomDialogOpen}
@@ -527,6 +535,36 @@ function BomUtility() {
         );
     }
 
+    function renderDeleteAllFromBomDialog() {
+        return (
+            <Dialog open={deleteAllFromBomDialogOpen} onClose={() => setPartSearchTerm(null)}>
+                <DialogTitle>Delete All From Bom</DialogTitle>
+                <DialogContent dividers>
+                    <Typography variant="h6">
+                        Clicking confirm will create a change to remove everything from this bom!
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={() => {
+                            setDeleteAllFromBomDialogOpen(false);
+                            setPartSearchTerm(null);
+                            reduxDispatch(
+                                deleteAllFromBomActions.requestProcessStart({
+                                    destPartNumber: bomName,
+                                    crfNumber: crNumber
+                                })
+                            );
+                        }}
+                        disabled={!crNumber}
+                    >
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
+    }
+
     const handleClose = () => setContextMenu(null);
 
     const handleReplaceClick = () => {
@@ -559,6 +597,7 @@ function BomUtility() {
         <Page history={history} homeUrl={config.appRoot}>
             {renderPartLookUp()}
             {renderCopyBomDialog()}
+            {renderDeleteAllFromBomDialog()}
 
             <Grid container spacing={3}>
                 <SnackbarMessage
@@ -640,6 +679,15 @@ function BomUtility() {
                                 onClick={() => {
                                     setCopyBomDialogOpen(true);
                                     setBomToCopy(null);
+                                }}
+                            >
+                                Copy Bom
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                disabled={!crNumber}
+                                onClick={() => {
+                                    setDeleteAllFromBomDialogOpen(true);
                                 }}
                             >
                                 Copy Bom

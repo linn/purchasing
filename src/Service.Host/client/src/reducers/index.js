@@ -111,6 +111,7 @@ import boardComponentSummaries from './boardComponentSummaries';
 import boardComponents from './boardComponents';
 import changeRequestPhaseIns from './changeRequestPhaseIns';
 import copyBom from './copyBom';
+import deleteAllFromBom from './deleteAllFromBom';
 
 const errors = fetchErrorReducer({ ...itemTypes, ...reportTypes });
 
@@ -141,6 +142,7 @@ const rootReducer = history =>
         copyBom,
         countries,
         currencies,
+        deleteAllFromBom,
         deliveryAddresses,
         deliveryPerformanceDetailReport,
         deliveryPerformanceSummaryReport,
