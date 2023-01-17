@@ -230,7 +230,7 @@ function BomUtility() {
             hide: true // useful for debugging, but hidden generally,
         },
         {
-            field: 'parentName',
+            field: 'parentId',
             headerName: 'Parent',
             width: 180,
             editable: false,
@@ -261,8 +261,8 @@ function BomUtility() {
             while (n > 0) {
                 const current = q[0];
                 q.shift();
-                console.log(0, current.name, newNode.parentName);
-                if (current.name === newNode.parentName) {
+                console.log(0, current.id, newNode.parentId);
+                if (current.id === newNode.parentId) {
                     console.log(1);
                     current.hasChanged = true;
                     if (addNode) {
