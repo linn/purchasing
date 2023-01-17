@@ -5,6 +5,7 @@
 
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Exceptions;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
 
     public class CircuitBoardService : ICircuitBoardService
     {
@@ -12,12 +13,16 @@
 
         private readonly IRepository<CircuitBoard, string> boardRepository;
 
+        private readonly IQueryRepository<Part> partRepository;
+
         public CircuitBoardService(
             IRepository<ChangeRequest, int> changeRequestRepository,
-            IRepository<CircuitBoard, string> boardRepository)
+            IRepository<CircuitBoard, string> boardRepository,
+            IQueryRepository<Part> partRepository)
         {
             this.changeRequestRepository = changeRequestRepository;
             this.boardRepository = boardRepository;
+            this.partRepository = partRepository;
         }
 
         public CircuitBoard UpdateComponents(
@@ -48,6 +53,9 @@
 
             foreach (var boardComponent in componentsToAdd)
             {
+                var part = this.partRepository.FindBy(a => a.PartNumber == boardComponent.PartNumber.ToUpper());
+                boardComponent.AddChangeId = pcasChange.ChangeId;
+                boardComponent.AssemblyTechnology = part.AssemblyTechnology;
                 board.Components.Add(boardComponent);
                 // TODO set from things
             }

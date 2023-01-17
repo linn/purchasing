@@ -121,20 +121,6 @@ export default function boardComponentsReducer(state = initialState, action) {
             };
         }
         case 'deleteProposedComponent': {
-            // if (!action.payload?.boardLine || !state.board?.components) {
-            //     return state;
-            // }
-
-            // const componentIndexToRemove = state.board.components.findIndex(
-            //     i => i.boardLine === action.payload.boardLine
-            // );
-
-            // const newComponents = [...state.board.components];
-            // newComponents.splice(componentIndexToRemove, 1);
-            // return {
-            //     ...state,
-            //     board: { ...state.board, components: newComponents }
-            // };
             if (!action.payload?.component?.boardLine) {
                 return state;
             }
@@ -181,6 +167,82 @@ export default function boardComponentsReducer(state = initialState, action) {
             if (!components) {
                 return state;
             }
+
+            const lastLine = Math.max(...components.map(o => o.boardLine));
+            components.push({
+                adding: true,
+                changeState: 'PROPOS',
+                boardCode: state.board.boardCode,
+                boardLine: lastLine + 1,
+                fromLayoutVersion: state.selectedRevision.layoutSequence,
+                fromRevisionNumber: state.selectedRevision.versionNumber,
+                quantity: action.payload.component?.quantity ?? 1,
+                addChangeDocumentNumber: action.payload.crfNumber,
+                partNumber: action.payload.component?.partNumber ?? null,
+                cRef: action.payload.component?.cRef ?? null
+            });
+
+            return {
+                ...state
+            };
+        }
+        case 'replaceProposedComponent': {
+            if (!action.payload?.component?.boardLine) {
+                return state;
+            }
+
+            const { components } = state.board;
+            if (!components) {
+                return state;
+            }
+
+            const componentIndexToMarkForRemove = components.findIndex(
+                i => i.boardLine === action.payload.component.boardLine
+            );
+
+            const componentToUpdate = { ...components[componentIndexToMarkForRemove] };
+
+            componentToUpdate.removing = true;
+            componentToUpdate.deleteChangeDocumentNumber = null;
+            components[componentIndexToMarkForRemove] = componentToUpdate;
+
+            const lastLine = Math.max(...components.map(o => o.boardLine));
+            components.push({
+                adding: true,
+                changeState: 'PROPOS',
+                boardCode: state.board.boardCode,
+                boardLine: lastLine + 1,
+                fromLayoutVersion: state.selectedRevision.layoutSequence,
+                fromRevisionNumber: state.selectedRevision.versionNumber,
+                quantity: action.payload.component?.quantity ?? 1,
+                addChangeDocumentNumber: action.payload.crfNumber,
+                partNumber: action.payload.component?.partNumber ?? null,
+                cRef: action.payload.component?.cRef ?? null
+            });
+
+            return {
+                ...state
+            };
+        }
+        case 'replaceComponent': {
+            if (!action.payload?.component?.boardLine) {
+                return state;
+            }
+
+            const { components } = state.board;
+            if (!components) {
+                return state;
+            }
+
+            const componentIndexToMarkForRemove = components.findIndex(
+                i => i.boardLine === action.payload.component.boardLine
+            );
+
+            const componentToUpdate = { ...components[componentIndexToMarkForRemove] };
+
+            componentToUpdate.removing = true;
+            componentToUpdate.deleteChangeDocumentNumber = action.payload.crfNumber;
+            components[componentIndexToMarkForRemove] = componentToUpdate;
 
             const lastLine = Math.max(...components.map(o => o.boardLine));
             components.push({

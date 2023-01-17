@@ -107,11 +107,9 @@ function BoardComponents() {
     const handleReplaceRow = params => {
         const comp = params.row;
         if (comp.addChangeDocumentNumber?.toString() === crfNumber) {
-            dispatch({ type: 'deleteProposedComponent', payload: { component: comp } });
-            dispatch({ type: 'newComponent', payload: { crfNumber, component: comp } });
+            dispatch({ type: 'replaceProposedComponent', payload: { crfNumber, component: comp } });
         } else {
-            dispatch({ type: 'deleteComponent', payload: crfNumber, component: comp });
-            dispatch({ type: 'newComponent', payload: { crfNumber, component: comp } });
+            dispatch({ type: 'replaceComponent', payload: { crfNumber, component: comp } });
         }
     };
 
@@ -492,7 +490,7 @@ function BoardComponents() {
                                     }}
                                     rows={componentRows}
                                     columns={componentColumns}
-                                    pageSize={40}
+                                    pageSize={100}
                                     selectionModel={state.componentSelectionModel}
                                     density="compact"
                                     autoHeight
@@ -508,7 +506,7 @@ function BoardComponents() {
                                     hideFooterSelectedRowCount
                                     hideFooter={
                                         !state.board?.components ||
-                                        state.board.components.length <= 40
+                                        state.board.components.length <= 100
                                     }
                                     getRowClassName={params => getDisplayClass(params)}
                                     isCellEditable={params => params.row.adding && crfNumber}

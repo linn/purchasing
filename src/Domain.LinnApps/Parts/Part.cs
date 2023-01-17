@@ -56,6 +56,8 @@
 
         public string SafetyCritical { get; set; }
 
+        public string AssemblyTechnology { get; set; }
+
         public bool SupplierAssembly()
         {
             if (this.BomType == "A")
