@@ -37,22 +37,14 @@
 
         protected override BomVerificationHistory CreateFromResource(BomVerificationHistoryResource resource, IEnumerable<string> privileges = null)
         {
-            if (resource == null)
-            {
-                throw new DomainException("Bom Verification History not present");
-            }
-
-            var requestId = this.databaseService.GetNextVal("TREF");
-            var newPart = this.bomVerificationHistoryService.ValidPartNumber(resource.PartNumber);
-
             return new BomVerificationHistory
             {
-                TRef = requestId,
-                PartNumber = newPart.PartNumber,
-                DateVerified = resource.DateVerified,
+                TRef = resource.TRef,
+                PartNumber = resource.PartNumber,
                 VerifiedBy = resource.VerifiedBy,
                 DocumentType = resource.DocumentType,
                 DocumentNumber = resource.DocumentNumber,
+                Remarks= resource.Remarks
             };
         }
 

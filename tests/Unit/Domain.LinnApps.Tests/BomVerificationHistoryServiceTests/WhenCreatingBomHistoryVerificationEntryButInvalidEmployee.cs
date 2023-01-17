@@ -18,7 +18,7 @@
             var request = new BomVerificationHistory
                               {
                                   TRef = 123,
-                                  DateVerified= new DateTime(2023, 1, 1),    
+                                  DateVerified= new DateTime(2023, 1, 1).ToString("o"),    
                                   DocumentNumber = 123456,
                                   DocumentType = "Test",
                                   PartNumber = "CAP 500",
@@ -26,7 +26,7 @@
                                   VerifiedBy = 33087
 
         };
-            this.DatabaseService.GetIdSequence("BVH_SEQ").Returns(1, 2);
+            this.DatabaseService.GetIdSequence("BVH_SEQ").Returns(1);
             this.action = () => this.Sut.CreateBomVerificationHistory(request);
         }
 

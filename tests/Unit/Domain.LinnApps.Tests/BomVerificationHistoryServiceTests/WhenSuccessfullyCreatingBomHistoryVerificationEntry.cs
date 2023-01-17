@@ -9,8 +9,6 @@
 
     public class WhenSuccessfullyCreatingBomHistoryVerificationEntry : ContextBase
     {
-        private Action action;
-
         [SetUp]
         public void SetUp()
         {
@@ -18,9 +16,9 @@
             this.EmployeeRepository.FindById(100).Returns(employee);
 
             var request = new BomVerificationHistory
-                              {
+                         {
                                   TRef = 123,
-                                  DateVerified= new DateTime(2023, 1, 1),    
+                                  DateVerified= new DateTime(2023, 1, 1).ToString("o"),    
                                   DocumentNumber = 123456,
                                   DocumentType = "Test",
                                   PartNumber = "CAP 500",

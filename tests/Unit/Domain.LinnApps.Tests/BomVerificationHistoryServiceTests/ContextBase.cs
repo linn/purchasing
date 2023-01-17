@@ -34,11 +34,9 @@
             this.BomVerificationHistoryRepository = Substitute.For<IRepository<BomVerificationHistory, int>>();
             this.AuthService = Substitute.For<IAuthorisationService>();
             this.PartRepository = Substitute.For<IQueryRepository<Part>>();
-            this.DatabaseService = Substitute.For<IDatabaseService>();
             this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
             this.Sut = new BomVerificationHistoryService(
                 this.AuthService,
-                this.DatabaseService,
                 this.PartRepository,
                 this.BomVerificationHistoryRepository,
                 this.EmployeeRepository);

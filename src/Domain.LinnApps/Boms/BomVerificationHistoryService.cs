@@ -22,14 +22,12 @@
         private readonly IRepository<Employee, int> employeeRepository;
 
         public BomVerificationHistoryService(IAuthorisationService authService, 
-            IDatabaseService databaseService, 
             IQueryRepository<Part> partRepository, 
             IRepository<BomVerificationHistory, int> bomVerificationRepository, 
             IRepository<Employee, int> employeeRepository)
 
         {
             this.authService = authService;
-            this.databaseService = databaseService;
             this.partRepository = partRepository;
             this.bomVerificationRepository = bomVerificationRepository;
             this.employeeRepository = employeeRepository;
@@ -37,7 +35,7 @@
 
         public BomVerificationHistory GetHistoryEntry(BomVerificationHistory bomHistoryEntry)
         {
-            var bomVerificationHistoryEntry = this.bomVerificationRepository.FindById(bomHistoryEntry.DocumentNumber);
+            var bomVerificationHistoryEntry = this.bomVerificationRepository.FindById((int)bomHistoryEntry.DocumentNumber);
             if (bomVerificationHistoryEntry is null)
             {
                 throw new ItemNotFoundException($"Could not find order {bomHistoryEntry.DocumentNumber}");
@@ -46,7 +44,7 @@
             return bomVerificationHistoryEntry;
         }
 
-        public Part ValidPartNumber(string partNumber)
+        private Part ValidPartNumber(string partNumber)
         {
             if (string.IsNullOrEmpty(partNumber))
             {
@@ -74,7 +72,7 @@
             {
                 TRef = this.databaseService.GetIdSequence("BVH_SEQ"),
                 DocumentNumber = bomHistoryEntry.DocumentNumber,
-                DateVerified = DateTime.Now,
+                DateVerified = DateTime.Now.ToString("O"),
                 PartNumber = bomHistoryEntry.PartNumber,
                 DocumentType= bomHistoryEntry.DocumentType,
                 Remarks= bomHistoryEntry.Remarks,

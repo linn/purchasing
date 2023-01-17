@@ -20,7 +20,7 @@
         }
 
         [Test]
-        public void ShouldReturnOk()
+        public void ShouldThrowDomainException()
         {
             this.action.Should().Throw<DomainException>();
         }
