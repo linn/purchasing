@@ -7,6 +7,7 @@
         CircuitBoard UpdateComponents(
             string boardCode,
             PcasChange pcasChange,
+            int changeRequestId,
             IEnumerable<BoardComponent> componentsToAdd,
             IEnumerable<BoardComponent> componentsToRemove);
     }

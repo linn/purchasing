@@ -23,8 +23,6 @@
 
         private readonly IRepository<PcasChange, int> pcasChangeRepository;
 
-        private readonly IRepository<ChangeRequest, int> changeRequestRepository;
-
         private readonly ICircuitBoardService circuitBoardService;
 
         private readonly IDatabaseService databaseService;
@@ -37,7 +35,6 @@
             IBuilder<CircuitBoard> resourceBuilder,
             IRepository<BoardRevisionType, string> boardRevisionTypeRepository,
             IRepository<PcasChange, int> pcasChangeRepository,
-            IRepository<ChangeRequest, int> changeRequestRepository,
             ICircuitBoardService circuitBoardService,
             IDatabaseService databaseService)
             : base(repository, transactionManager, resourceBuilder)
@@ -45,7 +42,6 @@
             this.transactionManager = transactionManager;
             this.resourceBuilder = resourceBuilder;
             this.pcasChangeRepository = pcasChangeRepository;
-            this.changeRequestRepository = changeRequestRepository;
             this.circuitBoardService = circuitBoardService;
             this.databaseService = databaseService;
             this.types = boardRevisionTypeRepository.FindAll();
@@ -59,26 +55,18 @@
             var pcasChange = this.pcasChangeRepository.FindBy(
                 a => a.BoardCode == id && a.RevisionCode == updateResource.ChangeRequestRevisionCode
                                               && a.ChangeRequest.DocumentNumber == updateResource.ChangeRequestId);
-
             if (pcasChange == null)
             {
                 var nextChangeId = this.databaseService.GetIdSequence("CHG_SEQ");
-                var changeRequest =
-                    this.changeRequestRepository.FindBy(a => a.DocumentNumber == updateResource.ChangeRequestId);
-                if (changeRequest == null)
-                {
-                    return new BadRequestResult<CircuitBoardResource>(
-                        $"Could not find change request {updateResource.ChangeRequestId}");
-                }
 
                 pcasChange = new PcasChange
                                  {
                                      ChangeId = nextChangeId,
                                      BoardCode = id,
                                      RevisionCode = updateResource.ChangeRequestRevisionCode,
-                                     ChangeRequest = changeRequest,
-                                     DocumentType = changeRequest.DocumentType,
-                                     DocumentNumber = changeRequest.DocumentNumber,
+                                     ChangeRequest = null,
+                                     DocumentType = null,
+                                     DocumentNumber = updateResource.ChangeRequestId,
                                      DateEntered = DateTime.Now,
                                      EnteredById = updateResource.UserNumber,
                                      EnteredBy = null,
@@ -88,7 +76,7 @@
                                      DateCancelled = null,
                                      CancelledById = null,
                                      CancelledBy = null,
-                                     ChangeState = changeRequest.ChangeState,
+                                     ChangeState = null,
                                      Comments = null
                                  };
                 this.pcasChangeRepository.Add(pcasChange);
@@ -100,6 +88,7 @@
                 result = this.circuitBoardService.UpdateComponents(
                     id,
                     pcasChange,
+                    updateResource.ChangeRequestId,
                     updateResource.Components.Where(a => a.Adding == true).Select(c => c.ToDomain()),
                     updateResource.Components.Where(b => b.Removing == true).Select(c => c.ToDomain()));
             }

@@ -28,6 +28,7 @@
         public CircuitBoard UpdateComponents(
             string boardCode,
             PcasChange pcasChange,
+            int changeRequestId,
             IEnumerable<BoardComponent> componentsToAdd,
             IEnumerable<BoardComponent> componentsToRemove)
         {
@@ -36,6 +37,22 @@
             {
                 throw new ItemNotFoundException($"Could not find board {boardCode}");
             }
+
+            var changeRequest = this.changeRequestRepository.FindBy(a => a.DocumentNumber == changeRequestId);
+            if (changeRequest == null)
+            {
+                throw new ItemNotFoundException($"Could not find change request {changeRequestId}");
+            }
+
+            if (pcasChange.ChangeRequest is null)
+            {
+                pcasChange.ChangeRequest = changeRequest;
+                pcasChange.ChangeState = changeRequest.ChangeState;
+                pcasChange.DocumentNumber = changeRequestId;
+                pcasChange.DocumentType = changeRequest.DocumentType;
+            }
+
+            var revision = board.Layouts.SelectMany(a => a.Revisions).First(r => r.RevisionCode == changeRequest.RevisionCode);
 
             foreach (var boardComponent in componentsToRemove)
             {
@@ -47,7 +64,6 @@
                 else
                 {
                     boardComponent.DeleteChangeId = pcasChange.ChangeId;
-                    // TODO set to things
                 }
             }
 
@@ -56,11 +72,44 @@
                 var part = this.partRepository.FindBy(a => a.PartNumber == boardComponent.PartNumber.ToUpper());
                 boardComponent.AddChangeId = pcasChange.ChangeId;
                 boardComponent.AssemblyTechnology = part.AssemblyTechnology;
+                boardComponent.FromLayoutVersion = revision.LayoutSequence;
+                boardComponent.FromRevisionVersion = revision.VersionNumber;
+                boardComponent.ChangeState = changeRequest.ChangeState;
+
+                if (this.LatestLayout(board, revision) && this.LatestVersion(board, revision))
+                {
+                    boardComponent.ToRevisionVersion = null;
+                    boardComponent.ToLayoutVersion = null;
+                } 
+                else if (this.LatestLayout(board, revision) && !this.LatestVersion(board, revision))
+                {
+                    boardComponent.ToRevisionVersion = revision.VersionNumber;
+                    boardComponent.ToLayoutVersion = revision.LayoutSequence;
+                }
+                else if (!this.LatestLayout(board, revision) && this.LatestVersion(board, revision))
+                {
+                    boardComponent.ToRevisionVersion = null;
+                    boardComponent.ToLayoutVersion = revision.LayoutSequence;
+                }
+
                 board.Components.Add(boardComponent);
-                // TODO set from things
             }
 
             return board;
+        }
+
+        private bool LatestLayout(CircuitBoard board, BoardRevision revision)
+        {
+            var maxLayoutSequence = board.Layouts.Max(a => a.LayoutSequence);
+            return revision.LayoutSequence == maxLayoutSequence;
+        }
+
+        private bool LatestVersion(CircuitBoard board, BoardRevision revision)
+        {
+            var maxVersionNumber = board.Layouts
+                .First(a => a.LayoutCode == revision.LayoutCode).Revisions
+                .Max(r => r.VersionNumber);
+            return revision.VersionNumber == maxVersionNumber;
         }
     }
 }
