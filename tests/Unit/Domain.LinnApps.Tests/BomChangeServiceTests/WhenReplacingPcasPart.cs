@@ -47,7 +47,7 @@
                 Qty = 2,
                 Name = "CAP NEW",
                 HasChanged = true,
-                ReplacementFor = "CAP OLD",
+                ReplacementFor = "4567",
                 ParentName = "BOM"
             };
 

@@ -125,7 +125,7 @@ function BomUtility() {
                       mouseY: e.clientY - 6,
                       part: target.innerText,
                       canReplace: Number(crNumber) !== detail.addChangeDocumentNumber,
-                      detail: { ...detail, parent: selected.id }
+                      detail: { ...detail, parentId: selected.id }
                   }
                 : null
         );
@@ -253,6 +253,7 @@ function BomUtility() {
 
     // updates the tree with changes passed via a 'newNode' object
     const updateTree = (tree, newNode, addNode) => {
+        console.log(newNode);
         const newTree = { ...tree };
         const q = [];
         q.push(newTree);
@@ -261,9 +262,7 @@ function BomUtility() {
             while (n > 0) {
                 const current = q[0];
                 q.shift();
-                console.log(0, current.id, newNode.parentId);
                 if (current.id === newNode.parentId) {
-                    console.log(1);
                     current.hasChanged = true;
                     if (addNode) {
                         current.children = [...current.children, newNode];
@@ -275,25 +274,23 @@ function BomUtility() {
                                 if (
                                     newNode.replacementFor &&
                                     newNode.name &&
-                                    newNode.replacementFor === x.name
+                                    newNode.replacementFor === x.id
                                 ) {
                                     return { ...x, replacedBy: newNode.name };
                                 }
-                                console.log('5 - leaving', x.name, x);
                                 return x;
                             }
                             if (newNode.isReplaced) {
                                 replacedIndex = index;
-                                replacementFor = x.name;
+                                replacementFor = x.id;
                             }
-                            console.log('7 - replacing', x, newNode);
                             return { ...newNode, changeState: 'PROPOS' };
                         });
                         if (replacedIndex !== null) {
                             current.children.splice(replacedIndex + 1, 0, {
                                 id: uid(),
                                 type: 'C',
-                                parent: current.id,
+                                parentId: current.id,
                                 changeState: 'PROPOS',
                                 replacementFor
                             });
@@ -363,17 +360,13 @@ function BomUtility() {
         return null;
     };
 
-    const processRowUpdate = useCallback(
-        newRow => {
-            setDisableChangesButton(true);
-            console.log(newRow);
-            const newTree = updateTree(bomTree, newRow, false);
-            console.log(newTree);
-            setTreeView(tr => updateTree(tr, newRow, false));
-            return newRow;
-        },
-        [bomTree]
-    );
+    const processRowUpdate = useCallback(newRow => {
+        setDisableChangesButton(true);
+        // const newTree = updateTree(bomTree, newRow, false);
+        // console.log(newTree);
+        setTreeView(tr => updateTree(tr, newRow, false));
+        return newRow;
+    }, []);
 
     // add a new line to the children list of the selected node
     const addLine = () => {
@@ -384,7 +377,7 @@ function BomUtility() {
                 {
                     id: uid(),
                     type: 'C',
-                    parent: selected.id,
+                    parentId: selected.id,
                     changeState: 'PROPOS',
                     qty: 1,
                     requirement: 'Y'
@@ -414,6 +407,7 @@ function BomUtility() {
             // fetch this subAssembly's bomTree to add it to the tree view
             reduxDispatch(subAssemblyActions.fetchByHref(subAssemblyUrl));
         } else {
+            console.log(partLookUp);
             processRowUpdate({
                 ...partLookUp.forRow,
                 name: newValue.partNumber,
@@ -536,7 +530,11 @@ function BomUtility() {
     const handleClose = () => setContextMenu(null);
 
     const handleReplaceClick = () => {
-        processRowUpdate({ ...contextMenu.detail, isReplaced: true });
+        processRowUpdate({
+            ...contextMenu.detail,
+            isReplaced: true,
+            parentId: contextMenu.detail.parentId
+        });
         setContextMenu(null);
     };
 

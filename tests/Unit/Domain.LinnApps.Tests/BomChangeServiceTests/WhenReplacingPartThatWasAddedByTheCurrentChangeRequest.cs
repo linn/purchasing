@@ -48,7 +48,7 @@
                 Qty = 2,
                 Name = "CAP NEW",
                 HasChanged = true,
-                ReplacementFor = "CAP OLD",
+                ReplacementFor = "4567",
                 ParentName = "BOM"
             };
 
@@ -70,7 +70,8 @@
                                             {
                                                 PartNumber = "CAP OLD",
                                                 Qty = 2,
-                                                ChangeState = "LIVE"
+                                                ChangeState = "LIVE",
+                                                DetailId = 4567
                                             }
                                   }
             });

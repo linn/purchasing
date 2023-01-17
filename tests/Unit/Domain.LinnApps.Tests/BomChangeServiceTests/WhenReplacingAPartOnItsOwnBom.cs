@@ -47,8 +47,9 @@
                 Qty = 2,
                 Name = "BOM",
                 HasChanged = true,
-                ReplacementFor = "CAP OLD",
-                ParentName = "BOM"
+                ReplacementFor = "4567",
+                ParentName = "BOM",
+                Id = "123"
             };
 
             this.newTree = new BomTreeNode
@@ -76,7 +77,7 @@
             this.DatabaseService.GetIdSequence("CHG_SEQ").Returns(6666);
             this.DatabaseService.GetIdSequence("BOMDET_SEQ").Returns(10023);
 
-            this.replacedDetail = new BomDetail { PartNumber = "CAP OLD", Qty = 2, ChangeState = "LIVE" };
+            this.replacedDetail = new BomDetail { PartNumber = "CAP OLD", Qty = 2, ChangeState = "LIVE", DetailId = 123 };
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
                 .Returns(new Part { DecrementRule = "YES", BomType = "C" });
 
