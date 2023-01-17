@@ -227,6 +227,13 @@ function BomUtility() {
             headerName: 'Replaced By',
             width: 180,
             editable: false,
+            hide: true // useful for debugging, but hidden generally,
+        },
+        {
+            field: 'parentName',
+            headerName: 'Parent',
+            width: 180,
+            editable: false,
             hide: true // useful for debugging, but hidden generally
         }
     ];
@@ -254,7 +261,9 @@ function BomUtility() {
             while (n > 0) {
                 const current = q[0];
                 q.shift();
-                if (current.id === newNode.parent) {
+                console.log(0, current.name, newNode.parentName);
+                if (current.name === newNode.parentName) {
+                    console.log(1);
                     current.hasChanged = true;
                     if (addNode) {
                         current.children = [...current.children, newNode];
@@ -270,12 +279,14 @@ function BomUtility() {
                                 ) {
                                     return { ...x, replacedBy: newNode.name };
                                 }
+                                console.log('5 - leaving', x.name, x);
                                 return x;
                             }
                             if (newNode.isReplaced) {
                                 replacedIndex = index;
                                 replacementFor = x.name;
                             }
+                            console.log('7 - replacing', x, newNode);
                             return { ...newNode, changeState: 'PROPOS' };
                         });
                         if (replacedIndex !== null) {
@@ -352,11 +363,17 @@ function BomUtility() {
         return null;
     };
 
-    const processRowUpdate = useCallback(newRow => {
-        setDisableChangesButton(true);
-        setTreeView(tree => updateTree(tree, newRow, false));
-        return newRow;
-    }, []);
+    const processRowUpdate = useCallback(
+        newRow => {
+            setDisableChangesButton(true);
+            console.log(newRow);
+            const newTree = updateTree(bomTree, newRow, false);
+            console.log(newTree);
+            setTreeView(tr => updateTree(tr, newRow, false));
+            return newRow;
+        },
+        [bomTree]
+    );
 
     // add a new line to the children list of the selected node
     const addLine = () => {
@@ -692,6 +709,7 @@ function BomUtility() {
                         rows={getRows()}
                         loading={bomTreeLoading}
                         processRowUpdate={processRowUpdate}
+                        onProcessRowUpdateError={err => console.log(err)}
                         hideFooter
                         autoHeight
                         experimentalFeatures={{ newEditingApi: true }}
