@@ -105,22 +105,6 @@
                                 throw new ItemNotFoundException($"Invalid Part Number: {child.Name} on Assembly: {current.Name}");
                             }
 
-                            if (bom.Details != null && string.IsNullOrEmpty(child.ReplacedBy) 
-                                && bom.Details.Select(x => x.DetailId.ToString()).Contains(child.Id))
-                            {
-                                // case: updating fields of existing detail on this bom
-                                // can only do this if part was added by current crf
-                                var toUpdate = this.bomDetailRepository.FindById(int.Parse(child.Id));
-                                if (toUpdate.AddChangeId != change.ChangeId)
-                                {
-                                    throw new InvalidBomChangeException(
-                                        "Can't directly update details adde by a different CRF - Replace them instead!");
-                                }
-
-                                toUpdate.Qty = child.Qty;
-                                toUpdate.GenerateRequirement = child.Requirement;
-                            }
-
                             if (child.ToDelete.GetValueOrDefault())
                             {
                                 // case: deleting a part from the bom
@@ -143,10 +127,30 @@
                             }
                             else
                             {
+                                if (bom.Details != null 
+                                    && string.IsNullOrEmpty(child.ReplacedBy)
+                                    && bom.Details.Select(x => x.DetailId.ToString()).Contains(child.Id))
+                                {
+                                    // case: updating fields of existing detail on this bom
+                                    // can only do this if part was added by current crf
+                                    var toUpdate = this.bomDetailRepository.FindById(int.Parse(child.Id));
+
+                                    if (toUpdate.Qty != child.Qty || toUpdate.GenerateRequirement != child.Requirement)
+                                    {
+                                        if (toUpdate.AddChangeId != change.ChangeId)
+                                        {
+                                            throw new InvalidBomChangeException(
+                                                "Can't directly update details added by a different CRF - Replace them instead!");
+                                        }
+
+                                        toUpdate.Qty = child.Qty;
+                                        toUpdate.GenerateRequirement = child.Requirement;
+                                    }
+                                }
+
                                 if (bom.Details == null || bom.Details.Count == 0 || bom.Details.All(d => d.DetailId.ToString() != child.Id))
                                 {
-                                    // case: adding a new part that is not on this bom
-                                    // add a detail for any new part on the bom
+                                    // case: adding a new detail
                                     if (part.DatePurchPhasedOut
                                         .HasValue)
                                     {
