@@ -44,7 +44,7 @@
             return bomVerificationHistoryEntry;
         }
 
-        private Part ValidPartNumber(string partNumber)
+        public Part ValidPartNumber(string partNumber)
         {
             if (string.IsNullOrEmpty(partNumber))
             {
