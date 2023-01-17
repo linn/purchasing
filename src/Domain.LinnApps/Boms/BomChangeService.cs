@@ -75,11 +75,14 @@
                             bom.Part.BomId = bom.BomId;
                         }
 
+                        // obtain a bom_change to make incoming changes against
+                        // check if there's an open one for this bom
                         var change = this.bomChangeRepository.FindBy(
                             x => x.DocumentNumber == changeRequestNumber 
-                                 && new[] { "ACCEPT", "PROPOS" }.Contains(x.ChangeState)
+                                 && new[] { "ACCEPT", "PROPOS" }.Contains(x.ChangeState) // todo - can we amend an ACCEPTed change?
                                  && x.BomName == current.Name);
 
+                        // create a new bom change if not
                         if (change == null)
                         {
                             var id = this.databaseService.GetIdSequence("CHG_SEQ");
@@ -210,24 +213,6 @@
                                     // case: replacing a detail on this bom with a new detail
                                     var replacement = current.Children.FirstOrDefault(c => c.ReplacementFor == child.Id);
                                     var replacementPart = this.partRepository.FindBy(x => x.PartNumber == replacement.Name);
-
-                                    if (replacementPart.DatePurchPhasedOut.HasValue)
-                                    {
-                                        throw new InvalidBomChangeException(
-                                            $"Can't add {replacement.Name} to {child.ParentName} - part has been phased out by purchasing");
-                                    }
-
-                                    if (string.IsNullOrEmpty(replacementPart.DecrementRule))
-                                    {
-                                        throw new InvalidBomChangeException(
-                                            $"Can't add {replacement.Name} to {child.ParentName} - part has no decrement rule!");
-                                    }
-
-                                    if (string.IsNullOrEmpty(replacementPart.BomType))
-                                    {
-                                        throw new InvalidBomChangeException(
-                                            $"Can't add {replacement.Name} to {child.ParentName} - part has no BOM Type!");
-                                    }
 
                                     if (replacement == null)
                                     {
