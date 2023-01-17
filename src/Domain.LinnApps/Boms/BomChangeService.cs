@@ -56,6 +56,7 @@
                     var current = q.Dequeue();
 
                     // add a new bom_change for any bom that has changed
+                    // todo - I don't think this is right. we just add to an open change if it exists against an open crf for this bom
                     if (current.HasChanged.GetValueOrDefault() && current.Children != null)
                     {
                         var bomLookup = this.bomRepository.FindBy(x => x.BomName == current.Name);
@@ -70,9 +71,9 @@
                                           CommonBom = "N"
                                       };
 
-                        this.bomRepository.Add(bom);
                         if (bomLookup == null)
                         {
+                            this.bomRepository.Add(bom);
                             bom.Part.BomId = bom.BomId;
                         }
 
@@ -144,7 +145,7 @@
                                                                      BomId = bom.BomId,
                                                                      PartNumber = child.Name,
                                                                      Qty = child.Qty,
-                                                                     GenerateRequirement = "Y", // todo  child.Requirement,
+                                                                     GenerateRequirement = child.Requirement,
                                                                      ChangeState = "PROPOS",
                                                                      AddChangeId = id,
                                                                      AddReplaceSeq = string.IsNullOrEmpty(child.ReplacementFor) 

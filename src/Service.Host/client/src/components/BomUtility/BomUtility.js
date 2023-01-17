@@ -364,7 +364,14 @@ function BomUtility() {
         setTreeView(tree =>
             updateTree(
                 tree,
-                { id: uid(), type: 'C', parent: selected.id, changeState: 'PROPOS' },
+                {
+                    id: uid(),
+                    type: 'C',
+                    parent: selected.id,
+                    changeState: 'PROPOS',
+                    qty: 1,
+                    requirement: 'Y'
+                },
                 true
             )
         );
