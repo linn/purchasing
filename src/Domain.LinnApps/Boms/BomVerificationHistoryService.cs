@@ -13,8 +13,6 @@
     {
         private readonly IAuthorisationService authService;
 
-        private readonly IDatabaseService databaseService;
-
         private readonly IRepository<BomVerificationHistory, int> bomVerificationRepository;
 
         private readonly IQueryRepository<Part> partRepository;
@@ -70,7 +68,7 @@
 
             var bomVerificationHistoryEntry = new BomVerificationHistory
             {
-                TRef = this.databaseService.GetIdSequence("BVH_SEQ"),
+                TRef = bomHistoryEntry.TRef,
                 DocumentNumber = bomHistoryEntry.DocumentNumber,
                 DateVerified = DateTime.Now.ToString("O"),
                 PartNumber = bomHistoryEntry.PartNumber,

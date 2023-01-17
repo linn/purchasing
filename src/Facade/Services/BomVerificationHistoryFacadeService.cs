@@ -44,9 +44,10 @@
 
             return new BomVerificationHistory
             {
-                TRef = resource.TRef,
+                TRef = this.databaseService.GetIdSequence("BVH_SEQ"),
                 PartNumber = resource.PartNumber,
                 VerifiedBy = resource.VerifiedBy,
+                DateVerified = DateTime.Now.ToString("O"),
                 DocumentType = resource.DocumentType,
                 DocumentNumber = resource.DocumentNumber,
                 Remarks= resource.Remarks

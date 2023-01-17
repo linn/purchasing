@@ -26,7 +26,6 @@
                                   VerifiedBy = 100
 
             };
-            this.DatabaseService.GetIdSequence("BVH_SEQ").Returns(1);
             this.Sut.CreateBomVerificationHistory(request);
         }
 
