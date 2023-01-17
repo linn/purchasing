@@ -64,7 +64,6 @@
 
         public BomVerificationHistory CreateBomVerificationHistory(BomVerificationHistory bomHistoryEntry)
         {
-            
             var employee = this.employeeRepository.FindById(bomHistoryEntry.VerifiedBy);
             if (employee == null)
             {
