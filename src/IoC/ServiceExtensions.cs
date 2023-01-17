@@ -90,7 +90,8 @@
                 .AddTransient<IBuilder<PcasChange>, PcasChangeResourceBuilder>()
                 .AddTransient<IBuilder<BomTypeChange>, BomTypeChangeResourceBuilder>()
                 .AddTransient<IBuilder<CircuitBoard>, CircuitBoardResourceBuilder>()
-                .AddTransient<IBuilder<BoardComponentSummary>, BoardComponentSummaryResourceBuilder>();
+                .AddTransient<IBuilder<BoardComponentSummary>, BoardComponentSummaryResourceBuilder>()
+                .AddTransient<IBuilder<BomVerificationHistory>, BomVerificationHistoryResourceBuilder>();
         }
 
         public static IServiceCollection AddFacades(this IServiceCollection services)
@@ -152,7 +153,8 @@
                 .AddTransient<IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource>, CircuitBoardFacadeService>()
                 .AddTransient<IBomTreeReportsService, BomTreeReportService>()
                 .AddTransient<IBomReportsFacadeService, BomReportsFacadeService>()
-                .AddTransient<IQueryFacadeResourceService<BoardComponentSummary, BoardComponentSummaryResource, BoardComponentSummaryResource>, BoardComponentSummaryFacadeService>();
+                .AddTransient<IQueryFacadeResourceService<BoardComponentSummary, BoardComponentSummaryResource, BoardComponentSummaryResource>, BoardComponentSummaryFacadeService>()
+                .AddTransient<IBomVerificationHistoryService, BomVerificationHistoryService>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
@@ -208,6 +210,7 @@
                 .AddTransient<IChangeRequestService, ChangeRequestService>()
                 .AddTransient<IBomReportsService, BomReportsService>()
                 .AddTransient<IBomChangeService, BomChangeService>()
+                .AddTransient<IBomVerificationHistoryService, BomVerificationHistoryService>()
 
                 // external services
                 .AddTransient<IPurchaseOrdersPack, PurchaseOrdersPack>()

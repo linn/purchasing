@@ -208,6 +208,8 @@
 
         public DbSet<BomDetail> BomDetails { get; set; }
 
+        public DbSet<BomVerificationHistory> BomVerificationHistory { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Model.AddAnnotation("MaxIdentifierLength", 30);
@@ -322,6 +324,7 @@
             this.BuildVMasterMrh(builder);
             this.BuildBomDetails(builder);
             this.BuildBomCostDetails(builder);
+            this.BuildBomVerificationHistory(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -2165,6 +2168,18 @@
             entity.Property(a => a.MaterialPrice).HasColumnName("MATERIAL_PRICE");
             entity.Property(a => a.LabourTimeMins).HasColumnName("LTT");
             entity.Property(a => a.BomName).HasColumnName("BOM_NAME");
+        }
+
+        private void BuildBomVerificationHistory(ModelBuilder builder)
+        {
+            var entity = builder.Entity<BomVerificationHistory>().ToTable("BOM_VERIFICATION_HISTORY").HasNoKey();
+            entity.Property(a => a.TRef).HasColumnName("TREF");
+            entity.Property(a => a.PartNumber).HasColumnName("PART_NUMBER");
+            entity.Property(a => a.DateVerified).HasColumnName("DATE_VERIFIED");
+            entity.Property(a => a.VerifiedBy).HasColumnName("VERIFIED_BY");
+            entity.Property(a => a.DocumentType).HasColumnName("DOCUMENT_TYPE");
+            entity.Property(a => a.DocumentNumber).HasColumnName("DOCUMENT_NUMBER");
+            entity.Property(a => a.Remarks).HasColumnName("REMARKS");
         }
     }
 }
