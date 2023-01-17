@@ -25,7 +25,6 @@
             {
                 TRef = model.TRef,
                 PartNumber = model.PartNumber,
-                DateVerified = model.DateVerified,
                 VerifiedBy = model.VerifiedBy,
                 DocumentType = model.DocumentType,
                 DocumentNumber = model.DocumentNumber,

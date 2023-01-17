@@ -9,8 +9,6 @@ namespace Linn.Purchasing.Resources.Boms
 
         public string PartNumber { get; set; }
 
-        public string DateVerified { get; set; }
-
         public int VerifiedBy { get; set; }
 
         public string DocumentType { get; set; }
