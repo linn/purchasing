@@ -295,5 +295,33 @@
 
             this.bomPack.CopyBom(srcPartNumber, destBom.BomId, change.ChangeId, "PROPOS", "O");
         }
+
+        public void DeleteAllFromBom(string bomName, int crfNumber, int changedBy)
+        {
+            var bom = this.bomRepository.FindBy(x => x.BomName == bomName);
+            var change = new BomChange
+                             {
+                                 BomId = bom.BomId,
+                                 ChangeId = this.databaseService.GetIdSequence("CHG_SEQ"),
+                                 BomName = bomName,
+                                 DocumentType = "CRF", // for now
+                                 DocumentNumber = crfNumber,
+                                 PartNumber = bomName,
+                                 DateEntered = DateTime.Today,
+                                 EnteredById = changedBy,
+                                 ChangeState = "PROPOS",
+                                 Comments = "BOM_UT",
+                                 PcasChange = "N"
+                             };
+            this.bomChangeRepository.Add(change);
+            foreach (var child in bom.Details)
+            {
+                var detail = this.bomDetailRepository.FindById(child.DetailId);
+                if (!detail.DeleteChangeId.HasValue && new[] { "PROPOS", "ACCEPT", "LIVE" }.Contains(detail.ChangeState))
+                {
+                    detail.DeleteChangeId = change.ChangeId;
+                }
+            }
+        }
     }
 }

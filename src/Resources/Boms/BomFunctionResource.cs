@@ -1,6 +1,6 @@
 ﻿namespace Linn.Purchasing.Resources.Boms
 {
-    public class CopyBomResource
+    public class BomFunctionResource
     {
         public string SrcPartNumber { get; set; }
 
