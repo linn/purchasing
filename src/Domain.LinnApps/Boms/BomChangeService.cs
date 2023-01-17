@@ -55,8 +55,6 @@
                 {
                     var current = q.Dequeue();
 
-                    // add a new bom_change for any bom that has changed
-                    // todo - I don't think this is right. we just add to an open change if it exists against an open crf for this bom
                     if (current.HasChanged.GetValueOrDefault() && current.Children != null)
                     {
                         var bomLookup = this.bomRepository.FindBy(x => x.BomName == current.Name);
@@ -77,8 +75,15 @@
                             bom.Part.BomId = bom.BomId;
                         }
 
-                        var id = this.databaseService.GetIdSequence("CHG_SEQ");
-                        var change = new BomChange
+                        var change = this.bomChangeRepository.FindBy(
+                            x => x.DocumentNumber == changeRequestNumber 
+                                 && new[] { "ACCEPT", "PROPOS" }.Contains(x.ChangeState)
+                                 && x.BomName == current.Name);
+
+                        if (change == null)
+                        {
+                            var id = this.databaseService.GetIdSequence("CHG_SEQ");
+                            change = new BomChange
                                          {
                                              BomId = bom.BomId,
                                              ChangeId = id,
@@ -92,8 +97,9 @@
                                              Comments = "BOM_UT",
                                              PcasChange = "N"
                                          };
-                        this.bomChangeRepository.Add(change);
-
+                            this.bomChangeRepository.Add(change);
+                        }
+                        
                         var replacementSeq = 1;
 
                         foreach (var child in current.Children)
@@ -123,7 +129,7 @@
                                     throw new InvalidBomChangeException($"{child.Name} is a PCAS line - cannot delete here.");
                                 }
 
-                                toDelete.DeleteChangeId = id;
+                                toDelete.DeleteChangeId = change.ChangeId;
                             }
                             else
                             {
@@ -189,14 +195,14 @@
                                         Qty = child.Qty,
                                         GenerateRequirement = child.Requirement,
                                         ChangeState = "PROPOS",
-                                        AddChangeId = id,
+                                        AddChangeId = change.ChangeId,
                                         AddReplaceSeq = string.IsNullOrEmpty(child.ReplacementFor)
                                                                              ? null : replacementSeq++,
                                         DeleteChangeId = null,
                                         DeleteReplaceSeq = null,
                                         PcasLine = "N"
                                     });
-                                    child.AddChangeDocumentNumber = id;
+                                    child.AddChangeDocumentNumber = change.ChangeId;
                                 }
 
                                 if (!string.IsNullOrEmpty(child.ReplacedBy))
@@ -253,7 +259,7 @@
                                     replacement.AddReplaceSeq = replacementSeq;
                                     child.DeleteReplaceSeq = replacementSeq;
 
-                                    replacedDetail.DeleteChangeId = id;
+                                    replacedDetail.DeleteChangeId = change.ChangeId;
                                     replacedDetail.DeleteReplaceSeq = replacementSeq;
                                     replacedDetail.ChangeState = "PROPOS";
                                 }
