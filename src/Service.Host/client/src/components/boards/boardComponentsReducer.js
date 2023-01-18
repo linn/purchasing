@@ -110,11 +110,53 @@ export default function boardComponentsReducer(state = initialState, action) {
                 i => i.boardLine === action.payload.boardLine
             );
 
-            let componentToUpdate = components[componentIndex];
-
-            componentToUpdate = action.payload;
-
+            const componentToUpdate = action.payload;
+            componentToUpdate.cRef = componentToUpdate.cRef
+                ? componentToUpdate.cRef.toUpperCase()
+                : null;
             components[componentIndex] = componentToUpdate;
+
+            return {
+                ...state
+            };
+        }
+        case 'deleteProposedComponent': {
+            if (!action.payload?.component?.boardLine) {
+                return state;
+            }
+
+            const { components } = state.board;
+
+            const componentIndexToMarkForRemove = components.findIndex(
+                i => i.boardLine === action.payload.component.boardLine
+            );
+
+            const componentToUpdate = { ...components[componentIndexToMarkForRemove] };
+
+            componentToUpdate.removing = true;
+            componentToUpdate.deleteChangeDocumentNumber = null;
+            components[componentIndexToMarkForRemove] = componentToUpdate;
+
+            return {
+                ...state
+            };
+        }
+        case 'deleteComponent': {
+            if (!action.payload?.component?.boardLine) {
+                return state;
+            }
+
+            const { components } = state.board;
+
+            const componentIndexToMarkForRemove = components.findIndex(
+                i => i.boardLine === action.payload.component.boardLine
+            );
+
+            const componentToUpdate = { ...components[componentIndexToMarkForRemove] };
+
+            componentToUpdate.removing = true;
+            componentToUpdate.deleteChangeDocumentNumber = action.payload.crfNumber;
+            components[componentIndexToMarkForRemove] = componentToUpdate;
 
             return {
                 ...state
@@ -134,7 +176,86 @@ export default function boardComponentsReducer(state = initialState, action) {
                 boardLine: lastLine + 1,
                 fromLayoutVersion: state.selectedRevision.layoutSequence,
                 fromRevisionNumber: state.selectedRevision.versionNumber,
-                quantity: 1
+                quantity: action.payload.component?.quantity ?? 1,
+                addChangeDocumentNumber: action.payload.crfNumber,
+                partNumber: action.payload.component?.partNumber ?? null,
+                cRef: action.payload.component?.cRef ?? null
+            });
+
+            return {
+                ...state
+            };
+        }
+        case 'replaceProposedComponent': {
+            if (!action.payload?.component?.boardLine) {
+                return state;
+            }
+
+            const { components } = state.board;
+            if (!components) {
+                return state;
+            }
+
+            const componentIndexToMarkForRemove = components.findIndex(
+                i => i.boardLine === action.payload.component.boardLine
+            );
+
+            const componentToUpdate = { ...components[componentIndexToMarkForRemove] };
+
+            componentToUpdate.removing = true;
+            componentToUpdate.deleteChangeDocumentNumber = null;
+            components[componentIndexToMarkForRemove] = componentToUpdate;
+
+            const lastLine = Math.max(...components.map(o => o.boardLine));
+            components.push({
+                adding: true,
+                changeState: 'PROPOS',
+                boardCode: state.board.boardCode,
+                boardLine: lastLine + 1,
+                fromLayoutVersion: state.selectedRevision.layoutSequence,
+                fromRevisionNumber: state.selectedRevision.versionNumber,
+                quantity: action.payload.component?.quantity ?? 1,
+                addChangeDocumentNumber: action.payload.crfNumber,
+                partNumber: action.payload.component?.partNumber ?? null,
+                cRef: action.payload.component?.cRef ?? null
+            });
+
+            return {
+                ...state
+            };
+        }
+        case 'replaceComponent': {
+            if (!action.payload?.component?.boardLine) {
+                return state;
+            }
+
+            const { components } = state.board;
+            if (!components) {
+                return state;
+            }
+
+            const componentIndexToMarkForRemove = components.findIndex(
+                i => i.boardLine === action.payload.component.boardLine
+            );
+
+            const componentToUpdate = { ...components[componentIndexToMarkForRemove] };
+
+            componentToUpdate.removing = true;
+            componentToUpdate.deleteChangeDocumentNumber = action.payload.crfNumber;
+            components[componentIndexToMarkForRemove] = componentToUpdate;
+
+            const lastLine = Math.max(...components.map(o => o.boardLine));
+            components.push({
+                adding: true,
+                changeState: 'PROPOS',
+                boardCode: state.board.boardCode,
+                boardLine: lastLine + 1,
+                fromLayoutVersion: state.selectedRevision.layoutSequence,
+                fromRevisionNumber: state.selectedRevision.versionNumber,
+                quantity: action.payload.component?.quantity ?? 1,
+                addChangeDocumentNumber: action.payload.crfNumber,
+                partNumber: action.payload.component?.partNumber ?? null,
+                cRef: action.payload.component?.cRef ?? null
             });
 
             return {

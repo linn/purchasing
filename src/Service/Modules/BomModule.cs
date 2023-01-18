@@ -9,7 +9,6 @@
     using Linn.Common.Facade;
     using Linn.Common.Facade.Carter.Extensions;
     using Linn.Common.Reporting.Resources.ReportResultResources;
-    using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Facade.Services;
     using Linn.Purchasing.Resources;
@@ -105,7 +104,7 @@
             HttpRequest req,
             HttpResponse res,
             string id,
-            IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource> circuitBoardFacadeService)
+            ICircuitBoardFacadeService circuitBoardFacadeService)
         {
             var result = circuitBoardFacadeService.GetById(id, req.HttpContext.GetPrivileges());
 
@@ -137,7 +136,7 @@
             HttpRequest req,
             HttpResponse res,
             string searchTerm,
-            IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource> circuitBoardFacadeService)
+            ICircuitBoardFacadeService circuitBoardFacadeService)
         {
             if (string.IsNullOrEmpty(searchTerm))
             {
@@ -155,8 +154,8 @@
             HttpRequest req,
             HttpResponse res,
             string id,
-            CircuitBoardResource resource,
-            IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource> circuitBoardFacadeService)
+            CircuitBoardComponentsUpdateResource resource,
+            ICircuitBoardFacadeService circuitBoardFacadeService)
         {
             var result = circuitBoardFacadeService.Update(id, resource, req.HttpContext.GetPrivileges());
 
@@ -167,10 +166,11 @@
             HttpRequest req,
             HttpResponse res,
             string id,
-            CircuitBoardResource resource,
-            IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource> circuitBoardFacadeService)
+            CircuitBoardComponentsUpdateResource resource,
+            ICircuitBoardFacadeService circuitBoardFacadeService)
         {
-            var result = circuitBoardFacadeService.Update(id, resource, req.HttpContext.GetPrivileges());
+            resource.UserNumber = req.HttpContext.User.GetEmployeeNumber();
+            var result = circuitBoardFacadeService.UpdateBoardComponents(id, resource, req.HttpContext.GetPrivileges());
 
             await res.Negotiate(result);
         }
@@ -178,7 +178,7 @@
         private async Task GetBoardApplicationState(
             HttpRequest req,
             HttpResponse res,
-            IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource> circuitBoardFacadeService)
+            ICircuitBoardFacadeService circuitBoardFacadeService)
         {
             var privileges = req.HttpContext.GetPrivileges();
 
@@ -191,7 +191,7 @@
             HttpRequest req,
             HttpResponse res,
             CircuitBoardResource resource,
-            IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource> circuitBoardFacadeService)
+            ICircuitBoardFacadeService circuitBoardFacadeService)
         {
             var result = circuitBoardFacadeService.Add(
                 resource,

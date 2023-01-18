@@ -39,6 +39,7 @@ function BoardComponents() {
 
     const [board, setBoard] = useState(null);
     const [crfNumber, setCrfNumber] = useState();
+    const [crfRevisionCode, setCrfRevisionCode] = useState();
     const [showChanges, setShowChanges] = useState(true);
     const searchBoards = searchTerm => reduxDispatch(boardsActions.search(searchTerm));
     const clearSearchBoards = () => reduxDispatch(boardsActions.clearSearch());
@@ -97,9 +98,18 @@ function BoardComponents() {
     const handleDeleteRow = params => {
         const comp = params.row;
         if (comp.addChangeDocumentNumber?.toString() === crfNumber) {
-            dispatch({ type: 'deleteProposedComponent', payload: comp });
+            dispatch({ type: 'deleteProposedComponent', payload: { component: comp } });
         } else {
-            dispatch({ type: 'deleteComponent', payload: comp });
+            dispatch({ type: 'deleteComponent', payload: { crfNumber, component: comp } });
+        }
+    };
+
+    const handleReplaceRow = params => {
+        const comp = params.row;
+        if (comp.addChangeDocumentNumber?.toString() === crfNumber) {
+            dispatch({ type: 'replaceProposedComponent', payload: { crfNumber, component: comp } });
+        } else {
+            dispatch({ type: 'replaceComponent', payload: { crfNumber, component: comp } });
         }
     };
 
@@ -185,7 +195,10 @@ function BoardComponents() {
         <>
             <span style={{ float: 'left' }}>
                 {params.row.partNumber}
-                <IconButton onClick={() => openPartLookUp(params.row)} disabled={!crfNumber}>
+                <IconButton
+                    onClick={() => openPartLookUp(params.row)}
+                    disabled={!crfNumber || !params.row.adding}
+                >
                     <ManageSearchIcon />
                 </IconButton>
             </span>
@@ -214,6 +227,7 @@ function BoardComponents() {
                     <IconButton
                         aria-label="remove"
                         size="small"
+                        disabled={!crfNumber || params.row.deleteChangeId}
                         onClick={() => handleDeleteRow(params)}
                     >
                         <DeleteIcon fontSize="inherit" />
@@ -229,8 +243,9 @@ function BoardComponents() {
                 <Tooltip title="Replace">
                     <IconButton
                         aria-label="replace"
+                        disabled={!crfNumber}
                         size="small"
-                        onClick={() => handleDeleteRow(params)}
+                        onClick={() => handleReplaceRow(params)}
                     >
                         <UpgradeIcon fontSize="inherit" />
                     </IconButton>
@@ -320,6 +335,20 @@ function BoardComponents() {
         dispatch({ type: 'populate', payload: item });
     };
 
+    const getDisplayClass = params => {
+        if (params.row.removing || params.row.deleteChangeId) {
+            return 'removing';
+        }
+
+        return params.row.changeState?.toLowerCase();
+    };
+
+    const setCrfDetails = documentNumber => {
+        setCrfNumber(documentNumber);
+        const crf = changeRequests.find(a => a.documentNumber.toString() === documentNumber);
+        setCrfRevisionCode(crf.revisionCode);
+    };
+
     return (
         <Page history={history} style={{ paddingBottom: '20px' }} homeUrl={config.appRoot}>
             <Typography variant="h5" gutterBottom>
@@ -374,7 +403,7 @@ function BoardComponents() {
                             helperText="Select a corresponding CRF to start editing"
                             value={crfNumber}
                             onChange={(_, n) => {
-                                setCrfNumber(n);
+                                setCrfDetails(n);
                             }}
                         />
                     </Stack>
@@ -456,11 +485,15 @@ function BoardComponents() {
                                         },
                                         '& .accept': {
                                             bgcolor: '#b0f7b9'
+                                        },
+                                        '& .removing': {
+                                            bgcolor: 'indianred',
+                                            textDecorationLine: 'line-through'
                                         }
                                     }}
                                     rows={componentRows}
                                     columns={componentColumns}
-                                    pageSize={40}
+                                    pageSize={100}
                                     selectionModel={state.componentSelectionModel}
                                     density="compact"
                                     autoHeight
@@ -476,11 +509,9 @@ function BoardComponents() {
                                     hideFooterSelectedRowCount
                                     hideFooter={
                                         !state.board?.components ||
-                                        state.board.components.length <= 40
+                                        state.board.components.length <= 100
                                     }
-                                    getRowClassName={params =>
-                                        params.row.changeState?.toLowerCase()
-                                    }
+                                    getRowClassName={params => getDisplayClass(params)}
                                     isCellEditable={params => params.row.adding && crfNumber}
                                 />
                             </>
@@ -493,7 +524,7 @@ function BoardComponents() {
                         <Button
                             disabled={!crfNumber}
                             onClick={() => {
-                                dispatch({ type: 'newComponent', payload: null });
+                                dispatch({ type: 'newComponent', payload: { crfNumber } });
                             }}
                         >
                             New Component
@@ -506,7 +537,11 @@ function BoardComponents() {
                         saveClick={() => {
                             reduxDispatch(boardComponentsActions.clearErrorsForItem());
                             reduxDispatch(
-                                boardComponentsActions.update(state.board.boardCode, state.board)
+                                boardComponentsActions.update(state.board.boardCode, {
+                                    ...state.board,
+                                    changeRequestId: crfNumber,
+                                    changeRequestRevisionCode: crfRevisionCode
+                                })
                             );
                         }}
                         cancelClick={handleCancel}

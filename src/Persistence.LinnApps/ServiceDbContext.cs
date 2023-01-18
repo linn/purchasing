@@ -507,6 +507,7 @@
             entity.Property(a => a.DecrementRule).HasColumnName("DECREMENT_RULE");
             entity.Property(a => a.DatePurchPhasedOut).HasColumnName("DATE_PURCH_PHASE_OUT");
             entity.Property(a => a.SafetyCritical).HasColumnName("SAFETY_CRITICAL_PART");
+            entity.Property(a => a.AssemblyTechnology).HasColumnName("ASSEMBLY_TECHNOLOGY").HasMaxLength(4);
             entity.Property(a => a.DateLive).HasColumnName("DATE_LIVE");
         }
 

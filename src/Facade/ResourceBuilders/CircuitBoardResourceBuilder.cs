@@ -9,8 +9,6 @@
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Resources.Boms;
 
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-
     public class CircuitBoardResourceBuilder : IBuilder<CircuitBoard>
     {
         private readonly IRepository<PcasChange, int> pcasChangeRepository;
