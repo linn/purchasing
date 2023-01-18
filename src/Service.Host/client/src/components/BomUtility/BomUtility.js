@@ -9,8 +9,7 @@ import {
     SnackbarMessage,
     getItemError,
     ErrorCard,
-    InputField,
-    processSelectorHelpers
+    InputField
 } from '@linn-it/linn-form-components-library';
 import { DataGrid } from '@mui/x-data-grid';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -43,8 +42,6 @@ import useInitialise from '../../hooks/useInitialise';
 import partsActions from '../../actions/partsActions';
 import subAssemblyActions from '../../actions/subAssemblyActions';
 import useExpandNodesWithChildren from '../../hooks/useExpandNodesWithChildren';
-import copyBomActions from '../../actions/copyBomActions';
-import deleteAllFromBomActions from '../../actions/deleteAllFromBomActions';
 
 // unique id generator
 const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -506,24 +503,6 @@ function BomUtility() {
     const [deleteAllFromBomDialogOpen, setDeleteAllFromBomDialogOpen] = useState(false);
     const [safetyCriticalWarningDialogOpen, setSafetyCriticalWarningDialogOpen] = useState(false);
 
-    const copyBomResult = useSelector(reduxState =>
-        processSelectorHelpers.getData(reduxState.copyBom)
-    );
-
-    const deleteAllFromBomResult = useSelector(reduxState =>
-        processSelectorHelpers.getData(reduxState.deleteAllFromBom)
-    );
-
-    useEffect(() => {
-        if (copyBomResult?.success || deleteAllFromBomResult?.success) {
-            reduxDispatch(
-                bomTreeActions.fetchByHref(
-                    `/purchasing/boms/tree?bomName=${bomName}&levels=0&requirementOnly=false&showChanges=true&treeType=bom`
-                )
-            );
-        }
-    }, [copyBomResult, deleteAllFromBomResult, reduxDispatch, bomName]);
-
     const CopyBomDialog = () => (
         <Dialog open={copyBomDialogOpen} onClose={() => setPartSearchTerm(null)}>
             <DialogTitle>Copy BOM</DialogTitle>
@@ -559,7 +538,7 @@ function BomUtility() {
                         setCopyBomDialogOpen(false);
                         setPartSearchTerm(null);
                         reduxDispatch(
-                            copyBomActions.requestProcessStart({
+                            bomTreeActions.postByHref('/purchasing/boms/copy', {
                                 srcPartNumber: bomToCopy,
                                 destPartNumber: bomName,
                                 crfNumber: crNumber
@@ -595,7 +574,7 @@ function BomUtility() {
                     onClick={() => {
                         setDeleteAllFromBomDialogOpen(false);
                         reduxDispatch(
-                            deleteAllFromBomActions.requestProcessStart({
+                            bomTreeActions.postByHref('/purchasing/boms/delete', {
                                 destPartNumber: bomName,
                                 crfNumber: crNumber
                             })

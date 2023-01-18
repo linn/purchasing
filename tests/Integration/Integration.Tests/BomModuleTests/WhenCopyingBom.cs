@@ -4,6 +4,7 @@
     using System.Net.Http.Json;
     using FluentAssertions;
 
+    using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Integration.Tests.Extensions;
     using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.Boms;
@@ -24,7 +25,8 @@
                       {
                           SrcPartNumber = "SRC", DestPartNumber = "DEST", CrfNumber = 123
                       };
-
+            this.BomTreeService.BuildBomTree("DEST", null, false, true)
+                .Returns(new BomTreeNode { Name = "DEST" });
             this.Response = this.Client.PostAsJsonAsync(
                 $"/purchasing/boms/copy",
                 this.functionResource).Result;
@@ -52,8 +54,8 @@
         [Test]
         public void ShouldBuildResource()
         {
-            var result = this.Response.DeserializeBody<ProcessResultResource>();
-            result.Success.Should().BeTrue();
+            var result = this.Response.DeserializeBody<BomTreeNode>();
+            result.Name.Should().Be("DEST");
         }
     }
 }

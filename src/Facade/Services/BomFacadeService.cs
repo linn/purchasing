@@ -14,12 +14,16 @@
 
         private readonly ITransactionManager transactionManager;
 
+        private readonly IBomTreeService treeService;
+
         public BomFacadeService(
             IBomChangeService bomChangeService, 
-            ITransactionManager transactionManager)
+            ITransactionManager transactionManager,
+            IBomTreeService treeService)
         {
             this.bomChangeService = bomChangeService;
             this.transactionManager = transactionManager;
+            this.treeService = treeService;
         }
 
         public IResult<BomTreeNode> PostBom(PostBomResource resource)
@@ -39,22 +43,22 @@
             }
         }
 
-        public IResult<ProcessResultResource> CopyBom(
+        public IResult<BomTreeNode> CopyBom(
             string srcPartNumber, string destPartNumber, int changedBy, int crfNumber)
         {
             this.bomChangeService.CopyBom(srcPartNumber, destPartNumber, changedBy, crfNumber);
             this.transactionManager.Commit();
 
             // todo - some error handling? Could this domain service throw errors?
-            return new SuccessResult<ProcessResultResource>(new ProcessResultResource(true, "Copied!"));
+            return new SuccessResult<BomTreeNode>(this.treeService.BuildBomTree(destPartNumber, null, false, true));
         }
 
-        public IResult<ProcessResultResource> DeleteBom(string bomName, int crfNumber, int changedBy)
+        public IResult<BomTreeNode> DeleteBom(string bomName, int crfNumber, int changedBy)
         {
             this.bomChangeService.DeleteAllFromBom(bomName, crfNumber, changedBy);
             this.transactionManager.Commit();
 
-            return new SuccessResult<ProcessResultResource>(new ProcessResultResource(true, "Deleted!"));
+            return new SuccessResult<BomTreeNode>(this.treeService.BuildBomTree(bomName, null, false, true));
         }
     }
 }

@@ -62,6 +62,7 @@
 
         protected CircuitBoardResource Resource { get; set; }
 
+
         [SetUp]
         public void SetUpContext()
         {
@@ -72,10 +73,10 @@
             this.PcasChangeRepository = Substitute.For<IRepository<PcasChange, int>>();
             this.BomChangeService = Substitute.For<IBomChangeService>();
             this.TransactionManager = Substitute.For<ITransactionManager>();
-            this.FacadeService = new BomFacadeService(
-                this.BomChangeService, this.TransactionManager);
-
             this.BomTreeService = Substitute.For<IBomTreeService>();
+
+            this.FacadeService = new BomFacadeService(
+                this.BomChangeService, this.TransactionManager, this.BomTreeService);
 
             this.MockBomReportsDomainService = Substitute.For<IBomReportsService>();
 
