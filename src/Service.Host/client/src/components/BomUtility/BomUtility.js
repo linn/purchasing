@@ -270,8 +270,7 @@ function BomUtility() {
             hide: true // useful for debugging, but hidden generally
         }
     ];
-
-    useEffect(() => {
+    const initialise = useCallback(() => {
         if (bomTree === null) {
             setSelected({ id: 'root', name: bomName, children: [] });
         } else {
@@ -283,6 +282,10 @@ function BomUtility() {
                 : { id: 'root', name: bomName, children: [] }
         );
     }, [bomTree, bomName, bomTreeLoading]);
+
+    useEffect(() => {
+        initialise();
+    }, [initialise]);
 
     // updates the tree with changes passed via a 'newNode' object
     const updateTree = (tree, newNode, addNode) => {
@@ -869,7 +872,7 @@ function BomUtility() {
                             reduxDispatch(bomTreeActions.clearErrorsForItem());
                             reduxDispatch(bomTreeActions.add({ treeRoot: treeView, crNumber }));
                         }}
-                        cancelClick={() => {}}
+                        cancelClick={initialise}
                         backClick={() => {
                             history.push('/purchasing/boms');
                         }}
