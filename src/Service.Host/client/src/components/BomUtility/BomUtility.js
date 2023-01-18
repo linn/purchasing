@@ -443,6 +443,8 @@ function BomUtility() {
             processRowUpdate({
                 ...partLookUp.forRow,
                 name: newValue.partNumber,
+                safetyCritical: newValue.safetyCriticalPart,
+                drawingRef: newValue.drawingReference,
                 type: newValue.bomType,
                 description: newValue.description
             });
@@ -456,6 +458,8 @@ function BomUtility() {
                 ...partLookUp.forRow,
                 name: subAssembly.name,
                 type: subAssembly.type,
+                safetyCritical: subAssembly.safetyCritical,
+                drawingRef: subAssembly.drawingReference,
                 description: subAssembly.description,
                 children: subAssembly.children,
                 changeState: 'PROPOS'
