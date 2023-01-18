@@ -54,51 +54,57 @@
 
             var revision = board.Layouts.SelectMany(a => a.Revisions).First(r => r.RevisionCode == changeRequest.RevisionCode);
 
-            foreach (var boardComponent in componentsToRemove)
+            if (componentsToRemove != null)
             {
-                var component = board.Components.First(a => a.BoardLine == boardComponent.BoardLine);
-                if (component == null)
+                foreach (var boardComponent in componentsToRemove)
                 {
-                    throw new ItemNotFoundException(
-                        $"Could not find component with board line {boardComponent.BoardLine} to remove");
-                }
+                    var component = board.Components.First(a => a.BoardLine == boardComponent.BoardLine);
+                    if (component == null)
+                    {
+                        throw new ItemNotFoundException(
+                            $"Could not find component with board line {boardComponent.BoardLine} to remove");
+                    }
 
-                if (boardComponent.AddChangeId == pcasChange.ChangeId && boardComponent.ChangeState != "LIVE")
-                {
-                    board.Components.Remove(component);
-                }
-                else
-                {
-                    component.DeleteChangeId = pcasChange.ChangeId;
+                    if (boardComponent.AddChangeId == pcasChange.ChangeId && boardComponent.ChangeState != "LIVE")
+                    {
+                        board.Components.Remove(component);
+                    }
+                    else
+                    {
+                        component.DeleteChangeId = pcasChange.ChangeId;
+                    }
                 }
             }
 
-            foreach (var boardComponent in componentsToAdd)
+            if (componentsToAdd != null)
             {
-                var part = this.partRepository.FindBy(a => a.PartNumber == boardComponent.PartNumber.ToUpper());
-                boardComponent.AddChangeId = pcasChange.ChangeId;
-                boardComponent.AssemblyTechnology = part.AssemblyTechnology;
-                boardComponent.FromLayoutVersion = revision.LayoutSequence;
-                boardComponent.FromRevisionVersion = revision.VersionNumber;
-                boardComponent.ChangeState = changeRequest.ChangeState;
+                foreach (var boardComponent in componentsToAdd)
+                {
+                    var part = this.partRepository.FindBy(a => a.PartNumber == boardComponent.PartNumber.ToUpper());
+                    boardComponent.AddChangeId = pcasChange.ChangeId;
+                    boardComponent.AssemblyTechnology = part.AssemblyTechnology;
+                    boardComponent.FromLayoutVersion = revision.LayoutSequence;
+                    boardComponent.FromRevisionVersion = revision.VersionNumber;
+                    boardComponent.ChangeState = changeRequest.ChangeState;
 
-                if (this.LatestLayout(board, revision) && this.LatestVersion(board, revision))
-                {
-                    boardComponent.ToRevisionVersion = null;
-                    boardComponent.ToLayoutVersion = null;
-                } 
-                else if (this.LatestLayout(board, revision) && !this.LatestVersion(board, revision))
-                {
-                    boardComponent.ToRevisionVersion = revision.VersionNumber;
-                    boardComponent.ToLayoutVersion = revision.LayoutSequence;
-                }
-                else if (!this.LatestLayout(board, revision) && this.LatestVersion(board, revision))
-                {
-                    boardComponent.ToRevisionVersion = null;
-                    boardComponent.ToLayoutVersion = revision.LayoutSequence;
-                }
+                    if (this.LatestLayout(board, revision) && this.LatestVersion(board, revision))
+                    {
+                        boardComponent.ToRevisionVersion = null;
+                        boardComponent.ToLayoutVersion = null;
+                    }
+                    else if (this.LatestLayout(board, revision) && !this.LatestVersion(board, revision))
+                    {
+                        boardComponent.ToRevisionVersion = revision.VersionNumber;
+                        boardComponent.ToLayoutVersion = revision.LayoutSequence;
+                    }
+                    else if (!this.LatestLayout(board, revision) && this.LatestVersion(board, revision))
+                    {
+                        boardComponent.ToRevisionVersion = null;
+                        boardComponent.ToLayoutVersion = revision.LayoutSequence;
+                    }
 
-                board.Components.Add(boardComponent);
+                    board.Components.Add(boardComponent);
+                }
             }
 
             return board;
