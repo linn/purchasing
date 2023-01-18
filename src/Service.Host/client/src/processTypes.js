@@ -11,11 +11,3 @@ export const emailMultiplePurchaseOrders = new ItemType(
     'EMAIL_MULTIPLE_PURCHASE_ORDERS',
     '/purchasing/purchase-orders/email-multiple'
 );
-
-export const copyBom = new ItemType('copyBom', 'COPY_BOM', '/purchasing/boms/copy');
-
-export const deleteAllFromBom = new ItemType(
-    'deleteAllFromBom',
-    'DELETE_ALL_FROM_BOM',
-    '/purchasing/boms/delete'
-);
