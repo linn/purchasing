@@ -30,6 +30,10 @@
         IResult<ChangeRequestResource> ChangeStatus(
             ChangeRequestStatusChangeResource request, int changedById, IEnumerable<string> privileges = null);
 
+        IResult<ChangeRequestResource> PhaseInChangeRequest(
+            ChangeRequestPhaseInsResource request,
+            IEnumerable<string> privileges = null);
+
         IResult<IEnumerable<ChangeRequestResource>> GetChangeRequestsRelevantToBom(
             string bomName, IEnumerable<string> privileges = null);
 

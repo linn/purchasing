@@ -43,8 +43,9 @@
 
         protected IRepository<Employee, int> EmployeeRepository { get; set; }
 
-        protected IBomTreeService BomTreeService { get; private set; }
+        protected IRepository<LinnWeek, int> WeekRepository { get; set; }
 
+        protected IBomTreeService BomTreeService { get; private set; }
 
         protected ILog Logger { get; set; }
 
@@ -57,6 +58,7 @@
             this.DatabaseService = Substitute.For<IDatabaseService>();
             this.PartRepository = Substitute.For<IQueryRepository<Part>>();
             this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
+            this.WeekRepository = Substitute.For<IRepository<LinnWeek, int>>();
             this.Logger = Substitute.For<ILog>();
             this.BomTreeService = Substitute.For<IBomTreeService>();
 
@@ -69,7 +71,8 @@
                     this.AuthService,
                     this.Repository,
                     this.PartRepository,
-                    this.EmployeeRepository),
+                    this.EmployeeRepository,
+                    this.WeekRepository),
                     this.DatabaseService,
                     this.BomTreeService,
                     this.Logger);

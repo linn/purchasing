@@ -31,9 +31,12 @@
                                Children = new List<BomTreeNode> { new BomTreeNode { Name = "CAP 001", ParentName = "BOM" } }
                            };
             this.BomRepository.FindBy(Arg.Any<Expression<Func<Bom, bool>>>()).Returns(
-                new Bom { BomName = "BOM", BomId = 123, Details = new List<BomDetailViewEntry>() });
+                new Bom
+                    {
+                        BomName = "BOM", BomId = 123, Details = new List<BomDetailViewEntry>()
+                    });
             this.PartRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
-                .Returns(new Part { BomType = "", DecrementRule = "YES" });
+                .Returns(new Part { BomType = string.Empty, DecrementRule = "YES" });
             this.action = () => this.Sut.CreateBomChanges(tree, 100, 33087);
         }
 

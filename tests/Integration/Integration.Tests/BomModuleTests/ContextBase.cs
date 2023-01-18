@@ -78,11 +78,11 @@
             this.BomChangeService = Substitute.For<IBomChangeService>();
             this.CircuitBoardService = Substitute.For<ICircuitBoardService>();
             this.TransactionManager = Substitute.For<ITransactionManager>();
-            this.FacadeService = new BomFacadeService(
-                this.BomChangeService, this.TransactionManager);
-            this.DatabaseService = Substitute.For<IDatabaseService>();
             this.BomTreeService = Substitute.For<IBomTreeService>();
 
+            this.FacadeService = new BomFacadeService(
+                this.BomChangeService, this.TransactionManager, this.BomTreeService);
+            this.DatabaseService = Substitute.For<IDatabaseService>();
             this.MockBomReportsDomainService = Substitute.For<IBomReportsService>();
 
             this.BomTreeReportsService = new BomTreeReportService(this.BomTreeService);
