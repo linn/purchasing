@@ -53,6 +53,7 @@ function BomUtility() {
     const reduxDispatch = useDispatch();
     const { search } = useLocation();
     const { bomName } = queryString.parse(search);
+
     const [crNumber, setCrNumber] = useState();
     const [changeRequests, changeRequestsLoading] = useInitialise(
         () => changeRequestsActions.searchWithOptions(bomName, '&includeAllForBom=True'),
@@ -145,6 +146,7 @@ function BomUtility() {
                 )}
                 <IconButton
                     onClick={() => openPartLookUp(params.row)}
+                    data-testid="part-lookup-button"
                     disabled={!crNumber || subAssemblyLoading || params.row.isReplaced}
                 >
                     <ManageSearchIcon />
