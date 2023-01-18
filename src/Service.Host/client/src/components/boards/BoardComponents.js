@@ -195,7 +195,10 @@ function BoardComponents() {
         <>
             <span style={{ float: 'left' }}>
                 {params.row.partNumber}
-                <IconButton onClick={() => openPartLookUp(params.row)} disabled={!crfNumber}>
+                <IconButton
+                    onClick={() => openPartLookUp(params.row)}
+                    disabled={!crfNumber || !params.row.adding}
+                >
                     <ManageSearchIcon />
                 </IconButton>
             </span>
