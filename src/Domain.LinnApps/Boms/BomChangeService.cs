@@ -205,7 +205,7 @@
                                         DeleteReplaceSeq = null,
                                         PcasLine = "N"
                                     });
-                                    child.AddChangeDocumentNumber = change.ChangeId;
+                                    child.AddChangeDocumentNumber = change.DocumentNumber;
                                 }
 
                                 if (!string.IsNullOrEmpty(child.ReplacedBy))

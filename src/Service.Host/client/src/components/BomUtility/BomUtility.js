@@ -440,11 +440,12 @@ function BomUtility() {
             // fetch this subAssembly's bomTree to add it to the tree view
             reduxDispatch(subAssemblyActions.fetchByHref(subAssemblyUrl));
         } else {
+            console.log(newValue);
             processRowUpdate({
                 ...partLookUp.forRow,
                 name: newValue.partNumber,
                 safetyCritical: newValue.safetyCriticalPart,
-                drawingRef: newValue.drawingReference,
+                drawingReference: newValue.drawingReference,
                 type: newValue.bomType,
                 description: newValue.description
             });
@@ -459,7 +460,7 @@ function BomUtility() {
                 name: subAssembly.name,
                 type: subAssembly.type,
                 safetyCritical: subAssembly.safetyCritical,
-                drawingRef: subAssembly.drawingReference,
+                drawingReference: subAssembly.drawingReference,
                 description: subAssembly.description,
                 children: subAssembly.children,
                 changeState: 'PROPOS'
