@@ -11,7 +11,7 @@
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Resources.Boms;
 
-    public class BomVerificationHistoryFacadeService : FacadeResourceService<BomVerificationHistory, string, BomVerificationHistoryResource, BomVerificationHistoryResource>
+    public class BomVerificationHistoryFacadeService : FacadeResourceService<BomVerificationHistory, int, BomVerificationHistoryResource, BomVerificationHistoryResource>
     {
         private readonly IBuilder<BomVerificationHistory> resourceBuilder;
 
@@ -22,7 +22,7 @@
         private readonly IBomVerificationHistoryService bomVerificationHistoryService;
 
         public BomVerificationHistoryFacadeService(
-            IRepository<BomVerificationHistory, string> repository,
+            IRepository<BomVerificationHistory, int> repository,
             ITransactionManager transactionManager,
             IBuilder<BomVerificationHistory> resourceBuilder,
             IBomVerificationHistoryService bomVerificationHistoryService,

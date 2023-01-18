@@ -231,7 +231,10 @@
                         ?.BomChanges))
                 .AddTransient<IRepository<BomDetail, int>, EntityFrameworkRepository<BomDetail, int>>(
                     r => new EntityFrameworkRepository<BomDetail, int>(r.GetService<ServiceDbContext>()
-                        ?.BomDetails));
+                        ?.BomDetails))
+                .AddTransient<IRepository<BomVerificationHistory, int>, EntityFrameworkRepository<BomVerificationHistory, int>>(
+                    r => new EntityFrameworkRepository<BomVerificationHistory, int>(r.GetService<ServiceDbContext>()
+                        ?.BomVerificationHistory));
         }
     }
 }

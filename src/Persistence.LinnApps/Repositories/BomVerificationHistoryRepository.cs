@@ -7,6 +7,7 @@
     using Linn.Purchasing.Domain.LinnApps.Boms;
 
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
     public class BomVerificationHistoryRepository : EntityFrameworkRepository<BomVerificationHistory, int>
     {
@@ -19,18 +20,24 @@
             this.serviceDbContext = serviceDbContext;
         }
 
-        public BomVerificationHistory FindById(int key)
+        public override BomVerificationHistory FindById(int key)
         {
-            throw new NotImplementedException();
+            return this.serviceDbContext.BomVerificationHistory
+                .Include(b => b.PartNumber)
+                .Include(b => b.DateVerified)
+                .Include(b => b.VerifiedBy)
+                .Include(b => b.DocumentType)
+                .Include(b => b.DocumentNumber)
+                .Include(b => b.Remarks).FirstOrDefault(b => b.TRef == key);
         }
 
-        public IQueryable<BomVerificationHistory> FindAll()
+        public override IQueryable<BomVerificationHistory> FindAll()
         {
             return this.bomVerificationHistory
                 .AsNoTracking();
         }
 
-        public void Add(BomVerificationHistory entity)
+        public override void Add(BomVerificationHistory entity)
         {
             throw new NotImplementedException();
         }
@@ -40,16 +47,15 @@
             throw new NotImplementedException();
         }
 
-        public BomVerificationHistory FindBy(Expression<Func<BomVerificationHistory, bool>> expression)
+        public override BomVerificationHistory FindBy(Expression<Func<BomVerificationHistory, bool>> expression)
         {
             return this.serviceDbContext.BomVerificationHistory.Include(b => b.PartNumber).SingleOrDefault(expression);
         }
 
-        public IQueryable<BomVerificationHistory> FilterBy(Expression<Func<BomVerificationHistory, bool>> expression)
+        public override IQueryable<BomVerificationHistory> FilterBy(Expression<Func<BomVerificationHistory, bool>> expression)
         {
             return this.serviceDbContext.BomVerificationHistory.Include(b => b.TRef)
                 .Include(b => b.PartNumber)
-                .Include(b => b.DateVerified)
                 .Include(b => b.DateVerified)
                 .Include(b => b.VerifiedBy)
                 .Include(b => b.DocumentType)

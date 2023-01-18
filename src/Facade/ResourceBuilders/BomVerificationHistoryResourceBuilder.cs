@@ -26,6 +26,7 @@
                 TRef = model.TRef,
                 PartNumber = model.PartNumber,
                 VerifiedBy = model.VerifiedBy,
+                Remarks = model.Remarks,
                 DocumentType = model.DocumentType,
                 DocumentNumber = model.DocumentNumber,
                 Links = claims != null ? this.BuildLinks(claims).ToArray() : null
