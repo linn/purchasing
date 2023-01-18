@@ -55,6 +55,7 @@
                                                     Name = d.Part.PartNumber,
                                                     Description = d.Part.Description,
                                                     ParentName = d.BomName,
+                                                    ParentId = d.BomId.ToString(),
                                                     Qty = d.Qty,
                                                     ChangeState = d.ChangeState,
                                                     IsReplaced = d.DeleteChangeId.HasValue,
@@ -110,12 +111,12 @@
                                     SafetyCritical = child.SafetyCritical,
                                     Type = child.Type,
                                     ParentName = current.Name,
+                                    ParentId = current.Id,
                                     ChangeState = child.ChangeState,
                                     Requirement = child.Requirement,
                                     DrawingReference = child.DrawingReference,
                                     AddChangeDocumentNumber = child.AddChangeDocumentNumber,
                                     IsReplaced = child.IsReplaced,
-
                                     Children =
                                     children?
                                         .OrderBy(x => x.Part.PartNumber)
@@ -129,6 +130,7 @@
                                                         Qty = detail.Qty,
                                                         Type = detail.Part.BomType,
                                                         ParentName = detail.BomPartNumber,
+                                                        ParentId = detail.BomId.ToString(),
                                                         Requirement = child.Requirement,
                                                         SafetyCritical = child.SafetyCritical,
                                                         DrawingReference = child.DrawingReference,

@@ -89,6 +89,12 @@
         }
 
         [Test]
+        public void ShouldNotAddNewBom()
+        {
+            this.BomRepository.DidNotReceive().Add(Arg.Any<Bom>());
+        }
+
+        [Test]
         public void ShouldAddThreeBomDetails()  // since we are adding one sub assembly with two components to the bom
         {
             this.BomDetailRepository.Received(3).Add(Arg.Any<BomDetail>());

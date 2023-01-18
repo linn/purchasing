@@ -52,6 +52,8 @@
             app.MapPost("/purchasing/boms/tree", this.PostBomTree);
 
             app.MapPost("/purchasing/boms/copy", this.CopyBom);
+            app.MapPost("/purchasing/boms/delete", this.DeleteAllFromBom);
+
         }
 
         private async Task GetApp(HttpRequest req, HttpResponse res)
@@ -259,14 +261,28 @@
         private async Task CopyBom(
             HttpRequest req,
             HttpResponse res,
-            CopyBomResource resource,
+            BomFunctionResource functionResource,
             IBomFacadeService bomFacadeService)
         {
             var result = bomFacadeService.CopyBom(
-                resource.SrcPartNumber, 
-                resource.DestPartNumber, 
+                functionResource.SrcPartNumber, 
+                functionResource.DestPartNumber, 
                 req.HttpContext.User.GetEmployeeNumber(), 
-                resource.CrfNumber);
+                functionResource.CrfNumber);
+
+            await res.Negotiate(result);
+        }
+
+        private async Task DeleteAllFromBom(
+            HttpRequest req,
+            HttpResponse res,
+            BomFunctionResource functionResource,
+            IBomFacadeService bomFacadeService)
+        {
+            var result = bomFacadeService.DeleteBom(
+                functionResource.DestPartNumber,
+                functionResource.CrfNumber,
+                req.HttpContext.User.GetEmployeeNumber());
 
             await res.Negotiate(result);
         }

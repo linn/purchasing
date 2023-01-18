@@ -43,7 +43,7 @@
                               Qty = 2,
                               Name = "CAP NEW",
                               HasChanged = true,
-                              ReplacementFor = "CAP OLD"
+                              ReplacementFor = "4567"
                           };
 
             this.newTree = new BomTreeNode
@@ -64,7 +64,8 @@
                                             {
                                                 PartNumber = "CAP OLD",
                                                 Qty = 2,
-                                                ChangeState = "LIVE"
+                                                ChangeState = "LIVE",
+                                                DetailId = 4567
                                             }
                                   }
                 });

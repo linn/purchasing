@@ -3,7 +3,6 @@
     using Linn.Common.Domain.Exceptions;
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
-    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
     using Linn.Purchasing.Resources;
@@ -48,6 +47,14 @@
 
             // todo - some error handling? Could this domain service throw errors?
             return new SuccessResult<ProcessResultResource>(new ProcessResultResource(true, "Copied!"));
+        }
+
+        public IResult<ProcessResultResource> DeleteBom(string bomName, int crfNumber, int changedBy)
+        {
+            this.bomChangeService.DeleteAllFromBom(bomName, crfNumber, changedBy);
+            this.transactionManager.Commit();
+
+            return new SuccessResult<ProcessResultResource>(new ProcessResultResource(true, "Deleted!"));
         }
     }
 }

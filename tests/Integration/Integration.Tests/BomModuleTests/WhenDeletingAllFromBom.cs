@@ -12,21 +12,17 @@
 
     using NUnit.Framework;
 
-    public class WhenCopyingBom : ContextBase
+    public class WhenDeletingAllFromBom : ContextBase
     {
         private BomFunctionResource functionResource;
 
         [SetUp]
         public void SetUp()
         {
-            this.functionResource 
-                = new BomFunctionResource
-                      {
-                          SrcPartNumber = "SRC", DestPartNumber = "DEST", CrfNumber = 123
-                      };
+            this.functionResource = new BomFunctionResource { DestPartNumber = "DEST", CrfNumber = 123 };
 
             this.Response = this.Client.PostAsJsonAsync(
-                $"/purchasing/boms/copy",
+                $"/purchasing/boms/delete",
                 this.functionResource).Result;
         }
 

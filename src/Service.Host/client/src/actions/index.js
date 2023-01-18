@@ -352,3 +352,7 @@ export const changeRequestPhaseInsActionTypes = makeActionTypes(
 );
 
 export const copyBomActionTypes = makeProcessActionTypes(processTypes.copyBom.actionType);
+
+export const deleteAllFromBomActionTypes = makeProcessActionTypes(
+    processTypes.deleteAllFromBom.actionType
+);
