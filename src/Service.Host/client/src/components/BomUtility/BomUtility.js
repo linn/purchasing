@@ -18,12 +18,14 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import DialogContentText from '@mui/material/DialogContentText';
 import Grid from '@mui/material/Grid';
 import { useLocation } from 'react-router';
 import queryString from 'query-string';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import { useSelector, useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
@@ -218,6 +220,18 @@ function BomUtility() {
             editable: false
         },
         {
+            field: 'addChangeDocumentNumber',
+            headerName: 'Add CRF',
+            width: 200,
+            hide: !showChanges,
+            editable: false,
+            renderCell: params => (
+                <Link to={`/purchasing/change-requests/${params.row.addChangeDocumentNumber}`}>
+                    {params.row.addChangeDocumentNumber}
+                </Link>
+            )
+        },
+        {
             field: 'replacementFor',
             headerName: 'Replacing',
             width: 180,
@@ -255,7 +269,6 @@ function BomUtility() {
 
     // updates the tree with changes passed via a 'newNode' object
     const updateTree = (tree, newNode, addNode) => {
-        console.log(newNode);
         const newTree = { ...tree };
         const q = [];
         q.push(newTree);
@@ -364,8 +377,6 @@ function BomUtility() {
 
     const processRowUpdate = useCallback(newRow => {
         setDisableChangesButton(true);
-        // const newTree = updateTree(bomTree, newRow, false);
-        // console.log(newTree);
         setTreeView(tr => updateTree(tr, newRow, false));
         return newRow;
     }, []);
@@ -409,7 +420,6 @@ function BomUtility() {
             // fetch this subAssembly's bomTree to add it to the tree view
             reduxDispatch(subAssemblyActions.fetchByHref(subAssemblyUrl));
         } else {
-            console.log(partLookUp);
             processRowUpdate({
                 ...partLookUp.forRow,
                 name: newValue.partNumber,
@@ -435,43 +445,39 @@ function BomUtility() {
         }
     }, [subAssembly, partLookUp.forRow, reduxDispatch, processRowUpdate]);
 
-    function renderPartLookUp() {
-        return (
-            <Dialog open={partLookUp.open}>
-                <DialogTitle>Search For A Part</DialogTitle>
-                <DialogContent dividers>
-                    <Search
-                        visible={partLookUp.open}
-                        autoFocus
-                        propertyName="partNumber"
-                        label="Part Number"
-                        resultsInModal
-                        resultLimit={100}
-                        value={partSearchTerm}
-                        handleValueChange={(_, newVal) => setPartSearchTerm(newVal)}
-                        search={searchParts}
-                        searchResults={partsSearchResults}
-                        loading={partsSearchLoading}
-                        priorityFunction="closestMatchesFirst"
-                        onResultSelect={handlePartSelect}
-                        clearSearch={() => {}}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button
-                        onClick={() =>
-                            setPartLookUp({ open: false, forRow: null, selectedPart: null })
-                        }
-                    >
-                        Cancel
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        );
-    }
-
+    const PartLookUp = () => (
+        <Dialog open={partLookUp.open}>
+            <DialogTitle>Search For A Part</DialogTitle>
+            <DialogContent dividers>
+                <Search
+                    visible={partLookUp.open}
+                    autoFocus
+                    propertyName="partNumber"
+                    label="Part Number"
+                    resultsInModal
+                    resultLimit={100}
+                    value={partSearchTerm}
+                    handleValueChange={(_, newVal) => setPartSearchTerm(newVal)}
+                    search={searchParts}
+                    searchResults={partsSearchResults}
+                    loading={partsSearchLoading}
+                    priorityFunction="closestMatchesFirst"
+                    onResultSelect={handlePartSelect}
+                    clearSearch={() => {}}
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    onClick={() => setPartLookUp({ open: false, forRow: null, selectedPart: null })}
+                >
+                    Cancel
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
     const [copyBomDialogOpen, setCopyBomDialogOpen] = useState(false);
     const [deleteAllFromBomDialogOpen, setDeleteAllFromBomDialogOpen] = useState(false);
+    const [safetyCriticalWarningDialogOpen, setSafetyCriticalWarningDialogOpen] = useState(false);
 
     const copyBomResult = useSelector(reduxState =>
         processSelectorHelpers.getData(reduxState.copyBom)
@@ -491,79 +497,120 @@ function BomUtility() {
         }
     }, [copyBomResult, deleteAllFromBomResult, reduxDispatch, bomName]);
 
-    function renderCopyBomDialog() {
-        return (
-            <Dialog open={copyBomDialogOpen} onClose={() => setPartSearchTerm(null)}>
-                <DialogTitle>Copy BOM</DialogTitle>
-                <DialogContent dividers>
-                    <Search
-                        visible={copyBomDialogOpen}
-                        autoFocus
-                        propertyName="partNumber"
-                        label="Part Number"
-                        resultsInModal
-                        resultLimit={100}
-                        value={bomToCopy ?? partSearchTerm}
-                        handleValueChange={(_, newVal) => setPartSearchTerm(newVal)}
-                        search={searchParts}
-                        searchResults={partsSearchResults.filter(x => x.bomType !== 'C')}
-                        loading={partsSearchLoading}
-                        priorityFunction="closestMatchesFirst"
-                        onResultSelect={newVal => setBomToCopy(newVal.partNumber)}
-                        clearSearch={() => {}}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button
-                        onClick={() => {
-                            setCopyBomDialogOpen(false);
-                            setPartSearchTerm(null);
-                            reduxDispatch(
-                                copyBomActions.requestProcessStart({
-                                    srcPartNumber: bomToCopy,
-                                    destPartNumber: bomName,
-                                    crfNumber: crNumber
-                                })
-                            );
-                        }}
-                        disabled={!bomToCopy}
-                    >
-                        Confirm
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        );
-    }
+    const CopyBomDialog = () => (
+        <Dialog open={copyBomDialogOpen} onClose={() => setPartSearchTerm(null)}>
+            <DialogTitle>Copy BOM</DialogTitle>
+            <DialogContent dividers>
+                <Search
+                    visible={copyBomDialogOpen}
+                    autoFocus
+                    propertyName="partNumber"
+                    label="Part Number"
+                    resultsInModal
+                    resultLimit={100}
+                    value={bomToCopy ?? partSearchTerm}
+                    handleValueChange={(_, newVal) => setPartSearchTerm(newVal)}
+                    search={searchParts}
+                    searchResults={partsSearchResults.filter(x => x.bomType !== 'C')}
+                    loading={partsSearchLoading}
+                    priorityFunction="closestMatchesFirst"
+                    onResultSelect={newVal => setBomToCopy(newVal.partNumber)}
+                    clearSearch={() => {}}
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    onClick={() => {
+                        setCopyBomDialogOpen(false);
+                    }}
+                >
+                    Cancel
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={() => {
+                        setCopyBomDialogOpen(false);
+                        setPartSearchTerm(null);
+                        reduxDispatch(
+                            copyBomActions.requestProcessStart({
+                                srcPartNumber: bomToCopy,
+                                destPartNumber: bomName,
+                                crfNumber: crNumber
+                            })
+                        );
+                    }}
+                    disabled={!bomToCopy}
+                >
+                    Confirm
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
 
-    function renderDeleteAllFromBomDialog() {
-        return (
-            <Dialog open={deleteAllFromBomDialogOpen} onClose={() => setPartSearchTerm(null)}>
-                <DialogTitle>Delete All From Bom</DialogTitle>
-                <DialogContent dividers>
-                    <Typography variant="h6">
-                        Clicking confirm will create a change to remove everything from this bom!
-                    </Typography>
-                </DialogContent>
-                <DialogActions>
-                    <Button
-                        onClick={() => {
-                            setDeleteAllFromBomDialogOpen(false);
-                            setPartSearchTerm(null);
-                            reduxDispatch(
-                                deleteAllFromBomActions.requestProcessStart({
-                                    destPartNumber: bomName,
-                                    crfNumber: crNumber
-                                })
-                            );
-                        }}
-                        disabled={!crNumber}
-                    >
-                        Confirm
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        );
-    }
+    const DeleteAllFromBomDialog = () => (
+        <Dialog open={deleteAllFromBomDialogOpen} onClose={() => setPartSearchTerm(null)}>
+            <DialogTitle>Delete All From Bom</DialogTitle>
+            <DialogContent dividers>
+                <Typography variant="h6">
+                    Clicking confirm will create a change to remove everything from this bom!
+                </Typography>
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    onClick={() => {
+                        setDeleteAllFromBomDialogOpen(false);
+                    }}
+                >
+                    Cancel
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={() => {
+                        setDeleteAllFromBomDialogOpen(false);
+                        reduxDispatch(
+                            deleteAllFromBomActions.requestProcessStart({
+                                destPartNumber: bomName,
+                                crfNumber: crNumber
+                            })
+                        );
+                    }}
+                    disabled={!crNumber}
+                >
+                    Confirm
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
+
+    const DeleteSafetyCriticalWarningDialog = () => (
+        <Dialog open={safetyCriticalWarningDialogOpen} onClose={() => setPartSearchTerm(null)}>
+            <DialogTitle>Safety Critical Part</DialogTitle>
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                    The part your are deleting is Safety Critical
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    onClick={() => {
+                        setDeleteAllFromBomDialogOpen(false);
+                    }}
+                >
+                    Cancel
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={() => {
+                        setSafetyCriticalWarningDialogOpen(false);
+                        processRowUpdate({ ...contextMenu.detail, toDelete: true });
+                        setContextMenu(null);
+                    }}
+                >
+                    Accept
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
 
     const handleClose = () => setContextMenu(null);
 
@@ -577,8 +624,12 @@ function BomUtility() {
     };
 
     const handleDeleteClick = () => {
-        processRowUpdate({ ...contextMenu.detail, toDelete: true });
-        setContextMenu(null);
+        if (contextMenu?.detail.safetyCritical === 'Y') {
+            setSafetyCriticalWarningDialogOpen(true);
+        } else {
+            processRowUpdate({ ...contextMenu.detail, toDelete: true });
+            setContextMenu(null);
+        }
     };
 
     const doSearch = () => {
@@ -595,10 +646,10 @@ function BomUtility() {
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
-            {renderPartLookUp()}
-            {renderCopyBomDialog()}
-            {renderDeleteAllFromBomDialog()}
-
+            {PartLookUp()}
+            {CopyBomDialog()}
+            {DeleteAllFromBomDialog()}
+            {DeleteSafetyCriticalWarningDialog()}
             <Grid container spacing={3}>
                 <SnackbarMessage
                     visible={snackbarVisible}
@@ -690,7 +741,7 @@ function BomUtility() {
                                     setDeleteAllFromBomDialogOpen(true);
                                 }}
                             >
-                                Copy Bom
+                                Delete All
                             </Button>
                         </Grid>
                     </>
