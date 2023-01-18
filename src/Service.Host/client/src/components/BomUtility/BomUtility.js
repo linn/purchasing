@@ -49,6 +49,7 @@ function BomUtility() {
     const reduxDispatch = useDispatch();
     const { search } = useLocation();
     const { bomName } = queryString.parse(search);
+
     const [crNumber, setCrNumber] = useState();
     const [changeRequests, changeRequestsLoading] = useInitialise(
         () => changeRequestsActions.searchWithOptions(bomName, '&includeAllForBom=True'),
@@ -141,6 +142,7 @@ function BomUtility() {
                 )}
                 <IconButton
                     onClick={() => openPartLookUp(params.row)}
+                    data-testid="part-lookup-button"
                     disabled={!crNumber || subAssemblyLoading || params.row.isReplaced}
                 >
                     <ManageSearchIcon />
@@ -364,7 +366,7 @@ function BomUtility() {
         setTreeView(tree =>
             updateTree(
                 tree,
-                { id: uid(), type: 'C', parent: selected.id, changeState: 'PROPOS' },
+                { id: uid(), type: 'C', parent: selected.id, changeState: 'PROPOS', qty: 1 },
                 true
             )
         );
