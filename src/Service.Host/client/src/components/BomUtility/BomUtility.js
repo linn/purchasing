@@ -222,7 +222,7 @@ function BomUtility() {
         {
             field: 'addChangeDocumentNumber',
             headerName: 'Add CRF',
-            width: 200,
+            width: 150,
             hide: !showChanges,
             editable: false,
             renderCell: params => (
@@ -230,6 +230,23 @@ function BomUtility() {
                     {params.row.addChangeDocumentNumber}
                 </Link>
             )
+        },
+        {
+            field: 'deleteChangeDocumentNumber',
+            headerName: 'Del CRF',
+            width: 150,
+            hide: !showChanges,
+            editable: false,
+            renderCell: params =>
+                params.row.deleteChangeDocumentNumber ? (
+                    <Link
+                        to={`/purchasing/change-requests/${params.row.deleteChangeDocumentNumber}`}
+                    >
+                        {params.row.deleteChangeDocumentNumber}
+                    </Link>
+                ) : (
+                    <span>{params.row.deleteChangeDocumentNumber}</span>
+                )
         },
         {
             field: 'replacementFor',
