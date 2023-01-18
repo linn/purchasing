@@ -350,9 +350,3 @@ export const boardComponentSummariesActionTypes = makeActionTypes(
 export const changeRequestPhaseInsActionTypes = makeActionTypes(
     itemTypes.changeRequestPhaseIns.actionType
 );
-
-export const copyBomActionTypes = makeProcessActionTypes(processTypes.copyBom.actionType);
-
-export const deleteAllFromBomActionTypes = makeProcessActionTypes(
-    processTypes.deleteAllFromBom.actionType
-);
