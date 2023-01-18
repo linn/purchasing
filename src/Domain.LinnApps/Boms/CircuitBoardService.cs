@@ -65,7 +65,14 @@
                             $"Could not find component with board line {boardComponent.BoardLine} to remove");
                     }
 
-                    if (boardComponent.AddChangeId == pcasChange.ChangeId && boardComponent.ChangeState != "LIVE")
+                    if (component.DeleteChangeId.HasValue
+                        && component.DeleteChangeId.Value != pcasChange.ChangeId)
+                    {
+                        throw new InvalidActionException(
+                            $"Cannot remove board line {component.BoardLine} from {boardCode} as it is already being removed on change {component.DeleteChangeId}");
+                    }
+
+                    if (component.AddChangeId == pcasChange.ChangeId && component.ChangeState != "LIVE")
                     {
                         board.Components.Remove(component);
                     }

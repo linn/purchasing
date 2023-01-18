@@ -224,7 +224,7 @@ function BoardComponents() {
                     <IconButton
                         aria-label="remove"
                         size="small"
-                        disabled={!crfNumber}
+                        disabled={!crfNumber || params.row.deleteChangeId}
                         onClick={() => handleDeleteRow(params)}
                     >
                         <DeleteIcon fontSize="inherit" />
@@ -333,7 +333,7 @@ function BoardComponents() {
     };
 
     const getDisplayClass = params => {
-        if (params.row.removing) {
+        if (params.row.removing || params.row.deleteChangeId) {
             return 'removing';
         }
 
