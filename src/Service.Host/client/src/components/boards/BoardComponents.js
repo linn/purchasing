@@ -13,6 +13,7 @@ import {
     collectionSelectorHelpers,
     itemSelectorHelpers,
     Search,
+    utilities,
     SaveBackCancelButtons
 } from '@linn-it/linn-form-components-library';
 import { DataGrid } from '@mui/x-data-grid';
@@ -286,20 +287,23 @@ function BoardComponents() {
     };
 
     const componentRows = state.board?.components
-        ? state.board.components
-              .filter(
-                  f =>
-                      f.changeState !== 'CANCEL' &&
-                      f.changeState !== 'HIST' &&
-                      versionsAreCorrect(
-                          f.fromLayoutVersion,
-                          f.toLayoutVersion,
-                          f.fromRevisionVersion,
-                          f.toRevisionVersion
-                      ) &&
-                      changesStateOk(f.changeState)
-              )
-              .map(c => ({ ...c, id: c.boardLine }))
+        ? utilities.sortEntityList(
+              state.board.components
+                  .filter(
+                      f =>
+                          f.changeState !== 'CANCEL' &&
+                          f.changeState !== 'HIST' &&
+                          versionsAreCorrect(
+                              f.fromLayoutVersion,
+                              f.toLayoutVersion,
+                              f.fromRevisionVersion,
+                              f.toRevisionVersion
+                          ) &&
+                          changesStateOk(f.changeState)
+                  )
+                  .map(c => ({ ...c, id: c.boardLine })),
+              'cRef'
+          )
         : [];
 
     const layout =
@@ -486,10 +490,6 @@ function BoardComponents() {
                                         },
                                         '& .accept': {
                                             bgcolor: '#b0f7b9'
-                                        },
-                                        '& .removing': {
-                                            bgcolor: 'indianred',
-                                            textDecorationLine: 'line-through'
                                         }
                                     }}
                                     rows={componentRows}
