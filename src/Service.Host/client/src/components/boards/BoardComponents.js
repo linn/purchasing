@@ -263,7 +263,8 @@ function BoardComponents() {
                 if (
                     (state.selectedRevision.versionNumber < fromRevision &&
                         state.selectedLayout.layoutSequence === fromLayout) ||
-                    (state.selectedRevision.versionNumber > toRevision &&
+                    (toRevision &&
+                        state.selectedRevision.versionNumber > toRevision &&
                         state.selectedLayout.layoutSequence === toLayout)
                 ) {
                     return false;
