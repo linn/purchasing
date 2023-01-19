@@ -7,7 +7,6 @@
     using Linn.Purchasing.Domain.LinnApps.Boms;
 
     using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
     public class BomVerificationHistoryRepository : EntityFrameworkRepository<BomVerificationHistory, int>
     {
