@@ -286,8 +286,11 @@ function BomUtility() {
         initialise();
     }, [initialise]);
 
+    const [changesMade, setChangesMade] = useState(false);
+
     // updates the tree with changes passed via a 'newNode' object
     const updateTree = (tree, newNode, addNode) => {
+        setChangesMade(true);
         const newTree = { ...tree };
         const q = [];
         q.push(newTree);
@@ -857,8 +860,9 @@ function BomUtility() {
                 </Grid>
                 <Grid item xs={12}>
                     <SaveBackCancelButtons
-                        saveDisabled={!crNumber || subAssemblyLoading}
+                        saveDisabled={!crNumber || subAssemblyLoading || !changesMade}
                         saveClick={() => {
+                            setChangesMade(false);
                             reduxDispatch(bomTreeActions.clearErrorsForItem());
                             reduxDispatch(bomTreeActions.add({ treeRoot: treeView, crNumber }));
                         }}

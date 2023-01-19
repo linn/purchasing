@@ -102,8 +102,12 @@
                                          };
                             this.bomChangeRepository.Add(change);
                         }
+
+                        var detailsOnChange = this.bomDetailRepository
+                            .FilterBy(x => x.BomId == bom.BomId && x.AddChangeId == change.ChangeId);
                         
-                        var replacementSeq = 1;
+                        var replacementSeq = !detailsOnChange.Any() ? 0 
+                                                 : detailsOnChange.Max(d => d.AddReplaceSeq.GetValueOrDefault());
 
                         foreach (var child in current.Children)
                         {
@@ -202,7 +206,7 @@
                                         ChangeState = "PROPOS",
                                         AddChangeId = change.ChangeId,
                                         AddReplaceSeq = string.IsNullOrEmpty(child.ReplacementFor)
-                                                                             ? null : replacementSeq++,
+                                                                             ? null : replacementSeq + 1,
                                         DeleteChangeId = null,
                                         DeleteReplaceSeq = null,
                                         PcasLine = "N"
@@ -214,7 +218,6 @@
                                 {
                                     // case: replacing a detail on this bom with a new detail
                                     var replacement = current.Children.FirstOrDefault(c => c.ReplacementFor == child.Id);
-                                    var replacementPart = this.partRepository.FindBy(x => x.PartNumber == replacement.Name);
 
                                     if (replacement == null)
                                     {
@@ -243,11 +246,9 @@
                                             $"{child.Name} is a PCAS line - cannot replace here.");
                                     }
 
-                                    replacement.AddReplaceSeq = replacementSeq;
-                                    child.DeleteReplaceSeq = replacementSeq;
-
+                                    child.DeleteReplaceSeq = replacementSeq + 1;
                                     replacedDetail.DeleteChangeId = change.ChangeId;
-                                    replacedDetail.DeleteReplaceSeq = replacementSeq;
+                                    replacedDetail.DeleteReplaceSeq = replacementSeq + 1;
                                     replacedDetail.ChangeState = "PROPOS";
                                 }
                             }
