@@ -11,6 +11,7 @@ import Button from '@mui/material/Button';
 import AssemblyChange from '../ChangeTypes/AssemblyChange';
 import ChangeState from '../ChangeState';
 import changeRequestActions from '../../../actions/changeRequestActions';
+import history from '../../../history';
 
 function MainTab({ item, approve }) {
     const reduxDispatch = useDispatch();
@@ -100,7 +101,11 @@ function MainTab({ item, approve }) {
                         disabled
                     />
                 ) : (
-                    <Button variant="outlined" disabled={!approveUri} onClick={() => approve(item)}>
+                    <Button
+                        variant="contained"
+                        disabled={!approveUri}
+                        onClick={() => approve(item)}
+                    >
                         Approve
                     </Button>
                 )}
@@ -109,22 +114,29 @@ function MainTab({ item, approve }) {
                 <ChangeState changeState={item?.changeState} />
             </Grid>
             <Grid item xs={8} />
+            <Grid item xs={12}>
+                <Button
+                    text="View/Edit Bom"
+                    onClick={() => {
+                        history.push(`/purchasing/boms/bom-utility?bomName=${item?.newPartNumber}`);
+                    }}
+                >
+                    View/Edit Bom
+                </Button>
+            </Grid>
             {editUri && (
-                <>
-                    <Grid item xs={8} />
-                    <Grid item xs={4}>
-                        <SaveBackCancelButtons
-                            saveDisabled={!editUri}
-                            saveClick={() =>
-                                reduxDispatch(
-                                    changeRequestActions.update(updated.documentNumber, updated)
-                                )
-                            }
-                            cancelClick={() => {}}
-                            backClick={() => {}}
-                        />
-                    </Grid>
-                </>
+                <Grid item xs={12}>
+                    <SaveBackCancelButtons
+                        saveDisabled={!editUri}
+                        saveClick={() =>
+                            reduxDispatch(
+                                changeRequestActions.update(updated.documentNumber, updated)
+                            )
+                        }
+                        cancelClick={() => {}}
+                        backClick={() => {}}
+                    />
+                </Grid>
             )}
         </Grid>
     );
@@ -133,6 +145,7 @@ function MainTab({ item, approve }) {
 MainTab.propTypes = {
     item: PropTypes.shape({
         documentNumber: PropTypes.number,
+        newPartNumber: PropTypes.string,
         dateEntered: PropTypes.string,
         dateAccepted: PropTypes.string,
         changeState: PropTypes.string,

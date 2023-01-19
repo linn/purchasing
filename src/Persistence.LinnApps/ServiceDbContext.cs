@@ -1959,7 +1959,7 @@
             entity.HasOne(a => a.Part).WithMany().HasForeignKey(a => a.PartNumber);
             entity.HasOne(a => a.BomPart).WithMany().HasForeignKey(a => a.BomPartNumber);
             entity.HasOne(a => a.AddChange).WithMany().HasForeignKey(d => d.AddChangeId);
-            entity.HasOne(a => a.DeleteChange).WithMany().HasForeignKey(d => d.DeleteChange);
+            entity.HasOne(a => a.DeleteChange).WithMany().HasForeignKey(d => d.DeleteChangeId);
         }
 
         private void BuildBomDetails(ModelBuilder builder)
