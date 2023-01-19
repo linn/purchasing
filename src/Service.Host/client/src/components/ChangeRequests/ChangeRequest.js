@@ -19,13 +19,13 @@ import changeRequestPhaseInsActions from '../../actions/changeRequestPhaseInsAct
 import MainTab from './Tabs/MainTab';
 import BomChangesTab from './Tabs/BomChangesTab';
 import PcasChangesTab from './Tabs/PcasChangesTab';
-
 import history from '../../history';
 
 function ChangeRequest() {
     const { id } = useParams();
 
     const reduxDispatch = useDispatch();
+
     useEffect(() => {
         if (id) {
             reduxDispatch(changeRequestActions.fetch(id));

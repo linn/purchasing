@@ -726,7 +726,11 @@ function BomUtility() {
                             </Button>
                             <Button
                                 variant="outlined"
-                                onClick={() => history.push('/purchasing/change-requests/create')}
+                                onClick={() =>
+                                    history.push(
+                                        `/purchasing/change-requests/create?bomName=${bomName}`
+                                    )
+                                }
                             >
                                 RAISE NEW CRF
                             </Button>
