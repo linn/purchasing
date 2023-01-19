@@ -29,7 +29,7 @@
                 Remarks = model.Remarks,
                 DocumentType = model.DocumentType,
                 DocumentNumber = model.DocumentNumber,
-                Links = claims != null ? this.BuildLinks(claims).ToArray() : null
+                Links = this.BuildLinks(model, claims).ToArray()
             };
 
             return resource;
@@ -42,13 +42,11 @@
 
         object IBuilder<BomVerificationHistory>.Build(BomVerificationHistory entity, IEnumerable<string> claims) => this.Build(entity, claims);
 
-        private IEnumerable<LinkResource> BuildLinks(IEnumerable<string> claims)
+        private IEnumerable<LinkResource> BuildLinks(BomVerificationHistory model, IEnumerable<string> claims)
         {
-            var privileges = claims as string[] ?? claims.ToArray();
-
-            if (this.authService.HasPermissionFor(AuthorisedAction.ChangeBomType, privileges))
+            if (model != null)
             {
-                yield return new LinkResource { Rel = "verify-bom", Href = $"/purchasing/bom-verification" };
+                yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
             }
         }
     }
