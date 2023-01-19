@@ -33,7 +33,6 @@ function ChangeRequest() {
     const item = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.changeRequest));
 
     if (!loading && (!item || item?.documentNumber.toString() !== id)) {
-        console.log(item?.id, id);
         reduxDispatch(changeRequestActions.fetch(id));
     }
     const statusChange = useSelector(reduxState =>
