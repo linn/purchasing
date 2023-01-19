@@ -225,14 +225,16 @@ function BoardComponents() {
             width: 50,
             renderCell: params => (
                 <Tooltip title="Remove">
-                    <IconButton
-                        aria-label="remove"
-                        size="small"
-                        disabled={!crfNumber || params.row.deleteChangeId}
-                        onClick={() => handleDeleteRow(params)}
-                    >
-                        <DeleteIcon fontSize="inherit" />
-                    </IconButton>
+                    <div>
+                        <IconButton
+                            aria-label="remove"
+                            size="small"
+                            disabled={!crfNumber || params.row.deleteChangeId > 0}
+                            onClick={() => handleDeleteRow(params)}
+                        >
+                            <DeleteIcon fontSize="inherit" />
+                        </IconButton>
+                    </div>
                 </Tooltip>
             )
         },
@@ -242,14 +244,16 @@ function BoardComponents() {
             width: 50,
             renderCell: params => (
                 <Tooltip title="Replace">
-                    <IconButton
-                        aria-label="replace"
-                        disabled={!crfNumber}
-                        size="small"
-                        onClick={() => handleReplaceRow(params)}
-                    >
-                        <UpgradeIcon fontSize="inherit" />
-                    </IconButton>
+                    <div>
+                        <IconButton
+                            aria-label="replace"
+                            disabled={!crfNumber}
+                            size="small"
+                            onClick={() => handleReplaceRow(params)}
+                        >
+                            <UpgradeIcon fontSize="inherit" />
+                        </IconButton>
+                    </div>
                 </Tooltip>
             )
         }
@@ -544,14 +548,16 @@ function BoardComponents() {
                 <Grid item xs={4} />
                 <Grid item xs={8}>
                     <Tooltip title="Remove">
-                        <Button
-                            disabled={!crfNumber}
-                            onClick={() => {
-                                dispatch({ type: 'newComponent', payload: { crfNumber } });
-                            }}
-                        >
-                            New Component
-                        </Button>
+                        <div>
+                            <Button
+                                disabled={!crfNumber}
+                                onClick={() => {
+                                    dispatch({ type: 'newComponent', payload: { crfNumber } });
+                                }}
+                            >
+                                New Component
+                            </Button>
+                        </div>
                     </Tooltip>
                 </Grid>
                 <Grid item xs={12}>
