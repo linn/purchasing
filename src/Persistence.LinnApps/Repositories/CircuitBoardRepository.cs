@@ -21,7 +21,8 @@
         {
             return this.serviceDbContext
                 .CircuitBoards
-                .Include(c => c.Components)
+                .Include(c => c.Components).ThenInclude(a => a.AddChange)
+                .Include(c => c.Components).ThenInclude(a => a.DeleteChange)
                 .Include(a => a.Layouts)
                 .ThenInclude(b => b.Revisions)
                 .ThenInclude(c => c.RevisionType)

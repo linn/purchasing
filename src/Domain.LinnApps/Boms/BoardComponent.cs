@@ -24,8 +24,12 @@
         
         public int AddChangeId { get; set; }
 
+        public PcasChange AddChange { get; set; }
+
         public int? DeleteChangeId { get; set; }
-        
+
+        public PcasChange DeleteChange { get; set; }
+
         public decimal Quantity { get; set; }
     }
 }

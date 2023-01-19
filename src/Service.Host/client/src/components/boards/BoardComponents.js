@@ -340,9 +340,15 @@ function BoardComponents() {
         dispatch({ type: 'populate', payload: item });
     };
 
+    const changesDisplaying = () => showChanges || crfNumber > 0;
+
     const getDisplayClass = params => {
-        if (params.row.removing || params.row.deleteChangeId) {
-            return 'removing';
+        if (params.row.changeState === 'LIVE' && params.row.deleteChangeId && changesDisplaying()) {
+            return `removing-${params.row.deleteChangeState?.toLowerCase()}`;
+        }
+
+        if (params.row.removing) {
+            return `removing-${params.row.changeState?.toLowerCase()}`;
         }
 
         return params.row.changeState?.toLowerCase();
@@ -357,8 +363,6 @@ function BoardComponents() {
             setCrfRevisionCode(null);
         }
     };
-
-    const changesDisplaying = () => showChanges || crfNumber > 0;
 
     return (
         <Page history={history} style={{ paddingBottom: '20px' }} homeUrl={config.appRoot}>
@@ -495,6 +499,14 @@ function BoardComponents() {
                                             bgcolor: 'yellow'
                                         },
                                         '& .accept': {
+                                            bgcolor: '#b0f7b9'
+                                        },
+                                        '& .removing-propos': {
+                                            textDecorationLine: 'line-through',
+                                            bgcolor: 'yellow'
+                                        },
+                                        '& .removing-accept': {
+                                            textDecorationLine: 'line-through',
                                             bgcolor: '#b0f7b9'
                                         }
                                     }}
