@@ -134,7 +134,7 @@
                                                    Part =
                                                        new Part
                                                            {
-                                                               PartNumber = x.PartNumber,
+                                                               PartNumber = x.PartNumber?.ToUpper(),
                                                                Description = x.PartDescription
                                                            },
                                                    PartNumber = x.PartNumber,

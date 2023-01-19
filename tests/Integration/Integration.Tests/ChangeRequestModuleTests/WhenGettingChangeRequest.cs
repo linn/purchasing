@@ -36,7 +36,31 @@
                                                           {
                                                               ChangeId = 1,
                                                               BomName = "TOAST 001",
-                                                              ChangeState = "ACCEPT"
+                                                              ChangeState = "ACCEPT",
+                                                              AddedBomDetails = new List<BomDetail>
+                                                                  {
+                                                                      new BomDetail
+                                                                          {
+                                                                              DetailId = 1,
+                                                                              PartNumber = "BUTTER 1",
+                                                                              Qty = 1,
+                                                                              GenerateRequirement = "N",
+                                                                              AddChangeId = 1,
+                                                                              AddReplaceSeq = 1
+                                                                          }
+                                                                  },
+                                                              DeletedBomDetails = new List<BomDetail>
+                                                                  {
+                                                                      new BomDetail
+                                                                          {
+                                                                              DetailId = 1,
+                                                                              PartNumber = "BUTTER 2",
+                                                                              Qty = 2,
+                                                                              GenerateRequirement = "Y",
+                                                                              DeleteChangeId = 1,
+                                                                              DeleteReplaceSeq = 1
+                                                                          }
+                                                                  }
                                                           }
                                                   },
                                  PcasChanges = new List<PcasChange>
@@ -85,6 +109,10 @@
             result.ChangeState.Should().Be("ACCEPT");
             result.BomChanges.Count().Should().Be(1);
             result.PcasChanges.Count().Should().Be(1);
+
+            var bomChange = result.BomChanges.FirstOrDefault();
+            bomChange.Should().NotBeNull();
+            bomChange.BomChangeDetails.Count().Should().Be(1);
         }
     }
 }

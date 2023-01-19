@@ -150,7 +150,7 @@
                 .AddTransient<IForecastWeekChangesFacadeService, ForecastWeekChangesFacadeService>()
                 .AddTransient<IChangeRequestFacadeService, ChangeRequestFacadeService>()
                 .AddTransient<IBomFacadeService, BomFacadeService>()
-                .AddTransient<IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource>, CircuitBoardFacadeService>()
+                .AddTransient<ICircuitBoardFacadeService, CircuitBoardFacadeService>()
                 .AddTransient<IBomTreeReportsService, BomTreeReportService>()
                 .AddTransient<IBomReportsFacadeService, BomReportsFacadeService>()
                 .AddTransient<IQueryFacadeResourceService<BoardComponentSummary, BoardComponentSummaryResource, BoardComponentSummaryResource>, BoardComponentSummaryFacadeService>()
@@ -210,6 +210,7 @@
                 .AddTransient<IChangeRequestService, ChangeRequestService>()
                 .AddTransient<IBomReportsService, BomReportsService>()
                 .AddTransient<IBomChangeService, BomChangeService>()
+                .AddTransient<ICircuitBoardService, CircuitBoardService>()
                 .AddTransient<IBomVerificationHistoryService, BomVerificationHistoryService>()
 
                 // external services
@@ -227,6 +228,7 @@
                 .AddTransient<IRazorEngine, RazorEngine>()
                 .AddTransient<ITemplateEngine, RazorTemplateEngine>()
                 .AddTransient<ISalesTaxPack, SalesTaxPack>()
+                .AddTransient<IBomPack, BomPack>()
 
                 // proxy
                 .AddTransient<IHtmlTemplateService<PurchaseOrder>>(x =>

@@ -35,7 +35,9 @@ function CloseSquare(props) {
     );
 }
 
-const StyledTreeItem = styled(props => <TreeItem {...props} />)(({ changeState, theme }) => ({
+const StyledTreeItem = styled(props => <TreeItem {...props} />, {
+    shouldForwardProp: prop => prop !== 'changeState'
+})(({ changeState, theme }) => ({
     [`& .${treeItemClasses.iconContainer}`]: {
         '& .close': {
             opacity: 0.3
@@ -59,6 +61,9 @@ const StyledTreeItem = styled(props => <TreeItem {...props} />)(({ changeState, 
             }
             return '';
         })()
+    },
+    [`& .${treeItemClasses.selected}`]: {
+        backgroundColor: '#e0f5f7 !important'
     }
 }));
 
@@ -80,6 +85,7 @@ export default function BomTree({
                 <Typography
                     display="inline"
                     variant="subtitle1"
+                    id={nodes.id}
                     color={!nodes.children?.length ? '' : 'primary'}
                 >
                     {nodes.name}

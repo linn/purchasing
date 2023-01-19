@@ -3,11 +3,13 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
 
     using FluentAssertions;
     using FluentAssertions.Extensions;
 
     using Linn.Purchasing.Domain.LinnApps.Keys;
+    using Linn.Purchasing.Domain.LinnApps.Parts;
     using Linn.Purchasing.Domain.LinnApps.PartSuppliers;
     using Linn.Purchasing.Domain.LinnApps.PurchaseLedger;
     using Linn.Purchasing.Domain.LinnApps.PurchaseOrders;
@@ -139,6 +141,9 @@
 
             this.PartSupplierRepository.FindById(Arg.Any<PartSupplierKey>()).Returns(
                 new PartSupplier { UnitOfMeasure = "Carrots", LeadTimeWeeks = 2 });
+
+            this.PartQueryRepository.FindBy(Arg.Any<Expression<Func<Part, bool>>>())
+                .Returns(new Part { DateLive = DateTime.Today });
 
             this.result = this.Sut.CreateOrder(this.order, new List<string>());
         }

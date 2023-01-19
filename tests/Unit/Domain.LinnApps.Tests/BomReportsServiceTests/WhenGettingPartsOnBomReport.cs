@@ -42,7 +42,7 @@
                                    }
                            };
 
-            this.BomDetailRepository.FindAll().Returns(data.AsQueryable());
+            this.BomDetailViewRepository.FindAll().Returns(data.AsQueryable());
 
             this.results = this.Sut.GetPartsOnBomReport(this.bomName);
         }

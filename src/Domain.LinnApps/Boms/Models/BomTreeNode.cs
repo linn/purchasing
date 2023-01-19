@@ -16,6 +16,8 @@
 
         public string ParentName { get; set; }
 
+        public string ParentId { get; set; }
+
         public string Id { get; set; }
 
         public bool? HasChanged { get; set; }
@@ -35,5 +37,11 @@
         public int? DeleteReplaceSeq { get; set; }
 
         public bool? ToDelete { get; set; }
+
+        public string Requirement { get; set; }
+
+        public string DrawingReference { get; set; }
+
+        public string SafetyCritical { get; set; }
     }
 }

@@ -17,7 +17,7 @@
     {
         protected IRepository<Bom, int> Repository { get; private set; }
 
-        protected IBomDetailRepository BomDetailRepository { get; private set; }
+        protected IBomDetailViewRepository BomDetailViewRepository { get; private set; }
 
         protected IBomTreeService Sut { get; private set; }
 
@@ -25,9 +25,9 @@
         public void SetUpContext()
         {
             this.Repository = Substitute.For<IRepository<Bom, int>>();
-            this.BomDetailRepository = Substitute.For<IBomDetailRepository>();
+            this.BomDetailViewRepository = Substitute.For<IBomDetailViewRepository>();
             this.MockData();
-            this.Sut = new BomTreeService(this.Repository, this.BomDetailRepository);
+            this.Sut = new BomTreeService(this.Repository, this.BomDetailViewRepository);
         }
 
         protected void MockData()
@@ -79,7 +79,7 @@
                                        new BomDetailViewEntry { ChangeState = "LIVE", BomPart = new Part { PartNumber = "n1121" } }
                                    };
 
-            this.BomDetailRepository.FilterBy(Arg.Any<Expression<Func<BomDetailViewEntry, bool>>>()).Returns(
+            this.BomDetailViewRepository.FilterBy(Arg.Any<Expression<Func<BomDetailViewEntry, bool>>>()).Returns(
                 rootChildren.AsQueryable(),
                 n1Children.AsQueryable(),
                 new List<BomDetailViewEntry>().AsQueryable(), // n12 has no children

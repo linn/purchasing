@@ -1,6 +1,9 @@
 ﻿namespace Linn.Purchasing.Resources
 {
+    using System.Collections.Generic;
+
     using Linn.Common.Resources;
+    using Linn.Purchasing.Domain.LinnApps.Boms;
 
     public class BomChangeResource : HypermediaResource
     {
@@ -37,5 +40,7 @@
         public string PhaseInWWYYYY { get; set; }
 
         public string LifecycleText { get; set; }
+
+        public IEnumerable<BomChangeDetail> BomChangeDetails { get; set; }
     }
 }

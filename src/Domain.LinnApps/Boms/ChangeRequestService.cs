@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Boms
 {
+    using System;
     using System.Collections.Generic;
 
     using Linn.Common.Authorisation;
@@ -19,16 +20,20 @@
 
         private readonly IRepository<Employee, int> employeeRepository;
 
+        private readonly IRepository<LinnWeek, int> weekRepository;
+
         public ChangeRequestService(
             IAuthorisationService authService,
             IRepository<ChangeRequest, int> repository,
             IQueryRepository<Part> partRepository,
-            IRepository<Employee, int> employeeRepository)
+            IRepository<Employee, int> employeeRepository,
+            IRepository<LinnWeek, int> weekRepository)
         {
             this.authService = authService;
             this.repository = repository;
             this.partRepository = partRepository;
             this.employeeRepository = employeeRepository;
+            this.weekRepository = weekRepository;
         }
 
         public Part ValidPartNumber(string partNumber)
@@ -45,6 +50,11 @@
             }
 
             return part;
+        }
+
+        public bool ChangeRequestAdmin(IEnumerable<string> privileges)
+        {
+            return this.authService.HasPermissionFor(AuthorisedAction.AdminChangeRequest, privileges);
         }
 
         public ChangeRequest Approve(int documentNumber, IEnumerable<string> privileges = null)
@@ -143,6 +153,48 @@
             {
                 throw new InvalidStateChangeException("Cannot make live this change request");
             }
+
+            return request;
+        }
+
+        public ChangeRequest PhaseInChanges(int documentNumber, int? linnWeekNumber, DateTime? linnWeekStartDate, IEnumerable<int> selectedBomChangeIds, IEnumerable<string> privileges = null)
+        {
+            var request = this.repository.FindById(documentNumber);
+            if (request == null)
+            {
+                throw new ItemNotFoundException("Change Request not found");
+            }
+
+            LinnWeek week = null;
+            if (linnWeekNumber != null)
+            {
+                week = this.weekRepository.FindById((int) linnWeekNumber);
+            }
+            else if (linnWeekStartDate != null)
+            {
+                var weekDate = ((DateTime) linnWeekStartDate).Date;
+                // if you don't do weekNumber > 0 then for this week you also get the Now week and Jacki doesn't want that
+                week = this.weekRepository.FindBy(
+                    d => d.StartsOn <= weekDate && d.EndsOn >= weekDate && d.WeekNumber > 0);
+            }
+
+            if (week == null)
+            {
+                throw new ItemNotFoundException("Linn Week not found");
+            }
+
+            if (week.EndsOn < DateTime.Now.Date)
+            {
+                throw new InvalidPhaseInWeekException("Phase in week is in the past");
+            }
+
+            if (!this.authService.HasPermissionFor(AuthorisedAction.AdminChangeRequest, privileges))
+            {
+                throw new UnauthorisedActionException(
+                    "You are not authorised to phase in change requests");
+            }
+
+            request.PhaseIn(week, selectedBomChangeIds);
 
             return request;
         }

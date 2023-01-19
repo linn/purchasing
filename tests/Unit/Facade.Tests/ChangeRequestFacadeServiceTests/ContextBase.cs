@@ -1,6 +1,7 @@
 ﻿namespace Linn.Purchasing.Facade.Tests.ChangeRequestFacadeServiceTests
 {
     using Linn.Common.Authorisation;
+    using Linn.Common.Logging;
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps;
@@ -27,6 +28,12 @@
 
         protected IRepository<Employee, int> EmployeeRepository { get; private set; }
 
+        protected IRepository<LinnWeek, int> WeekRepository { get; private set; }
+
+        protected ILog Logger { get; set; }
+
+        protected IBomTreeService BomTreeService { get; private set; }
+
         protected ChangeRequestFacadeService Sut { get; private set; }
 
         [SetUp]
@@ -38,20 +45,26 @@
             this.DatabaseService = Substitute.For<IDatabaseService>();
             this.PartRepository = Substitute.For<IQueryRepository<Part>>();
             this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
+            this.WeekRepository = Substitute.For<IRepository<LinnWeek, int>>();
+            this.BomTreeService = Substitute.For<IBomTreeService>();
+            this.Logger = Substitute.For<ILog>();
 
             this.Sut = new ChangeRequestFacadeService(
                 this.Repository,
                 this.TransactionManager,
                 new ChangeRequestResourceBuilder(
-                    new BomChangeResourceBuilder(),
-                    new PcasChangeResourceBuilder(),
-                    this.AuthorisationService),
+                new BomChangeResourceBuilder(),
+                new PcasChangeResourceBuilder(),
+                this.AuthorisationService),
                 new ChangeRequestService(
-                    this.AuthorisationService,
-                    this.Repository,
-                    this.PartRepository,
-                    this.EmployeeRepository),
-                this.DatabaseService);
+                this.AuthorisationService,
+                this.Repository,
+                this.PartRepository,
+                this.EmployeeRepository,
+                this.WeekRepository),
+                this.DatabaseService, 
+                this.BomTreeService,
+                this.Logger);
         }
     }
 }

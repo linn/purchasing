@@ -4,12 +4,20 @@
     using System.Linq;
 
     using Linn.Common.Facade;
+    using Linn.Common.Persistence;
     using Linn.Common.Resources;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Resources.Boms;
 
     public class CircuitBoardResourceBuilder : IBuilder<CircuitBoard>
     {
+        private readonly IRepository<PcasChange, int> pcasChangeRepository;
+
+        public CircuitBoardResourceBuilder(IRepository<PcasChange, int> pcasChangeRepository)
+        {
+            this.pcasChangeRepository = pcasChangeRepository;
+        }
+
         public CircuitBoardResource Build(CircuitBoard entity, IEnumerable<string> claims)
         {
             if (entity == null)
@@ -32,7 +40,7 @@
                            ClusterBoard = entity.ClusterBoard,
                            IdBoard = entity.IdBoard,
                            Layouts = entity.Layouts?.OrderBy(a => a.LayoutSequence).Select(MakeLayoutResource),
-                           Components = entity.Components?.Select(MakeComponentResource),
+                           Components = entity.Components?.Select(this.MakeComponentResource),
                            Links = this.BuildLinks(entity, claims).ToArray()
                        };
         }
@@ -106,11 +114,19 @@
                        };
         }
 
-        private static BoardComponentResource MakeComponentResource(BoardComponent boardComponent)
+        private BoardComponentResource MakeComponentResource(BoardComponent boardComponent)
         {
             if (boardComponent is null)
             {
                 return null;
+            }
+
+            var addChange = this.pcasChangeRepository.FindBy(a => a.ChangeId == boardComponent.AddChangeId);
+            PcasChange deleteChange = null;
+
+            if (boardComponent.DeleteChangeId.HasValue)
+            {
+                deleteChange = this.pcasChangeRepository.FindBy(a => a.ChangeId == boardComponent.DeleteChangeId);
             }
 
             return new BoardComponentResource
@@ -127,7 +143,11 @@
                            ToRevisionVersion = boardComponent.ToRevisionVersion,
                            AddChangeId = boardComponent.AddChangeId,
                            DeleteChangeId = boardComponent.DeleteChangeId,
-                           Quantity = boardComponent.Quantity
+                           Quantity = boardComponent.Quantity,
+                           AddChangeDocumentType = addChange?.DocumentType,
+                           AddChangeDocumentNumber = addChange?.DocumentNumber,
+                           DeleteChangeDocumentType = deleteChange?.DocumentType,
+                           DeleteChangeDocumentNumber = deleteChange?.DocumentNumber
                        };
         }
 

@@ -36,6 +36,10 @@
 
         public Part NewPart { get; set; }
 
+        public string BoardCode { get; set; }
+
+        public string RevisionCode { get; set; }
+
         public string ReasonForChange { get; set; }
 
         public string DescriptionOfChange { get; set; }
@@ -57,6 +61,21 @@
         }
 
         public bool CanCancel(bool adminPrivs)
+        {
+            if (this.ChangeState == "PROPOS")
+            {
+                return true;
+            }
+
+            if (this.ChangeState == "ACCEPT")
+            {
+                return adminPrivs;
+            }
+
+            return false;
+        }
+
+        public bool CanEdit(bool adminPrivs)
         {
             if (this.ChangeState == "PROPOS")
             {
@@ -194,6 +213,25 @@
                 if (allLive)
                 {
                     this.ChangeState = "LIVE";
+                }
+            }
+        }
+
+        public bool CanPhaseIn() => this.ChangeState == "ACCEPT";
+
+        public void PhaseIn(LinnWeek week, IEnumerable<int> selectedBomChangeIds)
+        {
+            if (this.CanPhaseIn() && selectedBomChangeIds != null && this.BomChanges != null)
+            {
+                foreach (var bomChange in this.BomChanges)
+                {
+                    if (bomChange.CanPhaseIn())
+                    {
+                        if (selectedBomChangeIds.Contains(bomChange.ChangeId))
+                        {
+                            bomChange.PhaseIn(week);
+                        }
+                    }
                 }
             }
         }
