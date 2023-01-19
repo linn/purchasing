@@ -8,11 +8,11 @@
 
     public class SupplierKitService : ISupplierKitService
     {
-        private readonly IBomDetailRepository bomDetailRepository;
+        private readonly IBomDetailViewRepository bomDetailViewRepository;
 
-        public SupplierKitService(IBomDetailRepository bomDetailRepository)
+        public SupplierKitService(IBomDetailViewRepository bomDetailViewRepository)
         {
-            this.bomDetailRepository = bomDetailRepository;
+            this.bomDetailViewRepository = bomDetailViewRepository;
         }
 
         public IEnumerable<SupplierKit> GetSupplierKits(PurchaseOrder order, bool getComponents = false)
@@ -28,7 +28,7 @@
 
         private SupplierKit AddComponents(Part part, decimal qty)
         {
-            var bom = this.bomDetailRepository.GetLiveBomDetails(part.PartNumber).ToList();
+            var bom = this.bomDetailViewRepository.GetLiveBomDetails(part.PartNumber).ToList();
             var components = bom.Select(d => new SupplierKitDetail(d.Part, qty * d.Qty));
             return new SupplierKit(part, qty, components);
         }

@@ -358,7 +358,7 @@ export const board = new ItemType('board', 'BOARD', '/purchasing/boms/boards');
 export const boardComponents = new ItemType(
     'boardComponents',
     'BOARD_COMPONENTS',
-    '/purchasing/boms/boards'
+    '/purchasing/boms/board-components'
 );
 export const boards = new ItemType('boards', 'BOARDS', '/purchasing/boms/boards');
 
@@ -366,6 +366,12 @@ export const changeRequestStatusChange = new ItemType(
     'changeRequestStatusChange',
     'CHANGE_REQUEST_STATUS',
     '/purchasing/change-requests/status'
+);
+
+export const changeRequestPhaseIns = new ItemType(
+    'changeRequestPhaseInsChange',
+    'CHANGE_REQUEST_PHASE_INS',
+    '/purchasing/change-requests/phase-ins'
 );
 
 export const subAssembly = new ItemType('subAssembly', 'SUB_ASSEMBLY', '/purchasing/boms/tree');

@@ -1,17 +1,16 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Boms.Exceptions
 {
+    using Linn.Common.Domain.Exceptions;
     using System;
 
-    using Linn.Common.Domain.Exceptions;
-
-    public class InvalidReplacementException : DomainException
+    public class InvalidPhaseInWeekException : DomainException
     {
-        public InvalidReplacementException(string message)
+        public InvalidPhaseInWeekException(string message)
             : base(message)
         {
         }
 
-        public InvalidReplacementException(string message, Exception innerException)
+        public InvalidPhaseInWeekException(string message, Exception innerException)
             : base(message, innerException)
         {
         }

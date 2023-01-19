@@ -99,6 +99,193 @@ export default function boardComponentsReducer(state = initialState, action) {
                 componentSelectionModel: action.payload
             };
         }
+        case 'updateComponent': {
+            if (!action.payload?.boardLine) {
+                return state;
+            }
+
+            const { components } = state.board;
+
+            const componentIndex = components.findIndex(
+                i => i.boardLine === action.payload.boardLine
+            );
+
+            const componentToUpdate = action.payload;
+            componentToUpdate.cRef = componentToUpdate.cRef
+                ? componentToUpdate.cRef.toUpperCase()
+                : null;
+            components[componentIndex] = componentToUpdate;
+
+            return {
+                ...state
+            };
+        }
+        case 'deleteProposedComponent': {
+            if (!action.payload?.component?.boardLine) {
+                return state;
+            }
+
+            const { components } = state.board;
+
+            const componentIndexToMarkForRemove = components.findIndex(
+                i => i.boardLine === action.payload.component.boardLine
+            );
+
+            const componentToUpdate = { ...components[componentIndexToMarkForRemove] };
+
+            componentToUpdate.removing = true;
+            componentToUpdate.deleteChangeDocumentNumber = null;
+            components[componentIndexToMarkForRemove] = componentToUpdate;
+
+            return {
+                ...state
+            };
+        }
+        case 'deleteComponent': {
+            if (!action.payload?.component?.boardLine) {
+                return state;
+            }
+
+            const { components } = state.board;
+
+            const componentIndexToMarkForRemove = components.findIndex(
+                i => i.boardLine === action.payload.component.boardLine
+            );
+
+            const componentToUpdate = { ...components[componentIndexToMarkForRemove] };
+
+            componentToUpdate.removing = true;
+            componentToUpdate.deleteChangeDocumentNumber = action.payload.crfNumber;
+            components[componentIndexToMarkForRemove] = componentToUpdate;
+
+            return {
+                ...state
+            };
+        }
+        case 'newComponent': {
+            const { components } = state.board;
+            if (!components) {
+                return state;
+            }
+
+            const lastLine = Math.max(...components.map(o => o.boardLine));
+            components.push({
+                adding: true,
+                changeState: 'PROPOS',
+                boardCode: state.board.boardCode,
+                boardLine: lastLine + 1,
+                fromLayoutVersion: state.selectedRevision.layoutSequence,
+                fromRevisionNumber: state.selectedRevision.versionNumber,
+                quantity: action.payload.component?.quantity ?? 1,
+                addChangeDocumentNumber: action.payload.crfNumber,
+                partNumber: action.payload.component?.partNumber ?? null,
+                cRef: action.payload.component?.cRef ?? null
+            });
+
+            return {
+                ...state
+            };
+        }
+        case 'replaceProposedComponent': {
+            if (!action.payload?.component?.boardLine) {
+                return state;
+            }
+
+            const { components } = state.board;
+            if (!components) {
+                return state;
+            }
+
+            const componentIndexToMarkForRemove = components.findIndex(
+                i => i.boardLine === action.payload.component.boardLine
+            );
+
+            const componentToUpdate = { ...components[componentIndexToMarkForRemove] };
+
+            componentToUpdate.removing = true;
+            componentToUpdate.deleteChangeDocumentNumber = null;
+            components[componentIndexToMarkForRemove] = componentToUpdate;
+
+            const lastLine = Math.max(...components.map(o => o.boardLine));
+            components.push({
+                adding: true,
+                changeState: 'PROPOS',
+                boardCode: state.board.boardCode,
+                boardLine: lastLine + 1,
+                fromLayoutVersion: state.selectedRevision.layoutSequence,
+                fromRevisionNumber: state.selectedRevision.versionNumber,
+                quantity: action.payload.component?.quantity ?? 1,
+                addChangeDocumentNumber: action.payload.crfNumber,
+                partNumber: action.payload.component?.partNumber ?? null,
+                cRef: action.payload.component?.cRef ?? null
+            });
+
+            return {
+                ...state
+            };
+        }
+        case 'replaceComponent': {
+            if (!action.payload?.component?.boardLine) {
+                return state;
+            }
+
+            const { components } = state.board;
+            if (!components) {
+                return state;
+            }
+
+            const componentIndexToMarkForRemove = components.findIndex(
+                i => i.boardLine === action.payload.component.boardLine
+            );
+
+            const componentToUpdate = { ...components[componentIndexToMarkForRemove] };
+
+            componentToUpdate.removing = true;
+            componentToUpdate.deleteChangeDocumentNumber = action.payload.crfNumber;
+            components[componentIndexToMarkForRemove] = componentToUpdate;
+
+            const lastLine = Math.max(...components.map(o => o.boardLine));
+            components.push({
+                adding: true,
+                changeState: 'PROPOS',
+                boardCode: state.board.boardCode,
+                boardLine: lastLine + 1,
+                fromLayoutVersion: state.selectedRevision.layoutSequence,
+                fromRevisionNumber: state.selectedRevision.versionNumber,
+                quantity: action.payload.component?.quantity ?? 1,
+                addChangeDocumentNumber: action.payload.crfNumber,
+                partNumber: action.payload.component?.partNumber ?? null,
+                cRef: action.payload.component?.cRef ?? null
+            });
+
+            return {
+                ...state
+            };
+        }
+        case 'setComponentPart': {
+            if (!action.payload?.boardLine) {
+                return state;
+            }
+
+            const { components } = state.board;
+
+            const componentIndex = components.findIndex(
+                i => i.boardLine === action.payload.boardLine
+            );
+
+            let componentToUpdate = components[componentIndex];
+
+            componentToUpdate = {
+                ...componentToUpdate,
+                partNumber: action.payload.part?.partNumber
+            };
+
+            components[componentIndex] = componentToUpdate;
+
+            return {
+                ...state
+            };
+        }
         default:
             return state;
     }

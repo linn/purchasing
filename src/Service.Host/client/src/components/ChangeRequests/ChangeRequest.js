@@ -15,6 +15,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import changeRequestActions from '../../actions/changeRequestActions';
 import changeRequestStatusChangeActions from '../../actions/changeRequestStatusChangeActions';
+import changeRequestPhaseInsActions from '../../actions/changeRequestPhaseInsActions';
 import MainTab from './Tabs/MainTab';
 import BomChangesTab from './Tabs/BomChangesTab';
 import PcasChangesTab from './Tabs/PcasChangesTab';
@@ -103,7 +104,7 @@ function ChangeRequest() {
     };
 
     const cancelUri = utilities.getHref(item, 'cancel');
-
+    const phaseInUri = utilities.getHref(item, 'phase-in');
     const makeLiveUri = utilities.getHref(item, 'make-live');
 
     const cancel = request => {
@@ -130,6 +131,16 @@ function ChangeRequest() {
                 })
             );
         }
+    };
+
+    const phaseIn = date => {
+        reduxDispatch(
+            changeRequestPhaseInsActions.add({
+                documentNumber: id,
+                phaseInWeekStart: date,
+                selectedBomChangeIds: selectedBomChanges
+            })
+        );
     };
 
     return (
@@ -188,6 +199,8 @@ function ChangeRequest() {
                                 <BomChangesTab
                                     bomChanges={item?.bomChanges}
                                     handleSelectChange={handleBomChangesSelectRow}
+                                    phaseInsUri={phaseInUri}
+                                    phaseIn={phaseIn}
                                 />
                             </Box>
                         )}

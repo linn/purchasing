@@ -1,5 +1,7 @@
 ﻿namespace Linn.Purchasing.Domain.LinnApps.Boms
 {
+    using System.Collections.Generic;
+
     public class BomDetail
     {
         public int DetailId { get; set; }
@@ -14,9 +16,13 @@
 
         public string ChangeState { get; set; }
 
+        public BomChange AddChange { get; set; }
+
         public int? AddChangeId { get; set; }
 
         public int? AddReplaceSeq { get; set; }
+
+        public BomChange DeleteChange { get; set; }
 
         public int? DeleteChangeId { get; set; }
 

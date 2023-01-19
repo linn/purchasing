@@ -6,6 +6,7 @@
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
+    using Linn.Common.Proxy.LinnApps;
     using Linn.Common.Reporting.Resources.ResourceBuilders;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
@@ -30,7 +31,7 @@
 
         protected IBomFacadeService FacadeService { get; set; }
 
-        protected IFacadeResourceService<CircuitBoard, string, CircuitBoardResource, CircuitBoardResource> CircuitBoardFacadeService { get; set; }
+        protected ICircuitBoardFacadeService CircuitBoardFacadeService { get; set; }
 
         protected IRepository<Bom, int> Repository { get; set; }
 
@@ -39,6 +40,8 @@
         protected IRepository<BoardRevisionType, string> BoardRevisionTypeRepository { get; set; }
         
         protected IQueryRepository<BoardComponentSummary> BoardComponentSummaryRepository { get; set; }
+
+        protected IRepository<PcasChange, int> PcasChangeRepository { get; set; }
 
         protected IEdiOrderService MockDomainService { get; set; }
 
@@ -55,10 +58,14 @@
         protected IBomReportsService MockBomReportsDomainService { get; set; }
 
         protected IBomChangeService BomChangeService { get; set; }
-        
+
+        protected ICircuitBoardService CircuitBoardService { get; private set; }
+
         protected string BoardCode { get; set; }
 
         protected CircuitBoardResource Resource { get; set; }
+
+        protected IDatabaseService DatabaseService { get; private set; }
 
         [SetUp]
         public void SetUpContext()
@@ -67,13 +74,15 @@
             this.CircuitBoardRepository = Substitute.For<IRepository<CircuitBoard, string>>();
             this.BoardRevisionTypeRepository = Substitute.For<IRepository<BoardRevisionType, string>>();
             this.BoardComponentSummaryRepository = Substitute.For<IQueryRepository<BoardComponentSummary>>();
+            this.PcasChangeRepository = Substitute.For<IRepository<PcasChange, int>>();
             this.BomChangeService = Substitute.For<IBomChangeService>();
+            this.CircuitBoardService = Substitute.For<ICircuitBoardService>();
             this.TransactionManager = Substitute.For<ITransactionManager>();
-            this.FacadeService = new BomFacadeService(
-                this.BomChangeService, this.TransactionManager);
-
             this.BomTreeService = Substitute.For<IBomTreeService>();
 
+            this.FacadeService = new BomFacadeService(
+                this.BomChangeService, this.TransactionManager, this.BomTreeService);
+            this.DatabaseService = Substitute.For<IDatabaseService>();
             this.MockBomReportsDomainService = Substitute.For<IBomReportsService>();
 
             this.BomTreeReportsService = new BomTreeReportService(this.BomTreeService);
@@ -94,8 +103,11 @@
             this.CircuitBoardFacadeService = new CircuitBoardFacadeService(
                 this.CircuitBoardRepository,
                 this.TransactionManager,
-                new CircuitBoardResourceBuilder(),
-                this.BoardRevisionTypeRepository);
+                new CircuitBoardResourceBuilder(this.PcasChangeRepository),
+                this.BoardRevisionTypeRepository,
+                this.PcasChangeRepository,
+                this.CircuitBoardService,
+                this.DatabaseService);
 
             this.BomChangeService = Substitute.For<IBomChangeService>();
               
@@ -109,84 +121,80 @@
                 IdBoard = "Y",
                 SplitBom = "Y",
                 Layouts = new List<BoardLayoutResource>
-                                                  {
-                                                      new BoardLayoutResource
+                              {
+                                  new BoardLayoutResource
+                                      {
+                                          BoardCode = this.BoardCode,
+                                          LayoutCode = "L1",
+                                          LayoutSequence = 1,
+                                          PcbNumber = "PCB",
+                                          LayoutType = "L",
+                                          LayoutNumber = 1,
+                                          PcbPartNumber = "PCB PART",
+                                          ChangeId = null,
+                                          ChangeState = null,
+                                          Revisions = new List<BoardRevisionResource>
                                                           {
-                                                              BoardCode = this.BoardCode,
-                                                              LayoutCode = "L1",
-                                                              LayoutSequence = 1,
-                                                              PcbNumber = "PCB",
-                                                              LayoutType = "L",
-                                                              LayoutNumber = 1,
-                                                              PcbPartNumber = "PCB PART",
-                                                              ChangeId = null,
-                                                              ChangeState = null,
-                                                              Revisions = new List<BoardRevisionResource>
+                                                              new BoardRevisionResource
+                                                                  {
+                                                                      BoardCode = this.BoardCode,
+                                                                      LayoutCode = "L1",
+                                                                      RevisionCode = "L1R1",
+                                                                      LayoutSequence = 1,
+                                                                      VersionNumber = 1,
+                                                                      RevisionType =
+                                                                          new BoardRevisionTypeResource
                                                                               {
-                                                                                  new BoardRevisionResource
-                                                                                      {
-                                                                                          BoardCode = this.BoardCode,
-                                                                                          LayoutCode = "L1",
-                                                                                          RevisionCode = "L1R1",
-                                                                                          LayoutSequence = 1,
-                                                                                          VersionNumber = 1,
-                                                                                          RevisionType =
-                                                                                              new
-                                                                                              BoardRevisionTypeResource
-                                                                                                  {
-                                                                                                      TypeCode =
-                                                                                                          "PRODUCTION"
-                                                                                                  },
-                                                                                          RevisionNumber = 1,
-                                                                                          SplitBom = "N",
-                                                                                          PcasPartNumber = "PCAS",
-                                                                                          PcsmPartNumber = "PCSM",
-                                                                                          PcbPartNumber = "PCB",
-                                                                                          AteTestCommissioned = null,
-                                                                                          ChangeId = null,
-                                                                                          ChangeState = null
-                                                                                      }
-                                                                              }
-                                                          },
-                                                      new BoardLayoutResource
-                                                          {
-                                                              BoardCode = this.BoardCode,
-                                                              LayoutCode = "L2",
-                                                              LayoutSequence = 2,
-                                                              PcbNumber = "PCB2",
-                                                              LayoutType = "L",
-                                                              LayoutNumber = 2,
-                                                              PcbPartNumber = "PCB PART2",
-                                                              ChangeId = null,
-                                                              ChangeState = null,
-                                                              Revisions = new List<BoardRevisionResource>
-                                                                              {
-                                                                                  new BoardRevisionResource
-                                                                                      {
-                                                                                          BoardCode = this.BoardCode,
-                                                                                          LayoutCode = "L2",
-                                                                                          RevisionCode = "L2R1",
-                                                                                          LayoutSequence = 2,
-                                                                                          VersionNumber = 1,
-                                                                                          RevisionType =
-                                                                                              new
-                                                                                              BoardRevisionTypeResource
-                                                                                                  {
-                                                                                                      TypeCode =
-                                                                                                          "PRODUCTION"
-                                                                                                  },
-                                                                                          RevisionNumber = 1,
-                                                                                          SplitBom = "N",
-                                                                                          PcasPartNumber = "PCAS2",
-                                                                                          PcsmPartNumber = "PCSM2",
-                                                                                          PcbPartNumber = "PCB2",
-                                                                                          AteTestCommissioned = null,
-                                                                                          ChangeId = null,
-                                                                                          ChangeState = null
-                                                                                      }
-                                                                              }
+                                                                                  TypeCode = "PRODUCTION"
+                                                                              },
+                                                                      RevisionNumber = 1,
+                                                                      SplitBom = "N",
+                                                                      PcasPartNumber = "PCAS",
+                                                                      PcsmPartNumber = "PCSM",
+                                                                      PcbPartNumber = "PCB",
+                                                                      AteTestCommissioned = null,
+                                                                      ChangeId = null,
+                                                                      ChangeState = null
+                                                                  }
                                                           }
-                                                  }
+                                      },
+                                  new BoardLayoutResource
+                                      {
+                                          BoardCode = this.BoardCode,
+                                          LayoutCode = "L2",
+                                          LayoutSequence = 2,
+                                          PcbNumber = "PCB2",
+                                          LayoutType = "L",
+                                          LayoutNumber = 2,
+                                          PcbPartNumber = "PCB PART2",
+                                          ChangeId = null,
+                                          ChangeState = null,
+                                          Revisions = new List<BoardRevisionResource>
+                                                          {
+                                                              new BoardRevisionResource
+                                                                  {
+                                                                      BoardCode = this.BoardCode,
+                                                                      LayoutCode = "L2",
+                                                                      RevisionCode = "L2R1",
+                                                                      LayoutSequence = 2,
+                                                                      VersionNumber = 1,
+                                                                      RevisionType =
+                                                                          new BoardRevisionTypeResource
+                                                                              {
+                                                                                  TypeCode = "PRODUCTION"
+                                                                              },
+                                                                      RevisionNumber = 1,
+                                                                      SplitBom = "N",
+                                                                      PcasPartNumber = "PCAS2",
+                                                                      PcsmPartNumber = "PCSM2",
+                                                                      PcbPartNumber = "PCB2",
+                                                                      AteTestCommissioned = null,
+                                                                      ChangeId = null,
+                                                                      ChangeState = null
+                                                                  }
+                                                          }
+                                      }
+                                                            }
             };
             this.Client = TestClient.With<BomModule>(
                 services =>

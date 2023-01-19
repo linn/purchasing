@@ -208,6 +208,8 @@
 
         public DbSet<BomDetail> BomDetails { get; set; }
 
+        public DbSet<PcasChange> PcasChanges { get; set; }
+
         public DbSet<BomVerificationHistory> BomVerificationHistory { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -506,6 +508,10 @@
             entity.Property(a => a.RawOrFinished).HasColumnName("RM_FG");
             entity.HasOne(a => a.NominalAccount).WithMany().HasForeignKey("NOMACC_NOMACC_ID");
             entity.Property(a => a.DecrementRule).HasColumnName("DECREMENT_RULE");
+            entity.Property(a => a.DatePurchPhasedOut).HasColumnName("DATE_PURCH_PHASE_OUT");
+            entity.Property(a => a.SafetyCritical).HasColumnName("SAFETY_CRITICAL_PART");
+            entity.Property(a => a.AssemblyTechnology).HasColumnName("ASSEMBLY_TECHNOLOGY").HasMaxLength(4);
+            entity.Property(a => a.DateLive).HasColumnName("DATE_LIVE");
         }
 
         private void BuildSuppliers(ModelBuilder builder)
@@ -1884,6 +1890,8 @@
             entity.Property(c => c.OldPartNumber).HasColumnName("OLD_PART_NUMBER");
             entity.HasOne(o => o.OldPart).WithMany().HasForeignKey(o => o.OldPartNumber);
             entity.Property(c => c.NewPartNumber).HasColumnName("NEW_PART_NUMBER");
+            entity.Property(c => c.BoardCode).HasColumnName("BOARD_CODE").HasMaxLength(6);
+            entity.Property(c => c.RevisionCode).HasColumnName("REVISION_CODE").HasMaxLength(10);
             entity.HasOne(o => o.NewPart).WithMany().HasForeignKey(o => o.NewPartNumber);
             entity.Property(c => c.ChangeState).HasColumnName("CHANGE_STATE").HasMaxLength(6);
             entity.Property(c => c.GlobalReplace).HasColumnName("GLOBAL_REPLACE").HasMaxLength(1);
@@ -1928,6 +1936,8 @@
             entity.HasKey(b => b.BomId);
             entity.Property(b => b.BomId).HasColumnName("BOM_ID");
             entity.Property(b => b.BomName).HasColumnName("BOM_NAME");
+            entity.Property(b => b.Depth).HasColumnName("DEPTH");
+            entity.Property(b => b.CommonBom).HasColumnName("COMMON_BOM");
             entity.HasMany(b => b.Details).WithOne().HasForeignKey(d => d.BomId);
             entity.HasOne(b => b.Part).WithOne().HasForeignKey<Part>(p => p.BomId);
         }
@@ -1969,6 +1979,8 @@
             entity.Property(a => a.DeleteChangeId).HasColumnName("DELETE_CHANGE_ID");
             entity.Property(a => a.DeleteReplaceSeq).HasColumnName("DELETE_REPLACE_SEQ");
             entity.Property(a => a.PcasLine).HasColumnName("PCAS_LINE");
+            entity.HasOne(a => a.DeleteChange).WithMany(c => c.DeletedBomDetails).HasForeignKey(x => x.DeleteChangeId);
+            entity.HasOne(a => a.AddChange).WithMany(c => c.AddedBomDetails).HasForeignKey(x => x.AddChangeId);
         }
 
         private void BuildBomDetailComponents(ModelBuilder builder)

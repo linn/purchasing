@@ -5,7 +5,11 @@ import {
     collectionSelectorHelpers,
     Search,
     itemSelectorHelpers,
-    SaveBackCancelButtons
+    SaveBackCancelButtons,
+    SnackbarMessage,
+    getItemError,
+    ErrorCard,
+    InputField
 } from '@linn-it/linn-form-components-library';
 import { DataGrid } from '@mui/x-data-grid';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -13,14 +17,17 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import DialogContentText from '@mui/material/DialogContentText';
 import Grid from '@mui/material/Grid';
 import { useLocation } from 'react-router';
 import queryString from 'query-string';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import { useSelector, useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import BomTree from '../BomTree';
 import history from '../../history';
@@ -29,7 +36,6 @@ import {
     changeRequests as changeRequestsItemType,
     bomTree as bomTreeItemType
 } from '../../itemTypes';
-
 import changeRequestsActions from '../../actions/changeRequestsActions';
 import bomTreeActions from '../../actions/bomTreeActions';
 import useInitialise from '../../hooks/useInitialise';
@@ -44,24 +50,34 @@ function BomUtility() {
     const reduxDispatch = useDispatch();
     const { search } = useLocation();
     const { bomName } = queryString.parse(search);
+
     const [crNumber, setCrNumber] = useState();
     const [changeRequests, changeRequestsLoading] = useInitialise(
-        () => changeRequestsActions.search(bomName),
+        () => changeRequestsActions.searchWithOptions(bomName, '&includeAllForBom=True'),
         changeRequestsItemType.item,
         'searchItems'
     );
-    const url = `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${true}&treeType=${'bom'}`;
+    const [showChanges, setShowChanges] = useState(true);
+    const [disableChangesButton, setDisableChangesButton] = useState(false);
+    const [searchBomTerm, setSearchBomTerm] = useState();
+
+    const url = changes =>
+        `/purchasing/boms/tree?bomName=${bomName}&levels=${0}&requirementOnly=${false}&showChanges=${changes}&treeType=${'bom'}`;
 
     const [bomTree, bomTreeLoading] = useInitialise(
-        () => bomTreeActions.fetchByHref(url),
-        bomTreeItemType.item
+        () => bomTreeActions.fetchByHref(url(showChanges)),
+        bomTreeItemType.item,
+        'item',
+        bomTreeActions.clearErrorsForItem
     );
 
     const [treeView, setTreeView] = useState();
 
-    const [expanded, setExpanded] = useState();
-
-    const { nodesWithChildren } = useExpandNodesWithChildren([], treeView, bomName);
+    const { expanded, setExpanded, nodesWithChildren } = useExpandNodesWithChildren(
+        [],
+        treeView,
+        bomName
+    );
 
     const [partLookUp, setPartLookUp] = useState({ open: false, forRow: null });
 
@@ -71,6 +87,10 @@ function BomUtility() {
     const subAssemblyLoading = useSelector(reduxState =>
         itemSelectorHelpers.getItemLoading(reduxState.subAssembly)
     );
+    const snackbarVisible = useSelector(reduxState =>
+        itemSelectorHelpers.getSnackbarVisible(reduxState.bomTree)
+    );
+    const itemError = useSelector(reduxState => getItemError(reduxState, 'bomTree'));
 
     const [partSearchTerm, setPartSearchTerm] = useState();
 
@@ -107,7 +127,7 @@ function BomUtility() {
                       mouseY: e.clientY - 6,
                       part: target.innerText,
                       canReplace: Number(crNumber) !== detail.addChangeDocumentNumber,
-                      detail: { ...detail, parent: selected.id }
+                      detail: { ...detail, parentId: selected.id }
                   }
                 : null
         );
@@ -123,6 +143,7 @@ function BomUtility() {
                 )}
                 <IconButton
                     onClick={() => openPartLookUp(params.row)}
+                    data-testid="part-lookup-button"
                     disabled={!crNumber || subAssemblyLoading || params.row.isReplaced}
                 >
                     <ManageSearchIcon />
@@ -166,6 +187,12 @@ function BomUtility() {
                 )
         },
         {
+            field: 'safetyCritical',
+            headerName: 'Safety',
+            width: 100,
+            editable: false
+        },
+        {
             field: 'qty',
             headerName: 'Qty',
             width: 100,
@@ -176,6 +203,48 @@ function BomUtility() {
                     <s>{params.row.qty}</s>
                 ) : (
                     <span>{params.row.qty}</span>
+                )
+        },
+        {
+            field: 'requirement',
+            headerName: 'Req',
+            editable: true,
+            type: 'singleSelect',
+            valueOptions: ['Y', 'N']
+        },
+        {
+            field: 'drawingReference',
+            headerName: 'Drawing Ref',
+            width: 200,
+            editable: false
+        },
+        {
+            field: 'addChangeDocumentNumber',
+            headerName: 'Add CRF',
+            width: 150,
+            hide: !showChanges,
+            editable: false,
+            renderCell: params => (
+                <Link to={`/purchasing/change-requests/${params.row.addChangeDocumentNumber}`}>
+                    {params.row.addChangeDocumentNumber}
+                </Link>
+            )
+        },
+        {
+            field: 'deleteChangeDocumentNumber',
+            headerName: 'Del CRF',
+            width: 150,
+            hide: !showChanges,
+            editable: false,
+            renderCell: params =>
+                params.row.deleteChangeDocumentNumber ? (
+                    <Link
+                        to={`/purchasing/change-requests/${params.row.deleteChangeDocumentNumber}`}
+                    >
+                        {params.row.deleteChangeDocumentNumber}
+                    </Link>
+                ) : (
+                    <span>{params.row.deleteChangeDocumentNumber}</span>
                 )
         },
         {
@@ -190,11 +259,17 @@ function BomUtility() {
             headerName: 'Replaced By',
             width: 180,
             editable: false,
+            hide: true // useful for debugging, but hidden generally,
+        },
+        {
+            field: 'parentId',
+            headerName: 'Parent',
+            width: 180,
+            editable: false,
             hide: true // useful for debugging, but hidden generally
         }
     ];
-
-    useEffect(() => {
+    const initialise = useCallback(() => {
         if (bomTree === null) {
             setSelected({ id: 'root', name: bomName, children: [] });
         } else {
@@ -207,6 +282,10 @@ function BomUtility() {
         );
     }, [bomTree, bomName, bomTreeLoading]);
 
+    useEffect(() => {
+        initialise();
+    }, [initialise]);
+
     // updates the tree with changes passed via a 'newNode' object
     const updateTree = (tree, newNode, addNode) => {
         const newTree = { ...tree };
@@ -217,7 +296,7 @@ function BomUtility() {
             while (n > 0) {
                 const current = q[0];
                 q.shift();
-                if (current.id === newNode.parent) {
+                if (current.id === newNode.parentId) {
                     current.hasChanged = true;
                     if (addNode) {
                         current.children = [...current.children, newNode];
@@ -229,7 +308,7 @@ function BomUtility() {
                                 if (
                                     newNode.replacementFor &&
                                     newNode.name &&
-                                    newNode.replacementFor === x.name
+                                    newNode.replacementFor === x.id
                                 ) {
                                     return { ...x, replacedBy: newNode.name };
                                 }
@@ -237,7 +316,7 @@ function BomUtility() {
                             }
                             if (newNode.isReplaced) {
                                 replacedIndex = index;
-                                replacementFor = x.name;
+                                replacementFor = x.id;
                             }
                             return { ...newNode, changeState: 'PROPOS' };
                         });
@@ -245,7 +324,7 @@ function BomUtility() {
                             current.children.splice(replacedIndex + 1, 0, {
                                 id: uid(),
                                 type: 'C',
-                                parent: current.id,
+                                parentId: current.id,
                                 changeState: 'PROPOS',
                                 replacementFor
                             });
@@ -263,8 +342,8 @@ function BomUtility() {
         return newTree;
     };
 
-    // find a node in the tree, by its id field
-    const getNode = id => {
+    // find a node in the tree
+    const getNode = (searchTerm, fieldName = 'id') => {
         if (treeView == null) return null;
         const q = [];
         q.push(treeView);
@@ -273,7 +352,7 @@ function BomUtility() {
             while (n > 0) {
                 const current = q[0];
                 q.shift();
-                if (current.id === id) return current;
+                if (current[fieldName] === searchTerm) return current;
                 if (current.children)
                     for (let i = 0; i < current.children.length; i += 1)
                         q.push(current.children[i]);
@@ -283,17 +362,58 @@ function BomUtility() {
         return null;
     };
 
+    const [searchOccurenceCount, setSearchOccurenceCount] = useState(0);
+
+    const searchTree = searchTerm => {
+        let count = 0;
+        setExpanded(expanded);
+        if (treeView == null) return null;
+        const q = [];
+        q.push(treeView);
+        while (q.length !== 0) {
+            let n = q.length;
+            while (n > 0) {
+                const current = q[0];
+                q.shift();
+                if (current.children) {
+                    for (let i = 0; i < current.children.length; i += 1)
+                        q.push(current.children[i]);
+                    setExpanded(e => [...e, current.id]);
+                }
+                if (current.name === searchTerm) {
+                    count += 1;
+                }
+                if (current.name === searchTerm && count === searchOccurenceCount + 1) {
+                    setSearchOccurenceCount(prevValue => prevValue + 1);
+                    return current;
+                }
+
+                n -= 1;
+            }
+        }
+        return null;
+    };
+
     const processRowUpdate = useCallback(newRow => {
-        setTreeView(tree => updateTree(tree, newRow, false));
+        setDisableChangesButton(true);
+        setTreeView(tr => updateTree(tr, newRow, false));
         return newRow;
     }, []);
 
     // add a new line to the children list of the selected node
     const addLine = () => {
+        setDisableChangesButton(true);
         setTreeView(tree =>
             updateTree(
                 tree,
-                { id: uid(), type: 'C', parent: selected.id, changeState: 'PROPOS' },
+                {
+                    id: uid(),
+                    type: 'C',
+                    parentId: selected.id,
+                    changeState: 'PROPOS',
+                    qty: 1,
+                    requirement: 'Y'
+                },
                 true
             )
         );
@@ -307,6 +427,8 @@ function BomUtility() {
         return [];
     };
 
+    const [bomToCopy, setBomToCopy] = useState();
+
     const handlePartSelect = newValue => {
         setPartLookUp(p => ({ ...p, selectedPart: newValue, open: false }));
         if (newValue.bomType !== 'C') {
@@ -317,9 +439,12 @@ function BomUtility() {
             // fetch this subAssembly's bomTree to add it to the tree view
             reduxDispatch(subAssemblyActions.fetchByHref(subAssemblyUrl));
         } else {
+            console.log(newValue);
             processRowUpdate({
                 ...partLookUp.forRow,
                 name: newValue.partNumber,
+                safetyCritical: newValue.safetyCriticalPart,
+                drawingReference: newValue.drawingReference,
                 type: newValue.bomType,
                 description: newValue.description
             });
@@ -333,6 +458,8 @@ function BomUtility() {
                 ...partLookUp.forRow,
                 name: subAssembly.name,
                 type: subAssembly.type,
+                safetyCritical: subAssembly.safetyCritical,
+                drawingReference: subAssembly.drawingReference,
                 description: subAssembly.description,
                 children: subAssembly.children,
                 changeState: 'PROPOS'
@@ -342,76 +469,288 @@ function BomUtility() {
         }
     }, [subAssembly, partLookUp.forRow, reduxDispatch, processRowUpdate]);
 
-    function renderPartLookUp() {
-        return (
-            <Dialog open={partLookUp.open}>
-                <DialogTitle>Search For A Part</DialogTitle>
-                <DialogContent dividers>
-                    <Search
-                        propertyName="partNumber"
-                        label="Part Number"
-                        resultsInModal
-                        resultLimit={100}
-                        value={partSearchTerm}
-                        handleValueChange={(_, newVal) => setPartSearchTerm(newVal)}
-                        search={searchParts}
-                        searchResults={partsSearchResults}
-                        loading={partsSearchLoading}
-                        priorityFunction="closestMatchesFirst"
-                        onResultSelect={handlePartSelect}
-                        clearSearch={() => {}}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button
-                        onClick={() =>
-                            setPartLookUp({ open: false, forRow: null, selectedPart: null })
-                        }
-                    >
-                        Cancel
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        );
-    }
+    const PartLookUp = () => (
+        <Dialog open={partLookUp.open}>
+            <DialogTitle>Search For A Part</DialogTitle>
+            <DialogContent dividers>
+                <Search
+                    visible={partLookUp.open}
+                    autoFocus
+                    propertyName="partNumber"
+                    label="Part Number"
+                    resultsInModal
+                    resultLimit={100}
+                    value={partSearchTerm}
+                    handleValueChange={(_, newVal) => setPartSearchTerm(newVal)}
+                    search={searchParts}
+                    searchResults={partsSearchResults}
+                    loading={partsSearchLoading}
+                    priorityFunction="closestMatchesFirst"
+                    onResultSelect={handlePartSelect}
+                    clearSearch={() => {}}
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    onClick={() => setPartLookUp({ open: false, forRow: null, selectedPart: null })}
+                >
+                    Cancel
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
+    const [copyBomDialogOpen, setCopyBomDialogOpen] = useState(false);
+    const [deleteAllFromBomDialogOpen, setDeleteAllFromBomDialogOpen] = useState(false);
+    const [safetyCriticalWarningDialogOpen, setSafetyCriticalWarningDialogOpen] = useState(false);
+
+    const CopyBomDialog = () => (
+        <Dialog open={copyBomDialogOpen} onClose={() => setPartSearchTerm(null)}>
+            <DialogTitle>Copy BOM</DialogTitle>
+            <DialogContent dividers>
+                <Search
+                    visible={copyBomDialogOpen}
+                    autoFocus
+                    propertyName="partNumber"
+                    label="Part Number"
+                    resultsInModal
+                    resultLimit={100}
+                    value={bomToCopy ?? partSearchTerm}
+                    handleValueChange={(_, newVal) => setPartSearchTerm(newVal)}
+                    search={searchParts}
+                    searchResults={partsSearchResults.filter(x => x.bomType !== 'C')}
+                    loading={partsSearchLoading}
+                    priorityFunction="closestMatchesFirst"
+                    onResultSelect={newVal => setBomToCopy(newVal.partNumber)}
+                    clearSearch={() => {}}
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    onClick={() => {
+                        setCopyBomDialogOpen(false);
+                    }}
+                >
+                    Cancel
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={() => {
+                        setCopyBomDialogOpen(false);
+                        setPartSearchTerm(null);
+                        reduxDispatch(
+                            bomTreeActions.postByHref('/purchasing/boms/copy', {
+                                srcPartNumber: bomToCopy,
+                                destPartNumber: bomName,
+                                crfNumber: crNumber
+                            })
+                        );
+                    }}
+                    disabled={!bomToCopy}
+                >
+                    Confirm
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
+
+    const DeleteAllFromBomDialog = () => (
+        <Dialog open={deleteAllFromBomDialogOpen} onClose={() => setPartSearchTerm(null)}>
+            <DialogTitle>Delete All From Bom</DialogTitle>
+            <DialogContent dividers>
+                <Typography variant="h6">
+                    Clicking confirm will create a change to remove everything from this bom!
+                </Typography>
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    onClick={() => {
+                        setDeleteAllFromBomDialogOpen(false);
+                    }}
+                >
+                    Cancel
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={() => {
+                        setDeleteAllFromBomDialogOpen(false);
+                        reduxDispatch(
+                            bomTreeActions.postByHref('/purchasing/boms/delete', {
+                                destPartNumber: bomName,
+                                crfNumber: crNumber
+                            })
+                        );
+                    }}
+                    disabled={!crNumber}
+                >
+                    Confirm
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
+
+    const DeleteSafetyCriticalWarningDialog = () => (
+        <Dialog open={safetyCriticalWarningDialogOpen} onClose={() => setPartSearchTerm(null)}>
+            <DialogTitle>Safety Critical Part</DialogTitle>
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                    The part your are deleting is Safety Critical
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    onClick={() => {
+                        setDeleteAllFromBomDialogOpen(false);
+                    }}
+                >
+                    Cancel
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={() => {
+                        setSafetyCriticalWarningDialogOpen(false);
+                        processRowUpdate({ ...contextMenu.detail, toDelete: true });
+                        setContextMenu(null);
+                    }}
+                >
+                    Accept
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
 
     const handleClose = () => setContextMenu(null);
 
     const handleReplaceClick = () => {
-        processRowUpdate({ ...contextMenu.detail, isReplaced: true });
+        processRowUpdate({
+            ...contextMenu.detail,
+            isReplaced: true,
+            parentId: contextMenu.detail.parentId
+        });
         setContextMenu(null);
     };
 
     const handleDeleteClick = () => {
-        processRowUpdate({ ...contextMenu.detail, toDelete: true });
-        setContextMenu(null);
+        if (contextMenu?.detail.safetyCritical === 'Y') {
+            setSafetyCriticalWarningDialogOpen(true);
+        } else {
+            processRowUpdate({ ...contextMenu.detail, toDelete: true });
+            setContextMenu(null);
+        }
+    };
+
+    const doSearch = () => {
+        const node = searchTree(searchBomTerm?.toUpperCase?.());
+        if (node) {
+            const parent = getNode(node.parentName, 'name');
+            setSelected(parent);
+            document.getElementById(parent.id).scrollIntoView();
+            (() => new Promise(resolve => setTimeout(resolve, 500)))().then(() => {
+                document.querySelectorAll(`[data-id="${node.id}"]`)?.[0]?.scrollIntoView();
+            });
+        }
     };
 
     return (
         <Page history={history} homeUrl={config.appRoot}>
-            {renderPartLookUp()}
+            {PartLookUp()}
+            {CopyBomDialog()}
+            {DeleteAllFromBomDialog()}
+            {DeleteSafetyCriticalWarningDialog()}
             <Grid container spacing={3}>
+                <SnackbarMessage
+                    visible={snackbarVisible}
+                    onClose={() => reduxDispatch(bomTreeActions.setSnackbarVisible(false))}
+                    message="Save Successful"
+                    timeOut={3000}
+                />
                 {changeRequestsLoading ? (
                     <Grid item xs={12}>
                         <LinearProgress />
                     </Grid>
                 ) : (
-                    <Grid item xs={12}>
-                        <Dropdown
-                            items={changeRequests?.map(c => ({
-                                id: c.documentNumber,
-                                displayText: `${c.documentType}${c.documentNumber}`
-                            }))}
-                            allowNoValue
-                            label="CRF Number"
-                            propertyName="crNumber"
-                            helperText="Select a corresponding CRF to start editing"
-                            value={crNumber}
-                            onChange={(_, n) => {
-                                setCrNumber(n);
-                            }}
-                        />
-                    </Grid>
+                    <>
+                        <Grid item xs={4}>
+                            <Dropdown
+                                items={changeRequests?.map(c => ({
+                                    id: c.documentNumber,
+                                    displayText: `${c.documentType}${c.documentNumber} / ${c.newPartNumber} / ${c.changeState}`
+                                }))}
+                                allowNoValue
+                                label="CRF Number"
+                                propertyName="crNumber"
+                                helperText="Select a corresponding CRF to start editing"
+                                value={crNumber}
+                                onChange={(_, n) => {
+                                    setCrNumber(n);
+                                }}
+                            />
+                        </Grid>
+                        <Grid item xs={4}>
+                            <InputField
+                                label="Search Bom"
+                                helperText="press enter to search"
+                                value={searchBomTerm}
+                                onChange={(_, v) => {
+                                    setSearchOccurenceCount(0);
+                                    setSearchBomTerm(v);
+                                }}
+                                propertyName="searchBomTerm"
+                                textFieldProps={{
+                                    onKeyDown: data => {
+                                        if (data.keyCode === 13) {
+                                            doSearch(searchBomTerm);
+                                        }
+                                    }
+                                }}
+                            />
+                        </Grid>
+                        <Grid item xs={4}>
+                            {itemError && (
+                                <Grid item xs={12}>
+                                    <ErrorCard
+                                        errorMessage={itemError.details?.error || itemError.details}
+                                    />
+                                </Grid>
+                            )}
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Button
+                                disabled={bomTreeLoading || disableChangesButton}
+                                variant="outlined"
+                                onClick={() => {
+                                    reduxDispatch(bomTreeActions.fetchByHref(url(!showChanges)));
+                                    setShowChanges(!showChanges);
+                                }}
+                            >
+                                {showChanges ? 'hide' : 'show'} changes{' '}
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                onClick={() => history.push('/purchasing/change-requests/create')}
+                            >
+                                RAISE NEW CRF
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                disabled={!crNumber}
+                                onClick={() => {
+                                    setCopyBomDialogOpen(true);
+                                    setBomToCopy(null);
+                                }}
+                            >
+                                Copy Bom
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                disabled={!crNumber}
+                                onClick={() => {
+                                    setDeleteAllFromBomDialogOpen(true);
+                                }}
+                            >
+                                Delete All
+                            </Button>
+                        </Grid>
+                    </>
                 )}
                 <Grid item xs={4} height="30px">
                     {subAssemblyLoading && <LinearProgress />}
@@ -473,6 +812,7 @@ function BomUtility() {
                         rows={getRows()}
                         loading={bomTreeLoading}
                         processRowUpdate={processRowUpdate}
+                        onProcessRowUpdateError={err => console.log(err)}
                         hideFooter
                         autoHeight
                         experimentalFeatures={{ newEditingApi: true }}
@@ -514,11 +854,14 @@ function BomUtility() {
                 <Grid item xs={12}>
                     <SaveBackCancelButtons
                         saveDisabled={!crNumber || subAssemblyLoading}
-                        saveClick={() =>
-                            reduxDispatch(bomTreeActions.add({ treeRoot: treeView, crNumber }))
-                        }
-                        cancelClick={() => {}}
-                        backClick={() => {}}
+                        saveClick={() => {
+                            reduxDispatch(bomTreeActions.clearErrorsForItem());
+                            reduxDispatch(bomTreeActions.add({ treeRoot: treeView, crNumber }));
+                        }}
+                        cancelClick={initialise}
+                        backClick={() => {
+                            history.push('/purchasing/boms');
+                        }}
                     />
                 </Grid>
             </Grid>

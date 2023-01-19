@@ -116,7 +116,7 @@ function CreatePurchaseOrderUt() {
     };
 
     const handleDetailQtyFieldChange = (propertyName, newValue, detail) => {
-        if (newValue && newValue > 0 && newValue !== order[propertyName]) {
+        if (newValue >= 0 && newValue !== order[propertyName]) {
             dispatch({
                 payload: {
                     ...detail,
@@ -205,6 +205,7 @@ function CreatePurchaseOrderUt() {
                 },
                 type: 'detailFieldUpdate'
             });
+            setPartSearchTerm(prevOrder.details[0].partNumber);
             dispatch({
                 payload: {
                     lineNumber: 1,
@@ -234,6 +235,7 @@ function CreatePurchaseOrderUt() {
                 },
                 type: 'detailFieldUpdate'
             });
+            setPartSearchTerm(null);
             dispatch({
                 payload: {
                     lineNumber: 1,
@@ -258,18 +260,26 @@ function CreatePurchaseOrderUt() {
             a => a.partNumber === detail?.partNumber
         );
         if (partSuppliersWithCorrectPart?.length) {
-            handleSupplierChange({
-                id: `${partSuppliersWithCorrectPart.find(s => s.supplierRanking === 1).supplierId}`
-            });
-            dispatch({
-                payload: {
-                    lineNumber: 1,
-                    fieldName: 'ourUnitPriceCurrency',
-                    value: partSuppliersWithCorrectPart.find(s => s.supplierRanking === 1)
-                        .currencyUnitPrice
-                },
-                type: 'detailFieldUpdate'
-            });
+            const preferredSupplier = partSuppliersWithCorrectPart.find(
+                s => s.supplierRanking === 1
+            );
+            if (preferredSupplier) {
+                handleSupplierChange({
+                    id: `${preferredSupplier.supplierId}`
+                });
+                setStockControlled(true);
+
+                dispatch({
+                    payload: {
+                        lineNumber: 1,
+                        fieldName: 'ourUnitPriceCurrency',
+                        value: preferredSupplier.currencyUnitPrice
+                    },
+                    type: 'detailFieldUpdate'
+                });
+            } else {
+                setStockControlled(false);
+            }
         }
     }, [detail?.partNumber, partSuppliersSearchResults]);
 
@@ -295,6 +305,21 @@ function CreatePurchaseOrderUt() {
                 `&numberToTake=1&searchTerm=${detail.originalOrderNumber}`
             )
         );
+    };
+
+    const setPartWithoutSearch = () => {
+        handleDetailFieldChange('partNumber', partSearchTerm?.toUpperCase(), order.details[0]);
+        setStockControlled(false);
+        reduxDispatch(
+            partSuppliersActions.searchWithOptions(
+                '',
+                `&partNumber=${partSearchTerm?.toUpperCase()}`
+            )
+        );
+    };
+
+    const setSupplierWithoutSearch = () => {
+        handleSupplierChange({ id: supplierSearchTerm, description: order.supplier?.name });
     };
 
     return (
@@ -388,7 +413,9 @@ function CreatePurchaseOrderUt() {
                                 search={() => reduxDispatch(partsActions.search(partSearchTerm))}
                                 searchResults={partsSearchResults}
                                 loading={partsSearchLoading}
+                                helperText="Press ENTER to search or TAB to proceed"
                                 priorityFunction="closestMatchesFirst"
+                                onKeyPressFunctions={[{ keyCode: 9, action: setPartWithoutSearch }]}
                                 onResultSelect={newPart => {
                                     handleDetailFieldChange(
                                         'partNumber',
@@ -482,6 +509,9 @@ function CreatePurchaseOrderUt() {
                                         setSupplierSearchTerm(newValue.name);
                                     }}
                                     minimumSearchTermLength={3}
+                                    onKeyPressFunctions={[
+                                        { keyCode: 9, action: setSupplierWithoutSearch }
+                                    ]}
                                     fullWidth
                                     disabled={
                                         !allowedToCreate() ||
@@ -489,6 +519,7 @@ function CreatePurchaseOrderUt() {
                                         !order.details[0].partNumber
                                     }
                                     required
+                                    helperText="Press ENTER to search or TAB to proceed"
                                 />
                             </Grid>
                         )}

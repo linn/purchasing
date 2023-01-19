@@ -3,6 +3,7 @@
     using System.Net.Http;
 
     using Linn.Common.Authorisation;
+    using Linn.Common.Logging;
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps;
@@ -42,6 +43,12 @@
 
         protected IRepository<Employee, int> EmployeeRepository { get; set; }
 
+        protected IRepository<LinnWeek, int> WeekRepository { get; set; }
+
+        protected IBomTreeService BomTreeService { get; private set; }
+
+        protected ILog Logger { get; set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -51,12 +58,24 @@
             this.DatabaseService = Substitute.For<IDatabaseService>();
             this.PartRepository = Substitute.For<IQueryRepository<Part>>();
             this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
+            this.WeekRepository = Substitute.For<IRepository<LinnWeek, int>>();
+            this.Logger = Substitute.For<ILog>();
+            this.BomTreeService = Substitute.For<IBomTreeService>();
+
             this.FacadeService = new ChangeRequestFacadeService(
                 this.Repository,
                 this.TransactionManager,
-                new ChangeRequestResourceBuilder(new BomChangeResourceBuilder(), new PcasChangeResourceBuilder(), this.AuthService),
-                new ChangeRequestService(this.AuthService, this.Repository, this.PartRepository, this.EmployeeRepository),
-                this.DatabaseService);
+                new ChangeRequestResourceBuilder(
+                    new BomChangeResourceBuilder(), new PcasChangeResourceBuilder(), this.AuthService),
+                new ChangeRequestService(
+                    this.AuthService,
+                    this.Repository,
+                    this.PartRepository,
+                    this.EmployeeRepository,
+                    this.WeekRepository),
+                    this.DatabaseService,
+                    this.BomTreeService,
+                    this.Logger);
 
             this.Client = TestClient.With<ChangeRequestModule>(
                 services =>

@@ -13,7 +13,7 @@
     {
         protected IBomReportsService Sut { get; private set; }
 
-        protected IBomDetailRepository BomDetailRepository { get; private set; }
+        protected IBomDetailViewRepository BomDetailViewRepository { get; private set; }
 
 
         protected IQueryRepository<BomCostReportDetail> BomCostReportDetailsRepository { get; private set; }
@@ -23,11 +23,11 @@
         [SetUp]
         public void SetUpContext()
         {
-            this.BomDetailRepository = Substitute.For<IBomDetailRepository>();
+            this.BomDetailViewRepository = Substitute.For<IBomDetailViewRepository>();
             this.BomTreeService = Substitute.For<IBomTreeService>();
             this.BomCostReportDetailsRepository = Substitute.For<IQueryRepository<BomCostReportDetail>>();
             this.Sut = new BomReportsService(
-                this.BomDetailRepository, 
+                this.BomDetailViewRepository, 
                 new ReportingHelper(), 
                 this.BomTreeService,
                 this.BomCostReportDetailsRepository);

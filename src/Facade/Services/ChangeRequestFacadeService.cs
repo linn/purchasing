@@ -2,10 +2,12 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
 
     using Linn.Common.Domain.Exceptions;
     using Linn.Common.Facade;
+    using Linn.Common.Logging;
     using Linn.Common.Persistence;
     using Linn.Common.Proxy.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
@@ -26,18 +28,29 @@
 
         private readonly IDatabaseService databaseService;
 
+        private readonly ILog log;
+
+        private readonly IBomTreeService bomTreeService;
+
+        private readonly IRepository<ChangeRequest, int> repository;
+
         public ChangeRequestFacadeService(
             IRepository<ChangeRequest, int> repository,
             ITransactionManager transactionManager,
             IBuilder<ChangeRequest> resourceBuilder,
             IChangeRequestService changeRequestService,
-            IDatabaseService databaseService)
+            IDatabaseService databaseService,
+            IBomTreeService bomTreeService,
+            ILog log)
             : base(repository, transactionManager, resourceBuilder)
         {
             this.resourceBuilder = resourceBuilder;
             this.changeRequestService = changeRequestService;
             this.databaseService = databaseService;
+            this.log = log;
             this.transactionManager = transactionManager;
+            this.bomTreeService = bomTreeService;
+            this.repository = repository;
         }
 
         public IResult<ChangeRequestResource> ApproveChangeRequest(int documentNumber, IEnumerable<string> privileges = null)
@@ -127,7 +140,63 @@
             return new BadRequestResult<ChangeRequestResource>($"Cannot change status to {request?.Status}");
         }
 
-        protected override ChangeRequest CreateFromResource(ChangeRequestResource resource, IEnumerable<string> privileges = null)
+        public IResult<ChangeRequestResource> PhaseInChangeRequest(
+            ChangeRequestPhaseInsResource request,
+            IEnumerable<string> privileges = null)
+        {
+            if (request == null)
+            {
+                return new BadRequestResult<ChangeRequestResource>("No parameters supplied");
+            }
+            else if (request.PhaseInWeek == null && request.PhaseInWeekStart == null)
+            {
+                return new BadRequestResult<ChangeRequestResource>("No phase in week supplied");
+            }
+
+            try
+            {
+                var changeRequest = this.changeRequestService.PhaseInChanges(request.DocumentNumber, request.PhaseInWeek, request.PhaseInWeekStart, request.SelectedBomChangeIds, privileges);
+                this.transactionManager.Commit();
+                var resource = (ChangeRequestResource)this.resourceBuilder.Build(changeRequest, privileges);
+                return new SuccessResult<ChangeRequestResource>(resource);
+            }
+            catch (ItemNotFoundException)
+            {
+                return new NotFoundResult<ChangeRequestResource>("Change Request not found");
+            }
+            catch (InvalidStateChangeException)
+            {
+                return new BadRequestResult<ChangeRequestResource>("Cannot phase in this change request");
+            }
+        }
+
+        public IResult<IEnumerable<ChangeRequestResource>> GetChangeRequestsRelevantToBom(
+            string bomName, IEnumerable<string> privileges = null)
+        {
+            var assemblies = this.bomTreeService
+                .FlattenBomTree(bomName.ToUpper().Trim(), null, false, true)
+                .Where(x => x.Type != "C").Select(a => a.Name).ToList();
+
+
+            var changeRequests = assemblies.Count == 0 ? this.repository.FilterBy(x => x.NewPartNumber == bomName).ToList() : this.repository.FilterBy(
+                x => assemblies.Contains(x.NewPartNumber) 
+                     && (x.ChangeState == "ACCEPT" || x.ChangeState == "PROPOS")).ToList();
+
+            return new SuccessResult<IEnumerable<ChangeRequestResource>>(
+                changeRequests.Select(x => (ChangeRequestResource)this.resourceBuilder.Build(x, privileges)));
+        }
+
+        public IResult<IEnumerable<ChangeRequestResource>> GetChangeRequestsRelevantToBoard(string boardCode, IEnumerable<string> privileges = null)
+        {
+            var changeRequests = this.repository.FilterBy(x => x.BoardCode == boardCode.ToUpper()
+                     && (x.ChangeState == "ACCEPT" || x.ChangeState == "PROPOS")).ToList();
+
+            return new SuccessResult<IEnumerable<ChangeRequestResource>>(
+                changeRequests.Select(x => (ChangeRequestResource)this.resourceBuilder.Build(x, privileges)));
+        }
+
+        protected override ChangeRequest CreateFromResource(
+            ChangeRequestResource resource, IEnumerable<string> privileges = null)
         {
             if (resource == null)
             {
@@ -157,7 +226,11 @@
 
         protected override void UpdateFromResource(ChangeRequest entity, ChangeRequestResource updateResource, IEnumerable<string> privileges = null)
         {
-            throw new NotImplementedException();
+            if (entity.CanEdit(this.changeRequestService.ChangeRequestAdmin(privileges)))
+            {
+                entity.ReasonForChange = updateResource.ReasonForChange;
+                entity.DescriptionOfChange = updateResource.DescriptionOfChange;
+            }
         }
 
         protected override Expression<Func<ChangeRequest, bool>> SearchExpression(string searchTerm)
@@ -173,7 +246,7 @@
             ChangeRequestResource resource,
             ChangeRequestResource updateResource)
         {
-            throw new NotImplementedException();
+            this.log.Info($"updated {entity.DocumentNumber}");
         }
 
         protected override void DeleteOrObsoleteResource(ChangeRequest entity, IEnumerable<string> privileges = null)

@@ -7,5 +7,10 @@
     public interface IBomFacadeService
     {
         IResult<BomTreeNode> PostBom(PostBomResource node);
+
+        IResult<BomTreeNode> CopyBom(
+            string srcPartNumber, string destPartNumber, int changedBy, int crfNumber);
+
+        IResult<BomTreeNode> DeleteBom(string bomName, int crfNumber, int changedBy);
     }
 }

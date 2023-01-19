@@ -20,6 +20,8 @@
 
         protected IRepository<Employee, int> EmployeeRepository { get; private set; }
 
+        protected IRepository<LinnWeek, int> WeekRepository { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
@@ -27,11 +29,13 @@
             this.AuthService = Substitute.For<IAuthorisationService>();
             this.PartRepository = Substitute.For<IQueryRepository<Part>>();
             this.EmployeeRepository = Substitute.For<IRepository<Employee, int>>();
+            this.WeekRepository = Substitute.For<IRepository<LinnWeek, int>>();
             this.Sut = new ChangeRequestService(
                 this.AuthService,
                 this.Repository,
                 this.PartRepository,
-                this.EmployeeRepository);
+                this.EmployeeRepository,
+                this.WeekRepository);
         }
     }
 }

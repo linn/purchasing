@@ -4,7 +4,7 @@ import currencyConvert from '../../helpers/currencyConvert';
 const initialState = {};
 
 const recalculateDetailFields = (detail, exchangeRate) => {
-    const netTotalCurrency = new Decimal(detail.ourQty).mul(detail.ourUnitPriceCurrency);
+    const netTotalCurrency = new Decimal(detail.ourQty ?? 0).mul(detail.ourUnitPriceCurrency);
     const detailTotalCurrency = new Decimal(netTotalCurrency).plus(detail.vatTotalCurrency);
     const baseNetTotal = currencyConvert(netTotalCurrency, exchangeRate);
     const baseDetailTotal = currencyConvert(detailTotalCurrency, exchangeRate);

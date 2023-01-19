@@ -11,7 +11,7 @@
 
     public class BomReportsService : IBomReportsService
     {
-        private readonly IBomDetailRepository bomDetailRepository;
+        private readonly IBomDetailViewRepository bomDetailViewRepository;
 
         private readonly IReportingHelper reportingHelper;
 
@@ -20,12 +20,12 @@
         private readonly IBomTreeService bomTreeService;
 
         public BomReportsService(
-            IBomDetailRepository bomDetailRepository, 
+            IBomDetailViewRepository bomDetailViewRepository, 
             IReportingHelper reportingHelper, 
             IBomTreeService bomTreeService,
             IQueryRepository<BomCostReportDetail> bomCostReportDetails)
         {
-            this.bomDetailRepository = bomDetailRepository;
+            this.bomDetailViewRepository = bomDetailViewRepository;
             this.reportingHelper = reportingHelper;
             this.bomTreeService = bomTreeService;
             this.bomCostReportDetails = bomCostReportDetails;
@@ -33,7 +33,7 @@
 
         public ResultsModel GetPartsOnBomReport(string bomName)
         {
-            var lines = this.bomDetailRepository.FindAll().Where(d => d.BomPartNumber == bomName)
+            var lines = this.bomDetailViewRepository.FindAll().Where(d => d.BomPartNumber == bomName)
                 .OrderBy(x => x.PartNumber);
 
             var reportLayout = new SimpleGridLayout(this.reportingHelper, CalculationValueModelType.Value, null, null);

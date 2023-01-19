@@ -13,5 +13,9 @@
         public Part Part { get; set; }
 
         public IList<BomDetailViewEntry> Details { get; set; }
+
+        public int Depth { get; set; }
+
+        public string CommonBom { get; set; }
     }
 }

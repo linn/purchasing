@@ -41,12 +41,12 @@
                            DateEntered = model.DateEntered.ToString("o"),
                            DateAccepted = model.DateAccepted?.ToString("o"),
                            NewPartNumber = model.NewPartNumber,
-
+                           BoardCode = model.BoardCode,
+                           RevisionCode = model.RevisionCode,
                            ChangeType = model.ChangeRequestType,
                            OldPartNumber = model.OldPartNumber,
                            OldPartDescription = model.OldPart?.Description,
                            NewPartDescription = model.NewPart?.Description,
-
                            ProposedBy = 
                                new EmployeeResource
                                    {
@@ -90,6 +90,11 @@
             if (model.CanMakeLive() && this.authService.HasPermissionFor(AuthorisedAction.MakeLiveChangeRequest, privileges))
             {
                 yield return new LinkResource { Rel = "make-live", Href = $"/purchasing/change-requests/status" };
+            }
+
+            if (model.CanPhaseIn() && this.authService.HasPermissionFor(AuthorisedAction.AdminChangeRequest, privileges))
+            {
+                yield return new LinkResource { Rel = "phase-in", Href = $"/purchasing/change-requests/phase-ins" };
             }
 
             yield return new LinkResource { Rel = "self", Href = this.GetLocation(model) };
