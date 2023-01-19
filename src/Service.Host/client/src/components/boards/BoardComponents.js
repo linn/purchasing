@@ -324,10 +324,12 @@ function BoardComponents() {
 
     const goToSelectedBoard = selectedBoard => {
         setBoard(selectedBoard.boardCode);
+        setCrfNumber(null);
         reduxDispatch(boardComponentsActions.fetch(selectedBoard.boardCode));
     };
 
     const goToBoard = () => {
+        setCrfNumber(null);
         if (board) {
             reduxDispatch(boardComponentsActions.fetch(board.toUpperCase()));
         }
@@ -363,6 +365,7 @@ function BoardComponents() {
         if (documentNumber) {
             const crf = changeRequests.find(a => a.documentNumber.toString() === documentNumber);
             setCrfRevisionCode(crf.revisionCode);
+            dispatch({ type: 'setSelectedRevisionToCrf', payload: crf.revisionCode });
         } else {
             setCrfRevisionCode(null);
         }
@@ -454,10 +457,12 @@ function BoardComponents() {
                                     density="compact"
                                     autoHeight
                                     onSelectionModelChange={newSelectionModel => {
-                                        dispatch({
-                                            type: 'setSelectedLayout',
-                                            payload: newSelectionModel
-                                        });
+                                        if (!crfNumber > 0) {
+                                            dispatch({
+                                                type: 'setSelectedLayout',
+                                                payload: newSelectionModel
+                                            });
+                                        }
                                     }}
                                     loading={loading}
                                     hideFooterSelectedRowCount
@@ -482,10 +487,12 @@ function BoardComponents() {
                                     hideFooterSelectedRowCount
                                     autoHeight
                                     onSelectionModelChange={newSelectionModel => {
-                                        dispatch({
-                                            type: 'setSelectedRevision',
-                                            payload: newSelectionModel
-                                        });
+                                        if (!crfNumber > 0) {
+                                            dispatch({
+                                                type: 'setSelectedRevision',
+                                                payload: newSelectionModel
+                                            });
+                                        }
                                     }}
                                     hideFooter={revisionRows.length <= 40}
                                 />

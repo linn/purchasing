@@ -93,6 +93,27 @@ export default function boardComponentsReducer(state = initialState, action) {
                 componentSelectionModel: []
             };
         }
+        case 'setSelectedRevisionToCrf': {
+            if (!action.payload) {
+                return state;
+            }
+
+            const layoutCodeForCrf = action.payload.substr(0, action.payload.indexOf('R'));
+            const selectedLayoutForCrf = state.board.layouts.find(
+                a => a.layoutCode === layoutCodeForCrf
+            );
+
+            return {
+                ...state,
+                layoutSelectionModel: [selectedLayoutForCrf.layoutCode],
+                selectedLayout: selectedLayoutForCrf,
+                revisionSelectionModel: [action.payload],
+                selectedRevision: selectedLayoutForCrf.revisions.find(
+                    a => a.revisionCode === action.payload
+                ),
+                componentSelectionModel: []
+            };
+        }
         case 'setSelectedComponent': {
             return {
                 ...state,
