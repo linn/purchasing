@@ -317,6 +317,7 @@
                                  PcasChange = "N"
                              };
             this.bomChangeRepository.Add(change);
+
             foreach (var child in bom.Details)
             {
                 var detail = this.bomDetailRepository.FindById(child.DetailId);

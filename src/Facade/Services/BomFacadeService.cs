@@ -5,7 +5,6 @@
     using Linn.Common.Persistence;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Domain.LinnApps.Boms.Models;
-    using Linn.Purchasing.Resources;
     using Linn.Purchasing.Resources.Boms;
 
     public class BomFacadeService : IBomFacadeService
@@ -57,8 +56,8 @@
         {
             this.bomChangeService.DeleteAllFromBom(bomName, crfNumber, changedBy);
             this.transactionManager.Commit();
-
-            return new SuccessResult<BomTreeNode>(this.treeService.BuildBomTree(bomName, null, false, true));
+            var updated = this.treeService.BuildBomTree(bomName, null, false, true);
+            return new SuccessResult<BomTreeNode>(updated);
         }
     }
 }
