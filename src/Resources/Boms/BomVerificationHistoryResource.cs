@@ -11,6 +11,8 @@ namespace Linn.Purchasing.Resources.Boms
 
         public int VerifiedBy { get; set; }
 
+        public string DateVerified { get; set; }
+
         public string DocumentType { get; set; }
 
         public int? DocumentNumber { get; set; }

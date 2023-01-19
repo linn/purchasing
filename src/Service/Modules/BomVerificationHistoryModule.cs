@@ -21,7 +21,6 @@
         {
             app.MapGet("/purchasing/bom-verification/create", this.GetApp);
             app.MapGet("/purchasing/bom-verification/{id:int}", this.GetBomVerificationHistoryEntry);
-            app.MapGet("/purchasing/bom-verification", this.SearchBomVerificationHistoryEntries);
             app.MapPost("/purchasing/bom-verification/create", this.CreateBomVerificationHistoryEntry);
         }
 
@@ -37,17 +36,6 @@
             int id)
         {
             var result = bomVerificationHistoryFacadeService.GetById(id, req.HttpContext.GetPrivileges());
-
-            await res.Negotiate(result);
-        }
-
-        private async Task SearchBomVerificationHistoryEntries(
-            HttpRequest req,
-            HttpResponse res,
-            string searchTerm,
-            IFacadeResourceService<BomVerificationHistory, int, BomVerificationHistoryResource, BomVerificationHistoryResource> bomVerificationHistoryFacadeService)
-        {
-            var result = bomVerificationHistoryFacadeService.Search(searchTerm);
 
             await res.Negotiate(result);
         }

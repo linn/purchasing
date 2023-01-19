@@ -3,10 +3,8 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using Linn.Common.Authorisation;
     using Linn.Common.Facade;
     using Linn.Common.Resources;
-    using Linn.Purchasing.Domain.LinnApps;
     using Linn.Purchasing.Domain.LinnApps.Boms;
     using Linn.Purchasing.Resources.Boms;
 
@@ -19,6 +17,7 @@
                 TRef = model.TRef,
                 PartNumber = model.PartNumber,
                 VerifiedBy = model.VerifiedBy,
+                DateVerified= model.DateVerified?.ToString("dd-MMM-yyyy"),
                 Remarks = model.Remarks,
                 DocumentType = model.DocumentType,
                 DocumentNumber = model.DocumentNumber,

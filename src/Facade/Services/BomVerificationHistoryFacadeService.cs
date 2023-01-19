@@ -13,10 +13,6 @@
 
     public class BomVerificationHistoryFacadeService : FacadeResourceService<BomVerificationHistory, int, BomVerificationHistoryResource, BomVerificationHistoryResource>
     {
-        private readonly IBuilder<BomVerificationHistory> resourceBuilder;
-
-        private readonly ITransactionManager transactionManager;
-
         private readonly IDatabaseService databaseService;
 
         public BomVerificationHistoryFacadeService(

@@ -1,5 +1,6 @@
 ﻿namespace Linn.Purchasing.Integration.Tests.BomVerificationHistoryModuleTests
 {
+    using System;
     using System.Net;
     using System.Net.Http.Json;
 
@@ -22,7 +23,8 @@
                 DocumentType = "Test",
                 PartNumber = "CAP 500",
                 Remarks = "B.Slime",
-                VerifiedBy = 33084
+                VerifiedBy = 33084,
+                DateVerified = new DateTime(2023, 1, 19, 6, 0, 0).ToString("dd-MMM-yyyy")
             };
 
             this.Response = this.Client.PostAsJsonAsync(
@@ -54,6 +56,7 @@
             resultResource.PartNumber.Should().Be("CAP 500");
             resultResource.Remarks.Should().Be("B.Slime");
             resultResource.VerifiedBy.Should().Be(33084);
+            resultResource.DateVerified.Should().Be(DateTime.Now.ToString("dd-MMM-yyyy"));
         }
     }
 }
