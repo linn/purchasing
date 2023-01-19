@@ -51,7 +51,9 @@
                 .Include(b => b.Details)
                 .ThenInclude(d => d.PartRequirement)
                 .Include(b => b.Details)
-                .ThenInclude(d => d.AddChange).FirstOrDefault();
+                .ThenInclude(d => d.AddChange)
+                .Include(b => b.Details)
+                .ThenInclude(d => d.DeleteChange).FirstOrDefault();
         }
 
         public IQueryable<Bom> FilterBy(Expression<Func<Bom, bool>> expression)

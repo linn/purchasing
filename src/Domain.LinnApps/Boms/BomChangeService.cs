@@ -133,6 +133,8 @@
                                 }
 
                                 toDelete.DeleteChangeId = change.ChangeId;
+
+                                child.DeleteChangeDocumentNumber = change.DocumentNumber;
                             }
                             else
                             {

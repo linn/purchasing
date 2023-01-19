@@ -194,7 +194,7 @@
                                      Qty = d.Qty,
                                      Type = d.Part.BomType,
                                      ParentName = root.BomName,
-                                     Id = d.DetailId.ToString()
+                                     Id = d.DetailId.ToString(),
                                  }).OrderBy(x => x.Name)
             };
             var q = new Queue<BomTreeNode>();

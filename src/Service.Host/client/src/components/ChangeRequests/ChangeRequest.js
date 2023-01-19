@@ -26,17 +26,17 @@ function ChangeRequest() {
 
     const reduxDispatch = useDispatch();
 
-    useEffect(() => {
-        if (id) {
-            reduxDispatch(changeRequestActions.fetch(id));
-        }
-    }, [id, reduxDispatch]);
-
     const loading = useSelector(reduxState =>
         itemSelectorHelpers.getItemLoading(reduxState.changeRequest)
     );
 
     const item = useSelector(reduxState => itemSelectorHelpers.getItem(reduxState.changeRequest));
+
+    useEffect(() => {
+        if (id && !item) {
+            reduxDispatch(changeRequestActions.fetch(id));
+        }
+    }, [id, reduxDispatch, item]);
 
     const statusChange = useSelector(reduxState =>
         itemSelectorHelpers.getItem(reduxState.changeRequestStatusChange)
